@@ -26,6 +26,7 @@ import android.text.TextUtils;
 import android.util.LocalLog;
 import android.util.Log;
 import com.android.internal.annotations.VisibleForTesting;
+import com.android.server.wifi.hotspot2.ANQPData;
 import com.android.server.wifi.hotspot2.PasspointNetworkEvaluator;
 import com.android.server.wifi.util.ScanResultUtil;
 import com.android.server.wifi.util.StringUtil;
@@ -559,8 +560,8 @@ public class WifiConnectivityManager extends AbsWifiConnectivityManager {
         this.mCurrentConnectionBonus = context.getResources().getInteger(17694901);
         this.mSameNetworkBonus = context.getResources().getInteger(17694891);
         this.mSecureBonus = context.getResources().getInteger(17694892);
-        this.mEnableAutoJoinWhenAssociated = context.getResources().getBoolean(17957080);
-        this.mUseSingleRadioChainScanResults = context.getResources().getBoolean(17957082);
+        this.mEnableAutoJoinWhenAssociated = context.getResources().getBoolean(17957081);
+        this.mUseSingleRadioChainScanResults = context.getResources().getBoolean(17957083);
         this.mInitialScoreMax = (Math.max(this.mScoringParams.getGoodRssi(ScoringParams.BAND2), this.mScoringParams.getGoodRssi(ScoringParams.BAND5)) + context.getResources().getInteger(17694889)) * context.getResources().getInteger(17694890);
         this.mFullScanMaxTxRate = context.getResources().getInteger(17694904);
         this.mFullScanMaxRxRate = context.getResources().getInteger(17694903);
@@ -666,7 +667,7 @@ public class WifiConnectivityManager extends AbsWifiConnectivityManager {
                 if (currentConnectedNetwork == null || currentConnectedNetwork.networkId != candidate.networkId) {
                     Bundle bundle = new HwDevicePolicyManagerEx().getPolicy(null, POLICY_AUTO_CONNECT);
                     if (bundle == null || !bundle.getBoolean(VALUE_DISABLE)) {
-                        if (this.mConnectivityHelper.isFirmwareRoamingSupported() && (candidate.BSSID == null || candidate.BSSID.equals("any"))) {
+                        if (candidate.BSSID == null || candidate.BSSID.equals("any")) {
                             targetBssid = "any";
                             stringBuilder3 = new StringBuilder();
                             stringBuilder3.append("connectToNetwork: Connect to ");
@@ -748,7 +749,7 @@ public class WifiConnectivityManager extends AbsWifiConnectivityManager {
         if (config == null) {
             return false;
         }
-        Set<Integer> freqs = this.mConfigManager.fetchChannelSetForNetworkForPartialScan(config.networkId, 3600000, this.mWifiInfo.getFrequency());
+        Set<Integer> freqs = this.mConfigManager.fetchChannelSetForNetworkForPartialScan(config.networkId, ANQPData.DATA_LIFETIME_MILLISECONDS, this.mWifiInfo.getFrequency());
         if (freqs == null || freqs.size() == 0) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("No scan channels for ");
@@ -854,7 +855,7 @@ public class WifiConnectivityManager extends AbsWifiConnectivityManager {
             long currentTimeStamp = this.mClock.getElapsedSinceBootMillis();
             if (this.mLastHourPeriodicSingleScanTimeStamp != RESET_TIME_STAMP) {
                 long msSinceLastScan = currentTimeStamp - this.mLastHourPeriodicSingleScanTimeStamp;
-                if (msSinceLastScan < 3600000) {
+                if (msSinceLastScan < ANQPData.DATA_LIFETIME_MILLISECONDS) {
                     StringBuilder stringBuilder2 = new StringBuilder();
                     stringBuilder2.append("Last hour periodic single scan started ");
                     stringBuilder2.append(msSinceLastScan);

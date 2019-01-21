@@ -37,7 +37,7 @@ public class TaskTapPointerEventListener implements PointerEventListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:84:?, code:
+    /* JADX WARNING: Missing block: B:81:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

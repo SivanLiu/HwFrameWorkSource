@@ -493,11 +493,11 @@ public class NotificationManagerService extends AbsNotificationManager {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0020, code:
+        /* JADX WARNING: Missing block: B:13:0x0020, code skipped:
             r1.this$0.cancelNotification(r21, r22, r23, r24, r25, 0, 66, true, r26, 2, r2.rank, r2.count, null);
             r29.recycle();
      */
-        /* JADX WARNING: Missing block: B:14:0x0044, code:
+        /* JADX WARNING: Missing block: B:14:0x0044, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -668,10 +668,10 @@ public class NotificationManagerService extends AbsNotificationManager {
     private boolean mNotificationPulseEnabled;
     private HwSysResource mNotificationResource;
     private final BroadcastReceiver mNotificationTimeoutReceiver = new BroadcastReceiver() {
-        /* JADX WARNING: Missing block: B:13:0x0028, code:
+        /* JADX WARNING: Missing block: B:13:0x0028, code skipped:
             if (r0 == null) goto L_0x0063;
      */
-        /* JADX WARNING: Missing block: B:14:0x002a, code:
+        /* JADX WARNING: Missing block: B:14:0x002a, code skipped:
             r1.this$0.cancelNotification(r0.sbn.getUid(), r0.sbn.getInitialPid(), r0.sbn.getPackageName(), r0.sbn.getTag(), r0.sbn.getId(), 0, 64, true, r0.getUserId(), 19, null);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1412,7 +1412,7 @@ public class NotificationManagerService extends AbsNotificationManager {
         }
 
         public ParceledListSlice<NotifyingApp> getRecentNotifyingAppsForUser(int userId) {
-            ParceledListSlice<NotifyingApp> parceledListSlice;
+            ParceledListSlice parceledListSlice;
             NotificationManagerService.this.checkCallerIsSystem();
             synchronized (NotificationManagerService.this.mNotificationLock) {
                 parceledListSlice = new ParceledListSlice(new ArrayList((Collection) NotificationManagerService.this.mRecentApps.getOrDefault(Integer.valueOf(userId), new ArrayList())));
@@ -1459,7 +1459,7 @@ public class NotificationManagerService extends AbsNotificationManager {
         }
 
         public ParceledListSlice<StatusBarNotification> getAppActiveNotifications(String pkg, int incomingUserId) {
-            ParceledListSlice<StatusBarNotification> parceledListSlice;
+            ParceledListSlice parceledListSlice;
             NotificationManagerService.this.checkCallerIsSystemOrSameApp(pkg);
             int userId = ActivityManager.handleIncomingUser(Binder.getCallingPid(), Binder.getCallingUid(), incomingUserId, true, false, "getAppActiveNotifications", pkg);
             synchronized (NotificationManagerService.this.mNotificationLock) {
@@ -1554,20 +1554,21 @@ public class NotificationManagerService extends AbsNotificationManager {
                                 N2 = N;
                             } else {
                                 int userId = r.sbn.getUserId();
-                                if (userId == info.userid || userId == -1 || NotificationManagerService.this.mUserProfiles.isCurrentProfile(userId)) {
-                                    String packageName = r.sbn.getPackageName();
-                                    String tag = r.sbn.getTag();
-                                    String str = packageName;
-                                    i3 = i2;
-                                    String str2 = tag;
-                                    N2 = N;
-                                    cancelNotificationFromListenerLocked(info, callingUid, callingPid, str, str2, r.sbn.getId(), userId);
-                                } else {
-                                    StringBuilder stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("Disallowed call from listener: ");
-                                    stringBuilder2.append(info.service);
-                                    throw new SecurityException(stringBuilder2.toString());
+                                if (!(userId == info.userid || userId == -1)) {
+                                    if (!NotificationManagerService.this.mUserProfiles.isCurrentProfile(userId)) {
+                                        StringBuilder stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Disallowed call from listener: ");
+                                        stringBuilder2.append(info.service);
+                                        throw new SecurityException(stringBuilder2.toString());
+                                    }
                                 }
+                                String packageName = r.sbn.getPackageName();
+                                String tag = r.sbn.getTag();
+                                String str = packageName;
+                                i3 = i2;
+                                String str2 = tag;
+                                N2 = N;
+                                cancelNotificationFromListenerLocked(info, callingUid, callingPid, str, str2, r.sbn.getId(), userId);
                             }
                             i = i3 + 1;
                             INotificationListener iNotificationListener = token;
@@ -1622,14 +1623,17 @@ public class NotificationManagerService extends AbsNotificationManager {
                         for (int i = 0; i < N; i++) {
                             NotificationRecord r = (NotificationRecord) NotificationManagerService.this.mNotificationsByKey.get(keys[i]);
                             if (r != null) {
-                                int userId = r.sbn.getUserId();
                                 StringBuilder stringBuilder;
-                                if (userId != info.userid && userId != -1 && !NotificationManagerService.this.mUserProfiles.isCurrentProfile(userId)) {
-                                    stringBuilder = new StringBuilder();
-                                    stringBuilder.append("Disallowed call from listener: ");
-                                    stringBuilder.append(info.service);
-                                    throw new SecurityException(stringBuilder.toString());
-                                } else if (!r.isSeen()) {
+                                int userId = r.sbn.getUserId();
+                                if (!(userId == info.userid || userId == -1)) {
+                                    if (!NotificationManagerService.this.mUserProfiles.isCurrentProfile(userId)) {
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Disallowed call from listener: ");
+                                        stringBuilder.append(info.service);
+                                        throw new SecurityException(stringBuilder.toString());
+                                    }
+                                }
+                                if (!r.isSeen()) {
                                     stringBuilder = new StringBuilder();
                                     stringBuilder.append("Marking notification as seen ");
                                     stringBuilder.append(keys[i]);
@@ -1689,10 +1693,10 @@ public class NotificationManagerService extends AbsNotificationManager {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0054, code:
+        /* JADX WARNING: Missing block: B:13:0x0054, code skipped:
             android.os.Binder.restoreCallingIdentity(r12);
      */
-        /* JADX WARNING: Missing block: B:14:0x0058, code:
+        /* JADX WARNING: Missing block: B:14:0x0058, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1740,7 +1744,7 @@ public class NotificationManagerService extends AbsNotificationManager {
         }
 
         public ParceledListSlice<StatusBarNotification> getActiveNotificationsFromListener(INotificationListener token, String[] keys, int trim) {
-            ParceledListSlice<StatusBarNotification> parceledListSlice;
+            ParceledListSlice parceledListSlice;
             synchronized (NotificationManagerService.this.mNotificationLock) {
                 ManagedServiceInfo info = NotificationManagerService.this.mListeners.checkServiceTokenLocked(token);
                 int i = 0;
@@ -1768,7 +1772,7 @@ public class NotificationManagerService extends AbsNotificationManager {
         }
 
         public ParceledListSlice<StatusBarNotification> getSnoozedNotificationsFromListener(INotificationListener token, int trim) {
-            ParceledListSlice<StatusBarNotification> parceledListSlice;
+            ParceledListSlice parceledListSlice;
             synchronized (NotificationManagerService.this.mNotificationLock) {
                 ManagedServiceInfo info = NotificationManagerService.this.mListeners.checkServiceTokenLocked(token);
                 List<NotificationRecord> snoozedRecords = NotificationManagerService.this.mSnoozeHelper.getSnoozed();
@@ -2100,15 +2104,6 @@ public class NotificationManagerService extends AbsNotificationManager {
             return toByteArray;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:19:0x007c A:{Splitter: B:17:0x0070, ExcHandler: java.lang.NumberFormatException (r2_9 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:19:0x007c A:{Splitter: B:17:0x0070, ExcHandler: java.lang.NumberFormatException (r2_9 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:19:0x007c, code:
-            r2 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:21:?, code:
-            android.util.Slog.w(com.android.server.notification.NotificationManagerService.TAG, "applyRestore: error reading payload", r2);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void applyRestore(byte[] payload, int user) {
             String str;
             StringBuilder stringBuilder;
@@ -2139,7 +2134,8 @@ public class NotificationManagerService extends AbsNotificationManager {
                     try {
                         NotificationManagerService.this.readPolicyXml(new ByteArrayInputStream(payload), true);
                         NotificationManagerService.this.savePolicyFile();
-                    } catch (Exception e) {
+                    } catch (IOException | NumberFormatException | XmlPullParserException e) {
+                        Slog.w(NotificationManagerService.TAG, "applyRestore: error reading payload", e);
                     }
                 }
             }
@@ -2691,18 +2687,15 @@ public class NotificationManagerService extends AbsNotificationManager {
             this.key = key;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:140:0x03e1 A:{SYNTHETIC, EDGE_INSN: B:140:0x03e1->B:127:0x03e1 ?: BREAK  , EDGE_INSN: B:140:0x03e1->B:127:0x03e1 ?: BREAK  } */
-        /* JADX WARNING: Removed duplicated region for block: B:123:0x03c0 A:{Catch:{ IllegalArgumentException -> 0x02c1, all -> 0x03ae }} */
-        /* JADX WARNING: Removed duplicated region for block: B:123:0x03c0 A:{Catch:{ IllegalArgumentException -> 0x02c1, all -> 0x03ae }} */
-        /* JADX WARNING: Removed duplicated region for block: B:140:0x03e1 A:{SYNTHETIC, EDGE_INSN: B:140:0x03e1->B:127:0x03e1 ?: BREAK  , EDGE_INSN: B:140:0x03e1->B:127:0x03e1 ?: BREAK  , EDGE_INSN: B:140:0x03e1->B:127:0x03e1 ?: BREAK  } */
-        /* JADX WARNING: Missing block: B:21:0x0077, code:
+        /* JADX WARNING: Removed duplicated region for block: B:143:0x03e1 A:{SYNTHETIC, EDGE_INSN: B:143:0x03e1->B:130:0x03e1 ?: BREAK  , EDGE_INSN: B:143:0x03e1->B:130:0x03e1 ?: BREAK  } */
+        /* JADX WARNING: Removed duplicated region for block: B:126:0x03c0 A:{Catch:{ IllegalArgumentException -> 0x02c1, all -> 0x03ae }} */
+        /* JADX WARNING: Removed duplicated region for block: B:126:0x03c0 A:{Catch:{ IllegalArgumentException -> 0x02c1, all -> 0x03ae }} */
+        /* JADX WARNING: Removed duplicated region for block: B:143:0x03e1 A:{SYNTHETIC, EDGE_INSN: B:143:0x03e1->B:130:0x03e1 ?: BREAK  , EDGE_INSN: B:143:0x03e1->B:130:0x03e1 ?: BREAK  , EDGE_INSN: B:143:0x03e1->B:130:0x03e1 ?: BREAK  } */
+        /* JADX WARNING: Missing block: B:21:0x0077, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:70:0x022b, code:
+        /* JADX WARNING: Missing block: B:70:0x022b, code skipped:
             if (java.util.Objects.equals(r9.getGroup(), r6.getGroup()) == false) goto L_0x022d;
-     */
-        /* JADX WARNING: Missing block: B:116:0x03ad, code:
-            return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
@@ -2726,7 +2719,21 @@ public class NotificationManagerService extends AbsNotificationManager {
                     NotificationRecord r2 = r;
                     String str2;
                     int N2;
-                    if (r2 != null) {
+                    if (r2 == null) {
+                        str2 = NotificationManagerService.TAG;
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Cannot find enqueued record for key: ");
+                        stringBuilder2.append(this.key);
+                        Slog.i(str2, stringBuilder2.toString());
+                        N2 = NotificationManagerService.this.mEnqueuedNotifications.size();
+                        while (i2 < N2) {
+                            if (Objects.equals(this.key, ((NotificationRecord) NotificationManagerService.this.mEnqueuedNotifications.get(i2)).getKey())) {
+                                NotificationManagerService.this.mEnqueuedNotifications.remove(i2);
+                                break;
+                            }
+                            i2++;
+                        }
+                    } else {
                         r2.setHidden(NotificationManagerService.this.isPackageSuspendedLocked(r2));
                         r = (NotificationRecord) NotificationManagerService.this.mNotificationsByKey.get(this.key);
                         final StatusBarNotification n = r2.sbn;
@@ -2746,10 +2753,10 @@ public class NotificationManagerService extends AbsNotificationManager {
                             r2.setTextChanged(NotificationManagerService.this.isVisuallyInterruptive(r, r2));
                         }
                         NotificationRecord old = r;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("enqueueNotificationInternal: n.getKey = ");
-                        stringBuilder2.append(n.getKey());
-                        Flog.i(400, stringBuilder2.toString());
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append("enqueueNotificationInternal: n.getKey = ");
+                        stringBuilder3.append(n.getKey());
+                        Flog.i(400, stringBuilder3.toString());
                         NotificationManagerService.this.mNotificationsByKey.put(n.getKey(), r2);
                         if ((notification.flags & 64) != 0) {
                             notification.flags |= 34;
@@ -2786,10 +2793,10 @@ public class NotificationManagerService extends AbsNotificationManager {
                                     notification.extras.putBoolean("gameDndOn", NotificationManagerService.this.mGameDndStatus);
                                 } catch (ConcurrentModificationException e) {
                                     String str3 = NotificationManagerService.TAG;
-                                    StringBuilder stringBuilder3 = new StringBuilder();
-                                    stringBuilder3.append("notification.extras:");
-                                    stringBuilder3.append(e.toString());
-                                    Log.e(str3, stringBuilder3.toString());
+                                    StringBuilder stringBuilder4 = new StringBuilder();
+                                    stringBuilder4.append("notification.extras:");
+                                    stringBuilder4.append(e.toString());
+                                    Log.e(str3, stringBuilder4.toString());
                                 } catch (Throwable th2) {
                                     th = th2;
                                     i = 0;
@@ -2843,12 +2850,12 @@ public class NotificationManagerService extends AbsNotificationManager {
                                 i4 = N;
                                 i = 0;
                                 packageName = NotificationManagerService.TAG;
-                                StringBuilder stringBuilder4 = new StringBuilder();
-                                stringBuilder4.append("notification:");
-                                stringBuilder4.append(n);
-                                stringBuilder4.append("extras:");
-                                stringBuilder4.append(n.getNotification().extras);
-                                Log.e(packageName, stringBuilder4.toString());
+                                StringBuilder stringBuilder5 = new StringBuilder();
+                                stringBuilder5.append("notification:");
+                                stringBuilder5.append(n);
+                                stringBuilder5.append("extras:");
+                                stringBuilder5.append(n.getNotification().extras);
+                                Log.e(packageName, stringBuilder5.toString());
                                 i2 = NotificationManagerService.this.mEnqueuedNotifications.size();
                                 while (true) {
                                     N = i;
@@ -2877,10 +2884,10 @@ public class NotificationManagerService extends AbsNotificationManager {
                         i = 0;
                         i4 = N;
                         str2 = NotificationManagerService.TAG;
-                        StringBuilder stringBuilder5 = new StringBuilder();
-                        stringBuilder5.append("Not posting notification without small icon: ");
-                        stringBuilder5.append(notification);
-                        Slog.e(str2, stringBuilder5.toString());
+                        StringBuilder stringBuilder6 = new StringBuilder();
+                        stringBuilder6.append("Not posting notification without small icon: ");
+                        stringBuilder6.append(notification);
+                        Slog.e(str2, stringBuilder6.toString());
                         if (!(old == null || old.isCanceled)) {
                             NotificationManagerService.this.mListeners.notifyRemovedLocked(r2, 4, null);
                             NotificationManagerService.this.mHandler.post(new Runnable() {
@@ -2890,10 +2897,10 @@ public class NotificationManagerService extends AbsNotificationManager {
                             });
                         }
                         str2 = NotificationManagerService.TAG;
-                        stringBuilder5 = new StringBuilder();
-                        stringBuilder5.append("WARNING: In a future release this will crash the app: ");
-                        stringBuilder5.append(n.getPackageName());
-                        Slog.e(str2, stringBuilder5.toString());
+                        stringBuilder6 = new StringBuilder();
+                        stringBuilder6.append("WARNING: In a future release this will crash the app: ");
+                        stringBuilder6.append(n.getPackageName());
+                        Slog.e(str2, stringBuilder6.toString());
                         if (!r2.isHidden()) {
                             NotificationManagerService.this.buzzBeepBlinkLocked(r2);
                         }
@@ -2909,20 +2916,6 @@ public class NotificationManagerService extends AbsNotificationManager {
                                 break;
                             }
                             i = i2 + 1;
-                        }
-                    } else {
-                        str2 = NotificationManagerService.TAG;
-                        StringBuilder stringBuilder6 = new StringBuilder();
-                        stringBuilder6.append("Cannot find enqueued record for key: ");
-                        stringBuilder6.append(this.key);
-                        Slog.i(str2, stringBuilder6.toString());
-                        N2 = NotificationManagerService.this.mEnqueuedNotifications.size();
-                        while (i2 < N2) {
-                            if (Objects.equals(this.key, ((NotificationRecord) NotificationManagerService.this.mEnqueuedNotifications.get(i2)).getKey())) {
-                                NotificationManagerService.this.mEnqueuedNotifications.remove(i2);
-                                break;
-                            }
-                            i2++;
                         }
                     }
                 } catch (ConcurrentModificationException e3) {
@@ -3032,6 +3025,115 @@ public class NotificationManagerService extends AbsNotificationManager {
             this();
         }
 
+        /* JADX WARNING: Missing block: B:32:0x0068, code skipped:
+            r2 = true;
+     */
+        /* JADX WARNING: Missing block: B:33:0x0069, code skipped:
+            switch(r2) {
+                case 0: goto L_0x0128;
+                case 1: goto L_0x011a;
+                case 2: goto L_0x00ec;
+                case 3: goto L_0x00be;
+                case 4: goto L_0x00a3;
+                case 5: goto L_0x0088;
+                case 6: goto L_0x007d;
+                case 7: goto L_0x0072;
+                default: goto L_0x006c;
+            };
+     */
+        /* JADX WARNING: Missing block: B:35:0x0072, code skipped:
+            r7.this$0.simulatePackageSuspendBroadcast(false, getNextArgRequired());
+     */
+        /* JADX WARNING: Missing block: B:36:0x007d, code skipped:
+            r7.this$0.simulatePackageSuspendBroadcast(true, getNextArgRequired());
+     */
+        /* JADX WARNING: Missing block: B:37:0x0088, code skipped:
+            r2 = android.content.ComponentName.unflattenFromString(getNextArgRequired());
+     */
+        /* JADX WARNING: Missing block: B:38:0x0090, code skipped:
+            if (r2 != null) goto L_0x0098;
+     */
+        /* JADX WARNING: Missing block: B:39:0x0092, code skipped:
+            r0.println("Invalid assistant - must be a ComponentName");
+     */
+        /* JADX WARNING: Missing block: B:40:0x0097, code skipped:
+            return -1;
+     */
+        /* JADX WARNING: Missing block: B:41:0x0098, code skipped:
+            r7.this$0.getBinderService().setNotificationAssistantAccessGranted(r2, false);
+     */
+        /* JADX WARNING: Missing block: B:42:0x00a3, code skipped:
+            r2 = android.content.ComponentName.unflattenFromString(getNextArgRequired());
+     */
+        /* JADX WARNING: Missing block: B:43:0x00ab, code skipped:
+            if (r2 != null) goto L_0x00b3;
+     */
+        /* JADX WARNING: Missing block: B:44:0x00ad, code skipped:
+            r0.println("Invalid assistant - must be a ComponentName");
+     */
+        /* JADX WARNING: Missing block: B:45:0x00b2, code skipped:
+            return -1;
+     */
+        /* JADX WARNING: Missing block: B:46:0x00b3, code skipped:
+            r7.this$0.getBinderService().setNotificationAssistantAccessGranted(r2, true);
+     */
+        /* JADX WARNING: Missing block: B:47:0x00be, code skipped:
+            r2 = android.content.ComponentName.unflattenFromString(getNextArgRequired());
+     */
+        /* JADX WARNING: Missing block: B:48:0x00c6, code skipped:
+            if (r2 != null) goto L_0x00ce;
+     */
+        /* JADX WARNING: Missing block: B:49:0x00c8, code skipped:
+            r0.println("Invalid listener - must be a ComponentName");
+     */
+        /* JADX WARNING: Missing block: B:50:0x00cd, code skipped:
+            return -1;
+     */
+        /* JADX WARNING: Missing block: B:51:0x00ce, code skipped:
+            r3 = getNextArg();
+     */
+        /* JADX WARNING: Missing block: B:52:0x00d2, code skipped:
+            if (r3 != null) goto L_0x00de;
+     */
+        /* JADX WARNING: Missing block: B:53:0x00d4, code skipped:
+            r7.this$0.getBinderService().setNotificationListenerAccessGranted(r2, false);
+     */
+        /* JADX WARNING: Missing block: B:54:0x00de, code skipped:
+            r7.this$0.getBinderService().setNotificationListenerAccessGrantedForUser(r2, java.lang.Integer.parseInt(r3), false);
+     */
+        /* JADX WARNING: Missing block: B:56:0x00ec, code skipped:
+            r2 = android.content.ComponentName.unflattenFromString(getNextArgRequired());
+     */
+        /* JADX WARNING: Missing block: B:57:0x00f4, code skipped:
+            if (r2 != null) goto L_0x00fc;
+     */
+        /* JADX WARNING: Missing block: B:58:0x00f6, code skipped:
+            r0.println("Invalid listener - must be a ComponentName");
+     */
+        /* JADX WARNING: Missing block: B:59:0x00fb, code skipped:
+            return -1;
+     */
+        /* JADX WARNING: Missing block: B:60:0x00fc, code skipped:
+            r3 = getNextArg();
+     */
+        /* JADX WARNING: Missing block: B:61:0x0100, code skipped:
+            if (r3 != null) goto L_0x010c;
+     */
+        /* JADX WARNING: Missing block: B:62:0x0102, code skipped:
+            r7.this$0.getBinderService().setNotificationListenerAccessGranted(r2, true);
+     */
+        /* JADX WARNING: Missing block: B:63:0x010c, code skipped:
+            r7.this$0.getBinderService().setNotificationListenerAccessGrantedForUser(r2, java.lang.Integer.parseInt(r3), true);
+     */
+        /* JADX WARNING: Missing block: B:65:0x011a, code skipped:
+            r7.this$0.getBinderService().setNotificationPolicyAccessGranted(getNextArgRequired(), false);
+     */
+        /* JADX WARNING: Missing block: B:66:0x0128, code skipped:
+            r7.this$0.getBinderService().setNotificationPolicyAccessGranted(getNextArgRequired(), true);
+     */
+        /* JADX WARNING: Missing block: B:67:0x0137, code skipped:
+            return handleDefaultCommands(r8);
+     */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public int onCommand(String cmd) {
             if (cmd == null) {
@@ -3082,68 +3184,6 @@ public class NotificationManagerService extends AbsNotificationManager {
                             break;
                         }
                     default:
-                        z = true;
-                        break;
-                }
-                ComponentName cn;
-                String userId;
-                switch (z) {
-                    case false:
-                        NotificationManagerService.this.getBinderService().setNotificationPolicyAccessGranted(getNextArgRequired(), true);
-                        break;
-                    case true:
-                        NotificationManagerService.this.getBinderService().setNotificationPolicyAccessGranted(getNextArgRequired(), false);
-                        break;
-                    case true:
-                        cn = ComponentName.unflattenFromString(getNextArgRequired());
-                        if (cn != null) {
-                            userId = getNextArg();
-                            if (userId != null) {
-                                NotificationManagerService.this.getBinderService().setNotificationListenerAccessGrantedForUser(cn, Integer.parseInt(userId), true);
-                                break;
-                            }
-                            NotificationManagerService.this.getBinderService().setNotificationListenerAccessGranted(cn, true);
-                            break;
-                        }
-                        pw.println("Invalid listener - must be a ComponentName");
-                        return -1;
-                    case true:
-                        cn = ComponentName.unflattenFromString(getNextArgRequired());
-                        if (cn != null) {
-                            userId = getNextArg();
-                            if (userId != null) {
-                                NotificationManagerService.this.getBinderService().setNotificationListenerAccessGrantedForUser(cn, Integer.parseInt(userId), false);
-                                break;
-                            }
-                            NotificationManagerService.this.getBinderService().setNotificationListenerAccessGranted(cn, false);
-                            break;
-                        }
-                        pw.println("Invalid listener - must be a ComponentName");
-                        return -1;
-                    case true:
-                        cn = ComponentName.unflattenFromString(getNextArgRequired());
-                        if (cn != null) {
-                            NotificationManagerService.this.getBinderService().setNotificationAssistantAccessGranted(cn, true);
-                            break;
-                        }
-                        pw.println("Invalid assistant - must be a ComponentName");
-                        return -1;
-                    case true:
-                        cn = ComponentName.unflattenFromString(getNextArgRequired());
-                        if (cn != null) {
-                            NotificationManagerService.this.getBinderService().setNotificationAssistantAccessGranted(cn, false);
-                            break;
-                        }
-                        pw.println("Invalid assistant - must be a ComponentName");
-                        return -1;
-                    case true:
-                        NotificationManagerService.this.simulatePackageSuspendBroadcast(true, getNextArgRequired());
-                        break;
-                    case true:
-                        NotificationManagerService.this.simulatePackageSuspendBroadcast(false, getNextArgRequired());
-                        break;
-                    default:
-                        return handleDefaultCommands(cmd);
                 }
             } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -3372,7 +3412,7 @@ public class NotificationManagerService extends AbsNotificationManager {
             c.secureSettingName = "enabled_notification_assistant";
             c.bindPermission = "android.permission.BIND_NOTIFICATION_ASSISTANT_SERVICE";
             c.settingsAction = "android.settings.MANAGE_DEFAULT_APPS_SETTINGS";
-            c.clientLabel = 17040605;
+            c.clientLabel = 17040606;
             return c;
         }
 
@@ -3491,7 +3531,7 @@ public class NotificationManagerService extends AbsNotificationManager {
             c.secureSettingName = "enabled_notification_listeners";
             c.bindPermission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE";
             c.settingsAction = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
-            c.clientLabel = 17040603;
+            c.clientLabel = 17040604;
             return c;
         }
 
@@ -3885,7 +3925,7 @@ public class NotificationManagerService extends AbsNotificationManager {
 
     protected void readDefaultApprovedServices(int userId) {
         int length;
-        String defaultListenerAccess = getContext().getResources().getString(17039786);
+        String defaultListenerAccess = getContext().getResources().getString(17039787);
         int i = 0;
         if (defaultListenerAccess != null) {
             for (String whitelisted : defaultListenerAccess.split(":")) {
@@ -3898,7 +3938,7 @@ public class NotificationManagerService extends AbsNotificationManager {
                 }
             }
         }
-        String defaultDndAccess = getContext().getResources().getString(17039785);
+        String defaultDndAccess = getContext().getResources().getString(17039786);
         if (defaultListenerAccess != null) {
             String[] split = defaultDndAccess.split(":");
             length = split.length;
@@ -4302,11 +4342,11 @@ public class NotificationManagerService extends AbsNotificationManager {
         this.mFallbackVibrationPattern = getLongArray(resources, 17236025, 17, DEFAULT_VIBRATE_PATTERN);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("file://");
-        stringBuilder.append(resources.getString(17039822));
+        stringBuilder.append(resources.getString(17039823));
         this.mInCallNotificationUri = Uri.parse(stringBuilder.toString());
         this.mInCallNotificationAudioAttributes = new Builder().setContentType(4).setUsage(2).build();
         this.mInCallNotificationVolume = resources.getFloat(17104962);
-        this.mUseAttentionLight = resources.getBoolean(17957056);
+        this.mUseAttentionLight = resources.getBoolean(17957057);
         boolean z = false;
         if (Global.getInt(getContext().getContentResolver(), "device_provisioned", 0) == 0) {
             this.mDisableNotificationEffects = true;
@@ -4757,16 +4797,16 @@ public class NotificationManagerService extends AbsNotificationManager {
         return summaries != null && summaries.containsKey(sbn.getPackageName());
     }
 
-    /* JADX WARNING: Missing block: B:59:0x01c3, code:
+    /* JADX WARNING: Missing block: B:60:0x01c3, code skipped:
             if (r9 == null) goto L_0x01e7;
      */
-    /* JADX WARNING: Missing block: B:61:0x01db, code:
+    /* JADX WARNING: Missing block: B:62:0x01db, code skipped:
             if (checkDisqualifyingFeatures(r11, MY_UID, r9.sbn.getId(), r9.sbn.getTag(), r9, true) == false) goto L_0x01e7;
      */
-    /* JADX WARNING: Missing block: B:62:0x01dd, code:
+    /* JADX WARNING: Missing block: B:63:0x01dd, code skipped:
             r8.mHandler.post(new com.android.server.notification.NotificationManagerService.EnqueueNotificationRunnable(r8, r11, r9));
      */
-    /* JADX WARNING: Missing block: B:63:0x01e7, code:
+    /* JADX WARNING: Missing block: B:64:0x01e7, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5027,7 +5067,11 @@ public class NotificationManagerService extends AbsNotificationManager {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:58:0x01aa  */
+    /* JADX WARNING: Removed duplicated region for block: B:106:0x0093 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x0076 A:{Catch:{ all -> 0x01e8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:106:0x0093 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x0076 A:{Catch:{ all -> 0x01e8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:59:0x01aa A:{Catch:{ all -> 0x01e8 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void dumpImpl(PrintWriter pw, DumpFilter filter) {
         int N;
@@ -5039,6 +5083,7 @@ public class NotificationManagerService extends AbsNotificationManager {
             pw.print(")");
         }
         pw.println(':');
+        int i2 = 0;
         boolean zenOnly = filter.filtered && filter.zen;
         if (!zenOnly) {
             synchronized (this.mToastQueue) {
@@ -5048,7 +5093,8 @@ public class NotificationManagerService extends AbsNotificationManager {
                     for (i = 0; i < N; i++) {
                         ((ToastRecord) this.mToastQueue.get(i)).dump(pw, "    ", filter);
                     }
-                    pw.println("  ");
+                    i = "  ";
+                    pw.println(i);
                 }
             }
         }
@@ -5056,92 +5102,102 @@ public class NotificationManagerService extends AbsNotificationManager {
             StringBuilder stringBuilder;
             int N2;
             if (!zenOnly) {
-                if (!filter.normalPriority) {
-                    dumpNotificationRecords(pw, filter);
-                }
-                if (!filter.filtered) {
-                    N = this.mLights.size();
-                    if (N > 0) {
-                        pw.println("  Lights List:");
-                        for (i = 0; i < N; i++) {
-                            if (i == N - 1) {
-                                pw.print("  > ");
-                            } else {
-                                pw.print("    ");
-                            }
-                            pw.println((String) this.mLights.get(i));
-                        }
-                        pw.println("  ");
+                try {
+                    if (!filter.normalPriority) {
+                        dumpNotificationRecords(pw, filter);
                     }
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mUseAttentionLight=");
-                    stringBuilder2.append(this.mUseAttentionLight);
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mNotificationPulseEnabled=");
-                    stringBuilder2.append(this.mNotificationPulseEnabled);
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mSoundNotificationKey=");
-                    stringBuilder2.append(this.mSoundNotificationKey);
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mVibrateNotificationKey=");
-                    stringBuilder2.append(this.mVibrateNotificationKey);
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mDisableNotificationEffects=");
-                    stringBuilder2.append(this.mDisableNotificationEffects);
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mCallState=");
-                    stringBuilder2.append(callStateToString(this.mCallState));
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mSystemReady=");
-                    stringBuilder2.append(this.mSystemReady);
-                    pw.println(stringBuilder2.toString());
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("  mMaxPackageEnqueueRate=");
-                    stringBuilder2.append(this.mMaxPackageEnqueueRate);
-                    pw.println(stringBuilder2.toString());
-                }
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("  mArchive=");
-                stringBuilder3.append(this.mArchive.toString());
-                pw.println(stringBuilder3.toString());
-                Iterator<StatusBarNotification> iter = this.mArchive.descendingIterator();
-                i = 0;
-                while (iter.hasNext()) {
-                    StatusBarNotification sbn = (StatusBarNotification) iter.next();
-                    if (filter == null || filter.matches(sbn)) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("    ");
-                        stringBuilder.append(sbn);
-                        pw.println(stringBuilder.toString());
-                        i++;
-                        if (i >= 5) {
-                            if (iter.hasNext()) {
-                                pw.println("    ...");
-                            }
-                            if (!zenOnly) {
-                                N2 = this.mEnqueuedNotifications.size();
-                                if (N2 > 0) {
-                                    pw.println("  Enqueued Notification List:");
-                                    for (int i2 = 0; i2 < N2; i2++) {
-                                        NotificationRecord nr = (NotificationRecord) this.mEnqueuedNotifications.get(i2);
-                                        if (!filter.filtered || filter.matches(nr.sbn)) {
-                                            nr.dump(pw, "    ", getContext(), filter.redact);
-                                        }
+                    if (!filter.filtered) {
+                        N = this.mLights.size();
+                        if (N > 0) {
+                            pw.println("  Lights List:");
+                            i = 0;
+                            if (i < N) {
+                                if (i == N - 1) {
+                                    pw.print("  > ");
+                                    pw.println((String) this.mLights.get(i));
+                                    i++;
+                                    if (i < N) {
                                     }
-                                    pw.println("  ");
                                 }
-                                this.mSnoozeHelper.dump(pw, filter);
+                                pw.print("    ");
+                                pw.println((String) this.mLights.get(i));
+                                i++;
+                                if (i < N) {
+                                }
+                            }
+                            pw.println("  ");
+                        }
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mUseAttentionLight=");
+                        stringBuilder2.append(this.mUseAttentionLight);
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mNotificationPulseEnabled=");
+                        stringBuilder2.append(this.mNotificationPulseEnabled);
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mSoundNotificationKey=");
+                        stringBuilder2.append(this.mSoundNotificationKey);
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mVibrateNotificationKey=");
+                        stringBuilder2.append(this.mVibrateNotificationKey);
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mDisableNotificationEffects=");
+                        stringBuilder2.append(this.mDisableNotificationEffects);
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mCallState=");
+                        stringBuilder2.append(callStateToString(this.mCallState));
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mSystemReady=");
+                        stringBuilder2.append(this.mSystemReady);
+                        pw.println(stringBuilder2.toString());
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  mMaxPackageEnqueueRate=");
+                        stringBuilder2.append(this.mMaxPackageEnqueueRate);
+                        pw.println(stringBuilder2.toString());
+                    }
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("  mArchive=");
+                    stringBuilder3.append(this.mArchive.toString());
+                    pw.println(stringBuilder3.toString());
+                    Iterator<StatusBarNotification> iter = this.mArchive.descendingIterator();
+                    i = i2;
+                    while (iter.hasNext()) {
+                        StatusBarNotification sbn = (StatusBarNotification) iter.next();
+                        if (filter == null || filter.matches(sbn)) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("    ");
+                            stringBuilder.append(sbn);
+                            pw.println(stringBuilder.toString());
+                            i++;
+                            if (i >= 5) {
+                                if (iter.hasNext()) {
+                                    pw.println("    ...");
+                                }
+                                if (!zenOnly) {
+                                    N2 = this.mEnqueuedNotifications.size();
+                                    if (N2 > 0) {
+                                        pw.println("  Enqueued Notification List:");
+                                        for (int i3 = i2; i3 < N2; i3++) {
+                                            NotificationRecord nr = (NotificationRecord) this.mEnqueuedNotifications.get(i3);
+                                            if (!filter.filtered || filter.matches(nr.sbn)) {
+                                                nr.dump(pw, "    ", getContext(), filter.redact);
+                                            }
+                                        }
+                                        pw.println("  ");
+                                    }
+                                    this.mSnoozeHelper.dump(pw, filter);
+                                }
                             }
                         }
                     }
-                }
-                if (zenOnly) {
+                    if (zenOnly) {
+                    }
+                } finally {
                 }
             }
             if (!zenOnly) {
@@ -5153,7 +5209,7 @@ public class NotificationManagerService extends AbsNotificationManager {
                 pw.println(this.mListenerHints);
                 pw.print("    mListenersDisablingEffects: (");
                 N = this.mListenersDisablingEffects.size();
-                for (i = 0; i < N; i++) {
+                for (i = i2; i < N; i++) {
                     N2 = this.mListenersDisablingEffects.keyAt(i);
                     if (i > 0) {
                         pw.print(';');
@@ -5165,7 +5221,7 @@ public class NotificationManagerService extends AbsNotificationManager {
                     pw.print(stringBuilder.toString());
                     ArraySet<ManagedServiceInfo> listeners = (ArraySet) this.mListenersDisablingEffects.valueAt(i);
                     int listenerSize = listeners.size();
-                    for (int j = 0; j < listenerSize; j++) {
+                    for (int j = i2; j < listenerSize; j++) {
                         if (i > 0) {
                             pw.print(',');
                         }
@@ -5502,7 +5558,7 @@ public class NotificationManagerService extends AbsNotificationManager {
         return callingUid;
     }
 
-    /* JADX WARNING: Missing block: B:31:0x00dc, code:
+    /* JADX WARNING: Missing block: B:32:0x00dc, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5523,15 +5579,17 @@ public class NotificationManagerService extends AbsNotificationManager {
         } else {
             synchronized (this.mNotificationLock) {
                 try {
-                    if (this.mNotificationsByKey.get(notificationRecord.sbn.getKey()) == null && !isPushNotification(notificationRecord.sbn.getOpPkg(), pkg, notificationRecord.sbn.getNotification()) && isCallerInstantApp(pkg)) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Instant app ");
-                        stringBuilder.append(pkg);
-                        stringBuilder.append(" cannot create notifications");
-                        throw new SecurityException(stringBuilder.toString());
-                    }
                     String str2;
                     StringBuilder stringBuilder2;
+                    if (this.mNotificationsByKey.get(notificationRecord.sbn.getKey()) == null && !isPushNotification(notificationRecord.sbn.getOpPkg(), pkg, notificationRecord.sbn.getNotification())) {
+                        if (isCallerInstantApp(pkg)) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Instant app ");
+                            stringBuilder.append(pkg);
+                            stringBuilder.append(" cannot create notifications");
+                            throw new SecurityException(stringBuilder.toString());
+                        }
+                    }
                     if (!(this.mNotificationsByKey.get(notificationRecord.sbn.getKey()) == null || r.getNotification().hasCompletedProgress() || isAutogroup)) {
                         float appEnqueueRate = this.mUsageStats.getAppEnqueueRate(pkg);
                         if (appEnqueueRate > this.mMaxPackageEnqueueRate) {
@@ -6576,13 +6634,13 @@ public class NotificationManagerService extends AbsNotificationManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0067, code:
+    /* JADX WARNING: Missing block: B:24:0x0067, code skipped:
             if (r11 == false) goto L_0x006e;
      */
-    /* JADX WARNING: Missing block: B:24:0x0069, code:
+    /* JADX WARNING: Missing block: B:25:0x0069, code skipped:
             r13.mHandler.scheduleSendRankingUpdate();
      */
-    /* JADX WARNING: Missing block: B:25:0x006e, code:
+    /* JADX WARNING: Missing block: B:26:0x006e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6595,6 +6653,7 @@ public class NotificationManagerService extends AbsNotificationManager {
                 if (record == null) {
                     return;
                 }
+                boolean changed;
                 int indexBefore = findNotificationRecordIndexLocked(record);
                 boolean interceptBefore = record.isIntercepted();
                 float contactAffinityBefore = record.getContactAffinity();
@@ -6605,10 +6664,17 @@ public class NotificationManagerService extends AbsNotificationManager {
                 int indexAfter = findNotificationRecordIndexLocked(record);
                 boolean interceptAfter = record.isIntercepted();
                 float contactAffinityAfter = record.getContactAffinity();
-                boolean changed = (indexBefore == indexAfter && interceptBefore == interceptAfter && visibilityBefore == record.getPackageVisibilityOverride()) ? false : true;
-                if (!(!interceptBefore || interceptAfter || Float.compare(contactAffinityBefore, contactAffinityAfter) == 0)) {
-                    buzzBeepBlinkLocked(record);
+                int visibilityAfter = record.getPackageVisibilityOverride();
+                if (indexBefore == indexAfter && interceptBefore == interceptAfter) {
+                    if (visibilityBefore == visibilityAfter) {
+                        changed = false;
+                        if (!(!interceptBefore || interceptAfter || Float.compare(contactAffinityBefore, contactAffinityAfter) == 0)) {
+                            buzzBeepBlinkLocked(record);
+                        }
+                    }
                 }
+                changed = true;
+                buzzBeepBlinkLocked(record);
             }
         }
     }
@@ -6643,12 +6709,13 @@ public class NotificationManagerService extends AbsNotificationManager {
                 this.mRankingHelper.sort(this.mNotificationList);
                 while (i < N) {
                     NotificationRecord r2 = (NotificationRecord) this.mNotificationList.get(i);
-                    if (((String) orderBefore.get(i)).equals(r2.getKey()) && visibilities[i] == r2.getPackageVisibilityOverride() && showBadges[i] == r2.canShowBadge() && Objects.equals(channelBefore.get(i), r2.getChannel()) && Objects.equals(groupKeyBefore.get(i), r2.getGroupKey()) && Objects.equals(overridePeopleBefore.get(i), r2.getPeopleOverride()) && Objects.equals(snoozeCriteriaBefore.get(i), r2.getSnoozeCriteria()) && Objects.equals(userSentimentBefore.get(i), Integer.valueOf(r2.getUserSentiment())) && Objects.equals(suppressVisuallyBefore.get(i), Integer.valueOf(r2.getSuppressedVisualEffects()))) {
-                        i++;
-                    } else {
-                        this.mHandler.scheduleSendRankingUpdate();
-                        return;
+                    if (((String) orderBefore.get(i)).equals(r2.getKey()) && visibilities[i] == r2.getPackageVisibilityOverride() && showBadges[i] == r2.canShowBadge() && Objects.equals(channelBefore.get(i), r2.getChannel()) && Objects.equals(groupKeyBefore.get(i), r2.getGroupKey()) && Objects.equals(overridePeopleBefore.get(i), r2.getPeopleOverride()) && Objects.equals(snoozeCriteriaBefore.get(i), r2.getSnoozeCriteria()) && Objects.equals(userSentimentBefore.get(i), Integer.valueOf(r2.getUserSentiment()))) {
+                        if (Objects.equals(suppressVisuallyBefore.get(i), Integer.valueOf(r2.getSuppressedVisualEffects()))) {
+                            i++;
+                        }
                     }
+                    this.mHandler.scheduleSendRankingUpdate();
+                    return;
                 }
             }
         }
@@ -6752,6 +6819,7 @@ public class NotificationManagerService extends AbsNotificationManager {
 
     @GuardedBy("mNotificationLock")
     private void cancelNotificationLocked(NotificationRecord r, boolean sendDelete, int reason, int rank, int count, boolean wasPosted, String listenerName) {
+        StringBuilder stringBuilder;
         long identity;
         int i;
         final NotificationRecord notificationRecord = r;
@@ -6761,19 +6829,20 @@ public class NotificationManagerService extends AbsNotificationManager {
         if (r.getStats().getDismissalSurface() == -1) {
             notificationRecord.recordDismissalSurface(0);
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("cancelNotificationLocked called,tell the app,reason = ");
-        stringBuilder.append(i2);
-        Flog.i(400, stringBuilder.toString());
+        String str = TAG;
+        StringBuilder stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("cancelNotificationLocked called,tell the app,reason = ");
+        stringBuilder2.append(i2);
+        Slog.i(str, stringBuilder2.toString());
         if (sendDelete && r.getNotification().deleteIntent != null) {
             try {
                 r.getNotification().deleteIntent.send();
             } catch (CanceledException ex) {
-                String str = TAG;
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("canceled PendingIntent for ");
-                stringBuilder2.append(notificationRecord.sbn.getPackageName());
-                Slog.w(str, stringBuilder2.toString(), ex);
+                String str2 = TAG;
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("canceled PendingIntent for ");
+                stringBuilder3.append(notificationRecord.sbn.getPackageName());
+                Slog.w(str2, stringBuilder3.toString(), ex);
             }
         }
         final int notifyType = calculateNotifyType(r);
@@ -6842,10 +6911,10 @@ public class NotificationManagerService extends AbsNotificationManager {
         stringBuilder.append(", key:");
         stringBuilder.append(r.getKey());
         Flog.i(400, stringBuilder.toString());
-        String groupKey = r.getGroupKey();
-        NotificationRecord groupSummary = (NotificationRecord) this.mSummaryByGroupKey.get(groupKey);
+        str = r.getGroupKey();
+        NotificationRecord groupSummary = (NotificationRecord) this.mSummaryByGroupKey.get(str);
         if (groupSummary != null && groupSummary.getKey().equals(canceledKey)) {
-            this.mSummaryByGroupKey.remove(groupKey);
+            this.mSummaryByGroupKey.remove(str);
         }
         ArrayMap<String, String> summaries = (ArrayMap) this.mAutobundledSummaries.get(Integer.valueOf(notificationRecord.sbn.getUserId()));
         String notifyKey = this.mGroupHelper.getUnGroupKey(notificationRecord.sbn.getPackageName(), notifyType);
@@ -6864,7 +6933,7 @@ public class NotificationManagerService extends AbsNotificationManager {
             }
         }
         i = count;
-        String str2 = groupKey;
+        String str3 = str;
         MetricsLogger.action(logMaker);
         EventLogTags.writeNotificationCanceled(canceledKey, i2, notificationRecord.getLifespanMs(identity), notificationRecord.getFreshnessMs(identity), notificationRecord.getExposureMs(identity), rank, i, listenerName);
     }
@@ -7052,7 +7121,7 @@ public class NotificationManagerService extends AbsNotificationManager {
         WorkerHandler workerHandler = this.mHandler;
         final int i9 = count;
         AnonymousClass15 anonymousClass152 = new Runnable() {
-            /* JADX WARNING: Missing block: B:28:0x00da, code:
+            /* JADX WARNING: Missing block: B:28:0x00da, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */

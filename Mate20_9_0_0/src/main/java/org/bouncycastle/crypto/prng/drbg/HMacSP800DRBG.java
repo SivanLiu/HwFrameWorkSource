@@ -75,22 +75,22 @@ public class HMacSP800DRBG implements SP80090DRBG {
             if (bArr2 != null) {
                 hmac_DRBG_Update(bArr2);
             }
-            Object obj = new byte[bArr.length];
+            byte[] bArr3 = new byte[bArr.length];
             int length2 = bArr.length / this._V.length;
             this._hMac.init(new KeyParameter(this._K));
             for (int i = 0; i < length2; i++) {
                 this._hMac.update(this._V, 0, this._V.length);
                 this._hMac.doFinal(this._V, 0);
-                System.arraycopy(this._V, 0, obj, this._V.length * i, this._V.length);
+                System.arraycopy(this._V, 0, bArr3, this._V.length * i, this._V.length);
             }
-            if (this._V.length * length2 < obj.length) {
+            if (this._V.length * length2 < bArr3.length) {
                 this._hMac.update(this._V, 0, this._V.length);
                 this._hMac.doFinal(this._V, 0);
-                System.arraycopy(this._V, 0, obj, this._V.length * length2, obj.length - (length2 * this._V.length));
+                System.arraycopy(this._V, 0, bArr3, this._V.length * length2, bArr3.length - (length2 * this._V.length));
             }
             hmac_DRBG_Update(bArr2);
             this._reseedCounter++;
-            System.arraycopy(obj, 0, bArr, 0, bArr.length);
+            System.arraycopy(bArr3, 0, bArr, 0, bArr.length);
             return length;
         }
     }

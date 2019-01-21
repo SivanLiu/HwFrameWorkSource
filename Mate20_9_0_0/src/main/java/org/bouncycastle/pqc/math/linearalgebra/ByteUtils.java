@@ -10,29 +10,29 @@ public final class ByteUtils {
         if (bArr == null) {
             return null;
         }
-        Object obj = new byte[bArr.length];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        return obj;
+        byte[] bArr2 = new byte[bArr.length];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+        return bArr2;
     }
 
     public static byte[] concatenate(byte[] bArr, byte[] bArr2) {
-        Object obj = new byte[(bArr.length + bArr2.length)];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        System.arraycopy(bArr2, 0, obj, bArr.length, bArr2.length);
-        return obj;
+        byte[] bArr3 = new byte[(bArr.length + bArr2.length)];
+        System.arraycopy(bArr, 0, bArr3, 0, bArr.length);
+        System.arraycopy(bArr2, 0, bArr3, bArr.length, bArr2.length);
+        return bArr3;
     }
 
     public static byte[] concatenate(byte[][] bArr) {
         int length = bArr[0].length;
-        Object obj = new byte[(bArr.length * length)];
+        byte[] bArr2 = new byte[(bArr.length * length)];
         int i = 0;
         int i2 = i;
         while (i < bArr.length) {
-            System.arraycopy(bArr[i], 0, obj, i2, length);
+            System.arraycopy(bArr[i], 0, bArr2, i2, length);
             i2 += length;
             i++;
         }
-        return obj;
+        return bArr2;
     }
 
     public static int deepHashCode(byte[] bArr) {
@@ -69,11 +69,11 @@ public final class ByteUtils {
         } else if (bArr2 == null || bArr.length != bArr2.length) {
             return false;
         } else {
-            boolean z2 = true;
+            int i = 1;
             for (int length = bArr.length - 1; length >= 0; length--) {
-                z2 &= bArr[length] == bArr2[length] ? 1 : 0;
+                i &= bArr[length] == bArr2[length] ? 1 : 0;
             }
-            return z2;
+            return i;
         }
     }
 
@@ -81,11 +81,11 @@ public final class ByteUtils {
         if (bArr.length != bArr2.length) {
             return false;
         }
-        boolean z = true;
+        int i = 1;
         for (int length = bArr.length - 1; length >= 0; length--) {
-            z &= equals(bArr[length], bArr2[length]);
+            i &= equals(bArr[length], bArr2[length]);
         }
-        return z;
+        return i;
     }
 
     public static boolean equals(byte[][][] bArr, byte[][][] bArr2) {
@@ -153,9 +153,9 @@ public final class ByteUtils {
 
     public static byte[] subArray(byte[] bArr, int i, int i2) {
         i2 -= i;
-        Object obj = new byte[i2];
-        System.arraycopy(bArr, i, obj, 0, i2);
-        return obj;
+        byte[] bArr2 = new byte[i2];
+        System.arraycopy(bArr, i, bArr2, 0, i2);
+        return bArr2;
     }
 
     public static String toBinaryString(byte[] bArr) {

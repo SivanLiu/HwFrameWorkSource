@@ -99,6 +99,10 @@ public class MemRepairAlgorithm {
         int mMinIncDValue;
         int mMinZoneCount;
 
+        public /* bridge */ /* synthetic */ void updateSrcValue(long[] jArr, int i) {
+            super.updateSrcValue(jArr, i);
+        }
+
         private MemRepairHolder() {
             super();
         }
@@ -309,17 +313,12 @@ public class MemRepairAlgorithm {
         int sumPositive = 0;
         int negaCount = 0;
         for (i = 0; i < dValueCount; i++) {
-            long j;
-            long j2;
             negaCount += dValues[i] < 0 ? 1 : 0;
             if (dValues[i] > 0) {
-                j = (long) sumPositive;
-                j2 = dValues[i];
+                sumPositive = (int) (((long) sumPositive) + dValues[i]);
             } else {
-                j = (long) sumNegative;
-                j2 = dValues[i];
+                sumNegative = (int) (((long) sumNegative) + dValues[i]);
             }
-            sumNegative = (int) (j + j2);
         }
         i = 100;
         if (sumPositive > 0) {

@@ -23,13 +23,13 @@ public class UnsignedInteger extends ASN1Object {
     }
 
     private byte[] convertValue() {
-        Object toByteArray = this.value.toByteArray();
+        byte[] toByteArray = this.value.toByteArray();
         if (toByteArray[0] != (byte) 0) {
             return toByteArray;
         }
-        Object obj = new byte[(toByteArray.length - 1)];
-        System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[(toByteArray.length - 1)];
+        System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+        return bArr;
     }
 
     public static UnsignedInteger getInstance(Object obj) {

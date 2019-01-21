@@ -194,7 +194,7 @@ public class HwQoEService implements IHwQoEContentAwareCallback, IGameCHRCallbac
         this.mHwQoEContentAware.updateWifiSleepWhiteList(type, packageWhiteList);
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0063, code:
+    /* JADX WARNING: Missing block: B:16:0x0063, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -242,13 +242,17 @@ public class HwQoEService implements IHwQoEContentAwareCallback, IGameCHRCallbac
     public boolean evaluateNetworkQuality(IHwQoECallback callback) {
         synchronized (this.mLock) {
             if (callback != null) {
-                HwQoEUtils.logD("evaluateNetworkQuality");
-                this.mEvaluateCallbackList.add(callback);
-                this.mQoEHandler.sendEmptyMessage(HwQoEUtils.QOE_MSG_WIFI_START_EVALUATE);
-                return true;
+                try {
+                    HwQoEUtils.logD("evaluateNetworkQuality");
+                    this.mEvaluateCallbackList.add(callback);
+                    this.mQoEHandler.sendEmptyMessage(HwQoEUtils.QOE_MSG_WIFI_START_EVALUATE);
+                    return true;
+                } catch (Throwable th) {
+                }
+            } else {
+                HwQoEUtils.logD("evaluateNetworkQuality callback == null");
+                return false;
             }
-            HwQoEUtils.logD("evaluateNetworkQuality callback == null");
-            return false;
         }
     }
 
@@ -626,7 +630,7 @@ public class HwQoEService implements IHwQoEContentAwareCallback, IGameCHRCallbac
                 boolean z2;
                 if (this.mHwWifiCHRService != null) {
                     z2 = true;
-                    this.mHwWifiCHRService.updateGameBoostStatic(GAME_KOG_PROCESSNAME, this.isSameKOGWar ^ true);
+                    this.mHwWifiCHRService.updateGameBoostStatic(GAME_KOG_PROCESSNAME, this.isSameKOGWar ^ 1);
                 } else {
                     z2 = true;
                 }
@@ -732,6 +736,7 @@ public class HwQoEService implements IHwQoEContentAwareCallback, IGameCHRCallbac
                                 }
                             }
                         }
+                        break;
                     case HwQoEUtils.QOE_MSG_WIFI_DISCONNECT /*110*/:
                         if (HwQoEService.this.isWiFiConnected && HwQoEService.this.isGameKOGInWar) {
                             HwQoEService.this.mHwQoEGameCHRImpl.updateWiFiDisCounter();
@@ -763,6 +768,7 @@ public class HwQoEService implements IHwQoEContentAwareCallback, IGameCHRCallbac
                                 HwQoEService.this.mEvaluateCallbackList.clear();
                             }
                         }
+                        break;
                     case HwQoEUtils.QOE_MSG_WIFI_ROAMING /*115*/:
                         HwQoEUtils.logD("HwQoEService: WIFI is roaming");
                         if (true == HwQoEService.this.isKOGInRateAjustMode) {

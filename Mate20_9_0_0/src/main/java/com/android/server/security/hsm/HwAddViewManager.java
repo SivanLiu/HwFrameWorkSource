@@ -110,32 +110,34 @@ public class HwAddViewManager {
         } else {
             synchronized (serviceLock) {
                 int userid = uid / 100000;
-                if (this.addviewMapWithUser.size() == 0 || this.addviewMapWithUser.get(Integer.valueOf(userid)) == null) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("list not ready, return allow, uid:");
-                    stringBuilder.append(uid);
-                    Slog.i(str, stringBuilder.toString());
-                    return true;
-                } else if (((AppOpsManager) this.mContext.getSystemService("appops")).checkOpNoThrow("android:system_alert_window", uid, packageName) == 0) {
-                    Slog.d(TAG, "permission allow");
-                    return true;
-                } else {
-                    String str2 = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("addViewPermissionCheck: ");
-                    stringBuilder2.append(packageName);
-                    stringBuilder2.append(" type: ");
-                    stringBuilder2.append(type);
-                    Slog.d(str2, stringBuilder2.toString());
-                    Map<String, Integer> currentUserPermissionMap = (Map) this.addviewMapWithUser.get(Integer.valueOf(userid));
-                    if (currentUserPermissionMap == null || !currentUserPermissionMap.containsKey(packageName)) {
-                        Slog.d(TAG, "not in blacklist, return default result-success");
-                        return true;
+                if (this.addviewMapWithUser.size() != 0) {
+                    if (this.addviewMapWithUser.get(Integer.valueOf(userid)) != null) {
+                        if (((AppOpsManager) this.mContext.getSystemService("appops")).checkOpNoThrow("android:system_alert_window", uid, packageName) == 0) {
+                            Slog.d(TAG, "permission allow");
+                            return true;
+                        }
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("addViewPermissionCheck: ");
+                        stringBuilder.append(packageName);
+                        stringBuilder.append(" type: ");
+                        stringBuilder.append(type);
+                        Slog.d(str, stringBuilder.toString());
+                        Map<String, Integer> currentUserPermissionMap = (Map) this.addviewMapWithUser.get(Integer.valueOf(userid));
+                        if (currentUserPermissionMap == null || !currentUserPermissionMap.containsKey(packageName)) {
+                            Slog.d(TAG, "not in blacklist, return default result-success");
+                            return true;
+                        }
+                        boolean permissionResult = getPermissionResult(type, ((Integer) currentUserPermissionMap.get(packageName)).intValue());
+                        return permissionResult;
                     }
-                    boolean permissionResult = getPermissionResult(type, ((Integer) currentUserPermissionMap.get(packageName)).intValue());
-                    return permissionResult;
                 }
+                String str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("list not ready, return allow, uid:");
+                stringBuilder2.append(uid);
+                Slog.i(str2, stringBuilder2.toString());
+                return true;
             }
         }
     }

@@ -117,19 +117,31 @@ public class Utils {
         try {
             zipFile = new ZipFile(apkFile);
             ZipEntry ManifestEntry = zipFile.getEntry("META-INF/MANIFEST.MF");
-            if (ManifestEntry == null || ManifestEntry.isDirectory()) {
-                HwAuthLogger.e("bailong", "can not find manifest.mf file.");
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("can not close inputStream, e is ");
-                        stringBuilder.append(e);
-                        HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+            if (ManifestEntry != null) {
+                if (!ManifestEntry.isDirectory()) {
+                    inputStream = zipFile.getInputStream(ManifestEntry);
+                    bufIn = new BufferedInputStream(inputStream);
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    bufOs = new BufferedOutputStream(os);
+                    while (true) {
+                        int read = bufIn.read(b, 0, 4096);
+                        int readLength = read;
+                        if (read <= 0) {
+                            break;
+                        }
+                        bufOs.write(b, 0, readLength);
                     }
-                }
-                if (bufIn != null) {
+                    bufOs.flush();
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("can not close inputStream, e is ");
+                            stringBuilder.append(e);
+                            HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                        }
+                    }
                     try {
                         bufIn.close();
                     } catch (IOException e2) {
@@ -138,8 +150,6 @@ public class Utils {
                         stringBuilder.append(e2);
                         HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
                     }
-                }
-                if (bufOs != null) {
                     try {
                         bufOs.close();
                     } catch (IOException e22) {
@@ -148,30 +158,18 @@ public class Utils {
                         stringBuilder.append(e22);
                         HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
                     }
+                    try {
+                        zipFile.close();
+                    } catch (IOException e222) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("can not close zipFile, e is ");
+                        stringBuilder.append(e222);
+                        HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                    }
+                    return true ? os.toByteArray() : new byte[0];
                 }
-                try {
-                    zipFile.close();
-                } catch (IOException e222) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("can not close zipFile, e is ");
-                    stringBuilder.append(e222);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
-                }
-                return null;
             }
-            inputStream = zipFile.getInputStream(ManifestEntry);
-            bufIn = new BufferedInputStream(inputStream);
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            bufOs = new BufferedOutputStream(os);
-            while (true) {
-                int read = bufIn.read(b, 0, 4096);
-                int readLength = read;
-                if (read <= 0) {
-                    break;
-                }
-                bufOs.write(b, 0, readLength);
-            }
-            bufOs.flush();
+            HwAuthLogger.e("bailong", "can not find manifest.mf file.");
             if (inputStream != null) {
                 try {
                     inputStream.close();
@@ -182,21 +180,25 @@ public class Utils {
                     HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
                 }
             }
-            try {
-                bufIn.close();
-            } catch (IOException e32) {
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("can not close bufIn, e is ");
-                stringBuilder2.append(e32);
-                HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+            if (bufIn != null) {
+                try {
+                    bufIn.close();
+                } catch (IOException e32) {
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("can not close bufIn, e is ");
+                    stringBuilder2.append(e32);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+                }
             }
-            try {
-                bufOs.close();
-            } catch (IOException e322) {
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("can not close bufOs, e is ");
-                stringBuilder2.append(e322);
-                HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+            if (bufOs != null) {
+                try {
+                    bufOs.close();
+                } catch (IOException e322) {
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("can not close bufOs, e is ");
+                    stringBuilder2.append(e322);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+                }
             }
             try {
                 zipFile.close();
@@ -206,50 +208,50 @@ public class Utils {
                 stringBuilder2.append(e3222);
                 HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
             }
-            return true ? os.toByteArray() : new byte[0];
-        } catch (IOException e2222) {
-            stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("IOException in getManifestFileNew, e is ");
-            stringBuilder2.append(e2222);
-            HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+            return null;
+        } catch (IOException e32222) {
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("IOException in getManifestFileNew, e is ");
+            stringBuilder.append(e32222);
+            HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e4) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("can not close inputStream, e is ");
-                    stringBuilder.append(e4);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("can not close inputStream, e is ");
+                    stringBuilder2.append(e4);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
                 }
             }
             if (bufIn != null) {
                 try {
                     bufIn.close();
                 } catch (IOException e42) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("can not close bufIn, e is ");
-                    stringBuilder.append(e42);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("can not close bufIn, e is ");
+                    stringBuilder2.append(e42);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
                 }
             }
             if (bufOs != null) {
                 try {
                     bufOs.close();
                 } catch (IOException e422) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("can not close bufOs, e is ");
-                    stringBuilder.append(e422);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("can not close bufOs, e is ");
+                    stringBuilder2.append(e422);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
                 }
             }
             if (zipFile != null) {
                 try {
                     zipFile.close();
                 } catch (IOException e4222) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("can not close zipFile, e is ");
-                    stringBuilder.append(e4222);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("can not close zipFile, e is ");
+                    stringBuilder2.append(e4222);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
                 }
             }
             return null;
@@ -257,40 +259,40 @@ public class Utils {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException e32222) {
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("can not close inputStream, e is ");
-                    stringBuilder2.append(e32222);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+                } catch (IOException e2222) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("can not close inputStream, e is ");
+                    stringBuilder.append(e2222);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
                 }
             }
             if (bufIn != null) {
                 try {
                     bufIn.close();
-                } catch (IOException e322222) {
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("can not close bufIn, e is ");
-                    stringBuilder2.append(e322222);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+                } catch (IOException e22222) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("can not close bufIn, e is ");
+                    stringBuilder.append(e22222);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
                 }
             }
             if (bufOs != null) {
                 try {
                     bufOs.close();
-                } catch (IOException e3222222) {
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("can not close bufOs, e is ");
-                    stringBuilder2.append(e3222222);
-                    HwAuthLogger.e("HwCertificationManager", stringBuilder2.toString());
+                } catch (IOException e222222) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("can not close bufOs, e is ");
+                    stringBuilder.append(e222222);
+                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
                 }
             }
             if (zipFile != null) {
                 try {
                     zipFile.close();
-                } catch (IOException e32222222) {
+                } catch (IOException e2222222) {
                     StringBuilder stringBuilder3 = new StringBuilder();
                     stringBuilder3.append("can not close zipFile, e is ");
-                    stringBuilder3.append(e32222222);
+                    stringBuilder3.append(e2222222);
                     HwAuthLogger.e("HwCertificationManager", stringBuilder3.toString());
                 }
             }
@@ -492,48 +494,48 @@ public class Utils {
         return catchFlag;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x0288 A:{SYNTHETIC, Splitter: B:118:0x0288} */
-    /* JADX WARNING: Removed duplicated region for block: B:123:0x02a6 A:{SYNTHETIC, Splitter: B:123:0x02a6} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x02c4 A:{SYNTHETIC, Splitter: B:128:0x02c4} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x02e5 A:{SYNTHETIC, Splitter: B:136:0x02e5} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0303 A:{SYNTHETIC, Splitter: B:141:0x0303} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x0321 A:{SYNTHETIC, Splitter: B:146:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0288 A:{SYNTHETIC, Splitter:B:119:0x0288} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x02a6 A:{SYNTHETIC, Splitter:B:124:0x02a6} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x02c4 A:{SYNTHETIC, Splitter:B:129:0x02c4} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02e5 A:{SYNTHETIC, Splitter:B:137:0x02e5} */
+    /* JADX WARNING: Removed duplicated region for block: B:142:0x0303 A:{SYNTHETIC, Splitter:B:142:0x0303} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x0321 A:{SYNTHETIC, Splitter:B:147:0x0321} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     @SuppressLint({"PreferForInArrayList"})
     public static byte[] readManifestAndSkipHwTag(byte[] manifest) {
@@ -705,37 +707,10 @@ public class Utils {
                                 HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
                                 bArr = new byte[0];
                                 if (bufferWriter != null) {
-                                    try {
-                                        bufferWriter.close();
-                                    } catch (IOException e6) {
-                                        iOException = e6;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("bufferWriter.close, e is ");
-                                        stringBuilder2.append(e6);
-                                        HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
-                                    }
                                 }
                                 if (byteIn2 != null) {
-                                    try {
-                                        byteIn2.close();
-                                    } catch (IOException e62) {
-                                        iOException = e62;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("byteIn.close, e is ");
-                                        stringBuilder2.append(e62);
-                                        HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
-                                    }
                                 }
                                 if (bufferReader != null) {
-                                    try {
-                                        bufferReader.close();
-                                    } catch (IOException e622) {
-                                        iOException = e622;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("bufferReader.close, e is ");
-                                        stringBuilder2.append(e622);
-                                        HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
-                                    }
                                 }
                                 return bArr;
                             } catch (Throwable th2222) {
@@ -744,37 +719,10 @@ public class Utils {
                                 map = null;
                                 arrayList = null;
                                 if (bufferWriter != null) {
-                                    try {
-                                        bufferWriter.close();
-                                    } catch (IOException e6222) {
-                                        iOException2 = e6222;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("bufferWriter.close, e is ");
-                                        stringBuilder3.append(e6222);
-                                        HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
-                                    }
                                 }
                                 if (byteIn2 != null) {
-                                    try {
-                                        byteIn2.close();
-                                    } catch (IOException e62222) {
-                                        iOException2 = e62222;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("byteIn.close, e is ");
-                                        stringBuilder3.append(e62222);
-                                        HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
-                                    }
                                 }
                                 if (bufferReader != null) {
-                                    try {
-                                        bufferReader.close();
-                                    } catch (IOException e622222) {
-                                        iOException2 = e622222;
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append("bufferReader.close, e is ");
-                                        stringBuilder.append(e622222);
-                                        HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
-                                    }
                                 }
                                 throw th;
                             }
@@ -798,35 +746,35 @@ public class Utils {
                                 HwAuthLogger.i("HwCertificationManager", stringBuilder4.toString());
                                 try {
                                     bufferWriter.close();
-                                } catch (IOException e6222222) {
-                                    e2 = e6222222;
+                                } catch (IOException e6) {
+                                    e2 = e6;
                                     stringBuilder = new StringBuilder();
                                     stringBuilder.append("bufferWriter.close, e is ");
-                                    stringBuilder.append(e6222222);
+                                    stringBuilder.append(e6);
                                     HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
                                 }
                                 try {
                                     byteIn2.close();
-                                } catch (IOException e62222222) {
-                                    e2 = e62222222;
+                                } catch (IOException e62) {
+                                    e2 = e62;
                                     stringBuilder = new StringBuilder();
                                     stringBuilder.append("byteIn.close, e is ");
-                                    stringBuilder.append(e62222222);
+                                    stringBuilder.append(e62);
                                     HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
                                 }
                                 try {
                                     bufferReader.close();
-                                } catch (IOException e622222222) {
-                                    e2 = e622222222;
+                                } catch (IOException e622) {
+                                    e2 = e622;
                                     manifestContent = new StringBuilder();
                                     manifestContent.append("bufferReader.close, e is ");
-                                    manifestContent.append(e622222222);
+                                    manifestContent.append(e622);
                                     HwAuthLogger.i("HwCertificationManager", manifestContent.toString());
                                 }
                                 return byteOut.toByteArray();
                             } catch (IOException e7) {
-                                e622222222 = e7;
-                                e2 = e622222222;
+                                e622 = e7;
+                                e2 = e622;
                                 stringBuilder = new StringBuilder();
                                 stringBuilder.append("readManifestAndSkipHwTag, e is ");
                                 stringBuilder.append(e2);
@@ -845,50 +793,77 @@ public class Utils {
                             bufferWriter.close();
                             map = null;
                             arrayList = null;
-                        } catch (IOException e6222222222) {
-                            iOException2 = e6222222222;
+                        } catch (IOException e6222) {
+                            iOException = e6222;
                             map = null;
-                            stringBuilder3 = new StringBuilder();
+                            stringBuilder2 = new StringBuilder();
                             arrayList = null;
-                            stringBuilder3.append("bufferWriter.close, e is ");
-                            stringBuilder3.append(e6222222222);
-                            HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
+                            stringBuilder2.append("bufferWriter.close, e is ");
+                            stringBuilder2.append(e6222);
+                            HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
                         }
                         try {
                             byteIn2.close();
-                        } catch (IOException e62222222222) {
-                            iOException2 = e62222222222;
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("byteIn.close, e is ");
-                            stringBuilder3.append(e62222222222);
-                            HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
+                        } catch (IOException e62222) {
+                            iOException = e62222;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("byteIn.close, e is ");
+                            stringBuilder2.append(e62222);
+                            HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
                         }
                         try {
                             bufferReader.close();
-                        } catch (IOException e622222222222) {
-                            iOException2 = e622222222222;
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("bufferReader.close, e is ");
-                            stringBuilder3.append(e622222222222);
-                            HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
+                        } catch (IOException e622222) {
+                            iOException = e622222;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("bufferReader.close, e is ");
+                            stringBuilder2.append(e622222);
+                            HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
                         }
                         return bArr2;
                     } catch (IOException e8) {
-                        e622222222222 = e8;
+                        e622222 = e8;
                         manifest2 = null;
                         map = null;
                         arrayList = null;
-                        e2 = e622222222222;
+                        e2 = e622222;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("readManifestAndSkipHwTag, e is ");
                         stringBuilder.append(e2);
                         HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
                         bArr = new byte[0];
                         if (bufferWriter != null) {
+                            try {
+                                bufferWriter.close();
+                            } catch (IOException e6222222) {
+                                iOException2 = e6222222;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("bufferWriter.close, e is ");
+                                stringBuilder3.append(e6222222);
+                                HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
+                            }
                         }
                         if (byteIn2 != null) {
+                            try {
+                                byteIn2.close();
+                            } catch (IOException e62222222) {
+                                iOException2 = e62222222;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("byteIn.close, e is ");
+                                stringBuilder3.append(e62222222);
+                                HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
+                            }
                         }
                         if (bufferReader != null) {
+                            try {
+                                bufferReader.close();
+                            } catch (IOException e622222222) {
+                                iOException2 = e622222222;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("bufferReader.close, e is ");
+                                stringBuilder3.append(e622222222);
+                                HwAuthLogger.i("HwCertificationManager", stringBuilder3.toString());
+                            }
                         }
                         return bArr;
                     } catch (Throwable th22222) {
@@ -897,10 +872,37 @@ public class Utils {
                         arrayList = null;
                         th = th22222;
                         if (bufferWriter != null) {
+                            try {
+                                bufferWriter.close();
+                            } catch (IOException e6222222222) {
+                                iOException = e6222222222;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("bufferWriter.close, e is ");
+                                stringBuilder2.append(e6222222222);
+                                HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
+                            }
                         }
                         if (byteIn2 != null) {
+                            try {
+                                byteIn2.close();
+                            } catch (IOException e62222222222) {
+                                iOException = e62222222222;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("byteIn.close, e is ");
+                                stringBuilder2.append(e62222222222);
+                                HwAuthLogger.i("HwCertificationManager", stringBuilder2.toString());
+                            }
                         }
                         if (bufferReader != null) {
+                            try {
+                                bufferReader.close();
+                            } catch (IOException e622222222222) {
+                                iOException = e622222222222;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("bufferReader.close, e is ");
+                                stringBuilder.append(e622222222222);
+                                HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
+                            }
                         }
                         throw th;
                     }

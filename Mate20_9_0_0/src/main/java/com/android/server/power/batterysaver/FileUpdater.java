@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import libcore.io.IoUtils;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 public class FileUpdater {
@@ -64,11 +65,16 @@ public class FileUpdater {
 
     public void systemReady(boolean runtimeRestarted) {
         synchronized (this.mLock) {
-            if (!runtimeRestarted) {
+            if (runtimeRestarted) {
+                try {
+                    if (loadDefaultValuesLocked()) {
+                        Slog.d(TAG, "Default values loaded after runtime restart; writing them...");
+                        restoreDefault();
+                    }
+                } finally {
+                }
+            } else {
                 injectDefaultValuesFilename().delete();
-            } else if (loadDefaultValuesLocked()) {
-                Slog.d(TAG, "Default values loaded after runtime restart; writing them...");
-                restoreDefault();
             }
         }
     }
@@ -99,35 +105,35 @@ public class FileUpdater {
         return new ArrayMap(source);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0014, code:
+    /* JADX WARNING: Missing block: B:9:0x0014, code skipped:
             r0 = false;
             r2 = r1.size();
             r3 = 0;
      */
-    /* JADX WARNING: Missing block: B:10:0x001a, code:
+    /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             if (r3 >= r2) goto L_0x003b;
      */
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
+    /* JADX WARNING: Missing block: B:11:0x001c, code skipped:
             r4 = (java.lang.String) r1.keyAt(r3);
             r5 = (java.lang.String) r1.valueAt(r3);
      */
-    /* JADX WARNING: Missing block: B:12:0x002c, code:
+    /* JADX WARNING: Missing block: B:12:0x002c, code skipped:
             if (ensureDefaultLoaded(r4) != false) goto L_0x002f;
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             injectWriteToFile(r4, r5);
             removePendingWrite(r4);
      */
-    /* JADX WARNING: Missing block: B:16:0x0037, code:
+    /* JADX WARNING: Missing block: B:16:0x0037, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:18:0x003b, code:
+    /* JADX WARNING: Missing block: B:18:0x003b, code skipped:
             if (r0 == false) goto L_0x0040;
      */
-    /* JADX WARNING: Missing block: B:19:0x003d, code:
+    /* JADX WARNING: Missing block: B:19:0x003d, code skipped:
             scheduleRetry();
      */
-    /* JADX WARNING: Missing block: B:20:0x0040, code:
+    /* JADX WARNING: Missing block: B:20:0x0040, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -190,29 +196,12 @@ public class FileUpdater {
         return IoUtils.readFileAsString(file).trim();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:19:0x0038 A:{Splitter: B:4:0x0022, ExcHandler: java.io.IOException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:19:0x0038, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:20:0x0039, code:
-            r1 = new java.lang.StringBuilder();
-            r1.append("Failed writing '");
-            r1.append(r5);
-            r1.append("' to '");
-            r1.append(r4);
-            r1.append("': ");
-            r1.append(r0.getMessage());
-            android.util.Slog.w(TAG, r1.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0063, code:
-            throw r0;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     void injectWriteToFile(String file, String value) throws IOException {
+        StringBuilder stringBuilder;
         if (injectShouldSkipWrite()) {
             String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder = new StringBuilder();
             stringBuilder.append("Skipped writing to '");
             stringBuilder.append(file);
             stringBuilder.append("'");
@@ -224,7 +213,16 @@ public class FileUpdater {
             out = new FileWriter(file);
             out.write(value);
             $closeResource(null, out);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed writing '");
+            stringBuilder.append(value);
+            stringBuilder.append("' to '");
+            stringBuilder.append(file);
+            stringBuilder.append("': ");
+            stringBuilder.append(e.getMessage());
+            Slog.w(TAG, stringBuilder.toString());
+            throw e;
         } catch (Throwable th) {
             $closeResource(r1, out);
         }
@@ -243,23 +241,6 @@ public class FileUpdater {
         x1.close();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0047 A:{PHI: r2 , Splitter: B:1:0x000b, ExcHandler: java.io.IOException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0047 A:{PHI: r2 , Splitter: B:1:0x000b, ExcHandler: java.io.IOException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:3:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:4:0x0048, code:
-            r3 = TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("Failed to write to file ");
-            r4.append(r0.getBaseFile());
-            android.util.Slog.e(r3, r4.toString(), r1);
-            r0.failWrite(r2);
-     */
-    /* JADX WARNING: Missing block: B:5:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mLock")
     private void saveDefaultValuesLocked() {
         AtomicFile file = new AtomicFile(injectDefaultValuesFilename());
@@ -275,43 +256,37 @@ public class FileUpdater {
             out.endTag(null, TAG_DEFAULT_ROOT);
             out.endDocument();
             file.finishWrite(outs);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException | XmlPullParserException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed to write to file ");
+            stringBuilder.append(file.getBaseFile());
+            Slog.e(str, stringBuilder.toString(), e);
+            file.failWrite(outs);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:33:0x0072 A:{PHI: r2 , Splitter: B:1:0x000d, ExcHandler: java.io.IOException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:33:0x0072 A:{PHI: r2 , Splitter: B:1:0x000d, ExcHandler: java.io.IOException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:14:0x003b, code:
+    /* JADX WARNING: Missing block: B:14:0x003b, code skipped:
             r10 = TAG;
             r11 = new java.lang.StringBuilder();
             r11.append("Invalid root tag: ");
             r11.append(r9);
             android.util.Slog.e(r10, r11.toString());
      */
-    /* JADX WARNING: Missing block: B:15:0x0052, code:
+    /* JADX WARNING: Missing block: B:15:0x0052, code skipped:
             if (r5 == null) goto L_0x0057;
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             $closeResource(null, r5);
      */
-    /* JADX WARNING: Missing block: B:18:0x0057, code:
+    /* JADX WARNING: Missing block: B:18:0x0057, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:22:0x0062, code:
+    /* JADX WARNING: Missing block: B:22:0x0062, code skipped:
             if (r5 == null) goto L_0x0091;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             $closeResource(null, r5);
-     */
-    /* JADX WARNING: Missing block: B:33:0x0072, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:34:0x0073, code:
-            r5 = TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("Failed to read file ");
-            r6.append(r0.getBaseFile());
-            android.util.Slog.e(r5, r6.toString(), r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mLock")
@@ -341,7 +316,12 @@ public class FileUpdater {
             }
         } catch (FileNotFoundException e) {
             read = null;
-        } catch (Exception e2) {
+        } catch (IOException | RuntimeException | XmlPullParserException e2) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed to read file ");
+            stringBuilder.append(file.getBaseFile());
+            Slog.e(str, stringBuilder.toString(), e2);
         } catch (Throwable th) {
             if (in != null) {
                 $closeResource(r1, in);

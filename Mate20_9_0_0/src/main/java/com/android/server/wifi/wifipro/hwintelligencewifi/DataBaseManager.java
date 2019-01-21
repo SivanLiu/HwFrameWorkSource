@@ -33,54 +33,54 @@ public class DataBaseManager {
         this.mWifiManager = (WifiManager) context.getSystemService("wifi");
     }
 
-    /* JADX WARNING: Missing block: B:14:0x006d, code:
+    /* JADX WARNING: Missing block: B:14:0x006d, code skipped:
             if (r3 != null) goto L_0x006f;
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:21:0x008c, code:
+    /* JADX WARNING: Missing block: B:21:0x008c, code skipped:
             if (r3 == null) goto L_0x008f;
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r2 = com.android.server.wifi.wifipro.hwintelligencewifi.MessageUtil.TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("getAllApInfos infos.size()=");
             r4.append(r1.size());
             android.util.Log.e(r2, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:24:0x00ad, code:
+    /* JADX WARNING: Missing block: B:24:0x00ad, code skipped:
             if (r1.size() <= 0) goto L_0x00e2;
      */
-    /* JADX WARNING: Missing block: B:25:0x00af, code:
+    /* JADX WARNING: Missing block: B:25:0x00af, code skipped:
             r2 = r1.iterator();
      */
-    /* JADX WARNING: Missing block: B:27:0x00b7, code:
+    /* JADX WARNING: Missing block: B:27:0x00b7, code skipped:
             if (r2.hasNext() == false) goto L_0x00e2;
      */
-    /* JADX WARNING: Missing block: B:28:0x00b9, code:
+    /* JADX WARNING: Missing block: B:28:0x00b9, code skipped:
             r4 = (com.android.server.wifi.wifipro.hwintelligencewifi.APInfoData) r2.next();
             r5 = queryCellInfoByBssid(r4.getBssid());
      */
-    /* JADX WARNING: Missing block: B:29:0x00cb, code:
+    /* JADX WARNING: Missing block: B:29:0x00cb, code skipped:
             if (r5.size() == 0) goto L_0x00d0;
      */
-    /* JADX WARNING: Missing block: B:30:0x00cd, code:
+    /* JADX WARNING: Missing block: B:30:0x00cd, code skipped:
             r4.setCellInfo(r5);
      */
-    /* JADX WARNING: Missing block: B:31:0x00d0, code:
+    /* JADX WARNING: Missing block: B:31:0x00d0, code skipped:
             r6 = getNearbyApInfo(r4.getBssid());
      */
-    /* JADX WARNING: Missing block: B:32:0x00dc, code:
+    /* JADX WARNING: Missing block: B:32:0x00dc, code skipped:
             if (r6.size() == 0) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:33:0x00de, code:
+    /* JADX WARNING: Missing block: B:33:0x00de, code skipped:
             r4.setNearbyAPInfos(r6);
      */
-    /* JADX WARNING: Missing block: B:36:0x00e3, code:
+    /* JADX WARNING: Missing block: B:36:0x00e3, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:41:0x00eb, code:
+    /* JADX WARNING: Missing block: B:41:0x00eb, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -112,76 +112,80 @@ public class DataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
+    /* JADX WARNING: Missing block: B:12:0x001c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void addApInfos(String bssid, String ssid, String cellid, int authtype) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                inlineAddBssidIdInfo(bssid, ssid, authtype);
-                inlineAddCellInfo(bssid, cellid);
-                inlineAddNearbyApInfo(bssid);
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    inlineAddBssidIdInfo(bssid, ssid, authtype);
+                    inlineAddCellInfo(bssid, cellid);
+                    inlineAddNearbyApInfo(bssid);
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
+    /* JADX WARNING: Missing block: B:12:0x001c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void delAPInfos(String bssid) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                delBssidInfo(bssid);
-                delCellidInfoByBssid(bssid);
-                delNearbyApInfo(bssid);
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    delBssidInfo(bssid);
+                    delCellidInfoByBssid(bssid);
+                    delNearbyApInfo(bssid);
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001f, code:
+    /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeDB() {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                Log.e(MessageUtil.TAG, "closeDB()");
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    Log.e(MessageUtil.TAG, "closeDB()");
+                    this.mDatabase.close();
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0016, code:
+    /* JADX WARNING: Missing block: B:12:0x0016, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void addCellInfo(String bssid, String cellid) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                inlineAddCellInfo(bssid, cellid);
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    inlineAddCellInfo(bssid, cellid);
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x003d, code:
+    /* JADX WARNING: Missing block: B:17:0x003d, code skipped:
             if (r2 != null) goto L_0x003f;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:24:0x005c, code:
+    /* JADX WARNING: Missing block: B:24:0x005c, code skipped:
             if (r2 == null) goto L_0x005f;
      */
-    /* JADX WARNING: Missing block: B:27:0x0060, code:
+    /* JADX WARNING: Missing block: B:27:0x0060, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:32:0x0068, code:
+    /* JADX WARNING: Missing block: B:32:0x0068, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -216,83 +220,87 @@ public class DataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0016, code:
+    /* JADX WARNING: Missing block: B:12:0x0016, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void addNearbyApInfo(String bssid) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                inlineAddNearbyApInfo(bssid);
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    inlineAddNearbyApInfo(bssid);
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0055, code:
+    /* JADX WARNING: Missing block: B:18:0x0055, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateBssidTimer(String bssid) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || bssid == null) {
-            } else {
-                long time = System.currentTimeMillis();
-                String str = MessageUtil.TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("updateBssidTimer time = ");
-                stringBuilder.append(time);
-                Log.w(str, stringBuilder.toString());
-                ContentValues values = new ContentValues();
-                values.put(WifiScanGenieDataBaseImpl.CHANNEL_TABLE_TIME, Long.valueOf(time));
-                try {
-                    this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
-                } catch (SQLiteException e) {
-                    Log.w(MessageUtil.TAG, "updateBssidTimer, update, SQLiteException");
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (bssid != null) {
+                    long time = System.currentTimeMillis();
+                    String str = MessageUtil.TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("updateBssidTimer time = ");
+                    stringBuilder.append(time);
+                    Log.w(str, stringBuilder.toString());
+                    ContentValues values = new ContentValues();
+                    values.put(WifiScanGenieDataBaseImpl.CHANNEL_TABLE_TIME, Long.valueOf(time));
+                    try {
+                        this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
+                    } catch (SQLiteException e) {
+                        Log.w(MessageUtil.TAG, "updateBssidTimer, update, SQLiteException");
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x003b, code:
+    /* JADX WARNING: Missing block: B:18:0x003b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateBssidIsInBlackList(String bssid, int inblacklist) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || bssid == null) {
-            } else {
-                ContentValues values = new ContentValues();
-                values.put("inbacklist", Integer.valueOf(inblacklist));
-                try {
-                    this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
-                } catch (SQLiteException e) {
-                    Log.w(MessageUtil.TAG, "updateBssidIsInBlackList, update, SQLiteException");
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (bssid != null) {
+                    ContentValues values = new ContentValues();
+                    values.put("inbacklist", Integer.valueOf(inblacklist));
+                    try {
+                        this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
+                    } catch (SQLiteException e) {
+                        Log.w(MessageUtil.TAG, "updateBssidIsInBlackList, update, SQLiteException");
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x003b, code:
+    /* JADX WARNING: Missing block: B:18:0x003b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateBssidIsHome(String bssid, int isHome) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || bssid == null) {
-            } else {
-                ContentValues values = new ContentValues();
-                values.put("isHome", Integer.valueOf(isHome));
-                try {
-                    this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
-                } catch (SQLiteException e) {
-                    Log.w(MessageUtil.TAG, "updateBssidIsHome, update, SQLiteException");
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (bssid != null) {
+                    ContentValues values = new ContentValues();
+                    values.put("isHome", Integer.valueOf(isHome));
+                    try {
+                        this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
+                    } catch (SQLiteException e) {
+                        Log.w(MessageUtil.TAG, "updateBssidIsHome, update, SQLiteException");
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002d, code:
+    /* JADX WARNING: Missing block: B:16:0x002d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -309,39 +317,41 @@ public class DataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0039, code:
+    /* JADX WARNING: Missing block: B:19:0x0039, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateSsid(String bssid, String ssid) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || bssid == null || ssid == null) {
-            } else {
-                ContentValues values = new ContentValues();
-                values.put("ssid", ssid);
-                try {
-                    this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
-                } catch (SQLiteException e) {
-                    Log.w(MessageUtil.TAG, "updateSsid, update, SQLiteException");
+            if (!(this.mDatabase == null || !this.mDatabase.isOpen() || bssid == null)) {
+                if (ssid != null) {
+                    ContentValues values = new ContentValues();
+                    values.put("ssid", ssid);
+                    try {
+                        this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
+                    } catch (SQLiteException e) {
+                        Log.w(MessageUtil.TAG, "updateSsid, update, SQLiteException");
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x003b, code:
+    /* JADX WARNING: Missing block: B:18:0x003b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateAuthType(String bssid, int authtype) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || bssid == null) {
-            } else {
-                ContentValues values = new ContentValues();
-                values.put(HwDualBandMessageUtil.MSG_KEY_AUTHTYPE, Integer.valueOf(authtype));
-                try {
-                    this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
-                } catch (SQLiteException e) {
-                    Log.w(MessageUtil.TAG, "updateAuthType, update, SQLiteException");
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (bssid != null) {
+                    ContentValues values = new ContentValues();
+                    values.put(HwDualBandMessageUtil.MSG_KEY_AUTHTYPE, Integer.valueOf(authtype));
+                    try {
+                        this.mDatabase.update(DataBaseHelper.BSSID_TABLE_NAME, values, "bssid like ?", new String[]{bssid});
+                    } catch (SQLiteException e) {
+                        Log.w(MessageUtil.TAG, "updateAuthType, update, SQLiteException");
+                    }
                 }
             }
         }
@@ -389,16 +399,16 @@ public class DataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0043, code:
+    /* JADX WARNING: Missing block: B:17:0x0043, code skipped:
             if (r2 != null) goto L_0x0045;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:24:0x0062, code:
+    /* JADX WARNING: Missing block: B:24:0x0062, code skipped:
             if (r2 == null) goto L_0x0065;
      */
-    /* JADX WARNING: Missing block: B:27:0x0066, code:
+    /* JADX WARNING: Missing block: B:27:0x0066, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

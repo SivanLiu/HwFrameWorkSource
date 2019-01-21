@@ -620,7 +620,7 @@ public class WifiServiceImpl extends Stub {
             /* JADX WARNING: Removed duplicated region for block: B:13:0x0063  */
             /* Code decompiled incorrectly, please refer to instructions dump. */
             public void onReceive(Context context, Intent intent) {
-                boolean z;
+                int i;
                 String action = intent.getAction();
                 String str = WifiServiceImpl.TAG;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -631,21 +631,21 @@ public class WifiServiceImpl extends Stub {
                 int hashCode = str.hashCode();
                 if (hashCode != -2061058799) {
                     if (hashCode == 525384130 && str.equals("android.intent.action.PACKAGE_REMOVED")) {
-                        z = false;
-                        switch (z) {
-                            case false:
+                        i = 0;
+                        switch (i) {
+                            case 0:
                                 if (!intent.getBooleanExtra("android.intent.extra.REPLACING", false)) {
-                                    int uid = intent.getIntExtra("android.intent.extra.UID", -1);
+                                    i = intent.getIntExtra("android.intent.extra.UID", -1);
                                     Uri uri = intent.getData();
-                                    if (uid != -1 && uri != null) {
-                                        WifiServiceImpl.this.mWifiStateMachine.removeAppConfigs(uri.getSchemeSpecificPart(), uid);
+                                    if (i != -1 && uri != null) {
+                                        WifiServiceImpl.this.mWifiStateMachine.removeAppConfigs(uri.getSchemeSpecificPart(), i);
                                         break;
                                     }
                                     return;
                                 }
                                 return;
                                 break;
-                            case true:
+                            case 1:
                                 WifiServiceImpl.this.mWifiStateMachine.removeUserConfigs(intent.getIntExtra("android.intent.extra.user_handle", 0));
                                 break;
                             default:
@@ -659,21 +659,21 @@ public class WifiServiceImpl extends Stub {
                         }
                     }
                 } else if (str.equals("android.intent.action.USER_REMOVED")) {
-                    z = true;
-                    switch (z) {
-                        case false:
+                    i = 1;
+                    switch (i) {
+                        case 0:
                             break;
-                        case true:
+                        case 1:
                             break;
                         default:
                             break;
                     }
                 }
-                z = true;
-                switch (z) {
-                    case false:
+                i = -1;
+                switch (i) {
+                    case 0:
                         break;
-                    case true:
+                    case 1:
                         break;
                     default:
                         break;
@@ -837,47 +837,47 @@ public class WifiServiceImpl extends Stub {
         this.mWifiStateMachine.handleUserStop(userId);
     }
 
-    /* JADX WARNING: Missing block: B:27:0x00c9, code:
+    /* JADX WARNING: Missing block: B:27:0x00c9, code skipped:
             if (r12 == null) goto L_0x00e0;
      */
-    /* JADX WARNING: Missing block: B:30:0x00cf, code:
+    /* JADX WARNING: Missing block: B:30:0x00cf, code skipped:
             if (r12.length() == 0) goto L_0x00e0;
      */
-    /* JADX WARNING: Missing block: B:31:0x00d1, code:
+    /* JADX WARNING: Missing block: B:31:0x00d1, code skipped:
             r11.mWifiPermissionsUtil.enforceCanAccessScanResults(r12, r0);
      */
-    /* JADX WARNING: Missing block: B:33:0x00da, code:
+    /* JADX WARNING: Missing block: B:34:0x00da, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:34:0x00dd, code:
+    /* JADX WARNING: Missing block: B:36:0x00dd, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:36:0x00e6, code:
+    /* JADX WARNING: Missing block: B:39:0x00e6, code skipped:
             if (r11.mWifiStateMachine.allowWifiScanRequest(r2) == null) goto L_0x00f7;
      */
-    /* JADX WARNING: Missing block: B:37:0x00e8, code:
+    /* JADX WARNING: Missing block: B:40:0x00e8, code skipped:
             android.util.Slog.d(TAG, "wifi_scan reject because the interval isn't arrived");
             sendFailedScanDirectionalBroadcast(r12);
      */
-    /* JADX WARNING: Missing block: B:38:0x00f2, code:
+    /* JADX WARNING: Missing block: B:41:0x00f2, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:39:0x00f6, code:
+    /* JADX WARNING: Missing block: B:42:0x00f6, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:42:0x00fb, code:
+    /* JADX WARNING: Missing block: B:45:0x00fb, code skipped:
             if (startQuickttffScan(r12) == null) goto L_0x0102;
      */
-    /* JADX WARNING: Missing block: B:43:0x00fd, code:
+    /* JADX WARNING: Missing block: B:46:0x00fd, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:44:0x0101, code:
+    /* JADX WARNING: Missing block: B:47:0x0101, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:47:0x0106, code:
+    /* JADX WARNING: Missing block: B:50:0x0106, code skipped:
             if (limitWifiScanRequest(r12) == null) goto L_0x0126;
      */
-    /* JADX WARNING: Missing block: B:48:0x0108, code:
+    /* JADX WARNING: Missing block: B:51:0x0108, code skipped:
             r5 = TAG;
             r6 = new java.lang.StringBuilder();
             r6.append("current scan request is refused ");
@@ -885,16 +885,16 @@ public class WifiServiceImpl extends Stub {
             android.util.Log.d(r5, r6.toString());
             sendFailedScanDirectionalBroadcast(r12);
      */
-    /* JADX WARNING: Missing block: B:49:0x0121, code:
+    /* JADX WARNING: Missing block: B:52:0x0121, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:50:0x0125, code:
+    /* JADX WARNING: Missing block: B:53:0x0125, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:53:0x012a, code:
+    /* JADX WARNING: Missing block: B:56:0x012a, code skipped:
             if (limitWifiScanInAbsoluteRest(r12) == null) goto L_0x014a;
      */
-    /* JADX WARNING: Missing block: B:54:0x012c, code:
+    /* JADX WARNING: Missing block: B:57:0x012c, code skipped:
             r5 = TAG;
             r6 = new java.lang.StringBuilder();
             r6.append("absolute rest, scan request is refused ");
@@ -902,89 +902,95 @@ public class WifiServiceImpl extends Stub {
             android.util.Log.d(r5, r6.toString());
             sendFailedScanDirectionalBroadcast(r12);
      */
-    /* JADX WARNING: Missing block: B:55:0x0145, code:
+    /* JADX WARNING: Missing block: B:58:0x0145, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:56:0x0149, code:
+    /* JADX WARNING: Missing block: B:59:0x0149, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:59:0x014e, code:
+    /* JADX WARNING: Missing block: B:62:0x014e, code skipped:
             if (restrictWifiScanRequest(r12) == null) goto L_0x016b;
      */
-    /* JADX WARNING: Missing block: B:60:0x0150, code:
+    /* JADX WARNING: Missing block: B:63:0x0150, code skipped:
             r5 = TAG;
             r6 = new java.lang.StringBuilder();
             r6.append("scan ctrl by PG, skip ");
             r6.append(r12);
             android.util.Slog.i(r5, r6.toString());
      */
-    /* JADX WARNING: Missing block: B:61:0x0166, code:
+    /* JADX WARNING: Missing block: B:64:0x0166, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:62:0x016a, code:
+    /* JADX WARNING: Missing block: B:65:0x016a, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:65:0x016d, code:
+    /* JADX WARNING: Missing block: B:68:0x016d, code skipped:
             if (r11.mHwWifiCHRService == null) goto L_0x0175;
      */
-    /* JADX WARNING: Missing block: B:66:0x016f, code:
+    /* JADX WARNING: Missing block: B:69:0x016f, code skipped:
             r11.mHwWifiCHRService.updateApkChangewWifiStatus(4, r12);
      */
-    /* JADX WARNING: Missing block: B:67:0x0175, code:
+    /* JADX WARNING: Missing block: B:70:0x0175, code skipped:
             r5 = new com.android.server.wifi.util.GeneralUtil.Mutable();
      */
-    /* JADX WARNING: Missing block: B:68:0x018b, code:
+    /* JADX WARNING: Missing block: B:71:0x018b, code skipped:
             if (r11.mWifiInjector.getWifiStateMachineHandler().runWithScissors(new com.android.server.wifi.-$$Lambda$WifiServiceImpl$71KWGZ9o3U1lf_2vP7tmY9cz4qQ(r11, r5, r0, r12), 4000) != false) goto L_0x019c;
      */
-    /* JADX WARNING: Missing block: B:69:0x018d, code:
+    /* JADX WARNING: Missing block: B:72:0x018d, code skipped:
             android.util.Log.e(TAG, "Failed to post runnable to start scan");
             sendFailedScanBroadcast();
      */
-    /* JADX WARNING: Missing block: B:70:0x0197, code:
+    /* JADX WARNING: Missing block: B:73:0x0197, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:71:0x019b, code:
+    /* JADX WARNING: Missing block: B:74:0x019b, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:74:0x01a4, code:
+    /* JADX WARNING: Missing block: B:77:0x01a4, code skipped:
             if (((java.lang.Boolean) r5.value).booleanValue() != false) goto L_0x01b2;
      */
-    /* JADX WARNING: Missing block: B:75:0x01a6, code:
+    /* JADX WARNING: Missing block: B:78:0x01a6, code skipped:
             android.util.Log.e(TAG, "Failed to start scan");
      */
-    /* JADX WARNING: Missing block: B:76:0x01ad, code:
+    /* JADX WARNING: Missing block: B:79:0x01ad, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:77:0x01b1, code:
+    /* JADX WARNING: Missing block: B:80:0x01b1, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:78:0x01b2, code:
+    /* JADX WARNING: Missing block: B:81:0x01b2, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
-    /* JADX WARNING: Missing block: B:79:0x01b6, code:
+    /* JADX WARNING: Missing block: B:82:0x01b6, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:81:?, code:
+    /* JADX WARNING: Missing block: B:84:?, code skipped:
             r6 = TAG;
             r7 = new java.lang.StringBuilder();
             r7.append("Exception:");
             r7.append(r5.getMessage());
             android.util.Log.w(r6, r7.toString());
      */
-    /* JADX WARNING: Missing block: B:82:0x01d6, code:
+    /* JADX WARNING: Missing block: B:85:0x01d2, code skipped:
+            android.os.Binder.restoreCallingIdentity(r3);
+     */
+    /* JADX WARNING: Missing block: B:86:0x01d6, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:84:?, code:
+    /* JADX WARNING: Missing block: B:88:?, code skipped:
             r6 = TAG;
             r7 = new java.lang.StringBuilder();
             r7.append("SecurityException:");
             r7.append(r5.getMessage());
             android.util.Log.w(r6, r7.toString());
      */
-    /* JADX WARNING: Missing block: B:85:0x01f6, code:
+    /* JADX WARNING: Missing block: B:89:0x01f2, code skipped:
+            android.os.Binder.restoreCallingIdentity(r3);
+     */
+    /* JADX WARNING: Missing block: B:90:0x01f6, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:86:0x01f7, code:
+    /* JADX WARNING: Missing block: B:91:0x01f7, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1084,13 +1090,36 @@ public class WifiServiceImpl extends Stub {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:10:0x003f  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void handleLightIdleModeChanged() {
         synchronized (this) {
+            boolean combinedIdle;
+            String str;
+            StringBuilder stringBuilder;
             boolean lightIdle = this.mPowerManager.isLightDeviceIdleMode();
             boolean deepIdle = this.mPowerManager.isDeviceIdleMode();
-            boolean combinedIdle = lightIdle || deepIdle;
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            if (!lightIdle) {
+                if (!deepIdle) {
+                    combinedIdle = false;
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("handleLightIdleModeChanged: lightIdle:");
+                    stringBuilder.append(lightIdle);
+                    stringBuilder.append(",deepIdle:");
+                    stringBuilder.append(deepIdle);
+                    stringBuilder.append(",combinedIdle:");
+                    stringBuilder.append(combinedIdle);
+                    Slog.d(str, stringBuilder.toString());
+                    if (this.mInLightIdleMode != combinedIdle) {
+                        this.mInLightIdleMode = combinedIdle;
+                        setFilterEnable(combinedIdle);
+                    }
+                }
+            }
+            combinedIdle = true;
+            str = TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("handleLightIdleModeChanged: lightIdle:");
             stringBuilder.append(lightIdle);
             stringBuilder.append(",deepIdle:");
@@ -1099,8 +1128,6 @@ public class WifiServiceImpl extends Stub {
             stringBuilder.append(combinedIdle);
             Slog.d(str, stringBuilder.toString());
             if (this.mInLightIdleMode != combinedIdle) {
-                this.mInLightIdleMode = combinedIdle;
-                setFilterEnable(combinedIdle);
             }
         }
     }
@@ -1284,13 +1311,19 @@ public class WifiServiceImpl extends Stub {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:60:0x0129, code:
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x00e4 A:{Catch:{ all -> 0x0278 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:52:0x00fe A:{Catch:{ all -> 0x0278 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:51:0x00f4 A:{Catch:{ all -> 0x0278 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x0131 A:{Catch:{ all -> 0x0278 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:117:0x021e A:{SYNTHETIC, Splitter:B:117:0x021e} */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0200 A:{Catch:{ all -> 0x0278 }} */
+    /* JADX WARNING: Missing block: B:61:0x0129, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:114:0x021d, code:
+    /* JADX WARNING: Missing block: B:116:0x021d, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:143:0x0277, code:
+    /* JADX WARNING: Missing block: B:145:0x0277, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1322,56 +1355,69 @@ public class WifiServiceImpl extends Stub {
             this.mLog.info("setWifiEnabled package=% uid=% enable=%").c(packageName).c((long) Binder.getCallingUid()).c(enable).flush();
             boolean isFromSettings = checkNetworkSettingsPermission(Binder.getCallingPid(), Binder.getCallingUid());
             if (!this.mSettingsStore.isAirplaneModeOn() || isFromSettings) {
-                boolean apEnabled = this.mSoftApState == 13 || this.mSoftApState == 12;
-                if (!apEnabled || isFromSettings) {
-                    if (this.mHwWifiCHRService != null) {
-                        if (enable) {
-                            this.mHwWifiCHRService.updateApkChangewWifiStatus(5, packageName);
-                        } else {
-                            this.mHwWifiCHRService.updateApkChangewWifiStatus(1, packageName);
-                        }
-                    }
-                    if (enable) {
-                        this.mWifiController.updateWMUserAction(this.mContext, "ACTION_ENABLE_WIFI_TRUE", packageName);
-                    } else {
-                        this.mWifiController.updateWMUserAction(this.mContext, "ACTION_ENABLE_WIFI_FALSE", packageName);
-                    }
-                    if (this.mContext == null || HwSystemManager.allowOp(this.mContext, 2097152, enable)) {
-                        if (WifiServiceHisiExt.hisiWifiEnabled()) {
-                            String str2 = TAG;
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("setWifiEnabled, P2P enable flag is ");
-                            stringBuilder2.append(this.mWifiServiceHisiExt.isWifiP2pEnabled());
-                            Slog.d(str2, stringBuilder2.toString());
-                            SystemProperties.set("sys.open_wifi_pid", Integer.toString(Binder.getCallingPid()));
-                            if (this.mWifiServiceHisiExt.isWifiP2pEnabled() && enable) {
-                                int flag = this.mHiSiWifiComm.getSettingsGlobalIntValue("show_sta_dialog_flag");
-                                if (!this.mWifiServiceHisiExt.checkUseNotCoexistPermission()) {
-                                    Slog.d(TAG, "the software have no some important permissions,return false.");
-                                    return false;
-                                } else if (this.mHiSiWifiComm.isP2pConnect() && flag != 1) {
-                                    Slog.e(TAG, "sendEmptyMessage CMD_CHANGE_TO_STA_P2P_CONNECT");
-                                    this.mWifiStateMachineHandler.sendEmptyMessage(WifiStateMachine.CMD_CHANGE_TO_STA_P2P_CONNECT);
-                                } else if (this.mIsP2pCloseDialogExist) {
-                                    Slog.d(TAG, "the p2p to AP dialog already exist cann't open wifi");
-                                    return false;
+                boolean apEnabled;
+                long ident;
+                if (this.mSoftApState != 13) {
+                    if (this.mSoftApState != 12) {
+                        apEnabled = false;
+                        if (apEnabled || isFromSettings) {
+                            if (this.mHwWifiCHRService != null) {
+                                if (enable) {
+                                    this.mHwWifiCHRService.updateApkChangewWifiStatus(5, packageName);
                                 } else {
-                                    setWifiStateByManual(true);
-                                    this.mWifiServiceHisiExt.setWifiP2pEnabled(3);
-                                }
-                            } else if (this.mWifiServiceHisiExt.isWifiP2pEnabled() && !enable) {
-                                if (this.mWifiServiceHisiExt.checkUseNotCoexistPermission()) {
-                                    this.mWifiServiceHisiExt.setWifiP2pEnabled(3);
-                                } else {
-                                    Slog.d(TAG, "the software have no some important permissions.");
-                                    return false;
+                                    this.mHwWifiCHRService.updateApkChangewWifiStatus(1, packageName);
                                 }
                             }
-                        }
-                        if (Binder.getCallingUid() == 0 || !"factory".equals(SystemProperties.get("ro.runmode", "normal")) || SystemProperties.getInt("wlan.wltest.status", 0) <= 0) {
-                            long ident = Binder.clearCallingIdentity();
-                            try {
+                            if (enable) {
+                                this.mWifiController.updateWMUserAction(this.mContext, "ACTION_ENABLE_WIFI_FALSE", packageName);
+                            } else {
+                                this.mWifiController.updateWMUserAction(this.mContext, "ACTION_ENABLE_WIFI_TRUE", packageName);
+                            }
+                            if (this.mContext != null || HwSystemManager.allowOp(this.mContext, 2097152, enable)) {
+                                if (WifiServiceHisiExt.hisiWifiEnabled()) {
+                                    String str2 = TAG;
+                                    StringBuilder stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("setWifiEnabled, P2P enable flag is ");
+                                    stringBuilder2.append(this.mWifiServiceHisiExt.isWifiP2pEnabled());
+                                    Slog.d(str2, stringBuilder2.toString());
+                                    SystemProperties.set("sys.open_wifi_pid", Integer.toString(Binder.getCallingPid()));
+                                    if (this.mWifiServiceHisiExt.isWifiP2pEnabled() && enable) {
+                                        int flag = this.mHiSiWifiComm.getSettingsGlobalIntValue("show_sta_dialog_flag");
+                                        if (!this.mWifiServiceHisiExt.checkUseNotCoexistPermission()) {
+                                            Slog.d(TAG, "the software have no some important permissions,return false.");
+                                            return false;
+                                        } else if (this.mHiSiWifiComm.isP2pConnect() && flag != 1) {
+                                            Slog.e(TAG, "sendEmptyMessage CMD_CHANGE_TO_STA_P2P_CONNECT");
+                                            this.mWifiStateMachineHandler.sendEmptyMessage(WifiStateMachine.CMD_CHANGE_TO_STA_P2P_CONNECT);
+                                        } else if (this.mIsP2pCloseDialogExist) {
+                                            Slog.d(TAG, "the p2p to AP dialog already exist cann't open wifi");
+                                            return false;
+                                        } else {
+                                            setWifiStateByManual(true);
+                                            this.mWifiServiceHisiExt.setWifiP2pEnabled(3);
+                                        }
+                                    } else if (this.mWifiServiceHisiExt.isWifiP2pEnabled() && !enable) {
+                                        if (this.mWifiServiceHisiExt.checkUseNotCoexistPermission()) {
+                                            this.mWifiServiceHisiExt.setWifiP2pEnabled(3);
+                                        } else {
+                                            Slog.d(TAG, "the software have no some important permissions.");
+                                            return false;
+                                        }
+                                    }
+                                }
+                                if (Binder.getCallingUid() == 0 && "factory".equals(SystemProperties.get("ro.runmode", "normal")) && SystemProperties.getInt("wlan.wltest.status", 0) > 0) {
+                                    Slog.e(TAG, "in wltest mode, dont allow to enable WiFi");
+                                    return false;
+                                }
+                                ident = Binder.clearCallingIdentity();
                                 if (this.mSettingsStore.handleWifiToggled(enable)) {
+                                    Slog.d(TAG, "setWifiEnabled,Nothing to do if wifi cannot be toggled.");
+                                    if (enable) {
+                                        this.uploader.e(52, "{ACT:1,STATUS:failed,DETAIL:cannot be toggled}");
+                                    } else {
+                                        this.uploader.e(52, "{ACT:0,STATUS:failed,DETAIL:cannot be toggled}");
+                                    }
+                                } else {
                                     Binder.restoreCallingIdentity(ident);
                                     if (this.mPermissionReviewRequired) {
                                         int wiFiEnabledState = getWifiEnabledState();
@@ -1391,33 +1437,42 @@ public class WifiServiceImpl extends Stub {
                                     } else {
                                         this.mWifiController.sendMessage(155656);
                                     }
-                                } else {
-                                    Slog.d(TAG, "setWifiEnabled,Nothing to do if wifi cannot be toggled.");
-                                    if (enable) {
-                                        this.uploader.e(52, "{ACT:1,STATUS:failed,DETAIL:cannot be toggled}");
-                                    } else {
-                                        this.uploader.e(52, "{ACT:0,STATUS:failed,DETAIL:cannot be toggled}");
-                                    }
                                 }
-                            } finally {
-                                Binder.restoreCallingIdentity(ident);
+                            } else if (enable) {
+                                this.uploader.e(52, "{ACT:1,STATUS:failed,DETAIL:permission deny}");
+                            } else {
+                                this.uploader.e(52, "{ACT:0,STATUS:failed,DETAIL:permission deny}");
                             }
                         } else {
-                            Slog.e(TAG, "in wltest mode, dont allow to enable WiFi");
+                            this.mLog.info("setWifiEnabled SoftAp not disabled: only Settings can enable wifi").flush();
                             return false;
                         }
-                    } else if (enable) {
-                        this.uploader.e(52, "{ACT:1,STATUS:failed,DETAIL:permission deny}");
-                    } else {
-                        this.uploader.e(52, "{ACT:0,STATUS:failed,DETAIL:permission deny}");
                     }
-                } else {
-                    this.mLog.info("setWifiEnabled SoftAp not disabled: only Settings can enable wifi").flush();
-                    return false;
                 }
+                apEnabled = true;
+                if (apEnabled) {
+                }
+                if (this.mHwWifiCHRService != null) {
+                }
+                if (enable) {
+                }
+                if (this.mContext != null) {
+                }
+                if (WifiServiceHisiExt.hisiWifiEnabled()) {
+                }
+                if (Binder.getCallingUid() == 0) {
+                }
+                ident = Binder.clearCallingIdentity();
+                try {
+                    if (this.mSettingsStore.handleWifiToggled(enable)) {
+                    }
+                } finally {
+                    Binder.restoreCallingIdentity(ident);
+                }
+            } else {
+                this.mLog.info("setWifiEnabled in Airplane mode: only Settings can enable wifi").flush();
+                return false;
             }
-            this.mLog.info("setWifiEnabled in Airplane mode: only Settings can enable wifi").flush();
-            return false;
         }
     }
 
@@ -1484,7 +1539,7 @@ public class WifiServiceImpl extends Stub {
         this.mClientHandler.post(new -$$Lambda$WifiServiceImpl$UQ9JbF5sXBV77FhG4oE7wjNFgek(this, ifaceName, mode));
     }
 
-    /* JADX WARNING: Missing block: B:28:0x009e, code:
+    /* JADX WARNING: Missing block: B:28:0x009e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1811,7 +1866,7 @@ public class WifiServiceImpl extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0054, code:
+    /* JADX WARNING: Missing block: B:18:0x0054, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2529,7 +2584,7 @@ public class WifiServiceImpl extends Stub {
         if (value == 2) {
             return true;
         }
-        return this.mContext.getResources().getBoolean(17957073);
+        return this.mContext.getResources().getBoolean(17957074);
     }
 
     public boolean needs5GHzToAnyApBandConversion() {
@@ -2537,7 +2592,7 @@ public class WifiServiceImpl extends Stub {
         if (this.mVerboseLoggingEnabled) {
             this.mLog.info("needs5GHzToAnyApBandConversion uid=%").c((long) Binder.getCallingUid()).flush();
         }
-        return this.mContext.getResources().getBoolean(17957072);
+        return this.mContext.getResources().getBoolean(17957073);
     }
 
     @Deprecated
@@ -2660,12 +2715,12 @@ public class WifiServiceImpl extends Stub {
         intentFilter.addAction("android.intent.action.USER_REMOVED");
         intentFilter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
         intentFilter.addAction("android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED");
-        if (this.mContext.getResources().getBoolean(17957074)) {
+        if (this.mContext.getResources().getBoolean(17957075)) {
             intentFilter.addAction("android.intent.action.EMERGENCY_CALLBACK_MODE_CHANGED");
         }
         intentFilter.addAction("android.os.action.DEVICE_IDLE_MODE_CHANGED");
         intentFilter.addAction("android.os.action.LIGHT_DEVICE_IDLE_MODE_CHANGED");
-        if (this.mContext.getResources().getBoolean(17957087)) {
+        if (this.mContext.getResources().getBoolean(17957088)) {
             intentFilter.addAction("android.intent.action.EMERGENCY_CALL_STATE_CHANGED");
         }
         registerForBroadcastsEx(intentFilter);

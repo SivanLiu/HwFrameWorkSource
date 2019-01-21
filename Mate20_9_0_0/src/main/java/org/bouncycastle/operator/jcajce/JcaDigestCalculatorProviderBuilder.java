@@ -2,6 +2,7 @@ package org.bouncycastle.operator.jcajce;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.Provider;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -57,7 +58,7 @@ public class JcaDigestCalculatorProviderBuilder {
                             return digestOutputStream;
                         }
                     };
-                } catch (Throwable e) {
+                } catch (GeneralSecurityException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("exception on setup: ");
                     stringBuilder.append(e);

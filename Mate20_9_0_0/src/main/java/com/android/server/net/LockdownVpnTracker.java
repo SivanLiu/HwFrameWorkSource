@@ -99,7 +99,7 @@ public class LockdownVpnTracker {
             EventLogTags.writeLockdownVpnError(egressType);
         }
         if (this.mErrorCount > 4) {
-            showNotification(17041340, 17303739);
+            showNotification(17041341, 17303739);
         } else if (!egressInfo.isConnected() || vpnInfo.isConnectedOrConnecting()) {
             if (vpnInfo.isConnected() && vpnConfig != null) {
                 String iface = vpnConfig.interfaze;
@@ -113,7 +113,7 @@ public class LockdownVpnTracker {
                     stringBuilder2.append(sourceAddrs.toString());
                     Slog.d(str2, stringBuilder2.toString());
                     EventLogTags.writeLockdownVpnConnected(egressType);
-                    showNotification(17041337, 17303738);
+                    showNotification(17041338, 17303738);
                     NetworkInfo clone = new NetworkInfo(egressInfo);
                     augmentNetworkInfo(clone);
                     this.mConnService.sendConnectedBroadcast(clone);
@@ -122,18 +122,18 @@ public class LockdownVpnTracker {
         } else if (this.mProfile.isValidLockdownProfile()) {
             Slog.d(TAG, "Active network connected; starting VPN");
             EventLogTags.writeLockdownVpnConnecting(egressType);
-            showNotification(17041338, 17303739);
+            showNotification(17041339, 17303739);
             this.mAcceptedEgressIface = egressProp.getInterfaceName();
             try {
                 this.mVpn.startLegacyVpnPrivileged(this.mProfile, KeyStore.getInstance(), egressProp);
             } catch (IllegalStateException e) {
                 this.mAcceptedEgressIface = null;
                 Slog.e(TAG, "Failed to start VPN", e);
-                showNotification(17041340, 17303739);
+                showNotification(17041341, 17303739);
             }
         } else {
             Slog.e(TAG, "Invalid VPN profile; requires IP-based server and DNS");
-            showNotification(17041340, 17303739);
+            showNotification(17041341, 17303739);
         }
     }
 
@@ -200,7 +200,7 @@ public class LockdownVpnTracker {
     }
 
     private void showNotification(int titleRes, int iconRes) {
-        NotificationManager.from(this.mContext).notify(null, 20, new Builder(this.mContext, SystemNotificationChannels.VPN).setWhen(0).setSmallIcon(iconRes).setContentTitle(this.mContext.getString(titleRes)).setContentText(this.mContext.getString(17041336)).setContentIntent(this.mConfigIntent).setOngoing(true).addAction(17302680, this.mContext.getString(17040998), this.mResetIntent).setColor(this.mContext.getColor(17170784)).build());
+        NotificationManager.from(this.mContext).notify(null, 20, new Builder(this.mContext, SystemNotificationChannels.VPN).setWhen(0).setSmallIcon(iconRes).setContentTitle(this.mContext.getString(titleRes)).setContentText(this.mContext.getString(17041337)).setContentIntent(this.mConfigIntent).setOngoing(true).addAction(17302680, this.mContext.getString(17040999), this.mResetIntent).setColor(this.mContext.getColor(17170784)).build());
     }
 
     private void hideNotification() {

@@ -124,7 +124,7 @@ public class BCDSTU4145PublicKey implements ECPublicKey, org.bouncycastle.jce.in
                     reverseBytes(b);
                 }
                 DSTU4145BinaryField field = eCBinary.getField();
-                ECCurve f2m = new F2m(field.getM(), field.getK1(), field.getK2(), field.getK3(), eCBinary.getA(), new BigInteger(1, b));
+                F2m f2m = new F2m(field.getM(), field.getK1(), field.getK2(), field.getK3(), eCBinary.getA(), new BigInteger(1, b));
                 b = eCBinary.getG();
                 if (subjectPublicKeyInfo.getAlgorithm().getAlgorithm().equals(UAObjectIdentifiers.dstu4145le)) {
                     reverseBytes(b);

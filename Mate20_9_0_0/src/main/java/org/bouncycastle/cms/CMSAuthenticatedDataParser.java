@@ -17,6 +17,7 @@ import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.OriginatorInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Arrays;
 
 public class CMSAuthenticatedDataParser extends CMSContentInfoParser {
@@ -59,7 +60,7 @@ public class CMSAuthenticatedDataParser extends CMSContentInfoParser {
                         }
                     }
                 });
-            } catch (Exception e) {
+            } catch (OperatorCreationException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to create digest calculator: ");
                 stringBuilder.append(e.getMessage());

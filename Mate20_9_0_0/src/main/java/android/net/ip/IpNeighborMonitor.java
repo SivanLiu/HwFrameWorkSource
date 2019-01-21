@@ -19,9 +19,11 @@ import android.util.Log;
 import com.android.internal.util.BitUtils;
 import java.io.FileDescriptor;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.StringJoiner;
+import libcore.io.IoUtils;
 
 public class IpNeighborMonitor extends PacketReader {
     private static final boolean DBG = false;
@@ -108,18 +110,6 @@ public class IpNeighborMonitor extends PacketReader {
     static /* synthetic */ void lambda$new$0(NeighborEvent event) {
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001e A:{PHI: r1 , Splitter: B:1:0x0002, ExcHandler: android.system.ErrnoException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x001e, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001f, code:
-            logError("Failed to create rtnetlink socket", r2);
-            libcore.io.IoUtils.closeQuietly(r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0027, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected FileDescriptor createFd() {
         FileDescriptor fd = null;
         try {
@@ -127,7 +117,10 @@ public class IpNeighborMonitor extends PacketReader {
             Os.bind(fd, new NetlinkSocketAddress(0, OsConstants.RTMGRP_NEIGH));
             Os.connect(fd, new NetlinkSocketAddress(0, 0));
             return fd;
-        } catch (Exception e) {
+        } catch (ErrnoException | SocketException e) {
+            logError("Failed to create rtnetlink socket", e);
+            IoUtils.closeQuietly(fd);
+            return null;
         }
     }
 

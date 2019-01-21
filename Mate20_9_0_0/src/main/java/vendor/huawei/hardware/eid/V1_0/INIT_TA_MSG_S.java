@@ -10,7 +10,7 @@ import java.util.Objects;
 public final class INIT_TA_MSG_S {
     public final byte[] eid_aid = new byte[256];
     public int eid_aid_len;
-    public final byte[] eid_logo = new byte[BUFF_LEN_E.MAX_LOGO_SIZE];
+    public final byte[] eid_logo = new byte[24576];
     public final byte[] hw_aid = new byte[256];
     public int hw_aid_len;
     public int logo_size;
@@ -75,7 +75,7 @@ public final class INIT_TA_MSG_S {
         this.hw_aid_len = _hidl_blob.getInt32(256 + _hidl_offset);
         _hidl_blob.copyToInt8Array(260 + _hidl_offset, this.eid_aid, 256);
         this.eid_aid_len = _hidl_blob.getInt32(516 + _hidl_offset);
-        _hidl_blob.copyToInt8Array(520 + _hidl_offset, this.eid_logo, BUFF_LEN_E.MAX_LOGO_SIZE);
+        _hidl_blob.copyToInt8Array(520 + _hidl_offset, this.eid_logo, 24576);
         this.logo_size = _hidl_blob.getInt32(25096 + _hidl_offset);
     }
 

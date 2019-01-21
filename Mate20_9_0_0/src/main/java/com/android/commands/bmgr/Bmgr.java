@@ -629,21 +629,23 @@ public final class Bmgr {
             }
             String current = this.mBmgr.getCurrentTransport();
             String[] transports = this.mBmgr.listAllTransports();
-            if (transports == null || transports.length == 0) {
-                System.out.println("No transports available.");
-                return;
+            if (transports != null) {
+                if (transports.length != 0) {
+                    int length2 = transports.length;
+                    while (i < length2) {
+                        String t = transports[i];
+                        String pad = t.equals(current) ? "  * " : "    ";
+                        PrintStream printStream = System.out;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(pad);
+                        stringBuilder.append(t);
+                        printStream.println(stringBuilder.toString());
+                        i++;
+                    }
+                    return;
+                }
             }
-            int length2 = transports.length;
-            while (i < length2) {
-                String t = transports[i];
-                String pad = t.equals(current) ? "  * " : "    ";
-                PrintStream printStream = System.out;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(pad);
-                stringBuilder.append(t);
-                printStream.println(stringBuilder.toString());
-                i++;
-            }
+            System.out.println("No transports available.");
         } catch (RemoteException e) {
             System.err.println(e.toString());
             System.err.println(BMGR_NOT_RUNNING_ERR);
@@ -786,12 +788,13 @@ public final class Bmgr {
                 sets = null;
             }
             if (!didRestore) {
-                if (sets == null || sets.length == 0) {
-                    System.out.println("No available restore sets; no restore performed");
-                } else {
-                    System.out.println("No matching restore set token.  Available sets:");
-                    printRestoreSets(sets);
+                if (sets != null) {
+                    if (sets.length != 0) {
+                        System.out.println("No matching restore set token.  Available sets:");
+                        printRestoreSets(sets);
+                    }
                 }
+                System.out.println("No available restore sets; no restore performed");
             }
             if (didRestore) {
                 observer.waitForCompletion();

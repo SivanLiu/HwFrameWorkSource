@@ -74,13 +74,16 @@ public class HwPCMultiWindowSettingsWriter {
                             case 2:
                                 if (!"app_window_settings".equals(parser.getName())) {
                                     if (!"pkg".equals(parser.getName())) {
-                                        if ("state_bounds".equals(parser.getName()) && entry != null) {
-                                            entry.windowState = getIntAttribute(parser, "windowState");
-                                            entry.originalWindowState = getIntAttribute(parser, "originalWindowState");
-                                            entry.windowBounds.left = getIntAttribute(parser, "left");
-                                            entry.windowBounds.top = getIntAttribute(parser, "top");
-                                            entry.windowBounds.right = getIntAttribute(parser, "right");
-                                            entry.windowBounds.bottom = getIntAttribute(parser, "bottom");
+                                        if ("state_bounds".equals(parser.getName())) {
+                                            if (entry != null) {
+                                                entry.windowState = getIntAttribute(parser, "windowState");
+                                                entry.originalWindowState = getIntAttribute(parser, "originalWindowState");
+                                                entry.windowBounds.left = getIntAttribute(parser, "left");
+                                                entry.windowBounds.top = getIntAttribute(parser, "top");
+                                                entry.windowBounds.right = getIntAttribute(parser, "right");
+                                                entry.windowBounds.bottom = getIntAttribute(parser, "bottom");
+                                                break;
+                                            }
                                             break;
                                         }
                                     }
@@ -88,8 +91,8 @@ public class HwPCMultiWindowSettingsWriter {
                                     if (name != null) {
                                         entryKey = name;
                                         entry = new Entry(name);
-                                        break;
                                     }
+                                    break;
                                 }
                                 this.mLastVersion = getIntAttribute(parser, "version");
                                 deviceKey = parser.getAttributeValue(null, "device");
@@ -102,6 +105,8 @@ public class HwPCMultiWindowSettingsWriter {
                                     entry = null;
                                     break;
                                 }
+                                break;
+                            default:
                                 break;
                         }
                     }

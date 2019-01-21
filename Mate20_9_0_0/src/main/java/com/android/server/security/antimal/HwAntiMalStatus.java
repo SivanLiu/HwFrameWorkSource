@@ -8,8 +8,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Binder;
 import android.os.SystemProperties;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Flog;
 import android.util.Slog;
@@ -27,11 +27,12 @@ public class HwAntiMalStatus {
     private static final int ANTIMAL_TYPE_ALLOWED_BY_SYSTEMAPP = 11;
     private static final int ANTIMAL_TYPE_NOT_ALLOWED_SET_HOME = 20;
     private static final int ANTIMAL_TYPE_RESTORE_DEFAULT_LAUNCHER = 30;
-    private static final long CALL_ENOUGH_TIME = 1800;
+    private static final long CALL_ENOUGH_TIME = 300;
+    private static final long CHARGING_ENOUGH_TIME = 20;
     private static final String DEFAULT_HW_LAUNCHER = "com.huawei.android.launcher";
     private static final boolean IS_CHINA_AREA = "CN".equalsIgnoreCase(SystemProperties.get(WifiProCommonUtils.KEY_PROP_LOCALE, ""));
     private static final String[] NOT_ALLOWED_DISABLE_WHITELIST = new String[]{"com.huawei.android.launcher", HwRecentsTaskUtils.PKG_SYS_MANAGER};
-    private static final long SCREENON_ENOUGH_TIME = 360000;
+    private static final long SCREENON_ENOUGH_TIME = 36000;
     private static final String TAG = "HwAntiMalStatus";
     private static final boolean mAntimalProtection = "true".equalsIgnoreCase(SystemProperties.get("ro.product.antimal_protection", "true"));
     private static HwCustPackageManagerService mCpms = ((HwCustPackageManagerService) HwCustUtils.createObj(HwCustPackageManagerService.class, new Object[0]));
@@ -43,10 +44,35 @@ public class HwAntiMalStatus {
     }
 
     public boolean isAllowedSetHomeActivityForAntiMal(PackageInfo pkgInfo, int userId) {
-        return isAllowedSetHomeActivityForAntiMal(pkgInfo, userId, true);
+        if (isAllowedSetHomeActivityForAntiMalInternal(pkgInfo, userId, true)) {
+            return true;
+        }
+        if (!hasMDMPermission(pkgInfo)) {
+            return false;
+        }
+        Slog.d(TAG, "found MDM permission!");
+        return true;
     }
 
-    public boolean isAllowedSetHomeActivityForAntiMal(PackageInfo pkgInfo, int userId, boolean internal) {
+    private boolean hasMDMPermission(PackageInfo pkgInfo) {
+        if (pkgInfo == null) {
+            Slog.d(TAG, "Invalid params.");
+            return true;
+        }
+        int uid = pkgInfo.applicationInfo.uid;
+        String str = TAG;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("uid:");
+        stringBuilder.append(uid);
+        Slog.i(str, stringBuilder.toString());
+        if (ActivityManager.checkUidPermission("com.huawei.permission.sec.SDK_LAUNCHER", uid) != 0) {
+            return false;
+        }
+        Slog.i(TAG, "have launcher permission!");
+        return true;
+    }
+
+    public boolean isAllowedSetHomeActivityForAntiMalInternal(PackageInfo pkgInfo, int userId, boolean internal) {
         if (this.mContext == null || pkgInfo == null) {
             Slog.d(TAG, "Invalid params.");
             return true;
@@ -55,9 +81,6 @@ public class HwAntiMalStatus {
             return true;
         } else if (!mAntimalProtection) {
             Slog.d(TAG, "AntimalProtection control is close!");
-            return true;
-        } else if (hasMDMPermission()) {
-            Slog.d(TAG, "found MDM permission!");
             return true;
         } else if (isSupportHomeScreen()) {
             Slog.d(TAG, "Support home screen.");
@@ -88,26 +111,9 @@ public class HwAntiMalStatus {
             stringBuilder2.append(20);
             stringBuilder2.append("}");
             Flog.bdReport(context2, 128, stringBuilder2.toString());
-            Slog.d(TAG, "not allowed to set home activity.");
+            Slog.d(TAG, "not allowed to set home activity at normal state.");
             return false;
         }
-    }
-
-    private boolean hasMDMPermission() {
-        int callingUid = Binder.getCallingUid();
-        int callingPid = Binder.getCallingPid();
-        String str = TAG;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("callingUid:");
-        stringBuilder.append(callingUid);
-        stringBuilder.append(",callingPid:");
-        stringBuilder.append(callingPid);
-        Slog.i(str, stringBuilder.toString());
-        if (callingUid != 1000 && this.mContext.checkPermission("com.huawei.permission.sec.MDM", callingPid, callingUid) == 0 && this.mContext.checkPermission("com.huawei.permission.sec.SDK_LAUNCHER", callingPid, callingUid) == 0) {
-            return true;
-        }
-        Slog.i(TAG, "system uid or don't have launcher permission!");
-        return false;
     }
 
     public void handleUserClearLockForAntiMal(int userId) {
@@ -115,7 +121,7 @@ public class HwAntiMalStatus {
             Slog.d(TAG, "invalid params.");
         } else if (ActivityManager.getCurrentUser() != 0) {
             Slog.d(TAG, "not owner.");
-        } else if (!isNeedRestrictForAntimal(true)) {
+        } else if (!isNeedRestrictForAntimal(false)) {
             Slog.d(TAG, "no need restrict for antimal.");
         } else if (isDefaultHwLauncher()) {
             Slog.d(TAG, "current launcher is default launcher.");
@@ -134,9 +140,10 @@ public class HwAntiMalStatus {
             return false;
         }
         HwDeviceUsageOEMINFO mHwDeviceUsageOEMINFO = HwDeviceUsageOEMINFO.getInstance();
-        if (mHwDeviceUsageOEMINFO.getScreenOnTime() < SCREENON_ENOUGH_TIME || mHwDeviceUsageOEMINFO.getTalkTime() < CALL_ENOUGH_TIME) {
+        if (mHwDeviceUsageOEMINFO.getScreenOnTime() < SCREENON_ENOUGH_TIME && mHwDeviceUsageOEMINFO.getTalkTime() < CALL_ENOUGH_TIME && mHwDeviceUsageOEMINFO.getChargeTime() < CHARGING_ENOUGH_TIME && !hasSimCard()) {
             return true;
         }
+        Slog.d(TAG, "No need to restrict");
         return false;
     }
 
@@ -255,5 +262,14 @@ public class HwAntiMalStatus {
 
     public boolean isSupportHomeScreen() {
         return this.mContext.getPackageManager().hasSystemFeature("android.software.home_screen");
+    }
+
+    private boolean hasSimCard() {
+        int simState = ((TelephonyManager) this.mContext.getSystemService("phone")).getSimState();
+        if (simState != 1 && simState != 0) {
+            return true;
+        }
+        Slog.i(TAG, "no SIM card!");
+        return false;
     }
 }

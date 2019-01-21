@@ -15,6 +15,7 @@ import com.android.internal.os.TransferPipe;
 import com.android.server.ServiceWatcher;
 import com.android.server.ServiceWatcher.BinderRunner;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 public class LocationProviderProxy implements LocationProviderInterface {
@@ -203,25 +204,15 @@ public class LocationProviderProxy implements LocationProviderInterface {
         append.append(stringBuilder.toString());
         pw.append(10);
         if (!this.mServiceWatcher.runOnBinder(new BinderRunner() {
-            /* JADX WARNING: Removed duplicated region for block: B:3:0x0010 A:{Splitter: B:1:0x0004, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-            /* JADX WARNING: Missing block: B:3:0x0010, code:
-            r1 = move-exception;
-     */
-            /* JADX WARNING: Missing block: B:4:0x0011, code:
-            r2 = r5;
-            r3 = new java.lang.StringBuilder();
-            r3.append("Failed to dump location provider: ");
-            r3.append(r1);
-            r2.println(r3.toString());
-     */
-            /* JADX WARNING: Missing block: B:5:?, code:
-            return;
-     */
-            /* Code decompiled incorrectly, please refer to instructions dump. */
             public void run(IBinder binder) {
                 try {
                     TransferPipe.dumpAsync(Stub.asInterface(binder).asBinder(), fd, args);
-                } catch (Exception e) {
+                } catch (RemoteException | IOException e) {
+                    PrintWriter printWriter = pw;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Failed to dump location provider: ");
+                    stringBuilder.append(e);
+                    printWriter.println(stringBuilder.toString());
                 }
             }
         })) {

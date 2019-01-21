@@ -269,9 +269,9 @@ public final class UsbAlsaManager {
             if (enabled && this.mPeripheralMidiDevice == null) {
                 Bundle properties = new Bundle();
                 Resources r = this.mContext.getResources();
-                properties.putString(Settings.ATTR_NAME, r.getString(17041278));
-                properties.putString("manufacturer", r.getString(17041277));
-                properties.putString("product", r.getString(17041279));
+                properties.putString(Settings.ATTR_NAME, r.getString(17041279));
+                properties.putString("manufacturer", r.getString(17041278));
+                properties.putString("product", r.getString(17041280));
                 properties.putInt("alsa_card", card);
                 properties.putInt("alsa_device", device);
                 this.mPeripheralMidiDevice = UsbMidiDevice.create(this.mContext, properties, card, device);

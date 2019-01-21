@@ -369,6 +369,7 @@ public class TransportManager {
                         return -1;
                     }
                 }
+            } catch (Throwable th) {
             }
         }
         return 0;

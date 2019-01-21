@@ -150,7 +150,11 @@ public class MyLocationOverlay extends Overlay implements SensorListener, Locati
         service.removeUpdates(this);
         this.mEnabledProviders.clear();
         this.mIsMyLocationEnabled = false;
-        for (String name : DESIRED_PROVIDER_NAMES) {
+        String[] strArr = DESIRED_PROVIDER_NAMES;
+        int length = strArr.length;
+        int i = 0;
+        while (i < length) {
+            String name = strArr[i];
             try {
                 if (service.isProviderEnabled(name)) {
                     this.mIsMyLocationEnabled = true;
@@ -160,6 +164,9 @@ public class MyLocationOverlay extends Overlay implements SensorListener, Locati
                     stringBuilder2.append("Request updates from ");
                     stringBuilder2.append(name);
                     Log.i("Maps.MyLocationOverlay", stringBuilder2.toString());
+                    i++;
+                } else {
+                    i++;
                 }
             } catch (SecurityException e) {
                 stringBuilder = new StringBuilder();
@@ -315,7 +322,7 @@ public class MyLocationOverlay extends Overlay implements SensorListener, Locati
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:18:0x003e, code:
+    /* JADX WARNING: Missing block: B:18:0x003e, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

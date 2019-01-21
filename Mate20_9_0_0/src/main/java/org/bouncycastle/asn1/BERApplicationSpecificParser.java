@@ -22,7 +22,7 @@ public class BERApplicationSpecificParser implements ASN1ApplicationSpecificPars
     public ASN1Primitive toASN1Primitive() {
         try {
             return getLoadedObject();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new ASN1ParsingException(e.getMessage(), e);
         }
     }

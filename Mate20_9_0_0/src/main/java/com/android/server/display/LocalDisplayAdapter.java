@@ -90,7 +90,10 @@ final class LocalDisplayAdapter extends DisplayAdapter {
         public void onHotplug(long timestampNanos, int builtInDisplayId, boolean connected) {
             synchronized (LocalDisplayAdapter.this.getSyncRoot()) {
                 if (connected) {
-                    LocalDisplayAdapter.this.tryConnectDisplayLocked(builtInDisplayId);
+                    try {
+                        LocalDisplayAdapter.this.tryConnectDisplayLocked(builtInDisplayId);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     LocalDisplayAdapter.this.tryDisconnectDisplayLocked(builtInDisplayId);
                 }
@@ -140,7 +143,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
         private UserSwtichReceiver() {
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0051, code:
+        /* JADX WARNING: Missing block: B:9:0x0051, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -366,7 +369,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                 DisplayDeviceInfo displayDeviceInfo;
                 DisplayDeviceInfo displayDeviceInfo2;
                 if (this.mBuiltInDisplayId == 0) {
-                    this.mInfo.name = res.getString(17039943);
+                    this.mInfo.name = res.getString(17039944);
                     displayDeviceInfo = this.mInfo;
                     displayDeviceInfo.flags = 3 | displayDeviceInfo.flags;
                     if (res.getBoolean(17956992) || (Build.IS_EMULATOR && SystemProperties.getBoolean(LocalDisplayAdapter.PROPERTY_EMULATOR_CIRCULAR, false))) {
@@ -419,7 +422,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                     this.mInfo.type = 2;
                     displayDeviceInfo = this.mInfo;
                     displayDeviceInfo.flags |= 64;
-                    this.mInfo.name = LocalDisplayAdapter.this.getContext().getResources().getString(17039944);
+                    this.mInfo.name = LocalDisplayAdapter.this.getContext().getResources().getString(17039945);
                     this.mInfo.touch = 2;
                     if (HwPCUtils.enabled()) {
                         this.mInfo.densityDpi = (int) ((phys.density * 160.0f) + 0.5f);
@@ -864,12 +867,17 @@ final class LocalDisplayAdapter extends DisplayAdapter {
             stringBuilder.append(connected);
             Slog.w(str, stringBuilder.toString());
             synchronized (getSyncRoot()) {
-                if (!connected) {
+                if (connected) {
+                    try {
+                        if (((LocalDisplayDevice) this.mDevices.get(PAD_DISPLAY_ID)) == null) {
+                            Slog.w(TAG, "pcDisplayChangeService tryDisconnectDisplayLocked");
+                            tryConnectDisplayLocked(PAD_DISPLAY_ID);
+                        }
+                    } catch (Throwable th) {
+                    }
+                } else {
                     Slog.w(TAG, "pcDisplayChangeService tryDisconnectDisplayLocked");
                     tryDisconnectDisplayLocked(PAD_DISPLAY_ID);
-                } else if (((LocalDisplayDevice) this.mDevices.get(PAD_DISPLAY_ID)) == null) {
-                    Slog.w(TAG, "pcDisplayChangeService tryDisconnectDisplayLocked");
-                    tryConnectDisplayLocked(PAD_DISPLAY_ID);
                 }
             }
         }

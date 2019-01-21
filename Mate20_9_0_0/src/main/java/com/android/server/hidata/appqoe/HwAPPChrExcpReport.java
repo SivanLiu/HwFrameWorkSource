@@ -49,7 +49,7 @@ public class HwAPPChrExcpReport {
         return hwAPPChrExcpReport;
     }
 
-    /* JADX WARNING: Missing block: B:31:0x00aa, code:
+    /* JADX WARNING: Missing block: B:34:0x00aa, code skipped:
             r3 = android.util.IMonitor.openEventStream(EVENT_APP_QOE_INFO_STATIS);
             r3.setParam("NETTYPE", r0.netType).setParam("RSSI", r0.rssi).setParam("RTT", r0.rtt).setParam("TXPACKET", r0.txPacket).setParam("TXBYTE", r0.txByte).setParam("RXPACKET", r0.rxPacket).setParam("RXBYTE", r0.rxByte).setParam("RSPACKET", r0.rsPacket).setParam("PARA1", r0.para1).setParam("PARA2", r0.para2).setParam("PARA3", r0.para3).setParam("PARA4", r0.para4);
             r4 = android.util.IMonitor.openEventStream(EVENT_CHAN_QOE_INFO_STATIS);
@@ -74,7 +74,7 @@ public class HwAPPChrExcpReport {
             android.util.IMonitor.closeEventStream(r4);
             android.util.IMonitor.closeEventStream(r3);
      */
-    /* JADX WARNING: Missing block: B:32:0x01cc, code:
+    /* JADX WARNING: Missing block: B:35:0x01cc, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -84,55 +84,63 @@ public class HwAPPChrExcpReport {
         HistoryMseasureInfo tempChlInfo = null;
         synchronized (this.mLock) {
             HwChannelQoEManager mChannelQoEManager = HwChannelQoEManager.getInstance();
-            if (this.mQualityMonitor == null || this.mQualityMonitorCell == null || mChannelQoEManager == null) {
-                HwAPPQoEUtils.logD(TAG, "reportAPPQoExcpInfo , invalid input");
-            } else if (appScenceId < 0) {
-            } else {
-                this.mHwAPPQoEResourceManger = HwAPPQoEResourceManger.getInstance();
-                this.mHwAPPChrManager = HwAPPChrManager.getInstance();
-                HwAPPQoEAPKConfig config = this.mHwAPPQoEResourceManger.getAPKScenceConfig(appScenceId);
-                if (isReportPermmitted()) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("reportAPPQoExcpInfo:exception type is:");
-                    stringBuilder.append(excpType);
-                    HwAPPQoEUtils.logD(str, stringBuilder.toString());
-                    switch (excpType) {
-                        case 1:
-                            netType = 800;
-                            tempChlInfo = new HistoryMseasureInfo();
-                            tempExcpInfo = this.mQualityMonitor.getAPPQoEInfo();
-                            if (config != null) {
-                                this.mHwAPPChrManager.updateStatisInfo(config.mAppId, appScenceId, 19);
-                                break;
-                            }
-                            break;
-                        case 2:
-                            netType = 801;
-                            tempChlInfo = mChannelQoEManager.getHistoryMseasureInfo(801);
-                            tempExcpInfo = new HwAPPChrExcpInfo();
-                            if (config != null) {
-                                this.mHwAPPChrManager.updateStatisInfo(config.mAppId, appScenceId, 18);
-                                break;
-                            }
-                            break;
-                        case 3:
-                            netType = 801;
-                            tempChlInfo = mChannelQoEManager.getHistoryMseasureInfo(801);
-                            tempExcpInfo = new HwAPPChrExcpInfo();
-                            break;
-                    }
-                    if (tempExcpInfo == null || tempChlInfo == null) {
+            if (!(this.mQualityMonitor == null || this.mQualityMonitorCell == null)) {
+                if (mChannelQoEManager != null) {
+                    if (appScenceId < 0) {
                         return;
                     }
-                    this.lastReportTime = System.currentTimeMillis();
-                    if (this.reportCnt >= 5) {
-                        this.reportCnt = 1;
-                    } else {
-                        this.reportCnt++;
+                    this.mHwAPPQoEResourceManger = HwAPPQoEResourceManger.getInstance();
+                    this.mHwAPPChrManager = HwAPPChrManager.getInstance();
+                    HwAPPQoEAPKConfig config = this.mHwAPPQoEResourceManger.getAPKScenceConfig(appScenceId);
+                    if (isReportPermmitted()) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("reportAPPQoExcpInfo:exception type is:");
+                        stringBuilder.append(excpType);
+                        HwAPPQoEUtils.logD(str, stringBuilder.toString());
+                        switch (excpType) {
+                            case 1:
+                                netType = 800;
+                                tempChlInfo = new HistoryMseasureInfo();
+                                tempExcpInfo = this.mQualityMonitor.getAPPQoEInfo();
+                                if (config != null) {
+                                    this.mHwAPPChrManager.updateStatisInfo(config.mAppId, appScenceId, 19);
+                                    break;
+                                }
+                                break;
+                            case 2:
+                                netType = 801;
+                                tempChlInfo = mChannelQoEManager.getHistoryMseasureInfo(801);
+                                tempExcpInfo = new HwAPPChrExcpInfo();
+                                if (config != null) {
+                                    this.mHwAPPChrManager.updateStatisInfo(config.mAppId, appScenceId, 18);
+                                    break;
+                                }
+                                break;
+                            case 3:
+                                netType = 801;
+                                tempChlInfo = mChannelQoEManager.getHistoryMseasureInfo(801);
+                                tempExcpInfo = new HwAPPChrExcpInfo();
+                                break;
+                            default:
+                                break;
+                        }
+                        if (tempExcpInfo != null) {
+                            if (tempChlInfo != null) {
+                                this.lastReportTime = System.currentTimeMillis();
+                                if (this.reportCnt >= 5) {
+                                    this.reportCnt = 1;
+                                } else {
+                                    this.reportCnt++;
+                                }
+                            }
+                        }
+                        return;
                     }
+                    return;
                 }
             }
+            HwAPPQoEUtils.logD(TAG, "reportAPPQoExcpInfo , invalid input");
         }
     }
 

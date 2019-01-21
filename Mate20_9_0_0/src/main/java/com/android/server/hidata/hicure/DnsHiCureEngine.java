@@ -27,6 +27,7 @@ import com.android.internal.util.State;
 import com.android.internal.util.StateMachine;
 import com.android.server.ConnectivityService;
 import com.android.server.connectivity.NetworkAgentInfo;
+import com.android.server.hidata.arbitration.HwArbitrationDEFS;
 import com.android.server.security.deviceusage.ActivationMonitor;
 import com.android.server.wifipro.WifiProCommonUtils;
 import java.net.InetAddress;
@@ -37,7 +38,9 @@ import java.util.List;
 public class DnsHiCureEngine extends StateMachine {
     private static final String CHR_BROADCAST_PERMISSION = "com.huawei.android.permission.GET_CHR_DATA";
     private static final int DELAY_TIME = 1000;
+    private static final int DELAY_TIME_MONITOR_AGAIN = 30000;
     private static final int DNS_FAILED_THRESHOLD = 2;
+    private static final int DNS_MAX_COUNT = 4;
     public static final String DNS_MONITOR_FLAG = "hw.hicure.dns_fail_count";
     private static final String DORECOVERY_FLAG = "radio.data.stall.recovery.action";
     private static final int EVENT_DATA_CONNECTED = 102;
@@ -45,6 +48,7 @@ public class DnsHiCureEngine extends StateMachine {
     private static final int EVENT_DNS_HICURE = 104;
     private static final int EVENT_DNS_MONITOR = 103;
     private static final String EVENT_DNS_MONITOR_ACTION = "telephony.dataconnection.DNS_MONITOR_ACTION";
+    private static final int EVENT_DNS_MONITOR_AGAIN = 110;
     private static final int EVENT_DNS_PUNISH = 108;
     private static final String EVENT_DNS_PUNISH_ACTION = "telephony.dataconnection.DNS_PUNISH_ACTION";
     private static final int EVENT_DNS_SET_BACK = 107;
@@ -52,18 +56,23 @@ public class DnsHiCureEngine extends StateMachine {
     private static final int EVENT_PRIVATE_DNS_SETTINGS_CHANGED = 109;
     private static final int EVENT_SET_DNS = 105;
     private static final String[] GlobalDns = new String[]{"8.8.8.8", "208.67.222.222"};
-    private static final String[] GlobalDomain = new String[]{"www.google.com", "www.youtube.com"};
+    private static final String[] GlobalDomain = new String[]{"www.google.com", "www.facebook.com"};
+    private static final String[] GlobalVerifyDomain = new String[]{"www.youtube.com", "www.amazon.com"};
     private static final String[] HomeDns = new String[]{"180.76.76.76", "223.5.5.5"};
     private static final String[] HomeDomain = new String[]{"www.baidu.com", "www.youku.com"};
+    private static final String[] HomeVerifyDomain = new String[]{"www.taobao.com", "www.qq.com"};
     private static final String INTENT_DS_DNS_HICURE_RESULT = "com.android.intent.action.dns_hicure_result";
     private static final int ITERATION_TIME = 6000;
     private static final int PUNISH_TIME = 21600000;
     private static final String TAG = "DnsHiCureEngine";
-    private static final int WAIT_TIME = 6000;
+    private static final int WAIT_TIME = 2000;
+    private static final int WAIT_VERIFY_TIME = 9000;
     private static DnsHiCureEngine mDnsHiCureEngine = null;
     private static final String[] mDnsWhiteList = new String[]{"10.8.2.1", "10.8.2.2"};
+    private boolean DnsCureState = false;
     private List<InetAddress> NetDns = new ArrayList();
-    private String[] cellDnses = new String[2];
+    private String[] cellDnses = new String[4];
+    private int cellDnsesNum = 0;
     private boolean dnsSetPunishFlag = false;
     private String[] dnses = new String[4];
     private String[] domains = new String[2];
@@ -104,6 +113,7 @@ public class DnsHiCureEngine extends StateMachine {
     private String[] publicDns = new String[2];
     private boolean publicDnsFlag = false;
     private boolean useHostname = false;
+    private String[] verifyDomains = new String[2];
 
     class DefaultState extends State {
         DefaultState() {
@@ -134,58 +144,58 @@ public class DnsHiCureEngine extends StateMachine {
         }
 
         public boolean processMessage(Message message) {
-            int i = message.what;
-            if (i == 101) {
-                DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_DATA_DISCONNECTED");
-                DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mUnmonitoredState);
-                return true;
-            } else if (i != 109) {
-                switch (i) {
-                    case 105:
-                        DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_SET_DNS");
-                        DnsHiCureEngine.this.dnses[0] = DnsHiCureEngine.this.publicDns[0];
-                        DnsHiCureEngine.this.dnses[1] = DnsHiCureEngine.this.cellDnses[0];
-                        DnsHiCureEngine.this.dnses[2] = DnsHiCureEngine.this.publicDns[1];
-                        DnsHiCureEngine.this.dnses[3] = DnsHiCureEngine.this.cellDnses[1];
-                        DnsHiCureEngine.this.setDns(DnsHiCureEngine.this.dnses, DnsHiCureEngine.this.mLinkProperties, DnsHiCureEngine.this.mNetId);
-                        DnsHiCureEngine.this.publicDnsFlag = true;
-                        DnsHiCureEngine.this.sendMessageDelayed(106, 1000);
-                        return true;
-                    case 106:
-                        DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_DNS_SET_COMPLETE");
-                        if (true == DnsHiCureEngine.this.isAddressReachable(DnsHiCureEngine.this.domains, 6000, DnsHiCureEngine.this.mNetId)) {
-                            DnsHiCureEngine.this.notifyChrDnsHiCureResult(DnsHiCureEngine.this.cellDnses[0], DnsHiCureEngine.this.cellDnses[1], true);
-                            DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mMonitoredState);
-                            return true;
-                        }
-                        DnsHiCureEngine.this.notifyChrDnsHiCureResult(DnsHiCureEngine.this.cellDnses[0], DnsHiCureEngine.this.cellDnses[1], false);
-                        DnsHiCureEngine.this.sendMessage(107);
-                        return true;
-                    case 107:
-                        DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_DNS_SET_BACK");
-                        DnsHiCureEngine.this.dnses[0] = DnsHiCureEngine.this.cellDnses[0];
-                        DnsHiCureEngine.this.dnses[1] = DnsHiCureEngine.this.cellDnses[1];
-                        DnsHiCureEngine.this.setDns(DnsHiCureEngine.this.dnses, DnsHiCureEngine.this.mLinkProperties, DnsHiCureEngine.this.mNetId);
-                        DnsHiCureEngine.this.publicDnsFlag = true;
-                        DnsHiCureEngine.this.dnsSetPunishFlag = true;
-                        DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mUnmonitoredState);
-                        return true;
-                    default:
-                        DnsHiCureEngine dnsHiCureEngine = DnsHiCureEngine.this;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("mHiCureState: default message.what=");
-                        stringBuilder.append(message.what);
-                        dnsHiCureEngine.log(stringBuilder.toString());
-                        return false;
-                }
-            } else {
-                DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_PRIVATE_DNS_SETTINGS_CHANGED");
-                DnsHiCureEngine.this.updataprivateDNScfg();
-                if (true != DnsHiCureEngine.this.useHostname) {
+            switch (message.what) {
+                case 101:
+                    DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_DATA_DISCONNECTED");
+                    DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mUnmonitoredState);
                     return true;
-                }
-                DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mUnmonitoredState);
-                return true;
+                case 105:
+                    DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_SET_DNS");
+                    DnsHiCureEngine.this.dnses[0] = DnsHiCureEngine.this.publicDns[0];
+                    DnsHiCureEngine.this.dnses[1] = DnsHiCureEngine.this.cellDnses[0];
+                    DnsHiCureEngine.this.dnses[2] = DnsHiCureEngine.this.publicDns[1];
+                    DnsHiCureEngine.this.dnses[3] = DnsHiCureEngine.this.cellDnses[1];
+                    DnsHiCureEngine.this.setDns(DnsHiCureEngine.this.dnses, DnsHiCureEngine.this.mLinkProperties, DnsHiCureEngine.this.mNetId);
+                    DnsHiCureEngine.this.publicDnsFlag = true;
+                    DnsHiCureEngine.this.sendMessageDelayed(106, 1000);
+                    return true;
+                case 106:
+                    DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_DNS_SET_COMPLETE");
+                    DnsHiCureEngine.this.DnsCureState = true;
+                    if (true == DnsHiCureEngine.this.isAddressReachable(DnsHiCureEngine.this.verifyDomains, DnsHiCureEngine.WAIT_VERIFY_TIME, DnsHiCureEngine.this.mNetId)) {
+                        DnsHiCureEngine.this.notifyChrDnsHiCureResult(DnsHiCureEngine.this.cellDnses[0], DnsHiCureEngine.this.cellDnses[1], true);
+                        DnsHiCureEngine.this.sendMessageDelayed(110, HwArbitrationDEFS.DelayTimeMillisA);
+                        return true;
+                    }
+                    DnsHiCureEngine.this.notifyChrDnsHiCureResult(DnsHiCureEngine.this.cellDnses[0], DnsHiCureEngine.this.cellDnses[1], false);
+                    DnsHiCureEngine.this.sendMessage(107);
+                    return true;
+                case 107:
+                    DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_DNS_SET_BACK");
+                    DnsHiCureEngine.this.setDns(DnsHiCureEngine.this.cellDnses, DnsHiCureEngine.this.mLinkProperties, DnsHiCureEngine.this.mNetId);
+                    DnsHiCureEngine.this.publicDnsFlag = false;
+                    DnsHiCureEngine.this.dnsSetPunishFlag = true;
+                    DnsHiCureEngine.this.DnsCureState = false;
+                    DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mUnmonitoredState);
+                    return true;
+                case 109:
+                    DnsHiCureEngine.this.log("mHiCureState processMessage EVENT_PRIVATE_DNS_SETTINGS_CHANGED");
+                    DnsHiCureEngine.this.updataprivateDNScfg();
+                    if (true != DnsHiCureEngine.this.useHostname) {
+                        return true;
+                    }
+                    DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mUnmonitoredState);
+                    return true;
+                case 110:
+                    DnsHiCureEngine.this.transitionTo(DnsHiCureEngine.this.mMonitoredState);
+                    return true;
+                default:
+                    DnsHiCureEngine dnsHiCureEngine = DnsHiCureEngine.this;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("mHiCureState: default message.what=");
+                    stringBuilder.append(message.what);
+                    dnsHiCureEngine.log(stringBuilder.toString());
+                    return false;
             }
         }
     }
@@ -206,6 +216,7 @@ public class DnsHiCureEngine extends StateMachine {
             this.mAlarmManager.set(3, SystemClock.elapsedRealtime() + 6000, this.mDnsAlarmIntent);
             DnsHiCureEngine.this.publicDns = DnsHiCureEngine.GlobalDns;
             DnsHiCureEngine.this.domains = DnsHiCureEngine.GlobalDomain;
+            DnsHiCureEngine.this.verifyDomains = DnsHiCureEngine.GlobalVerifyDomain;
             if (DnsHiCureEngine.this.mTelephonyManager == null) {
                 DnsHiCureEngine.this.log("getSimOperator: mTelephonyManager is null, return!");
                 return;
@@ -213,6 +224,7 @@ public class DnsHiCureEngine extends StateMachine {
             if (DnsHiCureEngine.this.mTelephonyManager.getSimOperator().startsWith(WifiProCommonUtils.COUNTRY_CODE_CN)) {
                 DnsHiCureEngine.this.publicDns = DnsHiCureEngine.HomeDns;
                 DnsHiCureEngine.this.domains = DnsHiCureEngine.HomeDomain;
+                DnsHiCureEngine.this.verifyDomains = DnsHiCureEngine.HomeVerifyDomain;
             }
         }
 
@@ -225,7 +237,6 @@ public class DnsHiCureEngine extends StateMachine {
             } else if (i != 109) {
                 switch (i) {
                     case 103:
-                        DnsHiCureEngine.this.log("mMonitoredState processMessage EVENT_DNS_MONITOR");
                         dnsMonitor();
                         return true;
                     case 104:
@@ -259,17 +270,25 @@ public class DnsHiCureEngine extends StateMachine {
             this.mCurrDnsFailedCounter = getCurrentDnsFailedCounter();
             int deltaFailedDns = this.mCurrDnsFailedCounter - this.mLastDnsFailedCounter;
             this.mLastDnsFailedCounter = this.mCurrDnsFailedCounter;
-            DnsHiCureEngine dnsHiCureEngine = DnsHiCureEngine.this;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("deltaFailedDns = ");
-            stringBuilder.append(deltaFailedDns);
-            dnsHiCureEngine.log(stringBuilder.toString());
-            if (deltaFailedDns < 2 || !DnsHiCureEngine.this.isDnsCureSuitable() || DnsHiCureEngine.this.isAddressReachable(DnsHiCureEngine.this.domains, 6000, DnsHiCureEngine.this.mNetId) || DnsHiCureEngine.this.isRecoveryAction()) {
-                this.mAlarmManager.set(3, SystemClock.elapsedRealtime() + 6000, this.mDnsAlarmIntent);
-                return;
+            if (deltaFailedDns > 0) {
+                DnsHiCureEngine dnsHiCureEngine = DnsHiCureEngine.this;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("deltaFailedDns = ");
+                stringBuilder.append(deltaFailedDns);
+                dnsHiCureEngine.log(stringBuilder.toString());
             }
-            DnsHiCureEngine.this.log("isAddressReachable? no. SendMessage(EVENT_DNS_HICURE)");
-            DnsHiCureEngine.this.sendMessage(104);
+            if (deltaFailedDns >= 2 && DnsHiCureEngine.this.isDnsCureSuitable()) {
+                int waitTime = DnsHiCureEngine.WAIT_VERIFY_TIME;
+                if (!DnsHiCureEngine.this.isDnsCuring()) {
+                    waitTime = (DnsHiCureEngine.this.cellDnsesNum * 2000) + 1000;
+                }
+                if (!(DnsHiCureEngine.this.isAddressReachable(DnsHiCureEngine.this.domains, waitTime, DnsHiCureEngine.this.mNetId) || DnsHiCureEngine.this.isRecoveryAction())) {
+                    DnsHiCureEngine.this.log("isAddressReachable? no. SendMessage(EVENT_DNS_HICURE)");
+                    DnsHiCureEngine.this.sendMessage(104);
+                    return;
+                }
+            }
+            this.mAlarmManager.set(3, SystemClock.elapsedRealtime() + 6000, this.mDnsAlarmIntent);
         }
 
         public int getCurrentDnsFailedCounter() {
@@ -385,11 +404,6 @@ public class DnsHiCureEngine extends StateMachine {
         intentFilter.addAction(EVENT_DNS_PUNISH_ACTION);
         this.mContext.registerReceiver(new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                DnsHiCureEngine dnsHiCureEngine = DnsHiCureEngine.this;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("onReceive: ");
-                stringBuilder.append(intent.getAction());
-                dnsHiCureEngine.log(stringBuilder.toString());
                 if (DnsHiCureEngine.EVENT_DNS_MONITOR_ACTION.equals(intent.getAction())) {
                     DnsHiCureEngine.this.sendMessage(103);
                 } else if (DnsHiCureEngine.EVENT_DNS_PUNISH_ACTION.equals(intent.getAction())) {
@@ -482,12 +496,21 @@ public class DnsHiCureEngine extends StateMachine {
         return false;
     }
 
+    private boolean isDnsCuring() {
+        return this.DnsCureState;
+    }
+
     private boolean isAddressReachable(String[] domain, int time, int netid) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("isAddressReachable starttime:");
-        stringBuilder.append(SystemClock.elapsedRealtime());
+        stringBuilder.append("isAddressReachable timeout:");
+        stringBuilder.append(time);
         log(stringBuilder.toString());
-        return new DnsProbe(time, netid).isDnsAvailable(domain);
+        boolean ret = new DnsProbe(time, netid).isDnsAvailable(domain);
+        StringBuilder stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("isAddressReachable ret:");
+        stringBuilder2.append(ret);
+        log(stringBuilder2.toString());
+        return ret;
     }
 
     private void setDns(String[] ndnses, LinkProperties lp, int netid) {
@@ -537,6 +560,10 @@ public class DnsHiCureEngine extends StateMachine {
         } catch (SettingNotFoundException e) {
             log("Settings Exception Reading Dorecovery Values");
         }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("isRecoveryAction:");
+        stringBuilder.append(action);
+        log(stringBuilder.toString());
         if (action > 0) {
             return true;
         }
@@ -566,10 +593,30 @@ public class DnsHiCureEngine extends StateMachine {
                 stringBuilder.append(this.NetDns.size());
                 log(stringBuilder.toString());
             } else {
-                String temp = ((InetAddress) this.NetDns.get(0)).toString();
-                this.cellDnses[0] = temp.substring(1, temp.length());
-                String temp2 = ((InetAddress) this.NetDns.get(1)).toString();
-                this.cellDnses[1] = temp2.substring(1, temp2.length());
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("NetDns.size() = ");
+                stringBuilder2.append(this.NetDns.size());
+                log(stringBuilder2.toString());
+                this.cellDnsesNum = 0;
+                int i = 4;
+                if (this.NetDns.size() <= 4) {
+                    i = this.NetDns.size();
+                }
+                int dnsCnt = i;
+                for (i = 0; i < dnsCnt; i++) {
+                    String temp = ((InetAddress) this.NetDns.get(i)).toString();
+                    this.cellDnses[i] = temp.substring(1, temp.length());
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("cellDnses = ");
+                    stringBuilder3.append(this.cellDnses[i]);
+                    stringBuilder3.append(", temp =");
+                    stringBuilder3.append(temp);
+                    log(stringBuilder3.toString());
+                    if (this.cellDnses[i].length() > 0) {
+                        this.cellDnsesNum++;
+                    }
+                }
+                this.DnsCureState = false;
                 this.dsFlag = true;
                 sendMessage(102);
             }
@@ -580,6 +627,7 @@ public class DnsHiCureEngine extends StateMachine {
         this.mLinkProperties = null;
         this.mNetId = 0;
         this.dsFlag = false;
+        this.DnsCureState = false;
         sendMessage(101);
     }
 

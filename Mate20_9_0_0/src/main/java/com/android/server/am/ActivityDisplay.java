@@ -377,8 +377,10 @@ public class ActivityDisplay extends ConfigurationContainer<ActivityStack> imple
         try {
             for (int i = this.mStacks.size() - 1; i >= 0; i--) {
                 ActivityStack otherStack = (ActivityStack) this.mStacks.get(i);
-                if (otherStack != this.mSplitScreenPrimaryStack && otherStack.affectedBySplitScreenResize()) {
-                    otherStack.setWindowingMode(4, false, false, true, true);
+                if (otherStack != this.mSplitScreenPrimaryStack) {
+                    if (otherStack.affectedBySplitScreenResize()) {
+                        otherStack.setWindowingMode(4, false, false, true, true);
+                    }
                 }
             }
         } finally {

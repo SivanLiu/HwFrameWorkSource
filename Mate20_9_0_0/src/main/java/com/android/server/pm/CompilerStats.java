@@ -52,7 +52,10 @@ class CompilerStats extends AbstractStatsBase<Void> {
             String storagePath = getStoredPathFromCodePath(codePath);
             synchronized (this.compileTimePerCodePath) {
                 if (compileTimeInMs <= 0) {
-                    this.compileTimePerCodePath.remove(storagePath);
+                    try {
+                        this.compileTimePerCodePath.remove(storagePath);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     this.compileTimePerCodePath.put(storagePath, Long.valueOf(compileTimeInMs));
                 }

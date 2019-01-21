@@ -12,15 +12,15 @@ public class SPHINCS256KeyPairGenerator implements AsymmetricCipherKeyPairGenera
 
     public AsymmetricCipherKeyPair generateKeyPair() {
         leafaddr leafaddr = new leafaddr();
-        Object obj = new byte[1088];
-        this.random.nextBytes(obj);
-        Object obj2 = new byte[1056];
-        System.arraycopy(obj, 32, obj2, 0, 1024);
+        byte[] bArr = new byte[1088];
+        this.random.nextBytes(bArr);
+        byte[] bArr2 = new byte[1056];
+        System.arraycopy(bArr, 32, bArr2, 0, 1024);
         leafaddr.level = 11;
         leafaddr.subtree = 0;
         leafaddr.subleaf = 0;
-        Tree.treehash(new HashFunctions(this.treeDigest), obj2, 1024, 5, obj, leafaddr, obj2, 0);
-        return new AsymmetricCipherKeyPair(new SPHINCSPublicKeyParameters(obj2), new SPHINCSPrivateKeyParameters(obj));
+        Tree.treehash(new HashFunctions(this.treeDigest), bArr2, 1024, 5, bArr, leafaddr, bArr2, 0);
+        return new AsymmetricCipherKeyPair(new SPHINCSPublicKeyParameters(bArr2), new SPHINCSPrivateKeyParameters(bArr));
     }
 
     public void init(KeyGenerationParameters keyGenerationParameters) {

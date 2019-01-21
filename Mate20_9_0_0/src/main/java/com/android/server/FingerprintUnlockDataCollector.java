@@ -24,7 +24,7 @@ public class FingerprintUnlockDataCollector {
     static final int AUTHENTICATE_NONE = 0;
     static final int AUTHENTICATE_SUCCESS = 1;
     private static boolean DEBUG = false;
-    private static boolean DEBUG_FPLOG = false;
+    private static boolean DEBUG_FPLOG = true;
     static String ENROLL_LOG_FULL_PATH = "/data/log/fingerprint/fpc_enroll.json";
     private static final long SLEEP_TIME = 50;
     static String STATS_UNLOCK_FILE = "/data/log/fingerprint/fp_unlock";
@@ -59,13 +59,8 @@ public class FingerprintUnlockDataCollector {
     private String mScreenOnTimeToWrite;
 
     static {
-        boolean z = true;
-        boolean z2 = Log.HWINFO || (Log.HWModuleLog && Log.isLoggable(TAG, 4));
-        DEBUG = z2;
-        if (!DEBUG) {
-            z = false;
-        }
-        DEBUG_FPLOG = z;
+        boolean z = Log.HWINFO || (Log.HWModuleLog && Log.isLoggable(TAG, 4));
+        DEBUG = z;
     }
 
     public static FingerprintUnlockDataCollector getInstance() {
@@ -176,60 +171,72 @@ public class FingerprintUnlockDataCollector {
         _data.recycle();
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0023  */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x001a  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void reportScreenTurnedOn() {
         boolean isScreenStateOnCurr = isScreenOn();
         synchronized (this) {
-            boolean mScreenOnInAuthenticating = this.mScreenOnFingerDown || this.mScreenOnCaptureCompleted || this.mScreenOnAuthenticated;
-            if (this.isAuthenticated == 0) {
-                Log.d(TAG, "case xxx, not a fingerprint unlock ");
-                return;
-            }
-            if (mScreenOnInAuthenticating) {
-                if (isScreenStateOnCurr) {
-                    if (this.isAuthenticated == 2) {
-                        Log.d(TAG, "case 110, unlock fail during screen on");
+            boolean mScreenOnInAuthenticating;
+            if (!(this.mScreenOnFingerDown || this.mScreenOnCaptureCompleted)) {
+                if (!this.mScreenOnAuthenticated) {
+                    mScreenOnInAuthenticating = false;
+                    if (this.isAuthenticated != 0) {
+                        Log.d(TAG, "case xxx, not a fingerprint unlock ");
+                        return;
+                    }
+                    if (mScreenOnInAuthenticating) {
+                        if (isScreenStateOnCurr) {
+                            if (this.isAuthenticated == 2) {
+                                Log.d(TAG, "case 110, unlock fail during screen on");
+                                this.mScreenOnTime = "null";
+                            } else {
+                                Log.d(TAG, "case 111, unlock succ during screen on");
+                                this.mScreenOnTime = "null";
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        FingerprintUnlockDataCollector.this.sendUnlockAndLightbright(2);
+                                    }
+                                }).start();
+                            }
+                        } else if (this.isAuthenticated == 2) {
+                            Log.d(TAG, "case 100, unlock fail and screen off by hand");
+                            this.mScreenOnTime = "null";
+                        } else {
+                            Log.d(TAG, "case 101, unlock succ but screen off by hand");
+                            this.mScreenOnTime = "null";
+                        }
+                    } else if (isScreenStateOnCurr) {
+                        if (this.isAuthenticated == 2) {
+                            Log.d(TAG, "case 010, screen on after unlock fail");
+                            this.mScreenOnTime = "null";
+                        } else {
+                            Log.d(TAG, "case 011, screen on after unlock succ");
+                            this.mScreenOnTime = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(Long.valueOf(System.currentTimeMillis()));
+                            new Thread(new Runnable() {
+                                public void run() {
+                                    FingerprintUnlockDataCollector.this.sendUnlockAndLightbright(1);
+                                }
+                            }).start();
+                        }
+                    } else if (this.isAuthenticated == 2) {
+                        Log.d(TAG, "case 000, black unlock fail");
                         this.mScreenOnTime = "null";
                     } else {
-                        Log.d(TAG, "case 111, unlock succ during screen on");
-                        this.mScreenOnTime = "null";
-                        new Thread(new Runnable() {
-                            public void run() {
-                                FingerprintUnlockDataCollector.this.sendUnlockAndLightbright(2);
-                            }
-                        }).start();
+                        Log.d(TAG, "case 001, wait for unlock screen on report");
+                        return;
                     }
-                } else if (this.isAuthenticated == 2) {
-                    Log.d(TAG, "case 100, unlock fail and screen off by hand");
-                    this.mScreenOnTime = "null";
-                } else {
-                    Log.d(TAG, "case 101, unlock succ but screen off by hand");
-                    this.mScreenOnTime = "null";
+                    this.isAuthenticated = 0;
+                    this.mFingerDownTimeToWrite = this.mFingerDownTime;
+                    this.mCaptureCompletedTimeToWrite = this.mCaptureCompletedTime;
+                    this.mAuthenticatedTimeToWrite = this.mAuthenticatedTime;
+                    this.mScreenOnTimeToWrite = this.mScreenOnTime;
+                    return;
                 }
-            } else if (isScreenStateOnCurr) {
-                if (this.isAuthenticated == 2) {
-                    Log.d(TAG, "case 010, screen on after unlock fail");
-                    this.mScreenOnTime = "null";
-                } else {
-                    Log.d(TAG, "case 011, screen on after unlock succ");
-                    this.mScreenOnTime = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(Long.valueOf(System.currentTimeMillis()));
-                    new Thread(new Runnable() {
-                        public void run() {
-                            FingerprintUnlockDataCollector.this.sendUnlockAndLightbright(1);
-                        }
-                    }).start();
-                }
-            } else if (this.isAuthenticated == 2) {
-                Log.d(TAG, "case 000, black unlock fail");
-                this.mScreenOnTime = "null";
-            } else {
-                Log.d(TAG, "case 001, wait for unlock screen on report");
-                return;
             }
-            this.isAuthenticated = 0;
-            this.mFingerDownTimeToWrite = this.mFingerDownTime;
-            this.mCaptureCompletedTimeToWrite = this.mCaptureCompletedTime;
-            this.mAuthenticatedTimeToWrite = this.mAuthenticatedTime;
-            this.mScreenOnTimeToWrite = this.mScreenOnTime;
+            mScreenOnInAuthenticating = true;
+            if (this.isAuthenticated != 0) {
+            }
         }
     }
 

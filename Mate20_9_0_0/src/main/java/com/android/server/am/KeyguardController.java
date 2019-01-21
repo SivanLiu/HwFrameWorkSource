@@ -6,7 +6,6 @@ import android.os.RemoteException;
 import android.os.Trace;
 import android.util.Flog;
 import android.util.HwPCUtils;
-import android.util.HwVRUtils;
 import android.util.Slog;
 import android.util.proto.ProtoOutputStream;
 import com.android.internal.policy.IKeyguardDismissCallback;
@@ -188,10 +187,9 @@ class KeyguardController {
         boolean isPadPcCastModeInServer = HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer();
         for (int displayNdx = this.mStackSupervisor.getChildCount() - 1; displayNdx >= 0; displayNdx--) {
             ActivityDisplay display = this.mStackSupervisor.getChildAt(displayNdx);
-            boolean isVRdisplayId = HwVRUtils.isValidVRDisplayId(display.mDisplayId);
             for (int stackNdx = display.getChildCount() - 1; stackNdx >= 0; stackNdx--) {
                 ActivityStack stack = display.getChildAt(stackNdx);
-                if ((display.mDisplayId == 0 || isPadPcCastModeInServer || isVRdisplayId) && this.mStackSupervisor.isFocusedStack(stack)) {
+                if ((display.mDisplayId == 0 || isPadPcCastModeInServer) && this.mStackSupervisor.isFocusedStack(stack)) {
                     ActivityRecord topDismissing = stack.getTopDismissingKeyguardActivity();
                     boolean z = stack.topActivityOccludesKeyguard() || (topDismissing != null && stack.topRunningActivityLocked() == topDismissing && canShowWhileOccluded(true, false));
                     this.mOccluded = z;

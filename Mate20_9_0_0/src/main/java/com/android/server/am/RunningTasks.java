@@ -22,15 +22,14 @@ class RunningTasks {
     void getTasks(int maxNum, List<RunningTaskInfo> list, @ActivityType int ignoreActivityType, @WindowingMode int ignoreWindowingMode, SparseArray<ActivityDisplay> activityDisplays, int callingUid, boolean allowed) {
         if (maxNum > 0) {
             this.mTmpSortedSet.clear();
-            this.mTmpStackTasks.clear();
             int numDisplays = activityDisplays.size();
             for (int displayNdx = 0; displayNdx < numDisplays; displayNdx++) {
                 ActivityDisplay display = (ActivityDisplay) activityDisplays.valueAt(displayNdx);
                 for (int stackNdx = display.getChildCount() - 1; stackNdx >= 0; stackNdx--) {
-                    display.getChildAt(stackNdx).getRunningTasks(this.mTmpStackTasks, ignoreActivityType, ignoreWindowingMode, callingUid, allowed);
-                    for (int i = this.mTmpStackTasks.size() - 1; i >= 0; i--) {
-                        this.mTmpSortedSet.addAll(this.mTmpStackTasks);
-                    }
+                    ActivityStack stack = display.getChildAt(stackNdx);
+                    this.mTmpStackTasks.clear();
+                    stack.getRunningTasks(this.mTmpStackTasks, ignoreActivityType, ignoreWindowingMode, callingUid, allowed);
+                    this.mTmpSortedSet.addAll(this.mTmpStackTasks);
                 }
             }
             SparseArray<ActivityDisplay> sparseArray = activityDisplays;

@@ -122,7 +122,7 @@ final class InstantAppResolverConnection implements DeathRecipient {
         throwIfCalledOnMainThread();
         IInstantAppResolver target = null;
         try {
-            List<InstantAppResolveInfo> instantAppResolveInfoList = this.mGetInstantAppResolveInfoCaller.getInstantAppResolveInfoList(getRemoteInstanceLazy(token), sanitizedIntent, hashPrefix, token);
+            List instantAppResolveInfoList = this.mGetInstantAppResolveInfoCaller.getInstantAppResolveInfoList(getRemoteInstanceLazy(token), sanitizedIntent, hashPrefix, token);
             synchronized (this.mLock) {
                 this.mLock.notifyAll();
             }
@@ -190,16 +190,16 @@ final class InstantAppResolverConnection implements DeathRecipient {
         }
     }
 
-    /* JADX WARNING: Missing block: B:36:0x0076, code:
+    /* JADX WARNING: Missing block: B:37:0x0076, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:37:0x0079, code:
+    /* JADX WARNING: Missing block: B:38:0x0079, code skipped:
             if (r0 == false) goto L_0x00a7;
      */
-    /* JADX WARNING: Missing block: B:40:0x007d, code:
+    /* JADX WARNING: Missing block: B:41:0x007d, code skipped:
             if (DEBUG_INSTANT == false) goto L_0x009a;
      */
-    /* JADX WARNING: Missing block: B:41:0x007f, code:
+    /* JADX WARNING: Missing block: B:42:0x007f, code skipped:
             r6 = TAG;
             r7 = new java.lang.StringBuilder();
             r7.append("[");
@@ -207,17 +207,17 @@ final class InstantAppResolverConnection implements DeathRecipient {
             r7.append("] Previous connection never established; rebinding");
             android.util.Slog.i(r6, r7.toString());
      */
-    /* JADX WARNING: Missing block: B:42:0x009a, code:
+    /* JADX WARNING: Missing block: B:43:0x009a, code skipped:
             r12.mContext.unbindService(r12.mServiceConnection);
      */
-    /* JADX WARNING: Missing block: B:44:0x00a3, code:
+    /* JADX WARNING: Missing block: B:45:0x00a3, code skipped:
             r6 = null;
             r2 = r1;
      */
-    /* JADX WARNING: Missing block: B:46:0x00a9, code:
+    /* JADX WARNING: Missing block: B:47:0x00a9, code skipped:
             if (DEBUG_INSTANT == false) goto L_0x00c6;
      */
-    /* JADX WARNING: Missing block: B:47:0x00ab, code:
+    /* JADX WARNING: Missing block: B:48:0x00ab, code skipped:
             r6 = TAG;
             r7 = new java.lang.StringBuilder();
             r7.append("[");
@@ -225,53 +225,53 @@ final class InstantAppResolverConnection implements DeathRecipient {
             r7.append("] Binding to instant app resolver");
             android.util.Slog.v(r6, r7.toString());
      */
-    /* JADX WARNING: Missing block: B:48:0x00c6, code:
+    /* JADX WARNING: Missing block: B:49:0x00c6, code skipped:
             r1 = r12.mContext.bindServiceAsUser(r12.mIntent, r12.mServiceConnection, 67108865, android.os.UserHandle.SYSTEM);
      */
-    /* JADX WARNING: Missing block: B:49:0x00d9, code:
+    /* JADX WARNING: Missing block: B:50:0x00d9, code skipped:
             if (r1 == false) goto L_0x00fe;
      */
-    /* JADX WARNING: Missing block: B:50:0x00db, code:
+    /* JADX WARNING: Missing block: B:51:0x00db, code skipped:
             r4 = r12.mLock;
      */
-    /* JADX WARNING: Missing block: B:51:0x00dd, code:
+    /* JADX WARNING: Missing block: B:52:0x00dd, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:53:?, code:
+    /* JADX WARNING: Missing block: B:54:?, code skipped:
             waitForBindLocked(r13);
             r2 = r12.mRemoteInstance;
      */
-    /* JADX WARNING: Missing block: B:54:0x00e4, code:
+    /* JADX WARNING: Missing block: B:55:0x00e4, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:55:0x00e5, code:
+    /* JADX WARNING: Missing block: B:56:0x00e5, code skipped:
             r7 = r12.mLock;
      */
-    /* JADX WARNING: Missing block: B:56:0x00e7, code:
+    /* JADX WARNING: Missing block: B:57:0x00e7, code skipped:
             monitor-enter(r7);
      */
-    /* JADX WARNING: Missing block: B:57:0x00e8, code:
+    /* JADX WARNING: Missing block: B:58:0x00e8, code skipped:
             if (r1 == false) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:58:0x00ea, code:
+    /* JADX WARNING: Missing block: B:59:0x00ea, code skipped:
             if (r2 != false) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:60:?, code:
+    /* JADX WARNING: Missing block: B:61:?, code skipped:
             r12.mBindState = 2;
      */
-    /* JADX WARNING: Missing block: B:61:0x00ef, code:
+    /* JADX WARNING: Missing block: B:62:0x00ef, code skipped:
             r12.mBindState = 0;
      */
-    /* JADX WARNING: Missing block: B:62:0x00f1, code:
+    /* JADX WARNING: Missing block: B:63:0x00f1, code skipped:
             r12.mLock.notifyAll();
      */
-    /* JADX WARNING: Missing block: B:63:0x00f6, code:
+    /* JADX WARNING: Missing block: B:64:0x00f6, code skipped:
             monitor-exit(r7);
      */
-    /* JADX WARNING: Missing block: B:64:0x00f7, code:
+    /* JADX WARNING: Missing block: B:65:0x00f7, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:73:0x00fe, code:
+    /* JADX WARNING: Missing block: B:74:0x00fe, code skipped:
             r7 = TAG;
             r8 = new java.lang.StringBuilder();
             r8.append("[");
@@ -280,22 +280,22 @@ final class InstantAppResolverConnection implements DeathRecipient {
             r8.append(r12.mIntent);
             android.util.Slog.w(r7, r8.toString());
      */
-    /* JADX WARNING: Missing block: B:74:0x0123, code:
+    /* JADX WARNING: Missing block: B:75:0x0123, code skipped:
             throw new com.android.server.pm.InstantAppResolverConnection.ConnectionException(1);
      */
-    /* JADX WARNING: Missing block: B:76:0x0126, code:
+    /* JADX WARNING: Missing block: B:77:0x0126, code skipped:
             monitor-enter(r12.mLock);
      */
-    /* JADX WARNING: Missing block: B:77:0x0127, code:
+    /* JADX WARNING: Missing block: B:78:0x0127, code skipped:
             if (r2 == false) goto L_0x012e;
      */
-    /* JADX WARNING: Missing block: B:80:?, code:
+    /* JADX WARNING: Missing block: B:81:?, code skipped:
             r12.mBindState = 2;
      */
-    /* JADX WARNING: Missing block: B:81:0x012e, code:
+    /* JADX WARNING: Missing block: B:82:0x012e, code skipped:
             r12.mBindState = 0;
      */
-    /* JADX WARNING: Missing block: B:82:0x0130, code:
+    /* JADX WARNING: Missing block: B:83:0x0130, code skipped:
             r12.mLock.notifyAll();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -357,24 +357,13 @@ final class InstantAppResolverConnection implements DeathRecipient {
         this.mBgHandler.post(new -$$Lambda$InstantAppResolverConnection$D-JKXi4qrYjnPQMOwj8UtfZenps(this));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: com.android.server.pm.InstantAppResolverConnection.ConnectionException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: com.android.server.pm.InstantAppResolverConnection.ConnectionException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:7:0x0015, code:
-            android.util.Slog.e(TAG, "Optimistic bind failed.", r0);
-     */
-    /* JADX WARNING: Missing block: B:8:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static /* synthetic */ void lambda$optimisticBind$0(InstantAppResolverConnection instantAppResolverConnection) {
         try {
             if (instantAppResolverConnection.bind("Optimistic Bind") != null && DEBUG_INSTANT) {
                 Slog.i(TAG, "Optimistic bind succeeded.");
             }
-        } catch (Exception e) {
+        } catch (ConnectionException | InterruptedException | TimeoutException e) {
+            Slog.e(TAG, "Optimistic bind failed.", e);
         }
     }
 

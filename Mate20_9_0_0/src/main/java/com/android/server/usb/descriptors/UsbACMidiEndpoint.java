@@ -7,6 +7,14 @@ public final class UsbACMidiEndpoint extends UsbACEndpoint {
     private byte[] mJackIds;
     private byte mNumJacks;
 
+    public /* bridge */ /* synthetic */ int getSubclass() {
+        return super.getSubclass();
+    }
+
+    public /* bridge */ /* synthetic */ byte getSubtype() {
+        return super.getSubtype();
+    }
+
     public UsbACMidiEndpoint(int length, byte type, int subclass) {
         super(length, type, subclass);
     }

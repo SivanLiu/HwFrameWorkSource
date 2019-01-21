@@ -490,13 +490,13 @@ public class AwareBroadcastPolicy {
             }
             switch (access$3300) {
                 case 1:
-                    return "MOBILEDATACON".equals(filterValue) ^ true;
+                    return "MOBILEDATACON".equals(filterValue) ^ 1;
                 case 2:
-                    return "MOBILEDATADSCON".equals(filterValue) ^ true;
+                    return "MOBILEDATADSCON".equals(filterValue) ^ 1;
                 case 3:
-                    return AwareBroadcastPolicy.CONNECT_STATUS_WIFI_CON_VALUE.equals(filterValue) ^ true;
+                    return AwareBroadcastPolicy.CONNECT_STATUS_WIFI_CON_VALUE.equals(filterValue) ^ 1;
                 case 4:
-                    return AwareBroadcastPolicy.CONNECT_STATUS_WIFI_DSCON_VALUE.equals(filterValue) ^ true;
+                    return AwareBroadcastPolicy.CONNECT_STATUS_WIFI_DSCON_VALUE.equals(filterValue) ^ 1;
                 default:
                     return true;
             }
@@ -566,7 +566,7 @@ public class AwareBroadcastPolicy {
 
         public boolean filter(Intent intent, String filterValue) {
             if (AwareBroadcastPolicy.SCREEN_STATUS_ON.equals(filterValue)) {
-                return AwareBroadcastPolicy.this.mScreenOn ^ true;
+                return AwareBroadcastPolicy.this.mScreenOn ^ 1;
             }
             if (AwareBroadcastPolicy.SCREEN_STATUS_OFF.equals(filterValue)) {
                 return AwareBroadcastPolicy.this.mScreenOn;
@@ -587,11 +587,11 @@ public class AwareBroadcastPolicy {
         public boolean filter(Intent intent, String filterValue) {
             int access$2600 = AwareBroadcastPolicy.this.mWifiStatue;
             if (access$2600 == 1) {
-                return AwareBroadcastPolicy.WIFI_STATUS_DISABLED_VALUE.equals(filterValue) ^ true;
+                return AwareBroadcastPolicy.WIFI_STATUS_DISABLED_VALUE.equals(filterValue) ^ 1;
             }
             switch (access$2600) {
                 case 3:
-                    return AwareBroadcastPolicy.WIFI_STATUS_ENABLED_VALUE.equals(filterValue) ^ true;
+                    return AwareBroadcastPolicy.WIFI_STATUS_ENABLED_VALUE.equals(filterValue) ^ 1;
                 case 4:
                     return false;
                 default:
@@ -612,11 +612,11 @@ public class AwareBroadcastPolicy {
         public boolean filter(Intent intent, String filterValue) {
             switch (AnonymousClass1.$SwitchMap$android$net$NetworkInfo$State[AwareBroadcastPolicy.this.mWifiNetStatue.ordinal()]) {
                 case 1:
-                    return "WIFICON".equals(filterValue) ^ true;
+                    return "WIFICON".equals(filterValue) ^ 1;
                 case 2:
-                    return "WIFIDSCON".equals(filterValue) ^ true;
+                    return "WIFIDSCON".equals(filterValue) ^ 1;
                 case 3:
-                    return AwareBroadcastPolicy.WIFI_STATUS_CONNECTING_VALUE.equals(filterValue) ^ true;
+                    return AwareBroadcastPolicy.WIFI_STATUS_CONNECTING_VALUE.equals(filterValue) ^ 1;
                 case 4:
                     return false;
                 default:
@@ -668,9 +668,9 @@ public class AwareBroadcastPolicy {
         public boolean filter(Intent intent, String filterValue) {
             switch (AnonymousClass1.$SwitchMap$android$net$wifi$SupplicantState[AwareBroadcastPolicy.this.mWifiSupStatue.ordinal()]) {
                 case 1:
-                    return AwareBroadcastPolicy.WIFI_SUP_STATUS_COMPLET_VALUE.equals(filterValue) ^ true;
+                    return AwareBroadcastPolicy.WIFI_SUP_STATUS_COMPLET_VALUE.equals(filterValue) ^ 1;
                 case 2:
-                    return AwareBroadcastPolicy.WIFI_SUP_STATUS_DISCONNECT_VALUE.equals(filterValue) ^ true;
+                    return AwareBroadcastPolicy.WIFI_SUP_STATUS_DISCONNECT_VALUE.equals(filterValue) ^ 1;
                 case 3:
                     return false;
                 default:
@@ -730,22 +730,22 @@ public class AwareBroadcastPolicy {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0035, code:
+    /* JADX WARNING: Missing block: B:9:0x0035, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:12:0x003b, code:
+    /* JADX WARNING: Missing block: B:12:0x003b, code skipped:
             if (isForbidProxy(r6, r10) == false) goto L_0x003e;
      */
-    /* JADX WARNING: Missing block: B:13:0x003d, code:
+    /* JADX WARNING: Missing block: B:13:0x003d, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:15:0x0042, code:
+    /* JADX WARNING: Missing block: B:15:0x0042, code skipped:
             if (isIawarePrepared() != false) goto L_0x0045;
      */
-    /* JADX WARNING: Missing block: B:16:0x0044, code:
+    /* JADX WARNING: Missing block: B:16:0x0044, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:18:0x0046, code:
+    /* JADX WARNING: Missing block: B:18:0x0046, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -158,8 +158,8 @@ public class CertificateFactory extends CertificateFactorySpi {
     }
 
     public Collection engineGenerateCRLs(InputStream inputStream) throws CRLException {
-        Collection arrayList = new ArrayList();
-        InputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        ArrayList arrayList = new ArrayList();
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
         while (true) {
             CRL engineGenerateCRL = engineGenerateCRL(bufferedInputStream);
             if (engineGenerateCRL == null) {
@@ -216,7 +216,7 @@ public class CertificateFactory extends CertificateFactorySpi {
                 this.sDataObjectCount = 0;
                 return null;
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("parsing issue: ");
             stringBuilder.append(e.getMessage());
@@ -225,8 +225,8 @@ public class CertificateFactory extends CertificateFactorySpi {
     }
 
     public Collection engineGenerateCertificates(InputStream inputStream) throws CertificateException {
-        InputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        Collection arrayList = new ArrayList();
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        ArrayList arrayList = new ArrayList();
         while (true) {
             Certificate engineGenerateCertificate = engineGenerateCertificate(bufferedInputStream);
             if (engineGenerateCertificate == null) {

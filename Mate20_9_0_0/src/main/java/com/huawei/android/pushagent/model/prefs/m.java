@@ -2,124 +2,265 @@ package com.huawei.android.pushagent.model.prefs;
 
 import android.content.Context;
 import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.a.c;
-import com.huawei.android.pushagent.utils.f.a;
-import java.util.HashSet;
+import com.huawei.android.pushagent.utils.b.a;
+import com.huawei.android.pushagent.utils.b.b;
+import com.huawei.android.pushagent.utils.d;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class m {
-    private static final byte[] gj = new byte[0];
-    private static m gk;
-    private final a gl;
+    /* renamed from: do */
+    private static final byte[] f1do = new byte[0];
+    private static m dp;
+    private final b dq;
 
     private m(Context context) {
-        this.gl = new a(context, "pclient_unRegist_info_v2");
+        this.dq = new b(context, "HeartBeatControl");
     }
 
-    public static m vg(Context context) {
-        return vo(context);
+    public static m mc(Context context) {
+        return mr(context);
     }
 
-    private static m vo(Context context) {
+    private static m mr(Context context) {
         m mVar;
-        synchronized (gj) {
-            if (gk == null) {
-                gk = new m(context);
+        synchronized (f1do) {
+            if (dp == null) {
+                dp = new m(context);
             }
-            mVar = gk;
+            mVar = dp;
         }
         return mVar;
     }
 
-    public boolean vi() {
-        return this.gl.eg();
-    }
-
-    public String vn(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return "";
-        }
-        try {
-            Map all = this.gl.getAll();
-            if (all == null) {
-                return "";
-            }
-            Iterable<Entry> entrySet = all.entrySet();
-            if (entrySet == null) {
-                return "";
-            }
-            for (Entry entry : entrySet) {
-                String str2 = (String) entry.getKey();
-                String str3 = (String) entry.getValue();
-                if (str.equals(c.j(str2))) {
-                    return str3;
+    public String mk(Context context, int i) {
+        String str = "";
+        switch (i) {
+            case 0:
+                str = d.yj(context);
+                String yk = d.yk(context);
+                if (TextUtils.isEmpty(yk)) {
+                    return "unknow";
                 }
-            }
-            return "";
-        } catch (Throwable e) {
-            com.huawei.android.pushagent.utils.f.c.es("PushLog3413", e.toString(), e);
+                return "data_" + str + "_" + yk;
+            case 1:
+                return "wifi_" + d.yi(context);
+            case 999:
+                return "bastet";
+            default:
+                return "unknow";
         }
     }
 
-    public String vj(String str) {
-        if (TextUtils.isEmpty(str)) {
+    private String[] mp(Context context, int i) {
+        String tg = this.dq.tg(mk(context, i));
+        if (TextUtils.isEmpty(tg)) {
             return null;
         }
-        String str2;
-        for (Entry entry : this.gl.getAll().entrySet()) {
-            if (str.equals((String) entry.getValue())) {
-                str2 = (String) entry.getKey();
-                break;
+        String[] split = tg.split("\\|");
+        if (split.length == 0) {
+            return null;
+        }
+        if (split.length >= HeartbeatControlSp$HeartBeatKey.NUM.ordinal()) {
+            return split;
+        }
+        String[] strArr = new String[]{"", "", "", "", ""};
+        System.arraycopy(split, 0, strArr, 0, split.length);
+        return strArr;
+    }
+
+    private boolean ms(Context context, int i, String str) {
+        String mk = mk(context, i);
+        if (this.dq.tq() >= 50) {
+            a.sv("PushLog3414", "heartbeat record more than 50, delete the old 30.");
+            mo();
+        }
+        return this.dq.tm(mk, str);
+    }
+
+    private Map<String, Object> mt(Map<String, ?> map) {
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        LinkedHashMap linkedHashMap = new LinkedHashMap();
+        ArrayList arrayList = new ArrayList(map.entrySet());
+        Collections.sort(arrayList, new n());
+        Iterator it = arrayList.iterator();
+        int size = arrayList.size() - 20;
+        int i = 0;
+        while (it.hasNext() && size > 0) {
+            if (i < size) {
+                int i2 = i + 1;
+                it.next();
+                i = i2;
+            } else {
+                Entry entry = (Entry) it.next();
+                linkedHashMap.put((String) entry.getKey(), entry.getValue());
             }
         }
-        str2 = null;
-        return str2;
+        return linkedHashMap;
     }
 
-    public Set<Entry<String, String>> vm() {
-        Map all = this.gl.getAll();
-        if (all == null) {
-            return new HashSet();
+    private void mo() {
+        try {
+            Map mt = mt(this.dq.getAll());
+            this.dq.tj();
+            this.dq.tn(mt);
+        } catch (Exception e) {
+            a.sw("PushLog3414", "deleteInvalidRecord exception is ", e);
         }
-        Set<Entry<String, String>> entrySet = all.entrySet();
-        if (entrySet == null) {
-            return new HashSet();
-        }
-        return entrySet;
     }
 
-    public boolean vh(String str, String str2) {
-        if (TextUtils.isEmpty(str2)) {
+    private String mq(String str, String str2, String str3, String str4, String str5) {
+        return str + "|" + str2 + "|" + str3 + "|" + str4 + "|" + str5;
+    }
+
+    public long mi(Context context, int i) {
+        String[] mp = mp(context, i);
+        if (mp == null) {
+            return -1;
+        }
+        try {
+            return Long.parseLong(mp[HeartbeatControlSp$HeartBeatKey.LastBestHBTime.ordinal()]);
+        } catch (Exception e) {
+            a.sx("PushLog3414", "parse last best heartbeat time exception.");
+            return -1;
+        }
+    }
+
+    public void md(Context context, int i) {
+        String mq;
+        long currentTimeMillis = System.currentTimeMillis();
+        String[] mp = mp(context, i);
+        String str = "";
+        if (mp == null) {
+            try {
+                mq = mq(String.valueOf(currentTimeMillis), "", "", "", "");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                mq = mq(String.valueOf(currentTimeMillis), "", "", "", "");
+            }
+        } else {
+            mq = mq(String.valueOf(currentTimeMillis), mp[HeartbeatControlSp$HeartBeatKey.HasFindBestHB.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.LastInterval.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.BestHB.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.IsBack.ordinal()]);
+        }
+        ms(context, i, mq);
+    }
+
+    public boolean mj(Context context, int i) {
+        String[] mp = mp(context, i);
+        if (mp == null) {
             return false;
         }
-        return this.gl.ea(str, str2);
-    }
-
-    public boolean vl(String str, String str2) {
-        return vh(c.k(str), str2);
-    }
-
-    public void vk(String str) {
-        if (!TextUtils.isEmpty(str)) {
-            try {
-                Map all = this.gl.getAll();
-                if (all != null) {
-                    Iterable<Entry> entrySet = all.entrySet();
-                    if (entrySet != null) {
-                        for (Entry key : entrySet) {
-                            String str2 = (String) key.getKey();
-                            if (str.equals(c.j(str2))) {
-                                this.gl.ed(str2);
-                                return;
-                            }
-                        }
-                    }
-                }
-            } catch (Throwable e) {
-                com.huawei.android.pushagent.utils.f.c.es("PushLog3413", e.toString(), e);
-            }
+        try {
+            return Boolean.parseBoolean(mp[HeartbeatControlSp$HeartBeatKey.HasFindBestHB.ordinal()]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return false;
         }
+    }
+
+    public void mm(Context context, int i, boolean z) {
+        String mq;
+        String[] mp = mp(context, i);
+        String str = "";
+        if (mp == null) {
+            try {
+                mq = mq("", String.valueOf(z), "", "", "");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                mq = mq("", String.valueOf(z), "", "", "");
+            }
+        } else {
+            mq = mq(mp[HeartbeatControlSp$HeartBeatKey.LastBestHBTime.ordinal()], String.valueOf(z), mp[HeartbeatControlSp$HeartBeatKey.LastInterval.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.BestHB.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.IsBack.ordinal()]);
+        }
+        ms(context, i, mq);
+    }
+
+    public long ml(Context context, int i) {
+        String[] mp = mp(context, i);
+        if (mp == null) {
+            return -1;
+        }
+        try {
+            return Long.parseLong(mp[HeartbeatControlSp$HeartBeatKey.LastInterval.ordinal()]);
+        } catch (Exception e) {
+            a.sx("PushLog3414", "parse last interval exception.");
+            return -1;
+        }
+    }
+
+    public void mn(Context context, int i, long j) {
+        String mq;
+        String[] mp = mp(context, i);
+        String str = "";
+        if (mp == null) {
+            try {
+                mq = mq("", "", String.valueOf(j), "", "");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                mq = mq("", "", String.valueOf(j), "", "");
+            }
+        } else {
+            mq = mq(mp[HeartbeatControlSp$HeartBeatKey.LastBestHBTime.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.HasFindBestHB.ordinal()], String.valueOf(j), mp[HeartbeatControlSp$HeartBeatKey.BestHB.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.IsBack.ordinal()]);
+        }
+        ms(context, i, mq);
+    }
+
+    public long me(Context context, int i) {
+        String[] mp = mp(context, i);
+        if (mp == null) {
+            return -1;
+        }
+        try {
+            return Long.parseLong(mp[HeartbeatControlSp$HeartBeatKey.BestHB.ordinal()]);
+        } catch (Exception e) {
+            a.sx("PushLog3414", "parse best heartbeat exception.");
+            return -1;
+        }
+    }
+
+    public void mf(Context context, int i, long j) {
+        String[] mp = mp(context, i);
+        long currentTimeMillis = System.currentTimeMillis();
+        String str = "";
+        boolean z = j > 0;
+        if (mp == null) {
+            try {
+                str = mq(String.valueOf(currentTimeMillis), String.valueOf(z), "", String.valueOf(j), "");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                str = mq(String.valueOf(currentTimeMillis), String.valueOf(false), "", String.valueOf(j), "");
+            }
+        } else {
+            str = mq(String.valueOf(currentTimeMillis), String.valueOf(z), mp[HeartbeatControlSp$HeartBeatKey.LastInterval.ordinal()], String.valueOf(j), mp[HeartbeatControlSp$HeartBeatKey.IsBack.ordinal()]);
+        }
+        ms(context, i, str);
+    }
+
+    public boolean mg(Context context, int i) {
+        String[] mp = mp(context, i);
+        if (mp == null) {
+            return false;
+        }
+        try {
+            return Boolean.parseBoolean(mp[HeartbeatControlSp$HeartBeatKey.IsBack.ordinal()]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    public void mh(Context context, int i, boolean z) {
+        String mq;
+        String[] mp = mp(context, i);
+        String str = "";
+        if (mp == null) {
+            try {
+                mq = mq("", "", "", "", String.valueOf(z));
+            } catch (ArrayIndexOutOfBoundsException e) {
+                mq = mq("", "", "", "", String.valueOf(z));
+            }
+        } else {
+            mq = mq(mp[HeartbeatControlSp$HeartBeatKey.LastBestHBTime.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.HasFindBestHB.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.LastInterval.ordinal()], mp[HeartbeatControlSp$HeartBeatKey.BestHB.ordinal()], String.valueOf(z));
+        }
+        ms(context, i, mq);
     }
 }

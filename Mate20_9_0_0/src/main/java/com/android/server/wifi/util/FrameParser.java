@@ -4,6 +4,7 @@ import android.hardware.wifi.supplicant.V1_0.ISupplicantStaIfaceCallback.ReasonC
 import android.hardware.wifi.supplicant.V1_0.ISupplicantStaIfaceCallback.StatusCode;
 import android.util.Log;
 import com.android.server.wifi.hotspot2.anqp.Constants;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashSet;
@@ -119,21 +120,6 @@ public class FrameParser {
     public String mResultString = "N/A";
     public String mTypeString = "N/A";
 
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0026 A:{Splitter: B:1:0x000f, ExcHandler: java.nio.BufferUnderflowException (r0_4 'e' java.lang.RuntimeException)} */
-    /* JADX WARNING: Missing block: B:8:0x0026, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:9:0x0027, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Dissection aborted mid-frame: ");
-            r2.append(r0);
-            android.util.Log.e(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:10:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public FrameParser(byte frameType, byte[] frameBytes) {
         try {
             ByteBuffer frameBuffer = ByteBuffer.wrap(frameBytes);
@@ -143,7 +129,12 @@ public class FrameParser {
             } else if (frameType == (byte) 2) {
                 parseManagementFrame(frameBuffer);
             }
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException | BufferUnderflowException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Dissection aborted mid-frame: ");
+            stringBuilder.append(e);
+            Log.e(str, stringBuilder.toString());
         }
     }
 

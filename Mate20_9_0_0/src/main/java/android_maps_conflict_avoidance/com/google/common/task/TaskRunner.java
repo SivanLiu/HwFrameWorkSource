@@ -164,19 +164,19 @@ public class TaskRunner implements Runnable {
         return task;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0031, code:
+    /* JADX WARNING: Missing block: B:20:0x0031, code skipped:
             if (r0 == null) goto L_0x0001;
      */
-    /* JADX WARNING: Missing block: B:20:0x0033, code:
+    /* JADX WARNING: Missing block: B:21:0x0033, code skipped:
             r0.updateStartTimestamp();
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r0.runInternal();
      */
-    /* JADX WARNING: Missing block: B:23:0x003a, code:
+    /* JADX WARNING: Missing block: B:24:0x003a, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:24:0x003b, code:
+    /* JADX WARNING: Missing block: B:25:0x003b, code skipped:
             r2 = new java.lang.StringBuilder();
             r2.append("runtime exception thrown by task [");
             r2.append(r0);
@@ -190,11 +190,14 @@ public class TaskRunner implements Runnable {
         while (true) {
             synchronized (this.mutex) {
                 if (task != null) {
-                    if (task.getState() == 4) {
-                        task.setState(0);
-                        task.scheduleInternal();
-                    } else if (task.getState() == 3) {
-                        task.setState(0);
+                    try {
+                        if (task.getState() == 4) {
+                            task.setState(0);
+                            task.scheduleInternal();
+                        } else if (task.getState() == 3) {
+                            task.setState(0);
+                        }
+                    } finally {
                     }
                 }
                 if (waitForSomethingToDo()) {
@@ -203,8 +206,6 @@ public class TaskRunner implements Runnable {
                     return;
                 }
             }
-        }
-        while (true) {
         }
         task.updateFinishTimestamp();
     }

@@ -31,9 +31,9 @@ public final class BigIntUtils {
 
     public static BigInteger[] subArray(BigInteger[] bigIntegerArr, int i, int i2) {
         i2 -= i;
-        Object obj = new BigInteger[i2];
-        System.arraycopy(bigIntegerArr, i, obj, 0, i2);
-        return obj;
+        BigInteger[] bigIntegerArr2 = new BigInteger[i2];
+        System.arraycopy(bigIntegerArr, i, bigIntegerArr2, 0, i2);
+        return bigIntegerArr2;
     }
 
     public static int[] toIntArray(BigInteger[] bigIntegerArr) {
@@ -54,12 +54,12 @@ public final class BigIntUtils {
     }
 
     public static byte[] toMinimalByteArray(BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         if (toByteArray.length == 1 || (bigInteger.bitLength() & 7) != 0) {
             return toByteArray;
         }
-        Object obj = new byte[(bigInteger.bitLength() >> 3)];
-        System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[(bigInteger.bitLength() >> 3)];
+        System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+        return bArr;
     }
 }

@@ -60,7 +60,7 @@ public class HwActivityStack extends ActivityStack implements IHwActivityStack {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x004c, code:
+    /* JADX WARNING: Missing block: B:13:0x004c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

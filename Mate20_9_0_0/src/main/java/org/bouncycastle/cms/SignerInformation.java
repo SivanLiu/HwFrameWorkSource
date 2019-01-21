@@ -26,6 +26,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.operator.ContentVerifier;
 import org.bouncycastle.operator.DigestCalculator;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.RawContentVerifier;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.io.TeeOutputStream;
@@ -110,7 +111,7 @@ public class SignerInformation {
                         } else if (contentVerifier instanceof RawContentVerifier) {
                             this.content.write(outputStream2);
                         } else {
-                            OutputStream teeOutputStream = new TeeOutputStream(outputStream2, outputStream);
+                            TeeOutputStream teeOutputStream = new TeeOutputStream(outputStream2, outputStream);
                             this.content.write(teeOutputStream);
                             teeOutputStream.close();
                         }
@@ -190,26 +191,26 @@ public class SignerInformation {
                             }
                             RawContentVerifier rawContentVerifier = (RawContentVerifier) contentVerifier;
                             return encryptionAlgName.equals("RSA") ? rawContentVerifier.verify(new DigestInfo(new AlgorithmIdentifier(this.digestAlgorithm.getAlgorithm(), DERNull.INSTANCE), this.resultDigest).getEncoded(ASN1Encoding.DER), getSignature()) : rawContentVerifier.verify(this.resultDigest, getSignature());
-                        } catch (Exception e) {
+                        } catch (IOException e) {
                             throw new CMSException("can't process mime object to create signature.", e);
                         }
                     }
                     throw new CMSException("A countersignature attribute MUST NOT be a signed attribute");
                 }
                 throw new CMSException("A cmsAlgorithmProtect attribute MUST be a signed attribute");
-            } catch (Exception e2) {
+            } catch (IOException e2) {
                 throw new CMSException("can't process mime object to create signature.", e2);
-            } catch (Exception e22) {
+            } catch (OperatorCreationException e3) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("can't create digest calculator: ");
-                stringBuilder.append(e22.getMessage());
-                throw new CMSException(stringBuilder.toString(), e22);
+                stringBuilder.append(e3.getMessage());
+                throw new CMSException(stringBuilder.toString(), e3);
             }
-        } catch (Exception e222) {
+        } catch (OperatorCreationException e32) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("can't create content verifier: ");
-            stringBuilder.append(e222.getMessage());
-            throw new CMSException(stringBuilder.toString(), e222);
+            stringBuilder.append(e32.getMessage());
+            throw new CMSException(stringBuilder.toString(), e32);
         }
     }
 

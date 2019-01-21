@@ -252,16 +252,16 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
     private final ArrayMap<String, Integer> mPowerSaveWhitelistUserApps = new ArrayMap();
     private final ArraySet<String> mPowerSaveWhitelistUserAppsExceptIdle = new ArraySet();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        /* JADX WARNING: Removed duplicated region for block: B:41:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:35:0x0070  */
+        /* JADX WARNING: Removed duplicated region for block: B:44:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:37:0x0070  */
         /* JADX WARNING: Removed duplicated region for block: B:24:0x0058  */
         /* JADX WARNING: Removed duplicated region for block: B:17:0x003d  */
-        /* JADX WARNING: Removed duplicated region for block: B:41:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:35:0x0070  */
+        /* JADX WARNING: Removed duplicated region for block: B:44:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:37:0x0070  */
         /* JADX WARNING: Removed duplicated region for block: B:24:0x0058  */
         /* JADX WARNING: Removed duplicated region for block: B:17:0x003d  */
-        /* JADX WARNING: Removed duplicated region for block: B:41:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:35:0x0070  */
+        /* JADX WARNING: Removed duplicated region for block: B:44:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:37:0x0070  */
         /* JADX WARNING: Removed duplicated region for block: B:24:0x0058  */
         /* JADX WARNING: Removed duplicated region for block: B:17:0x003d  */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1330,6 +1330,7 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                 }
             } catch (NameNotFoundException e) {
                 return false;
+            } catch (Throwable th) {
             }
         }
         return true;
@@ -1402,6 +1403,7 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                 }
             } catch (NameNotFoundException e) {
                 return false;
+            } catch (Throwable th) {
             }
         }
         return true;
@@ -1522,7 +1524,12 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
     public boolean isPowerSaveWhitelistExceptIdleAppInternal(String packageName) {
         boolean z;
         synchronized (this) {
-            z = this.mPowerSaveWhitelistAppsExceptIdle.containsKey(packageName) || this.mPowerSaveWhitelistUserApps.containsKey(packageName);
+            if (!this.mPowerSaveWhitelistAppsExceptIdle.containsKey(packageName)) {
+                if (!this.mPowerSaveWhitelistUserApps.containsKey(packageName)) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
@@ -1530,7 +1537,12 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
     public boolean isPowerSaveWhitelistAppInternal(String packageName) {
         boolean z;
         synchronized (this) {
-            z = this.mPowerSaveWhitelistApps.containsKey(packageName) || this.mPowerSaveWhitelistUserApps.containsKey(packageName);
+            if (!this.mPowerSaveWhitelistApps.containsKey(packageName)) {
+                if (!this.mPowerSaveWhitelistUserApps.containsKey(packageName)) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
@@ -1599,16 +1611,16 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x00c0, code:
+    /* JADX WARNING: Missing block: B:40:0x00c0, code skipped:
             if (r6 == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:40:0x00c2, code:
+    /* JADX WARNING: Missing block: B:41:0x00c2, code skipped:
             r1.mNetworkPolicyManagerInternal.onTempPowerSaveWhitelistChange(r2, true);
      */
-    /* JADX WARNING: Missing block: B:49:?, code:
+    /* JADX WARNING: Missing block: B:50:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:50:?, code:
+    /* JADX WARNING: Missing block: B:51:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1722,7 +1734,7 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(6, uid, 0), delay);
     }
 
-    /* JADX WARNING: Missing block: B:17:0x007d, code:
+    /* JADX WARNING: Missing block: B:17:0x007d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1783,7 +1795,7 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         }
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0046, code:
+    /* JADX WARNING: Missing block: B:26:0x0046, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2035,21 +2047,21 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x0139, code:
+    /* JADX WARNING: Missing block: B:39:0x0139, code skipped:
             if (r0.mLocating != false) goto L_0x0228;
      */
-    /* JADX WARNING: Missing block: B:40:0x013d, code:
+    /* JADX WARNING: Missing block: B:40:0x013d, code skipped:
             cancelAlarmLocked();
             cancelLocatingLocked();
             r0.mAnyMotionDetector.stop();
      */
-    /* JADX WARNING: Missing block: B:41:0x0148, code:
+    /* JADX WARNING: Missing block: B:41:0x0148, code skipped:
             scheduleAlarmLocked(r0.mNextIdleDelay, true);
      */
-    /* JADX WARNING: Missing block: B:42:0x014f, code:
+    /* JADX WARNING: Missing block: B:42:0x014f, code skipped:
             if (DEBUG == false) goto L_0x016e;
      */
-    /* JADX WARNING: Missing block: B:43:0x0151, code:
+    /* JADX WARNING: Missing block: B:43:0x0151, code skipped:
             r4 = TAG;
             r9 = new java.lang.StringBuilder();
             r9.append("Moved to STATE_IDLE. Next alarm in ");
@@ -2057,45 +2069,45 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
             r9.append(" ms.");
             android.util.Slog.d(r4, r9.toString());
      */
-    /* JADX WARNING: Missing block: B:44:0x016e, code:
+    /* JADX WARNING: Missing block: B:44:0x016e, code skipped:
             r0.mNextIdleDelay = (long) (((float) r0.mNextIdleDelay) * r0.mConstants.IDLE_FACTOR);
      */
-    /* JADX WARNING: Missing block: B:45:0x017b, code:
+    /* JADX WARNING: Missing block: B:45:0x017b, code skipped:
             if (DEBUG == false) goto L_0x0195;
      */
-    /* JADX WARNING: Missing block: B:46:0x017d, code:
+    /* JADX WARNING: Missing block: B:46:0x017d, code skipped:
             r4 = TAG;
             r9 = new java.lang.StringBuilder();
             r9.append("Setting mNextIdleDelay = ");
             r9.append(r0.mNextIdleDelay);
             android.util.Slog.d(r4, r9.toString());
      */
-    /* JADX WARNING: Missing block: B:47:0x0195, code:
+    /* JADX WARNING: Missing block: B:47:0x0195, code skipped:
             r0.mNextIdleDelay = java.lang.Math.min(r0.mNextIdleDelay, r0.mConstants.MAX_IDLE_TIMEOUT);
      */
-    /* JADX WARNING: Missing block: B:48:0x01a9, code:
+    /* JADX WARNING: Missing block: B:48:0x01a9, code skipped:
             if (r0.mNextIdleDelay >= r0.mConstants.IDLE_TIMEOUT) goto L_0x01b1;
      */
-    /* JADX WARNING: Missing block: B:49:0x01ab, code:
+    /* JADX WARNING: Missing block: B:49:0x01ab, code skipped:
             r0.mNextIdleDelay = r0.mConstants.IDLE_TIMEOUT;
      */
-    /* JADX WARNING: Missing block: B:50:0x01b1, code:
+    /* JADX WARNING: Missing block: B:50:0x01b1, code skipped:
             r0.mState = 5;
      */
-    /* JADX WARNING: Missing block: B:51:0x01b6, code:
+    /* JADX WARNING: Missing block: B:51:0x01b6, code skipped:
             if (r0.mLightState == 7) goto L_0x01bd;
      */
-    /* JADX WARNING: Missing block: B:52:0x01b8, code:
+    /* JADX WARNING: Missing block: B:52:0x01b8, code skipped:
             r0.mLightState = 7;
             cancelLightAlarmLocked();
      */
-    /* JADX WARNING: Missing block: B:53:0x01bd, code:
+    /* JADX WARNING: Missing block: B:53:0x01bd, code skipped:
             com.android.server.EventLogTags.writeDeviceIdle(r0.mState, r1);
             addEvent(4, null);
             r0.mGoingIdleWakeLock.acquire();
             r0.mHandler.sendEmptyMessage(2);
      */
-    /* JADX WARNING: Missing block: B:64:0x0228, code:
+    /* JADX WARNING: Missing block: B:64:0x0228, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2642,7 +2654,7 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         return true;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00bc A:{Catch:{ IllegalStateException -> 0x013e, NullPointerException -> 0x0126, NumberFormatException -> 0x010e, XmlPullParserException -> 0x00f6, IOException -> 0x00de, IndexOutOfBoundsException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00bc A:{Catch:{ IllegalStateException -> 0x013e, NullPointerException -> 0x0126, NumberFormatException -> 0x010e, XmlPullParserException -> 0x00f6, IOException -> 0x00de, IndexOutOfBoundsException -> 0x00c5 }} */
     /* JADX WARNING: Removed duplicated region for block: B:7:0x0016 A:{Catch:{ IllegalStateException -> 0x013e, NullPointerException -> 0x0126, NumberFormatException -> 0x010e, XmlPullParserException -> 0x00f6, IOException -> 0x00de, IndexOutOfBoundsException -> 0x00c5 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void readConfigFileLocked(XmlPullParser parser) {
@@ -2670,8 +2682,10 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                                         Object obj = -1;
                                         int hashCode = tagName.hashCode();
                                         if (hashCode != 3797) {
-                                            if (hashCode == 111376009 && tagName.equals("un-wl")) {
-                                                obj = 1;
+                                            if (hashCode == 111376009) {
+                                                if (tagName.equals("un-wl")) {
+                                                    obj = 1;
+                                                }
                                             }
                                         } else if (tagName.equals("wl")) {
                                             obj = null;
@@ -2857,32 +2871,23 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         pw.println("    Simulate a motion event to bring the device out of deep doze");
     }
 
-    /* JADX WARNING: Missing block: B:42:0x00e8, code:
-            return -1;
+    /* JADX WARNING: Removed duplicated region for block: B:201:0x02fe A:{Catch:{ all -> 0x02d7, all -> 0x0347 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:203:0x0308 A:{Catch:{ all -> 0x02d7, all -> 0x0347 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:209:0x0328 A:{Catch:{ all -> 0x02d7, all -> 0x0347 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:245:0x03a2 A:{Catch:{ all -> 0x037b, all -> 0x03d0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:247:0x03ac A:{Catch:{ all -> 0x037b, all -> 0x03d0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x03b1 A:{Catch:{ all -> 0x037b, all -> 0x03d0 }} */
+    /* JADX WARNING: Missing block: B:328:?, code skipped:
+            r0 = new java.lang.StringBuilder();
+            r0.append("Package must be prefixed with +, -, or =: ");
+            r0.append(r6);
+            r10.println(r0.toString());
      */
-    /* JADX WARNING: Missing block: B:70:0x0154, code:
-            android.os.Binder.restoreCallingIdentity(r5);
-     */
-    /* JADX WARNING: Missing block: B:83:0x019b, code:
-            android.os.Binder.restoreCallingIdentity(r1);
-     */
-    /* JADX WARNING: Missing block: B:96:0x01e1, code:
-            android.os.Binder.restoreCallingIdentity(r1);
-     */
-    /* JADX WARNING: Missing block: B:138:0x0297, code:
-            android.os.Binder.restoreCallingIdentity(r5);
-     */
-    /* JADX WARNING: Missing block: B:154:0x02d4, code:
-            if ("all".equals(r3) == false) goto L_0x02e6;
-     */
-    /* JADX WARNING: Missing block: B:192:0x0378, code:
-            if ("all".equals(r3) == false) goto L_0x038a;
-     */
-    /* JADX WARNING: Missing block: B:279:0x050e, code:
+    /* JADX WARNING: Missing block: B:329:0x0508, code skipped:
             android.os.Binder.restoreCallingIdentity(r13);
      */
-    /* JADX WARNING: Missing block: B:383:0x071c, code:
-            android.os.Binder.restoreCallingIdentity(r1);
+    /* JADX WARNING: Missing block: B:330:0x050c, code skipped:
+            return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int onShellCommand(Shell shell, String cmd) {
@@ -2895,17 +2900,17 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
         StringBuilder stringBuilder;
         long token2;
         String arg2;
-        int curState;
+        int curLightState;
         boolean z;
         String arg3;
         StringBuilder stringBuilder2;
         if ("step".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                token = Binder.clearCallingIdentity();
-                arg = shell.getNextArg();
-                if (arg != null) {
-                    try {
+                try {
+                    token = Binder.clearCallingIdentity();
+                    arg = shell.getNextArg();
+                    if (arg != null) {
                         if (!"deep".equals(arg)) {
                             if ("light".equals(arg)) {
                                 stepLightIdleStateLocked("s:shell");
@@ -2919,27 +2924,52 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                             }
                             Binder.restoreCallingIdentity(token);
                         }
-                    } catch (Throwable th) {
-                        Binder.restoreCallingIdentity(token);
                     }
+                    stepIdleStateLocked("s:shell");
+                    pw.print("Stepped to deep: ");
+                    pw.println(stateToString(this.mState));
+                    Binder.restoreCallingIdentity(token);
+                } catch (Throwable th) {
+                    throw th;
                 }
-                stepIdleStateLocked("s:shell");
-                pw.print("Stepped to deep: ");
-                pw.println(stateToString(this.mState));
-                Binder.restoreCallingIdentity(token);
             }
         } else if ("force-idle".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                token2 = Binder.clearCallingIdentity();
-                arg2 = shell.getNextArg();
-                if (arg2 == null || "deep".equals(arg2)) {
+                try {
+                    token2 = Binder.clearCallingIdentity();
+                    arg2 = shell.getNextArg();
+                    if (arg2 != null) {
+                        if (!"deep".equals(arg2)) {
+                            if ("light".equals(arg2)) {
+                                this.mForceIdle = true;
+                                becomeInactiveIfAppropriateLocked();
+                                for (curLightState = this.mLightState; curLightState != 4; curLightState = this.mLightState) {
+                                    stepLightIdleStateLocked("s:shell");
+                                    if (curLightState == this.mLightState) {
+                                        pw.print("Unable to go light idle; stopped at ");
+                                        pw.println(lightStateToString(this.mLightState));
+                                        exitForceIdleLocked();
+                                        Binder.restoreCallingIdentity(token2);
+                                        return -1;
+                                    }
+                                }
+                                pw.println("Now forced in to light idle mode");
+                            } else {
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("Unknown idle mode: ");
+                                stringBuilder.append(arg2);
+                                pw.println(stringBuilder.toString());
+                            }
+                            Binder.restoreCallingIdentity(token2);
+                        }
+                    }
                     if (this.mDeepEnabled) {
                         this.mForceIdle = true;
                         becomeInactiveIfAppropriateLocked();
-                        for (curState = this.mState; curState != 5; curState = this.mState) {
+                        for (curLightState = this.mState; curLightState != 5; curLightState = this.mState) {
                             stepIdleStateLocked("s:shell");
-                            if (curState == this.mState) {
+                            if (curLightState == this.mState) {
                                 pw.print("Unable to go deep idle; stopped at ");
                                 pw.println(stateToString(this.mState));
                                 exitForceIdleLocked();
@@ -2948,68 +2978,54 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                             }
                         }
                         pw.println("Now forced in to deep idle mode");
+                        Binder.restoreCallingIdentity(token2);
                     } else {
                         pw.println("Unable to go deep idle; not enabled");
                         Binder.restoreCallingIdentity(token2);
                         return -1;
                     }
-                } else if ("light".equals(arg2)) {
-                    this.mForceIdle = true;
-                    becomeInactiveIfAppropriateLocked();
-                    curState = this.mLightState;
-                    while (curState != 4) {
-                        stepLightIdleStateLocked("s:shell");
-                        if (curState == this.mLightState) {
-                            pw.print("Unable to go light idle; stopped at ");
-                            pw.println(lightStateToString(this.mLightState));
-                            exitForceIdleLocked();
-                        } else {
-                            curState = this.mLightState;
-                        }
-                    }
-                    pw.println("Now forced in to light idle mode");
-                } else {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Unknown idle mode: ");
-                    stringBuilder.append(arg2);
-                    pw.println(stringBuilder.toString());
+                } catch (Throwable th2) {
+                    throw th2;
                 }
-                Binder.restoreCallingIdentity(token2);
             }
         } else if ("force-inactive".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                token = Binder.clearCallingIdentity();
                 try {
+                    token = Binder.clearCallingIdentity();
                     this.mForceIdle = true;
                     becomeInactiveIfAppropriateLocked();
                     pw.print("Light state: ");
                     pw.print(lightStateToString(this.mLightState));
                     pw.print(", deep state: ");
                     pw.println(stateToString(this.mState));
-                } finally {
+                    Binder.restoreCallingIdentity(token);
+                } catch (Throwable th22) {
+                    throw th22;
                 }
             }
         } else if ("unforce".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                token = Binder.clearCallingIdentity();
                 try {
+                    token = Binder.clearCallingIdentity();
                     exitForceIdleLocked();
                     pw.print("Light state: ");
                     pw.print(lightStateToString(this.mLightState));
                     pw.print(", deep state: ");
                     pw.println(stateToString(this.mState));
-                } finally {
+                    Binder.restoreCallingIdentity(token);
+                } catch (Throwable th222) {
+                    throw th222;
                 }
             }
         } else if ("get".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                arg2 = shell.getNextArg();
-                if (arg2 != null) {
-                    token2 = Binder.clearCallingIdentity();
-                    try {
+                try {
+                    arg2 = shell.getNextArg();
+                    if (arg2 != null) {
+                        token2 = Binder.clearCallingIdentity();
                         switch (arg2.hashCode()) {
                             case -907689876:
                                 if (arg2.equals("screen")) {
@@ -3042,9 +3058,8 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                                     break;
                                 }
                             default:
-                                z = true;
-                                break;
                         }
+                        z = true;
                         switch (z) {
                             case false:
                                 pw.println(lightStateToString(this.mLightState));
@@ -3071,111 +3086,140 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                                 pw.println(stringBuilder.toString());
                                 break;
                         }
-                    } finally {
+                        Binder.restoreCallingIdentity(token2);
+                    } else {
+                        pw.println("Argument required");
                     }
-                } else {
-                    pw.println("Argument required");
+                } catch (Throwable th2222) {
+                    throw th2222;
                 }
             }
         } else if ("disable".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                StringBuilder stringBuilder3;
-                token = Binder.clearCallingIdentity();
-                arg = shell.getNextArg();
-                z = false;
-                boolean valid = false;
-                if (arg != null) {
-                    try {
+                try {
+                    token = Binder.clearCallingIdentity();
+                    arg = shell.getNextArg();
+                    z = false;
+                    boolean valid = false;
+                    if (arg != null) {
                         if (!"deep".equals(arg)) {
+                            StringBuilder stringBuilder3;
+                            if ("all".equals(arg)) {
+                            }
+                            if (arg == null || "light".equals(arg) || "all".equals(arg)) {
+                                valid = true;
+                                if (this.mLightEnabled) {
+                                    this.mLightEnabled = false;
+                                    z = true;
+                                    pw.println("Light idle mode disabled");
+                                }
+                            }
+                            if (z) {
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append(arg == null ? "all" : arg);
+                                stringBuilder3.append("-disabled");
+                                becomeActiveLocked(stringBuilder3.toString(), Process.myUid());
+                            }
+                            if (!valid) {
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("Unknown idle mode: ");
+                                stringBuilder3.append(arg);
+                                pw.println(stringBuilder3.toString());
+                            }
+                            Binder.restoreCallingIdentity(token);
                         }
-                    } catch (Throwable th2) {
-                        Binder.restoreCallingIdentity(token);
                     }
-                }
-                valid = true;
-                if (this.mDeepEnabled) {
-                    this.mDeepEnabled = false;
-                    z = true;
-                    pw.println("Deep idle mode disabled");
-                }
-                if (arg == null || "light".equals(arg) || "all".equals(arg)) {
+                    valid = true;
+                    if (this.mDeepEnabled) {
+                        this.mDeepEnabled = false;
+                        z = true;
+                        pw.println("Deep idle mode disabled");
+                    }
                     valid = true;
                     if (this.mLightEnabled) {
-                        this.mLightEnabled = false;
-                        z = true;
-                        pw.println("Light idle mode disabled");
                     }
+                    if (z) {
+                    }
+                    if (valid) {
+                    }
+                    Binder.restoreCallingIdentity(token);
+                } catch (Throwable th22222) {
+                    throw th22222;
                 }
-                if (z) {
-                    stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append(arg == null ? "all" : arg);
-                    stringBuilder3.append("-disabled");
-                    becomeActiveLocked(stringBuilder3.toString(), Process.myUid());
-                }
-                if (!valid) {
-                    stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("Unknown idle mode: ");
-                    stringBuilder3.append(arg);
-                    pw.println(stringBuilder3.toString());
-                }
-                Binder.restoreCallingIdentity(token);
             }
         } else if ("enable".equals(str)) {
             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             synchronized (this) {
-                token = Binder.clearCallingIdentity();
-                arg = shell.getNextArg();
-                z = false;
-                boolean valid2 = false;
-                if (arg != null) {
-                    try {
+                try {
+                    token = Binder.clearCallingIdentity();
+                    arg = shell.getNextArg();
+                    z = false;
+                    boolean valid2 = false;
+                    if (arg != null) {
                         if (!"deep".equals(arg)) {
+                            if ("all".equals(arg)) {
+                            }
+                            if (arg == null || "light".equals(arg) || "all".equals(arg)) {
+                                valid2 = true;
+                                if (!this.mLightEnabled) {
+                                    this.mLightEnabled = true;
+                                    z = true;
+                                    pw.println("Light idle mode enable");
+                                }
+                            }
+                            if (z) {
+                                becomeInactiveIfAppropriateLocked();
+                            }
+                            if (!valid2) {
+                                StringBuilder stringBuilder4 = new StringBuilder();
+                                stringBuilder4.append("Unknown idle mode: ");
+                                stringBuilder4.append(arg);
+                                pw.println(stringBuilder4.toString());
+                            }
+                            Binder.restoreCallingIdentity(token);
                         }
-                    } catch (Throwable th3) {
-                        Binder.restoreCallingIdentity(token);
                     }
-                }
-                valid2 = true;
-                if (!this.mDeepEnabled) {
-                    this.mDeepEnabled = true;
-                    z = true;
-                    pw.println("Deep idle mode enabled");
-                }
-                if (arg == null || "light".equals(arg) || "all".equals(arg)) {
                     valid2 = true;
-                    if (!this.mLightEnabled) {
-                        this.mLightEnabled = true;
+                    if (!this.mDeepEnabled) {
+                        this.mDeepEnabled = true;
                         z = true;
-                        pw.println("Light idle mode enable");
+                        pw.println("Deep idle mode enabled");
                     }
+                    valid2 = true;
+                    if (this.mLightEnabled) {
+                    }
+                    if (z) {
+                    }
+                    if (valid2) {
+                    }
+                    Binder.restoreCallingIdentity(token);
+                } catch (Throwable th222222) {
+                    throw th222222;
                 }
-                if (z) {
-                    becomeInactiveIfAppropriateLocked();
-                }
-                if (!valid2) {
-                    StringBuilder stringBuilder4 = new StringBuilder();
-                    stringBuilder4.append("Unknown idle mode: ");
-                    stringBuilder4.append(arg);
-                    pw.println(stringBuilder4.toString());
-                }
-                Binder.restoreCallingIdentity(token);
             }
         } else if ("enabled".equals(str)) {
             synchronized (this) {
-                arg3 = shell.getNextArg();
-                if (arg3 == null || "all".equals(arg3)) {
+                try {
+                    arg3 = shell.getNextArg();
+                    if (arg3 != null) {
+                        if (!"all".equals(arg3)) {
+                            if ("deep".equals(arg3)) {
+                                pw.println(this.mDeepEnabled ? "1" : Integer.valueOf(0));
+                            } else if ("light".equals(arg3)) {
+                                pw.println(this.mLightEnabled ? "1" : Integer.valueOf(0));
+                            } else {
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Unknown idle mode: ");
+                                stringBuilder2.append(arg3);
+                                pw.println(stringBuilder2.toString());
+                            }
+                        }
+                    }
                     Object valueOf = (this.mDeepEnabled && this.mLightEnabled) ? "1" : Integer.valueOf(0);
                     pw.println(valueOf);
-                } else if ("deep".equals(arg3)) {
-                    pw.println(this.mDeepEnabled ? "1" : Integer.valueOf(0));
-                } else if ("light".equals(arg3)) {
-                    pw.println(this.mLightEnabled ? "1" : Integer.valueOf(0));
-                } else {
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("Unknown idle mode: ");
-                    stringBuilder2.append(arg3);
-                    pw.println(stringBuilder2.toString());
+                } catch (Throwable th2222222) {
+                    throw th2222222;
                 }
             }
         } else {
@@ -3191,67 +3235,72 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                     while (true) {
                         token3 = token4;
                         try {
-                            if (arg4.length() < 1 || !(arg4.charAt(0) == '-' || arg4.charAt(0) == '+' || arg4.charAt(0) == c)) {
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("Package must be prefixed with +, -, or =: ");
-                                stringBuilder.append(arg4);
-                                pw.println(stringBuilder.toString());
-                                Binder.restoreCallingIdentity(token3);
-                                return -1;
-                            }
-                            op = arg4.charAt(0);
-                            arg2 = arg4.substring(1);
-                            StringBuilder stringBuilder5;
-                            if (op == '+') {
-                                if (addPowerSaveWhitelistAppInternal(arg2)) {
-                                    StringBuilder stringBuilder6 = new StringBuilder();
-                                    stringBuilder6.append("Added: ");
-                                    stringBuilder6.append(arg2);
-                                    pw.println(stringBuilder6.toString());
-                                } else {
+                            if (arg4.length() >= 1) {
+                                if (arg4.charAt(0) != '-' && arg4.charAt(0) != '+' && arg4.charAt(0) != c) {
+                                    break;
+                                }
+                                op = arg4.charAt(0);
+                                arg2 = arg4.substring(1);
+                                StringBuilder stringBuilder5;
+                                if (op == '+') {
+                                    if (addPowerSaveWhitelistAppInternal(arg2)) {
+                                        StringBuilder stringBuilder6 = new StringBuilder();
+                                        stringBuilder6.append("Added: ");
+                                        stringBuilder6.append(arg2);
+                                        pw.println(stringBuilder6.toString());
+                                    } else {
+                                        stringBuilder5 = new StringBuilder();
+                                        stringBuilder5.append("Unknown package: ");
+                                        stringBuilder5.append(arg2);
+                                        pw.println(stringBuilder5.toString());
+                                    }
+                                } else if (op != '-') {
+                                    pw.println(getPowerSaveWhitelistAppInternal(arg2));
+                                } else if (removePowerSaveWhitelistAppInternal(arg2)) {
                                     stringBuilder5 = new StringBuilder();
-                                    stringBuilder5.append("Unknown package: ");
+                                    stringBuilder5.append("Removed: ");
                                     stringBuilder5.append(arg2);
                                     pw.println(stringBuilder5.toString());
                                 }
-                            } else if (op != '-') {
-                                pw.println(getPowerSaveWhitelistAppInternal(arg2));
-                            } else if (removePowerSaveWhitelistAppInternal(arg2)) {
-                                stringBuilder5 = new StringBuilder();
-                                stringBuilder5.append("Removed: ");
-                                stringBuilder5.append(arg2);
-                                pw.println(stringBuilder5.toString());
+                                arg3 = shell.getNextArg();
+                                arg4 = arg3;
+                                if (arg3 == null) {
+                                    Binder.restoreCallingIdentity(token3);
+                                    break;
+                                }
+                                token4 = token3;
+                                c = '=';
                             }
-                            arg3 = shell.getNextArg();
-                            arg4 = arg3;
-                            if (arg3 == null) {
-                                break;
-                            }
-                            token4 = token3;
-                            c = '=';
-                        } finally {
+                        } catch (Throwable th22222222) {
+                            Binder.restoreCallingIdentity(token3);
+                            throw th22222222;
                         }
                     }
-                } else {
-                    synchronized (this) {
-                        for (curState = 0; curState < this.mPowerSaveWhitelistAppsExceptIdle.size(); curState++) {
+                }
+                synchronized (this) {
+                    curLightState = 0;
+                    while (curLightState < this.mPowerSaveWhitelistAppsExceptIdle.size()) {
+                        try {
                             pw.print("system-excidle,");
-                            pw.print((String) this.mPowerSaveWhitelistAppsExceptIdle.keyAt(curState));
+                            pw.print((String) this.mPowerSaveWhitelistAppsExceptIdle.keyAt(curLightState));
                             pw.print(",");
-                            pw.println(this.mPowerSaveWhitelistAppsExceptIdle.valueAt(curState));
+                            pw.println(this.mPowerSaveWhitelistAppsExceptIdle.valueAt(curLightState));
+                            curLightState++;
+                        } catch (Throwable th222222222) {
+                            throw th222222222;
                         }
-                        for (curState = 0; curState < this.mPowerSaveWhitelistApps.size(); curState++) {
-                            pw.print("system,");
-                            pw.print((String) this.mPowerSaveWhitelistApps.keyAt(curState));
-                            pw.print(",");
-                            pw.println(this.mPowerSaveWhitelistApps.valueAt(curState));
-                        }
-                        for (curState = 0; curState < this.mPowerSaveWhitelistUserApps.size(); curState++) {
-                            pw.print("user,");
-                            pw.print((String) this.mPowerSaveWhitelistUserApps.keyAt(curState));
-                            pw.print(",");
-                            pw.println(this.mPowerSaveWhitelistUserApps.valueAt(curState));
-                        }
+                    }
+                    for (curLightState = 0; curLightState < this.mPowerSaveWhitelistApps.size(); curLightState++) {
+                        pw.print("system,");
+                        pw.print((String) this.mPowerSaveWhitelistApps.keyAt(curLightState));
+                        pw.print(",");
+                        pw.println(this.mPowerSaveWhitelistApps.valueAt(curLightState));
+                    }
+                    for (curLightState = 0; curLightState < this.mPowerSaveWhitelistUserApps.size(); curLightState++) {
+                        pw.print("user,");
+                        pw.print((String) this.mPowerSaveWhitelistUserApps.keyAt(curLightState));
+                        pw.print(",");
+                        pw.println(this.mPowerSaveWhitelistUserApps.valueAt(curLightState));
                     }
                 }
             } else if ("tempwhitelist".equals(str)) {
@@ -3333,13 +3382,17 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                     arg3 = shell.getNextArg();
                     if (arg3 == null) {
                         pw.println("No arguments given");
+                        Binder.restoreCallingIdentity(token);
                         return -1;
                     }
                     if ("reset".equals(arg3)) {
                         resetPowerSaveWhitelistExceptIdleInternal();
                     } else {
                         StringBuilder stringBuilder7;
-                        while (arg3.length() >= 1 && (arg3.charAt(0) == '-' || arg3.charAt(0) == '+' || arg3.charAt(0) == '=')) {
+                        while (arg3.length() >= 1) {
+                            if (arg3.charAt(0) != '-' && arg3.charAt(0) != '+' && arg3.charAt(0) != '=') {
+                                break;
+                            }
                             char op2 = arg3.charAt(0);
                             String pkg = arg3.substring(1);
                             if (op2 == '+') {
@@ -3378,7 +3431,9 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                         return -1;
                     }
                     Binder.restoreCallingIdentity(token);
-                } finally {
+                } catch (Throwable th2222222222) {
+                    Binder.restoreCallingIdentity(token);
+                    throw th2222222222;
                 }
             } else if ("sys-whitelist".equals(str)) {
                 String arg6 = shell.getNextArg();
@@ -3389,16 +3444,21 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                         if ("reset".equals(arg6)) {
                             resetSystemPowerWhitelistInternal();
                         } else {
-                            while (arg6.length() >= 1 && (arg6.charAt(0) == '-' || arg6.charAt(0) == '+')) {
+                            while (arg6.length() >= 1) {
+                                if (arg6.charAt(0) != '-' && arg6.charAt(0) != '+') {
+                                    break;
+                                }
                                 op = arg6.charAt(0);
                                 arg2 = arg6.substring(1);
                                 StringBuilder stringBuilder9;
                                 if (op != '+') {
-                                    if (op == '-' && removeSystemPowerWhitelistAppInternal(arg2)) {
-                                        stringBuilder9 = new StringBuilder();
-                                        stringBuilder9.append("Removed ");
-                                        stringBuilder9.append(arg2);
-                                        pw.println(stringBuilder9.toString());
+                                    if (op == '-') {
+                                        if (removeSystemPowerWhitelistAppInternal(arg2)) {
+                                            stringBuilder9 = new StringBuilder();
+                                            stringBuilder9.append("Removed ");
+                                            stringBuilder9.append(arg2);
+                                            pw.println(stringBuilder9.toString());
+                                        }
                                     }
                                 } else if (restoreSystemPowerWhitelistAppInternal(arg2)) {
                                     stringBuilder9 = new StringBuilder();
@@ -3419,15 +3479,22 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
                             return -1;
                         }
                         Binder.restoreCallingIdentity(token3);
-                    } catch (Throwable th4) {
+                    } catch (Throwable th22222222222) {
                         Binder.restoreCallingIdentity(token3);
+                        throw th22222222222;
                     }
                 }
                 synchronized (this) {
-                    for (curState = 0; curState < this.mPowerSaveWhitelistApps.size(); curState++) {
-                        pw.print((String) this.mPowerSaveWhitelistApps.keyAt(curState));
-                        pw.print(",");
-                        pw.println(this.mPowerSaveWhitelistApps.valueAt(curState));
+                    curLightState = 0;
+                    while (curLightState < this.mPowerSaveWhitelistApps.size()) {
+                        try {
+                            pw.print((String) this.mPowerSaveWhitelistApps.keyAt(curLightState));
+                            pw.print(",");
+                            pw.println(this.mPowerSaveWhitelistApps.valueAt(curLightState));
+                            curLightState++;
+                        } catch (Throwable th222222222222) {
+                            throw th222222222222;
+                        }
                     }
                 }
             } else if (!"motion".equals(str)) {
@@ -3435,15 +3502,16 @@ public class DeviceIdleController extends SystemService implements DeviceIdleCal
             } else {
                 getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
                 synchronized (this) {
-                    token = Binder.clearCallingIdentity();
                     try {
+                        token = Binder.clearCallingIdentity();
                         motionLocked();
                         pw.print("Light state: ");
                         pw.print(lightStateToString(this.mLightState));
                         pw.print(", deep state: ");
                         pw.println(stateToString(this.mState));
-                    } finally {
                         Binder.restoreCallingIdentity(token);
+                    } catch (Throwable th2222222222222) {
+                        throw th2222222222222;
                     }
                 }
             }

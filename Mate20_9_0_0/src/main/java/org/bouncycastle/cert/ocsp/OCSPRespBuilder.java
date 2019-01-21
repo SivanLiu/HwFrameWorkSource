@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.ocsp;
 
+import java.io.IOException;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.ocsp.OCSPResponse;
@@ -21,7 +22,7 @@ public class OCSPRespBuilder {
         if (obj instanceof BasicOCSPResp) {
             try {
                 return new OCSPResp(new OCSPResponse(new OCSPResponseStatus(i), new ResponseBytes(OCSPObjectIdentifiers.id_pkix_ocsp_basic, new DEROctetString(((BasicOCSPResp) obj).getEncoded()))));
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 throw new OCSPException("can't encode object.", e);
             }
         }

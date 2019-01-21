@@ -81,15 +81,15 @@ public final class SessionParameters {
 
         /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
             jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x0013 in {1, 3, 4} preds:[]
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
             	at jadx.core.ProcessClass.process(ProcessClass.java:32)
             	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -100,12 +100,9 @@ public final class SessionParameters {
             /*
             r1 = this;
             if (r2 != 0) goto L_0x0006;
-        L_0x0002:
             r2 = 0;
-        L_0x0003:
             r1.encodedServerExtensions = r2;
             return r1;
-        L_0x0006:
             r0 = new java.io.ByteArrayOutputStream;
             r0.<init>();
             org.bouncycastle.crypto.tls.TlsProtocol.writeExtensions(r0, r2);
@@ -113,7 +110,7 @@ public final class SessionParameters {
             goto L_0x0003;
             return r1;
             */
-            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.crypto.tls.SessionParameters.Builder.setServerExtensions(java.util.Hashtable):org.bouncycastle.crypto.tls.SessionParameters$Builder");
+            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.crypto.tls.SessionParameters$Builder.setServerExtensions(java.util.Hashtable):org.bouncycastle.crypto.tls.SessionParameters$Builder");
         }
     }
 

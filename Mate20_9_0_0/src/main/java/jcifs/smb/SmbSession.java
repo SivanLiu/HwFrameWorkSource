@@ -46,7 +46,7 @@ public final class SmbSession {
         return new NtlmChallenge(trans.server.encryptionKey, dc);
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0058, code:
+    /* JADX WARNING: Missing block: B:23:0x0058, code skipped:
             return r9;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -173,6 +173,8 @@ public final class SmbSession {
         return this.transport;
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void send(ServerMessageBlock request, ServerMessageBlock response) throws SmbException {
         synchronized (transport()) {
             if (response != null) {
@@ -203,14 +205,14 @@ public final class SmbSession {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:77:0x019f A:{ExcHandler: all (th java.lang.Throwable), Catch:{ SmbAuthException -> 0x01cb, SmbException -> 0x01cd, all -> 0x019f, SmbException -> 0x00c0, all -> 0x019f }, Splitter: B:32:0x00a3} */
-    /* JADX WARNING: Missing block: B:77:0x019f, code:
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x019f A:{Catch:{ SmbAuthException -> 0x01cb, SmbException -> 0x01cd, all -> 0x019f, SmbException -> 0x00c0, all -> 0x019f }, Splitter:B:32:0x00a3, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Missing block: B:77:0x019f, code skipped:
             r14 = th;
      */
-    /* JADX WARNING: Missing block: B:78:0x01a0, code:
+    /* JADX WARNING: Missing block: B:78:0x01a0, code skipped:
             r5 = r6;
      */
-    /* JADX WARNING: Missing block: B:164:?, code:
+    /* JADX WARNING: Missing block: B:159:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -226,7 +228,7 @@ public final class SmbSession {
                 } else {
                     try {
                         this.transport.wait();
-                    } catch (Throwable ie) {
+                    } catch (InterruptedException ie) {
                         throw new SmbException(ie.getMessage(), ie);
                     }
                 }

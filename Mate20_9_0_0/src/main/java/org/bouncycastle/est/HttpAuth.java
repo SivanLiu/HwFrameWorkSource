@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bouncycastle.asn1.DERNull;
@@ -36,7 +35,7 @@ public class HttpAuth implements ESTAuth {
     private final String username;
 
     static {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         hashSet.add("realm");
         hashSet.add("nonce");
         hashSet.add("opaque");
@@ -90,7 +89,7 @@ public class HttpAuth implements ESTAuth {
                 String str3 = (String) splitCSL.get("opaque");
                 String str4 = (String) splitCSL.get("algorithm");
                 String str5 = (String) splitCSL.get("qop");
-                List arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 if (this.realm == null || this.realm.equals(str)) {
                     if (str4 == null) {
                         str4 = "MD5";
@@ -192,7 +191,7 @@ public class HttpAuth implements ESTAuth {
                             update(outputStream4, method);
                             outputStream4.close();
                             str5 = Hex.toHexString(digestCalculator4.getDigest());
-                            Map hashMap = new HashMap();
+                            HashMap hashMap = new HashMap();
                             hashMap.put("username", this.username);
                             hashMap.put("realm", str);
                             hashMap.put("nonce", str2);

@@ -2,7 +2,6 @@ package org.bouncycastle.crypto.params;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -73,7 +72,7 @@ public class SkeinParameters implements CipherParameters {
 
         public Builder setPersonalisation(Date date, String str, String str2) {
             try {
-                OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, "UTF-8");
                 outputStreamWriter.write(new SimpleDateFormat("YYYYMMDD").format(date));
                 outputStreamWriter.write(" ");
@@ -92,7 +91,7 @@ public class SkeinParameters implements CipherParameters {
 
         public Builder setPersonalisation(Date date, Locale locale, String str, String str2) {
             try {
-                OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, "UTF-8");
                 outputStreamWriter.write(new SimpleDateFormat("YYYYMMDD", locale).format(date));
                 outputStreamWriter.write(" ");

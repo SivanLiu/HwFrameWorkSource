@@ -113,7 +113,7 @@ public abstract class SimpleTest implements Test {
             return success();
         } catch (TestFailedException e) {
             return e.getResult();
-        } catch (Throwable e2) {
+        } catch (Exception e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Exception: ");
             stringBuilder.append(e2);

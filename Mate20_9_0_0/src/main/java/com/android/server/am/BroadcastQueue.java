@@ -903,34 +903,34 @@ public class BroadcastQueue extends AbsBroadcastQueue {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:392:0x0f20 A:{SYNTHETIC, Splitter: B:392:0x0f20} */
-    /* JADX WARNING: Removed duplicated region for block: B:405:0x0fc2  */
-    /* JADX WARNING: Removed duplicated region for block: B:404:0x0f97  */
-    /* JADX WARNING: Removed duplicated region for block: B:411:0x0fd9  */
-    /* JADX WARNING: Removed duplicated region for block: B:408:0x0fcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:415:0x0ffc  */
-    /* JADX WARNING: Removed duplicated region for block: B:414:0x0ff9  */
-    /* JADX WARNING: Removed duplicated region for block: B:420:0x1060  */
-    /* JADX WARNING: Removed duplicated region for block: B:418:0x1012  */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x0e85 A:{Splitter: B:373:0x0e6d, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:138:0x049e  */
-    /* JADX WARNING: Removed duplicated region for block: B:422:0x1067 A:{LOOP_END, LOOP:2: B:71:0x023a->B:422:0x1067} */
-    /* JADX WARNING: Removed duplicated region for block: B:433:0x04fe A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:392:0x0f20 A:{SYNTHETIC, Splitter: B:392:0x0f20} */
-    /* JADX WARNING: Removed duplicated region for block: B:404:0x0f97  */
-    /* JADX WARNING: Removed duplicated region for block: B:405:0x0fc2  */
-    /* JADX WARNING: Removed duplicated region for block: B:408:0x0fcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:411:0x0fd9  */
-    /* JADX WARNING: Removed duplicated region for block: B:414:0x0ff9  */
-    /* JADX WARNING: Removed duplicated region for block: B:415:0x0ffc  */
-    /* JADX WARNING: Removed duplicated region for block: B:418:0x1012  */
-    /* JADX WARNING: Removed duplicated region for block: B:420:0x1060  */
-    /* JADX WARNING: Removed duplicated region for block: B:382:0x0e92 A:{Splitter: B:371:0x0e6b, ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:394:0x0f20 A:{SYNTHETIC, Splitter:B:394:0x0f20} */
+    /* JADX WARNING: Removed duplicated region for block: B:407:0x0fc2  */
+    /* JADX WARNING: Removed duplicated region for block: B:406:0x0f97  */
+    /* JADX WARNING: Removed duplicated region for block: B:413:0x0fd9  */
+    /* JADX WARNING: Removed duplicated region for block: B:410:0x0fcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:417:0x0ffc  */
+    /* JADX WARNING: Removed duplicated region for block: B:416:0x0ff9  */
+    /* JADX WARNING: Removed duplicated region for block: B:422:0x1060  */
+    /* JADX WARNING: Removed duplicated region for block: B:420:0x1012  */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x0e85 A:{ExcHandler: RemoteException (e android.os.RemoteException), Splitter:B:375:0x0e6d} */
+    /* JADX WARNING: Removed duplicated region for block: B:140:0x049e  */
+    /* JADX WARNING: Removed duplicated region for block: B:424:0x1067 A:{LOOP_END, LOOP:2: B:73:0x023a->B:424:0x1067} */
+    /* JADX WARNING: Removed duplicated region for block: B:435:0x04fe A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:394:0x0f20 A:{SYNTHETIC, Splitter:B:394:0x0f20} */
+    /* JADX WARNING: Removed duplicated region for block: B:406:0x0f97  */
+    /* JADX WARNING: Removed duplicated region for block: B:407:0x0fc2  */
+    /* JADX WARNING: Removed duplicated region for block: B:410:0x0fcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:413:0x0fd9  */
+    /* JADX WARNING: Removed duplicated region for block: B:416:0x0ff9  */
+    /* JADX WARNING: Removed duplicated region for block: B:417:0x0ffc  */
+    /* JADX WARNING: Removed duplicated region for block: B:420:0x1012  */
+    /* JADX WARNING: Removed duplicated region for block: B:422:0x1060  */
+    /* JADX WARNING: Removed duplicated region for block: B:384:0x0e92 A:{ExcHandler: RuntimeException (e java.lang.RuntimeException), Splitter:B:373:0x0e6b} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:380:0x0e85, code:
+    /* JADX WARNING: Missing block: B:382:0x0e85, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:381:0x0e86, code:
+    /* JADX WARNING: Missing block: B:383:0x0e86, code skipped:
             r29 = r3;
             r30 = r5;
             r12 = r6;
@@ -938,10 +938,10 @@ public class BroadcastQueue extends AbsBroadcastQueue {
             r18 = r40;
             r44 = r41;
      */
-    /* JADX WARNING: Missing block: B:382:0x0e92, code:
+    /* JADX WARNING: Missing block: B:384:0x0e92, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:383:0x0e93, code:
+    /* JADX WARNING: Missing block: B:385:0x0e93, code skipped:
             r12 = r48;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1049,7 +1049,13 @@ public class BroadcastQueue extends AbsBroadcastQueue {
             if (this.mPendingBroadcast.curApp.pid > 0) {
                 synchronized (this.mService.mPidsSelfLocked) {
                     proc = (ProcessRecord) this.mService.mPidsSelfLocked.get(this.mPendingBroadcast.curApp.pid);
-                    z = proc == null || proc.crashing;
+                    if (proc != null) {
+                        if (!proc.crashing) {
+                            z = false;
+                            isDead = z;
+                        }
+                    }
+                    z = true;
                     isDead = z;
                 }
             } else {

@@ -3,14 +3,16 @@ package com.android.server.locksettings;
 import android.security.keystore.KeyProtection.Builder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStore.SecretKeyEntry;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -58,47 +60,21 @@ public class SyntheticPasswordCrypto {
         throw new RuntimeException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x001c, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001d, code:
-            r2.printStackTrace();
-     */
-    /* JADX WARNING: Missing block: B:6:0x0021, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static byte[] encrypt(byte[] keyBytes, byte[] personalisation, byte[] message) {
         try {
             return encrypt(new SecretKeySpec(Arrays.copyOf(personalisedHash(personalisation, keyBytes), 32), "AES"), message);
-        } catch (Exception e) {
+        } catch (IOException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:1:0x0017, ExcHandler: java.security.InvalidKeyException (r2_3 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Missing block: B:4:0x001c, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001d, code:
-            r2.printStackTrace();
-     */
-    /* JADX WARNING: Missing block: B:6:0x0021, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static byte[] decrypt(byte[] keyBytes, byte[] personalisation, byte[] ciphertext) {
         try {
             return decrypt(new SecretKeySpec(Arrays.copyOf(personalisedHash(personalisation, keyBytes), 32), "AES"), ciphertext);
-        } catch (GeneralSecurityException e) {
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -113,51 +89,17 @@ public class SyntheticPasswordCrypto {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001b A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:3:0x001b, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:4:0x001c, code:
-            r0.printStackTrace();
-     */
-    /* JADX WARNING: Missing block: B:5:0x0026, code:
-            throw new java.lang.RuntimeException("Failed to decrypt blob", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static byte[] decryptBlob(String keyAlias, byte[] blob, byte[] applicationId) {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             return decrypt(applicationId, APPLICATION_ID_PERSONALIZATION, decrypt((SecretKey) keyStore.getKey(keyAlias, null), blob));
-        } catch (Exception e) {
+        } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to decrypt blob", e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0068 A:{Splitter: B:0:0x0000, ExcHandler: java.security.cert.CertificateException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0068, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:7:0x0069, code:
-            r0.printStackTrace();
-     */
-    /* JADX WARNING: Missing block: B:8:0x0073, code:
-            throw new java.lang.RuntimeException("Failed to encrypt blob", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static byte[] createBlob(String keyAlias, byte[] data, byte[] applicationId, long sid, boolean managedProfile) {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
@@ -172,7 +114,9 @@ public class SyntheticPasswordCrypto {
             builder.setRollbackResistant(managedProfile);
             keyStore.setEntry(keyAlias, new SecretKeyEntry(secretKey), builder.build());
             return encrypt(secretKey, encrypt(applicationId, APPLICATION_ID_PERSONALIZATION, data));
-        } catch (Exception e) {
+        } catch (IOException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to encrypt blob", e);
         }
     }
 
@@ -180,25 +124,13 @@ public class SyntheticPasswordCrypto {
         return createBlob(keyAlias, data, applicationId, sid, false);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000e A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000e A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000e A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:2:0x000e, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:3:0x000f, code:
-            r0.printStackTrace();
-     */
-    /* JADX WARNING: Missing block: B:4:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void destroyBlobKey(String keyAlias) {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             keyStore.deleteEntry(keyAlias);
-        } catch (Exception e) {
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            e.printStackTrace();
         }
     }
 

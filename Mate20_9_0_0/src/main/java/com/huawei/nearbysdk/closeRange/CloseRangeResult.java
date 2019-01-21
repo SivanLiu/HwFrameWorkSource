@@ -76,10 +76,12 @@ public final class CloseRangeResult implements Parcelable {
                 return this.hwSpecDataArray;
             }
             byte[] hwSpecRawData = record.getServiceData(CloseRangeProtocol.PARCEL_UUID_CLOSERANGE);
-            if (hwSpecRawData == null || hwSpecRawData.length == 0) {
-                return this.hwSpecDataArray;
+            if (hwSpecRawData != null) {
+                if (hwSpecRawData.length != 0) {
+                    this.hwSpecDataArray = CloseRangeProtocol.parseCloseRangeServiceData(hwSpecRawData);
+                }
             }
-            this.hwSpecDataArray = CloseRangeProtocol.parseCloseRangeServiceData(hwSpecRawData);
+            return this.hwSpecDataArray;
         }
         return this.hwSpecDataArray;
     }

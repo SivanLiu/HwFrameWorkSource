@@ -1,5 +1,6 @@
 package org.bouncycastle.tsp;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -30,6 +31,7 @@ import org.bouncycastle.asn1.x509.ExtensionsGenerator;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.cms.CMSAttributeTableGenerationException;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.SignerInfoGenerator;
@@ -94,12 +96,12 @@ public class TimeStampTokenGenerator {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:17:0x00d5 in {8, 9, 11, 14, 16, 20, 22} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -140,7 +142,6 @@ public class TimeStampTokenGenerator {
         r5.tsaPolicyOID = r8;
         r8 = r6.hasAssociatedCertificate();
         if (r8 == 0) goto L_0x00df;
-    L_0x003a:
         r8 = r6.getAssociatedCertificate();
         org.bouncycastle.tsp.TSPUtil.validateCertificate(r8);
         r0 = r7.getOutputStream();	 Catch:{ IOException -> 0x00d6 }
@@ -152,11 +153,9 @@ public class TimeStampTokenGenerator {
         r2 = org.bouncycastle.asn1.oiw.OIWObjectIdentifiers.idSHA1;	 Catch:{ IOException -> 0x00d6 }
         r0 = r0.equals(r2);	 Catch:{ IOException -> 0x00d6 }
         if (r0 == 0) goto L_0x0092;	 Catch:{ IOException -> 0x00d6 }
-    L_0x005f:
         r0 = new org.bouncycastle.asn1.ess.ESSCertID;	 Catch:{ IOException -> 0x00d6 }
         r7 = r7.getDigest();	 Catch:{ IOException -> 0x00d6 }
         if (r9 == 0) goto L_0x007e;	 Catch:{ IOException -> 0x00d6 }
-    L_0x0067:
         r1 = new org.bouncycastle.asn1.x509.IssuerSerial;	 Catch:{ IOException -> 0x00d6 }
         r9 = new org.bouncycastle.asn1.x509.GeneralNames;	 Catch:{ IOException -> 0x00d6 }
         r2 = new org.bouncycastle.asn1.x509.GeneralName;	 Catch:{ IOException -> 0x00d6 }
@@ -165,17 +164,14 @@ public class TimeStampTokenGenerator {
         r9.<init>(r2);	 Catch:{ IOException -> 0x00d6 }
         r8 = r8.getSerialNumber();	 Catch:{ IOException -> 0x00d6 }
         r1.<init>(r9, r8);	 Catch:{ IOException -> 0x00d6 }
-    L_0x007e:
         r0.<init>(r7, r1);	 Catch:{ IOException -> 0x00d6 }
         r7 = new org.bouncycastle.cms.SignerInfoGenerator;	 Catch:{ IOException -> 0x00d6 }
         r8 = new org.bouncycastle.tsp.TimeStampTokenGenerator$1;	 Catch:{ IOException -> 0x00d6 }
         r8.<init>(r6, r0);	 Catch:{ IOException -> 0x00d6 }
         r9 = r6.getUnsignedAttributeTableGenerator();	 Catch:{ IOException -> 0x00d6 }
         r7.<init>(r6, r8, r9);	 Catch:{ IOException -> 0x00d6 }
-    L_0x008f:
         r5.signerInfoGen = r7;	 Catch:{ IOException -> 0x00d6 }
         return;	 Catch:{ IOException -> 0x00d6 }
-    L_0x0092:
         r0 = new org.bouncycastle.asn1.x509.AlgorithmIdentifier;	 Catch:{ IOException -> 0x00d6 }
         r2 = r7.getAlgorithmIdentifier();	 Catch:{ IOException -> 0x00d6 }
         r2 = r2.getAlgorithm();	 Catch:{ IOException -> 0x00d6 }
@@ -183,7 +179,6 @@ public class TimeStampTokenGenerator {
         r2 = new org.bouncycastle.asn1.ess.ESSCertIDv2;	 Catch:{ IOException -> 0x00d6 }
         r7 = r7.getDigest();	 Catch:{ IOException -> 0x00d6 }
         if (r9 == 0) goto L_0x00c3;	 Catch:{ IOException -> 0x00d6 }
-    L_0x00a7:
         r1 = new org.bouncycastle.asn1.x509.IssuerSerial;	 Catch:{ IOException -> 0x00d6 }
         r9 = new org.bouncycastle.asn1.x509.GeneralNames;	 Catch:{ IOException -> 0x00d6 }
         r3 = new org.bouncycastle.asn1.x509.GeneralName;	 Catch:{ IOException -> 0x00d6 }
@@ -194,7 +189,6 @@ public class TimeStampTokenGenerator {
         r8 = r8.getSerialNumber();	 Catch:{ IOException -> 0x00d6 }
         r3.<init>(r8);	 Catch:{ IOException -> 0x00d6 }
         r1.<init>(r9, r3);	 Catch:{ IOException -> 0x00d6 }
-    L_0x00c3:
         r2.<init>(r0, r7, r1);	 Catch:{ IOException -> 0x00d6 }
         r7 = new org.bouncycastle.cms.SignerInfoGenerator;	 Catch:{ IOException -> 0x00d6 }
         r8 = new org.bouncycastle.tsp.TimeStampTokenGenerator$2;	 Catch:{ IOException -> 0x00d6 }
@@ -203,13 +197,11 @@ public class TimeStampTokenGenerator {
         r7.<init>(r6, r8, r9);	 Catch:{ IOException -> 0x00d6 }
         goto L_0x008f;
         return;
-    L_0x00d6:
         r6 = move-exception;
         r7 = new org.bouncycastle.tsp.TSPException;
         r8 = "Exception processing certificate.";
         r7.<init>(r8, r6);
         throw r7;
-    L_0x00df:
         r6 = new java.lang.IllegalArgumentException;
         r7 = "SignerInfoGenerator must have an associated certificate";
         r6.<init>(r7);
@@ -218,13 +210,13 @@ public class TimeStampTokenGenerator {
         throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.tsp.TimeStampTokenGenerator.<init>(org.bouncycastle.cms.SignerInfoGenerator, org.bouncycastle.operator.DigestCalculator, org.bouncycastle.asn1.ASN1ObjectIdentifier, boolean):void");
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0062, code:
+    /* JADX WARNING: Missing block: B:13:0x0062, code skipped:
             if (r0.length() > r2) goto L_0x006d;
      */
-    /* JADX WARNING: Missing block: B:15:0x006b, code:
+    /* JADX WARNING: Missing block: B:15:0x006b, code skipped:
             if (r0.length() > r2) goto L_0x006d;
      */
-    /* JADX WARNING: Missing block: B:16:0x006d, code:
+    /* JADX WARNING: Missing block: B:16:0x006d, code skipped:
             r0.delete(r2, r0.length());
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -335,14 +327,14 @@ public class TimeStampTokenGenerator {
             cMSSignedDataGenerator.addCRLs(new CollectionStore(this.crls));
             if (!this.otherRevoc.isEmpty()) {
                 for (ASN1ObjectIdentifier aSN1ObjectIdentifier3 : this.otherRevoc.keySet()) {
-                    cMSSignedDataGenerator.addOtherRevocationInfo(aSN1ObjectIdentifier3, new CollectionStore((Collection) this.otherRevoc.get(aSN1ObjectIdentifier3)));
+                    cMSSignedDataGenerator.addOtherRevocationInfo(aSN1ObjectIdentifier3, (Store) new CollectionStore((Collection) this.otherRevoc.get(aSN1ObjectIdentifier3)));
                 }
             }
             cMSSignedDataGenerator.addSignerInfoGenerator(this.signerInfoGen);
             return new TimeStampToken(cMSSignedDataGenerator.generate(new CMSProcessableByteArray(PKCSObjectIdentifiers.id_ct_TSTInfo, tSTInfo.getEncoded(ASN1Encoding.DER)), true));
-        } catch (Throwable e) {
+        } catch (CMSException e) {
             throw new TSPException("Error generating time-stamp token", e);
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             throw new TSPException("Exception encoding info", e2);
         }
     }

@@ -132,7 +132,7 @@ public class StylusGestureListener implements PointerEventListener, OnGesturePer
         this.mWindowManagerInternal = (WindowManagerInternal) LocalServices.getService(WindowManagerInternal.class);
         this.mScreenshotHelper = new ScreenshotHelper(context);
         this.mStylusGestureManager = new StylusGestureManager(context);
-        this.mHasNotchInScreen = TextUtils.isEmpty(mNotchProp) ^ true;
+        this.mHasNotchInScreen = TextUtils.isEmpty(mNotchProp) ^ 1;
     }
 
     public void cancelStylusGesture() {
@@ -484,7 +484,7 @@ public class StylusGestureListener implements PointerEventListener, OnGesturePer
                 stringBuilder.append(e);
                 Log.w(str, stringBuilder.toString());
                 return;
-            } catch (IllegalArgumentException e2) {
+            } catch (Exception e2) {
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("SwtichInputMethod error occured:");

@@ -22,9 +22,9 @@ public class WakeupNotificationFactory {
     }
 
     public Notification createOnboardingNotification() {
-        CharSequence title = this.mContext.getText(17041415);
-        CharSequence content = this.mContext.getText(17041414);
-        CharSequence disableText = this.mContext.getText(17041413);
+        CharSequence title = this.mContext.getText(17041416);
+        CharSequence content = this.mContext.getText(17041415);
+        CharSequence disableText = this.mContext.getText(17041414);
         return this.mFrameworkFacade.makeNotificationBuilder(this.mContext, SystemNotificationChannels.NETWORK_STATUS).setSmallIcon(17302791).setTicker(title).setContentTitle(title).setContentText(content).setContentIntent(getPrivateBroadcast(ACTION_OPEN_WIFI_PREFERENCES)).setDeleteIntent(getPrivateBroadcast(ACTION_DISMISS_NOTIFICATION)).addAction(new Builder(null, disableText, getPrivateBroadcast(ACTION_TURN_OFF_WIFI_WAKE)).build()).setShowWhen(false).setLocalOnly(true).setColor(this.mContext.getResources().getColor(17170784, this.mContext.getTheme())).build();
     }
 

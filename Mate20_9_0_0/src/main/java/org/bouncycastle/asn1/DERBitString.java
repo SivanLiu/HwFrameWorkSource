@@ -70,11 +70,11 @@ public class DERBitString extends ASN1BitString {
     }
 
     void encode(ASN1OutputStream aSN1OutputStream) throws IOException {
-        Object derForm = ASN1BitString.derForm(this.data, this.padBits);
-        Object obj = new byte[(derForm.length + 1)];
-        obj[0] = (byte) getPadBits();
-        System.arraycopy(derForm, 0, obj, 1, obj.length - 1);
-        aSN1OutputStream.writeEncoded(3, obj);
+        byte[] derForm = ASN1BitString.derForm(this.data, this.padBits);
+        byte[] bArr = new byte[(derForm.length + 1)];
+        bArr[0] = (byte) getPadBits();
+        System.arraycopy(derForm, 0, bArr, 1, bArr.length - 1);
+        aSN1OutputStream.writeEncoded(3, bArr);
     }
 
     int encodedLength() {

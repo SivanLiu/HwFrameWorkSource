@@ -135,10 +135,10 @@ public final class CAST6Engine extends CAST5Engine {
             i4 = i3;
             i3 = i6;
         }
-        Object obj2 = new byte[64];
-        System.arraycopy(obj, 0, obj2, 0, obj.length);
+        byte[] bArr2 = new byte[64];
+        System.arraycopy(obj, 0, bArr2, 0, obj.length);
         for (i2 = 0; i2 < 8; i2++) {
-            this._workingKey[i2] = BytesTo32bits(obj2, i2 * 4);
+            this._workingKey[i2] = BytesTo32bits(bArr2, i2 * 4);
         }
         for (i2 = 0; i2 < 12; i2++) {
             i5 = i2 * 2;

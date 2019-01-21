@@ -6,12 +6,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.rms.iaware.AwareLog;
+import android.util.ArraySet;
 import com.android.server.am.HwBroadcastRecord;
 import com.android.server.am.HwMtmBroadcastResourceManager;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class AwareBroadcastProcess {
     private static final int IAWARE_FIRST_UNPROXY_DELAY_TIME = 5;
@@ -64,254 +68,6 @@ public class AwareBroadcastProcess {
                     return;
             }
         }
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void dump(java.io.PrintWriter r29) {
-        /*
-        r28 = this;
-        r1 = r28;
-        r2 = r29;
-        if (r2 != 0) goto L_0x0007;
-    L_0x0006:
-        return;
-    L_0x0007:
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r3 = "      Proxy broadcast [";
-        r0.append(r3);
-        r3 = r1.mBrName;
-        r0.append(r3);
-        r3 = "]";
-        r0.append(r3);
-        r0 = r0.toString();
-        r2.println(r0);
-        r0 = new android.util.ArraySet;
-        r0.<init>();
-        r3 = r0;
-        r0 = new android.util.ArraySet;
-        r0.<init>();
-        r4 = r0;
-        r0 = new android.util.ArraySet;
-        r0.<init>();
-        r5 = r0;
-        r0 = new android.util.ArraySet;
-        r0.<init>();
-        r6 = r0;
-        r0 = new android.util.ArraySet;
-        r0.<init>();
-        r7 = r0;
-        r8 = r1.mIawareParallelProxyBrMap;
-        monitor-enter(r8);
-        r0 = new java.util.ArrayList;	 Catch:{ all -> 0x01fd }
-        r9 = r1.mIawareParallelProxyBrMap;	 Catch:{ all -> 0x01fd }
-        r10 = 0;	 Catch:{ all -> 0x01fd }
-        r10 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x01fd }
-        r9 = r9.get(r10);	 Catch:{ all -> 0x01fd }
-        r9 = (java.util.Collection) r9;	 Catch:{ all -> 0x01fd }
-        r0.<init>(r9);	 Catch:{ all -> 0x01fd }
-        r9 = new java.util.ArrayList;	 Catch:{ all -> 0x01fd }
-        r10 = r1.mIawareParallelProxyBrMap;	 Catch:{ all -> 0x01fd }
-        r11 = 1;	 Catch:{ all -> 0x01fd }
-        r11 = java.lang.Integer.valueOf(r11);	 Catch:{ all -> 0x01fd }
-        r10 = r10.get(r11);	 Catch:{ all -> 0x01fd }
-        r10 = (java.util.Collection) r10;	 Catch:{ all -> 0x01fd }
-        r9.<init>(r10);	 Catch:{ all -> 0x01fd }
-        r10 = new java.util.ArrayList;	 Catch:{ all -> 0x01fd }
-        r11 = r1.mIawareParallelProxyBrMap;	 Catch:{ all -> 0x01fd }
-        r12 = 2;	 Catch:{ all -> 0x01fd }
-        r12 = java.lang.Integer.valueOf(r12);	 Catch:{ all -> 0x01fd }
-        r11 = r11.get(r12);	 Catch:{ all -> 0x01fd }
-        r11 = (java.util.Collection) r11;	 Catch:{ all -> 0x01fd }
-        r10.<init>(r11);	 Catch:{ all -> 0x01fd }
-        r11 = new java.util.ArrayList;	 Catch:{ all -> 0x01fd }
-        r12 = r1.mIawareParallelProxyBrMap;	 Catch:{ all -> 0x01fd }
-        r13 = 3;	 Catch:{ all -> 0x01fd }
-        r13 = java.lang.Integer.valueOf(r13);	 Catch:{ all -> 0x01fd }
-        r12 = r12.get(r13);	 Catch:{ all -> 0x01fd }
-        r12 = (java.util.Collection) r12;	 Catch:{ all -> 0x01fd }
-        r11.<init>(r12);	 Catch:{ all -> 0x01fd }
-        monitor-exit(r8);	 Catch:{ all -> 0x01fd }
-        r8 = r0.size();
-        r12 = r9.size();
-        r13 = r10.size();
-        r14 = r11.size();
-        r15 = 0;
-        r16 = r0.size();
-    L_0x00a1:
-        r17 = r16;
-        r1 = r17;
-        if (r15 >= r1) goto L_0x00cc;
-    L_0x00a7:
-        r16 = r0.get(r15);
-        r18 = r0;
-        r0 = r16;
-        r0 = (com.android.server.am.HwBroadcastRecord) r0;
-        r19 = r1;
-        r1 = r0.getAction();
-        r3.add(r1);
-        r20 = r1;
-        r1 = r0.getReceiverPkg();
-        r4.add(r1);
-        r15 = r15 + 1;
-        r0 = r18;
-        r16 = r19;
-        r1 = r28;
-        goto L_0x00a1;
-    L_0x00cc:
-        r18 = r0;
-        r0 = 0;
-        r1 = r9.size();
-    L_0x00d3:
-        if (r0 >= r1) goto L_0x00f2;
-    L_0x00d5:
-        r15 = r9.get(r0);
-        r15 = (com.android.server.am.HwBroadcastRecord) r15;
-        r21 = r1;
-        r1 = r15.getAction();
-        r3.add(r1);
-        r22 = r1;
-        r1 = r15.getReceiverPkg();
-        r5.add(r1);
-        r0 = r0 + 1;
-        r1 = r21;
-        goto L_0x00d3;
-    L_0x00f2:
-        r0 = 0;
-        r1 = r10.size();
-    L_0x00f7:
-        if (r0 >= r1) goto L_0x0116;
-    L_0x00f9:
-        r15 = r10.get(r0);
-        r15 = (com.android.server.am.HwBroadcastRecord) r15;
-        r23 = r1;
-        r1 = r15.getAction();
-        r3.add(r1);
-        r24 = r1;
-        r1 = r15.getReceiverPkg();
-        r6.add(r1);
-        r0 = r0 + 1;
-        r1 = r23;
-        goto L_0x00f7;
-    L_0x0116:
-        r0 = 0;
-        r1 = r11.size();
-    L_0x011b:
-        if (r0 >= r1) goto L_0x013a;
-    L_0x011d:
-        r15 = r11.get(r0);
-        r15 = (com.android.server.am.HwBroadcastRecord) r15;
-        r25 = r1;
-        r1 = r15.getAction();
-        r3.add(r1);
-        r26 = r1;
-        r1 = r15.getReceiverPkg();
-        r7.add(r1);
-        r0 = r0 + 1;
-        r1 = r25;
-        goto L_0x011b;
-    L_0x013a:
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r1 = "      proxy action :";
-        r0.append(r1);
-        r0.append(r3);
-        r0 = r0.toString();
-        r2.println(r0);
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r1 = "      proxy Top pkg :";
-        r0.append(r1);
-        r0.append(r4);
-        r0 = r0.toString();
-        r2.println(r0);
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r1 = "      proxy high adj pkg :";
-        r0.append(r1);
-        r0.append(r5);
-        r0 = r0.toString();
-        r2.println(r0);
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r1 = "      proxy middle adj pkg :";
-        r0.append(r1);
-        r0.append(r6);
-        r0 = r0.toString();
-        r2.println(r0);
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r1 = "      proxy low adj pkg :";
-        r0.append(r1);
-        r0.append(r7);
-        r0 = r0.toString();
-        r2.println(r0);
-        r0 = r8 + r12;
-        r0 = r0 + r13;
-        r0 = r0 + r14;
-        if (r0 != 0) goto L_0x01ae;
-    L_0x01a4:
-        r1 = "      Unproxy speed :0";
-        r2.println(r1);
-        r27 = r3;
-        r15 = r28;
-        goto L_0x01c8;
-    L_0x01ae:
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r15 = "      Unproxy speed :";
-        r1.append(r15);
-        r27 = r3;
-        r15 = r28;
-        r3 = r15.mIawareUnProxyTime;
-        r1.append(r3);
-        r1 = r1.toString();
-        r2.println(r1);
-    L_0x01c8:
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r3 = "      Proxy broadcast count :";
-        r1.append(r3);
-        r1.append(r0);
-        r3 = ", Top count:";
-        r1.append(r3);
-        r1.append(r8);
-        r3 = ", high adj count:";
-        r1.append(r3);
-        r1.append(r12);
-        r3 = ", middle adj count:";
-        r1.append(r3);
-        r1.append(r13);
-        r3 = ", low adj count:";
-        r1.append(r3);
-        r1.append(r14);
-        r1 = r1.toString();
-        r2.println(r1);
-        return;
-    L_0x01fd:
-        r0 = move-exception;
-        r15 = r1;
-        r27 = r3;
-    L_0x0201:
-        monitor-exit(r8);	 Catch:{ all -> 0x0203 }
-        throw r0;
-    L_0x0203:
-        r0 = move-exception;
-        goto L_0x0201;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.mtm.iaware.srms.AwareBroadcastProcess.dump(java.io.PrintWriter):void");
     }
 
     public AwareBroadcastProcess(AwareBroadcastPolicy iawareBrPolicy, Handler handler, String name) {
@@ -530,6 +286,138 @@ public class AwareBroadcastProcess {
         this.mUnproxyHighSpeed = speed;
     }
 
+    public void dump(PrintWriter pw) {
+        PrintWriter printWriter = pw;
+        if (printWriter != null) {
+            ArrayList<HwBroadcastRecord> iawareTopParallelBroadcasts;
+            ArrayList<HwBroadcastRecord> iawareHighAdjParallelBroadcasts;
+            ArrayList<HwBroadcastRecord> iawareMiddleAdjParallelBroadcasts;
+            ArrayList<HwBroadcastRecord> iawareLowAdjParallelBroadcasts;
+            int listSize;
+            String action;
+            HwBroadcastRecord hwBr;
+            StringBuilder stringBuilder;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("      Proxy broadcast [");
+            stringBuilder2.append(this.mBrName);
+            stringBuilder2.append("]");
+            printWriter.println(stringBuilder2.toString());
+            Set<String> proxyActions = new ArraySet();
+            ArraySet proxyTopPkgs = new ArraySet();
+            ArraySet proxyHighAdjPkgs = new ArraySet();
+            ArraySet proxyMiddleAdjPkgs = new ArraySet();
+            ArraySet proxyLowAdjPkgs = new ArraySet();
+            synchronized (this.mIawareParallelProxyBrMap) {
+                try {
+                    iawareTopParallelBroadcasts = new ArrayList((Collection) this.mIawareParallelProxyBrMap.get(Integer.valueOf(0)));
+                    iawareHighAdjParallelBroadcasts = new ArrayList((Collection) this.mIawareParallelProxyBrMap.get(Integer.valueOf(1)));
+                    iawareMiddleAdjParallelBroadcasts = new ArrayList((Collection) this.mIawareParallelProxyBrMap.get(Integer.valueOf(2)));
+                    iawareLowAdjParallelBroadcasts = new ArrayList((Collection) this.mIawareParallelProxyBrMap.get(Integer.valueOf(3)));
+                } catch (Throwable th) {
+                    Set<String> set = proxyActions;
+                    while (true) {
+                    }
+                }
+            }
+            int lengthTop = iawareTopParallelBroadcasts.size();
+            int lengthHighAdj = iawareHighAdjParallelBroadcasts.size();
+            int lengthMiddleAdj = iawareMiddleAdjParallelBroadcasts.size();
+            int lengthLowAdj = iawareLowAdjParallelBroadcasts.size();
+            int index = 0;
+            int listSize2 = iawareTopParallelBroadcasts.size();
+            while (true) {
+                listSize = listSize2;
+                if (index >= listSize) {
+                    break;
+                }
+                ArrayList<HwBroadcastRecord> iawareTopParallelBroadcasts2 = iawareTopParallelBroadcasts;
+                HwBroadcastRecord iawareTopParallelBroadcasts3 = (HwBroadcastRecord) iawareTopParallelBroadcasts.get(index);
+                int listSize3 = listSize;
+                action = iawareTopParallelBroadcasts3.getAction();
+                proxyActions.add(action);
+                proxyTopPkgs.add(iawareTopParallelBroadcasts3.getReceiverPkg());
+                index++;
+                iawareTopParallelBroadcasts = iawareTopParallelBroadcasts2;
+                listSize2 = listSize3;
+            }
+            int index2 = 0;
+            listSize = iawareHighAdjParallelBroadcasts.size();
+            while (index2 < listSize) {
+                hwBr = (HwBroadcastRecord) iawareHighAdjParallelBroadcasts.get(index2);
+                int listSize4 = listSize;
+                action = hwBr.getAction();
+                proxyActions.add(action);
+                proxyHighAdjPkgs.add(hwBr.getReceiverPkg());
+                index2++;
+                listSize = listSize4;
+            }
+            index2 = 0;
+            listSize = iawareMiddleAdjParallelBroadcasts.size();
+            while (index2 < listSize) {
+                hwBr = (HwBroadcastRecord) iawareMiddleAdjParallelBroadcasts.get(index2);
+                int listSize5 = listSize;
+                action = hwBr.getAction();
+                proxyActions.add(action);
+                proxyMiddleAdjPkgs.add(hwBr.getReceiverPkg());
+                index2++;
+                listSize = listSize5;
+            }
+            index2 = 0;
+            listSize = iawareLowAdjParallelBroadcasts.size();
+            while (index2 < listSize) {
+                hwBr = (HwBroadcastRecord) iawareLowAdjParallelBroadcasts.get(index2);
+                int listSize6 = listSize;
+                action = hwBr.getAction();
+                proxyActions.add(action);
+                proxyLowAdjPkgs.add(hwBr.getReceiverPkg());
+                index2++;
+                listSize = listSize6;
+            }
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("      proxy action :");
+            stringBuilder2.append(proxyActions);
+            printWriter.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("      proxy Top pkg :");
+            stringBuilder2.append(proxyTopPkgs);
+            printWriter.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("      proxy high adj pkg :");
+            stringBuilder2.append(proxyHighAdjPkgs);
+            printWriter.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("      proxy middle adj pkg :");
+            stringBuilder2.append(proxyMiddleAdjPkgs);
+            printWriter.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("      proxy low adj pkg :");
+            stringBuilder2.append(proxyLowAdjPkgs);
+            printWriter.println(stringBuilder2.toString());
+            index2 = ((lengthTop + lengthHighAdj) + lengthMiddleAdj) + lengthLowAdj;
+            if (index2 == 0) {
+                printWriter.println("      Unproxy speed :0");
+                Object obj = proxyActions;
+            } else {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("      Unproxy speed :");
+                stringBuilder.append(this.mIawareUnProxyTime);
+                printWriter.println(stringBuilder.toString());
+            }
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("      Proxy broadcast count :");
+            stringBuilder.append(index2);
+            stringBuilder.append(", Top count:");
+            stringBuilder.append(lengthTop);
+            stringBuilder.append(", high adj count:");
+            stringBuilder.append(lengthHighAdj);
+            stringBuilder.append(", middle adj count:");
+            stringBuilder.append(lengthMiddleAdj);
+            stringBuilder.append(", low adj count:");
+            stringBuilder.append(lengthLowAdj);
+            printWriter.println(stringBuilder.toString());
+        }
+    }
+
     public void startUnproxyFgAppBroadcast(int pid, int uid) {
         if (getIawareBrSize() != 0) {
             Message msg = this.mHandler.obtainMessage(103, this);
@@ -553,20 +441,23 @@ public class AwareBroadcastProcess {
         synchronized (this.mIawareParallelProxyBrMap) {
             String pkgSys = null;
             if (1000 == uid) {
-                pkgSys = getSysPkg(pid, uid);
-                if (AwareBroadcastDebug.getDebugDetail()) {
-                    String str2 = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("iaware_br unProxyForegroundAppBroadcast system app, uid:");
-                    stringBuilder2.append(uid);
-                    stringBuilder2.append(", pid: ");
-                    stringBuilder2.append(pid);
-                    stringBuilder2.append(": pkg : ");
-                    stringBuilder2.append(pkgSys);
-                    AwareLog.i(str2, stringBuilder2.toString());
-                }
-                if (pkgSys == null) {
-                    return;
+                try {
+                    pkgSys = getSysPkg(pid, uid);
+                    if (AwareBroadcastDebug.getDebugDetail()) {
+                        String str2 = TAG;
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("iaware_br unProxyForegroundAppBroadcast system app, uid:");
+                        stringBuilder2.append(uid);
+                        stringBuilder2.append(", pid: ");
+                        stringBuilder2.append(pid);
+                        stringBuilder2.append(": pkg : ");
+                        stringBuilder2.append(pkgSys);
+                        AwareLog.i(str2, stringBuilder2.toString());
+                    }
+                    if (pkgSys == null) {
+                        return;
+                    }
+                } catch (Throwable th) {
                 }
             }
             for (Entry<Integer, ArrayList<HwBroadcastRecord>> ent : this.mIawareParallelProxyBrMap.entrySet()) {
@@ -680,10 +571,10 @@ public class AwareBroadcastProcess {
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x005c, code:
+    /* JADX WARNING: Missing block: B:25:0x005c, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:26:0x005d, code:
+    /* JADX WARNING: Missing block: B:26:0x005d, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

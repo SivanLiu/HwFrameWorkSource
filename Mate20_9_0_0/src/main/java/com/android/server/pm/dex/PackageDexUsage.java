@@ -193,7 +193,7 @@ public class PackageDexUsage extends AbstractStatsBase<Void> {
         super("package-dex-usage.list", "PackageDexUsage_DiskWriter", false);
     }
 
-    /* JADX WARNING: Missing block: B:31:0x008a, code:
+    /* JADX WARNING: Missing block: B:32:0x008a, code skipped:
             return r10;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -246,8 +246,10 @@ public class PackageDexUsage extends AbstractStatsBase<Void> {
                         stringBuilder2.append(" to ");
                         stringBuilder2.append(i);
                         throw new IllegalArgumentException(stringBuilder2.toString());
-                    } else if (!(existingData.merge(newData) || updateLoadingPackages)) {
-                        z2 = false;
+                    } else if (!existingData.merge(newData)) {
+                        if (!updateLoadingPackages) {
+                            z2 = false;
+                        }
                     }
                 }
             }
@@ -315,11 +317,11 @@ public class PackageDexUsage extends AbstractStatsBase<Void> {
                 stringBuilder.append(DEX_LINE_CHAR);
                 stringBuilder.append(codePath);
                 fpw.println(stringBuilder.toString());
-                CharSequence charSequence = SPLIT_CHAR;
+                String str = SPLIT_CHAR;
                 CharSequence[] charSequenceArr = new CharSequence[i];
                 charSequenceArr[0] = Integer.toString(dexUseInfo.mOwnerUserId);
                 charSequenceArr[1] = writeBoolean(dexUseInfo.mIsUsedByOtherApps);
-                fpw.print(String.join(charSequence, charSequenceArr));
+                fpw.print(String.join(str, charSequenceArr));
                 for (String isa : dexUseInfo.mLoaderIsas) {
                     StringBuilder stringBuilder2 = new StringBuilder();
                     stringBuilder2.append(SPLIT_CHAR);
@@ -592,7 +594,7 @@ public class PackageDexUsage extends AbstractStatsBase<Void> {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
+    /* JADX WARNING: Missing block: B:21:0x0052, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

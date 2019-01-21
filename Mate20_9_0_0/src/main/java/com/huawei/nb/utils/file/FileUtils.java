@@ -142,9 +142,6 @@ public class FileUtils {
         return mode;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0022  */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static boolean mkdir(File file, int uid, int gid, boolean isReadShare, boolean isWriteShare) {
         if (!file.mkdir()) {
             return false;
@@ -157,15 +154,12 @@ public class FileUtils {
             Os.chown(path, uid, gid);
             Os.chmod(path, getDirMode(isReadShare, isWriteShare));
             return true;
-        } catch (ErrnoException e) {
-            if (!file.delete()) {
+        } catch (ErrnoException | IOException e) {
+            if (file.delete()) {
                 return false;
             }
             DSLog.w("mkdir a dir with wrong uid/gid remains.", new Object[0]);
             return false;
-        } catch (IOException e2) {
-            if (!file.delete()) {
-            }
         }
     }
 
@@ -194,7 +188,6 @@ public class FileUtils {
     }
 
     public static OutputStream openOutputStream(File file, int uid, int gid, boolean isReadShare, boolean isWriteShare) throws IOException {
-        Exception e;
         boolean alreadyExists = file.exists();
         try {
             String path = file.getCanonicalPath();
@@ -207,12 +200,7 @@ public class FileUtils {
                 setFileAccessPermission(path, uid, gid, isReadShare, isWriteShare);
             }
             return outputStream;
-        } catch (IOException e2) {
-            e = e2;
-            closeCloseable(null);
-            throw new IOException(e.getMessage());
-        } catch (ErrnoException e3) {
-            e = e3;
+        } catch (ErrnoException | IOException e) {
             closeCloseable(null);
             throw new IOException(e.getMessage());
         }

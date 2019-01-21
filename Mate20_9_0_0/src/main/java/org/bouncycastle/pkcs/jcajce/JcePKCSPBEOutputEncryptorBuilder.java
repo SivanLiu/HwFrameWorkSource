@@ -1,13 +1,12 @@
 package org.bouncycastle.pkcs.jcajce;
 
 import java.io.OutputStream;
-import java.security.Key;
 import java.security.Provider;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.PBEKeySpec;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -48,12 +47,12 @@ public class JcePKCSPBEOutputEncryptorBuilder {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x002c in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -78,12 +77,9 @@ public class JcePKCSPBEOutputEncryptorBuilder {
         r1.pbkdf = r0;
         r0 = r1.isPKCS12(r2);
         if (r0 == 0) goto L_0x0027;
-    L_0x0022:
         r1.algorithm = r2;
-    L_0x0024:
         r1.keyEncAlgorithm = r2;
         return;
-    L_0x0027:
         r0 = org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_PBES2;
         r1.algorithm = r0;
         goto L_0x0024;
@@ -153,8 +149,8 @@ public class JcePKCSPBEOutputEncryptorBuilder {
                     ScryptConfig scryptConfig = (ScryptConfig) build;
                     byte[] bArr2 = new byte[scryptConfig.getSaltLength()];
                     this.random.nextBytes(bArr2);
-                    ASN1Encodable scryptParams = new ScryptParams(bArr2, scryptConfig.getCostParameter(), scryptConfig.getBlockSize(), scryptConfig.getParallelizationParameter());
-                    Key generateSecret = this.helper.createSecretKeyFactory("SCRYPT").generateSecret(new ScryptKeySpec(cArr, bArr2, scryptConfig.getCostParameter(), scryptConfig.getBlockSize(), scryptConfig.getParallelizationParameter(), this.keySizeProvider.getKeySize(new AlgorithmIdentifier(this.keyEncAlgorithm))));
+                    ScryptParams scryptParams = new ScryptParams(bArr2, scryptConfig.getCostParameter(), scryptConfig.getBlockSize(), scryptConfig.getParallelizationParameter());
+                    SecretKey generateSecret = this.helper.createSecretKeyFactory("SCRYPT").generateSecret(new ScryptKeySpec(cArr, bArr2, scryptConfig.getCostParameter(), scryptConfig.getBlockSize(), scryptConfig.getParallelizationParameter(), this.keySizeProvider.getKeySize(new AlgorithmIdentifier(this.keyEncAlgorithm))));
                     Cipher createCipher2 = this.helper.createCipher(this.keyEncAlgorithm.getId());
                     createCipher2.init(1, generateSecret, this.random);
                     algorithmIdentifier = new AlgorithmIdentifier(this.algorithm, new PBES2Parameters(new KeyDerivationFunc(MiscObjectIdentifiers.id_scrypt, scryptParams), new EncryptionScheme(this.keyEncAlgorithm, ASN1Primitive.fromByteArray(createCipher2.getParameters().getEncoded()))));
@@ -163,7 +159,7 @@ public class JcePKCSPBEOutputEncryptorBuilder {
                     PBKDF2Config pBKDF2Config = (PBKDF2Config) build;
                     byte[] bArr3 = new byte[pBKDF2Config.getSaltLength()];
                     this.random.nextBytes(bArr3);
-                    Key generateSecret2 = this.helper.createSecretKeyFactory(JceUtils.getAlgorithm(pBKDF2Config.getPRF().getAlgorithm())).generateSecret(new PBEKeySpec(cArr, bArr3, pBKDF2Config.getIterationCount(), this.keySizeProvider.getKeySize(new AlgorithmIdentifier(this.keyEncAlgorithm))));
+                    SecretKey generateSecret2 = this.helper.createSecretKeyFactory(JceUtils.getAlgorithm(pBKDF2Config.getPRF().getAlgorithm())).generateSecret(new PBEKeySpec(cArr, bArr3, pBKDF2Config.getIterationCount(), this.keySizeProvider.getKeySize(new AlgorithmIdentifier(this.keyEncAlgorithm))));
                     Cipher createCipher3 = this.helper.createCipher(this.keyEncAlgorithm.getId());
                     createCipher3.init(1, generateSecret2, this.random);
                     algorithmIdentifier = new AlgorithmIdentifier(this.algorithm, new PBES2Parameters(new KeyDerivationFunc(PKCSObjectIdentifiers.id_PBKDF2, new PBKDF2Params(bArr3, pBKDF2Config.getIterationCount(), pBKDF2Config.getPRF())), new EncryptionScheme(this.keyEncAlgorithm, ASN1Primitive.fromByteArray(createCipher3.getParameters().getEncoded()))));
@@ -185,7 +181,7 @@ public class JcePKCSPBEOutputEncryptorBuilder {
                     return new CipherOutputStream(outputStream, createCipher);
                 }
             };
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to create OutputEncryptor: ");
             stringBuilder.append(e.getMessage());

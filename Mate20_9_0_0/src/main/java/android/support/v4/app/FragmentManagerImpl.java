@@ -201,7 +201,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
 
         public boolean getTransformation(long currentTime, Transformation t) {
             if (this.mEnded) {
-                return this.mTransitionEnded ^ true;
+                return this.mTransitionEnded ^ 1;
             }
             if (!super.getTransformation(currentTime, t)) {
                 this.mEnded = true;
@@ -212,7 +212,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
 
         public boolean getTransformation(long currentTime, Transformation outTransformation, float scale) {
             if (this.mEnded) {
-                return this.mTransitionEnded ^ true;
+                return this.mTransitionEnded ^ 1;
             }
             if (!super.getTransformation(currentTime, outTransformation, scale)) {
                 this.mEnded = true;
@@ -553,7 +553,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
         if (this.mAdded.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        List<Fragment> list;
+        List list;
         synchronized (this.mAdded) {
             list = (List) this.mAdded.clone();
         }
@@ -864,7 +864,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0030, code:
+    /* JADX WARNING: Missing block: B:9:0x0030, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -901,166 +901,166 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:218:0x0478  */
-    /* JADX WARNING: Missing block: B:82:0x01ac, code:
+    /* JADX WARNING: Missing block: B:82:0x01ac, code skipped:
             r1 = r0;
             ensureInflatedFragmentView(r16);
      */
-    /* JADX WARNING: Missing block: B:83:0x01b0, code:
+    /* JADX WARNING: Missing block: B:83:0x01b0, code skipped:
             if (r1 <= 1) goto L_0x02a8;
      */
-    /* JADX WARNING: Missing block: B:85:0x01b4, code:
+    /* JADX WARNING: Missing block: B:85:0x01b4, code skipped:
             if (DEBUG == false) goto L_0x01cc;
      */
-    /* JADX WARNING: Missing block: B:86:0x01b6, code:
+    /* JADX WARNING: Missing block: B:86:0x01b6, code skipped:
             r0 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("moveto ACTIVITY_CREATED: ");
             r2.append(r8);
             android.util.Log.v(r0, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:88:0x01ce, code:
+    /* JADX WARNING: Missing block: B:88:0x01ce, code skipped:
             if (r8.mFromLayout != false) goto L_0x0293;
      */
-    /* JADX WARNING: Missing block: B:89:0x01d0, code:
+    /* JADX WARNING: Missing block: B:89:0x01d0, code skipped:
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:90:0x01d3, code:
+    /* JADX WARNING: Missing block: B:90:0x01d3, code skipped:
             if (r8.mContainerId == 0) goto L_0x0246;
      */
-    /* JADX WARNING: Missing block: B:92:0x01d8, code:
+    /* JADX WARNING: Missing block: B:92:0x01d8, code skipped:
             if (r8.mContainerId != -1) goto L_0x01f8;
      */
-    /* JADX WARNING: Missing block: B:93:0x01da, code:
+    /* JADX WARNING: Missing block: B:93:0x01da, code skipped:
             r3 = new java.lang.StringBuilder();
             r3.append("Cannot create fragment ");
             r3.append(r8);
             r3.append(" for a container view with no id");
             throwException(new java.lang.IllegalArgumentException(r3.toString()));
      */
-    /* JADX WARNING: Missing block: B:94:0x01f8, code:
+    /* JADX WARNING: Missing block: B:94:0x01f8, code skipped:
             r2 = (android.view.ViewGroup) r7.mContainer.onFindViewById(r8.mContainerId);
      */
-    /* JADX WARNING: Missing block: B:95:0x0202, code:
+    /* JADX WARNING: Missing block: B:95:0x0202, code skipped:
             if (r2 != null) goto L_0x0245;
      */
-    /* JADX WARNING: Missing block: B:97:0x0206, code:
+    /* JADX WARNING: Missing block: B:97:0x0206, code skipped:
             if (r8.mRestored != false) goto L_0x0245;
      */
-    /* JADX WARNING: Missing block: B:99:?, code:
+    /* JADX WARNING: Missing block: B:99:?, code skipped:
             r0 = r16.getResources().getResourceName(r8.mContainerId);
      */
-    /* JADX WARNING: Missing block: B:101:0x0214, code:
+    /* JADX WARNING: Missing block: B:101:0x0214, code skipped:
             r0 = android.support.v4.os.EnvironmentCompat.MEDIA_UNKNOWN;
      */
-    /* JADX WARNING: Missing block: B:147:0x0328, code:
+    /* JADX WARNING: Missing block: B:147:0x0328, code skipped:
             if (r0 >= 4) goto L_0x034a;
      */
-    /* JADX WARNING: Missing block: B:149:0x032c, code:
+    /* JADX WARNING: Missing block: B:149:0x032c, code skipped:
             if (DEBUG == false) goto L_0x0344;
      */
-    /* JADX WARNING: Missing block: B:150:0x032e, code:
+    /* JADX WARNING: Missing block: B:150:0x032e, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("movefrom STARTED: ");
             r2.append(r8);
             android.util.Log.v(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:151:0x0344, code:
+    /* JADX WARNING: Missing block: B:151:0x0344, code skipped:
             r16.performStop();
             dispatchOnFragmentStopped(r8, false);
      */
-    /* JADX WARNING: Missing block: B:152:0x034a, code:
+    /* JADX WARNING: Missing block: B:152:0x034a, code skipped:
             if (r0 >= 3) goto L_0x0369;
      */
-    /* JADX WARNING: Missing block: B:154:0x034e, code:
+    /* JADX WARNING: Missing block: B:154:0x034e, code skipped:
             if (DEBUG == false) goto L_0x0366;
      */
-    /* JADX WARNING: Missing block: B:155:0x0350, code:
+    /* JADX WARNING: Missing block: B:155:0x0350, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("movefrom STOPPED: ");
             r2.append(r8);
             android.util.Log.v(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:156:0x0366, code:
+    /* JADX WARNING: Missing block: B:156:0x0366, code skipped:
             r16.performReallyStop();
      */
-    /* JADX WARNING: Missing block: B:157:0x0369, code:
+    /* JADX WARNING: Missing block: B:157:0x0369, code skipped:
             if (r0 >= 2) goto L_0x03fa;
      */
-    /* JADX WARNING: Missing block: B:159:0x036d, code:
+    /* JADX WARNING: Missing block: B:159:0x036d, code skipped:
             if (DEBUG == false) goto L_0x0385;
      */
-    /* JADX WARNING: Missing block: B:160:0x036f, code:
+    /* JADX WARNING: Missing block: B:160:0x036f, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("movefrom ACTIVITY_CREATED: ");
             r2.append(r8);
             android.util.Log.v(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:162:0x0387, code:
+    /* JADX WARNING: Missing block: B:162:0x0387, code skipped:
             if (r8.mView == null) goto L_0x0398;
      */
-    /* JADX WARNING: Missing block: B:164:0x038f, code:
+    /* JADX WARNING: Missing block: B:164:0x038f, code skipped:
             if (r7.mHost.onShouldSaveFragmentState(r8) == false) goto L_0x0398;
      */
-    /* JADX WARNING: Missing block: B:166:0x0393, code:
+    /* JADX WARNING: Missing block: B:166:0x0393, code skipped:
             if (r8.mSavedViewState != null) goto L_0x0398;
      */
-    /* JADX WARNING: Missing block: B:167:0x0395, code:
+    /* JADX WARNING: Missing block: B:167:0x0395, code skipped:
             saveFragmentViewState(r16);
      */
-    /* JADX WARNING: Missing block: B:168:0x0398, code:
+    /* JADX WARNING: Missing block: B:168:0x0398, code skipped:
             r16.performDestroyView();
             dispatchOnFragmentViewDestroyed(r8, false);
      */
-    /* JADX WARNING: Missing block: B:169:0x03a0, code:
+    /* JADX WARNING: Missing block: B:169:0x03a0, code skipped:
             if (r8.mView == null) goto L_0x03e6;
      */
-    /* JADX WARNING: Missing block: B:171:0x03a4, code:
+    /* JADX WARNING: Missing block: B:171:0x03a4, code skipped:
             if (r8.mContainer == null) goto L_0x03e6;
      */
-    /* JADX WARNING: Missing block: B:172:0x03a6, code:
+    /* JADX WARNING: Missing block: B:172:0x03a6, code skipped:
             r8.mContainer.endViewTransition(r8.mView);
             r8.mView.clearAnimation();
             r1 = null;
      */
-    /* JADX WARNING: Missing block: B:173:0x03b6, code:
+    /* JADX WARNING: Missing block: B:173:0x03b6, code skipped:
             if (r7.mCurState <= 0) goto L_0x03d3;
      */
-    /* JADX WARNING: Missing block: B:175:0x03ba, code:
+    /* JADX WARNING: Missing block: B:175:0x03ba, code skipped:
             if (r7.mDestroyed != false) goto L_0x03d3;
      */
-    /* JADX WARNING: Missing block: B:177:0x03c2, code:
+    /* JADX WARNING: Missing block: B:177:0x03c2, code skipped:
             if (r8.mView.getVisibility() != 0) goto L_0x03d3;
      */
-    /* JADX WARNING: Missing block: B:179:0x03c8, code:
+    /* JADX WARNING: Missing block: B:179:0x03c8, code skipped:
             if (r8.mPostponedAlpha < 0.0f) goto L_0x03d3;
      */
-    /* JADX WARNING: Missing block: B:180:0x03ca, code:
+    /* JADX WARNING: Missing block: B:180:0x03ca, code skipped:
             r1 = loadAnimation(r8, r18, false, r19);
      */
-    /* JADX WARNING: Missing block: B:181:0x03d3, code:
+    /* JADX WARNING: Missing block: B:181:0x03d3, code skipped:
             r2 = r18;
             r4 = r19;
      */
-    /* JADX WARNING: Missing block: B:182:0x03d7, code:
+    /* JADX WARNING: Missing block: B:182:0x03d7, code skipped:
             r8.mPostponedAlpha = 0.0f;
      */
-    /* JADX WARNING: Missing block: B:183:0x03d9, code:
+    /* JADX WARNING: Missing block: B:183:0x03d9, code skipped:
             if (r1 == null) goto L_0x03de;
      */
-    /* JADX WARNING: Missing block: B:184:0x03db, code:
+    /* JADX WARNING: Missing block: B:184:0x03db, code skipped:
             animateRemoveFragment(r8, r1, r0);
      */
-    /* JADX WARNING: Missing block: B:185:0x03de, code:
+    /* JADX WARNING: Missing block: B:185:0x03de, code skipped:
             r8.mContainer.removeView(r8.mView);
      */
-    /* JADX WARNING: Missing block: B:186:0x03e6, code:
+    /* JADX WARNING: Missing block: B:186:0x03e6, code skipped:
             r2 = r18;
             r4 = r19;
      */
-    /* JADX WARNING: Missing block: B:187:0x03ea, code:
+    /* JADX WARNING: Missing block: B:187:0x03ea, code skipped:
             r8.mContainer = null;
             r8.mView = null;
             r8.mViewLifecycleOwner = null;
@@ -1068,73 +1068,73 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
             r8.mInnerView = null;
             r8.mInLayout = false;
      */
-    /* JADX WARNING: Missing block: B:189:0x03fe, code:
+    /* JADX WARNING: Missing block: B:189:0x03fe, code skipped:
             if (r0 >= 1) goto L_0x0474;
      */
-    /* JADX WARNING: Missing block: B:191:0x0402, code:
+    /* JADX WARNING: Missing block: B:191:0x0402, code skipped:
             if (r7.mDestroyed == false) goto L_0x0425;
      */
-    /* JADX WARNING: Missing block: B:193:0x0408, code:
+    /* JADX WARNING: Missing block: B:193:0x0408, code skipped:
             if (r16.getAnimatingAway() == null) goto L_0x0415;
      */
-    /* JADX WARNING: Missing block: B:194:0x040a, code:
+    /* JADX WARNING: Missing block: B:194:0x040a, code skipped:
             r1 = r16.getAnimatingAway();
             r8.setAnimatingAway(null);
             r1.clearAnimation();
      */
-    /* JADX WARNING: Missing block: B:196:0x0419, code:
+    /* JADX WARNING: Missing block: B:196:0x0419, code skipped:
             if (r16.getAnimator() == null) goto L_0x0425;
      */
-    /* JADX WARNING: Missing block: B:197:0x041b, code:
+    /* JADX WARNING: Missing block: B:197:0x041b, code skipped:
             r1 = r16.getAnimator();
             r8.setAnimator(null);
             r1.cancel();
      */
-    /* JADX WARNING: Missing block: B:199:0x0429, code:
+    /* JADX WARNING: Missing block: B:199:0x0429, code skipped:
             if (r16.getAnimatingAway() != null) goto L_0x0470;
      */
-    /* JADX WARNING: Missing block: B:201:0x042f, code:
+    /* JADX WARNING: Missing block: B:201:0x042f, code skipped:
             if (r16.getAnimator() == null) goto L_0x0432;
      */
-    /* JADX WARNING: Missing block: B:203:0x0434, code:
+    /* JADX WARNING: Missing block: B:203:0x0434, code skipped:
             if (DEBUG == false) goto L_0x044c;
      */
-    /* JADX WARNING: Missing block: B:204:0x0436, code:
+    /* JADX WARNING: Missing block: B:204:0x0436, code skipped:
             r1 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("movefrom CREATED: ");
             r3.append(r8);
             android.util.Log.v(r1, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:206:0x044e, code:
+    /* JADX WARNING: Missing block: B:206:0x044e, code skipped:
             if (r8.mRetaining != false) goto L_0x0457;
      */
-    /* JADX WARNING: Missing block: B:207:0x0450, code:
+    /* JADX WARNING: Missing block: B:207:0x0450, code skipped:
             r16.performDestroy();
             dispatchOnFragmentDestroyed(r8, false);
      */
-    /* JADX WARNING: Missing block: B:208:0x0457, code:
+    /* JADX WARNING: Missing block: B:208:0x0457, code skipped:
             r8.mState = 0;
      */
-    /* JADX WARNING: Missing block: B:209:0x0459, code:
+    /* JADX WARNING: Missing block: B:209:0x0459, code skipped:
             r16.performDetach();
             dispatchOnFragmentDetached(r8, false);
      */
-    /* JADX WARNING: Missing block: B:210:0x045f, code:
+    /* JADX WARNING: Missing block: B:210:0x045f, code skipped:
             if (r20 != false) goto L_0x0474;
      */
-    /* JADX WARNING: Missing block: B:212:0x0463, code:
+    /* JADX WARNING: Missing block: B:212:0x0463, code skipped:
             if (r8.mRetaining != false) goto L_0x0469;
      */
-    /* JADX WARNING: Missing block: B:213:0x0465, code:
+    /* JADX WARNING: Missing block: B:213:0x0465, code skipped:
             makeInactive(r16);
      */
-    /* JADX WARNING: Missing block: B:214:0x0469, code:
+    /* JADX WARNING: Missing block: B:214:0x0469, code skipped:
             r8.mHost = null;
             r8.mParentFragment = null;
             r8.mFragmentManager = null;
      */
-    /* JADX WARNING: Missing block: B:215:0x0470, code:
+    /* JADX WARNING: Missing block: B:215:0x0470, code skipped:
             r8.setStateAfterAnimating(r0);
             r0 = 1;
      */
@@ -1441,7 +1441,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
 
     void completeShowHideFragment(final Fragment fragment) {
         if (fragment.mView != null) {
-            AnimationOrAnimator anim = loadAnimation(fragment, fragment.getNextTransition(), fragment.mHidden ^ true, fragment.getNextTransitionStyle());
+            AnimationOrAnimator anim = loadAnimation(fragment, fragment.getNextTransition(), fragment.mHidden ^ 1, fragment.getNextTransitionStyle());
             if (anim == null || anim.animator == null) {
                 if (anim != null) {
                     setHWLayerAnimListenerIfAlpha(fragment.mView, anim);
@@ -1669,7 +1669,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
         }
         if (!fragment.mHidden) {
             fragment.mHidden = true;
-            fragment.mHiddenChanged = true ^ fragment.mHiddenChanged;
+            fragment.mHiddenChanged = 1 ^ fragment.mHiddenChanged;
         }
     }
 
@@ -1833,16 +1833,20 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
             checkStateLoss();
         }
         synchronized (this) {
-            if (!this.mDestroyed && this.mHost != null) {
-                if (this.mPendingActions == null) {
-                    this.mPendingActions = new ArrayList();
+            if (!this.mDestroyed) {
+                if (this.mHost != null) {
+                    if (this.mPendingActions == null) {
+                        this.mPendingActions = new ArrayList();
+                    }
+                    this.mPendingActions.add(action);
+                    scheduleCommit();
+                    return;
                 }
-                this.mPendingActions.add(action);
-                scheduleCommit();
-            } else if (allowStateLoss) {
-            } else {
-                throw new IllegalStateException("Activity has been destroyed");
             }
+            if (allowStateLoss) {
+                return;
+            }
+            throw new IllegalStateException("Activity has been destroyed");
         }
     }
 
@@ -1865,34 +1869,36 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
             int index;
             String str;
             StringBuilder stringBuilder;
-            if (this.mAvailBackStackIndices == null || this.mAvailBackStackIndices.size() <= 0) {
-                if (this.mBackStackIndices == null) {
-                    this.mBackStackIndices = new ArrayList();
+            if (this.mAvailBackStackIndices != null) {
+                if (this.mAvailBackStackIndices.size() > 0) {
+                    index = ((Integer) this.mAvailBackStackIndices.remove(this.mAvailBackStackIndices.size() - 1)).intValue();
+                    if (DEBUG) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Adding back stack index ");
+                        stringBuilder.append(index);
+                        stringBuilder.append(" with ");
+                        stringBuilder.append(bse);
+                        Log.v(str, stringBuilder.toString());
+                    }
+                    this.mBackStackIndices.set(index, bse);
+                    return index;
                 }
-                index = this.mBackStackIndices.size();
-                if (DEBUG) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Setting back stack index ");
-                    stringBuilder.append(index);
-                    stringBuilder.append(" to ");
-                    stringBuilder.append(bse);
-                    Log.v(str, stringBuilder.toString());
-                }
-                this.mBackStackIndices.add(bse);
-                return index;
             }
-            index = ((Integer) this.mAvailBackStackIndices.remove(this.mAvailBackStackIndices.size() - 1)).intValue();
+            if (this.mBackStackIndices == null) {
+                this.mBackStackIndices = new ArrayList();
+            }
+            index = this.mBackStackIndices.size();
             if (DEBUG) {
                 str = TAG;
                 stringBuilder = new StringBuilder();
-                stringBuilder.append("Adding back stack index ");
+                stringBuilder.append("Setting back stack index ");
                 stringBuilder.append(index);
-                stringBuilder.append(" with ");
+                stringBuilder.append(" to ");
                 stringBuilder.append(bse);
                 Log.v(str, stringBuilder.toString());
             }
-            this.mBackStackIndices.set(index, bse);
+            this.mBackStackIndices.add(bse);
             return index;
         }
     }
@@ -2319,7 +2325,7 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x003c, code:
+    /* JADX WARNING: Missing block: B:15:0x003c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2327,15 +2333,16 @@ final class FragmentManagerImpl extends FragmentManager implements Factory2 {
         boolean didSomething = false;
         synchronized (this) {
             int i = 0;
-            if (this.mPendingActions == null || this.mPendingActions.size() == 0) {
-            } else {
-                while (i < this.mPendingActions.size()) {
-                    didSomething |= ((OpGenerator) this.mPendingActions.get(i)).generateOps(records, isPop);
-                    i++;
+            if (this.mPendingActions != null) {
+                if (this.mPendingActions.size() != 0) {
+                    while (i < this.mPendingActions.size()) {
+                        didSomething |= ((OpGenerator) this.mPendingActions.get(i)).generateOps(records, isPop);
+                        i++;
+                    }
+                    this.mPendingActions.clear();
+                    this.mHost.getHandler().removeCallbacks(this.mExecCommit);
+                    return didSomething;
                 }
-                this.mPendingActions.clear();
-                this.mHost.getHandler().removeCallbacks(this.mExecCommit);
-                return didSomething;
             }
         }
     }

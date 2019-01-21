@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.AtomicFile;
+import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -51,6 +52,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 class UsbProfileGroupSettingsManager {
+    protected static final String BACKUP_SUB_ID = "subId";
+    protected static final String BACKUP_SUB_NAME = "subName";
     private static final boolean DEBUG = false;
     private static final String TAG = UsbProfileGroupSettingsManager.class.getSimpleName();
     private static final File sSingleUserSettingsFile = new File("/data/system/usb_device_manager.xml");
@@ -203,14 +206,6 @@ class UsbProfileGroupSettingsManager {
         XmlUtils.nextElement(parser);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x0049 A:{Splitter: B:3:0x0013, ExcHandler: java.io.IOException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:13:0x0049, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:15:?, code:
-            android.util.Log.wtf(TAG, "Failed to read single-user settings", r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mLock")
     private void upgradeSingleUserLocked() {
         if (sSingleUserSettingsFile.exists()) {
@@ -229,7 +224,8 @@ class UsbProfileGroupSettingsManager {
                         XmlUtils.nextElement(parser);
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException | XmlPullParserException e) {
+                Log.wtf(TAG, "Failed to read single-user settings", e);
             } catch (Throwable th) {
                 IoUtils.closeQuietly(null);
             }
@@ -311,16 +307,16 @@ class UsbProfileGroupSettingsManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:36:0x007d, code:
+    /* JADX WARNING: Missing block: B:36:0x007d, code skipped:
             if (r2 != null) goto L_0x007f;
      */
-    /* JADX WARNING: Missing block: B:37:0x007f, code:
+    /* JADX WARNING: Missing block: B:37:0x007f, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:42:0x00a0, code:
+    /* JADX WARNING: Missing block: B:42:0x00a0, code skipped:
             if (r2 == null) goto L_0x00a3;
      */
-    /* JADX WARNING: Missing block: B:43:0x00a3, code:
+    /* JADX WARNING: Missing block: B:43:0x00a3, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -671,16 +667,16 @@ class UsbProfileGroupSettingsManager {
         return keysToRemove.isEmpty() ^ 1;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x004d, code:
+    /* JADX WARNING: Missing block: B:25:0x004d, code skipped:
             if (r0 != null) goto L_0x004f;
      */
-    /* JADX WARNING: Missing block: B:25:0x004f, code:
+    /* JADX WARNING: Missing block: B:26:0x004f, code skipped:
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:30:0x0070, code:
+    /* JADX WARNING: Missing block: B:31:0x0070, code skipped:
             if (r0 == null) goto L_0x0073;
      */
-    /* JADX WARNING: Missing block: B:31:0x0073, code:
+    /* JADX WARNING: Missing block: B:32:0x0073, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -721,7 +717,7 @@ class UsbProfileGroupSettingsManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0040, code:
+    /* JADX WARNING: Missing block: B:23:0x0040, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -752,6 +748,7 @@ class UsbProfileGroupSettingsManager {
                 stringBuilder.append("handlePackageUpdate could not find package ");
                 stringBuilder.append(userPackage);
                 Slog.e(str, stringBuilder.toString(), e);
+            } catch (Throwable th) {
             }
         }
     }
@@ -764,14 +761,19 @@ class UsbProfileGroupSettingsManager {
         DeviceFilter filter = new DeviceFilter(device);
         synchronized (this.mLock) {
             boolean changed = true;
-            if (packageName != null) {
+            if (packageName == null) {
+                try {
+                    if (this.mDevicePreferenceMap.remove(filter) == null) {
+                        changed = false;
+                    }
+                } finally {
+                }
+            } else {
                 UserPackage userPackage = new UserPackage(packageName, user);
                 changed = true ^ userPackage.equals(this.mDevicePreferenceMap.get(filter));
                 if (changed) {
                     this.mDevicePreferenceMap.put(filter, userPackage);
                 }
-            } else if (this.mDevicePreferenceMap.remove(filter) == null) {
-                changed = false;
             }
             if (changed) {
                 scheduleWriteSettingsLocked();
@@ -783,14 +785,19 @@ class UsbProfileGroupSettingsManager {
         AccessoryFilter filter = new AccessoryFilter(accessory);
         synchronized (this.mLock) {
             boolean changed = true;
-            if (packageName != null) {
+            if (packageName == null) {
+                try {
+                    if (this.mAccessoryPreferenceMap.remove(filter) == null) {
+                        changed = false;
+                    }
+                } finally {
+                }
+            } else {
                 UserPackage userPackage = new UserPackage(packageName, user);
                 changed = true ^ userPackage.equals(this.mAccessoryPreferenceMap.get(filter));
                 if (changed) {
                     this.mAccessoryPreferenceMap.put(filter, userPackage);
                 }
-            } else if (this.mAccessoryPreferenceMap.remove(filter) == null) {
-                changed = false;
             }
             if (changed) {
                 scheduleWriteSettingsLocked();
@@ -818,7 +825,7 @@ class UsbProfileGroupSettingsManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x006f, code:
+    /* JADX WARNING: Missing block: B:29:0x006f, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -890,6 +897,8 @@ class UsbProfileGroupSettingsManager {
     private static Intent createDeviceAttachedIntent(UsbDevice device) {
         Intent intent = new Intent("android.hardware.usb.action.USB_DEVICE_ATTACHED");
         intent.putExtra("device", device);
+        intent.putExtra(BACKUP_SUB_ID, device.getBackupSubProductId());
+        intent.putExtra(BACKUP_SUB_NAME, device.getBackupSubDeviceName());
         intent.addFlags(285212672);
         return intent;
     }

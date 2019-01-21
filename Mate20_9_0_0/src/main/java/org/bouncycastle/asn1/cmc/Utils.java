@@ -8,15 +8,15 @@ class Utils {
     }
 
     static BodyPartID[] clone(BodyPartID[] bodyPartIDArr) {
-        Object obj = new BodyPartID[bodyPartIDArr.length];
-        System.arraycopy(bodyPartIDArr, 0, obj, 0, bodyPartIDArr.length);
-        return obj;
+        BodyPartID[] bodyPartIDArr2 = new BodyPartID[bodyPartIDArr.length];
+        System.arraycopy(bodyPartIDArr, 0, bodyPartIDArr2, 0, bodyPartIDArr.length);
+        return bodyPartIDArr2;
     }
 
     static Extension[] clone(Extension[] extensionArr) {
-        Object obj = new Extension[extensionArr.length];
-        System.arraycopy(extensionArr, 0, obj, 0, extensionArr.length);
-        return obj;
+        Extension[] extensionArr2 = new Extension[extensionArr.length];
+        System.arraycopy(extensionArr, 0, extensionArr2, 0, extensionArr.length);
+        return extensionArr2;
     }
 
     static BodyPartID[] toBodyPartIDArray(ASN1Sequence aSN1Sequence) {

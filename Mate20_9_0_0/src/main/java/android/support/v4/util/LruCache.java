@@ -35,47 +35,47 @@ public class LruCache<K, V> {
         throw new IllegalArgumentException("maxSize <= 0");
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001a, code:
+    /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             r1 = create(r5);
      */
-    /* JADX WARNING: Missing block: B:11:0x001e, code:
+    /* JADX WARNING: Missing block: B:11:0x001e, code skipped:
             if (r1 != null) goto L_0x0022;
      */
-    /* JADX WARNING: Missing block: B:13:0x0021, code:
+    /* JADX WARNING: Missing block: B:13:0x0021, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:14:0x0022, code:
+    /* JADX WARNING: Missing block: B:14:0x0022, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r4.createCount++;
             r0 = r4.map.put(r5, r1);
      */
-    /* JADX WARNING: Missing block: B:17:0x0030, code:
+    /* JADX WARNING: Missing block: B:17:0x0030, code skipped:
             if (r0 == null) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:18:0x0032, code:
+    /* JADX WARNING: Missing block: B:18:0x0032, code skipped:
             r4.map.put(r5, r0);
      */
-    /* JADX WARNING: Missing block: B:19:0x0038, code:
+    /* JADX WARNING: Missing block: B:19:0x0038, code skipped:
             r4.size += safeSizeOf(r5, r1);
      */
-    /* JADX WARNING: Missing block: B:20:0x0041, code:
+    /* JADX WARNING: Missing block: B:20:0x0041, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:21:0x0042, code:
+    /* JADX WARNING: Missing block: B:21:0x0042, code skipped:
             if (r0 == null) goto L_0x0049;
      */
-    /* JADX WARNING: Missing block: B:22:0x0044, code:
+    /* JADX WARNING: Missing block: B:22:0x0044, code skipped:
             entryRemoved(false, r5, r1, r0);
      */
-    /* JADX WARNING: Missing block: B:23:0x0048, code:
+    /* JADX WARNING: Missing block: B:23:0x0048, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:24:0x0049, code:
+    /* JADX WARNING: Missing block: B:24:0x0049, code skipped:
             trimToSize(r4.maxSize);
      */
-    /* JADX WARNING: Missing block: B:25:0x004e, code:
+    /* JADX WARNING: Missing block: B:25:0x004e, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -114,23 +114,23 @@ public class LruCache<K, V> {
         return previous;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0051, code:
-            return;
+    /* JADX WARNING: Missing block: B:20:0x0070, code skipped:
+            throw new java.lang.IllegalStateException(r1.toString());
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void trimToSize(int maxSize) {
-        StringBuilder stringBuilder;
         while (true) {
             K key;
             V value;
             synchronized (this) {
                 if (this.size < 0 || (this.map.isEmpty() && this.size != 0)) {
-                    stringBuilder = new StringBuilder();
+                    StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append(getClass().getName());
                     stringBuilder.append(".sizeOf() is reporting inconsistent results!");
-                } else if (this.size <= maxSize || this.map.isEmpty()) {
-                    break;
-                } else {
+                } else if (this.size > maxSize) {
+                    if (this.map.isEmpty()) {
+                        break;
+                    }
                     Entry<K, V> toEvict = (Entry) this.map.entrySet().iterator().next();
                     key = toEvict.getKey();
                     value = toEvict.getValue();
@@ -141,10 +141,6 @@ public class LruCache<K, V> {
             }
             entryRemoved(true, key, value, null);
         }
-        stringBuilder = new StringBuilder();
-        stringBuilder.append(getClass().getName());
-        stringBuilder.append(".sizeOf() is reporting inconsistent results!");
-        throw new IllegalStateException(stringBuilder.toString());
     }
 
     public final V remove(K key) {

@@ -423,14 +423,14 @@ public class ActivityStarter extends AbsActivityStarter {
         this.mController.onExecutionComplete(this);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:237:0x0677  */
-    /* JADX WARNING: Removed duplicated region for block: B:236:0x0674  */
-    /* JADX WARNING: Removed duplicated region for block: B:242:0x06cf  */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x06b5  */
-    /* JADX WARNING: Removed duplicated region for block: B:198:0x04de  */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x04ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:205:0x0503  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x04e8 A:{SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:237:0x0670  */
+    /* JADX WARNING: Removed duplicated region for block: B:236:0x066d  */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x06c8  */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x06ae  */
+    /* JADX WARNING: Removed duplicated region for block: B:198:0x04d7  */
+    /* JADX WARNING: Removed duplicated region for block: B:197:0x04b3  */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x04fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x04e1 A:{SKIP} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int startActivity(IApplicationThread caller, Intent intent, Intent ephemeralIntent, String resolvedType, ActivityInfo aInfo, ResolveInfo rInfo, IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor, IBinder resultTo, String resultWho, int requestCode, int callingPid, int callingUid, String callingPackage, int realCallingPid, int realCallingUid, int startFlags, SafeActivityOptions options, boolean ignoreTargetSecurity, boolean componentSpecified, ActivityRecord[] outActivity, TaskRecord inTask, boolean allowPendingRemoteAnimationRegistryLookup) {
         Throwable th;
@@ -565,7 +565,6 @@ public class ActivityStarter extends AbsActivityStarter {
             Slog.w(ActivityManagerService.TAG, "check the USER_SETUP_COMPLETE is set 1 in first start launcher!");
             this.mService.forceValidateHomeButton(userId2);
             mLauncherStartState.put(Integer.valueOf(userId2), Boolean.valueOf(true));
-            clearFrpRestricted(this.mService.mContext, userId2);
         }
         if (err == 0) {
             str = ActivityManagerService.TAG;
@@ -592,7 +591,7 @@ public class ActivityStarter extends AbsActivityStarter {
                 }
                 HwBootCheck.addBootInfo(str);
             }
-            this.mSupervisor.recognitionMaliciousApp(iApplicationThread, intent2);
+            this.mSupervisor.recognitionMaliciousApp(iApplicationThread, intent2, userId2);
             ComponentName cmp = intent.getComponent();
             strPkg = BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
             if (cmp != null) {
@@ -1060,22 +1059,23 @@ public class ActivityStarter extends AbsActivityStarter {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:230:0x053e  */
-    /* JADX WARNING: Removed duplicated region for block: B:221:0x0514 A:{SYNTHETIC, Splitter: B:221:0x0514} */
-    /* JADX WARNING: Removed duplicated region for block: B:221:0x0514 A:{SYNTHETIC, Splitter: B:221:0x0514} */
-    /* JADX WARNING: Removed duplicated region for block: B:230:0x053e  */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:277:0x0614=Splitter:B:277:0x0614, B:287:0x062b=Splitter:B:287:0x062b} */
+    /* JADX WARNING: Removed duplicated region for block: B:231:0x053e  */
+    /* JADX WARNING: Removed duplicated region for block: B:222:0x0514 A:{SYNTHETIC, Splitter:B:222:0x0514} */
+    /* JADX WARNING: Removed duplicated region for block: B:222:0x0514 A:{SYNTHETIC, Splitter:B:222:0x0514} */
+    /* JADX WARNING: Removed duplicated region for block: B:231:0x053e  */
     /* JADX WARNING: Removed duplicated region for block: B:125:0x02ca  */
-    /* JADX WARNING: Removed duplicated region for block: B:116:0x028b A:{SYNTHETIC, Splitter: B:116:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x02d4 A:{SYNTHETIC, Splitter: B:130:0x02d4} */
-    /* JADX WARNING: Removed duplicated region for block: B:230:0x053e  */
-    /* JADX WARNING: Removed duplicated region for block: B:221:0x0514 A:{SYNTHETIC, Splitter: B:221:0x0514} */
+    /* JADX WARNING: Removed duplicated region for block: B:116:0x028b A:{SYNTHETIC, Splitter:B:116:0x028b} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x02d4 A:{SYNTHETIC, Splitter:B:130:0x02d4} */
+    /* JADX WARNING: Removed duplicated region for block: B:231:0x053e  */
+    /* JADX WARNING: Removed duplicated region for block: B:222:0x0514 A:{SYNTHETIC, Splitter:B:222:0x0514} */
     /* JADX WARNING: Removed duplicated region for block: B:73:0x0185  */
     /* JADX WARNING: Removed duplicated region for block: B:90:0x01ec  */
     /* JADX WARNING: Removed duplicated region for block: B:89:0x01e3  */
-    /* JADX WARNING: Removed duplicated region for block: B:100:0x0252 A:{SYNTHETIC, Splitter: B:100:0x0252} */
+    /* JADX WARNING: Removed duplicated region for block: B:100:0x0252 A:{SYNTHETIC, Splitter:B:100:0x0252} */
     /* JADX WARNING: Removed duplicated region for block: B:89:0x01e3  */
     /* JADX WARNING: Removed duplicated region for block: B:90:0x01ec  */
-    /* JADX WARNING: Removed duplicated region for block: B:100:0x0252 A:{SYNTHETIC, Splitter: B:100:0x0252} */
+    /* JADX WARNING: Removed duplicated region for block: B:100:0x0252 A:{SYNTHETIC, Splitter:B:100:0x0252} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int startActivityMayWait(IApplicationThread caller, int callingUid, String callingPackage, Intent intent, String resolvedType, IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor, IBinder resultTo, String resultWho, int requestCode, int startFlags, ProfilerInfo profilerInfo, WaitResult outResult, Configuration globalConfig, SafeActivityOptions options, boolean ignoreTargetSecurity, int userId, TaskRecord inTask, String reason, boolean allowPendingRemoteAnimationRegistryLookup) {
         int callingUid2;
@@ -1292,7 +1292,6 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                             Intent intent9 = ephemeralIntent;
                                                                                             try {
                                                                                                 ActivityStarter activityStarter;
-                                                                                                boolean z2;
                                                                                                 int res = startActivity(iApplicationThread3, ephemeralIntent, ephemeralIntent2, str2, callingUid2, rInfo3, voiceSession, voiceInteractor, resultTo, resultWho, requestCode, intent7, callingUid7, callingPackage, realCallingPid, realCallingUid, startFlags, options, ignoreTargetSecurity, componentSpecified2, outRecord, inTask, reason, allowPendingRemoteAnimationRegistryLookup);
                                                                                                 Binder.restoreCallingIdentity(origId);
                                                                                                 stack2 = stack;
@@ -1300,7 +1299,7 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                                     activityStarter = this;
                                                                                                     try {
                                                                                                         activityStarter.mService.enforceCallingPermission("android.permission.CHANGE_CONFIGURATION", "updateConfiguration()");
-                                                                                                        z2 = false;
+                                                                                                        callingUid3 = 0;
                                                                                                         stack2.mConfigWillChange = false;
                                                                                                         if (ActivityManagerDebugConfig.DEBUG_CONFIGURATION) {
                                                                                                             try {
@@ -1329,7 +1328,7 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                                     }
                                                                                                 }
                                                                                                 activityStarter = this;
-                                                                                                z2 = false;
+                                                                                                callingUid3 = 0;
                                                                                                 aInfo = globalConfig;
                                                                                                 waitResult2 = outResult;
                                                                                                 if (waitResult2 != null) {
@@ -1337,7 +1336,7 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                                         waitResult2.result = res;
                                                                                                         intent7 = intent9;
                                                                                                         waitResult2.origin = intent7.getComponent();
-                                                                                                        ActivityRecord r = outRecord[z2];
+                                                                                                        ActivityRecord r = outRecord[callingUid3];
                                                                                                         if (res != 0) {
                                                                                                             switch (res) {
                                                                                                                 case 2:
@@ -1355,17 +1354,19 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                                                         } while (waitResult2.who == null);
                                                                                                                         break;
                                                                                                                     }
-                                                                                                                    waitResult2.timeout = z2;
+                                                                                                                    waitResult2.timeout = callingUid3;
                                                                                                                     waitResult2.who = r.realActivity;
                                                                                                                     waitResult2.totalTime = 0;
                                                                                                                     waitResult2.thisTime = 0;
                                                                                                                     break;
                                                                                                                     break;
                                                                                                                 case 3:
-                                                                                                                    waitResult2.timeout = z2;
+                                                                                                                    waitResult2.timeout = callingUid3;
                                                                                                                     waitResult2.who = r.realActivity;
                                                                                                                     waitResult2.totalTime = 0;
                                                                                                                     waitResult2.thisTime = 0;
+                                                                                                                    break;
+                                                                                                                default:
                                                                                                                     break;
                                                                                                             }
                                                                                                         }
@@ -1393,7 +1394,7 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                                     }
                                                                                                 }
                                                                                                 intent7 = intent9;
-                                                                                                activityStarter.mSupervisor.getActivityMetricsLogger().notifyActivityLaunched(res, outRecord[z2]);
+                                                                                                activityStarter.mSupervisor.getActivityMetricsLogger().notifyActivityLaunched(res, outRecord[callingUid3]);
                                                                                                 ActivityManagerService.resetPriorityAfterLockedSection();
                                                                                                 return res;
                                                                                             } catch (Throwable th8) {
@@ -1415,7 +1416,7 @@ public class ActivityStarter extends AbsActivityStarter {
                                                                                                 public void run() {
                                                                                                     Context context = ActivityStarter.this.mService.mUiContext;
                                                                                                     if (context != null) {
-                                                                                                        Toast toast = Toast.makeText(context, context.getString(33686099), 0);
+                                                                                                        Toast toast = Toast.makeText(context, context.getString(33686101), 0);
                                                                                                         LayoutParams windowParams = toast.getWindowParams();
                                                                                                         windowParams.privateFlags |= 16;
                                                                                                         toast.show();
@@ -1923,6 +1924,9 @@ public class ActivityStarter extends AbsActivityStarter {
         }
         ConfigurationContainer configurationContainer = null;
         if (HwPCUtils.isPcCastModeInServer()) {
+            if (!this.mHwActivityStarterEx.isAbleToLaunchInPCCastMode(this.mStartActivity.packageName, this.mPreferredDisplayId)) {
+                return 102;
+            }
             startedResult = hasStartedOnOtherDisplay(this.mStartActivity, this.mPreferredDisplayId);
             if (startedResult != -1) {
                 ActivityOptions.abort(this.mOptions);
@@ -2493,7 +2497,7 @@ public class ActivityStarter extends AbsActivityStarter {
                 TaskRecord task2 = this.mSourceRecord.getTask();
                 if (task2 != null && task2.getStack() == null) {
                     this.mTargetStack = computeStackFocus(this.mSourceRecord, false, this.mLaunchFlags, this.mOptions);
-                    this.mTargetStack.addTask(task2, true ^ this.mLaunchTaskBehind, "startActivityUnchecked");
+                    this.mTargetStack.addTask(task2, 1 ^ this.mLaunchTaskBehind, "startActivityUnchecked");
                 }
             }
         } else if (this.mStartActivity.realActivity.equals(intentActivity.getTask().realActivity)) {

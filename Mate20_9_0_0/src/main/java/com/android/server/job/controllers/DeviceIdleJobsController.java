@@ -31,21 +31,21 @@ public final class DeviceIdleJobsController extends StateController {
     private static final String TAG = "JobScheduler.DeviceIdle";
     private final ArraySet<JobStatus> mAllowInIdleJobs = new ArraySet();
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        /* JADX WARNING: Removed duplicated region for block: B:58:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:48:0x00f9  */
-        /* JADX WARNING: Removed duplicated region for block: B:38:0x00ba  */
+        /* JADX WARNING: Removed duplicated region for block: B:62:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:50:0x00f9  */
+        /* JADX WARNING: Removed duplicated region for block: B:39:0x00ba  */
         /* JADX WARNING: Removed duplicated region for block: B:22:0x004d  */
-        /* JADX WARNING: Removed duplicated region for block: B:58:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:48:0x00f9  */
-        /* JADX WARNING: Removed duplicated region for block: B:38:0x00ba  */
+        /* JADX WARNING: Removed duplicated region for block: B:62:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:50:0x00f9  */
+        /* JADX WARNING: Removed duplicated region for block: B:39:0x00ba  */
         /* JADX WARNING: Removed duplicated region for block: B:22:0x004d  */
-        /* JADX WARNING: Removed duplicated region for block: B:58:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:48:0x00f9  */
-        /* JADX WARNING: Removed duplicated region for block: B:38:0x00ba  */
+        /* JADX WARNING: Removed duplicated region for block: B:62:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:50:0x00f9  */
+        /* JADX WARNING: Removed duplicated region for block: B:39:0x00ba  */
         /* JADX WARNING: Removed duplicated region for block: B:22:0x004d  */
-        /* JADX WARNING: Removed duplicated region for block: B:58:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:48:0x00f9  */
-        /* JADX WARNING: Removed duplicated region for block: B:38:0x00ba  */
+        /* JADX WARNING: Removed duplicated region for block: B:62:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:50:0x00f9  */
+        /* JADX WARNING: Removed duplicated region for block: B:39:0x00ba  */
         /* JADX WARNING: Removed duplicated region for block: B:22:0x004d  */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onReceive(Context context, Intent intent) {

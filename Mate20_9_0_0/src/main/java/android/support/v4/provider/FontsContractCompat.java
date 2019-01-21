@@ -209,13 +209,13 @@ public class FontsContractCompat {
         sTypefaceCache.evictAll();
     }
 
-    /* JADX WARNING: Missing block: B:34:0x007c, code:
+    /* JADX WARNING: Missing block: B:34:0x007c, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:38:0x008d, code:
+    /* JADX WARNING: Missing block: B:38:0x008d, code skipped:
             sBackgroundThread.postAndReply(r2, new android.support.v4.provider.FontsContractCompat.AnonymousClass3());
      */
-    /* JADX WARNING: Missing block: B:39:0x0097, code:
+    /* JADX WARNING: Missing block: B:39:0x0097, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

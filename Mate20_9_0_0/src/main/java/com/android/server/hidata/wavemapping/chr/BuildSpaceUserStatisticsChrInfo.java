@@ -33,35 +33,37 @@ public class BuildSpaceUserStatisticsChrInfo {
                 if (userExpValue != null) {
                     this.historyUserExpEstream = IMonitor.openEventStream(MSG_WAVEMAPPING_HISTORY_USEREXP_CLASSID);
                     this.spaceNetworkGroupEstream = IMonitor.openEventStream(MSG_WAVEMAPPING_SPACE_NETWORK_GROUP_CLASSID);
-                    if (this.historyUserExpEstream == null || this.spaceNetworkGroupEstream == null) {
-                        LogUtil.e("buildHistoryUserExp, open Estream failed");
-                        return false;
+                    if (this.historyUserExpEstream != null) {
+                        if (this.spaceNetworkGroupEstream != null) {
+                            this.spaceNetworkGroupEstream.setParam("spcA", Short.parseShort(userExpValue.getString("spaceid")));
+                            this.spaceNetworkGroupEstream.setParam("modA", Integer.parseInt(userExpValue.getString("modelVerAllap")));
+                            this.spaceNetworkGroupEstream.setParam("spcM", Short.parseShort(userExpValue.getString("spaceidmain")));
+                            this.spaceNetworkGroupEstream.setParam("modM", Integer.parseInt(userExpValue.getString("modelVerMainap")));
+                            Bundle userPrefValue = this.mspaceUserDAO.getUerPrefTotalCountDurationByAllApSpaces(freqlocation, userExpValue.getString("spaceid"), userExpValue.getString("modelVerAllap"));
+                            this.spaceNetworkGroupEstream.setParam("spcC", userExpValue.getInt("nwidcnt"));
+                            this.spaceNetworkGroupEstream.setParam("modC", userPrefValue.getInt("totalDuration"));
+                            this.spaceNetworkGroupEstream.setParam("Id", userPrefValue.getInt("totalCount"));
+                            this.spaceNetworkGroupEstream.setParam("name", userExpValue.getString("networkname"));
+                            this.spaceNetworkGroupEstream.setParam("freq", userExpValue.getShort("nwfreqcnt"));
+                            this.spaceNetworkGroupEstream.setParam(HwSecDiagnoseConstant.ANTIMAL_APK_TYPE, (byte) userExpValue.getInt("nwType"));
+                            this.spaceNetworkGroupEstream.setParam("rec", userExpValue.getShort("rec"));
+                            this.historyUserExpEstream.setParam("spcInf", this.spaceNetworkGroupEstream);
+                            this.historyUserExpEstream.setParam("dur", (int) (userExpValue.getLong("duration_connected") / 1000));
+                            this.historyUserExpEstream.setParam(BuildBenefitStatisticsChrInfo.E909009052_DATARX_INT, (int) userExpValue.getLong("datarx"));
+                            this.historyUserExpEstream.setParam(BuildBenefitStatisticsChrInfo.E909009052_DATATX_INT, (int) userExpValue.getLong("datatx"));
+                            this.historyUserExpEstream.setParam("sig", userExpValue.getShort("avgSignal"));
+                            this.historyUserExpEstream.setParam("In", userExpValue.getInt("user_pref_opt_in"));
+                            this.historyUserExpEstream.setParam("Out", userExpValue.getInt("user_pref_opt_out"));
+                            this.historyUserExpEstream.setParam("Stay", userExpValue.getInt("user_pref_stay"));
+                            this.historyUserExpEstream.setParam("power", (int) userExpValue.getLong("powerconsumption"));
+                            this.historyUserExpEstream.setParam("pwrIdle", 0);
+                            this.buildSpaceUserEstream.fillArrayParam(BuildBenefitStatisticsChrInfo.E909002049_USR_PREF_STATISTIC_CLASS, this.historyUserExpEstream);
+                            IMonitor.closeEventStream(this.spaceNetworkGroupEstream);
+                            IMonitor.closeEventStream(this.historyUserExpEstream);
+                        }
                     }
-                    this.spaceNetworkGroupEstream.setParam("spcA", Short.parseShort(userExpValue.getString("spaceid")));
-                    this.spaceNetworkGroupEstream.setParam("modA", Integer.parseInt(userExpValue.getString("modelVerAllap")));
-                    this.spaceNetworkGroupEstream.setParam("spcM", Short.parseShort(userExpValue.getString("spaceidmain")));
-                    this.spaceNetworkGroupEstream.setParam("modM", Integer.parseInt(userExpValue.getString("modelVerMainap")));
-                    Bundle userPrefValue = this.mspaceUserDAO.getUerPrefTotalCountDurationByAllApSpaces(freqlocation, userExpValue.getString("spaceid"), userExpValue.getString("modelVerAllap"));
-                    this.spaceNetworkGroupEstream.setParam("spcC", userExpValue.getInt("nwidcnt"));
-                    this.spaceNetworkGroupEstream.setParam("modC", userPrefValue.getInt("totalDuration"));
-                    this.spaceNetworkGroupEstream.setParam("Id", userPrefValue.getInt("totalCount"));
-                    this.spaceNetworkGroupEstream.setParam("name", userExpValue.getString("networkname"));
-                    this.spaceNetworkGroupEstream.setParam("freq", userExpValue.getShort("nwfreqcnt"));
-                    this.spaceNetworkGroupEstream.setParam(HwSecDiagnoseConstant.ANTIMAL_APK_TYPE, (byte) userExpValue.getInt("nwType"));
-                    this.spaceNetworkGroupEstream.setParam("rec", userExpValue.getShort("rec"));
-                    this.historyUserExpEstream.setParam("spcInf", this.spaceNetworkGroupEstream);
-                    this.historyUserExpEstream.setParam("dur", (int) (userExpValue.getLong("duration_connected") / 1000));
-                    this.historyUserExpEstream.setParam(BuildBenefitStatisticsChrInfo.E909009052_DATARX_INT, (int) userExpValue.getLong("datarx"));
-                    this.historyUserExpEstream.setParam(BuildBenefitStatisticsChrInfo.E909009052_DATATX_INT, (int) userExpValue.getLong("datatx"));
-                    this.historyUserExpEstream.setParam("sig", userExpValue.getShort("avgSignal"));
-                    this.historyUserExpEstream.setParam("In", userExpValue.getInt("user_pref_opt_in"));
-                    this.historyUserExpEstream.setParam("Out", userExpValue.getInt("user_pref_opt_out"));
-                    this.historyUserExpEstream.setParam("Stay", userExpValue.getInt("user_pref_stay"));
-                    this.historyUserExpEstream.setParam("power", (int) userExpValue.getLong("powerconsumption"));
-                    this.historyUserExpEstream.setParam("pwrIdle", 0);
-                    this.buildSpaceUserEstream.fillArrayParam(BuildBenefitStatisticsChrInfo.E909002049_USR_PREF_STATISTIC_CLASS, this.historyUserExpEstream);
-                    IMonitor.closeEventStream(this.spaceNetworkGroupEstream);
-                    IMonitor.closeEventStream(this.historyUserExpEstream);
+                    LogUtil.e("buildHistoryUserExp, open Estream failed");
+                    return false;
                 }
             }
             return true;
@@ -89,27 +91,29 @@ public class BuildSpaceUserStatisticsChrInfo {
                 if (appQoEValue != null) {
                     this.historyAppQoEEstream = IMonitor.openEventStream(MSG_WAVEMAPPING_HISTORY_APPQOE_CLASSID);
                     this.spaceNetworkGroupEstream = IMonitor.openEventStream(MSG_WAVEMAPPING_SPACE_NETWORK_GROUP_CLASSID);
-                    if (this.historyAppQoEEstream == null || this.spaceNetworkGroupEstream == null) {
-                        LogUtil.e("buildHistoryAppQoE, open Estream failed");
-                        return false;
+                    if (this.historyAppQoEEstream != null) {
+                        if (this.spaceNetworkGroupEstream != null) {
+                            this.spaceNetworkGroupEstream.setParam("spcA", Short.parseShort(appQoEValue.getString("spaceid")));
+                            this.spaceNetworkGroupEstream.setParam("modA", Integer.parseInt(appQoEValue.getString("modelVerAllap")));
+                            this.spaceNetworkGroupEstream.setParam("spcM", Short.parseShort(appQoEValue.getString("spaceidmain")));
+                            this.spaceNetworkGroupEstream.setParam("modM", Integer.parseInt(appQoEValue.getString("modelVerMainap")));
+                            this.spaceNetworkGroupEstream.setParam("spcC", appQoEValue.getInt("nwidcnt"));
+                            this.spaceNetworkGroupEstream.setParam("name", appQoEValue.getString("networkname"));
+                            this.spaceNetworkGroupEstream.setParam("freq", appQoEValue.getShort("nwfreqcnt"));
+                            this.spaceNetworkGroupEstream.setParam(HwSecDiagnoseConstant.ANTIMAL_APK_TYPE, (byte) appQoEValue.getInt("nwType"));
+                            this.spaceNetworkGroupEstream.setParam("rec", appQoEValue.getShort("rec"));
+                            this.historyAppQoEEstream.setParam("app", appQoEValue.getInt("app"));
+                            this.historyAppQoEEstream.setParam("spcInf", this.spaceNetworkGroupEstream);
+                            this.historyAppQoEEstream.setParam("dur", (int) (appQoEValue.getLong("duration") / 1000));
+                            this.historyAppQoEEstream.setParam(BuildBenefitStatisticsChrInfo.E909009050_GOOD_INT, appQoEValue.getInt("goodcount"));
+                            this.historyAppQoEEstream.setParam(BuildBenefitStatisticsChrInfo.E909009050_POOR_INT, appQoEValue.getInt("poorcount"));
+                            this.buildSpaceUserEstream.fillArrayParam(BuildBenefitStatisticsChrInfo.E909002049_APP_QOE_BENEFIT_CLASS, this.historyAppQoEEstream);
+                            IMonitor.closeEventStream(this.spaceNetworkGroupEstream);
+                            IMonitor.closeEventStream(this.historyAppQoEEstream);
+                        }
                     }
-                    this.spaceNetworkGroupEstream.setParam("spcA", Short.parseShort(appQoEValue.getString("spaceid")));
-                    this.spaceNetworkGroupEstream.setParam("modA", Integer.parseInt(appQoEValue.getString("modelVerAllap")));
-                    this.spaceNetworkGroupEstream.setParam("spcM", Short.parseShort(appQoEValue.getString("spaceidmain")));
-                    this.spaceNetworkGroupEstream.setParam("modM", Integer.parseInt(appQoEValue.getString("modelVerMainap")));
-                    this.spaceNetworkGroupEstream.setParam("spcC", appQoEValue.getInt("nwidcnt"));
-                    this.spaceNetworkGroupEstream.setParam("name", appQoEValue.getString("networkname"));
-                    this.spaceNetworkGroupEstream.setParam("freq", appQoEValue.getShort("nwfreqcnt"));
-                    this.spaceNetworkGroupEstream.setParam(HwSecDiagnoseConstant.ANTIMAL_APK_TYPE, (byte) appQoEValue.getInt("nwType"));
-                    this.spaceNetworkGroupEstream.setParam("rec", appQoEValue.getShort("rec"));
-                    this.historyAppQoEEstream.setParam("app", appQoEValue.getInt("app"));
-                    this.historyAppQoEEstream.setParam("spcInf", this.spaceNetworkGroupEstream);
-                    this.historyAppQoEEstream.setParam("dur", (int) (appQoEValue.getLong("duration") / 1000));
-                    this.historyAppQoEEstream.setParam(BuildBenefitStatisticsChrInfo.E909009050_GOOD_INT, appQoEValue.getInt("goodcount"));
-                    this.historyAppQoEEstream.setParam(BuildBenefitStatisticsChrInfo.E909009050_POOR_INT, appQoEValue.getInt("poorcount"));
-                    this.buildSpaceUserEstream.fillArrayParam(BuildBenefitStatisticsChrInfo.E909002049_APP_QOE_BENEFIT_CLASS, this.historyAppQoEEstream);
-                    IMonitor.closeEventStream(this.spaceNetworkGroupEstream);
-                    IMonitor.closeEventStream(this.historyAppQoEEstream);
+                    LogUtil.e("buildHistoryAppQoE, open Estream failed");
+                    return false;
                 }
             }
             return true;

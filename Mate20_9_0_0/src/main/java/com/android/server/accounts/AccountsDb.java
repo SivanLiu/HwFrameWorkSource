@@ -630,10 +630,10 @@ class AccountsDb implements AutoCloseable {
         return db.insert(CE_TABLE_EXTRAS, "key", values);
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0044, code:
+    /* JADX WARNING: Missing block: B:14:0x0044, code skipped:
             if (r1 != null) goto L_0x0046;
      */
-    /* JADX WARNING: Missing block: B:15:0x0046, code:
+    /* JADX WARNING: Missing block: B:15:0x0046, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -664,10 +664,10 @@ class AccountsDb implements AutoCloseable {
         x1.close();
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0044, code:
+    /* JADX WARNING: Missing block: B:16:0x0044, code skipped:
             if (r1 != null) goto L_0x0046;
      */
-    /* JADX WARNING: Missing block: B:17:0x0046, code:
+    /* JADX WARNING: Missing block: B:17:0x0046, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -687,10 +687,10 @@ class AccountsDb implements AutoCloseable {
         return -1;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0040, code:
+    /* JADX WARNING: Missing block: B:15:0x0040, code skipped:
             if (r1 != null) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:16:0x0042, code:
+    /* JADX WARNING: Missing block: B:16:0x0042, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -823,10 +823,10 @@ class AccountsDb implements AutoCloseable {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0044, code:
+    /* JADX WARNING: Missing block: B:16:0x0044, code skipped:
             if (r1 != null) goto L_0x0046;
      */
-    /* JADX WARNING: Missing block: B:17:0x0046, code:
+    /* JADX WARNING: Missing block: B:17:0x0046, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -846,10 +846,10 @@ class AccountsDb implements AutoCloseable {
         return -1;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0052, code:
+    /* JADX WARNING: Missing block: B:14:0x0052, code skipped:
             if (r1 != null) goto L_0x0054;
      */
-    /* JADX WARNING: Missing block: B:15:0x0054, code:
+    /* JADX WARNING: Missing block: B:15:0x0054, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -868,10 +868,10 @@ class AccountsDb implements AutoCloseable {
         return map;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0043, code:
+    /* JADX WARNING: Missing block: B:15:0x0043, code skipped:
             if (r1 != null) goto L_0x0045;
      */
-    /* JADX WARNING: Missing block: B:16:0x0045, code:
+    /* JADX WARNING: Missing block: B:16:0x0045, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1066,17 +1066,18 @@ class AccountsDb implements AutoCloseable {
             try {
                 String type = TextUtils.split(metaCursor.getString(0), META_KEY_DELIMITER)[1];
                 String uidStr = metaCursor.getString(1);
-                if (TextUtils.isEmpty(type) || TextUtils.isEmpty(uidStr)) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Auth type empty: ");
-                    stringBuilder.append(TextUtils.isEmpty(type));
-                    stringBuilder.append(", uid empty: ");
-                    stringBuilder.append(TextUtils.isEmpty(uidStr));
-                    Slog.e(str, stringBuilder.toString());
-                } else {
-                    map.put(type, Integer.valueOf(Integer.parseInt(metaCursor.getString(1))));
+                if (!TextUtils.isEmpty(type)) {
+                    if (!TextUtils.isEmpty(uidStr)) {
+                        map.put(type, Integer.valueOf(Integer.parseInt(metaCursor.getString(1))));
+                    }
                 }
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Auth type empty: ");
+                stringBuilder.append(TextUtils.isEmpty(type));
+                stringBuilder.append(", uid empty: ");
+                stringBuilder.append(TextUtils.isEmpty(uidStr));
+                Slog.e(str, stringBuilder.toString());
             } finally {
                 metaCursor.close();
             }
@@ -1094,19 +1095,18 @@ class AccountsDb implements AutoCloseable {
         return this.mDeDatabase.getWritableDatabase().delete(TABLE_META, "key=? AND value=?", strArr) > 0;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x004c, code:
+    /* JADX WARNING: Missing block: B:21:0x004c, code skipped:
             if (r1 != null) goto L_0x004e;
      */
-    /* JADX WARNING: Missing block: B:21:0x004e, code:
+    /* JADX WARNING: Missing block: B:22:0x004e, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     List<Pair<String, Integer>> findAllAccountGrants() {
-        List<Pair<String, Integer>> results;
         Cursor cursor = this.mDeDatabase.getReadableDatabase().rawQuery(ACCOUNT_ACCESS_GRANTS, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                results = new ArrayList();
+                List<Pair<String, Integer>> results = new ArrayList();
                 do {
                     results.add(Pair.create(cursor.getString(null), Integer.valueOf(cursor.getInt(1))));
                 } while (cursor.moveToNext());
@@ -1116,11 +1116,11 @@ class AccountsDb implements AutoCloseable {
                 return results;
             }
         }
-        results = Collections.emptyList();
+        List emptyList = Collections.emptyList();
         if (cursor != null) {
             $closeResource(null, cursor);
         }
-        return results;
+        return emptyList;
     }
 
     List<Account> findCeAccountsNotInDe() {

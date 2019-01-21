@@ -1,6 +1,7 @@
 package org.bouncycastle.cert.crmf;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.crmf.EncryptedValue;
@@ -8,6 +9,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.operator.KeyWrapper;
+import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.OutputEncryptor;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfoBuilder;
@@ -30,7 +32,7 @@ public class EncryptedValueBuilder {
 
     private EncryptedValue encryptData(byte[] bArr) throws CRMFException {
         StringBuilder stringBuilder;
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         OutputStream outputStream = this.encryptor.getOutputStream(byteArrayOutputStream);
         try {
             outputStream.write(bArr);
@@ -39,13 +41,13 @@ public class EncryptedValueBuilder {
             try {
                 this.wrapper.generateWrappedKey(this.encryptor.getKey());
                 return new EncryptedValue(null, algorithmIdentifier, new DERBitString(this.wrapper.generateWrappedKey(this.encryptor.getKey())), this.wrapper.getAlgorithmIdentifier(), null, new DERBitString(byteArrayOutputStream.toByteArray()));
-            } catch (Throwable e) {
+            } catch (OperatorException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("cannot wrap key: ");
                 stringBuilder.append(e.getMessage());
                 throw new CRMFException(stringBuilder.toString(), e);
             }
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot process data: ");
             stringBuilder.append(e2.getMessage());
@@ -66,28 +68,28 @@ public class EncryptedValueBuilder {
             PKCS8EncryptedPrivateKeyInfo build = pKCS8EncryptedPrivateKeyInfoBuilder.build(this.encryptor);
             this.wrapper.generateWrappedKey(this.encryptor.getKey());
             return new EncryptedValue(privateKeyAlgorithm, algorithmIdentifier, new DERBitString(this.wrapper.generateWrappedKey(this.encryptor.getKey())), this.wrapper.getAlgorithmIdentifier(), null, new DERBitString(build.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode encrypted private key: ");
             stringBuilder.append(e.getMessage());
             throw new CRMFException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalStateException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode key: ");
             stringBuilder.append(e2.getMessage());
             throw new CRMFException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (OperatorException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot wrap key: ");
-            stringBuilder.append(e22.getMessage());
-            throw new CRMFException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new CRMFException(stringBuilder.toString(), e3);
         }
     }
 
     public EncryptedValue build(X509CertificateHolder x509CertificateHolder) throws CRMFException {
         try {
             return encryptData(padData(x509CertificateHolder.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode certificate: ");
             stringBuilder.append(e.getMessage());

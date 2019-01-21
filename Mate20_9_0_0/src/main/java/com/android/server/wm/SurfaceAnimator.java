@@ -61,10 +61,10 @@ class SurfaceAnimator {
         return new -$$Lambda$SurfaceAnimator$vdRZk66hQVbQCvVXEaQCT1kVmFc(this, animationFinishedCallback);
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0038, code:
+    /* JADX WARNING: Missing block: B:19:0x0038, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:20:0x003b, code:
+    /* JADX WARNING: Missing block: B:20:0x003b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

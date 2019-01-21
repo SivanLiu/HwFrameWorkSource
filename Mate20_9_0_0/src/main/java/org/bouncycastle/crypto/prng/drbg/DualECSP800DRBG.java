@@ -165,7 +165,7 @@ public class DualECSP800DRBG implements SP80090DRBG {
             int i3 = i2;
             while (i2 < length2) {
                 bigInteger = getScalarMultipleXCoord(this._P, bigInteger);
-                Object toByteArray = getScalarMultipleXCoord(this._Q, bigInteger).toByteArray();
+                byte[] toByteArray = getScalarMultipleXCoord(this._Q, bigInteger).toByteArray();
                 if (toByteArray.length > this._outlen) {
                     System.arraycopy(toByteArray, toByteArray.length - this._outlen, bArr, i3, this._outlen);
                 } else {
@@ -177,7 +177,7 @@ public class DualECSP800DRBG implements SP80090DRBG {
             }
             if (i3 < bArr.length) {
                 bigInteger = getScalarMultipleXCoord(this._P, bigInteger);
-                Object toByteArray2 = getScalarMultipleXCoord(this._Q, bigInteger).toByteArray();
+                byte[] toByteArray2 = getScalarMultipleXCoord(this._Q, bigInteger).toByteArray();
                 length2 = bArr.length - i3;
                 if (toByteArray2.length > this._outlen) {
                     i = toByteArray2.length - this._outlen;

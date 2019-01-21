@@ -131,16 +131,16 @@ public class X509V2CRLGenerator {
         TBSCertList generateCertList = generateCertList();
         try {
             return generateJcaObject(generateCertList, X509Util.calculateSignature(this.sigOID, this.signatureAlgorithm, str, privateKey, secureRandom, generateCertList));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new ExtCRLException("cannot generate CRL encoding", e);
         }
     }
 
     public X509CRL generate(PrivateKey privateKey, SecureRandom secureRandom) throws CRLException, IllegalStateException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        Object generateCertList = generateCertList();
+        TBSCertList generateCertList = generateCertList();
         try {
             return generateJcaObject(generateCertList, X509Util.calculateSignature(this.sigOID, this.signatureAlgorithm, privateKey, secureRandom, generateCertList));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new ExtCRLException("cannot generate CRL encoding", e);
         }
     }

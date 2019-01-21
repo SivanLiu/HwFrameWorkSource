@@ -135,56 +135,56 @@ public class ARIAEngine implements BlockCipher {
         byte[] bArr2 = C[i];
         byte[] bArr3 = C[(i + 1) % 3];
         byte[] bArr4 = C[(i + 2) % 3];
-        Object obj = new byte[16];
-        Object obj2 = new byte[16];
-        System.arraycopy(bArr, 0, obj, 0, 16);
-        System.arraycopy(bArr, 16, obj2, 0, length - 16);
-        Object obj3 = new byte[16];
-        Object obj4 = new byte[16];
-        Object obj5 = new byte[16];
-        Object obj6 = new byte[16];
-        System.arraycopy(obj, 0, obj3, 0, 16);
-        System.arraycopy(obj3, 0, obj4, 0, 16);
-        FO(obj4, bArr2);
-        xor(obj4, obj2);
-        System.arraycopy(obj4, 0, obj5, 0, 16);
-        FE(obj5, bArr3);
-        xor(obj5, obj3);
-        System.arraycopy(obj5, 0, obj6, 0, 16);
-        FO(obj6, bArr4);
-        xor(obj6, obj4);
+        byte[] bArr5 = new byte[16];
+        byte[] bArr6 = new byte[16];
+        System.arraycopy(bArr, 0, bArr5, 0, 16);
+        System.arraycopy(bArr, 16, bArr6, 0, length - 16);
+        bArr = new byte[16];
+        byte[] bArr7 = new byte[16];
+        byte[] bArr8 = new byte[16];
+        byte[] bArr9 = new byte[16];
+        System.arraycopy(bArr5, 0, bArr, 0, 16);
+        System.arraycopy(bArr, 0, bArr7, 0, 16);
+        FO(bArr7, bArr2);
+        xor(bArr7, bArr6);
+        System.arraycopy(bArr7, 0, bArr8, 0, 16);
+        FE(bArr8, bArr3);
+        xor(bArr8, bArr);
+        System.arraycopy(bArr8, 0, bArr9, 0, 16);
+        FO(bArr9, bArr4);
+        xor(bArr9, bArr7);
         i = (i * 2) + 12;
-        byte[][] bArr5 = (byte[][]) Array.newInstance(byte.class, new int[]{i + 1, 16});
-        keyScheduleRound(bArr5[0], obj3, obj4, 19);
+        byte[][] bArr10 = (byte[][]) Array.newInstance(byte.class, new int[]{i + 1, 16});
+        keyScheduleRound(bArr10[0], bArr, bArr7, 19);
         int i2 = 1;
-        keyScheduleRound(bArr5[1], obj4, obj5, 19);
-        keyScheduleRound(bArr5[2], obj5, obj6, 19);
-        keyScheduleRound(bArr5[3], obj6, obj3, 19);
-        keyScheduleRound(bArr5[4], obj3, obj4, 31);
-        keyScheduleRound(bArr5[5], obj4, obj5, 31);
-        keyScheduleRound(bArr5[6], obj5, obj6, 31);
-        keyScheduleRound(bArr5[7], obj6, obj3, 31);
-        keyScheduleRound(bArr5[8], obj3, obj4, 67);
-        keyScheduleRound(bArr5[9], obj4, obj5, 67);
-        keyScheduleRound(bArr5[10], obj5, obj6, 67);
-        keyScheduleRound(bArr5[11], obj6, obj3, 67);
-        keyScheduleRound(bArr5[12], obj3, obj4, 97);
+        keyScheduleRound(bArr10[1], bArr7, bArr8, 19);
+        keyScheduleRound(bArr10[2], bArr8, bArr9, 19);
+        keyScheduleRound(bArr10[3], bArr9, bArr, 19);
+        keyScheduleRound(bArr10[4], bArr, bArr7, 31);
+        keyScheduleRound(bArr10[5], bArr7, bArr8, 31);
+        keyScheduleRound(bArr10[6], bArr8, bArr9, 31);
+        keyScheduleRound(bArr10[7], bArr9, bArr, 31);
+        keyScheduleRound(bArr10[8], bArr, bArr7, 67);
+        keyScheduleRound(bArr10[9], bArr7, bArr8, 67);
+        keyScheduleRound(bArr10[10], bArr8, bArr9, 67);
+        keyScheduleRound(bArr10[11], bArr9, bArr, 67);
+        keyScheduleRound(bArr10[12], bArr, bArr7, 97);
         if (i > 12) {
-            keyScheduleRound(bArr5[13], obj4, obj5, 97);
-            keyScheduleRound(bArr5[14], obj5, obj6, 97);
+            keyScheduleRound(bArr10[13], bArr7, bArr8, 97);
+            keyScheduleRound(bArr10[14], bArr8, bArr9, 97);
             if (i > 14) {
-                keyScheduleRound(bArr5[15], obj6, obj3, 97);
-                keyScheduleRound(bArr5[16], obj3, obj4, CipherSuite.TLS_DH_anon_WITH_AES_256_CBC_SHA256);
+                keyScheduleRound(bArr10[15], bArr9, bArr, 97);
+                keyScheduleRound(bArr10[16], bArr, bArr7, CipherSuite.TLS_DH_anon_WITH_AES_256_CBC_SHA256);
             }
         }
         if (!z) {
-            reverseKeys(bArr5);
+            reverseKeys(bArr10);
             while (i2 < i) {
-                A(bArr5[i2]);
+                A(bArr10[i2]);
                 i2++;
             }
         }
-        return bArr5;
+        return bArr10;
     }
 
     protected static void keyScheduleRound(byte[] bArr, byte[] bArr2, byte[] bArr3, int i) {
@@ -245,24 +245,24 @@ public class ARIAEngine implements BlockCipher {
             throw new DataLengthException("input buffer too short");
         } else if (i2 <= bArr2.length - 16) {
             int i3;
-            Object obj = new byte[16];
-            System.arraycopy(bArr, i, obj, 0, 16);
+            byte[] bArr3 = new byte[16];
+            System.arraycopy(bArr, i, bArr3, 0, 16);
             int length = this.roundKeys.length - 3;
             i = 0;
             while (i < length) {
                 int i4 = i + 1;
-                FO(obj, this.roundKeys[i]);
+                FO(bArr3, this.roundKeys[i]);
                 i3 = i4 + 1;
-                FE(obj, this.roundKeys[i4]);
+                FE(bArr3, this.roundKeys[i4]);
                 i = i3;
             }
             i3 = i + 1;
-            FO(obj, this.roundKeys[i]);
+            FO(bArr3, this.roundKeys[i]);
             i = i3 + 1;
-            xor(obj, this.roundKeys[i3]);
-            SL2(obj);
-            xor(obj, this.roundKeys[i]);
-            System.arraycopy(obj, 0, bArr2, i2, 16);
+            xor(bArr3, this.roundKeys[i3]);
+            SL2(bArr3);
+            xor(bArr3, this.roundKeys[i]);
+            System.arraycopy(bArr3, 0, bArr2, i2, 16);
             return 16;
         } else {
             throw new OutputLengthException("output buffer too short");

@@ -13,7 +13,6 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -64,7 +63,7 @@ public class NetscapeCertRequest extends ASN1Object {
                     this.challenge = ((DERIA5String) aSN1Encodable.getObjectAt(1)).getString();
                     this.content = new DERBitString(aSN1Encodable);
                     aSN1Encodable = SubjectPublicKeyInfo.getInstance(aSN1Encodable.getObjectAt(0));
-                    KeySpec x509EncodedKeySpec = new X509EncodedKeySpec(new DERBitString(aSN1Encodable).getBytes());
+                    X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(new DERBitString(aSN1Encodable).getBytes());
                     this.keyAlg = aSN1Encodable.getAlgorithm();
                     this.pubkey = KeyFactory.getInstance(this.keyAlg.getAlgorithm().getId(), "BC").generatePublic(x509EncodedKeySpec);
                     return;

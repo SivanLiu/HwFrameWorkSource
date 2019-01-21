@@ -767,17 +767,24 @@ public class UsageStatsService extends SystemService implements StatsUpdatedList
         public byte[] getBackupPayload(int user, String key) {
             synchronized (UsageStatsService.this.mLock) {
                 if (user == 0) {
-                    byte[] backupPayload = UsageStatsService.this.getUserDataAndInitializeIfNeededLocked(user, UsageStatsService.this.checkAndGetTimeLocked()).getBackupPayload(key);
-                    return backupPayload;
+                    try {
+                        byte[] backupPayload = UsageStatsService.this.getUserDataAndInitializeIfNeededLocked(user, UsageStatsService.this.checkAndGetTimeLocked()).getBackupPayload(key);
+                        return backupPayload;
+                    } catch (Throwable th) {
+                    }
+                } else {
+                    return null;
                 }
-                return null;
             }
         }
 
         public void applyRestoredPayload(int user, String key, byte[] payload) {
             synchronized (UsageStatsService.this.mLock) {
                 if (user == 0) {
-                    UsageStatsService.this.getUserDataAndInitializeIfNeededLocked(user, UsageStatsService.this.checkAndGetTimeLocked()).applyRestoredPayload(key, payload);
+                    try {
+                        UsageStatsService.this.getUserDataAndInitializeIfNeededLocked(user, UsageStatsService.this.checkAndGetTimeLocked()).applyRestoredPayload(key, payload);
+                    } catch (Throwable th) {
+                    }
                 }
             }
         }
@@ -1034,6 +1041,8 @@ public class UsageStatsService extends SystemService implements StatsUpdatedList
                 case 2:
                     this.mAppTimeLimit.moveToBackground(event.getPackageName(), event.getClassName(), userId);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -1059,7 +1068,7 @@ public class UsageStatsService extends SystemService implements StatsUpdatedList
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x004e, code:
+    /* JADX WARNING: Missing block: B:19:0x004e, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1089,7 +1098,7 @@ public class UsageStatsService extends SystemService implements StatsUpdatedList
         synchronized (this.mLock) {
             long timeNow = checkAndGetTimeLocked();
             if (validRange(timeNow, beginTime, endTime)) {
-                List<ConfigurationStats> queryConfigurationStats = getUserDataAndInitializeIfNeededLocked(userId, timeNow).queryConfigurationStats(bucketType, beginTime, endTime);
+                List queryConfigurationStats = getUserDataAndInitializeIfNeededLocked(userId, timeNow).queryConfigurationStats(bucketType, beginTime, endTime);
                 return queryConfigurationStats;
             }
             return null;
@@ -1100,7 +1109,7 @@ public class UsageStatsService extends SystemService implements StatsUpdatedList
         synchronized (this.mLock) {
             long timeNow = checkAndGetTimeLocked();
             if (validRange(timeNow, beginTime, endTime)) {
-                List<EventStats> queryEventStats = getUserDataAndInitializeIfNeededLocked(userId, timeNow).queryEventStats(bucketType, beginTime, endTime);
+                List queryEventStats = getUserDataAndInitializeIfNeededLocked(userId, timeNow).queryEventStats(bucketType, beginTime, endTime);
                 return queryEventStats;
             }
             return null;

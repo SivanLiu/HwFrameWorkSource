@@ -1,72 +1,45 @@
 package com.huawei.android.pushagent.model.b;
 
 import android.content.Context;
-import android.content.Intent;
-import com.huawei.android.pushagent.a.a;
-import com.huawei.android.pushagent.model.prefs.k;
-import com.huawei.android.pushagent.utils.g;
-import com.huawei.android.pushagent.utils.tools.d;
-import java.util.ArrayList;
-import java.util.Iterator;
+import android.text.TextUtils;
+import com.huawei.android.pushagent.datatype.http.server.TrsReq;
+import com.huawei.android.pushagent.datatype.http.server.TrsRsp;
+import com.huawei.android.pushagent.model.prefs.a;
+import org.json.JSONException;
 
-public class c {
-    private static c gx = new c();
-    private ArrayList<com.huawei.android.pushagent.datatype.a.c> gw = new ArrayList();
+public class c extends b<TrsRsp> {
+    private TrsReq dz;
 
-    private c() {
+    public c(Context context, TrsReq trsReq) {
+        super(context);
+        this.dz = trsReq;
     }
 
-    public static c xr() {
-        return gx;
+    protected String mx() {
+        String na = b.na("pushtrs.push.hicloud.com", a.ff(mz()).getBelongId());
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("https://").append(na).append("/TRSServer/v4/TRSRequest");
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "url:" + stringBuffer.toString());
+        return stringBuffer.toString();
     }
 
-    public void xu(String str, String str2) {
-        com.huawei.android.pushagent.datatype.a.c cVar = new com.huawei.android.pushagent.datatype.a.c();
-        cVar.setPkgName(str);
-        cVar.kk(str2);
-        cVar.kl(System.currentTimeMillis());
-        xv(cVar);
+    protected int mv() {
+        return 5222;
     }
 
-    private void xv(com.huawei.android.pushagent.datatype.a.c cVar) {
-        if (this.gw.size() >= 50) {
-            this.gw.remove(0);
-        }
-        this.gw.add(cVar);
-    }
-
-    public void xs(Context context, String str) {
-        Iterator it = this.gw.iterator();
-        while (it.hasNext()) {
-            if (str.equals(((com.huawei.android.pushagent.datatype.a.c) it.next()).km())) {
-                a.hq(90, str);
-                it.remove();
-                break;
-            }
-        }
-        if (this.gw.isEmpty()) {
-            d.cy(context, "com.huawei.android.push.intent.MSG_RSP_TIMEOUT");
+    protected String mw() {
+        try {
+            return com.huawei.android.pushagent.utils.d.a.uh(this.dz);
+        } catch (JSONException e) {
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "fail to get reqContent");
+            return null;
         }
     }
 
-    public void xt(Context context) {
-        long currentTimeMillis = System.currentTimeMillis();
-        long se = k.rh(context).se();
-        Iterator it = this.gw.iterator();
-        while (it.hasNext()) {
-            com.huawei.android.pushagent.datatype.a.c cVar = (com.huawei.android.pushagent.datatype.a.c) it.next();
-            if (currentTimeMillis - cVar.kn() > se) {
-                String km = cVar.km();
-                if (g.gu(context, cVar.ko())) {
-                    a.hq(92, km);
-                } else {
-                    a.hq(91, km);
-                }
-                it.remove();
-            }
+    protected TrsRsp my(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return new TrsRsp(null);
         }
-        if (!this.gw.isEmpty()) {
-            d.cw(context, new Intent("com.huawei.android.push.intent.MSG_RSP_TIMEOUT").setPackage(context.getPackageName()), k.rh(context).se());
-        }
+        return new TrsRsp(str);
     }
 }

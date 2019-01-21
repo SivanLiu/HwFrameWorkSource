@@ -160,80 +160,90 @@ public class TarBackupReader {
     }
 
     public Signature[] readAppManifestAndReturnSignatures(FileMetadata info) throws IOException {
+        String str;
+        StringBuilder stringBuilder;
         IllegalArgumentException e;
         if (info.size <= 65536) {
             byte[] buffer = new byte[((int) info.size)];
             if (((long) readExactly(this.mInputStream, buffer, 0, (int) info.size)) == info.size) {
                 this.mBytesReadListener.onBytesRead(info.size);
-                String[] str = new String[1];
-                String str2;
+                String[] str2 = new String[1];
                 try {
-                    int offset = extractLine(buffer, 0, str);
-                    int version = Integer.parseInt(str[0]);
+                    int offset = extractLine(buffer, 0, str2);
+                    int version = Integer.parseInt(str2[0]);
                     String manifestPackage;
                     if (version == 1) {
-                        offset = extractLine(buffer, offset, str);
-                        manifestPackage = str[0];
+                        offset = extractLine(buffer, offset, str2);
+                        manifestPackage = str2[0];
                         if (manifestPackage.equals(info.packageName)) {
-                            offset = extractLine(buffer, offset, str);
-                            info.version = (long) Integer.parseInt(str[0]);
-                            offset = extractLine(buffer, offset, str);
-                            Integer.parseInt(str[0]);
-                            offset = extractLine(buffer, offset, str);
-                            info.installerPackageName = str[0].length() > 0 ? str[0] : null;
-                            offset = extractLine(buffer, offset, str);
-                            info.hasApk = str[0].equals("1");
-                            offset = extractLine(buffer, offset, str);
-                            int numSigs = Integer.parseInt(str[0]);
+                            offset = extractLine(buffer, offset, str2);
+                            info.version = (long) Integer.parseInt(str2[0]);
+                            offset = extractLine(buffer, offset, str2);
+                            Integer.parseInt(str2[0]);
+                            offset = extractLine(buffer, offset, str2);
+                            info.installerPackageName = str2[0].length() > 0 ? str2[0] : null;
+                            offset = extractLine(buffer, offset, str2);
+                            info.hasApk = str2[0].equals("1");
+                            offset = extractLine(buffer, offset, str2);
+                            int numSigs = Integer.parseInt(str2[0]);
                             if (numSigs > 0) {
                                 Signature[] sigs = new Signature[numSigs];
                                 int offset2 = offset;
                                 offset = 0;
                                 while (offset < numSigs) {
                                     try {
-                                        offset2 = extractLine(buffer, offset2, str);
-                                        sigs[offset] = new Signature(str[0]);
+                                        offset2 = extractLine(buffer, offset2, str2);
+                                        sigs[offset] = new Signature(str2[0]);
                                         offset++;
                                     } catch (NumberFormatException e2) {
+                                        str = BackupManagerService.TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Corrupt restore manifest for package ");
+                                        stringBuilder.append(info.packageName);
+                                        Slog.w(str, stringBuilder.toString());
+                                        this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 46, null, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EVENT_PACKAGE_NAME", info.packageName));
+                                        return null;
                                     } catch (IllegalArgumentException e3) {
                                         e = e3;
                                         offset = offset2;
+                                        Slog.w(BackupManagerService.TAG, e.getMessage());
+                                        return null;
                                     }
                                 }
                                 return sigs;
                             }
-                            str2 = BackupManagerService.TAG;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("Missing signature on backed-up package ");
-                            stringBuilder.append(info.packageName);
-                            Slog.i(str2, stringBuilder.toString());
+                            str = BackupManagerService.TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Missing signature on backed-up package ");
+                            stringBuilder2.append(info.packageName);
+                            Slog.i(str, stringBuilder2.toString());
                             this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 42, null, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EVENT_PACKAGE_NAME", info.packageName));
                         } else {
-                            str2 = BackupManagerService.TAG;
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("Expected package ");
-                            stringBuilder2.append(info.packageName);
-                            stringBuilder2.append(" but restore manifest claims ");
-                            stringBuilder2.append(manifestPackage);
-                            Slog.i(str2, stringBuilder2.toString());
+                            str = BackupManagerService.TAG;
+                            StringBuilder stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("Expected package ");
+                            stringBuilder3.append(info.packageName);
+                            stringBuilder3.append(" but restore manifest claims ");
+                            stringBuilder3.append(manifestPackage);
+                            Slog.i(str, stringBuilder3.toString());
                             this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 43, null, 3, BackupManagerMonitorUtils.putMonitoringExtra(BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EVENT_PACKAGE_NAME", info.packageName), "android.app.backup.extra.LOG_MANIFEST_PACKAGE_NAME", manifestPackage));
                         }
                     } else {
                         manifestPackage = BackupManagerService.TAG;
-                        StringBuilder stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append("Unknown restore manifest version ");
-                        stringBuilder3.append(version);
-                        stringBuilder3.append(" for package ");
-                        stringBuilder3.append(info.packageName);
-                        Slog.i(manifestPackage, stringBuilder3.toString());
+                        StringBuilder stringBuilder4 = new StringBuilder();
+                        stringBuilder4.append("Unknown restore manifest version ");
+                        stringBuilder4.append(version);
+                        stringBuilder4.append(" for package ");
+                        stringBuilder4.append(info.packageName);
+                        Slog.i(manifestPackage, stringBuilder4.toString());
                         this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 44, null, 3, BackupManagerMonitorUtils.putMonitoringExtra(BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EVENT_PACKAGE_NAME", info.packageName), "android.app.backup.extra.LOG_EVENT_PACKAGE_VERSION", (long) version));
                     }
                 } catch (NumberFormatException e4) {
-                    str2 = BackupManagerService.TAG;
-                    StringBuilder stringBuilder4 = new StringBuilder();
-                    stringBuilder4.append("Corrupt restore manifest for package ");
-                    stringBuilder4.append(info.packageName);
-                    Slog.w(str2, stringBuilder4.toString());
+                    str = BackupManagerService.TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Corrupt restore manifest for package ");
+                    stringBuilder.append(info.packageName);
+                    Slog.w(str, stringBuilder.toString());
                     this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 46, null, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EVENT_PACKAGE_NAME", info.packageName));
                     return null;
                 } catch (IllegalArgumentException e5) {
@@ -260,7 +270,54 @@ public class TarBackupReader {
             PackageInfo pkgInfo = packageManager.getPackageInfo(info.packageName, 134217728);
             String str;
             StringBuilder stringBuilder;
-            if ((32768 & pkgInfo.applicationInfo.flags) == 0) {
+            if ((32768 & pkgInfo.applicationInfo.flags) != 0) {
+                if (pkgInfo.applicationInfo.uid < 10000) {
+                    if (pkgInfo.applicationInfo.backupAgentName == null) {
+                        str = BackupManagerService.TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Package ");
+                        stringBuilder.append(info.packageName);
+                        stringBuilder.append(" is system level with no agent");
+                        Slog.w(str, stringBuilder.toString());
+                        this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 38, pkgInfo, 2, null);
+                    }
+                }
+                if (!AppBackupUtils.signaturesMatch(signatures, pkgInfo, pmi)) {
+                    str = BackupManagerService.TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Restore manifest signatures do not match installed application for ");
+                    stringBuilder.append(info.packageName);
+                    Slog.w(str, stringBuilder.toString());
+                    this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 37, pkgInfo, 3, null);
+                } else if ((pkgInfo.applicationInfo.flags & 131072) != 0) {
+                    Slog.i(BackupManagerService.TAG, "Package has restoreAnyVersion; taking data");
+                    this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 34, pkgInfo, 3, null);
+                    policy = RestorePolicy.ACCEPT;
+                } else if (pkgInfo.getLongVersionCode() >= info.version) {
+                    Slog.i(BackupManagerService.TAG, "Sig + version match; taking data");
+                    policy = RestorePolicy.ACCEPT;
+                    this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 35, pkgInfo, 3, null);
+                } else if (allowApks) {
+                    str = BackupManagerService.TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Data version ");
+                    stringBuilder.append(info.version);
+                    stringBuilder.append(" is newer than installed version ");
+                    stringBuilder.append(pkgInfo.getLongVersionCode());
+                    stringBuilder.append(" - requiring apk");
+                    Slog.i(str, stringBuilder.toString());
+                    policy = RestorePolicy.ACCEPT_IF_APK;
+                } else {
+                    str = BackupManagerService.TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Data requires newer version ");
+                    stringBuilder.append(info.version);
+                    stringBuilder.append("; ignoring");
+                    Slog.i(str, stringBuilder.toString());
+                    this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 36, pkgInfo, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_OLD_VERSION", info.version));
+                    policy = RestorePolicy.IGNORE;
+                }
+            } else {
                 str = BackupManagerService.TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("Restore manifest from ");
@@ -268,48 +325,6 @@ public class TarBackupReader {
                 stringBuilder.append(" but allowBackup=false");
                 Slog.i(str, stringBuilder.toString());
                 this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 39, pkgInfo, 3, null);
-            } else if (pkgInfo.applicationInfo.uid < 10000 && pkgInfo.applicationInfo.backupAgentName == null) {
-                str = BackupManagerService.TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Package ");
-                stringBuilder.append(info.packageName);
-                stringBuilder.append(" is system level with no agent");
-                Slog.w(str, stringBuilder.toString());
-                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 38, pkgInfo, 2, null);
-            } else if (!AppBackupUtils.signaturesMatch(signatures, pkgInfo, pmi)) {
-                str = BackupManagerService.TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Restore manifest signatures do not match installed application for ");
-                stringBuilder.append(info.packageName);
-                Slog.w(str, stringBuilder.toString());
-                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 37, pkgInfo, 3, null);
-            } else if ((pkgInfo.applicationInfo.flags & 131072) != 0) {
-                Slog.i(BackupManagerService.TAG, "Package has restoreAnyVersion; taking data");
-                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 34, pkgInfo, 3, null);
-                policy = RestorePolicy.ACCEPT;
-            } else if (pkgInfo.getLongVersionCode() >= info.version) {
-                Slog.i(BackupManagerService.TAG, "Sig + version match; taking data");
-                policy = RestorePolicy.ACCEPT;
-                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 35, pkgInfo, 3, null);
-            } else if (allowApks) {
-                str = BackupManagerService.TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Data version ");
-                stringBuilder.append(info.version);
-                stringBuilder.append(" is newer than installed version ");
-                stringBuilder.append(pkgInfo.getLongVersionCode());
-                stringBuilder.append(" - requiring apk");
-                Slog.i(str, stringBuilder.toString());
-                policy = RestorePolicy.ACCEPT_IF_APK;
-            } else {
-                str = BackupManagerService.TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Data requires newer version ");
-                stringBuilder.append(info.version);
-                stringBuilder.append("; ignoring");
-                Slog.i(str, stringBuilder.toString());
-                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 36, pkgInfo, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_OLD_VERSION", info.version));
-                policy = RestorePolicy.IGNORE;
             }
         } catch (NameNotFoundException e) {
             if (allowApks) {

@@ -166,13 +166,14 @@ class AudioPlayerStateMonitor extends Stub {
     public void cleanUpAudioPlaybackUids(int mediaButtonSessionUid) {
         synchronized (this.mLock) {
             int userId = UserHandle.getUserId(mediaButtonSessionUid);
-            int i = this.mSortedAudioPlaybackClientUids.size() - 1;
-            while (i >= 0 && this.mSortedAudioPlaybackClientUids.get(i) != mediaButtonSessionUid) {
+            for (int i = this.mSortedAudioPlaybackClientUids.size() - 1; i >= 0; i--) {
+                if (this.mSortedAudioPlaybackClientUids.get(i) == mediaButtonSessionUid) {
+                    break;
+                }
                 int uid = this.mSortedAudioPlaybackClientUids.get(i);
                 if (userId == UserHandle.getUserId(uid) && !isPlaybackActive(uid)) {
                     this.mSortedAudioPlaybackClientUids.remove(i);
                 }
-                i--;
             }
         }
     }

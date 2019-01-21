@@ -108,7 +108,7 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
     private static final int CODE_SUSPEND_AUTHENTICATE = 1108;
     private static final int CODE_SUSPEND_ENROLL = 1123;
     static final boolean DEBUG = true;
-    private static boolean DEBUG_FPLOG = false;
+    private static boolean DEBUG_FPLOG = true;
     protected static final int ENROLL_UD = 4096;
     private static final int ERROR_CODE_COMMEN_ERROR = 8;
     private static final long FAIL_LOCKOUT_TIMEOUT_MS = 30000;
@@ -554,7 +554,6 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
                 Log.i(FingerprintService.TAG, "Clone profile authenticate,change userid to 0");
                 hwGroupId = 0;
             }
-            FingerprintService.this.notifyAuthenticationStarted(str, receiver, flags, hwGroupId, bundle, dialogReceiver);
             if (HwDeviceManager.disallowOp(50)) {
                 Slog.i(FingerprintService.TAG, "MDM forbid fingerprint authentication");
                 FingerprintService.this.mHandler.postDelayed(new Runnable() {
@@ -585,17 +584,16 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
             }
             if (FingerprintService.this.canUseFingerprint(str, true, callingUid, callingPid, callingUserId)) {
                 final long j = opId;
-                final IBinder iBinder = token;
-                final int i2 = callingUserId;
-                final int i3 = hwGroupId;
-                final IFingerprintServiceReceiver iFingerprintServiceReceiver = receiver;
-                final int i4 = flags;
-                final boolean z = restricted;
-                AnonymousClass4 anonymousClass4 = r0;
                 final String str3 = str;
-                Handler handler = FingerprintService.this.mHandler;
+                final IFingerprintServiceReceiver iFingerprintServiceReceiver = receiver;
+                final int i2 = flags;
                 final Bundle bundle2 = bundle;
                 final IBiometricPromptReceiver iBiometricPromptReceiver = dialogReceiver;
+                final IBinder iBinder = token;
+                AnonymousClass4 anonymousClass4 = r0;
+                final int i3 = callingUserId;
+                Handler handler = FingerprintService.this.mHandler;
+                final boolean z = restricted;
                 AnonymousClass4 anonymousClass42 = new Runnable() {
                     public void run() {
                         Slog.i(FingerprintService.TAG, "authenticate run");
@@ -607,7 +605,8 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
                             pmap.put(Integer.valueOf(FingerprintService.this.mCurrentUserId), stats);
                         }
                         FingerprintService.this.mPerformanceStats = stats;
-                        FingerprintService.this.startAuthentication(iBinder, j, i2, i3, iFingerprintServiceReceiver, i4, z, str3, bundle2, iBiometricPromptReceiver);
+                        FingerprintService.this.notifyAuthenticationStarted(str3, iFingerprintServiceReceiver, i2, hwGroupId, bundle2, iBiometricPromptReceiver);
+                        FingerprintService.this.startAuthentication(iBinder, j, i3, hwGroupId, iFingerprintServiceReceiver, i2, z, str3, bundle2, iBiometricPromptReceiver);
                     }
                 };
                 handler.post(anonymousClass4);
@@ -828,7 +827,12 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
             boolean z;
             FingerprintService.this.checkPermission("android.permission.MANAGE_FINGERPRINT");
             synchronized (FingerprintService.this) {
-                z = (FingerprintService.this.mCurrentClient == null && FingerprintService.this.mPendingClient == null) ? false : true;
+                if (FingerprintService.this.mCurrentClient == null) {
+                    if (FingerprintService.this.mPendingClient == null) {
+                        z = false;
+                    }
+                }
+                z = true;
             }
             return z;
         }
@@ -899,15 +903,10 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
         }
     }
 
-    static {
-        boolean z = Log.HWINFO || (Log.HWModuleLog && Log.isLoggable(TAG, 4));
-        DEBUG_FPLOG = z;
-    }
-
     public FingerprintService(Context context) {
         super(context);
         this.mContext = context;
-        this.mKeyguardPackage = ComponentName.unflattenFromString(context.getResources().getString(17039824)).getPackageName();
+        this.mKeyguardPackage = ComponentName.unflattenFromString(context.getResources().getString(17039825)).getPackageName();
         this.mAppOps = (AppOpsManager) context.getSystemService(AppOpsManager.class);
         this.mPowerManager = (PowerManager) this.mContext.getSystemService(PowerManager.class);
         this.mContext.registerReceiver(this.mLockoutReceiver, new IntentFilter(ACTION_LOCKOUT_RESET), "android.permission.RESET_FINGERPRINT_LOCKOUT", null);
@@ -983,15 +982,16 @@ public class FingerprintService extends AbsFingerprintService implements DeathRe
             stringBuilder3.append("Fingerprint HAL id: ");
             stringBuilder3.append(this.mHalDeviceId);
             Slog.v(str3, stringBuilder3.toString());
-            if (this.mHalDeviceId != 0 || (FingerprintUtils.getInstance().isDualFp() && this.mUDHalDeviceId != 0)) {
-                loadAuthenticatorIds();
-                updateActiveGroup(ActivityManager.getCurrentUser(), null);
-                doFingerprintCleanupForUser(ActivityManager.getCurrentUser());
-            } else {
-                Slog.w(TAG, "Failed to open Fingerprint HAL!");
-                MetricsLogger.count(this.mContext, "fingerprintd_openhal_error", 1);
-                this.mDaemon = null;
+            if (this.mHalDeviceId == 0) {
+                if (!FingerprintUtils.getInstance().isDualFp() || this.mUDHalDeviceId == 0) {
+                    Slog.w(TAG, "Failed to open Fingerprint HAL!");
+                    MetricsLogger.count(this.mContext, "fingerprintd_openhal_error", 1);
+                    this.mDaemon = null;
+                }
             }
+            loadAuthenticatorIds();
+            updateActiveGroup(ActivityManager.getCurrentUser(), null);
+            doFingerprintCleanupForUser(ActivityManager.getCurrentUser());
         }
         return this.mDaemon;
     }

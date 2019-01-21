@@ -5,6 +5,8 @@ import com.android.server.security.tsmagent.utils.HwLog;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -21,31 +23,6 @@ public class PayX509TrustManager implements X509TrustManager {
     private static final String TRUST_PWD = "";
     protected List<X509TrustManager> m509TrustManager = new ArrayList();
 
-    /* JADX WARNING: Removed duplicated region for block: B:19:0x0067 A:{ExcHandler: java.io.IOException (r1_4 'e' java.lang.Exception), Splitter: B:2:0x000d} */
-    /* JADX WARNING: Removed duplicated region for block: B:19:0x0067 A:{ExcHandler: java.io.IOException (r1_4 'e' java.lang.Exception), Splitter: B:2:0x000d} */
-    /* JADX WARNING: Removed duplicated region for block: B:19:0x0067 A:{ExcHandler: java.io.IOException (r1_4 'e' java.lang.Exception), Splitter: B:2:0x000d} */
-    /* JADX WARNING: Missing block: B:19:0x0067, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:21:?, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("PayX509TrustManager instance exception: ");
-            r2.append(r1.getMessage());
-            com.android.server.security.tsmagent.utils.HwLog.e(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:22:0x0080, code:
-            if (r0 != null) goto L_0x0082;
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:35:?, code:
-            return;
-     */
-    /* JADX WARNING: Missing block: B:38:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public PayX509TrustManager(Context context) {
         InputStream is = null;
         if (context != null) {
@@ -70,7 +47,14 @@ public class PayX509TrustManager implements X509TrustManager {
                         HwLog.e("can not close InputStream");
                     }
                 }
-            } catch (Exception e2) {
+            } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e2) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("PayX509TrustManager instance exception: ");
+                stringBuilder.append(e2.getMessage());
+                HwLog.e(stringBuilder.toString());
+                if (is != null) {
+                    is.close();
+                }
             } catch (Throwable th) {
                 if (is != null) {
                     try {

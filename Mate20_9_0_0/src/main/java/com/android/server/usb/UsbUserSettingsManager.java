@@ -92,33 +92,37 @@ class UsbUserSettingsManager {
 
     public boolean hasPermission(UsbDevice device, String packageName, int uid) {
         synchronized (this.mLock) {
-            if (isCameraDevicePresent(device) && !isCameraPermissionGranted(packageName, uid)) {
-                return false;
-            } else if (uid == 1000 || this.mDisablePermissionDialogs) {
-                return true;
-            } else {
-                SparseBooleanArray uidList = (SparseBooleanArray) this.mDevicePermissionMap.get(device.getDeviceName());
-                if (uidList == null) {
-                    return false;
+            if (!isCameraDevicePresent(device) || isCameraPermissionGranted(packageName, uid)) {
+                if (uid != 1000) {
+                    if (!this.mDisablePermissionDialogs) {
+                        SparseBooleanArray uidList = (SparseBooleanArray) this.mDevicePermissionMap.get(device.getDeviceName());
+                        if (uidList == null) {
+                            return false;
+                        }
+                        boolean z = uidList.get(uid);
+                        return z;
+                    }
                 }
-                boolean z = uidList.get(uid);
-                return z;
+                return true;
             }
+            return false;
         }
     }
 
     public boolean hasPermission(UsbAccessory accessory) {
         synchronized (this.mLock) {
             int uid = Binder.getCallingUid();
-            if (uid == 1000 || this.mDisablePermissionDialogs) {
-                return true;
+            if (uid != 1000) {
+                if (!this.mDisablePermissionDialogs) {
+                    SparseBooleanArray uidList = (SparseBooleanArray) this.mAccessoryPermissionMap.get(accessory);
+                    if (uidList == null) {
+                        return false;
+                    }
+                    boolean z = uidList.get(uid);
+                    return z;
+                }
             }
-            SparseBooleanArray uidList = (SparseBooleanArray) this.mAccessoryPermissionMap.get(accessory);
-            if (uidList == null) {
-                return false;
-            }
-            boolean z = uidList.get(uid);
-            return z;
+            return true;
         }
     }
 

@@ -49,7 +49,7 @@ public class SignerInformationStore implements Iterable<SignerInformation> {
             ArrayList arrayList = (ArrayList) this.table.get(signerId);
             return arrayList == null ? new ArrayList() : new ArrayList(arrayList);
         } else {
-            Collection arrayList2 = new ArrayList();
+            ArrayList arrayList2 = new ArrayList();
             Collection signers = getSigners(new SignerId(signerId.getIssuer(), signerId.getSerialNumber()));
             if (signers != null) {
                 arrayList2.addAll(signers);

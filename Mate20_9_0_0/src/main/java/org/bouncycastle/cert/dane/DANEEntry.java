@@ -43,10 +43,10 @@ public class DANEEntry {
     }
 
     public byte[] getRDATA() throws IOException {
-        Object encoded = this.certHolder.getEncoded();
-        Object obj = new byte[(this.flags.length + encoded.length)];
-        System.arraycopy(this.flags, 0, obj, 0, this.flags.length);
-        System.arraycopy(encoded, 0, obj, this.flags.length, encoded.length);
-        return obj;
+        byte[] encoded = this.certHolder.getEncoded();
+        byte[] bArr = new byte[(this.flags.length + encoded.length)];
+        System.arraycopy(this.flags, 0, bArr, 0, this.flags.length);
+        System.arraycopy(encoded, 0, bArr, this.flags.length, encoded.length);
+        return bArr;
     }
 }

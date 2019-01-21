@@ -1,0 +1,1067 @@
+package sun.misc;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilePermission;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.net.HttpURLConnection;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketPermission;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
+import java.security.AccessControlContext;
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.CodeSigner;
+import java.security.Permission;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.Stack;
+import java.util.StringTokenizer;
+import java.util.jar.Attributes;
+import java.util.jar.Attributes.Name;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import sun.net.util.URLUtil;
+import sun.net.www.ParseUtil;
+import sun.security.action.GetPropertyAction;
+import sun.security.util.SecurityConstants;
+
+public class URLClassPath {
+    private static final boolean DEBUG = (AccessController.doPrivileged(new GetPropertyAction("sun.misc.URLClassPath.debug")) != null);
+    private static final boolean DEBUG_LOOKUP_CACHE = (AccessController.doPrivileged(new GetPropertyAction("sun.misc.URLClassPath.debugLookupCache")) != null);
+    private static final boolean DISABLE_ACC_CHECKING;
+    private static final boolean DISABLE_JAR_CHECKING;
+    static final String JAVA_VERSION = ((String) AccessController.doPrivileged(new GetPropertyAction("java.version")));
+    static final String USER_AGENT_JAVA_VERSION = "UA-Java-Version";
+    private static volatile boolean lookupCacheEnabled = false;
+    private final AccessControlContext acc;
+    private boolean closed;
+    private URLStreamHandler jarHandler;
+    HashMap<String, Loader> lmap;
+    ArrayList<Loader> loaders;
+    private ClassLoader lookupCacheLoader;
+    private URL[] lookupCacheURLs;
+    private ArrayList<URL> path;
+    Stack<URL> urls;
+
+    private static class Loader implements Closeable {
+        private final URL base;
+        private JarFile jarfile;
+
+        Loader(URL url) {
+            this.base = url;
+        }
+
+        URL getBaseURL() {
+            return this.base;
+        }
+
+        URL findResource(String name, boolean check) {
+            try {
+                URL url = new URL(this.base, ParseUtil.encodePath(name, false));
+                if (check) {
+                    try {
+                        URLClassPath.check(url);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+                URLConnection uc = url.openConnection();
+                if (uc instanceof HttpURLConnection) {
+                    HttpURLConnection hconn = (HttpURLConnection) uc;
+                    hconn.setRequestMethod("HEAD");
+                    if (hconn.getResponseCode() >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                        return null;
+                    }
+                } else {
+                    uc.setUseCaches(false);
+                    uc.getInputStream().close();
+                }
+                return url;
+            } catch (MalformedURLException e2) {
+                throw new IllegalArgumentException("name");
+            }
+        }
+
+        Resource getResource(final String name, boolean check) {
+            try {
+                final URL url = new URL(this.base, ParseUtil.encodePath(name, false));
+                if (check) {
+                    try {
+                        URLClassPath.check(url);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+                final Exception e2 = url.openConnection();
+                InputStream in = e2.getInputStream();
+                if (e2 instanceof JarURLConnection) {
+                    this.jarfile = JarLoader.checkJar(((JarURLConnection) e2).getJarFile());
+                }
+                return new Resource() {
+                    public String getName() {
+                        return name;
+                    }
+
+                    public URL getURL() {
+                        return url;
+                    }
+
+                    public URL getCodeSourceURL() {
+                        return Loader.this.base;
+                    }
+
+                    public InputStream getInputStream() throws IOException {
+                        return e2.getInputStream();
+                    }
+
+                    public int getContentLength() throws IOException {
+                        return e2.getContentLength();
+                    }
+                };
+            } catch (MalformedURLException e3) {
+                throw new IllegalArgumentException("name");
+            }
+        }
+
+        Resource getResource(String name) {
+            return getResource(name, true);
+        }
+
+        public void close() throws IOException {
+            if (this.jarfile != null) {
+                this.jarfile.close();
+            }
+        }
+
+        URL[] getClassPath() throws IOException {
+            return null;
+        }
+    }
+
+    private static class FileLoader extends Loader {
+        private File dir;
+
+        FileLoader(URL url) throws IOException {
+            super(url);
+            if ("file".equals(url.getProtocol())) {
+                this.dir = new File(ParseUtil.decode(url.getFile().replace('/', File.separatorChar))).getCanonicalFile();
+                return;
+            }
+            throw new IllegalArgumentException("url");
+        }
+
+        URL findResource(String name, boolean check) {
+            Resource rsc = getResource(name, check);
+            if (rsc != null) {
+                return rsc.getURL();
+            }
+            return null;
+        }
+
+        Resource getResource(final String name, boolean check) {
+            try {
+                URL normalizedBase = new URL(getBaseURL(), ".");
+                final URL url = new URL(getBaseURL(), ParseUtil.encodePath(name, false));
+                if (!url.getFile().startsWith(normalizedBase.getFile())) {
+                    return null;
+                }
+                File file;
+                if (check) {
+                    URLClassPath.check(url);
+                }
+                if (name.indexOf("..") != -1) {
+                    file = new File(this.dir, name.replace('/', File.separatorChar)).getCanonicalFile();
+                    if (!file.getPath().startsWith(this.dir.getPath())) {
+                        return null;
+                    }
+                }
+                file = new File(this.dir, name.replace('/', File.separatorChar));
+                if (file.exists()) {
+                    return new Resource() {
+                        public String getName() {
+                            return name;
+                        }
+
+                        public URL getURL() {
+                            return url;
+                        }
+
+                        public URL getCodeSourceURL() {
+                            return FileLoader.this.getBaseURL();
+                        }
+
+                        public InputStream getInputStream() throws IOException {
+                            return new FileInputStream(file);
+                        }
+
+                        public int getContentLength() throws IOException {
+                            return (int) file.length();
+                        }
+                    };
+                }
+                return null;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    static class JarLoader extends Loader {
+        private final AccessControlContext acc;
+        private boolean closed = false;
+        private final URL csu;
+        private URLStreamHandler handler;
+        private JarIndex index;
+        private JarFile jar;
+        private final HashMap<String, Loader> lmap;
+        private MetaIndex metaIndex;
+
+        JarLoader(URL url, URLStreamHandler jarHandler, HashMap<String, Loader> loaderMap, AccessControlContext acc) throws IOException {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append((Object) url);
+            stringBuilder.append("!/");
+            super(new URL("jar", "", -1, stringBuilder.toString(), jarHandler));
+            this.csu = url;
+            this.handler = jarHandler;
+            this.lmap = loaderMap;
+            this.acc = acc;
+            if (isOptimizable(url)) {
+                String fileName = url.getFile();
+                if (fileName != null) {
+                    File f = new File(ParseUtil.decode(fileName));
+                    this.metaIndex = MetaIndex.forJar(f);
+                    if (!(this.metaIndex == null || f.exists())) {
+                        this.metaIndex = null;
+                    }
+                }
+                if (this.metaIndex == null) {
+                    ensureOpen();
+                    return;
+                }
+                return;
+            }
+            ensureOpen();
+        }
+
+        public void close() throws IOException {
+            if (!this.closed) {
+                this.closed = true;
+                ensureOpen();
+                this.jar.close();
+            }
+        }
+
+        JarFile getJarFile() {
+            return this.jar;
+        }
+
+        private boolean isOptimizable(URL url) {
+            return "file".equals(url.getProtocol());
+        }
+
+        private void ensureOpen() throws IOException {
+            if (this.jar == null) {
+                try {
+                    AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
+                        public Void run() throws IOException {
+                            if (URLClassPath.DEBUG) {
+                                PrintStream printStream = System.err;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("Opening ");
+                                stringBuilder.append(JarLoader.this.csu);
+                                printStream.println(stringBuilder.toString());
+                                Thread.dumpStack();
+                            }
+                            JarLoader.this.jar = JarLoader.this.getJarFile(JarLoader.this.csu);
+                            JarLoader.this.index = JarIndex.getJarIndex(JarLoader.this.jar, JarLoader.this.metaIndex);
+                            if (JarLoader.this.index != null) {
+                                String[] jarfiles = JarLoader.this.index.getJarFiles();
+                                for (String url : jarfiles) {
+                                    try {
+                                        String urlNoFragString = URLUtil.urlNoFragString(new URL(JarLoader.this.csu, url));
+                                        if (!JarLoader.this.lmap.containsKey(urlNoFragString)) {
+                                            JarLoader.this.lmap.put(urlNoFragString, null);
+                                        }
+                                    } catch (MalformedURLException e) {
+                                    }
+                                }
+                            }
+                            return null;
+                        }
+                    }, this.acc);
+                } catch (PrivilegedActionException pae) {
+                    throw ((IOException) pae.getException());
+                }
+            }
+        }
+
+        static JarFile checkJar(JarFile jar) throws IOException {
+            if (System.getSecurityManager() == null || URLClassPath.DISABLE_JAR_CHECKING || jar.startsWithLocHeader()) {
+                return jar;
+            }
+            IOException x = new IOException("Invalid Jar file");
+            try {
+                jar.close();
+            } catch (IOException ex) {
+                x.addSuppressed(ex);
+            }
+            throw x;
+        }
+
+        private JarFile getJarFile(URL url) throws IOException {
+            if (isOptimizable(url)) {
+                FileURLMapper p = new FileURLMapper(url);
+                if (p.exists()) {
+                    return checkJar(new JarFile(p.getPath()));
+                }
+                throw new FileNotFoundException(p.getPath());
+            }
+            URLConnection uc = getBaseURL().openConnection();
+            uc.setRequestProperty(URLClassPath.USER_AGENT_JAVA_VERSION, URLClassPath.JAVA_VERSION);
+            return checkJar(((JarURLConnection) uc).getJarFile());
+        }
+
+        JarIndex getIndex() {
+            try {
+                ensureOpen();
+                return this.index;
+            } catch (IOException e) {
+                throw new InternalError(e);
+            }
+        }
+
+        Resource checkResource(final String name, boolean check, final JarEntry entry) {
+            try {
+                final URL url = new URL(getBaseURL(), ParseUtil.encodePath(name, false));
+                if (check) {
+                    URLClassPath.check(url);
+                }
+                return new Resource() {
+                    public String getName() {
+                        return name;
+                    }
+
+                    public URL getURL() {
+                        return url;
+                    }
+
+                    public URL getCodeSourceURL() {
+                        return JarLoader.this.csu;
+                    }
+
+                    public InputStream getInputStream() throws IOException {
+                        return JarLoader.this.jar.getInputStream(entry);
+                    }
+
+                    public int getContentLength() {
+                        return (int) entry.getSize();
+                    }
+
+                    public Manifest getManifest() throws IOException {
+                        return JarLoader.this.jar.getManifest();
+                    }
+
+                    public Certificate[] getCertificates() {
+                        return entry.getCertificates();
+                    }
+
+                    public CodeSigner[] getCodeSigners() {
+                        return entry.getCodeSigners();
+                    }
+                };
+            } catch (MalformedURLException e) {
+                return null;
+            } catch (IOException e2) {
+                return null;
+            } catch (AccessControlException e3) {
+                return null;
+            }
+        }
+
+        boolean validIndex(String name) {
+            String packageName = name;
+            int lastIndexOf = name.lastIndexOf("/");
+            int pos = lastIndexOf;
+            if (lastIndexOf != -1) {
+                packageName = name.substring(0, pos);
+            }
+            Enumeration<JarEntry> enum_ = this.jar.entries();
+            while (enum_.hasMoreElements()) {
+                String entryName = ((ZipEntry) enum_.nextElement()).getName();
+                int lastIndexOf2 = entryName.lastIndexOf("/");
+                pos = lastIndexOf2;
+                if (lastIndexOf2 != -1) {
+                    entryName = entryName.substring(0, pos);
+                }
+                if (entryName.equals(packageName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        URL findResource(String name, boolean check) {
+            Resource rsc = getResource(name, check);
+            if (rsc != null) {
+                return rsc.getURL();
+            }
+            return null;
+        }
+
+        Resource getResource(String name, boolean check) {
+            if (this.metaIndex != null && !this.metaIndex.mayContain(name)) {
+                return null;
+            }
+            try {
+                ensureOpen();
+                JarEntry entry = this.jar.getJarEntry(name);
+                if (entry != null) {
+                    return checkResource(name, check, entry);
+                }
+                if (this.index == null) {
+                    return null;
+                }
+                return getResource(name, check, new HashSet());
+            } catch (IOException e) {
+                throw new InternalError(e);
+            }
+        }
+
+        Resource getResource(String name, boolean check, Set<String> visited) {
+            String str = name;
+            boolean z = check;
+            Set<String> set = visited;
+            int count = 0;
+            LinkedList<String> linkedList = this.index.get(str);
+            LinkedList<String> jarFilesList = linkedList;
+            if (linkedList == null) {
+                return null;
+            }
+            while (true) {
+                int size = jarFilesList.size();
+                String[] jarFiles = (String[]) jarFilesList.toArray(new String[size]);
+                while (count < size) {
+                    LinkedList<String> jarFilesList2;
+                    int count2 = count + 1;
+                    String jarName = jarFiles[count];
+                    try {
+                        final URL url = new URL(this.csu, jarName);
+                        String urlNoFragString = URLUtil.urlNoFragString(url);
+                        JarLoader jarLoader = (JarLoader) this.lmap.get(urlNoFragString);
+                        JarLoader newLoader = jarLoader;
+                        if (jarLoader == null) {
+                            newLoader = (JarLoader) AccessController.doPrivileged(new PrivilegedExceptionAction<JarLoader>() {
+                                public JarLoader run() throws IOException {
+                                    return new JarLoader(url, JarLoader.this.handler, JarLoader.this.lmap, JarLoader.this.acc);
+                                }
+                            }, this.acc);
+                            JarIndex newIndex = newLoader.getIndex();
+                            if (newIndex != null) {
+                                String str2;
+                                int pos = jarName.lastIndexOf("/");
+                                JarIndex jarIndex = this.index;
+                                if (pos == -1) {
+                                    jarFilesList2 = jarFilesList;
+                                    str2 = null;
+                                } else {
+                                    jarFilesList2 = jarFilesList;
+                                    try {
+                                        str2 = jarName.substring(0, pos + 1);
+                                    } catch (MalformedURLException | PrivilegedActionException e) {
+                                    }
+                                }
+                                newIndex.merge(jarIndex, str2);
+                            } else {
+                                jarFilesList2 = jarFilesList;
+                            }
+                            this.lmap.put(urlNoFragString, newLoader);
+                        } else {
+                            jarFilesList2 = jarFilesList;
+                        }
+                        JarLoader jarFilesList3 = newLoader;
+                        boolean visitedURL = set.add(URLUtil.urlNoFragString(url)) ^ 1;
+                        if (!visitedURL) {
+                            try {
+                                jarFilesList3.ensureOpen();
+                                JarEntry entry = jarFilesList3.jar.getJarEntry(str);
+                                if (entry != null) {
+                                    return jarFilesList3.checkResource(str, z, entry);
+                                }
+                                if (!jarFilesList3.validIndex(str)) {
+                                    throw new InvalidJarIndexException("Invalid index");
+                                }
+                            } catch (IOException e2) {
+                                Throwable th = e2;
+                                throw new InternalError(e2);
+                            }
+                        }
+                        if (!(visitedURL || jarFilesList3 == this || jarFilesList3.getIndex() == null)) {
+                            Resource resource = jarFilesList3.getResource(str, z, set);
+                            Resource res = resource;
+                            if (resource != null) {
+                                return res;
+                            }
+                        }
+                    } catch (PrivilegedActionException e3) {
+                        jarFilesList2 = jarFilesList;
+                    } catch (MalformedURLException e4) {
+                        jarFilesList2 = jarFilesList;
+                    }
+                    count = count2;
+                    jarFilesList = jarFilesList2;
+                }
+                jarFilesList = this.index.get(str);
+                if (count >= jarFilesList.size()) {
+                    return null;
+                }
+            }
+        }
+
+        URL[] getClassPath() throws IOException {
+            if (this.index != null || this.metaIndex != null) {
+                return null;
+            }
+            ensureOpen();
+            parseExtensionsDependencies();
+            if (this.jar.hasClassPathAttribute()) {
+                Manifest man = this.jar.getManifest();
+                if (man != null) {
+                    Attributes attr = man.getMainAttributes();
+                    if (attr != null) {
+                        String value = attr.getValue(Name.CLASS_PATH);
+                        if (value != null) {
+                            return parseClassPath(this.csu, value);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private void parseExtensionsDependencies() throws IOException {
+        }
+
+        private URL[] parseClassPath(URL base, String value) throws MalformedURLException {
+            StringTokenizer st = new StringTokenizer(value);
+            URL[] urls = new URL[st.countTokens()];
+            int i = 0;
+            while (st.hasMoreTokens()) {
+                urls[i] = new URL(base, st.nextToken());
+                i++;
+            }
+            return urls;
+        }
+    }
+
+    static {
+        boolean z = true;
+        String p = (String) AccessController.doPrivileged(new GetPropertyAction("sun.misc.URLClassPath.disableJarChecking"));
+        boolean z2 = p != null && (p.equals("true") || p.equals(""));
+        DISABLE_JAR_CHECKING = z2;
+        p = (String) AccessController.doPrivileged(new GetPropertyAction("jdk.net.URLClassPath.disableRestrictedPermissions"));
+        if (p == null || !(p.equals("true") || p.equals(""))) {
+            z = false;
+        }
+        DISABLE_ACC_CHECKING = z;
+    }
+
+    public URLClassPath(URL[] urls, URLStreamHandlerFactory factory, AccessControlContext acc) {
+        this.path = new ArrayList();
+        this.urls = new Stack();
+        this.loaders = new ArrayList();
+        this.lmap = new HashMap();
+        int i = 0;
+        this.closed = false;
+        while (i < urls.length) {
+            this.path.add(urls[i]);
+            i++;
+        }
+        push(urls);
+        if (factory != null) {
+            this.jarHandler = factory.createURLStreamHandler("jar");
+        }
+        if (DISABLE_ACC_CHECKING) {
+            this.acc = null;
+        } else {
+            this.acc = acc;
+        }
+    }
+
+    public URLClassPath(URL[] urls) {
+        this(urls, null, null);
+    }
+
+    public URLClassPath(URL[] urls, AccessControlContext acc) {
+        this(urls, null, acc);
+    }
+
+    public synchronized List<IOException> closeLoaders() {
+        if (this.closed) {
+            return Collections.emptyList();
+        }
+        List<IOException> result = new LinkedList();
+        Iterator it = this.loaders.iterator();
+        while (it.hasNext()) {
+            try {
+                ((Loader) it.next()).close();
+            } catch (IOException e) {
+                result.add(e);
+            }
+        }
+        this.closed = true;
+        return result;
+    }
+
+    /* JADX WARNING: Missing block: B:19:0x0029, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public synchronized void addURL(URL url) {
+        if (!this.closed) {
+            synchronized (this.urls) {
+                if (url != null) {
+                    if (!this.path.contains(url)) {
+                        this.urls.add(0, url);
+                        this.path.add(url);
+                        if (this.lookupCacheURLs != null) {
+                            disableAllLookupCaches();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public URL[] getURLs() {
+        URL[] urlArr;
+        synchronized (this.urls) {
+            urlArr = (URL[]) this.path.toArray(new URL[this.path.size()]);
+        }
+        return urlArr;
+    }
+
+    public URL findResource(String name, boolean check) {
+        int[] cache = getLookupCache(name);
+        int i = 0;
+        while (true) {
+            Loader nextLoader = getNextLoader(cache, i);
+            Loader loader = nextLoader;
+            if (nextLoader == null) {
+                return null;
+            }
+            URL url = loader.findResource(name, check);
+            if (url != null) {
+                return url;
+            }
+            i++;
+        }
+    }
+
+    public Resource getResource(String name, boolean check) {
+        if (DEBUG) {
+            PrintStream printStream = System.err;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("URLClassPath.getResource(\"");
+            stringBuilder.append(name);
+            stringBuilder.append("\")");
+            printStream.println(stringBuilder.toString());
+        }
+        int[] cache = getLookupCache(name);
+        int i = 0;
+        while (true) {
+            Loader nextLoader = getNextLoader(cache, i);
+            Loader loader = nextLoader;
+            if (nextLoader == null) {
+                return null;
+            }
+            Resource res = loader.getResource(name, check);
+            if (res != null) {
+                return res;
+            }
+            i++;
+        }
+    }
+
+    public Enumeration<URL> findResources(final String name, final boolean check) {
+        return new Enumeration<URL>() {
+            private int[] cache = URLClassPath.this.getLookupCache(name);
+            private int index = 0;
+            private URL url = null;
+
+            private boolean next() {
+                if (this.url != null) {
+                    return true;
+                }
+                do {
+                    URLClassPath uRLClassPath = URLClassPath.this;
+                    int[] iArr = this.cache;
+                    int i = this.index;
+                    this.index = i + 1;
+                    Loader access$100 = uRLClassPath.getNextLoader(iArr, i);
+                    Loader loader = access$100;
+                    if (access$100 == null) {
+                        return false;
+                    }
+                    this.url = loader.findResource(name, check);
+                } while (this.url == null);
+                return true;
+            }
+
+            public boolean hasMoreElements() {
+                return next();
+            }
+
+            public URL nextElement() {
+                if (next()) {
+                    URL u = this.url;
+                    this.url = null;
+                    return u;
+                }
+                throw new NoSuchElementException();
+            }
+        };
+    }
+
+    public Resource getResource(String name) {
+        return getResource(name, true);
+    }
+
+    public Enumeration<Resource> getResources(final String name, final boolean check) {
+        return new Enumeration<Resource>() {
+            private int[] cache = URLClassPath.this.getLookupCache(name);
+            private int index = 0;
+            private Resource res = null;
+
+            private boolean next() {
+                if (this.res != null) {
+                    return true;
+                }
+                do {
+                    URLClassPath uRLClassPath = URLClassPath.this;
+                    int[] iArr = this.cache;
+                    int i = this.index;
+                    this.index = i + 1;
+                    Loader access$100 = uRLClassPath.getNextLoader(iArr, i);
+                    Loader loader = access$100;
+                    if (access$100 == null) {
+                        return false;
+                    }
+                    this.res = loader.getResource(name, check);
+                } while (this.res == null);
+                return true;
+            }
+
+            public boolean hasMoreElements() {
+                return next();
+            }
+
+            public Resource nextElement() {
+                if (next()) {
+                    Resource r = this.res;
+                    this.res = null;
+                    return r;
+                }
+                throw new NoSuchElementException();
+            }
+        };
+    }
+
+    public Enumeration<Resource> getResources(String name) {
+        return getResources(name, true);
+    }
+
+    synchronized void initLookupCache(ClassLoader loader) {
+        URL[] lookupCacheURLs = getLookupCacheURLs(loader);
+        this.lookupCacheURLs = lookupCacheURLs;
+        if (lookupCacheURLs != null) {
+            this.lookupCacheLoader = loader;
+        } else {
+            disableAllLookupCaches();
+        }
+    }
+
+    static void disableAllLookupCaches() {
+        lookupCacheEnabled = false;
+    }
+
+    private URL[] getLookupCacheURLs(ClassLoader loader) {
+        return null;
+    }
+
+    private static int[] getLookupCacheForClassLoader(ClassLoader loader, String name) {
+        return null;
+    }
+
+    private static boolean knownToNotExist0(ClassLoader loader, String className) {
+        return false;
+    }
+
+    synchronized boolean knownToNotExist(String className) {
+        if (this.lookupCacheURLs == null || !lookupCacheEnabled) {
+            return false;
+        }
+        return knownToNotExist0(this.lookupCacheLoader, className);
+    }
+
+    /* JADX WARNING: Missing block: B:17:0x004a, code skipped:
+            return null;
+     */
+    /* JADX WARNING: Missing block: B:19:0x004c, code skipped:
+            return r0;
+     */
+    /* JADX WARNING: Missing block: B:21:0x004e, code skipped:
+            return null;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private synchronized int[] getLookupCache(String name) {
+        if (this.lookupCacheURLs != null) {
+            if (lookupCacheEnabled) {
+                int[] cache = getLookupCacheForClassLoader(this.lookupCacheLoader, name);
+                if (cache != null && cache.length > 0) {
+                    int maxindex = cache[cache.length - 1];
+                    if (!ensureLoaderOpened(maxindex)) {
+                        if (DEBUG_LOOKUP_CACHE) {
+                            PrintStream printStream = System.out;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Expanded loaders FAILED ");
+                            stringBuilder.append(this.loaders.size());
+                            stringBuilder.append(" for maxindex=");
+                            stringBuilder.append(maxindex);
+                            printStream.println(stringBuilder.toString());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean ensureLoaderOpened(int index) {
+        if (this.loaders.size() <= index) {
+            if (getLoader(index) == null || !lookupCacheEnabled) {
+                return false;
+            }
+            if (DEBUG_LOOKUP_CACHE) {
+                PrintStream printStream = System.out;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Expanded loaders ");
+                stringBuilder.append(this.loaders.size());
+                stringBuilder.append(" to index=");
+                stringBuilder.append(index);
+                printStream.println(stringBuilder.toString());
+            }
+        }
+        return true;
+    }
+
+    /* JADX WARNING: Missing block: B:20:0x0040, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private synchronized void validateLookupCache(int index, String urlNoFragString) {
+        if (this.lookupCacheURLs != null && lookupCacheEnabled) {
+            if (index >= this.lookupCacheURLs.length || !urlNoFragString.equals(URLUtil.urlNoFragString(this.lookupCacheURLs[index]))) {
+                if (DEBUG || DEBUG_LOOKUP_CACHE) {
+                    PrintStream printStream = System.out;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("WARNING: resource lookup cache invalidated for lookupCacheLoader at ");
+                    stringBuilder.append(index);
+                    printStream.println(stringBuilder.toString());
+                }
+                disableAllLookupCaches();
+            }
+        }
+    }
+
+    /* JADX WARNING: Missing block: B:15:0x0040, code skipped:
+            return r0;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private synchronized Loader getNextLoader(int[] cache, int index) {
+        if (this.closed) {
+            return null;
+        }
+        if (cache == null) {
+            return getLoader(index);
+        } else if (index >= cache.length) {
+            return null;
+        } else {
+            Loader loader = (Loader) this.loaders.get(cache[index]);
+            if (DEBUG_LOOKUP_CACHE) {
+                PrintStream printStream = System.out;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("HASCACHE: Loading from : ");
+                stringBuilder.append(cache[index]);
+                stringBuilder.append(" = ");
+                stringBuilder.append(loader.getBaseURL());
+                printStream.println(stringBuilder.toString());
+            }
+        }
+    }
+
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
+            r0 = sun.net.util.URLUtil.urlNoFragString(r2);
+     */
+    /* JADX WARNING: Missing block: B:23:0x0033, code skipped:
+            if (r7.lmap.containsKey(r0) == false) goto L_0x0036;
+     */
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
+            r3 = getLoader((java.net.URL) r2);
+            r4 = r3.getClassPath();
+     */
+    /* JADX WARNING: Missing block: B:27:0x003e, code skipped:
+            if (r4 == null) goto L_0x0045;
+     */
+    /* JADX WARNING: Missing block: B:28:0x0040, code skipped:
+            push(r4);
+     */
+    /* JADX WARNING: Missing block: B:30:?, code skipped:
+            validateLookupCache(r7.loaders.size(), r0);
+            r7.loaders.add(r3);
+            r7.lmap.put(r0, r3);
+     */
+    /* JADX WARNING: Missing block: B:31:0x0059, code skipped:
+            r3 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:33:0x005c, code skipped:
+            if (DEBUG != false) goto L_0x005e;
+     */
+    /* JADX WARNING: Missing block: B:34:0x005e, code skipped:
+            r4 = java.lang.System.err;
+            r5 = new java.lang.StringBuilder();
+            r5.append("Failed to access ");
+            r5.append(r2);
+            r5.append(", ");
+            r5.append(r3);
+            r4.println(r5.toString());
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private synchronized Loader getLoader(int index) {
+        if (this.closed) {
+            return null;
+        }
+        while (this.loaders.size() < index + 1) {
+            synchronized (this.urls) {
+                if (this.urls.empty()) {
+                    return null;
+                }
+                Object url = (URL) this.urls.pop();
+            }
+        }
+        if (DEBUG_LOOKUP_CACHE) {
+            PrintStream printStream = System.out;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("NOCACHE: Loading from : ");
+            stringBuilder.append(index);
+            printStream.println(stringBuilder.toString());
+        }
+        return (Loader) this.loaders.get(index);
+    }
+
+    private Loader getLoader(final URL url) throws IOException {
+        try {
+            return (Loader) AccessController.doPrivileged(new PrivilegedExceptionAction<Loader>() {
+                public Loader run() throws IOException {
+                    String file = url.getFile();
+                    if (file == null || !file.endsWith("/")) {
+                        return new JarLoader(url, URLClassPath.this.jarHandler, URLClassPath.this.lmap, URLClassPath.this.acc);
+                    }
+                    if ("file".equals(url.getProtocol())) {
+                        return new FileLoader(url);
+                    }
+                    return new Loader(url);
+                }
+            }, this.acc);
+        } catch (PrivilegedActionException pae) {
+            throw ((IOException) pae.getException());
+        }
+    }
+
+    private void push(URL[] us) {
+        synchronized (this.urls) {
+            for (int i = us.length - 1; i >= 0; i--) {
+                this.urls.push(us[i]);
+            }
+        }
+    }
+
+    public static URL[] pathToURLs(String path) {
+        StringTokenizer st = new StringTokenizer(path, File.pathSeparator);
+        Object urls = new URL[st.countTokens()];
+        int count = 0;
+        while (st.hasMoreTokens()) {
+            File f = new File(st.nextToken());
+            try {
+                f = new File(f.getCanonicalPath());
+            } catch (IOException e) {
+            }
+            int count2 = count + 1;
+            try {
+                urls[count] = ParseUtil.fileToEncodedURL(f);
+            } catch (IOException e2) {
+            }
+            count = count2;
+        }
+        if (urls.length == count) {
+            return urls;
+        }
+        Object tmp = new URL[count];
+        System.arraycopy(urls, 0, tmp, 0, count);
+        return tmp;
+    }
+
+    public URL checkURL(URL url) {
+        try {
+            check(url);
+            return url;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    static void check(URL url) throws IOException {
+        SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            URLConnection urlConnection = url.openConnection();
+            Permission perm = urlConnection.getPermission();
+            if (perm != null) {
+                try {
+                    security.checkPermission(perm);
+                } catch (SecurityException se) {
+                    if ((perm instanceof FilePermission) && perm.getActions().indexOf("read") != -1) {
+                        security.checkRead(perm.getName());
+                    } else if (!(perm instanceof SocketPermission) || perm.getActions().indexOf(SecurityConstants.SOCKET_CONNECT_ACTION) == -1) {
+                        throw se;
+                    } else {
+                        URL locUrl = url;
+                        if (urlConnection instanceof JarURLConnection) {
+                            locUrl = ((JarURLConnection) urlConnection).getJarFileURL();
+                        }
+                        security.checkConnect(locUrl.getHost(), locUrl.getPort());
+                    }
+                }
+            }
+        }
+    }
+}

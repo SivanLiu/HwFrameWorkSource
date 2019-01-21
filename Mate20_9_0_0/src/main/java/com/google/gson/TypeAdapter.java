@@ -55,7 +55,7 @@ public abstract class TypeAdapter<T> {
             JsonTreeWriter jsonWriter = new JsonTreeWriter();
             write(jsonWriter, value);
             return jsonWriter.get();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new JsonIOException(e);
         }
     }
@@ -71,7 +71,7 @@ public abstract class TypeAdapter<T> {
     public final T fromJsonTree(JsonElement jsonTree) {
         try {
             return read(new JsonTreeReader(jsonTree));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new JsonIOException(e);
         }
     }

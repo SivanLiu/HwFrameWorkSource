@@ -35,7 +35,10 @@ public class InMemoryPersistentStore implements PersistentStore {
 
     public synchronized int writeBlock(byte[] data, String name) {
         if (data == null) {
-            data = new byte[0];
+            try {
+                data = new byte[0];
+            } catch (Throwable th) {
+            }
         }
         this.blocks.put(name, data);
         return data.length;

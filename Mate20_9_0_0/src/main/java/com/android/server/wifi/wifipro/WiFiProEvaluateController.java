@@ -247,7 +247,7 @@ public class WiFiProEvaluateController {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:42:0x0120, code:
+    /* JADX WARNING: Missing block: B:42:0x0120, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -421,10 +421,10 @@ public class WiFiProEvaluateController {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x004e, code:
+    /* JADX WARNING: Missing block: B:19:0x004e, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
+    /* JADX WARNING: Missing block: B:20:0x004f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -491,7 +491,7 @@ public class WiFiProEvaluateController {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0048, code:
+    /* JADX WARNING: Missing block: B:10:0x0048, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -512,7 +512,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x008b, code:
+    /* JADX WARNING: Missing block: B:22:0x008b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -552,7 +552,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x00ff, code:
+    /* JADX WARNING: Missing block: B:32:0x00ff, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -575,7 +575,7 @@ public class WiFiProEvaluateController {
                         return;
                     }
                     if (!isLastEvaluateValid(scanResult, evalate_type)) {
-                        wiFiProScoreInfo.trusted = scanResult.untrusted ^ true;
+                        wiFiProScoreInfo.trusted = scanResult.untrusted ^ 1;
                         wiFiProScoreInfo.evaluated = false;
                         wiFiProScoreInfo.invalid = true;
                         wiFiProScoreInfo.rssi = scanResult.level;
@@ -692,7 +692,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x0065, code:
+    /* JADX WARNING: Missing block: B:30:0x0065, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -752,7 +752,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -783,7 +783,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x004b, code:
+    /* JADX WARNING: Missing block: B:14:0x004b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -831,7 +831,7 @@ public class WiFiProEvaluateController {
         return -1;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002c, code:
+    /* JADX WARNING: Missing block: B:16:0x002c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -869,7 +869,7 @@ public class WiFiProEvaluateController {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0023, code:
+    /* JADX WARNING: Missing block: B:11:0x0023, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -887,7 +887,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x003b, code:
+    /* JADX WARNING: Missing block: B:16:0x003b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -930,7 +930,7 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x002b, code:
+    /* JADX WARNING: Missing block: B:15:0x002b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -944,23 +944,25 @@ public class WiFiProEvaluateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0039, code:
+    /* JADX WARNING: Missing block: B:15:0x0039, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:16:0x003b, code:
+    /* JADX WARNING: Missing block: B:17:0x003b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void restorePortalEvaluateRecord(String currSsid) {
-        if (!TextUtils.isEmpty(currSsid) && !INVAILD_SSID.equals(currSsid)) {
-            WiFiProScoreInfo scoreInfo = getCurrentWiFiProScoreInfo(currSsid);
-            if (!(scoreInfo == null || scoreInfo.internetAccessType == 0 || scoreInfo.internetAccessType == 3)) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("restore to portal, ssid = ");
-                stringBuilder.append(currSsid);
-                Log.d(str, stringBuilder.toString());
-                updateScoreInfoType(currSsid, 3);
+        if (!TextUtils.isEmpty(currSsid)) {
+            if (!INVAILD_SSID.equals(currSsid)) {
+                WiFiProScoreInfo scoreInfo = getCurrentWiFiProScoreInfo(currSsid);
+                if (!(scoreInfo == null || scoreInfo.internetAccessType == 0 || scoreInfo.internetAccessType == 3)) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("restore to portal, ssid = ");
+                    stringBuilder.append(currSsid);
+                    Log.d(str, stringBuilder.toString());
+                    updateScoreInfoType(currSsid, 3);
+                }
             }
         }
     }
@@ -1101,7 +1103,7 @@ public class WiFiProEvaluateController {
         return HwFrameworkFactory.getHwInnerWifiManager().calculateSignalLevelHW(is5G ? 5180 : 2412, rssi);
     }
 
-    /* JADX WARNING: Missing block: B:26:0x004a, code:
+    /* JADX WARNING: Missing block: B:26:0x004a, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1164,10 +1166,10 @@ public class WiFiProEvaluateController {
         return newNetworkType;
     }
 
-    /* JADX WARNING: Missing block: B:35:0x0043, code:
+    /* JADX WARNING: Missing block: B:35:0x0043, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:37:0x0045, code:
+    /* JADX WARNING: Missing block: B:37:0x0045, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

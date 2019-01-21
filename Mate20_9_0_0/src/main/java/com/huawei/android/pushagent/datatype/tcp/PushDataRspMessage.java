@@ -1,9 +1,9 @@
 package com.huawei.android.pushagent.datatype.tcp;
 
 import com.huawei.android.pushagent.datatype.tcp.base.PushMessage;
-import com.huawei.android.pushagent.utils.f.b;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.utils.b.a;
+import com.huawei.android.pushagent.utils.b.c;
+import com.huawei.android.pushagent.utils.d;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,12 +16,12 @@ public class PushDataRspMessage extends PushMessage {
     private byte result;
     private byte[] tokenBytes;
 
-    private static byte jg() {
+    private static byte q() {
         return (byte) 69;
     }
 
     public PushDataRspMessage() {
-        super(jg());
+        super(q());
     }
 
     public PushDataRspMessage(byte[] bArr, byte b, byte b2, byte[] bArr2, byte[] bArr3) {
@@ -34,14 +34,14 @@ public class PushDataRspMessage extends PushMessage {
         }
         this.result = b;
         this.control = (byte) (b2 & 48);
-        je(bArr2);
+        p(bArr2);
         if (bArr3 == null) {
             bArr3 = new byte[0];
         }
         this.tokenBytes = bArr3;
     }
 
-    private void je(byte[] bArr) {
+    private void p(byte[] bArr) {
         if (bArr == null) {
             bArr = new byte[0];
         }
@@ -51,53 +51,53 @@ public class PushDataRspMessage extends PushMessage {
         }
     }
 
-    public PushMessage jc(InputStream inputStream) {
+    public PushMessage a(InputStream inputStream) {
         return null;
     }
 
-    public void ji(byte b) {
+    public void m(byte b) {
         this.result = b;
     }
 
-    public byte jf() {
+    public byte o() {
         return this.result;
     }
 
-    public byte[] is() {
+    public byte[] b() {
         if (this.msgId == null) {
-            c.eq("PushLog3413", "encode error, mMsgId is null ");
+            a.su("PushLog3414", "encode error, mMsgId is null ");
             return new byte[0];
         }
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byteArrayOutputStream.write(it());
+            byteArrayOutputStream.write(c());
             int length = ((((this.msgId.length + 4) + 2) + this.tokenBytes.length) + 1) + 1;
             if ((this.control & 32) == 32) {
                 length += this.cookie.length + 2;
             }
-            byteArrayOutputStream.write(g.gd(length));
+            byteArrayOutputStream.write(d.zr(length));
             byteArrayOutputStream.write(this.msgId.length);
             byteArrayOutputStream.write(this.msgId);
-            byteArrayOutputStream.write(g.gd(this.tokenBytes.length));
+            byteArrayOutputStream.write(d.zr(this.tokenBytes.length));
             byteArrayOutputStream.write(this.tokenBytes);
             byteArrayOutputStream.write(this.result);
             byteArrayOutputStream.write(this.control);
             if ((this.control & 32) == 32) {
-                byteArrayOutputStream.write(g.gd(this.cookie.length));
+                byteArrayOutputStream.write(d.zr(this.cookie.length));
                 byteArrayOutputStream.write(this.cookie);
             }
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            c.eq("PushLog3413", "encode error " + e.toString());
+            a.su("PushLog3414", "encode error " + e.toString());
             return new byte[0];
         }
     }
 
     public String toString() {
-        return new StringBuffer(getClass().getSimpleName()).append(",cmdId:").append(iw()).append(",msgId:").append(b.el(this.msgId)).append(",flag:").append(this.result).toString();
+        return new StringBuffer(getClass().getSimpleName()).append(",cmdId:").append(d()).append(",msgId:").append(c.tr(this.msgId)).append(",flag:").append(this.result).toString();
     }
 
-    public byte[] jh() {
+    public byte[] n() {
         return this.msgId;
     }
 }

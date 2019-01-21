@@ -57,7 +57,7 @@ final class TvRemoteProviderWatcher {
         this.mHandler = handler;
         this.mUserId = UserHandle.myUserId();
         this.mPackageManager = context.getPackageManager();
-        this.mUnbundledServicePackage = context.getString(17039842);
+        this.mUnbundledServicePackage = context.getString(17039843);
     }
 
     public void start() {

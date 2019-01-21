@@ -122,11 +122,13 @@ public class RecSysClient {
     public void requestRecRes(String jobName) {
         HwLog.d(TAG, "requestRecRes");
         try {
-            if (this.mHwRecSysCallBack == null || this.mHwRecSysAidlInterface == null) {
-                HwLog.w(TAG, "warning !!! mHwRecSysCallBack or mHwRecSysAidlInterface is null, requestRecRes() can not be called back, make sure the recsystem service has connected!!");
-            } else {
-                this.mHwRecSysAidlInterface.requestRecRes(this.mHwRecSysCallBack, jobName);
+            if (this.mHwRecSysCallBack != null) {
+                if (this.mHwRecSysAidlInterface != null) {
+                    this.mHwRecSysAidlInterface.requestRecRes(this.mHwRecSysCallBack, jobName);
+                    return;
+                }
             }
+            HwLog.w(TAG, "warning !!! mHwRecSysCallBack or mHwRecSysAidlInterface is null, requestRecRes() can not be called back, make sure the recsystem service has connected!!");
         } catch (RemoteException e) {
             HwLog.e(TAG, e.getMessage());
         }

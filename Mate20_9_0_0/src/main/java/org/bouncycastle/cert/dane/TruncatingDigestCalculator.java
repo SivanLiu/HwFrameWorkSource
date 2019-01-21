@@ -22,9 +22,9 @@ public class TruncatingDigestCalculator implements DigestCalculator {
     }
 
     public byte[] getDigest() {
-        Object obj = new byte[this.length];
-        System.arraycopy(this.baseCalculator.getDigest(), 0, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[this.length];
+        System.arraycopy(this.baseCalculator.getDigest(), 0, bArr, 0, bArr.length);
+        return bArr;
     }
 
     public OutputStream getOutputStream() {

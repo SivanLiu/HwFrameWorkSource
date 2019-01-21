@@ -8,7 +8,7 @@ public class ShutdownReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (context != null && intent != null) {
             if ("android.intent.action.ACTION_SHUTDOWN".equals(intent.getAction())) {
-                new a(context).start();
+                new d(context).start();
             }
         }
     }

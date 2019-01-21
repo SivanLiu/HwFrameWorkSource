@@ -955,7 +955,7 @@ final class WifiDisplayController implements IWifiDisplayControllerInner, Dump {
             return null;
         }
         Inet4Address addr = getInterfaceAddress(info);
-        boolean equals = info.getOwner().deviceAddress.equals(this.mThisDevice.deviceAddress) ^ 1;
+        int equals = info.getOwner().deviceAddress.equals(this.mThisDevice.deviceAddress) ^ 1;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(info.getOwner().deviceAddress);
         stringBuilder.append(" ");

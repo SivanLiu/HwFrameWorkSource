@@ -146,13 +146,13 @@ public class TelecomLoaderService extends SystemService {
     private void registerDefaultAppProviders() {
         PackageManagerInternal packageManagerInternal = (PackageManagerInternal) LocalServices.getService(PackageManagerInternal.class);
         packageManagerInternal.setSmsAppPackagesProvider(new PackagesProvider() {
-            /* JADX WARNING: Missing block: B:13:0x0039, code:
+            /* JADX WARNING: Missing block: B:13:0x0039, code skipped:
             if (com.android.internal.telephony.SmsApplication.getDefaultSmsApplication(com.android.server.telecom.TelecomLoaderService.access$100(r4.this$0), true) == null) goto L_0x0045;
      */
-            /* JADX WARNING: Missing block: B:15:0x0044, code:
+            /* JADX WARNING: Missing block: B:15:0x0044, code skipped:
             return new java.lang.String[]{com.android.internal.telephony.SmsApplication.getDefaultSmsApplication(com.android.server.telecom.TelecomLoaderService.access$100(r4.this$0), true).getPackageName()};
      */
-            /* JADX WARNING: Missing block: B:16:0x0045, code:
+            /* JADX WARNING: Missing block: B:16:0x0045, code skipped:
             return null;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -169,13 +169,13 @@ public class TelecomLoaderService extends SystemService {
             }
         });
         packageManagerInternal.setDialerAppPackagesProvider(new PackagesProvider() {
-            /* JADX WARNING: Missing block: B:13:0x0038, code:
+            /* JADX WARNING: Missing block: B:13:0x0038, code skipped:
             if (android.telecom.DefaultDialerManager.getDefaultDialerApplication(com.android.server.telecom.TelecomLoaderService.access$100(r4.this$0)) == null) goto L_0x0041;
      */
-            /* JADX WARNING: Missing block: B:15:0x0040, code:
+            /* JADX WARNING: Missing block: B:15:0x0040, code skipped:
             return new java.lang.String[]{android.telecom.DefaultDialerManager.getDefaultDialerApplication(com.android.server.telecom.TelecomLoaderService.access$100(r4.this$0))};
      */
-            /* JADX WARNING: Missing block: B:16:0x0041, code:
+            /* JADX WARNING: Missing block: B:16:0x0041, code skipped:
             return null;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -192,13 +192,13 @@ public class TelecomLoaderService extends SystemService {
             }
         });
         packageManagerInternal.setSimCallManagerPackagesProvider(new PackagesProvider() {
-            /* JADX WARNING: Missing block: B:13:0x0041, code:
+            /* JADX WARNING: Missing block: B:13:0x0041, code skipped:
             if (((android.telecom.TelecomManager) com.android.server.telecom.TelecomLoaderService.access$100(r5.this$0).getSystemService("telecom")).getSimCallManager(r6) == null) goto L_0x0052;
      */
-            /* JADX WARNING: Missing block: B:15:0x0051, code:
+            /* JADX WARNING: Missing block: B:15:0x0051, code skipped:
             return new java.lang.String[]{((android.telecom.TelecomManager) com.android.server.telecom.TelecomLoaderService.access$100(r5.this$0).getSystemService("telecom")).getSimCallManager(r6).getComponentName().getPackageName()};
      */
-            /* JADX WARNING: Missing block: B:16:0x0052, code:
+            /* JADX WARNING: Missing block: B:16:0x0052, code skipped:
             return null;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */

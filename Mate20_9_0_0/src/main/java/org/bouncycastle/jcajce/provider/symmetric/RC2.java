@@ -12,7 +12,6 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.RC2CBCParameter;
-import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.engines.RC2Engine;
 import org.bouncycastle.crypto.engines.RC2WrapEngine;
@@ -90,15 +89,15 @@ public final class RC2 {
 
         /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
             jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:14:0x0029 in {2, 4, 11, 12, 13, 16} preds:[]
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
             	at jadx.core.ProcessClass.process(ProcessClass.java:32)
             	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -110,39 +109,30 @@ public final class RC2 {
             r2 = this;
             r0 = r3 instanceof javax.crypto.spec.IvParameterSpec;
             if (r0 == 0) goto L_0x000d;
-        L_0x0004:
             r3 = (javax.crypto.spec.IvParameterSpec) r3;
             r3 = r3.getIV();
-        L_0x000a:
             r2.iv = r3;
             return;
-        L_0x000d:
             r0 = r3 instanceof javax.crypto.spec.RC2ParameterSpec;
             if (r0 == 0) goto L_0x002a;
-        L_0x0011:
             r3 = (javax.crypto.spec.RC2ParameterSpec) r3;
             r0 = r3.getEffectiveKeyBits();
             r1 = -1;
             if (r0 == r1) goto L_0x0024;
-        L_0x001a:
             r1 = 256; // 0x100 float:3.59E-43 double:1.265E-321;
             if (r0 >= r1) goto L_0x0022;
-        L_0x001e:
             r1 = table;
             r0 = r1[r0];
-        L_0x0022:
             r2.parameterVersion = r0;
-        L_0x0024:
             r3 = r3.getIV();
             goto L_0x000a;
             return;
-        L_0x002a:
             r3 = new java.security.spec.InvalidParameterSpecException;
             r0 = "IvParameterSpec or RC2ParameterSpec required to initialise a RC2 parameters algorithm parameters object";
             r3.<init>(r0);
             throw r3;
             */
-            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.jcajce.provider.symmetric.RC2.AlgParams.engineInit(java.security.spec.AlgorithmParameterSpec):void");
+            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.jcajce.provider.symmetric.RC2$AlgParams.engineInit(java.security.spec.AlgorithmParameterSpec):void");
         }
 
         protected void engineInit(byte[] bArr) throws IOException {
@@ -340,7 +330,7 @@ public final class RC2 {
 
     public static class PBEWithMD5AndRC2 extends BaseBlockCipher {
         public PBEWithMD5AndRC2() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
             super(cBCBlockCipher, 0, 0, 64, 8);
         }
     }
@@ -353,7 +343,7 @@ public final class RC2 {
 
     public static class PBEWithSHA1AndRC2 extends BaseBlockCipher {
         public PBEWithSHA1AndRC2() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
             super(cBCBlockCipher, 0, 1, 64, 8);
         }
     }
@@ -372,7 +362,7 @@ public final class RC2 {
 
     public static class PBEWithSHAAnd128BitRC2 extends BaseBlockCipher {
         public PBEWithSHAAnd128BitRC2() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
             super(cBCBlockCipher, 2, 1, 128, 8);
         }
     }
@@ -385,7 +375,7 @@ public final class RC2 {
 
     public static class PBEWithSHAAnd40BitRC2 extends BaseBlockCipher {
         public PBEWithSHAAnd40BitRC2() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new RC2Engine());
             super(cBCBlockCipher, 2, 1, 40, 8);
         }
     }

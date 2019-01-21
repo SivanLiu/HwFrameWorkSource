@@ -174,7 +174,7 @@ public class OffloadHardwareInterface {
             this.mOffloadControl.initOffload(this.mTetheringOffloadCallback, new -$$Lambda$OffloadHardwareInterface$324leYOM3BvGJiK4Wade-B0d5jE(results));
             record(logmsg, results);
             return results.success;
-        } catch (Throwable e2) {
+        } catch (RemoteException e2) {
             record(logmsg, e2);
             return false;
         }
@@ -225,7 +225,7 @@ public class OffloadHardwareInterface {
             stringBuilder.append(stats);
             sharedLog.log(stringBuilder.toString());
             return stats;
-        } catch (Throwable e) {
+        } catch (RemoteException e) {
             record(logmsg, e);
             return stats;
         }
@@ -247,7 +247,7 @@ public class OffloadHardwareInterface {
             this.mOffloadControl.setLocalPrefixes(localPrefixes, new -$$Lambda$OffloadHardwareInterface$IpWViosH4sGe7yz1VTujaEKIDNQ(results));
             record(logmsg, results);
             return results.success;
-        } catch (Throwable e) {
+        } catch (RemoteException e) {
             record(logmsg, e);
             return false;
         }
@@ -265,7 +265,7 @@ public class OffloadHardwareInterface {
             this.mOffloadControl.setDataLimit(iface, limit, new -$$Lambda$OffloadHardwareInterface$4gz9PGx-iHz6VaJglXvPXV_YCTo(results));
             record(logmsg, results);
             return results.success;
-        } catch (Throwable e) {
+        } catch (RemoteException e) {
             record(logmsg, e);
             return false;
         }
@@ -283,7 +283,7 @@ public class OffloadHardwareInterface {
             this.mOffloadControl.setUpstreamParameters(iface != null ? iface : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, v4addr != null ? v4addr : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, v4gateway != null ? v4gateway : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, v6gws, new -$$Lambda$OffloadHardwareInterface$2RWDK-fyqU5SThZDqBkZ1L_XSJA(results));
             record(logmsg, results);
             return results.success;
-        } catch (Throwable e) {
+        } catch (RemoteException e) {
             record(logmsg, e);
             return false;
         }
@@ -301,7 +301,7 @@ public class OffloadHardwareInterface {
             this.mOffloadControl.addDownstream(ifname, prefix, new -$$Lambda$OffloadHardwareInterface$GhKYJ09_bq-n9xoRpQeCc3ZpQPU(results));
             record(logmsg, results);
             return results.success;
-        } catch (Throwable e) {
+        } catch (RemoteException e) {
             record(logmsg, e);
             return false;
         }
@@ -319,7 +319,7 @@ public class OffloadHardwareInterface {
             this.mOffloadControl.removeDownstream(ifname, prefix, new -$$Lambda$OffloadHardwareInterface$w6w__dI5-bH4oSI_P9WIdOzlG28(results));
             record(logmsg, results);
             return results.success;
-        } catch (Throwable e) {
+        } catch (RemoteException e) {
             record(logmsg, e);
             return false;
         }

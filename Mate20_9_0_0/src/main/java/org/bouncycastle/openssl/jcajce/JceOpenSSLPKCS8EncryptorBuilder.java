@@ -1,14 +1,15 @@
 package org.bouncycastle.openssl.jcajce;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -77,8 +78,8 @@ public class JceOpenSSLPKCS8EncryptorBuilder {
                 this.random.nextBytes(this.salt);
                 this.params = this.paramGen.generateParameters();
                 try {
-                    ASN1Encodable encryptionScheme = new EncryptionScheme(this.algOID, ASN1Primitive.fromByteArray(this.params.getEncoded()));
-                    ASN1Encodable keyDerivationFunc = new KeyDerivationFunc(PKCSObjectIdentifiers.id_PBKDF2, new PBKDF2Params(this.salt, this.iterationCount, this.prf));
+                    EncryptionScheme encryptionScheme = new EncryptionScheme(this.algOID, ASN1Primitive.fromByteArray(this.params.getEncoded()));
+                    KeyDerivationFunc keyDerivationFunc = new KeyDerivationFunc(PKCSObjectIdentifiers.id_PBKDF2, new PBKDF2Params(this.salt, this.iterationCount, this.prf));
                     ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
                     aSN1EncodableVector.add(keyDerivationFunc);
                     aSN1EncodableVector.add(encryptionScheme);
@@ -86,10 +87,10 @@ public class JceOpenSSLPKCS8EncryptorBuilder {
                     try {
                         this.key = PEMUtilities.isHmacSHA1(this.prf) ? PEMUtilities.generateSecretKeyForPKCS5Scheme2(this.helper, this.algOID.getId(), this.password, this.salt, this.iterationCount) : PEMUtilities.generateSecretKeyForPKCS5Scheme2(this.helper, this.algOID.getId(), this.password, this.salt, this.iterationCount, this.prf);
                         this.cipher.init(1, this.key, this.params);
-                    } catch (Throwable e) {
+                    } catch (GeneralSecurityException e) {
                         throw new OperatorCreationException(e.getMessage(), e);
                     }
-                } catch (Throwable e2) {
+                } catch (IOException e2) {
                     throw new OperatorCreationException(e2.getMessage(), e2);
                 }
             } else if (PEMUtilities.isPKCS12(this.algOID)) {
@@ -102,8 +103,8 @@ public class JceOpenSSLPKCS8EncryptorBuilder {
                 try {
                     this.cipher.init(1, new PKCS12KeyWithParameters(this.password, this.salt, this.iterationCount));
                     algorithmIdentifier = algorithmIdentifier2;
-                } catch (Throwable e22) {
-                    throw new OperatorCreationException(e22.getMessage(), e22);
+                } catch (GeneralSecurityException e3) {
+                    throw new OperatorCreationException(e3.getMessage(), e3);
                 }
             } else {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -124,12 +125,12 @@ public class JceOpenSSLPKCS8EncryptorBuilder {
                     return new CipherOutputStream(outputStream, JceOpenSSLPKCS8EncryptorBuilder.this.cipher);
                 }
             };
-        } catch (Throwable e222) {
+        } catch (GeneralSecurityException e32) {
             StringBuilder stringBuilder2 = new StringBuilder();
             stringBuilder2.append(this.algOID);
             stringBuilder2.append(" not available: ");
-            stringBuilder2.append(e222.getMessage());
-            throw new OperatorCreationException(stringBuilder2.toString(), e222);
+            stringBuilder2.append(e32.getMessage());
+            throw new OperatorCreationException(stringBuilder2.toString(), e32);
         }
     }
 

@@ -47,6 +47,14 @@ public class MotionEventInjector extends BaseEventStreamTransformation implement
     private IAccessibilityServiceClient mServiceInterfaceForCurrentGesture;
     private SparseIntArray mStrokeIdToPointerId = new SparseIntArray(5);
 
+    public /* bridge */ /* synthetic */ EventStreamTransformation getNext() {
+        return super.getNext();
+    }
+
+    public /* bridge */ /* synthetic */ void setNext(EventStreamTransformation eventStreamTransformation) {
+        super.setNext(eventStreamTransformation);
+    }
+
     public MotionEventInjector(Looper looper) {
         this.mHandler = new Handler(looper, this);
     }

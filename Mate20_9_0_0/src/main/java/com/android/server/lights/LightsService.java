@@ -93,9 +93,12 @@ public class LightsService extends SystemService {
             if (ratioMin == ratioMax && ratioMin == -1 && !LightsService.this.POWER_CURVE_BLIGHT_SUPPORT) {
                 synchronized (this) {
                     if (autoLimit > 0) {
-                        LightsService.this.mLimitedMaxBrightness = autoLimit;
-                        if (LightsService.this.mCurBrightness > autoLimit && !LightsService.this.POWER_CURVE_BLIGHT_SUPPORT) {
-                            setLightGradualChange(autoLimit, 0, true);
+                        try {
+                            LightsService.this.mLimitedMaxBrightness = autoLimit;
+                            if (LightsService.this.mCurBrightness > autoLimit && !LightsService.this.POWER_CURVE_BLIGHT_SUPPORT) {
+                                setLightGradualChange(autoLimit, 0, true);
+                            }
+                        } finally {
                         }
                     } else {
                         LightsService.this.mLimitedMaxBrightness = -1;
@@ -204,7 +207,7 @@ public class LightsService extends SystemService {
             LightsService.inMirrorLinkBrightnessMode = status;
         }
 
-        /* JADX WARNING: Missing block: B:59:0x0130, code:
+        /* JADX WARNING: Missing block: B:60:0x0130, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -229,47 +232,50 @@ public class LightsService extends SystemService {
                     String str;
                     StringBuilder stringBuilder;
                     if (brightnessMode == 2) {
-                        str = LightsService.TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("setBrightness with LOW_PERSISTENCE unexpected #");
-                        stringBuilder.append(this.mId);
-                        stringBuilder.append(": brightness=0x");
-                        stringBuilder.append(Integer.toHexString(brightness));
-                        Slog.w(str, stringBuilder.toString());
-                        return;
-                    }
-                    brightness = LightsService.this.mapIntoRealBacklightLevel(brightness);
-                    if (LightsService.this.mIsHighPrecision) {
-                        int color = NetworkConstants.ARP_HWTYPE_RESERVED_HI & brightness;
-                        if (this.mId == 2 && LightsService.FRONT_FINGERPRINT_NAVIGATION && LightsService.FRONT_FINGERPRINT_NAVIGATION_TRIKEY == 1) {
-                            int color2 = (color * 255) / LightsService.this.getNormalizedMaxBrightness();
-                            if (color2 == 0 && brightness != 0) {
-                                color2 = 1;
-                            }
-                            color2 &= 255;
-                            String str2 = LightsService.TAG;
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("HighPrecision, Set button brihtness:");
-                            stringBuilder2.append(color2);
-                            stringBuilder2.append(", bcaklight brightness:");
-                            stringBuilder2.append(brightness);
-                            Slog.d(str2, stringBuilder2.toString());
-                            setLightLocked(color2, 0, 0, 0, brightnessMode);
-                            return;
-                        }
-                        setLightLocked_10000stage(color, 0, 0, 0, brightnessMode);
-                    } else {
-                        int color3 = brightness & 255;
-                        if (this.mId == 2 && LightsService.FRONT_FINGERPRINT_NAVIGATION && LightsService.FRONT_FINGERPRINT_NAVIGATION_TRIKEY == 1) {
+                        try {
                             str = LightsService.TAG;
                             stringBuilder = new StringBuilder();
-                            stringBuilder.append("Set button brihtness:");
-                            stringBuilder.append(color3);
-                            Slog.i(str, stringBuilder.toString());
-                            setLightLocked(color3, 0, 0, 0, brightnessMode);
-                            return;
+                            stringBuilder.append("setBrightness with LOW_PERSISTENCE unexpected #");
+                            stringBuilder.append(this.mId);
+                            stringBuilder.append(": brightness=0x");
+                            stringBuilder.append(Integer.toHexString(brightness));
+                            Slog.w(str, stringBuilder.toString());
+                        } catch (Throwable th) {
                         }
-                        setLightLocked(((UsbAudioDevice.kAudioDeviceMetaMask | (color3 << 16)) | (color3 << 8)) | color3, 0, 0, 0, brightnessMode);
+                    } else {
+                        brightness = LightsService.this.mapIntoRealBacklightLevel(brightness);
+                        if (LightsService.this.mIsHighPrecision) {
+                            int color = NetworkConstants.ARP_HWTYPE_RESERVED_HI & brightness;
+                            if (this.mId == 2 && LightsService.FRONT_FINGERPRINT_NAVIGATION && LightsService.FRONT_FINGERPRINT_NAVIGATION_TRIKEY == 1) {
+                                int color2 = (color * 255) / LightsService.this.getNormalizedMaxBrightness();
+                                if (color2 == 0 && brightness != 0) {
+                                    color2 = 1;
+                                }
+                                color2 &= 255;
+                                String str2 = LightsService.TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("HighPrecision, Set button brihtness:");
+                                stringBuilder2.append(color2);
+                                stringBuilder2.append(", bcaklight brightness:");
+                                stringBuilder2.append(brightness);
+                                Slog.d(str2, stringBuilder2.toString());
+                                setLightLocked(color2, 0, 0, 0, brightnessMode);
+                                return;
+                            }
+                            setLightLocked_10000stage(color, 0, 0, 0, brightnessMode);
+                        } else {
+                            int color3 = brightness & 255;
+                            if (this.mId == 2 && LightsService.FRONT_FINGERPRINT_NAVIGATION && LightsService.FRONT_FINGERPRINT_NAVIGATION_TRIKEY == 1) {
+                                str = LightsService.TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("Set button brihtness:");
+                                stringBuilder.append(color3);
+                                Slog.i(str, stringBuilder.toString());
+                                setLightLocked(color3, 0, 0, 0, brightnessMode);
+                                return;
+                            }
+                            setLightLocked(((UsbAudioDevice.kAudioDeviceMetaMask | (color3 << 16)) | (color3 << 8)) | color3, 0, 0, 0, brightnessMode);
+                        }
                     }
                 }
             }
@@ -395,12 +401,14 @@ public class LightsService extends SystemService {
                             } catch (Throwable th4) {
                                 th = th4;
                                 brightnessGap = amount;
+                                throw th;
                             }
                         } catch (Throwable th5) {
                             th = th5;
                             regulateTime = regulateTime2;
                             i = transitionTime;
                             brightnessGap = amount2;
+                            throw th;
                         }
                     } catch (Throwable th6) {
                         th = th6;

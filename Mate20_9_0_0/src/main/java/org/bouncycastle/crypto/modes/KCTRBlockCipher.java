@@ -77,7 +77,7 @@ public class KCTRBlockCipher extends StreamBlockCipher {
         this.initialised = true;
         if (cipherParameters instanceof ParametersWithIV) {
             ParametersWithIV parametersWithIV = (ParametersWithIV) cipherParameters;
-            Object iv = parametersWithIV.getIV();
+            byte[] iv = parametersWithIV.getIV();
             int length = this.iv.length - iv.length;
             Arrays.fill(this.iv, (byte) 0);
             System.arraycopy(iv, 0, this.iv, length, iv.length);

@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -22,23 +23,10 @@ public class ShortcutDumpFiles {
         this.mService = service;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x004c A:{Splitter: B:1:0x0001, ExcHandler: java.lang.RuntimeException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:21:0x004c, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:22:0x004d, code:
-            r2 = TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("Failed to create dump file: ");
-            r3.append(r7);
-            android.util.Slog.w(r2, r3.toString(), r1);
-     */
-    /* JADX WARNING: Missing block: B:23:0x0063, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean save(String filename, Consumer<PrintWriter> dumper) {
         PrintWriter pw;
+        String str;
+        StringBuilder stringBuilder;
         try {
             File directory = this.mService.getDumpPath();
             directory.mkdirs();
@@ -48,13 +36,19 @@ public class ShortcutDumpFiles {
                 $closeResource(null, pw);
                 return true;
             }
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("Failed to create directory: ");
             stringBuilder.append(directory);
             Slog.e(str, stringBuilder.toString());
             return false;
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed to create dump file: ");
+            stringBuilder.append(filename);
+            Slog.w(str, stringBuilder.toString(), e);
+            return false;
         } catch (Throwable th) {
             $closeResource(r4, pw);
         }
@@ -77,42 +71,37 @@ public class ShortcutDumpFiles {
         return save(filename, new -$$Lambda$ShortcutDumpFiles$rwmVVp6PnQCcurF7D6VzrdNqEdk(utf8bytes));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0077 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.RuntimeException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:27:0x0077, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:28:0x0078, code:
-            android.util.Slog.w(TAG, "Failed to print dump files", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void dumpAll(PrintWriter pw) {
         BufferedReader reader;
         try {
             File directory = this.mService.getDumpPath();
             File[] files = directory.listFiles(-$$Lambda$ShortcutDumpFiles$v6wMz6MRa9pgSnEDM_9bjvrLaKY.INSTANCE);
-            if (!directory.exists() || ArrayUtils.isEmpty(files)) {
-                pw.print("  No dump files found.");
-                return;
-            }
-            Arrays.sort(files, Comparator.comparing(-$$Lambda$ShortcutDumpFiles$stGgHzhh-NVWPgDSwmH2ybAWRE8.INSTANCE));
-            for (File path : files) {
-                pw.print("*** Dumping: ");
-                pw.println(path.getName());
-                pw.print("mtime: ");
-                pw.println(ShortcutService.formatTime(path.lastModified()));
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-                String line = null;
-                while (true) {
-                    String readLine = reader.readLine();
-                    line = readLine;
-                    if (readLine == null) {
-                        break;
+            if (directory.exists()) {
+                if (!ArrayUtils.isEmpty(files)) {
+                    Arrays.sort(files, Comparator.comparing(-$$Lambda$ShortcutDumpFiles$stGgHzhh-NVWPgDSwmH2ybAWRE8.INSTANCE));
+                    for (File path : files) {
+                        pw.print("*** Dumping: ");
+                        pw.println(path.getName());
+                        pw.print("mtime: ");
+                        pw.println(ShortcutService.formatTime(path.lastModified()));
+                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+                        String line = null;
+                        while (true) {
+                            String readLine = reader.readLine();
+                            line = readLine;
+                            if (readLine == null) {
+                                break;
+                            }
+                            pw.println(line);
+                        }
+                        $closeResource(null, reader);
                     }
-                    pw.println(line);
+                    return;
                 }
-                $closeResource(null, reader);
             }
-        } catch (Exception e) {
+            pw.print("  No dump files found.");
+        } catch (IOException | RuntimeException e) {
+            Slog.w(TAG, "Failed to print dump files", e);
         } catch (Throwable th) {
             $closeResource(th, reader);
         }

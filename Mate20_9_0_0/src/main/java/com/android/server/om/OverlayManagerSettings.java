@@ -60,19 +60,19 @@ final class OverlayManagerSettings {
         private Serializer() {
         }
 
-        /* JADX WARNING: Missing block: B:22:0x005b, code:
+        /* JADX WARNING: Missing block: B:24:0x005b, code skipped:
             if (r1 != null) goto L_0x005d;
      */
-        /* JADX WARNING: Missing block: B:24:?, code:
+        /* JADX WARNING: Missing block: B:26:?, code skipped:
             r0.close();
      */
-        /* JADX WARNING: Missing block: B:25:0x0061, code:
+        /* JADX WARNING: Missing block: B:27:0x0061, code skipped:
             r3 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:26:0x0062, code:
+        /* JADX WARNING: Missing block: B:28:0x0062, code skipped:
             r1.addSuppressed(r3);
      */
-        /* JADX WARNING: Missing block: B:27:0x0066, code:
+        /* JADX WARNING: Missing block: B:29:0x0066, code skipped:
             r0.close();
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -90,8 +90,10 @@ final class OverlayManagerSettings {
             while (XmlUtils.nextElementWithin(parser, depth)) {
                 String name = parser.getName();
                 Object obj = -1;
-                if (name.hashCode() == 3242771 && name.equals("item")) {
-                    obj = null;
+                if (name.hashCode() == 3242771) {
+                    if (name.equals("item")) {
+                        obj = null;
+                    }
                 }
                 if (obj == null) {
                     table.add(restoreRow(parser, depth + 1));

@@ -303,7 +303,7 @@ public class HwBroadcastQueue extends BroadcastQueue {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x008f, code:
+    /* JADX WARNING: Missing block: B:26:0x008f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -507,6 +507,8 @@ public class HwBroadcastQueue extends BroadcastQueue {
                             break;
                         case 7:
                             configRemoveAppProxyBCActions(key, value);
+                            break;
+                        default:
                             break;
                     }
                 } finally {

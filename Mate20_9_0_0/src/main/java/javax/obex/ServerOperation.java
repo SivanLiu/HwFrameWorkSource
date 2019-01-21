@@ -192,7 +192,7 @@ public final class ServerOperation implements Operation, BaseStream {
         }
     }
 
-    /* JADX WARNING: Missing block: B:137:0x01f4, code:
+    /* JADX WARNING: Missing block: B:138:0x01f4, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -275,16 +275,19 @@ public final class ServerOperation implements Operation, BaseStream {
                     bodyLength = (this.mMaxPacketLength - headerArray.length) - 6;
                 }
                 sendHeader = this.mPrivateOutput.readBytes(bodyLength);
-                if (this.finalBitSet || this.mPrivateOutput.isClosed()) {
-                    if (this.mSendBodyHeader) {
-                        out.write(73);
-                        bodyLength += 3;
-                        out.write((byte) (bodyLength >> 8));
-                        out.write((byte) bodyLength);
-                        out.write(sendHeader);
+                if (!this.finalBitSet) {
+                    if (!this.mPrivateOutput.isClosed()) {
+                        if (this.mSendBodyHeader) {
+                            out.write(72);
+                            bodyLength += 3;
+                            out.write((byte) (bodyLength >> 8));
+                            out.write((byte) bodyLength);
+                            out.write(sendHeader);
+                        }
                     }
-                } else if (this.mSendBodyHeader) {
-                    out.write(72);
+                }
+                if (this.mSendBodyHeader) {
+                    out.write(73);
                     bodyLength += 3;
                     out.write((byte) (bodyLength >> 8));
                     out.write((byte) bodyLength);

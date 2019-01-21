@@ -67,12 +67,12 @@ public class XMSSSigner implements StateAwareMessageSigner {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0032 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -88,7 +88,6 @@ public class XMSSSigner implements StateAwareMessageSigner {
         r1 = this;
         r0 = 0;
         if (r2 == 0) goto L_0x0025;
-    L_0x0003:
         r2 = 1;
         r1.initSign = r2;
         r1.hasGenerated = r0;
@@ -98,14 +97,12 @@ public class XMSSSigner implements StateAwareMessageSigner {
         r1.nextKeyGenerator = r2;
         r2 = r1.privateKey;
         r2 = r2.getParameters();
-    L_0x0016:
         r1.params = r2;
         r2 = r1.params;
         r2 = r2.getWOTSPlus();
         r2 = r2.getKhf();
         r1.khf = r2;
         return;
-    L_0x0025:
         r1.initSign = r0;
         r3 = (org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters) r3;
         r1.publicKey = r3;
@@ -118,7 +115,7 @@ public class XMSSSigner implements StateAwareMessageSigner {
     }
 
     public boolean verifySignature(byte[] bArr, byte[] bArr2) {
-        XMSSReducedSignature build = new Builder(this.params).withSignature(bArr2).build();
+        XMSSSignature build = new Builder(this.params).withSignature(bArr2).build();
         int index = build.getIndex();
         this.params.getWOTSPlus().importKeys(new byte[this.params.getDigestSize()], this.publicKey.getPublicSeed());
         long j = (long) index;

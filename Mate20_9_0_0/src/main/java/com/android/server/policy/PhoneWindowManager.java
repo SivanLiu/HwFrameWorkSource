@@ -89,7 +89,6 @@ import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.MutableBoolean;
 import android.util.PrintWriterPrinter;
-import android.util.Printer;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.util.proto.ProtoOutputStream;
@@ -169,6 +168,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -200,10 +200,12 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     private static final String HUAWEI_PRE_CAMERA_START_MODE = "com.huawei.RapidCapture";
     private static final String HUAWEI_SHUTDOWN_PERMISSION = "huawei.android.permission.HWSHUTDOWN";
     protected static final boolean HWFLOW;
+    public static final int HW_ROTATE_APP_OPT_ENABLED = 1;
+    public static final int HW_STARTWINDOW_OPT_ENABLED = 0;
     private static final int INVALID_HARDWARE_TYPE = -1;
     private static final int IN_SCREEN_OPTIC_TYPE = 1;
     private static final int IN_SCREEN_ULTRA_TYPE = 2;
-    protected static final boolean IS_NOTCH_PROP = (SystemProperties.get("ro.config.hw_notch_size", BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS).equals(BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS) ^ true);
+    protected static final boolean IS_NOTCH_PROP = (SystemProperties.get("ro.config.hw_notch_size", BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS).equals(BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS) ^ 1);
     private static final boolean IS_lOCK_UNNATURAL_ORIENTATION = SystemProperties.getBoolean("ro.config.lock_land_screen", false);
     private static final float KEYGUARD_SCREENSHOT_CHORD_DELAY_MULTIPLIER = 2.5f;
     static final int LAST_LONG_PRESS_HOME_BEHAVIOR = 2;
@@ -327,6 +329,11 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     static final Rect mTmpVisibleFrame = new Rect();
     private static boolean mUsingHwNavibar = SystemProperties.getBoolean("ro.config.hw_navigationbar", false);
     static SparseArray<String> sApplicationLaunchKeyCategories = new SparseArray();
+    private static final boolean sIsChinaRegion = "CN".equals(SystemProperties.get("ro.product.locale.region", "CN"));
+    private static final boolean sIsChineseLanguage = "zh".equals(SystemProperties.get("ro.product.locale.language", "zh"));
+    private static boolean sIsLayaPorschePorduct = false;
+    private static boolean sIsPorscheProduct = SystemProperties.getBoolean("ro.config.pd_font_enable", false);
+    private static String sProductBrandString = SystemProperties.get("ro.product.board", "UNKOWN");
     private static final String sProximityWndName = "Emui:ProximityWnd";
     boolean ifBootMessageShowing = false;
     private boolean mA11yShortcutChordVolumeUpKeyConsumed;
@@ -483,7 +490,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     HdmiControl mHdmiControl;
     boolean mHdmiPlugged;
     private final Runnable mHiddenNavPanic = new Runnable() {
-        /* JADX WARNING: Missing block: B:11:0x0030, code:
+        /* JADX WARNING: Missing block: B:11:0x0030, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -762,22 +769,27 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     protected int notchStatusBarColorLw = 0;
     boolean notchWindowChange = false;
     boolean notchWindowChangeState = false;
+    private int otaStateForOverSeaPdLaya = 0;
 
     class AodSwitchObserver extends ContentObserver {
         AodSwitchObserver(Handler handler) {
             super(handler);
             PhoneWindowManager.this.mAodSwitch = getAodSwitch();
+            PhoneWindowManager.this.otaStateForOverSeaPdLaya = getPorscheLYAOtaState();
         }
 
         void observe() {
             Slog.i(PhoneWindowManager.TAG, "AOD AodSwitchObserver observe");
             if (PhoneWindowManager.mSupportAod) {
-                PhoneWindowManager.this.mContext.getContentResolver().registerContentObserver(Secure.getUriFor("aod_switch"), false, this, -1);
+                ContentResolver resolver = PhoneWindowManager.this.mContext.getContentResolver();
+                resolver.registerContentObserver(Secure.getUriFor("aod_switch"), false, this, -1);
+                resolver.registerContentObserver(Secure.getUriFor("aod_oversea_pd_laya_ota_state"), false, this, -1);
             }
         }
 
         public void onChange(boolean selfChange) {
             PhoneWindowManager.this.mAodSwitch = Secure.getIntForUser(PhoneWindowManager.this.mContext.getContentResolver(), "aod_switch", 0, ActivityManager.getCurrentUser());
+            PhoneWindowManager.this.otaStateForOverSeaPdLaya = Secure.getIntForUser(PhoneWindowManager.this.mContext.getContentResolver(), "aod_oversea_pd_laya_ota_state", 0, ActivityManager.getCurrentUser());
         }
 
         private int getAodSwitch() {
@@ -787,6 +799,15 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             }
             PhoneWindowManager.this.mAodSwitch = Secure.getIntForUser(PhoneWindowManager.this.mContext.getContentResolver(), "aod_switch", 0, ActivityManager.getCurrentUser());
             return PhoneWindowManager.this.mAodSwitch;
+        }
+
+        private int getPorscheLYAOtaState() {
+            Slog.i(PhoneWindowManager.TAG, "AOD getPorscheLYAOtaState ");
+            if (!PhoneWindowManager.mSupportAod) {
+                return 0;
+            }
+            PhoneWindowManager.this.otaStateForOverSeaPdLaya = Secure.getIntForUser(PhoneWindowManager.this.mContext.getContentResolver(), "aod_oversea_pd_laya_ota_state", 0, ActivityManager.getCurrentUser());
+            return PhoneWindowManager.this.otaStateForOverSeaPdLaya;
         }
     }
 
@@ -845,10 +866,10 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             super(inputChannel, looper);
         }
 
-        /* JADX WARNING: Missing block: B:24:0x0061, code:
+        /* JADX WARNING: Missing block: B:24:0x0061, code skipped:
             if (r2 == false) goto L_0x006e;
      */
-        /* JADX WARNING: Missing block: B:26:?, code:
+        /* JADX WARNING: Missing block: B:26:?, code skipped:
             r9.this$0.mWindowManagerFuncs.reevaluateStatusBarVisibility();
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1202,6 +1223,18 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         sApplicationLaunchKeyCategories.append(208, "android.intent.category.APP_CALENDAR");
         sApplicationLaunchKeyCategories.append(209, "android.intent.category.APP_MUSIC");
         sApplicationLaunchKeyCategories.append(NetdResponseCode.TetherStatusResult, "android.intent.category.APP_CALCULATOR");
+        sIsLayaPorschePorduct = false;
+        if (sIsPorscheProduct) {
+            String board = sProductBrandString.toUpperCase(Locale.US);
+            if (board.contains("LYA") || board.contains("LAYA")) {
+                sIsLayaPorschePorduct = true;
+            }
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("HwAodManagerService sIsPorscheProduct ");
+            stringBuilder.append(sIsLayaPorschePorduct);
+            Slog.i(str, stringBuilder.toString());
+        }
     }
 
     public boolean isLandscape() {
@@ -2030,7 +2063,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         this.mBroadcastWakeLock = this.mPowerManager.newWakeLock(1, "PhoneWindowManager.mBroadcastWakeLock");
         this.mPowerKeyWakeLock = this.mPowerManager.newWakeLock(1, "PhoneWindowManager.mPowerKeyWakeLock");
         this.mEnableShiftMenuBugReports = "1".equals(SystemProperties.get("ro.debuggable"));
-        this.mSupportAutoRotation = this.mContext.getResources().getBoolean(17957033);
+        this.mSupportAutoRotation = this.mContext.getResources().getBoolean(17957034);
         this.mLidOpenRotation = readRotation(17694797);
         this.mCarDockRotation = readRotation(17694755);
         this.mDeskDockRotation = readRotation(17694776);
@@ -2051,7 +2084,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         this.mAllowTheaterModeWakeFromLidSwitch = this.mContext.getResources().getBoolean(17956881);
         this.mAllowTheaterModeWakeFromWakeGesture = this.mContext.getResources().getBoolean(17956879);
         this.mGoToSleepOnButtonPressTheaterMode = this.mContext.getResources().getBoolean(17956978);
-        this.mSupportLongPressPowerWhenNonInteractive = this.mContext.getResources().getBoolean(17957036);
+        this.mSupportLongPressPowerWhenNonInteractive = this.mContext.getResources().getBoolean(17957037);
         this.mLongPressOnBackBehavior = this.mContext.getResources().getInteger(17694800);
         this.mShortPressOnPowerBehavior = this.mContext.getResources().getInteger(17694864);
         this.mLongPressOnPowerBehavior = this.mContext.getResources().getInteger(17694802);
@@ -2286,7 +2319,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             this.mIncallBackBehavior = Secure.getIntForUser(resolver, "incall_back_button_behavior", 0, -2);
             this.mSystemNavigationKeysEnabled = Secure.getIntForUser(resolver, "system_navigation_keys_enabled", 0, -2) == 1;
             this.mRingerToggleChord = Secure.getIntForUser(resolver, "volume_hush_gesture", 0, -2);
-            if (!this.mContext.getResources().getBoolean(17957068)) {
+            if (!this.mContext.getResources().getBoolean(17957069)) {
                 this.mRingerToggleChord = 0;
             }
             int showRotationSuggestions = Secure.getIntForUser(resolver, "show_rotation_suggestions", 1, -2);
@@ -2767,49 +2800,52 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         return z;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x00ee A:{Catch:{ BadTokenException -> 0x026c, RuntimeException -> 0x0262, all -> 0x0257 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:57:0x00ff A:{Catch:{ BadTokenException -> 0x026c, RuntimeException -> 0x0262, all -> 0x0257 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x00fa A:{Catch:{ BadTokenException -> 0x026c, RuntimeException -> 0x0262, all -> 0x0257 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x010d A:{SYNTHETIC, Splitter: B:60:0x010d} */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x02a8  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x02a8  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x02a8  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x02a8  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x02a8  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x02a8  */
-    /* JADX WARNING: Missing block: B:69:0x011e, code:
-            if (android.hwcontrol.HwWidgetFactory.isHwDarkTheme(r1) == false) goto L_0x0124;
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:147:0x02a8=Splitter:B:147:0x02a8, B:156:0x02df=Splitter:B:156:0x02df} */
+    /* JADX WARNING: Removed duplicated region for block: B:63:0x0103 A:{Catch:{ BadTokenException -> 0x0280, RuntimeException -> 0x0276, all -> 0x026b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0113 A:{Catch:{ BadTokenException -> 0x0280, RuntimeException -> 0x0276, all -> 0x026b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x010f A:{Catch:{ BadTokenException -> 0x0280, RuntimeException -> 0x0276, all -> 0x026b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x0122 A:{SYNTHETIC, Splitter:B:69:0x0122} */
+    /* JADX WARNING: Removed duplicated region for block: B:159:0x02fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:159:0x02fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:159:0x02fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:159:0x02fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:159:0x02fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:159:0x02fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x02c0  */
+    /* JADX WARNING: Missing block: B:78:0x0133, code skipped:
+            if (android.hwcontrol.HwWidgetFactory.isHwDarkTheme(r1) == false) goto L_0x0139;
      */
-    /* JADX WARNING: Missing block: B:70:0x0120, code:
+    /* JADX WARNING: Missing block: B:79:0x0135, code skipped:
             r5 = 134217728 | r5;
      */
-    /* JADX WARNING: Missing block: B:71:0x0124, code:
+    /* JADX WARNING: Missing block: B:80:0x0139, code skipped:
             r2.setFlags(((r5 | 16) | 8) | 131072, ((r5 | 16) | 8) | 131072);
             r2.setDefaultIcon(r13);
      */
-    /* JADX WARNING: Missing block: B:74:?, code:
-            r2.setDefaultLogo(r33);
+    /* JADX WARNING: Missing block: B:83:?, code skipped:
+            r2.setDefaultLogo(r34);
             r2.setLayout(-1, -1);
             r0 = r2.getAttributes();
             r0.token = r8;
             r0.packageName = r9;
-            r23 = r3;
-            r0.windowAnimations = r2.getWindowStyle().getResourceId(8, r15);
+            r24 = r3;
+            r0.windowAnimations = r2.getWindowStyle().getResourceId(8, null);
             r0.privateFlags |= 1;
             r0.privateFlags |= 16;
      */
-    /* JADX WARNING: Missing block: B:75:0x0167, code:
-            if (r29.supportsScreen() != null) goto L_0x016f;
+    /* JADX WARNING: Missing block: B:84:0x017b, code skipped:
+            if (r30.supportsScreen() != null) goto L_0x0183;
      */
-    /* JADX WARNING: Missing block: B:76:0x0169, code:
+    /* JADX WARNING: Missing block: B:85:0x017d, code skipped:
             r0.privateFlags |= 128;
      */
-    /* JADX WARNING: Missing block: B:77:0x016f, code:
+    /* JADX WARNING: Missing block: B:86:0x0183, code skipped:
             r3 = new java.lang.StringBuilder();
             r3.append("Splash Screen ");
             r3.append(r9);
@@ -2817,133 +2853,134 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             addSplashscreenContent(r2, r1);
             r3 = (android.view.WindowManager) r1.getSystemService("window");
      */
-    /* JADX WARNING: Missing block: B:79:?, code:
-            r4 = r2.getDecorView();
+    /* JADX WARNING: Missing block: B:88:?, code skipped:
+            r14 = r2.getDecorView();
      */
-    /* JADX WARNING: Missing block: B:81:?, code:
-            r15 = new java.lang.StringBuilder();
-            r24 = r1;
-            r15.append("addStartingWindow ");
-            r15.append(r9);
-            r15.append(": nonLocalizedLabel=");
-            r15.append(r11);
-            r15.append(" theme=");
-            r15.append(java.lang.Integer.toHexString(r28));
-            r15.append(" windowFlags=");
-            r15.append(java.lang.Integer.toHexString(r5));
-            r15.append(" isFloating=");
-            r15.append(r2.isFloating());
-            r15.append(" appToken=");
-            r15.append(r8);
-            android.util.Flog.i(301, r15.toString());
+    /* JADX WARNING: Missing block: B:90:?, code skipped:
+            r4 = new java.lang.StringBuilder();
+            r25 = r1;
+            r4.append("addStartingWindow ");
+            r4.append(r9);
+            r4.append(": nonLocalizedLabel=");
+            r4.append(r11);
+            r4.append(" theme=");
+            r4.append(java.lang.Integer.toHexString(r29));
+            r4.append(" windowFlags=");
+            r4.append(java.lang.Integer.toHexString(r5));
+            r4.append(" isFloating=");
+            r4.append(r2.isFloating());
+            r4.append(" appToken=");
+            r4.append(r8);
+            android.util.Flog.i(301, r4.toString());
             setHasAcitionBar(r2.hasFeature(8));
-            r3.addView(r4, r0);
+            r3.addView(r14, r0);
      */
-    /* JADX WARNING: Missing block: B:82:0x01ef, code:
-            if (r4.getParent() == null) goto L_0x01f9;
+    /* JADX WARNING: Missing block: B:91:0x0203, code skipped:
+            if (r14.getParent() == null) goto L_0x020d;
      */
-    /* JADX WARNING: Missing block: B:84:0x01f6, code:
-            r22 = new com.android.server.policy.SplashScreenSurface(r4, r8);
+    /* JADX WARNING: Missing block: B:93:0x020a, code skipped:
+            r20 = new com.android.server.policy.SplashScreenSurface(r14, r8);
      */
-    /* JADX WARNING: Missing block: B:85:0x01f9, code:
-            r22 = null;
+    /* JADX WARNING: Missing block: B:94:0x020d, code skipped:
+            r20 = null;
      */
-    /* JADX WARNING: Missing block: B:86:0x01fc, code:
-            if (r4 == null) goto L_0x020f;
+    /* JADX WARNING: Missing block: B:95:0x0210, code skipped:
+            if (r14 == null) goto L_0x0223;
      */
-    /* JADX WARNING: Missing block: B:88:0x0202, code:
-            if (r4.getParent() != null) goto L_0x020f;
+    /* JADX WARNING: Missing block: B:97:0x0216, code skipped:
+            if (r14.getParent() != null) goto L_0x0223;
      */
-    /* JADX WARNING: Missing block: B:89:0x0204, code:
+    /* JADX WARNING: Missing block: B:98:0x0218, code skipped:
             android.util.Log.w(TAG, "view not successfully added to wm, removing view");
-            r3.removeViewImmediate(r4);
+            r3.removeViewImmediate(r14);
      */
-    /* JADX WARNING: Missing block: B:90:0x020f, code:
-            return r22;
+    /* JADX WARNING: Missing block: B:99:0x0223, code skipped:
+            return r20;
      */
-    /* JADX WARNING: Missing block: B:91:0x0210, code:
+    /* JADX WARNING: Missing block: B:100:0x0224, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:92:0x0213, code:
+    /* JADX WARNING: Missing block: B:101:0x0227, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:93:0x0214, code:
+    /* JADX WARNING: Missing block: B:102:0x0228, code skipped:
             r1 = r5;
-            r5 = r4;
+            r5 = r14;
      */
-    /* JADX WARNING: Missing block: B:94:0x0218, code:
+    /* JADX WARNING: Missing block: B:103:0x022c, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:95:0x0219, code:
+    /* JADX WARNING: Missing block: B:104:0x022d, code skipped:
             r1 = r5;
-            r5 = r4;
+            r5 = r14;
      */
-    /* JADX WARNING: Missing block: B:96:0x021d, code:
+    /* JADX WARNING: Missing block: B:105:0x0231, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:97:0x021e, code:
-            r4 = r18;
+    /* JADX WARNING: Missing block: B:106:0x0232, code skipped:
+            r14 = r18;
      */
-    /* JADX WARNING: Missing block: B:98:0x0222, code:
+    /* JADX WARNING: Missing block: B:107:0x0236, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:99:0x0223, code:
+    /* JADX WARNING: Missing block: B:108:0x0237, code skipped:
             r1 = r5;
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:100:0x0228, code:
+    /* JADX WARNING: Missing block: B:109:0x023c, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:101:0x0229, code:
+    /* JADX WARNING: Missing block: B:110:0x023d, code skipped:
             r1 = r5;
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:102:0x022e, code:
+    /* JADX WARNING: Missing block: B:111:0x0242, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:103:0x022f, code:
-            r6 = r33;
+    /* JADX WARNING: Missing block: B:112:0x0243, code skipped:
+            r6 = r34;
      */
-    /* JADX WARNING: Missing block: B:104:0x0232, code:
+    /* JADX WARNING: Missing block: B:113:0x0246, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:105:0x0233, code:
-            r6 = r33;
+    /* JADX WARNING: Missing block: B:114:0x0247, code skipped:
+            r6 = r34;
      */
-    /* JADX WARNING: Missing block: B:106:0x0236, code:
+    /* JADX WARNING: Missing block: B:115:0x024a, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:107:0x0237, code:
-            r6 = r33;
+    /* JADX WARNING: Missing block: B:116:0x024b, code skipped:
+            r6 = r34;
      */
-    /* JADX WARNING: Missing block: B:116:0x024d, code:
+    /* JADX WARNING: Missing block: B:125:0x0261, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:117:0x024f, code:
+    /* JADX WARNING: Missing block: B:126:0x0263, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:118:0x0250, code:
+    /* JADX WARNING: Missing block: B:127:0x0264, code skipped:
             r1 = r5;
      */
-    /* JADX WARNING: Missing block: B:119:0x0252, code:
+    /* JADX WARNING: Missing block: B:128:0x0266, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:120:0x0253, code:
+    /* JADX WARNING: Missing block: B:129:0x0267, code skipped:
             r1 = r5;
      */
-    /* JADX WARNING: Missing block: B:140:0x02ac, code:
-            if (r5.getParent() == null) goto L_0x02ae;
+    /* JADX WARNING: Missing block: B:151:0x02c4, code skipped:
+            if (r5.getParent() == null) goto L_0x02c6;
      */
-    /* JADX WARNING: Missing block: B:141:0x02ae, code:
+    /* JADX WARNING: Missing block: B:152:0x02c6, code skipped:
             android.util.Log.w(TAG, "view not successfully added to wm, removing view");
             r3.removeViewImmediate(r5);
      */
-    /* JADX WARNING: Missing block: B:148:0x02e8, code:
-            if (r5.getParent() == null) goto L_0x02ae;
+    /* JADX WARNING: Missing block: B:160:0x0302, code skipped:
+            if (r5.getParent() == null) goto L_0x02c6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public StartingSurface addSplashScreen(IBinder appToken, String packageName, int theme, CompatibilityInfo compatInfo, CharSequence nonLocalizedLabel, int labelRes, int icon, int logo, int windowFlags, Configuration overrideConfig, int displayId) {
         BadTokenException e;
+        CompatibilityInfo compatibilityInfo;
         int windowFlags2;
         WindowManager wm;
         String str;
@@ -2952,9 +2989,9 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         Throwable th;
         View view;
         View view2;
-        WindowManager wm2;
         int i;
         int i2;
+        WindowManager windowManager;
         Context context;
         CharSequence charSequence;
         IBinder iBinder = appToken;
@@ -2967,17 +3004,18 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         if (str2 == null) {
             return null;
         }
-        WindowManager wm3 = null;
+        WindowManager wm2 = null;
         View view3 = null;
         try {
             Context displayContext = getDisplayContext(this.mContext, displayId);
             if (displayContext == null) {
                 if (view3 != null && view3.getParent() == null) {
                     Log.w(TAG, "view not successfully added to wm, removing view");
-                    wm3.removeViewImmediate(view3);
+                    wm2.removeViewImmediate(view3);
                 }
                 return null;
             }
+            boolean wm3;
             boolean z;
             final PhoneWindow win;
             CharSequence wm4;
@@ -2989,9 +3027,10 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                 } catch (NameNotFoundException e3) {
                 } catch (BadTokenException e4) {
                     e = e4;
+                    compatibilityInfo = compatInfo;
                     windowFlags2 = windowFlags;
-                    wm = wm3;
-                    wm3 = logo;
+                    wm = wm2;
+                    wm2 = logo;
                     str = TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append(iBinder);
@@ -3003,9 +3042,10 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                     return null;
                 } catch (RuntimeException e5) {
                     e2 = e5;
+                    compatibilityInfo = compatInfo;
                     windowFlags2 = windowFlags;
-                    wm = wm3;
-                    wm3 = logo;
+                    wm = wm2;
+                    wm2 = logo;
                     try {
                         str = TAG;
                         stringBuilder = new StringBuilder();
@@ -3024,9 +3064,10 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                     }
                 } catch (Throwable th3) {
                     th = th3;
+                    compatibilityInfo = compatInfo;
                     view = view3;
-                    wm = wm3;
-                    wm3 = logo;
+                    wm = wm2;
+                    wm2 = logo;
                     view3 = windowFlags;
                     Log.w(TAG, "view not successfully added to wm, removing view");
                     wm.removeViewImmediate(view);
@@ -3042,27 +3083,69 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                     context2 = context3.createConfigurationContext(configuration);
                     context2.setTheme(i3);
                     TypedArray typedArray2 = context2.obtainStyledAttributes(R.styleable.Window);
-                    if (isHwStartWindowEnabled()) {
-                        overrideContext = context2;
-                        TypedArray typedArray3 = typedArray2;
-                        z = false;
-                        view2 = view3;
-                        wm2 = wm3;
+                    wm3 = isHwStartWindowEnabled(0);
+                    if (wm3) {
                         try {
-                            contextStartWindow = addHwStartWindow(str2, overrideContext, context3, typedArray3, windowFlags);
-                            if (contextStartWindow != null) {
-                                context3 = contextStartWindow;
-                                typedArray = typedArray3;
-                                typedArray.recycle();
-                            } else {
-                                typedArray = typedArray3;
+                            overrideContext = context2;
+                            TypedArray typedArray3 = typedArray2;
+                            z = true;
+                            view2 = view3;
+                            wm3 = wm2;
+                            try {
+                                contextStartWindow = addHwStartWindow(compatInfo.mAppInfo, overrideContext, context3, typedArray3, windowFlags);
+                                if (contextStartWindow != null) {
+                                    context3 = contextStartWindow;
+                                    typedArray = typedArray3;
+                                    typedArray.recycle();
+                                } else {
+                                    typedArray = typedArray3;
+                                }
+                            } catch (BadTokenException e6) {
+                                e = e6;
+                                i = logo;
+                                windowFlags2 = windowFlags;
+                                view3 = view2;
+                                wm = wm3;
+                                str = TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append(iBinder);
+                                stringBuilder.append(" already running, starting window not displayed. ");
+                                stringBuilder.append(e.getMessage());
+                                Log.w(str, stringBuilder.toString());
+                                if (view3 != null) {
+                                }
+                                return null;
+                            } catch (RuntimeException e7) {
+                                e2 = e7;
+                                i = logo;
+                                windowFlags2 = windowFlags;
+                                view3 = view2;
+                                wm = wm3;
+                                str = TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append(iBinder);
+                                stringBuilder.append(" failed creating starting window");
+                                Log.w(str, stringBuilder.toString(), e2);
+                                if (view3 != null) {
+                                }
+                                return null;
+                            } catch (Throwable th4) {
+                                th = th4;
+                                i = logo;
+                                i2 = windowFlags;
+                                view = view2;
+                                wm = wm3;
+                                Log.w(TAG, "view not successfully added to wm, removing view");
+                                wm.removeViewImmediate(view);
+                                throw th;
                             }
-                        } catch (BadTokenException e6) {
-                            e = e6;
-                            i = logo;
+                        } catch (BadTokenException e8) {
+                            e = e8;
+                            view2 = view3;
+                            windowManager = wm2;
+                            wm2 = logo;
                             windowFlags2 = windowFlags;
-                            view3 = view2;
-                            wm = wm2;
+                            wm = windowManager;
                             str = TAG;
                             stringBuilder = new StringBuilder();
                             stringBuilder.append(iBinder);
@@ -3072,12 +3155,13 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                             if (view3 != null) {
                             }
                             return null;
-                        } catch (RuntimeException e7) {
-                            e2 = e7;
-                            i = logo;
+                        } catch (RuntimeException e9) {
+                            e2 = e9;
+                            view2 = view3;
+                            windowManager = wm2;
+                            wm2 = logo;
                             windowFlags2 = windowFlags;
-                            view3 = view2;
-                            wm = wm2;
+                            wm = windowManager;
                             str = TAG;
                             stringBuilder = new StringBuilder();
                             stringBuilder.append(iBinder);
@@ -3086,24 +3170,27 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                             if (view3 != null) {
                             }
                             return null;
-                        } catch (Throwable th4) {
-                            th = th4;
-                            i = logo;
-                            i2 = windowFlags;
+                        } catch (Throwable th5) {
+                            th = th5;
+                            view2 = view3;
+                            windowManager = wm2;
+                            wm2 = logo;
+                            view3 = windowFlags;
                             view = view2;
-                            wm = wm2;
+                            wm = windowManager;
                             Log.w(TAG, "view not successfully added to wm, removing view");
                             wm.removeViewImmediate(view);
                             throw th;
                         }
                     }
+                    compatibilityInfo = compatInfo;
                     overrideContext = context2;
                     typedArray = typedArray2;
-                    z = false;
                     view2 = view3;
-                    wm2 = wm3;
+                    wm3 = wm2;
+                    z = true;
                     if (contextStartWindow == null) {
-                        int resId = typedArray.getResourceId(1, z);
+                        int resId = typedArray.getResourceId(z, 0);
                         if (resId != 0) {
                             Context overrideContext2 = overrideContext;
                             if (overrideContext2.getDrawable(resId) != null) {
@@ -3114,7 +3201,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                     }
                     context2 = context3;
                     win = (PhoneWindow) HwPolicyFactory.getHwPhoneWindow(context2);
-                    win.setIsStartingWindow(true);
+                    win.setIsStartingWindow(z);
                     wm4 = context2.getResources().getText(i4, null);
                     if (i5 != 0) {
                         new Thread("iconPreloadingThread") {
@@ -3132,9 +3219,9 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                         }.start();
                     }
                     if (wm4 == null) {
-                        win.setTitle(wm4, true);
+                        win.setTitle(wm4, z);
                     } else {
-                        win.setTitle(charSequence2, z);
+                        win.setTitle(charSequence2, false);
                     }
                     win.setType(3);
                     synchronized (this.mWindowManagerFuncs.getWindowManagerLock()) {
@@ -3145,22 +3232,22 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 i2 = windowFlags;
                             }
                             try {
-                            } catch (Throwable th5) {
-                                th = th5;
+                            } catch (Throwable th6) {
+                                th = th6;
                                 i = logo;
                                 context = context2;
                                 charSequence = wm4;
                                 while (true) {
                                     try {
                                         break;
-                                    } catch (Throwable th6) {
-                                        th = th6;
+                                    } catch (Throwable th7) {
+                                        th = th7;
                                     }
                                 }
                                 throw th;
                             }
-                        } catch (Throwable th7) {
-                            th = th7;
+                        } catch (Throwable th8) {
+                            th = th8;
                             i = logo;
                             context = context2;
                             charSequence = wm4;
@@ -3173,12 +3260,13 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                     }
                 }
             }
-            z = false;
+            compatibilityInfo = compatInfo;
             view2 = view3;
-            wm2 = wm3;
+            wm3 = wm2;
+            z = true;
             context2 = context3;
             win = (PhoneWindow) HwPolicyFactory.getHwPhoneWindow(context2);
-            win.setIsStartingWindow(true);
+            win.setIsStartingWindow(z);
             wm4 = context2.getResources().getText(i4, null);
             if (i5 != 0) {
             }
@@ -3187,13 +3275,14 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             win.setType(3);
             synchronized (this.mWindowManagerFuncs.getWindowManagerLock()) {
             }
-        } catch (BadTokenException e8) {
-            e = e8;
+        } catch (BadTokenException e10) {
+            e = e10;
+            compatibilityInfo = compatInfo;
             view2 = view3;
-            wm2 = wm3;
-            wm3 = logo;
+            windowManager = wm2;
+            wm2 = logo;
             windowFlags2 = windowFlags;
-            wm = wm2;
+            wm = windowManager;
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append(iBinder);
@@ -3203,13 +3292,14 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             if (view3 != null) {
             }
             return null;
-        } catch (RuntimeException e9) {
-            e2 = e9;
+        } catch (RuntimeException e11) {
+            e2 = e11;
+            compatibilityInfo = compatInfo;
             view2 = view3;
-            wm2 = wm3;
-            wm3 = logo;
+            windowManager = wm2;
+            wm2 = logo;
             windowFlags2 = windowFlags;
-            wm = wm2;
+            wm = windowManager;
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append(iBinder);
@@ -3218,18 +3308,17 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             if (view3 != null) {
             }
             return null;
-        } catch (Throwable th8) {
-            th = th8;
+        } catch (Throwable th9) {
+            th = th9;
+            compatibilityInfo = compatInfo;
             view2 = view3;
-            wm2 = wm3;
-            wm3 = logo;
+            windowManager = wm2;
+            wm2 = logo;
             view3 = windowFlags;
             view = view2;
-            wm = wm2;
-            if (view != null && view.getParent() == null) {
-                Log.w(TAG, "view not successfully added to wm, removing view");
-                wm.removeViewImmediate(view);
-            }
+            wm = windowManager;
+            Log.w(TAG, "view not successfully added to wm, removing view");
+            wm.removeViewImmediate(view);
             throw th;
         }
     }
@@ -3259,7 +3348,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         return context.createDisplayContext(targetDisplay);
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002f, code:
+    /* JADX WARNING: Missing block: B:14:0x002f, code skipped:
             if (r0 != 2033) goto L_0x009d;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4025,11 +4114,12 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     public void registerShortcutKey(long shortcutCode, IShortcutService shortcutService) throws RemoteException {
         synchronized (this.mLock) {
             IShortcutService service = (IShortcutService) this.mShortcutKeyServices.get(shortcutCode);
-            if (service == null || !service.asBinder().pingBinder()) {
-                this.mShortcutKeyServices.put(shortcutCode, shortcutService);
-            } else {
-                throw new RemoteException("Key already exists.");
+            if (service != null) {
+                if (service.asBinder().pingBinder()) {
+                    throw new RemoteException("Key already exists.");
+                }
             }
+            this.mShortcutKeyServices.put(shortcutCode, shortcutService);
         }
     }
 
@@ -4875,56 +4965,56 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     /* JADX WARNING: Removed duplicated region for block: B:426:0x09d8  */
     /* JADX WARNING: Removed duplicated region for block: B:426:0x09d8  */
     /* JADX WARNING: Removed duplicated region for block: B:425:0x09d2  */
-    /* JADX WARNING: Removed duplicated region for block: B:302:0x069a  */
-    /* JADX WARNING: Removed duplicated region for block: B:265:0x0618  */
-    /* JADX WARNING: Removed duplicated region for block: B:304:0x06a9  */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06d4  */
-    /* JADX WARNING: Removed duplicated region for block: B:307:0x06b6  */
-    /* JADX WARNING: Removed duplicated region for block: B:265:0x0618  */
-    /* JADX WARNING: Removed duplicated region for block: B:302:0x069a  */
-    /* JADX WARNING: Removed duplicated region for block: B:304:0x06a9  */
-    /* JADX WARNING: Removed duplicated region for block: B:307:0x06b6  */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06d4  */
-    /* JADX WARNING: Removed duplicated region for block: B:302:0x069a  */
-    /* JADX WARNING: Removed duplicated region for block: B:265:0x0618  */
-    /* JADX WARNING: Removed duplicated region for block: B:304:0x06a9  */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06d4  */
-    /* JADX WARNING: Removed duplicated region for block: B:307:0x06b6  */
+    /* JADX WARNING: Removed duplicated region for block: B:302:0x0699  */
+    /* JADX WARNING: Removed duplicated region for block: B:265:0x0617  */
+    /* JADX WARNING: Removed duplicated region for block: B:304:0x06a8  */
+    /* JADX WARNING: Removed duplicated region for block: B:309:0x06d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:307:0x06b5  */
+    /* JADX WARNING: Removed duplicated region for block: B:265:0x0617  */
+    /* JADX WARNING: Removed duplicated region for block: B:302:0x0699  */
+    /* JADX WARNING: Removed duplicated region for block: B:304:0x06a8  */
+    /* JADX WARNING: Removed duplicated region for block: B:307:0x06b5  */
+    /* JADX WARNING: Removed duplicated region for block: B:309:0x06d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:302:0x0699  */
+    /* JADX WARNING: Removed duplicated region for block: B:265:0x0617  */
+    /* JADX WARNING: Removed duplicated region for block: B:304:0x06a8  */
+    /* JADX WARNING: Removed duplicated region for block: B:309:0x06d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:307:0x06b5  */
     /* JADX WARNING: Removed duplicated region for block: B:103:0x0260  */
-    /* JADX WARNING: Missing block: B:242:0x05a1, code:
-            if (r12 <= 1999) goto L_0x05ac;
+    /* JADX WARNING: Missing block: B:242:0x05a0, code skipped:
+            if (r12 <= 1999) goto L_0x05ab;
      */
-    /* JADX WARNING: Missing block: B:244:0x05a5, code:
-            if (r12 == 2020) goto L_0x05ac;
+    /* JADX WARNING: Missing block: B:244:0x05a4, code skipped:
+            if (r12 == 2020) goto L_0x05ab;
      */
-    /* JADX WARNING: Missing block: B:283:0x065d, code:
+    /* JADX WARNING: Missing block: B:283:0x065c, code skipped:
             r3 = r60;
      */
-    /* JADX WARNING: Missing block: B:284:0x0664, code:
-            if ((r3.flags & Integer.MIN_VALUE) != 0) goto L_0x068e;
+    /* JADX WARNING: Missing block: B:284:0x0663, code skipped:
+            if ((r3.flags & Integer.MIN_VALUE) != 0) goto L_0x068d;
      */
-    /* JADX WARNING: Missing block: B:286:0x066b, code:
-            if ((r3.flags & 67108864) != 0) goto L_0x068e;
+    /* JADX WARNING: Missing block: B:286:0x066a, code skipped:
+            if ((r3.flags & 67108864) != 0) goto L_0x068d;
      */
-    /* JADX WARNING: Missing block: B:288:0x066f, code:
-            if ((r6 & 3076) != 0) goto L_0x068e;
+    /* JADX WARNING: Missing block: B:288:0x066e, code skipped:
+            if ((r6 & 3076) != 0) goto L_0x068d;
      */
-    /* JADX WARNING: Missing block: B:290:0x0674, code:
-            if (r3.type == 3) goto L_0x068e;
+    /* JADX WARNING: Missing block: B:290:0x0673, code skipped:
+            if (r3.type == 3) goto L_0x068d;
      */
-    /* JADX WARNING: Missing block: B:292:0x067a, code:
-            if (r3.type == 2038) goto L_0x068e;
+    /* JADX WARNING: Missing block: B:292:0x0679, code skipped:
+            if (r3.type == 2038) goto L_0x068d;
      */
-    /* JADX WARNING: Missing block: B:293:0x067c, code:
+    /* JADX WARNING: Missing block: B:293:0x067b, code skipped:
             r0 = r10.mUnrestricted.top + r13.mStatusBarHeightForRotation[r10.mRotation];
             r15.top = r0;
             r2 = r61;
             r2.top = r0;
      */
-    /* JADX WARNING: Missing block: B:294:0x068e, code:
+    /* JADX WARNING: Missing block: B:294:0x068d, code skipped:
             r2 = r61;
      */
-    /* JADX WARNING: Missing block: B:403:0x08f1, code:
+    /* JADX WARNING: Missing block: B:403:0x08f1, code skipped:
             if (r6.type != 2013) goto L_0x08f6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4941,7 +5031,6 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             return;
         }
         boolean hasNavBar;
-        Rect of;
         Rect pf;
         Rect cf;
         LayoutParams attrs;
@@ -4971,7 +5060,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         int sysUiFl2 = requestedSysUiFl | type.getImpliedSysUiFlagsForLayout(attrs2);
         Rect pf2 = mTmpParentFrame;
         Rect df2 = mTmpDisplayFrame;
-        Rect of2 = mTmpOverscanFrame;
+        Rect of = mTmpOverscanFrame;
         Rect cf2 = mTmpContentFrame;
         Rect vf2 = mTmpVisibleFrame;
         Rect dcf2 = mTmpDecorFrame;
@@ -5002,7 +5091,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         int adjust = (!isLandScapeMultiWindowMode || windowState == type.mInputMethodTarget) ? sim & 240 : 48;
         hasNavBar = ((fl & 1024) == 0 && (requestedSysUiFl & 4) == 0) ? false : true;
         boolean requestedFullscreen = hasNavBar;
-        Rect of3 = of2;
+        Rect of2 = of;
         boolean layoutInScreen = (fl & 256) == 256;
         boolean layoutInsetDecor = (65536 & fl) == 65536;
         sf2.set(displayFrames2.mStable);
@@ -5021,17 +5110,18 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             int type7;
             Rect vf4;
             LayoutParams attrs4;
+            Rect of3;
             Rect df3;
             Rect pf3;
             Rect cf3;
             if (attached != null) {
-                of = of3;
+                of3 = of2;
                 df3 = df2;
                 pf3 = pf2;
                 sysUiFl4 = sysUiFl2;
                 adjust2 = adjust;
                 int i4 = 2011;
-                of3 = pfl;
+                of2 = pfl;
                 fl2 = fl;
                 sf3 = sf2;
                 type7 = type6;
@@ -5040,8 +5130,8 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                 vf4 = vf2;
                 attrs4 = attrs2;
                 displayFrames2 = displayFrames;
-                type.setAttachedWindowFrames(windowState, fl, adjust, attached, true, pf3, df3, of, cf3, vf4, displayFrames2);
-                dcf2 = of;
+                type.setAttachedWindowFrames(windowState, fl, adjust, attached, true, pf3, df3, of3, cf3, vf4, displayFrames2);
+                dcf2 = of3;
                 sf2 = df3;
                 pf = pf3;
                 cf = cf3;
@@ -5057,14 +5147,14 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                 cf3 = cf2;
                 vf4 = vf2;
                 type7 = type6;
-                of = of3;
+                of3 = of2;
                 i2 = sim2;
-                of3 = pfl;
+                of2 = pfl;
                 displayFrames2 = displayFrames;
                 i3 = displayFrames2.mOverscan.left;
                 cf = cf3;
                 cf.left = i3;
-                dcf2 = of;
+                dcf2 = of3;
                 dcf2.left = i3;
                 sf2 = df3;
                 sf2.left = i3;
@@ -5175,7 +5265,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             attrs3 = attrs2;
             cf = cf2;
             vf = vf2;
-            dcf2 = of3;
+            dcf2 = of2;
             i2 = sim2;
             pf = pf2;
             int pfl2 = pfl;
@@ -5353,7 +5443,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 sysUiFl = sysUiFl3;
                                 if ((sysUiFl & 4) == 0) {
                                     i3 = fl2;
-                                    if ((i3 & 1024) == 0 && (i3 & 67108864) == 0 && (i3 & Integer.MIN_VALUE) == 0 && (pfl2 & 131072) == 0 && type.mStatusBar != null && type.mStatusBar.isVisibleLw() && (type.mLastSystemUiFlags & 67108864) == 0) {
+                                    if ((i3 & 1024) == 0 && (67108864 & i3) == 0 && (i3 & Integer.MIN_VALUE) == 0 && (pfl2 & 131072) == 0 && type.mStatusBar != null && type.mStatusBar.isVisibleLw() && (type.mLastSystemUiFlags & 67108864) == 0) {
                                         dcf4.top = displayFrames2.mStable.top;
                                     }
                                 } else {
@@ -5379,7 +5469,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 int fl4;
                                 Rect rect = cf;
                                 int fl5 = i3;
-                                of2 = dcf4;
+                                of = dcf4;
                                 sim = sysUiFl;
                                 attrs7 = attrs5;
                                 sf = rect;
@@ -5391,7 +5481,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 sf2 = dcf2;
                                 DisplayFrames displayFrames5 = displayFrames4;
                                 if (layoutInScreen) {
-                                    dcf = of2;
+                                    dcf = of;
                                     sysUiFl6 = sim;
                                     fl4 = fl5;
                                     type3 = type2;
@@ -5410,7 +5500,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                     Rect df5;
                                     Rect of5;
                                     if (attached != null) {
-                                        dcf = of2;
+                                        dcf = of;
                                         attrs9 = attrs7;
                                         adjust4 = sysUiFl2;
                                         cf5 = sf;
@@ -5431,7 +5521,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                         sf2 = df5;
                                         dcf2 = of5;
                                     } else {
-                                        dcf = of2;
+                                        dcf = of;
                                         attrs9 = attrs7;
                                         adjust4 = sysUiFl2;
                                         cf5 = sf;
@@ -5510,7 +5600,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                     adjust = fl4;
                                     type = this;
                                 } else {
-                                    dcf = of2;
+                                    dcf = of;
                                     sysUiFl6 = sim;
                                     fl4 = fl5;
                                     type3 = type2;
@@ -5905,7 +5995,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                             }
                             if (!(type.mHwFullScreenWindow == null || !type.mHwFullScreenWinVisibility || type.mDisplayRotation != 0 || type.isAboveFullScreen(windowState, type.mHwFullScreenWindow) || win.toString().contains("GestureNavBottom") || win.toString().contains("ChargingAnimView") || win.toString().contains("ProximityWnd") || win.toString().contains("fingerprint_alpha_layer") || win.toString().contains("fingerprintview_button") || win.toString().contains("fingerprint_mask") || (win.getOwningPackage() != null && (win.getOwningPackage().contains("com.huawei.android.launcher") || win.getOwningPackage().contains("com.huawei.aod"))))) {
                                 Rect cf_fullWinBtn = type.mHwFullScreenWindow.getContentFrameLw();
-                                z = cf.bottom > cf_fullWinBtn.top;
+                                z = cf_fullWinBtn.top > 0 && cf_fullWinBtn.left == 0 && cf.bottom > cf_fullWinBtn.top;
                                 if (z) {
                                     i3 = (displayFrames2.mUnrestricted.top + type.mRestrictedScreenHeight) - (cf.bottom - cf_fullWinBtn.top);
                                     cf.bottom = i3;
@@ -5964,9 +6054,9 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         z2 = false;
         if (IS_NOTCH_PROP) {
             if (!type.mIsNotchSwitchOpen) {
-                type.mLayoutBeyondDisplayCutout = canLayoutInDisplayCutout(win) ^ true;
+                type.mLayoutBeyondDisplayCutout = canLayoutInDisplayCutout(win) ^ 1;
             } else if (type.mDisplayRotation == 1 || type.mDisplayRotation == 3) {
-                type.mLayoutBeyondDisplayCutout = win.toString().contains("com.qeexo.smartshot.CropActivity") ^ true;
+                type.mLayoutBeyondDisplayCutout = win.toString().contains("com.qeexo.smartshot.CropActivity") ^ 1;
             } else {
                 z2 = type.mIsNoneNotchAppInHideMode;
                 boolean z3 = (!type.mIsNoneNotchAppInHideMode && canLayoutInDisplayCutout(win)) ? z : true;
@@ -5979,37 +6069,39 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         }
         boolean isNoneNotchAppInHideMode = z2;
         if (type.mLayoutBeyondDisplayCutout || !(IS_NOTCH_PROP || pfl == 1)) {
-            of2 = mTmpDisplayCutoutSafeExceptMaybeBarsRect;
+            of = mTmpDisplayCutoutSafeExceptMaybeBarsRect;
             sim = type2;
             displayFrames2 = displayFrames;
-            of2.set(displayFrames2.mDisplayCutoutSafe);
+            of.set(displayFrames2.mDisplayCutoutSafe);
             if (layoutInScreen && layoutInsetDecor && !requestedFullscreen && pfl == 0 && !isNoneNotchAppInHideMode) {
-                of2.top = Integer.MIN_VALUE;
+                of.top = Integer.MIN_VALUE;
             }
             if (layoutInScreen && layoutInsetDecor && !requestedHideNavigation && pfl == 0) {
                 sysUiFl2 = type.mNavigationBarPosition;
                 if (sysUiFl2 != 4) {
                     switch (sysUiFl2) {
                         case 1:
-                            of2.left = Integer.MIN_VALUE;
+                            of.left = Integer.MIN_VALUE;
                             break;
                         case 2:
-                            of2.right = HwBootFail.STAGE_BOOT_SUCCESS;
-                            break;
+                            if (!(IS_NOTCH_PROP && type.mDisplayRotation == 3)) {
+                                of.right = HwBootFail.STAGE_BOOT_SUCCESS;
+                                break;
+                            }
                     }
                 }
-                of2.bottom = HwBootFail.STAGE_BOOT_SUCCESS;
+                of.bottom = HwBootFail.STAGE_BOOT_SUCCESS;
             }
             if (sim == 2011 && type.mNavigationBarPosition == 4) {
-                of2.bottom = HwBootFail.STAGE_BOOT_SUCCESS;
+                of.bottom = HwBootFail.STAGE_BOOT_SUCCESS;
             }
             if (!(attachedInParent || topAtRest)) {
                 mTmpRect.set(sf2);
-                sf2.intersectUnchecked(of2);
+                sf2.intersectUnchecked(of);
                 parentFrameWasClippedByDisplayCutout2 = false | (mTmpRect.equals(sf2) ^ 1);
             }
             df = df6;
-            df.intersectUnchecked(of2);
+            df.intersectUnchecked(of);
             parentFrameWasClippedByDisplayCutout = parentFrameWasClippedByDisplayCutout2;
         } else {
             parentFrameWasClippedByDisplayCutout = false;
@@ -6071,24 +6163,24 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         hasNavBar = type.shouldUseOutsets(attrs10, min);
         int fl7;
         if (isDefaultDisplay && hasNavBar) {
-            of2 = mTmpOutsetFrame;
+            of = mTmpOutsetFrame;
             fl7 = min;
             type4 = sim;
-            of2.set(cf.left, cf.top, cf.right, cf.bottom);
+            of.set(cf.left, cf.top, cf.right, cf.bottom);
             hasNavBar = ScreenShapeHelper.getWindowOutsetBottomPx(type.mContext.getResources());
             if (hasNavBar <= false) {
                 min = displayFrames2.mRotation;
                 if (min == 0) {
-                    of2.bottom += hasNavBar;
+                    of.bottom += hasNavBar;
                 } else if (min == 1) {
-                    of2.right += hasNavBar;
+                    of.right += hasNavBar;
                 } else if (min == 2) {
-                    of2.top -= hasNavBar;
+                    of.top -= hasNavBar;
                 } else if (min == 3) {
-                    of2.left -= hasNavBar;
+                    of.left -= hasNavBar;
                 }
             }
-            osf = of2;
+            osf = of;
         } else {
             fl7 = min;
             type4 = sim;
@@ -6106,10 +6198,10 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             sf2.top = i;
         }
         WmDisplayCutout wmDisplayCutout = displayFrames2.mDisplayCutout;
-        of = pf2;
+        Rect of7 = pf2;
         type3 = 2011;
         type2 = type4;
-        windowState.computeFrameLw(sf2, df, of, cf, vf, pf, cf2, osf, wmDisplayCutout, parentFrameWasClippedByDisplayCutout);
+        windowState.computeFrameLw(sf2, df, of7, cf, vf, pf, cf2, osf, wmDisplayCutout, parentFrameWasClippedByDisplayCutout);
         if (type2 == type3 && win.isVisibleLw() && !win.getGivenInsetsPendingLw()) {
             phoneWindowManager = this;
             phoneWindowManager.setLastInputMethodWindowLw(null, null);
@@ -6233,7 +6325,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             inFullScreenOrSplitScreenSecondaryWindowingMode = true;
         }
         if (this.mTopFullscreenOpaqueWindowState == null && (attrs.type == 2100 || attrs.type == 2101)) {
-            this.mHasCoverView = sProximityWndName.equals(attrs.getTitle()) ^ true;
+            this.mHasCoverView = sProximityWndName.equals(attrs.getTitle()) ^ 1;
         } else if (this.mTopFullscreenOpaqueWindowState == null && affectsSystemUi) {
             if ((fl & 2048) != 0) {
                 this.mForceStatusBar = true;
@@ -6611,61 +6703,61 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             z = true;
         }
         this.mHdmiPlugged = z;
-        setHdmiPlugged(this.mHdmiPlugged ^ true);
+        setHdmiPlugged(this.mHdmiPlugged ^ 1);
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:248:0x043a  */
     /* JADX WARNING: Removed duplicated region for block: B:250:0x0441  */
     /* JADX WARNING: Removed duplicated region for block: B:248:0x043a  */
     /* JADX WARNING: Removed duplicated region for block: B:250:0x0441  */
-    /* JADX WARNING: Missing block: B:87:0x0149, code:
+    /* JADX WARNING: Missing block: B:87:0x0149, code skipped:
             r17 = r10;
      */
-    /* JADX WARNING: Missing block: B:96:0x016a, code:
+    /* JADX WARNING: Missing block: B:96:0x016a, code skipped:
             r17 = r10;
             r19 = r11;
             r10 = false;
      */
-    /* JADX WARNING: Missing block: B:119:0x01de, code:
+    /* JADX WARNING: Missing block: B:119:0x01de, code skipped:
             r17 = r10;
      */
-    /* JADX WARNING: Missing block: B:120:0x01e2, code:
+    /* JADX WARNING: Missing block: B:120:0x01e2, code skipped:
             r17 = r10;
      */
-    /* JADX WARNING: Missing block: B:132:0x021f, code:
+    /* JADX WARNING: Missing block: B:132:0x021f, code skipped:
             if (android.media.session.MediaSessionLegacyHelper.getHelper(r1.mContext).isGlobalPriorityActive() == false) goto L_0x0223;
      */
-    /* JADX WARNING: Missing block: B:133:0x0221, code:
+    /* JADX WARNING: Missing block: B:133:0x0221, code skipped:
             r13 = r13 & -2;
      */
-    /* JADX WARNING: Missing block: B:135:0x0225, code:
+    /* JADX WARNING: Missing block: B:135:0x0225, code skipped:
             if ((r13 & 1) != 0) goto L_0x01f3;
      */
-    /* JADX WARNING: Missing block: B:136:0x0227, code:
+    /* JADX WARNING: Missing block: B:136:0x0227, code skipped:
             r1.mBroadcastWakeLock.acquire();
             r0 = r1.mHandler.obtainMessage(3, new android.view.KeyEvent(r2));
             r0.setAsynchronous(true);
             r0.sendToTarget();
      */
-    /* JADX WARNING: Missing block: B:142:0x0253, code:
+    /* JADX WARNING: Missing block: B:142:0x0253, code skipped:
             if (r9 != 25) goto L_0x0288;
      */
-    /* JADX WARNING: Missing block: B:143:0x0255, code:
+    /* JADX WARNING: Missing block: B:143:0x0255, code skipped:
             if (r7 == false) goto L_0x027e;
      */
-    /* JADX WARNING: Missing block: B:144:0x0257, code:
+    /* JADX WARNING: Missing block: B:144:0x0257, code skipped:
             cancelPendingRingerToggleChordAction();
      */
-    /* JADX WARNING: Missing block: B:145:0x025a, code:
+    /* JADX WARNING: Missing block: B:145:0x025a, code skipped:
             if (r6 == false) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:147:0x025e, code:
+    /* JADX WARNING: Missing block: B:147:0x025e, code skipped:
             if (r1.mScreenshotChordVolumeDownKeyTriggered != false) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:149:0x0266, code:
+    /* JADX WARNING: Missing block: B:149:0x0266, code skipped:
             if ((r21.getFlags() & 1024) != 0) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:150:0x0268, code:
+    /* JADX WARNING: Missing block: B:150:0x0268, code skipped:
             r1.mScreenshotChordVolumeDownKeyTriggered = true;
             r1.mScreenshotChordVolumeDownKeyTime = r21.getDownTime();
             r1.mScreenshotChordVolumeDownKeyConsumed = false;
@@ -6673,27 +6765,27 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             interceptScreenshotChord();
             interceptAccessibilityShortcutChord();
      */
-    /* JADX WARNING: Missing block: B:151:0x027e, code:
+    /* JADX WARNING: Missing block: B:151:0x027e, code skipped:
             r1.mScreenshotChordVolumeDownKeyTriggered = false;
             cancelPendingScreenshotChordAction();
             cancelPendingAccessibilityShortcutAction();
      */
-    /* JADX WARNING: Missing block: B:153:0x028a, code:
+    /* JADX WARNING: Missing block: B:153:0x028a, code skipped:
             if (r9 != 24) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:154:0x028c, code:
+    /* JADX WARNING: Missing block: B:154:0x028c, code skipped:
             if (r7 == false) goto L_0x02b8;
      */
-    /* JADX WARNING: Missing block: B:155:0x028e, code:
+    /* JADX WARNING: Missing block: B:155:0x028e, code skipped:
             if (r6 == false) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:157:0x0292, code:
+    /* JADX WARNING: Missing block: B:157:0x0292, code skipped:
             if (r1.mA11yShortcutChordVolumeUpKeyTriggered != false) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:159:0x029a, code:
+    /* JADX WARNING: Missing block: B:159:0x029a, code skipped:
             if ((r21.getFlags() & 1024) != 0) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:160:0x029c, code:
+    /* JADX WARNING: Missing block: B:160:0x029c, code skipped:
             r1.mA11yShortcutChordVolumeUpKeyTriggered = true;
             r1.mA11yShortcutChordVolumeUpKeyTime = r21.getDownTime();
             r1.mA11yShortcutChordVolumeUpKeyConsumed = false;
@@ -6703,46 +6795,46 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             interceptAccessibilityShortcutChord();
             interceptRingerToggleChord();
      */
-    /* JADX WARNING: Missing block: B:161:0x02b8, code:
+    /* JADX WARNING: Missing block: B:161:0x02b8, code skipped:
             r1.mA11yShortcutChordVolumeUpKeyTriggered = false;
             cancelPendingScreenshotChordAction();
             cancelPendingAccessibilityShortcutAction();
             cancelPendingRingerToggleChordAction();
      */
-    /* JADX WARNING: Missing block: B:162:0x02c4, code:
+    /* JADX WARNING: Missing block: B:162:0x02c4, code skipped:
             if (r7 == false) goto L_0x0326;
      */
-    /* JADX WARNING: Missing block: B:163:0x02c6, code:
+    /* JADX WARNING: Missing block: B:163:0x02c6, code skipped:
             sendSystemKeyToStatusBarAsync(r21.getKeyCode());
             r4 = getTelecommService();
      */
-    /* JADX WARNING: Missing block: B:164:0x02d1, code:
+    /* JADX WARNING: Missing block: B:164:0x02d1, code skipped:
             if (r4 == null) goto L_0x02eb;
      */
-    /* JADX WARNING: Missing block: B:166:0x02d5, code:
+    /* JADX WARNING: Missing block: B:166:0x02d5, code skipped:
             if (r1.mHandleVolumeKeysInWM != false) goto L_0x02eb;
      */
-    /* JADX WARNING: Missing block: B:168:0x02db, code:
+    /* JADX WARNING: Missing block: B:168:0x02db, code skipped:
             if (r4.isRinging() == false) goto L_0x02eb;
      */
-    /* JADX WARNING: Missing block: B:169:0x02dd, code:
+    /* JADX WARNING: Missing block: B:169:0x02dd, code skipped:
             android.util.Log.i(TAG, "interceptKeyBeforeQueueing: VOLUME key-down while ringing: Silence ringer!");
             r4.silenceRinger();
             r13 = r13 & -2;
      */
-    /* JADX WARNING: Missing block: B:170:0x02eb, code:
+    /* JADX WARNING: Missing block: B:170:0x02eb, code skipped:
             r16 = 0;
      */
-    /* JADX WARNING: Missing block: B:172:?, code:
+    /* JADX WARNING: Missing block: B:172:?, code skipped:
             r0 = getAudioService().getMode();
      */
-    /* JADX WARNING: Missing block: B:173:0x02f6, code:
+    /* JADX WARNING: Missing block: B:173:0x02f6, code skipped:
             r16 = r0;
      */
-    /* JADX WARNING: Missing block: B:174:0x02f9, code:
+    /* JADX WARNING: Missing block: B:174:0x02f9, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:175:0x02fa, code:
+    /* JADX WARNING: Missing block: B:175:0x02fa, code skipped:
             android.util.Log.e(TAG, "Error getting AudioService in interceptKeyBeforeQueueing.", r0);
             r0 = r16;
      */
@@ -7308,7 +7400,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         this.mBroadcastWakeLock.release();
     }
 
-    /* JADX WARNING: Missing block: B:26:0x004b, code:
+    /* JADX WARNING: Missing block: B:26:0x004b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7451,16 +7543,18 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
 
     private void finishKeyguardDrawn() {
         synchronized (this.mLock) {
-            if (!this.mScreenOnEarly || this.mKeyguardDrawComplete) {
-                return;
+            if (this.mScreenOnEarly) {
+                if (!this.mKeyguardDrawComplete) {
+                    this.mKeyguardDrawComplete = true;
+                    if (this.mKeyguardDelegate != null) {
+                        this.mHandler.removeMessages(6);
+                    }
+                    this.mWindowManagerDrawComplete = false;
+                    Flog.i(NativeResponseCode.SERVICE_FOUND, "UL_Power finishKeyguardDrawn -> waitForAllWindowsDrawn");
+                    this.mWindowManagerInternal.waitForAllWindowsDrawn(this.mWindowManagerDrawCallback, 1000);
+                    return;
+                }
             }
-            this.mKeyguardDrawComplete = true;
-            if (this.mKeyguardDelegate != null) {
-                this.mHandler.removeMessages(6);
-            }
-            this.mWindowManagerDrawComplete = false;
-            Flog.i(NativeResponseCode.SERVICE_FOUND, "UL_Power finishKeyguardDrawn -> waitForAllWindowsDrawn");
-            this.mWindowManagerInternal.waitForAllWindowsDrawn(this.mWindowManagerDrawCallback, 1000);
         }
     }
 
@@ -7555,24 +7649,26 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
             if (DEBUG_WAKEUP) {
                 Slog.i(TAG, "UL_Power finish Windows Drawn begin...");
             }
-            if (!this.mScreenOnEarly || this.mWindowManagerDrawComplete) {
-                return;
+            if (this.mScreenOnEarly) {
+                if (!this.mWindowManagerDrawComplete) {
+                    this.mWindowManagerDrawComplete = true;
+                    finishScreenTurningOn();
+                    return;
+                }
             }
-            this.mWindowManagerDrawComplete = true;
-            finishScreenTurningOn();
         }
     }
 
-    /* JADX WARNING: Missing block: B:33:0x0095, code:
+    /* JADX WARNING: Missing block: B:34:0x0095, code skipped:
             if (r0 == null) goto L_0x009a;
      */
-    /* JADX WARNING: Missing block: B:34:0x0097, code:
+    /* JADX WARNING: Missing block: B:35:0x0097, code skipped:
             r0.onScreenOn();
      */
-    /* JADX WARNING: Missing block: B:35:0x009a, code:
+    /* JADX WARNING: Missing block: B:36:0x009a, code skipped:
             if (r2 == false) goto L_0x00a3;
      */
-    /* JADX WARNING: Missing block: B:37:?, code:
+    /* JADX WARNING: Missing block: B:38:?, code skipped:
             r5.mWindowManager.enableScreenIfNeeded();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7599,54 +7695,55 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                 stringBuilder.append(this.mWindowManagerDrawComplete);
                 Slog.d(str, stringBuilder.toString());
             }
-            if (this.mScreenOnFully || !this.mScreenOnEarly || !this.mWindowManagerDrawComplete || (this.mAwake && !this.mKeyguardDrawComplete)) {
-                return;
-            }
-            Slog.i(TAG, "UL_Power Finished screen turning on...");
-            ScreenOnListener listener = this.mScreenOnListener;
-            this.mScreenOnListener = null;
-            this.mScreenOnFully = true;
-            boolean enableScreen;
-            if (this.mKeyguardDrawnOnce || !this.mAwake) {
-                enableScreen = false;
-            } else {
-                this.mKeyguardDrawnOnce = true;
-                enableScreen = true;
-                if (this.mBootMessageNeedsHiding) {
-                    this.mBootMessageNeedsHiding = false;
-                    hideBootMessages();
+            if (!this.mScreenOnFully && this.mScreenOnEarly && this.mWindowManagerDrawComplete) {
+                if (!this.mAwake || this.mKeyguardDrawComplete) {
+                    Slog.i(TAG, "UL_Power Finished screen turning on...");
+                    ScreenOnListener listener = this.mScreenOnListener;
+                    this.mScreenOnListener = null;
+                    this.mScreenOnFully = true;
+                    boolean enableScreen;
+                    if (this.mKeyguardDrawnOnce || !this.mAwake) {
+                        enableScreen = false;
+                    } else {
+                        this.mKeyguardDrawnOnce = true;
+                        enableScreen = true;
+                        if (this.mBootMessageNeedsHiding) {
+                            this.mBootMessageNeedsHiding = false;
+                            hideBootMessages();
+                        }
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (r2.ifBootMessageShowing == false) goto L_0x0029;
      */
-    /* JADX WARNING: Missing block: B:12:0x0013, code:
+    /* JADX WARNING: Missing block: B:12:0x0013, code skipped:
             if (DEBUG_WAKEUP == false) goto L_0x001c;
      */
-    /* JADX WARNING: Missing block: B:13:0x0015, code:
+    /* JADX WARNING: Missing block: B:13:0x0015, code skipped:
             android.util.Slog.d(TAG, "HOTA handleHideBootMessage: dismissing");
      */
-    /* JADX WARNING: Missing block: B:14:0x001c, code:
+    /* JADX WARNING: Missing block: B:14:0x001c, code skipped:
             r2.mHandler.post(new com.android.server.policy.PhoneWindowManager.AnonymousClass22(r2));
             r2.ifBootMessageShowing = false;
      */
-    /* JADX WARNING: Missing block: B:16:0x002b, code:
+    /* JADX WARNING: Missing block: B:16:0x002b, code skipped:
             if (r2.mBootMsgDialog == null) goto L_0x0040;
      */
-    /* JADX WARNING: Missing block: B:18:0x002f, code:
+    /* JADX WARNING: Missing block: B:18:0x002f, code skipped:
             if (DEBUG_WAKEUP == false) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:19:0x0031, code:
+    /* JADX WARNING: Missing block: B:19:0x0031, code skipped:
             android.util.Slog.d(TAG, "handleHideBootMessage: dismissing");
      */
-    /* JADX WARNING: Missing block: B:20:0x0038, code:
+    /* JADX WARNING: Missing block: B:20:0x0038, code skipped:
             r2.mBootMsgDialog.dismiss();
             r2.mBootMsgDialog = null;
      */
-    /* JADX WARNING: Missing block: B:21:0x0040, code:
+    /* JADX WARNING: Missing block: B:21:0x0040, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7744,7 +7841,12 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
     public boolean isKeyguardDrawnLw() {
         boolean z;
         synchronized (this.mLock) {
-            z = this.mKeyguardDrawnOnce || this.mKeyguardDrawComplete;
+            if (!this.mKeyguardDrawnOnce) {
+                if (!this.mKeyguardDrawComplete) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
@@ -7832,144 +7934,251 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         PhoneWindow.sendCloseSystemWindows(this.mContext, reason);
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:116:0x016e A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:115:0x016b A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x017d A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:165:0x01cd A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:158:0x01c1 A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x01ad A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x0199 A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x018d A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:122:0x0181 A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:115:0x016b A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:116:0x016e A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x017d A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:165:0x01cd A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:158:0x01c1 A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x01ad A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x0199 A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x018d A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:122:0x0181 A:{Catch:{ RemoteException -> 0x00d8 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public int rotationForOrientationLw(int orientation, int lastRotation, boolean defaultDisplay) {
         int i = 0;
         int defaultRotation = SystemProperties.getInt("ro.panel.hw_orientation", 0) / 90;
-        if (this.mForceDefaultOrientation) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("rotationForOrientationLw defaultRotation ");
-            stringBuilder.append(defaultRotation);
-            Flog.i(308, stringBuilder.toString());
-            return defaultRotation;
-        }
-        synchronized (this.mLock) {
-            int sensorRotation = getRotationFromSensorOrFaceFR(orientation, lastRotation);
-            int preferredRotation = -1;
-            if (!defaultDisplay) {
-                preferredRotation = 0;
-            } else if (this.mLidState == 1 && this.mLidOpenRotation >= 0) {
-                preferredRotation = this.mLidOpenRotation;
-            } else if (this.mDockMode == 2 && (this.mCarDockEnablesAccelerometer || this.mCarDockRotation >= 0)) {
-                preferredRotation = this.mCarDockEnablesAccelerometer ? sensorRotation : this.mCarDockRotation;
-            } else if ((this.mDockMode == 1 || this.mDockMode == 3 || this.mDockMode == 4) && (this.mDeskDockEnablesAccelerometer || this.mDeskDockRotation >= 0)) {
-                if (this.mDeskDockEnablesAccelerometer) {
-                    i = sensorRotation;
-                } else {
-                    i = this.mDeskDockRotation;
-                }
-                preferredRotation = i;
-            } else if (this.mHdmiPlugged && this.mDemoHdmiRotationLock) {
-                preferredRotation = this.mDemoHdmiRotation;
-            } else if (this.mHdmiPlugged && this.mDockMode == 0 && this.mUndockedHdmiRotation >= 0) {
-                preferredRotation = this.mUndockedHdmiRotation;
-            } else if (this.mDemoRotationLock) {
-                preferredRotation = this.mDemoRotation;
-            } else if (this.mPersistentVrModeEnabled) {
-                preferredRotation = this.mPortraitRotation;
-            } else if (orientation == 14) {
-                preferredRotation = lastRotation;
-            } else if (!this.mSupportAutoRotation) {
-                preferredRotation = -1;
-            } else if ((this.mUserRotationMode == 0 && (orientation == 2 || orientation == -1 || orientation == 11 || orientation == 12 || orientation == 13)) || orientation == 4 || orientation == 10 || orientation == 6 || orientation == 7) {
-                if (this.mAllowAllRotations < 0) {
-                    if (this.mContext.getResources().getBoolean(17956870)) {
-                        i = 1;
+        if (!this.mForceDefaultOrientation) {
+            synchronized (this.mLock) {
+                StringBuilder stringBuilder;
+                int sensorRotation = getRotationFromSensorOrFaceFR(orientation, lastRotation);
+                int preferredRotation = -1;
+                if (!defaultDisplay) {
+                    preferredRotation = 0;
+                } else if (this.mLidState == 1 && this.mLidOpenRotation >= 0) {
+                    preferredRotation = this.mLidOpenRotation;
+                } else if (this.mDockMode != 2 || (!this.mCarDockEnablesAccelerometer && this.mCarDockRotation < 0)) {
+                    if (this.mDockMode == 1 || this.mDockMode == 3 || this.mDockMode == 4) {
+                        if (!this.mDeskDockEnablesAccelerometer) {
+                            if (this.mDeskDockRotation >= 0) {
+                            }
+                        }
+                        if (this.mDeskDockEnablesAccelerometer) {
+                            i = sensorRotation;
+                        } else {
+                            i = this.mDeskDockRotation;
+                        }
+                        preferredRotation = i;
                     }
-                    this.mAllowAllRotations = i;
-                }
-                preferredRotation = (sensorRotation != 2 || this.mAllowAllRotations == 1 || orientation == 10 || orientation == 13) ? sensorRotation : lastRotation;
-            } else if (this.mUserRotationMode == 1 && orientation != 5) {
-                i = -1;
-                try {
-                    i = this.mWindowManager.getDockedStackSide();
-                } catch (RemoteException e) {
-                    Slog.e(TAG, "Remote Exception while getting dockside!");
-                }
-                if (i != -1) {
-                    String str = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("Keep last Rotate as preferred in DockMode while auto-rotation off with lastRotation = ");
-                    stringBuilder2.append(lastRotation);
-                    Slog.i(str, stringBuilder2.toString());
-                    preferredRotation = lastRotation;
+                    if (this.mHdmiPlugged && this.mDemoHdmiRotationLock) {
+                        preferredRotation = this.mDemoHdmiRotation;
+                    } else if (this.mHdmiPlugged && this.mDockMode == 0 && this.mUndockedHdmiRotation >= 0) {
+                        preferredRotation = this.mUndockedHdmiRotation;
+                    } else if (this.mDemoRotationLock) {
+                        preferredRotation = this.mDemoRotation;
+                    } else if (this.mPersistentVrModeEnabled) {
+                        preferredRotation = this.mPortraitRotation;
+                    } else if (orientation == 14) {
+                        preferredRotation = lastRotation;
+                    } else if (this.mSupportAutoRotation) {
+                        if (!((this.mUserRotationMode == 0 && (orientation == 2 || orientation == -1 || orientation == 11 || orientation == 12 || orientation == 13)) || orientation == 4 || orientation == 10 || orientation == 6)) {
+                            if (orientation != 7) {
+                                if (this.mUserRotationMode == 1 && orientation != 5) {
+                                    i = -1;
+                                    try {
+                                        i = this.mWindowManager.getDockedStackSide();
+                                    } catch (RemoteException e) {
+                                        Slog.e(TAG, "Remote Exception while getting dockside!");
+                                    }
+                                    if (i != -1) {
+                                        String str = TAG;
+                                        StringBuilder stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Keep last Rotate as preferred in DockMode while auto-rotation off with lastRotation = ");
+                                        stringBuilder2.append(lastRotation);
+                                        Slog.i(str, stringBuilder2.toString());
+                                        preferredRotation = lastRotation;
+                                    } else {
+                                        preferredRotation = this.mUserRotation;
+                                    }
+                                    i = preferredRotation;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("rotationForOrientationLw orientation=");
+                                    stringBuilder.append(orientation);
+                                    stringBuilder.append(", lastRotation=");
+                                    stringBuilder.append(lastRotation);
+                                    stringBuilder.append(", sensorRotation=");
+                                    stringBuilder.append(sensorRotation);
+                                    stringBuilder.append(", preferredRotation=");
+                                    stringBuilder.append(i);
+                                    stringBuilder.append("); user=");
+                                    stringBuilder.append(this.mUserRotation);
+                                    stringBuilder.append(" ");
+                                    if (this.mUserRotationMode == 1) {
+                                    }
+                                    stringBuilder.append(this.mUserRotationMode == 1 ? "USER_ROTATION_LOCKED" : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
+                                    Flog.i(308, stringBuilder.toString());
+                                    switch (orientation) {
+                                        case 0:
+                                            break;
+                                        case 1:
+                                            break;
+                                        case 6:
+                                        case 11:
+                                            break;
+                                        case 7:
+                                        case 12:
+                                            break;
+                                        case 8:
+                                            break;
+                                        case 9:
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                i = preferredRotation;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("rotationForOrientationLw orientation=");
+                                stringBuilder.append(orientation);
+                                stringBuilder.append(", lastRotation=");
+                                stringBuilder.append(lastRotation);
+                                stringBuilder.append(", sensorRotation=");
+                                stringBuilder.append(sensorRotation);
+                                stringBuilder.append(", preferredRotation=");
+                                stringBuilder.append(i);
+                                stringBuilder.append("); user=");
+                                stringBuilder.append(this.mUserRotation);
+                                stringBuilder.append(" ");
+                                stringBuilder.append(this.mUserRotationMode == 1 ? "USER_ROTATION_LOCKED" : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
+                                Flog.i(308, stringBuilder.toString());
+                                int i2;
+                                switch (orientation) {
+                                    case 0:
+                                        if (isLandscapeOrSeascape(i)) {
+                                            return i;
+                                        }
+                                        i2 = this.mLandscapeRotation;
+                                        return i2;
+                                    case 1:
+                                        if (isAnyPortrait(i)) {
+                                            return i;
+                                        }
+                                        i2 = this.mPortraitRotation;
+                                        return i2;
+                                    case 6:
+                                    case 11:
+                                        if (isLandscapeOrSeascape(i)) {
+                                            return i;
+                                        } else if (isLandscapeOrSeascape(lastRotation)) {
+                                            return lastRotation;
+                                        } else {
+                                            i2 = this.mLandscapeRotation;
+                                            return i2;
+                                        }
+                                    case 7:
+                                    case 12:
+                                        if (isAnyPortrait(i)) {
+                                            return i;
+                                        } else if (isAnyPortrait(lastRotation)) {
+                                            return lastRotation;
+                                        } else {
+                                            i2 = this.mPortraitRotation;
+                                            return i2;
+                                        }
+                                    case 8:
+                                        if (isLandscapeOrSeascape(i)) {
+                                            return i;
+                                        }
+                                        i2 = this.mSeascapeRotation;
+                                        return i2;
+                                    case 9:
+                                        if (isAnyPortrait(i)) {
+                                            return i;
+                                        }
+                                        i2 = this.mUpsideDownRotation;
+                                        return i2;
+                                    default:
+                                        if (i >= 0) {
+                                            return i;
+                                        }
+                                        return defaultRotation;
+                                }
+                            }
+                        }
+                        if (this.mAllowAllRotations < 0) {
+                            if (this.mContext.getResources().getBoolean(17956870)) {
+                                i = 1;
+                            }
+                            this.mAllowAllRotations = i;
+                        }
+                        if (!(sensorRotation != 2 || this.mAllowAllRotations == 1 || orientation == 10)) {
+                            if (orientation != 13) {
+                                preferredRotation = lastRotation;
+                            }
+                        }
+                        preferredRotation = sensorRotation;
+                    } else {
+                        preferredRotation = -1;
+                    }
                 } else {
-                    preferredRotation = this.mUserRotation;
+                    preferredRotation = this.mCarDockEnablesAccelerometer ? sensorRotation : this.mCarDockRotation;
+                }
+                i = preferredRotation;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("rotationForOrientationLw orientation=");
+                stringBuilder.append(orientation);
+                stringBuilder.append(", lastRotation=");
+                stringBuilder.append(lastRotation);
+                stringBuilder.append(", sensorRotation=");
+                stringBuilder.append(sensorRotation);
+                stringBuilder.append(", preferredRotation=");
+                stringBuilder.append(i);
+                stringBuilder.append("); user=");
+                stringBuilder.append(this.mUserRotation);
+                stringBuilder.append(" ");
+                if (this.mUserRotationMode == 1) {
+                }
+                stringBuilder.append(this.mUserRotationMode == 1 ? "USER_ROTATION_LOCKED" : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
+                Flog.i(308, stringBuilder.toString());
+                switch (orientation) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 6:
+                    case 11:
+                        break;
+                    case 7:
+                    case 12:
+                        break;
+                    case 8:
+                        break;
+                    case 9:
+                        break;
+                    default:
+                        break;
                 }
             }
-            i = preferredRotation;
-            StringBuilder stringBuilder3 = new StringBuilder();
-            stringBuilder3.append("rotationForOrientationLw orientation=");
-            stringBuilder3.append(orientation);
-            stringBuilder3.append(", lastRotation=");
-            stringBuilder3.append(lastRotation);
-            stringBuilder3.append(", sensorRotation=");
-            stringBuilder3.append(sensorRotation);
-            stringBuilder3.append(", preferredRotation=");
-            stringBuilder3.append(i);
-            stringBuilder3.append("); user=");
-            stringBuilder3.append(this.mUserRotation);
-            stringBuilder3.append(" ");
-            stringBuilder3.append(this.mUserRotationMode == 1 ? "USER_ROTATION_LOCKED" : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
-            Flog.i(308, stringBuilder3.toString());
-            int i2;
-            switch (orientation) {
-                case 0:
-                    if (isLandscapeOrSeascape(i)) {
-                        return i;
-                    }
-                    i2 = this.mLandscapeRotation;
-                    return i2;
-                case 1:
-                    if (isAnyPortrait(i)) {
-                        return i;
-                    }
-                    i2 = this.mPortraitRotation;
-                    return i2;
-                case 6:
-                case 11:
-                    if (isLandscapeOrSeascape(i)) {
-                        return i;
-                    } else if (isLandscapeOrSeascape(lastRotation)) {
-                        return lastRotation;
-                    } else {
-                        i2 = this.mLandscapeRotation;
-                        return i2;
-                    }
-                case 7:
-                case 12:
-                    if (isAnyPortrait(i)) {
-                        return i;
-                    } else if (isAnyPortrait(lastRotation)) {
-                        return lastRotation;
-                    } else {
-                        i2 = this.mPortraitRotation;
-                        return i2;
-                    }
-                case 8:
-                    if (isLandscapeOrSeascape(i)) {
-                        return i;
-                    }
-                    i2 = this.mSeascapeRotation;
-                    return i2;
-                case 9:
-                    if (isAnyPortrait(i)) {
-                        return i;
-                    }
-                    i2 = this.mUpsideDownRotation;
-                    return i2;
-                default:
-                    if (i >= 0) {
-                        return i;
-                    }
-                    return defaultRotation;
-            }
         }
+        StringBuilder stringBuilder3 = new StringBuilder();
+        stringBuilder3.append("rotationForOrientationLw defaultRotation ");
+        stringBuilder3.append(defaultRotation);
+        Flog.i(308, stringBuilder3.toString());
+        return defaultRotation;
     }
 
-    /* JADX WARNING: Missing block: B:5:0x000c, code:
+    /* JADX WARNING: Missing block: B:5:0x000c, code skipped:
             return isAnyPortrait(r3);
      */
-    /* JADX WARNING: Missing block: B:7:0x0011, code:
+    /* JADX WARNING: Missing block: B:7:0x0011, code skipped:
             return isLandscapeOrSeascape(r3);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8433,7 +8642,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         return Global.getInt(this.mContext.getContentResolver(), "theater_mode_on", 0) == 1;
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0060, code:
+    /* JADX WARNING: Missing block: B:25:0x0060, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8464,10 +8673,10 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0025, code:
+    /* JADX WARNING: Missing block: B:14:0x0025, code skipped:
             return android.os.VibrationEffect.get(0);
      */
-    /* JADX WARNING: Missing block: B:16:0x002b, code:
+    /* JADX WARNING: Missing block: B:16:0x002b, code skipped:
             return android.os.VibrationEffect.get(5);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8857,7 +9066,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x003f, code:
+    /* JADX WARNING: Missing block: B:26:0x003f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -9185,7 +9394,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         pw.print(prefix);
         pw.println("Looper state:");
         Looper looper = this.mHandler.getLooper();
-        Printer printWriterPrinter = new PrintWriterPrinter(pw);
+        PrintWriterPrinter printWriterPrinter = new PrintWriterPrinter(pw);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(prefix);
         stringBuilder.append("  ");
@@ -9473,6 +9682,18 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         }
     }
 
+    private boolean isExecOtaPdLaya() {
+        return this.otaStateForOverSeaPdLaya == 0;
+    }
+
+    private boolean isOverSeaVersion() {
+        return (sIsChineseLanguage && sIsChinaRegion) ? false : true;
+    }
+
+    private boolean isOverSeaLyaNeedOta() {
+        return isOverSeaVersion() && sIsLayaPorschePorduct && isExecOtaPdLaya();
+    }
+
     public boolean startAodService(int startState) {
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
@@ -9499,7 +9720,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         if (-1 == this.mFingerprintType) {
             this.mFingerprintType = getHardwareType();
         }
-        if (this.mAodSwitch == 0) {
+        if (this.mAodSwitch == 0 && !isOverSeaLyaNeedOta()) {
             if (!isInScreenFingerprint(this.mFingerprintType)) {
                 this.mAODState = startState;
                 return false;
@@ -9551,6 +9772,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 intent = new Intent("com.huawei.aod.action.AOD_SCREEN_ON");
                             }
                         }
+                        break;
                     case 3:
                         synchronized (this) {
                             String str = PhoneWindowManager.TAG;
@@ -9574,6 +9796,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 intent.putExtra(PhoneWindowManager.NEED_START_AOD_WHEN_SCREEN_OFF, pickUpFlag);
                             }
                         }
+                        break;
                     case 4:
                         synchronized (this) {
                             if (PhoneWindowManager.this.mIAodStateCallback != null) {
@@ -9585,6 +9808,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 intent = new Intent("com.huawei.aod.action.AOD_WAKE_UP");
                             }
                         }
+                        break;
                     case 5:
                         synchronized (this) {
                             if (PhoneWindowManager.this.mIAodStateCallback != null) {
@@ -9594,6 +9818,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 }
                             }
                         }
+                        break;
                     case 6:
                         intent = new Intent("com.huawei.aod.action.AOD_SCREEN_OFF");
                         break;
@@ -9609,6 +9834,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
                                 intent = new Intent("com.huawei.aod.action.AOD_GOING_TO_SLEEP");
                             }
                         }
+                        break;
                 }
                 if (intent != null) {
                     intent.setComponent(new ComponentName("com.huawei.aod", "com.huawei.aod.AODService"));
@@ -9720,7 +9946,7 @@ public class PhoneWindowManager extends AbsPhoneWindowManager implements WindowM
         return this.mHasNavigationBar && this.mNavigationBar != null && this.mNavigationBar.isVisibleLw();
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0046, code:
+    /* JADX WARNING: Missing block: B:19:0x0046, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

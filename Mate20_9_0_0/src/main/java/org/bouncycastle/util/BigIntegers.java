@@ -8,7 +8,7 @@ public final class BigIntegers {
     private static final BigInteger ZERO = BigInteger.valueOf(0);
 
     public static byte[] asUnsignedByteArray(int i, BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         if (toByteArray.length == i) {
             return toByteArray;
         }
@@ -18,21 +18,21 @@ public final class BigIntegers {
         }
         int length = toByteArray.length - i2;
         if (length <= i) {
-            Object obj = new byte[i];
-            System.arraycopy(toByteArray, i2, obj, obj.length - length, length);
-            return obj;
+            byte[] bArr = new byte[i];
+            System.arraycopy(toByteArray, i2, bArr, bArr.length - length, length);
+            return bArr;
         }
         throw new IllegalArgumentException("standard length exceeded for value");
     }
 
     public static byte[] asUnsignedByteArray(BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         if (toByteArray[0] != (byte) 0) {
             return toByteArray;
         }
-        Object obj = new byte[(toByteArray.length - 1)];
-        System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[(toByteArray.length - 1)];
+        System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+        return bArr;
     }
 
     public static BigInteger createRandomInRange(BigInteger bigInteger, BigInteger bigInteger2, SecureRandom secureRandom) {
@@ -61,9 +61,9 @@ public final class BigIntegers {
 
     public static BigInteger fromUnsignedByteArray(byte[] bArr, int i, int i2) {
         if (!(i == 0 && i2 == bArr.length)) {
-            Object obj = new byte[i2];
-            System.arraycopy(bArr, i, obj, 0, i2);
-            bArr = obj;
+            byte[] bArr2 = new byte[i2];
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            bArr = bArr2;
         }
         return new BigInteger(1, bArr);
     }

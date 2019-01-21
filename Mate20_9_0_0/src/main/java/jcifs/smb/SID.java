@@ -92,7 +92,7 @@ public class SID extends sid_t {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:20:0x0067  */
-    /* JADX WARNING: Missing block: B:17:0x0063, code:
+    /* JADX WARNING: Missing block: B:17:0x0063, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -197,7 +197,7 @@ public class SID extends sid_t {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:12:0x0048  */
-    /* JADX WARNING: Missing block: B:28:0x0075, code:
+    /* JADX WARNING: Missing block: B:28:0x0075, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -549,11 +549,11 @@ public class SID extends sid_t {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:28:0x0064  */
-    /* JADX WARNING: Can't wrap try/catch for R(5:21|22|23|24|25) */
-    /* JADX WARNING: Missing block: B:35:0x0072, code:
+    /* JADX WARNING: Can't wrap try/catch for region: R(5:21|22|23|24|25) */
+    /* JADX WARNING: Missing block: B:35:0x0072, code skipped:
             r6 = th;
      */
-    /* JADX WARNING: Missing block: B:41:?, code:
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             return r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -620,7 +620,7 @@ public class SID extends sid_t {
 
     /* JADX WARNING: Removed duplicated region for block: B:14:0x0084  */
     /* JADX WARNING: Removed duplicated region for block: B:14:0x0084  */
-    /* JADX WARNING: Missing block: B:47:0x0137, code:
+    /* JADX WARNING: Missing block: B:47:0x0137, code skipped:
             return r11;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -642,6 +642,18 @@ public class SID extends sid_t {
                     th = th2;
                     policyHandle = policyHandle2;
                     if (handle != null) {
+                        if (policyHandle != null) {
+                            if (domainHandle != null) {
+                                try {
+                                    domainHandle.close();
+                                } catch (Throwable th3) {
+                                    th = th3;
+                                    throw th;
+                                }
+                            }
+                            policyHandle.close();
+                        }
+                        handle.close();
                     }
                     throw th;
                 }
@@ -675,8 +687,8 @@ public class SID extends sid_t {
                             if (domainHandle2 != null) {
                                 try {
                                     domainHandle2.close();
-                                } catch (Throwable th3) {
-                                    th = th3;
+                                } catch (Throwable th4) {
+                                    th = th4;
                                     domainHandle = domainHandle2;
                                     policyHandle = policyHandle2;
                                     throw th;
@@ -686,29 +698,17 @@ public class SID extends sid_t {
                         }
                         handle.close();
                     }
-                } catch (Throwable th4) {
-                    th = th4;
+                } catch (Throwable th5) {
+                    th = th5;
                     domainHandle = domainHandle2;
                     policyHandle = policyHandle2;
                     if (handle != null) {
                     }
                     throw th;
                 }
-            } catch (Throwable th5) {
-                th = th5;
+            } catch (Throwable th6) {
+                th = th6;
                 if (handle != null) {
-                    if (policyHandle != null) {
-                        if (domainHandle != null) {
-                            try {
-                                domainHandle.close();
-                            } catch (Throwable th6) {
-                                th = th6;
-                                throw th;
-                            }
-                        }
-                        policyHandle.close();
-                    }
-                    handle.close();
                 }
                 throw th;
             }

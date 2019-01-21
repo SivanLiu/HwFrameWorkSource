@@ -204,7 +204,7 @@ public class WifiP2pServiceHisiExt {
                     WifiP2pServiceHisiExt.this.mIsDialogNeedShow = isChecked;
                 }
             });
-            AlertDialog dialog = new Builder(this.mContext, 33947691).setCancelable(false).setTitle(r.getString(17041398)).setMessage(r.getString(17041409)).setView(checkBox).setNegativeButton(r.getString(17039360), new OnClickListener() {
+            AlertDialog dialog = new Builder(this.mContext, 33947691).setCancelable(false).setTitle(r.getString(17041399)).setMessage(r.getString(17041410)).setView(checkBox).setNegativeButton(r.getString(17039360), new OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     WifiP2pServiceHisiExt.this.mIsStaToP2pDialogExist = false;
                     Slog.d(WifiP2pServiceHisiExt.TAG, "NegativeButton is click");

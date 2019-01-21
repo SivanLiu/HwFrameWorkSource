@@ -555,7 +555,7 @@ public class GMSSPrivateKey extends ASN1Object {
             objArr = algorithmIdentifierArr;
         }
         aSN1EncodableVector3 = aSN1EncodableVector8;
-        ASN1Encodable dERSequence = new DERSequence(aSN1EncodableVector6);
+        DERSequence dERSequence = new DERSequence(aSN1EncodableVector6);
         aSN1EncodableVector6 = aSN1EncodableVector3;
         aSN1EncodableVector6.add(dERSequence);
         aSN1EncodableVector7 = new ASN1EncodableVector();

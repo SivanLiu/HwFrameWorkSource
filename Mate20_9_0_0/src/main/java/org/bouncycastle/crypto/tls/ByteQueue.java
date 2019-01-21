@@ -47,9 +47,9 @@ public class ByteQueue {
         if ((this.skipped + this.available) + i2 > this.databuf.length) {
             int nextTwoPow = nextTwoPow(this.available + i2);
             if (nextTwoPow > this.databuf.length) {
-                Object obj = new byte[nextTwoPow];
-                System.arraycopy(this.databuf, this.skipped, obj, 0, this.available);
-                this.databuf = obj;
+                byte[] bArr2 = new byte[nextTwoPow];
+                System.arraycopy(this.databuf, this.skipped, bArr2, 0, this.available);
+                this.databuf = bArr2;
             } else {
                 System.arraycopy(this.databuf, this.skipped, this.databuf, 0, this.available);
             }

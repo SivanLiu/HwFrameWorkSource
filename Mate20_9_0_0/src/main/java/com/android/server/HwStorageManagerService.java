@@ -32,9 +32,11 @@ public class HwStorageManagerService extends StorageManagerService {
     private static final int FILE_INVALID_PATH = -202;
     private static final String GET_KEY_DESC = "get_key_desc";
     private static final String GET_PRE_LOAD_POLICY_FLAG = "get_pre_load_policy_flag";
+    private static final int HONOR_STORAGE_SERIAL = 1;
     private static final int HUAWEI_EARL_PRODUCT_ID = 15168;
     private static final int HUAWEI_EARL_STORAGE_SERIAL = 0;
     private static final int HUAWEI_EARL_VENDOR_ID = 4817;
+    private static final int INVALID_DEVICE_SERIAL = -1;
     private static final String LOCK_USER_KEY_ISEC = "lock_user_key_isec";
     private static final String LOCK_USER_SCREEN_ISEC = "lock_user_screen_isec";
     private static final String MANAGE_USE_SECURITY = "com.huawei.permission.MANAGE_USE_SECURITY";
@@ -722,11 +724,11 @@ public class HwStorageManagerService extends StorageManagerService {
         }
     }
 
-    public boolean checkIfHuaweiEarl() {
+    public int getUsbDeviceExInfo() {
         if (this.mUsbManager == null) {
             this.mUsbManager = (UsbManager) this.mContext.getSystemService("usb");
             if (this.mUsbManager == null) {
-                return false;
+                return -1;
             }
         }
         for (UsbDevice device : this.mUsbManager.getDeviceList().values()) {
@@ -742,13 +744,15 @@ public class HwStorageManagerService extends StorageManagerService {
                                 connection.close();
                             }
                             Binder.restoreCallingIdentity(ident);
-                            return false;
-                        } else if (inquireStorageSerialNumber(connection) == 0) {
+                            return -1;
+                        }
+                        int deviceCode = inquireStorageSerialNumber(connection);
+                        if (deviceCode == 0 || deviceCode == 1) {
                             if (connection != null) {
                                 connection.close();
                             }
                             Binder.restoreCallingIdentity(ident);
-                            return true;
+                            return deviceCode;
                         }
                     }
                     Slog.e(TAG, " openDevice(): permissin deny ");
@@ -764,16 +768,23 @@ public class HwStorageManagerService extends StorageManagerService {
                 }
             }
         }
-        return false;
+        return -1;
     }
 
-    protected void checkIfHuaweiEarlMount() {
+    protected void checkIfBackUpDeviceMount(int deviceCode) {
+        int i = deviceCode;
         synchronized (this.mLock) {
             DiskInfo diskInfo = null;
             for (String s : this.mDisks.keySet()) {
                 diskInfo = (DiskInfo) this.mDisks.get(s);
                 if (diskInfo.isUsb()) {
-                    diskInfo = new DiskInfo(s, diskInfo.flags | 64);
+                    int flags = diskInfo.flags;
+                    if (i == 0) {
+                        flags |= 64;
+                    } else if (i == 1) {
+                        flags |= 128;
+                    }
+                    diskInfo = new DiskInfo(s, flags);
                     this.mDisks.replace(s, diskInfo);
                 }
             }
@@ -784,10 +795,17 @@ public class HwStorageManagerService extends StorageManagerService {
                     this.mVolumes.replace(s2, vol);
                     onVolumeCreatedLocked(vol);
                 }
-                for (int userId : this.mSystemUnlockedUsers) {
+                int[] iArr = this.mSystemUnlockedUsers;
+                int length = iArr.length;
+                boolean z = false;
+                int i2 = 0;
+                while (i2 < length) {
+                    int userId = iArr[i2];
                     if (vol.isVisibleForRead(userId)) {
-                        this.mHandler.obtainMessage(6, vol.buildStorageVolume(this.mContext, userId, false)).sendToTarget();
+                        this.mHandler.obtainMessage(6, vol.buildStorageVolume(this.mContext, userId, z)).sendToTarget();
                     }
+                    i2++;
+                    z = false;
                 }
             }
         }

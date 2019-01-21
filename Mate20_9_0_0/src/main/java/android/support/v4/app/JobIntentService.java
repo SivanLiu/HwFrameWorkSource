@@ -242,16 +242,16 @@ public abstract class JobIntentService extends Service {
             return result;
         }
 
-        /* JADX WARNING: Missing block: B:11:0x0011, code:
+        /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             if (r2 == null) goto L_0x0026;
      */
-        /* JADX WARNING: Missing block: B:12:0x0013, code:
+        /* JADX WARNING: Missing block: B:12:0x0013, code skipped:
             r2.getIntent().setExtrasClassLoader(r4.mService.getClassLoader());
      */
-        /* JADX WARNING: Missing block: B:13:0x0025, code:
+        /* JADX WARNING: Missing block: B:13:0x0025, code skipped:
             return new android.support.v4.app.JobIntentService.JobServiceEngineImpl.WrapperWorkItem(r4, r2);
      */
-        /* JADX WARNING: Missing block: B:14:0x0026, code:
+        /* JADX WARNING: Missing block: B:14:0x0026, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

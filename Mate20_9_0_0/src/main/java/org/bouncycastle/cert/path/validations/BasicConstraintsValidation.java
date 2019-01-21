@@ -24,7 +24,7 @@ public class BasicConstraintsValidation implements CertPathValidation {
     }
 
     public Memoable copy() {
-        Memoable basicConstraintsValidation = new BasicConstraintsValidation(this.isMandatory);
+        BasicConstraintsValidation basicConstraintsValidation = new BasicConstraintsValidation(this.isMandatory);
         basicConstraintsValidation.bc = this.bc;
         basicConstraintsValidation.pathLengthRemaining = this.pathLengthRemaining;
         return basicConstraintsValidation;

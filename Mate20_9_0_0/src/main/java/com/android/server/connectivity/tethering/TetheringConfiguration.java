@@ -216,7 +216,7 @@ public class TetheringConfiguration {
 
     private static String getProvisioningAppNoUi(Context ctx) {
         try {
-            return ctx.getResources().getString(17039830);
+            return ctx.getResources().getString(17039831);
         } catch (NotFoundException e) {
             return BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
         }

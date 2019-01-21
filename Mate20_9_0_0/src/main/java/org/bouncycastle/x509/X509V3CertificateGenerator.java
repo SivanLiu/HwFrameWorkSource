@@ -122,23 +122,23 @@ public class X509V3CertificateGenerator {
         try {
             try {
                 return generateJcaObject(generateTbsCert, X509Util.calculateSignature(this.sigOID, this.signatureAlgorithm, str, privateKey, secureRandom, generateTbsCert));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new ExtCertificateEncodingException("exception producing certificate object", e);
             }
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             throw new ExtCertificateEncodingException("exception encoding TBS cert", e2);
         }
     }
 
     public X509Certificate generate(PrivateKey privateKey, SecureRandom secureRandom) throws CertificateEncodingException, IllegalStateException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        Object generateTbsCert = generateTbsCert();
+        TBSCertificate generateTbsCert = generateTbsCert();
         try {
             try {
                 return generateJcaObject(generateTbsCert, X509Util.calculateSignature(this.sigOID, this.signatureAlgorithm, privateKey, secureRandom, generateTbsCert));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new ExtCertificateEncodingException("exception producing certificate object", e);
             }
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             throw new ExtCertificateEncodingException("exception encoding TBS cert", e2);
         }
     }

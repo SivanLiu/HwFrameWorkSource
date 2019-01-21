@@ -64,7 +64,7 @@ public class HwEyeProtectionAmbientLuxFilterAlgo {
                     stringBuilder.append("updateAmbientLux: ");
                     stringBuilder.append(e2);
                     Slog.e(str, stringBuilder.toString());
-                } catch (ArrayIndexOutOfBoundsException e22) {
+                } catch (Exception e22) {
                     str = TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("updateAmbientLux: ");

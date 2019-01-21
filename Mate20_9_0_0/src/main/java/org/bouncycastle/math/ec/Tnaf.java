@@ -93,14 +93,14 @@ class Tnaf {
 
     public static ECPoint.AbstractF2m[] getPreComp(ECPoint.AbstractF2m abstractF2m, byte b) {
         byte[][] bArr = b == (byte) 0 ? alpha0Tnaf : alpha1Tnaf;
-        ECPoint[] eCPointArr = new ECPoint.AbstractF2m[((bArr.length + 1) >>> 1)];
-        eCPointArr[0] = abstractF2m;
+        ECPoint.AbstractF2m[] abstractF2mArr = new ECPoint.AbstractF2m[((bArr.length + 1) >>> 1)];
+        abstractF2mArr[0] = abstractF2m;
         int length = bArr.length;
         for (int i = 3; i < length; i += 2) {
-            eCPointArr[i >>> 1] = multiplyFromTnaf(abstractF2m, bArr[i]);
+            abstractF2mArr[i >>> 1] = multiplyFromTnaf(abstractF2m, bArr[i]);
         }
-        abstractF2m.getCurve().normalizeAll(eCPointArr);
-        return eCPointArr;
+        abstractF2m.getCurve().normalizeAll(abstractF2mArr);
+        return abstractF2mArr;
     }
 
     protected static int getShiftsForCofactor(BigInteger bigInteger) {
@@ -186,12 +186,12 @@ class Tnaf {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0030 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -216,19 +216,14 @@ class Tnaf {
         r2 = 1;
         r4 = r4.shiftLeft(r2);
         if (r3 != r2) goto L_0x0028;
-    L_0x001f:
         r3 = r0.add(r1);
-    L_0x0023:
         r3 = r3.add(r4);
         return r3;
-    L_0x0028:
         r2 = -1;
         if (r3 != r2) goto L_0x0031;
-    L_0x002b:
         r3 = r0.subtract(r1);
         goto L_0x0023;
         return r3;
-    L_0x0031:
         r3 = new java.lang.IllegalArgumentException;
         r4 = "mu must be 1 or -1";
         r3.<init>(r4);
@@ -239,12 +234,12 @@ class Tnaf {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0024 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -263,19 +258,14 @@ class Tnaf {
         r1 = 1;
         r4 = r4.shiftLeft(r1);
         if (r2 != r1) goto L_0x001c;
-    L_0x0013:
         r2 = r0.add(r3);
-    L_0x0017:
         r2 = r2.add(r4);
         return r2;
-    L_0x001c:
         r1 = -1;
         if (r2 != r1) goto L_0x0025;
-    L_0x001f:
         r2 = r0.subtract(r3);
         goto L_0x0017;
         return r2;
-    L_0x0025:
         r2 = new java.lang.IllegalArgumentException;
         r3 = "mu must be 1 or -1";
         r2.<init>(r3);
@@ -301,7 +291,7 @@ class Tnaf {
     /* JADX WARNING: Removed duplicated region for block: B:26:0x007f  */
     /* JADX WARNING: Removed duplicated region for block: B:26:0x007f  */
     /* JADX WARNING: Removed duplicated region for block: B:30:0x008c  */
-    /* JADX WARNING: Missing block: B:31:0x0092, code:
+    /* JADX WARNING: Missing block: B:31:0x0092, code skipped:
             if (r7.compareTo(MINUS_TWO) < 0) goto L_0x0087;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -363,7 +353,7 @@ class Tnaf {
     public static byte[] tauAdicNaf(byte b, ZTauElement zTauElement) {
         if (b == (byte) 1 || b == (byte) -1) {
             int bitLength = norm(b, zTauElement).bitLength();
-            Object obj = new byte[(bitLength > 30 ? bitLength + 4 : 34)];
+            byte[] bArr = new byte[(bitLength > 30 ? bitLength + 4 : 34)];
             BigInteger bigInteger = zTauElement.u;
             BigInteger bigInteger2 = zTauElement.v;
             int i = 0;
@@ -371,16 +361,16 @@ class Tnaf {
             while (true) {
                 if (bigInteger.equals(ECConstants.ZERO) && bigInteger2.equals(ECConstants.ZERO)) {
                     i++;
-                    Object obj2 = new byte[i];
-                    System.arraycopy(obj, 0, obj2, 0, i);
-                    return obj2;
+                    byte[] bArr2 = new byte[i];
+                    System.arraycopy(bArr, 0, bArr2, 0, i);
+                    return bArr2;
                 }
                 if (bigInteger.testBit(0)) {
-                    obj[i2] = (byte) ECConstants.TWO.subtract(bigInteger.subtract(bigInteger2.shiftLeft(1)).mod(ECConstants.FOUR)).intValue();
-                    bigInteger = obj[i2] == (byte) 1 ? bigInteger.clearBit(0) : bigInteger.add(ECConstants.ONE);
+                    bArr[i2] = (byte) ECConstants.TWO.subtract(bigInteger.subtract(bigInteger2.shiftLeft(1)).mod(ECConstants.FOUR)).intValue();
+                    bigInteger = bArr[i2] == (byte) 1 ? bigInteger.clearBit(0) : bigInteger.add(ECConstants.ONE);
                     i = i2;
                 } else {
-                    obj[i2] = null;
+                    bArr[i2] = (byte) 0;
                 }
                 BigInteger shiftRight = bigInteger.shiftRight(1);
                 bigInteger2 = b == (byte) 1 ? bigInteger2.add(shiftRight) : bigInteger2.subtract(shiftRight);
@@ -408,6 +398,7 @@ class Tnaf {
                 }
                 if (bigInteger3.testBit(0)) {
                     int i2;
+                    int i3;
                     BigInteger mod = bigInteger3.add(bigInteger4.multiply(bigInteger2)).mod(bigInteger);
                     if (mod.compareTo(shiftRight) >= 0) {
                         mod = mod.subtract(bigInteger);
@@ -416,12 +407,12 @@ class Tnaf {
                     bArr[i] = intValue;
                     if (intValue < (byte) 0) {
                         i2 = (byte) (-intValue);
-                        intValue = (byte) 0;
+                        i3 = 0;
                     } else {
                         i2 = intValue;
-                        intValue = (byte) 1;
+                        i3 = 1;
                     }
-                    if (intValue != (byte) 0) {
+                    if (i3 != 0) {
                         bigInteger3 = bigInteger3.subtract(zTauElementArr[i2].u);
                         bigInteger4 = bigInteger4.subtract(zTauElementArr[i2].v);
                     } else {

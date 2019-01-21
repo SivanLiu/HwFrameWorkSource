@@ -298,7 +298,7 @@ public final class MediaControllerCompat {
                 this.mCallbackObj = MediaControllerCompatApi21.createCallback(new StubApi21(this));
                 return;
             }
-            IMediaControllerCallback stubCompat = new StubCompat(this);
+            StubCompat stubCompat = new StubCompat(this);
             this.mIControllerCallback = stubCompat;
             this.mCallbackObj = stubCompat;
         }
@@ -588,6 +588,8 @@ public final class MediaControllerCompat {
             }
         }
 
+        /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public final void registerCallback(Callback callback, Handler handler) {
             MediaControllerCompatApi21.registerCallback(this.mControllerObj, callback.mCallbackObj, handler);
             if (this.mSessionToken.getExtraBinder() != null) {
@@ -608,6 +610,8 @@ public final class MediaControllerCompat {
             }
         }
 
+        /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public final void unregisterCallback(Callback callback) {
             MediaControllerCompatApi21.unregisterCallback(this.mControllerObj, callback.mCallbackObj);
             if (this.mSessionToken.getExtraBinder() != null) {

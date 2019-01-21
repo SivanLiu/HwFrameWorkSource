@@ -105,10 +105,10 @@ public class ISAACEngine implements StreamCipher {
         this.b = 0;
         this.a = 0;
         this.index = 0;
-        Object obj = new byte[(bArr.length + (bArr.length & 3))];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        for (int i3 = 0; i3 < obj.length; i3 += 4) {
-            this.results[i3 >>> 2] = Pack.littleEndianToInt(obj, i3);
+        byte[] bArr2 = new byte[(bArr.length + (bArr.length & 3))];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+        for (int i3 = 0; i3 < bArr2.length; i3 += 4) {
+            this.results[i3 >>> 2] = Pack.littleEndianToInt(bArr2, i3);
         }
         int[] iArr2 = new int[8];
         for (i = 0; i < 8; i++) {

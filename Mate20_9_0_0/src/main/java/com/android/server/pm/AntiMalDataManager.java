@@ -300,6 +300,8 @@ public class AntiMalDataManager {
                             case 3:
                                 deleteCnt++;
                                 break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -408,7 +410,7 @@ public class AntiMalDataManager {
         return antimalData;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0049 A:{SYNTHETIC, Splitter: B:14:0x0049} */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x0049 A:{SYNTHETIC, Splitter:B:14:0x0049} */
     /* JADX WARNING: Removed duplicated region for block: B:11:0x003e A:{Catch:{ IOException -> 0x00a3, XmlPullParserException -> 0x0088, Exception -> 0x006d, all -> 0x006b }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void readOldAntiMalData() {

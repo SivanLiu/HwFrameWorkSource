@@ -123,7 +123,7 @@ public class ASN1StreamParser {
             } else {
                 try {
                     return ASN1InputStream.createPrimitiveDERObject(readTagNumber, definiteLengthInputStream, this.tmpBuffers);
-                } catch (Throwable e) {
+                } catch (IllegalArgumentException e) {
                     throw new ASN1Exception("corrupted stream detected", e);
                 }
             }

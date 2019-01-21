@@ -11,7 +11,7 @@ public final class RestartAction extends SinglePressAction implements LongPressA
     private final WindowManagerFuncs mWindowManagerFuncs;
 
     public RestartAction(Context context, WindowManagerFuncs windowManagerFuncs) {
-        super(17302741, 17040129);
+        super(17302741, 17040130);
         this.mContext = context;
         this.mWindowManagerFuncs = windowManagerFuncs;
     }

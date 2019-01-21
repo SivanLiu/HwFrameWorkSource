@@ -172,24 +172,26 @@ public class HwArbitrationCommonUtils {
     public static String getTopActivityPackageName(Context context) {
         try {
             List<RunningTaskInfo> tasks = ((ActivityManager) context.getSystemService("activity")).getRunningTasks(1);
-            if (tasks == null || tasks.isEmpty()) {
-                logD(TAG, "Top_Activity,Null");
-                return null;
+            if (tasks != null) {
+                if (!tasks.isEmpty()) {
+                    ComponentName topActivity = ((RunningTaskInfo) tasks.get(0)).topActivity;
+                    if (topActivity == null) {
+                        return null;
+                    }
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Top_Activity, pgName:");
+                    stringBuilder.append(topActivity.getPackageName());
+                    logD(str, stringBuilder.toString());
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Top_Activity, className:");
+                    stringBuilder.append(topActivity.getClassName());
+                    logD(str, stringBuilder.toString());
+                    return topActivity.getPackageName();
+                }
             }
-            ComponentName topActivity = ((RunningTaskInfo) tasks.get(0)).topActivity;
-            if (topActivity != null) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Top_Activity, pgName:");
-                stringBuilder.append(topActivity.getPackageName());
-                logD(str, stringBuilder.toString());
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Top_Activity, className:");
-                stringBuilder.append(topActivity.getClassName());
-                logD(str, stringBuilder.toString());
-                return topActivity.getPackageName();
-            }
+            logD(TAG, "Top_Activity,Null");
             return null;
         } catch (Exception e) {
             String str2 = TAG;

@@ -1,5 +1,6 @@
 package com.android.server;
 
+import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 import android.net.LocalSocketAddress.Namespace;
 import android.os.Build;
@@ -20,6 +21,8 @@ import com.android.server.os.HwBootFail;
 import com.android.server.power.ShutdownThread;
 import com.google.android.collect.Lists;
 import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +34,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 final class NativeDaemonConnector implements Runnable, Callback, Monitor {
     private static boolean DEBUG_NETD = false;
@@ -223,500 +227,6 @@ final class NativeDaemonConnector implements Runnable, Callback, Monitor {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void listenToSocket() throws java.io.IOException {
-        /*
-        r22 = this;
-        r1 = r22;
-        r2 = 0;
-        r0 = "listenToSocket enter";
-        r1.log(r0);
-        r3 = 0;
-        r0 = new android.net.LocalSocket;	 Catch:{ IOException -> 0x02e4 }
-        r0.<init>();	 Catch:{ IOException -> 0x02e4 }
-        r2 = r0;
-        r0 = r22.determineSocketAddress();	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r4 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r2.connect(r4);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = r2.getInputStream();	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r5 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r6 = r1.mDaemonLock;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        monitor-enter(r6);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = r2.getOutputStream();	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r1.mOutputStream = r0;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        monitor-exit(r6);	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r0 = r1.mCallbacks;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0.onDaemonConnected();	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = 0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r6 = 4096; // 0x1000 float:5.74E-42 double:2.0237E-320;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r7 = new byte[r6];	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r9 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = 0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-    L_0x0033:
-        r10 = 4096 - r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r10 = r5.read(r7, r0, r10);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        if (r10 >= 0) goto L_0x00b4;
-    L_0x003b:
-        r6 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x02e4 }
-        r6.<init>();	 Catch:{ IOException -> 0x02e4 }
-        r8 = "got ";	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r8);	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r10);	 Catch:{ IOException -> 0x02e4 }
-        r8 = " reading with start = ";	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r8);	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r0);	 Catch:{ IOException -> 0x02e4 }
-        r6 = r6.toString();	 Catch:{ IOException -> 0x02e4 }
-        r1.loge(r6);	 Catch:{ IOException -> 0x02e4 }
-        r4 = r1.mDaemonLock;
-        monitor-enter(r4);
-        r0 = r1.mOutputStream;	 Catch:{ IOException -> 0x007b }
-        if (r0 == 0) goto L_0x0092;
-    L_0x005f:
-        r0 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x007b }
-        r0.<init>();	 Catch:{ IOException -> 0x007b }
-        r5 = "closing stream for ";	 Catch:{ IOException -> 0x007b }
-        r0.append(r5);	 Catch:{ IOException -> 0x007b }
-        r5 = r1.mSocket;	 Catch:{ IOException -> 0x007b }
-        r0.append(r5);	 Catch:{ IOException -> 0x007b }
-        r0 = r0.toString();	 Catch:{ IOException -> 0x007b }
-        r1.loge(r0);	 Catch:{ IOException -> 0x007b }
-        r0 = r1.mOutputStream;	 Catch:{ IOException -> 0x007b }
-        r0.close();	 Catch:{ IOException -> 0x007b }
-        goto L_0x0090;
-    L_0x007b:
-        r0 = move-exception;
-        r5 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x007b }
-        r5.<init>();	 Catch:{ IOException -> 0x007b }
-        r6 = "Failed closing output stream: ";	 Catch:{ IOException -> 0x007b }
-        r5.append(r6);	 Catch:{ IOException -> 0x007b }
-        r5.append(r0);	 Catch:{ IOException -> 0x007b }
-        r5 = r5.toString();	 Catch:{ IOException -> 0x007b }
-        r1.loge(r5);	 Catch:{ IOException -> 0x007b }
-    L_0x0090:
-        r1.mOutputStream = r3;	 Catch:{ IOException -> 0x007b }
-    L_0x0092:
-        monitor-exit(r4);	 Catch:{ IOException -> 0x007b }
-        r2.close();	 Catch:{ IOException -> 0x0098 }
-        goto L_0x00af;
-    L_0x0098:
-        r0 = move-exception;
-        r3 = r0;
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "Failed closing socket: ";
-        r3.append(r4);
-        r3.append(r0);
-        r3 = r3.toString();
-        r1.loge(r3);
-        goto L_0x00b0;
-    L_0x00b0:
-        return;
-    L_0x00b1:
-        r0 = move-exception;
-        monitor-exit(r4);	 Catch:{ IOException -> 0x007b }
-        throw r0;
-    L_0x00b4:
-        r11 = r2.getAncillaryFileDescriptors();	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r9 = r11;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r10 = r10 + r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = 0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r11 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = 0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-    L_0x00bd:
-        r12 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        if (r12 >= r10) goto L_0x0299;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-    L_0x00c0:
-        r0 = r7[r12];	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        if (r0 != 0) goto L_0x0286;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-    L_0x00c4:
-        r0 = new java.lang.String;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r13 = r12 - r11;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r14 = java.nio.charset.StandardCharsets.UTF_8;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0.<init>(r7, r11, r13, r14);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r13 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = "([0-9a-zA-Z]{2}:){4}[0-9a-zA-Z]{2}";	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r14 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = "[A-Fa-f0-9]{2,}:{1,}";	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r15 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = java.util.regex.Pattern.compile(r14);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r16 = r0;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}";	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r3 = " ******** ";	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r0 = r13.replaceAll(r0, r3);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r3 = r16;	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r6 = r3.matcher(r0);	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        r6 = r6.find();	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        if (r6 == 0) goto L_0x0110;
-    L_0x00ee:
-        r6 = " ******** ";	 Catch:{ IOException -> 0x02e4 }
-        r6 = r0.replaceAll(r14, r6);	 Catch:{ IOException -> 0x02e4 }
-        r0 = r6;	 Catch:{ IOException -> 0x02e4 }
-        r6 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x02e4 }
-        r6.<init>();	 Catch:{ IOException -> 0x02e4 }
-        r8 = "RCV <- {";	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r8);	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r0);	 Catch:{ IOException -> 0x02e4 }
-        r8 = "}";	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r8);	 Catch:{ IOException -> 0x02e4 }
-        r6 = r6.toString();	 Catch:{ IOException -> 0x02e4 }
-        r1.log(r6);	 Catch:{ IOException -> 0x02e4 }
-        goto L_0x0137;
-    L_0x0110:
-        r6 = r22.shouldPrintEvent();	 Catch:{ IOException -> 0x02dc, all -> 0x02d5 }
-        if (r6 != 0) goto L_0x0137;
-    L_0x0116:
-        r6 = "****";	 Catch:{ IOException -> 0x02e4 }
-        r6 = r0.replaceAll(r15, r6);	 Catch:{ IOException -> 0x02e4 }
-        r0 = r6;	 Catch:{ IOException -> 0x02e4 }
-        r6 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x02e4 }
-        r6.<init>();	 Catch:{ IOException -> 0x02e4 }
-        r8 = "RCV <- {";	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r8);	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r0);	 Catch:{ IOException -> 0x02e4 }
-        r8 = "}";	 Catch:{ IOException -> 0x02e4 }
-        r6.append(r8);	 Catch:{ IOException -> 0x02e4 }
-        r6 = r6.toString();	 Catch:{ IOException -> 0x02e4 }
-        r1.log(r6);	 Catch:{ IOException -> 0x02e4 }
-    L_0x0137:
-        r6 = r0;
-        r8 = 0;
-        r16 = r8;
-        r0 = com.android.server.NativeDaemonEvent.parseRawEvent(r13, r9);	 Catch:{ IllegalArgumentException -> 0x0257, all -> 0x024d }
-        r8 = r0.toString();	 Catch:{ IllegalArgumentException -> 0x0257, all -> 0x024d }
-        r17 = r2;
-        r2 = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}";	 Catch:{ IllegalArgumentException -> 0x0245, all -> 0x023d }
-        r18 = r4;
-        r4 = " ******** ";	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r2 = r8.replaceAll(r2, r4);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4 = r22.shouldPrintEvent();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        if (r4 == 0) goto L_0x017f;
-    L_0x0156:
-        r4 = new java.lang.StringBuilder;	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.<init>();	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r8 = "RCV <- {";	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.append(r8);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.append(r0);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r8 = "}";	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.append(r8);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4 = r4.toString();	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r1.log(r4);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        goto L_0x01cc;
-    L_0x0171:
-        r0 = move-exception;
-        r20 = r3;
-        r21 = r5;
-        goto L_0x027e;
-    L_0x0178:
-        r0 = move-exception;
-        r20 = r3;
-        r21 = r5;
-        goto L_0x0260;
-    L_0x017f:
-        r4 = r3.matcher(r2);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4 = r4.find();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        if (r4 == 0) goto L_0x01ab;
-    L_0x0189:
-        r4 = " ******** ";	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4 = r2.replaceAll(r14, r4);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r2 = r4;	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.<init>();	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r8 = "RCV <- {";	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.append(r8);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.append(r2);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r8 = "}";	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.append(r8);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4 = r4.toString();	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r1.log(r4);	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        goto L_0x01cc;
-    L_0x01ab:
-        r4 = "****";	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4 = r2.replaceAll(r15, r4);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r2 = r4;	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4.<init>();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r8 = "RCV <- {";	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4.append(r8);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4.append(r2);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r8 = "}";	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4.append(r8);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4 = r4.toString();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r1.log(r4);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-    L_0x01cc:
-        r4 = r0.isClassUnsolicited();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        if (r4 == 0) goto L_0x0218;	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-    L_0x01d2:
-        r4 = r1.mCallbacks;	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r8 = r0.getCode();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r4 = r4.onCheckHoldWakeLock(r8);	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        if (r4 == 0) goto L_0x01ea;
-    L_0x01de:
-        r4 = r1.mWakeLock;	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        if (r4 == 0) goto L_0x01ea;	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-    L_0x01e2:
-        r4 = r1.mWakeLock;	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4.acquire();	 Catch:{ IllegalArgumentException -> 0x0178, all -> 0x0171 }
-        r4 = 1;
-        r16 = r4;
-    L_0x01ea:
-        r4 = r1.mCallbackHandler;	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r8 = r0.getCode();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r19 = r2;	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r2 = r22.uptimeMillisInt();	 Catch:{ IllegalArgumentException -> 0x0237, all -> 0x0231 }
-        r20 = r3;
-        r3 = r0.getRawEvent();	 Catch:{ IllegalArgumentException -> 0x0214, all -> 0x020f }
-        r21 = r5;
-        r5 = 0;
-        r2 = r4.obtainMessage(r8, r2, r5, r3);	 Catch:{ IllegalArgumentException -> 0x022f }
-        r3 = r1.mCallbackHandler;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r3 = r3.sendMessage(r2);	 Catch:{ IllegalArgumentException -> 0x022f }
-        if (r3 == 0) goto L_0x0227;	 Catch:{ IllegalArgumentException -> 0x022f }
-    L_0x020b:
-        r2 = 0;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r16 = r2;	 Catch:{ IllegalArgumentException -> 0x022f }
-    L_0x020e:
-        goto L_0x0227;	 Catch:{ IllegalArgumentException -> 0x022f }
-    L_0x020f:
-        r0 = move-exception;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r21 = r5;	 Catch:{ IllegalArgumentException -> 0x022f }
-        goto L_0x027e;	 Catch:{ IllegalArgumentException -> 0x022f }
-    L_0x0214:
-        r0 = move-exception;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r21 = r5;	 Catch:{ IllegalArgumentException -> 0x022f }
-        goto L_0x0260;	 Catch:{ IllegalArgumentException -> 0x022f }
-    L_0x0218:
-        r19 = r2;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r20 = r3;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r21 = r5;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r2 = r1.mResponseQueue;	 Catch:{ IllegalArgumentException -> 0x022f }
-        r3 = r0.getCmdNumber();	 Catch:{ IllegalArgumentException -> 0x022f }
-        r2.add(r3, r0);	 Catch:{ IllegalArgumentException -> 0x022f }
-    L_0x0227:
-        if (r16 == 0) goto L_0x0279;
-    L_0x0229:
-        r0 = r1.mWakeLock;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x022b:
-        r0.release();	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        goto L_0x0279;
-    L_0x022f:
-        r0 = move-exception;
-        goto L_0x0260;
-    L_0x0231:
-        r0 = move-exception;
-        r20 = r3;
-        r21 = r5;
-        goto L_0x027e;
-    L_0x0237:
-        r0 = move-exception;
-        r20 = r3;
-        r21 = r5;
-        goto L_0x0260;
-    L_0x023d:
-        r0 = move-exception;
-        r20 = r3;
-        r18 = r4;
-        r21 = r5;
-        goto L_0x027e;
-    L_0x0245:
-        r0 = move-exception;
-        r20 = r3;
-        r18 = r4;
-        r21 = r5;
-        goto L_0x0260;
-    L_0x024d:
-        r0 = move-exception;
-        r17 = r2;
-        r20 = r3;
-        r18 = r4;
-        r21 = r5;
-        goto L_0x027e;
-    L_0x0257:
-        r0 = move-exception;
-        r17 = r2;
-        r20 = r3;
-        r18 = r4;
-        r21 = r5;
-    L_0x0260:
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x027d }
-        r2.<init>();	 Catch:{ all -> 0x027d }
-        r3 = "Problem parsing message ";	 Catch:{ all -> 0x027d }
-        r2.append(r3);	 Catch:{ all -> 0x027d }
-        r2.append(r0);	 Catch:{ all -> 0x027d }
-        r2 = r2.toString();	 Catch:{ all -> 0x027d }
-        r1.log(r2);	 Catch:{ all -> 0x027d }
-        if (r16 == 0) goto L_0x0279;
-    L_0x0276:
-        r0 = r1.mWakeLock;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        goto L_0x022b;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x0279:
-        r0 = r12 + 1;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r11 = r0;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        goto L_0x028c;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x027d:
-        r0 = move-exception;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x027e:
-        if (r16 == 0) goto L_0x0285;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x0280:
-        r2 = r1.mWakeLock;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r2.release();	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x0285:
-        throw r0;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x0286:
-        r17 = r2;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r18 = r4;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r21 = r5;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x028c:
-        r0 = r12 + 1;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r2 = r17;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r4 = r18;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r5 = r21;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r3 = 0;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r6 = 4096; // 0x1000 float:5.74E-42 double:2.0237E-320;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        goto L_0x00bd;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x0299:
-        r17 = r2;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r18 = r4;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r21 = r5;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        if (r11 != 0) goto L_0x02a6;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x02a1:
-        r0 = "RCV incomplete";	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r1.log(r0);	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x02a6:
-        if (r11 == r10) goto L_0x02b2;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x02a8:
-        r2 = 4096; // 0x1000 float:5.74E-42 double:2.0237E-320;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r6 = 4096 - r11;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r3 = 0;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        java.lang.System.arraycopy(r7, r11, r7, r3, r6);	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-        r0 = r6;
-        goto L_0x02b6;
-    L_0x02b2:
-        r2 = 4096; // 0x1000 float:5.74E-42 double:2.0237E-320;
-        r3 = 0;
-        r0 = 0;
-        r6 = r2;
-        r2 = r17;
-        r4 = r18;
-        r5 = r21;
-        r3 = 0;
-        goto L_0x0033;
-    L_0x02c1:
-        r0 = move-exception;
-        r17 = r2;
-        r18 = r4;
-        r21 = r5;
-    L_0x02c8:
-        monitor-exit(r6);	 Catch:{ all -> 0x02d3 }
-        throw r0;	 Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }
-    L_0x02ca:
-        r0 = move-exception;
-        r2 = r0;
-        r3 = r17;
-        goto L_0x02fa;
-    L_0x02cf:
-        r0 = move-exception;
-        r2 = r17;
-        goto L_0x02e5;
-    L_0x02d3:
-        r0 = move-exception;
-        goto L_0x02c8;
-    L_0x02d5:
-        r0 = move-exception;
-        r17 = r2;
-        r2 = r0;
-        r3 = r17;
-        goto L_0x02fa;
-    L_0x02dc:
-        r0 = move-exception;
-        r17 = r2;
-        goto L_0x02e5;
-    L_0x02e0:
-        r0 = move-exception;
-        r3 = r2;
-        r2 = r0;
-        goto L_0x02fa;
-    L_0x02e4:
-        r0 = move-exception;
-    L_0x02e5:
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02e0 }
-        r3.<init>();	 Catch:{ all -> 0x02e0 }
-        r4 = "Communications error: ";	 Catch:{ all -> 0x02e0 }
-        r3.append(r4);	 Catch:{ all -> 0x02e0 }
-        r3.append(r0);	 Catch:{ all -> 0x02e0 }
-        r3 = r3.toString();	 Catch:{ all -> 0x02e0 }
-        r1.loge(r3);	 Catch:{ all -> 0x02e0 }
-        throw r0;	 Catch:{ all -> 0x02e0 }
-    L_0x02fa:
-        r4 = r1.mDaemonLock;
-        monitor-enter(r4);
-        r0 = r1.mOutputStream;	 Catch:{ IOException -> 0x031d }
-        if (r0 == 0) goto L_0x0335;
-    L_0x0301:
-        r0 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x031d }
-        r0.<init>();	 Catch:{ IOException -> 0x031d }
-        r5 = "closing stream for ";	 Catch:{ IOException -> 0x031d }
-        r0.append(r5);	 Catch:{ IOException -> 0x031d }
-        r5 = r1.mSocket;	 Catch:{ IOException -> 0x031d }
-        r0.append(r5);	 Catch:{ IOException -> 0x031d }
-        r0 = r0.toString();	 Catch:{ IOException -> 0x031d }
-        r1.loge(r0);	 Catch:{ IOException -> 0x031d }
-        r0 = r1.mOutputStream;	 Catch:{ IOException -> 0x031d }
-        r0.close();	 Catch:{ IOException -> 0x031d }
-        goto L_0x0332;
-    L_0x031d:
-        r0 = move-exception;
-        r5 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x031d }
-        r5.<init>();	 Catch:{ IOException -> 0x031d }
-        r6 = "Failed closing output stream: ";	 Catch:{ IOException -> 0x031d }
-        r5.append(r6);	 Catch:{ IOException -> 0x031d }
-        r5.append(r0);	 Catch:{ IOException -> 0x031d }
-        r5 = r5.toString();	 Catch:{ IOException -> 0x031d }
-        r1.loge(r5);	 Catch:{ IOException -> 0x031d }
-    L_0x0332:
-        r5 = 0;	 Catch:{ IOException -> 0x031d }
-        r1.mOutputStream = r5;	 Catch:{ IOException -> 0x031d }
-    L_0x0335:
-        monitor-exit(r4);	 Catch:{ IOException -> 0x031d }
-        if (r3 == 0) goto L_0x0353;
-    L_0x0338:
-        r3.close();	 Catch:{ IOException -> 0x033c }
-        goto L_0x0353;
-    L_0x033c:
-        r0 = move-exception;
-        r4 = r0;
-        r4 = new java.lang.StringBuilder;
-        r4.<init>();
-        r5 = "Failed closing socket: ";
-        r4.append(r5);
-        r4.append(r0);
-        r4 = r4.toString();
-        r1.loge(r4);
-    L_0x0353:
-        throw r2;
-    L_0x0354:
-        r0 = move-exception;
-        monitor-exit(r4);	 Catch:{ IOException -> 0x031d }
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.NativeDaemonConnector.listenToSocket():void");
-    }
-
     static {
         boolean z = false;
         if (Log.HWModuleLog || DEBUG_ON) {
@@ -851,6 +361,407 @@ final class NativeDaemonConnector implements Runnable, Callback, Monitor {
         return new LocalSocketAddress(this.mSocket, Namespace.RESERVED);
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x02fd A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:171:0x0338 A:{SYNTHETIC, Splitter:B:171:0x0338} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x02fd A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:171:0x0338 A:{SYNTHETIC, Splitter:B:171:0x0338} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0276 A:{SYNTHETIC, Splitter:B:119:0x0276} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x0280 A:{Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0276 A:{SYNTHETIC, Splitter:B:119:0x0276} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0276 A:{SYNTHETIC, Splitter:B:119:0x0276} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x0280 A:{Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x0280 A:{Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x0276 A:{SYNTHETIC, Splitter:B:119:0x0276} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x0280 A:{Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x0280 A:{Catch:{ all -> 0x02c1, IOException -> 0x02cf, all -> 0x02ca }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void listenToSocket() throws IOException {
+        LocalSocket socket;
+        LocalSocketAddress localSocketAddress;
+        InputStream inputStream;
+        IOException ex;
+        Throwable th;
+        LocalSocket socket2;
+        IllegalArgumentException e;
+        Pattern pattern;
+        StringBuilder stringBuilder;
+        StringBuilder stringBuilder2;
+        LocalSocket socket3 = null;
+        log("listenToSocket enter");
+        OutputStream outputStream = null;
+        try {
+            socket3 = new LocalSocket();
+            StringBuilder stringBuilder3;
+            StringBuilder stringBuilder4;
+            try {
+                int count;
+                StringBuilder stringBuilder5;
+                LocalSocketAddress address = determineSocketAddress();
+                socket3.connect(address);
+                InputStream inputStream2 = socket3.getInputStream();
+                synchronized (this.mDaemonLock) {
+                    try {
+                        this.mOutputStream = socket3.getOutputStream();
+                    } catch (IOException e2) {
+                        ex = e2;
+                        socket3 = socket;
+                    } catch (Throwable th2) {
+                        socket3 = th2;
+                        socket2 = socket;
+                        synchronized (this.mDaemonLock) {
+                        }
+                        if (socket2 != null) {
+                        }
+                        throw socket3;
+                    }
+                }
+                this.mCallbacks.onDaemonConnected();
+                byte[] buffer = new byte[4096];
+                FileDescriptor[] fdList = null;
+                int start = 0;
+                while (true) {
+                    count = inputStream2.read(buffer, start, 4096 - start);
+                    if (count < 0) {
+                        break;
+                    }
+                    Object obj;
+                    fdList = socket3.getAncillaryFileDescriptors();
+                    count += start;
+                    int start2 = 0;
+                    start = 0;
+                    while (true) {
+                        int i = start;
+                        if (i >= count) {
+                            break;
+                        }
+                        if (buffer[i] == (byte) 0) {
+                            String rawEvent = new String(buffer, start2, i - start2, StandardCharsets.UTF_8);
+                            String r = "([0-9a-zA-Z]{2}:){4}[0-9a-zA-Z]{2}";
+                            String rv = "[A-Fa-f0-9]{2,}:{1,}";
+                            Pattern pattern2 = Pattern.compile(r);
+                            String rawEventLog = rawEvent.replaceAll(encryption_ip, " ******** ");
+                            Pattern pattern3 = pattern2;
+                            if (pattern3.matcher(rawEventLog).find()) {
+                                rawEventLog = rawEventLog.replaceAll(r, " ******** ");
+                                stringBuilder5 = new StringBuilder();
+                                stringBuilder5.append("RCV <- {");
+                                stringBuilder5.append(rawEventLog);
+                                stringBuilder5.append("}");
+                                log(stringBuilder5.toString());
+                            } else if (!shouldPrintEvent()) {
+                                rawEventLog = rawEventLog.replaceAll(rv, "****");
+                                stringBuilder5 = new StringBuilder();
+                                stringBuilder5.append("RCV <- {");
+                                stringBuilder5.append(rawEventLog);
+                                stringBuilder5.append("}");
+                                log(stringBuilder5.toString());
+                            }
+                            boolean releaseWl = false;
+                            WakeLock wakeLock;
+                            try {
+                                NativeDaemonEvent event = NativeDaemonEvent.parseRawEvent(rawEvent, fdList);
+                                socket = socket3;
+                                try {
+                                    localSocketAddress = address;
+                                    try {
+                                        String eventLog = event.toString().replaceAll(encryption_ip, " ******** ");
+                                        if (shouldPrintEvent()) {
+                                            try {
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("RCV <- {");
+                                                stringBuilder3.append(event);
+                                                stringBuilder3.append("}");
+                                                log(stringBuilder3.toString());
+                                            } catch (IllegalArgumentException e3) {
+                                                e = e3;
+                                                pattern = pattern3;
+                                                inputStream = inputStream2;
+                                            } catch (Throwable th3) {
+                                                th2 = th3;
+                                                pattern = pattern3;
+                                                inputStream = inputStream2;
+                                                if (releaseWl) {
+                                                }
+                                                throw th2;
+                                            }
+                                        } else if (pattern3.matcher(eventLog).find()) {
+                                            eventLog = eventLog.replaceAll(r, " ******** ");
+                                            stringBuilder3 = new StringBuilder();
+                                            stringBuilder3.append("RCV <- {");
+                                            stringBuilder3.append(eventLog);
+                                            stringBuilder3.append("}");
+                                            log(stringBuilder3.toString());
+                                        } else {
+                                            eventLog = eventLog.replaceAll(rv, "****");
+                                            stringBuilder3 = new StringBuilder();
+                                            stringBuilder3.append("RCV <- {");
+                                            stringBuilder3.append(eventLog);
+                                            stringBuilder3.append("}");
+                                            log(stringBuilder3.toString());
+                                        }
+                                        if (event.isClassUnsolicited()) {
+                                            if (this.mCallbacks.onCheckHoldWakeLock(event.getCode())) {
+                                                if (this.mWakeLock != null) {
+                                                    this.mWakeLock.acquire();
+                                                    releaseWl = true;
+                                                }
+                                            }
+                                            try {
+                                                inputStream = inputStream2;
+                                                try {
+                                                    if (this.mCallbackHandler.sendMessage(this.mCallbackHandler.obtainMessage(event.getCode(), uptimeMillisInt(), null, event.getRawEvent()))) {
+                                                        releaseWl = null;
+                                                    }
+                                                } catch (IllegalArgumentException e4) {
+                                                    e = e4;
+                                                    try {
+                                                        stringBuilder = new StringBuilder();
+                                                        stringBuilder.append("Problem parsing message ");
+                                                        stringBuilder.append(e);
+                                                        log(stringBuilder.toString());
+                                                        if (releaseWl) {
+                                                        }
+                                                        start2 = i + 1;
+                                                        start = i + 1;
+                                                        socket3 = socket;
+                                                        address = localSocketAddress;
+                                                        inputStream2 = inputStream;
+                                                    } catch (Throwable th4) {
+                                                        th2 = th4;
+                                                        if (releaseWl) {
+                                                        }
+                                                        throw th2;
+                                                    }
+                                                }
+                                            } catch (IllegalArgumentException e5) {
+                                                e = e5;
+                                                inputStream = inputStream2;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Problem parsing message ");
+                                                stringBuilder.append(e);
+                                                log(stringBuilder.toString());
+                                                if (releaseWl) {
+                                                }
+                                                start2 = i + 1;
+                                                start = i + 1;
+                                                socket3 = socket;
+                                                address = localSocketAddress;
+                                                inputStream2 = inputStream;
+                                            } catch (Throwable th5) {
+                                                th2 = th5;
+                                                inputStream = inputStream2;
+                                                if (releaseWl) {
+                                                }
+                                                throw th2;
+                                            }
+                                        }
+                                        String str = eventLog;
+                                        pattern = pattern3;
+                                        inputStream = inputStream2;
+                                        this.mResponseQueue.add(event.getCmdNumber(), event);
+                                        if (releaseWl) {
+                                            wakeLock = this.mWakeLock;
+                                            wakeLock.release();
+                                        }
+                                    } catch (IllegalArgumentException e6) {
+                                        e = e6;
+                                        pattern = pattern3;
+                                        inputStream = inputStream2;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Problem parsing message ");
+                                        stringBuilder.append(e);
+                                        log(stringBuilder.toString());
+                                        if (releaseWl) {
+                                        }
+                                        start2 = i + 1;
+                                        start = i + 1;
+                                        socket3 = socket;
+                                        address = localSocketAddress;
+                                        inputStream2 = inputStream;
+                                    } catch (Throwable th6) {
+                                        th2 = th6;
+                                        pattern = pattern3;
+                                        inputStream = inputStream2;
+                                        if (releaseWl) {
+                                        }
+                                        throw th2;
+                                    }
+                                } catch (IllegalArgumentException e7) {
+                                    e = e7;
+                                    pattern = pattern3;
+                                    localSocketAddress = address;
+                                    inputStream = inputStream2;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("Problem parsing message ");
+                                    stringBuilder.append(e);
+                                    log(stringBuilder.toString());
+                                    if (releaseWl) {
+                                    }
+                                    start2 = i + 1;
+                                    start = i + 1;
+                                    socket3 = socket;
+                                    address = localSocketAddress;
+                                    inputStream2 = inputStream;
+                                } catch (Throwable th7) {
+                                    th2 = th7;
+                                    pattern = pattern3;
+                                    localSocketAddress = address;
+                                    inputStream = inputStream2;
+                                    if (releaseWl) {
+                                    }
+                                    throw th2;
+                                }
+                            } catch (IllegalArgumentException e8) {
+                                e = e8;
+                                socket = socket3;
+                                pattern = pattern3;
+                                localSocketAddress = address;
+                                inputStream = inputStream2;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("Problem parsing message ");
+                                stringBuilder.append(e);
+                                log(stringBuilder.toString());
+                                if (releaseWl) {
+                                    wakeLock = this.mWakeLock;
+                                    wakeLock.release();
+                                }
+                                start2 = i + 1;
+                                start = i + 1;
+                                socket3 = socket;
+                                address = localSocketAddress;
+                                inputStream2 = inputStream;
+                            } catch (Throwable th8) {
+                                th2 = th8;
+                                socket = socket3;
+                                pattern = pattern3;
+                                localSocketAddress = address;
+                                inputStream = inputStream2;
+                                if (releaseWl) {
+                                    this.mWakeLock.release();
+                                }
+                                throw th2;
+                            }
+                            start2 = i + 1;
+                        } else {
+                            socket = socket3;
+                            localSocketAddress = address;
+                            inputStream = inputStream2;
+                        }
+                        start = i + 1;
+                        socket3 = socket;
+                        address = localSocketAddress;
+                        inputStream2 = inputStream;
+                    }
+                    socket = socket3;
+                    localSocketAddress = address;
+                    inputStream = inputStream2;
+                    if (start2 == 0) {
+                        log("RCV incomplete");
+                    }
+                    if (start2 != count) {
+                        obj = 4096;
+                        int remaining = 4096 - start2;
+                        System.arraycopy(buffer, start2, buffer, 0, remaining);
+                        start = remaining;
+                    } else {
+                        obj = 4096;
+                        start = 0;
+                    }
+                    Object obj2 = obj;
+                    socket3 = socket;
+                    address = localSocketAddress;
+                    inputStream2 = inputStream;
+                    outputStream = null;
+                }
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("got ");
+                stringBuilder5.append(count);
+                stringBuilder5.append(" reading with start = ");
+                stringBuilder5.append(start);
+                loge(stringBuilder5.toString());
+                synchronized (this.mDaemonLock) {
+                    if (this.mOutputStream != null) {
+                        try {
+                            stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append("closing stream for ");
+                            stringBuilder4.append(this.mSocket);
+                            loge(stringBuilder4.toString());
+                            this.mOutputStream.close();
+                        } catch (IOException ex2) {
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Failed closing output stream: ");
+                            stringBuilder2.append(ex2);
+                            loge(stringBuilder2.toString());
+                        }
+                        this.mOutputStream = outputStream;
+                    }
+                }
+                try {
+                    socket3.close();
+                } catch (IOException ex22) {
+                    IOException iOException = ex22;
+                    StringBuilder stringBuilder6 = new StringBuilder();
+                    stringBuilder6.append("Failed closing socket: ");
+                    stringBuilder6.append(ex22);
+                    loge(stringBuilder6.toString());
+                }
+            } catch (IOException e9) {
+                ex22 = e9;
+                socket = socket3;
+                try {
+                    socket2 = new StringBuilder();
+                    socket2.append("Communications error: ");
+                    socket2.append(ex22);
+                    loge(socket2.toString());
+                    throw ex22;
+                } catch (Throwable th22) {
+                    socket2 = socket3;
+                    socket3 = th22;
+                    synchronized (this.mDaemonLock) {
+                        if (this.mOutputStream != null) {
+                            try {
+                                stringBuilder4 = new StringBuilder();
+                                stringBuilder4.append("closing stream for ");
+                                stringBuilder4.append(this.mSocket);
+                                loge(stringBuilder4.toString());
+                                this.mOutputStream.close();
+                            } catch (IOException ex222) {
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Failed closing output stream: ");
+                                stringBuilder2.append(ex222);
+                                loge(stringBuilder2.toString());
+                            }
+                            this.mOutputStream = null;
+                        }
+                    }
+                    if (socket2 != null) {
+                        try {
+                            socket2.close();
+                        } catch (IOException ex2222) {
+                            IOException iOException2 = ex2222;
+                            stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("Failed closing socket: ");
+                            stringBuilder3.append(ex2222);
+                            loge(stringBuilder3.toString());
+                        }
+                    }
+                    throw socket3;
+                }
+            } catch (Throwable th222) {
+                socket = socket3;
+                socket3 = th222;
+                socket2 = socket;
+                synchronized (this.mDaemonLock) {
+                }
+                if (socket2 != null) {
+                }
+                throw socket3;
+            }
+        } catch (IOException e10) {
+            ex2222 = e10;
+        }
+    }
+
     @VisibleForTesting
     static void makeCommand(StringBuilder rawBuilder, StringBuilder logBuilder, int sequenceNumber, String cmd, Object... args) {
         StringBuilder stringBuilder;
@@ -965,27 +876,27 @@ final class NativeDaemonConnector implements Runnable, Callback, Monitor {
         return x;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x00d4, code:
+    /* JADX WARNING: Missing block: B:19:0x00d4, code skipped:
             r16 = r5;
             r17 = r6;
             r14 = r1.mResponseQueue.remove(r7, r26, r11);
      */
-    /* JADX WARNING: Missing block: B:20:0x00e0, code:
+    /* JADX WARNING: Missing block: B:20:0x00e0, code skipped:
             if (r14 != null) goto L_0x0128;
      */
-    /* JADX WARNING: Missing block: B:21:0x00e2, code:
+    /* JADX WARNING: Missing block: B:21:0x00e2, code skipped:
             r15 = new java.lang.StringBuilder();
             r15.append("timed-out waiting for response to ");
             r15.append(r11);
             loge(r15.toString());
      */
-    /* JADX WARNING: Missing block: B:22:0x00f9, code:
+    /* JADX WARNING: Missing block: B:22:0x00f9, code skipped:
             if (r1.mhwNativeDaemonConnector == null) goto L_0x0101;
      */
-    /* JADX WARNING: Missing block: B:23:0x00fb, code:
+    /* JADX WARNING: Missing block: B:23:0x00fb, code skipped:
             r1.mhwNativeDaemonConnector.reportChrForAddRouteFail(r11, null);
      */
-    /* JADX WARNING: Missing block: B:24:0x0101, code:
+    /* JADX WARNING: Missing block: B:24:0x0101, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append("timed-out waiting for response mOutputStream = ");
             r0.append(r1.mOutputStream);
@@ -993,35 +904,35 @@ final class NativeDaemonConnector implements Runnable, Callback, Monitor {
             r0.append(r1.mSocket);
             loge(r0.toString());
      */
-    /* JADX WARNING: Missing block: B:25:0x0127, code:
+    /* JADX WARNING: Missing block: B:25:0x0127, code skipped:
             throw new com.android.server.NativeDaemonTimeoutException(r11, r14);
      */
-    /* JADX WARNING: Missing block: B:26:0x0128, code:
+    /* JADX WARNING: Missing block: B:26:0x0128, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append("RMV <- {");
             r0.append(r14);
             r0.append("}");
             r0 = r0.toString();
      */
-    /* JADX WARNING: Missing block: B:27:0x0142, code:
+    /* JADX WARNING: Missing block: B:27:0x0142, code skipped:
             if (r1.mhwNativeDaemonConnector == null) goto L_0x0149;
      */
-    /* JADX WARNING: Missing block: B:28:0x0144, code:
+    /* JADX WARNING: Missing block: B:28:0x0144, code skipped:
             r1.mhwNativeDaemonConnector.reportChrForAddRouteFail(r11, r0);
      */
-    /* JADX WARNING: Missing block: B:29:0x0149, code:
+    /* JADX WARNING: Missing block: B:29:0x0149, code skipped:
             r4.add(r14);
      */
-    /* JADX WARNING: Missing block: B:30:0x0150, code:
+    /* JADX WARNING: Missing block: B:30:0x0150, code skipped:
             if (r14.isClassContinue() != false) goto L_0x01b2;
      */
-    /* JADX WARNING: Missing block: B:31:0x0152, code:
+    /* JADX WARNING: Missing block: B:31:0x0152, code skipped:
             r18 = android.os.SystemClock.elapsedRealtime();
      */
-    /* JADX WARNING: Missing block: B:32:0x015c, code:
+    /* JADX WARNING: Missing block: B:32:0x015c, code skipped:
             if ((r18 - r2) <= 500) goto L_0x0183;
      */
-    /* JADX WARNING: Missing block: B:33:0x015e, code:
+    /* JADX WARNING: Missing block: B:33:0x015e, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append("NDC Command {");
             r0.append(r11);
@@ -1030,28 +941,28 @@ final class NativeDaemonConnector implements Runnable, Callback, Monitor {
             r0.append("ms)");
             loge(r0.toString());
      */
-    /* JADX WARNING: Missing block: B:35:0x0187, code:
+    /* JADX WARNING: Missing block: B:35:0x0187, code skipped:
             if (r14.isClassClientError() != false) goto L_0x01a7;
      */
-    /* JADX WARNING: Missing block: B:37:0x018d, code:
+    /* JADX WARNING: Missing block: B:37:0x018d, code skipped:
             if (r14.isClassServerError() != false) goto L_0x019c;
      */
-    /* JADX WARNING: Missing block: B:39:0x019b, code:
+    /* JADX WARNING: Missing block: B:39:0x019b, code skipped:
             return (com.android.server.NativeDaemonEvent[]) r4.toArray(new com.android.server.NativeDaemonEvent[r4.size()]);
      */
-    /* JADX WARNING: Missing block: B:40:0x019c, code:
+    /* JADX WARNING: Missing block: B:40:0x019c, code skipped:
             loge("NDC server error throw NativeDaemonFailureException");
      */
-    /* JADX WARNING: Missing block: B:41:0x01a6, code:
+    /* JADX WARNING: Missing block: B:41:0x01a6, code skipped:
             throw new com.android.server.NativeDaemonConnector.NativeDaemonFailureException(r11, r14);
      */
-    /* JADX WARNING: Missing block: B:42:0x01a7, code:
+    /* JADX WARNING: Missing block: B:42:0x01a7, code skipped:
             loge("NDC client error throw NativeDaemonArgumentException");
      */
-    /* JADX WARNING: Missing block: B:43:0x01b1, code:
+    /* JADX WARNING: Missing block: B:43:0x01b1, code skipped:
             throw new com.android.server.NativeDaemonConnector.NativeDaemonArgumentException(r11, r14);
      */
-    /* JADX WARNING: Missing block: B:44:0x01b2, code:
+    /* JADX WARNING: Missing block: B:44:0x01b2, code skipped:
             r5 = r16;
             r6 = r17;
      */
@@ -1099,7 +1010,7 @@ final class NativeDaemonConnector implements Runnable, Callback, Monitor {
                 if (this.mOutputStream != null) {
                     try {
                         this.mOutputStream.write(rawCmd.getBytes(StandardCharsets.UTF_8));
-                    } catch (Throwable e2) {
+                    } catch (IOException e2) {
                         stringBuilder = rawBuilder;
                         stringBuilder2 = logBuilder;
                         loge("NDC problem sending command throw NativeDaemonConnectorException");

@@ -121,69 +121,69 @@ public final class ShutdownThread extends Thread {
         shutdownInner(context, confirm);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0014, code:
+    /* JADX WARNING: Missing block: B:9:0x0014, code skipped:
             r0 = r6.getResources().getInteger(17694802);
      */
-    /* JADX WARNING: Missing block: B:10:0x0021, code:
+    /* JADX WARNING: Missing block: B:10:0x0021, code skipped:
             if (mRebootSafeMode == false) goto L_0x0027;
      */
-    /* JADX WARNING: Missing block: B:11:0x0023, code:
-            r1 = 17040969;
+    /* JADX WARNING: Missing block: B:11:0x0023, code skipped:
+            r1 = 17040970;
      */
-    /* JADX WARNING: Missing block: B:13:0x0028, code:
+    /* JADX WARNING: Missing block: B:13:0x0028, code skipped:
             if (r0 != 2) goto L_0x002e;
      */
-    /* JADX WARNING: Missing block: B:14:0x002a, code:
+    /* JADX WARNING: Missing block: B:14:0x002a, code skipped:
+            r1 = 17041104;
+     */
+    /* JADX WARNING: Missing block: B:15:0x002e, code skipped:
             r1 = 17041103;
      */
-    /* JADX WARNING: Missing block: B:15:0x002e, code:
-            r1 = 17041102;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0031, code:
+    /* JADX WARNING: Missing block: B:16:0x0031, code skipped:
             r2 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Notifying thread to start shutdown longPressBehavior=");
             r3.append(r0);
             android.util.Log.d(r2, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             if (r7 == false) goto L_0x00b2;
      */
-    /* JADX WARNING: Missing block: B:19:0x0053, code:
+    /* JADX WARNING: Missing block: B:19:0x0053, code skipped:
             if (com.android.server.HwServiceFactory.getHwShutdownThread().needRebootDialog(mReason, r6) != false) goto L_0x00b5;
      */
-    /* JADX WARNING: Missing block: B:20:0x0055, code:
+    /* JADX WARNING: Missing block: B:20:0x0055, code skipped:
             r2 = new com.android.server.power.ShutdownThread.CloseDialogReceiver(r6);
      */
-    /* JADX WARNING: Missing block: B:21:0x005c, code:
+    /* JADX WARNING: Missing block: B:21:0x005c, code skipped:
             if (sConfirmDialog == null) goto L_0x0063;
      */
-    /* JADX WARNING: Missing block: B:22:0x005e, code:
+    /* JADX WARNING: Missing block: B:22:0x005e, code skipped:
             sConfirmDialog.dismiss();
      */
-    /* JADX WARNING: Missing block: B:23:0x0063, code:
+    /* JADX WARNING: Missing block: B:23:0x0063, code skipped:
             r3 = new android.app.AlertDialog.Builder(r6, 33947691);
      */
-    /* JADX WARNING: Missing block: B:24:0x006d, code:
+    /* JADX WARNING: Missing block: B:24:0x006d, code skipped:
             if (mRebootSafeMode == false) goto L_0x0073;
      */
-    /* JADX WARNING: Missing block: B:25:0x006f, code:
-            r4 = 17040970;
+    /* JADX WARNING: Missing block: B:25:0x006f, code skipped:
+            r4 = 17040971;
      */
-    /* JADX WARNING: Missing block: B:26:0x0073, code:
-            r4 = 17040946;
+    /* JADX WARNING: Missing block: B:26:0x0073, code skipped:
+            r4 = 17040947;
      */
-    /* JADX WARNING: Missing block: B:27:0x0076, code:
+    /* JADX WARNING: Missing block: B:27:0x0076, code skipped:
             sConfirmDialog = r3.setTitle(r4).setMessage(r1).setPositiveButton(17039379, new com.android.server.power.ShutdownThread.AnonymousClass1()).setNegativeButton(17039369, null).create();
             r2.dialog = sConfirmDialog;
             sConfirmDialog.setOnDismissListener(r2);
             sConfirmDialog.getWindow().setType(2009);
             sConfirmDialog.show();
      */
-    /* JADX WARNING: Missing block: B:28:0x00b2, code:
+    /* JADX WARNING: Missing block: B:28:0x00b2, code skipped:
             beginShutdownSequence(r6);
      */
-    /* JADX WARNING: Missing block: B:29:0x00b5, code:
+    /* JADX WARNING: Missing block: B:29:0x00b5, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -219,34 +219,34 @@ public final class ShutdownThread extends Thread {
         if (mReason != null && mReason.startsWith("recovery-update")) {
             boolean z = RecoverySystem.UNCRYPT_PACKAGE_FILE.exists() && !RecoverySystem.BLOCK_MAP_FILE.exists();
             mRebootHasProgressBar = z;
-            pd.setTitle(context.getText(17040976));
+            pd.setTitle(context.getText(17040977));
             if (mRebootHasProgressBar) {
                 pd.setMax(100);
                 pd.setProgress(0);
                 pd.setIndeterminate(false);
                 pd.setProgressNumberFormat(null);
                 pd.setProgressStyle(1);
-                pd.setMessage(context.getText(17040974));
+                pd.setMessage(context.getText(17040975));
             } else if (showSysuiReboot()) {
                 return null;
             } else {
                 pd.setIndeterminate(true);
-                pd.setMessage(context.getText(17040975));
+                pd.setMessage(context.getText(17040976));
             }
         } else if (mReason == null || !mReason.equals("recovery")) {
             if (showSysuiReboot()) {
                 return null;
             }
-            pd.setTitle(context.getText(17040946));
-            pd.setMessage(context.getText(17041104));
+            pd.setTitle(context.getText(17040947));
+            pd.setMessage(context.getText(17041105));
             pd.setIndeterminate(true);
         } else if (RescueParty.isAttemptingFactoryReset()) {
-            pd.setTitle(context.getText(17040946));
-            pd.setMessage(context.getText(17041104));
+            pd.setTitle(context.getText(17040947));
+            pd.setMessage(context.getText(17041105));
             pd.setIndeterminate(true);
         } else {
-            pd.setTitle(context.getText(17040972));
-            pd.setMessage(context.getText(17040971));
+            pd.setTitle(context.getText(17040973));
+            pd.setMessage(context.getText(17040972));
             pd.setIndeterminate(true);
         }
         pd.setCancelable(false);
@@ -268,10 +268,10 @@ public final class ShutdownThread extends Thread {
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x00d1 A:{SYNTHETIC, Splitter: B:31:0x00d1} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x00d1 A:{SYNTHETIC, Splitter:B:31:0x00d1} */
     /* JADX WARNING: Removed duplicated region for block: B:37:0x0102  */
     /* JADX WARNING: Removed duplicated region for block: B:37:0x0102  */
-    /* JADX WARNING: Missing block: B:10:0x001e, code:
+    /* JADX WARNING: Missing block: B:10:0x001e, code skipped:
             r1 = android.os.Binder.getCallingUid();
             r3 = android.os.Binder.getCallingPid();
             r5 = new java.lang.StringBuilder();
@@ -281,31 +281,31 @@ public final class ShutdownThread extends Thread {
             r5.append(r3);
             android.util.Flog.e(1600, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:11:0x004a, code:
+    /* JADX WARNING: Missing block: B:11:0x004a, code skipped:
             if (iHwShutdownThread.isDoShutdownAnimation() != false) goto L_0x0064;
      */
-    /* JADX WARNING: Missing block: B:13:0x0054, code:
+    /* JADX WARNING: Missing block: B:13:0x0054, code skipped:
             if (iHwShutdownThread.needRebootProgressDialog(mReboot, r9) != false) goto L_0x0064;
      */
-    /* JADX WARNING: Missing block: B:15:0x005a, code:
+    /* JADX WARNING: Missing block: B:15:0x005a, code skipped:
             if (com.android.server.policy.HwPolicyFactory.isHwGlobalActionsShowing() != false) goto L_0x0064;
      */
-    /* JADX WARNING: Missing block: B:16:0x005c, code:
+    /* JADX WARNING: Missing block: B:16:0x005c, code skipped:
             sInstance.mProgressDialog = showShutdownDialog(r9);
      */
-    /* JADX WARNING: Missing block: B:17:0x0064, code:
+    /* JADX WARNING: Missing block: B:17:0x0064, code skipped:
             mFastShutdownEnable = com.android.server.policy.HwPolicyFactory.isHwFastShutdownEnable();
      */
-    /* JADX WARNING: Missing block: B:18:0x006c, code:
+    /* JADX WARNING: Missing block: B:18:0x006c, code skipped:
             if (mFastShutdownEnable == false) goto L_0x0083;
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             new android.os.SystemVibrator(r9).vibrate(500, VIBRATION_ATTRIBUTES);
      */
-    /* JADX WARNING: Missing block: B:22:0x007b, code:
+    /* JADX WARNING: Missing block: B:22:0x007b, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:23:0x007c, code:
+    /* JADX WARNING: Missing block: B:23:0x007c, code skipped:
             android.util.Log.w(TAG, "Failed to vibrate during shutdown under condition of fastshutdown mode.", r5);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -366,13 +366,13 @@ public final class ShutdownThread extends Thread {
         }
     }
 
-    /* JADX WARNING: Missing block: B:42:0x0105, code:
+    /* JADX WARNING: Missing block: B:42:0x0105, code skipped:
             if (mRebootHasProgressBar == false) goto L_0x010d;
      */
-    /* JADX WARNING: Missing block: B:43:0x0107, code:
+    /* JADX WARNING: Missing block: B:43:0x0107, code skipped:
             sInstance.setRebootProgress(2, null);
      */
-    /* JADX WARNING: Missing block: B:44:0x010d, code:
+    /* JADX WARNING: Missing block: B:44:0x010d, code skipped:
             r2.traceEnd();
             metricEnded(METRIC_SEND_BROADCAST);
             android.util.Log.i(TAG, "Shutting down activity manager...");
@@ -380,10 +380,10 @@ public final class ShutdownThread extends Thread {
             metricStarted(METRIC_AM);
             r3 = android.app.IActivityManager.Stub.asInterface(android.os.ServiceManager.checkService("activity"));
      */
-    /* JADX WARNING: Missing block: B:45:0x0130, code:
+    /* JADX WARNING: Missing block: B:45:0x0130, code skipped:
             if (r3 == null) goto L_0x0139;
      */
-    /* JADX WARNING: Missing block: B:48:?, code:
+    /* JADX WARNING: Missing block: B:48:?, code skipped:
             r3.shutdown(10000);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -451,6 +451,7 @@ public final class ShutdownThread extends Thread {
                 } catch (Throwable th3) {
                     th = th3;
                     j = endTime;
+                    throw th;
                 }
             }
             try {
@@ -534,8 +535,8 @@ public final class ShutdownThread extends Thread {
         final int i = timeout;
         final boolean[] zArr = done;
         Thread anonymousClass5 = new Thread() {
-            /* JADX WARNING: Removed duplicated region for block: B:9:0x0021 A:{Catch:{ RemoteException -> 0x001c }} */
-            /* JADX WARNING: Removed duplicated region for block: B:14:0x0054  */
+            /* JADX WARNING: Removed duplicated region for block: B:11:0x0021 A:{Catch:{ RemoteException -> 0x001c }} */
+            /* JADX WARNING: Removed duplicated region for block: B:16:0x0054  */
             /* Code decompiled incorrectly, please refer to instructions dump. */
             public void run() {
                 boolean radioOff;
@@ -703,9 +704,9 @@ public final class ShutdownThread extends Thread {
         final ProgressListener progressListener = new ProgressListener() {
             public void onProgress(int status) {
                 if (status >= 0 && status < 100) {
-                    ShutdownThread.sInstance.setRebootProgress(((int) ((((double) status) * 80.0d) / 100.0d)) + 20, ShutdownThread.this.mContext.getText(17040973));
+                    ShutdownThread.sInstance.setRebootProgress(((int) ((((double) status) * 80.0d) / 100.0d)) + 20, ShutdownThread.this.mContext.getText(17040974));
                 } else if (status == 100) {
-                    ShutdownThread.sInstance.setRebootProgress(status, ShutdownThread.this.mContext.getText(17040975));
+                    ShutdownThread.sInstance.setRebootProgress(status, ShutdownThread.this.mContext.getText(17040976));
                 }
             }
         };

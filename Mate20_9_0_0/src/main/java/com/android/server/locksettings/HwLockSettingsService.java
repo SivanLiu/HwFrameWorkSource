@@ -238,21 +238,6 @@ public class HwLockSettingsService extends LockSettingsService {
         return z;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0125 A:{ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0006} */
-    /* JADX WARNING: Missing block: B:25:0x0125, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:27:0x012d, code:
-            throw new java.lang.RuntimeException("Failed to encrypt key", r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     private void saveUserHintMessage(int userId, String hint) throws RuntimeException, IOException {
         byte[] randomLockSeed = hint.getBytes(StandardCharsets.UTF_8);
@@ -296,10 +281,11 @@ public class HwLockSettingsService extends LockSettingsService {
                 stringBuilder2.append("Invalid iv length: ");
                 stringBuilder2.append(iv.length);
                 throw new RuntimeException(stringBuilder2.toString());
-            } catch (SecretKey secretKey2) {
+            } catch (IOException secretKey2) {
                 throw new RuntimeException("Failed to concatenate byte arrays", secretKey2);
             }
-        } catch (Exception e) {
+        } catch (IOException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            throw new RuntimeException("Failed to encrypt key", e);
         } catch (Throwable th) {
             stringBuilder = new StringBuilder();
             stringBuilder.append(PROFILE_KEY_USER_HINT_ENCRYPT);
@@ -345,11 +331,6 @@ public class HwLockSettingsService extends LockSettingsService {
         return this.mStorage.hasFile(getHwUserLockHintFile(userId));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x005d A:{ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException), Splitter: B:4:0x001d} */
-    /* JADX WARNING: Missing block: B:11:0x005e, code:
-            android.util.Log.e(TAG, "save fail");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void setString(String key, String value, int userId) {
         if (KEY_HW_LOCK_HINT.equals(key)) {
             checkWritePermission(userId);
@@ -373,7 +354,8 @@ public class HwLockSettingsService extends LockSettingsService {
                         Log.v(str, stringBuilder.toString());
                     }
                     return;
-                } catch (RuntimeException e) {
+                } catch (IOException | RuntimeException e) {
+                    Log.e(TAG, "save fail");
                 }
             }
         }
@@ -440,19 +422,6 @@ public class HwLockSettingsService extends LockSettingsService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0039 A:{ExcHandler: java.security.KeyStoreException (e java.security.KeyStoreException), Splitter: B:8:0x002b} */
-    /* JADX WARNING: Missing block: B:15:0x003a, code:
-            android.util.Log.e(TAG, "get UserHintMessage fail");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public String getString(String key, String defaultValue, int userId) {
         if (KEY_HW_LOCK_HINT.equals(key) && hasHwUserLockHint(userId)) {
             checkWritePermission(userId);
@@ -461,7 +430,8 @@ public class HwLockSettingsService extends LockSettingsService {
                 try {
                     String hintInfo = getUserHintMessage(userId);
                     return TextUtils.isEmpty(hintInfo) ? defaultValue : hintInfo;
-                } catch (KeyStoreException e) {
+                } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+                    Log.e(TAG, "get UserHintMessage fail");
                 }
             }
         }

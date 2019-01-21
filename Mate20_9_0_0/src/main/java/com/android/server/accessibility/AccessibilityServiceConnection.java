@@ -74,7 +74,7 @@ class AccessibilityServiceConnection extends AbstractAccessibilityServiceConnect
         return this.mSecurityPolicy.canRetrieveWindowContentLocked(this) && this.mRetrieveInteractiveWindows;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0039, code:
+    /* JADX WARNING: Missing block: B:17:0x0039, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -125,22 +125,22 @@ class AccessibilityServiceConnection extends AbstractAccessibilityServiceConnect
         return this.mAccessibilityServiceInfo;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x002c, code:
+    /* JADX WARNING: Missing block: B:13:0x002c, code skipped:
             if (r0 != null) goto L_0x0032;
      */
-    /* JADX WARNING: Missing block: B:14:0x002e, code:
+    /* JADX WARNING: Missing block: B:14:0x002e, code skipped:
             binderDied();
      */
-    /* JADX WARNING: Missing block: B:15:0x0031, code:
+    /* JADX WARNING: Missing block: B:15:0x0031, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             r0.init(r5, r5.mId, r5.mOverlayWindowToken);
      */
-    /* JADX WARNING: Missing block: B:18:0x003a, code:
+    /* JADX WARNING: Missing block: B:18:0x003a, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:19:0x003b, code:
+    /* JADX WARNING: Missing block: B:19:0x003b, code skipped:
             r2 = LOG_TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Error while setting connection for service: ");
@@ -173,38 +173,38 @@ class AccessibilityServiceConnection extends AbstractAccessibilityServiceConnect
         return this.mSecurityPolicy.resolveCallingUserIdEnforcingPermissionsLocked(-2) == this.mSystemSupport.getCurrentUserIdLocked();
     }
 
-    /* JADX WARNING: Missing block: B:8:0x000d, code:
+    /* JADX WARNING: Missing block: B:8:0x000d, code skipped:
             r0 = (com.android.server.accessibility.AccessibilityManagerService.UserState) r6.mUserStateWeakReference.get();
      */
-    /* JADX WARNING: Missing block: B:9:0x0015, code:
+    /* JADX WARNING: Missing block: B:9:0x0015, code skipped:
             if (r0 != null) goto L_0x0018;
      */
-    /* JADX WARNING: Missing block: B:10:0x0017, code:
+    /* JADX WARNING: Missing block: B:10:0x0017, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:11:0x0018, code:
+    /* JADX WARNING: Missing block: B:11:0x0018, code skipped:
             r1 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:12:0x001c, code:
+    /* JADX WARNING: Missing block: B:12:0x001c, code skipped:
             if (r7 != 0) goto L_0x0020;
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             r3 = null;
      */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             r3 = r6.mComponentName;
      */
-    /* JADX WARNING: Missing block: B:16:0x0022, code:
+    /* JADX WARNING: Missing block: B:16:0x0022, code skipped:
             r0.mServiceChangingSoftKeyboardMode = r3;
             android.provider.Settings.Secure.putIntForUser(r6.mContext.getContentResolver(), "accessibility_soft_keyboard_mode", r7, r0.mUserId);
      */
-    /* JADX WARNING: Missing block: B:17:0x0031, code:
+    /* JADX WARNING: Missing block: B:17:0x0031, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:18:0x0036, code:
+    /* JADX WARNING: Missing block: B:18:0x0036, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:20:0x0038, code:
+    /* JADX WARNING: Missing block: B:20:0x0038, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -216,7 +216,7 @@ class AccessibilityServiceConnection extends AbstractAccessibilityServiceConnect
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001f, code:
+    /* JADX WARNING: Missing block: B:13:0x001f, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

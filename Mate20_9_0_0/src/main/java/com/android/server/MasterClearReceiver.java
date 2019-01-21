@@ -30,7 +30,7 @@ public class MasterClearReceiver extends BroadcastReceiver {
         protected void onPreExecute() {
             this.mProgressDialog.setIndeterminate(true);
             this.mProgressDialog.getWindow().setType(2003);
-            this.mProgressDialog.setMessage(this.mContext.getText(17040956));
+            this.mProgressDialog.setMessage(this.mContext.getText(17040957));
             this.mProgressDialog.show();
         }
 

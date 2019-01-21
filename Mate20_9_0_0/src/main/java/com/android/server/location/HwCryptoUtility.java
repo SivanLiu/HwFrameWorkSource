@@ -49,20 +49,22 @@ public class HwCryptoUtility {
             return des.toString();
         }
 
-        /* JADX WARNING: Missing block: B:4:0x000e, code:
-            if (r6.equals("") != false) goto L_0x0013;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public static String Encrypt(String strSrc, String encName) {
+            MessageDigest md;
             byte[] bt = strSrc.getBytes();
             if (encName != null) {
                 try {
+                    if (encName.equals("")) {
+                    }
+                    md = MessageDigest.getInstance(encName);
+                    md.update(bt);
+                    return bytes2Hex(md.digest());
                 } catch (NoSuchAlgorithmException e) {
                     return null;
                 }
             }
             encName = "SHA-256";
-            MessageDigest md = MessageDigest.getInstance(encName);
+            md = MessageDigest.getInstance(encName);
             md.update(bt);
             return bytes2Hex(md.digest());
         }

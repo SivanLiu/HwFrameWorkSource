@@ -1,6 +1,7 @@
 package jcifs.smb;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import jcifs.util.Hexdump;
 import jcifs.util.LogStream;
 
@@ -25,7 +26,7 @@ public class SigningDigest implements SmbConstants {
                 log.println("macSigningKey:");
                 Hexdump.hexdump(log, macSigningKey, 0, macSigningKey.length);
             }
-        } catch (Throwable ex) {
+        } catch (NoSuchAlgorithmException ex) {
             logStream = log;
             if (LogStream.level > 0) {
                 ex.printStackTrace(log);
@@ -64,10 +65,10 @@ public class SigningDigest implements SmbConstants {
                     log.println("LM_COMPATIBILITY=" + LM_COMPATIBILITY);
                     Hexdump.hexdump(log, this.macSigningKey, 0, this.macSigningKey.length);
                 }
-            } catch (Throwable ex) {
+            } catch (Exception ex) {
                 throw new SmbException("", ex);
             }
-        } catch (Throwable ex2) {
+        } catch (NoSuchAlgorithmException ex2) {
             logStream = log;
             if (LogStream.level > 0) {
                 ex2.printStackTrace(log);

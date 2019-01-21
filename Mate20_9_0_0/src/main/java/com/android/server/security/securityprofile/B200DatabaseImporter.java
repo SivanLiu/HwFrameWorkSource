@@ -19,20 +19,20 @@ class B200DatabaseImporter {
     B200DatabaseImporter() {
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0058, code:
+    /* JADX WARNING: Missing block: B:16:0x0058, code skipped:
             if (r1 != null) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:17:0x005a, code:
+    /* JADX WARNING: Missing block: B:17:0x005a, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:22:0x0068, code:
+    /* JADX WARNING: Missing block: B:22:0x0068, code skipped:
             if (r1 == null) goto L_0x006b;
      */
-    /* JADX WARNING: Missing block: B:23:0x006b, code:
+    /* JADX WARNING: Missing block: B:23:0x006b, code skipped:
             r2.close();
             r13.deleteDatabase(DATABASE_NAME);
      */
-    /* JADX WARNING: Missing block: B:24:0x0074, code:
+    /* JADX WARNING: Missing block: B:24:0x0074, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

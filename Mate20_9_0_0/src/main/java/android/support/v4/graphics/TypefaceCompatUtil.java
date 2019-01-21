@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
@@ -66,7 +67,7 @@ public class TypefaceCompatUtil {
             try {
                 FileChannel channel = fis.getChannel();
                 FileChannel fileChannel = channel;
-                ByteBuffer map = fileChannel.map(MapMode.READ_ONLY, 0, channel.size());
+                MappedByteBuffer map = fileChannel.map(MapMode.READ_ONLY, 0, channel.size());
                 fis.close();
                 return map;
             } catch (Throwable th22) {
@@ -90,18 +91,18 @@ public class TypefaceCompatUtil {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x004f A:{Splitter: B:7:0x0014, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x004f A:{Splitter:B:8:0x0014, ExcHandler: all (th java.lang.Throwable)} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:32:0x004f, code:
+    /* JADX WARNING: Missing block: B:33:0x004f, code skipped:
             r3 = th;
      */
-    /* JADX WARNING: Missing block: B:33:0x0050, code:
+    /* JADX WARNING: Missing block: B:34:0x0050, code skipped:
             r4 = null;
      */
-    /* JADX WARNING: Missing block: B:37:0x0054, code:
+    /* JADX WARNING: Missing block: B:38:0x0054, code skipped:
             r4 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:38:0x0055, code:
+    /* JADX WARNING: Missing block: B:39:0x0055, code skipped:
             r11 = r4;
             r4 = r3;
             r3 = r11;
@@ -126,7 +127,7 @@ public class TypefaceCompatUtil {
                 try {
                     FileChannel channel = fis.getChannel();
                     FileChannel fileChannel = channel;
-                    ByteBuffer map = fileChannel.map(MapMode.READ_ONLY, 0, channel.size());
+                    MappedByteBuffer map = fileChannel.map(MapMode.READ_ONLY, 0, channel.size());
                     fis.close();
                     if (pfd != null) {
                         pfd.close();

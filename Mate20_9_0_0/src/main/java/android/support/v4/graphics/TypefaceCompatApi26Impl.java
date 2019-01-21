@@ -22,6 +22,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -46,25 +47,6 @@ public class TypefaceCompatApi26Impl extends TypefaceCompatApi21Impl {
     protected final Constructor mFontFamilyCtor;
     protected final Method mFreeze;
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0029 A:{Splitter: B:1:0x0003, ExcHandler: java.lang.ClassNotFoundException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:4:0x0029, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x002a, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Unable to collect necessary methods for class ");
-            r2.append(r0.getClass().getName());
-            android.util.Log.e(r1, r2.toString(), r0);
-            r1 = null;
-            r2 = null;
-            r3 = null;
-            r4 = null;
-            r5 = null;
-            r6 = null;
-            r0 = null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public TypefaceCompatApi26Impl() {
         Method addFontFromBuffer;
         Method freeze;
@@ -88,7 +70,19 @@ public class TypefaceCompatApi26Impl extends TypefaceCompatApi21Impl {
             freeze = addFontFromBuffer;
             addFontFromBuffer = addFontFromAssetManager;
             fontFamilyCtor = constructor;
-        } catch (ReflectiveOperationException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Unable to collect necessary methods for class ");
+            stringBuilder.append(e.getClass().getName());
+            Log.e(str, stringBuilder.toString(), e);
+            fontFamily = null;
+            fontFamilyCtor = null;
+            addFontFromBuffer = null;
+            freeze = null;
+            abortCreation = null;
+            abortCreation2 = null;
+            createFromFamiliesWithDefault = null;
         }
         this.mFontFamily = fontFamily;
         this.mFontFamilyCtor = fontFamilyCtor;
@@ -106,95 +100,52 @@ public class TypefaceCompatApi26Impl extends TypefaceCompatApi21Impl {
         return this.mAddFontFromAssetManager != null;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000a A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000a A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x000a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0010, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private Object newFamily() {
         try {
             return this.mFontFamilyCtor.newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0041 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_3 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0041, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0047, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean addFontFromAssetManager(Context context, Object family, String fileName, int ttcIndex, int weight, int style, @Nullable FontVariationAxis[] axes) {
         try {
             return ((Boolean) this.mAddFontFromAssetManager.invoke(family, new Object[]{context.getAssets(), fileName, Integer.valueOf(0), Boolean.valueOf(false), Integer.valueOf(ttcIndex), Integer.valueOf(weight), Integer.valueOf(style), axes})).booleanValue();
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x002c A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_3 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x002c, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0032, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean addFontFromBuffer(Object family, ByteBuffer buffer, int ttcIndex, int weight, int style) {
         try {
             return ((Boolean) this.mAddFontFromBuffer.invoke(family, new Object[]{buffer, Integer.valueOf(ttcIndex), null, Integer.valueOf(weight), Integer.valueOf(style)})).booleanValue();
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0028 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0028, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x002e, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected Typeface createFromFamiliesWithDefault(Object family) {
         try {
             Array.set(Array.newInstance(this.mFontFamily, 1), 0, family);
             return (Typeface) this.mCreateFromFamiliesWithDefault.invoke(null, new Object[]{familyArray, Integer.valueOf(-1), Integer.valueOf(-1)});
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0010 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_3 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0010, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0016, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean freeze(Object family) {
         try {
             return ((Boolean) this.mFreeze.invoke(family, new Object[0])).booleanValue();
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000a A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_1 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x000a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0010, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void abortCreation(Object family) {
         try {
             this.mAbortCreation.invoke(family, new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 

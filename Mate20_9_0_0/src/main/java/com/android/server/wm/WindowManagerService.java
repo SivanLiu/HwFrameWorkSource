@@ -227,7 +227,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
     static final String[] DISABLE_HW_LAUNCHER_EXIT_ANIM_CMP_LIST = new String[]{PERMISSION_DIALOG_CMP, STK_DIALOG_CMP};
     static final String DRAWER_LAUNCHER_CMP = "com.huawei.android.launcher/.drawer.DrawerLauncher";
     static final boolean HWFLOW = true;
-    static final boolean HW_SUPPORT_LAUNCHER_EXIT_ANIM = (SystemProperties.getBoolean("ro.config.disable_launcher_exit_anim", false) ^ true);
+    static final boolean HW_SUPPORT_LAUNCHER_EXIT_ANIM = (SystemProperties.getBoolean("ro.config.disable_launcher_exit_anim", false) ^ 1);
     private static final int INPUT_DEVICES_READY_FOR_SAFE_MODE_DETECTION_TIMEOUT_MILLIS = 1000;
     static final boolean IS_DEBUG_VERSION = (SystemProperties.getInt("ro.logsystem.usertype", 1) == 3);
     static final int LAST_ANR_LIFETIME_DURATION_MSECS = 7200000;
@@ -566,58 +566,58 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         public static final int WINDOW_HIDE_TIMEOUT = 52;
         public static final int WINDOW_REPLACEMENT_TIMEOUT = 46;
 
-        /* JADX WARNING: Missing block: B:253:0x048e, code:
-            return;
-     */
-        /* JADX WARNING: Missing block: B:256:0x0490, code:
+        /* JADX WARNING: Missing block: B:258:0x0490, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             java.lang.Runtime.getRuntime().gc();
      */
-        /* JADX WARNING: Missing block: B:315:0x061f, code:
+        /* JADX WARNING: Missing block: B:263:0x04a7, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:326:0x0659, code:
+        /* JADX WARNING: Missing block: B:316:0x061f, code skipped:
+            return;
+     */
+        /* JADX WARNING: Missing block: B:327:0x0659, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             r3 = r4;
             r4 = r5;
      */
-        /* JADX WARNING: Missing block: B:327:0x065e, code:
+        /* JADX WARNING: Missing block: B:328:0x065e, code skipped:
             if (r0 == null) goto L_0x0663;
      */
-        /* JADX WARNING: Missing block: B:328:0x0660, code:
+        /* JADX WARNING: Missing block: B:329:0x0660, code skipped:
             r0.onWindowFocusChangedNotLocked();
      */
-        /* JADX WARNING: Missing block: B:329:0x0663, code:
+        /* JADX WARNING: Missing block: B:330:0x0663, code skipped:
             if (r4 == null) goto L_0x068b;
      */
-        /* JADX WARNING: Missing block: B:331:0x0667, code:
+        /* JADX WARNING: Missing block: B:332:0x0667, code skipped:
             if (com.android.server.wm.WindowManagerDebugConfig.DEBUG_FOCUS_LIGHT == false) goto L_0x067f;
      */
-        /* JADX WARNING: Missing block: B:332:0x0669, code:
+        /* JADX WARNING: Missing block: B:333:0x0669, code skipped:
             r5 = com.android.server.wm.WindowManagerService.TAG;
             r6 = new java.lang.StringBuilder();
             r6.append("Gaining focus: ");
             r6.append(r4);
             android.util.Slog.i(r5, r6.toString());
      */
-        /* JADX WARNING: Missing block: B:333:0x067f, code:
+        /* JADX WARNING: Missing block: B:334:0x067f, code skipped:
             r4.reportFocusChangedSerialized(true, r9.this$0.mInTouchMode);
             com.android.server.wm.WindowManagerService.access$600(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:334:0x068b, code:
+        /* JADX WARNING: Missing block: B:335:0x068b, code skipped:
             if (r3 == null) goto L_0x0745;
      */
-        /* JADX WARNING: Missing block: B:336:0x068f, code:
+        /* JADX WARNING: Missing block: B:337:0x068f, code skipped:
             if (com.android.server.wm.WindowManagerDebugConfig.DEBUG_FOCUS_LIGHT == false) goto L_0x06a7;
      */
-        /* JADX WARNING: Missing block: B:337:0x0691, code:
+        /* JADX WARNING: Missing block: B:338:0x0691, code skipped:
             r1 = com.android.server.wm.WindowManagerService.TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Losing focus: ");
             r5.append(r3);
             android.util.Slog.i(r1, r5.toString());
      */
-        /* JADX WARNING: Missing block: B:338:0x06a7, code:
+        /* JADX WARNING: Missing block: B:339:0x06a7, code skipped:
             r3.reportFocusChangedSerialized(false, r9.this$0.mInTouchMode);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -751,15 +751,17 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                     synchronized (WindowManagerService.this.mWindowMap) {
                                         try {
                                             WindowManagerService.boostPriorityForLockedSection();
-                                            if (!WindowManagerService.this.mAnimator.isAnimating() && !WindowManagerService.this.mAnimator.isAnimationScheduled()) {
-                                                if (!WindowManagerService.this.mDisplayFrozen) {
-                                                    break;
+                                            if (!WindowManagerService.this.mAnimator.isAnimating()) {
+                                                if (!WindowManagerService.this.mAnimator.isAnimationScheduled()) {
+                                                    if (!WindowManagerService.this.mDisplayFrozen) {
+                                                        break;
+                                                    }
+                                                    WindowManagerService.resetPriorityAfterLockedSection();
+                                                    return;
                                                 }
-                                            } else {
-                                                sendEmptyMessageDelayed(15, 2000);
-                                                WindowManagerService.resetPriorityAfterLockedSection();
-                                                return;
                                             }
+                                            sendEmptyMessageDelayed(15, 2000);
+                                            break;
                                         } finally {
                                             while (true) {
                                                 WindowManagerService.resetPriorityAfterLockedSection();
@@ -767,7 +769,6 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                             }
                                         }
                                     }
-                                    break;
                                 case 16:
                                     WindowManagerService.this.performEnableScreen();
                                     break;
@@ -1345,6 +1346,10 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
 
         public HwTaskSnapshotWrapper getForegroundTaskSnapshotWrapper(boolean refresh) {
             return WindowManagerService.this.mHwWMSEx.getForegroundTaskSnapshotWrapper(WindowManagerService.this.mTaskSnapshotController, WindowManagerService.this.getFocusedWindow(), refresh);
+        }
+
+        public void setGestureNavMode(String packageName, int leftMode, int rightMode, int bottomMode) {
+            WindowManagerService.this.mPolicy.setGestureNavMode(packageName, Binder.getCallingUid(), leftMode, rightMode, bottomMode);
         }
     }
 
@@ -2223,41 +2228,39 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:386:0x0725 A:{Catch:{ all -> 0x06ce }} */
-    /* JADX WARNING: Removed duplicated region for block: B:412:0x077c  */
-    /* JADX WARNING: Removed duplicated region for block: B:389:0x072e A:{SYNTHETIC, Splitter: B:389:0x072e} */
-    /* JADX WARNING: Removed duplicated region for block: B:417:0x0784 A:{SYNTHETIC, Splitter: B:417:0x0784} */
-    /* JADX WARNING: Removed duplicated region for block: B:422:0x078f A:{SYNTHETIC, Splitter: B:422:0x078f} */
-    /* JADX WARNING: Removed duplicated region for block: B:442:0x07f8 A:{Catch:{ all -> 0x076a }} */
-    /* JADX WARNING: Removed duplicated region for block: B:439:0x07f0  */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0853  */
-    /* JADX WARNING: Removed duplicated region for block: B:463:0x0836 A:{SYNTHETIC, Splitter: B:463:0x0836} */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0872  */
-    /* JADX WARNING: Removed duplicated region for block: B:477:0x0860  */
-    /* JADX WARNING: Removed duplicated region for block: B:497:0x08c5 A:{Catch:{ all -> 0x0988 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:500:0x08cd A:{Catch:{ all -> 0x0988 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x08fb A:{Catch:{ all -> 0x0988 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:508:0x08ed A:{Catch:{ all -> 0x0988 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:527:0x094e A:{Catch:{ all -> 0x0988 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x0921 A:{Catch:{ all -> 0x0988 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:536:0x0981  */
-    /* JADX WARNING: Removed duplicated region for block: B:358:0x06d7 A:{SYNTHETIC, Splitter: B:358:0x06d7} */
-    /* JADX WARNING: Removed duplicated region for block: B:351:0x06a9 A:{SYNTHETIC, Splitter: B:351:0x06a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:351:0x06a9 A:{SYNTHETIC, Splitter: B:351:0x06a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:358:0x06d7 A:{SYNTHETIC, Splitter: B:358:0x06d7} */
-    /* JADX WARNING: Removed duplicated region for block: B:358:0x06d7 A:{SYNTHETIC, Splitter: B:358:0x06d7} */
-    /* JADX WARNING: Removed duplicated region for block: B:351:0x06a9 A:{SYNTHETIC, Splitter: B:351:0x06a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:351:0x06a9 A:{SYNTHETIC, Splitter: B:351:0x06a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:358:0x06d7 A:{SYNTHETIC, Splitter: B:358:0x06d7} */
-    /* JADX WARNING: Removed duplicated region for block: B:358:0x06d7 A:{SYNTHETIC, Splitter: B:358:0x06d7} */
-    /* JADX WARNING: Removed duplicated region for block: B:351:0x06a9 A:{SYNTHETIC, Splitter: B:351:0x06a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:351:0x06a9 A:{SYNTHETIC, Splitter: B:351:0x06a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:358:0x06d7 A:{SYNTHETIC, Splitter: B:358:0x06d7} */
-    /* JADX WARNING: Missing block: B:406:0x0756, code:
-            if (r14.mCurrentFocus.mOwnerUid == r8) goto L_0x077e;
+    /* JADX WARNING: Removed duplicated region for block: B:388:0x0724 A:{Catch:{ all -> 0x06cd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:415:0x077b  */
+    /* JADX WARNING: Removed duplicated region for block: B:391:0x072d A:{SYNTHETIC, Splitter:B:391:0x072d} */
+    /* JADX WARNING: Removed duplicated region for block: B:420:0x0783 A:{SYNTHETIC, Splitter:B:420:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:425:0x078e A:{SYNTHETIC, Splitter:B:425:0x078e} */
+    /* JADX WARNING: Removed duplicated region for block: B:450:0x0802 A:{Catch:{ all -> 0x07fd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:445:0x07f5  */
+    /* JADX WARNING: Removed duplicated region for block: B:474:0x0852 A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:470:0x0840 A:{Catch:{ all -> 0x0989 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:490:0x08c1 A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:493:0x08c9 A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:504:0x08f7 A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x08e9 A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:520:0x094a A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:515:0x091d A:{Catch:{ all -> 0x0984 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:529:0x097d  */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x06d6 A:{SYNTHETIC, Splitter:B:360:0x06d6} */
+    /* JADX WARNING: Removed duplicated region for block: B:353:0x06a8 A:{SYNTHETIC, Splitter:B:353:0x06a8} */
+    /* JADX WARNING: Removed duplicated region for block: B:353:0x06a8 A:{SYNTHETIC, Splitter:B:353:0x06a8} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x06d6 A:{SYNTHETIC, Splitter:B:360:0x06d6} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x06d6 A:{SYNTHETIC, Splitter:B:360:0x06d6} */
+    /* JADX WARNING: Removed duplicated region for block: B:353:0x06a8 A:{SYNTHETIC, Splitter:B:353:0x06a8} */
+    /* JADX WARNING: Removed duplicated region for block: B:353:0x06a8 A:{SYNTHETIC, Splitter:B:353:0x06a8} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x06d6 A:{SYNTHETIC, Splitter:B:360:0x06d6} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x06d6 A:{SYNTHETIC, Splitter:B:360:0x06d6} */
+    /* JADX WARNING: Removed duplicated region for block: B:353:0x06a8 A:{SYNTHETIC, Splitter:B:353:0x06a8} */
+    /* JADX WARNING: Removed duplicated region for block: B:353:0x06a8 A:{SYNTHETIC, Splitter:B:353:0x06a8} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x06d6 A:{SYNTHETIC, Splitter:B:360:0x06d6} */
+    /* JADX WARNING: Missing block: B:408:0x0755, code skipped:
+            if (r14.mCurrentFocus.mOwnerUid == r8) goto L_0x077d;
      */
-    /* JADX WARNING: Missing block: B:424:0x0793, code:
-            if (excludeWindowsFromTapOutTask(r1) != false) goto L_0x0795;
+    /* JADX WARNING: Missing block: B:427:0x0792, code skipped:
+            if (excludeWindowsFromTapOutTask(r1) != false) goto L_0x0794;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int addWindow(Session session, IWindow client, int seq, LayoutParams attrs, int viewVisibility, int displayId, Rect outFrame, Rect outContentInsets, Rect outStableInsets, Rect outOutsets, ParcelableWrapper outDisplayCutout, InputChannel outInputChannel) {
@@ -2375,8 +2378,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                     IWindow iWindow2;
                     boolean z;
                     int i6;
-                    Object obj2;
                     AppWindowToken atoken2;
+                    Object obj2;
                     WindowToken token3;
                     IBinder iBinder2;
                     int type3;
@@ -2526,8 +2529,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                 z = parentWindow5.mCanAddInternalSystemWindow;
                                                 type2 = token2;
                                                 i6 = parentWindow5.mUid;
-                                                obj2 = obj;
                                                 atoken2 = atoken;
+                                                obj2 = obj;
                                                 windowHashMap = windowHashMap2;
                                                 token3 = token2;
                                                 type = type4;
@@ -2547,6 +2550,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         return -4;
                                                     } catch (Throwable th5) {
                                                         displayContent = th5;
+                                                        windowState = parentWindow4;
                                                         i5 = callingUid;
                                                         i = type;
                                                         i3 = displayId;
@@ -2567,8 +2571,10 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         return res;
                                                     }
                                                     boolean type5;
+                                                    boolean imMayMove;
                                                     WindowStateAnimator winAnimator;
                                                     AppWindowToken atoken3;
+                                                    boolean imMayMove2;
                                                     boolean openInputChannels;
                                                     Object obj3;
                                                     Rect taskBounds;
@@ -2577,7 +2583,6 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                     InputChannel inputChannel2 = outInputChannel;
                                                     if (inputChannel2 != null) {
                                                         if ((layoutParams3.inputFeatures & 2) == 0) {
-                                                            boolean imMayMove;
                                                             type5 = true;
                                                             if (type5) {
                                                                 windowState.openInputChannel(inputChannel2);
@@ -2603,11 +2608,15 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                                     } catch (Throwable th6) {
                                                                         displayContent = th6;
                                                                         i = callingUid2;
+                                                                        i3 = displayId;
+                                                                        resetPriorityAfterLockedSection();
+                                                                        throw displayContent;
                                                                     }
                                                                 } catch (Throwable th7) {
                                                                     displayContent = th7;
                                                                     i5 = callingUid;
                                                                     i = callingUid2;
+                                                                    windowState = parentWindow4;
                                                                     i3 = displayId;
                                                                     resetPriorityAfterLockedSection();
                                                                     throw displayContent;
@@ -2628,21 +2637,29 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                             windowState.setForceHideNonSystemOverlayWindowIfNeeded(this.mHidingNonSystemOverlayWindows.isEmpty() ^ true);
                                                             parentWindow2 = token3.asAppWindowToken();
                                                             if (callingUid2 == 3 || parentWindow2 == null) {
-                                                                this.mHwWMSEx.updateHwStartWindowRecord(layoutParams3.packageName);
+                                                                i3 = callingUid2;
+                                                                this.mHwWMSEx.updateHwStartWindowRecord(session.mUid);
                                                             } else {
                                                                 parentWindow2.startingWindow = windowState;
                                                                 boolean z2 = hasStatusBarServicePermission;
+                                                                i3 = callingUid2;
+                                                                callingUid2 = session;
                                                             }
-                                                            hasStatusBarServicePermission = true;
+                                                            imMayMove = true;
                                                             windowState.mToken.addWindow(windowState);
-                                                            if (callingUid2 != 2011) {
-                                                                windowState.mGivenInsetsPending = true;
-                                                                setInputMethodWindowLocked(windowState);
-                                                                hasStatusBarServicePermission = false;
-                                                            } else if (callingUid2 == 2012) {
+                                                            if (i3 != 2011) {
+                                                                try {
+                                                                    windowState.mGivenInsetsPending = true;
+                                                                    setInputMethodWindowLocked(windowState);
+                                                                    imMayMove = false;
+                                                                } catch (Throwable th8) {
+                                                                    displayContent = th8;
+                                                                    i = i3;
+                                                                }
+                                                            } else if (i3 == 2012) {
                                                                 displayContent2.computeImeTarget(true);
-                                                                hasStatusBarServicePermission = false;
-                                                            } else if (callingUid2 == 2013) {
+                                                                imMayMove = false;
+                                                            } else if (i3 == 2013) {
                                                                 displayContent2.mWallpaperController.clearLastWallpaperTimeoutTime();
                                                                 displayContent2.pendingLayoutChanges |= 4;
                                                             } else if ((layoutParams3.flags & DumpState.DUMP_DEXOPT) != 0) {
@@ -2651,105 +2668,87 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                                 displayContent2.pendingLayoutChanges |= 4;
                                                             }
                                                             windowState.applyAdjustForImeIfNeeded();
-                                                            if (callingUid2 != 2034) {
+                                                            if (i3 != 2034) {
+                                                                i = i3;
+                                                                i3 = displayId;
                                                                 try {
-                                                                    imMayMove = hasStatusBarServicePermission;
-                                                                    i3 = displayId;
-                                                                    try {
-                                                                        this.mRoot.getDisplayContent(i3).getDockedDividerController().setWindow(windowState);
-                                                                    } catch (Throwable th8) {
-                                                                        displayContent = th8;
-                                                                    }
+                                                                    this.mRoot.getDisplayContent(i3).getDockedDividerController().setWindow(windowState);
                                                                 } catch (Throwable th9) {
                                                                     displayContent = th9;
-                                                                    i3 = displayId;
-                                                                    i = callingUid2;
                                                                     windowState = parentWindow4;
                                                                     resetPriorityAfterLockedSection();
                                                                     throw displayContent;
                                                                 }
                                                             }
-                                                            imMayMove = hasStatusBarServicePermission;
                                                             i3 = displayId;
-                                                            try {
-                                                                winAnimator = windowState.mWinAnimator;
-                                                                winAnimator.mEnterAnimationPending = true;
-                                                                winAnimator.mEnteringAnimation = true;
-                                                                if (atoken2 == null) {
-                                                                    atoken3 = atoken2;
-                                                                    if (atoken3.isVisible() && !prepareWindowReplacementTransition(atoken3)) {
-                                                                        prepareNoneTransitionForRelaunching(atoken3);
-                                                                    }
-                                                                } else {
-                                                                    atoken3 = atoken2;
-                                                                }
-                                                                forceCompatMode2 = displayContent2.mDisplayFrames;
-                                                                openInputChannels = type5;
-                                                                i = callingUid2;
-                                                                type2 = displayContent2.getDisplayInfo();
-                                                                forceCompatMode2.onDisplayInfoUpdated(type2, displayContent2.calculateDisplayCutoutForRotation(type2.rotation));
-                                                                if (atoken3 != null || atoken3.getTask() == 0) {
-                                                                    obj3 = type2;
-                                                                    taskBounds = iBinder2;
-                                                                } else {
-                                                                    callingUid2 = this.mTmpRect;
-                                                                    DisplayInfo displayInfo = type2;
-                                                                    atoken3.getTask().getBounds(this.mTmpRect);
-                                                                    taskBounds = callingUid2;
-                                                                }
-                                                                if (this.mPolicy.getLayoutHintLw(windowState.mAttrs, taskBounds, forceCompatMode2, outFrame, outContentInsets, outStableInsets, outOutsets, outDisplayCutout)) {
-                                                                    res = 0 | 4;
-                                                                }
-                                                                if (this.mInTouchMode) {
-                                                                    res |= 1;
-                                                                }
-                                                                if (windowState.mAppToken == null || !windowState.mAppToken.isClientHidden()) {
-                                                                    res |= 2;
-                                                                }
-                                                                this.mInputMonitor.setUpdateInputWindowsNeededLw();
-                                                                focusChanged = false;
-                                                                if (windowState.canReceiveKeys() == 0) {
-                                                                    focusChanged = updateFocusedWindowLocked(1, 0);
-                                                                    if (focusChanged) {
-                                                                        imMayMove = false;
-                                                                    }
-                                                                }
-                                                                if (imMayMove && (HwPCUtils.enabledInPad() == 0 || HwPCUtils.isPcCastModeInServer() == 0 || HwPCUtils.isValidExtDisplayId(displayContent2.getDisplayId()) != 0)) {
-                                                                    displayContent2.computeImeTarget(1);
-                                                                }
-                                                                windowState.getParent().assignChildLayers();
-                                                                if (focusChanged) {
-                                                                } else {
-                                                                    if (HwPCUtils.isPcCastModeInServer() != 0) {
-                                                                        type2 = TAG;
-                                                                        callingUid2 = new StringBuilder();
-                                                                        callingUid2.append("updateFocusedWindowLocked mCurrentFocus = ");
-                                                                        callingUid2.append(this.mCurrentFocus);
-                                                                        HwPCUtils.log(type2, callingUid2.toString());
-                                                                    }
-                                                                    this.mInputMonitor.setInputFocusLw(this.mCurrentFocus, 0);
-                                                                }
-                                                                this.mInputMonitor.updateInputWindowsLw(0);
-                                                                str = TAG;
-                                                                type2 = new StringBuilder();
-                                                                type2.append("addWindow: ");
-                                                                type2.append(windowState);
-                                                                Slog.v(str, type2.toString());
-                                                                if (windowState.isVisibleOrAdding() && updateOrientationFromAppTokensLocked(i3)) {
-                                                                    reportNewConfig = true;
-                                                                }
-                                                                resetPriorityAfterLockedSection();
-                                                                if (reportNewConfig) {
-                                                                    sendNewConfiguration(i3);
-                                                                }
-                                                                Binder.restoreCallingIdentity(type4);
-                                                                return res;
-                                                            } catch (Throwable th10) {
-                                                                displayContent = th10;
-                                                                i = callingUid2;
-                                                                resetPriorityAfterLockedSection();
-                                                                throw displayContent;
+                                                            winAnimator = windowState.mWinAnimator;
+                                                            winAnimator.mEnterAnimationPending = true;
+                                                            winAnimator.mEnteringAnimation = true;
+                                                            atoken3 = atoken2;
+                                                            if (!(atoken3 == null || !atoken3.isVisible() || prepareWindowReplacementTransition(atoken3))) {
+                                                                prepareNoneTransitionForRelaunching(atoken3);
                                                             }
+                                                            imMayMove2 = imMayMove;
+                                                            forceCompatMode2 = displayContent2.mDisplayFrames;
+                                                            openInputChannels = type5;
+                                                            type2 = displayContent2.getDisplayInfo();
+                                                            forceCompatMode2.onDisplayInfoUpdated(type2, displayContent2.calculateDisplayCutoutForRotation(type2.rotation));
+                                                            if (atoken3 != null || atoken3.getTask() == 0) {
+                                                                obj3 = type2;
+                                                                taskBounds = iBinder2;
+                                                            } else {
+                                                                callingUid2 = this.mTmpRect;
+                                                                DisplayInfo displayInfo = type2;
+                                                                atoken3.getTask().getBounds(this.mTmpRect);
+                                                                taskBounds = callingUid2;
+                                                            }
+                                                            if (this.mPolicy.getLayoutHintLw(windowState.mAttrs, taskBounds, forceCompatMode2, outFrame, outContentInsets, outStableInsets, outOutsets, outDisplayCutout)) {
+                                                                res = 0 | 4;
+                                                            }
+                                                            if (this.mInTouchMode) {
+                                                                res |= 1;
+                                                            }
+                                                            if (windowState.mAppToken == null || !windowState.mAppToken.isClientHidden()) {
+                                                                res |= 2;
+                                                            }
+                                                            this.mInputMonitor.setUpdateInputWindowsNeededLw();
+                                                            focusChanged = false;
+                                                            if (windowState.canReceiveKeys() == 0) {
+                                                                focusChanged = updateFocusedWindowLocked(1, 0);
+                                                                if (focusChanged) {
+                                                                    imMayMove2 = false;
+                                                                }
+                                                            }
+                                                            if (imMayMove2 && (HwPCUtils.enabledInPad() == 0 || HwPCUtils.isPcCastModeInServer() == 0 || HwPCUtils.isValidExtDisplayId(displayContent2.getDisplayId()) != 0)) {
+                                                                displayContent2.computeImeTarget(1);
+                                                            }
+                                                            windowState.getParent().assignChildLayers();
+                                                            if (focusChanged) {
+                                                            } else {
+                                                                if (HwPCUtils.isPcCastModeInServer() != 0) {
+                                                                    type2 = TAG;
+                                                                    callingUid2 = new StringBuilder();
+                                                                    callingUid2.append("updateFocusedWindowLocked mCurrentFocus = ");
+                                                                    callingUid2.append(this.mCurrentFocus);
+                                                                    HwPCUtils.log(type2, callingUid2.toString());
+                                                                }
+                                                                this.mInputMonitor.setInputFocusLw(this.mCurrentFocus, 0);
+                                                            }
+                                                            this.mInputMonitor.updateInputWindowsLw(0);
+                                                            str = TAG;
+                                                            type2 = new StringBuilder();
+                                                            type2.append("addWindow: ");
+                                                            type2.append(windowState);
+                                                            Slog.v(str, type2.toString());
+                                                            if (windowState.isVisibleOrAdding() && updateOrientationFromAppTokensLocked(i3)) {
+                                                                reportNewConfig = true;
+                                                            }
+                                                            resetPriorityAfterLockedSection();
+                                                            if (reportNewConfig) {
+                                                                sendNewConfiguration(i3);
+                                                            }
+                                                            Binder.restoreCallingIdentity(type4);
+                                                            return res;
                                                         }
                                                     }
                                                     type5 = false;
@@ -2774,31 +2773,33 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         parentWindow2 = token3.asAppWindowToken();
                                                         if (callingUid2 == 3) {
                                                         }
-                                                        this.mHwWMSEx.updateHwStartWindowRecord(layoutParams3.packageName);
-                                                        hasStatusBarServicePermission = true;
-                                                        windowState.mToken.addWindow(windowState);
-                                                        if (callingUid2 != 2011) {
-                                                        }
-                                                        windowState.applyAdjustForImeIfNeeded();
-                                                        if (callingUid2 != 2034) {
-                                                        }
-                                                        winAnimator = windowState.mWinAnimator;
-                                                        winAnimator.mEnterAnimationPending = true;
-                                                        winAnimator.mEnteringAnimation = true;
-                                                        if (atoken2 == null) {
-                                                        }
-                                                        forceCompatMode2 = displayContent2.mDisplayFrames;
-                                                        openInputChannels = type5;
-                                                        i = callingUid2;
-                                                        type2 = displayContent2.getDisplayInfo();
-                                                    } catch (Throwable th11) {
-                                                        displayContent = th11;
+                                                        i3 = callingUid2;
+                                                    } catch (Throwable th10) {
+                                                        displayContent = th10;
                                                         i = callingUid2;
                                                         i3 = displayId;
+                                                        windowState = parentWindow4;
                                                         resetPriorityAfterLockedSection();
                                                         throw displayContent;
                                                     }
                                                     try {
+                                                        this.mHwWMSEx.updateHwStartWindowRecord(session.mUid);
+                                                        imMayMove = true;
+                                                        windowState.mToken.addWindow(windowState);
+                                                        if (i3 != 2011) {
+                                                        }
+                                                        windowState.applyAdjustForImeIfNeeded();
+                                                        if (i3 != 2034) {
+                                                        }
+                                                        winAnimator = windowState.mWinAnimator;
+                                                        winAnimator.mEnterAnimationPending = true;
+                                                        winAnimator.mEnteringAnimation = true;
+                                                        atoken3 = atoken2;
+                                                        prepareNoneTransitionForRelaunching(atoken3);
+                                                        imMayMove2 = imMayMove;
+                                                        forceCompatMode2 = displayContent2.mDisplayFrames;
+                                                        openInputChannels = type5;
+                                                        type2 = displayContent2.getDisplayInfo();
                                                         forceCompatMode2.onDisplayInfoUpdated(type2, displayContent2.calculateDisplayCutoutForRotation(type2.rotation));
                                                         if (atoken3 != null) {
                                                         }
@@ -2829,8 +2830,10 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         }
                                                         Binder.restoreCallingIdentity(type4);
                                                         return res;
-                                                    } catch (Throwable th12) {
-                                                        displayContent = th12;
+                                                    } catch (Throwable th11) {
+                                                        displayContent = th11;
+                                                        i = i3;
+                                                        i3 = displayId;
                                                         windowState = parentWindow4;
                                                         resetPriorityAfterLockedSection();
                                                         throw displayContent;
@@ -2845,8 +2848,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                             Slog.w(str3, stringBuilder3.toString());
                                             resetPriorityAfterLockedSection();
                                             return -1;
-                                        } catch (Throwable th13) {
-                                            displayContent = th13;
+                                        } catch (Throwable th12) {
+                                            displayContent = th12;
                                             i5 = type2;
                                             i = type4;
                                             windowHashMap = windowHashMap2;
@@ -2855,8 +2858,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                             resetPriorityAfterLockedSection();
                                             throw displayContent;
                                         }
-                                    } catch (Throwable th14) {
-                                        displayContent = th14;
+                                    } catch (Throwable th13) {
+                                        displayContent = th13;
                                         i = type4;
                                         windowHashMap = windowHashMap2;
                                         windowState = parentWindow2;
@@ -2880,8 +2883,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                     int i8 = 2011;
                                                     parentWindow4 = parentWindow2;
                                                     parentWindow5 = session;
-                                                } catch (Throwable th15) {
-                                                    displayContent = th15;
+                                                } catch (Throwable th14) {
+                                                    displayContent = th14;
                                                     i5 = type2;
                                                     i = type4;
                                                     windowHashMap = windowHashMap2;
@@ -2904,8 +2907,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         z = parentWindow5.mCanAddInternalSystemWindow;
                                                         type2 = token2;
                                                         i6 = parentWindow5.mUid;
-                                                        obj2 = obj;
                                                         atoken2 = atoken;
+                                                        obj2 = obj;
                                                         windowHashMap = windowHashMap2;
                                                         token3 = token2;
                                                         type = type4;
@@ -2915,8 +2918,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         windowState = new WindowState(this, session2, iWindow2, type2, parentWindow4, iArr[0], seq, layoutParams, viewVisibility, i6, z, i4);
                                                         if (windowState.mDeathRecipient == null) {
                                                         }
-                                                    } catch (Throwable th16) {
-                                                        displayContent = th16;
+                                                    } catch (Throwable th15) {
+                                                        displayContent = th15;
                                                         i = type4;
                                                         windowHashMap = windowHashMap2;
                                                         windowState = parentWindow4;
@@ -2925,8 +2928,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                         resetPriorityAfterLockedSection();
                                                         throw displayContent;
                                                     }
-                                                } catch (Throwable th17) {
-                                                    displayContent = th17;
+                                                } catch (Throwable th16) {
+                                                    displayContent = th16;
                                                     i5 = type2;
                                                     i = type4;
                                                     windowHashMap = windowHashMap2;
@@ -2961,8 +2964,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                 z = parentWindow5.mCanAddInternalSystemWindow;
                                                 type2 = token2;
                                                 i6 = parentWindow5.mUid;
-                                                obj2 = obj;
                                                 atoken2 = atoken;
+                                                obj2 = obj;
                                                 windowHashMap = windowHashMap2;
                                                 token3 = token2;
                                                 type = type4;
@@ -2972,8 +2975,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                 windowState = new WindowState(this, session2, iWindow2, type2, parentWindow4, iArr[0], seq, layoutParams, viewVisibility, i6, z, i4);
                                                 if (windowState.mDeathRecipient == null) {
                                                 }
-                                            } catch (Throwable th18) {
-                                                displayContent = th18;
+                                            } catch (Throwable th17) {
+                                                displayContent = th17;
                                                 i = type4;
                                                 windowHashMap = windowHashMap2;
                                                 i5 = callingUid;
@@ -2982,8 +2985,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                 resetPriorityAfterLockedSection();
                                                 throw displayContent;
                                             }
-                                        } catch (Throwable th19) {
-                                            displayContent = th19;
+                                        } catch (Throwable th18) {
+                                            displayContent = th18;
                                             i5 = type2;
                                             i = type4;
                                             windowHashMap = windowHashMap2;
@@ -3014,8 +3017,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                         z = parentWindow5.mCanAddInternalSystemWindow;
                                         type2 = token2;
                                         i6 = parentWindow5.mUid;
-                                        obj2 = obj;
                                         atoken2 = atoken;
+                                        obj2 = obj;
                                         windowHashMap = windowHashMap2;
                                         token3 = token2;
                                         type = type4;
@@ -3039,8 +3042,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                 z = parentWindow5.mCanAddInternalSystemWindow;
                                 type2 = token2;
                                 i6 = parentWindow5.mUid;
-                                obj2 = obj;
                                 atoken2 = atoken;
+                                obj2 = obj;
                                 windowHashMap = windowHashMap2;
                                 token3 = token2;
                                 type = type4;
@@ -3071,8 +3074,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                             z = parentWindow5.mCanAddInternalSystemWindow;
                             type2 = token2;
                             i6 = parentWindow5.mUid;
-                            obj2 = obj;
                             atoken2 = atoken;
+                            obj2 = obj;
                             windowHashMap = windowHashMap2;
                             token3 = token2;
                             type = type4;
@@ -3204,16 +3207,16 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                     atoken = null;
                                     callingUid = callingUid3;
                                     obj = 1;
-                                } catch (Throwable th20) {
-                                    displayContent = th20;
+                                } catch (Throwable th19) {
+                                    displayContent = th19;
                                     i = type4;
                                     windowHashMap = windowHashMap2;
                                     i3 = displayId;
                                     resetPriorityAfterLockedSection();
                                     throw displayContent;
                                 }
-                            } catch (Throwable th21) {
-                                displayContent = th21;
+                            } catch (Throwable th20) {
+                                displayContent = th20;
                                 WindowContainer windowContainer2 = parentWindow6;
                                 iArr = appOp;
                                 i4 = forceCompatMode3;
@@ -3238,8 +3241,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                 Slog.w(str4, token.toString());
                                 resetPriorityAfterLockedSection();
                                 return -1;
-                            } catch (Throwable th22) {
-                                displayContent = th22;
+                            } catch (Throwable th21) {
+                                displayContent = th21;
                                 parentWindow3 = parentWindow6;
                                 i = type2;
                                 i5 = callingUid2;
@@ -3248,8 +3251,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                 parentWindow = i2;
                                 i4 = forceCompatMode3;
                             }
-                        } catch (Throwable th23) {
-                            displayContent = th23;
+                        } catch (Throwable th22) {
+                            displayContent = th22;
                             parentWindow3 = parentWindow6;
                             i4 = forceCompatMode2;
                             i = type2;
@@ -3269,8 +3272,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                     z = parentWindow5.mCanAddInternalSystemWindow;
                     type2 = token2;
                     i6 = parentWindow5.mUid;
-                    obj2 = obj;
                     atoken2 = atoken;
+                    obj2 = obj;
                     windowHashMap = windowHashMap2;
                     token3 = token2;
                     type = type4;
@@ -3281,8 +3284,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         windowState = new WindowState(this, session2, iWindow2, type2, parentWindow4, iArr[0], seq, layoutParams, viewVisibility, i6, z, i4);
                         if (windowState.mDeathRecipient == null) {
                         }
-                    } catch (Throwable th24) {
-                        displayContent = th24;
+                    } catch (Throwable th23) {
+                        displayContent = th23;
                         i5 = callingUid;
                         i = type;
                         i3 = displayId;
@@ -3297,8 +3300,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                 windowHashMap = windowHashMap2;
                 i3 = i2;
                 throw new IllegalStateException("Display has not been initialialized");
-            } catch (Throwable th25) {
-                displayContent = th25;
+            } catch (Throwable th24) {
+                displayContent = th24;
                 resetPriorityAfterLockedSection();
                 throw displayContent;
             }
@@ -3669,147 +3672,178 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0348 A:{SYNTHETIC, Splitter: B:238:0x0348} */
-    /* JADX WARNING: Removed duplicated region for block: B:298:0x0434  */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0365 A:{SYNTHETIC, Splitter: B:248:0x0365} */
-    /* JADX WARNING: Removed duplicated region for block: B:330:0x04cd  */
-    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:339:0x04e0  */
-    /* JADX WARNING: Removed duplicated region for block: B:344:0x04e9  */
-    /* JADX WARNING: Removed duplicated region for block: B:350:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:354:0x0505 A:{SYNTHETIC, Splitter: B:354:0x0505} */
-    /* JADX WARNING: Removed duplicated region for block: B:362:0x0521 A:{SYNTHETIC, Splitter: B:362:0x0521} */
-    /* JADX WARNING: Removed duplicated region for block: B:379:0x0578 A:{SYNTHETIC, Splitter: B:379:0x0578} */
-    /* JADX WARNING: Removed duplicated region for block: B:384:0x0581  */
-    /* JADX WARNING: Removed duplicated region for block: B:391:0x058f A:{Catch:{ all -> 0x067c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:394:0x0598  */
-    /* JADX WARNING: Removed duplicated region for block: B:399:0x05a3  */
-    /* JADX WARNING: Removed duplicated region for block: B:398:0x059d A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:407:0x05f9 A:{SYNTHETIC, Splitter: B:407:0x05f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:229:0x0312 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:232:0x0338 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0348 A:{SYNTHETIC, Splitter: B:238:0x0348} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0365 A:{SYNTHETIC, Splitter: B:248:0x0365} */
-    /* JADX WARNING: Removed duplicated region for block: B:298:0x0434  */
-    /* JADX WARNING: Removed duplicated region for block: B:330:0x04cd  */
-    /* JADX WARNING: Removed duplicated region for block: B:339:0x04e0  */
-    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:344:0x04e9  */
-    /* JADX WARNING: Removed duplicated region for block: B:350:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:354:0x0505 A:{SYNTHETIC, Splitter: B:354:0x0505} */
-    /* JADX WARNING: Removed duplicated region for block: B:362:0x0521 A:{SYNTHETIC, Splitter: B:362:0x0521} */
-    /* JADX WARNING: Removed duplicated region for block: B:372:0x0557 A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:379:0x0578 A:{SYNTHETIC, Splitter: B:379:0x0578} */
-    /* JADX WARNING: Removed duplicated region for block: B:384:0x0581  */
-    /* JADX WARNING: Removed duplicated region for block: B:391:0x058f A:{Catch:{ all -> 0x067c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:394:0x0598  */
-    /* JADX WARNING: Removed duplicated region for block: B:398:0x059d A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:399:0x05a3  */
-    /* JADX WARNING: Removed duplicated region for block: B:407:0x05f9 A:{SYNTHETIC, Splitter: B:407:0x05f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0280 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:190:0x027d A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:204:0x02da  */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x02a7 A:{SYNTHETIC, Splitter: B:202:0x02a7} */
-    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:208:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:213:0x02ed A:{SYNTHETIC, Splitter: B:213:0x02ed} */
-    /* JADX WARNING: Removed duplicated region for block: B:229:0x0312 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:232:0x0338 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0348 A:{SYNTHETIC, Splitter: B:238:0x0348} */
-    /* JADX WARNING: Removed duplicated region for block: B:298:0x0434  */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0365 A:{SYNTHETIC, Splitter: B:248:0x0365} */
-    /* JADX WARNING: Removed duplicated region for block: B:330:0x04cd  */
-    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:339:0x04e0  */
-    /* JADX WARNING: Removed duplicated region for block: B:344:0x04e9  */
-    /* JADX WARNING: Removed duplicated region for block: B:350:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:354:0x0505 A:{SYNTHETIC, Splitter: B:354:0x0505} */
-    /* JADX WARNING: Removed duplicated region for block: B:362:0x0521 A:{SYNTHETIC, Splitter: B:362:0x0521} */
-    /* JADX WARNING: Removed duplicated region for block: B:372:0x0557 A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:379:0x0578 A:{SYNTHETIC, Splitter: B:379:0x0578} */
-    /* JADX WARNING: Removed duplicated region for block: B:384:0x0581  */
-    /* JADX WARNING: Removed duplicated region for block: B:391:0x058f A:{Catch:{ all -> 0x067c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:394:0x0598  */
-    /* JADX WARNING: Removed duplicated region for block: B:399:0x05a3  */
-    /* JADX WARNING: Removed duplicated region for block: B:398:0x059d A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:407:0x05f9 A:{SYNTHETIC, Splitter: B:407:0x05f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:183:0x026e A:{SYNTHETIC, Splitter: B:183:0x026e} */
-    /* JADX WARNING: Removed duplicated region for block: B:190:0x027d A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0280 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:194:0x028a A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x02a7 A:{SYNTHETIC, Splitter: B:202:0x02a7} */
-    /* JADX WARNING: Removed duplicated region for block: B:204:0x02da  */
-    /* JADX WARNING: Removed duplicated region for block: B:208:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:213:0x02ed A:{SYNTHETIC, Splitter: B:213:0x02ed} */
-    /* JADX WARNING: Removed duplicated region for block: B:229:0x0312 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:232:0x0338 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0348 A:{SYNTHETIC, Splitter: B:238:0x0348} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0365 A:{SYNTHETIC, Splitter: B:248:0x0365} */
-    /* JADX WARNING: Removed duplicated region for block: B:298:0x0434  */
-    /* JADX WARNING: Removed duplicated region for block: B:330:0x04cd  */
-    /* JADX WARNING: Removed duplicated region for block: B:339:0x04e0  */
-    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:344:0x04e9  */
-    /* JADX WARNING: Removed duplicated region for block: B:350:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:354:0x0505 A:{SYNTHETIC, Splitter: B:354:0x0505} */
-    /* JADX WARNING: Removed duplicated region for block: B:362:0x0521 A:{SYNTHETIC, Splitter: B:362:0x0521} */
-    /* JADX WARNING: Removed duplicated region for block: B:372:0x0557 A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:379:0x0578 A:{SYNTHETIC, Splitter: B:379:0x0578} */
-    /* JADX WARNING: Removed duplicated region for block: B:384:0x0581  */
-    /* JADX WARNING: Removed duplicated region for block: B:391:0x058f A:{Catch:{ all -> 0x067c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:394:0x0598  */
-    /* JADX WARNING: Removed duplicated region for block: B:398:0x059d A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:399:0x05a3  */
-    /* JADX WARNING: Removed duplicated region for block: B:407:0x05f9 A:{SYNTHETIC, Splitter: B:407:0x05f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x0254 A:{SYNTHETIC, Splitter: B:168:0x0254} */
-    /* JADX WARNING: Removed duplicated region for block: B:183:0x026e A:{SYNTHETIC, Splitter: B:183:0x026e} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0280 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:190:0x027d A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:194:0x028a A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:204:0x02da  */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x02a7 A:{SYNTHETIC, Splitter: B:202:0x02a7} */
-    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:208:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:213:0x02ed A:{SYNTHETIC, Splitter: B:213:0x02ed} */
-    /* JADX WARNING: Removed duplicated region for block: B:229:0x0312 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:232:0x0338 A:{Catch:{ all -> 0x0262 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0348 A:{SYNTHETIC, Splitter: B:238:0x0348} */
-    /* JADX WARNING: Removed duplicated region for block: B:298:0x0434  */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0365 A:{SYNTHETIC, Splitter: B:248:0x0365} */
-    /* JADX WARNING: Removed duplicated region for block: B:330:0x04cd  */
-    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:339:0x04e0  */
-    /* JADX WARNING: Removed duplicated region for block: B:344:0x04e9  */
-    /* JADX WARNING: Removed duplicated region for block: B:350:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:354:0x0505 A:{SYNTHETIC, Splitter: B:354:0x0505} */
-    /* JADX WARNING: Removed duplicated region for block: B:362:0x0521 A:{SYNTHETIC, Splitter: B:362:0x0521} */
-    /* JADX WARNING: Removed duplicated region for block: B:372:0x0557 A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:379:0x0578 A:{SYNTHETIC, Splitter: B:379:0x0578} */
-    /* JADX WARNING: Removed duplicated region for block: B:384:0x0581  */
-    /* JADX WARNING: Removed duplicated region for block: B:391:0x058f A:{Catch:{ all -> 0x067c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:394:0x0598  */
-    /* JADX WARNING: Removed duplicated region for block: B:399:0x05a3  */
-    /* JADX WARNING: Removed duplicated region for block: B:398:0x059d A:{Catch:{ all -> 0x054e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:407:0x05f9 A:{SYNTHETIC, Splitter: B:407:0x05f9} */
-    /* JADX WARNING: Missing block: B:136:0x01d9, code:
+    /* JADX WARNING: Removed duplicated region for block: B:239:0x0348 A:{SYNTHETIC, Splitter:B:239:0x0348} */
+    /* JADX WARNING: Removed duplicated region for block: B:299:0x0434  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0365 A:{SYNTHETIC, Splitter:B:249:0x0365} */
+    /* JADX WARNING: Removed duplicated region for block: B:331:0x04cd  */
+    /* JADX WARNING: Removed duplicated region for block: B:341:0x04e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:345:0x04e9  */
+    /* JADX WARNING: Removed duplicated region for block: B:351:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:355:0x0505 A:{SYNTHETIC, Splitter:B:355:0x0505} */
+    /* JADX WARNING: Removed duplicated region for block: B:363:0x0521 A:{SYNTHETIC, Splitter:B:363:0x0521} */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0578 A:{SYNTHETIC, Splitter:B:380:0x0578} */
+    /* JADX WARNING: Removed duplicated region for block: B:385:0x0581  */
+    /* JADX WARNING: Removed duplicated region for block: B:392:0x058f A:{Catch:{ all -> 0x067c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:395:0x0598  */
+    /* JADX WARNING: Removed duplicated region for block: B:400:0x05a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:399:0x059d A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:408:0x05f9 A:{SYNTHETIC, Splitter:B:408:0x05f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x0312 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:233:0x0338 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:239:0x0348 A:{SYNTHETIC, Splitter:B:239:0x0348} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0365 A:{SYNTHETIC, Splitter:B:249:0x0365} */
+    /* JADX WARNING: Removed duplicated region for block: B:299:0x0434  */
+    /* JADX WARNING: Removed duplicated region for block: B:331:0x04cd  */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:341:0x04e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:345:0x04e9  */
+    /* JADX WARNING: Removed duplicated region for block: B:351:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:355:0x0505 A:{SYNTHETIC, Splitter:B:355:0x0505} */
+    /* JADX WARNING: Removed duplicated region for block: B:363:0x0521 A:{SYNTHETIC, Splitter:B:363:0x0521} */
+    /* JADX WARNING: Removed duplicated region for block: B:373:0x0557 A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0578 A:{SYNTHETIC, Splitter:B:380:0x0578} */
+    /* JADX WARNING: Removed duplicated region for block: B:385:0x0581  */
+    /* JADX WARNING: Removed duplicated region for block: B:392:0x058f A:{Catch:{ all -> 0x067c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:395:0x0598  */
+    /* JADX WARNING: Removed duplicated region for block: B:399:0x059d A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:400:0x05a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:408:0x05f9 A:{SYNTHETIC, Splitter:B:408:0x05f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x0280 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x027d A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02da  */
+    /* JADX WARNING: Removed duplicated region for block: B:203:0x02a7 A:{SYNTHETIC, Splitter:B:203:0x02a7} */
+    /* JADX WARNING: Removed duplicated region for block: B:210:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:214:0x02ed A:{SYNTHETIC, Splitter:B:214:0x02ed} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x0312 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:233:0x0338 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:239:0x0348 A:{SYNTHETIC, Splitter:B:239:0x0348} */
+    /* JADX WARNING: Removed duplicated region for block: B:299:0x0434  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0365 A:{SYNTHETIC, Splitter:B:249:0x0365} */
+    /* JADX WARNING: Removed duplicated region for block: B:331:0x04cd  */
+    /* JADX WARNING: Removed duplicated region for block: B:341:0x04e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:345:0x04e9  */
+    /* JADX WARNING: Removed duplicated region for block: B:351:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:355:0x0505 A:{SYNTHETIC, Splitter:B:355:0x0505} */
+    /* JADX WARNING: Removed duplicated region for block: B:363:0x0521 A:{SYNTHETIC, Splitter:B:363:0x0521} */
+    /* JADX WARNING: Removed duplicated region for block: B:373:0x0557 A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0578 A:{SYNTHETIC, Splitter:B:380:0x0578} */
+    /* JADX WARNING: Removed duplicated region for block: B:385:0x0581  */
+    /* JADX WARNING: Removed duplicated region for block: B:392:0x058f A:{Catch:{ all -> 0x067c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:395:0x0598  */
+    /* JADX WARNING: Removed duplicated region for block: B:400:0x05a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:399:0x059d A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:408:0x05f9 A:{SYNTHETIC, Splitter:B:408:0x05f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x026e A:{SYNTHETIC, Splitter:B:184:0x026e} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x027d A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x0280 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:195:0x028a A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:203:0x02a7 A:{SYNTHETIC, Splitter:B:203:0x02a7} */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02da  */
+    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:210:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:214:0x02ed A:{SYNTHETIC, Splitter:B:214:0x02ed} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x0312 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:233:0x0338 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:239:0x0348 A:{SYNTHETIC, Splitter:B:239:0x0348} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0365 A:{SYNTHETIC, Splitter:B:249:0x0365} */
+    /* JADX WARNING: Removed duplicated region for block: B:299:0x0434  */
+    /* JADX WARNING: Removed duplicated region for block: B:331:0x04cd  */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:341:0x04e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:345:0x04e9  */
+    /* JADX WARNING: Removed duplicated region for block: B:351:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:355:0x0505 A:{SYNTHETIC, Splitter:B:355:0x0505} */
+    /* JADX WARNING: Removed duplicated region for block: B:363:0x0521 A:{SYNTHETIC, Splitter:B:363:0x0521} */
+    /* JADX WARNING: Removed duplicated region for block: B:373:0x0557 A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0578 A:{SYNTHETIC, Splitter:B:380:0x0578} */
+    /* JADX WARNING: Removed duplicated region for block: B:385:0x0581  */
+    /* JADX WARNING: Removed duplicated region for block: B:392:0x058f A:{Catch:{ all -> 0x067c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:395:0x0598  */
+    /* JADX WARNING: Removed duplicated region for block: B:399:0x059d A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:400:0x05a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:408:0x05f9 A:{SYNTHETIC, Splitter:B:408:0x05f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:169:0x0254 A:{SYNTHETIC, Splitter:B:169:0x0254} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x026e A:{SYNTHETIC, Splitter:B:184:0x026e} */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x0280 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x027d A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:195:0x028a A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02da  */
+    /* JADX WARNING: Removed duplicated region for block: B:203:0x02a7 A:{SYNTHETIC, Splitter:B:203:0x02a7} */
+    /* JADX WARNING: Removed duplicated region for block: B:210:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:214:0x02ed A:{SYNTHETIC, Splitter:B:214:0x02ed} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x0312 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:233:0x0338 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:239:0x0348 A:{SYNTHETIC, Splitter:B:239:0x0348} */
+    /* JADX WARNING: Removed duplicated region for block: B:299:0x0434  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0365 A:{SYNTHETIC, Splitter:B:249:0x0365} */
+    /* JADX WARNING: Removed duplicated region for block: B:331:0x04cd  */
+    /* JADX WARNING: Removed duplicated region for block: B:341:0x04e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:345:0x04e9  */
+    /* JADX WARNING: Removed duplicated region for block: B:351:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:355:0x0505 A:{SYNTHETIC, Splitter:B:355:0x0505} */
+    /* JADX WARNING: Removed duplicated region for block: B:363:0x0521 A:{SYNTHETIC, Splitter:B:363:0x0521} */
+    /* JADX WARNING: Removed duplicated region for block: B:373:0x0557 A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0578 A:{SYNTHETIC, Splitter:B:380:0x0578} */
+    /* JADX WARNING: Removed duplicated region for block: B:385:0x0581  */
+    /* JADX WARNING: Removed duplicated region for block: B:392:0x058f A:{Catch:{ all -> 0x067c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:395:0x0598  */
+    /* JADX WARNING: Removed duplicated region for block: B:400:0x05a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:399:0x059d A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:408:0x05f9 A:{SYNTHETIC, Splitter:B:408:0x05f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0242 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:169:0x0254 A:{SYNTHETIC, Splitter:B:169:0x0254} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x026e A:{SYNTHETIC, Splitter:B:184:0x026e} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x027d A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x0280 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:195:0x028a A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:203:0x02a7 A:{SYNTHETIC, Splitter:B:203:0x02a7} */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02da  */
+    /* JADX WARNING: Removed duplicated region for block: B:209:0x02e5 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:210:0x02e7 A:{Catch:{ all -> 0x06c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:214:0x02ed A:{SYNTHETIC, Splitter:B:214:0x02ed} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x0312 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:233:0x0338 A:{Catch:{ all -> 0x0262 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:239:0x0348 A:{SYNTHETIC, Splitter:B:239:0x0348} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0365 A:{SYNTHETIC, Splitter:B:249:0x0365} */
+    /* JADX WARNING: Removed duplicated region for block: B:299:0x0434  */
+    /* JADX WARNING: Removed duplicated region for block: B:331:0x04cd  */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x04e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:341:0x04e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:345:0x04e9  */
+    /* JADX WARNING: Removed duplicated region for block: B:351:0x04f5 A:{Catch:{ Exception -> 0x03e9, all -> 0x0429, all -> 0x04d8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:355:0x0505 A:{SYNTHETIC, Splitter:B:355:0x0505} */
+    /* JADX WARNING: Removed duplicated region for block: B:363:0x0521 A:{SYNTHETIC, Splitter:B:363:0x0521} */
+    /* JADX WARNING: Removed duplicated region for block: B:373:0x0557 A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0578 A:{SYNTHETIC, Splitter:B:380:0x0578} */
+    /* JADX WARNING: Removed duplicated region for block: B:385:0x0581  */
+    /* JADX WARNING: Removed duplicated region for block: B:392:0x058f A:{Catch:{ all -> 0x067c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:395:0x0598  */
+    /* JADX WARNING: Removed duplicated region for block: B:399:0x059d A:{Catch:{ all -> 0x054e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:400:0x05a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:408:0x05f9 A:{SYNTHETIC, Splitter:B:408:0x05f9} */
+    /* JADX WARNING: Missing block: B:136:0x01d9, code skipped:
             if (r12.mAttrs.surfaceInsets.bottom == 0) goto L_0x01df;
      */
-    /* JADX WARNING: Missing block: B:422:0x0660, code:
+    /* JADX WARNING: Missing block: B:423:0x0660, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:423:0x0664, code:
+    /* JADX WARNING: Missing block: B:424:0x0664, code skipped:
             if (r13 == false) goto L_0x0674;
      */
-    /* JADX WARNING: Missing block: B:424:0x0666, code:
+    /* JADX WARNING: Missing block: B:425:0x0666, code skipped:
             android.os.Trace.traceBegin(32, "relayoutWindow: sendNewConfiguration");
             sendNewConfiguration(r2);
             android.os.Trace.traceEnd(32);
      */
-    /* JADX WARNING: Missing block: B:425:0x0674, code:
+    /* JADX WARNING: Missing block: B:426:0x0674, code skipped:
             android.os.Binder.restoreCallingIdentity(r38);
      */
-    /* JADX WARNING: Missing block: B:426:0x0679, code:
+    /* JADX WARNING: Missing block: B:427:0x0679, code skipped:
             return r10;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3821,12 +3855,14 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         long j;
         int displayId;
         long origId;
+        int i;
+        boolean z3;
         StringBuilder stringBuilder;
         IWindow iWindow = client;
         LayoutParams layoutParams = attrs;
-        int i = requestedWidth;
-        int i2 = requestedHeight;
-        int i3 = viewVisibility;
+        int i2 = requestedWidth;
+        int i3 = requestedHeight;
+        int i4 = viewVisibility;
         MergedConfiguration mergedConfiguration2 = mergedConfiguration;
         Surface surface = outSurface;
         int result = 0;
@@ -3859,7 +3895,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                             throw th;
                         }
                     }
-                    int i4;
+                    int i5;
                     int attrChanges;
                     boolean imMayMove;
                     boolean focusMayChange;
@@ -3869,16 +3905,16 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                     WindowState win2;
                     WindowStateAnimator winAnimator;
                     StringBuilder stringBuilder2;
-                    int i5;
+                    int i6;
                     DisplayContent dc;
                     long origId4;
                     MergedConfiguration mergedConfiguration3;
                     DisplayContent displayContent;
                     int displayId2 = win.getDisplayId();
-                    this.mHwWMSEx.updateWindowReport(win, i, i2);
+                    this.mHwWMSEx.updateWindowReport(win, i2, i3);
                     WindowStateAnimator winAnimator2 = win.mWinAnimator;
-                    if (i3 != 8) {
-                        win.setRequestedSize(i, i2);
+                    if (i4 != 8) {
+                        win.setRequestedSize(i2, i3);
                     }
                     try {
                         win.setFrameNumber(frameNumber);
@@ -3902,9 +3938,9 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                         layoutParams.height = win.mAttrs.height;
                                     }
                                     LayoutParams layoutParams2 = win.mAttrs;
-                                    i4 = layoutParams.flags ^ layoutParams2.flags;
-                                    layoutParams2.flags = i4;
-                                    flagChanges = i4;
+                                    i5 = layoutParams.flags ^ layoutParams2.flags;
+                                    layoutParams2.flags = i5;
+                                    flagChanges = i5;
                                     systemUiVisibility = win.mAttrs.copyFrom(layoutParams);
                                     if ((systemUiVisibility & 16385) != 0) {
                                         win.mLayoutNeeded = true;
@@ -3940,11 +3976,11 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                             }
                         }
                         attrChanges = 0;
-                        i4 = flagChanges;
+                        i5 = flagChanges;
                         z = hasStatusBarPermission;
                         if (win.toString().contains("HwFullScreenWindow")) {
                             try {
-                                this.mPolicy.setFullScreenWinVisibile(i3 == 0);
+                                this.mPolicy.setFullScreenWinVisibile(i4 == 0);
                                 this.mPolicy.setFullScreenWindow(win);
                             } catch (Throwable th5) {
                                 th = th5;
@@ -3973,7 +4009,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                     try {
                         boolean isDefaultDisplay;
                         if (HW_SUPPORT_LAUNCHER_EXIT_ANIM) {
-                            if (win.mWinAnimator != null && win.mAnimatingExit && i3 == 0) {
+                            if (win.mWinAnimator != null && win.mAnimatingExit && i4 == 0) {
                                 win.mWinAnimator.setWindowClipFlag(0);
                                 Log.d(TAG, "Relayout clear glRoundRectFlag");
                             }
@@ -3998,109 +4034,140 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         int oldVisibility = win.mViewVisibility;
                         boolean shouldPrintLog = false;
                         if (!WindowManagerDebugConfig.DEBUG_LAYOUT) {
-                            if (win.mViewVisibility == i3) {
+                            if (win.mViewVisibility == i4) {
                                 int result2;
                                 z2 = hasStatusBarServicePermission;
-                                hasStatusBarServicePermission = (oldVisibility != 4 || oldVisibility == 8) && i3 == 0;
-                                imMayMove = (i4 & 131080) == 0 || hasStatusBarServicePermission;
-                                isDefaultDisplay = win.isDefaultDisplay();
-                                if (isDefaultDisplay) {
-                                    try {
-                                        if (!(win.mViewVisibility == i3 && (i4 & 8) == 0 && win.mRelayoutCalled)) {
-                                            focusMayChange = true;
-                                            if (win.mViewVisibility != i3) {
-                                                if ((win.mAttrs.flags & DumpState.DUMP_DEXOPT) != 0) {
-                                                    wallpaperMayMove = true;
-                                                    wallpaperMayMove |= (i4 & DumpState.DUMP_DEXOPT) == 0 ? 1 : 0;
-                                                    if ((i4 & 8192) || winAnimator3.mSurfaceController == null) {
-                                                    } else {
-                                                        winAnimator3.mSurfaceController.setSecure(isSecureLocked(win));
-                                                    }
-                                                    win.mRelayoutCalled = true;
-                                                    win.mInRelayout = true;
-                                                    win.mViewVisibility = i3;
-                                                    if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
-                                                        wallpaperMayMove2 = wallpaperMayMove;
-                                                        displayId = displayId2;
-                                                    } else {
-                                                        RuntimeException stack = new RuntimeException();
-                                                        stack.fillInStackTrace();
-                                                        String str = TAG;
-                                                        displayId = displayId2;
-                                                        StringBuilder stringBuilder4 = new StringBuilder();
-                                                        wallpaperMayMove2 = wallpaperMayMove;
-                                                        stringBuilder4.append("Relayout ");
-                                                        stringBuilder4.append(win);
-                                                        stringBuilder4.append(": oldVis=");
-                                                        stringBuilder4.append(oldVisibility);
-                                                        stringBuilder4.append(" newVis=");
-                                                        stringBuilder4.append(i3);
-                                                        Slog.i(str, stringBuilder4.toString(), stack);
-                                                    }
-                                                    win.setDisplayLayoutNeeded();
-                                                    win.mGivenInsetsPending = (flags & 1) == 0;
-                                                    if (i3 == 0) {
-                                                        if (win.mAppToken == null || win.mAttrs.type == 3 || !win.mAppToken.isClientHidden()) {
-                                                            shouldRelayout = true;
-                                                            if (!(shouldRelayout || !winAnimator3.hasSurface() || win.mAnimatingExit)) {
-                                                                if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
-                                                                    String str2 = TAG;
-                                                                    StringBuilder stringBuilder5 = new StringBuilder();
-                                                                    stringBuilder5.append("Relayout invis ");
-                                                                    stringBuilder5.append(win);
-                                                                    stringBuilder5.append(": mAnimatingExit=");
-                                                                    stringBuilder5.append(win.mAnimatingExit);
-                                                                    Slog.i(str2, stringBuilder5.toString());
-                                                                }
-                                                                result = 0 | 4;
-                                                                if (!win.mWillReplaceWindow) {
-                                                                    String str3;
-                                                                    wallpaperMayMove = tryStartExitingAnimation(win, winAnimator3, isDefaultDisplay, focusMayChange);
-                                                                    this.mAppTransitTrack = "relayout";
-                                                                    if (this.mWaitingForConfig) {
-                                                                        if (!(win.mAppToken == null || this.mDeferRelayoutWindow.contains(win))) {
-                                                                            this.mDeferRelayoutWindow.add(win);
+                                hasStatusBarServicePermission = (oldVisibility != 4 || oldVisibility == 8) && i4 == 0;
+                                if ((i5 & 131080) == 0) {
+                                    if (!hasStatusBarServicePermission) {
+                                        imMayMove = false;
+                                        isDefaultDisplay = win.isDefaultDisplay();
+                                        if (isDefaultDisplay) {
+                                            try {
+                                                if (!(win.mViewVisibility == i4 && (i5 & 8) == 0 && win.mRelayoutCalled)) {
+                                                    focusMayChange = true;
+                                                    if (win.mViewVisibility != i4) {
+                                                        if ((win.mAttrs.flags & DumpState.DUMP_DEXOPT) != 0) {
+                                                            wallpaperMayMove = true;
+                                                            wallpaperMayMove |= (i5 & DumpState.DUMP_DEXOPT) != 0 ? 1 : 0;
+                                                            if ((i5 & 8192) || winAnimator3.mSurfaceController == null) {
+                                                            } else {
+                                                                winAnimator3.mSurfaceController.setSecure(isSecureLocked(win));
+                                                            }
+                                                            win.mRelayoutCalled = true;
+                                                            win.mInRelayout = true;
+                                                            win.mViewVisibility = i4;
+                                                            if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
+                                                                RuntimeException stack = new RuntimeException();
+                                                                stack.fillInStackTrace();
+                                                                String str = TAG;
+                                                                displayId = displayId2;
+                                                                StringBuilder stringBuilder4 = new StringBuilder();
+                                                                wallpaperMayMove2 = wallpaperMayMove;
+                                                                stringBuilder4.append("Relayout ");
+                                                                stringBuilder4.append(win);
+                                                                stringBuilder4.append(": oldVis=");
+                                                                stringBuilder4.append(oldVisibility);
+                                                                stringBuilder4.append(" newVis=");
+                                                                stringBuilder4.append(i4);
+                                                                Slog.i(str, stringBuilder4.toString(), stack);
+                                                            } else {
+                                                                wallpaperMayMove2 = wallpaperMayMove;
+                                                                displayId = displayId2;
+                                                            }
+                                                            win.setDisplayLayoutNeeded();
+                                                            win.mGivenInsetsPending = (flags & 1) != 0;
+                                                            if (i4 == 0) {
+                                                                if (win.mAppToken == null || win.mAttrs.type == 3 || !win.mAppToken.isClientHidden()) {
+                                                                    shouldRelayout = true;
+                                                                    if (!(shouldRelayout || !winAnimator3.hasSurface() || win.mAnimatingExit)) {
+                                                                        if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
+                                                                            String str2 = TAG;
+                                                                            StringBuilder stringBuilder5 = new StringBuilder();
+                                                                            stringBuilder5.append("Relayout invis ");
+                                                                            stringBuilder5.append(win);
+                                                                            stringBuilder5.append(": mAnimatingExit=");
+                                                                            stringBuilder5.append(win.mAnimatingExit);
+                                                                            Slog.i(str2, stringBuilder5.toString());
                                                                         }
-                                                                    }
-                                                                    this.mWindowPlacerLocked.performSurfacePlacement(true);
-                                                                    win2 = win;
-                                                                    int i6;
-                                                                    boolean z3;
-                                                                    int i7;
-                                                                    if (shouldRelayout) {
-                                                                        long j2;
-                                                                        i6 = oldVisibility;
-                                                                        z3 = isDefaultDisplay;
-                                                                        origId = origId3;
-                                                                        hasStatusBarServicePermission = win2;
-                                                                        surface2 = outSurface;
-                                                                        try {
-                                                                            WindowStateAnimator winAnimator4 = winAnimator3;
-                                                                            Trace.traceBegin(32, "relayoutWindow: viewVisibility_2");
-                                                                            winAnimator = winAnimator4;
-                                                                            winAnimator.mEnterAnimationPending = false;
-                                                                            winAnimator.mEnteringAnimation = false;
-                                                                            if (i3 == 0) {
+                                                                        result = 0 | 4;
+                                                                        if (!win.mWillReplaceWindow) {
+                                                                            String str3;
+                                                                            wallpaperMayMove = tryStartExitingAnimation(win, winAnimator3, isDefaultDisplay, focusMayChange);
+                                                                            this.mAppTransitTrack = "relayout";
+                                                                            if (this.mWaitingForConfig) {
+                                                                                if (!(win.mAppToken == null || this.mDeferRelayoutWindow.contains(win))) {
+                                                                                    this.mDeferRelayoutWindow.add(win);
+                                                                                }
+                                                                            }
+                                                                            this.mWindowPlacerLocked.performSurfacePlacement(true);
+                                                                            win2 = win;
+                                                                            int i7;
+                                                                            if (shouldRelayout) {
                                                                                 try {
-                                                                                    if (winAnimator.hasSurface()) {
-                                                                                        result2 = result;
+                                                                                    Trace.traceBegin(32, "relayoutWindow: viewVisibility_1");
+                                                                                    hasStatusBarServicePermission = win2;
+                                                                                    try {
+                                                                                        result = createSurfaceControl(outSurface, hasStatusBarServicePermission.relayoutVisibleWindow(result, attrChanges, oldVisibility), hasStatusBarServicePermission, winAnimator3);
+                                                                                        if ((result & 2) != 0) {
+                                                                                            wallpaperMayMove = isDefaultDisplay;
+                                                                                        }
                                                                                         try {
-                                                                                            Trace.traceBegin(32, "relayoutWindow: getSurface");
-                                                                                            winAnimator.mSurfaceController.getSurface(surface2);
+                                                                                            if (hasStatusBarServicePermission.mAttrs.type == 2011 && (this.mInputMethodWindow == null || this.mInputMethodWindow != hasStatusBarServicePermission)) {
+                                                                                                setInputMethodWindowLocked(hasStatusBarServicePermission);
+                                                                                                imMayMove = true;
+                                                                                            }
+                                                                                            if (hasStatusBarServicePermission.mAttrs.type == 2011 && isLandScapeMultiWindowMode() && (this.mPolicy instanceof PhoneWindowManager)) {
+                                                                                                ((PhoneWindowManager) this.mPolicy).setFocusChangeIMEFrozenTag(false);
+                                                                                            }
+                                                                                            if (hasStatusBarServicePermission.mAttrs.type == 2012 && this.mInputMethodWindow == null && !(HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer())) {
+                                                                                                Slog.d(TAG, "relayoutwindow TYPE_INPUT_METHOD_DIALOG , do setInputMethodWindowLocked");
+                                                                                                setInputMethodWindowLocked(hasStatusBarServicePermission);
+                                                                                            }
+                                                                                            hasStatusBarServicePermission.adjustStartingWindowFlags();
                                                                                             Trace.traceEnd(32);
-                                                                                            j2 = 32;
-                                                                                            Trace.traceEnd(j2);
-                                                                                            result = result2;
+                                                                                            i7 = attrChanges;
+                                                                                            winAnimator = winAnimator3;
+                                                                                            origId = origId3;
                                                                                         } catch (Throwable th7) {
                                                                                             th = th7;
-                                                                                            j = origId;
-                                                                                            result = result2;
+                                                                                            rect = outFrame;
+                                                                                            while (true) {
+                                                                                                break;
+                                                                                            }
+                                                                                            resetPriorityAfterLockedSection();
+                                                                                            throw th;
                                                                                         }
+                                                                                    } catch (Exception e) {
+                                                                                        i = oldVisibility;
+                                                                                        z3 = isDefaultDisplay;
+                                                                                        oldVisibility = e;
+                                                                                        this.mInputMonitor.updateInputWindowsLw(true);
+                                                                                        oldVisibility = TAG;
+                                                                                        stringBuilder = new StringBuilder();
+                                                                                        stringBuilder.append("Exception thrown when creating surface for client ");
+                                                                                        stringBuilder.append(iWindow);
+                                                                                        stringBuilder.append(" (");
+                                                                                        stringBuilder.append(hasStatusBarServicePermission.mAttrs.getTitle());
+                                                                                        stringBuilder.append(")");
+                                                                                        Slog.w(oldVisibility, stringBuilder.toString(), e);
+                                                                                        origId = origId3;
+                                                                                        Binder.restoreCallingIdentity(origId);
+                                                                                        resetPriorityAfterLockedSection();
+                                                                                        return 0;
+                                                                                    } catch (Throwable th8) {
+                                                                                        th = th8;
+                                                                                        j = origId;
+                                                                                        rect = outFrame;
+                                                                                        while (true) {
+                                                                                            break;
+                                                                                        }
+                                                                                        resetPriorityAfterLockedSection();
+                                                                                        throw th;
                                                                                     }
-                                                                                } catch (Throwable th8) {
-                                                                                    th = th8;
-                                                                                    result2 = result;
-                                                                                    j = origId;
+                                                                                } catch (Throwable th9) {
+                                                                                    th = th9;
+                                                                                    surface2 = outSurface;
                                                                                     rect = outFrame;
                                                                                     while (true) {
                                                                                         break;
@@ -4109,212 +4176,263 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                                                     throw th;
                                                                                 }
                                                                             }
-                                                                            i7 = attrChanges;
-                                                                            result2 = result;
-                                                                        } catch (Throwable th9) {
-                                                                            th = th9;
-                                                                            j = origId;
-                                                                            result2 = result;
-                                                                            rect = outFrame;
-                                                                            while (true) {
-                                                                                break;
-                                                                            }
-                                                                            resetPriorityAfterLockedSection();
-                                                                            throw th;
-                                                                        }
-                                                                        try {
-                                                                            if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
-                                                                                str3 = TAG;
-                                                                                StringBuilder stringBuilder6 = new StringBuilder();
-                                                                                stringBuilder6.append("Releasing surface in: ");
-                                                                                stringBuilder6.append(hasStatusBarServicePermission);
-                                                                                Slog.i(str3, stringBuilder6.toString());
-                                                                            }
-                                                                        } catch (Throwable th10) {
-                                                                            th = th10;
-                                                                            j = origId;
-                                                                            rect = outFrame;
-                                                                            result = result2;
-                                                                            while (true) {
-                                                                                break;
-                                                                            }
-                                                                            resetPriorityAfterLockedSection();
-                                                                            throw th;
-                                                                        }
-                                                                        try {
-                                                                            stringBuilder2 = new StringBuilder();
-                                                                            stringBuilder2.append("wmReleaseOutSurface_");
-                                                                            stringBuilder2.append(hasStatusBarServicePermission.mAttrs.getTitle());
-                                                                            j2 = 32;
-                                                                            Trace.traceBegin(32, stringBuilder2.toString());
-                                                                            outSurface.release();
+                                                                            long j2;
+                                                                            i = oldVisibility;
+                                                                            z3 = isDefaultDisplay;
+                                                                            origId = origId3;
+                                                                            hasStatusBarServicePermission = win2;
+                                                                            surface2 = outSurface;
                                                                             try {
-                                                                                Trace.traceEnd(32);
-                                                                                Trace.traceEnd(j2);
-                                                                                result = result2;
-                                                                            } catch (Throwable th11) {
-                                                                                th = th11;
-                                                                                rect = outFrame;
+                                                                                WindowStateAnimator winAnimator4 = winAnimator3;
+                                                                                Trace.traceBegin(32, "relayoutWindow: viewVisibility_2");
+                                                                                winAnimator = winAnimator4;
+                                                                                winAnimator.mEnterAnimationPending = false;
+                                                                                winAnimator.mEnteringAnimation = false;
+                                                                                if (i4 == 0) {
+                                                                                    try {
+                                                                                        if (winAnimator.hasSurface()) {
+                                                                                            result2 = result;
+                                                                                            try {
+                                                                                                Trace.traceBegin(32, "relayoutWindow: getSurface");
+                                                                                                winAnimator.mSurfaceController.getSurface(surface2);
+                                                                                                Trace.traceEnd(32);
+                                                                                                j2 = 32;
+                                                                                                Trace.traceEnd(j2);
+                                                                                                result = result2;
+                                                                                            } catch (Throwable th10) {
+                                                                                                th = th10;
+                                                                                                j = origId;
+                                                                                                result = result2;
+                                                                                            }
+                                                                                        }
+                                                                                    } catch (Throwable th11) {
+                                                                                        th = th11;
+                                                                                        result2 = result;
+                                                                                        j = origId;
+                                                                                        rect = outFrame;
+                                                                                        while (true) {
+                                                                                            break;
+                                                                                        }
+                                                                                        resetPriorityAfterLockedSection();
+                                                                                        throw th;
+                                                                                    }
+                                                                                }
+                                                                                i7 = attrChanges;
+                                                                                result2 = result;
+                                                                            } catch (Throwable th12) {
+                                                                                th = th12;
                                                                                 j = origId;
-                                                                                result = result2;
+                                                                                result2 = result;
+                                                                                rect = outFrame;
                                                                                 while (true) {
                                                                                     break;
                                                                                 }
                                                                                 resetPriorityAfterLockedSection();
                                                                                 throw th;
                                                                             }
-                                                                        } catch (Throwable th12) {
-                                                                            th = th12;
-                                                                            result = result2;
-                                                                            while (true) {
-                                                                                break;
-                                                                            }
-                                                                            resetPriorityAfterLockedSection();
-                                                                            throw th;
-                                                                        }
-                                                                    }
-                                                                    try {
-                                                                        Trace.traceBegin(32, "relayoutWindow: viewVisibility_1");
-                                                                        hasStatusBarServicePermission = win2;
-                                                                        try {
-                                                                            result = createSurfaceControl(outSurface, hasStatusBarServicePermission.relayoutVisibleWindow(result, attrChanges, oldVisibility), hasStatusBarServicePermission, winAnimator3);
-                                                                            if ((result & 2) != 0) {
-                                                                                wallpaperMayMove = isDefaultDisplay;
-                                                                            }
                                                                             try {
-                                                                                if (hasStatusBarServicePermission.mAttrs.type == 2011 && (this.mInputMethodWindow == null || this.mInputMethodWindow != hasStatusBarServicePermission)) {
-                                                                                    setInputMethodWindowLocked(hasStatusBarServicePermission);
-                                                                                    imMayMove = true;
+                                                                                if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
+                                                                                    str3 = TAG;
+                                                                                    StringBuilder stringBuilder6 = new StringBuilder();
+                                                                                    stringBuilder6.append("Releasing surface in: ");
+                                                                                    stringBuilder6.append(hasStatusBarServicePermission);
+                                                                                    Slog.i(str3, stringBuilder6.toString());
                                                                                 }
-                                                                                if (hasStatusBarServicePermission.mAttrs.type == 2011 && isLandScapeMultiWindowMode() && (this.mPolicy instanceof PhoneWindowManager)) {
-                                                                                    ((PhoneWindowManager) this.mPolicy).setFocusChangeIMEFrozenTag(false);
-                                                                                }
-                                                                                if (hasStatusBarServicePermission.mAttrs.type == 2012 && this.mInputMethodWindow == null && !(HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer())) {
-                                                                                    Slog.d(TAG, "relayoutwindow TYPE_INPUT_METHOD_DIALOG , do setInputMethodWindowLocked");
-                                                                                    setInputMethodWindowLocked(hasStatusBarServicePermission);
-                                                                                }
-                                                                                hasStatusBarServicePermission.adjustStartingWindowFlags();
-                                                                                Trace.traceEnd(32);
-                                                                                i7 = attrChanges;
-                                                                                winAnimator = winAnimator3;
-                                                                                origId = origId3;
                                                                             } catch (Throwable th13) {
                                                                                 th = th13;
+                                                                                j = origId;
                                                                                 rect = outFrame;
+                                                                                result = result2;
                                                                                 while (true) {
                                                                                     break;
                                                                                 }
                                                                                 resetPriorityAfterLockedSection();
                                                                                 throw th;
                                                                             }
-                                                                        } catch (Exception e) {
-                                                                            i6 = oldVisibility;
-                                                                            z3 = isDefaultDisplay;
-                                                                            oldVisibility = e;
-                                                                            this.mInputMonitor.updateInputWindowsLw(true);
-                                                                            oldVisibility = TAG;
-                                                                            stringBuilder = new StringBuilder();
-                                                                            stringBuilder.append("Exception thrown when creating surface for client ");
-                                                                            stringBuilder.append(iWindow);
-                                                                            stringBuilder.append(" (");
-                                                                            stringBuilder.append(hasStatusBarServicePermission.mAttrs.getTitle());
-                                                                            stringBuilder.append(")");
-                                                                            Slog.w(oldVisibility, stringBuilder.toString(), e);
-                                                                            origId = origId3;
-                                                                            Binder.restoreCallingIdentity(origId);
-                                                                            resetPriorityAfterLockedSection();
-                                                                            return 0;
-                                                                        } catch (Throwable th14) {
-                                                                            th = th14;
-                                                                            j = origId;
-                                                                            rect = outFrame;
-                                                                            while (true) {
-                                                                                break;
+                                                                            try {
+                                                                                stringBuilder2 = new StringBuilder();
+                                                                                stringBuilder2.append("wmReleaseOutSurface_");
+                                                                                stringBuilder2.append(hasStatusBarServicePermission.mAttrs.getTitle());
+                                                                                j2 = 32;
+                                                                                Trace.traceBegin(32, stringBuilder2.toString());
+                                                                                outSurface.release();
+                                                                                try {
+                                                                                    Trace.traceEnd(32);
+                                                                                    Trace.traceEnd(j2);
+                                                                                    result = result2;
+                                                                                } catch (Throwable th14) {
+                                                                                    th = th14;
+                                                                                    rect = outFrame;
+                                                                                    j = origId;
+                                                                                    result = result2;
+                                                                                    while (true) {
+                                                                                        break;
+                                                                                    }
+                                                                                    resetPriorityAfterLockedSection();
+                                                                                    throw th;
+                                                                                }
+                                                                            } catch (Throwable th15) {
+                                                                                th = th15;
+                                                                                result = result2;
+                                                                                while (true) {
+                                                                                    break;
+                                                                                }
+                                                                                resetPriorityAfterLockedSection();
+                                                                                throw th;
                                                                             }
-                                                                            resetPriorityAfterLockedSection();
-                                                                            throw th;
+                                                                            setHwSecureScreen(hasStatusBarServicePermission);
+                                                                            if (wallpaperMayMove) {
+                                                                                if (updateFocusedWindowLocked(3, false)) {
+                                                                                    imMayMove = false;
+                                                                                }
+                                                                            }
+                                                                            focusMayChange = (result & 2) != 0;
+                                                                            dc = hasStatusBarServicePermission.getDisplayContent();
+                                                                            if (imMayMove) {
+                                                                                dc.computeImeTarget(true);
+                                                                                if (focusMayChange) {
+                                                                                    dc.assignWindowLayers(false);
+                                                                                }
+                                                                            }
+                                                                            if (wallpaperMayMove2) {
+                                                                                DisplayContent displayContent2 = hasStatusBarServicePermission.getDisplayContent();
+                                                                                displayContent2.pendingLayoutChanges |= 4;
+                                                                            }
+                                                                            if (hasStatusBarServicePermission.mAppToken != null) {
+                                                                                this.mUnknownAppVisibilityController.notifyRelayouted(hasStatusBarServicePermission.mAppToken);
+                                                                            }
+                                                                            origId4 = origId;
+                                                                            Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
+                                                                            i6 = displayId;
+                                                                            hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
+                                                                            Trace.traceEnd(32);
+                                                                            if (shouldRelayout) {
+                                                                                try {
+                                                                                    if (hasStatusBarServicePermission.mFrame.width() == 0 && hasStatusBarServicePermission.mFrame.height() == 0) {
+                                                                                        String str4 = TAG;
+                                                                                        stringBuilder = new StringBuilder();
+                                                                                        stringBuilder.append("force to relayout later when size is 1*1 for:");
+                                                                                        stringBuilder.append(hasStatusBarServicePermission);
+                                                                                        Slog.w(str4, stringBuilder.toString());
+                                                                                        this.mWindowPlacerLocked.performSurfacePlacement(true);
+                                                                                    }
+                                                                                } catch (Throwable th16) {
+                                                                                    th = th16;
+                                                                                    rect = outFrame;
+                                                                                    while (true) {
+                                                                                        break;
+                                                                                    }
+                                                                                    resetPriorityAfterLockedSection();
+                                                                                    throw th;
+                                                                                }
+                                                                            }
+                                                                            if (focusMayChange || !hasStatusBarServicePermission.mIsWallpaper) {
+                                                                            } else {
+                                                                                DisplayInfo displayInfo = hasStatusBarServicePermission.getDisplayContent().getDisplayInfo();
+                                                                                DisplayInfo displayInfo2 = displayInfo;
+                                                                                dc.mWallpaperController.updateWallpaperOffset(hasStatusBarServicePermission, displayInfo.logicalWidth, displayInfo.logicalHeight, null);
+                                                                            }
+                                                                            if (hasStatusBarServicePermission.mAppToken != null) {
+                                                                                hasStatusBarServicePermission.mAppToken.updateReportedVisibilityLocked();
+                                                                            }
+                                                                            if (winAnimator.mReportSurfaceResized) {
+                                                                                winAnimator.mReportSurfaceResized = false;
+                                                                                result |= 32;
+                                                                            }
+                                                                            if (this.mPolicy.isNavBarForcedShownLw(hasStatusBarServicePermission)) {
+                                                                                result |= 64;
+                                                                            }
+                                                                            if (!hasStatusBarServicePermission.isGoneForLayoutLw()) {
+                                                                                hasStatusBarServicePermission.mResizedWhileGone = false;
+                                                                            }
+                                                                            if (shouldRelayout) {
+                                                                                mergedConfiguration3 = mergedConfiguration;
+                                                                                hasStatusBarServicePermission.getMergedConfiguration(mergedConfiguration3);
+                                                                            } else {
+                                                                                mergedConfiguration3 = mergedConfiguration;
+                                                                                hasStatusBarServicePermission.getLastReportedMergedConfiguration(mergedConfiguration3);
+                                                                            }
+                                                                            hasStatusBarServicePermission.setLastReportedMergedConfiguration(mergedConfiguration3);
+                                                                            hasStatusBarServicePermission.updateLastInsetValues();
+                                                                            outFrame.set(hasStatusBarServicePermission.mCompatFrame);
+                                                                            outOverscanInsets.set(hasStatusBarServicePermission.mOverscanInsets);
+                                                                            outContentInsets.set(hasStatusBarServicePermission.mContentInsets);
+                                                                            hasStatusBarServicePermission.mLastRelayoutContentInsets.set(hasStatusBarServicePermission.mContentInsets);
+                                                                            outVisibleInsets.set(hasStatusBarServicePermission.mVisibleInsets);
+                                                                            outStableInsets.set(hasStatusBarServicePermission.mStableInsets);
+                                                                            outCutout.set(hasStatusBarServicePermission.mDisplayCutout.getDisplayCutout());
+                                                                            outOutsets.set(hasStatusBarServicePermission.mOutsets);
+                                                                            outBackdropFrame.set(hasStatusBarServicePermission.getBackdropFrame(hasStatusBarServicePermission.mFrame));
+                                                                            if (WindowManagerDebugConfig.DEBUG_FOCUS) {
+                                                                                try {
+                                                                                    str3 = TAG;
+                                                                                    StringBuilder stringBuilder7 = new StringBuilder();
+                                                                                    stringBuilder7.append("Relayout of ");
+                                                                                    stringBuilder7.append(hasStatusBarServicePermission);
+                                                                                    stringBuilder7.append(": focusMayChange=");
+                                                                                    stringBuilder7.append(wallpaperMayMove);
+                                                                                    Slog.v(str3, stringBuilder7.toString());
+                                                                                } catch (Throwable th17) {
+                                                                                    th = th17;
+                                                                                }
+                                                                            }
+                                                                            result |= this.mInTouchMode;
+                                                                            this.mInputMonitor.updateInputWindowsLw(true);
+                                                                            if (WindowManagerDebugConfig.DEBUG_LAYOUT || shouldPrintLog) {
+                                                                                stringBuilder2 = new StringBuilder();
+                                                                                stringBuilder2.append("complete Relayout ");
+                                                                                stringBuilder2.append(hasStatusBarServicePermission);
+                                                                                stringBuilder2.append("  size:");
+                                                                                stringBuilder2.append(outFrame.toShortString());
+                                                                                Flog.i(307, stringBuilder2.toString());
+                                                                            }
+                                                                            hasStatusBarServicePermission.mInRelayout = false;
+                                                                            displayContent = getDefaultDisplayContentLocked();
+                                                                            if (displayContent != null && i4 == 0) {
+                                                                                displayContent.checkNeedNotifyFingerWinCovered();
+                                                                                displayContent.mObserveToken = null;
+                                                                                displayContent.mTopAboveAppToken = null;
+                                                                            }
                                                                         }
-                                                                    } catch (Throwable th15) {
-                                                                        th = th15;
-                                                                        surface2 = outSurface;
-                                                                        rect = outFrame;
-                                                                        while (true) {
-                                                                            break;
-                                                                        }
-                                                                        resetPriorityAfterLockedSection();
-                                                                        throw th;
+                                                                    }
+                                                                    wallpaperMayMove = focusMayChange;
+                                                                    this.mAppTransitTrack = "relayout";
+                                                                    if (this.mWaitingForConfig) {
+                                                                    }
+                                                                    this.mWindowPlacerLocked.performSurfacePlacement(true);
+                                                                    win2 = win;
+                                                                    if (shouldRelayout) {
                                                                     }
                                                                     setHwSecureScreen(hasStatusBarServicePermission);
                                                                     if (wallpaperMayMove) {
-                                                                        if (updateFocusedWindowLocked(3, false)) {
-                                                                            imMayMove = false;
-                                                                        }
                                                                     }
-                                                                    focusMayChange = (result & 2) == 0;
+                                                                    if ((result & 2) != 0) {
+                                                                    }
                                                                     dc = hasStatusBarServicePermission.getDisplayContent();
                                                                     if (imMayMove) {
-                                                                        dc.computeImeTarget(true);
-                                                                        if (focusMayChange) {
-                                                                            dc.assignWindowLayers(false);
-                                                                        }
                                                                     }
                                                                     if (wallpaperMayMove2) {
-                                                                        DisplayContent displayContent2 = hasStatusBarServicePermission.getDisplayContent();
-                                                                        displayContent2.pendingLayoutChanges |= 4;
                                                                     }
                                                                     if (hasStatusBarServicePermission.mAppToken != null) {
-                                                                        this.mUnknownAppVisibilityController.notifyRelayouted(hasStatusBarServicePermission.mAppToken);
                                                                     }
                                                                     origId4 = origId;
                                                                     Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
-                                                                    i5 = displayId;
-                                                                    hasStatusBarPermission = updateOrientationFromAppTokensLocked(i5);
+                                                                    i6 = displayId;
+                                                                    hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
                                                                     Trace.traceEnd(32);
                                                                     if (shouldRelayout) {
-                                                                        try {
-                                                                            if (hasStatusBarServicePermission.mFrame.width() == 0 && hasStatusBarServicePermission.mFrame.height() == 0) {
-                                                                                String str4 = TAG;
-                                                                                stringBuilder = new StringBuilder();
-                                                                                stringBuilder.append("force to relayout later when size is 1*1 for:");
-                                                                                stringBuilder.append(hasStatusBarServicePermission);
-                                                                                Slog.w(str4, stringBuilder.toString());
-                                                                                this.mWindowPlacerLocked.performSurfacePlacement(true);
-                                                                            }
-                                                                        } catch (Throwable th16) {
-                                                                            th = th16;
-                                                                            rect = outFrame;
-                                                                            while (true) {
-                                                                                break;
-                                                                            }
-                                                                            resetPriorityAfterLockedSection();
-                                                                            throw th;
-                                                                        }
                                                                     }
-                                                                    if (focusMayChange || !hasStatusBarServicePermission.mIsWallpaper) {
-                                                                    } else {
-                                                                        DisplayInfo displayInfo = hasStatusBarServicePermission.getDisplayContent().getDisplayInfo();
-                                                                        DisplayInfo displayInfo2 = displayInfo;
-                                                                        dc.mWallpaperController.updateWallpaperOffset(hasStatusBarServicePermission, displayInfo.logicalWidth, displayInfo.logicalHeight, null);
+                                                                    if (focusMayChange) {
                                                                     }
                                                                     if (hasStatusBarServicePermission.mAppToken != null) {
-                                                                        hasStatusBarServicePermission.mAppToken.updateReportedVisibilityLocked();
                                                                     }
                                                                     if (winAnimator.mReportSurfaceResized) {
-                                                                        winAnimator.mReportSurfaceResized = false;
-                                                                        result |= 32;
                                                                     }
                                                                     if (this.mPolicy.isNavBarForcedShownLw(hasStatusBarServicePermission)) {
-                                                                        result |= 64;
                                                                     }
-                                                                    if (!hasStatusBarServicePermission.isGoneForLayoutLw()) {
-                                                                        hasStatusBarServicePermission.mResizedWhileGone = false;
+                                                                    if (hasStatusBarServicePermission.isGoneForLayoutLw()) {
                                                                     }
                                                                     if (shouldRelayout) {
-                                                                        mergedConfiguration3 = mergedConfiguration;
-                                                                        hasStatusBarServicePermission.getLastReportedMergedConfiguration(mergedConfiguration3);
-                                                                    } else {
-                                                                        mergedConfiguration3 = mergedConfiguration;
-                                                                        hasStatusBarServicePermission.getMergedConfiguration(mergedConfiguration3);
                                                                     }
                                                                     hasStatusBarServicePermission.setLastReportedMergedConfiguration(mergedConfiguration3);
                                                                     hasStatusBarServicePermission.updateLastInsetValues();
@@ -4328,36 +4446,27 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                                     outOutsets.set(hasStatusBarServicePermission.mOutsets);
                                                                     outBackdropFrame.set(hasStatusBarServicePermission.getBackdropFrame(hasStatusBarServicePermission.mFrame));
                                                                     if (WindowManagerDebugConfig.DEBUG_FOCUS) {
-                                                                        try {
-                                                                            str3 = TAG;
-                                                                            StringBuilder stringBuilder7 = new StringBuilder();
-                                                                            stringBuilder7.append("Relayout of ");
-                                                                            stringBuilder7.append(hasStatusBarServicePermission);
-                                                                            stringBuilder7.append(": focusMayChange=");
-                                                                            stringBuilder7.append(wallpaperMayMove);
-                                                                            Slog.v(str3, stringBuilder7.toString());
-                                                                        } catch (Throwable th17) {
-                                                                            th = th17;
-                                                                        }
                                                                     }
                                                                     result |= this.mInTouchMode;
                                                                     this.mInputMonitor.updateInputWindowsLw(true);
-                                                                    if (WindowManagerDebugConfig.DEBUG_LAYOUT || shouldPrintLog) {
-                                                                        stringBuilder2 = new StringBuilder();
-                                                                        stringBuilder2.append("complete Relayout ");
-                                                                        stringBuilder2.append(hasStatusBarServicePermission);
-                                                                        stringBuilder2.append("  size:");
-                                                                        stringBuilder2.append(outFrame.toShortString());
-                                                                        Flog.i(307, stringBuilder2.toString());
-                                                                    }
+                                                                    stringBuilder2 = new StringBuilder();
+                                                                    stringBuilder2.append("complete Relayout ");
+                                                                    stringBuilder2.append(hasStatusBarServicePermission);
+                                                                    stringBuilder2.append("  size:");
+                                                                    stringBuilder2.append(outFrame.toShortString());
+                                                                    Flog.i(307, stringBuilder2.toString());
                                                                     hasStatusBarServicePermission.mInRelayout = false;
                                                                     displayContent = getDefaultDisplayContentLocked();
-                                                                    if (displayContent != null && i3 == 0) {
-                                                                        displayContent.checkNeedNotifyFingerWinCovered();
-                                                                        displayContent.mObserveToken = null;
-                                                                        displayContent.mTopAboveAppToken = null;
-                                                                    }
+                                                                    displayContent.checkNeedNotifyFingerWinCovered();
+                                                                    displayContent.mObserveToken = null;
+                                                                    displayContent.mTopAboveAppToken = null;
                                                                 }
+                                                            }
+                                                            shouldRelayout = false;
+                                                            if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
+                                                            }
+                                                            result = 0 | 4;
+                                                            if (win.mWillReplaceWindow) {
                                                             }
                                                             wallpaperMayMove = focusMayChange;
                                                             this.mAppTransitTrack = "relayout";
@@ -4370,7 +4479,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                             setHwSecureScreen(hasStatusBarServicePermission);
                                                             if (wallpaperMayMove) {
                                                             }
-                                                            if ((result & 2) == 0) {
+                                                            if ((result & 2) != 0) {
                                                             }
                                                             dc = hasStatusBarServicePermission.getDisplayContent();
                                                             if (imMayMove) {
@@ -4381,8 +4490,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                             }
                                                             origId4 = origId;
                                                             Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
-                                                            i5 = displayId;
-                                                            hasStatusBarPermission = updateOrientationFromAppTokensLocked(i5);
+                                                            i6 = displayId;
+                                                            hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
                                                             Trace.traceEnd(32);
                                                             if (shouldRelayout) {
                                                             }
@@ -4426,6 +4535,23 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                             displayContent.mTopAboveAppToken = null;
                                                         }
                                                     }
+                                                    wallpaperMayMove = false;
+                                                    if ((i5 & DumpState.DUMP_DEXOPT) != 0) {
+                                                    }
+                                                    wallpaperMayMove |= (i5 & DumpState.DUMP_DEXOPT) != 0 ? 1 : 0;
+                                                    if (i5 & 8192) {
+                                                    }
+                                                    win.mRelayoutCalled = true;
+                                                    win.mInRelayout = true;
+                                                    win.mViewVisibility = i4;
+                                                    if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
+                                                    }
+                                                    win.setDisplayLayoutNeeded();
+                                                    if ((flags & 1) != 0) {
+                                                    }
+                                                    win.mGivenInsetsPending = (flags & 1) != 0;
+                                                    if (i4 == 0) {
+                                                    }
                                                     shouldRelayout = false;
                                                     if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
                                                     }
@@ -4443,7 +4569,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                     setHwSecureScreen(hasStatusBarServicePermission);
                                                     if (wallpaperMayMove) {
                                                     }
-                                                    if ((result & 2) == 0) {
+                                                    if ((result & 2) != 0) {
                                                     }
                                                     dc = hasStatusBarServicePermission.getDisplayContent();
                                                     if (imMayMove) {
@@ -4454,8 +4580,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                     }
                                                     origId4 = origId;
                                                     Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
-                                                    i5 = displayId;
-                                                    hasStatusBarPermission = updateOrientationFromAppTokensLocked(i5);
+                                                    i6 = displayId;
+                                                    hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
                                                     Trace.traceEnd(32);
                                                     if (shouldRelayout) {
                                                     }
@@ -4498,120 +4624,127 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                                     displayContent.mObserveToken = null;
                                                     displayContent.mTopAboveAppToken = null;
                                                 }
+                                            } catch (Throwable th18) {
+                                                th = th18;
+                                                rect = outFrame;
                                             }
-                                            wallpaperMayMove = false;
-                                            if ((i4 & DumpState.DUMP_DEXOPT) == 0) {
-                                            }
-                                            wallpaperMayMove |= (i4 & DumpState.DUMP_DEXOPT) == 0 ? 1 : 0;
-                                            if (i4 & 8192) {
-                                            }
-                                            win.mRelayoutCalled = true;
-                                            win.mInRelayout = true;
-                                            win.mViewVisibility = i3;
-                                            if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
-                                            }
-                                            win.setDisplayLayoutNeeded();
-                                            if ((flags & 1) == 0) {
-                                            }
-                                            win.mGivenInsetsPending = (flags & 1) == 0;
-                                            if (i3 == 0) {
-                                            }
-                                            shouldRelayout = false;
-                                            if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
-                                            }
-                                            result = 0 | 4;
-                                            if (win.mWillReplaceWindow) {
-                                            }
-                                            wallpaperMayMove = focusMayChange;
-                                            this.mAppTransitTrack = "relayout";
-                                            if (this.mWaitingForConfig) {
-                                            }
-                                            this.mWindowPlacerLocked.performSurfacePlacement(true);
-                                            win2 = win;
-                                            if (shouldRelayout) {
-                                            }
-                                            setHwSecureScreen(hasStatusBarServicePermission);
-                                            if (wallpaperMayMove) {
-                                            }
-                                            if ((result & 2) == 0) {
-                                            }
-                                            dc = hasStatusBarServicePermission.getDisplayContent();
-                                            if (imMayMove) {
-                                            }
-                                            if (wallpaperMayMove2) {
-                                            }
-                                            if (hasStatusBarServicePermission.mAppToken != null) {
-                                            }
-                                            origId4 = origId;
-                                            Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
-                                            i5 = displayId;
-                                            hasStatusBarPermission = updateOrientationFromAppTokensLocked(i5);
-                                            Trace.traceEnd(32);
-                                            if (shouldRelayout) {
-                                            }
-                                            if (focusMayChange) {
-                                            }
-                                            if (hasStatusBarServicePermission.mAppToken != null) {
-                                            }
-                                            if (winAnimator.mReportSurfaceResized) {
-                                            }
-                                            if (this.mPolicy.isNavBarForcedShownLw(hasStatusBarServicePermission)) {
-                                            }
-                                            if (hasStatusBarServicePermission.isGoneForLayoutLw()) {
-                                            }
-                                            if (shouldRelayout) {
-                                            }
-                                            hasStatusBarServicePermission.setLastReportedMergedConfiguration(mergedConfiguration3);
-                                            hasStatusBarServicePermission.updateLastInsetValues();
-                                            outFrame.set(hasStatusBarServicePermission.mCompatFrame);
-                                            outOverscanInsets.set(hasStatusBarServicePermission.mOverscanInsets);
-                                            outContentInsets.set(hasStatusBarServicePermission.mContentInsets);
-                                            hasStatusBarServicePermission.mLastRelayoutContentInsets.set(hasStatusBarServicePermission.mContentInsets);
-                                            outVisibleInsets.set(hasStatusBarServicePermission.mVisibleInsets);
-                                            outStableInsets.set(hasStatusBarServicePermission.mStableInsets);
-                                            outCutout.set(hasStatusBarServicePermission.mDisplayCutout.getDisplayCutout());
-                                            outOutsets.set(hasStatusBarServicePermission.mOutsets);
-                                            outBackdropFrame.set(hasStatusBarServicePermission.getBackdropFrame(hasStatusBarServicePermission.mFrame));
-                                            if (WindowManagerDebugConfig.DEBUG_FOCUS) {
-                                            }
-                                            result |= this.mInTouchMode;
-                                            this.mInputMonitor.updateInputWindowsLw(true);
-                                            stringBuilder2 = new StringBuilder();
-                                            stringBuilder2.append("complete Relayout ");
-                                            stringBuilder2.append(hasStatusBarServicePermission);
-                                            stringBuilder2.append("  size:");
-                                            stringBuilder2.append(outFrame.toShortString());
-                                            Flog.i(307, stringBuilder2.toString());
-                                            hasStatusBarServicePermission.mInRelayout = false;
-                                            displayContent = getDefaultDisplayContentLocked();
-                                            displayContent.checkNeedNotifyFingerWinCovered();
-                                            displayContent.mObserveToken = null;
-                                            displayContent.mTopAboveAppToken = null;
                                         }
-                                    } catch (Throwable th18) {
-                                        th = th18;
-                                        rect = outFrame;
+                                        focusMayChange = false;
+                                        if (win.mViewVisibility != i4) {
+                                        }
+                                        wallpaperMayMove = false;
+                                        if ((i5 & DumpState.DUMP_DEXOPT) != 0) {
+                                        }
+                                        wallpaperMayMove |= (i5 & DumpState.DUMP_DEXOPT) != 0 ? 1 : 0;
+                                        if (i5 & 8192) {
+                                        }
+                                        win.mRelayoutCalled = true;
+                                        win.mInRelayout = true;
+                                        win.mViewVisibility = i4;
+                                        if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
+                                        }
+                                        win.setDisplayLayoutNeeded();
+                                        if ((flags & 1) != 0) {
+                                        }
+                                        win.mGivenInsetsPending = (flags & 1) != 0;
+                                        if (i4 == 0) {
+                                        }
+                                        shouldRelayout = false;
+                                        if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
+                                        }
+                                        result = 0 | 4;
+                                        if (win.mWillReplaceWindow) {
+                                        }
+                                        wallpaperMayMove = focusMayChange;
+                                        this.mAppTransitTrack = "relayout";
+                                        if (this.mWaitingForConfig) {
+                                        }
+                                        this.mWindowPlacerLocked.performSurfacePlacement(true);
+                                        win2 = win;
+                                        if (shouldRelayout) {
+                                        }
+                                        setHwSecureScreen(hasStatusBarServicePermission);
+                                        if (wallpaperMayMove) {
+                                        }
+                                        if ((result & 2) != 0) {
+                                        }
+                                        dc = hasStatusBarServicePermission.getDisplayContent();
+                                        if (imMayMove) {
+                                        }
+                                        if (wallpaperMayMove2) {
+                                        }
+                                        if (hasStatusBarServicePermission.mAppToken != null) {
+                                        }
+                                        origId4 = origId;
+                                        Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
+                                        i6 = displayId;
+                                        hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
+                                        Trace.traceEnd(32);
+                                        if (shouldRelayout) {
+                                        }
+                                        if (focusMayChange) {
+                                        }
+                                        if (hasStatusBarServicePermission.mAppToken != null) {
+                                        }
+                                        if (winAnimator.mReportSurfaceResized) {
+                                        }
+                                        if (this.mPolicy.isNavBarForcedShownLw(hasStatusBarServicePermission)) {
+                                        }
+                                        if (hasStatusBarServicePermission.isGoneForLayoutLw()) {
+                                        }
+                                        if (shouldRelayout) {
+                                        }
+                                        hasStatusBarServicePermission.setLastReportedMergedConfiguration(mergedConfiguration3);
+                                        hasStatusBarServicePermission.updateLastInsetValues();
+                                        outFrame.set(hasStatusBarServicePermission.mCompatFrame);
+                                        outOverscanInsets.set(hasStatusBarServicePermission.mOverscanInsets);
+                                        outContentInsets.set(hasStatusBarServicePermission.mContentInsets);
+                                        hasStatusBarServicePermission.mLastRelayoutContentInsets.set(hasStatusBarServicePermission.mContentInsets);
+                                        outVisibleInsets.set(hasStatusBarServicePermission.mVisibleInsets);
+                                        outStableInsets.set(hasStatusBarServicePermission.mStableInsets);
+                                        outCutout.set(hasStatusBarServicePermission.mDisplayCutout.getDisplayCutout());
+                                        outOutsets.set(hasStatusBarServicePermission.mOutsets);
+                                        outBackdropFrame.set(hasStatusBarServicePermission.getBackdropFrame(hasStatusBarServicePermission.mFrame));
+                                        if (WindowManagerDebugConfig.DEBUG_FOCUS) {
+                                        }
+                                        result |= this.mInTouchMode;
+                                        this.mInputMonitor.updateInputWindowsLw(true);
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("complete Relayout ");
+                                        stringBuilder2.append(hasStatusBarServicePermission);
+                                        stringBuilder2.append("  size:");
+                                        stringBuilder2.append(outFrame.toShortString());
+                                        Flog.i(307, stringBuilder2.toString());
+                                        hasStatusBarServicePermission.mInRelayout = false;
+                                        displayContent = getDefaultDisplayContentLocked();
+                                        displayContent.checkNeedNotifyFingerWinCovered();
+                                        displayContent.mObserveToken = null;
+                                        displayContent.mTopAboveAppToken = null;
                                     }
                                 }
+                                imMayMove = true;
+                                isDefaultDisplay = win.isDefaultDisplay();
+                                if (isDefaultDisplay) {
+                                }
                                 focusMayChange = false;
-                                if (win.mViewVisibility != i3) {
+                                if (win.mViewVisibility != i4) {
                                 }
                                 wallpaperMayMove = false;
-                                if ((i4 & DumpState.DUMP_DEXOPT) == 0) {
+                                if ((i5 & DumpState.DUMP_DEXOPT) != 0) {
                                 }
-                                wallpaperMayMove |= (i4 & DumpState.DUMP_DEXOPT) == 0 ? 1 : 0;
-                                if (i4 & 8192) {
+                                wallpaperMayMove |= (i5 & DumpState.DUMP_DEXOPT) != 0 ? 1 : 0;
+                                if (i5 & 8192) {
                                 }
                                 win.mRelayoutCalled = true;
                                 win.mInRelayout = true;
-                                win.mViewVisibility = i3;
+                                win.mViewVisibility = i4;
                                 if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
                                 }
                                 win.setDisplayLayoutNeeded();
-                                if ((flags & 1) == 0) {
+                                if ((flags & 1) != 0) {
                                 }
-                                win.mGivenInsetsPending = (flags & 1) == 0;
-                                if (i3 == 0) {
+                                win.mGivenInsetsPending = (flags & 1) != 0;
+                                if (i4 == 0) {
                                 }
                                 shouldRelayout = false;
                                 if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
@@ -4631,7 +4764,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                     setHwSecureScreen(hasStatusBarServicePermission);
                                     if (wallpaperMayMove) {
                                     }
-                                    if ((result & 2) == 0) {
+                                    if ((result & 2) != 0) {
                                     }
                                     dc = hasStatusBarServicePermission.getDisplayContent();
                                     if (imMayMove) {
@@ -4642,8 +4775,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                                     }
                                     origId4 = origId;
                                     Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
-                                    i5 = displayId;
-                                    hasStatusBarPermission = updateOrientationFromAppTokensLocked(i5);
+                                    i6 = displayId;
+                                    hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
                                     Trace.traceEnd(32);
                                     if (shouldRelayout) {
                                     }
@@ -4726,17 +4859,18 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         stringBuilder2.append(" oldVis=");
                         stringBuilder2.append(oldVisibility);
                         stringBuilder2.append(" newVis=");
-                        stringBuilder2.append(i3);
+                        stringBuilder2.append(i4);
                         stringBuilder2.append(" width=");
-                        stringBuilder2.append(i);
-                        stringBuilder2.append(" height=");
                         stringBuilder2.append(i2);
+                        stringBuilder2.append(" height=");
+                        stringBuilder2.append(i3);
                         Flog.i(307, stringBuilder2.toString());
                         shouldPrintLog = shouldPrintLog2;
                         if (oldVisibility != 4) {
                         }
-                        if ((i4 & 131080) == 0) {
+                        if ((i5 & 131080) == 0) {
                         }
+                        imMayMove = true;
                         isDefaultDisplay = win.isDefaultDisplay();
                         if (isDefaultDisplay) {
                         }
@@ -4754,24 +4888,24 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         throw th;
                     }
                     try {
-                        if (win.mViewVisibility != i3) {
+                        if (win.mViewVisibility != i4) {
                         }
                         wallpaperMayMove = false;
-                        if ((i4 & DumpState.DUMP_DEXOPT) == 0) {
+                        if ((i5 & DumpState.DUMP_DEXOPT) != 0) {
                         }
-                        wallpaperMayMove |= (i4 & DumpState.DUMP_DEXOPT) == 0 ? 1 : 0;
-                        if (i4 & 8192) {
+                        wallpaperMayMove |= (i5 & DumpState.DUMP_DEXOPT) != 0 ? 1 : 0;
+                        if (i5 & 8192) {
                         }
                         win.mRelayoutCalled = true;
                         win.mInRelayout = true;
-                        win.mViewVisibility = i3;
+                        win.mViewVisibility = i4;
                         if (WindowManagerDebugConfig.DEBUG_SCREEN_ON) {
                         }
                         win.setDisplayLayoutNeeded();
-                        if ((flags & 1) == 0) {
+                        if ((flags & 1) != 0) {
                         }
-                        win.mGivenInsetsPending = (flags & 1) == 0;
-                        if (i3 == 0) {
+                        win.mGivenInsetsPending = (flags & 1) != 0;
+                        if (i4 == 0) {
                         }
                         shouldRelayout = false;
                         if (WindowManagerDebugConfig.DEBUG_VISIBILITY) {
@@ -4802,7 +4936,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         setHwSecureScreen(hasStatusBarServicePermission);
                         if (wallpaperMayMove) {
                         }
-                        if ((result & 2) == 0) {
+                        if ((result & 2) != 0) {
                         }
                         dc = hasStatusBarServicePermission.getDisplayContent();
                         if (imMayMove) {
@@ -4813,8 +4947,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         }
                         origId4 = origId;
                         Trace.traceBegin(32, "relayoutWindow: updateOrientationFromAppTokens");
-                        i5 = displayId;
-                        hasStatusBarPermission = updateOrientationFromAppTokensLocked(i5);
+                        i6 = displayId;
+                        hasStatusBarPermission = updateOrientationFromAppTokensLocked(i6);
                         Trace.traceEnd(32);
                         if (shouldRelayout) {
                         }
@@ -5013,10 +5147,10 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0063, code:
+    /* JADX WARNING: Missing block: B:16:0x0063, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:17:0x0066, code:
+    /* JADX WARNING: Missing block: B:17:0x0066, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5077,19 +5211,23 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
                         Slog.w(str, stringBuilder.toString());
                         resetPriorityAfterLockedSection();
                         Binder.restoreCallingIdentity(origId);
-                    } else if (dc.removeWindowToken(binder) != null || isTokenFound(binder, dc)) {
-                        this.mInputMonitor.updateInputWindowsLw(true);
-                        resetPriorityAfterLockedSection();
-                        Binder.restoreCallingIdentity(origId);
-                    } else {
-                        String str2 = TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("removeWindowToken: Attempted to remove non-existing token: ");
-                        stringBuilder2.append(binder);
-                        Slog.w(str2, stringBuilder2.toString());
-                        resetPriorityAfterLockedSection();
-                        Binder.restoreCallingIdentity(origId);
+                        return;
                     }
+                    if (dc.removeWindowToken(binder) == null) {
+                        if (!isTokenFound(binder, dc)) {
+                            String str2 = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("removeWindowToken: Attempted to remove non-existing token: ");
+                            stringBuilder2.append(binder);
+                            Slog.w(str2, stringBuilder2.toString());
+                            resetPriorityAfterLockedSection();
+                            Binder.restoreCallingIdentity(origId);
+                            return;
+                        }
+                    }
+                    this.mInputMonitor.updateInputWindowsLw(true);
+                    resetPriorityAfterLockedSection();
+                    Binder.restoreCallingIdentity(origId);
                 }
             } catch (Throwable th) {
                 Binder.restoreCallingIdentity(origId);
@@ -5787,6 +5925,21 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         return isKeyguardTrustedLw;
     }
 
+    public boolean isKeyguardOccluded() {
+        boolean isKeyguardOccluded;
+        synchronized (this.mWindowMap) {
+            try {
+                boostPriorityForLockedSection();
+                isKeyguardOccluded = this.mPolicy.isKeyguardOccluded();
+            } finally {
+                while (true) {
+                }
+                resetPriorityAfterLockedSection();
+            }
+        }
+        return isKeyguardOccluded;
+    }
+
     public void setKeyguardGoingAway(boolean keyguardGoingAway) {
         synchronized (this.mWindowMap) {
             try {
@@ -6356,10 +6509,10 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         this.mPolicy.onSystemUiStarted();
     }
 
-    /* JADX WARNING: Missing block: B:64:0x011d, code:
+    /* JADX WARNING: Missing block: B:64:0x011d, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:66:?, code:
+    /* JADX WARNING: Missing block: B:66:?, code skipped:
             r9.mActivityManager.bootAnimationComplete();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6455,16 +6608,16 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0079, code:
+    /* JADX WARNING: Missing block: B:28:0x0079, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:29:0x007c, code:
+    /* JADX WARNING: Missing block: B:29:0x007c, code skipped:
             if (r0 == false) goto L_0x0081;
      */
-    /* JADX WARNING: Missing block: B:30:0x007e, code:
+    /* JADX WARNING: Missing block: B:30:0x007e, code skipped:
             performEnableScreen();
      */
-    /* JADX WARNING: Missing block: B:31:0x0081, code:
+    /* JADX WARNING: Missing block: B:31:0x0081, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6550,7 +6703,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
     }
 
     private void updateCircularDisplayMaskIfNeeded() {
-        if (this.mContext.getResources().getConfiguration().isScreenRound() && this.mContext.getResources().getBoolean(17957094)) {
+        if (this.mContext.getResources().getConfiguration().isScreenRound() && this.mContext.getResources().getBoolean(17957095)) {
             int currentUserId;
             synchronized (this.mWindowMap) {
                 try {
@@ -6573,7 +6726,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
     }
 
     public void showEmulatorDisplayOverlayIfNeeded() {
-        if (this.mContext.getResources().getBoolean(17957090) && SystemProperties.getBoolean(PROPERTY_EMULATOR_CIRCULAR, false) && Build.IS_EMULATOR) {
+        if (this.mContext.getResources().getBoolean(17957091) && SystemProperties.getBoolean(PROPERTY_EMULATOR_CIRCULAR, false) && Build.IS_EMULATOR) {
             this.mH.sendMessage(this.mH.obtainMessage(36));
         }
     }
@@ -6995,8 +7148,8 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x004b A:{LOOP_START, SKIP, LOOP:1: B:35:0x004b->B:39:0x004b, PHI: r7 , Splitter: B:2:0x0003, ExcHandler:  FINALLY} */
-    /* JADX WARNING: Missing block: B:18:0x0032, code:
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x004b A:{LOOP_START, SKIP, PHI: r7 , ExcHandler:  FINALLY, LOOP:1: B:37:0x004b->B:41:0x004b, Splitter:B:2:0x0003} */
+    /* JADX WARNING: Missing block: B:19:0x0032, code skipped:
             return r7;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7302,19 +7455,19 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0025, code:
+    /* JADX WARNING: Missing block: B:10:0x0025, code skipped:
             resetPriorityAfterLockedSection();
             r0 = r1.length;
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:11:0x002a, code:
+    /* JADX WARNING: Missing block: B:11:0x002a, code skipped:
             if (r2 >= r0) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:12:0x002c, code:
+    /* JADX WARNING: Missing block: B:12:0x002c, code skipped:
             r1[r2].windowsChanged();
             r2 = r2 + 1;
      */
-    /* JADX WARNING: Missing block: B:13:0x0034, code:
+    /* JADX WARNING: Missing block: B:13:0x0034, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7334,19 +7487,19 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0025, code:
+    /* JADX WARNING: Missing block: B:10:0x0025, code skipped:
             resetPriorityAfterLockedSection();
             r0 = r1.length;
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:11:0x002a, code:
+    /* JADX WARNING: Missing block: B:11:0x002a, code skipped:
             if (r2 >= r0) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:12:0x002c, code:
+    /* JADX WARNING: Missing block: B:12:0x002c, code skipped:
             r1[r2].focusChanged();
             r2 = r2 + 1;
      */
-    /* JADX WARNING: Missing block: B:13:0x0034, code:
+    /* JADX WARNING: Missing block: B:13:0x0034, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8431,7 +8584,7 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         startFreezingDisplayLocked(exitAnim, enterAnim, getDefaultDisplayContentLocked());
     }
 
-    /* JADX WARNING: Missing block: B:33:0x00f4, code:
+    /* JADX WARNING: Missing block: B:33:0x00f4, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -9915,10 +10068,10 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0033, code:
+    /* JADX WARNING: Missing block: B:13:0x0033, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:14:0x0036, code:
+    /* JADX WARNING: Missing block: B:14:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10114,86 +10267,86 @@ public class WindowManagerService extends AbsWindowManagerService implements IHw
         inOutBounds.intersect(this.mTmpRect3);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001a, code:
+    /* JADX WARNING: Missing block: B:9:0x001a, code skipped:
             r3 = r9.mWindowMap;
      */
-    /* JADX WARNING: Missing block: B:10:0x001c, code:
+    /* JADX WARNING: Missing block: B:10:0x001c, code skipped:
             monitor-enter(r3);
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             boostPriorityForLockedSection();
      */
-    /* JADX WARNING: Missing block: B:13:0x0026, code:
+    /* JADX WARNING: Missing block: B:13:0x0026, code skipped:
             if (r9.mDragDropController.dragDropActiveLocked() == false) goto L_0x002d;
      */
-    /* JADX WARNING: Missing block: B:14:0x0028, code:
+    /* JADX WARNING: Missing block: B:14:0x0028, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:15:0x0029, code:
+    /* JADX WARNING: Missing block: B:15:0x0029, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:16:0x002c, code:
+    /* JADX WARNING: Missing block: B:16:0x002c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             r0 = windowForClientLocked((com.android.server.wm.Session) null, r10, false);
      */
-    /* JADX WARNING: Missing block: B:20:0x0033, code:
+    /* JADX WARNING: Missing block: B:20:0x0033, code skipped:
             if (r0 != null) goto L_0x0050;
      */
-    /* JADX WARNING: Missing block: B:21:0x0035, code:
+    /* JADX WARNING: Missing block: B:21:0x0035, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Bad requesting window ");
             r5.append(r10);
             android.util.Slog.w(r4, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:22:0x004b, code:
+    /* JADX WARNING: Missing block: B:22:0x004b, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:23:0x004c, code:
+    /* JADX WARNING: Missing block: B:23:0x004c, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:24:0x004f, code:
+    /* JADX WARNING: Missing block: B:24:0x004f, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             r4 = r0.getDisplayContent();
      */
-    /* JADX WARNING: Missing block: B:27:0x0054, code:
+    /* JADX WARNING: Missing block: B:27:0x0054, code skipped:
             if (r4 != null) goto L_0x005c;
      */
-    /* JADX WARNING: Missing block: B:28:0x0056, code:
+    /* JADX WARNING: Missing block: B:28:0x0056, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:29:0x0057, code:
+    /* JADX WARNING: Missing block: B:29:0x0057, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:30:0x005a, code:
+    /* JADX WARNING: Missing block: B:30:0x005a, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r5 = r4.getTouchableWinAtPointLocked(r1, r2);
      */
-    /* JADX WARNING: Missing block: B:33:0x0060, code:
+    /* JADX WARNING: Missing block: B:33:0x0060, code skipped:
             if (r5 == r0) goto L_0x0067;
      */
-    /* JADX WARNING: Missing block: B:34:0x0062, code:
+    /* JADX WARNING: Missing block: B:34:0x0062, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:35:0x0063, code:
+    /* JADX WARNING: Missing block: B:35:0x0063, code skipped:
             resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:36:0x0066, code:
+    /* JADX WARNING: Missing block: B:36:0x0066, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:38:?, code:
+    /* JADX WARNING: Missing block: B:38:?, code skipped:
             r5.mClient.updatePointerIcon(r5.translateToWindowX(r1), r5.translateToWindowY(r2));
      */
-    /* JADX WARNING: Missing block: B:41:?, code:
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             android.util.Slog.w(TAG, "unable to update pointer icon");
      */
-    /* JADX WARNING: Missing block: B:48:0x0085, code:
+    /* JADX WARNING: Missing block: B:48:0x0085, code skipped:
             resetPriorityAfterLockedSection();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

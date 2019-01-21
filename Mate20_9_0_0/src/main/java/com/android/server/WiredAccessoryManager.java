@@ -273,7 +273,7 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
         this.mWakeLock.setReferenceCounted(false);
         this.mAudioManager = (AudioManager) context.getSystemService("audio");
         this.mInputManager = inputManager;
-        this.mUseDevInputEventForAudioJack = context.getResources().getBoolean(17957058);
+        this.mUseDevInputEventForAudioJack = context.getResources().getBoolean(17957059);
         this.mObserver = new WiredAccessoryObserver();
     }
 

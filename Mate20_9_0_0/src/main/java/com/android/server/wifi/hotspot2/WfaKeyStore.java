@@ -2,7 +2,11 @@ package com.android.server.wifi.hotspot2;
 
 import android.os.Environment;
 import android.util.Log;
+import java.io.IOException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 public class WfaKeyStore {
@@ -18,16 +22,6 @@ public class WfaKeyStore {
         DEFAULT_WFA_CERT_DIR = stringBuilder.toString();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x004e A:{Splitter: B:4:0x0007, ExcHandler: java.security.KeyStoreException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x004e A:{Splitter: B:4:0x0007, ExcHandler: java.security.KeyStoreException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x004e A:{Splitter: B:4:0x0007, ExcHandler: java.security.KeyStoreException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x004e, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x004f, code:
-            r0.printStackTrace();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void load() {
         if (this.mKeyStore == null) {
             int index = 0;
@@ -41,7 +35,8 @@ public class WfaKeyStore {
                 if (index <= 0) {
                     Log.wtf(TAG, "No certs loaded");
                 }
-            } catch (Exception e) {
+            } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+                e.printStackTrace();
             }
         }
     }

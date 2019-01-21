@@ -371,6 +371,7 @@ public class SupplicantP2pIfaceHal {
                 stringBuilder.append(e);
                 Log.e(str, stringBuilder.toString());
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -392,7 +393,7 @@ public class SupplicantP2pIfaceHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:37:0x0068, code:
+    /* JADX WARNING: Missing block: B:37:0x0068, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -581,6 +582,7 @@ public class SupplicantP2pIfaceHal {
                 Log.e(str2, stringBuilder2.toString());
                 supplicantServiceDiedHandler();
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -625,6 +627,7 @@ public class SupplicantP2pIfaceHal {
             } catch (NoSuchElementException e) {
                 Log.e(TAG, "Failed to get ISupplicant", e);
                 return null;
+            } catch (Throwable th) {
             }
         }
         return castFrom;
@@ -654,6 +657,7 @@ public class SupplicantP2pIfaceHal {
                 Log.e(str, stringBuilder.toString());
                 supplicantServiceDiedHandler();
                 return false;
+            } catch (Throwable th) {
             }
         }
         return z;
@@ -1425,41 +1429,43 @@ public class SupplicantP2pIfaceHal {
                     periodInMillis = 0;
                     intervalInMillis = 0;
                 }
-                if (periodInMillis < 0 || intervalInMillis < 0) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Invalid parameters supplied to configureExtListen: ");
-                    stringBuilder.append(periodInMillis);
-                    stringBuilder.append(", ");
-                    stringBuilder.append(intervalInMillis);
-                    Log.e(str, stringBuilder.toString());
-                    return false;
+                if (periodInMillis >= 0) {
+                    if (intervalInMillis >= 0) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("configureExtListen(");
+                        stringBuilder.append(periodInMillis);
+                        stringBuilder.append(", ");
+                        stringBuilder.append(intervalInMillis);
+                        stringBuilder.append(")");
+                        SupplicantResult<Void> result = new SupplicantResult(stringBuilder.toString());
+                        try {
+                            result.setResult(this.mISupplicantP2pIface.configureExtListen(periodInMillis, intervalInMillis));
+                        } catch (RemoteException e) {
+                            String str = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("ISupplicantP2pIface exception: ");
+                            stringBuilder2.append(e);
+                            Log.e(str, stringBuilder2.toString());
+                            supplicantServiceDiedHandler();
+                        }
+                        boolean isSuccess = result.isSuccess();
+                        return isSuccess;
+                    }
                 }
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("configureExtListen(");
-                stringBuilder2.append(periodInMillis);
-                stringBuilder2.append(", ");
-                stringBuilder2.append(intervalInMillis);
-                stringBuilder2.append(")");
-                SupplicantResult<Void> result = new SupplicantResult(stringBuilder2.toString());
-                try {
-                    result.setResult(this.mISupplicantP2pIface.configureExtListen(periodInMillis, intervalInMillis));
-                } catch (RemoteException e) {
-                    String str2 = TAG;
-                    StringBuilder stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("ISupplicantP2pIface exception: ");
-                    stringBuilder3.append(e);
-                    Log.e(str2, stringBuilder3.toString());
-                    supplicantServiceDiedHandler();
-                }
-                boolean isSuccess = result.isSuccess();
-                return isSuccess;
+                String str2 = TAG;
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("Invalid parameters supplied to configureExtListen: ");
+                stringBuilder3.append(periodInMillis);
+                stringBuilder3.append(", ");
+                stringBuilder3.append(intervalInMillis);
+                Log.e(str2, stringBuilder3.toString());
+                return false;
             }
             return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:45:0x00ec, code:
+    /* JADX WARNING: Missing block: B:46:0x00ec, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1527,7 +1533,9 @@ public class SupplicantP2pIfaceHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:71:0x015a, code:
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x0159 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x0150 A:{Catch:{ RemoteException -> 0x0134 }} */
+    /* JADX WARNING: Missing block: B:72:0x015a, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1568,7 +1576,9 @@ public class SupplicantP2pIfaceHal {
                                 stringBuilder2.append(")");
                                 result = new SupplicantResult(stringBuilder2.toString());
                                 result.setResult(this.mISupplicantP2pIface.addUpnpService(response, data[2]));
-                                if (result != null || !result.isSuccess()) {
+                                if (result != null) {
+                                    if (result.isSuccess()) {
+                                    }
                                 }
                             } catch (NumberFormatException e) {
                                 String str2 = TAG;
@@ -1618,7 +1628,9 @@ public class SupplicantP2pIfaceHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:72:0x0158, code:
+    /* JADX WARNING: Removed duplicated region for block: B:80:0x0157 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x014e A:{Catch:{ RemoteException -> 0x0132 }} */
+    /* JADX WARNING: Missing block: B:73:0x0158, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1660,7 +1672,9 @@ public class SupplicantP2pIfaceHal {
                                 stringBuilder2.append(")");
                                 result = new SupplicantResult(stringBuilder2.toString());
                                 result.setResult(this.mISupplicantP2pIface.removeUpnpService(request, data[2]));
-                                if (result != null || !result.isSuccess()) {
+                                if (result != null) {
+                                    if (result.isSuccess()) {
+                                    }
                                 }
                             } catch (NumberFormatException e) {
                                 String str2 = TAG;
@@ -1823,6 +1837,8 @@ public class SupplicantP2pIfaceHal {
                         break;
                     case 2:
                         targetMode = (byte) 2;
+                        break;
+                    default:
                         break;
                 }
                 StringBuilder stringBuilder = new StringBuilder();
@@ -2098,7 +2114,7 @@ public class SupplicantP2pIfaceHal {
                     Log.e(str, stringBuilder.toString());
                     supplicantServiceDiedHandler();
                 }
-                List<Integer> list = (List) result.getResult();
+                List list = (List) result.getResult();
                 return list;
             }
             return null;
@@ -2134,7 +2150,7 @@ public class SupplicantP2pIfaceHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:66:0x01db, code:
+    /* JADX WARNING: Missing block: B:68:0x01db, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2144,102 +2160,105 @@ public class SupplicantP2pIfaceHal {
         synchronized (this.mLock) {
             if (checkSupplicantP2pIfaceAndLogFailure("loadGroups")) {
                 List<Integer> networkIds = listNetworks();
-                if (networkIds == null || networkIds.isEmpty()) {
-                } else {
-                    for (Integer networkId : networkIds) {
-                        ISupplicantP2pNetwork network = getNetwork(networkId.intValue());
-                        StringBuilder stringBuilder3;
-                        if (network == null) {
-                            String str = TAG;
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("Failed to retrieve network object for ");
-                            stringBuilder3.append(networkId);
-                            Log.e(str, stringBuilder3.toString());
-                        } else {
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("isCurrent(");
-                            stringBuilder3.append(networkId);
-                            stringBuilder3.append(")");
-                            SupplicantResult<Boolean> resultIsCurrent = new SupplicantResult(stringBuilder3.toString());
-                            try {
-                                network.isCurrent(new -$$Lambda$SupplicantP2pIfaceHal$DZ5hjM0K-k-jbWASpzD6nJ3e6xU(resultIsCurrent));
-                            } catch (RemoteException e) {
-                                String str2 = TAG;
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("ISupplicantP2pIface exception: ");
-                                stringBuilder.append(e);
-                                Log.e(str2, stringBuilder.toString());
-                                supplicantServiceDiedHandler();
-                            }
-                            if (!resultIsCurrent.isSuccess() || ((Boolean) resultIsCurrent.getResult()).booleanValue()) {
-                                Log.i(TAG, "Skipping current network");
+                if (networkIds != null) {
+                    if (!networkIds.isEmpty()) {
+                        for (Integer networkId : networkIds) {
+                            ISupplicantP2pNetwork network = getNetwork(networkId.intValue());
+                            StringBuilder stringBuilder3;
+                            if (network == null) {
+                                String str = TAG;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("Failed to retrieve network object for ");
+                                stringBuilder3.append(networkId);
+                                Log.e(str, stringBuilder3.toString());
                             } else {
-                                WifiP2pGroup group = new WifiP2pGroup();
-                                group.setNetworkId(networkId.intValue());
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("getSsid(");
-                                stringBuilder.append(networkId);
-                                stringBuilder.append(")");
-                                SupplicantResult<ArrayList> resultSsid = new SupplicantResult(stringBuilder.toString());
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("isCurrent(");
+                                stringBuilder3.append(networkId);
+                                stringBuilder3.append(")");
+                                SupplicantResult<Boolean> resultIsCurrent = new SupplicantResult(stringBuilder3.toString());
                                 try {
-                                    network.getSsid(new -$$Lambda$SupplicantP2pIfaceHal$JzKiJ4oLypdiaI_2kjk3anuHsPQ(resultSsid));
-                                } catch (RemoteException e2) {
-                                    String str3 = TAG;
-                                    stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("ISupplicantP2pIface exception: ");
-                                    stringBuilder2.append(e2);
-                                    Log.e(str3, stringBuilder2.toString());
+                                    network.isCurrent(new -$$Lambda$SupplicantP2pIfaceHal$DZ5hjM0K-k-jbWASpzD6nJ3e6xU(resultIsCurrent));
+                                } catch (RemoteException e) {
+                                    String str2 = TAG;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("ISupplicantP2pIface exception: ");
+                                    stringBuilder.append(e);
+                                    Log.e(str2, stringBuilder.toString());
                                     supplicantServiceDiedHandler();
                                 }
-                                if (!(!resultSsid.isSuccess() || resultSsid.getResult() == null || ((ArrayList) resultSsid.getResult()).isEmpty())) {
-                                    group.setNetworkName(NativeUtil.removeEnclosingQuotes(NativeUtil.encodeSsid((ArrayList) resultSsid.getResult())));
+                                if (resultIsCurrent.isSuccess()) {
+                                    if (!((Boolean) resultIsCurrent.getResult()).booleanValue()) {
+                                        WifiP2pGroup group = new WifiP2pGroup();
+                                        group.setNetworkId(networkId.intValue());
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("getSsid(");
+                                        stringBuilder.append(networkId);
+                                        stringBuilder.append(")");
+                                        SupplicantResult<ArrayList> resultSsid = new SupplicantResult(stringBuilder.toString());
+                                        try {
+                                            network.getSsid(new -$$Lambda$SupplicantP2pIfaceHal$JzKiJ4oLypdiaI_2kjk3anuHsPQ(resultSsid));
+                                        } catch (RemoteException e2) {
+                                            String str3 = TAG;
+                                            stringBuilder2 = new StringBuilder();
+                                            stringBuilder2.append("ISupplicantP2pIface exception: ");
+                                            stringBuilder2.append(e2);
+                                            Log.e(str3, stringBuilder2.toString());
+                                            supplicantServiceDiedHandler();
+                                        }
+                                        if (!(!resultSsid.isSuccess() || resultSsid.getResult() == null || ((ArrayList) resultSsid.getResult()).isEmpty())) {
+                                            group.setNetworkName(NativeUtil.removeEnclosingQuotes(NativeUtil.encodeSsid((ArrayList) resultSsid.getResult())));
+                                        }
+                                        StringBuilder stringBuilder4 = new StringBuilder();
+                                        stringBuilder4.append("getBssid(");
+                                        stringBuilder4.append(networkId);
+                                        stringBuilder4.append(")");
+                                        SupplicantResult<byte[]> resultBssid = new SupplicantResult(stringBuilder4.toString());
+                                        try {
+                                            network.getBssid(new -$$Lambda$SupplicantP2pIfaceHal$dFKn5oY7OFr4d91vo-vY6YUffTI(resultBssid));
+                                        } catch (RemoteException e3) {
+                                            String str4 = TAG;
+                                            StringBuilder stringBuilder5 = new StringBuilder();
+                                            stringBuilder5.append("ISupplicantP2pIface exception: ");
+                                            stringBuilder5.append(e3);
+                                            Log.e(str4, stringBuilder5.toString());
+                                            supplicantServiceDiedHandler();
+                                        }
+                                        if (resultBssid.isSuccess() && !ArrayUtils.isEmpty((byte[]) resultBssid.getResult())) {
+                                            WifiP2pDevice device = new WifiP2pDevice();
+                                            device.deviceAddress = NativeUtil.macAddressFromByteArray((byte[]) resultBssid.getResult());
+                                            group.setOwner(device);
+                                        }
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("isGo(");
+                                        stringBuilder2.append(networkId);
+                                        stringBuilder2.append(")");
+                                        SupplicantResult<Boolean> resultIsGo = new SupplicantResult(stringBuilder2.toString());
+                                        try {
+                                            network.isGo(new -$$Lambda$SupplicantP2pIfaceHal$NNtqsQiP2_K4VCIPid6vvSLYwJg(resultIsGo));
+                                        } catch (RemoteException e4) {
+                                            String str5 = TAG;
+                                            StringBuilder stringBuilder6 = new StringBuilder();
+                                            stringBuilder6.append("ISupplicantP2pIface exception: ");
+                                            stringBuilder6.append(e4);
+                                            Log.e(str5, stringBuilder6.toString());
+                                            supplicantServiceDiedHandler();
+                                        }
+                                        if (resultIsGo.isSuccess()) {
+                                            group.setIsGroupOwner(((Boolean) resultIsGo.getResult()).booleanValue());
+                                        }
+                                        groups.add(group);
+                                    }
                                 }
-                                StringBuilder stringBuilder4 = new StringBuilder();
-                                stringBuilder4.append("getBssid(");
-                                stringBuilder4.append(networkId);
-                                stringBuilder4.append(")");
-                                SupplicantResult<byte[]> resultBssid = new SupplicantResult(stringBuilder4.toString());
-                                try {
-                                    network.getBssid(new -$$Lambda$SupplicantP2pIfaceHal$dFKn5oY7OFr4d91vo-vY6YUffTI(resultBssid));
-                                } catch (RemoteException e3) {
-                                    String str4 = TAG;
-                                    StringBuilder stringBuilder5 = new StringBuilder();
-                                    stringBuilder5.append("ISupplicantP2pIface exception: ");
-                                    stringBuilder5.append(e3);
-                                    Log.e(str4, stringBuilder5.toString());
-                                    supplicantServiceDiedHandler();
-                                }
-                                if (resultBssid.isSuccess() && !ArrayUtils.isEmpty((byte[]) resultBssid.getResult())) {
-                                    WifiP2pDevice device = new WifiP2pDevice();
-                                    device.deviceAddress = NativeUtil.macAddressFromByteArray((byte[]) resultBssid.getResult());
-                                    group.setOwner(device);
-                                }
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("isGo(");
-                                stringBuilder2.append(networkId);
-                                stringBuilder2.append(")");
-                                SupplicantResult<Boolean> resultIsGo = new SupplicantResult(stringBuilder2.toString());
-                                try {
-                                    network.isGo(new -$$Lambda$SupplicantP2pIfaceHal$NNtqsQiP2_K4VCIPid6vvSLYwJg(resultIsGo));
-                                } catch (RemoteException e4) {
-                                    String str5 = TAG;
-                                    StringBuilder stringBuilder6 = new StringBuilder();
-                                    stringBuilder6.append("ISupplicantP2pIface exception: ");
-                                    stringBuilder6.append(e4);
-                                    Log.e(str5, stringBuilder6.toString());
-                                    supplicantServiceDiedHandler();
-                                }
-                                if (resultIsGo.isSuccess()) {
-                                    group.setIsGroupOwner(((Boolean) resultIsGo.getResult()).booleanValue());
-                                }
-                                groups.add(group);
+                                Log.i(TAG, "Skipping current network");
                             }
                         }
+                        return true;
                     }
-                    return true;
                 }
+            } else {
+                return false;
             }
-            return false;
         }
     }
 
@@ -2276,36 +2295,38 @@ public class SupplicantP2pIfaceHal {
         StringBuilder stringBuilder;
         try {
             Matcher match = WPS_DEVICE_TYPE_PATTERN.matcher(typeStr);
-            if (match.find() && match.groupCount() == 3) {
-                short categ = Short.parseShort(match.group(1));
-                byte[] oui = NativeUtil.hexStringToByteArray(match.group(2));
-                short subCateg = Short.parseShort(match.group(3));
-                byte[] bytes = new byte[8];
-                ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
-                byteBuffer.putShort(categ);
-                byteBuffer.put(oui);
-                byteBuffer.putShort(subCateg);
-                synchronized (this.mLock) {
-                    if (checkSupplicantP2pIfaceAndLogFailure("setWpsDeviceType")) {
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("setWpsDeviceType(");
-                        stringBuilder2.append(typeStr);
-                        stringBuilder2.append(")");
-                        SupplicantResult<Void> result = new SupplicantResult(stringBuilder2.toString());
-                        try {
-                            result.setResult(this.mISupplicantP2pIface.setWpsDeviceType(bytes));
-                        } catch (RemoteException e) {
-                            String str2 = TAG;
-                            StringBuilder stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("ISupplicantP2pIface exception: ");
-                            stringBuilder3.append(e);
-                            Log.e(str2, stringBuilder3.toString());
-                            supplicantServiceDiedHandler();
+            if (match.find()) {
+                if (match.groupCount() == 3) {
+                    short categ = Short.parseShort(match.group(1));
+                    byte[] oui = NativeUtil.hexStringToByteArray(match.group(2));
+                    short subCateg = Short.parseShort(match.group(3));
+                    byte[] bytes = new byte[8];
+                    ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
+                    byteBuffer.putShort(categ);
+                    byteBuffer.put(oui);
+                    byteBuffer.putShort(subCateg);
+                    synchronized (this.mLock) {
+                        if (checkSupplicantP2pIfaceAndLogFailure("setWpsDeviceType")) {
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("setWpsDeviceType(");
+                            stringBuilder2.append(typeStr);
+                            stringBuilder2.append(")");
+                            SupplicantResult<Void> result = new SupplicantResult(stringBuilder2.toString());
+                            try {
+                                result.setResult(this.mISupplicantP2pIface.setWpsDeviceType(bytes));
+                            } catch (RemoteException e) {
+                                String str2 = TAG;
+                                StringBuilder stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("ISupplicantP2pIface exception: ");
+                                stringBuilder3.append(e);
+                                Log.e(str2, stringBuilder3.toString());
+                                supplicantServiceDiedHandler();
+                            }
+                            boolean isSuccess = result.isSuccess();
+                            return isSuccess;
                         }
-                        boolean isSuccess = result.isSuccess();
-                        return isSuccess;
+                        return false;
                     }
-                    return false;
                 }
             }
             str = TAG;

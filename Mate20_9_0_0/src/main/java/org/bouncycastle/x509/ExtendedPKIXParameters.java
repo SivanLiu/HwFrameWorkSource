@@ -211,12 +211,12 @@ public class ExtendedPKIXParameters extends PKIXParameters {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0010 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -232,13 +232,10 @@ public class ExtendedPKIXParameters extends PKIXParameters {
         r0 = this;
         super.setTargetCertConstraints(r1);
         if (r1 == 0) goto L_0x000e;
-    L_0x0005:
         r1 = (java.security.cert.X509CertSelector) r1;
         r1 = org.bouncycastle.x509.X509CertStoreSelector.getInstance(r1);
-    L_0x000b:
         r0.selector = r1;
         return;
-    L_0x000e:
         r1 = 0;
         goto L_0x000b;
         return;
@@ -248,12 +245,12 @@ public class ExtendedPKIXParameters extends PKIXParameters {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x000d in {1, 3, 4} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -268,13 +265,10 @@ public class ExtendedPKIXParameters extends PKIXParameters {
         /*
         r0 = this;
         if (r1 == 0) goto L_0x000b;
-    L_0x0002:
         r1 = r1.clone();
         r1 = (org.bouncycastle.util.Selector) r1;
-    L_0x0008:
         r0.selector = r1;
         return;
-    L_0x000b:
         r1 = 0;
         goto L_0x0008;
         return;

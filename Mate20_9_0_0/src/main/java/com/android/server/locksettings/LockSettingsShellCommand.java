@@ -80,9 +80,8 @@ class LockSettingsShellCommand extends ShellCommand {
                         break;
                     }
                 default:
-                    i = -1;
-                    break;
             }
+            i = -1;
             switch (i) {
                 case 0:
                     runSetPattern();

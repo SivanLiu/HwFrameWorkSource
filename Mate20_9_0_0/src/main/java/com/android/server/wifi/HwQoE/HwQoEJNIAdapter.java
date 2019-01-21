@@ -84,7 +84,7 @@ public class HwQoEJNIAdapter {
         return result;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0019, code:
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

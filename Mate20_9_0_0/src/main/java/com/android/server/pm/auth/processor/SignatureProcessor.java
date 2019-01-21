@@ -14,7 +14,7 @@ import org.xmlpull.v1.XmlPullParser;
 public class SignatureProcessor extends BaseProcessor {
     private static final String SEPARATOR = "\r\n";
 
-    /* JADX WARNING: Missing block: B:15:0x0033, code:
+    /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

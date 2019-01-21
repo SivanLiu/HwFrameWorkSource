@@ -1,14 +1,15 @@
 package com.huawei.android.pushagent.utils.d;
 
-import android.content.Context;
+class d implements b<Long, Number> {
+    /* synthetic */ d(d dVar) {
+        this();
+    }
 
-public class d {
-    public static b cn(Context context, int i) {
-        switch (i) {
-            case 2:
-                return new f();
-            default:
-                return new a(context);
-        }
+    private d() {
+    }
+
+    /* renamed from: vk */
+    public Long vi(Number number) {
+        return Long.valueOf(number.longValue());
     }
 }

@@ -32,12 +32,12 @@ class RemoteBugreportUtils {
         dialogIntent.putExtra("android.app.extra.bugreport_notification_type", type);
         Builder builder = new Builder(context, SystemNotificationChannels.DEVELOPER).setSmallIcon(17303482).setOngoing(true).setLocalOnly(true).setContentIntent(PendingIntent.getActivityAsUser(context, type, dialogIntent, 0, null, UserHandle.CURRENT)).setColor(context.getColor(17170784));
         if (type == 2) {
-            builder.setContentTitle(context.getString(17041093)).setProgress(0, 0, true);
+            builder.setContentTitle(context.getString(17041094)).setProgress(0, 0, true);
         } else if (type == 1) {
-            builder.setContentTitle(context.getString(17041233)).setProgress(0, 0, true);
+            builder.setContentTitle(context.getString(17041234)).setProgress(0, 0, true);
         } else if (type == 3) {
             PendingIntent pendingIntentAccept = PendingIntent.getBroadcast(context, NOTIFICATION_ID, new Intent("com.android.server.action.REMOTE_BUGREPORT_SHARING_ACCEPTED"), 268435456);
-            builder.addAction(new Action.Builder(null, context.getString(17039912), PendingIntent.getBroadcast(context, NOTIFICATION_ID, new Intent("com.android.server.action.REMOTE_BUGREPORT_SHARING_DECLINED"), 268435456)).build()).addAction(new Action.Builder(null, context.getString(17041088), pendingIntentAccept).build()).setContentTitle(context.getString(17041090)).setContentText(context.getString(17041089)).setStyle(new BigTextStyle().bigText(context.getString(17041089)));
+            builder.addAction(new Action.Builder(null, context.getString(17039913), PendingIntent.getBroadcast(context, NOTIFICATION_ID, new Intent("com.android.server.action.REMOTE_BUGREPORT_SHARING_DECLINED"), 268435456)).build()).addAction(new Action.Builder(null, context.getString(17041089), pendingIntentAccept).build()).setContentTitle(context.getString(17041091)).setContentText(context.getString(17041090)).setStyle(new BigTextStyle().bigText(context.getString(17041090)));
         }
         return builder.build();
     }

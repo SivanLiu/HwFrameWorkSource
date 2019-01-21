@@ -5,6 +5,7 @@ import com.leisen.wallet.sdk.util.LogUtil;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.UnknownHostException;
 
 public class AsyncHttpRequestX implements Runnable {
     private static final String TAG = "AsyncHttpRequestX";
@@ -63,7 +64,7 @@ public class AsyncHttpRequestX implements Runnable {
             try {
                 makeRequest();
                 return;
-            } catch (Exception e) {
+            } catch (UnknownHostException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("UnknownHostException exception:");
                 stringBuilder.append(e.getMessage());

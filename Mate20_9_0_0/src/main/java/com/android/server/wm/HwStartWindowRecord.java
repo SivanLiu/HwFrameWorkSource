@@ -1,12 +1,16 @@
 package com.android.server.wm;
 
 import android.os.IBinder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HwStartWindowRecord {
     private static HwStartWindowRecord sInstance;
-    private Map<String, IBinder> mStartWindowApps = new HashMap();
+    private List<Integer> mOriAppLauncher = new ArrayList();
+    private Map<Integer, Boolean> mStartFromMainAction = new HashMap();
+    private Map<Integer, IBinder> mStartWindowApps = new HashMap();
 
     public static synchronized HwStartWindowRecord getInstance() {
         HwStartWindowRecord hwStartWindowRecord;
@@ -22,52 +26,104 @@ public class HwStartWindowRecord {
     private HwStartWindowRecord() {
     }
 
-    public void updateStartWindowApp(String packageName, IBinder token) {
+    public void updateStartWindowApp(Integer uid, IBinder token) {
         synchronized (this.mStartWindowApps) {
-            this.mStartWindowApps.put(packageName, token);
+            this.mStartWindowApps.put(uid, token);
         }
     }
 
-    public boolean checkStartWindowApp(String packageName) {
+    public boolean checkStartWindowApp(Integer uid) {
         synchronized (this.mStartWindowApps) {
-            if (this.mStartWindowApps.get(packageName) != null) {
+            if (this.mStartWindowApps.get(uid) != null) {
                 return true;
             }
             return false;
         }
     }
 
-    public IBinder getTransferFromStartWindowApp(String packageName) {
+    public IBinder getTransferFromStartWindowApp(Integer uid) {
         IBinder iBinder;
         synchronized (this.mStartWindowApps) {
-            iBinder = (IBinder) this.mStartWindowApps.get(packageName);
+            iBinder = (IBinder) this.mStartWindowApps.get(uid);
         }
         return iBinder;
     }
 
-    public void resetStartWindowApp(String packageName) {
+    public void resetStartWindowApp(Integer uid) {
         synchronized (this.mStartWindowApps) {
-            this.mStartWindowApps.put(packageName, null);
+            this.mStartWindowApps.put(uid, null);
         }
     }
 
-    public boolean isStartWindowApp(String packageName) {
+    public boolean isStartWindowApp(Integer uid) {
         boolean containsKey;
         synchronized (this.mStartWindowApps) {
-            containsKey = this.mStartWindowApps.containsKey(packageName);
+            containsKey = this.mStartWindowApps.containsKey(uid);
         }
         return containsKey;
     }
 
-    public void removeStartWindowApp(String packageName) {
+    public void removeStartWindowApp(Integer uid) {
         synchronized (this.mStartWindowApps) {
-            this.mStartWindowApps.remove(packageName);
+            this.mStartWindowApps.remove(uid);
+        }
+        synchronized (this.mStartFromMainAction) {
+            this.mStartFromMainAction.remove(uid);
         }
     }
 
     public void clearStartWindowApp() {
         synchronized (this.mStartWindowApps) {
             this.mStartWindowApps.clear();
+        }
+        synchronized (this.mStartFromMainAction) {
+            this.mStartFromMainAction.clear();
+        }
+    }
+
+    public void addOriAppLauncher(Integer appUid) {
+        synchronized (this.mOriAppLauncher) {
+            if (!this.mOriAppLauncher.contains(appUid)) {
+                this.mOriAppLauncher.add(appUid);
+            }
+        }
+    }
+
+    public boolean hasOriAppLauncher() {
+        int isEmpty;
+        synchronized (this.mOriAppLauncher) {
+            isEmpty = this.mOriAppLauncher.isEmpty() ^ 1;
+        }
+        return isEmpty;
+    }
+
+    public void clearOriAppLauncher() {
+        synchronized (this.mOriAppLauncher) {
+            this.mOriAppLauncher.clear();
+        }
+    }
+
+    public void removeOriAppLauncher(Integer appUid) {
+        synchronized (this.mOriAppLauncher) {
+            this.mOriAppLauncher.remove(appUid);
+        }
+    }
+
+    public void setStartFromMainAction(Integer appUid, boolean isStartFromMainAction) {
+        if (appUid.intValue() >= 10000) {
+            synchronized (this.mStartFromMainAction) {
+                this.mStartFromMainAction.put(appUid, Boolean.valueOf(isStartFromMainAction));
+            }
+        }
+    }
+
+    public boolean getStartFromMainAction(Integer appUid) {
+        synchronized (this.mStartFromMainAction) {
+            if (this.mStartFromMainAction.containsKey(appUid)) {
+                boolean booleanValue = ((Boolean) this.mStartFromMainAction.get(appUid)).booleanValue();
+                return booleanValue;
+            }
+            return false;
         }
     }
 }

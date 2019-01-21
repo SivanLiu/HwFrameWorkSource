@@ -211,10 +211,10 @@ public class SlicePermissionManager implements DirtyTracker {
         this.mHandler.sendEmptyMessageDelayed(2, 500);
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0087, code:
+    /* JADX WARNING: Missing block: B:28:0x0087, code skipped:
             if (r7 != null) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:29:?, code:
+    /* JADX WARNING: Missing block: B:30:?, code skipped:
             $closeResource(r1, r7);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -417,15 +417,6 @@ public class SlicePermissionManager implements DirtyTracker {
         return new AtomicFile(new File(this.mSliceDir, fileName));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x003c A:{Splitter: B:8:0x0021, ExcHandler: java.io.IOException (r4_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:10:0x003c, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:?, code:
-            android.util.Slog.w(TAG, "Failed to save access file, restoring backup", r4);
-            r2.failWrite(r3);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handlePersist() {
         synchronized (this) {
             Iterator it = this.mDirty.iterator();
@@ -440,7 +431,9 @@ public class SlicePermissionManager implements DirtyTracker {
                         persistable.writeTo(out);
                         out.flush();
                         file.finishWrite(stream);
-                    } catch (Exception e) {
+                    } catch (IOException | XmlPullParserException e) {
+                        Slog.w(TAG, "Failed to save access file, restoring backup", e);
+                        file.failWrite(stream);
                     }
                 } catch (IOException e2) {
                     Slog.w(TAG, "Failed to save access file", e2);

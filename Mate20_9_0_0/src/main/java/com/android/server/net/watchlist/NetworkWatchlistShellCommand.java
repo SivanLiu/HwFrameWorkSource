@@ -18,12 +18,12 @@ class NetworkWatchlistShellCommand extends ShellCommand {
         this.mService = service;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0034 A:{Catch:{ Exception -> 0x0044 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x003e A:{Catch:{ Exception -> 0x0044 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x0039 A:{Catch:{ Exception -> 0x0044 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0034 A:{Catch:{ Exception -> 0x0044 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x003e A:{Catch:{ Exception -> 0x0044 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x0039 A:{Catch:{ Exception -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0034 A:{Catch:{ Exception -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:21:0x003e A:{Catch:{ Exception -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:19:0x0039 A:{Catch:{ Exception -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0034 A:{Catch:{ Exception -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:21:0x003e A:{Catch:{ Exception -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:19:0x0039 A:{Catch:{ Exception -> 0x0044 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int onCommand(String cmd) {
         if (cmd == null) {
@@ -44,15 +44,17 @@ class NetworkWatchlistShellCommand extends ShellCommand {
                             break;
                     }
                 }
-            } else if (hashCode == 1854202282 && cmd.equals("force-generate-report")) {
-                hashCode = 1;
-                switch (hashCode) {
-                    case 0:
-                        return runSetTestConfig();
-                    case 1:
-                        return runForceGenerateReport();
-                    default:
-                        return handleDefaultCommands(cmd);
+            } else if (hashCode == 1854202282) {
+                if (cmd.equals("force-generate-report")) {
+                    hashCode = 1;
+                    switch (hashCode) {
+                        case 0:
+                            return runSetTestConfig();
+                        case 1:
+                            return runForceGenerateReport();
+                        default:
+                            return handleDefaultCommands(cmd);
+                    }
                 }
             }
             hashCode = -1;

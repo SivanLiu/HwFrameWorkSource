@@ -30,7 +30,7 @@ public abstract class RecipientInformation {
     public byte[] getContent(Recipient recipient) throws CMSException {
         try {
             return CMSUtils.streamToByteArray(getContentStream(recipient).getContentStream());
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to parse internal stream: ");
             stringBuilder.append(e.getMessage());

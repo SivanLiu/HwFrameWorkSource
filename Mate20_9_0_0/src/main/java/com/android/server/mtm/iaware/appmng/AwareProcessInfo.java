@@ -172,7 +172,7 @@ public class AwareProcessInfo {
         return awareProcList;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x004a, code:
+    /* JADX WARNING: Missing block: B:16:0x004a, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -197,7 +197,7 @@ public class AwareProcessInfo {
         return awareProcList;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x006f, code:
+    /* JADX WARNING: Missing block: B:19:0x006f, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -348,15 +348,19 @@ public class AwareProcessInfo {
     public BrFilterPolicy getBrPolicy(Intent intent) {
         synchronized (this.mBrPolicys) {
             if (intent == null) {
-                return null;
+                try {
+                    return null;
+                } catch (Throwable th) {
+                }
+            } else {
+                BrFilterPolicy brFilterPolicy = (BrFilterPolicy) this.mBrPolicys.get(intent.getAction());
+                return brFilterPolicy;
             }
-            BrFilterPolicy brFilterPolicy = (BrFilterPolicy) this.mBrPolicys.get(intent.getAction());
-            return brFilterPolicy;
         }
     }
 
     public ArrayMap<String, BrFilterPolicy> getBrFilterPolicyMap() {
-        ArrayMap<String, BrFilterPolicy> arrayMap;
+        ArrayMap arrayMap;
         synchronized (this.mBrPolicys) {
             arrayMap = new ArrayMap(this.mBrPolicys);
         }

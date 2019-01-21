@@ -1,0 +1,528 @@
+package java.util.stream;
+
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
+import java.util.function.LongConsumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+import java.util.stream.Collector.Characteristics;
+import java.util.stream.Node.Builder;
+import java.util.stream.Sink.ChainedReference;
+
+public abstract class ReferencePipeline<P_IN, P_OUT> extends AbstractPipeline<P_IN, P_OUT, Stream<P_OUT>> implements Stream<P_OUT> {
+
+    public static class Head<E_IN, E_OUT> extends ReferencePipeline<E_IN, E_OUT> {
+        public Head(Supplier<? extends Spliterator<?>> source, int sourceFlags, boolean parallel) {
+            super((Supplier) source, sourceFlags, parallel);
+        }
+
+        public Head(Spliterator<?> source, int sourceFlags, boolean parallel) {
+            super((Spliterator) source, sourceFlags, parallel);
+        }
+
+        public final boolean opIsStateful() {
+            throw new UnsupportedOperationException();
+        }
+
+        public final Sink<E_IN> opWrapSink(int flags, Sink<E_OUT> sink) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void forEach(Consumer<? super E_OUT> action) {
+            if (isParallel()) {
+                super.forEach(action);
+            } else {
+                sourceStageSpliterator().forEachRemaining(action);
+            }
+        }
+
+        public void forEachOrdered(Consumer<? super E_OUT> action) {
+            if (isParallel()) {
+                super.forEachOrdered(action);
+            } else {
+                sourceStageSpliterator().forEachRemaining(action);
+            }
+        }
+    }
+
+    public static abstract class StatefulOp<E_IN, E_OUT> extends ReferencePipeline<E_IN, E_OUT> {
+        static final /* synthetic */ boolean $assertionsDisabled = false;
+
+        public abstract <P_IN> Node<E_OUT> opEvaluateParallel(PipelineHelper<E_OUT> pipelineHelper, Spliterator<P_IN> spliterator, IntFunction<E_OUT[]> intFunction);
+
+        static {
+            Class cls = ReferencePipeline.class;
+        }
+
+        public StatefulOp(AbstractPipeline<?, E_IN, ?> upstream, StreamShape inputShape, int opFlags) {
+            super(upstream, opFlags);
+        }
+
+        public final boolean opIsStateful() {
+            return true;
+        }
+    }
+
+    public static abstract class StatelessOp<E_IN, E_OUT> extends ReferencePipeline<E_IN, E_OUT> {
+        static final /* synthetic */ boolean $assertionsDisabled = false;
+
+        static {
+            Class cls = ReferencePipeline.class;
+        }
+
+        public StatelessOp(AbstractPipeline<?, E_IN, ?> upstream, StreamShape inputShape, int opFlags) {
+            super(upstream, opFlags);
+        }
+
+        public final boolean opIsStateful() {
+            return false;
+        }
+    }
+
+    ReferencePipeline(Supplier<? extends Spliterator<?>> source, int sourceFlags, boolean parallel) {
+        super((Supplier) source, sourceFlags, parallel);
+    }
+
+    ReferencePipeline(Spliterator<?> source, int sourceFlags, boolean parallel) {
+        super((Spliterator) source, sourceFlags, parallel);
+    }
+
+    ReferencePipeline(AbstractPipeline<?, P_IN, ?> upstream, int opFlags) {
+        super(upstream, opFlags);
+    }
+
+    public final StreamShape getOutputShape() {
+        return StreamShape.REFERENCE;
+    }
+
+    public final <P_IN> Node<P_OUT> evaluateToNode(PipelineHelper<P_OUT> helper, Spliterator<P_IN> spliterator, boolean flattenTree, IntFunction<P_OUT[]> generator) {
+        return Nodes.collect(helper, spliterator, flattenTree, generator);
+    }
+
+    public final <P_IN> Spliterator<P_OUT> wrap(PipelineHelper<P_OUT> ph, Supplier<Spliterator<P_IN>> supplier, boolean isParallel) {
+        return new WrappingSpliterator((PipelineHelper) ph, (Supplier) supplier, isParallel);
+    }
+
+    public final Spliterator<P_OUT> lazySpliterator(Supplier<? extends Spliterator<P_OUT>> supplier) {
+        return new DelegatingSpliterator(supplier);
+    }
+
+    public final void forEachWithCancel(Spliterator<P_OUT> spliterator, Sink<P_OUT> sink) {
+        while (!sink.cancellationRequested()) {
+            if (!spliterator.tryAdvance(sink)) {
+                return;
+            }
+        }
+    }
+
+    public final Builder<P_OUT> makeNodeBuilder(long exactSizeIfKnown, IntFunction<P_OUT[]> generator) {
+        return Nodes.builder(exactSizeIfKnown, generator);
+    }
+
+    public final Iterator<P_OUT> iterator() {
+        return Spliterators.iterator(spliterator());
+    }
+
+    public Stream<P_OUT> unordered() {
+        if (isOrdered()) {
+            return new StatelessOp<P_OUT, P_OUT>(this, StreamShape.REFERENCE, StreamOpFlag.NOT_ORDERED) {
+                public Sink<P_OUT> opWrapSink(int flags, Sink<P_OUT> sink) {
+                    return sink;
+                }
+            };
+        }
+        return this;
+    }
+
+    public final Stream<P_OUT> filter(Predicate<? super P_OUT> predicate) {
+        Objects.requireNonNull(predicate);
+        final Predicate<? super P_OUT> predicate2 = predicate;
+        return new StatelessOp<P_OUT, P_OUT>(this, StreamShape.REFERENCE, StreamOpFlag.NOT_SIZED) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<P_OUT> sink) {
+                return new ChainedReference<P_OUT, P_OUT>(sink) {
+                    public void begin(long size) {
+                        this.downstream.begin(-1);
+                    }
+
+                    public void accept(P_OUT u) {
+                        if (predicate2.test(u)) {
+                            this.downstream.accept(u);
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+    public final <R> Stream<R> map(Function<? super P_OUT, ? extends R> mapper) {
+        Objects.requireNonNull(mapper);
+        final Function<? super P_OUT, ? extends R> function = mapper;
+        return new StatelessOp<P_OUT, R>(this, StreamShape.REFERENCE, StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<R> sink) {
+                return new ChainedReference<P_OUT, R>(sink) {
+                    public void accept(P_OUT u) {
+                        this.downstream.accept(function.apply(u));
+                    }
+                };
+            }
+        };
+    }
+
+    public final IntStream mapToInt(ToIntFunction<? super P_OUT> mapper) {
+        Objects.requireNonNull(mapper);
+        final ToIntFunction<? super P_OUT> toIntFunction = mapper;
+        return new java.util.stream.IntPipeline.StatelessOp<P_OUT>(this, StreamShape.REFERENCE, StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<Integer> sink) {
+                return new ChainedReference<P_OUT, Integer>(sink) {
+                    public void accept(P_OUT u) {
+                        this.downstream.accept(toIntFunction.applyAsInt(u));
+                    }
+                };
+            }
+        };
+    }
+
+    public final LongStream mapToLong(ToLongFunction<? super P_OUT> mapper) {
+        Objects.requireNonNull(mapper);
+        final ToLongFunction<? super P_OUT> toLongFunction = mapper;
+        return new java.util.stream.LongPipeline.StatelessOp<P_OUT>(this, StreamShape.REFERENCE, StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<Long> sink) {
+                return new ChainedReference<P_OUT, Long>(sink) {
+                    public void accept(P_OUT u) {
+                        this.downstream.accept(toLongFunction.applyAsLong(u));
+                    }
+                };
+            }
+        };
+    }
+
+    public final DoubleStream mapToDouble(ToDoubleFunction<? super P_OUT> mapper) {
+        Objects.requireNonNull(mapper);
+        final ToDoubleFunction<? super P_OUT> toDoubleFunction = mapper;
+        return new java.util.stream.DoublePipeline.StatelessOp<P_OUT>(this, StreamShape.REFERENCE, StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<Double> sink) {
+                return new ChainedReference<P_OUT, Double>(sink) {
+                    public void accept(P_OUT u) {
+                        this.downstream.accept(toDoubleFunction.applyAsDouble(u));
+                    }
+                };
+            }
+        };
+    }
+
+    public final <R> Stream<R> flatMap(Function<? super P_OUT, ? extends Stream<? extends R>> mapper) {
+        Objects.requireNonNull(mapper);
+        final Function<? super P_OUT, ? extends Stream<? extends R>> function = mapper;
+        return new StatelessOp<P_OUT, R>(this, StreamShape.REFERENCE, (StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) | StreamOpFlag.NOT_SIZED) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<R> sink) {
+                return new ChainedReference<P_OUT, R>(sink) {
+                    public void begin(long size) {
+                        this.downstream.begin(-1);
+                    }
+
+                    /* JADX WARNING: Missing block: B:9:0x001d, code skipped:
+            if (r0 != null) goto L_0x001f;
+     */
+                    /* JADX WARNING: Missing block: B:10:0x001f, code skipped:
+            if (r1 != null) goto L_0x0021;
+     */
+                    /* JADX WARNING: Missing block: B:12:?, code skipped:
+            r0.close();
+     */
+                    /* JADX WARNING: Missing block: B:13:0x0025, code skipped:
+            r3 = move-exception;
+     */
+                    /* JADX WARNING: Missing block: B:14:0x0026, code skipped:
+            r1.addSuppressed(r3);
+     */
+                    /* JADX WARNING: Missing block: B:15:0x002a, code skipped:
+            r0.close();
+     */
+                    /* Code decompiled incorrectly, please refer to instructions dump. */
+                    public void accept(P_OUT u) {
+                        Stream<? extends R> result = (Stream) function.apply(u);
+                        if (result != null) {
+                            ((Stream) result.sequential()).forEach(this.downstream);
+                        }
+                        if (result != null) {
+                            result.close();
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+    public final IntStream flatMapToInt(Function<? super P_OUT, ? extends IntStream> mapper) {
+        Objects.requireNonNull(mapper);
+        final Function<? super P_OUT, ? extends IntStream> function = mapper;
+        return new java.util.stream.IntPipeline.StatelessOp<P_OUT>(this, StreamShape.REFERENCE, (StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) | StreamOpFlag.NOT_SIZED) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<Integer> sink) {
+                return new ChainedReference<P_OUT, Integer>(sink) {
+                    IntConsumer downstreamAsInt;
+
+                    public void begin(long size) {
+                        this.downstream.begin(-1);
+                    }
+
+                    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
+            if (r0 != null) goto L_0x001d;
+     */
+                    /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
+            if (r1 != null) goto L_0x001f;
+     */
+                    /* JADX WARNING: Missing block: B:12:?, code skipped:
+            r0.close();
+     */
+                    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
+            r3 = move-exception;
+     */
+                    /* JADX WARNING: Missing block: B:14:0x0024, code skipped:
+            r1.addSuppressed(r3);
+     */
+                    /* JADX WARNING: Missing block: B:15:0x0028, code skipped:
+            r0.close();
+     */
+                    /* Code decompiled incorrectly, please refer to instructions dump. */
+                    public void accept(P_OUT u) {
+                        IntStream result = (IntStream) function.apply(u);
+                        if (result != null) {
+                            result.sequential().forEach(this.downstreamAsInt);
+                        }
+                        if (result != null) {
+                            result.close();
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+    public final DoubleStream flatMapToDouble(Function<? super P_OUT, ? extends DoubleStream> mapper) {
+        Objects.requireNonNull(mapper);
+        final Function<? super P_OUT, ? extends DoubleStream> function = mapper;
+        return new java.util.stream.DoublePipeline.StatelessOp<P_OUT>(this, StreamShape.REFERENCE, (StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) | StreamOpFlag.NOT_SIZED) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<Double> sink) {
+                return new ChainedReference<P_OUT, Double>(sink) {
+                    DoubleConsumer downstreamAsDouble;
+
+                    public void begin(long size) {
+                        this.downstream.begin(-1);
+                    }
+
+                    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
+            if (r0 != null) goto L_0x001d;
+     */
+                    /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
+            if (r1 != null) goto L_0x001f;
+     */
+                    /* JADX WARNING: Missing block: B:12:?, code skipped:
+            r0.close();
+     */
+                    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
+            r3 = move-exception;
+     */
+                    /* JADX WARNING: Missing block: B:14:0x0024, code skipped:
+            r1.addSuppressed(r3);
+     */
+                    /* JADX WARNING: Missing block: B:15:0x0028, code skipped:
+            r0.close();
+     */
+                    /* Code decompiled incorrectly, please refer to instructions dump. */
+                    public void accept(P_OUT u) {
+                        DoubleStream result = (DoubleStream) function.apply(u);
+                        if (result != null) {
+                            result.sequential().forEach(this.downstreamAsDouble);
+                        }
+                        if (result != null) {
+                            result.close();
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+    public final LongStream flatMapToLong(Function<? super P_OUT, ? extends LongStream> mapper) {
+        Objects.requireNonNull(mapper);
+        final Function<? super P_OUT, ? extends LongStream> function = mapper;
+        return new java.util.stream.LongPipeline.StatelessOp<P_OUT>(this, StreamShape.REFERENCE, (StreamOpFlag.NOT_SORTED | StreamOpFlag.NOT_DISTINCT) | StreamOpFlag.NOT_SIZED) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<Long> sink) {
+                return new ChainedReference<P_OUT, Long>(sink) {
+                    LongConsumer downstreamAsLong;
+
+                    public void begin(long size) {
+                        this.downstream.begin(-1);
+                    }
+
+                    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
+            if (r0 != null) goto L_0x001d;
+     */
+                    /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
+            if (r1 != null) goto L_0x001f;
+     */
+                    /* JADX WARNING: Missing block: B:12:?, code skipped:
+            r0.close();
+     */
+                    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
+            r3 = move-exception;
+     */
+                    /* JADX WARNING: Missing block: B:14:0x0024, code skipped:
+            r1.addSuppressed(r3);
+     */
+                    /* JADX WARNING: Missing block: B:15:0x0028, code skipped:
+            r0.close();
+     */
+                    /* Code decompiled incorrectly, please refer to instructions dump. */
+                    public void accept(P_OUT u) {
+                        LongStream result = (LongStream) function.apply(u);
+                        if (result != null) {
+                            result.sequential().forEach(this.downstreamAsLong);
+                        }
+                        if (result != null) {
+                            result.close();
+                        }
+                    }
+                };
+            }
+        };
+    }
+
+    public final Stream<P_OUT> peek(Consumer<? super P_OUT> action) {
+        Objects.requireNonNull(action);
+        final Consumer<? super P_OUT> consumer = action;
+        return new StatelessOp<P_OUT, P_OUT>(this, StreamShape.REFERENCE, 0) {
+            public Sink<P_OUT> opWrapSink(int flags, Sink<P_OUT> sink) {
+                return new ChainedReference<P_OUT, P_OUT>(sink) {
+                    public void accept(P_OUT u) {
+                        consumer.accept(u);
+                        this.downstream.accept(u);
+                    }
+                };
+            }
+        };
+    }
+
+    public final Stream<P_OUT> distinct() {
+        return DistinctOps.makeRef(this);
+    }
+
+    public final Stream<P_OUT> sorted() {
+        return SortedOps.makeRef(this);
+    }
+
+    public final Stream<P_OUT> sorted(Comparator<? super P_OUT> comparator) {
+        return SortedOps.makeRef(this, comparator);
+    }
+
+    public final Stream<P_OUT> limit(long maxSize) {
+        if (maxSize >= 0) {
+            return SliceOps.makeRef(this, 0, maxSize);
+        }
+        throw new IllegalArgumentException(Long.toString(maxSize));
+    }
+
+    public final Stream<P_OUT> skip(long n) {
+        if (n < 0) {
+            throw new IllegalArgumentException(Long.toString(n));
+        } else if (n == 0) {
+            return this;
+        } else {
+            return SliceOps.makeRef(this, n, -1);
+        }
+    }
+
+    public void forEach(Consumer<? super P_OUT> action) {
+        evaluate(ForEachOps.makeRef(action, false));
+    }
+
+    public void forEachOrdered(Consumer<? super P_OUT> action) {
+        evaluate(ForEachOps.makeRef(action, true));
+    }
+
+    public final <A> A[] toArray(IntFunction<A[]> generator) {
+        IntFunction<A[]> rawGenerator = generator;
+        return Nodes.flatten(evaluateToArrayNode(rawGenerator), rawGenerator).asArray(rawGenerator);
+    }
+
+    public final Object[] toArray() {
+        return toArray(-$$Lambda$ReferencePipeline$n3O_UMTjTSOeDSKD1yhh_2N2rRU.INSTANCE);
+    }
+
+    public final boolean anyMatch(Predicate<? super P_OUT> predicate) {
+        return ((Boolean) evaluate(MatchOps.makeRef(predicate, MatchKind.ANY))).booleanValue();
+    }
+
+    public final boolean allMatch(Predicate<? super P_OUT> predicate) {
+        return ((Boolean) evaluate(MatchOps.makeRef(predicate, MatchKind.ALL))).booleanValue();
+    }
+
+    public final boolean noneMatch(Predicate<? super P_OUT> predicate) {
+        return ((Boolean) evaluate(MatchOps.makeRef(predicate, MatchKind.NONE))).booleanValue();
+    }
+
+    public final Optional<P_OUT> findFirst() {
+        return (Optional) evaluate(FindOps.makeRef(true));
+    }
+
+    public final Optional<P_OUT> findAny() {
+        return (Optional) evaluate(FindOps.makeRef(false));
+    }
+
+    public final P_OUT reduce(P_OUT identity, BinaryOperator<P_OUT> accumulator) {
+        return evaluate(ReduceOps.makeRef((Object) identity, (BiFunction) accumulator, (BinaryOperator) accumulator));
+    }
+
+    public final Optional<P_OUT> reduce(BinaryOperator<P_OUT> accumulator) {
+        return (Optional) evaluate(ReduceOps.makeRef((BinaryOperator) accumulator));
+    }
+
+    public final <R> R reduce(R identity, BiFunction<R, ? super P_OUT, R> accumulator, BinaryOperator<R> combiner) {
+        return evaluate(ReduceOps.makeRef((Object) identity, (BiFunction) accumulator, (BinaryOperator) combiner));
+    }
+
+    public final <R, A> R collect(Collector<? super P_OUT, A, R> collector) {
+        A container;
+        if (isParallel() && collector.characteristics().contains(Characteristics.CONCURRENT) && (!isOrdered() || collector.characteristics().contains(Characteristics.UNORDERED))) {
+            container = collector.supplier().get();
+            forEach(new -$$Lambda$ReferencePipeline$i-WMOWw-bzoH_v-eRIvtIHIFvko(collector.accumulator(), container));
+        } else {
+            container = evaluate(ReduceOps.makeRef((Collector) collector));
+        }
+        if (collector.characteristics().contains(Characteristics.IDENTITY_FINISH)) {
+            return container;
+        }
+        return collector.finisher().apply(container);
+    }
+
+    public final <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super P_OUT> accumulator, BiConsumer<R, R> combiner) {
+        return evaluate(ReduceOps.makeRef((Supplier) supplier, (BiConsumer) accumulator, (BiConsumer) combiner));
+    }
+
+    public final Optional<P_OUT> max(Comparator<? super P_OUT> comparator) {
+        return reduce(BinaryOperator.maxBy(comparator));
+    }
+
+    public final Optional<P_OUT> min(Comparator<? super P_OUT> comparator) {
+        return reduce(BinaryOperator.minBy(comparator));
+    }
+
+    public final long count() {
+        return mapToLong(-$$Lambda$ReferencePipeline$mk6xSsLZAKvG89IyN8pzBoM6otw.INSTANCE).sum();
+    }
+}

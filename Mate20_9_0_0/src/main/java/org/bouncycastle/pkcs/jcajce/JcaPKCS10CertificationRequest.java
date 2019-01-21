@@ -8,7 +8,6 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Hashtable;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
@@ -43,7 +42,7 @@ public class JcaPKCS10CertificationRequest extends PKCS10CertificationRequest {
     }
 
     public PublicKey getPublicKey() throws InvalidKeyException, NoSuchAlgorithmException {
-        KeySpec x509EncodedKeySpec;
+        X509EncodedKeySpec x509EncodedKeySpec;
         KeyFactory createKeyFactory;
         SubjectPublicKeyInfo subjectPublicKeyInfo;
         try {

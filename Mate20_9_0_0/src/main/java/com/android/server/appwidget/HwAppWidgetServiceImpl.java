@@ -43,6 +43,8 @@ class HwAppWidgetServiceImpl extends AppWidgetServiceImpl {
                     case 2:
                         handleGetVisibleWidgetsByUserId(data.readInt(), reply);
                         return true;
+                    default:
+                        break;
                 }
             } catch (Exception e) {
                 return false;

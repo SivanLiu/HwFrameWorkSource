@@ -1141,7 +1141,7 @@ public class HwWifiService extends WifiServiceImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1522,7 +1522,7 @@ public class HwWifiService extends WifiServiceImpl {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x004c, code:
+    /* JADX WARNING: Missing block: B:22:0x004c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

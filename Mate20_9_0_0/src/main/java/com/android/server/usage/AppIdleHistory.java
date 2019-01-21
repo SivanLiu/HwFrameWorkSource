@@ -23,11 +23,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import libcore.io.IoUtils;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class AppIdleHistory {
     @VisibleForTesting
@@ -104,11 +104,6 @@ public class AppIdleHistory {
         return new File(this.mStorageDir, "screen_on_time");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x002c A:{Splitter: B:2:0x000a, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Missing block: B:7:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void readScreenOnTime() {
         File screenOnTimeFile = getScreenOnTimeFile();
         if (screenOnTimeFile.exists()) {
@@ -117,11 +112,12 @@ public class AppIdleHistory {
                 this.mScreenOnDuration = Long.parseLong(reader.readLine());
                 this.mElapsedDuration = Long.parseLong(reader.readLine());
                 reader.close();
-            } catch (IOException e) {
+                return;
+            } catch (IOException | NumberFormatException e) {
+                return;
             }
-        } else {
-            writeScreenOnTime();
         }
+        writeScreenOnTime();
     }
 
     private void writeScreenOnTime() {
@@ -332,51 +328,34 @@ public class AppIdleHistory {
         return new File(new File(new File(this.mStorageDir, SoundModelContract.KEY_USERS), Integer.toString(userId)), APP_IDLE_FILENAME);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x004b A:{SYNTHETIC, Splitter: B:11:0x004b} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0031 A:{Catch:{ IOException -> 0x0124, IOException -> 0x0124, all -> 0x0120 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x0124 A:{PHI: r4 , Splitter: B:1:0x0006, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00fd A:{Splitter: B:30:0x00c4, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x010b A:{Splitter: B:21:0x0065, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f6 A:{Splitter: B:41:0x00f0, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Missing block: B:49:0x00fe, code:
-            r3 = r19;
-     */
-    /* JADX WARNING: Missing block: B:50:0x0100, code:
-            r4 = r15;
-     */
-    /* JADX WARNING: Missing block: B:55:0x010c, code:
-            r3 = r19;
-            r15 = r4;
-     */
-    /* JADX WARNING: Missing block: B:62:0x0125, code:
-            r3 = r19;
-     */
-    /* JADX WARNING: Missing block: B:64:?, code:
-            r5 = TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("Unable to read app idle file for user ");
-            r6.append(r2);
-            android.util.Slog.e(r5, r6.toString());
-     */
-    /* JADX WARNING: Missing block: B:65:0x013d, code:
-            libcore.io.IoUtils.closeQuietly(r4);
-     */
-    /* JADX WARNING: Missing block: B:67:0x0142, code:
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x004b A:{SYNTHETIC, Splitter:B:11:0x004b} */
+    /* JADX WARNING: Removed duplicated region for block: B:8:0x0031 A:{Catch:{ IOException | XmlPullParserException -> 0x0124, all -> 0x0120 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x00fd A:{ExcHandler: IOException | XmlPullParserException (e java.lang.Throwable), Splitter:B:30:0x00c4} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:45:0x00f8, code skipped:
             r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:46:0x00f9, code skipped:
+            r3 = r19;
+     */
+    /* JADX WARNING: Missing block: B:49:0x00fe, code skipped:
+            r3 = r19;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void readAppIdleTimes(int userId, ArrayMap<String, AppUsageHistory> userHistory) {
+        FileInputStream fis;
         Throwable th;
+        String str;
+        StringBuilder stringBuilder;
         int i = userId;
-        String str = null;
-        FileInputStream fis = null;
+        String str2 = null;
+        FileInputStream fis2 = null;
         ArrayMap<String, AppUsageHistory> arrayMap;
         try {
             int type;
-            FileInputStream fileInputStream;
-            fis = new AtomicFile(getUserFile(userId)).openRead();
+            fis2 = new AtomicFile(getUserFile(userId)).openRead();
             XmlPullParser parser = Xml.newPullParser();
-            parser.setInput(fis, StandardCharsets.UTF_8.name());
+            parser.setInput(fis2, StandardCharsets.UTF_8.name());
             while (true) {
                 int next = parser.next();
                 type = next;
@@ -384,99 +363,122 @@ public class AppIdleHistory {
                 int i3 = 2;
                 if (next == 2 || type == 1) {
                     if (type == 2) {
-                        String str2 = TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Unable to read app idle file for user ");
-                        stringBuilder.append(i);
-                        Slog.e(str2, stringBuilder.toString());
-                        IoUtils.closeQuietly(fis);
+                        String str3 = TAG;
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Unable to read app idle file for user ");
+                        stringBuilder2.append(i);
+                        Slog.e(str3, stringBuilder2.toString());
+                        IoUtils.closeQuietly(fis2);
                         return;
                     } else if (parser.getName().equals(TAG_PACKAGES)) {
                         while (true) {
                             next = parser.next();
                             type = next;
                             if (next == i2) {
-                                arrayMap = userHistory;
-                                fileInputStream = fis;
-                                IoUtils.closeQuietly(fis);
                                 break;
                             }
                             if (type == i3) {
                                 try {
                                     if (parser.getName().equals("package")) {
-                                        String packageName = parser.getAttributeValue(str, "name");
+                                        String packageName = parser.getAttributeValue(str2, "name");
                                         AppUsageHistory appUsageHistory = new AppUsageHistory();
-                                        appUsageHistory.lastUsedElapsedTime = Long.parseLong(parser.getAttributeValue(str, ATTR_ELAPSED_IDLE));
-                                        appUsageHistory.lastUsedScreenTime = Long.parseLong(parser.getAttributeValue(str, ATTR_SCREEN_IDLE));
+                                        appUsageHistory.lastUsedElapsedTime = Long.parseLong(parser.getAttributeValue(str2, ATTR_ELAPSED_IDLE));
+                                        appUsageHistory.lastUsedScreenTime = Long.parseLong(parser.getAttributeValue(str2, ATTR_SCREEN_IDLE));
                                         appUsageHistory.lastPredictedTime = getLongValue(parser, ATTR_LAST_PREDICTED_TIME, 0);
-                                        String currentBucketString = parser.getAttributeValue(str, ATTR_CURRENT_BUCKET);
+                                        String currentBucketString = parser.getAttributeValue(str2, ATTR_CURRENT_BUCKET);
                                         if (currentBucketString == null) {
                                             next = 10;
                                         } else {
                                             next = Integer.parseInt(currentBucketString);
                                         }
                                         appUsageHistory.currentBucket = next;
-                                        String bucketingReason = parser.getAttributeValue(str, ATTR_BUCKETING_REASON);
-                                        fileInputStream = fis;
+                                        String bucketingReason = parser.getAttributeValue(str2, ATTR_BUCKETING_REASON);
+                                        fis = fis2;
                                         try {
                                             appUsageHistory.lastJobRunTime = getLongValue(parser, ATTR_LAST_RUN_JOB_TIME, Long.MIN_VALUE);
                                             appUsageHistory.bucketActiveTimeoutTime = getLongValue(parser, ATTR_BUCKET_ACTIVE_TIMEOUT_TIME, 0);
                                             appUsageHistory.bucketWorkingSetTimeoutTime = getLongValue(parser, ATTR_BUCKET_WORKING_SET_TIMEOUT_TIME, 0);
                                             appUsageHistory.bucketingReason = 256;
                                             if (bucketingReason != null) {
-                                                try {
-                                                    appUsageHistory.bucketingReason = Integer.parseInt(bucketingReason, 16);
-                                                } catch (NumberFormatException e) {
-                                                }
+                                                appUsageHistory.bucketingReason = Integer.parseInt(bucketingReason, 16);
                                             }
-                                            appUsageHistory.lastInformedBucket = -1;
-                                            try {
-                                                userHistory.put(packageName, appUsageHistory);
-                                            } catch (IOException e2) {
-                                            } catch (Throwable th2) {
-                                                th = th2;
-                                            }
-                                        } catch (IOException e3) {
-                                        } catch (Throwable th3) {
-                                            th = th3;
-                                            arrayMap = userHistory;
+                                        } catch (NumberFormatException e) {
+                                        } catch (IOException | XmlPullParserException e2) {
                                         }
-                                    } else {
-                                        arrayMap = userHistory;
-                                        fileInputStream = fis;
+                                        appUsageHistory.lastInformedBucket = -1;
+                                        try {
+                                            userHistory.put(packageName, appUsageHistory);
+                                        } catch (IOException | XmlPullParserException e3) {
+                                        } catch (Throwable th2) {
+                                            th = th2;
+                                            fis2 = fis;
+                                            IoUtils.closeQuietly(fis2);
+                                            throw th;
+                                        }
                                     }
-                                } catch (IOException e4) {
+                                    arrayMap = userHistory;
+                                    fis = fis2;
+                                } catch (IOException | XmlPullParserException e4) {
+                                    arrayMap = userHistory;
+                                    fis = fis2;
+                                    try {
+                                        str = TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Unable to read app idle file for user ");
+                                        stringBuilder.append(i);
+                                        Slog.e(str, stringBuilder.toString());
+                                        IoUtils.closeQuietly(fis2);
+                                    } catch (Throwable th3) {
+                                        th = th3;
+                                        IoUtils.closeQuietly(fis2);
+                                        throw th;
+                                    }
                                 } catch (Throwable th4) {
                                     th = th4;
                                     arrayMap = userHistory;
-                                    fileInputStream = fis;
-                                    IoUtils.closeQuietly(fis);
+                                    fis = fis2;
+                                    IoUtils.closeQuietly(fis2);
                                     throw th;
                                 }
                             }
                             arrayMap = userHistory;
-                            fileInputStream = fis;
-                            fis = fileInputStream;
-                            str = null;
+                            fis = fis2;
+                            fis2 = fis;
+                            str2 = null;
                             i2 = 1;
                             i3 = 2;
                         }
-                        return;
+                        arrayMap = userHistory;
+                        fis = fis2;
+                        IoUtils.closeQuietly(fis2);
                     } else {
-                        IoUtils.closeQuietly(fis);
+                        IoUtils.closeQuietly(fis2);
                         return;
                     }
                 }
             }
             if (type == 2) {
             }
-            fis = fileInputStream;
-            IoUtils.closeQuietly(fis);
-            throw th;
-        } catch (IOException e5) {
+            fis2 = fis;
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Unable to read app idle file for user ");
+            stringBuilder.append(i);
+            Slog.e(str, stringBuilder.toString());
+            IoUtils.closeQuietly(fis2);
+        } catch (IOException | XmlPullParserException e5) {
+            arrayMap = userHistory;
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Unable to read app idle file for user ");
+            stringBuilder.append(i);
+            Slog.e(str, stringBuilder.toString());
+            IoUtils.closeQuietly(fis2);
         } catch (Throwable th5) {
             th = th5;
             arrayMap = userHistory;
+            IoUtils.closeQuietly(fis2);
+            throw th;
         }
     }
 
@@ -536,10 +538,10 @@ public class AppIdleHistory {
     }
 
     public void dump(IndentingPrintWriter idpw, int userId, String pkg) {
-        PrintWriter printWriter = idpw;
+        IndentingPrintWriter indentingPrintWriter = idpw;
         int i = userId;
         String str = pkg;
-        printWriter.println("App Standby States:");
+        indentingPrintWriter.println("App Standby States:");
         idpw.increaseIndent();
         ArrayMap<String, AppUsageHistory> userHistory = (ArrayMap) this.mIdleHistory.get(i);
         long elapsedRealtime = SystemClock.elapsedRealtime();
@@ -556,34 +558,34 @@ public class AppIdleHistory {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("package=");
                     stringBuilder.append(packageName);
-                    printWriter.print(stringBuilder.toString());
+                    indentingPrintWriter.print(stringBuilder.toString());
                     StringBuilder stringBuilder2 = new StringBuilder();
                     stringBuilder2.append(" u=");
                     stringBuilder2.append(i);
-                    printWriter.print(stringBuilder2.toString());
+                    indentingPrintWriter.print(stringBuilder2.toString());
                     stringBuilder2 = new StringBuilder();
                     stringBuilder2.append(" bucket=");
                     stringBuilder2.append(appUsageHistory.currentBucket);
                     stringBuilder2.append(" reason=");
                     stringBuilder2.append(UsageStatsManager.reasonToString(appUsageHistory.bucketingReason));
-                    printWriter.print(stringBuilder2.toString());
-                    printWriter.print(" used=");
+                    indentingPrintWriter.print(stringBuilder2.toString());
+                    indentingPrintWriter.print(" used=");
                     userHistory2 = userHistory;
-                    TimeUtils.formatDuration(totalElapsedTime - appUsageHistory.lastUsedElapsedTime, printWriter);
-                    printWriter.print(" usedScr=");
-                    TimeUtils.formatDuration(screenOnTime - appUsageHistory.lastUsedScreenTime, printWriter);
-                    printWriter.print(" lastPred=");
-                    TimeUtils.formatDuration(totalElapsedTime - appUsageHistory.lastPredictedTime, printWriter);
-                    printWriter.print(" activeLeft=");
-                    TimeUtils.formatDuration(appUsageHistory.bucketActiveTimeoutTime - totalElapsedTime, printWriter);
-                    printWriter.print(" wsLeft=");
-                    TimeUtils.formatDuration(appUsageHistory.bucketWorkingSetTimeoutTime - totalElapsedTime, printWriter);
-                    printWriter.print(" lastJob=");
-                    TimeUtils.formatDuration(totalElapsedTime - appUsageHistory.lastJobRunTime, printWriter);
+                    TimeUtils.formatDuration(totalElapsedTime - appUsageHistory.lastUsedElapsedTime, indentingPrintWriter);
+                    indentingPrintWriter.print(" usedScr=");
+                    TimeUtils.formatDuration(screenOnTime - appUsageHistory.lastUsedScreenTime, indentingPrintWriter);
+                    indentingPrintWriter.print(" lastPred=");
+                    TimeUtils.formatDuration(totalElapsedTime - appUsageHistory.lastPredictedTime, indentingPrintWriter);
+                    indentingPrintWriter.print(" activeLeft=");
+                    TimeUtils.formatDuration(appUsageHistory.bucketActiveTimeoutTime - totalElapsedTime, indentingPrintWriter);
+                    indentingPrintWriter.print(" wsLeft=");
+                    TimeUtils.formatDuration(appUsageHistory.bucketWorkingSetTimeoutTime - totalElapsedTime, indentingPrintWriter);
+                    indentingPrintWriter.print(" lastJob=");
+                    TimeUtils.formatDuration(totalElapsedTime - appUsageHistory.lastJobRunTime, indentingPrintWriter);
                     stringBuilder2 = new StringBuilder();
                     stringBuilder2.append(" idle=");
                     stringBuilder2.append(isIdle(packageName, i, elapsedRealtime) ? "y" : "n");
-                    printWriter.print(stringBuilder2.toString());
+                    indentingPrintWriter.print(stringBuilder2.toString());
                     idpw.println();
                 } else {
                     userHistory2 = userHistory;
@@ -593,11 +595,11 @@ public class AppIdleHistory {
                 str = pkg;
             }
             idpw.println();
-            printWriter.print("totalElapsedTime=");
-            TimeUtils.formatDuration(getElapsedTime(elapsedRealtime), printWriter);
+            indentingPrintWriter.print("totalElapsedTime=");
+            TimeUtils.formatDuration(getElapsedTime(elapsedRealtime), indentingPrintWriter);
             idpw.println();
-            printWriter.print("totalScreenOnTime=");
-            TimeUtils.formatDuration(getScreenOnTime(elapsedRealtime), printWriter);
+            indentingPrintWriter.print("totalScreenOnTime=");
+            TimeUtils.formatDuration(getScreenOnTime(elapsedRealtime), indentingPrintWriter);
             idpw.println();
             idpw.decreaseIndent();
         }

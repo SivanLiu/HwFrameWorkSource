@@ -14,7 +14,7 @@ public class JcaCRLStore extends CollectionStore {
     }
 
     private static Collection convertCRLs(Collection collection) throws CRLException {
-        Collection arrayList = new ArrayList(collection.size());
+        ArrayList arrayList = new ArrayList(collection.size());
         for (Object next : collection) {
             if (next instanceof X509CRL) {
                 try {

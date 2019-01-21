@@ -73,7 +73,7 @@ public class RSADigestSigner implements Signer {
             try {
                 bArr = derEncode(bArr);
                 return this.rsaEngine.processBlock(bArr, 0, bArr.length);
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to encode signature: ");
                 stringBuilder.append(e.getMessage());

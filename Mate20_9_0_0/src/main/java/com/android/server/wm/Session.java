@@ -54,9 +54,9 @@ class Session extends Stub implements DeathRecipient {
     SurfaceSession mSurfaceSession;
     final int mUid;
 
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0106 A:{Splitter: B:24:0x00e9, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0106 A:{ExcHandler: all (th java.lang.Throwable), Splitter:B:24:0x00e9} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:36:0x0117, code:
+    /* JADX WARNING: Missing block: B:36:0x0117, code skipped:
             android.os.Binder.restoreCallingIdentity(r2);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -502,7 +502,7 @@ class Session extends Stub implements DeathRecipient {
                     MetricsLoggerWrapper.logAppOverlayExit(this.mUid, this.mPackageName, changed2, type, false);
                 }
                 if (changed2) {
-                    setHasOverlayUi(this.mAppOverlaySurfaces.isEmpty() ^ true);
+                    setHasOverlayUi(this.mAppOverlaySurfaces.isEmpty() ^ 1);
                 }
             }
         }

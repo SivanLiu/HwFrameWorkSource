@@ -532,7 +532,7 @@ public class HwBrightnessSceneRecognition {
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0227 A:{Catch:{ XmlPullParserException -> 0x0277, IOException -> 0x025f, NumberFormatException -> 0x0247, Exception -> 0x022f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0227 A:{Catch:{ XmlPullParserException -> 0x0277, IOException -> 0x025f, NumberFormatException -> 0x0247, Exception -> 0x022f }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean getConfigFromXML(InputStream inStream) {
         String str;
@@ -657,6 +657,8 @@ public class HwBrightnessSceneRecognition {
                             configGroupLoadStarted = false;
                             break;
                         }
+                    default:
+                        break;
                 }
                 if (loadFinished) {
                     if (loadFinished) {
@@ -838,25 +840,30 @@ public class HwBrightnessSceneRecognition {
         }
     }
 
-    public void notifyScreenStatus(boolean isScreenOn) {
-        boolean lastState = this.mIsScreenOn;
-        this.mIsScreenOn = isScreenOn;
-        if (!this.mIsScreenOn && lastState) {
-            this.mScreenOffStateCleanFlag = true;
-        }
-        this.mScreenOnTimeMs = SystemClock.uptimeMillis();
-        if (isARConnected()) {
-            if (isScreenOn) {
-                enableAR();
-            } else {
-                disableAR();
+    public void notifyScreenStatus(final boolean isScreenOn) {
+        new Thread(new Runnable() {
+            public void run() {
+                boolean lastState = HwBrightnessSceneRecognition.this.mIsScreenOn;
+                HwBrightnessSceneRecognition.this.mIsScreenOn = isScreenOn;
+                if (!HwBrightnessSceneRecognition.this.mIsScreenOn && lastState) {
+                    HwBrightnessSceneRecognition.this.mScreenOffStateCleanFlag = true;
+                }
+                HwBrightnessSceneRecognition.this.mScreenOnTimeMs = SystemClock.uptimeMillis();
+                if (!HwBrightnessSceneRecognition.this.isARConnected()) {
+                    return;
+                }
+                if (isScreenOn) {
+                    HwBrightnessSceneRecognition.this.enableAR();
+                } else {
+                    HwBrightnessSceneRecognition.this.disableAR();
+                }
             }
-        }
+        }).start();
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("notifyScreenStatus = ");
         stringBuilder.append(isScreenOn);
-        DElog.d(str, stringBuilder.toString());
+        DElog.i(str, stringBuilder.toString());
     }
 
     public void notifyAutoBrightnessAdj() {

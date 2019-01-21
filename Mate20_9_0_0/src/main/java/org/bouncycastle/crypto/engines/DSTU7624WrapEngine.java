@@ -53,47 +53,47 @@ public class DSTU7624WrapEngine implements Wrapper {
             int blockSize = (2 * i2) / this.engine.getBlockSize();
             int i3 = blockSize - 1;
             int i4 = i3 * 6;
-            Object obj = new byte[i2];
-            System.arraycopy(bArr, i, obj, 0, i2);
-            Object obj2 = new byte[(this.engine.getBlockSize() / 2)];
-            System.arraycopy(obj, 0, obj2, 0, this.engine.getBlockSize() / 2);
+            byte[] bArr2 = new byte[i2];
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            bArr = new byte[(this.engine.getBlockSize() / 2)];
+            System.arraycopy(bArr2, 0, bArr, 0, this.engine.getBlockSize() / 2);
             this.Btemp.clear();
-            i = obj.length - (this.engine.getBlockSize() / 2);
+            i = bArr2.length - (this.engine.getBlockSize() / 2);
             i2 = this.engine.getBlockSize() / 2;
             while (i != 0) {
-                Object obj3 = new byte[(this.engine.getBlockSize() / 2)];
-                System.arraycopy(obj, i2, obj3, 0, this.engine.getBlockSize() / 2);
-                this.Btemp.add(obj3);
+                byte[] bArr3 = new byte[(this.engine.getBlockSize() / 2)];
+                System.arraycopy(bArr2, i2, bArr3, 0, this.engine.getBlockSize() / 2);
+                this.Btemp.add(bArr3);
                 i -= this.engine.getBlockSize() / 2;
                 i2 += this.engine.getBlockSize() / 2;
             }
             for (i = 0; i < i4; i++) {
-                System.arraycopy(this.Btemp.get(blockSize - 2), 0, obj, 0, this.engine.getBlockSize() / 2);
-                System.arraycopy(obj2, 0, obj, this.engine.getBlockSize() / 2, this.engine.getBlockSize() / 2);
+                System.arraycopy(this.Btemp.get(blockSize - 2), 0, bArr2, 0, this.engine.getBlockSize() / 2);
+                System.arraycopy(bArr, 0, bArr2, this.engine.getBlockSize() / 2, this.engine.getBlockSize() / 2);
                 intToBytes(i4 - i, this.intArray, 0);
                 for (i2 = 0; i2 < 4; i2++) {
                     int blockSize2 = (this.engine.getBlockSize() / 2) + i2;
-                    obj[blockSize2] = (byte) (obj[blockSize2] ^ this.intArray[i2]);
+                    bArr2[blockSize2] = (byte) (bArr2[blockSize2] ^ this.intArray[i2]);
                 }
-                this.engine.processBlock(obj, 0, obj, 0);
-                System.arraycopy(obj, 0, obj2, 0, this.engine.getBlockSize() / 2);
+                this.engine.processBlock(bArr2, 0, bArr2, 0);
+                System.arraycopy(bArr2, 0, bArr, 0, this.engine.getBlockSize() / 2);
                 for (i2 = 2; i2 < blockSize; i2++) {
                     int i5 = blockSize - i2;
                     System.arraycopy(this.Btemp.get(i5 - 1), 0, this.Btemp.get(i5), 0, this.engine.getBlockSize() / 2);
                 }
-                System.arraycopy(obj, this.engine.getBlockSize() / 2, this.Btemp.get(0), 0, this.engine.getBlockSize() / 2);
+                System.arraycopy(bArr2, this.engine.getBlockSize() / 2, this.Btemp.get(0), 0, this.engine.getBlockSize() / 2);
             }
-            System.arraycopy(obj2, 0, obj, 0, this.engine.getBlockSize() / 2);
+            System.arraycopy(bArr, 0, bArr2, 0, this.engine.getBlockSize() / 2);
             i = this.engine.getBlockSize() / 2;
             for (int i6 = 0; i6 < i3; i6++) {
-                System.arraycopy(this.Btemp.get(i6), 0, obj, i, this.engine.getBlockSize() / 2);
+                System.arraycopy(this.Btemp.get(i6), 0, bArr2, i, this.engine.getBlockSize() / 2);
                 i += this.engine.getBlockSize() / 2;
             }
-            System.arraycopy(obj, obj.length - this.engine.getBlockSize(), this.checkSumArray, 0, this.engine.getBlockSize());
-            obj2 = new byte[(obj.length - this.engine.getBlockSize())];
+            System.arraycopy(bArr2, bArr2.length - this.engine.getBlockSize(), this.checkSumArray, 0, this.engine.getBlockSize());
+            bArr = new byte[(bArr2.length - this.engine.getBlockSize())];
             if (Arrays.areEqual(this.checkSumArray, this.zeroArray)) {
-                System.arraycopy(obj, 0, obj2, 0, obj.length - this.engine.getBlockSize());
-                return obj2;
+                System.arraycopy(bArr2, 0, bArr, 0, bArr2.length - this.engine.getBlockSize());
+                return bArr;
             }
             throw new InvalidCipherTextException("checksum failed");
         } else {
@@ -118,43 +118,43 @@ public class DSTU7624WrapEngine implements Wrapper {
             int blockSize = (1 + (i2 / this.engine.getBlockSize())) * 2;
             int i3 = blockSize - 1;
             int i4 = i3 * 6;
-            Object obj = new byte[(this.engine.getBlockSize() + i2)];
-            System.arraycopy(bArr, i, obj, 0, i2);
-            System.arraycopy(obj, 0, this.B, 0, this.engine.getBlockSize() / 2);
+            byte[] bArr2 = new byte[(this.engine.getBlockSize() + i2)];
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            System.arraycopy(bArr2, 0, this.B, 0, this.engine.getBlockSize() / 2);
             this.Btemp.clear();
-            int length = obj.length - (this.engine.getBlockSize() / 2);
+            int length = bArr2.length - (this.engine.getBlockSize() / 2);
             i = this.engine.getBlockSize() / 2;
             while (length != 0) {
-                Object obj2 = new byte[(this.engine.getBlockSize() / 2)];
-                System.arraycopy(obj, i, obj2, 0, this.engine.getBlockSize() / 2);
-                this.Btemp.add(obj2);
+                byte[] bArr3 = new byte[(this.engine.getBlockSize() / 2)];
+                System.arraycopy(bArr2, i, bArr3, 0, this.engine.getBlockSize() / 2);
+                this.Btemp.add(bArr3);
                 length -= this.engine.getBlockSize() / 2;
                 i += this.engine.getBlockSize() / 2;
             }
             length = 0;
             while (length < i4) {
-                System.arraycopy(this.B, 0, obj, 0, this.engine.getBlockSize() / 2);
-                System.arraycopy(this.Btemp.get(0), 0, obj, this.engine.getBlockSize() / 2, this.engine.getBlockSize() / 2);
-                this.engine.processBlock(obj, 0, obj, 0);
+                System.arraycopy(this.B, 0, bArr2, 0, this.engine.getBlockSize() / 2);
+                System.arraycopy(this.Btemp.get(0), 0, bArr2, this.engine.getBlockSize() / 2, this.engine.getBlockSize() / 2);
+                this.engine.processBlock(bArr2, 0, bArr2, 0);
                 length++;
                 intToBytes(length, this.intArray, 0);
                 for (i = 0; i < 4; i++) {
                     i2 = (this.engine.getBlockSize() / 2) + i;
-                    obj[i2] = (byte) (obj[i2] ^ this.intArray[i]);
+                    bArr2[i2] = (byte) (bArr2[i2] ^ this.intArray[i]);
                 }
-                System.arraycopy(obj, this.engine.getBlockSize() / 2, this.B, 0, this.engine.getBlockSize() / 2);
+                System.arraycopy(bArr2, this.engine.getBlockSize() / 2, this.B, 0, this.engine.getBlockSize() / 2);
                 for (i = 2; i < blockSize; i++) {
                     System.arraycopy(this.Btemp.get(i - 1), 0, this.Btemp.get(i - 2), 0, this.engine.getBlockSize() / 2);
                 }
-                System.arraycopy(obj, 0, this.Btemp.get(blockSize - 2), 0, this.engine.getBlockSize() / 2);
+                System.arraycopy(bArr2, 0, this.Btemp.get(blockSize - 2), 0, this.engine.getBlockSize() / 2);
             }
-            System.arraycopy(this.B, 0, obj, 0, this.engine.getBlockSize() / 2);
+            System.arraycopy(this.B, 0, bArr2, 0, this.engine.getBlockSize() / 2);
             i = this.engine.getBlockSize() / 2;
             for (length = 0; length < i3; length++) {
-                System.arraycopy(this.Btemp.get(length), 0, obj, i, this.engine.getBlockSize() / 2);
+                System.arraycopy(this.Btemp.get(length), 0, bArr2, i, this.engine.getBlockSize() / 2);
                 i += this.engine.getBlockSize() / 2;
             }
-            return obj;
+            return bArr2;
         } else {
             throw new DataLengthException("input buffer too short");
         }

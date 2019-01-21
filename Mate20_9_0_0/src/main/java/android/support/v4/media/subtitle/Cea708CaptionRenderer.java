@@ -498,8 +498,9 @@ public class Cea708CaptionRenderer extends Renderer {
                         float gap = Math.min(1.0f - scaleCol, scaleCol);
                         int columnCount = Math.min(getScreenColumnCount(), captionWindow2.columnCount + 1);
                         StringBuilder widestTextBuilder = new StringBuilder();
+                        int i2 = 0;
                         while (true) {
-                            i = 0;
+                            i = i2;
                             if (i >= columnCount) {
                                 Paint paint = new Paint();
                                 paint.setTypeface(this.mCaptionStyle.getTypeface());
@@ -526,7 +527,7 @@ public class Cea708CaptionRenderer extends Renderer {
                                 break;
                             }
                             widestTextBuilder.append(this.mWidestChar);
-                            int i2 = i + 1;
+                            i2 = i + 1;
                             cCLayout = ccLayout;
                         }
                         break;
@@ -665,7 +666,7 @@ public class Cea708CaptionRenderer extends Renderer {
                     end--;
                 }
                 if (start == 0 && end == last) {
-                    this.mCCView.setText(this.mBuilder);
+                    this.mCCView.setText((CharSequence) this.mBuilder);
                     return;
                 }
                 SpannableStringBuilder trim = new SpannableStringBuilder();

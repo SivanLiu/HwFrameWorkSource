@@ -67,7 +67,7 @@ public class WifiApConfigStore {
         this.mContext = context;
         this.mBackupManagerProxy = backupManagerProxy;
         this.mApConfigFile = apConfigFile;
-        String ap2GChannelListStr = this.mContext.getResources().getString(17039847);
+        String ap2GChannelListStr = this.mContext.getResources().getString(17039848);
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("2G band allowed channels are:");
@@ -82,7 +82,7 @@ public class WifiApConfigStore {
                 i++;
             }
         }
-        this.mRequiresApBandConversion = this.mContext.getResources().getBoolean(17957072);
+        this.mRequiresApBandConversion = this.mContext.getResources().getBoolean(17957073);
         this.mWifiApConfig = loadApConfiguration(this.mApConfigFile);
         if (this.mWifiApConfig == null) {
             Log.d(TAG, "Fallback to use default AP configuration");
@@ -103,7 +103,10 @@ public class WifiApConfigStore {
 
     public synchronized void setApConfiguration(WifiConfiguration config) {
         if (config == null) {
-            this.mWifiApConfig = getDefaultApConfiguration();
+            try {
+                this.mWifiApConfig = getDefaultApConfiguration();
+            } catch (Throwable th) {
+            }
         } else {
             this.mWifiApConfig = apBandCheckConvert(config);
         }
@@ -270,7 +273,7 @@ public class WifiApConfigStore {
         WifiConfiguration config = new WifiConfiguration();
         config.apBand = 0;
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(this.mContext.getResources().getString(17041410));
+        stringBuilder.append(this.mContext.getResources().getString(17041411));
         stringBuilder.append("_");
         stringBuilder.append(getRandomIntForDefaultSsid());
         config.SSID = stringBuilder.toString();
@@ -317,7 +320,7 @@ public class WifiApConfigStore {
         WifiConfiguration config = new WifiConfiguration();
         config.apBand = 0;
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(context.getResources().getString(17041395));
+        stringBuilder.append(context.getResources().getString(17041396));
         stringBuilder.append("_");
         stringBuilder.append(getRandomIntForDefaultSsid());
         config.SSID = stringBuilder.toString();

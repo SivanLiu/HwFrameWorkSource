@@ -296,26 +296,28 @@ public class GraphicsStatsService extends Stub {
         Trace.traceBegin(524288, "deleting old graphicsstats buffers");
         synchronized (this.mFileAccessLock) {
             File[] files = this.mGraphicsStatsDir.listFiles();
-            if (files == null || files.length <= 3) {
-                return;
-            }
-            long[] sortedDates = new long[files.length];
-            int i = 0;
-            for (int i2 = 0; i2 < files.length; i2++) {
-                try {
-                    sortedDates[i2] = Long.parseLong(files[i2].getName());
-                } catch (NumberFormatException e) {
+            if (files != null) {
+                if (files.length > 3) {
+                    long[] sortedDates = new long[files.length];
+                    int i = 0;
+                    for (int i2 = 0; i2 < files.length; i2++) {
+                        try {
+                            sortedDates[i2] = Long.parseLong(files[i2].getName());
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                    if (sortedDates.length <= 3) {
+                        return;
+                    }
+                    Arrays.sort(sortedDates);
+                    while (i < sortedDates.length - 3) {
+                        deleteRecursiveLocked(new File(this.mGraphicsStatsDir, Long.toString(sortedDates[i])));
+                        i++;
+                    }
+                    Trace.traceEnd(524288);
+                    return;
                 }
             }
-            if (sortedDates.length <= 3) {
-                return;
-            }
-            Arrays.sort(sortedDates);
-            while (i < sortedDates.length - 3) {
-                deleteRecursiveLocked(new File(this.mGraphicsStatsDir, Long.toString(sortedDates[i])));
-                i++;
-            }
-            Trace.traceEnd(524288);
         }
     }
 

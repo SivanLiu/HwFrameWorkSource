@@ -416,19 +416,21 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0031, code:
+    /* JADX WARNING: Missing block: B:23:0x0031, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private synchronized boolean isCellInfoChange() {
         getCellID();
-        if (-1 != this.mCurrentAreaCode && -1 != this.mLastAreaCode) {
-            if (-1 != this.mLastCellid && -1 != this.mLastAreaCode && this.mLastCellid == this.mCurrentCellId && this.mLastAreaCode == this.mCurrentAreaCode) {
-                return false;
+        if (-1 != this.mCurrentAreaCode) {
+            if (-1 != this.mLastAreaCode) {
+                if (-1 != this.mLastCellid && -1 != this.mLastAreaCode && this.mLastCellid == this.mCurrentCellId && this.mLastAreaCode == this.mCurrentAreaCode) {
+                    return false;
+                }
+                this.mLastAreaCode = this.mCurrentAreaCode;
+                this.mLastCellid = this.mCurrentCellId;
+                return true;
             }
-            this.mLastAreaCode = this.mCurrentAreaCode;
-            this.mLastCellid = this.mCurrentCellId;
-            return true;
         }
     }
 
@@ -591,16 +593,16 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
         return null;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x004f, code:
+    /* JADX WARNING: Missing block: B:12:0x004f, code skipped:
             if (r1 != null) goto L_0x0051;
      */
-    /* JADX WARNING: Missing block: B:13:0x0051, code:
+    /* JADX WARNING: Missing block: B:13:0x0051, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:18:0x0061, code:
+    /* JADX WARNING: Missing block: B:18:0x0061, code skipped:
             if (r1 == null) goto L_0x0064;
      */
-    /* JADX WARNING: Missing block: B:19:0x0064, code:
+    /* JADX WARNING: Missing block: B:19:0x0064, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -634,16 +636,16 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0058, code:
+    /* JADX WARNING: Missing block: B:13:0x0058, code skipped:
             if (r3 != null) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:14:0x005a, code:
+    /* JADX WARNING: Missing block: B:14:0x005a, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:20:0x0066, code:
+    /* JADX WARNING: Missing block: B:20:0x0066, code skipped:
             if (r3 == null) goto L_0x0069;
      */
-    /* JADX WARNING: Missing block: B:21:0x0069, code:
+    /* JADX WARNING: Missing block: B:21:0x0069, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -795,16 +797,16 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
         return null;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0108, code:
+    /* JADX WARNING: Missing block: B:22:0x0108, code skipped:
             if (r6 != null) goto L_0x010a;
      */
-    /* JADX WARNING: Missing block: B:23:0x010a, code:
+    /* JADX WARNING: Missing block: B:23:0x010a, code skipped:
             r6.close();
      */
-    /* JADX WARNING: Missing block: B:33:0x0135, code:
+    /* JADX WARNING: Missing block: B:33:0x0135, code skipped:
             if (r6 == null) goto L_0x0138;
      */
-    /* JADX WARNING: Missing block: B:35:0x0139, code:
+    /* JADX WARNING: Missing block: B:35:0x0139, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1034,16 +1036,16 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0032, code:
+    /* JADX WARNING: Missing block: B:13:0x0032, code skipped:
             if (r2 != null) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:14:0x0034, code:
+    /* JADX WARNING: Missing block: B:14:0x0034, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:20:0x0040, code:
+    /* JADX WARNING: Missing block: B:20:0x0040, code skipped:
             if (r2 == null) goto L_0x0043;
      */
-    /* JADX WARNING: Missing block: B:21:0x0043, code:
+    /* JADX WARNING: Missing block: B:21:0x0043, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1070,16 +1072,16 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x00d6, code:
+    /* JADX WARNING: Missing block: B:23:0x00d6, code skipped:
             if (r4 != null) goto L_0x00d8;
      */
-    /* JADX WARNING: Missing block: B:24:0x00d8, code:
+    /* JADX WARNING: Missing block: B:24:0x00d8, code skipped:
             r4.close();
      */
-    /* JADX WARNING: Missing block: B:29:0x00e8, code:
+    /* JADX WARNING: Missing block: B:29:0x00e8, code skipped:
             if (r4 == null) goto L_0x00eb;
      */
-    /* JADX WARNING: Missing block: B:31:0x00ec, code:
+    /* JADX WARNING: Missing block: B:31:0x00ec, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1150,6 +1152,10 @@ public class HwLocalLocationManager implements IHwLocalLocationManager {
                                 list.add(parser.getText());
                                 break;
                             }
+                            break;
+                        case 3:
+                            break;
+                        default:
                             break;
                     }
                 }

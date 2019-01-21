@@ -72,6 +72,7 @@ import com.android.server.security.trustcircle.tlv.command.query.DATA_TCIS_ERROR
 import com.android.server.statusbar.StatusBarManagerService;
 import com.android.server.wm.WindowManagerInternal;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -81,6 +82,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class HwSecureInputMethodManagerService extends AbsInputMethodManagerService implements ServiceConnection, Callback {
     static final boolean DEBUG = false;
@@ -430,7 +432,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         return Secure.getIntForUser(this.mContext.getContentResolver(), "secure_keyboard", 1, this.mSettings.getCurrentUserId()) == 1;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x002e, code:
+    /* JADX WARNING: Missing block: B:15:0x002e, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -489,7 +491,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }, true);
         this.mAppOpsManager = (AppOpsManager) this.mContext.getSystemService(AppOpsManager.class);
         this.mUserManager = (UserManager) this.mContext.getSystemService(UserManager.class);
-        this.mSlotIme = this.mContext.getString(17041186);
+        this.mSlotIme = this.mContext.getString(17041187);
         new Bundle().putBoolean("android.allowDuringSetup", true);
         IntentFilter broadcastFilter = new IntentFilter();
         broadcastFilter.addAction("android.intent.action.USER_ADDED");
@@ -566,7 +568,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
             if (!this.mSystemReady) {
                 this.mSystemReady = true;
                 int currentUserId = this.mSettings.getCurrentUserId();
-                this.mSettings.switchCurrentUser(currentUserId, this.mUserManager.isUserUnlockingOrUnlocked(currentUserId) ^ true);
+                this.mSettings.switchCurrentUser(currentUserId, this.mUserManager.isUserUnlockingOrUnlocked(currentUserId) ^ 1);
                 this.mKeyguardManager = (KeyguardManager) this.mContext.getSystemService(KeyguardManager.class);
                 this.mStatusBar = statusBar;
                 if (this.mStatusBar != null) {
@@ -579,7 +581,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x003f, code:
+    /* JADX WARNING: Missing block: B:9:0x003f, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -622,7 +624,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         if (!calledFromValidUser()) {
             return Collections.emptyList();
         }
-        List arrayList;
+        ArrayList arrayList;
         synchronized (this.mMethodMap) {
             arrayList = new ArrayList(this.mMethodList);
         }
@@ -741,7 +743,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         if (session != null) {
             executeOrSendMessage(session.method, this.mCaller.obtainMessageIIOOOO(2000, this.mCurInputContextMissingMethods, initial ^ 1, startInputToken, session, this.mCurInputContext, this.mCurAttribute));
         }
-        InputChannel inputChannel = null;
+        ResultReceiver resultReceiver = null;
         if (this.mShowRequested) {
             if (DEBUG_FLOW) {
                 Slog.v(TAG, "Attach new input asks to show input");
@@ -753,9 +755,9 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
         IInputMethodSession iInputMethodSession = session.session;
         if (session.channel != null) {
-            inputChannel = session.channel.dup();
+            resultReceiver = session.channel.dup();
         }
-        return new InputBindResult(0, iInputMethodSession, inputChannel, this.mCurId, this.mCurSeq, this.mCurUserActionNotificationSequenceNumber);
+        return new InputBindResult(0, iInputMethodSession, resultReceiver, this.mCurId, this.mCurSeq, this.mCurUserActionNotificationSequenceNumber);
     }
 
     InputBindResult startInputLocked(int startInputReason, IInputMethodClient client, IInputContext inputContext, int missingMethods, EditorInfo attribute, int controlFlags) {
@@ -888,7 +890,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         unbindCurrentMethodLocked(true);
         this.mCurIntent = new Intent("android.view.InputMethod");
         this.mCurIntent.setComponent(info.getComponent());
-        this.mCurIntent.putExtra("android.intent.extra.client_label", 17040221);
+        this.mCurIntent.putExtra("android.intent.extra.client_label", 17040222);
         this.mCurIntent.putExtra("android.intent.extra.client_intent", PendingIntent.getActivity(this.mContext, 0, new Intent("android.settings.INPUT_METHOD_SETTINGS"), 0));
         if (bindCurrentInputMethodService(this.mCurIntent, this, 1610612741)) {
             this.mLastBindTime = SystemClock.uptimeMillis();
@@ -934,7 +936,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
     public void finishInput(IInputMethodClient client) {
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0066, code:
+    /* JADX WARNING: Missing block: B:19:0x0066, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -963,13 +965,13 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0057, code:
+    /* JADX WARNING: Missing block: B:21:0x0057, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:23:0x0059, code:
+    /* JADX WARNING: Missing block: B:23:0x0059, code skipped:
             r9.dispose();
      */
-    /* JADX WARNING: Missing block: B:24:0x005c, code:
+    /* JADX WARNING: Missing block: B:24:0x005c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1081,10 +1083,10 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Missing block: B:31:0x007f, code:
+    /* JADX WARNING: Missing block: B:31:0x007f, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
-    /* JADX WARNING: Missing block: B:32:0x0083, code:
+    /* JADX WARNING: Missing block: B:32:0x0083, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1234,7 +1236,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0030, code:
+    /* JADX WARNING: Missing block: B:16:0x0030, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1398,29 +1400,29 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:34:0x006c, code:
+    /* JADX WARNING: Missing block: B:34:0x006c, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:42:0x0077, code:
+    /* JADX WARNING: Missing block: B:42:0x0077, code skipped:
             if (r2 != 8) goto L_0x0083;
      */
-    /* JADX WARNING: Missing block: B:43:0x0079, code:
+    /* JADX WARNING: Missing block: B:43:0x0079, code skipped:
             android.util.Slog.i(TAG, "startInputOrWindowGainedFocus, client deactive by imms, set active again to enable secure inputmethod");
             r1.mShouldSetActive = true;
      */
-    /* JADX WARNING: Missing block: B:44:0x0083, code:
+    /* JADX WARNING: Missing block: B:44:0x0083, code skipped:
             r0 = secureImeStartInputOrWindowGainedFocus(r12, r13, r14, r15, r16, r17, r18, r19, r20);
      */
-    /* JADX WARNING: Missing block: B:45:0x0087, code:
+    /* JADX WARNING: Missing block: B:45:0x0087, code skipped:
             if (r0 == null) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:47:0x008b, code:
+    /* JADX WARNING: Missing block: B:47:0x008b, code skipped:
             if (r0 == r1.mNoBinding) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:48:0x008d, code:
+    /* JADX WARNING: Missing block: B:48:0x008d, code skipped:
             setClientActiveIfShould();
      */
-    /* JADX WARNING: Missing block: B:49:0x0090, code:
+    /* JADX WARNING: Missing block: B:49:0x0090, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1469,6 +1471,16 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         return startInput(startInputReason, client, inputContext, missingMethods, attribute, controlFlags);
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x012a A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x0128 A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x0134 A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x01af A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:87:0x01ae A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x019a A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x018a A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x0160 A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x0136 A:{Catch:{ all -> 0x022d, all -> 0x0236 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected InputBindResult windowGainedFocus(int startInputReason, IInputMethodClient client, IBinder windowToken, int controlFlags, int softInputMode, int windowFlags, EditorInfo attribute, IInputContext inputContext, int missingMethods) {
         Throwable th;
         HashMap hashMap;
@@ -1552,93 +1564,133 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
                             Binder.restoreCallingIdentity(ident);
                             return null;
                         } else {
+                            boolean z2;
+                            boolean doAutoShow;
+                            boolean isTextEditor;
+                            boolean didStart;
                             hashMap = hashMap2;
                             z = calledFromValidUser;
                             calledFromValidUser = cs;
                             this.mCurFocusedWindow = iBinder;
                             this.mCurFocusedWindowSoftInputMode = i;
                             this.mCurFocusedWindowClient = calledFromValidUser;
-                            boolean z2 = (i & 240) == 16 || this.mRes.getConfiguration().isLayoutSizeAtLeast(3);
-                            boolean doAutoShow = z2;
-                            boolean isTextEditor = (controlFlags & 2) != 0;
-                            boolean didStart = false;
-                            ResultReceiver resultReceiver;
-                            int i2;
+                            if ((i & 240) != 16) {
+                                if (!this.mRes.getConfiguration().isLayoutSizeAtLeast(3)) {
+                                    z2 = false;
+                                    doAutoShow = z2;
+                                    isTextEditor = (controlFlags & 2) == 0;
+                                    didStart = false;
+                                    ResultReceiver resultReceiver;
+                                    int i2;
+                                    switch (i & 15) {
+                                        case 0:
+                                            resultReceiver = null;
+                                            i2 = 1;
+                                            if (isTextEditor) {
+                                                if (doAutoShow) {
+                                                    if ((i & 256) != 0) {
+                                                        if (DEBUG_FLOW) {
+                                                            Slog.v(TAG, "Unspecified window will show input");
+                                                        }
+                                                        if (editorInfo != null) {
+                                                            didStart = true;
+                                                            res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
+                                                        }
+                                                        showCurrentInputLocked(i2, resultReceiver);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (LayoutParams.mayUseInputMethod(windowFlags)) {
+                                                if (DEBUG_FLOW) {
+                                                    Slog.v(TAG, "Unspecified window will hide input");
+                                                }
+                                                hideCurrentInputLocked(2, resultReceiver);
+                                                break;
+                                            }
+                                            break;
+                                        case 1:
+                                            break;
+                                        case 2:
+                                            resultReceiver = null;
+                                            if ((i & 256) != 0) {
+                                                if (DEBUG_FLOW) {
+                                                    Slog.v(TAG, "Window asks to hide input going forward");
+                                                }
+                                                hideCurrentInputLocked(0, resultReceiver);
+                                                break;
+                                            }
+                                            break;
+                                        case 3:
+                                            resultReceiver = null;
+                                            if (DEBUG_FLOW) {
+                                                Slog.v(TAG, "Window asks to hide input");
+                                            }
+                                            hideCurrentInputLocked(0, resultReceiver);
+                                            break;
+                                        case 4:
+                                            resultReceiver = null;
+                                            i2 = 1;
+                                            if ((i & 256) != 0) {
+                                                if (DEBUG_FLOW) {
+                                                    Slog.v(TAG, "Window asks to show input going forward");
+                                                }
+                                                if (editorInfo != null) {
+                                                    didStart = true;
+                                                    res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
+                                                }
+                                                showCurrentInputLocked(i2, resultReceiver);
+                                                break;
+                                            }
+                                            break;
+                                        case 5:
+                                            if (DEBUG_FLOW) {
+                                                Slog.v(TAG, "Window asks to always show input");
+                                            }
+                                            if (editorInfo != null) {
+                                                resultReceiver = null;
+                                                i2 = 1;
+                                                didStart = true;
+                                                res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
+                                            } else {
+                                                resultReceiver = null;
+                                                i2 = 1;
+                                            }
+                                            showCurrentInputLocked(i2, resultReceiver);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (!(didStart || editorInfo == null)) {
+                                        res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
+                                    }
+                                    Binder.restoreCallingIdentity(ident);
+                                    return res;
+                                }
+                            }
+                            z2 = true;
+                            doAutoShow = z2;
+                            if ((controlFlags & 2) == 0) {
+                            }
+                            isTextEditor = (controlFlags & 2) == 0;
+                            didStart = false;
                             switch (i & 15) {
                                 case 0:
-                                    resultReceiver = null;
-                                    i2 = 1;
-                                    if (!isTextEditor || !doAutoShow) {
-                                        if (LayoutParams.mayUseInputMethod(windowFlags)) {
-                                            if (DEBUG_FLOW) {
-                                                Slog.v(TAG, "Unspecified window will hide input");
-                                            }
-                                            hideCurrentInputLocked(2, resultReceiver);
-                                            break;
-                                        }
-                                    } else if ((i & 256) != 0) {
-                                        if (DEBUG_FLOW) {
-                                            Slog.v(TAG, "Unspecified window will show input");
-                                        }
-                                        if (editorInfo != null) {
-                                            didStart = true;
-                                            res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
-                                        }
-                                        showCurrentInputLocked(i2, resultReceiver);
-                                        break;
-                                    }
+                                    break;
+                                case 1:
                                     break;
                                 case 2:
-                                    resultReceiver = null;
-                                    if ((i & 256) != 0) {
-                                        if (DEBUG_FLOW) {
-                                            Slog.v(TAG, "Window asks to hide input going forward");
-                                        }
-                                        hideCurrentInputLocked(0, resultReceiver);
-                                        break;
-                                    }
                                     break;
                                 case 3:
-                                    resultReceiver = null;
-                                    if (DEBUG_FLOW) {
-                                        Slog.v(TAG, "Window asks to hide input");
-                                    }
-                                    hideCurrentInputLocked(0, resultReceiver);
                                     break;
                                 case 4:
-                                    resultReceiver = null;
-                                    i2 = 1;
-                                    if ((i & 256) != 0) {
-                                        if (DEBUG_FLOW) {
-                                            Slog.v(TAG, "Window asks to show input going forward");
-                                        }
-                                        if (editorInfo != null) {
-                                            didStart = true;
-                                            res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
-                                        }
-                                        showCurrentInputLocked(i2, resultReceiver);
-                                        break;
-                                    }
                                     break;
                                 case 5:
-                                    if (DEBUG_FLOW) {
-                                        Slog.v(TAG, "Window asks to always show input");
-                                    }
-                                    if (editorInfo != null) {
-                                        resultReceiver = null;
-                                        i2 = 1;
-                                        didStart = true;
-                                        res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
-                                    } else {
-                                        resultReceiver = null;
-                                        i2 = 1;
-                                    }
-                                    showCurrentInputLocked(i2, resultReceiver);
+                                    break;
+                                default:
                                     break;
                             }
-                            if (!(didStart || editorInfo == null)) {
-                                res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
-                            }
+                            res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, editorInfo, controlFlags, startInputReason);
                             Binder.restoreCallingIdentity(ident);
                             return res;
                         }
@@ -1687,10 +1739,10 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0053, code:
+    /* JADX WARNING: Missing block: B:28:0x0053, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:31:0x0058, code:
+    /* JADX WARNING: Missing block: B:33:0x0058, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1700,21 +1752,23 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
         synchronized (this.mMethodMap) {
             Pair<String, String> lastIme = this.mSettings.getLastInputMethodAndSubtypeLocked();
-            if (lastIme == null || TextUtils.isEmpty((CharSequence) lastIme.first) || TextUtils.isEmpty((CharSequence) lastIme.second)) {
-            } else {
-                InputMethodInfo lastImi = (InputMethodInfo) this.mMethodMap.get(lastIme.first);
-                if (lastImi == null) {
-                    return null;
-                }
-                try {
-                    int lastSubtypeId = InputMethodUtils.getSubtypeIdFromHashCode(lastImi, Integer.parseInt((String) lastIme.second));
-                    if (lastSubtypeId < 0 || lastSubtypeId >= lastImi.getSubtypeCount()) {
-                    } else {
-                        InputMethodSubtype subtypeAt = lastImi.getSubtypeAt(lastSubtypeId);
-                        return subtypeAt;
+            if (!(lastIme == null || TextUtils.isEmpty((CharSequence) lastIme.first))) {
+                if (!TextUtils.isEmpty((CharSequence) lastIme.second)) {
+                    InputMethodInfo lastImi = (InputMethodInfo) this.mMethodMap.get(lastIme.first);
+                    if (lastImi == null) {
+                        return null;
                     }
-                } catch (NumberFormatException e) {
-                    return null;
+                    try {
+                        int lastSubtypeId = InputMethodUtils.getSubtypeIdFromHashCode(lastImi, Integer.parseInt((String) lastIme.second));
+                        if (lastSubtypeId >= 0) {
+                            if (lastSubtypeId < lastImi.getSubtypeCount()) {
+                                InputMethodSubtype subtypeAt = lastImi.getSubtypeAt(lastSubtypeId);
+                                return subtypeAt;
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
                 }
             }
         }
@@ -1756,10 +1810,6 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
     public void notifyUserAction(int sequenceNumber) {
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0067, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void hideMySoftInput(IBinder token, int flags) {
         if (calledFromValidUser()) {
             synchronized (this.mMethodMap) {
@@ -1793,10 +1843,6 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0041, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void showMySoftInput(IBinder token, int flags) {
         if (calledFromValidUser()) {
             synchronized (this.mMethodMap) {
@@ -1839,22 +1885,22 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Missing block: B:30:0x00a1, code:
+    /* JADX WARNING: Missing block: B:30:0x00a1, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x00a3;
      */
-    /* JADX WARNING: Missing block: B:31:0x00a3, code:
+    /* JADX WARNING: Missing block: B:31:0x00a3, code skipped:
             r3.channel.dispose();
      */
-    /* JADX WARNING: Missing block: B:39:0x00cc, code:
+    /* JADX WARNING: Missing block: B:39:0x00cc, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x00a3;
      */
-    /* JADX WARNING: Missing block: B:67:0x013c, code:
+    /* JADX WARNING: Missing block: B:67:0x013c, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x0155;
      */
-    /* JADX WARNING: Missing block: B:77:0x0153, code:
+    /* JADX WARNING: Missing block: B:77:0x0153, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x0155;
      */
-    /* JADX WARNING: Missing block: B:78:0x0155, code:
+    /* JADX WARNING: Missing block: B:78:0x0155, code skipped:
             r3.dispose();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2024,18 +2070,6 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0086 A:{ExcHandler: org.xmlpull.v1.XmlPullParserException (r6_7 'e' java.lang.Exception), Splitter: B:8:0x0070} */
-    /* JADX WARNING: Missing block: B:10:0x0086, code:
-            r6 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:11:0x0087, code:
-            r7 = TAG;
-            r8 = new java.lang.StringBuilder();
-            r8.append("Unable to load input method ");
-            r8.append(r5);
-            android.util.Slog.w(r7, r8.toString(), r6);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     void buildInputMethodListLocked(boolean resetDefaultEnabledIme) {
         this.mMethodList.clear();
         this.mMethodMap.clear();
@@ -2057,7 +2091,12 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
                     InputMethodInfo p = new InputMethodInfo(this.mContext, ri);
                     this.mMethodList.add(p);
                     this.mMethodMap.put(p.getId(), p);
-                } catch (Exception e) {
+                } catch (IOException | XmlPullParserException e) {
+                    String str2 = TAG;
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Unable to load input method ");
+                    stringBuilder2.append(compName);
+                    Slog.w(str2, stringBuilder2.toString(), e);
                 }
             }
         }
@@ -2075,7 +2114,7 @@ public class HwSecureInputMethodManagerService extends AbsInputMethodManagerServ
         return null;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0024, code:
+    /* JADX WARNING: Missing block: B:9:0x0024, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

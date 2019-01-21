@@ -19,7 +19,7 @@ public class X509StoreLDAPCertPairs extends X509StoreSpi {
             return Collections.EMPTY_SET;
         }
         X509CertPairStoreSelector x509CertPairStoreSelector = (X509CertPairStoreSelector) selector;
-        Collection hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         hashSet.addAll(this.helper.getCrossCertificatePairs(x509CertPairStoreSelector));
         return hashSet;
     }

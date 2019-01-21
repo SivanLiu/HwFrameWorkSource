@@ -213,6 +213,8 @@ public class BlackListAppsUtils {
                                     break;
                                 }
                                 break;
+                            default:
+                                break;
                         }
                     }
                     if (parserError) {

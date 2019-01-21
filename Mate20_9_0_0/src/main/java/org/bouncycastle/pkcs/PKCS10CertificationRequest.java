@@ -3,7 +3,6 @@ package org.bouncycastle.pkcs;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -33,12 +32,12 @@ public class PKCS10CertificationRequest {
         StringBuilder stringBuilder;
         try {
             return CertificationRequest.getInstance(ASN1Primitive.fromByteArray(bArr));
-        } catch (Throwable e) {
+        } catch (ClassCastException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());
             throw new PKCSIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e2.getMessage());
@@ -73,7 +72,7 @@ public class PKCS10CertificationRequest {
         if (attributes == null) {
             return EMPTY_ARRAY;
         }
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (int i = 0; i != attributes.size(); i++) {
             Attribute instance = Attribute.getInstance(attributes.getObjectAt(i));
             if (instance.getAttrType().equals(aSN1ObjectIdentifier)) {
@@ -115,7 +114,7 @@ public class PKCS10CertificationRequest {
             outputStream.write(certificationRequestInfo.getEncoded(ASN1Encoding.DER));
             outputStream.close();
             return contentVerifier.verify(getSignature());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to process signature: ");
             stringBuilder.append(e.getMessage());

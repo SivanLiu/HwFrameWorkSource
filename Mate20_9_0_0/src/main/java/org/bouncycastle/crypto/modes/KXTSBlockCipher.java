@@ -56,14 +56,14 @@ public class KXTSBlockCipher extends BufferedBlockCipher {
             byte[] bArr3 = new byte[this.blockSize];
             int i3 = 0;
             Pack.longToLittleEndian(this.tw_current, bArr3, 0);
-            Object obj = new byte[this.blockSize];
-            System.arraycopy(bArr3, 0, obj, 0, this.blockSize);
+            byte[] bArr4 = new byte[this.blockSize];
+            System.arraycopy(bArr3, 0, bArr4, 0, this.blockSize);
             for (int i4 = 0; i4 < this.blockSize; i4++) {
-                obj[i4] = (byte) (obj[i4] ^ bArr[i + i4]);
+                bArr4[i4] = (byte) (bArr4[i4] ^ bArr[i + i4]);
             }
-            this.cipher.processBlock(obj, 0, obj, 0);
+            this.cipher.processBlock(bArr4, 0, bArr4, 0);
             while (i3 < this.blockSize) {
-                bArr2[i2 + i3] = (byte) (obj[i3] ^ bArr3[i3]);
+                bArr2[i2 + i3] = (byte) (bArr4[i3] ^ bArr3[i3]);
                 i3++;
             }
             return;
@@ -88,14 +88,14 @@ public class KXTSBlockCipher extends BufferedBlockCipher {
         if (cipherParameters instanceof ParametersWithIV) {
             ParametersWithIV parametersWithIV = (ParametersWithIV) cipherParameters;
             CipherParameters parameters = parametersWithIV.getParameters();
-            Object iv = parametersWithIV.getIV();
+            byte[] iv = parametersWithIV.getIV();
             if (iv.length == this.blockSize) {
-                Object obj = new byte[this.blockSize];
-                System.arraycopy(iv, 0, obj, 0, this.blockSize);
+                byte[] bArr = new byte[this.blockSize];
+                System.arraycopy(iv, 0, bArr, 0, this.blockSize);
                 this.cipher.init(true, parameters);
-                this.cipher.processBlock(obj, 0, obj, 0);
+                this.cipher.processBlock(bArr, 0, bArr, 0);
                 this.cipher.init(z, parameters);
-                Pack.littleEndianToLong(obj, 0, this.tw_init);
+                Pack.littleEndianToLong(bArr, 0, this.tw_init);
                 System.arraycopy(this.tw_init, 0, this.tw_current, 0, this.tw_init.length);
                 this.counter = 0;
                 return;

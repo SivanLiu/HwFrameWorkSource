@@ -390,6 +390,8 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
                         break;
                     }
                     break;
+                default:
+                    break;
             }
             int i;
             String app;
@@ -416,6 +418,9 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
                     synchronized (this) {
                         isSetSucess = updateScreenCaptureDisabledInWindowManager(i, bundle.getBoolean("value"));
                     }
+                    break;
+                case true:
+                    break;
                 case true:
                     z = bundle.getBoolean("value", false);
                     if (effective && z) {
@@ -485,6 +490,8 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
                         break;
                     }
                     break;
+                default:
+                    break;
             }
             Binder.restoreCallingIdentity(token);
             return isSetSucess;
@@ -498,8 +505,10 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
         long token = Binder.clearCallingIdentity();
         Object obj = -1;
         try {
-            if (policyName.hashCode() == -304109734 && policyName.equals("disable-navigationbar")) {
-                obj = null;
+            if (policyName.hashCode() == -304109734) {
+                if (policyName.equals("disable-navigationbar")) {
+                    obj = null;
+                }
             }
             if (obj == null) {
                 changeNavigationBarStatus(UserHandle.getCallingUserId(), HwDeviceManager.disallowOp(true));
@@ -579,8 +588,10 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
         try {
             int hashCode = policyName.hashCode();
             if (hashCode != -1462770845) {
-                if (hashCode == 1658369855 && policyName.equals("disable_float_task")) {
-                    z = true;
+                if (hashCode == 1658369855) {
+                    if (policyName.equals("disable_float_task")) {
+                        z = true;
+                    }
                 }
             } else if (policyName.equals("disable-applications-list")) {
                 z = false;
@@ -601,6 +612,8 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
                         break;
                     }
                     break;
+                default:
+                    break;
             }
             Binder.restoreCallingIdentity(token);
             return true;
@@ -609,26 +622,26 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x00ac A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x009b A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0078 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x006e A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x00ac A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x009b A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0078 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x006e A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x00ac A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x009b A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0078 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x006e A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x00ac A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x009b A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0078 A:{Catch:{ all -> 0x00b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x006e A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x006d A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x009b A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x0078 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x006e A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x006d A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x009b A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x0078 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x006e A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x006d A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x009b A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x0078 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x006e A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x006d A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00a8 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x009b A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x0078 A:{Catch:{ all -> 0x00b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x006e A:{Catch:{ all -> 0x00b3 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean onActiveAdminRemoved(ComponentName who, ArrayList<PolicyItem> removedPolicies) {
         HwLog.i(TAG, "onActiveAdminRemoved");
@@ -688,35 +701,37 @@ public class DeviceRestrictionPlugin extends DevicePolicyPlugin {
                                 break;
                         }
                     }
-                } else if (hashCode == 1658369855 && policyName.equals("disable_float_task")) {
-                    z = true;
-                    int userHandle;
-                    switch (z) {
-                        case false:
-                            disableSystemUpdate(false);
-                            break;
-                        case true:
-                            userHandle = UserHandle.getCallingUserId();
-                            synchronized (this) {
-                                updateScreenCaptureDisabledInWindowManager(userHandle, false);
-                            }
-                            break;
-                        case true:
-                            if (!(this.mDisableApplicationsList == null || this.mDisableApplicationsList.size() == 0)) {
-                                int j = this.mDisableApplicationsList.size();
-                                for (userHandle = 0; userHandle < j; userHandle++) {
-                                    disableComponentForPackage((String) this.mDisableApplicationsList.get(userHandle), false, pm, 0);
+                } else if (hashCode == 1658369855) {
+                    if (policyName.equals("disable_float_task")) {
+                        z = true;
+                        int userHandle;
+                        switch (z) {
+                            case false:
+                                disableSystemUpdate(false);
+                                break;
+                            case true:
+                                userHandle = UserHandle.getCallingUserId();
+                                synchronized (this) {
+                                    updateScreenCaptureDisabledInWindowManager(userHandle, false);
                                 }
                                 break;
-                            }
-                        case true:
-                            if (!isFloatTaskEnableBefore()) {
+                            case true:
+                                if (!(this.mDisableApplicationsList == null || this.mDisableApplicationsList.size() == 0)) {
+                                    int j = this.mDisableApplicationsList.size();
+                                    for (userHandle = 0; userHandle < j; userHandle++) {
+                                        disableComponentForPackage((String) this.mDisableApplicationsList.get(userHandle), false, pm, 0);
+                                    }
+                                    break;
+                                }
+                            case true:
+                                if (!isFloatTaskEnableBefore()) {
+                                    break;
+                                }
+                                setFloatTaskEnabled(true);
                                 break;
-                            }
-                            setFloatTaskEnabled(true);
-                            break;
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
                 }
                 z = true;

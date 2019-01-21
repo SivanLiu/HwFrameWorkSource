@@ -39,11 +39,11 @@ public class WifiStateTracker {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0011, code:
+    /* JADX WARNING: Missing block: B:7:0x0011, code skipped:
             r2.mWifiState = r3;
             informWifiStateBatteryStats(r0);
      */
-    /* JADX WARNING: Missing block: B:9:0x001a, code:
+    /* JADX WARNING: Missing block: B:9:0x001a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

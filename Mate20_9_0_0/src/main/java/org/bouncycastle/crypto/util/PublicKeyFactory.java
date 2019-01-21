@@ -53,7 +53,6 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.params.ElGamalParameters;
 import org.bouncycastle.crypto.params.ElGamalPublicKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
-import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECCurve.F2m;
 
 public class PublicKeyFactory {
@@ -149,7 +148,7 @@ public class PublicKeyFactory {
                         reverseBytes(b);
                     }
                     DSTU4145BinaryField field = eCBinary.getField();
-                    ECCurve f2m = new F2m(field.getM(), field.getK1(), field.getK2(), field.getK3(), eCBinary.getA(), new BigInteger(1, b));
+                    F2m f2m = new F2m(field.getM(), field.getK1(), field.getK2(), field.getK3(), eCBinary.getA(), new BigInteger(1, b));
                     b = eCBinary.getG();
                     if (subjectPublicKeyInfo.getAlgorithm().getAlgorithm().equals(UAObjectIdentifiers.dstu4145le)) {
                         reverseBytes(b);

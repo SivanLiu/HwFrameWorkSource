@@ -15,12 +15,12 @@ public class GCMParameters extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0030 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -43,16 +43,13 @@ public class GCMParameters extends ASN1Object {
         r0 = r3.size();
         r1 = 2;
         if (r0 != r1) goto L_0x002d;
-    L_0x0019:
         r0 = 1;
         r3 = r3.getObjectAt(r0);
         r3 = org.bouncycastle.asn1.ASN1Integer.getInstance(r3);
         r3 = r3.getValue();
         r3 = r3.intValue();
-    L_0x002a:
         r2.icvLen = r3;
         return;
-    L_0x002d:
         r3 = 12;
         goto L_0x002a;
         return;

@@ -460,7 +460,7 @@ public class WifiNetworkSelector {
         this.mScoringParams = scoringParams;
         this.mLocalLog = localLog;
         this.mContext = context;
-        this.mEnableAutoJoinWhenAssociated = context.getResources().getBoolean(17957080);
+        this.mEnableAutoJoinWhenAssociated = context.getResources().getBoolean(17957081);
         this.mStayOnNetworkMinimumTxRate = context.getResources().getInteger(17694906);
         this.mStayOnNetworkMinimumRxRate = context.getResources().getInteger(17694905);
     }

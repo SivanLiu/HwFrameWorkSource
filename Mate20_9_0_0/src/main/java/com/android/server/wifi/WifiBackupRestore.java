@@ -93,10 +93,13 @@ public class WifiBackupRestore {
                 while (in.ready()) {
                     try {
                         String line = in.readLine();
-                        if (line == null || line.startsWith("}")) {
+                        if (line == null) {
                             break;
+                        } else if (line.startsWith("}")) {
+                            break;
+                        } else {
+                            n.parseLine(line);
                         }
-                        n.parseLine(line);
                     } catch (IOException e) {
                         return null;
                     }
@@ -256,7 +259,12 @@ public class WifiBackupRestore {
                             SupplicantNetwork net = SupplicantNetwork.readNetworkFromStream(in);
                             if (net == null) {
                                 Log.e(WifiBackupRestore.TAG, "Error while parsing the network.");
-                            } else if (net.isEap || net.certUsed) {
+                            } else {
+                                if (!net.isEap) {
+                                    if (!net.certUsed) {
+                                        this.mNetworks.add(net);
+                                    }
+                                }
                                 String str = WifiBackupRestore.TAG;
                                 StringBuilder stringBuilder = new StringBuilder();
                                 stringBuilder.append("Skipping enterprise network for restore: ");
@@ -264,8 +272,6 @@ public class WifiBackupRestore {
                                 stringBuilder.append(" / ");
                                 stringBuilder.append(net.mParsedKeyMgmtLine);
                                 Log.d(str, stringBuilder.toString());
-                            } else {
-                                this.mNetworks.add(net);
                             }
                         }
                     } catch (IOException e) {
@@ -407,20 +413,24 @@ public class WifiBackupRestore {
         XmlUtil.writeNextSectionEnd(out, XML_TAG_SECTION_HEADER_IP_CONFIGURATION);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x0099 A:{Splitter: B:4:0x0008, ExcHandler: org.xmlpull.v1.XmlPullParserException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x0099 A:{Splitter: B:4:0x0008, ExcHandler: org.xmlpull.v1.XmlPullParserException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x0099 A:{Splitter: B:4:0x0008, ExcHandler: org.xmlpull.v1.XmlPullParserException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:24:0x0099, code:
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x0099 A:{ExcHandler: IOException | ClassCastException | IllegalArgumentException | XmlPullParserException (r1_3 'e' java.lang.Exception), Splitter:B:4:0x0008} */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x0099 A:{ExcHandler: IOException | ClassCastException | IllegalArgumentException | XmlPullParserException (r1_3 'e' java.lang.Exception), Splitter:B:4:0x0008} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:16:0x0066, code skipped:
+            r4 = 1;
+            r5 = 0;
+     */
+    /* JADX WARNING: Missing block: B:24:0x0099, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:25:0x009a, code:
+    /* JADX WARNING: Missing block: B:25:0x009a, code skipped:
             r2 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Error parsing the backup data: ");
             r3.append(r1);
             android.util.Log.e(r2, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:26:0x00b0, code:
+    /* JADX WARNING: Missing block: B:26:0x00b0, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -440,19 +450,14 @@ public class WifiBackupRestore {
             XmlUtil.gotoDocumentStart(in, XML_TAG_DOCUMENT_HEADER);
             int rootTagDepth = in.getDepth();
             int minorVersion2 = -1;
-            try {
-                String versionStr = new Float(((Float) XmlUtil.readNextValueWithName(in, XML_TAG_VERSION)).floatValue()).toString();
-                int separatorPos = versionStr.indexOf(46);
-                if (separatorPos == -1) {
-                    majorVersion = Integer.parseInt(versionStr);
-                    minorVersion = 0;
-                } else {
-                    majorVersion = Integer.parseInt(versionStr.substring(0, separatorPos));
-                    minorVersion = Integer.parseInt(versionStr.substring(separatorPos + 1));
-                }
-            } catch (ClassCastException e) {
-                majorVersion = 1;
+            String versionStr = new Float(((Float) XmlUtil.readNextValueWithName(in, XML_TAG_VERSION)).floatValue()).toString();
+            int separatorPos = versionStr.indexOf(46);
+            if (separatorPos == -1) {
+                majorVersion = Integer.parseInt(versionStr);
                 minorVersion = 0;
+            } else {
+                majorVersion = Integer.parseInt(versionStr.substring(0, separatorPos));
+                minorVersion = Integer.parseInt(versionStr.substring(separatorPos + 1));
             }
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();
@@ -467,7 +472,7 @@ public class WifiBackupRestore {
             }
             Log.w(TAG, "Major version of backup data is unknown to this Android version; not restoring");
             return null;
-        } catch (Exception e2) {
+        } catch (IOException | ClassCastException | IllegalArgumentException | XmlPullParserException e) {
         }
     }
 

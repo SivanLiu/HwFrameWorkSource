@@ -154,16 +154,16 @@ public class PhoneStatusRecong {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002c, code:
+    /* JADX WARNING: Missing block: B:9:0x002c, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:12:0x0030, code:
+    /* JADX WARNING: Missing block: B:12:0x0030, code skipped:
             if (r9.mDevMSDPDeviceStatus == null) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:14:0x0038, code:
+    /* JADX WARNING: Missing block: B:14:0x0038, code skipped:
             return r9.mDevMSDPDeviceStatus.getCurrentDeviceStatus();
      */
-    /* JADX WARNING: Missing block: B:15:0x0039, code:
+    /* JADX WARNING: Missing block: B:15:0x0039, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -304,13 +304,13 @@ public class PhoneStatusRecong {
                 stringBuilder.append("getCurrentStatus debug is ");
                 stringBuilder.append(this.mCurrentStatus);
                 AwareLog.d(str, stringBuilder.toString());
-                List<CurrentStatus> list = this.mCurrentStatus;
+                List list = this.mCurrentStatus;
                 return list;
             }
             if (!this.mIsStatusValid && this.mCurrentStatus.size() == 0) {
                 this.mCurrentStatus.add(new CurrentStatus(0, SystemClock.elapsedRealtime()));
             }
-            List arrayList = new ArrayList(this.mCurrentStatus);
+            ArrayList arrayList = new ArrayList(this.mCurrentStatus);
             return arrayList;
         }
     }

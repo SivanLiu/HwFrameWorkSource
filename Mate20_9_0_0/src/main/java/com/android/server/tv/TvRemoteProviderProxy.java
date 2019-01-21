@@ -92,7 +92,7 @@ final class TvRemoteProviderProxy implements ServiceConnection {
             });
         }
 
-        /* JADX WARNING: Missing block: B:33:0x009e, code:
+        /* JADX WARNING: Missing block: B:34:0x009e, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

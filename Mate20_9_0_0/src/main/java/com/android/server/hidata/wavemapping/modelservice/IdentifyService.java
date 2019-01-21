@@ -118,16 +118,16 @@ public class IdentifyService extends ModelBaseService {
             try {
                 int size = model.getBssidLst().length;
                 String[] trainBssids = model.getBssidLst();
-                int i = 0;
-                while (i < size) {
-                    if (trainBssidVals[i] != 0 && noneZeroTestBssid.containsKey(trainBssids[i])) {
-                        int diff = trainBssidVals[i] - ((Integer) noneZeroTestBssid.get(trainBssids[i])).intValue();
-                        diff *= diff;
-                        if (diff > maxDiff) {
-                            maxDiff = diff;
+                for (int i = 0; i < size; i++) {
+                    if (trainBssidVals[i] != 0) {
+                        if (noneZeroTestBssid.containsKey(trainBssids[i])) {
+                            int diff = trainBssidVals[i] - ((Integer) noneZeroTestBssid.get(trainBssids[i])).intValue();
+                            diff *= diff;
+                            if (diff > maxDiff) {
+                                maxDiff = diff;
+                            }
                         }
                     }
-                    i++;
                 }
             } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -263,6 +263,11 @@ public class IdentifyService extends ModelBaseService {
                         } catch (Exception e4) {
                             e = e4;
                             result = result2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("indentifyLocation :");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                            return result2;
                         }
                         try {
                             if (((float) maxDist) < getXtrainBssidLen(trainDatas[i2], parameterInfo)) {

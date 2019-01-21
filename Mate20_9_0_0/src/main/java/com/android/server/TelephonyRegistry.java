@@ -992,6 +992,7 @@ public class TelephonyRegistry extends Stub {
                     this.mRemoveList.add(r.binder);
                 } catch (Throwable th3) {
                     th = th3;
+                    throw th;
                 }
             }
         }

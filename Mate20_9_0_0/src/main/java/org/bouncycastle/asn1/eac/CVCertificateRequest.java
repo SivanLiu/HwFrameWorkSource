@@ -40,7 +40,7 @@ public class CVCertificateRequest extends ASN1Object {
         }
         try {
             return new CVCertificateRequest(ASN1ApplicationSpecific.getInstance(obj));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to parse data: ");
             stringBuilder.append(e.getMessage());

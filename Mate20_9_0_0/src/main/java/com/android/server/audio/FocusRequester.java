@@ -251,7 +251,7 @@ public class FocusRequester {
         super.finalize();
     }
 
-    /* JADX WARNING: Missing block: B:6:0x000f, code:
+    /* JADX WARNING: Missing block: B:6:0x000f, code skipped:
             switch(r3.mFocusLossReceived) {
                 case -3: goto L_0x0014;
                 case -2: goto L_0x0014;
@@ -260,13 +260,13 @@ public class FocusRequester {
                 default: goto L_0x0012;
             };
      */
-    /* JADX WARNING: Missing block: B:7:0x0013, code:
+    /* JADX WARNING: Missing block: B:7:0x0013, code skipped:
             return -1;
      */
-    /* JADX WARNING: Missing block: B:8:0x0014, code:
+    /* JADX WARNING: Missing block: B:8:0x0014, code skipped:
             return -2;
      */
-    /* JADX WARNING: Missing block: B:10:0x0017, code:
+    /* JADX WARNING: Missing block: B:10:0x0017, code skipped:
             switch(r3.mFocusLossReceived) {
                 case -3: goto L_0x001d;
                 case -2: goto L_0x001c;
@@ -275,23 +275,23 @@ public class FocusRequester {
                 default: goto L_0x001a;
             };
      */
-    /* JADX WARNING: Missing block: B:11:0x001b, code:
+    /* JADX WARNING: Missing block: B:11:0x001b, code skipped:
             return -1;
      */
-    /* JADX WARNING: Missing block: B:12:0x001c, code:
+    /* JADX WARNING: Missing block: B:12:0x001c, code skipped:
             return -2;
      */
-    /* JADX WARNING: Missing block: B:14:0x001e, code:
+    /* JADX WARNING: Missing block: B:14:0x001e, code skipped:
             return -3;
      */
-    /* JADX WARNING: Missing block: B:15:0x001f, code:
+    /* JADX WARNING: Missing block: B:15:0x001f, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("focusLossForGainRequest() for invalid focus request ");
             r1.append(r4);
             android.util.Log.e(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:16:0x0036, code:
+    /* JADX WARNING: Missing block: B:16:0x0036, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

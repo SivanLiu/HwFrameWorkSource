@@ -22,7 +22,7 @@ public class DataChangedJournal {
         this.mFile = file;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001d, code:
+    /* JADX WARNING: Missing block: B:9:0x001d, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -46,7 +46,7 @@ public class DataChangedJournal {
         x1.close();
     }
 
-    /* JADX WARNING: Missing block: B:26:0x003c, code:
+    /* JADX WARNING: Missing block: B:26:0x003c, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

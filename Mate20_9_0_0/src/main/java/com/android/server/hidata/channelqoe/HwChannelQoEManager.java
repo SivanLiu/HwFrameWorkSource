@@ -25,8 +25,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.net.ssl.SSLContext;
 
 public class HwChannelQoEManager {
@@ -60,6 +60,7 @@ public class HwChannelQoEManager {
     private static final int MESSAGE_EXCEPTION = 61440;
     private static final int MESSAGE_EXCEPTION_BAK = 61441;
     private static final int MESSAGE_HICLOUD_RTT = 61443;
+    private static final int MESSAGE_START_QUERY = 61449;
     private static final int MESSAGE_TIMEOUT = 61442;
     private static final int NOT_GET_CURRENT_RTT = 1;
     private static final int SOCKET_CONNECT_TIMEOUT = 4000;
@@ -70,7 +71,7 @@ public class HwChannelQoEManager {
     private static final String getGoogle = "GET http://www.google.com/ HTTP/1.1\r\nHost: www.google.com\r\nConnection: Keep-Alive\r\n\r\n";
     private static final String getGstatic = "GET /generate_204 HTTP/1.1\r\nHost: connectivitycheck.gstatic.com\r\nConnection: Keep-Alive\r\n\r\n";
     private static final String getHiCloud = "GET /generate_204 HTTP/1.1\r\nHost: connectivitycheck.platform.hi\r\nConnection: Keep-Alive\r\n\r\n";
-    private static HwChannelQoEManager mChannelQoEManager = null;
+    private static volatile HwChannelQoEManager mChannelQoEManager = null;
     private static final String urlBaidu = "www.baidu.com";
     private static final String urlGoogle = "www.google.com";
     private static final String urlGstatic = "connectivitycheck.gstatic.com";
@@ -99,7 +100,7 @@ public class HwChannelQoEManager {
     public class CHMeasureObject {
         private boolean isBakRunning = false;
         private IChannelQoECallback mAvailableCallBack = null;
-        private List<HwChannelQoEAppInfo> mCallbackList = new ArrayList();
+        private CopyOnWriteArrayList<HwChannelQoEAppInfo> mCallbackList = new CopyOnWriteArrayList();
         private Handler mHandler;
         private int mMutex = 0;
         private String mName;
@@ -219,6 +220,10 @@ public class HwChannelQoEManager {
                             CHMeasureObject.this.isBakRunning = true;
                             CHMeasureObject.this.bakProcess(CHMeasureObject.this.netType);
                             break;
+                        case HwChannelQoEManager.MESSAGE_START_QUERY /*61449*/:
+                            HwChannelQoEManager.log("MESSAGE_START_QUERY enter.");
+                            CHMeasureObject.this.queryQuality(msg.obj);
+                            break;
                         default:
                             stringBuilder = new StringBuilder();
                             stringBuilder.append("handler receive unknown message ");
@@ -298,7 +303,9 @@ public class HwChannelQoEManager {
                 HwChannelQoEManager.this.mWifiHistoryMseasureInfo.rttBef = (int) finalRtt;
             }
             int lable = 1;
-            for (HwChannelQoEAppInfo appqoeInfo : this.mCallbackList) {
+            Iterator it = this.mCallbackList.iterator();
+            while (it.hasNext()) {
+                HwChannelQoEAppInfo appqoeInfo = (HwChannelQoEAppInfo) it.next();
                 int[] iArr;
                 if (HwCHQciManager.getInstance().getChQciConfig(appqoeInfo.mQci).mRtt == 0) {
                     if (801 == this.netType) {
@@ -893,9 +900,13 @@ public class HwChannelQoEManager {
     }
 
     public static HwChannelQoEManager createInstance(Context context) {
-        log("createInstance enter.");
         if (mChannelQoEManager == null) {
-            mChannelQoEManager = new HwChannelQoEManager(context);
+            synchronized (HwChannelQoEManager.class) {
+                if (mChannelQoEManager == null) {
+                    log("createInstance enter.");
+                    mChannelQoEManager = new HwChannelQoEManager(context);
+                }
+            }
         }
         return mChannelQoEManager;
     }
@@ -1024,12 +1035,19 @@ public class HwChannelQoEManager {
             this.mCellHistoryMseasureInfo.reset();
             this.mCellHistoryMseasureInfo.tupBef = -1;
             int signal_level = queryCellSignalLevel(config.mTput);
+            Message startMessage;
             if (signal_level == 0) {
                 logE("queryChannelQuality signal level good.");
-                this.mCell.queryQuality(new HwChannelQoEAppInfo(UID, scence, i, i2, callback));
+                startMessage = Message.obtain();
+                startMessage.what = MESSAGE_START_QUERY;
+                startMessage.obj = new HwChannelQoEAppInfo(UID, scence, i, i2, callback);
+                this.mCell.mHandler.sendMessage(startMessage);
             } else if (signal_level == 1) {
                 logE("queryChannelQuality signal level MODERATE.");
-                this.mCell.queryQuality(new HwChannelQoEAppInfo(UID, scence, i, i2, callback));
+                startMessage = Message.obtain();
+                startMessage.what = MESSAGE_START_QUERY;
+                startMessage.obj = new HwChannelQoEAppInfo(UID, scence, i, i2, callback);
+                this.mCell.mHandler.sendMessage(startMessage);
             } else {
                 logE("queryChannelQuality signal level bad.");
                 int[] iArr = this.mChannelQoEParm[0].mRst.mRst;
@@ -1056,10 +1074,12 @@ public class HwChannelQoEManager {
                 this.mWifiHistoryMseasureInfo.sigLoad = info.getChload();
                 this.mWifiHistoryMseasureInfo.tupBef = -1;
             }
-            CHMeasureObject cHMeasureObject = this.mWifi;
+            Message startMessage2 = Message.obtain();
+            startMessage2.what = MESSAGE_START_QUERY;
             HwChannelQoEAppInfo hwChannelQoEAppInfo = r2;
             HwChannelQoEAppInfo hwChannelQoEAppInfo2 = new HwChannelQoEAppInfo(i3, i4, i, i2, iChannelQoECallback);
-            cHMeasureObject.queryQuality(hwChannelQoEAppInfo);
+            startMessage2.obj = hwChannelQoEAppInfo;
+            this.mWifi.mHandler.sendMessage(startMessage2);
             return;
         }
         logE("queryChannelQuality networkType error");

@@ -36,10 +36,10 @@ class TaskPositioningController {
         this.mHandler = new Handler(looper);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0024, code:
+    /* JADX WARNING: Missing block: B:9:0x0024, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r11.mActivityManager.setFocusedTask(r0.getTask().mTaskId);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -66,32 +66,32 @@ class TaskPositioningController {
         this.mHandler.post(new -$$Lambda$TaskPositioningController$WvS6bGwsoNKniWwQXf4LtUhPblY(this, x, y, displayContent));
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0054, code:
+    /* JADX WARNING: Missing block: B:20:0x0054, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:21:0x005b, code:
+    /* JADX WARNING: Missing block: B:21:0x005b, code skipped:
             if (android.util.HwPCUtils.isPcCastModeInServer() == false) goto L_0x0075;
      */
-    /* JADX WARNING: Missing block: B:22:0x005d, code:
+    /* JADX WARNING: Missing block: B:22:0x005d, code skipped:
             r12.mService.setFocusedDisplay(r15.getDisplayId(), false, "handleTapOutsideTaskXY");
             r4 = r12.mService;
      */
-    /* JADX WARNING: Missing block: B:23:0x006a, code:
+    /* JADX WARNING: Missing block: B:23:0x006a, code skipped:
             if (r2 >= 0) goto L_0x0071;
      */
-    /* JADX WARNING: Missing block: B:25:0x006e, code:
+    /* JADX WARNING: Missing block: B:25:0x006e, code skipped:
             if (r15.isDefaultDisplay != false) goto L_0x0071;
      */
-    /* JADX WARNING: Missing block: B:26:0x0071, code:
+    /* JADX WARNING: Missing block: B:26:0x0071, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:27:0x0072, code:
+    /* JADX WARNING: Missing block: B:27:0x0072, code skipped:
             r4.setPCLauncherFocused(r1);
      */
-    /* JADX WARNING: Missing block: B:28:0x0075, code:
+    /* JADX WARNING: Missing block: B:28:0x0075, code skipped:
             if (r2 < 0) goto L_0x007e;
      */
-    /* JADX WARNING: Missing block: B:30:?, code:
+    /* JADX WARNING: Missing block: B:30:?, code skipped:
             r12.mActivityManager.setFocusedTask(r2);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

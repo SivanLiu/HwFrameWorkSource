@@ -49,6 +49,10 @@ public abstract class GnssNavigationMessageProvider extends RemoteListenerHelper
 
     private static native boolean native_stop_navigation_message_collection();
 
+    public /* bridge */ /* synthetic */ boolean isRegistered() {
+        return super.isRegistered();
+    }
+
     protected GnssNavigationMessageProvider(Handler handler) {
         this(handler, new GnssNavigationMessageProviderNative());
     }

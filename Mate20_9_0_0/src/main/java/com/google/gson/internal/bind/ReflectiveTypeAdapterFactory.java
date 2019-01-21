@@ -68,15 +68,16 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
                 in.beginObject();
                 while (in.hasNext()) {
                     BoundField field = (BoundField) this.boundFields.get(in.nextName());
-                    if (field == null || !field.deserialized) {
-                        in.skipValue();
-                    } else {
-                        field.read(in, instance);
+                    if (field != null) {
+                        if (field.deserialized) {
+                            field.read(in, instance);
+                        }
                     }
+                    in.skipValue();
                 }
                 in.endObject();
                 return instance;
-            } catch (Throwable e) {
+            } catch (IllegalStateException e) {
                 throw new JsonSyntaxException(e);
             } catch (IllegalAccessException e2) {
                 throw new AssertionError(e2);

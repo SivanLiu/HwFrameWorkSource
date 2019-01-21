@@ -322,7 +322,7 @@ public class GF2Matrix extends Matrix {
         return new GF2Matrix(this.numRows, iArr);
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0034, code:
+    /* JADX WARNING: Missing block: B:19:0x0034, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -637,7 +637,7 @@ public class GF2Matrix extends Matrix {
             throw new ArithmeticException("matrix is not defined over GF(2)");
         } else if (matrix.numRows == this.numColumns) {
             GF2Matrix gF2Matrix = (GF2Matrix) matrix;
-            Matrix gF2Matrix2 = new GF2Matrix(this.numRows, matrix.numColumns);
+            GF2Matrix gF2Matrix2 = new GF2Matrix(this.numRows, matrix.numColumns);
             int i = this.numColumns & 31;
             int i2 = i == 0 ? this.length : this.length - 1;
             for (int i3 = 0; i3 < this.numRows; i3++) {
@@ -681,7 +681,7 @@ public class GF2Matrix extends Matrix {
     public Matrix rightMultiply(Permutation permutation) {
         int[] vector = permutation.getVector();
         if (vector.length == this.numColumns) {
-            Matrix gF2Matrix = new GF2Matrix(this.numRows, this.numColumns);
+            GF2Matrix gF2Matrix = new GF2Matrix(this.numRows, this.numColumns);
             for (int i = this.numColumns - 1; i >= 0; i--) {
                 int i2 = i >>> 5;
                 int i3 = i & 31;

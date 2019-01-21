@@ -28,20 +28,20 @@ public class HMacDSAKCalculator implements DSAKCalculator {
         this.n = bigInteger;
         Arrays.fill(this.V, (byte) 1);
         Arrays.fill(this.K, (byte) 0);
-        Object obj = new byte[((bigInteger.bitLength() + 7) / 8)];
-        Object asUnsignedByteArray = BigIntegers.asUnsignedByteArray(bigInteger2);
-        System.arraycopy(asUnsignedByteArray, 0, obj, obj.length - asUnsignedByteArray.length, asUnsignedByteArray.length);
+        byte[] bArr2 = new byte[((bigInteger.bitLength() + 7) / 8)];
+        byte[] asUnsignedByteArray = BigIntegers.asUnsignedByteArray(bigInteger2);
+        System.arraycopy(asUnsignedByteArray, 0, bArr2, bArr2.length - asUnsignedByteArray.length, asUnsignedByteArray.length);
         asUnsignedByteArray = new byte[((bigInteger.bitLength() + 7) / 8)];
         BigInteger bitsToInt = bitsToInt(bArr);
         if (bitsToInt.compareTo(bigInteger) >= 0) {
             bitsToInt = bitsToInt.subtract(bigInteger);
         }
-        Object asUnsignedByteArray2 = BigIntegers.asUnsignedByteArray(bitsToInt);
+        byte[] asUnsignedByteArray2 = BigIntegers.asUnsignedByteArray(bitsToInt);
         System.arraycopy(asUnsignedByteArray2, 0, asUnsignedByteArray, asUnsignedByteArray.length - asUnsignedByteArray2.length, asUnsignedByteArray2.length);
         this.hMac.init(new KeyParameter(this.K));
         this.hMac.update(this.V, 0, this.V.length);
         this.hMac.update((byte) 0);
-        this.hMac.update(obj, 0, obj.length);
+        this.hMac.update(bArr2, 0, bArr2.length);
         this.hMac.update(asUnsignedByteArray, 0, asUnsignedByteArray.length);
         this.hMac.doFinal(this.K, 0);
         this.hMac.init(new KeyParameter(this.K));
@@ -49,7 +49,7 @@ public class HMacDSAKCalculator implements DSAKCalculator {
         this.hMac.doFinal(this.V, 0);
         this.hMac.update(this.V, 0, this.V.length);
         this.hMac.update((byte) 1);
-        this.hMac.update(obj, 0, obj.length);
+        this.hMac.update(bArr2, 0, bArr2.length);
         this.hMac.update(asUnsignedByteArray, 0, asUnsignedByteArray.length);
         this.hMac.doFinal(this.K, 0);
         this.hMac.init(new KeyParameter(this.K));
@@ -66,17 +66,17 @@ public class HMacDSAKCalculator implements DSAKCalculator {
     }
 
     public BigInteger nextK() {
-        Object obj = new byte[((this.n.bitLength() + 7) / 8)];
+        byte[] bArr = new byte[((this.n.bitLength() + 7) / 8)];
         while (true) {
             int i = 0;
-            while (i < obj.length) {
+            while (i < bArr.length) {
                 this.hMac.update(this.V, 0, this.V.length);
                 this.hMac.doFinal(this.V, 0);
-                int min = Math.min(obj.length - i, this.V.length);
-                System.arraycopy(this.V, 0, obj, i, min);
+                int min = Math.min(bArr.length - i, this.V.length);
+                System.arraycopy(this.V, 0, bArr, i, min);
                 i += min;
             }
-            BigInteger bitsToInt = bitsToInt(obj);
+            BigInteger bitsToInt = bitsToInt(bArr);
             if (bitsToInt.compareTo(ZERO) > 0 && bitsToInt.compareTo(this.n) < 0) {
                 return bitsToInt;
             }

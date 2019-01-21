@@ -1,5 +1,6 @@
 package org.bouncycastle.openssl.jcajce;
 
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -85,8 +86,8 @@ class PEMUtilities {
         JcaJceHelper jcaJceHelper2 = jcaJceHelper;
         char[] cArr2 = cArr;
         String str3 = str;
-        Object obj = bArr2;
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(obj);
+        byte[] bArr3 = bArr2;
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(bArr3);
         String str4 = "CBC";
         String str5 = "PKCS5Padding";
         if (str3.endsWith("-CFB")) {
@@ -107,13 +108,13 @@ class PEMUtilities {
         int i = 1;
         if (str3.startsWith("DES-EDE")) {
             str2 = "DESede";
-            key = getKey(jcaJceHelper2, cArr2, str2, 24, obj, str3.startsWith("DES-EDE3") ^ 1);
+            key = getKey(jcaJceHelper2, cArr2, str2, 24, bArr3, str3.startsWith("DES-EDE3") ^ 1);
         } else if (str3.startsWith("DES-")) {
             str2 = "DES";
-            key = getKey(jcaJceHelper2, cArr2, str2, 8, obj);
+            key = getKey(jcaJceHelper2, cArr2, str2, 8, bArr3);
         } else if (str3.startsWith("BF-")) {
             str2 = "Blowfish";
-            key = getKey(jcaJceHelper2, cArr2, str2, 16, obj);
+            key = getKey(jcaJceHelper2, cArr2, str2, 16, bArr3);
         } else {
             int i2 = 128;
             if (str3.startsWith("RC2-")) {
@@ -123,16 +124,16 @@ class PEMUtilities {
                 } else if (str3.startsWith("RC2-64-")) {
                     i2 = 64;
                 }
-                key = getKey(jcaJceHelper2, cArr2, str2, i2 / 8, obj);
-                algorithmParameterSpec = algorithmParameterSpec == null ? new RC2ParameterSpec(i2) : new RC2ParameterSpec(i2, obj);
+                key = getKey(jcaJceHelper2, cArr2, str2, i2 / 8, bArr3);
+                algorithmParameterSpec = algorithmParameterSpec == null ? new RC2ParameterSpec(i2) : new RC2ParameterSpec(i2, bArr3);
             } else if (str3.startsWith("AES-")) {
-                byte[] bArr3;
+                byte[] bArr4;
                 str2 = "AES";
-                if (obj.length > 8) {
-                    bArr3 = new byte[8];
-                    System.arraycopy(obj, 0, bArr3, 0, 8);
+                if (bArr3.length > 8) {
+                    bArr4 = new byte[8];
+                    System.arraycopy(bArr3, 0, bArr4, 0, 8);
                 } else {
-                    bArr3 = obj;
+                    bArr4 = bArr3;
                 }
                 if (!str3.startsWith("AES-128-")) {
                     if (str3.startsWith("AES-192-")) {
@@ -143,7 +144,7 @@ class PEMUtilities {
                         throw new EncryptionException("unknown AES encryption with private key");
                     }
                 }
-                key = getKey(jcaJceHelper2, cArr2, "AES", i2 / 8, bArr3);
+                key = getKey(jcaJceHelper2, cArr2, "AES", i2 / 8, bArr4);
             } else {
                 throw new EncryptionException("unknown encryption with private key");
             }
@@ -165,7 +166,7 @@ class PEMUtilities {
                 createCipher.init(i, key, algorithmParameterSpec);
             }
             return createCipher.doFinal(bArr);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new EncryptionException("exception using cipher - please check password and data.", e);
         }
     }
@@ -191,12 +192,12 @@ class PEMUtilities {
 
     private static SecretKey getKey(JcaJceHelper jcaJceHelper, char[] cArr, String str, int i, byte[] bArr, boolean z) throws PEMException {
         try {
-            Object encoded = jcaJceHelper.createSecretKeyFactory("PBKDF-OpenSSL").generateSecret(new PBEKeySpec(cArr, bArr, 1, i * 8)).getEncoded();
+            byte[] encoded = jcaJceHelper.createSecretKeyFactory("PBKDF-OpenSSL").generateSecret(new PBEKeySpec(cArr, bArr, 1, i * 8)).getEncoded();
             if (z && encoded.length >= 24) {
                 System.arraycopy(encoded, 0, encoded, 16, 8);
             }
             return new SecretKeySpec(encoded, str);
-        } catch (Exception e) {
+        } catch (GeneralSecurityException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Unable to create OpenSSL PBDKF: ");
             stringBuilder.append(e.getMessage());

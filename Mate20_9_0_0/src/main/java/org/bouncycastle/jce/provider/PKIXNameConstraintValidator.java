@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -208,13 +207,13 @@ public class PKIXNameConstraintValidator {
 
     private byte[][] extractIPsAndSubnetMasks(byte[] bArr, byte[] bArr2) {
         int length = bArr.length / 2;
-        Object obj = new byte[length];
+        byte[] bArr3 = new byte[length];
         System.arraycopy(bArr, 0, new byte[length], 0, length);
-        System.arraycopy(bArr, length, obj, 0, length);
-        Object obj2 = new byte[length];
+        System.arraycopy(bArr, length, bArr3, 0, length);
+        byte[] bArr4 = new byte[length];
         System.arraycopy(bArr2, 0, new byte[length], 0, length);
-        System.arraycopy(bArr2, length, obj2, 0, length);
-        return new byte[][]{r2, obj, r7, obj2};
+        System.arraycopy(bArr2, length, bArr4, 0, length);
+        return new byte[][]{r2, bArr3, bArr, bArr4};
     }
 
     private String extractNameAsString(GeneralName generalName) {
@@ -233,7 +232,7 @@ public class PKIXNameConstraintValidator {
     }
 
     private Set intersectDN(Set set, Set set2) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (GeneralSubtree base : set2) {
             ASN1Sequence instance = ASN1Sequence.getInstance(base.getBase().getName().toASN1Primitive());
             if (set != null) {
@@ -252,7 +251,7 @@ public class PKIXNameConstraintValidator {
     }
 
     private Set intersectDNS(Set set, Set set2) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (GeneralSubtree base : set2) {
             String extractNameAsString = extractNameAsString(base.getBase());
             if (set != null) {
@@ -271,7 +270,7 @@ public class PKIXNameConstraintValidator {
     }
 
     private Set intersectEmail(Set set, Set set2) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (GeneralSubtree base : set2) {
             String extractNameAsString = extractNameAsString(base.getBase());
             if (set != null) {
@@ -285,16 +284,16 @@ public class PKIXNameConstraintValidator {
         return hashSet;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0052, code:
+    /* JADX WARNING: Missing block: B:17:0x0052, code skipped:
             if (withinDomain(r5.substring(r4.indexOf(64) + 1), r4) != false) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:25:0x006e, code:
+    /* JADX WARNING: Missing block: B:25:0x006e, code skipped:
             if (withinDomain(r5, r4) != false) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:29:0x0079, code:
+    /* JADX WARNING: Missing block: B:29:0x0079, code skipped:
             if (withinDomain(r5, r4) != false) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:35:0x0093, code:
+    /* JADX WARNING: Missing block: B:35:0x0093, code skipped:
             if (r5.substring(r5.indexOf(64) + 1).equalsIgnoreCase(r4) != false) goto L_0x007b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -324,9 +323,9 @@ public class PKIXNameConstraintValidator {
     }
 
     private Set intersectIP(Set set, Set set2) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (GeneralSubtree base : set2) {
-            Object octets = ASN1OctetString.getInstance(base.getBase().getName()).getOctets();
+            byte[] octets = ASN1OctetString.getInstance(base.getBase().getName()).getOctets();
             if (set != null) {
                 for (byte[] intersectIPRange : set) {
                     hashSet.addAll(intersectIPRange(intersectIPRange, octets));
@@ -352,7 +351,7 @@ public class PKIXNameConstraintValidator {
     }
 
     private Set intersectURI(Set set, Set set2) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (GeneralSubtree base : set2) {
             String extractNameAsString = extractNameAsString(base.getBase());
             if (set != null) {
@@ -366,16 +365,16 @@ public class PKIXNameConstraintValidator {
         return hashSet;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0052, code:
+    /* JADX WARNING: Missing block: B:17:0x0052, code skipped:
             if (withinDomain(r5.substring(r4.indexOf(64) + 1), r4) != false) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:25:0x006e, code:
+    /* JADX WARNING: Missing block: B:25:0x006e, code skipped:
             if (withinDomain(r5, r4) != false) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:29:0x0079, code:
+    /* JADX WARNING: Missing block: B:29:0x0079, code skipped:
             if (withinDomain(r5, r4) != false) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:35:0x0093, code:
+    /* JADX WARNING: Missing block: B:35:0x0093, code skipped:
             if (r5.substring(r5.indexOf(64) + 1).equalsIgnoreCase(r4) != false) goto L_0x007b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -406,10 +405,10 @@ public class PKIXNameConstraintValidator {
 
     private byte[] ipWithSubnetMask(byte[] bArr, byte[] bArr2) {
         int length = bArr.length;
-        Object obj = new byte[(length * 2)];
-        System.arraycopy(bArr, 0, obj, 0, length);
-        System.arraycopy(bArr2, 0, obj, length, length);
-        return obj;
+        byte[] bArr3 = new byte[(length * 2)];
+        System.arraycopy(bArr, 0, bArr3, 0, length);
+        System.arraycopy(bArr2, 0, bArr3, length, length);
+        return bArr3;
     }
 
     private boolean isIPConstrained(byte[] bArr, byte[] bArr2) {
@@ -418,16 +417,16 @@ public class PKIXNameConstraintValidator {
         if (length != bArr2.length / 2) {
             return false;
         }
-        Object obj = new byte[length];
-        System.arraycopy(bArr2, length, obj, 0, length);
         byte[] bArr3 = new byte[length];
+        System.arraycopy(bArr2, length, bArr3, 0, length);
         byte[] bArr4 = new byte[length];
+        byte[] bArr5 = new byte[length];
         while (i < length) {
-            bArr3[i] = (byte) (bArr2[i] & obj[i]);
-            bArr4[i] = (byte) (bArr[i] & obj[i]);
+            bArr4[i] = (byte) (bArr2[i] & bArr3[i]);
+            bArr5[i] = (byte) (bArr[i] & bArr3[i]);
             i++;
         }
-        return Arrays.areEqual(bArr3, bArr4);
+        return Arrays.areEqual(bArr4, bArr5);
     }
 
     private boolean isUriConstrained(String str, String str2) {
@@ -531,7 +530,7 @@ public class PKIXNameConstraintValidator {
 
     private Set unionDN(Set set, ASN1Sequence aSN1Sequence) {
         if (!set.isEmpty()) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             for (ASN1Sequence aSN1Sequence2 : set) {
                 if (withinDNSubtree(aSN1Sequence, aSN1Sequence2)) {
                     hashSet.add(aSN1Sequence2);
@@ -553,7 +552,7 @@ public class PKIXNameConstraintValidator {
 
     private Set unionEmail(Set set, String str) {
         if (!set.isEmpty()) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             for (String unionEmail : set) {
                 unionEmail(unionEmail, str, hashSet);
             }
@@ -568,12 +567,12 @@ public class PKIXNameConstraintValidator {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:52:0x00b0 in {6, 11, 14, 21, 28, 31, 33, 35, 37, 38, 43, 48, 51} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -587,99 +586,69 @@ public class PKIXNameConstraintValidator {
         r1 = r4.indexOf(r0);
         r2 = -1;
         if (r1 == r2) goto L_0x0036;
-    L_0x0009:
         r1 = r4.indexOf(r0);
         r1 = r1 + 1;
         r1 = r4.substring(r1);
         r0 = r5.indexOf(r0);
         if (r0 == r2) goto L_0x0020;
-    L_0x0019:
         r0 = r4.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x001f:
         goto L_0x007b;
-    L_0x0020:
         r0 = ".";
         r0 = r5.startsWith(r0);
         if (r0 == 0) goto L_0x002f;
-    L_0x0028:
         r0 = r3.withinDomain(r1, r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x002e:
         goto L_0x0071;
-    L_0x002f:
         r0 = r1.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x0035:
         goto L_0x0071;
-    L_0x0036:
         r1 = ".";
         r1 = r4.startsWith(r1);
         if (r1 == 0) goto L_0x0083;
-    L_0x003e:
         r1 = r5.indexOf(r0);
         if (r1 == r2) goto L_0x0055;
-    L_0x0044:
         r0 = r4.indexOf(r0);
         r0 = r0 + 1;
         r0 = r5.substring(r0);
         r0 = r3.withinDomain(r0, r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x0054:
         goto L_0x007b;
-    L_0x0055:
         r0 = ".";
         r0 = r5.startsWith(r0);
         if (r0 == 0) goto L_0x0075;
-    L_0x005d:
         r0 = r3.withinDomain(r4, r5);
         if (r0 != 0) goto L_0x0071;
-    L_0x0063:
         r0 = r4.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x006a;
-    L_0x0069:
         goto L_0x0071;
-    L_0x006a:
         r0 = r3.withinDomain(r5, r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x0070:
         goto L_0x007b;
-    L_0x0071:
         r6.add(r5);
         return;
-    L_0x0075:
         r0 = r3.withinDomain(r5, r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x007b:
         r6.add(r4);
         return;
-    L_0x007f:
         r6.add(r4);
         goto L_0x0071;
-    L_0x0083:
         r1 = r5.indexOf(r0);
         if (r1 == r2) goto L_0x009a;
-    L_0x0089:
         r0 = r4.indexOf(r0);
         r0 = r0 + 1;
         r0 = r5.substring(r0);
         r0 = r0.equalsIgnoreCase(r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x0099:
         goto L_0x007b;
-    L_0x009a:
         r0 = ".";
         r0 = r5.startsWith(r0);
         if (r0 == 0) goto L_0x00a9;
-    L_0x00a2:
         r0 = r3.withinDomain(r4, r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x00a8:
         goto L_0x0071;
-    L_0x00a9:
         r0 = r4.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x00af:
         goto L_0x007b;
         return;
         */
@@ -688,7 +657,7 @@ public class PKIXNameConstraintValidator {
 
     private Set unionIP(Set set, byte[] bArr) {
         if (!set.isEmpty()) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             for (byte[] unionIPRange : set) {
                 hashSet.addAll(unionIPRange(unionIPRange, bArr));
             }
@@ -702,7 +671,7 @@ public class PKIXNameConstraintValidator {
     }
 
     private Set unionIPRange(byte[] bArr, byte[] bArr2) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         if (Arrays.areEqual(bArr, bArr2)) {
             hashSet.add(bArr);
             return hashSet;
@@ -714,7 +683,7 @@ public class PKIXNameConstraintValidator {
 
     private Set unionURI(Set set, String str) {
         if (!set.isEmpty()) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             for (String unionURI : set) {
                 unionURI(unionURI, str, hashSet);
             }
@@ -729,12 +698,12 @@ public class PKIXNameConstraintValidator {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:52:0x00b0 in {6, 11, 14, 21, 28, 31, 33, 35, 37, 38, 43, 48, 51} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -748,99 +717,69 @@ public class PKIXNameConstraintValidator {
         r1 = r4.indexOf(r0);
         r2 = -1;
         if (r1 == r2) goto L_0x0036;
-    L_0x0009:
         r1 = r4.indexOf(r0);
         r1 = r1 + 1;
         r1 = r4.substring(r1);
         r0 = r5.indexOf(r0);
         if (r0 == r2) goto L_0x0020;
-    L_0x0019:
         r0 = r4.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x001f:
         goto L_0x007b;
-    L_0x0020:
         r0 = ".";
         r0 = r5.startsWith(r0);
         if (r0 == 0) goto L_0x002f;
-    L_0x0028:
         r0 = r3.withinDomain(r1, r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x002e:
         goto L_0x0071;
-    L_0x002f:
         r0 = r1.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x0035:
         goto L_0x0071;
-    L_0x0036:
         r1 = ".";
         r1 = r4.startsWith(r1);
         if (r1 == 0) goto L_0x0083;
-    L_0x003e:
         r1 = r5.indexOf(r0);
         if (r1 == r2) goto L_0x0055;
-    L_0x0044:
         r0 = r4.indexOf(r0);
         r0 = r0 + 1;
         r0 = r5.substring(r0);
         r0 = r3.withinDomain(r0, r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x0054:
         goto L_0x007b;
-    L_0x0055:
         r0 = ".";
         r0 = r5.startsWith(r0);
         if (r0 == 0) goto L_0x0075;
-    L_0x005d:
         r0 = r3.withinDomain(r4, r5);
         if (r0 != 0) goto L_0x0071;
-    L_0x0063:
         r0 = r4.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x006a;
-    L_0x0069:
         goto L_0x0071;
-    L_0x006a:
         r0 = r3.withinDomain(r5, r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x0070:
         goto L_0x007b;
-    L_0x0071:
         r6.add(r5);
         return;
-    L_0x0075:
         r0 = r3.withinDomain(r5, r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x007b:
         r6.add(r4);
         return;
-    L_0x007f:
         r6.add(r4);
         goto L_0x0071;
-    L_0x0083:
         r1 = r5.indexOf(r0);
         if (r1 == r2) goto L_0x009a;
-    L_0x0089:
         r0 = r4.indexOf(r0);
         r0 = r0 + 1;
         r0 = r5.substring(r0);
         r0 = r0.equalsIgnoreCase(r4);
         if (r0 == 0) goto L_0x007f;
-    L_0x0099:
         goto L_0x007b;
-    L_0x009a:
         r0 = ".";
         r0 = r5.startsWith(r0);
         if (r0 == 0) goto L_0x00a9;
-    L_0x00a2:
         r0 = r3.withinDomain(r4, r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x00a8:
         goto L_0x0071;
-    L_0x00a9:
         r0 = r4.equalsIgnoreCase(r5);
         if (r0 == 0) goto L_0x007f;
-    L_0x00af:
         goto L_0x007b;
         return;
         */
@@ -999,7 +938,7 @@ public class PKIXNameConstraintValidator {
     }
 
     public void intersectPermittedSubtree(GeneralSubtree[] generalSubtreeArr) {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         for (int i = 0; i != generalSubtreeArr.length; i++) {
             GeneralSubtree generalSubtree = generalSubtreeArr[i];
             Integer valueOf = Integers.valueOf(generalSubtree.getBase().getTagNo());
@@ -1155,7 +1094,7 @@ public class PKIXNameConstraintValidator {
 
     protected Set unionDNS(Set set, String str) {
         if (!set.isEmpty()) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             for (String str2 : set) {
                 if (!withinDomain(str2, str)) {
                     if (withinDomain(str, str2)) {

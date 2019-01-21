@@ -20,14 +20,14 @@ public class GOST28147Mac implements Mac {
     private int[] workingKey = null;
 
     private byte[] CM5func(byte[] bArr, int i, byte[] bArr2) {
-        Object obj = new byte[(bArr.length - i)];
+        byte[] bArr3 = new byte[(bArr.length - i)];
         int i2 = 0;
-        System.arraycopy(bArr, i, obj, 0, bArr2.length);
+        System.arraycopy(bArr, i, bArr3, 0, bArr2.length);
         while (i2 != bArr2.length) {
-            obj[i2] = (byte) (obj[i2] ^ bArr2[i2]);
+            bArr3[i2] = (byte) (bArr3[i2] ^ bArr2[i2]);
             i2++;
         }
-        return obj;
+        return bArr3;
     }
 
     private int bytesToint(byte[] bArr, int i) {
@@ -85,14 +85,14 @@ public class GOST28147Mac implements Mac {
             this.buf[this.bufOff] = (byte) 0;
             this.bufOff++;
         }
-        Object obj = new byte[this.buf.length];
-        System.arraycopy(this.buf, 0, obj, 0, this.mac.length);
+        byte[] bArr2 = new byte[this.buf.length];
+        System.arraycopy(this.buf, 0, bArr2, 0, this.mac.length);
         if (this.firstStep) {
             this.firstStep = false;
         } else {
-            obj = CM5func(this.buf, 0, this.mac);
+            bArr2 = CM5func(this.buf, 0, this.mac);
         }
-        gost28147MacFunc(this.workingKey, obj, 0, this.mac, 0);
+        gost28147MacFunc(this.workingKey, bArr2, 0, this.mac, 0);
         System.arraycopy(this.mac, (this.mac.length / 2) - this.macSize, bArr, i, this.macSize);
         reset();
         return this.macSize;
@@ -144,22 +144,22 @@ public class GOST28147Mac implements Mac {
     public void update(byte b) throws IllegalStateException {
         byte[] bArr;
         if (this.bufOff == this.buf.length) {
-            Object obj = new byte[this.buf.length];
-            System.arraycopy(this.buf, 0, obj, 0, this.mac.length);
+            bArr = new byte[this.buf.length];
+            System.arraycopy(this.buf, 0, bArr, 0, this.mac.length);
             byte[] bArr2;
             if (this.firstStep) {
                 this.firstStep = false;
                 if (this.macIV != null) {
                     bArr = this.buf;
                     bArr2 = this.macIV;
-                    obj = CM5func(bArr, 0, bArr2);
+                    bArr = CM5func(bArr, 0, bArr2);
                 }
             } else {
                 bArr = this.buf;
                 bArr2 = this.mac;
-                obj = CM5func(bArr, 0, bArr2);
+                bArr = CM5func(bArr, 0, bArr2);
             }
-            gost28147MacFunc(this.workingKey, obj, 0, this.mac, 0);
+            gost28147MacFunc(this.workingKey, bArr, 0, this.mac, 0);
             this.bufOff = 0;
         }
         bArr = this.buf;
@@ -173,23 +173,22 @@ public class GOST28147Mac implements Mac {
             int i3 = this.blockSize - this.bufOff;
             if (i2 > i3) {
                 System.arraycopy(bArr, i, this.buf, this.bufOff, i3);
-                Object obj = new byte[this.buf.length];
-                System.arraycopy(this.buf, 0, obj, 0, this.mac.length);
-                byte[] bArr2;
+                byte[] bArr2 = new byte[this.buf.length];
+                System.arraycopy(this.buf, 0, bArr2, 0, this.mac.length);
                 byte[] bArr3;
                 if (this.firstStep) {
                     this.firstStep = false;
                     if (this.macIV != null) {
                         bArr2 = this.buf;
                         bArr3 = this.macIV;
-                        obj = CM5func(bArr2, 0, bArr3);
+                        bArr2 = CM5func(bArr2, 0, bArr3);
                     }
                 } else {
                     bArr2 = this.buf;
                     bArr3 = this.mac;
-                    obj = CM5func(bArr2, 0, bArr3);
+                    bArr2 = CM5func(bArr2, 0, bArr3);
                 }
-                gost28147MacFunc(this.workingKey, obj, 0, this.mac, 0);
+                gost28147MacFunc(this.workingKey, bArr2, 0, this.mac, 0);
                 this.bufOff = 0;
                 i2 -= i3;
                 while (true) {

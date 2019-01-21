@@ -23,33 +23,33 @@ public class OldCTSBlockCipher extends BufferedBlockCipher {
         if (this.bufOff + i <= bArr.length) {
             int blockSize = this.cipher.getBlockSize();
             int i2 = this.bufOff - blockSize;
-            Object obj = new byte[blockSize];
+            byte[] bArr2 = new byte[blockSize];
             if (this.forEncryption) {
-                this.cipher.processBlock(this.buf, 0, obj, 0);
+                this.cipher.processBlock(this.buf, 0, bArr2, 0);
                 if (this.bufOff >= blockSize) {
                     int i3;
                     for (i3 = this.bufOff; i3 != this.buf.length; i3++) {
-                        this.buf[i3] = obj[i3 - blockSize];
+                        this.buf[i3] = bArr2[i3 - blockSize];
                     }
                     for (i3 = blockSize; i3 != this.bufOff; i3++) {
-                        byte[] bArr2 = this.buf;
-                        bArr2[i3] = (byte) (bArr2[i3] ^ obj[i3 - blockSize]);
+                        byte[] bArr3 = this.buf;
+                        bArr3[i3] = (byte) (bArr3[i3] ^ bArr2[i3 - blockSize]);
                     }
                     (this.cipher instanceof CBCBlockCipher ? ((CBCBlockCipher) this.cipher).getUnderlyingCipher() : this.cipher).processBlock(this.buf, blockSize, bArr, i);
-                    System.arraycopy(obj, 0, bArr, i + blockSize, i2);
+                    System.arraycopy(bArr2, 0, bArr, i + blockSize, i2);
                 } else {
                     throw new DataLengthException("need at least one block of input for CTS");
                 }
             }
-            Object obj2 = new byte[blockSize];
-            (this.cipher instanceof CBCBlockCipher ? ((CBCBlockCipher) this.cipher).getUnderlyingCipher() : this.cipher).processBlock(this.buf, 0, obj, 0);
+            byte[] bArr4 = new byte[blockSize];
+            (this.cipher instanceof CBCBlockCipher ? ((CBCBlockCipher) this.cipher).getUnderlyingCipher() : this.cipher).processBlock(this.buf, 0, bArr2, 0);
             for (int i4 = blockSize; i4 != this.bufOff; i4++) {
                 int i5 = i4 - blockSize;
-                obj2[i5] = (byte) (obj[i5] ^ this.buf[i4]);
+                bArr4[i5] = (byte) (bArr2[i5] ^ this.buf[i4]);
             }
-            System.arraycopy(this.buf, blockSize, obj, 0, i2);
-            this.cipher.processBlock(obj, 0, bArr, i);
-            System.arraycopy(obj2, 0, bArr, i + blockSize, i2);
+            System.arraycopy(this.buf, blockSize, bArr2, 0, i2);
+            this.cipher.processBlock(bArr2, 0, bArr, i);
+            System.arraycopy(bArr4, 0, bArr, i + blockSize, i2);
             int i6 = this.bufOff;
             reset();
             return i6;

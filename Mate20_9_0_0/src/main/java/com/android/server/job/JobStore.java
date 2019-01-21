@@ -87,14 +87,16 @@ public final class JobStore {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:44:0x0125 A:{Catch:{ IOException -> 0x011c, XmlPullParserException -> 0x010b, all -> 0x0104, all -> 0x0146 }} */
-        /* JADX WARNING: Removed duplicated region for block: B:39:0x0114 A:{Catch:{ IOException -> 0x011c, XmlPullParserException -> 0x010b, all -> 0x0104, all -> 0x0146 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:47:0x0125 A:{Catch:{ IOException -> 0x011c, XmlPullParserException -> 0x010b, all -> 0x0104, all -> 0x0146 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:42:0x0114 A:{Catch:{ IOException -> 0x011c, XmlPullParserException -> 0x010b, all -> 0x0104, all -> 0x0146 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:47:0x0125 A:{Catch:{ IOException -> 0x011c, XmlPullParserException -> 0x010b, all -> 0x0104, all -> 0x0146 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:42:0x0114 A:{Catch:{ IOException -> 0x011c, XmlPullParserException -> 0x010b, all -> 0x0104, all -> 0x0146 }} */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private void writeJobsMapImpl(List<JobStatus> jobList) {
             IOException e;
-            List<JobStatus> list;
             XmlPullParserException e2;
             Throwable th;
+            List<JobStatus> list;
             int numJobs = 0;
             int numJobs2 = 0;
             int numSystemJobs = 0;
@@ -114,63 +116,81 @@ public final class JobStore {
                 numJobs = 0;
                 while (numJobs < jobList.size()) {
                     try {
-                    } catch (IOException e3) {
-                        e = e3;
-                        list = jobList;
-                    } catch (XmlPullParserException e4) {
-                        e2 = e4;
-                        list = jobList;
-                    } catch (Throwable th2) {
-                        th = th2;
-                        list = jobList;
-                    }
-                    try {
-                        JobStatus jobStatus = (JobStatus) jobList.get(numJobs);
-                        if (JobStore.DEBUG) {
-                            String str = JobStore.TAG;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("Saving job ");
-                            stringBuilder.append(jobStatus.getJobId());
-                            Slog.d(str, stringBuilder.toString());
-                        }
-                        out.startTag(null, "job");
-                        addAttributesToJobTag(out, jobStatus);
-                        writeConstraintsToXml(out, jobStatus);
-                        writeExecutionCriteriaToXml(out, jobStatus);
-                        writeBundleToXml(jobStatus.getJob().getExtras(), out);
-                        out.endTag(null, "job");
-                        numJobs2++;
-                        if (jobStatus.getUid() == 1000) {
-                            numSystemJobs++;
-                            if (JobStore.isSyncJob(jobStatus)) {
-                                numSyncJobs++;
+                        try {
+                            JobStatus jobStatus = (JobStatus) jobList.get(numJobs);
+                            if (JobStore.DEBUG) {
+                                String str = JobStore.TAG;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("Saving job ");
+                                stringBuilder.append(jobStatus.getJobId());
+                                Slog.d(str, stringBuilder.toString());
                             }
+                            out.startTag(null, "job");
+                            addAttributesToJobTag(out, jobStatus);
+                            writeConstraintsToXml(out, jobStatus);
+                            writeExecutionCriteriaToXml(out, jobStatus);
+                            writeBundleToXml(jobStatus.getJob().getExtras(), out);
+                            out.endTag(null, "job");
+                            numJobs2++;
+                            if (jobStatus.getUid() == 1000) {
+                                numSystemJobs++;
+                                if (JobStore.isSyncJob(jobStatus)) {
+                                    numSyncJobs++;
+                                }
+                            }
+                            numJobs++;
+                        } catch (IOException e3) {
+                            e = e3;
+                            numJobs = numJobs2;
+                            numJobs2 = numSystemJobs;
+                            numSystemJobs = numSyncJobs;
+                            if (JobStore.DEBUG) {
+                            }
+                            JobStore.this.mPersistInfo.countAllJobsSaved = numJobs;
+                            JobStore.this.mPersistInfo.countSystemServerJobsSaved = numJobs2;
+                            JobStore.this.mPersistInfo.countSystemSyncManagerJobsSaved = numSystemJobs;
+                        } catch (XmlPullParserException e4) {
+                            e2 = e4;
+                            numJobs = numJobs2;
+                            numJobs2 = numSystemJobs;
+                            numSystemJobs = numSyncJobs;
+                            if (JobStore.DEBUG) {
+                            }
+                            JobStore.this.mPersistInfo.countAllJobsSaved = numJobs;
+                            JobStore.this.mPersistInfo.countSystemServerJobsSaved = numJobs2;
+                            JobStore.this.mPersistInfo.countSystemSyncManagerJobsSaved = numSystemJobs;
+                        } catch (Throwable th2) {
+                            th = th2;
+                            JobStore.this.mPersistInfo.countAllJobsSaved = numJobs2;
+                            JobStore.this.mPersistInfo.countSystemServerJobsSaved = numSystemJobs;
+                            JobStore.this.mPersistInfo.countSystemSyncManagerJobsSaved = numSyncJobs;
+                            throw th;
                         }
-                        numJobs++;
                     } catch (IOException e5) {
                         e = e5;
+                        list = jobList;
                         numJobs = numJobs2;
                         numJobs2 = numSystemJobs;
                         numSystemJobs = numSyncJobs;
                         if (JobStore.DEBUG) {
-                            Slog.v(JobStore.TAG, "Error writing out job data.", e);
                         }
                         JobStore.this.mPersistInfo.countAllJobsSaved = numJobs;
                         JobStore.this.mPersistInfo.countSystemServerJobsSaved = numJobs2;
                         JobStore.this.mPersistInfo.countSystemSyncManagerJobsSaved = numSystemJobs;
                     } catch (XmlPullParserException e6) {
                         e2 = e6;
+                        list = jobList;
                         numJobs = numJobs2;
                         numJobs2 = numSystemJobs;
                         numSystemJobs = numSyncJobs;
                         if (JobStore.DEBUG) {
-                            Slog.d(JobStore.TAG, "Error persisting bundle.", e2);
                         }
                         JobStore.this.mPersistInfo.countAllJobsSaved = numJobs;
                         JobStore.this.mPersistInfo.countSystemServerJobsSaved = numJobs2;
                         JobStore.this.mPersistInfo.countSystemSyncManagerJobsSaved = numSystemJobs;
                     } catch (Throwable th3) {
                         th = th3;
+                        list = jobList;
                         JobStore.this.mPersistInfo.countAllJobsSaved = numJobs2;
                         JobStore.this.mPersistInfo.countSystemServerJobsSaved = numSystemJobs;
                         JobStore.this.mPersistInfo.countSystemSyncManagerJobsSaved = numSyncJobs;
@@ -192,6 +212,7 @@ public final class JobStore {
                 e = e7;
                 list = jobList;
                 if (JobStore.DEBUG) {
+                    Slog.v(JobStore.TAG, "Error writing out job data.", e);
                 }
                 JobStore.this.mPersistInfo.countAllJobsSaved = numJobs;
                 JobStore.this.mPersistInfo.countSystemServerJobsSaved = numJobs2;
@@ -200,6 +221,7 @@ public final class JobStore {
                 e2 = e8;
                 list = jobList;
                 if (JobStore.DEBUG) {
+                    Slog.d(JobStore.TAG, "Error persisting bundle.", e2);
                 }
                 JobStore.this.mPersistInfo.countAllJobsSaved = numJobs;
                 JobStore.this.mPersistInfo.countSystemServerJobsSaved = numJobs2;
@@ -541,28 +563,21 @@ public final class JobStore {
             this.rtcGood = rtcIsGood;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:29:0x0080 A:{PHI: r0 r1 r3 , Splitter: B:1:0x0004, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_15 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:21:0x0060, code:
+        /* JADX WARNING: Missing block: B:21:0x0060, code skipped:
             if (com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded < 0) goto L_0x0062;
      */
-        /* JADX WARNING: Missing block: B:22:0x0062, code:
+        /* JADX WARNING: Missing block: B:22:0x0062, code skipped:
             com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded = r0;
             com.android.server.job.JobStore.access$400(r13.this$0).countSystemServerJobsLoaded = r1;
             com.android.server.job.JobStore.access$400(r13.this$0).countSystemSyncManagerJobsLoaded = r3;
      */
-        /* JADX WARNING: Missing block: B:29:0x0080, code:
-            r2 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:31:?, code:
-            android.util.Slog.wtf(com.android.server.job.JobStore.TAG, "Error jobstore xml.", r2);
-     */
-        /* JADX WARNING: Missing block: B:33:0x0090, code:
-            if (com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded < 0) goto L_0x0062;
-     */
-        /* JADX WARNING: Missing block: B:40:0x00a9, code:
+        /* JADX WARNING: Missing block: B:33:0x0090, code skipped:
             if (com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded >= 0) goto L_0x00ac;
      */
-        /* JADX WARNING: Missing block: B:41:0x00ac, code:
+        /* JADX WARNING: Missing block: B:40:0x00a9, code skipped:
+            if (com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded >= 0) goto L_0x00ac;
+     */
+        /* JADX WARNING: Missing block: B:41:0x00ac, code skipped:
             r2 = com.android.server.job.JobStore.TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("Read ");
@@ -570,16 +585,8 @@ public final class JobStore {
             r4.append(" jobs");
             android.util.Slog.i(r2, r4.toString());
      */
-        /* JADX WARNING: Missing block: B:42:0x00c7, code:
+        /* JADX WARNING: Missing block: B:42:0x00c7, code skipped:
             return;
-     */
-        /* JADX WARNING: Missing block: B:44:0x00d0, code:
-            if (com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded < 0) goto L_0x00d2;
-     */
-        /* JADX WARNING: Missing block: B:45:0x00d2, code:
-            com.android.server.job.JobStore.access$400(r13.this$0).countAllJobsLoaded = r0;
-            com.android.server.job.JobStore.access$400(r13.this$0).countSystemServerJobsLoaded = r1;
-            com.android.server.job.JobStore.access$400(r13.this$0).countSystemSyncManagerJobsLoaded = r3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
@@ -615,7 +622,16 @@ public final class JobStore {
                 if (JobStore.DEBUG) {
                     Slog.d(JobStore.TAG, "Could not find jobs file, probably there was nothing to load.");
                 }
-            } catch (Exception e2) {
+            } catch (IOException | XmlPullParserException e2) {
+                try {
+                    Slog.wtf(JobStore.TAG, "Error jobstore xml.", e2);
+                } catch (Throwable th) {
+                    if (JobStore.this.mPersistInfo.countAllJobsLoaded < 0) {
+                        JobStore.this.mPersistInfo.countAllJobsLoaded = numJobs;
+                        JobStore.this.mPersistInfo.countSystemServerJobsLoaded = numSystemJobs;
+                        JobStore.this.mPersistInfo.countSystemSyncManagerJobsLoaded = numSyncJobs;
+                    }
+                }
             }
         }
 
@@ -681,7 +697,7 @@ public final class JobStore {
             NumberFormatException numberFormatException;
             XmlPullParser xmlPullParser = parser;
             int internalFlags = 0;
-            String str = null;
+            JobStatus jobStatus = null;
             try {
                 Builder jobBuilder = buildBuilderFromXml(xmlPullParser);
                 jobBuilder.setPersisted(true);
@@ -714,7 +730,7 @@ public final class JobStore {
                         if (eventType != 4) {
                             break;
                         }
-                        str = null;
+                        jobStatus = null;
                     }
                     Builder builder;
                     int i2;
@@ -722,7 +738,7 @@ public final class JobStore {
                         builder = jobBuilder;
                         internalFlags = uid;
                         i2 = sourceUserId;
-                        uid = str;
+                        uid = jobStatus;
                     } else if (JobStore.XML_TAG_PARAMS_CONSTRAINTS.equals(parser.getName())) {
                         try {
                             int i3;
@@ -736,12 +752,12 @@ public final class JobStore {
                                 i = internalFlags;
                                 internalFlags = uid;
                                 i3 = eventType;
-                                uid = str;
+                                uid = jobStatus;
                                 uid = internalFlags;
                                 internalFlags = i;
                             }
                             if (eventType != 2) {
-                                return str;
+                                return jobStatus;
                             }
                             try {
                                 long clampedLateRuntimeElapsed;
@@ -754,8 +770,8 @@ public final class JobStore {
                                 if (JobStore.XML_TAG_PERIODIC.equals(parser.getName())) {
                                     try {
                                         long longValue;
-                                        long periodMillis = Long.parseLong(xmlPullParser.getAttributeValue(str, "period"));
-                                        String val2 = xmlPullParser.getAttributeValue(str, "flex");
+                                        long periodMillis = Long.parseLong(xmlPullParser.getAttributeValue(jobStatus, "period"));
+                                        String val2 = xmlPullParser.getAttributeValue(jobStatus, "flex");
                                         if (val2 != null) {
                                             try {
                                                 longValue = Long.valueOf(val2).longValue();
@@ -775,15 +791,15 @@ public final class JobStore {
                                         try {
                                             jobBuilder.setPeriodic(periodMillis2, flexMillis);
                                             if (((Long) elapsedRuntimes2.second).longValue() > (elapsedNow + periodMillis2) + flexMillis) {
+                                                String str;
                                                 String str2;
-                                                String str3;
                                                 Object[] objArr;
                                                 builder2 = jobBuilder;
                                                 clampedLateRuntimeElapsed = (elapsedNow + flexMillis) + periodMillis2;
                                                 periodMillis2 = clampedLateRuntimeElapsed - flexMillis;
                                                 try {
-                                                    str2 = JobStore.TAG;
-                                                    str3 = "Periodic job for uid='%d' persisted run-time is too big [%s, %s]. Clamping to [%s,%s]";
+                                                    str = JobStore.TAG;
+                                                    str2 = "Periodic job for uid='%d' persisted run-time is too big [%s, %s]. Clamping to [%s,%s]";
                                                     objArr = new Object[5];
                                                     i = internalFlags;
                                                     internalFlags = uid2;
@@ -810,7 +826,7 @@ public final class JobStore {
                                                         objArr[2] = DateUtils.formatElapsedTime(((Long) elapsedRuntimes2.second).longValue() / 1000);
                                                         objArr[3] = DateUtils.formatElapsedTime(periodMillis2 / 1000);
                                                         objArr[4] = DateUtils.formatElapsedTime(clampedLateRuntimeElapsed / 1000);
-                                                        Slog.w(str2, String.format(str3, objArr));
+                                                        Slog.w(str, String.format(str2, objArr));
                                                         elapsedRuntimes2 = Pair.create(Long.valueOf(periodMillis2), Long.valueOf(clampedLateRuntimeElapsed));
                                                     } catch (NumberFormatException e4) {
                                                         Slog.d(JobStore.TAG, "Error reading periodic execution criteria, skipping.");
@@ -901,11 +917,11 @@ public final class JobStore {
                                 i2 = sourceUserId2;
                                 builder = builder2;
                                 if (JobStore.DEBUG) {
-                                    String str4 = JobStore.TAG;
+                                    String str3 = JobStore.TAG;
                                     StringBuilder stringBuilder = new StringBuilder();
                                     stringBuilder.append("Invalid parameter tag, skipping - ");
                                     stringBuilder.append(parser.getName());
-                                    Slog.d(str4, stringBuilder.toString());
+                                    Slog.d(str3, stringBuilder.toString());
                                 }
                                 return null;
                                 maybeBuildBackoffPolicyFromXml(builder, xmlPullParser);
@@ -927,12 +943,12 @@ public final class JobStore {
                                     if (PackageManagerService.PLATFORM_PACKAGE_NAME.equals(val) && extras != null && extras.getBoolean("SyncManagerJob", false)) {
                                         val = extras.getString("owningPackage", val);
                                         if (JobStore.DEBUG) {
-                                            String str5 = JobStore.TAG;
+                                            String str4 = JobStore.TAG;
                                             StringBuilder stringBuilder2 = new StringBuilder();
                                             stringBuilder2.append("Fixing up sync job source package name from 'android' to '");
                                             stringBuilder2.append(val);
                                             stringBuilder2.append("'");
-                                            Slog.i(str5, stringBuilder2.toString());
+                                            Slog.i(str4, stringBuilder2.toString());
                                         }
                                     }
                                     String sourcePackageName = val;
@@ -971,17 +987,17 @@ public final class JobStore {
                             builder = jobBuilder;
                             internalFlags = uid;
                             i2 = sourceUserId;
-                            String str6 = str;
+                            JobStatus jobStatus2 = jobStatus;
                             numberFormatException = e122;
                             Slog.d(JobStore.TAG, "Error reading constraints, skipping.");
-                            return str6;
+                            return jobStatus2;
                         }
                     } else {
                         i = internalFlags;
                         builder = jobBuilder;
                         internalFlags = uid;
                         i2 = sourceUserId;
-                        uid = str;
+                        uid = jobStatus;
                     }
                     return uid;
                 } catch (NumberFormatException e13) {

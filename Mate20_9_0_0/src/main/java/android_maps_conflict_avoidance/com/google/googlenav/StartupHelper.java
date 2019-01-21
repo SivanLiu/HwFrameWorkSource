@@ -10,7 +10,7 @@ public class StartupHelper {
         addPostStartupCallback(runnable, false);
     }
 
-    /* JADX WARNING: Missing block: B:12:0x001a, code:
+    /* JADX WARNING: Missing block: B:12:0x001a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

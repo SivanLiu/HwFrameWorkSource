@@ -56,16 +56,16 @@ public class HwFastAppManager {
             onChange(selfChange, null);
         }
 
-        /* JADX WARNING: Missing block: B:25:0x007e, code:
+        /* JADX WARNING: Missing block: B:25:0x007e, code skipped:
             if (r8 != null) goto L_0x0080;
      */
-        /* JADX WARNING: Missing block: B:26:0x0080, code:
+        /* JADX WARNING: Missing block: B:26:0x0080, code skipped:
             r8.close();
      */
-        /* JADX WARNING: Missing block: B:36:0x00a4, code:
+        /* JADX WARNING: Missing block: B:36:0x00a4, code skipped:
             if (r8 == null) goto L_0x00a7;
      */
-        /* JADX WARNING: Missing block: B:37:0x00a7, code:
+        /* JADX WARNING: Missing block: B:37:0x00a7, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -192,23 +192,25 @@ public class HwFastAppManager {
         }
         try {
             ProviderInfo provInfo = packageManager.resolveContentProvider(FAST_APP_PROVIDER, 0);
-            if (provInfo == null || !FAST_APP_PACKAGE_NAME.equals(provInfo.packageName)) {
-                Slog.w(TAG, "registerFastAppObserver: provInfo is wrong");
-                return false;
-            }
-            this.mFastAppBasePackageInfo = packageManager.getPackageInfo(FAST_APP_PACKAGE_NAME, 64);
-            if (checkFastAppSignature(this.mFastAppBasePackageInfo.signatures)) {
-                ContentResolver contentResolver = this.mContext.getContentResolver();
-                if (contentResolver == null) {
-                    Slog.w(TAG, "registerFastAppObserver: content resolver is null");
+            if (provInfo != null) {
+                if (FAST_APP_PACKAGE_NAME.equals(provInfo.packageName)) {
+                    this.mFastAppBasePackageInfo = packageManager.getPackageInfo(FAST_APP_PACKAGE_NAME, 64);
+                    if (checkFastAppSignature(this.mFastAppBasePackageInfo.signatures)) {
+                        ContentResolver contentResolver = this.mContext.getContentResolver();
+                        if (contentResolver == null) {
+                            Slog.w(TAG, "registerFastAppObserver: content resolver is null");
+                            return false;
+                        }
+                        this.mFastAppObserver = new FastAppObserver(this.mHandler);
+                        contentResolver.registerContentObserver(FAST_APP_CONTENT_URI, true, this.mFastAppObserver);
+                        this.mFastAppObserver.dispatchChange(true, FAST_APP_CONTENT_URI);
+                        return true;
+                    }
+                    Slog.w(TAG, "registerFastAppObserver: fail to check fastapp signature");
                     return false;
                 }
-                this.mFastAppObserver = new FastAppObserver(this.mHandler);
-                contentResolver.registerContentObserver(FAST_APP_CONTENT_URI, true, this.mFastAppObserver);
-                this.mFastAppObserver.dispatchChange(true, FAST_APP_CONTENT_URI);
-                return true;
             }
-            Slog.w(TAG, "registerFastAppObserver: fail to check fastapp signature");
+            Slog.w(TAG, "registerFastAppObserver: provInfo is wrong");
             return false;
         } catch (Throwable error) {
             this.mFastAppObserver = null;

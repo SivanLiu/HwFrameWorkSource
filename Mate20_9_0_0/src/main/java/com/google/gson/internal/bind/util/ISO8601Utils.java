@@ -69,16 +69,12 @@ public class ISO8601Utils {
     /* JADX WARNING: Removed duplicated region for block: B:102:0x0216  */
     /* JADX WARNING: Removed duplicated region for block: B:102:0x0216  */
     /* JADX WARNING: Removed duplicated region for block: B:103:0x0219  */
-    /* JADX WARNING: Removed duplicated region for block: B:103:0x0219  */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x0216  */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x0216  */
-    /* JADX WARNING: Removed duplicated region for block: B:103:0x0219  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static Date parse(String date, ParsePosition pos) throws ParseException {
         Exception fail;
         Exception exception;
-        String input;
         String str;
+        String input;
         String msg;
         StringBuilder stringBuilder;
         StringBuilder stringBuilder2;
@@ -116,14 +112,23 @@ public class ISO8601Utils {
                     fail = e;
                     exception = fail2;
                     if (str2 == null) {
+                        str = null;
+                    } else {
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append('\"');
+                        stringBuilder3.append(str2);
+                        stringBuilder3.append("'");
+                        str = stringBuilder3.toString();
                     }
                     input = str;
                     msg = fail.getMessage();
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("(");
-                    stringBuilder.append(fail.getClass().getName());
-                    stringBuilder.append(")");
-                    msg = stringBuilder.toString();
+                    if (msg == null || msg.isEmpty()) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("(");
+                        stringBuilder.append(fail.getClass().getName());
+                        stringBuilder.append(")");
+                        msg = stringBuilder.toString();
+                    }
                     stringBuilder2 = new StringBuilder();
                     stringBuilder2.append("Failed to parse date [");
                     stringBuilder2.append(input);
@@ -234,21 +239,21 @@ public class ISO8601Utils {
                     } else if (timezoneIndicator == '-') {
                         timezone2 = null;
                     } else {
-                        StringBuilder stringBuilder3 = new StringBuilder();
+                        StringBuilder stringBuilder4 = new StringBuilder();
                         timezone2 = null;
-                        stringBuilder3.append("Invalid time zone indicator '");
-                        stringBuilder3.append(timezoneIndicator);
-                        stringBuilder3.append("'");
-                        throw new IndexOutOfBoundsException(stringBuilder3.toString());
+                        stringBuilder4.append("Invalid time zone indicator '");
+                        stringBuilder4.append(timezoneIndicator);
+                        stringBuilder4.append("'");
+                        throw new IndexOutOfBoundsException(stringBuilder4.toString());
                     }
                     input = str2.substring(offset);
                     if (input.length() >= 5) {
                         str3 = input;
                     } else {
-                        StringBuilder stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append(input);
-                        stringBuilder4.append("00");
-                        str3 = stringBuilder4.toString();
+                        StringBuilder stringBuilder5 = new StringBuilder();
+                        stringBuilder5.append(input);
+                        stringBuilder5.append("00");
+                        str3 = stringBuilder5.toString();
                     }
                     input = str3;
                     offset += input.length();
@@ -283,46 +288,8 @@ public class ISO8601Utils {
                                     input.append(timezone3.getID());
                                     throw new IndexOutOfBoundsException(input.toString());
                                 }
-                            } catch (IndexOutOfBoundsException e4) {
+                            } catch (IllegalArgumentException | IndexOutOfBoundsException | NumberFormatException e4) {
                                 fail = e4;
-                                if (str2 == null) {
-                                }
-                                input = str;
-                                msg = fail.getMessage();
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("(");
-                                stringBuilder.append(fail.getClass().getName());
-                                stringBuilder.append(")");
-                                msg = stringBuilder.toString();
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Failed to parse date [");
-                                stringBuilder2.append(input);
-                                stringBuilder2.append("]: ");
-                                stringBuilder2.append(msg);
-                                ex = new ParseException(stringBuilder2.toString(), pos.getIndex());
-                                ex.initCause(fail);
-                                throw ex;
-                            } catch (NumberFormatException e5) {
-                                fail = e5;
-                                if (str2 == null) {
-                                }
-                                input = str;
-                                msg = fail.getMessage();
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("(");
-                                stringBuilder.append(fail.getClass().getName());
-                                stringBuilder.append(")");
-                                msg = stringBuilder.toString();
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Failed to parse date [");
-                                stringBuilder2.append(input);
-                                stringBuilder2.append("]: ");
-                                stringBuilder2.append(msg);
-                                ex = new ParseException(stringBuilder2.toString(), pos.getIndex());
-                                ex.initCause(fail);
-                                throw ex;
-                            } catch (IllegalArgumentException e6) {
-                                fail = e6;
                                 if (str2 == null) {
                                 }
                                 input = str;
@@ -359,37 +326,8 @@ public class ISO8601Utils {
                 return fail2.getTime();
             }
             throw new IllegalArgumentException("No time zone indicator");
-        } catch (IndexOutOfBoundsException e7) {
-            fail = e7;
-            exception = fail2;
-            if (str2 == null) {
-                str = null;
-            } else {
-                StringBuilder stringBuilder5 = new StringBuilder();
-                stringBuilder5.append('\"');
-                stringBuilder5.append(str2);
-                stringBuilder5.append("'");
-                str = stringBuilder5.toString();
-            }
-            input = str;
-            msg = fail.getMessage();
-            if (msg == null || msg.isEmpty()) {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("(");
-                stringBuilder.append(fail.getClass().getName());
-                stringBuilder.append(")");
-                msg = stringBuilder.toString();
-            }
-            stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("Failed to parse date [");
-            stringBuilder2.append(input);
-            stringBuilder2.append("]: ");
-            stringBuilder2.append(msg);
-            ex = new ParseException(stringBuilder2.toString(), pos.getIndex());
-            ex.initCause(fail);
-            throw ex;
-        } catch (NumberFormatException e8) {
-            fail = e8;
+        } catch (IndexOutOfBoundsException e5) {
+            fail = e5;
             exception = fail2;
             if (str2 == null) {
             }
@@ -408,8 +346,28 @@ public class ISO8601Utils {
             ex = new ParseException(stringBuilder2.toString(), pos.getIndex());
             ex.initCause(fail);
             throw ex;
-        } catch (IllegalArgumentException e9) {
-            fail = e9;
+        } catch (NumberFormatException e6) {
+            fail = e6;
+            exception = fail2;
+            if (str2 == null) {
+            }
+            input = str;
+            msg = fail.getMessage();
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("(");
+            stringBuilder.append(fail.getClass().getName());
+            stringBuilder.append(")");
+            msg = stringBuilder.toString();
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Failed to parse date [");
+            stringBuilder2.append(input);
+            stringBuilder2.append("]: ");
+            stringBuilder2.append(msg);
+            ex = new ParseException(stringBuilder2.toString(), pos.getIndex());
+            ex.initCause(fail);
+            throw ex;
+        } catch (IllegalArgumentException e7) {
+            fail = e7;
             exception = fail2;
             if (str2 == null) {
             }

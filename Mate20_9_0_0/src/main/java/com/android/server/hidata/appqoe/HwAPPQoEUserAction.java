@@ -197,10 +197,10 @@ public class HwAPPQoEUserAction {
         this.mContext.registerReceiver(this.mBroadcastReceiver, this.intentFilter);
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0056, code:
+    /* JADX WARNING: Missing block: B:12:0x0056, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:13:0x0057, code:
+    /* JADX WARNING: Missing block: B:13:0x0057, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -211,19 +211,19 @@ public class HwAPPQoEUserAction {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x00da, code:
+    /* JADX WARNING: Missing block: B:22:0x00da, code skipped:
             if (r12 != null) goto L_0x00dc;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             r12.close();
      */
-    /* JADX WARNING: Missing block: B:29:0x00fb, code:
+    /* JADX WARNING: Missing block: B:29:0x00fb, code skipped:
             if (r12 == null) goto L_0x00fe;
      */
-    /* JADX WARNING: Missing block: B:30:0x00fe, code:
+    /* JADX WARNING: Missing block: B:30:0x00fe, code skipped:
             if (r8 == false) goto L_0x0175;
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r0 = TAG;
             r13 = new java.lang.StringBuilder();
             r13.append("updateUserActionData userType :");
@@ -240,19 +240,19 @@ public class HwAPPQoEUserAction {
             r0.put("commonCnt", java.lang.Integer.valueOf(r4));
             r0.put("radicalCnt", java.lang.Integer.valueOf(r5));
      */
-    /* JADX WARNING: Missing block: B:33:0x0158, code:
+    /* JADX WARNING: Missing block: B:33:0x0158, code skipped:
             r20 = r6;
      */
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
             r1.mDatabase.update(com.android.server.hidata.appqoe.HwAPPQoEDataBase.TABLE_USER_ACTION, r0, " (wifiSSID like ?) and (cardInfo = ?) and (appId = ?)", new java.lang.String[]{r3, r9, java.lang.String.valueOf(r23)});
      */
-    /* JADX WARNING: Missing block: B:36:0x0171, code:
+    /* JADX WARNING: Missing block: B:36:0x0171, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:37:0x0172, code:
+    /* JADX WARNING: Missing block: B:37:0x0172, code skipped:
             r20 = r6;
      */
-    /* JADX WARNING: Missing block: B:38:0x0175, code:
+    /* JADX WARNING: Missing block: B:38:0x0175, code skipped:
             r20 = r6;
             r0 = TAG;
             r6 = new java.lang.StringBuilder();
@@ -265,16 +265,16 @@ public class HwAPPQoEUserAction {
             com.android.server.hidata.appqoe.HwAPPQoEUtils.logD(r0, r6.toString());
             r1.mDatabase.execSQL("INSERT INTO APPQoEUserAction VALUES(null, ?, ?, ?, ?, ?)", new java.lang.Object[]{java.lang.Integer.valueOf(r23), r3, r9, java.lang.Integer.valueOf(r4), java.lang.Integer.valueOf(r5)});
      */
-    /* JADX WARNING: Missing block: B:40:0x01c3, code:
+    /* JADX WARNING: Missing block: B:40:0x01c3, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:41:0x01c4, code:
+    /* JADX WARNING: Missing block: B:41:0x01c4, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:42:0x01c5, code:
+    /* JADX WARNING: Missing block: B:42:0x01c5, code skipped:
             r6 = r20;
      */
-    /* JADX WARNING: Missing block: B:52:0x01d9, code:
+    /* JADX WARNING: Missing block: B:52:0x01d9, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -368,16 +368,16 @@ public class HwAPPQoEUserAction {
         return userType;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0057, code:
+    /* JADX WARNING: Missing block: B:20:0x0057, code skipped:
             if (r2 != null) goto L_0x0059;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:27:0x0076, code:
+    /* JADX WARNING: Missing block: B:27:0x0076, code skipped:
             if (r2 == null) goto L_0x0079;
      */
-    /* JADX WARNING: Missing block: B:30:0x007a, code:
+    /* JADX WARNING: Missing block: B:30:0x007a, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -437,7 +437,7 @@ public class HwAPPQoEUserAction {
         this.mAppScenceId = appScenceId;
     }
 
-    /* JADX WARNING: Missing block: B:8:0x003b, code:
+    /* JADX WARNING: Missing block: B:8:0x003b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

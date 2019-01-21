@@ -68,72 +68,74 @@ public class RecognizeService {
             if (place == null) {
                 LogUtil.d(" identifyLocationByAllAp loadModel failure. placeInfo == null");
                 return recognizeResult;
-            } else if (place.getPlace() == null || place.getPlace().equals("")) {
-                LogUtil.d(" identifyLocationByAllAp loadModel failure. placeInfo.getPlace() == null || placeInfo.getPlace().equals(\"\")");
-                return recognizeResult;
-            } else {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append(" identifyLocationByAllAp begin. place:");
-                stringBuilder.append(place.getPlace());
-                LogUtil.i(stringBuilder.toString());
-                if (!this.modelService.loadCommModels(place)) {
+            }
+            if (place.getPlace() != null) {
+                if (!place.getPlace().equals("")) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append(" identifyLocationByAllAp begin. place:");
+                    stringBuilder.append(place.getPlace());
+                    LogUtil.i(stringBuilder.toString());
+                    if (!this.modelService.loadCommModels(place)) {
+                        return recognizeResult;
+                    }
+                    FingerInfo fingerInfo = getFinger(wifiList, place);
+                    if (fingerInfo == null) {
+                        LogUtil.d(" identifyLocationByAllAp getFinger failure. fingerInfo == null");
+                        return null;
+                    }
+                    recognizeResult = new RecognizeResult();
+                    String rgResult = this.modelService.indentifyLocation(place.getPlace(), fingerInfo, this.modelService.getParameterInfo());
+                    if (rgResult != null) {
+                        recognizeResult.setRgResult(rgResult);
+                        recognizeResult.setAllApModelName(place.getModelName());
+                    }
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("AllAp detect space:");
+                    stringBuilder2.append(recognizeResult.getRgResult());
+                    this.toastInfo = stringBuilder2.toString();
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(this.toastInfo);
+                    stringBuilder2.append(", model name:");
+                    stringBuilder2.append(recognizeResult.getAllApModelName());
+                    LogUtil.d(stringBuilder2.toString());
+                    if (LogUtil.getDebug_flag()) {
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append(Constant.getLogPath());
+                        stringBuilder2.append(place.getPlace());
+                        stringBuilder2.append(Constant.LOG_FILE_EXTENSION);
+                        this.identifyLogPath = stringBuilder2.toString();
+                        stringBuilder2 = new StringBuilder();
+                        TimeUtil timeUtil = this.timeUtil;
+                        stringBuilder2.append(TimeUtil.getTime());
+                        stringBuilder2.append(",");
+                        stringBuilder2.append(recognizeResult.getRgResult());
+                        stringBuilder2.append(",");
+                        stringBuilder2.append(place.getPlace());
+                        stringBuilder2.append(",");
+                        stringBuilder2.append(place.getModelName());
+                        stringBuilder2.append(",");
+                        stringBuilder2.append(fingerInfo.toReString());
+                        stringBuilder2.append(Constant.lineSeperate);
+                        this.identifyLog = stringBuilder2.toString();
+                        if (!FileUtils.addFileHead(this.identifyLogPath, this.resultFileHead)) {
+                            LogUtil.d(" identifyLocationByAllAp addFileHead failure.");
+                        }
+                        if (!FileUtils.writeFile(this.identifyLogPath, this.identifyLog)) {
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append(" identifyLocationByAllAp log failure. identifyLogPath:");
+                            stringBuilder2.append(this.identifyLogPath);
+                            LogUtil.d(stringBuilder2.toString());
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append(" identifyLocationByAllAp log failure. identifyLog:");
+                            stringBuilder2.append(this.identifyLog);
+                            LogUtil.d(stringBuilder2.toString());
+                        }
+                    }
                     return recognizeResult;
                 }
-                FingerInfo fingerInfo = getFinger(wifiList, place);
-                if (fingerInfo == null) {
-                    LogUtil.d(" identifyLocationByAllAp getFinger failure. fingerInfo == null");
-                    return null;
-                }
-                recognizeResult = new RecognizeResult();
-                String rgResult = this.modelService.indentifyLocation(place.getPlace(), fingerInfo, this.modelService.getParameterInfo());
-                if (rgResult != null) {
-                    recognizeResult.setRgResult(rgResult);
-                    recognizeResult.setAllApModelName(place.getModelName());
-                }
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("AllAp detect space:");
-                stringBuilder2.append(recognizeResult.getRgResult());
-                this.toastInfo = stringBuilder2.toString();
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(this.toastInfo);
-                stringBuilder2.append(", model name:");
-                stringBuilder2.append(recognizeResult.getAllApModelName());
-                LogUtil.d(stringBuilder2.toString());
-                if (LogUtil.getDebug_flag()) {
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append(Constant.getLogPath());
-                    stringBuilder2.append(place.getPlace());
-                    stringBuilder2.append(Constant.LOG_FILE_EXTENSION);
-                    this.identifyLogPath = stringBuilder2.toString();
-                    stringBuilder2 = new StringBuilder();
-                    TimeUtil timeUtil = this.timeUtil;
-                    stringBuilder2.append(TimeUtil.getTime());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(recognizeResult.getRgResult());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(place.getPlace());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(place.getModelName());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(fingerInfo.toReString());
-                    stringBuilder2.append(Constant.lineSeperate);
-                    this.identifyLog = stringBuilder2.toString();
-                    if (!FileUtils.addFileHead(this.identifyLogPath, this.resultFileHead)) {
-                        LogUtil.d(" identifyLocationByAllAp addFileHead failure.");
-                    }
-                    if (!FileUtils.writeFile(this.identifyLogPath, this.identifyLog)) {
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(" identifyLocationByAllAp log failure. identifyLogPath:");
-                        stringBuilder2.append(this.identifyLogPath);
-                        LogUtil.d(stringBuilder2.toString());
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(" identifyLocationByAllAp log failure. identifyLog:");
-                        stringBuilder2.append(this.identifyLog);
-                        LogUtil.d(stringBuilder2.toString());
-                    }
-                }
-                return recognizeResult;
             }
+            LogUtil.d(" identifyLocationByAllAp loadModel failure. placeInfo.getPlace() == null || placeInfo.getPlace().equals(\"\")");
+            return recognizeResult;
         } catch (Exception e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("identifyLocationByAllAp:");
@@ -149,70 +151,73 @@ public class RecognizeService {
             if (place == null) {
                 LogUtil.d(" identifyLocationByMainAp loadModel failure. placeInfo == null");
                 return recognizeResult;
-            } else if (place.getPlace() == null || place.getPlace().equals("")) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(" identifyLocationByMainAp loadModel failure. placeInfo.getPlace() == null || placeInfo.getPlace().equals(\"\"),modelName:");
-                stringBuilder.append(place.getModelName());
-                LogUtil.d(stringBuilder.toString());
-                return recognizeResult;
-            } else if (!this.modelService.loadMainApModel(place)) {
-                return recognizeResult;
-            } else {
-                recognizeResult = new RecognizeResult();
-                FingerInfo mainApFingerInfo = getMainApFinger(place);
-                if (mainApFingerInfo == null) {
-                    LogUtil.d(" identifyLocationByMainAp getMainApFinger failure. mainApFingerInfo == null");
-                    return null;
-                }
-                String mainApRgResult = this.modelService.indentifyLocation(place.getPlace(), mainApFingerInfo, this.modelService.getMainParameterInfo());
-                if (mainApRgResult != null) {
-                    recognizeResult.setMainApRgResult(mainApRgResult);
-                    recognizeResult.setMainApModelName(place.getModelName());
-                }
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("MainAp detect space:");
-                stringBuilder2.append(recognizeResult.getMainApRgResult());
-                this.toastInfo = stringBuilder2.toString();
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(this.toastInfo);
-                stringBuilder2.append(", model name:");
-                stringBuilder2.append(recognizeResult.getMainApModelName());
-                LogUtil.d(stringBuilder2.toString());
-                if (LogUtil.getDebug_flag()) {
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append(Constant.getLogPath());
-                    stringBuilder2.append(place.getPlace());
-                    stringBuilder2.append(Constant.MAINAP_LOG_FILE_EXTENSION);
-                    this.identifyLogPath = stringBuilder2.toString();
-                    stringBuilder2 = new StringBuilder();
-                    TimeUtil timeUtil = this.timeUtil;
-                    stringBuilder2.append(TimeUtil.getTime());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(recognizeResult.getMainApRgResult());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(place.getPlace());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(place.getModelName());
-                    stringBuilder2.append(",");
-                    stringBuilder2.append(mainApFingerInfo.toReString());
-                    stringBuilder2.append(Constant.lineSeperate);
-                    this.identifyLog = stringBuilder2.toString();
-                    if (!FileUtils.addFileHead(this.identifyLogPath, this.resultFileHead)) {
-                        LogUtil.d(" identifyLocationByMainAp addFileHead failure.");
-                    }
-                    if (!FileUtils.writeFile(this.identifyLogPath, this.identifyLog)) {
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(" identifyLocationByMainAp log failure. identifyLogPath:");
-                        stringBuilder2.append(this.identifyLogPath);
-                        LogUtil.d(stringBuilder2.toString());
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(" identifyLocationByMainAp log failure. identifyLog:");
-                        stringBuilder2.append(this.identifyLog);
-                        LogUtil.d(stringBuilder2.toString());
-                    }
-                }
-                return recognizeResult;
             }
+            if (place.getPlace() != null) {
+                if (!place.getPlace().equals("")) {
+                    if (!this.modelService.loadMainApModel(place)) {
+                        return recognizeResult;
+                    }
+                    recognizeResult = new RecognizeResult();
+                    FingerInfo mainApFingerInfo = getMainApFinger(place);
+                    if (mainApFingerInfo == null) {
+                        LogUtil.d(" identifyLocationByMainAp getMainApFinger failure. mainApFingerInfo == null");
+                        return null;
+                    }
+                    String mainApRgResult = this.modelService.indentifyLocation(place.getPlace(), mainApFingerInfo, this.modelService.getMainParameterInfo());
+                    if (mainApRgResult != null) {
+                        recognizeResult.setMainApRgResult(mainApRgResult);
+                        recognizeResult.setMainApModelName(place.getModelName());
+                    }
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("MainAp detect space:");
+                    stringBuilder.append(recognizeResult.getMainApRgResult());
+                    this.toastInfo = stringBuilder.toString();
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append(this.toastInfo);
+                    stringBuilder.append(", model name:");
+                    stringBuilder.append(recognizeResult.getMainApModelName());
+                    LogUtil.d(stringBuilder.toString());
+                    if (LogUtil.getDebug_flag()) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append(Constant.getLogPath());
+                        stringBuilder.append(place.getPlace());
+                        stringBuilder.append(Constant.MAINAP_LOG_FILE_EXTENSION);
+                        this.identifyLogPath = stringBuilder.toString();
+                        stringBuilder = new StringBuilder();
+                        TimeUtil timeUtil = this.timeUtil;
+                        stringBuilder.append(TimeUtil.getTime());
+                        stringBuilder.append(",");
+                        stringBuilder.append(recognizeResult.getMainApRgResult());
+                        stringBuilder.append(",");
+                        stringBuilder.append(place.getPlace());
+                        stringBuilder.append(",");
+                        stringBuilder.append(place.getModelName());
+                        stringBuilder.append(",");
+                        stringBuilder.append(mainApFingerInfo.toReString());
+                        stringBuilder.append(Constant.lineSeperate);
+                        this.identifyLog = stringBuilder.toString();
+                        if (!FileUtils.addFileHead(this.identifyLogPath, this.resultFileHead)) {
+                            LogUtil.d(" identifyLocationByMainAp addFileHead failure.");
+                        }
+                        if (!FileUtils.writeFile(this.identifyLogPath, this.identifyLog)) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append(" identifyLocationByMainAp log failure. identifyLogPath:");
+                            stringBuilder.append(this.identifyLogPath);
+                            LogUtil.d(stringBuilder.toString());
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append(" identifyLocationByMainAp log failure. identifyLog:");
+                            stringBuilder.append(this.identifyLog);
+                            LogUtil.d(stringBuilder.toString());
+                        }
+                    }
+                    return recognizeResult;
+                }
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append(" identifyLocationByMainAp loadModel failure. placeInfo.getPlace() == null || placeInfo.getPlace().equals(\"\"),modelName:");
+            stringBuilder2.append(place.getModelName());
+            LogUtil.d(stringBuilder2.toString());
+            return recognizeResult;
         } catch (Exception e) {
             StringBuilder stringBuilder3 = new StringBuilder();
             stringBuilder3.append("identifyLocationByMainAp:");
@@ -230,20 +235,24 @@ public class RecognizeService {
             Bundle wifiInfo = NetUtil.getWifiStateString(this.mCtx);
             String wifiMAC = wifiInfo.getString("wifiMAC", "UNKNOWN");
             String wifiRssi = wifiInfo.getString("wifiRssi", "0");
-            if (wifiMAC == null || wifiMAC.equals("UNKNOWN")) {
-                LogUtil.d("getMainApFinger wifiMAC = null");
-                return null;
-            } else if (wifiRssi == null || wifiRssi.equals("0")) {
-                return null;
-            } else {
-                HashMap<String, Integer> bissiddatas = new HashMap();
-                bissiddatas.put(wifiMAC, Integer.valueOf(wifiRssi));
-                finger.setBissiddatas(bissiddatas);
-                finger.setBatch(placeInfo.getBatch());
-                finger.setServeMac(wifiMAC);
-                finger.setTimestamp(TimeUtil.getTime());
-                return finger;
+            if (wifiMAC != null) {
+                if (!wifiMAC.equals("UNKNOWN")) {
+                    if (wifiRssi != null) {
+                        if (!wifiRssi.equals("0")) {
+                            HashMap<String, Integer> bissiddatas = new HashMap();
+                            bissiddatas.put(wifiMAC, Integer.valueOf(wifiRssi));
+                            finger.setBissiddatas(bissiddatas);
+                            finger.setBatch(placeInfo.getBatch());
+                            finger.setServeMac(wifiMAC);
+                            finger.setTimestamp(TimeUtil.getTime());
+                            return finger;
+                        }
+                    }
+                    return null;
+                }
             }
+            LogUtil.d("getMainApFinger wifiMAC = null");
+            return null;
         } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("getMainApFinger:");

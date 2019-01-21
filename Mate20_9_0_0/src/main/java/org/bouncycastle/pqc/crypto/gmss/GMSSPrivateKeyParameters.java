@@ -219,15 +219,15 @@ public class GMSSPrivateKeyParameters extends GMSSKeyParameters {
         } else {
             this.minTreehash = iArr4;
         }
-        Object obj = new byte[this.mdLength];
         byte[] bArr11 = new byte[this.mdLength];
+        byte[] bArr12 = new byte[this.mdLength];
         if (gMSSRootSigArr2 == null) {
             this.nextRootSig = new GMSSRootSig[(this.numLayer - 1)];
             i3 = 0;
             while (i3 < this.numLayer - 1) {
-                System.arraycopy(bArr8[i3], 0, obj, 0, this.mdLength);
-                this.gmssRandom.nextSeed(obj);
-                byte[] nextSeed = this.gmssRandom.nextSeed(obj);
+                System.arraycopy(bArr8[i3], 0, bArr11, 0, this.mdLength);
+                this.gmssRandom.nextSeed(bArr11);
+                byte[] nextSeed = this.gmssRandom.nextSeed(bArr11);
                 int i6 = i3 + 1;
                 this.nextRootSig[i3] = new GMSSRootSig(gMSSDigestProvider.get(), this.otsIndex[i3], this.heightOfTrees[i6]);
                 this.nextRootSig[i3].initSign(nextSeed, bArr10[i3]);
@@ -261,32 +261,31 @@ public class GMSSPrivateKeyParameters extends GMSSKeyParameters {
         bArr = this.gmssRandom.nextSeed(this.currentSeeds[i]);
         int i7 = 1;
         int i8 = (i3 >>> (i5 + 1)) & 1;
-        Object obj = new byte[this.mdLength];
+        byte[] bArr2 = new byte[this.mdLength];
         i4--;
         if (i5 < i4 && i8 == 0) {
-            System.arraycopy(this.currentAuthPaths[i][i5], 0, obj, 0, this.mdLength);
+            System.arraycopy(this.currentAuthPaths[i][i5], 0, bArr2, 0, this.mdLength);
         }
-        byte[] bArr2 = new byte[this.mdLength];
-        Object leaf;
+        byte[] bArr3 = new byte[this.mdLength];
         if (i5 == 0) {
             Object publicKey;
             if (i == this.numLayer - 1) {
                 publicKey = new WinternitzOTSignature(bArr, this.digestProvider.get(), this.otsIndex[i]).getPublicKey();
             } else {
-                publicKey = new byte[this.mdLength];
-                System.arraycopy(this.currentSeeds[i], 0, publicKey, 0, this.mdLength);
-                this.gmssRandom.nextSeed(publicKey);
-                leaf = this.upperLeaf[i].getLeaf();
-                this.upperLeaf[i].initLeafCalc(publicKey);
+                byte[] bArr4 = new byte[this.mdLength];
+                System.arraycopy(this.currentSeeds[i], 0, bArr4, 0, this.mdLength);
+                this.gmssRandom.nextSeed(bArr4);
+                Object leaf = this.upperLeaf[i].getLeaf();
+                this.upperLeaf[i].initLeafCalc(bArr4);
                 publicKey = leaf;
             }
             System.arraycopy(publicKey, 0, this.currentAuthPaths[i][0], 0, this.mdLength);
         } else {
-            leaf = new byte[(this.mdLength << 1)];
+            bArr = new byte[(this.mdLength << 1)];
             int i9 = i5 - 1;
-            System.arraycopy(this.currentAuthPaths[i][i9], 0, leaf, 0, this.mdLength);
-            System.arraycopy(this.keep[i][(int) Math.floor((double) (i9 / 2))], 0, leaf, this.mdLength, this.mdLength);
-            this.messDigestTrees.update(leaf, 0, leaf.length);
+            System.arraycopy(this.currentAuthPaths[i][i9], 0, bArr, 0, this.mdLength);
+            System.arraycopy(this.keep[i][(int) Math.floor((double) (i9 / 2))], 0, bArr, this.mdLength, this.mdLength);
+            this.messDigestTrees.update(bArr, 0, bArr.length);
             this.currentAuthPaths[i][i5] = new byte[this.messDigestTrees.getDigestSize()];
             this.messDigestTrees.doFinal(this.currentAuthPaths[i][i5], 0);
             i6 = 0;
@@ -320,16 +319,16 @@ public class GMSSPrivateKeyParameters extends GMSSKeyParameters {
             }
         }
         if (i5 < i4 && i8 == 0) {
-            System.arraycopy(obj, 0, this.keep[i][(int) Math.floor((double) (i5 / 2))], 0, this.mdLength);
+            System.arraycopy(bArr2, 0, this.keep[i][(int) Math.floor((double) (i5 / 2))], 0, this.mdLength);
         }
         if (i == this.numLayer - 1) {
             while (i7 <= i2 / 2) {
                 i3 = getMinTreehashIndex(i);
                 if (i3 >= 0) {
                     try {
-                        Object obj2 = new byte[this.mdLength];
-                        System.arraycopy(this.currentTreehash[i][i3].getSeedActive(), 0, obj2, 0, this.mdLength);
-                        this.currentTreehash[i][i3].update(this.gmssRandom, new WinternitzOTSignature(this.gmssRandom.nextSeed(obj2), this.digestProvider.get(), this.otsIndex[i]).getPublicKey());
+                        byte[] bArr5 = new byte[this.mdLength];
+                        System.arraycopy(this.currentTreehash[i][i3].getSeedActive(), 0, bArr5, 0, this.mdLength);
+                        this.currentTreehash[i][i3].update(this.gmssRandom, new WinternitzOTSignature(this.gmssRandom.nextSeed(bArr5), this.digestProvider.get(), this.otsIndex[i]).getPublicKey());
                     } catch (Exception e) {
                         System.out.println(e);
                     }
@@ -430,11 +429,11 @@ public class GMSSPrivateKeyParameters extends GMSSKeyParameters {
                 this.nextStack[i2] = this.nextNextRoot[i2].getStack();
                 this.nextRoot[i2] = this.nextNextRoot[i2].getRoot();
                 byte[] bArr = new byte[this.mdLength];
-                Object obj = new byte[this.mdLength];
-                System.arraycopy(this.currentSeeds[i2], 0, obj, 0, this.mdLength);
-                this.gmssRandom.nextSeed(obj);
-                this.gmssRandom.nextSeed(obj);
-                this.nextRootSig[i2].initSign(this.gmssRandom.nextSeed(obj), this.nextRoot[i2]);
+                bArr = new byte[this.mdLength];
+                System.arraycopy(this.currentSeeds[i2], 0, bArr, 0, this.mdLength);
+                this.gmssRandom.nextSeed(bArr);
+                this.gmssRandom.nextSeed(bArr);
+                this.nextRootSig[i2].initSign(this.gmssRandom.nextSeed(bArr), this.nextRoot[i2]);
                 nextKey(i2);
             }
         }

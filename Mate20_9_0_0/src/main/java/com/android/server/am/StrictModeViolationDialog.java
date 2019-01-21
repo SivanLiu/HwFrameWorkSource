@@ -47,11 +47,11 @@ final class StrictModeViolationDialog extends BaseErrorDialog {
             CharSequence applicationLabel = context.getPackageManager().getApplicationLabel(app.info);
             CharSequence name = applicationLabel;
             if (applicationLabel != null) {
-                setMessage(res.getString(17041138, new Object[]{name.toString(), app.info.processName}));
+                setMessage(res.getString(17041139, new Object[]{name.toString(), app.info.processName}));
                 setCancelable(false);
-                setButton(-1, res.getText(17039951), this.mHandler.obtainMessage(0));
+                setButton(-1, res.getText(17039952), this.mHandler.obtainMessage(0));
                 if (app.errorReportReceiver != null) {
-                    setButton(-2, res.getText(17040997), this.mHandler.obtainMessage(1));
+                    setButton(-2, res.getText(17040998), this.mHandler.obtainMessage(1));
                 }
                 getWindow().addPrivateFlags(256);
                 window = getWindow();
@@ -62,9 +62,9 @@ final class StrictModeViolationDialog extends BaseErrorDialog {
                 this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(0), 60000);
             }
         }
-        setMessage(res.getString(17041139, new Object[]{app.processName.toString()}));
+        setMessage(res.getString(17041140, new Object[]{app.processName.toString()}));
         setCancelable(false);
-        setButton(-1, res.getText(17039951), this.mHandler.obtainMessage(0));
+        setButton(-1, res.getText(17039952), this.mHandler.obtainMessage(0));
         if (app.errorReportReceiver != null) {
         }
         getWindow().addPrivateFlags(256);

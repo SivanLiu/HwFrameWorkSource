@@ -28,15 +28,16 @@ public class HwQoEQualityManager {
         return mHwQoEQualityManager;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0018, code:
+    /* JADX WARNING: Missing block: B:12:0x0018, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeDB() {
         synchronized (this.mSQLLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    this.mDatabase.close();
+                }
             }
         }
     }
@@ -106,157 +107,166 @@ public class HwQoEQualityManager {
 
     public boolean addOrUpdateAppQualityRcd(HwQoEQualityInfo dbr) {
         synchronized (this.mSQLLock) {
-            boolean updateAppQualityRcd;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                HwQoEUtils.logE("addOrUpdateAppQualityRcd error.");
-                return false;
-            } else if (dbr.mBSSID == null) {
-                HwQoEUtils.logE("addOrUpdateAppQualityRcd null error.");
-                return false;
-            } else if (checkHistoryRecordExist(dbr)) {
-                updateAppQualityRcd = updateAppQualityRcd(dbr);
-                return updateAppQualityRcd;
-            } else {
-                updateAppQualityRcd = insertAppQualityRcd(dbr);
-                return updateAppQualityRcd;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    boolean updateAppQualityRcd;
+                    if (dbr.mBSSID == null) {
+                        HwQoEUtils.logE("addOrUpdateAppQualityRcd null error.");
+                        return false;
+                    } else if (checkHistoryRecordExist(dbr)) {
+                        updateAppQualityRcd = updateAppQualityRcd(dbr);
+                        return updateAppQualityRcd;
+                    } else {
+                        updateAppQualityRcd = insertAppQualityRcd(dbr);
+                        return updateAppQualityRcd;
+                    }
+                }
             }
+            HwQoEUtils.logE("addOrUpdateAppQualityRcd error.");
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0068, code:
+    /* JADX WARNING: Missing block: B:23:0x0068, code skipped:
             return r3;
      */
-    /* JADX WARNING: Missing block: B:26:0x006f, code:
+    /* JADX WARNING: Missing block: B:27:0x006f, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:30:0x0077, code:
+    /* JADX WARNING: Missing block: B:32:0x0077, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HwQoEQualityInfo queryAppQualityRcd(String apBssid, int apRssi, int appType) {
         HwQoEUtils.logD("queryAppQualityRcd enter.");
         synchronized (this.mSQLLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                HwQoEUtils.logE("queryAppQualityRcd database error.");
-                return null;
-            } else if (apBssid == null) {
-                HwQoEUtils.logE("queryAppQualityRcd null error.");
-                return null;
-            } else {
-                Cursor c = null;
-                try {
-                    c = this.mDatabase.rawQuery("SELECT * FROM HwQoEQualityRecordTable where (BSSID like ?) and (RSSI = ?) and (APPType = ?)", new String[]{apBssid, String.valueOf(apRssi), String.valueOf(appType)});
-                    if (c.getCount() > 0) {
-                        if (c.moveToNext()) {
-                            HwQoEQualityInfo record = new HwQoEQualityInfo();
-                            record.mBSSID = apBssid;
-                            record.mAPPType = appType;
-                            record.mRSSI = apRssi;
-                            record.mThoughtput = c.getLong(c.getColumnIndex("Thoughtput"));
-                            if (c != null) {
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apBssid == null) {
+                        HwQoEUtils.logE("queryAppQualityRcd null error.");
+                        return null;
+                    }
+                    Cursor c = null;
+                    try {
+                        c = this.mDatabase.rawQuery("SELECT * FROM HwQoEQualityRecordTable where (BSSID like ?) and (RSSI = ?) and (APPType = ?)", new String[]{apBssid, String.valueOf(apRssi), String.valueOf(appType)});
+                        if (c.getCount() > 0) {
+                            if (c.moveToNext()) {
+                                HwQoEQualityInfo record = new HwQoEQualityInfo();
+                                record.mBSSID = apBssid;
+                                record.mAPPType = appType;
+                                record.mRSSI = apRssi;
+                                record.mThoughtput = c.getLong(c.getColumnIndex("Thoughtput"));
+                                if (c != null) {
+                                    c.close();
+                                }
+                            } else if (c != null) {
                                 c.close();
                             }
                         } else if (c != null) {
                             c.close();
                         }
-                    } else if (c != null) {
-                        c.close();
-                    }
-                } catch (SQLException e) {
-                    try {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("queryAppQualityRcd error:");
-                        stringBuilder.append(e);
-                        HwQoEUtils.logE(stringBuilder.toString());
-                        if (c != null) {
-                            c.close();
-                        }
-                        return null;
-                    } catch (Throwable th) {
-                        if (c != null) {
-                            c.close();
+                    } catch (SQLException e) {
+                        try {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("queryAppQualityRcd error:");
+                            stringBuilder.append(e);
+                            HwQoEUtils.logE(stringBuilder.toString());
+                            if (c != null) {
+                                c.close();
+                            }
+                            return null;
+                        } catch (Throwable th) {
+                            if (c != null) {
+                                c.close();
+                            }
                         }
                     }
                 }
             }
+            HwQoEUtils.logE("queryAppQualityRcd database error.");
+            return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x006e, code:
+    /* JADX WARNING: Missing block: B:24:0x006e, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:27:0x0076, code:
+    /* JADX WARNING: Missing block: B:29:0x0076, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<HwQoEQualityInfo> getAppQualityAllRcd(String apBssid, int appType) {
         List<HwQoEQualityInfo> mRecordList = new ArrayList();
         synchronized (this.mSQLLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                HwQoEUtils.logE("getAppQualityAllRcd database error.");
-                return mRecordList;
-            } else if (apBssid == null) {
-                HwQoEUtils.logE("getAppQualityAllRcd null error.");
-                return mRecordList;
-            } else {
-                Cursor c = null;
-                try {
-                    c = this.mDatabase.rawQuery("SELECT * FROM HwQoEQualityRecordTable where (BSSID like ?) and (APPType = ?)", new String[]{apBssid, String.valueOf(appType)});
-                    if (c.getCount() > 0) {
-                        while (c.moveToNext()) {
-                            HwQoEQualityInfo record = new HwQoEQualityInfo();
-                            record.mBSSID = apBssid;
-                            record.mAPPType = appType;
-                            record.mRSSI = c.getInt(c.getColumnIndex("RSSI"));
-                            record.mThoughtput = c.getLong(c.getColumnIndex("Thoughtput"));
-                            mRecordList.add(record);
-                        }
-                        if (c != null) {
-                            c.close();
-                        }
-                    } else if (c != null) {
-                        c.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apBssid == null) {
+                        HwQoEUtils.logE("getAppQualityAllRcd null error.");
+                        return mRecordList;
                     }
-                } catch (SQLException e) {
+                    Cursor c = null;
                     try {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("getAppQualityAllRcd error:");
-                        stringBuilder.append(e);
-                        HwQoEUtils.logE(stringBuilder.toString());
-                        if (c != null) {
+                        c = this.mDatabase.rawQuery("SELECT * FROM HwQoEQualityRecordTable where (BSSID like ?) and (APPType = ?)", new String[]{apBssid, String.valueOf(appType)});
+                        if (c.getCount() > 0) {
+                            while (c.moveToNext()) {
+                                HwQoEQualityInfo record = new HwQoEQualityInfo();
+                                record.mBSSID = apBssid;
+                                record.mAPPType = appType;
+                                record.mRSSI = c.getInt(c.getColumnIndex("RSSI"));
+                                record.mThoughtput = c.getLong(c.getColumnIndex("Thoughtput"));
+                                mRecordList.add(record);
+                            }
+                            if (c != null) {
+                                c.close();
+                            }
+                        } else if (c != null) {
                             c.close();
                         }
-                        return null;
-                    } catch (Throwable th) {
-                        if (c != null) {
-                            c.close();
+                    } catch (SQLException e) {
+                        try {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("getAppQualityAllRcd error:");
+                            stringBuilder.append(e);
+                            HwQoEUtils.logE(stringBuilder.toString());
+                            if (c != null) {
+                                c.close();
+                            }
+                            return null;
+                        } catch (Throwable th) {
+                            if (c != null) {
+                                c.close();
+                            }
                         }
                     }
                 }
             }
+            HwQoEUtils.logE("getAppQualityAllRcd database error.");
+            return mRecordList;
         }
     }
 
     public boolean deleteAppQualityRcd(String apBssid) {
         synchronized (this.mSQLLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                HwQoEUtils.logE("deleteAppQualityRcd database error.");
-                return false;
-            } else if (apBssid == null) {
-                HwQoEUtils.logE("deleteAppQualityRcd null error.");
-                return false;
-            } else {
-                try {
-                    this.mDatabase.delete(HwQoEQualityDataBase.HW_QOE_QUALITY_NAME, "BSSID like ?", new String[]{apBssid});
-                    return true;
-                } catch (SQLException e) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("deleteAppQualityRcd error:");
-                    stringBuilder.append(e);
-                    HwQoEUtils.logE(stringBuilder.toString());
-                    return false;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apBssid == null) {
+                        HwQoEUtils.logE("deleteAppQualityRcd null error.");
+                        return false;
+                    }
+                    try {
+                        this.mDatabase.delete(HwQoEQualityDataBase.HW_QOE_QUALITY_NAME, "BSSID like ?", new String[]{apBssid});
+                        return true;
+                    } catch (SQLException e) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("deleteAppQualityRcd error:");
+                        stringBuilder.append(e);
+                        HwQoEUtils.logE(stringBuilder.toString());
+                        return false;
+                    }
                 }
             }
+            HwQoEUtils.logE("deleteAppQualityRcd database error.");
+            return false;
         }
     }
 

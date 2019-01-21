@@ -1,6 +1,8 @@
 package org.bouncycastle.cms.jcajce;
 
 import java.security.AlgorithmParameters;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -18,9 +20,9 @@ public class JceAlgorithmIdentifierConverter {
             AlgorithmParameters createAlgorithmParameters = this.helper.createAlgorithmParameters(algorithmIdentifier.getAlgorithm());
             CMSUtils.loadParameters(createAlgorithmParameters, algorithmIdentifier.getParameters());
             return createAlgorithmParameters;
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new CMSException("can't find parameters for algorithm", e);
-        } catch (Exception e2) {
+        } catch (NoSuchProviderException e2) {
             throw new CMSException("can't find provider for algorithm", e2);
         }
     }

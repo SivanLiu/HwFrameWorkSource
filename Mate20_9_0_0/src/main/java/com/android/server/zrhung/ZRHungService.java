@@ -365,7 +365,7 @@ public final class ZRHungService extends SystemService implements IZRHungService
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x006a, code:
+    /* JADX WARNING: Missing block: B:27:0x006a, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -373,31 +373,34 @@ public final class ZRHungService extends SystemService implements IZRHungService
         boolean flag = true;
         synchronized (this.mANRMap) {
             if (args != null) {
-                String packageName = args.getString("packageName");
-                String currentANRType = args.getString("result");
-                int pid = args.getInt("pid");
-                if (handleDirectRecoverPackages(packageName, pid)) {
-                    return false;
-                } else if (!(packageName == null || currentANRType == null)) {
-                    if (currentANRType.equals("original")) {
-                        if (canShowOriginalANRDialogsLocked(packageName)) {
-                            Slog.d(TAG, " show ORIGNAL ANR Dialogs");
+                try {
+                    String packageName = args.getString("packageName");
+                    String currentANRType = args.getString("result");
+                    int pid = args.getInt("pid");
+                    if (handleDirectRecoverPackages(packageName, pid)) {
+                        return false;
+                    } else if (!(packageName == null || currentANRType == null)) {
+                        if (currentANRType.equals("original")) {
+                            if (canShowOriginalANRDialogsLocked(packageName)) {
+                                Slog.d(TAG, " show ORIGNAL ANR Dialogs");
+                            } else {
+                                Slog.d(TAG, " forbid ORIGNAL ANR Dialogs");
+                                flag = false;
+                            }
+                        } else if (canShowAppEyeANRDialogsLocked(packageName)) {
+                            Slog.d(TAG, " show APPEYE ANR Dialogs");
                         } else {
-                            Slog.d(TAG, " forbid ORIGNAL ANR Dialogs");
+                            Slog.d(TAG, " forbid APPEYE ANR Dialogs");
                             flag = false;
                         }
-                    } else if (canShowAppEyeANRDialogsLocked(packageName)) {
-                        Slog.d(TAG, " show APPEYE ANR Dialogs");
-                    } else {
-                        Slog.d(TAG, " forbid APPEYE ANR Dialogs");
-                        flag = false;
-                    }
-                    if (flag) {
-                        flag = isTargetAnrProcessStillAlive(pid);
                         if (flag) {
-                            resetAppEyeANRDataLocked(packageName, currentANRType, 0);
+                            flag = isTargetAnrProcessStillAlive(pid);
+                            if (flag) {
+                                resetAppEyeANRDataLocked(packageName, currentANRType, 0);
+                            }
                         }
                     }
+                } finally {
                 }
             }
         }

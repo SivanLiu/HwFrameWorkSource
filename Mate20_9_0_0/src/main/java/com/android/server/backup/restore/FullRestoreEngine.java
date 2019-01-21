@@ -86,204 +86,210 @@ public class FullRestoreEngine extends RestoreEngine {
 
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:93:0x0213 A:{Catch:{ NameNotFoundException | IOException -> 0x0246 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x024e A:{Catch:{ IOException -> 0x01ed }} */
+    /* JADX WARNING: Removed duplicated region for block: B:253:0x05aa A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x029c  */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
     /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
     /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:248:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x0644  */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x0635  */
-    /* JADX WARNING: Removed duplicated region for block: B:285:0x064a  */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0647  */
-    /* JADX WARNING: Missing block: B:81:0x01ea, code:
-            if (isCanonicalFilePath(r3.path) == false) goto L_0x01f6;
-     */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x04ca A:{Catch:{ IOException -> 0x059f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:238:0x0545 A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x054d A:{Catch:{ IOException -> 0x0594 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:249:0x0597 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:255:0x05b6 A:{Catch:{ IOException -> 0x05f0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0635  */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0644  */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0647  */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x064a  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean restoreOneFile(InputStream instream, boolean mustKillAgent, byte[] buffer, PackageInfo onlyPackage, boolean allowApks, int token, IBackupManagerMonitor monitor) {
         IOException e;
@@ -348,11 +354,11 @@ public class FullRestoreEngine extends RestoreEngine {
                                 setResult(-3);
                                 info = null;
                                 info2 = info;
-                                if (info2 != null) {
-                                }
                                 if (info2 == null) {
                                 }
-                                return info2 == null ? true : z;
+                                if (info2 != null) {
+                                }
+                                return info2 != null ? true : z;
                             }
                         }
                         if (!this.mPackagePolicies.containsKey(pkg)) {
@@ -374,7 +380,7 @@ public class FullRestoreEngine extends RestoreEngine {
                             Signature[] signatures = tarBackupReader2.readAppManifestAndReturnSignatures(info4);
                             pkg2 = pkg;
                             FileMetadata info6 = info4;
-                            Object obj2 = null;
+                            ApplicationInfo applicationInfo = null;
                             i2 = 1;
                             RestorePolicy restorePolicy = tarBackupReader2.chooseRestorePolicy(this.mBackupManagerService.getPackageManager(), allowApks, info6, signatures, (PackageManagerInternal) LocalServices.getService(PackageManagerInternal.class));
                             info5 = info6;
@@ -399,11 +405,11 @@ public class FullRestoreEngine extends RestoreEngine {
                             setResult(-3);
                             info = null;
                             info2 = info;
-                            if (info2 != null) {
-                            }
                             if (info2 == null) {
                             }
-                            return info2 == null ? true : z;
+                            if (info2 != null) {
+                            }
+                            return info2 != null ? true : z;
                         }
                     }
                     pkg2 = pkg;
@@ -435,14 +441,14 @@ public class FullRestoreEngine extends RestoreEngine {
                             setResult(-3);
                             info = null;
                             info2 = info;
-                            if (info2 != null) {
-                            }
                             if (info2 == null) {
                             }
-                            return info2 == null ? true : z;
+                            if (info2 != null) {
+                            }
+                            return info2 != null ? true : z;
                         }
                         info2 = info;
-                        if (info2 != null) {
+                        if (info2 == null) {
                             tearDownPipes();
                             z = false;
                             setRunning(false);
@@ -452,12 +458,11 @@ public class FullRestoreEngine extends RestoreEngine {
                         } else {
                             z = false;
                         }
-                        return info2 == null ? true : z;
+                        return info2 != null ? true : z;
                     }
                     TarBackupReader tarBackupReader3;
                     boolean isSuccessfullyInstalled;
                     StringBuilder stringBuilder3;
-                    String pkg3;
                     boolean okay2 = true;
                     RestorePolicy policy = (RestorePolicy) this.mPackagePolicies.get(pkg2);
                     RestorePolicy restorePolicy2;
@@ -484,15 +489,15 @@ public class FullRestoreEngine extends RestoreEngine {
                                 restorePolicy2 = policy;
                                 tarBackupReader3 = tarBackupReader2;
                                 try {
-                                    Object obj3;
+                                    Object obj2;
                                     isSuccessfullyInstalled = RestoreUtils.installApk(inputStream, this.mBackupManagerService.getContext(), this.mDeleteObserver, this.mManifestSignatures, this.mPackagePolicies, info7, (String) this.mPackageInstallers.get(pkg2), bytesReadListener);
                                     HashMap hashMap = this.mPackagePolicies;
                                     if (isSuccessfullyInstalled) {
-                                        obj3 = RestorePolicy.ACCEPT;
+                                        obj2 = RestorePolicy.ACCEPT;
                                     } else {
-                                        obj3 = RestorePolicy.IGNORE;
+                                        obj2 = RestorePolicy.IGNORE;
                                     }
-                                    hashMap.put(pkg2, obj3);
+                                    hashMap.put(pkg2, obj2);
                                     tarBackupReader3.skipTarPadding(info7.size);
                                     return true;
                                 } catch (IOException e5) {
@@ -517,11 +522,11 @@ public class FullRestoreEngine extends RestoreEngine {
                                 setResult(-3);
                                 info = null;
                                 info2 = info;
-                                if (info2 != null) {
-                                }
                                 if (info2 == null) {
                                 }
-                                return info2 == null ? true : z;
+                                if (info2 != null) {
+                                }
+                                return info2 != null ? true : z;
                             }
                             break;
                         case ACCEPT:
@@ -551,11 +556,11 @@ public class FullRestoreEngine extends RestoreEngine {
                             }
                     }
                     if (isRestorableFile(info3)) {
-                    }
-                    okay2 = false;
-                    isSuccessfullyInstalled = okay2;
-                    if (isSuccessfullyInstalled && this.mAgent == null) {
-                        try {
+                        String pkg3;
+                        if (!isCanonicalFilePath(info3.path)) {
+                        }
+                        isSuccessfullyInstalled = okay2;
+                        if (isSuccessfullyInstalled && this.mAgent == null) {
                             this.mTargetApp = this.mBackupManagerService.getPackageManager().getApplicationInfo(pkg2, 0);
                             if (!this.mClearedPackages.contains(pkg2)) {
                                 okay2 = shouldForceClearAppDataOnFullRestore(this.mTargetApp.packageName);
@@ -568,202 +573,265 @@ public class FullRestoreEngine extends RestoreEngine {
                             setUpPipes();
                             this.mAgent = this.mBackupManagerService.bindToAgentSynchronous(this.mTargetApp, 3);
                             this.mAgentPackage = pkg2;
-                        } catch (IOException e8) {
-                        } catch (NameNotFoundException e9) {
+                            if (this.mAgent == null) {
+                                str2 = BackupManagerService.TAG;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("Unable to create agent for ");
+                                stringBuilder3.append(pkg2);
+                                Slog.e(str2, stringBuilder3.toString());
+                                isSuccessfullyInstalled = false;
+                                tearDownPipes();
+                                this.mPackagePolicies.put(pkg2, RestorePolicy.IGNORE);
+                            }
                         }
-                        if (this.mAgent == null) {
+                        if (isSuccessfullyInstalled && !pkg2.equals(this.mAgentPackage)) {
                             str2 = BackupManagerService.TAG;
                             stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("Unable to create agent for ");
+                            stringBuilder3.append("Restoring data for ");
                             stringBuilder3.append(pkg2);
+                            stringBuilder3.append(" but agent is for ");
+                            stringBuilder3.append(this.mAgentPackage);
                             Slog.e(str2, stringBuilder3.toString());
                             isSuccessfullyInstalled = false;
-                            tearDownPipes();
-                            this.mPackagePolicies.put(pkg2, RestorePolicy.IGNORE);
                         }
-                    }
-                    if (isSuccessfullyInstalled && !pkg2.equals(this.mAgentPackage)) {
-                        str2 = BackupManagerService.TAG;
-                        stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append("Restoring data for ");
-                        stringBuilder3.append(pkg2);
-                        stringBuilder3.append(" but agent is for ");
-                        stringBuilder3.append(this.mAgentPackage);
-                        Slog.e(str2, stringBuilder3.toString());
-                        isSuccessfullyInstalled = false;
-                    }
-                    if (isSuccessfullyInstalled) {
-                        long sharedBackupAgentTimeoutMillis;
-                        long toCopy = info3.size;
-                        boolean isSharedStorage = pkg2.equals(BackupManagerService.SHARED_BACKUP_AGENT_PACKAGE);
-                        if (isSharedStorage) {
-                            sharedBackupAgentTimeoutMillis = this.mAgentTimeoutParameters.getSharedBackupAgentTimeoutMillis();
+                        if (isSuccessfullyInstalled) {
+                            i = token;
+                            okay = isSuccessfullyInstalled;
+                            packageInfo = packageInfo2;
+                            pkg3 = pkg2;
+                            bytesReadListener2 = bytesReadListener;
+                            tarBackupReader2 = tarBackupReader3;
                         } else {
-                            sharedBackupAgentTimeoutMillis = this.mAgentTimeoutParameters.getRestoreAgentTimeoutMillis();
-                        }
-                        boolean agentSuccess2;
-                        long toCopy2;
-                        String pkg4;
-                        try {
-                            this.mBackupManagerService.prepareOperationTimeout(token, sharedBackupAgentTimeoutMillis, this.mMonitorTask, 1);
-                            if ("obb".equals(info3.domain)) {
-                                try {
-                                    str2 = BackupManagerService.TAG;
-                                    stringBuilder3 = new StringBuilder();
-                                    stringBuilder3.append("Restoring OBB file for ");
-                                    stringBuilder3.append(pkg2);
-                                    stringBuilder3.append(" : ");
-                                    stringBuilder3.append(info3.path);
-                                    Slog.d(str2, stringBuilder3.toString());
-                                    okay = isSuccessfullyInstalled;
+                            long sharedBackupAgentTimeoutMillis;
+                            long toCopy = info3.size;
+                            boolean isSharedStorage = pkg2.equals(BackupManagerService.SHARED_BACKUP_AGENT_PACKAGE);
+                            if (isSharedStorage) {
+                                sharedBackupAgentTimeoutMillis = this.mAgentTimeoutParameters.getSharedBackupAgentTimeoutMillis();
+                            } else {
+                                sharedBackupAgentTimeoutMillis = this.mAgentTimeoutParameters.getRestoreAgentTimeoutMillis();
+                            }
+                            boolean agentSuccess2;
+                            long toCopy2;
+                            String pkg4;
+                            try {
+                                this.mBackupManagerService.prepareOperationTimeout(token, sharedBackupAgentTimeoutMillis, this.mMonitorTask, 1);
+                                if ("obb".equals(info3.domain)) {
                                     try {
-                                        agentSuccess2 = true;
-                                    } catch (IOException e10) {
-                                        agentSuccess2 = true;
-                                        toCopy2 = toCopy;
-                                        z2 = isSharedStorage;
-                                        bytesReadListener2 = bytesReadListener;
-                                        tarBackupReader = tarBackupReader3;
-                                        pkg4 = pkg2;
+                                        str2 = BackupManagerService.TAG;
+                                        stringBuilder3 = new StringBuilder();
+                                        stringBuilder3.append("Restoring OBB file for ");
+                                        stringBuilder3.append(pkg2);
+                                        stringBuilder3.append(" : ");
+                                        stringBuilder3.append(info3.path);
+                                        Slog.d(str2, stringBuilder3.toString());
+                                        okay = isSuccessfullyInstalled;
                                         try {
-                                            Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
-                                            agentSuccess = false;
-                                            okay2 = false;
-                                            isSuccessfullyInstalled = okay2;
-                                            if (isSuccessfullyInstalled) {
+                                            agentSuccess2 = true;
+                                        } catch (IOException e8) {
+                                            agentSuccess2 = true;
+                                            toCopy2 = toCopy;
+                                            z2 = isSharedStorage;
+                                            bytesReadListener2 = bytesReadListener;
+                                            tarBackupReader = tarBackupReader3;
+                                            pkg4 = pkg2;
+                                            try {
+                                                Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
+                                                agentSuccess = false;
+                                                okay2 = false;
+                                                isSuccessfullyInstalled = okay2;
+                                                if (isSuccessfullyInstalled) {
+                                                }
+                                                if (agentSuccess) {
+                                                }
+                                                okay = isSuccessfullyInstalled;
+                                                if (!okay) {
+                                                }
+                                                iBackupManagerMonitor = monitor;
+                                                info = info3;
+                                            } catch (IOException e9) {
+                                                e = e9;
+                                                i = token;
+                                                tarBackupReader2 = tarBackupReader;
+                                                packageInfo = onlyPackage;
+                                                iBackupManagerMonitor = monitor;
+                                                str = BackupManagerService.TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("io exception on restore socket read: ");
+                                                stringBuilder.append(e.getMessage());
+                                                Slog.w(str, stringBuilder.toString());
+                                                setResult(-3);
+                                                info = null;
+                                                info2 = info;
+                                                if (info2 == null) {
+                                                }
+                                                if (info2 != null) {
+                                                }
+                                                return info2 != null ? true : z;
                                             }
-                                            if (agentSuccess) {
-                                            }
-                                            okay = isSuccessfullyInstalled;
-                                            if (!okay) {
-                                            }
-                                            iBackupManagerMonitor = monitor;
-                                            info = info3;
-                                        } catch (IOException e11) {
-                                            e = e11;
-                                            i = token;
-                                            tarBackupReader2 = tarBackupReader;
-                                            packageInfo = onlyPackage;
-                                            iBackupManagerMonitor = monitor;
-                                            str = BackupManagerService.TAG;
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("io exception on restore socket read: ");
-                                            stringBuilder.append(e.getMessage());
-                                            Slog.w(str, stringBuilder.toString());
-                                            setResult(-3);
-                                            info = null;
                                             info2 = info;
-                                            if (info2 != null) {
-                                            }
                                             if (info2 == null) {
                                             }
-                                            return info2 == null ? true : z;
+                                            if (info2 != null) {
+                                            }
+                                            return info2 != null ? true : z;
+                                        } catch (RemoteException e10) {
+                                            agentSuccess2 = true;
+                                            toCopy2 = toCopy;
+                                            z2 = isSharedStorage;
+                                            bytesReadListener2 = bytesReadListener;
+                                            tarBackupReader = tarBackupReader3;
+                                            pkg4 = pkg2;
+                                            try {
+                                                Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
+                                                agentSuccess = false;
+                                                okay2 = false;
+                                                isSuccessfullyInstalled = okay2;
+                                                if (isSuccessfullyInstalled) {
+                                                }
+                                                if (agentSuccess) {
+                                                }
+                                                okay = isSuccessfullyInstalled;
+                                                if (okay) {
+                                                }
+                                                iBackupManagerMonitor = monitor;
+                                                info = info3;
+                                            } catch (IOException e11) {
+                                                e = e11;
+                                                i = token;
+                                                isSharedStorage = tarBackupReader;
+                                                packageInfo = onlyPackage;
+                                                str = BackupManagerService.TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("io exception on restore socket read: ");
+                                                stringBuilder.append(e.getMessage());
+                                                Slog.w(str, stringBuilder.toString());
+                                                setResult(-3);
+                                                info = null;
+                                                info2 = info;
+                                                if (info2 == null) {
+                                                }
+                                                if (info2 != null) {
+                                                }
+                                                return info2 != null ? true : z;
+                                            }
+                                            info2 = info;
+                                            if (info2 == null) {
+                                            }
+                                            if (info2 != null) {
+                                            }
+                                            return info2 != null ? true : z;
                                         }
-                                        info2 = info;
-                                        if (info2 != null) {
-                                        }
-                                        if (info2 == null) {
-                                        }
-                                        return info2 == null ? true : z;
-                                    } catch (RemoteException e12) {
+                                    } catch (IOException e12) {
+                                        okay = isSuccessfullyInstalled;
                                         agentSuccess2 = true;
                                         toCopy2 = toCopy;
                                         z2 = isSharedStorage;
                                         bytesReadListener2 = bytesReadListener;
                                         tarBackupReader = tarBackupReader3;
                                         pkg4 = pkg2;
-                                        try {
-                                            Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
-                                            agentSuccess = false;
-                                            okay2 = false;
-                                            isSuccessfullyInstalled = okay2;
-                                            if (isSuccessfullyInstalled) {
-                                            }
-                                            if (agentSuccess) {
-                                            }
-                                            okay = isSuccessfullyInstalled;
-                                            if (okay) {
-                                            }
-                                            iBackupManagerMonitor = monitor;
-                                            info = info3;
-                                        } catch (IOException e13) {
-                                            e = e13;
-                                            i = token;
-                                            isSharedStorage = tarBackupReader;
+                                        Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
+                                        agentSuccess = false;
+                                        okay2 = false;
+                                        isSuccessfullyInstalled = okay2;
+                                        if (isSuccessfullyInstalled) {
                                         }
+                                        if (agentSuccess) {
+                                        }
+                                        okay = isSuccessfullyInstalled;
+                                        if (okay) {
+                                        }
+                                        iBackupManagerMonitor = monitor;
+                                        info = info3;
                                         info2 = info;
-                                        if (info2 != null) {
-                                        }
                                         if (info2 == null) {
                                         }
-                                        return info2 == null ? true : z;
-                                    }
-                                } catch (IOException e14) {
-                                    okay = isSuccessfullyInstalled;
-                                    agentSuccess2 = true;
-                                    toCopy2 = toCopy;
-                                    z2 = isSharedStorage;
-                                    bytesReadListener2 = bytesReadListener;
-                                    tarBackupReader = tarBackupReader3;
-                                    pkg4 = pkg2;
-                                    Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
-                                    agentSuccess = false;
-                                    okay2 = false;
-                                    isSuccessfullyInstalled = okay2;
-                                    if (isSuccessfullyInstalled) {
-                                    }
-                                    if (agentSuccess) {
-                                    }
-                                    okay = isSuccessfullyInstalled;
-                                    if (okay) {
-                                    }
-                                    iBackupManagerMonitor = monitor;
-                                    info = info3;
-                                    info2 = info;
-                                    if (info2 != null) {
-                                    }
-                                    if (info2 == null) {
-                                    }
-                                    return info2 == null ? true : z;
-                                } catch (RemoteException e15) {
-                                    okay = isSuccessfullyInstalled;
-                                    agentSuccess2 = true;
-                                    toCopy2 = toCopy;
-                                    z2 = isSharedStorage;
-                                    bytesReadListener2 = bytesReadListener;
-                                    tarBackupReader = tarBackupReader3;
-                                    pkg4 = pkg2;
-                                    Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
-                                    agentSuccess = false;
-                                    okay2 = false;
-                                    isSuccessfullyInstalled = okay2;
-                                    if (isSuccessfullyInstalled) {
-                                    }
-                                    if (agentSuccess) {
-                                    }
-                                    okay = isSuccessfullyInstalled;
-                                    if (okay) {
-                                    }
-                                    iBackupManagerMonitor = monitor;
-                                    info = info3;
-                                    info2 = info;
-                                    if (info2 != null) {
-                                    }
-                                    if (info2 == null) {
-                                    }
-                                    return info2 == null ? true : z;
-                                }
-                                try {
-                                    toCopy2 = toCopy;
-                                    try {
+                                        if (info2 != null) {
+                                        }
+                                        return info2 != null ? true : z;
+                                    } catch (RemoteException e13) {
+                                        okay = isSuccessfullyInstalled;
+                                        agentSuccess2 = true;
+                                        toCopy2 = toCopy;
+                                        z2 = isSharedStorage;
                                         bytesReadListener2 = bytesReadListener;
                                         tarBackupReader = tarBackupReader3;
+                                        pkg4 = pkg2;
+                                        Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
+                                        agentSuccess = false;
+                                        okay2 = false;
+                                        isSuccessfullyInstalled = okay2;
+                                        if (isSuccessfullyInstalled) {
+                                        }
+                                        if (agentSuccess) {
+                                        }
+                                        okay = isSuccessfullyInstalled;
+                                        if (okay) {
+                                        }
+                                        iBackupManagerMonitor = monitor;
+                                        info = info3;
+                                        info2 = info;
+                                        if (info2 == null) {
+                                        }
+                                        if (info2 != null) {
+                                        }
+                                        return info2 != null ? true : z;
+                                    }
+                                    try {
+                                        toCopy2 = toCopy;
                                         try {
+                                            bytesReadListener2 = bytesReadListener;
+                                            tarBackupReader = tarBackupReader3;
                                             try {
-                                                this.mObbConnection.restoreObbFile(pkg2, this.mPipes[0], info3.size, info3.type, info3.path, info3.mode, info3.mtime, token, this.mBackupManagerService.getBackupManagerBinder());
+                                                try {
+                                                    this.mObbConnection.restoreObbFile(pkg2, this.mPipes[0], info3.size, info3.type, info3.path, info3.mode, info3.mtime, token, this.mBackupManagerService.getBackupManagerBinder());
+                                                } catch (IOException e14) {
+                                                    pkg4 = pkg2;
+                                                } catch (RemoteException e15) {
+                                                    pkg4 = pkg2;
+                                                    Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
+                                                    agentSuccess = false;
+                                                    okay2 = false;
+                                                    isSuccessfullyInstalled = okay2;
+                                                    if (isSuccessfullyInstalled) {
+                                                    }
+                                                    if (agentSuccess) {
+                                                    }
+                                                    okay = isSuccessfullyInstalled;
+                                                    if (okay) {
+                                                    }
+                                                    iBackupManagerMonitor = monitor;
+                                                    info = info3;
+                                                    info2 = info;
+                                                    if (info2 == null) {
+                                                    }
+                                                    if (info2 != null) {
+                                                    }
+                                                    return info2 != null ? true : z;
+                                                }
                                             } catch (IOException e16) {
+                                                z2 = isSharedStorage;
                                                 pkg4 = pkg2;
+                                                Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
+                                                agentSuccess = false;
+                                                okay2 = false;
+                                                isSuccessfullyInstalled = okay2;
+                                                if (isSuccessfullyInstalled) {
+                                                }
+                                                if (agentSuccess) {
+                                                }
+                                                okay = isSuccessfullyInstalled;
+                                                if (okay) {
+                                                }
+                                                iBackupManagerMonitor = monitor;
+                                                info = info3;
+                                                info2 = info;
+                                                if (info2 == null) {
+                                                }
+                                                if (info2 != null) {
+                                                }
+                                                return info2 != null ? true : z;
                                             } catch (RemoteException e17) {
+                                                z2 = isSharedStorage;
                                                 pkg4 = pkg2;
                                                 Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
                                                 agentSuccess = false;
@@ -779,14 +847,16 @@ public class FullRestoreEngine extends RestoreEngine {
                                                 iBackupManagerMonitor = monitor;
                                                 info = info3;
                                                 info2 = info;
-                                                if (info2 != null) {
-                                                }
                                                 if (info2 == null) {
                                                 }
-                                                return info2 == null ? true : z;
+                                                if (info2 != null) {
+                                                }
+                                                return info2 != null ? true : z;
                                             }
                                         } catch (IOException e18) {
                                             z2 = isSharedStorage;
+                                            bytesReadListener2 = bytesReadListener;
+                                            tarBackupReader = tarBackupReader3;
                                             pkg4 = pkg2;
                                             Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
                                             agentSuccess = false;
@@ -802,13 +872,15 @@ public class FullRestoreEngine extends RestoreEngine {
                                             iBackupManagerMonitor = monitor;
                                             info = info3;
                                             info2 = info;
-                                            if (info2 != null) {
-                                            }
                                             if (info2 == null) {
                                             }
-                                            return info2 == null ? true : z;
+                                            if (info2 != null) {
+                                            }
+                                            return info2 != null ? true : z;
                                         } catch (RemoteException e19) {
                                             z2 = isSharedStorage;
+                                            bytesReadListener2 = bytesReadListener;
+                                            tarBackupReader = tarBackupReader3;
                                             pkg4 = pkg2;
                                             Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
                                             agentSuccess = false;
@@ -824,13 +896,14 @@ public class FullRestoreEngine extends RestoreEngine {
                                             iBackupManagerMonitor = monitor;
                                             info = info3;
                                             info2 = info;
-                                            if (info2 != null) {
-                                            }
                                             if (info2 == null) {
                                             }
-                                            return info2 == null ? true : z;
+                                            if (info2 != null) {
+                                            }
+                                            return info2 != null ? true : z;
                                         }
                                     } catch (IOException e20) {
+                                        toCopy2 = toCopy;
                                         z2 = isSharedStorage;
                                         bytesReadListener2 = bytesReadListener;
                                         tarBackupReader = tarBackupReader3;
@@ -849,12 +922,13 @@ public class FullRestoreEngine extends RestoreEngine {
                                         iBackupManagerMonitor = monitor;
                                         info = info3;
                                         info2 = info;
-                                        if (info2 != null) {
-                                        }
                                         if (info2 == null) {
                                         }
-                                        return info2 == null ? true : z;
+                                        if (info2 != null) {
+                                        }
+                                        return info2 != null ? true : z;
                                     } catch (RemoteException e21) {
+                                        toCopy2 = toCopy;
                                         z2 = isSharedStorage;
                                         bytesReadListener2 = bytesReadListener;
                                         tarBackupReader = tarBackupReader3;
@@ -873,17 +947,197 @@ public class FullRestoreEngine extends RestoreEngine {
                                         iBackupManagerMonitor = monitor;
                                         info = info3;
                                         info2 = info;
-                                        if (info2 != null) {
-                                        }
                                         if (info2 == null) {
                                         }
-                                        return info2 == null ? true : z;
+                                        if (info2 != null) {
+                                        }
+                                        return info2 != null ? true : z;
                                     }
-                                } catch (IOException e22) {
-                                    toCopy2 = toCopy;
-                                    z2 = isSharedStorage;
-                                    bytesReadListener2 = bytesReadListener;
-                                    tarBackupReader = tarBackupReader3;
+                                }
+                                okay = isSuccessfullyInstalled;
+                                agentSuccess2 = true;
+                                toCopy2 = toCopy;
+                                z2 = isSharedStorage;
+                                bytesReadListener2 = bytesReadListener;
+                                tarBackupReader = tarBackupReader3;
+                                try {
+                                    if ("k".equals(info3.domain)) {
+                                        str2 = BackupManagerService.TAG;
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Restoring key-value file for ");
+                                        stringBuilder2.append(pkg2);
+                                        stringBuilder2.append(" : ");
+                                        stringBuilder2.append(info3.path);
+                                        Slog.d(str2, stringBuilder2.toString());
+                                        new Thread(new KeyValueAdbRestoreEngine(this.mBackupManagerService, this.mBackupManagerService.getDataDir(), info3, this.mPipes[0], this.mAgent, token), "restore-key-value-runner").start();
+                                    } else if (this.mTargetApp.processName.equals("system")) {
+                                        Slog.d(BackupManagerService.TAG, "system process agent - spinning a thread");
+                                        new Thread(new RestoreFileRunnable(this.mBackupManagerService, this.mAgent, info3, this.mPipes[0], token), "restore-sys-runner").start();
+                                    } else {
+                                        pkg4 = pkg2;
+                                        try {
+                                            this.mAgent.doRestoreFile(this.mPipes[0], info3.size, info3.type, info3.domain, info3.path, info3.mode, info3.mtime, token, this.mBackupManagerService.getBackupManagerBinder());
+                                            isSuccessfullyInstalled = okay;
+                                            agentSuccess = agentSuccess2;
+                                        } catch (IOException e22) {
+                                            Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
+                                            agentSuccess = false;
+                                            okay2 = false;
+                                            isSuccessfullyInstalled = okay2;
+                                            if (isSuccessfullyInstalled) {
+                                            }
+                                            if (agentSuccess) {
+                                            }
+                                            okay = isSuccessfullyInstalled;
+                                            if (okay) {
+                                            }
+                                            iBackupManagerMonitor = monitor;
+                                            info = info3;
+                                            info2 = info;
+                                            if (info2 == null) {
+                                            }
+                                            if (info2 != null) {
+                                            }
+                                            return info2 != null ? true : z;
+                                        } catch (RemoteException e23) {
+                                            Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
+                                            agentSuccess = false;
+                                            okay2 = false;
+                                            isSuccessfullyInstalled = okay2;
+                                            if (isSuccessfullyInstalled) {
+                                            }
+                                            if (agentSuccess) {
+                                            }
+                                            okay = isSuccessfullyInstalled;
+                                            if (okay) {
+                                            }
+                                            iBackupManagerMonitor = monitor;
+                                            info = info3;
+                                            info2 = info;
+                                            if (info2 == null) {
+                                            }
+                                            if (info2 != null) {
+                                            }
+                                            return info2 != null ? true : z;
+                                        }
+                                        long toCopy3;
+                                        if (isSuccessfullyInstalled) {
+                                            FileOutputStream pipe = new FileOutputStream(this.mPipes[1].getFileDescriptor());
+                                            boolean pipeOkay = true;
+                                            long toCopy4 = toCopy2;
+                                            while (toCopy4 > 0) {
+                                                pkg2 = inputStream.read(bArr, 0, toCopy4 > ((long) bArr.length) ? bArr.length : (int) toCopy4);
+                                                if (pkg2 >= null) {
+                                                    toCopy3 = toCopy4;
+                                                    this.mBytes += (long) pkg2;
+                                                } else {
+                                                    toCopy3 = toCopy4;
+                                                }
+                                                if (pkg2 > null) {
+                                                    toCopy = toCopy3 - ((long) pkg2);
+                                                    if (pipeOkay) {
+                                                        try {
+                                                            pipe.write(bArr, 0, pkg2);
+                                                        } catch (IOException e24) {
+                                                            IOException iOException = e24;
+                                                            String str3 = BackupManagerService.TAG;
+                                                            StringBuilder stringBuilder4 = new StringBuilder();
+                                                            stringBuilder4.append("Failed to write to restore pipe: ");
+                                                            stringBuilder4.append(e24.getMessage());
+                                                            Slog.e(str3, stringBuilder4.toString());
+                                                            pipeOkay = false;
+                                                        }
+                                                    }
+                                                    toCopy4 = toCopy;
+                                                }
+                                                tarBackupReader.skipTarPadding(info3.size);
+                                                try {
+                                                    agentSuccess = this.mBackupManagerService.waitUntilOperationComplete(token);
+                                                } catch (IOException e25) {
+                                                    e24 = e25;
+                                                    packageInfo = onlyPackage;
+                                                    str = BackupManagerService.TAG;
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("io exception on restore socket read: ");
+                                                    stringBuilder.append(e24.getMessage());
+                                                    Slog.w(str, stringBuilder.toString());
+                                                    setResult(-3);
+                                                    info = null;
+                                                    info2 = info;
+                                                    if (info2 == null) {
+                                                    }
+                                                    if (info2 != null) {
+                                                    }
+                                                    return info2 != null ? true : z;
+                                                }
+                                            }
+                                            toCopy3 = toCopy4;
+                                            try {
+                                                tarBackupReader.skipTarPadding(info3.size);
+                                                agentSuccess = this.mBackupManagerService.waitUntilOperationComplete(token);
+                                            } catch (IOException e26) {
+                                                e24 = e26;
+                                                i = token;
+                                                packageInfo = onlyPackage;
+                                                str = BackupManagerService.TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("io exception on restore socket read: ");
+                                                stringBuilder.append(e24.getMessage());
+                                                Slog.w(str, stringBuilder.toString());
+                                                setResult(-3);
+                                                info = null;
+                                                info2 = info;
+                                                if (info2 == null) {
+                                                }
+                                                if (info2 != null) {
+                                                }
+                                                return info2 != null ? true : z;
+                                            }
+                                        }
+                                        i = token;
+                                        tarBackupReader2 = tarBackupReader;
+                                        toCopy3 = toCopy2;
+                                        if (agentSuccess) {
+                                            str2 = BackupManagerService.TAG;
+                                            stringBuilder3 = new StringBuilder();
+                                            stringBuilder3.append("Agent failure restoring ");
+                                            pkg3 = pkg4;
+                                            stringBuilder3.append(pkg3);
+                                            stringBuilder3.append("; ending restore");
+                                            Slog.w(str2, stringBuilder3.toString());
+                                            this.mBackupManagerService.getBackupHandler().removeMessages(18);
+                                            tearDownPipes();
+                                            tearDownAgent(this.mTargetApp);
+                                            this.mAgent = null;
+                                            this.mPackagePolicies.put(pkg3, RestorePolicy.IGNORE);
+                                            if (onlyPackage != null) {
+                                                try {
+                                                    setResult(-2);
+                                                    setRunning(false);
+                                                    return false;
+                                                } catch (IOException e27) {
+                                                    e24 = e27;
+                                                    str = BackupManagerService.TAG;
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("io exception on restore socket read: ");
+                                                    stringBuilder.append(e24.getMessage());
+                                                    Slog.w(str, stringBuilder.toString());
+                                                    setResult(-3);
+                                                    info = null;
+                                                    info2 = info;
+                                                    if (info2 == null) {
+                                                    }
+                                                    if (info2 != null) {
+                                                    }
+                                                    return info2 != null ? true : z;
+                                                }
+                                            }
+                                        }
+                                        pkg3 = pkg4;
+                                        packageInfo = onlyPackage;
+                                        okay = isSuccessfullyInstalled;
+                                    }
+                                } catch (IOException e28) {
                                     pkg4 = pkg2;
                                     Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
                                     agentSuccess = false;
@@ -899,16 +1153,12 @@ public class FullRestoreEngine extends RestoreEngine {
                                     iBackupManagerMonitor = monitor;
                                     info = info3;
                                     info2 = info;
-                                    if (info2 != null) {
-                                    }
                                     if (info2 == null) {
                                     }
-                                    return info2 == null ? true : z;
-                                } catch (RemoteException e23) {
-                                    toCopy2 = toCopy;
-                                    z2 = isSharedStorage;
-                                    bytesReadListener2 = bytesReadListener;
-                                    tarBackupReader = tarBackupReader3;
+                                    if (info2 != null) {
+                                    }
+                                    return info2 != null ? true : z;
+                                } catch (RemoteException e29) {
                                     pkg4 = pkg2;
                                     Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
                                     agentSuccess = false;
@@ -924,198 +1174,23 @@ public class FullRestoreEngine extends RestoreEngine {
                                     iBackupManagerMonitor = monitor;
                                     info = info3;
                                     info2 = info;
-                                    if (info2 != null) {
-                                    }
                                     if (info2 == null) {
                                     }
-                                    return info2 == null ? true : z;
+                                    if (info2 != null) {
+                                    }
+                                    return info2 != null ? true : z;
                                 }
-                            }
-                            okay = isSuccessfullyInstalled;
-                            agentSuccess2 = true;
-                            toCopy2 = toCopy;
-                            z2 = isSharedStorage;
-                            bytesReadListener2 = bytesReadListener;
-                            tarBackupReader = tarBackupReader3;
-                            try {
-                                if ("k".equals(info3.domain)) {
-                                    str2 = BackupManagerService.TAG;
-                                    stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("Restoring key-value file for ");
-                                    stringBuilder2.append(pkg2);
-                                    stringBuilder2.append(" : ");
-                                    stringBuilder2.append(info3.path);
-                                    Slog.d(str2, stringBuilder2.toString());
-                                    new Thread(new KeyValueAdbRestoreEngine(this.mBackupManagerService, this.mBackupManagerService.getDataDir(), info3, this.mPipes[0], this.mAgent, token), "restore-key-value-runner").start();
-                                } else if (this.mTargetApp.processName.equals("system")) {
-                                    Slog.d(BackupManagerService.TAG, "system process agent - spinning a thread");
-                                    new Thread(new RestoreFileRunnable(this.mBackupManagerService, this.mAgent, info3, this.mPipes[0], token), "restore-sys-runner").start();
-                                } else {
-                                    pkg4 = pkg2;
-                                    try {
-                                        this.mAgent.doRestoreFile(this.mPipes[0], info3.size, info3.type, info3.domain, info3.path, info3.mode, info3.mtime, token, this.mBackupManagerService.getBackupManagerBinder());
-                                        isSuccessfullyInstalled = okay;
-                                        agentSuccess = agentSuccess2;
-                                    } catch (IOException e24) {
-                                        Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
-                                        agentSuccess = false;
-                                        okay2 = false;
-                                        isSuccessfullyInstalled = okay2;
-                                        if (isSuccessfullyInstalled) {
-                                        }
-                                        if (agentSuccess) {
-                                        }
-                                        okay = isSuccessfullyInstalled;
-                                        if (okay) {
-                                        }
-                                        iBackupManagerMonitor = monitor;
-                                        info = info3;
-                                        info2 = info;
-                                        if (info2 != null) {
-                                        }
-                                        if (info2 == null) {
-                                        }
-                                        return info2 == null ? true : z;
-                                    } catch (RemoteException e25) {
-                                        Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
-                                        agentSuccess = false;
-                                        okay2 = false;
-                                        isSuccessfullyInstalled = okay2;
-                                        if (isSuccessfullyInstalled) {
-                                        }
-                                        if (agentSuccess) {
-                                        }
-                                        okay = isSuccessfullyInstalled;
-                                        if (okay) {
-                                        }
-                                        iBackupManagerMonitor = monitor;
-                                        info = info3;
-                                        info2 = info;
-                                        if (info2 != null) {
-                                        }
-                                        if (info2 == null) {
-                                        }
-                                        return info2 == null ? true : z;
-                                    }
-                                    long toCopy3;
-                                    if (isSuccessfullyInstalled) {
-                                        FileOutputStream pipe = new FileOutputStream(this.mPipes[1].getFileDescriptor());
-                                        boolean pipeOkay = true;
-                                        long toCopy4 = toCopy2;
-                                        while (toCopy4 > 0) {
-                                            pkg2 = inputStream.read(bArr, 0, toCopy4 > ((long) bArr.length) ? bArr.length : (int) toCopy4);
-                                            if (pkg2 >= null) {
-                                                toCopy3 = toCopy4;
-                                                this.mBytes += (long) pkg2;
-                                            } else {
-                                                toCopy3 = toCopy4;
-                                            }
-                                            if (pkg2 > null) {
-                                                toCopy = toCopy3 - ((long) pkg2);
-                                                if (pipeOkay) {
-                                                    try {
-                                                        pipe.write(bArr, 0, pkg2);
-                                                    } catch (IOException e26) {
-                                                        IOException iOException = e26;
-                                                        String str3 = BackupManagerService.TAG;
-                                                        StringBuilder stringBuilder4 = new StringBuilder();
-                                                        stringBuilder4.append("Failed to write to restore pipe: ");
-                                                        stringBuilder4.append(e26.getMessage());
-                                                        Slog.e(str3, stringBuilder4.toString());
-                                                        pipeOkay = false;
-                                                    }
-                                                }
-                                                toCopy4 = toCopy;
-                                            }
-                                            tarBackupReader.skipTarPadding(info3.size);
-                                            try {
-                                                agentSuccess = this.mBackupManagerService.waitUntilOperationComplete(token);
-                                            } catch (IOException e27) {
-                                                e26 = e27;
-                                                packageInfo = onlyPackage;
-                                                str = BackupManagerService.TAG;
-                                                stringBuilder = new StringBuilder();
-                                                stringBuilder.append("io exception on restore socket read: ");
-                                                stringBuilder.append(e26.getMessage());
-                                                Slog.w(str, stringBuilder.toString());
-                                                setResult(-3);
-                                                info = null;
-                                                info2 = info;
-                                                if (info2 != null) {
-                                                }
-                                                if (info2 == null) {
-                                                }
-                                                return info2 == null ? true : z;
-                                            }
-                                        }
-                                        toCopy3 = toCopy4;
-                                        try {
-                                            tarBackupReader.skipTarPadding(info3.size);
-                                            agentSuccess = this.mBackupManagerService.waitUntilOperationComplete(token);
-                                        } catch (IOException e28) {
-                                            e26 = e28;
-                                            i = token;
-                                            packageInfo = onlyPackage;
-                                            str = BackupManagerService.TAG;
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("io exception on restore socket read: ");
-                                            stringBuilder.append(e26.getMessage());
-                                            Slog.w(str, stringBuilder.toString());
-                                            setResult(-3);
-                                            info = null;
-                                            info2 = info;
-                                            if (info2 != null) {
-                                            }
-                                            if (info2 == null) {
-                                            }
-                                            return info2 == null ? true : z;
-                                        }
-                                    }
-                                    i = token;
-                                    tarBackupReader2 = tarBackupReader;
-                                    toCopy3 = toCopy2;
-                                    if (agentSuccess) {
-                                        str2 = BackupManagerService.TAG;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("Agent failure restoring ");
-                                        pkg3 = pkg4;
-                                        stringBuilder3.append(pkg3);
-                                        stringBuilder3.append("; ending restore");
-                                        Slog.w(str2, stringBuilder3.toString());
-                                        this.mBackupManagerService.getBackupHandler().removeMessages(18);
-                                        tearDownPipes();
-                                        tearDownAgent(this.mTargetApp);
-                                        this.mAgent = null;
-                                        this.mPackagePolicies.put(pkg3, RestorePolicy.IGNORE);
-                                        if (onlyPackage != null) {
-                                            try {
-                                                setResult(-2);
-                                                setRunning(false);
-                                                return false;
-                                            } catch (IOException e29) {
-                                                e26 = e29;
-                                                str = BackupManagerService.TAG;
-                                                stringBuilder = new StringBuilder();
-                                                stringBuilder.append("io exception on restore socket read: ");
-                                                stringBuilder.append(e26.getMessage());
-                                                Slog.w(str, stringBuilder.toString());
-                                                setResult(-3);
-                                                info = null;
-                                                info2 = info;
-                                                if (info2 != null) {
-                                                }
-                                                if (info2 == null) {
-                                                }
-                                                return info2 == null ? true : z;
-                                            }
-                                        }
-                                    }
-                                    pkg3 = pkg4;
-                                    packageInfo = onlyPackage;
-                                    okay = isSuccessfullyInstalled;
-                                }
-                            } catch (IOException e30) {
                                 pkg4 = pkg2;
+                                isSuccessfullyInstalled = okay;
+                                agentSuccess = agentSuccess2;
+                            } catch (IOException e30) {
+                                okay = isSuccessfullyInstalled;
+                                agentSuccess2 = true;
+                                toCopy2 = toCopy;
+                                z2 = isSharedStorage;
+                                pkg4 = pkg2;
+                                bytesReadListener2 = bytesReadListener;
+                                tarBackupReader = tarBackupReader3;
                                 Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
                                 agentSuccess = false;
                                 okay2 = false;
@@ -1130,13 +1205,19 @@ public class FullRestoreEngine extends RestoreEngine {
                                 iBackupManagerMonitor = monitor;
                                 info = info3;
                                 info2 = info;
-                                if (info2 != null) {
-                                }
                                 if (info2 == null) {
                                 }
-                                return info2 == null ? true : z;
+                                if (info2 != null) {
+                                }
+                                return info2 != null ? true : z;
                             } catch (RemoteException e31) {
+                                okay = isSuccessfullyInstalled;
+                                agentSuccess2 = true;
+                                toCopy2 = toCopy;
+                                z2 = isSharedStorage;
                                 pkg4 = pkg2;
+                                bytesReadListener2 = bytesReadListener;
+                                tarBackupReader = tarBackupReader3;
                                 Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
                                 agentSuccess = false;
                                 okay2 = false;
@@ -1151,99 +1232,60 @@ public class FullRestoreEngine extends RestoreEngine {
                                 iBackupManagerMonitor = monitor;
                                 info = info3;
                                 info2 = info;
-                                if (info2 != null) {
-                                }
                                 if (info2 == null) {
                                 }
-                                return info2 == null ? true : z;
+                                if (info2 != null) {
+                                }
+                                return info2 != null ? true : z;
                             }
-                            pkg4 = pkg2;
-                            isSuccessfullyInstalled = okay;
-                            agentSuccess = agentSuccess2;
-                        } catch (IOException e32) {
-                            okay = isSuccessfullyInstalled;
-                            agentSuccess2 = true;
-                            toCopy2 = toCopy;
-                            z2 = isSharedStorage;
-                            pkg4 = pkg2;
-                            bytesReadListener2 = bytesReadListener;
-                            tarBackupReader = tarBackupReader3;
-                            Slog.d(BackupManagerService.TAG, "Couldn't establish restore");
-                            agentSuccess = false;
-                            okay2 = false;
-                            isSuccessfullyInstalled = okay2;
                             if (isSuccessfullyInstalled) {
                             }
                             if (agentSuccess) {
                             }
                             okay = isSuccessfullyInstalled;
-                            if (okay) {
-                            }
-                            iBackupManagerMonitor = monitor;
-                            info = info3;
-                            info2 = info;
-                            if (info2 != null) {
-                            }
-                            if (info2 == null) {
-                            }
-                            return info2 == null ? true : z;
-                        } catch (RemoteException e33) {
-                            okay = isSuccessfullyInstalled;
-                            agentSuccess2 = true;
-                            toCopy2 = toCopy;
-                            z2 = isSharedStorage;
-                            pkg4 = pkg2;
-                            bytesReadListener2 = bytesReadListener;
-                            tarBackupReader = tarBackupReader3;
-                            Slog.e(BackupManagerService.TAG, "Agent crashed during full restore");
-                            agentSuccess = false;
-                            okay2 = false;
-                            isSuccessfullyInstalled = okay2;
-                            if (isSuccessfullyInstalled) {
-                            }
-                            if (agentSuccess) {
-                            }
-                            okay = isSuccessfullyInstalled;
-                            if (okay) {
-                            }
-                            iBackupManagerMonitor = monitor;
-                            info = info3;
-                            info2 = info;
-                            if (info2 != null) {
-                            }
-                            if (info2 == null) {
-                            }
-                            return info2 == null ? true : z;
                         }
-                        if (isSuccessfullyInstalled) {
+                        if (okay) {
+                            long bytesToConsume = (info3.size + 511) & -512;
+                            while (bytesToConsume > 0) {
+                                String pkg5;
+                                bytesReadListener = (long) inputStream.read(bArr, 0, bytesToConsume > ((long) bArr.length) ? bArr.length : (int) bytesToConsume);
+                                if (bytesReadListener >= 0) {
+                                    pkg5 = pkg3;
+                                    this.mBytes += bytesReadListener;
+                                } else {
+                                    pkg5 = pkg3;
+                                }
+                                if (bytesReadListener > 0) {
+                                    bytesToConsume -= bytesReadListener;
+                                    pkg3 = pkg5;
+                                }
+                            }
                         }
-                        if (agentSuccess) {
+                    }
+                    okay2 = false;
+                    isSuccessfullyInstalled = okay2;
+                    try {
+                        this.mTargetApp = this.mBackupManagerService.getPackageManager().getApplicationInfo(pkg2, 0);
+                        if (this.mClearedPackages.contains(pkg2)) {
                         }
-                        okay = isSuccessfullyInstalled;
-                    } else {
-                        i = token;
-                        okay = isSuccessfullyInstalled;
-                        packageInfo = packageInfo2;
-                        pkg3 = pkg2;
-                        bytesReadListener2 = bytesReadListener;
-                        tarBackupReader2 = tarBackupReader3;
+                        setUpPipes();
+                        this.mAgent = this.mBackupManagerService.bindToAgentSynchronous(this.mTargetApp, 3);
+                        this.mAgentPackage = pkg2;
+                    } catch (NameNotFoundException | IOException e32) {
+                    }
+                    if (this.mAgent == null) {
+                    }
+                    str2 = BackupManagerService.TAG;
+                    stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("Restoring data for ");
+                    stringBuilder3.append(pkg2);
+                    stringBuilder3.append(" but agent is for ");
+                    stringBuilder3.append(this.mAgentPackage);
+                    Slog.e(str2, stringBuilder3.toString());
+                    isSuccessfullyInstalled = false;
+                    if (isSuccessfullyInstalled) {
                     }
                     if (okay) {
-                        long bytesToConsume = (info3.size + 511) & -512;
-                        while (bytesToConsume > 0) {
-                            String pkg5;
-                            bytesReadListener = (long) inputStream.read(bArr, 0, bytesToConsume > ((long) bArr.length) ? bArr.length : (int) bytesToConsume);
-                            if (bytesReadListener >= 0) {
-                                pkg5 = pkg3;
-                                this.mBytes += bytesReadListener;
-                            } else {
-                                pkg5 = pkg3;
-                            }
-                            if (bytesReadListener > 0) {
-                                bytesToConsume -= bytesReadListener;
-                                pkg3 = pkg5;
-                            }
-                        }
                     }
                 } else {
                     i = token;
@@ -1253,8 +1295,8 @@ public class FullRestoreEngine extends RestoreEngine {
                 }
                 iBackupManagerMonitor = monitor;
                 info = info3;
-            } catch (IOException e34) {
-                e26 = e34;
+            } catch (IOException e33) {
+                e24 = e33;
                 i = token;
                 packageInfo = packageInfo2;
                 bytesReadListener2 = bytesReadListener;
@@ -1262,23 +1304,23 @@ public class FullRestoreEngine extends RestoreEngine {
                 str = BackupManagerService.TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("io exception on restore socket read: ");
-                stringBuilder.append(e26.getMessage());
+                stringBuilder.append(e24.getMessage());
                 Slog.w(str, stringBuilder.toString());
                 setResult(-3);
                 info = null;
                 info2 = info;
-                if (info2 != null) {
-                }
                 if (info2 == null) {
                 }
-                return info2 == null ? true : z;
+                if (info2 != null) {
+                }
+                return info2 != null ? true : z;
             }
             info2 = info;
-            if (info2 != null) {
-            }
             if (info2 == null) {
             }
-            return info2 == null ? true : z;
+            if (info2 != null) {
+            }
+            return info2 != null ? true : z;
         }
         Slog.w(BackupManagerService.TAG, "Restore engine used after halting");
         return false;

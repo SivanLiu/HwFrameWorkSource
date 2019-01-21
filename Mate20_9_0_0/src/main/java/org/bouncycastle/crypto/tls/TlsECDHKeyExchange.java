@@ -65,7 +65,7 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         if (!requiresServerKeyExchange()) {
             return null;
         }
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralServerKeyExchange(this.context.getSecureRandom(), this.namedCurves, this.clientECPointFormats, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
@@ -114,7 +114,7 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
                     try {
                         this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey((ECPublicKeyParameters) this.serverPublicKey);
                         i = 8;
-                    } catch (Throwable e) {
+                    } catch (ClassCastException e) {
                         throw new TlsFatalAlert((short) 46, e);
                     }
                 } else if (this.tlsSigner.isValidPublicKey(this.serverPublicKey)) {
@@ -124,7 +124,7 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
                 }
                 TlsUtils.validateKeyUsage(certificateAt, i);
                 super.processServerCertificate(certificate);
-            } catch (Throwable e2) {
+            } catch (RuntimeException e2) {
                 throw new TlsFatalAlert((short) 43, e2);
             }
         }

@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,14 +21,16 @@ public class OneShotTimerTrigger implements ITimerTrigger {
     private static final int PERIOD_TYPE_MONTH = 3;
     private static final int PERIOD_TYPE_WEEK = 2;
     private static final int PERIOD_TYPE_YEAR = 4;
+    private static final int RANDOM_TIME_IN_SECOND = 7200;
     private static final String TAG = "OneShotTimerTrigger";
     private int mPeriodType;
     private SpanTimerTrigger mSpanTrigger;
     private Calendar mStartDate;
 
     private void initialize(int h, int m, int s) {
-        int seconds = ((((h * 60) + m) * 60) + s) + ERROR_TOLERANCE_INSECOND;
-        this.mSpanTrigger = new SpanTimerTrigger(h, m, s, (seconds / 3600) % 24, (seconds / 60) % 60, seconds % 60, 21600);
+        int random_time = new Random().nextInt(RANDOM_TIME_IN_SECOND);
+        OPCollectLog.i(TAG, "random_time: " + random_time);
+        this.mSpanTrigger = new SpanTimerTrigger(h, m, s + random_time, 0, 0, 0, 21600);
     }
 
     public OneShotTimerTrigger(int h, int m, int s) {

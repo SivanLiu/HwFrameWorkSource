@@ -44,7 +44,7 @@ public class OCSPReqBuilder {
         for (RequestObject toRequest : this.list) {
             try {
                 aSN1EncodableVector.add(toRequest.toRequest());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new OCSPException("exception creating Request", e);
             }
         }
@@ -67,7 +67,7 @@ public class OCSPReqBuilder {
                     }
                     signature = new Signature(algorithmIdentifier, dERBitString, new DERSequence(aSN1EncodableVector2));
                 }
-            } catch (Throwable e2) {
+            } catch (Exception e2) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception processing TBSRequest: ");
                 stringBuilder.append(e2);

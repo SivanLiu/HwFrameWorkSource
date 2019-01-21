@@ -316,7 +316,7 @@ class SecurityLogMonitor implements Runnable {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002e, code:
+    /* JADX WARNING: Missing block: B:12:0x002e, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

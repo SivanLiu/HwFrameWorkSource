@@ -1,106 +1,106 @@
 package com.huawei.android.pushagent.model.prefs;
 
 import android.content.Context;
-import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.a.c;
-import com.huawei.android.pushagent.utils.f.a;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-public class e {
-    private static final byte[] fk = new byte[0];
-    private static e fl;
-    private final a fm;
+public class e extends h {
+    private static final byte[] cr = new byte[0];
+    private static e cs = null;
 
     private e(Context context) {
-        this.fm = new a(context, "pclient_info_v2");
+        super(context, "pushConfig");
+        la();
     }
 
-    public static e pn(Context context) {
-        return pw(context);
-    }
-
-    private static e pw(Context context) {
-        e eVar;
-        synchronized (fk) {
-            if (fl == null) {
-                fl = new e(context);
+    public static e jj(Context context) {
+        synchronized (cr) {
+            e eVar;
+            if (cs != null) {
+                eVar = cs;
+                return eVar;
             }
-            eVar = fl;
-        }
-        return eVar;
-    }
-
-    public boolean pt() {
-        return this.fm.eg();
-    }
-
-    public String pp(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return "";
-        }
-        return this.fm.ec(str);
-    }
-
-    public String ps(String str) {
-        return c.j(pp(str));
-    }
-
-    public boolean px(String str, String str2) {
-        if (TextUtils.isEmpty(str)) {
-            return false;
-        }
-        return this.fm.ea(str, str2);
-    }
-
-    public boolean po(String str, String str2) {
-        return px(str, c.k(str2));
-    }
-
-    public void pr(String str) {
-        this.fm.ed(str);
-    }
-
-    public Set<String> pq() {
-        Map all = this.fm.getAll();
-        if (all == null) {
-            return new HashSet();
-        }
-        Set<String> keySet = all.keySet();
-        if (keySet == null) {
-            return new HashSet();
-        }
-        return keySet;
-    }
-
-    public String pu(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
-        }
-        try {
-            Map all = this.fm.getAll();
-            if (all == null) {
-                return null;
-            }
-            Iterable<Entry> entrySet = all.entrySet();
-            if (entrySet == null) {
-                return null;
-            }
-            for (Entry entry : entrySet) {
-                String str2 = (String) entry.getKey();
-                if (str.equals(c.j((String) entry.getValue()))) {
-                    return str2;
-                }
-            }
-            return null;
-        } catch (Throwable e) {
-            com.huawei.android.pushagent.utils.f.c.es("PushLog3413", e.toString(), e);
+            cs = new e(context);
+            eVar = cs;
+            return eVar;
         }
     }
 
-    public void pv() {
-        this.fm.dz();
+    public long ju() {
+        return getLong("upAnalyticUrlTime", 0);
+    }
+
+    public boolean kc(long j) {
+        return setValue("upAnalyticUrlTime", Long.valueOf(j));
+    }
+
+    public long jt() {
+        return getLong("run_time_less_times", 0);
+    }
+
+    public boolean kb(long j) {
+        return setValue("run_time_less_times", Long.valueOf(j));
+    }
+
+    public int jk() {
+        return getInt("lastConnectPushSrvMethodIdx", 0);
+    }
+
+    public boolean jn(int i) {
+        return setValue("lastConnectPushSrvMethodIdx", Integer.valueOf(i));
+    }
+
+    public int jl() {
+        return getInt("tryConnectPushSevTimes", 0);
+    }
+
+    public boolean jm(int i) {
+        return setValue("tryConnectPushSevTimes", Integer.valueOf(i));
+    }
+
+    public long js() {
+        return getLong("queryTrsTimes", 0);
+    }
+
+    public boolean ka(long j) {
+        return setValue("queryTrsTimes", Long.valueOf(j));
+    }
+
+    public long jq() {
+        return getLong("lastQueryTRSTime", 0);
+    }
+
+    public boolean jz(long j) {
+        return setValue("lastQueryTRSTime", Long.valueOf(j));
+    }
+
+    public long jp() {
+        return getLong("lastQueryTRSsucc_time", 0);
+    }
+
+    public boolean jy(long j) {
+        return setValue("lastQueryTRSsucc_time", Long.valueOf(j));
+    }
+
+    public boolean jw() {
+        return lc("isBadNetworkMode", false);
+    }
+
+    public boolean jx(boolean z) {
+        return setValue("isBadNetworkMode", Boolean.valueOf(z));
+    }
+
+    public int jv() {
+        return getInt("version_config", 0);
+    }
+
+    public boolean kd(int i) {
+        return setValue("version_config", Integer.valueOf(i));
+    }
+
+    public int jr() {
+        return getInt("networkPolicySwitch", 1);
+    }
+
+    public boolean jo(int i) {
+        return setValue("networkPolicySwitch", Integer.valueOf(i));
     }
 }

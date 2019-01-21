@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import libcore.io.IoUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DiskStatsService extends Binder {
@@ -193,17 +194,6 @@ public class DiskStatsService extends Binder {
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x00c7 A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:2:0x00c7, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:3:0x00c8, code:
-            android.util.Log.w(TAG, "exception reading diskstats cache file", r0);
-     */
-    /* JADX WARNING: Missing block: B:4:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void reportCachedValues(PrintWriter pw) {
         try {
             JSONObject json = new JSONObject(IoUtils.readFileAsString("/data/system/diskstats_cache.json"));
@@ -233,21 +223,11 @@ public class DiskStatsService extends Binder {
             pw.println(json.getJSONArray(DiskStatsFileLogger.APP_DATA_KEY));
             pw.print("Cache Sizes: ");
             pw.println(json.getJSONArray(DiskStatsFileLogger.APP_CACHES_KEY));
-        } catch (Exception e) {
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "exception reading diskstats cache file", e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x012f A:{Splitter: B:1:0x0002, ExcHandler: java.io.IOException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:14:0x012f, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:15:0x0130, code:
-            android.util.Log.w(TAG, "exception reading diskstats cache file", r0);
-     */
-    /* JADX WARNING: Missing block: B:17:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void reportCachedValuesProto(ProtoOutputStream proto) {
         ProtoOutputStream protoOutputStream = proto;
         try {
@@ -289,7 +269,8 @@ public class DiskStatsService extends Binder {
                 Slog.wtf(TAG, "Sizes of packageNamesArray, appSizesArray, appDataSizesArray  and cacheSizesArray are not the same");
             }
             protoOutputStream.end(cachedValuesToken);
-        } catch (Exception e) {
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "exception reading diskstats cache file", e);
         }
     }
 
@@ -301,18 +282,6 @@ public class DiskStatsService extends Binder {
         throw new IllegalStateException("storaged not found");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x0021 A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:5:0x0021, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:6:0x0022, code:
-            r5.println(r0.toString());
-            android.util.Log.e(TAG, r0.toString());
-     */
-    /* JADX WARNING: Missing block: B:7:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void reportDiskWriteSpeed(PrintWriter pw) {
         try {
             long perf = (long) getRecentPerf();
@@ -323,21 +292,12 @@ public class DiskStatsService extends Binder {
             }
             pw.println("Recent Disk Write Speed data unavailable");
             Log.w(TAG, "Recent Disk Write Speed data unavailable!");
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            pw.println(e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x001c A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:5:0x001c, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:6:0x001d, code:
-            android.util.Log.e(TAG, r0.toString());
-     */
-    /* JADX WARNING: Missing block: B:7:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void reportDiskWriteSpeedProto(ProtoOutputStream proto) {
         try {
             long perf = (long) getRecentPerf();
@@ -346,7 +306,8 @@ public class DiskStatsService extends Binder {
             } else {
                 Log.w(TAG, "Recent Disk Write Speed data unavailable!");
             }
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            Log.e(TAG, e.toString());
         }
     }
 }

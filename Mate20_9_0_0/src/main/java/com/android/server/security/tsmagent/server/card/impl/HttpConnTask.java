@@ -12,10 +12,13 @@ import com.android.server.security.tsmagent.utils.NetworkUtil;
 import com.android.server.security.tsmagent.utils.StringUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,19 +38,6 @@ public abstract class HttpConnTask extends HttpConnectionBase {
         this.mSocketTimeout = socketTimeout;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0114 A:{ExcHandler: java.io.IOException (r0_9 'e' java.lang.Exception), Splitter: B:9:0x002f} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0114 A:{ExcHandler: java.io.IOException (r0_9 'e' java.lang.Exception), Splitter: B:9:0x002f} */
-    /* JADX WARNING: Missing block: B:30:0x0114, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:32:?, code:
-            r4 = new java.lang.StringBuilder();
-            r4.append("processTask, Exception : ");
-            r4.append(r0.getMessage());
-            com.android.server.security.tsmagent.utils.HwLog.e(r4.toString());
-            r3 = readErrorResponse(-2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public CardServerBaseResponse processTask(CardServerBaseRequest params) {
         CardServerBaseRequest cardServerBaseRequest = params;
         if (NetworkUtil.isNetworkConnected(this.mContext)) {
@@ -116,7 +106,12 @@ public abstract class HttpConnTask extends HttpConnectionBase {
             } catch (MalformedURLException e) {
                 HwLog.e("processTask url invalid.");
                 result = readErrorResponse(-3);
-            } catch (Exception e2) {
+            } catch (IOException | KeyManagementException | NoSuchAlgorithmException e2) {
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("processTask, Exception : ");
+                stringBuilder3.append(e2.getMessage());
+                HwLog.e(stringBuilder3.toString());
+                result = readErrorResponse(-2);
             } catch (Throwable th) {
                 closeStream(null, null, outputStream, null);
             }
@@ -156,28 +151,30 @@ public abstract class HttpConnTask extends HttpConnectionBase {
                 stringBuilder3.append(errorMsg);
                 HwLog.w(stringBuilder3.toString());
                 return readSuccessResponse(Integer.parseInt(errorCode), errorMsg, null);
-            } else if (ServiceConfig.WALLET_MERCHANT_ID.equals(merchantID) && -1 == keyIndex && !StringUtil.isTrimedEmpty(responseDataStr)) {
-                stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("handleResponse, responseDataStr : ");
-                stringBuilder3.append(responseDataStr);
-                HwLog.d(stringBuilder3.toString());
-                dataObject = new JSONObject(responseDataStr);
-                String returnCodeStr = JSONHelper.getStringValue(dataObject, "returnCode");
-                if (returnCodeStr == null) {
-                    HwLog.d("handleResponse, returnCode is invalid.");
-                    return readSuccessResponse(-99, null, null);
-                }
-                if (isNumber(returnCodeStr)) {
-                    returnCode = Integer.parseInt(returnCodeStr);
-                } else {
-                    returnCode = -98;
-                }
-                returnDesc = JSONHelper.getStringValue(dataObject, "returnDesc");
-                return readSuccessResponse(returnCode, returnDesc, dataObject);
-            } else {
-                HwLog.d("handleResponse, unexpected error from server.");
-                return readSuccessResponse(-99, null, null);
             }
+            if (ServiceConfig.WALLET_MERCHANT_ID.equals(merchantID) && -1 == keyIndex) {
+                if (!StringUtil.isTrimedEmpty(responseDataStr)) {
+                    stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("handleResponse, responseDataStr : ");
+                    stringBuilder3.append(responseDataStr);
+                    HwLog.d(stringBuilder3.toString());
+                    dataObject = new JSONObject(responseDataStr);
+                    String returnCodeStr = JSONHelper.getStringValue(dataObject, "returnCode");
+                    if (returnCodeStr == null) {
+                        HwLog.d("handleResponse, returnCode is invalid.");
+                        return readSuccessResponse(-99, null, null);
+                    }
+                    if (isNumber(returnCodeStr)) {
+                        returnCode = Integer.parseInt(returnCodeStr);
+                    } else {
+                        returnCode = -98;
+                    }
+                    returnDesc = JSONHelper.getStringValue(dataObject, "returnDesc");
+                    return readSuccessResponse(returnCode, returnDesc, dataObject);
+                }
+            }
+            HwLog.d("handleResponse, unexpected error from server.");
+            return readSuccessResponse(-99, null, null);
         } catch (NumberFormatException ex) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("readSuccessResponse, NumberFormatException : ");

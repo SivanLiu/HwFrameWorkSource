@@ -103,7 +103,7 @@ public class TlsPSKKeyExchange extends AbstractTlsKeyExchange {
 
     public byte[] generatePremasterSecret() throws IOException {
         byte[] generateOtherSecret = generateOtherSecret(this.psk.length);
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream((4 + generateOtherSecret.length) + this.psk.length);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream((4 + generateOtherSecret.length) + this.psk.length);
         TlsUtils.writeOpaque16(generateOtherSecret, byteArrayOutputStream);
         TlsUtils.writeOpaque16(this.psk, byteArrayOutputStream);
         Arrays.fill(this.psk, (byte) 0);
@@ -116,7 +116,7 @@ public class TlsPSKKeyExchange extends AbstractTlsKeyExchange {
         if (this.psk_identity_hint == null && !requiresServerKeyExchange()) {
             return null;
         }
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         TlsUtils.writeOpaque16(this.psk_identity_hint == null ? TlsUtils.EMPTY_BYTES : this.psk_identity_hint, byteArrayOutputStream);
         if (this.keyExchange == 14) {
             if (this.dhParameters != null) {
@@ -170,7 +170,7 @@ public class TlsPSKKeyExchange extends AbstractTlsKeyExchange {
                 this.rsaServerPublicKey = validateRSAPublicKey((RSAKeyParameters) this.serverPublicKey);
                 TlsUtils.validateKeyUsage(certificateAt, 32);
                 super.processServerCertificate(certificate);
-            } catch (Throwable e) {
+            } catch (RuntimeException e) {
                 throw new TlsFatalAlert((short) 43, e);
             }
         }

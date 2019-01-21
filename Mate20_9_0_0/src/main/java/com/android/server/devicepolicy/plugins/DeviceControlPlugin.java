@@ -53,8 +53,10 @@ public class DeviceControlPlugin extends DevicePolicyPlugin {
         long identityToken = Binder.clearCallingIdentity();
         boolean z = true;
         try {
-            if (policyName.hashCode() == 1576234773 && policyName.equals(POLICY_TURN_ON_EYE_COMFORT)) {
-                z = false;
+            if (policyName.hashCode() == 1576234773) {
+                if (policyName.equals(POLICY_TURN_ON_EYE_COMFORT)) {
+                    z = false;
+                }
             }
             if (!z) {
                 onSetEyeComfotPolicy(policyData);
@@ -83,8 +85,10 @@ public class DeviceControlPlugin extends DevicePolicyPlugin {
         long identityToken = Binder.clearCallingIdentity();
         boolean z2 = true;
         try {
-            if (policyName.hashCode() == 1576234773 && policyName.equals(POLICY_TURN_ON_EYE_COMFORT)) {
-                z2 = false;
+            if (policyName.hashCode() == 1576234773) {
+                if (policyName.equals(POLICY_TURN_ON_EYE_COMFORT)) {
+                    z2 = false;
+                }
             }
             if (!z2) {
                 if (System.getInt(this.mContext.getContentResolver(), "eyes_protection_mode", 0) != 0) {

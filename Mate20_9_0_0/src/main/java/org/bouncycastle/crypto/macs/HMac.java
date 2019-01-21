@@ -107,7 +107,7 @@ public class HMac implements Mac {
 
     public void init(CipherParameters cipherParameters) {
         this.digest.reset();
-        Object key = ((KeyParameter) cipherParameters).getKey();
+        byte[] key = ((KeyParameter) cipherParameters).getKey();
         int length = key.length;
         if (length > this.blockLength) {
             this.digest.update(key, 0, length);

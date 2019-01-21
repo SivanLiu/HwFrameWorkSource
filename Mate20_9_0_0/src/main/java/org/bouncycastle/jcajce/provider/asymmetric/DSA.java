@@ -5,7 +5,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSAUtil;
 import org.bouncycastle.jcajce.provider.asymmetric.dsa.KeyFactorySpi;
 import org.bouncycastle.jcajce.provider.config.ConfigurableProvider;
 import org.bouncycastle.jcajce.provider.util.AsymmetricAlgorithmProvider;
-import org.bouncycastle.jcajce.provider.util.AsymmetricKeyInfoConverter;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
 
 public class DSA {
@@ -55,7 +54,7 @@ public class DSA {
             configurableProvider.addAlgorithm("Alg.Alias.Signature.DSAWITHSHA1", "DSA");
             configurableProvider.addAlgorithm("Alg.Alias.Signature.SHA1WithDSA", "DSA");
             configurableProvider.addAlgorithm("Alg.Alias.Signature.DSAWithSHA1", "DSA");
-            AsymmetricKeyInfoConverter keyFactorySpi = new KeyFactorySpi();
+            KeyFactorySpi keyFactorySpi = new KeyFactorySpi();
             for (int i = 0; i != DSAUtil.dsaOids.length; i++) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Alg.Alias.Signature.");

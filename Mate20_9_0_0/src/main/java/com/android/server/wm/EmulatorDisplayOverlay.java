@@ -47,8 +47,7 @@ class EmulatorDisplayOverlay {
             Canvas c = null;
             try {
                 c = this.mSurface.lockCanvas(new Rect(0, 0, this.mScreenSize.x, this.mScreenSize.y));
-            } catch (IllegalArgumentException e) {
-            } catch (OutOfResourcesException e2) {
+            } catch (OutOfResourcesException | IllegalArgumentException e) {
             }
             if (c != null) {
                 c.drawColor(0, Mode.SRC);

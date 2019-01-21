@@ -85,7 +85,7 @@ public class CMSEnvelopedDataStreamGenerator extends CMSEnvelopedGenerator {
             bERSequenceGenerator3.addObject(CMSObjectIdentifiers.data);
             bERSequenceGenerator3.getRawOutputStream().write(outputEncryptor.getAlgorithmIdentifier().getEncoded());
             return new CmsEnvelopedDataOutputStream(outputEncryptor.getOutputStream(CMSUtils.createBEROctetOutputStream(bERSequenceGenerator3.getRawOutputStream(), 0, false, this._bufferSize)), bERSequenceGenerator, bERSequenceGenerator2, bERSequenceGenerator3);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new CMSException("exception decoding algorithm parameters.", e);
         }
     }

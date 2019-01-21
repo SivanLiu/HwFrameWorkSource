@@ -76,7 +76,7 @@ public class HiDataApBlackWhiteListManager {
         return counter;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x003b, code:
+    /* JADX WARNING: Missing block: B:22:0x003b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -116,7 +116,7 @@ public class HiDataApBlackWhiteListManager {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0071, code:
+    /* JADX WARNING: Missing block: B:28:0x0071, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -154,10 +154,10 @@ public class HiDataApBlackWhiteListManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:17:0x003a, code:
+    /* JADX WARNING: Missing block: B:18:0x003a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -167,9 +167,11 @@ public class HiDataApBlackWhiteListManager {
             stringBuilder.append("updateHoldWiFiCounter,ssid: ");
             stringBuilder.append(ssid);
             logD(stringBuilder.toString());
-            if (!TextUtils.isEmpty(getCurrentDefaultDataImsi()) && !isInTheWhiteList(ssid, apAuthType, appType)) {
-                if (getBlackListCounter(ssid, apAuthType, appType) > 0) {
-                    minusHandoverBlackCounter(ssid, apAuthType, appType);
+            if (!TextUtils.isEmpty(getCurrentDefaultDataImsi())) {
+                if (!isInTheWhiteList(ssid, apAuthType, appType)) {
+                    if (getBlackListCounter(ssid, apAuthType, appType) > 0) {
+                        minusHandoverBlackCounter(ssid, apAuthType, appType);
+                    }
                 }
             }
         }

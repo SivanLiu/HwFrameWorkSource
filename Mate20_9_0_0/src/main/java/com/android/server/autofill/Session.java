@@ -234,10 +234,10 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
         return ids;
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0034, code:
+    /* JADX WARNING: Missing block: B:18:0x0034, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:21:0x004c, code:
+    /* JADX WARNING: Missing block: B:21:0x004c, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -483,21 +483,21 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0097, code:
+    /* JADX WARNING: Missing block: B:27:0x0097, code skipped:
             r8 = r0;
             r1.mService.setLastResponse(r1.id, r3);
             r14 = r23.getDisableDuration();
      */
-    /* JADX WARNING: Missing block: B:28:0x00a8, code:
+    /* JADX WARNING: Missing block: B:28:0x00a8, code skipped:
             if (r14 <= 0) goto L_0x0105;
      */
-    /* JADX WARNING: Missing block: B:29:0x00aa, code:
+    /* JADX WARNING: Missing block: B:29:0x00aa, code skipped:
             r5 = r23.getFlags();
      */
-    /* JADX WARNING: Missing block: B:30:0x00b0, code:
+    /* JADX WARNING: Missing block: B:30:0x00b0, code skipped:
             if (com.android.server.autofill.Helper.sDebug == false) goto L_0x00d8;
      */
-    /* JADX WARNING: Missing block: B:31:0x00b2, code:
+    /* JADX WARNING: Missing block: B:31:0x00b2, code skipped:
             r9 = new java.lang.StringBuilder("Service disabled autofill for ");
             r9.append(r1.mComponentName);
             r9.append(": flags=");
@@ -506,73 +506,73 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
             android.util.TimeUtils.formatDuration(r14, r9);
             android.util.Slog.d(TAG, r9.toString());
      */
-    /* JADX WARNING: Missing block: B:33:0x00da, code:
+    /* JADX WARNING: Missing block: B:33:0x00da, code skipped:
             if ((r5 & 2) == 0) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:34:0x00dc, code:
+    /* JADX WARNING: Missing block: B:34:0x00dc, code skipped:
             r19 = r14;
             r1.mService.disableAutofillForActivity(r1.mComponentName, r14, r1.id, r1.mCompatMode);
      */
-    /* JADX WARNING: Missing block: B:35:0x00ef, code:
+    /* JADX WARNING: Missing block: B:35:0x00ef, code skipped:
             r19 = r14;
             r1.mService.disableAutofillForApp(r1.mComponentName.getPackageName(), r19, r1.id, r1.mCompatMode);
      */
-    /* JADX WARNING: Missing block: B:36:0x0102, code:
+    /* JADX WARNING: Missing block: B:36:0x0102, code skipped:
             r9 = 4;
      */
-    /* JADX WARNING: Missing block: B:37:0x0105, code:
+    /* JADX WARNING: Missing block: B:37:0x0105, code skipped:
             r19 = r14;
             r9 = 0;
      */
-    /* JADX WARNING: Missing block: B:39:0x010c, code:
+    /* JADX WARNING: Missing block: B:39:0x010c, code skipped:
             if (r23.getDatasets() == null) goto L_0x0118;
      */
-    /* JADX WARNING: Missing block: B:41:0x0116, code:
+    /* JADX WARNING: Missing block: B:41:0x0116, code skipped:
             if (r23.getDatasets().isEmpty() == false) goto L_0x011e;
      */
-    /* JADX WARNING: Missing block: B:43:0x011c, code:
+    /* JADX WARNING: Missing block: B:43:0x011c, code skipped:
             if (r23.getAuthentication() == null) goto L_0x0122;
      */
-    /* JADX WARNING: Missing block: B:45:0x0120, code:
+    /* JADX WARNING: Missing block: B:45:0x0120, code skipped:
             if (r19 <= 0) goto L_0x0125;
      */
-    /* JADX WARNING: Missing block: B:46:0x0122, code:
+    /* JADX WARNING: Missing block: B:46:0x0122, code skipped:
             notifyUnavailableToClient(r9);
      */
-    /* JADX WARNING: Missing block: B:47:0x0125, code:
+    /* JADX WARNING: Missing block: B:47:0x0125, code skipped:
             if (r8 == null) goto L_0x014b;
      */
-    /* JADX WARNING: Missing block: B:49:0x012c, code:
+    /* JADX WARNING: Missing block: B:49:0x012c, code skipped:
             if (r23.getDatasets() != null) goto L_0x0130;
      */
-    /* JADX WARNING: Missing block: B:50:0x012e, code:
+    /* JADX WARNING: Missing block: B:50:0x012e, code skipped:
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:51:0x0130, code:
+    /* JADX WARNING: Missing block: B:51:0x0130, code skipped:
             r0 = r23.getDatasets().size();
      */
-    /* JADX WARNING: Missing block: B:52:0x0138, code:
+    /* JADX WARNING: Missing block: B:52:0x0138, code skipped:
             r8.addTaggedData(909, java.lang.Integer.valueOf(r0));
      */
-    /* JADX WARNING: Missing block: B:53:0x013f, code:
+    /* JADX WARNING: Missing block: B:53:0x013f, code skipped:
             if (r7 == null) goto L_0x014b;
      */
-    /* JADX WARNING: Missing block: B:54:0x0141, code:
+    /* JADX WARNING: Missing block: B:54:0x0141, code skipped:
             r8.addTaggedData(1271, java.lang.Integer.valueOf(r7.length));
      */
-    /* JADX WARNING: Missing block: B:55:0x014b, code:
+    /* JADX WARNING: Missing block: B:55:0x014b, code skipped:
             r6 = r1.mLock;
      */
-    /* JADX WARNING: Missing block: B:56:0x014d, code:
+    /* JADX WARNING: Missing block: B:56:0x014d, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:59:?, code:
+    /* JADX WARNING: Missing block: B:59:?, code skipped:
             processResponseLocked(r3, null, r4);
      */
-    /* JADX WARNING: Missing block: B:60:0x0152, code:
+    /* JADX WARNING: Missing block: B:60:0x0152, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:61:0x0153, code:
+    /* JADX WARNING: Missing block: B:61:0x0153, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -630,16 +630,16 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
         onFillRequestFailureOrTimeout(requestId, true, null, servicePackageName);
     }
 
-    /* JADX WARNING: Missing block: B:16:0x005f, code:
+    /* JADX WARNING: Missing block: B:16:0x005f, code skipped:
             if (r8 == null) goto L_0x0068;
      */
-    /* JADX WARNING: Missing block: B:17:0x0061, code:
+    /* JADX WARNING: Missing block: B:17:0x0061, code skipped:
             getUiForShowing().showError(r8, (com.android.server.autofill.ui.AutoFillUI.AutoFillUiCallback) r5);
      */
-    /* JADX WARNING: Missing block: B:18:0x0068, code:
+    /* JADX WARNING: Missing block: B:18:0x0068, code skipped:
             removeSelf();
      */
-    /* JADX WARNING: Missing block: B:19:0x006b, code:
+    /* JADX WARNING: Missing block: B:19:0x006b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -670,37 +670,37 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002a, code:
+    /* JADX WARNING: Missing block: B:10:0x002a, code skipped:
             r0 = newLogMaker(918, r5);
      */
-    /* JADX WARNING: Missing block: B:11:0x0030, code:
+    /* JADX WARNING: Missing block: B:11:0x0030, code skipped:
             if (r6 != null) goto L_0x0035;
      */
-    /* JADX WARNING: Missing block: B:12:0x0032, code:
+    /* JADX WARNING: Missing block: B:12:0x0032, code skipped:
             r1 = 10;
      */
-    /* JADX WARNING: Missing block: B:13:0x0035, code:
+    /* JADX WARNING: Missing block: B:13:0x0035, code skipped:
             r1 = 1;
      */
-    /* JADX WARNING: Missing block: B:14:0x0036, code:
+    /* JADX WARNING: Missing block: B:14:0x0036, code skipped:
             r4.mMetricsLogger.write(r0.setType(r1));
      */
-    /* JADX WARNING: Missing block: B:15:0x003f, code:
+    /* JADX WARNING: Missing block: B:15:0x003f, code skipped:
             if (r6 == null) goto L_0x004f;
      */
-    /* JADX WARNING: Missing block: B:17:0x0043, code:
+    /* JADX WARNING: Missing block: B:17:0x0043, code skipped:
             if (com.android.server.autofill.Helper.sDebug == false) goto L_0x004c;
      */
-    /* JADX WARNING: Missing block: B:18:0x0045, code:
+    /* JADX WARNING: Missing block: B:18:0x0045, code skipped:
             android.util.Slog.d(TAG, "Starting intent sender on save()");
      */
-    /* JADX WARNING: Missing block: B:19:0x004c, code:
+    /* JADX WARNING: Missing block: B:19:0x004c, code skipped:
             startIntentSender(r6);
      */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
+    /* JADX WARNING: Missing block: B:20:0x004f, code skipped:
             removeSelf();
      */
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
+    /* JADX WARNING: Missing block: B:21:0x0052, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -832,6 +832,10 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
         }
     }
 
+    /* JADX WARNING: Missing block: B:20:0x0077, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void requestShowFillUi(AutofillId id, int width, int height, IAutofillWindowPresenter presenter) {
         synchronized (this.mLock) {
             String str;
@@ -843,7 +847,6 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
                 stringBuilder.append(id);
                 stringBuilder.append(" destroyed");
                 Slog.w(str, stringBuilder.toString());
-                return;
             } else if (id.equals(this.mCurrentViewId)) {
                 try {
                     AutofillId autofillId = id;
@@ -1505,13 +1508,10 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
                 String str2;
                 AutofillId autofillId = autofillIds[i];
                 ArrayMap<String, Float> scoresByField = null;
-                while (true) {
-                    j = 0;
-                    if (0 >= strArr.length) {
-                        break;
-                    }
-                    String categoryId = categoryIds[0];
-                    float score = scores.scores[i][0];
+                j = 0;
+                while (j < strArr.length) {
+                    String categoryId = categoryIds[j];
+                    float score = scores.scores[i][j];
                     if (score > 0.0f) {
                         if (scoresByField == null) {
                             scoresByField = new ArrayMap(strArr.length);
@@ -1524,7 +1524,7 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
                                 stringBuilder.append("adding score ");
                                 stringBuilder.append(score);
                                 stringBuilder.append(" at index ");
-                                stringBuilder.append(0);
+                                stringBuilder.append(j);
                                 stringBuilder.append(" and id ");
                                 stringBuilder.append(autofillId);
                                 Slog.v(str2, stringBuilder.toString());
@@ -1543,12 +1543,12 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
                         str2 = TAG;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("skipping score 0 at index ");
-                        stringBuilder.append(0);
+                        stringBuilder.append(j);
                         stringBuilder.append(" and id ");
                         stringBuilder.append(autofillId);
                         Slog.v(str2, stringBuilder.toString());
                     }
-                    j = 0 + 1;
+                    j++;
                     strArr = userValues;
                 }
                 if (scoresByField == null) {
@@ -1577,6 +1577,9 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
                         }
                     } catch (ArrayIndexOutOfBoundsException e3) {
                         e = e3;
+                        arrayList2 = detectedFieldClassifications;
+                        session2.wtf(e, "Error accessing FC score at [%d, %d] (%s): %s", Integer.valueOf(i), Integer.valueOf(j), scores, e);
+                        return;
                     }
                 }
                 i++;
@@ -2530,43 +2533,43 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
         return ArrayUtils.contains(response.getIgnoredIds(), id);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0028, code:
+    /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:10:0x0029, code:
+    /* JADX WARNING: Missing block: B:10:0x0029, code skipped:
             if (r17 == null) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:12:0x002f, code:
+    /* JADX WARNING: Missing block: B:12:0x002f, code skipped:
             if (r17.isText() == false) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:13:0x0031, code:
+    /* JADX WARNING: Missing block: B:13:0x0031, code skipped:
             r0 = r17.getTextValue().toString();
      */
-    /* JADX WARNING: Missing block: B:14:0x0039, code:
+    /* JADX WARNING: Missing block: B:14:0x0039, code skipped:
             getUiForShowing().showFillUi(r16, r15, r0, r12.mService.getServicePackageName(), r12.mComponentName, r12.mService.getServiceLabel(), r12.mService.getServiceIcon(), r12, r12.id, r12.mCompatMode);
             r2 = r12.mLock;
      */
-    /* JADX WARNING: Missing block: B:15:0x0060, code:
+    /* JADX WARNING: Missing block: B:15:0x0060, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:18:0x0067, code:
+    /* JADX WARNING: Missing block: B:18:0x0067, code skipped:
             if (r12.mUiShownTime != 0) goto L_0x00d7;
      */
-    /* JADX WARNING: Missing block: B:19:0x0069, code:
+    /* JADX WARNING: Missing block: B:19:0x0069, code skipped:
             r12.mUiShownTime = android.os.SystemClock.elapsedRealtime();
             r0 = r12.mUiShownTime - r12.mStartTime;
      */
-    /* JADX WARNING: Missing block: B:20:0x0076, code:
+    /* JADX WARNING: Missing block: B:20:0x0076, code skipped:
             if (com.android.server.autofill.Helper.sDebug == false) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:21:0x0078, code:
+    /* JADX WARNING: Missing block: B:21:0x0078, code skipped:
             r3 = new java.lang.StringBuilder("1st UI for ");
             r3.append(r12.mActivityToken);
             r3.append(" shown in ");
             android.util.TimeUtils.formatDuration(r0, r3);
             android.util.Slog.d(TAG, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:22:0x0095, code:
+    /* JADX WARNING: Missing block: B:22:0x0095, code skipped:
             r3 = new java.lang.StringBuilder("id=");
             r3.append(r12.id);
             r3.append(" app=");
@@ -2578,10 +2581,10 @@ final class Session implements FillServiceCallbacks, Listener, AutoFillUiCallbac
             r12.mUiLatencyHistory.log(r3.toString());
             addTaggedDataToRequestLogLocked(r15.getRequestId(), 1145, java.lang.Long.valueOf(r0));
      */
-    /* JADX WARNING: Missing block: B:23:0x00d7, code:
+    /* JADX WARNING: Missing block: B:23:0x00d7, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:24:0x00d8, code:
+    /* JADX WARNING: Missing block: B:24:0x00d8, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

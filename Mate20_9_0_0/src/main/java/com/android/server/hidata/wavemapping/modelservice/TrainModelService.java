@@ -302,16 +302,24 @@ public class TrainModelService extends ModelBaseService {
                                 while (bssids3 < arrWords.length) {
                                     try {
                                         str = fPath;
-                                        try {
-                                            datas[i - 1][bssids3 - bssidStart] = Integer.parseInt(arrWords[bssids3]);
-                                            bssids3++;
-                                            fPath = str;
-                                        } catch (NumberFormatException e14) {
-                                            e3 = e14;
-                                        }
+                                    } catch (NumberFormatException e14) {
+                                        e3 = e14;
+                                        str = fPath;
+                                        stringBuilder4 = new StringBuilder();
+                                        stringBuilder4.append("LocatingState,e");
+                                        stringBuilder4.append(e3.getMessage());
+                                        LogUtil.e(stringBuilder4.toString());
+                                        i3 = i + 1;
+                                        bssids3 = bssids;
+                                        headerLen2 = headerLen;
+                                        fPath = str;
+                                    }
+                                    try {
+                                        datas[i - 1][bssids3 - bssidStart] = Integer.parseInt(arrWords[bssids3]);
+                                        bssids3++;
+                                        fPath = str;
                                     } catch (NumberFormatException e15) {
                                         e3 = e15;
-                                        str = fPath;
                                         stringBuilder4 = new StringBuilder();
                                         stringBuilder4.append("LocatingState,e");
                                         stringBuilder4.append(e3.getMessage());
@@ -630,13 +638,17 @@ public class TrainModelService extends ModelBaseService {
             List<String> batchLst = new ArrayList();
             for (String[] wds : lines) {
                 String[] wds2 = wds2.split(",");
-                if (!(wds2.length < param.getScanWifiStart() || wds2[0] == null || wds2[0].equals(""))) {
-                    String strBatch = wds2[param.getBatchID()];
-                    if (hpBatchStat.containsKey(strBatch)) {
-                        ((AtomicInteger) hpBatchStat.get(strBatch)).incrementAndGet();
-                    } else {
-                        batchLst.add(strBatch);
-                        hpBatchStat.put(strBatch, new AtomicInteger(1));
+                if (wds2.length >= param.getScanWifiStart()) {
+                    if (wds2[0] != null) {
+                        if (!wds2[0].equals("")) {
+                            String strBatch = wds2[param.getBatchID()];
+                            if (hpBatchStat.containsKey(strBatch)) {
+                                ((AtomicInteger) hpBatchStat.get(strBatch)).incrementAndGet();
+                            } else {
+                                batchLst.add(strBatch);
+                                hpBatchStat.put(strBatch, new AtomicInteger(1));
+                            }
+                        }
                     }
                 }
             }
@@ -663,7 +675,11 @@ public class TrainModelService extends ModelBaseService {
                 if (i2 >= size) {
                     str2 = fileContent;
                     break;
-                } else if (!batchLst.isEmpty() && testFetchDataCnt < testDataCnt) {
+                } else if (batchLst.isEmpty()) {
+                    break;
+                } else if (testFetchDataCnt >= testDataCnt) {
+                    break;
+                } else {
                     String filePath2 = filePath;
                     filePath = random.nextInt(batchLst.size());
                     int randomCnt = filePath;
@@ -1348,6 +1364,9 @@ public class TrainModelService extends ModelBaseService {
                         tempMac = (String) iterator2.next();
                         if (checkMacFormat(tempMac)) {
                             macLst.add(tempMac);
+                            iterator = iterator2;
+                        } else {
+                            iterator = iterator2;
                         }
                     } catch (RuntimeException e7) {
                         stringBuilder2 = new StringBuilder();
@@ -1360,7 +1379,6 @@ public class TrainModelService extends ModelBaseService {
                         stringBuilder2.append(e22);
                         LogUtil.e(stringBuilder2.toString());
                     }
-                    iterator = iterator2;
                 }
                 stringBuilder4 = new StringBuilder();
                 stringBuilder4.append(" transformRawData setMacs.length:");
@@ -1410,7 +1428,7 @@ public class TrainModelService extends ModelBaseService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x00ac, code:
+    /* JADX WARNING: Missing block: B:28:0x00ac, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1484,8 +1502,8 @@ public class TrainModelService extends ModelBaseService {
         return mobileMacs;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x014c A:{Catch:{ RuntimeException -> 0x01d3, Exception -> 0x01d1 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x014c A:{Catch:{ RuntimeException -> 0x01d3, Exception -> 0x01d1 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x014c A:{Catch:{ RuntimeException -> 0x01d3, Exception -> 0x01d1 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x014c A:{Catch:{ RuntimeException -> 0x01d3, Exception -> 0x01d1 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private StdDataSet getMainApStdDataSet(ParameterInfo param, String[] lines, List<String> macLst) {
         StringBuilder stringBuilder;
@@ -1515,142 +1533,157 @@ public class TrainModelService extends ModelBaseService {
                 while (true) {
                     int i3 = i2;
                     try {
-                        if (i3 < strArr.length) {
-                            try {
-                                String[] wds = strArr[i3].split(",");
-                                if (wds.length >= param.getScanWifiStart()) {
-                                    if (wds[i] == null || wds[i].equals("")) {
-                                        i2 = i3 + 1;
-                                        strArr = lines;
-                                        i = 0;
-                                    } else if (wds.length >= param.getServingWiFiMAC()) {
-                                        try {
-                                            String curBatch = wds[i];
-                                            if (!curBatch.equals(lastBatch)) {
-                                                standardBatch++;
-                                                lastBatch = curBatch;
+                        if (i3 >= strArr.length) {
+                            break;
+                        }
+                        try {
+                            String[] wds = strArr[i3].split(",");
+                            if (wds.length >= param.getScanWifiStart()) {
+                                if (wds[i] != null) {
+                                    if (!wds[i].equals("")) {
+                                        if (wds.length >= param.getServingWiFiMAC()) {
+                                            try {
+                                                String curBatch = wds[i];
+                                                if (!curBatch.equals(lastBatch)) {
+                                                    standardBatch++;
+                                                    lastBatch = curBatch;
+                                                }
+                                            } catch (RuntimeException e4) {
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("getMainApStdDataSet, ");
+                                                stringBuilder.append(e4.getMessage());
+                                                LogUtil.e(stringBuilder.toString());
+                                            } catch (Exception e22) {
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("getMainApStdDataSet, ");
+                                                stringBuilder.append(e22.getMessage());
+                                                LogUtil.e(stringBuilder.toString());
                                             }
-                                        } catch (RuntimeException e4) {
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("getMainApStdDataSet, ");
-                                            stringBuilder.append(e4.getMessage());
-                                            LogUtil.e(stringBuilder.toString());
-                                        } catch (Exception e22) {
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("getMainApStdDataSet, ");
-                                            stringBuilder.append(e22.getMessage());
-                                            LogUtil.e(stringBuilder.toString());
-                                        }
-                                        Object tempStdRecord = new StdRecord(standardBatch);
-                                        if (param.getTimestamp() < wds.length) {
-                                            tempStdRecord.setTimeStamp(wds[param.getTimestamp()]);
-                                        } else {
-                                            tempStdRecord.setTimeStamp("0");
-                                        }
-                                        ArrayList tempScanRssis = new ArrayList();
-                                        tempHp.clear();
-                                        try {
-                                            String[] tempScanWifiInfo = wds[param.getScanWifiStart()].split(param.getWifiSeperate());
-                                            if (tempScanWifiInfo.length >= 4) {
-                                                tempMac = tempScanWifiInfo[param.getScanMAC()];
-                                                if (stdDataSet.getMacRecords().containsKey(tempMac)) {
-                                                } else {
-                                                    try {
-                                                        if (checkMacFormat(tempMac)) {
-                                                            stdDataSet.getMacRecords().put(tempMac, new TMapList());
-                                                        } else {
-                                                            i2 = i3 + 1;
-                                                            strArr = lines;
-                                                            i = 0;
-                                                        }
-                                                    } catch (NumberFormatException e5) {
-                                                        e3 = e5;
+                                            Object tempStdRecord = new StdRecord(standardBatch);
+                                            if (param.getTimestamp() < wds.length) {
+                                                tempStdRecord.setTimeStamp(wds[param.getTimestamp()]);
+                                            } else {
+                                                tempStdRecord.setTimeStamp("0");
+                                            }
+                                            ArrayList tempScanRssis = new ArrayList();
+                                            tempHp.clear();
+                                            try {
+                                                String[] tempScanWifiInfo = wds[param.getScanWifiStart()].split(param.getWifiSeperate());
+                                                if (tempScanWifiInfo.length >= 4) {
+                                                    tempMac = tempScanWifiInfo[param.getScanMAC()];
+                                                    if (stdDataSet.getMacRecords().containsKey(tempMac)) {
+                                                    } else {
                                                         try {
-                                                            stringBuilder2 = new StringBuilder();
-                                                            stringBuilder2.append("getMainApStdDataSet, ");
-                                                            stringBuilder2.append(e3.getMessage());
-                                                            LogUtil.e(stringBuilder2.toString());
-                                                            while (it.hasNext()) {
-                                                            }
-                                                            tempStdRecord.setScanRssis(tempScanRssis);
-                                                            ((TMapList) stdDataSet.getMacRecords().get(tempMac)).add(Integer.valueOf(standardBatch), tempStdRecord);
-                                                            tempMac2++;
-                                                        } catch (RuntimeException e6) {
-                                                            e4 = e6;
-                                                            stringBuilder2 = new StringBuilder();
-                                                            stringBuilder2.append("getMainApStdDataSet, ");
-                                                            stringBuilder2.append(e4.getMessage());
-                                                            LogUtil.e(stringBuilder2.toString());
-                                                            i2 = i3 + 1;
-                                                            strArr = lines;
-                                                            i = 0;
-                                                        } catch (Exception e7) {
-                                                            e22 = e7;
-                                                            try {
-                                                                stringBuilder2 = new StringBuilder();
-                                                                stringBuilder2.append("getMainApStdDataSet, ");
-                                                                stringBuilder2.append(e22.getMessage());
-                                                                LogUtil.e(stringBuilder2.toString());
+                                                            if (checkMacFormat(tempMac)) {
+                                                                stdDataSet.getMacRecords().put(tempMac, new TMapList());
+                                                            } else {
                                                                 i2 = i3 + 1;
                                                                 strArr = lines;
                                                                 i = 0;
-                                                            } catch (RuntimeException e8) {
-                                                                e4 = e8;
+                                                            }
+                                                        } catch (NumberFormatException e5) {
+                                                            e3 = e5;
+                                                            try {
+                                                                stringBuilder2 = new StringBuilder();
+                                                                stringBuilder2.append("getMainApStdDataSet, ");
+                                                                stringBuilder2.append(e3.getMessage());
+                                                                LogUtil.e(stringBuilder2.toString());
+                                                                while (it.hasNext()) {
+                                                                }
+                                                                tempStdRecord.setScanRssis(tempScanRssis);
+                                                                ((TMapList) stdDataSet.getMacRecords().get(tempMac)).add(Integer.valueOf(standardBatch), tempStdRecord);
+                                                                tempMac2++;
+                                                            } catch (RuntimeException e6) {
+                                                                e4 = e6;
                                                                 stringBuilder2 = new StringBuilder();
                                                                 stringBuilder2.append("getMainApStdDataSet, ");
                                                                 stringBuilder2.append(e4.getMessage());
                                                                 LogUtil.e(stringBuilder2.toString());
-                                                                return stdDataSet;
-                                                            } catch (Exception e9) {
-                                                                e22 = e9;
-                                                                stringBuilder2 = new StringBuilder();
-                                                                stringBuilder2.append("getMainApStdDataSet, ");
-                                                                stringBuilder2.append(e22.getMessage());
-                                                                LogUtil.e(stringBuilder2.toString());
-                                                                return stdDataSet;
+                                                                i2 = i3 + 1;
+                                                                strArr = lines;
+                                                                i = 0;
+                                                            } catch (Exception e7) {
+                                                                e22 = e7;
+                                                                try {
+                                                                    stringBuilder2 = new StringBuilder();
+                                                                    stringBuilder2.append("getMainApStdDataSet, ");
+                                                                    stringBuilder2.append(e22.getMessage());
+                                                                    LogUtil.e(stringBuilder2.toString());
+                                                                    i2 = i3 + 1;
+                                                                    strArr = lines;
+                                                                    i = 0;
+                                                                } catch (RuntimeException e8) {
+                                                                    e4 = e8;
+                                                                    stringBuilder2 = new StringBuilder();
+                                                                    stringBuilder2.append("getMainApStdDataSet, ");
+                                                                    stringBuilder2.append(e4.getMessage());
+                                                                    LogUtil.e(stringBuilder2.toString());
+                                                                    return stdDataSet;
+                                                                } catch (Exception e9) {
+                                                                    e22 = e9;
+                                                                    stringBuilder2 = new StringBuilder();
+                                                                    stringBuilder2.append("getMainApStdDataSet, ");
+                                                                    stringBuilder2.append(e22.getMessage());
+                                                                    LogUtil.e(stringBuilder2.toString());
+                                                                    return stdDataSet;
+                                                                }
                                                             }
+                                                            i2 = i3 + 1;
+                                                            strArr = lines;
+                                                            i = 0;
                                                         }
-                                                        i2 = i3 + 1;
-                                                        strArr = lines;
-                                                        i = 0;
                                                     }
+                                                    tempHp.put(tempScanWifiInfo[param.getScanMAC()], Integer.valueOf(Integer.parseInt(tempScanWifiInfo[param.getScanRSSI()].split("\\.")[0])));
+                                                    Iterator it2;
+                                                    for (it = macLst.iterator(); it.hasNext(); it = it2) {
+                                                        try {
+                                                            if (tempHp.containsKey((String) it.next())) {
+                                                                tempScanRssis.add(Integer.valueOf(((Integer) tempHp.get(tempMac)).intValue()));
+                                                                it2 = it;
+                                                            } else {
+                                                                it2 = it;
+                                                                try {
+                                                                    tempScanRssis.add(Integer.valueOf(0));
+                                                                } catch (RuntimeException e10) {
+                                                                    e4 = e10;
+                                                                } catch (Exception e11) {
+                                                                    e22 = e11;
+                                                                    stringBuilder2 = new StringBuilder();
+                                                                    stringBuilder2.append(" getMainApStdDataSet exception :");
+                                                                    stringBuilder2.append(e22.getMessage());
+                                                                    LogUtil.e(stringBuilder2.toString());
+                                                                }
+                                                            }
+                                                        } catch (RuntimeException e12) {
+                                                            e4 = e12;
+                                                            it2 = it;
+                                                            stringBuilder2 = new StringBuilder();
+                                                            stringBuilder2.append("getMainApStdDataSet, ");
+                                                            stringBuilder2.append(e4.getMessage());
+                                                            LogUtil.e(stringBuilder2.toString());
+                                                        } catch (Exception e13) {
+                                                            e22 = e13;
+                                                            it2 = it;
+                                                            stringBuilder2 = new StringBuilder();
+                                                            stringBuilder2.append(" getMainApStdDataSet exception :");
+                                                            stringBuilder2.append(e22.getMessage());
+                                                            LogUtil.e(stringBuilder2.toString());
+                                                        }
+                                                    }
+                                                    tempStdRecord.setScanRssis(tempScanRssis);
+                                                    ((TMapList) stdDataSet.getMacRecords().get(tempMac)).add(Integer.valueOf(standardBatch), tempStdRecord);
+                                                    tempMac2++;
+                                                    i2 = i3 + 1;
+                                                    strArr = lines;
+                                                    i = 0;
                                                 }
-                                                tempHp.put(tempScanWifiInfo[param.getScanMAC()], Integer.valueOf(Integer.parseInt(tempScanWifiInfo[param.getScanRSSI()].split("\\.")[0])));
-                                                Iterator it2;
-                                                for (it = macLst.iterator(); it.hasNext(); it = it2) {
-                                                    try {
-                                                        if (tempHp.containsKey((String) it.next())) {
-                                                            tempScanRssis.add(Integer.valueOf(((Integer) tempHp.get(tempMac)).intValue()));
-                                                            it2 = it;
-                                                        } else {
-                                                            it2 = it;
-                                                            try {
-                                                                tempScanRssis.add(Integer.valueOf(0));
-                                                            } catch (RuntimeException e10) {
-                                                                e4 = e10;
-                                                            } catch (Exception e11) {
-                                                                e22 = e11;
-                                                                stringBuilder2 = new StringBuilder();
-                                                                stringBuilder2.append(" getMainApStdDataSet exception :");
-                                                                stringBuilder2.append(e22.getMessage());
-                                                                LogUtil.e(stringBuilder2.toString());
-                                                            }
-                                                        }
-                                                    } catch (RuntimeException e12) {
-                                                        e4 = e12;
-                                                        it2 = it;
-                                                        stringBuilder2 = new StringBuilder();
-                                                        stringBuilder2.append("getMainApStdDataSet, ");
-                                                        stringBuilder2.append(e4.getMessage());
-                                                        LogUtil.e(stringBuilder2.toString());
-                                                    } catch (Exception e13) {
-                                                        e22 = e13;
-                                                        it2 = it;
-                                                        stringBuilder2 = new StringBuilder();
-                                                        stringBuilder2.append(" getMainApStdDataSet exception :");
-                                                        stringBuilder2.append(e22.getMessage());
-                                                        LogUtil.e(stringBuilder2.toString());
-                                                    }
+                                            } catch (NumberFormatException e14) {
+                                                e3 = e14;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("getMainApStdDataSet, ");
+                                                stringBuilder2.append(e3.getMessage());
+                                                LogUtil.e(stringBuilder2.toString());
+                                                while (it.hasNext()) {
                                                 }
                                                 tempStdRecord.setScanRssis(tempScanRssis);
                                                 ((TMapList) stdDataSet.getMacRecords().get(tempMac)).add(Integer.valueOf(standardBatch), tempStdRecord);
@@ -1659,70 +1692,68 @@ public class TrainModelService extends ModelBaseService {
                                                 strArr = lines;
                                                 i = 0;
                                             }
-                                        } catch (NumberFormatException e14) {
-                                            e3 = e14;
-                                            stringBuilder2 = new StringBuilder();
-                                            stringBuilder2.append("getMainApStdDataSet, ");
-                                            stringBuilder2.append(e3.getMessage());
-                                            LogUtil.e(stringBuilder2.toString());
-                                            while (it.hasNext()) {
-                                            }
-                                            tempStdRecord.setScanRssis(tempScanRssis);
-                                            ((TMapList) stdDataSet.getMacRecords().get(tempMac)).add(Integer.valueOf(standardBatch), tempStdRecord);
-                                            tempMac2++;
-                                            i2 = i3 + 1;
-                                            strArr = lines;
-                                            i = 0;
                                         }
                                     }
                                 }
-                            } catch (RuntimeException e15) {
-                                e4 = e15;
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("getMainApStdDataSet, ");
-                                stringBuilder2.append(e4.getMessage());
-                                LogUtil.e(stringBuilder2.toString());
-                                i2 = i3 + 1;
-                                strArr = lines;
-                                i = 0;
-                            } catch (Exception e16) {
-                                e22 = e16;
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("getMainApStdDataSet, ");
-                                stringBuilder2.append(e22.getMessage());
-                                LogUtil.e(stringBuilder2.toString());
                                 i2 = i3 + 1;
                                 strArr = lines;
                                 i = 0;
                             }
+                        } catch (RuntimeException e15) {
+                            e4 = e15;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("getMainApStdDataSet, ");
+                            stringBuilder2.append(e4.getMessage());
+                            LogUtil.e(stringBuilder2.toString());
                             i2 = i3 + 1;
                             strArr = lines;
                             i = 0;
-                        } else {
-                            List<Integer> macIndexLst = new ArrayList();
-                            ArrayList macIndexLst2 = new ArrayList();
-                            int size = macLst.size();
-                            int i4 = 0;
-                            while (true) {
-                                int i5 = i4;
-                                if (i5 >= size) {
-                                    break;
-                                }
-                                macIndexLst2.add(Integer.valueOf(i5));
-                                i4 = i5 + 1;
-                            }
-                            stdDataSet.setMacIndexLst(macIndexLst2);
-                            StringBuilder stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("getMainApStdDataSet rdCount:");
-                            stringBuilder3.append(tempMac2);
-                            LogUtil.d(stringBuilder3.toString());
+                        } catch (Exception e16) {
+                            e22 = e16;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("getMainApStdDataSet, ");
+                            stringBuilder2.append(e22.getMessage());
+                            LogUtil.e(stringBuilder2.toString());
+                            i2 = i3 + 1;
+                            strArr = lines;
+                            i = 0;
                         }
+                        i2 = i3 + 1;
+                        strArr = lines;
+                        i = 0;
                     } catch (RuntimeException e17) {
                         e4 = e17;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("getMainApStdDataSet, ");
+                        stringBuilder2.append(e4.getMessage());
+                        LogUtil.e(stringBuilder2.toString());
+                        return stdDataSet;
                     } catch (Exception e18) {
                         e22 = e18;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("getMainApStdDataSet, ");
+                        stringBuilder2.append(e22.getMessage());
+                        LogUtil.e(stringBuilder2.toString());
+                        return stdDataSet;
                     }
                 }
+                List<Integer> macIndexLst = new ArrayList();
+                ArrayList macIndexLst2 = new ArrayList();
+                int size = macLst.size();
+                int i4 = 0;
+                while (true) {
+                    int i5 = i4;
+                    if (i5 >= size) {
+                        break;
+                    }
+                    macIndexLst2.add(Integer.valueOf(i5));
+                    i4 = i5 + 1;
+                }
+                stdDataSet.setMacIndexLst(macIndexLst2);
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("getMainApStdDataSet rdCount:");
+                stringBuilder3.append(tempMac2);
+                LogUtil.d(stringBuilder3.toString());
             } catch (RuntimeException e19) {
                 e4 = e19;
                 tempMac = null;
@@ -1744,82 +1775,46 @@ public class TrainModelService extends ModelBaseService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:115:0x021e A:{PHI: r24 , ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException), Splitter: B:103:0x01f1} */
-    /* JADX WARNING: Removed duplicated region for block: B:119:0x0228 A:{ExcHandler: java.lang.Exception (e java.lang.Exception), Splitter: B:94:0x01d9} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x021e A:{Splitter:B:107:0x01f1, PHI: r24 , ExcHandler: RuntimeException (e java.lang.RuntimeException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0228 A:{Splitter:B:98:0x01d9, ExcHandler: Exception (e java.lang.Exception)} */
     /* JADX WARNING: Failed to process nested try/catch */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:88:0x01ca, code:
-            r20 = r2;
-            r21 = r13;
-     */
-    /* JADX WARNING: Missing block: B:91:0x01d2, code:
-            r2 = r31.size();
-            r14 = r19;
-            r0 = 0;
-     */
-    /* JADX WARNING: Missing block: B:108:0x0209, code:
+    /* JADX WARNING: Missing block: B:112:0x0209, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:115:0x021e, code:
+    /* JADX WARNING: Missing block: B:119:0x021e, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:116:0x021f, code:
+    /* JADX WARNING: Missing block: B:120:0x021f, code skipped:
             r26 = r11;
      */
-    /* JADX WARNING: Missing block: B:117:0x0222, code:
+    /* JADX WARNING: Missing block: B:121:0x0222, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:118:0x0223, code:
+    /* JADX WARNING: Missing block: B:122:0x0223, code skipped:
             r24 = r2;
             r26 = r11;
      */
-    /* JADX WARNING: Missing block: B:119:0x0228, code:
+    /* JADX WARNING: Missing block: B:123:0x0228, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:120:0x0229, code:
+    /* JADX WARNING: Missing block: B:124:0x0229, code skipped:
             r24 = r2;
      */
-    /* JADX WARNING: Missing block: B:138:0x02ab, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:139:0x02ac, code:
-            r26 = r11;
-     */
-    /* JADX WARNING: Missing block: B:140:0x02af, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:141:0x02b0, code:
-            r26 = r11;
-     */
-    /* JADX WARNING: Missing block: B:173:0x039a, code:
+    /* JADX WARNING: Missing block: B:177:0x039a, code skipped:
             return r10;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private StdDataSet getCommStdDataSet(String place, ParameterInfo param, String[] lines, List<String> macLst) {
+        String[] strArr;
         HashMap<String, Integer> tempHp;
         int i;
-        int tempServeRssi;
-        int rdCount;
-        String lastBatch;
-        int standardBatch;
-        int i2;
-        int i3;
-        String[] wds;
-        String[] strArr;
-        HashMap<String, Integer> tempHp2;
-        int i4;
-        String curBatch;
-        String tempServeMac;
-        int standardBatch2;
-        Object tempStdRecord;
         RuntimeException e;
-        String lastBatch2;
+        String lastBatch;
         Exception e2;
         StringBuilder stringBuilder;
         StringBuilder stringBuilder2;
-        ArrayList tempScanRssis;
         int tempSize;
-        int tempSize2;
         NumberFormatException e3;
         int size2;
         String[] strArr2 = lines;
@@ -1828,50 +1823,55 @@ public class TrainModelService extends ModelBaseService {
         if (param == null || strArr2 == null || list == null || strArr2.length == 0 || macLst.size() == 0) {
             return stdDataSet;
         }
-        tempHp = new HashMap();
+        HashMap<String, Integer> tempHp2 = new HashMap();
         HashMap<String, String> macSsidHp = new HashMap();
         try {
             stdDataSet.setMacLst(list);
-            i = 0;
-            tempServeRssi = 0;
-            rdCount = 0;
-            lastBatch = "";
-            standardBatch = 0;
-            i2 = 0;
+            int i2 = 0;
+            int tempServeRssi = 0;
+            int rdCount = 0;
+            String lastBatch2 = "";
+            int standardBatch = 0;
+            int i3 = 0;
             while (true) {
-                i3 = i2;
-                if (i3 >= strArr2.length) {
+                int i4 = i3;
+                if (i4 >= strArr2.length) {
                     break;
                 }
+                int standardBatch2;
                 try {
-                    wds = strArr2[i3].split(",");
-                    String tempServeMac2 = null;
+                    String[] wds = strArr2[i4].split(",");
+                    String tempServeMac = null;
                     tempServeRssi = 0;
                     try {
                         if (wds.length >= param.getScanWifiStart()) {
-                            if (wds[i] == null) {
+                            if (wds[i2] == null) {
                                 strArr = wds;
-                                tempHp2 = tempHp;
-                                i4 = 0;
-                            } else if (wds[i].equals("")) {
+                                tempHp = tempHp2;
+                                i = 0;
+                            } else if (wds[i2].equals("")) {
                                 strArr = wds;
-                                tempHp2 = tempHp;
-                                i4 = 0;
+                                tempHp = tempHp2;
+                                i = 0;
                             } else if (wds.length >= param.getServingWiFiMAC()) {
+                                String tempServeMac2;
                                 try {
-                                    curBatch = wds[i];
-                                    tempServeMac2 = wds[param.getServingWiFiMAC()];
-                                    if (tempServeMac2 != null) {
-                                        if (!stdDataSet.getMacRecords().containsKey(tempServeMac2)) {
-                                            if (checkMacFormat(tempServeMac2)) {
-                                                stdDataSet.getMacRecords().put(tempServeMac2, new TMapList());
+                                    String curBatch = wds[i2];
+                                    tempServeMac = wds[param.getServingWiFiMAC()];
+                                    if (tempServeMac != null) {
+                                        Object tempStdRecord;
+                                        ArrayList tempScanRssis;
+                                        int tempSize2;
+                                        if (!stdDataSet.getMacRecords().containsKey(tempServeMac)) {
+                                            if (checkMacFormat(tempServeMac)) {
+                                                stdDataSet.getMacRecords().put(tempServeMac, new TMapList());
                                             }
                                         }
-                                        if (!curBatch.equals(lastBatch)) {
+                                        if (!curBatch.equals(lastBatch2)) {
                                             standardBatch++;
-                                            lastBatch = curBatch;
+                                            lastBatch2 = curBatch;
                                         }
-                                        tempServeMac = tempServeMac2;
+                                        tempServeMac2 = tempServeMac;
                                         standardBatch2 = standardBatch;
                                         try {
                                             tempStdRecord = new StdRecord(standardBatch2);
@@ -1880,24 +1880,24 @@ public class TrainModelService extends ModelBaseService {
                                                     tempStdRecord.setTimeStamp(wds[param.getTimestamp()]);
                                                 } catch (RuntimeException e4) {
                                                     e = e4;
-                                                    tempHp2 = tempHp;
-                                                    lastBatch2 = lastBatch;
+                                                    tempHp = tempHp2;
+                                                    lastBatch = lastBatch2;
                                                 } catch (Exception e5) {
                                                     e2 = e5;
-                                                    tempHp2 = tempHp;
-                                                    lastBatch2 = lastBatch;
-                                                    i4 = tempServeRssi;
+                                                    tempHp = tempHp2;
+                                                    lastBatch = lastBatch2;
+                                                    i = tempServeRssi;
                                                     try {
                                                         stringBuilder = new StringBuilder();
                                                         stringBuilder.append("getCommStdDataSet, ");
                                                         stringBuilder.append(e2.getMessage());
                                                         LogUtil.e(stringBuilder.toString());
                                                         standardBatch = standardBatch2;
-                                                        lastBatch = lastBatch2;
-                                                        tempServeRssi = i4;
-                                                        i2 = i3 + 1;
-                                                        tempHp = tempHp2;
-                                                        i = 0;
+                                                        lastBatch2 = lastBatch;
+                                                        tempServeRssi = i;
+                                                        i3 = i4 + 1;
+                                                        tempHp2 = tempHp;
+                                                        i2 = 0;
                                                         strArr2 = lines;
                                                     } catch (RuntimeException e6) {
                                                         e = e6;
@@ -1919,28 +1919,28 @@ public class TrainModelService extends ModelBaseService {
                                             tempStdRecord.setTimeStamp("0");
                                             tempScanRssis = new ArrayList();
                                             int tempSize3 = wds.length;
-                                            tempHp.clear();
-                                            i2 = param.getScanWifiStart();
+                                            tempHp2.clear();
+                                            i3 = param.getScanWifiStart();
                                             while (true) {
-                                                lastBatch2 = lastBatch;
-                                                i4 = tempServeRssi;
-                                                tempSize = tempSize3;
-                                                tempServeRssi = i2;
-                                                if (tempServeRssi >= tempSize) {
+                                                lastBatch = lastBatch2;
+                                                i = tempServeRssi;
+                                                tempSize2 = tempSize3;
+                                                tempServeRssi = i3;
+                                                if (tempServeRssi >= tempSize2) {
                                                     break;
                                                 }
                                                 try {
                                                     strArr = wds;
                                                     try {
                                                         String[] tempScanWifiInfo = wds[tempServeRssi].split(param.getWifiSeperate());
-                                                        tempSize2 = tempSize;
+                                                        tempSize = tempSize2;
                                                         if (tempScanWifiInfo.length >= 4) {
                                                             try {
                                                                 wds = tempScanWifiInfo[param.getScanMAC()];
                                                                 if (checkMacFormat(wds)) {
                                                                     String tempMac = wds;
                                                                     wds = Integer.valueOf(Integer.parseInt(tempScanWifiInfo[param.getScanRSSI()].split("\\.")[0]));
-                                                                    tempHp.put(tempScanWifiInfo[param.getScanMAC()], wds);
+                                                                    tempHp2.put(tempScanWifiInfo[param.getScanMAC()], wds);
                                                                     Integer tempRssi = wds;
                                                                     macSsidHp.put(tempScanWifiInfo[param.getScanMAC()], tempScanWifiInfo[param.getScanSSID()]);
                                                                 }
@@ -1951,199 +1951,366 @@ public class TrainModelService extends ModelBaseService {
                                                                     wds.append("getCommStdDataSet, ");
                                                                     wds.append(e3.getMessage());
                                                                     LogUtil.e(wds.toString());
-                                                                    i2 = tempServeRssi + 1;
-                                                                    lastBatch = lastBatch2;
-                                                                    tempServeRssi = i4;
+                                                                    i3 = tempServeRssi + 1;
+                                                                    lastBatch2 = lastBatch;
+                                                                    tempServeRssi = i;
                                                                     wds = strArr;
-                                                                    tempSize3 = tempSize2;
+                                                                    tempSize3 = tempSize;
                                                                 } catch (RuntimeException e9) {
                                                                     e = e9;
-                                                                    tempHp2 = tempHp;
+                                                                    tempHp = tempHp2;
                                                                 } catch (Exception e10) {
                                                                     e2 = e10;
+                                                                    tempHp = tempHp2;
+                                                                    stringBuilder = new StringBuilder();
+                                                                    stringBuilder.append("getCommStdDataSet, ");
+                                                                    stringBuilder.append(e2.getMessage());
+                                                                    LogUtil.e(stringBuilder.toString());
+                                                                    standardBatch = standardBatch2;
+                                                                    lastBatch2 = lastBatch;
+                                                                    tempServeRssi = i;
+                                                                    i3 = i4 + 1;
                                                                     tempHp2 = tempHp;
+                                                                    i2 = 0;
+                                                                    strArr2 = lines;
                                                                 }
                                                             }
                                                         }
                                                     } catch (NumberFormatException e11) {
                                                         e3 = e11;
-                                                        tempSize2 = tempSize;
+                                                        tempSize = tempSize2;
                                                         wds = new StringBuilder();
                                                         wds.append("getCommStdDataSet, ");
                                                         wds.append(e3.getMessage());
                                                         LogUtil.e(wds.toString());
-                                                        i2 = tempServeRssi + 1;
-                                                        lastBatch = lastBatch2;
-                                                        tempServeRssi = i4;
+                                                        i3 = tempServeRssi + 1;
+                                                        lastBatch2 = lastBatch;
+                                                        tempServeRssi = i;
                                                         wds = strArr;
-                                                        tempSize3 = tempSize2;
+                                                        tempSize3 = tempSize;
                                                     }
                                                 } catch (NumberFormatException e12) {
                                                     e3 = e12;
                                                     strArr = wds;
-                                                    tempSize2 = tempSize;
+                                                    tempSize = tempSize2;
                                                     wds = new StringBuilder();
                                                     wds.append("getCommStdDataSet, ");
                                                     wds.append(e3.getMessage());
                                                     LogUtil.e(wds.toString());
-                                                    i2 = tempServeRssi + 1;
-                                                    lastBatch = lastBatch2;
-                                                    tempServeRssi = i4;
+                                                    i3 = tempServeRssi + 1;
+                                                    lastBatch2 = lastBatch;
+                                                    tempServeRssi = i;
                                                     wds = strArr;
-                                                    tempSize3 = tempSize2;
+                                                    tempSize3 = tempSize;
                                                 }
-                                                i2 = tempServeRssi + 1;
-                                                lastBatch = lastBatch2;
-                                                tempServeRssi = i4;
+                                                i3 = tempServeRssi + 1;
+                                                lastBatch2 = lastBatch;
+                                                tempServeRssi = i;
                                                 wds = strArr;
-                                                tempSize3 = tempSize2;
+                                                tempSize3 = tempSize;
                                             }
+                                            tempSize = tempSize2;
                                         } catch (RuntimeException e13) {
                                             e = e13;
-                                            tempHp2 = tempHp;
-                                            lastBatch2 = lastBatch;
-                                            i4 = 0;
+                                            tempHp = tempHp2;
+                                            lastBatch = lastBatch2;
+                                            i = 0;
                                             stringBuilder = new StringBuilder();
                                             stringBuilder.append("getCommStdDataSet, ");
                                             stringBuilder.append(e.getMessage());
                                             LogUtil.e(stringBuilder.toString());
                                             standardBatch = standardBatch2;
-                                            lastBatch = lastBatch2;
-                                            tempServeRssi = i4;
-                                            i2 = i3 + 1;
-                                            tempHp = tempHp2;
-                                            i = 0;
+                                            lastBatch2 = lastBatch;
+                                            tempServeRssi = i;
+                                            i3 = i4 + 1;
+                                            tempHp2 = tempHp;
+                                            i2 = 0;
                                             strArr2 = lines;
                                         } catch (Exception e14) {
                                             e2 = e14;
-                                            tempHp2 = tempHp;
-                                            lastBatch2 = lastBatch;
-                                            i4 = 0;
+                                            tempHp = tempHp2;
+                                            lastBatch = lastBatch2;
+                                            i = 0;
                                             stringBuilder = new StringBuilder();
                                             stringBuilder.append("getCommStdDataSet, ");
                                             stringBuilder.append(e2.getMessage());
                                             LogUtil.e(stringBuilder.toString());
                                             standardBatch = standardBatch2;
-                                            lastBatch = lastBatch2;
-                                            tempServeRssi = i4;
-                                            i2 = i3 + 1;
-                                            tempHp = tempHp2;
-                                            i = 0;
+                                            lastBatch2 = lastBatch;
+                                            tempServeRssi = i;
+                                            i3 = i4 + 1;
+                                            tempHp2 = tempHp;
+                                            i2 = 0;
                                             strArr2 = lines;
                                         }
-                                        i2 = i3 + 1;
-                                        tempHp = tempHp2;
-                                        i = 0;
+                                        try {
+                                            wds = macLst.size();
+                                            tempServeRssi = i;
+                                            i3 = 0;
+                                            while (true) {
+                                                tempSize2 = i3;
+                                                if (tempSize2 >= wds) {
+                                                    break;
+                                                }
+                                                try {
+                                                    curBatch = (String) list.get(tempSize2);
+                                                    if (tempHp2.containsKey(curBatch)) {
+                                                        if (curBatch.equals(tempServeMac2)) {
+                                                            size2 = wds;
+                                                            try {
+                                                                tempServeRssi = ((Integer) tempHp2.get(curBatch)).intValue();
+                                                            } catch (RuntimeException e15) {
+                                                            } catch (Exception e16) {
+                                                                e2 = e16;
+                                                                try {
+                                                                    wds = new StringBuilder();
+                                                                    tempHp = tempHp2;
+                                                                    try {
+                                                                        wds.append(" getCommStdDataSet exception :");
+                                                                        wds.append(e2.getMessage());
+                                                                        LogUtil.e(wds.toString());
+                                                                        i3 = tempSize2 + 1;
+                                                                        wds = size2;
+                                                                        tempHp2 = tempHp;
+                                                                    } catch (RuntimeException e17) {
+                                                                        e = e17;
+                                                                        i = tempServeRssi;
+                                                                        stringBuilder = new StringBuilder();
+                                                                        stringBuilder.append("getCommStdDataSet, ");
+                                                                        stringBuilder.append(e.getMessage());
+                                                                        LogUtil.e(stringBuilder.toString());
+                                                                        standardBatch = standardBatch2;
+                                                                        lastBatch2 = lastBatch;
+                                                                        tempServeRssi = i;
+                                                                        i3 = i4 + 1;
+                                                                        tempHp2 = tempHp;
+                                                                        i2 = 0;
+                                                                        strArr2 = lines;
+                                                                    } catch (Exception e18) {
+                                                                        e2 = e18;
+                                                                        i = tempServeRssi;
+                                                                        stringBuilder = new StringBuilder();
+                                                                        stringBuilder.append("getCommStdDataSet, ");
+                                                                        stringBuilder.append(e2.getMessage());
+                                                                        LogUtil.e(stringBuilder.toString());
+                                                                        standardBatch = standardBatch2;
+                                                                        lastBatch2 = lastBatch;
+                                                                        tempServeRssi = i;
+                                                                        i3 = i4 + 1;
+                                                                        tempHp2 = tempHp;
+                                                                        i2 = 0;
+                                                                        strArr2 = lines;
+                                                                    }
+                                                                } catch (RuntimeException e19) {
+                                                                    e = e19;
+                                                                    tempHp = tempHp2;
+                                                                    i = tempServeRssi;
+                                                                    stringBuilder = new StringBuilder();
+                                                                    stringBuilder.append("getCommStdDataSet, ");
+                                                                    stringBuilder.append(e.getMessage());
+                                                                    LogUtil.e(stringBuilder.toString());
+                                                                    standardBatch = standardBatch2;
+                                                                    lastBatch2 = lastBatch;
+                                                                    tempServeRssi = i;
+                                                                    i3 = i4 + 1;
+                                                                    tempHp2 = tempHp;
+                                                                    i2 = 0;
+                                                                    strArr2 = lines;
+                                                                } catch (Exception e20) {
+                                                                    e2 = e20;
+                                                                    tempHp = tempHp2;
+                                                                    i = tempServeRssi;
+                                                                    stringBuilder = new StringBuilder();
+                                                                    stringBuilder.append("getCommStdDataSet, ");
+                                                                    stringBuilder.append(e2.getMessage());
+                                                                    LogUtil.e(stringBuilder.toString());
+                                                                    standardBatch = standardBatch2;
+                                                                    lastBatch2 = lastBatch;
+                                                                    tempServeRssi = i;
+                                                                    i3 = i4 + 1;
+                                                                    tempHp2 = tempHp;
+                                                                    i2 = 0;
+                                                                    strArr2 = lines;
+                                                                }
+                                                            }
+                                                        } else {
+                                                            size2 = wds;
+                                                        }
+                                                        tempScanRssis.add((Integer) tempHp2.get(curBatch));
+                                                        String str = curBatch;
+                                                    } else {
+                                                        size2 = wds;
+                                                        tempScanRssis.add(Integer.valueOf(null));
+                                                    }
+                                                    tempHp = tempHp2;
+                                                } catch (RuntimeException e21) {
+                                                    e = e21;
+                                                    size2 = wds;
+                                                    tempHp = tempHp2;
+                                                    wds = new StringBuilder();
+                                                    wds.append("getCommStdDataSet, ");
+                                                    wds.append(e.getMessage());
+                                                    LogUtil.e(wds.toString());
+                                                    i3 = tempSize2 + 1;
+                                                    wds = size2;
+                                                    tempHp2 = tempHp;
+                                                } catch (Exception e22) {
+                                                }
+                                                i3 = tempSize2 + 1;
+                                                wds = size2;
+                                                tempHp2 = tempHp;
+                                            }
+                                            size2 = wds;
+                                            tempHp = tempHp2;
+                                            tempScanRssis.add(Integer.valueOf(tempServeRssi));
+                                            tempStdRecord.setScanRssis(tempScanRssis);
+                                            tempStdRecord.setServeRssi(tempServeRssi);
+                                            ((TMapList) stdDataSet.getMacRecords().get(tempServeMac2)).add(Integer.valueOf(standardBatch2), tempStdRecord);
+                                            rdCount++;
+                                            standardBatch = standardBatch2;
+                                            lastBatch2 = lastBatch;
+                                        } catch (RuntimeException e23) {
+                                            e = e23;
+                                            tempHp = tempHp2;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("getCommStdDataSet, ");
+                                            stringBuilder.append(e.getMessage());
+                                            LogUtil.e(stringBuilder.toString());
+                                            standardBatch = standardBatch2;
+                                            lastBatch2 = lastBatch;
+                                            tempServeRssi = i;
+                                            i3 = i4 + 1;
+                                            tempHp2 = tempHp;
+                                            i2 = 0;
+                                            strArr2 = lines;
+                                        } catch (Exception e24) {
+                                            e2 = e24;
+                                            tempHp = tempHp2;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("getCommStdDataSet, ");
+                                            stringBuilder.append(e2.getMessage());
+                                            LogUtil.e(stringBuilder.toString());
+                                            standardBatch = standardBatch2;
+                                            lastBatch2 = lastBatch;
+                                            tempServeRssi = i;
+                                            i3 = i4 + 1;
+                                            tempHp2 = tempHp;
+                                            i2 = 0;
+                                            strArr2 = lines;
+                                        }
+                                        i3 = i4 + 1;
+                                        tempHp2 = tempHp;
+                                        i2 = 0;
                                         strArr2 = lines;
                                     }
-                                } catch (RuntimeException e15) {
-                                    tempServeMac = new StringBuilder();
-                                    tempServeMac.append("getCommStdDataSet, ");
-                                    tempServeMac.append(e15.getMessage());
-                                    LogUtil.e(tempServeMac.toString());
-                                } catch (Exception e22) {
+                                } catch (RuntimeException e25) {
+                                    tempServeMac2 = new StringBuilder();
+                                    tempServeMac2.append("getCommStdDataSet, ");
+                                    tempServeMac2.append(e25.getMessage());
+                                    LogUtil.e(tempServeMac2.toString());
+                                } catch (Exception e26) {
                                     try {
                                         StringBuilder stringBuilder3 = new StringBuilder();
                                         stringBuilder3.append("getCommStdDataSet, ");
-                                        stringBuilder3.append(e22.getMessage());
+                                        stringBuilder3.append(e26.getMessage());
                                         LogUtil.e(stringBuilder3.toString());
-                                    } catch (RuntimeException e16) {
-                                        e15 = e16;
-                                        tempHp2 = tempHp;
-                                        lastBatch2 = lastBatch;
-                                        i4 = 0;
+                                    } catch (RuntimeException e27) {
+                                        e25 = e27;
+                                        tempHp = tempHp2;
+                                        lastBatch = lastBatch2;
+                                        i = 0;
                                         standardBatch2 = standardBatch;
-                                    } catch (Exception e17) {
-                                        e22 = e17;
-                                        tempHp2 = tempHp;
-                                        lastBatch2 = lastBatch;
-                                        i4 = 0;
+                                    } catch (Exception e28) {
+                                        e26 = e28;
+                                        tempHp = tempHp2;
+                                        lastBatch = lastBatch2;
+                                        i = 0;
                                         standardBatch2 = standardBatch;
                                         stringBuilder = new StringBuilder();
                                         stringBuilder.append("getCommStdDataSet, ");
-                                        stringBuilder.append(e22.getMessage());
+                                        stringBuilder.append(e26.getMessage());
                                         LogUtil.e(stringBuilder.toString());
                                         standardBatch = standardBatch2;
-                                        lastBatch = lastBatch2;
-                                        tempServeRssi = i4;
-                                        i2 = i3 + 1;
-                                        tempHp = tempHp2;
-                                        i = 0;
+                                        lastBatch2 = lastBatch;
+                                        tempServeRssi = i;
+                                        i3 = i4 + 1;
+                                        tempHp2 = tempHp;
+                                        i2 = 0;
                                         strArr2 = lines;
                                     }
                                 }
                             }
-                            tempServeRssi = i4;
-                            i2 = i3 + 1;
-                            tempHp = tempHp2;
-                            i = 0;
+                            tempServeRssi = i;
+                            i3 = i4 + 1;
+                            tempHp2 = tempHp;
+                            i2 = 0;
                             strArr2 = lines;
                         }
-                        tempHp2 = tempHp;
-                        i4 = 0;
-                        tempServeRssi = i4;
-                    } catch (RuntimeException e18) {
-                        e15 = e18;
-                        tempHp2 = tempHp;
-                        i4 = 0;
-                        lastBatch2 = lastBatch;
+                        tempHp = tempHp2;
+                        i = 0;
+                        tempServeRssi = i;
+                    } catch (RuntimeException e29) {
+                        e25 = e29;
+                        tempHp = tempHp2;
+                        i = 0;
+                        lastBatch = lastBatch2;
                         standardBatch2 = standardBatch;
-                    } catch (Exception e19) {
-                        e22 = e19;
-                        tempHp2 = tempHp;
-                        i4 = 0;
-                        lastBatch2 = lastBatch;
+                    } catch (Exception e30) {
+                        e26 = e30;
+                        tempHp = tempHp2;
+                        i = 0;
+                        lastBatch = lastBatch2;
                         standardBatch2 = standardBatch;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("getCommStdDataSet, ");
-                        stringBuilder.append(e22.getMessage());
+                        stringBuilder.append(e26.getMessage());
                         LogUtil.e(stringBuilder.toString());
                         standardBatch = standardBatch2;
-                        lastBatch = lastBatch2;
-                        tempServeRssi = i4;
-                        i2 = i3 + 1;
-                        tempHp = tempHp2;
-                        i = 0;
+                        lastBatch2 = lastBatch;
+                        tempServeRssi = i;
+                        i3 = i4 + 1;
+                        tempHp2 = tempHp;
+                        i2 = 0;
                         strArr2 = lines;
                     }
-                } catch (RuntimeException e20) {
-                    e15 = e20;
-                    tempHp2 = tempHp;
-                    lastBatch2 = lastBatch;
-                    i4 = tempServeRssi;
+                } catch (RuntimeException e31) {
+                    e25 = e31;
+                    tempHp = tempHp2;
+                    lastBatch = lastBatch2;
+                    i = tempServeRssi;
                     standardBatch2 = standardBatch;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("getCommStdDataSet, ");
-                    stringBuilder.append(e15.getMessage());
+                    stringBuilder.append(e25.getMessage());
                     LogUtil.e(stringBuilder.toString());
                     standardBatch = standardBatch2;
-                    lastBatch = lastBatch2;
-                    tempServeRssi = i4;
-                    i2 = i3 + 1;
-                    tempHp = tempHp2;
-                    i = 0;
+                    lastBatch2 = lastBatch;
+                    tempServeRssi = i;
+                    i3 = i4 + 1;
+                    tempHp2 = tempHp;
+                    i2 = 0;
                     strArr2 = lines;
-                } catch (Exception e21) {
-                    e22 = e21;
-                    tempHp2 = tempHp;
-                    lastBatch2 = lastBatch;
-                    i4 = tempServeRssi;
+                } catch (Exception e32) {
+                    e26 = e32;
+                    tempHp = tempHp2;
+                    lastBatch = lastBatch2;
+                    i = tempServeRssi;
                     standardBatch2 = standardBatch;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("getCommStdDataSet, ");
-                    stringBuilder.append(e22.getMessage());
+                    stringBuilder.append(e26.getMessage());
                     LogUtil.e(stringBuilder.toString());
                     standardBatch = standardBatch2;
-                    lastBatch = lastBatch2;
-                    tempServeRssi = i4;
-                    i2 = i3 + 1;
-                    tempHp = tempHp2;
-                    i = 0;
+                    lastBatch2 = lastBatch;
+                    tempServeRssi = i;
+                    i3 = i4 + 1;
+                    tempHp2 = tempHp;
+                    i2 = 0;
                     strArr2 = lines;
                 }
-                i2 = i3 + 1;
-                tempHp = tempHp2;
-                i = 0;
+                i3 = i4 + 1;
+                tempHp2 = tempHp;
+                i2 = 0;
                 strArr2 = lines;
             }
             stdDataSet.setTotalCnt(rdCount);
@@ -2153,128 +2320,24 @@ public class TrainModelService extends ModelBaseService {
             stringBuilder4.append(rdCount);
             LogUtil.d(stringBuilder4.toString());
             stdDataSet = filterMobileAps2(place, stdDataSet, list, param, macSsidHp);
-        } catch (RuntimeException e23) {
-            e15 = e23;
-            tempHp2 = tempHp;
+        } catch (RuntimeException e33) {
+            e25 = e33;
+            tempHp = tempHp2;
             stringBuilder2 = new StringBuilder();
             stringBuilder2.append("getCommStdDataSet, ");
-            stringBuilder2.append(e15.getMessage());
+            stringBuilder2.append(e25.getMessage());
             LogUtil.e(stringBuilder2.toString());
             return stdDataSet;
-        } catch (Exception e24) {
-            e22 = e24;
-            tempHp2 = tempHp;
+        } catch (Exception e34) {
+            e26 = e34;
+            tempHp = tempHp2;
             stringBuilder2 = new StringBuilder();
             stringBuilder2.append("getCommStdDataSet, ");
-            stringBuilder2.append(e22.getMessage());
+            stringBuilder2.append(e26.getMessage());
             LogUtil.e(stringBuilder2.toString());
             return stdDataSet;
         }
         return stdDataSet;
-        while (true) {
-            tempSize = i2;
-            if (tempSize >= wds) {
-                size2 = wds;
-                tempHp2 = tempHp;
-                tempScanRssis.add(Integer.valueOf(tempServeRssi));
-                tempStdRecord.setScanRssis(tempScanRssis);
-                tempStdRecord.setServeRssi(tempServeRssi);
-                ((TMapList) stdDataSet.getMacRecords().get(tempServeMac)).add(Integer.valueOf(standardBatch2), tempStdRecord);
-                rdCount++;
-                standardBatch = standardBatch2;
-                lastBatch = lastBatch2;
-                break;
-            }
-            try {
-                curBatch = (String) list.get(tempSize);
-                if (tempHp.containsKey(curBatch)) {
-                    if (curBatch.equals(tempServeMac)) {
-                        size2 = wds;
-                        try {
-                            tempServeRssi = ((Integer) tempHp.get(curBatch)).intValue();
-                        } catch (RuntimeException e25) {
-                        } catch (Exception e26) {
-                            e22 = e26;
-                            try {
-                                wds = new StringBuilder();
-                                tempHp2 = tempHp;
-                                try {
-                                    wds.append(" getCommStdDataSet exception :");
-                                    wds.append(e22.getMessage());
-                                    LogUtil.e(wds.toString());
-                                    i2 = tempSize + 1;
-                                    wds = size2;
-                                    tempHp = tempHp2;
-                                } catch (RuntimeException e27) {
-                                    e15 = e27;
-                                    i4 = tempServeRssi;
-                                    stringBuilder = new StringBuilder();
-                                    stringBuilder.append("getCommStdDataSet, ");
-                                    stringBuilder.append(e15.getMessage());
-                                    LogUtil.e(stringBuilder.toString());
-                                    standardBatch = standardBatch2;
-                                    lastBatch = lastBatch2;
-                                    tempServeRssi = i4;
-                                    i2 = i3 + 1;
-                                    tempHp = tempHp2;
-                                    i = 0;
-                                    strArr2 = lines;
-                                } catch (Exception e28) {
-                                    e22 = e28;
-                                    i4 = tempServeRssi;
-                                    stringBuilder = new StringBuilder();
-                                    stringBuilder.append("getCommStdDataSet, ");
-                                    stringBuilder.append(e22.getMessage());
-                                    LogUtil.e(stringBuilder.toString());
-                                    standardBatch = standardBatch2;
-                                    lastBatch = lastBatch2;
-                                    tempServeRssi = i4;
-                                    i2 = i3 + 1;
-                                    tempHp = tempHp2;
-                                    i = 0;
-                                    strArr2 = lines;
-                                }
-                            } catch (RuntimeException e29) {
-                                e15 = e29;
-                                tempHp2 = tempHp;
-                                i4 = tempServeRssi;
-                            } catch (Exception e30) {
-                                e22 = e30;
-                                tempHp2 = tempHp;
-                                i4 = tempServeRssi;
-                            }
-                        }
-                    } else {
-                        size2 = wds;
-                    }
-                    tempScanRssis.add((Integer) tempHp.get(curBatch));
-                    String str = curBatch;
-                } else {
-                    size2 = wds;
-                    tempScanRssis.add(Integer.valueOf(null));
-                }
-                tempHp2 = tempHp;
-            } catch (RuntimeException e31) {
-                e15 = e31;
-                size2 = wds;
-                tempHp2 = tempHp;
-                wds = new StringBuilder();
-                wds.append("getCommStdDataSet, ");
-                wds.append(e15.getMessage());
-                LogUtil.e(wds.toString());
-                i2 = tempSize + 1;
-                wds = size2;
-                tempHp = tempHp2;
-            } catch (Exception e32) {
-            }
-            i2 = tempSize + 1;
-            wds = size2;
-            tempHp = tempHp2;
-        }
-        i2 = i3 + 1;
-        tempHp = tempHp2;
-        i = 0;
-        strArr2 = lines;
     }
 
     private boolean saveStdDataSetToFile(StdDataSet stdDataSet, String place, ParameterInfo param) {
@@ -2629,31 +2692,35 @@ public class TrainModelService extends ModelBaseService {
             try {
                 MobileApCheckParamInfo param = ParamManager.getInstance().getMobileApCheckParamInfo();
                 List<Integer> topKMainApRssiIndexs = getTopKRssiIndexs((ArrayList) colsRssis.get(Constant.MAINAP_TAG), param);
-                if (topKMainApRssiIndexs == null || topKMainApRssiIndexs.size() == 0) {
-                    return mobileSsids;
-                }
-                GetStd getStd = new GetStd();
-                int i = macLst.size();
-                while (true) {
-                    i--;
-                    if (i <= -1) {
-                        break;
-                    }
-                    try {
-                        ArrayList<Float> tempFitKColRssis = getFitKColRssiLst(topKMainApRssiIndexs, (ArrayList) colsRssis.get(macLst.get(i)));
-                        if (tempFitKColRssis.size() != 0 && ((double) getStd.getStandardDevition(tempFitKColRssis)) > ((double) param.getMobileApMinStd())) {
-                            mobileSsids.add((String) macLst.get(i));
+                if (topKMainApRssiIndexs != null) {
+                    if (topKMainApRssiIndexs.size() != 0) {
+                        GetStd getStd = new GetStd();
+                        int i = macLst.size();
+                        while (true) {
+                            i--;
+                            if (i <= -1) {
+                                break;
+                            }
+                            try {
+                                ArrayList<Float> tempFitKColRssis = getFitKColRssiLst(topKMainApRssiIndexs, (ArrayList) colsRssis.get(macLst.get(i)));
+                                if (tempFitKColRssis.size() != 0) {
+                                    if (((double) getStd.getStandardDevition(tempFitKColRssis)) > ((double) param.getMobileApMinStd())) {
+                                        mobileSsids.add((String) macLst.get(i));
+                                    }
+                                }
+                            } catch (RuntimeException e) {
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("filterBatchFp, ");
+                                stringBuilder.append(e.getMessage());
+                                LogUtil.e(stringBuilder.toString());
+                            } catch (Exception e2) {
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("filterBatchFp, ");
+                                stringBuilder.append(e2.getMessage());
+                                LogUtil.e(stringBuilder.toString());
+                            }
                         }
-                    } catch (RuntimeException e) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("filterBatchFp, ");
-                        stringBuilder.append(e.getMessage());
-                        LogUtil.e(stringBuilder.toString());
-                    } catch (Exception e2) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("filterBatchFp, ");
-                        stringBuilder.append(e2.getMessage());
-                        LogUtil.e(stringBuilder.toString());
+                        return mobileSsids;
                     }
                 }
                 return mobileSsids;
@@ -2671,7 +2738,7 @@ public class TrainModelService extends ModelBaseService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0078, code:
+    /* JADX WARNING: Missing block: B:22:0x0078, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

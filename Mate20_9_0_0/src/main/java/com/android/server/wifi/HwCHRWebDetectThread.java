@@ -97,27 +97,11 @@ public class HwCHRWebDetectThread extends Thread {
         return this.errorCode;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0070, code:
+    /* JADX WARNING: Missing block: B:9:0x0070, code skipped:
             if (r1 != null) goto L_0x0072;
      */
-    /* JADX WARNING: Missing block: B:10:0x0072, code:
-            android.util.Log.d(TAG, "doHttpRequest: Disconnect URLConnection");
-            r1.disconnect();
-     */
-    /* JADX WARNING: Missing block: B:15:0x0083, code:
+    /* JADX WARNING: Missing block: B:27:0x00dc, code skipped:
             if (r1 == null) goto L_0x00df;
-     */
-    /* JADX WARNING: Missing block: B:18:0x00a0, code:
-            if (r1 == null) goto L_0x00df;
-     */
-    /* JADX WARNING: Missing block: B:21:0x00bd, code:
-            if (r1 == null) goto L_0x00df;
-     */
-    /* JADX WARNING: Missing block: B:24:0x00dc, code:
-            if (r1 == null) goto L_0x00df;
-     */
-    /* JADX WARNING: Missing block: B:25:0x00df, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int doHttpRequest(String urlAddr) {
@@ -163,6 +147,11 @@ public class HwCHRWebDetectThread extends Thread {
             stringBuilder.append(e2);
             Log.d(str, stringBuilder.toString());
             e2.printStackTrace();
+            if (urlConnection != null) {
+                Log.d(TAG, "doHttpRequest: Disconnect URLConnection");
+                urlConnection.disconnect();
+            }
+            return resCode;
         } catch (IOException e3) {
             str = TAG;
             stringBuilder = new StringBuilder();
@@ -170,8 +159,18 @@ public class HwCHRWebDetectThread extends Thread {
             stringBuilder.append(e3);
             Log.d(str, stringBuilder.toString());
             e3.printStackTrace();
+            if (urlConnection != null) {
+                Log.d(TAG, "doHttpRequest: Disconnect URLConnection");
+                urlConnection.disconnect();
+            }
+            return resCode;
         } catch (Exception e4) {
             e4.printStackTrace();
+            if (urlConnection != null) {
+                Log.d(TAG, "doHttpRequest: Disconnect URLConnection");
+                urlConnection.disconnect();
+            }
+            return resCode;
         } catch (Throwable th) {
             if (urlConnection != null) {
                 Log.d(TAG, "doHttpRequest: Disconnect URLConnection");

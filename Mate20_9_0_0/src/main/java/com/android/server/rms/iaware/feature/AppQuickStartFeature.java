@@ -502,8 +502,10 @@ public class AppQuickStartFeature extends RFeature {
                 if (itemValue != null) {
                     Object obj = -1;
                     try {
-                        if (itemName.hashCode() == -1805606060 && itemName.equals(AQS_EXCTPRD_SWITCH)) {
-                            obj = null;
+                        if (itemName.hashCode() == -1805606060) {
+                            if (itemName.equals(AQS_EXCTPRD_SWITCH)) {
+                                obj = null;
+                            }
                         }
                         if (obj != null) {
                             StringBuilder stringBuilder = new StringBuilder();
@@ -538,8 +540,10 @@ public class AppQuickStartFeature extends RFeature {
                 if (itemValue != null) {
                     Object obj = -1;
                     try {
-                        if (itemName.hashCode() == 870516780 && itemName.equals(AQS_EXCTPRD_APPNAME)) {
-                            obj = null;
+                        if (itemName.hashCode() == 870516780) {
+                            if (itemName.equals(AQS_EXCTPRD_APPNAME)) {
+                                obj = null;
+                            }
                         }
                         StringBuilder stringBuilder;
                         if (obj != null) {
@@ -571,8 +575,10 @@ public class AppQuickStartFeature extends RFeature {
                 if (itemValue != null) {
                     Object obj = -1;
                     try {
-                        if (itemName.hashCode() == 502031901 && itemName.equals(AQS_EXCTPRD_ACTNAME)) {
-                            obj = null;
+                        if (itemName.hashCode() == 502031901) {
+                            if (itemName.equals(AQS_EXCTPRD_ACTNAME)) {
+                                obj = null;
+                            }
                         }
                         StringBuilder stringBuilder;
                         if (obj != null) {
@@ -610,8 +616,10 @@ public class AppQuickStartFeature extends RFeature {
                     if (hashCode != 590910123) {
                         if (hashCode != 1545794062) {
                             if (hashCode != 1920911693) {
-                                if (hashCode == 1974045943 && itemName.equals(AQS_EXCTPRD_COLLECT_TIMEOUT)) {
-                                    obj = 2;
+                                if (hashCode == 1974045943) {
+                                    if (itemName.equals(AQS_EXCTPRD_COLLECT_TIMEOUT)) {
+                                        obj = 2;
+                                    }
                                 }
                             } else if (itemName.equals(AQS_EXCTPRD_PAUSE_DELAY)) {
                                 obj = null;
@@ -651,12 +659,14 @@ public class AppQuickStartFeature extends RFeature {
                             return;
                         case 2:
                             collectTimeout = Integer.parseInt(itemValue.trim());
-                            if (pauseTimeout <= collectTimeout && delayPause <= collectTimeout) {
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("applyExctprdCollectTimeConfig CollectTimeout = ");
-                                stringBuilder.append(collectTimeout);
-                                AwareLog.i("AppQuickStart", stringBuilder.toString());
-                                break;
+                            if (pauseTimeout <= collectTimeout) {
+                                if (delayPause <= collectTimeout) {
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("applyExctprdCollectTimeConfig CollectTimeout = ");
+                                    stringBuilder.append(collectTimeout);
+                                    AwareLog.i("AppQuickStart", stringBuilder.toString());
+                                    break;
+                                }
                             }
                             stringBuilder = new StringBuilder();
                             stringBuilder.append("applyExctprdCollectTimeConfig invalid parameters: PauseDelay=");
@@ -671,7 +681,6 @@ public class AppQuickStartFeature extends RFeature {
                             stringBuilder.append(collectTimeout);
                             AwareLog.w("AppQuickStart", stringBuilder.toString());
                             return;
-                            break;
                         case 3:
                             launchTimeout = Integer.parseInt(itemValue.trim());
                             stringBuilder = new StringBuilder();

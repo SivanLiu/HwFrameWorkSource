@@ -15,7 +15,7 @@ public class AppEyeMessage {
     private String mProcessName = "";
     private int mUid = 0;
 
-    /* JADX WARNING: Missing block: B:28:0x006b, code:
+    /* JADX WARNING: Missing block: B:28:0x006b, code skipped:
             if (r5.equals("pid") != false) goto L_0x0079;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

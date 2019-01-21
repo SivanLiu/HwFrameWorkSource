@@ -1,16 +1,13 @@
 package com.huawei.android.pushagent;
 
-import android.os.MessageQueue.IdleHandler;
+final class g implements Runnable {
+    final /* synthetic */ PushService jw;
 
-final class g implements IdleHandler {
-    final /* synthetic */ b jw;
-
-    g(b bVar) {
-        this.jw = bVar;
+    g(PushService pushService) {
+        this.jw = pushService;
     }
 
-    public boolean queueIdle() {
-        this.jw.acj();
-        return true;
+    public void run() {
+        this.jw.acb();
     }
 }

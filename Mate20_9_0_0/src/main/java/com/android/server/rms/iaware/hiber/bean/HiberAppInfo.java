@@ -14,7 +14,7 @@ public class HiberAppInfo extends AbsAppInfo {
         this.mProcessName = processName;
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0057, code:
+    /* JADX WARNING: Missing block: B:27:0x0057, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

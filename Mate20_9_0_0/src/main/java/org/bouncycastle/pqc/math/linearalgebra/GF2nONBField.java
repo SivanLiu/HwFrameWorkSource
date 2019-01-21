@@ -173,9 +173,9 @@ public class GF2nONBField extends GF2nField {
         if (this.mDegree == gF2nField.mDegree) {
             GF2nElement randomRoot;
             int i;
-            Object obj = new GF2Polynomial[this.mDegree];
+            GF2Polynomial[] gF2PolynomialArr = new GF2Polynomial[this.mDegree];
             for (int i2 = 0; i2 < this.mDegree; i2++) {
-                obj[i2] = new GF2Polynomial(this.mDegree);
+                gF2PolynomialArr[i2] = new GF2Polynomial(this.mDegree);
             }
             do {
                 randomRoot = gF2nField.getRandomRoot(this.fieldPolynomial);
@@ -188,14 +188,14 @@ public class GF2nONBField extends GF2nField {
             for (i = 0; i < this.mDegree; i++) {
                 for (int i3 = 0; i3 < this.mDegree; i3++) {
                     if (gF2nPolynomialElementArr[i].testBit(i3)) {
-                        obj[(this.mDegree - i3) - 1].setBit((this.mDegree - i) - 1);
+                        gF2PolynomialArr[(this.mDegree - i3) - 1].setBit((this.mDegree - i) - 1);
                     }
                 }
             }
             this.fields.addElement(gF2nField);
-            this.matrices.addElement(obj);
+            this.matrices.addElement(gF2PolynomialArr);
             gF2nField.fields.addElement(this);
-            gF2nField.matrices.addElement(invertMatrix(obj));
+            gF2nField.matrices.addElement(invertMatrix(gF2PolynomialArr));
             return;
         }
         throw new IllegalArgumentException("GF2nField.computeCOBMatrix: B1 has a different degree and thus cannot be coverted to!");
@@ -237,7 +237,7 @@ public class GF2nONBField extends GF2nField {
             int degree;
             int degree2;
             while (true) {
-                GF2nElement gF2nONBElement = new GF2nONBElement(this, this.random);
+                GF2nONBElement gF2nONBElement = new GF2nONBElement(this, this.random);
                 GF2nPolynomial gF2nPolynomial2 = new GF2nPolynomial(2, GF2nONBElement.ZERO(this));
                 gF2nPolynomial2.set(1, gF2nONBElement);
                 GF2nPolynomial gF2nPolynomial3 = new GF2nPolynomial(gF2nPolynomial2);

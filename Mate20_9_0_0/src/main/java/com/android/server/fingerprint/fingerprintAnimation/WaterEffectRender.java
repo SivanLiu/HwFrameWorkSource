@@ -136,7 +136,10 @@ public class WaterEffectRender implements Renderer {
 
     public synchronized void setAlpha(float alpha) {
         if (alpha < GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO) {
-            this.mAlpha = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
+            try {
+                this.mAlpha = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
+            } catch (Throwable th) {
+            }
         } else if (alpha > 1.0f) {
             this.mAlpha = 1.0f;
         } else {
@@ -362,7 +365,12 @@ public class WaterEffectRender implements Renderer {
     boolean shouldRequest() {
         boolean z;
         synchronized (this) {
-            z = !this.mPaused || this.mShouldDrawNext;
+            if (this.mPaused) {
+                if (!this.mShouldDrawNext) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }

@@ -249,16 +249,27 @@ final class UiModeManagerService extends SystemService {
             pw.println("    Set or read night mode.");
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:15:0x0025 A:{Catch:{ RemoteException -> 0x002a }} */
+        /* JADX WARNING: Removed duplicated region for block: B:13:0x0020 A:{Catch:{ RemoteException -> 0x002a }} */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public int onCommand(String cmd) {
             if (cmd == null) {
                 return handleDefaultCommands(cmd);
             }
             try {
-                int i = (cmd.hashCode() == 104817688 && cmd.equals("night")) ? 0 : -1;
-                if (i != 0) {
-                    return handleDefaultCommands(cmd);
+                int i;
+                if (cmd.hashCode() == 104817688) {
+                    if (cmd.equals("night")) {
+                        i = 0;
+                        if (i == 0) {
+                            return handleDefaultCommands(cmd);
+                        }
+                        return handleNightMode();
+                    }
                 }
-                return handleNightMode();
+                i = -1;
+                if (i == 0) {
+                }
             } catch (RemoteException e) {
                 PrintWriter err = getErrPrintWriter();
                 StringBuilder stringBuilder = new StringBuilder();
@@ -411,7 +422,7 @@ final class UiModeManagerService extends SystemService {
         this.mWatch = pm.hasSystemFeature("android.hardware.type.watch");
         this.mNightMode = Secure.getInt(context.getContentResolver(), "ui_night_mode", res.getInteger(17694768));
         SystemServerInitThreadPool systemServerInitThreadPool = SystemServerInitThreadPool.get();
-        Runnable -__lambda_uimodemanagerservice_smgexvqckmptx7aaojee7khgma0 = new -$$Lambda$UiModeManagerService$SMGExVQCkMpTx7aAoJee7KHGMA0(this);
+        -$$Lambda$UiModeManagerService$SMGExVQCkMpTx7aAoJee7KHGMA0 -__lambda_uimodemanagerservice_smgexvqckmptx7aaojee7khgma0 = new -$$Lambda$UiModeManagerService$SMGExVQCkMpTx7aAoJee7KHGMA0(this);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(TAG);
         stringBuilder.append(".onStart");

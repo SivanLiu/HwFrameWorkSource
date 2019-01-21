@@ -77,7 +77,7 @@ public class HwWindowStateAnimator extends WindowStateAnimator {
         computeShownFrameLocked(1);
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0102, code:
+    /* JADX WARNING: Missing block: B:30:0x0102, code skipped:
             if (r0.mWin.isIdentityMatrix(r0.mDsDx, r0.mDtDx, r0.mDtDy, r0.mDsDy) != false) goto L_0x0107;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

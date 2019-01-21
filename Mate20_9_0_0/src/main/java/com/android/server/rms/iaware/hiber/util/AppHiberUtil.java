@@ -137,7 +137,7 @@ public class AppHiberUtil {
         return absApp == null || illegalUid(absApp.mUid) || isStrEmpty(absApp.mPkgName);
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0062, code:
+    /* JADX WARNING: Missing block: B:27:0x0062, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -41,38 +41,24 @@ public final class ReflectionUtils {
     }
 
     public static Object invoke(Method method, Object receiver, Object... args) {
-        Exception e;
         if (method != null) {
             try {
                 return method.invoke(receiver, args);
-            } catch (RuntimeException e2) {
-                e = e2;
-            } catch (IllegalAccessException e3) {
-                e = e3;
-            } catch (InvocationTargetException e4) {
-                e = e4;
+            } catch (IllegalAccessException | RuntimeException | InvocationTargetException e) {
+                OPCollectLog.e(TAG, "failed to invoke, method is " + method.getName() + ", cause: " + e.getMessage());
             }
         }
-        return null;
-        OPCollectLog.e(TAG, "failed to invoke, method is " + method.getName() + ", cause: " + e.getMessage());
         return null;
     }
 
     public static Object invoke(Method method, Object receiver) {
-        Exception e;
         if (method != null) {
             try {
                 return method.invoke(receiver, new Object[0]);
-            } catch (RuntimeException e2) {
-                e = e2;
-            } catch (IllegalAccessException e3) {
-                e = e3;
-            } catch (InvocationTargetException e4) {
-                e = e4;
+            } catch (IllegalAccessException | RuntimeException | InvocationTargetException e) {
+                OPCollectLog.e(TAG, "failed to invoke, method is " + method.getName() + ", cause: " + e.getMessage());
             }
         }
-        return null;
-        OPCollectLog.e(TAG, "failed to invoke, method is " + method.getName() + ", cause: " + e.getMessage());
         return null;
     }
 

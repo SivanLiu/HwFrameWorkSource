@@ -148,7 +148,7 @@ public abstract class AuthenticationClient extends ClientMonitor {
                     Slog.e("FingerprintService", "Failed to notify Authenticated:", e);
                 }
             } else {
-                this.mStatusBarService.onFingerprintHelp(getContext().getResources().getString(17040081));
+                this.mStatusBarService.onFingerprintHelp(getContext().getResources().getString(17040082));
             }
         }
         IFingerprintServiceReceiver receiver = getReceiver();

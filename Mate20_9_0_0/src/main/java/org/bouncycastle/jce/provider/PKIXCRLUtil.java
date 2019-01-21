@@ -1,6 +1,7 @@
 package org.bouncycastle.jce.provider;
 
 import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import org.bouncycastle.jcajce.PKIXCRLStoreSelector;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.StoreException;
 
 class PKIXCRLUtil {
     PKIXCRLUtil() {
@@ -17,21 +19,21 @@ class PKIXCRLUtil {
 
     private final Collection findCRLs(PKIXCRLStoreSelector pKIXCRLStoreSelector, List list) throws AnnotatedException {
         AnnotatedException annotatedException;
-        Collection hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         AnnotatedException annotatedException2 = null;
         Object obj = null;
         for (Object next : list) {
             if (next instanceof Store) {
                 try {
                     hashSet.addAll(((Store) next).getMatches(pKIXCRLStoreSelector));
-                } catch (Throwable e) {
+                } catch (StoreException e) {
                     annotatedException = new AnnotatedException("Exception searching in X.509 CRL store.", e);
                     annotatedException2 = annotatedException;
                 }
             } else {
                 try {
                     hashSet.addAll(PKIXCRLStoreSelector.getCRLs(pKIXCRLStoreSelector, (CertStore) next));
-                } catch (Throwable e2) {
+                } catch (CertStoreException e2) {
                     annotatedException = new AnnotatedException("Exception searching in X.509 CRL store.", e2);
                 }
             }
@@ -44,11 +46,11 @@ class PKIXCRLUtil {
     }
 
     public Set findCRLs(PKIXCRLStoreSelector pKIXCRLStoreSelector, Date date, List list, List list2) throws AnnotatedException {
-        Set<X509CRL> hashSet = new HashSet();
+        HashSet<X509CRL> hashSet = new HashSet();
         try {
             hashSet.addAll(findCRLs(pKIXCRLStoreSelector, list2));
             hashSet.addAll(findCRLs(pKIXCRLStoreSelector, list));
-            Set hashSet2 = new HashSet();
+            HashSet hashSet2 = new HashSet();
             for (X509CRL x509crl : hashSet) {
                 if (x509crl.getNextUpdate().after(date)) {
                     X509Certificate certificateChecking = pKIXCRLStoreSelector.getCertificateChecking();
@@ -58,7 +60,7 @@ class PKIXCRLUtil {
                 }
             }
             return hashSet2;
-        } catch (Throwable e) {
+        } catch (AnnotatedException e) {
             throw new AnnotatedException("Exception obtaining complete CRLs.", e);
         }
     }

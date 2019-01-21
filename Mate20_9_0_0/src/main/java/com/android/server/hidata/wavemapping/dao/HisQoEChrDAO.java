@@ -24,38 +24,11 @@ public class HisQoEChrDAO {
         TAG = stringBuilder.toString();
     }
 
-    /* JADX WARNING: Missing block: B:7:0x005b, code:
+    /* JADX WARNING: Missing block: B:7:0x005b, code skipped:
             if (r4 != null) goto L_0x005d;
      */
-    /* JADX WARNING: Missing block: B:8:0x005d, code:
-            r4.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x007d, code:
+    /* JADX WARNING: Missing block: B:17:0x0099, code skipped:
             if (r4 == null) goto L_0x009c;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0099, code:
-            if (r4 == null) goto L_0x009c;
-     */
-    /* JADX WARNING: Missing block: B:17:0x009c, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getCntNumByLoc in HistQoeChrTable found:");
-            r3.append(r2);
-            r3.append(" location:");
-            r3.append(r7.freqLocation);
-            r3.append(":");
-            r3.append(r7.hQoeQueryCnt);
-            r3.append(":");
-            r3.append(r7.hQoeGoodCnt);
-            r3.append(":");
-            r3.append(r7.hQoePoorCnt);
-            r3.append(":");
-            r3.append(r7.hQoeUnknownDB);
-            r3.append(":");
-            r3.append(r7.hQoeUnknownSpace);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x00ec, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getCountersByLocation() {
@@ -87,6 +60,26 @@ public class HisQoEChrDAO {
             stringBuilder.append("exception getCntNumByLoc in HistQoeChrTable Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getCntNumByLoc in HistQoeChrTable found:");
+            stringBuilder2.append(found);
+            stringBuilder2.append(" location:");
+            stringBuilder2.append(this.freqLocation);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeQueryCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeGoodCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoePoorCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeUnknownDB);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeUnknownSpace);
+            LogUtil.i(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -94,38 +87,11 @@ public class HisQoEChrDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x005c, code:
+    /* JADX WARNING: Missing block: B:7:0x005c, code skipped:
             if (r4 != null) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:8:0x005e, code:
-            r4.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x007e, code:
+    /* JADX WARNING: Missing block: B:17:0x009a, code skipped:
             if (r4 == null) goto L_0x009d;
-     */
-    /* JADX WARNING: Missing block: B:16:0x009a, code:
-            if (r4 == null) goto L_0x009d;
-     */
-    /* JADX WARNING: Missing block: B:17:0x009d, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("getCountersByLocation in HistQoeChrTable found:");
-            r2.append(r3);
-            r2.append(" location:");
-            r2.append(r8);
-            r2.append(":");
-            r2.append(r7.hQoeQueryCnt);
-            r2.append(":");
-            r2.append(r7.hQoeGoodCnt);
-            r2.append(":");
-            r2.append(r7.hQoePoorCnt);
-            r2.append(":");
-            r2.append(r7.hQoeUnknownDB);
-            r2.append(":");
-            r2.append(r7.hQoeUnknownSpace);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x00eb, code:
-            return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getCountersByLocation(String location) {
@@ -157,6 +123,26 @@ public class HisQoEChrDAO {
             stringBuilder.append("getCountersByLocation Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getCountersByLocation in HistQoeChrTable found:");
+            stringBuilder2.append(found);
+            stringBuilder2.append(" location:");
+            stringBuilder2.append(location);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeQueryCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeGoodCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoePoorCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeUnknownDB);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.hQoeUnknownSpace);
+            LogUtil.i(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -164,26 +150,11 @@ public class HisQoEChrDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x001f, code:
+    /* JADX WARNING: Missing block: B:7:0x001f, code skipped:
             if (r4 != null) goto L_0x0021;
      */
-    /* JADX WARNING: Missing block: B:8:0x0021, code:
-            r4.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x0040, code:
+    /* JADX WARNING: Missing block: B:17:0x005c, code skipped:
             if (r4 == null) goto L_0x005f;
-     */
-    /* JADX WARNING: Missing block: B:16:0x005c, code:
-            if (r4 == null) goto L_0x005f;
-     */
-    /* JADX WARNING: Missing block: B:17:0x005f, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getRecordByLoc in HistQoeChrTable found:");
-            r3.append(r2);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x0073, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getRecordByLoc() {
@@ -210,6 +181,14 @@ public class HisQoEChrDAO {
             stringBuilder.append("exception getRecordByLoc in HistQoeChrTable Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getRecordByLoc in HistQoeChrTable found:");
+            stringBuilder2.append(found);
+            LogUtil.i(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();

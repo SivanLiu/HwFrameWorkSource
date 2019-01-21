@@ -187,7 +187,10 @@ public class AlarmManagerService extends AbsAlarmManagerService {
         public void onUidForeground(int uid, boolean foreground) {
             synchronized (AlarmManagerService.this.mLock) {
                 if (foreground) {
-                    AlarmManagerService.this.mUseAllowWhileIdleShortTime.put(uid, true);
+                    try {
+                        AlarmManagerService.this.mUseAllowWhileIdleShortTime.put(uid, true);
+                    } catch (Throwable th) {
+                    }
                 }
             }
         }
@@ -690,16 +693,23 @@ public class AlarmManagerService extends AbsAlarmManagerService {
     }
 
     private class AlarmThread extends Thread {
-        /*  JADX ERROR: NullPointerException in pass: BlockFinish
-            java.lang.NullPointerException
-            	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-            	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
+        public AlarmThread() {
+            super(AlarmManagerService.TAG);
+        }
+
+        /*  JADX ERROR: ConcurrentModificationException in pass: EliminatePhiNodes
+            java.util.ConcurrentModificationException
+            	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:909)
+            	at java.util.ArrayList$Itr.next(ArrayList.java:859)
+            	at jadx.core.dex.visitors.ssa.EliminatePhiNodes.replaceMerge(EliminatePhiNodes.java:114)
+            	at jadx.core.dex.visitors.ssa.EliminatePhiNodes.replaceMergeInstructions(EliminatePhiNodes.java:68)
+            	at jadx.core.dex.visitors.ssa.EliminatePhiNodes.visit(EliminatePhiNodes.java:31)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
             	at jadx.core.ProcessClass.process(ProcessClass.java:32)
             	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -741,14 +751,14 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             r3 = com.android.server.AlarmManagerService.this;
             r3 = r3.mLock;
             monitor-enter(r3);
-            r9 = com.android.server.AlarmManagerService.this;
-            r9 = r9.mLastTimeChangeClockTime;
-            r18 = r9;
-            r9 = com.android.server.AlarmManagerService.this;
-            r9 = r9.mLastTimeChangeRealtime;
-            r9 = r4 - r9;
-            r20 = r18 + r9;
-            monitor-exit(r3);
+            r9 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x00c5 }
+            r9 = r9.mLastTimeChangeClockTime;	 Catch:{ all -> 0x00c5 }
+            r18 = r9;	 Catch:{ all -> 0x00c5 }
+            r9 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x00c5 }
+            r9 = r9.mLastTimeChangeRealtime;	 Catch:{ all -> 0x00c5 }
+            r9 = r4 - r9;	 Catch:{ all -> 0x00c5 }
+            r20 = r18 + r9;	 Catch:{ all -> 0x00c5 }
+            monitor-exit(r3);	 Catch:{ all -> 0x00c5 }
             r9 = 0;
             r3 = (r18 > r9 ? 1 : (r18 == r9 ? 0 : -1));
             if (r3 == 0) goto L_0x005d;
@@ -783,15 +793,15 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             r3 = com.android.server.AlarmManagerService.this;
             r9 = r3.mLock;
             monitor-enter(r9);
-            r3 = com.android.server.AlarmManagerService.this;
-            r10 = r3.mNumTimeChanged;
-            r10 = r10 + 1;
-            r3.mNumTimeChanged = r10;
-            r3 = com.android.server.AlarmManagerService.this;
-            r3.mLastTimeChangeClockTime = r6;
-            r3 = com.android.server.AlarmManagerService.this;
-            r3.mLastTimeChangeRealtime = r4;
-            monitor-exit(r9);
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x00c2 }
+            r10 = r3.mNumTimeChanged;	 Catch:{ all -> 0x00c2 }
+            r10 = r10 + 1;	 Catch:{ all -> 0x00c2 }
+            r3.mNumTimeChanged = r10;	 Catch:{ all -> 0x00c2 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x00c2 }
+            r3.mLastTimeChangeClockTime = r6;	 Catch:{ all -> 0x00c2 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x00c2 }
+            r3.mLastTimeChangeRealtime = r4;	 Catch:{ all -> 0x00c2 }
+            monitor-exit(r9);	 Catch:{ all -> 0x00c2 }
             r3 = new android.content.Intent;
             r9 = "android.intent.action.TIME_SET";
             r3.<init>(r9);
@@ -811,11 +821,11 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             goto L_0x00c8;
         L_0x00c2:
             r0 = move-exception;
-            monitor-exit(r9);
+            monitor-exit(r9);	 Catch:{ all -> 0x00c2 }
             throw r0;
         L_0x00c5:
             r0 = move-exception;
-            monitor-exit(r3);
+            monitor-exit(r3);	 Catch:{ all -> 0x00c5 }
             throw r0;
         L_0x00c8:
             r9 = r2;
@@ -824,153 +834,153 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             r0 = com.android.server.AlarmManagerService.this;
             r10 = r0.mLock;
             monitor-enter(r10);
-            r0 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r0.mLastTrigger = r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r0 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2 }
+            r0.mLastTrigger = r4;	 Catch:{ all -> 0x01e2 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2 }
             r3 = r8;
             r11 = r4;
             r13 = r6;
-            r0 = r2.triggerAlarmsLocked(r3, r4, r6);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r0 != 0) goto L_0x012d;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r0 = r2.triggerAlarmsLocked(r3, r4, r6);	 Catch:{ all -> 0x01e7 }
+            if (r0 != 0) goto L_0x012d;	 Catch:{ all -> 0x01e7 }
         L_0x00e0:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.checkAllowNonWakeupDelayLocked(r11);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r2 == 0) goto L_0x012d;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.checkAllowNonWakeupDelayLocked(r11);	 Catch:{ all -> 0x01e7 }
+            if (r2 == 0) goto L_0x012d;	 Catch:{ all -> 0x01e7 }
         L_0x00e8:
-            r2 = "there are no wakeup alarms and the screen is off, we can delay what we have so far until the future";	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = 500; // 0x1f4 float:7.0E-43 double:2.47E-321;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            android.util.Flog.i(r3, r2);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.size();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r2 != 0) goto L_0x010f;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = "there are no wakeup alarms and the screen is off, we can delay what we have so far until the future";	 Catch:{ all -> 0x01e7 }
+            r3 = 500; // 0x1f4 float:7.0E-43 double:2.47E-321;	 Catch:{ all -> 0x01e7 }
+            android.util.Flog.i(r3, r2);	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.size();	 Catch:{ all -> 0x01e7 }
+            if (r2 != 0) goto L_0x010f;	 Catch:{ all -> 0x01e7 }
         L_0x00fa:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.mStartCurrentDelayTime = r11;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r3.currentNonWakeupFuzzLocked(r11);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r5 = 3;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r3 * r5;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r5 = 2;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r3 / r5;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r3 + r11;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.mNextNonWakeupDeliveryTime = r3;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2.mStartCurrentDelayTime = r11;	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3 = r3.currentNonWakeupFuzzLocked(r11);	 Catch:{ all -> 0x01e7 }
+            r5 = 3;	 Catch:{ all -> 0x01e7 }
+            r3 = r3 * r5;	 Catch:{ all -> 0x01e7 }
+            r5 = 2;	 Catch:{ all -> 0x01e7 }
+            r3 = r3 / r5;	 Catch:{ all -> 0x01e7 }
+            r3 = r3 + r11;	 Catch:{ all -> 0x01e7 }
+            r2.mNextNonWakeupDeliveryTime = r3;	 Catch:{ all -> 0x01e7 }
         L_0x010f:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.addAll(r8);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r2.mNumDelayedAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r4 = r8.size();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r3 + r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.mNumDelayedAlarms = r3;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.rescheduleKernelAlarmsLocked();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.updateNextAlarmClockLocked();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            goto L_0x01e0;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e7 }
+            r2.addAll(r8);	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3 = r2.mNumDelayedAlarms;	 Catch:{ all -> 0x01e7 }
+            r4 = r8.size();	 Catch:{ all -> 0x01e7 }
+            r3 = r3 + r4;	 Catch:{ all -> 0x01e7 }
+            r2.mNumDelayedAlarms = r3;	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2.rescheduleKernelAlarmsLocked();	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2.updateNextAlarmClockLocked();	 Catch:{ all -> 0x01e7 }
+            goto L_0x01e0;	 Catch:{ all -> 0x01e7 }
         L_0x012d:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.isAwareAlarmManagerEnabled();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r2 == 0) goto L_0x015b;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.isAwareAlarmManagerEnabled();	 Catch:{ all -> 0x01e7 }
+            if (r2 == 0) goto L_0x015b;	 Catch:{ all -> 0x01e7 }
         L_0x0135:
-            r2 = r9 & 5;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r2 == 0) goto L_0x015b;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = r9 & 5;	 Catch:{ all -> 0x01e7 }
+            if (r2 == 0) goto L_0x015b;	 Catch:{ all -> 0x01e7 }
         L_0x0139:
-            r2 = new java.util.ArrayList;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.<init>();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r8.iterator();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = new java.util.ArrayList;	 Catch:{ all -> 0x01e7 }
+            r2.<init>();	 Catch:{ all -> 0x01e7 }
+            r3 = r8.iterator();	 Catch:{ all -> 0x01e7 }
         L_0x0142:
-            r4 = r3.hasNext();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r4 == 0) goto L_0x0156;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r4 = r3.hasNext();	 Catch:{ all -> 0x01e7 }
+            if (r4 == 0) goto L_0x0156;	 Catch:{ all -> 0x01e7 }
         L_0x0148:
-            r4 = r3.next();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r4 = (com.android.server.AlarmManagerService.Alarm) r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r5 = r4.wakeup;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r5 == 0) goto L_0x0155;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r4 = r3.next();	 Catch:{ all -> 0x01e7 }
+            r4 = (com.android.server.AlarmManagerService.Alarm) r4;	 Catch:{ all -> 0x01e7 }
+            r5 = r4.wakeup;	 Catch:{ all -> 0x01e7 }
+            if (r5 == 0) goto L_0x0155;	 Catch:{ all -> 0x01e7 }
         L_0x0152:
-            r2.add(r4);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2.add(r4);	 Catch:{ all -> 0x01e7 }
         L_0x0155:
-            goto L_0x0142;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            goto L_0x0142;	 Catch:{ all -> 0x01e7 }
         L_0x0156:
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3.reportWakeupAlarms(r2);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3.reportWakeupAlarms(r2);	 Catch:{ all -> 0x01e7 }
         L_0x015b:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.size();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r2 <= 0) goto L_0x019c;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.size();	 Catch:{ all -> 0x01e7 }
+            if (r2 <= 0) goto L_0x019c;	 Catch:{ all -> 0x01e7 }
         L_0x0165:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = r3.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.calculateDeliveryPriorities(r3);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r8.addAll(r2);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mAlarmDispatchComparator;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            java.util.Collections.sort(r8, r2);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mStartCurrentDelayTime;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r4 = r11 - r2;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r6 = r2.mTotalDelayTime;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r6 = r6 + r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.mTotalDelayTime = r6;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mMaxDelayTime;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = (r2 > r4 ? 1 : (r2 == r4 ? 0 : -1));	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r2 >= 0) goto L_0x0195;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3 = r3.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e7 }
+            r2.calculateDeliveryPriorities(r3);	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e7 }
+            r8.addAll(r2);	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mAlarmDispatchComparator;	 Catch:{ all -> 0x01e7 }
+            java.util.Collections.sort(r8, r2);	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mStartCurrentDelayTime;	 Catch:{ all -> 0x01e7 }
+            r4 = r11 - r2;	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r6 = r2.mTotalDelayTime;	 Catch:{ all -> 0x01e7 }
+            r6 = r6 + r4;	 Catch:{ all -> 0x01e7 }
+            r2.mTotalDelayTime = r6;	 Catch:{ all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mMaxDelayTime;	 Catch:{ all -> 0x01e7 }
+            r2 = (r2 > r4 ? 1 : (r2 == r4 ? 0 : -1));	 Catch:{ all -> 0x01e7 }
+            if (r2 >= 0) goto L_0x0195;	 Catch:{ all -> 0x01e7 }
         L_0x0191:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.mMaxDelayTime = r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2.mMaxDelayTime = r4;	 Catch:{ all -> 0x01e7 }
         L_0x0195:
-            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.clear();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r2 = r2.mPendingNonWakeupAlarms;	 Catch:{ all -> 0x01e7 }
+            r2.clear();	 Catch:{ all -> 0x01e7 }
         L_0x019c:
-            r2 = new android.util.ArraySet;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.<init>();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = 0;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r2 = new android.util.ArraySet;	 Catch:{ all -> 0x01e7 }
+            r2.<init>();	 Catch:{ all -> 0x01e7 }
+            r3 = 0;	 Catch:{ all -> 0x01e7 }
         L_0x01a2:
-            r4 = r8.size();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r3 >= r4) goto L_0x01cc;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r4 = r8.size();	 Catch:{ all -> 0x01e7 }
+            if (r3 >= r4) goto L_0x01cc;	 Catch:{ all -> 0x01e7 }
         L_0x01a8:
-            r4 = r8.get(r3);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r4 = (com.android.server.AlarmManagerService.Alarm) r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r5 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r5 = r5.isExemptFromAppStandby(r4);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            if (r5 != 0) goto L_0x01c9;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r4 = r8.get(r3);	 Catch:{ all -> 0x01e7 }
+            r4 = (com.android.server.AlarmManagerService.Alarm) r4;	 Catch:{ all -> 0x01e7 }
+            r5 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r5 = r5.isExemptFromAppStandby(r4);	 Catch:{ all -> 0x01e7 }
+            if (r5 != 0) goto L_0x01c9;	 Catch:{ all -> 0x01e7 }
         L_0x01b6:
-            r5 = r4.sourcePackage;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r6 = r4.creatorUid;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r6 = android.os.UserHandle.getUserId(r6);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r6 = java.lang.Integer.valueOf(r6);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r5 = android.util.Pair.create(r5, r6);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r2.add(r5);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r5 = r4.sourcePackage;	 Catch:{ all -> 0x01e7 }
+            r6 = r4.creatorUid;	 Catch:{ all -> 0x01e7 }
+            r6 = android.os.UserHandle.getUserId(r6);	 Catch:{ all -> 0x01e7 }
+            r6 = java.lang.Integer.valueOf(r6);	 Catch:{ all -> 0x01e7 }
+            r5 = android.util.Pair.create(r5, r6);	 Catch:{ all -> 0x01e7 }
+            r2.add(r5);	 Catch:{ all -> 0x01e7 }
         L_0x01c9:
-            r3 = r3 + 1;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            goto L_0x01a2;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r3 = r3 + 1;	 Catch:{ all -> 0x01e7 }
+            goto L_0x01a2;	 Catch:{ all -> 0x01e7 }
         L_0x01cc:
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3.deliverAlarmsLocked(r8, r11);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3.reorderAlarmsBasedOnStandbyBuckets(r2);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3.rescheduleKernelAlarmsLocked();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r3.updateNextAlarmClockLocked();	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3.deliverAlarmsLocked(r8, r11);	 Catch:{ all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3.reorderAlarmsBasedOnStandbyBuckets(r2);	 Catch:{ all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3.rescheduleKernelAlarmsLocked();	 Catch:{ all -> 0x01e7 }
+            r3 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01e7 }
+            r3.updateNextAlarmClockLocked();	 Catch:{ all -> 0x01e7 }
         L_0x01e0:
-            monitor-exit(r10);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            goto L_0x01f6;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            monitor-exit(r10);	 Catch:{ all -> 0x01e7 }
+            goto L_0x01f6;	 Catch:{ all -> 0x01e7 }
         L_0x01e2:
-            r0 = move-exception;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r11 = r4;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
-            r13 = r6;	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            r0 = move-exception;	 Catch:{ all -> 0x01e7 }
+            r11 = r4;	 Catch:{ all -> 0x01e7 }
+            r13 = r6;	 Catch:{ all -> 0x01e7 }
         L_0x01e5:
-            monitor-exit(r10);	 Catch:{ all -> 0x01e2, all -> 0x01e7 }
+            monitor-exit(r10);	 Catch:{ all -> 0x01e7 }
             throw r0;
         L_0x01e7:
             r0 = move-exception;
@@ -981,14 +991,14 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             r0 = com.android.server.AlarmManagerService.this;
             r4 = r0.mLock;
             monitor-enter(r4);
-            r0 = com.android.server.AlarmManagerService.this;
-            r0.rescheduleKernelAlarmsLocked();
-            monitor-exit(r4);
+            r0 = com.android.server.AlarmManagerService.this;	 Catch:{ all -> 0x01f8 }
+            r0.rescheduleKernelAlarmsLocked();	 Catch:{ all -> 0x01f8 }
+            monitor-exit(r4);	 Catch:{ all -> 0x01f8 }
         L_0x01f6:
-            goto L_0x000d;
+            goto L_0x000d;	 Catch:{ all -> 0x01f8 }
         L_0x01f8:
-            r0 = move-exception;
-            monitor-exit(r4);
+            r0 = move-exception;	 Catch:{ all -> 0x01f8 }
+            monitor-exit(r4);	 Catch:{ all -> 0x01f8 }
             throw r0;
         L_0x01fb:
             r0 = move-exception;
@@ -1001,11 +1011,7 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             r0 = move-exception;
             goto L_0x01fe;
             */
-            throw new UnsupportedOperationException("Method not decompiled: com.android.server.AlarmManagerService.AlarmThread.run():void");
-        }
-
-        public AlarmThread() {
-            super(AlarmManagerService.TAG);
+            throw new UnsupportedOperationException("Method not decompiled: com.android.server.AlarmManagerService$AlarmThread.run():void");
         }
     }
 
@@ -1876,12 +1882,12 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             return Stub.asInterface(AlarmManagerService.this.mService);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:17:0x0036 A:{Catch:{ Exception -> 0x005d }} */
-        /* JADX WARNING: Removed duplicated region for block: B:20:0x0047 A:{Catch:{ Exception -> 0x005d }} */
-        /* JADX WARNING: Removed duplicated region for block: B:18:0x003b A:{Catch:{ Exception -> 0x005d }} */
-        /* JADX WARNING: Removed duplicated region for block: B:17:0x0036 A:{Catch:{ Exception -> 0x005d }} */
-        /* JADX WARNING: Removed duplicated region for block: B:20:0x0047 A:{Catch:{ Exception -> 0x005d }} */
-        /* JADX WARNING: Removed duplicated region for block: B:18:0x003b A:{Catch:{ Exception -> 0x005d }} */
+        /* JADX WARNING: Removed duplicated region for block: B:18:0x0036 A:{Catch:{ Exception -> 0x005d }} */
+        /* JADX WARNING: Removed duplicated region for block: B:21:0x0047 A:{Catch:{ Exception -> 0x005d }} */
+        /* JADX WARNING: Removed duplicated region for block: B:19:0x003b A:{Catch:{ Exception -> 0x005d }} */
+        /* JADX WARNING: Removed duplicated region for block: B:18:0x0036 A:{Catch:{ Exception -> 0x005d }} */
+        /* JADX WARNING: Removed duplicated region for block: B:21:0x0047 A:{Catch:{ Exception -> 0x005d }} */
+        /* JADX WARNING: Removed duplicated region for block: B:19:0x003b A:{Catch:{ Exception -> 0x005d }} */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public int onCommand(String cmd) {
             if (cmd == null) {
@@ -1903,19 +1909,21 @@ public class AlarmManagerService extends AbsAlarmManagerService {
                                 break;
                         }
                     }
-                } else if (hashCode == 2023087364 && cmd.equals("set-timezone")) {
-                    hashCode = 1;
-                    switch (hashCode) {
-                        case 0:
-                            if (getBinderService().setTime(Long.parseLong(getNextArgRequired()))) {
-                                i = 0;
-                            }
-                            return i;
-                        case 1:
-                            getBinderService().setTimeZone(getNextArgRequired());
-                            return 0;
-                        default:
-                            return handleDefaultCommands(cmd);
+                } else if (hashCode == 2023087364) {
+                    if (cmd.equals("set-timezone")) {
+                        hashCode = 1;
+                        switch (hashCode) {
+                            case 0:
+                                if (getBinderService().setTime(Long.parseLong(getNextArgRequired()))) {
+                                    i = 0;
+                                }
+                                return i;
+                            case 1:
+                                getBinderService().setTimeZone(getNextArgRequired());
+                                return 0;
+                            default:
+                                return handleDefaultCommands(cmd);
+                        }
                     }
                 }
                 hashCode = -1;
@@ -1992,7 +2000,7 @@ public class AlarmManagerService extends AbsAlarmManagerService {
             AlarmManagerService.this.getContext().registerReceiver(this, sdFilter);
         }
 
-        /* JADX WARNING: Missing block: B:74:0x0196, code:
+        /* JADX WARNING: Missing block: B:75:0x0196, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4482,7 +4490,7 @@ public class AlarmManagerService extends AbsAlarmManagerService {
         return this.mConstants.ALLOW_WHILE_IDLE_LONG_TIME;
     }
 
-    /* JADX WARNING: Missing block: B:44:0x00ee, code:
+    /* JADX WARNING: Missing block: B:44:0x00ee, code skipped:
             if (2 == r7.type) goto L_0x00f2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4879,26 +4887,34 @@ public class AlarmManagerService extends AbsAlarmManagerService {
         return (a.alarmClock == null && !UserHandle.isCore(a.creatorUid) && (a.flags & 8) == 0) ? false : true;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0029 A:{Catch:{ Exception -> 0x0048 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x0023 A:{Catch:{ Exception -> 0x0048 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void setWakelockWorkSource(PendingIntent pi, WorkSource ws, int type, String tag, int knownUid, boolean first) {
         try {
             boolean unimportant = pi == this.mTimeTickSender;
             this.mWakeLock.setUnimportantForLogging(unimportant);
-            if (first || this.mLastWakeLockUnimportantForLogging) {
-                this.mWakeLock.setHistoryTag(tag);
-            } else {
-                this.mWakeLock.setHistoryTag(null);
+            if (!first) {
+                if (!this.mLastWakeLockUnimportantForLogging) {
+                    this.mWakeLock.setHistoryTag(null);
+                    this.mLastWakeLockUnimportantForLogging = unimportant;
+                    if (ws == null) {
+                        this.mWakeLock.setWorkSource(ws);
+                        return;
+                    }
+                    int uid = knownUid >= 0 ? knownUid : ActivityManager.getService().getUidForIntentSender(pi.getTarget());
+                    if (uid >= 0) {
+                        this.mWakeLock.setWorkSource(new WorkSource(uid));
+                        return;
+                    }
+                    this.mWakeLock.setWorkSource(null);
+                    return;
+                }
             }
+            this.mWakeLock.setHistoryTag(tag);
             this.mLastWakeLockUnimportantForLogging = unimportant;
-            if (ws != null) {
-                this.mWakeLock.setWorkSource(ws);
-                return;
+            if (ws == null) {
             }
-            int uid = knownUid >= 0 ? knownUid : ActivityManager.getService().getUidForIntentSender(pi.getTarget());
-            if (uid >= 0) {
-                this.mWakeLock.setWorkSource(new WorkSource(uid));
-                return;
-            }
-            this.mWakeLock.setWorkSource(null);
         } catch (Exception e) {
         }
     }

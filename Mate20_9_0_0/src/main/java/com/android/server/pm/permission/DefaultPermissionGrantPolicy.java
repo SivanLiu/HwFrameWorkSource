@@ -252,7 +252,7 @@ public class DefaultPermissionGrantPolicy extends AbsDefaultPermissionGrantPolic
         }
         String defaultApplication = Secure.getStringForUser(this.mContext.getContentResolver(), "sms_default_application", userId);
         if (TextUtils.isEmpty(defaultApplication)) {
-            String custDefaultSmsApp = SystemProperties.get("ro.config.default_sms_app", this.mContext.getResources().getString(17039922));
+            String custDefaultSmsApp = SystemProperties.get("ro.config.default_sms_app", this.mContext.getResources().getString(17039923));
             if (TextUtils.isEmpty(custDefaultSmsApp)) {
                 Slog.w(TAG, "grantCustSmsApplication custDefaultSmsApp is null, return");
                 return;
@@ -992,7 +992,7 @@ public class DefaultPermissionGrantPolicy extends AbsDefaultPermissionGrantPolic
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0036, code:
+    /* JADX WARNING: Missing block: B:9:0x0036, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1220,11 +1220,18 @@ public class DefaultPermissionGrantPolicy extends AbsDefaultPermissionGrantPolic
         return ret.isEmpty() ? null : (File[]) ret.toArray(new File[0]);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x009a A:{Splitter: B:12:0x006d, ExcHandler: org.xmlpull.v1.XmlPullParserException (r5_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:31:0x009a, code:
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x009a A:{ExcHandler: IOException | XmlPullParserException (r5_6 'e' java.lang.Exception), Splitter:B:12:0x006d} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:26:0x0091, code skipped:
+            r8 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:28:?, code skipped:
+            r6.addSuppressed(r8);
+     */
+    /* JADX WARNING: Missing block: B:31:0x009a, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:32:0x009b, code:
+    /* JADX WARNING: Missing block: B:32:0x009b, code skipped:
             r6 = TAG;
             r7 = new java.lang.StringBuilder();
             r7.append("Error reading default permissions file ");
@@ -1261,9 +1268,13 @@ public class DefaultPermissionGrantPolicy extends AbsDefaultPermissionGrantPolic
                     parser.setInput(str2, null);
                     parse(parser, grantExceptions);
                     str2.close();
-                } catch (Exception e) {
+                } catch (IOException | XmlPullParserException e) {
                 } catch (Throwable th) {
-                    r6.addSuppressed(th);
+                    if (r6 != null) {
+                        str2.close();
+                    } else {
+                        str2.close();
+                    }
                 }
             } else {
                 str = TAG;

@@ -73,13 +73,13 @@ public final class PrintManagerService extends SystemService {
             new PrintShellCommand(this).exec(this, in, out, err, args, callback, resultReceiver);
         }
 
-        /* JADX WARNING: Missing block: B:28:0x0085, code:
+        /* JADX WARNING: Missing block: B:28:0x0085, code skipped:
             r7 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:30:?, code:
+        /* JADX WARNING: Missing block: B:30:?, code skipped:
             r2 = r1.print(r10, r11, r12, r5, r6);
      */
-        /* JADX WARNING: Missing block: B:33:0x0096, code:
+        /* JADX WARNING: Missing block: B:33:0x0096, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -125,13 +125,13 @@ public final class PrintManagerService extends SystemService {
             return r2;
         }
 
-        /* JADX WARNING: Missing block: B:10:0x001e, code:
+        /* JADX WARNING: Missing block: B:10:0x001e, code skipped:
             r4 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:12:?, code:
+        /* JADX WARNING: Missing block: B:12:?, code skipped:
             r1 = r3.getPrintJobInfos(r2);
      */
-        /* JADX WARNING: Missing block: B:15:0x002b, code:
+        /* JADX WARNING: Missing block: B:15:0x002b, code skipped:
             android.os.Binder.restoreCallingIdentity(r4);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -147,13 +147,13 @@ public final class PrintManagerService extends SystemService {
             return r1;
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0021, code:
+        /* JADX WARNING: Missing block: B:12:0x0021, code skipped:
             r4 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:14:?, code:
+        /* JADX WARNING: Missing block: B:14:?, code skipped:
             r2 = r3.getPrintJobInfo(r7, r0);
      */
-        /* JADX WARNING: Missing block: B:17:0x002e, code:
+        /* JADX WARNING: Missing block: B:17:0x002e, code skipped:
             android.os.Binder.restoreCallingIdentity(r4);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -172,13 +172,13 @@ public final class PrintManagerService extends SystemService {
             return r2;
         }
 
-        /* JADX WARNING: Missing block: B:10:0x0021, code:
+        /* JADX WARNING: Missing block: B:10:0x0021, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:12:?, code:
+        /* JADX WARNING: Missing block: B:12:?, code skipped:
             r1 = r2.getCustomPrinterIcon(r6);
      */
-        /* JADX WARNING: Missing block: B:15:0x002e, code:
+        /* JADX WARNING: Missing block: B:15:0x002e, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -194,13 +194,13 @@ public final class PrintManagerService extends SystemService {
             return r1;
         }
 
-        /* JADX WARNING: Missing block: B:11:0x0020, code:
+        /* JADX WARNING: Missing block: B:11:0x0020, code skipped:
             r4 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:13:?, code:
+        /* JADX WARNING: Missing block: B:13:?, code skipped:
             r3.cancelPrintJob(r7, r2);
      */
-        /* JADX WARNING: Missing block: B:16:0x002d, code:
+        /* JADX WARNING: Missing block: B:16:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r4);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -217,13 +217,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0026, code:
+        /* JADX WARNING: Missing block: B:12:0x0026, code skipped:
             r4 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:14:?, code:
+        /* JADX WARNING: Missing block: B:14:?, code skipped:
             r3.restartPrintJob(r7, r2);
      */
-        /* JADX WARNING: Missing block: B:17:0x0033, code:
+        /* JADX WARNING: Missing block: B:17:0x0033, code skipped:
             android.os.Binder.restoreCallingIdentity(r4);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -240,13 +240,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0025, code:
+        /* JADX WARNING: Missing block: B:9:0x0025, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r1 = r2.getPrintServices(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x0032, code:
+        /* JADX WARNING: Missing block: B:14:0x0032, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -263,13 +263,13 @@ public final class PrintManagerService extends SystemService {
             return r1;
         }
 
-        /* JADX WARNING: Missing block: B:19:0x0051, code:
+        /* JADX WARNING: Missing block: B:20:0x0051, code skipped:
             r4 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:21:?, code:
+        /* JADX WARNING: Missing block: B:22:?, code skipped:
             r3.setPrintServiceEnabled(r7, r8);
      */
-        /* JADX WARNING: Missing block: B:24:0x005e, code:
+        /* JADX WARNING: Missing block: B:25:0x005e, code skipped:
             android.os.Binder.restoreCallingIdentity(r4);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -295,13 +295,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0021, code:
+        /* JADX WARNING: Missing block: B:9:0x0021, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r1 = r2.getPrintServiceRecommendations();
      */
-        /* JADX WARNING: Missing block: B:14:0x002e, code:
+        /* JADX WARNING: Missing block: B:14:0x002e, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -317,13 +317,13 @@ public final class PrintManagerService extends SystemService {
             return r1;
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.createPrinterDiscoverySession(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002d, code:
+        /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -338,13 +338,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.destroyPrinterDiscoverySession(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002d, code:
+        /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -359,13 +359,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x002b, code:
+        /* JADX WARNING: Missing block: B:12:0x002b, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:14:?, code:
+        /* JADX WARNING: Missing block: B:14:?, code skipped:
             r2.startPrinterDiscovery(r6, r7);
      */
-        /* JADX WARNING: Missing block: B:17:0x0038, code:
+        /* JADX WARNING: Missing block: B:17:0x0038, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -383,13 +383,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.stopPrinterDiscovery(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002d, code:
+        /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -404,13 +404,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0022, code:
+        /* JADX WARNING: Missing block: B:9:0x0022, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.validatePrinters(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002f, code:
+        /* JADX WARNING: Missing block: B:14:0x002f, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -425,13 +425,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.startPrinterStateTracking(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002d, code:
+        /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -446,13 +446,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.stopPrinterStateTracking(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002d, code:
+        /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -467,13 +467,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0024, code:
+        /* JADX WARNING: Missing block: B:9:0x0024, code skipped:
             r4 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r3.addPrintJobStateChangeListener(r7, r2);
      */
-        /* JADX WARNING: Missing block: B:14:0x0031, code:
+        /* JADX WARNING: Missing block: B:14:0x0031, code skipped:
             android.os.Binder.restoreCallingIdentity(r4);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -489,13 +489,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.removePrintJobStateChangeListener(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x002d, code:
+        /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -510,13 +510,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0028, code:
+        /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.addPrintServicesChangeListener(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x0035, code:
+        /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -532,13 +532,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0028, code:
+        /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.removePrintServicesChangeListener(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x0035, code:
+        /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -554,13 +554,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0028, code:
+        /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.addPrintServiceRecommendationsChangeListener(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x0035, code:
+        /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -576,13 +576,13 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0028, code:
+        /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             r3 = android.os.Binder.clearCallingIdentity();
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2.removePrintServiceRecommendationsChangeListener(r6);
      */
-        /* JADX WARNING: Missing block: B:14:0x0035, code:
+        /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -769,7 +769,7 @@ public final class PrintManagerService extends SystemService {
                     }
                 }
 
-                /* JADX WARNING: Missing block: B:26:0x0065, code:
+                /* JADX WARNING: Missing block: B:26:0x0065, code skipped:
             return false;
      */
                 /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -887,7 +887,7 @@ public final class PrintManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:14:0x0045, code:
+        /* JADX WARNING: Missing block: B:14:0x0045, code skipped:
             return r6;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

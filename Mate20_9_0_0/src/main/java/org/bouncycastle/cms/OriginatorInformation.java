@@ -1,7 +1,6 @@
 package org.bouncycastle.cms;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -27,7 +26,7 @@ public class OriginatorInformation {
         if (cRLs == null) {
             return new CollectionStore(new ArrayList());
         }
-        Collection arrayList = new ArrayList(cRLs.size());
+        ArrayList arrayList = new ArrayList(cRLs.size());
         Enumeration objects = cRLs.getObjects();
         while (objects.hasMoreElements()) {
             ASN1Primitive toASN1Primitive = ((ASN1Encodable) objects.nextElement()).toASN1Primitive();
@@ -43,7 +42,7 @@ public class OriginatorInformation {
         if (certificates == null) {
             return new CollectionStore(new ArrayList());
         }
-        Collection arrayList = new ArrayList(certificates.size());
+        ArrayList arrayList = new ArrayList(certificates.size());
         Enumeration objects = certificates.getObjects();
         while (objects.hasMoreElements()) {
             ASN1Primitive toASN1Primitive = ((ASN1Encodable) objects.nextElement()).toASN1Primitive();

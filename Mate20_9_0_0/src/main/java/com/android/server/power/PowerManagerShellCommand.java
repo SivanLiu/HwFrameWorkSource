@@ -14,17 +14,28 @@ class PowerManagerShellCommand extends ShellCommand {
         this.mInterface = service;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x0029 A:{Catch:{ RemoteException -> 0x002e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0024 A:{Catch:{ RemoteException -> 0x002e }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public int onCommand(String cmd) {
         if (cmd == null) {
             return handleDefaultCommands(cmd);
         }
         PrintWriter pw = getOutPrintWriter();
         try {
-            int i = (cmd.hashCode() == 1369181230 && cmd.equals("set-mode")) ? 0 : -1;
-            if (i != 0) {
-                return handleDefaultCommands(cmd);
+            int i;
+            if (cmd.hashCode() == 1369181230) {
+                if (cmd.equals("set-mode")) {
+                    i = 0;
+                    if (i == 0) {
+                        return handleDefaultCommands(cmd);
+                    }
+                    return runSetMode();
+                }
             }
-            return runSetMode();
+            i = -1;
+            if (i == 0) {
+            }
         } catch (RemoteException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Remote exception: ");

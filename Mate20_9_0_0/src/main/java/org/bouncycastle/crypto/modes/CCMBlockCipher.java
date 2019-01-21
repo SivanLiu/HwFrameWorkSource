@@ -5,7 +5,6 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.params.AEADParameters;
@@ -41,24 +40,24 @@ public class CCMBlockCipher implements AEADBlockCipher {
     }
 
     private int calculateMac(byte[] bArr, int i, int i2, byte[] bArr2) {
-        Mac cBCBlockCipherMac = new CBCBlockCipherMac(this.cipher, this.macSize * 8);
+        CBCBlockCipherMac cBCBlockCipherMac = new CBCBlockCipherMac(this.cipher, this.macSize * 8);
         cBCBlockCipherMac.init(this.keyParam);
-        Object obj = new byte[16];
+        byte[] bArr3 = new byte[16];
         if (hasAssociatedText()) {
-            obj[0] = (byte) (obj[0] | 64);
+            bArr3[0] = (byte) (bArr3[0] | 64);
         }
         int i3 = 2;
-        obj[0] = (byte) (obj[0] | ((((cBCBlockCipherMac.getMacSize() - 2) / 2) & 7) << 3));
-        obj[0] = (byte) (obj[0] | (((15 - this.nonce.length) - 1) & 7));
-        System.arraycopy(this.nonce, 0, obj, 1, this.nonce.length);
+        bArr3[0] = (byte) (bArr3[0] | ((((cBCBlockCipherMac.getMacSize() - 2) / 2) & 7) << 3));
+        bArr3[0] = (byte) (bArr3[0] | (((15 - this.nonce.length) - 1) & 7));
+        System.arraycopy(this.nonce, 0, bArr3, 1, this.nonce.length);
         int i4 = i2;
         int i5 = 1;
         while (i4 > 0) {
-            obj[obj.length - i5] = (byte) (i4 & 255);
+            bArr3[bArr3.length - i5] = (byte) (i4 & 255);
             i4 >>>= 8;
             i5++;
         }
-        cBCBlockCipherMac.update(obj, 0, obj.length);
+        cBCBlockCipherMac.update(bArr3, 0, bArr3.length);
         if (hasAssociatedText()) {
             int associatedTextLength = getAssociatedTextLength();
             if (associatedTextLength < CipherSuite.DRAFT_TLS_DHE_RSA_WITH_AES_128_OCB) {
@@ -113,9 +112,9 @@ public class CCMBlockCipher implements AEADBlockCipher {
     }
 
     public byte[] getMac() {
-        Object obj = new byte[this.macSize];
-        System.arraycopy(this.macBlock, 0, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[this.macSize];
+        System.arraycopy(this.macBlock, 0, bArr, 0, bArr.length);
+        return bArr;
     }
 
     public int getOutputSize(int i) {
@@ -186,19 +185,19 @@ public class CCMBlockCipher implements AEADBlockCipher {
         if (this.keyParam != null) {
             int length = 15 - this.nonce.length;
             if (length >= 4 || i2 < (1 << (8 * length))) {
-                Object obj = new byte[this.blockSize];
-                obj[0] = (byte) ((length - 1) & 7);
-                System.arraycopy(this.nonce, 0, obj, 1, this.nonce.length);
-                BlockCipher sICBlockCipher = new SICBlockCipher(this.cipher);
-                sICBlockCipher.init(this.forEncryption, new ParametersWithIV(this.keyParam, obj));
+                byte[] bArr3 = new byte[this.blockSize];
+                bArr3[0] = (byte) ((length - 1) & 7);
+                System.arraycopy(this.nonce, 0, bArr3, 1, this.nonce.length);
+                SICBlockCipher sICBlockCipher = new SICBlockCipher(this.cipher);
+                sICBlockCipher.init(this.forEncryption, new ParametersWithIV(this.keyParam, bArr3));
                 int i4;
                 int i5;
                 if (this.forEncryption) {
                     i4 = this.macSize + i2;
                     if (bArr2.length >= i4 + i3) {
                         calculateMac(bArr, i, i2, this.macBlock);
-                        Object obj2 = new byte[this.blockSize];
-                        sICBlockCipher.processBlock(this.macBlock, 0, obj2, 0);
+                        byte[] bArr4 = new byte[this.blockSize];
+                        sICBlockCipher.processBlock(this.macBlock, 0, bArr4, 0);
                         i5 = i;
                         int i6 = i3;
                         while (true) {
@@ -208,12 +207,12 @@ public class CCMBlockCipher implements AEADBlockCipher {
                                 i6 += this.blockSize;
                                 i5 += this.blockSize;
                             } else {
-                                Object obj3 = new byte[this.blockSize];
+                                byte[] bArr5 = new byte[this.blockSize];
                                 i7 -= i5;
-                                System.arraycopy(bArr, i5, obj3, 0, i7);
-                                sICBlockCipher.processBlock(obj3, 0, obj3, 0);
-                                System.arraycopy(obj3, 0, bArr2, i6, i7);
-                                System.arraycopy(obj2, 0, bArr2, i3 + i2, this.macSize);
+                                System.arraycopy(bArr, i5, bArr5, 0, i7);
+                                sICBlockCipher.processBlock(bArr5, 0, bArr5, 0);
+                                System.arraycopy(bArr5, 0, bArr2, i6, i7);
+                                System.arraycopy(bArr4, 0, bArr2, i3 + i2, this.macSize);
                                 return i4;
                             }
                         }
@@ -236,11 +235,11 @@ public class CCMBlockCipher implements AEADBlockCipher {
                             i5 += this.blockSize;
                             i8 += this.blockSize;
                         }
-                        Object obj4 = new byte[this.blockSize];
+                        byte[] bArr6 = new byte[this.blockSize];
                         i = i4 - (i8 - i);
-                        System.arraycopy(bArr, i8, obj4, 0, i);
-                        sICBlockCipher.processBlock(obj4, 0, obj4, 0);
-                        System.arraycopy(obj4, 0, bArr2, i5, i);
+                        System.arraycopy(bArr, i8, bArr6, 0, i);
+                        sICBlockCipher.processBlock(bArr6, 0, bArr6, 0);
+                        System.arraycopy(bArr6, 0, bArr2, i5, i);
                         bArr = new byte[this.blockSize];
                         calculateMac(bArr2, i3, i4, bArr);
                         if (Arrays.constantTimeAreEqual(this.macBlock, bArr)) {

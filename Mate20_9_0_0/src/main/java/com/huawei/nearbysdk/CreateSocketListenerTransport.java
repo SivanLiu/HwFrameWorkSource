@@ -131,6 +131,10 @@ public class CreateSocketListenerTransport extends Stub {
                             result.setSocket(socket);
                             msg.obj = result;
                             break;
+                        case 2:
+                            break;
+                        default:
+                            break;
                     }
                     if (!CreateSocketListenerTransport.this.mListenerHandler.sendMessage(msg)) {
                         HwLog.e(CreateSocketListenerTransport.TAG, "createP2PNearbySocketServer : handler quitting,remove the listener. ");

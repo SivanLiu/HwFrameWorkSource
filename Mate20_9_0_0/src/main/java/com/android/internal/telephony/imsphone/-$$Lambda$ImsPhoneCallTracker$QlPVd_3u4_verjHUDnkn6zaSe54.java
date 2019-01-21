@@ -1,0 +1,16 @@
+package com.android.internal.telephony.imsphone;
+
+import android.telephony.PhoneNumberUtils;
+import com.android.internal.telephony.imsphone.ImsPhoneCallTracker.PhoneNumberUtilsProxy;
+
+/* compiled from: lambda */
+public final /* synthetic */ class -$$Lambda$ImsPhoneCallTracker$QlPVd_3u4_verjHUDnkn6zaSe54 implements PhoneNumberUtilsProxy {
+    public static final /* synthetic */ -$$Lambda$ImsPhoneCallTracker$QlPVd_3u4_verjHUDnkn6zaSe54 INSTANCE = new -$$Lambda$ImsPhoneCallTracker$QlPVd_3u4_verjHUDnkn6zaSe54();
+
+    private /* synthetic */ -$$Lambda$ImsPhoneCallTracker$QlPVd_3u4_verjHUDnkn6zaSe54() {
+    }
+
+    public final boolean isEmergencyNumber(String str) {
+        return PhoneNumberUtils.isEmergencyNumber(str);
+    }
+}

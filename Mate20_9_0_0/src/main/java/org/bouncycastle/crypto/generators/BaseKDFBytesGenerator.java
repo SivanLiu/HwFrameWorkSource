@@ -24,30 +24,30 @@ public class BaseKDFBytesGenerator implements DigestDerivationFunction {
             if (j <= 8589934591L) {
                 long j2 = (long) digestSize;
                 int i3 = (int) (((j + j2) - 1) / j2);
-                Object obj = new byte[this.digest.getDigestSize()];
-                byte[] bArr2 = new byte[4];
-                Pack.intToBigEndian(this.counterStart, bArr2, 0);
+                byte[] bArr2 = new byte[this.digest.getDigestSize()];
+                byte[] bArr3 = new byte[4];
+                Pack.intToBigEndian(this.counterStart, bArr3, 0);
                 int i4 = this.counterStart & -256;
                 int i5 = i;
                 for (i = 0; i < i3; i++) {
                     this.digest.update(this.shared, 0, this.shared.length);
-                    this.digest.update(bArr2, 0, bArr2.length);
+                    this.digest.update(bArr3, 0, bArr3.length);
                     if (this.iv != null) {
                         this.digest.update(this.iv, 0, this.iv.length);
                     }
-                    this.digest.doFinal(obj, 0);
+                    this.digest.doFinal(bArr2, 0);
                     if (i2 > digestSize) {
-                        System.arraycopy(obj, 0, bArr, i5, digestSize);
+                        System.arraycopy(bArr2, 0, bArr, i5, digestSize);
                         i5 += digestSize;
                         i2 -= digestSize;
                     } else {
-                        System.arraycopy(obj, 0, bArr, i5, i2);
+                        System.arraycopy(bArr2, 0, bArr, i5, i2);
                     }
-                    byte b = (byte) (bArr2[3] + 1);
-                    bArr2[3] = b;
+                    byte b = (byte) (bArr3[3] + 1);
+                    bArr3[3] = b;
                     if (b == (byte) 0) {
                         i4 += 256;
-                        Pack.intToBigEndian(i4, bArr2, 0);
+                        Pack.intToBigEndian(i4, bArr3, 0);
                     }
                 }
                 this.digest.reset();
@@ -64,12 +64,12 @@ public class BaseKDFBytesGenerator implements DigestDerivationFunction {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0021 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -81,25 +81,20 @@ public class BaseKDFBytesGenerator implements DigestDerivationFunction {
         r1 = this;
         r0 = r2 instanceof org.bouncycastle.crypto.params.KDFParameters;
         if (r0 == 0) goto L_0x0013;
-    L_0x0004:
         r2 = (org.bouncycastle.crypto.params.KDFParameters) r2;
         r0 = r2.getSharedSecret();
         r1.shared = r0;
         r2 = r2.getIV();
-    L_0x0010:
         r1.iv = r2;
         return;
-    L_0x0013:
         r0 = r2 instanceof org.bouncycastle.crypto.params.ISO18033KDFParameters;
         if (r0 == 0) goto L_0x0022;
-    L_0x0017:
         r2 = (org.bouncycastle.crypto.params.ISO18033KDFParameters) r2;
         r2 = r2.getSeed();
         r1.shared = r2;
         r2 = 0;
         goto L_0x0010;
         return;
-    L_0x0022:
         r2 = new java.lang.IllegalArgumentException;
         r0 = "KDF parameters required for generator";
         r2.<init>(r0);

@@ -2,7 +2,6 @@ package org.bouncycastle.asn1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import org.bouncycastle.util.Arrays;
 
 public class DERUniversalString extends ASN1Primitive implements ASN1String {
@@ -57,7 +56,7 @@ public class DERUniversalString extends ASN1Primitive implements ASN1String {
 
     public String getString() {
         StringBuffer stringBuffer = new StringBuffer("#");
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             new ASN1OutputStream(byteArrayOutputStream).writeObject(this);
             byte[] toByteArray = byteArrayOutputStream.toByteArray();

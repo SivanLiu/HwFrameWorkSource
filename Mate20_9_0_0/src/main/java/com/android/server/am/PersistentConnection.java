@@ -149,11 +149,11 @@ public abstract class PersistentConnection<T> {
     }
 
     public final T getServiceBinder() {
-        T t;
+        Object obj;
         synchronized (this.mLock) {
-            t = this.mService;
+            obj = this.mService;
         }
-        return t;
+        return obj;
     }
 
     public final void bind() {

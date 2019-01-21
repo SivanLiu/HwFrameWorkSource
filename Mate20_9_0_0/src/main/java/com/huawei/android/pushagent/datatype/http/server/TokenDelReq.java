@@ -4,7 +4,7 @@ import com.huawei.android.pushagent.datatype.http.metadata.TokenDelReqMeta;
 import java.util.List;
 
 public class TokenDelReq {
-    private int agentVersion = 3413;
+    private int agentVersion = 3414;
     private int chanMode;
     private int deviceIdType;
     private List<TokenDelReqMeta> tokens;

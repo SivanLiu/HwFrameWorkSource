@@ -13,10 +13,10 @@ public final class b {
             if (length % blockSize != 0) {
                 length += blockSize - (length % blockSize);
             }
-            Object obj = new byte[length];
-            System.arraycopy(bArr, 0, obj, 0, bArr.length);
+            byte[] bArr2 = new byte[length];
+            System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
             instance.init(1, new SecretKeySpec(str.getBytes("UTF-8"), "AES"), new IvParameterSpec(str.getBytes("UTF-8")));
-            return instance.doFinal(obj);
+            return instance.doFinal(bArr2);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

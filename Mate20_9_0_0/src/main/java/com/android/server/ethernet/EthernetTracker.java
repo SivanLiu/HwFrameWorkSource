@@ -74,7 +74,7 @@ final class EthernetTracker {
     EthernetTracker(Context context, Handler handler) {
         this.mHandler = handler;
         this.mNMService = Stub.asInterface(ServiceManager.getService("network_management"));
-        this.mIfaceMatch = context.getResources().getString(17039802);
+        this.mIfaceMatch = context.getResources().getString(17039803);
         for (String strConfig : context.getResources().getStringArray(17236009)) {
             parseEthernetConfig(strConfig);
         }
@@ -144,39 +144,32 @@ final class EthernetTracker {
         this.mFactory.removeInterface(iface);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000e A:{ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0001} */
-    /* JADX WARNING: Missing block: B:4:0x000e, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000f, code:
-            r2 = TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("Error upping interface ");
-            r3.append(r8);
-            android.util.Log.e(r2, r3.toString(), r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void addInterface(String iface) {
         InterfaceConfiguration config = null;
         try {
             this.mNMService.setInterfaceUp(iface);
             config = this.mNMService.getInterfaceConfig(iface);
-        } catch (Exception e) {
-        }
-        String str;
-        if (config == null) {
-            str = TAG;
+        } catch (RemoteException | IllegalStateException e) {
+            String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Null interface config for ");
+            stringBuilder.append("Error upping interface ");
             stringBuilder.append(iface);
-            stringBuilder.append(". Bailing out.");
-            Log.e(str, stringBuilder.toString());
+            Log.e(str, stringBuilder.toString(), e);
+        }
+        String str2;
+        if (config == null) {
+            str2 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Null interface config for ");
+            stringBuilder2.append(iface);
+            stringBuilder2.append(". Bailing out.");
+            Log.e(str2, stringBuilder2.toString());
             return;
         }
-        str = config.getHardwareAddress();
+        str2 = config.getHardwareAddress();
         NetworkCapabilities nc = (NetworkCapabilities) this.mNetworkCapabilities.get(iface);
         if (nc == null) {
-            nc = (NetworkCapabilities) this.mNetworkCapabilities.get(str);
+            nc = (NetworkCapabilities) this.mNetworkCapabilities.get(str2);
             if (nc == null) {
                 nc = createDefaultNetworkCapabilities();
             }
@@ -185,12 +178,12 @@ final class EthernetTracker {
         if (ipConfiguration == null) {
             ipConfiguration = createDefaultIpConfiguration();
         }
-        String str2 = TAG;
-        StringBuilder stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("Started tracking interface ");
-        stringBuilder2.append(iface);
-        Log.d(str2, stringBuilder2.toString());
-        this.mFactory.addInterface(iface, str, nc, ipConfiguration);
+        String str3 = TAG;
+        StringBuilder stringBuilder3 = new StringBuilder();
+        stringBuilder3.append("Started tracking interface ");
+        stringBuilder3.append(iface);
+        Log.d(str3, stringBuilder3.toString());
+        this.mFactory.addInterface(iface, str2, nc, ipConfiguration);
         if (config.hasFlag("running")) {
             updateInterfaceState(iface, DBG);
         }
@@ -229,27 +222,17 @@ final class EthernetTracker {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x0013 A:{ExcHandler: android.os.RemoteException (r0_2 'e' java.lang.Exception), Splitter: B:0:0x0000} */
-    /* JADX WARNING: Missing block: B:5:0x0013, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:6:0x0014, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Could not get list of interfaces ");
-            r2.append(r0);
-            android.util.Log.e(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:8:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void trackAvailableInterfaces() {
         try {
             for (String iface : this.mNMService.listInterfaces()) {
                 maybeTrackInterface(iface);
             }
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Could not get list of interfaces ");
+            stringBuilder.append(e);
+            Log.e(str, stringBuilder.toString());
         }
     }
 
@@ -310,7 +293,7 @@ final class EthernetTracker {
     /* JADX WARNING: Removed duplicated region for block: B:34:0x00b8  */
     /* JADX WARNING: Removed duplicated region for block: B:33:0x00b1  */
     /* JADX WARNING: Removed duplicated region for block: B:29:0x0090  */
-    /* JADX WARNING: Missing block: B:24:0x006a, code:
+    /* JADX WARNING: Missing block: B:24:0x006a, code skipped:
             if (r7.equals("gateway") != false) goto L_0x006e;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

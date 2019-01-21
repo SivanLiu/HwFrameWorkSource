@@ -1,13 +1,13 @@
 package com.huawei.android.pushagent.utils;
 
-import com.huawei.android.pushagent.utils.f.c;
+import com.huawei.android.pushagent.utils.b.a;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 public abstract class e {
-    public static byte[] fn(byte[] bArr) {
+    public static byte[] zt(byte[] bArr) {
         if (bArr == null || bArr.length == 0) {
             return new byte[0];
         }
@@ -23,7 +23,7 @@ public abstract class e {
                 byteArrayOutputStream.write(bArr2, 0, read);
             }
         } catch (IOException e) {
-            c.eq("PushLog3413", "fail to gzip uncompress");
+            a.su("PushLog3414", "fail to gzip uncompress");
         }
         return byteArrayOutputStream.toByteArray();
     }

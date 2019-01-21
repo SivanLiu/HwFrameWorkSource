@@ -26,13 +26,13 @@ public class KDFDoublePipelineIterationBytesGenerator implements MacDerivationFu
         this.h = mac.getMacSize();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0049, code:
+    /* JADX WARNING: Missing block: B:12:0x0049, code skipped:
             r5.ios[r5.ios.length - 3] = (byte) (r0 >>> 16);
      */
-    /* JADX WARNING: Missing block: B:13:0x0055, code:
+    /* JADX WARNING: Missing block: B:13:0x0055, code skipped:
             r5.ios[r5.ios.length - 2] = (byte) (r0 >>> 8);
      */
-    /* JADX WARNING: Missing block: B:14:0x0061, code:
+    /* JADX WARNING: Missing block: B:14:0x0061, code skipped:
             r5.ios[r5.ios.length - 1] = (byte) r0;
             r5.prf.update(r5.ios, 0, r5.ios.length);
      */

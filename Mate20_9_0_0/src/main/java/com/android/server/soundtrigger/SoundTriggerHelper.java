@@ -255,6 +255,8 @@ public class SoundTriggerHelper implements StatusListener {
                 case 1:
                     type = "Generic";
                     break;
+                default:
+                    break;
             }
             stringBuilder = new StringBuilder();
             stringBuilder.append("Model type: ");
@@ -340,53 +342,54 @@ public class SoundTriggerHelper implements StatusListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x00ac, code:
+    /* JADX WARNING: Missing block: B:30:0x00ac, code skipped:
             return Integer.MIN_VALUE;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int startKeyphraseRecognition(int keyphraseId, KeyphraseSoundModel soundModel, IRecognitionStatusCallback callback, RecognitionConfig recognitionConfig) {
         synchronized (this.mLock) {
             MetricsLogger.count(this.mContext, "sth_start_recognition", 1);
-            if (soundModel == null || callback == null || recognitionConfig == null) {
-            } else {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("startKeyphraseRecognition for keyphraseId=");
-                stringBuilder.append(keyphraseId);
-                stringBuilder.append(" soundModel=");
-                stringBuilder.append(soundModel);
-                stringBuilder.append(", callback=");
-                stringBuilder.append(callback.asBinder());
-                stringBuilder.append(", recognitionConfig=");
-                stringBuilder.append(recognitionConfig);
-                Slog.d(str, stringBuilder.toString());
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("moduleProperties=");
-                stringBuilder.append(this.mModuleProperties);
-                Slog.d(str, stringBuilder.toString());
-                dumpModelStateLocked();
-                ModelData model = getKeyphraseModelDataLocked(keyphraseId);
-                if (model == null || model.isKeyphraseModel()) {
-                    ModelData model2;
-                    if (!(model == null || model.getModelId().equals(soundModel.uuid))) {
-                        int status = cleanUpExistingKeyphraseModelLocked(model);
-                        if (status != 0) {
-                            return status;
+            if (!(soundModel == null || callback == null)) {
+                if (recognitionConfig != null) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("startKeyphraseRecognition for keyphraseId=");
+                    stringBuilder.append(keyphraseId);
+                    stringBuilder.append(" soundModel=");
+                    stringBuilder.append(soundModel);
+                    stringBuilder.append(", callback=");
+                    stringBuilder.append(callback.asBinder());
+                    stringBuilder.append(", recognitionConfig=");
+                    stringBuilder.append(recognitionConfig);
+                    Slog.d(str, stringBuilder.toString());
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("moduleProperties=");
+                    stringBuilder.append(this.mModuleProperties);
+                    Slog.d(str, stringBuilder.toString());
+                    dumpModelStateLocked();
+                    ModelData model = getKeyphraseModelDataLocked(keyphraseId);
+                    if (model == null || model.isKeyphraseModel()) {
+                        ModelData model2;
+                        if (!(model == null || model.getModelId().equals(soundModel.uuid))) {
+                            int status = cleanUpExistingKeyphraseModelLocked(model);
+                            if (status != 0) {
+                                return status;
+                            }
+                            removeKeyphraseModelLocked(keyphraseId);
+                            model = null;
                         }
-                        removeKeyphraseModelLocked(keyphraseId);
-                        model = null;
+                        if (model == null) {
+                            model2 = createKeyphraseModelDataLocked(soundModel.uuid, keyphraseId);
+                        } else {
+                            model2 = model;
+                        }
+                        int startRecognition = startRecognition(soundModel, model2, callback, recognitionConfig, keyphraseId);
+                        return startRecognition;
                     }
-                    if (model == null) {
-                        model2 = createKeyphraseModelDataLocked(soundModel.uuid, keyphraseId);
-                    } else {
-                        model2 = model;
-                    }
-                    int startRecognition = startRecognition(soundModel, model2, callback, recognitionConfig, keyphraseId);
-                    return startRecognition;
+                    Slog.e(TAG, "Generic model with same UUID exists.");
+                    return Integer.MIN_VALUE;
                 }
-                Slog.e(TAG, "Generic model with same UUID exists.");
-                return Integer.MIN_VALUE;
             }
         }
     }
@@ -490,40 +493,44 @@ public class SoundTriggerHelper implements StatusListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0042, code:
+    /* JADX WARNING: Missing block: B:16:0x0042, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int stopGenericRecognition(UUID modelId, IRecognitionStatusCallback callback) {
         synchronized (this.mLock) {
             MetricsLogger.count(this.mContext, "sth_stop_recognition", 1);
-            if (callback == null || modelId == null) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Null callbackreceived for stopGenericRecognition() for modelid:");
-                stringBuilder.append(modelId);
-                Slog.e(str, stringBuilder.toString());
-                return Integer.MIN_VALUE;
+            if (callback != null) {
+                if (modelId != null) {
+                    String str;
+                    StringBuilder stringBuilder;
+                    ModelData modelData = (ModelData) this.mModelDataMap.get(modelId);
+                    if (modelData != null) {
+                        if (modelData.isGenericModel()) {
+                            int status = stopRecognition(modelData, callback);
+                            if (status != 0) {
+                                str = TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("stopGenericRecognition failed: ");
+                                stringBuilder.append(status);
+                                Slog.w(str, stringBuilder.toString());
+                            }
+                        }
+                    }
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Attempting stopRecognition on invalid model with id:");
+                    stringBuilder.append(modelId);
+                    Slog.w(str, stringBuilder.toString());
+                    return Integer.MIN_VALUE;
+                }
             }
-            ModelData modelData = (ModelData) this.mModelDataMap.get(modelId);
-            String str2;
-            StringBuilder stringBuilder2;
-            if (modelData == null || !modelData.isGenericModel()) {
-                str2 = TAG;
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Attempting stopRecognition on invalid model with id:");
-                stringBuilder2.append(modelId);
-                Slog.w(str2, stringBuilder2.toString());
-                return Integer.MIN_VALUE;
-            }
-            int status = stopRecognition(modelData, callback);
-            if (status != 0) {
-                str2 = TAG;
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("stopGenericRecognition failed: ");
-                stringBuilder2.append(status);
-                Slog.w(str2, stringBuilder2.toString());
-            }
+            String str2 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Null callbackreceived for stopGenericRecognition() for modelid:");
+            stringBuilder2.append(modelId);
+            Slog.e(str2, stringBuilder2.toString());
+            return Integer.MIN_VALUE;
         }
     }
 
@@ -540,72 +547,82 @@ public class SoundTriggerHelper implements StatusListener {
                 return Integer.MIN_VALUE;
             }
             ModelData modelData = getKeyphraseModelDataLocked(keyphraseId);
-            if (modelData == null || !modelData.isKeyphraseModel()) {
-                String str2 = TAG;
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("No model exists for given keyphrase Id ");
-                stringBuilder2.append(keyphraseId);
-                Slog.e(str2, stringBuilder2.toString());
-                return Integer.MIN_VALUE;
+            if (modelData != null) {
+                if (modelData.isKeyphraseModel()) {
+                    Object obj;
+                    String str2 = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("stopRecognition for keyphraseId=");
+                    stringBuilder.append(keyphraseId);
+                    stringBuilder.append(", callback =");
+                    stringBuilder.append(callback.asBinder());
+                    Slog.d(str2, stringBuilder.toString());
+                    str2 = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("current callback=");
+                    if (modelData == null) {
+                        obj = "null";
+                    } else {
+                        obj = modelData.getCallback().asBinder();
+                    }
+                    stringBuilder.append(obj);
+                    Slog.d(str2, stringBuilder.toString());
+                    int status = stopRecognition(modelData, callback);
+                    if (status != 0) {
+                        return status;
+                    }
+                    return status;
+                }
             }
-            Object obj;
             String str3 = TAG;
-            stringBuilder = new StringBuilder();
-            stringBuilder.append("stopRecognition for keyphraseId=");
-            stringBuilder.append(keyphraseId);
-            stringBuilder.append(", callback =");
-            stringBuilder.append(callback.asBinder());
-            Slog.d(str3, stringBuilder.toString());
-            str3 = TAG;
-            stringBuilder = new StringBuilder();
-            stringBuilder.append("current callback=");
-            if (modelData == null) {
-                obj = "null";
-            } else {
-                obj = modelData.getCallback().asBinder();
-            }
-            stringBuilder.append(obj);
-            Slog.d(str3, stringBuilder.toString());
-            int status = stopRecognition(modelData, callback);
-            if (status != 0) {
-                return status;
-            }
-            return status;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("No model exists for given keyphrase Id ");
+            stringBuilder2.append(keyphraseId);
+            Slog.e(str3, stringBuilder2.toString());
+            return Integer.MIN_VALUE;
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x0060, code:
+    /* JADX WARNING: Missing block: B:35:0x0060, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int stopRecognition(ModelData modelData, IRecognitionStatusCallback callback) {
         synchronized (this.mLock) {
             if (callback == null) {
-                return Integer.MIN_VALUE;
-            } else if (this.mModuleProperties == null || this.mModule == null) {
-                Slog.w(TAG, "Attempting stopRecognition without the capability");
-                return Integer.MIN_VALUE;
+                try {
+                    return Integer.MIN_VALUE;
+                } catch (Throwable th) {
+                }
             } else {
-                IRecognitionStatusCallback currentCallback = modelData.getCallback();
-                if (modelData == null || currentCallback == null || !(modelData.isRequested() || modelData.isModelStarted())) {
-                    Slog.w(TAG, "Attempting stopRecognition without a successful startRecognition");
-                    return Integer.MIN_VALUE;
-                } else if (currentCallback.asBinder() != callback.asBinder()) {
-                    Slog.w(TAG, "Attempting stopRecognition for another recognition");
-                    return Integer.MIN_VALUE;
-                } else {
-                    modelData.setRequested(false);
-                    int status = updateRecognitionLocked(modelData, isRecognitionAllowed(), false);
-                    if (status != 0) {
-                        return status;
-                    }
-                    modelData.setLoaded();
-                    modelData.clearCallback();
-                    modelData.setRecognitionConfig(null);
-                    if (!computeRecognitionRunningLocked()) {
-                        internalClearGlobalStateLocked();
+                if (this.mModuleProperties != null) {
+                    if (this.mModule != null) {
+                        IRecognitionStatusCallback currentCallback = modelData.getCallback();
+                        if (!(modelData == null || currentCallback == null)) {
+                            if (modelData.isRequested() || modelData.isModelStarted()) {
+                                if (currentCallback.asBinder() != callback.asBinder()) {
+                                    Slog.w(TAG, "Attempting stopRecognition for another recognition");
+                                    return Integer.MIN_VALUE;
+                                }
+                                modelData.setRequested(false);
+                                int status = updateRecognitionLocked(modelData, isRecognitionAllowed(), false);
+                                if (status != 0) {
+                                    return status;
+                                }
+                                modelData.setLoaded();
+                                modelData.clearCallback();
+                                modelData.setRecognitionConfig(null);
+                                if (!computeRecognitionRunningLocked()) {
+                                    internalClearGlobalStateLocked();
+                                }
+                            }
+                        }
+                        Slog.w(TAG, "Attempting stopRecognition without a successful startRecognition");
+                        return Integer.MIN_VALUE;
                     }
                 }
+                Slog.w(TAG, "Attempting stopRecognition without the capability");
+                return Integer.MIN_VALUE;
             }
         }
     }
@@ -649,7 +666,7 @@ public class SoundTriggerHelper implements StatusListener {
         return this.mModuleProperties;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0073, code:
+    /* JADX WARNING: Missing block: B:21:0x0073, code skipped:
             return Integer.MIN_VALUE;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -657,83 +674,87 @@ public class SoundTriggerHelper implements StatusListener {
         synchronized (this.mLock) {
             MetricsLogger.count(this.mContext, "sth_unload_keyphrase_sound_model", 1);
             ModelData modelData = getKeyphraseModelDataLocked(keyphraseId);
-            if (this.mModule == null || modelData == null || modelData.getHandle() == Integer.MIN_VALUE || !modelData.isKeyphraseModel()) {
-            } else {
-                String str;
-                StringBuilder stringBuilder;
-                modelData.setRequested(false);
-                int status = updateRecognitionLocked(modelData, isRecognitionAllowed(), false);
-                if (status != 0) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Stop recognition failed for keyphrase ID:");
-                    stringBuilder.append(status);
-                    Slog.w(str, stringBuilder.toString());
+            if (!(this.mModule == null || modelData == null || modelData.getHandle() == Integer.MIN_VALUE)) {
+                if (modelData.isKeyphraseModel()) {
+                    String str;
+                    StringBuilder stringBuilder;
+                    modelData.setRequested(false);
+                    int status = updateRecognitionLocked(modelData, isRecognitionAllowed(), false);
+                    if (status != 0) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Stop recognition failed for keyphrase ID:");
+                        stringBuilder.append(status);
+                        Slog.w(str, stringBuilder.toString());
+                    }
+                    status = this.mModule.unloadSoundModel(modelData.getHandle());
+                    if (status != 0) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("unloadKeyphraseSoundModel call failed with ");
+                        stringBuilder.append(status);
+                        Slog.w(str, stringBuilder.toString());
+                    }
+                    removeKeyphraseModelLocked(keyphraseId);
+                    return status;
                 }
-                status = this.mModule.unloadSoundModel(modelData.getHandle());
-                if (status != 0) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("unloadKeyphraseSoundModel call failed with ");
-                    stringBuilder.append(status);
-                    Slog.w(str, stringBuilder.toString());
-                }
-                removeKeyphraseModelLocked(keyphraseId);
-                return status;
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:31:0x00b7, code:
+    /* JADX WARNING: Missing block: B:33:0x00b7, code skipped:
             return Integer.MIN_VALUE;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int unloadGenericSoundModel(UUID modelId) {
         synchronized (this.mLock) {
             MetricsLogger.count(this.mContext, "sth_unload_generic_sound_model", 1);
-            if (modelId == null || this.mModule == null) {
-            } else {
-                ModelData modelData = (ModelData) this.mModelDataMap.get(modelId);
-                String str;
-                StringBuilder stringBuilder;
-                if (modelData == null || !modelData.isGenericModel()) {
+            if (modelId != null) {
+                if (this.mModule != null) {
+                    String str;
+                    StringBuilder stringBuilder;
+                    ModelData modelData = (ModelData) this.mModelDataMap.get(modelId);
+                    if (modelData != null) {
+                        if (modelData.isGenericModel()) {
+                            if (modelData.isModelLoaded()) {
+                                int status;
+                                if (modelData.isModelStarted()) {
+                                    status = stopRecognitionLocked(modelData, false);
+                                    if (status != 0) {
+                                        str = TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("stopGenericRecognition failed: ");
+                                        stringBuilder.append(status);
+                                        Slog.w(str, stringBuilder.toString());
+                                    }
+                                }
+                                status = this.mModule.unloadSoundModel(modelData.getHandle());
+                                if (status != 0) {
+                                    str = TAG;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("unloadGenericSoundModel() call failed with ");
+                                    stringBuilder.append(status);
+                                    Slog.w(str, stringBuilder.toString());
+                                    Slog.w(TAG, "unloadGenericSoundModel() force-marking model as unloaded.");
+                                }
+                                this.mModelDataMap.remove(modelId);
+                                dumpModelStateLocked();
+                                return status;
+                            }
+                            String str2 = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Unload: Given generic model is not loaded:");
+                            stringBuilder.append(modelId);
+                            Slog.i(str2, stringBuilder.toString());
+                            return 0;
+                        }
+                    }
                     str = TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("Unload error: Attempting unload invalid generic model with id:");
                     stringBuilder.append(modelId);
                     Slog.w(str, stringBuilder.toString());
                     return Integer.MIN_VALUE;
-                } else if (modelData.isModelLoaded()) {
-                    int status;
-                    if (modelData.isModelStarted()) {
-                        status = stopRecognitionLocked(modelData, false);
-                        if (status != 0) {
-                            str = TAG;
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append("stopGenericRecognition failed: ");
-                            stringBuilder.append(status);
-                            Slog.w(str, stringBuilder.toString());
-                        }
-                    }
-                    status = this.mModule.unloadSoundModel(modelData.getHandle());
-                    if (status != 0) {
-                        str = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("unloadGenericSoundModel() call failed with ");
-                        stringBuilder.append(status);
-                        Slog.w(str, stringBuilder.toString());
-                        Slog.w(TAG, "unloadGenericSoundModel() force-marking model as unloaded.");
-                    }
-                    this.mModelDataMap.remove(modelId);
-                    dumpModelStateLocked();
-                    return status;
-                } else {
-                    String str2 = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Unload: Given generic model is not loaded:");
-                    stringBuilder.append(modelId);
-                    Slog.i(str2, stringBuilder.toString());
-                    return 0;
                 }
             }
         }
@@ -772,6 +793,8 @@ public class SoundTriggerHelper implements StatusListener {
                         break;
                     case 2:
                         onRecognitionFailureLocked();
+                        break;
+                    default:
                         break;
                 }
             }

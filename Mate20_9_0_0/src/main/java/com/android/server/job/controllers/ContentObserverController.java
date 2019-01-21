@@ -14,7 +14,6 @@ import android.util.TimeUtils;
 import android.util.proto.ProtoOutputStream;
 import com.android.internal.util.IndentingPrintWriter;
 import com.android.server.job.JobSchedulerService;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -316,22 +315,22 @@ public final class ContentObserverController extends StateController {
 
     public void dumpControllerStateLocked(IndentingPrintWriter pw, Predicate<JobStatus> predicate) {
         int i;
-        PrintWriter printWriter = pw;
+        IndentingPrintWriter indentingPrintWriter = pw;
         Predicate predicate2 = predicate;
         for (i = 0; i < this.mTrackedTasks.size(); i++) {
             JobStatus js = (JobStatus) this.mTrackedTasks.valueAt(i);
             if (predicate2.test(js)) {
-                printWriter.print("#");
-                js.printUniqueId(printWriter);
-                printWriter.print(" from ");
-                UserHandle.formatUid(printWriter, js.getSourceUid());
+                indentingPrintWriter.print("#");
+                js.printUniqueId(indentingPrintWriter);
+                indentingPrintWriter.print(" from ");
+                UserHandle.formatUid(indentingPrintWriter, js.getSourceUid());
                 pw.println();
             }
         }
         pw.println();
         i = this.mObservers.size();
         if (i > 0) {
-            printWriter.println("Observers:");
+            indentingPrintWriter.println("Observers:");
             pw.increaseIndent();
             int userIdx = 0;
             while (userIdx < i) {
@@ -351,41 +350,41 @@ public final class ContentObserverController extends StateController {
                     }
                     if (shouldDump) {
                         TriggerContentUri trigger = (TriggerContentUri) observersOfUser.keyAt(observerIdx);
-                        printWriter.print(trigger.getUri());
-                        printWriter.print(" 0x");
-                        printWriter.print(Integer.toHexString(trigger.getFlags()));
-                        printWriter.print(" (");
-                        printWriter.print(System.identityHashCode(obs));
-                        printWriter.println("):");
+                        indentingPrintWriter.print(trigger.getUri());
+                        indentingPrintWriter.print(" 0x");
+                        indentingPrintWriter.print(Integer.toHexString(trigger.getFlags()));
+                        indentingPrintWriter.print(" (");
+                        indentingPrintWriter.print(System.identityHashCode(obs));
+                        indentingPrintWriter.println("):");
                         pw.increaseIndent();
-                        printWriter.println("Jobs:");
+                        indentingPrintWriter.println("Jobs:");
                         pw.increaseIndent();
                         int j2 = 0;
                         while (j2 < M) {
                             JobInstance inst = (JobInstance) obs.mJobs.valueAt(j2);
-                            printWriter.print("#");
-                            inst.mJobStatus.printUniqueId(printWriter);
-                            printWriter.print(" from ");
-                            UserHandle.formatUid(printWriter, inst.mJobStatus.getSourceUid());
+                            indentingPrintWriter.print("#");
+                            inst.mJobStatus.printUniqueId(indentingPrintWriter);
+                            indentingPrintWriter.print(" from ");
+                            UserHandle.formatUid(indentingPrintWriter, inst.mJobStatus.getSourceUid());
                             if (inst.mChangedAuthorities != null) {
                                 int k;
-                                printWriter.println(":");
+                                indentingPrintWriter.println(":");
                                 pw.increaseIndent();
                                 if (inst.mTriggerPending) {
-                                    printWriter.print("Trigger pending: update=");
-                                    TimeUtils.formatDuration(inst.mJobStatus.getTriggerContentUpdateDelay(), printWriter);
-                                    printWriter.print(", max=");
-                                    TimeUtils.formatDuration(inst.mJobStatus.getTriggerContentMaxDelay(), printWriter);
+                                    indentingPrintWriter.print("Trigger pending: update=");
+                                    TimeUtils.formatDuration(inst.mJobStatus.getTriggerContentUpdateDelay(), indentingPrintWriter);
+                                    indentingPrintWriter.print(", max=");
+                                    TimeUtils.formatDuration(inst.mJobStatus.getTriggerContentMaxDelay(), indentingPrintWriter);
                                     pw.println();
                                 }
-                                printWriter.println("Changed Authorities:");
+                                indentingPrintWriter.println("Changed Authorities:");
                                 for (k = 0; k < inst.mChangedAuthorities.size(); k++) {
-                                    printWriter.println((String) inst.mChangedAuthorities.valueAt(k));
+                                    indentingPrintWriter.println((String) inst.mChangedAuthorities.valueAt(k));
                                 }
                                 if (inst.mChangedUris != null) {
-                                    printWriter.println("          Changed URIs:");
+                                    indentingPrintWriter.println("          Changed URIs:");
                                     for (k = 0; k < inst.mChangedUris.size(); k++) {
-                                        printWriter.println(inst.mChangedUris.valueAt(k));
+                                        indentingPrintWriter.println(inst.mChangedUris.valueAt(k));
                                     }
                                 }
                                 pw.decreaseIndent();

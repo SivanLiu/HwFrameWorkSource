@@ -132,16 +132,16 @@ public class ResourceRecordStore {
         this.mHandler = mHandler;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0052, code:
+    /* JADX WARNING: Missing block: B:15:0x0052, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:21:0x0071, code:
+    /* JADX WARNING: Missing block: B:21:0x0071, code skipped:
             r0 = com.android.server.rms.record.ResourceUtils.getProcessTypeId(r2, r10, -1);
      */
-    /* JADX WARNING: Missing block: B:22:0x0078, code:
+    /* JADX WARNING: Missing block: B:22:0x0078, code skipped:
             if (android.rms.utils.Utils.DEBUG == false) goto L_0x00b0;
      */
-    /* JADX WARNING: Missing block: B:23:0x007a, code:
+    /* JADX WARNING: Missing block: B:23:0x007a, code skipped:
             r8 = TAG;
             r12 = new java.lang.StringBuilder();
             r12.append("getResourceOverloadMax: pkg=");
@@ -156,37 +156,37 @@ public class ResourceRecordStore {
             r12.append(r0);
             android.util.Log.w(r8, r12.toString());
      */
-    /* JADX WARNING: Missing block: B:24:0x00b0, code:
+    /* JADX WARNING: Missing block: B:24:0x00b0, code skipped:
             if (r9 != false) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:25:0x00b2, code:
+    /* JADX WARNING: Missing block: B:25:0x00b2, code skipped:
             if (r6 <= r7) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:26:0x00b4, code:
+    /* JADX WARNING: Missing block: B:26:0x00b4, code skipped:
             if (r0 != r3) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:27:0x00b6, code:
+    /* JADX WARNING: Missing block: B:27:0x00b6, code skipped:
             r8 = android.app.mtm.MultiTaskManager.getInstance();
      */
-    /* JADX WARNING: Missing block: B:28:0x00ba, code:
+    /* JADX WARNING: Missing block: B:28:0x00ba, code skipped:
             if (r8 == 0) goto L_0x00f2;
      */
-    /* JADX WARNING: Missing block: B:30:0x00c2, code:
+    /* JADX WARNING: Missing block: B:30:0x00c2, code skipped:
             if (r8.forcestopApps(r19) == false) goto L_0x00f4;
      */
-    /* JADX WARNING: Missing block: B:31:0x00c4, code:
+    /* JADX WARNING: Missing block: B:31:0x00c4, code skipped:
             cleanResRecordAppDied(r18, r19);
      */
-    /* JADX WARNING: Missing block: B:32:0x00c9, code:
+    /* JADX WARNING: Missing block: B:32:0x00c9, code skipped:
             if (android.rms.utils.Utils.DEBUG != false) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:34:0x00cd, code:
+    /* JADX WARNING: Missing block: B:34:0x00cd, code skipped:
             if (android.rms.utils.Utils.HWFLOW == false) goto L_0x00d0;
      */
-    /* JADX WARNING: Missing block: B:35:0x00d0, code:
+    /* JADX WARNING: Missing block: B:35:0x00d0, code skipped:
             r16 = r0;
      */
-    /* JADX WARNING: Missing block: B:36:0x00d3, code:
+    /* JADX WARNING: Missing block: B:36:0x00d3, code skipped:
             r12 = TAG;
             r15 = new java.lang.StringBuilder();
             r16 = r0;
@@ -195,19 +195,19 @@ public class ResourceRecordStore {
             r15.append("successfully!");
             android.util.Log.d(r12, r15.toString());
      */
-    /* JADX WARNING: Missing block: B:37:0x00f2, code:
+    /* JADX WARNING: Missing block: B:37:0x00f2, code skipped:
             r13 = r19;
      */
-    /* JADX WARNING: Missing block: B:38:0x00f4, code:
+    /* JADX WARNING: Missing block: B:38:0x00f4, code skipped:
             r16 = r0;
      */
-    /* JADX WARNING: Missing block: B:39:0x00f8, code:
+    /* JADX WARNING: Missing block: B:39:0x00f8, code skipped:
             if (android.rms.utils.Utils.DEBUG != false) goto L_0x00fe;
      */
-    /* JADX WARNING: Missing block: B:41:0x00fc, code:
+    /* JADX WARNING: Missing block: B:41:0x00fc, code skipped:
             if (android.rms.utils.Utils.HWFLOW == false) goto L_0x011e;
      */
-    /* JADX WARNING: Missing block: B:42:0x00fe, code:
+    /* JADX WARNING: Missing block: B:42:0x00fe, code skipped:
             r0 = TAG;
             r12 = new java.lang.StringBuilder();
             r12.append("killOverloadApp ");
@@ -215,11 +215,11 @@ public class ResourceRecordStore {
             r12.append("failed!");
             android.util.Log.d(r0, r12.toString());
      */
-    /* JADX WARNING: Missing block: B:43:0x011a, code:
+    /* JADX WARNING: Missing block: B:43:0x011a, code skipped:
             r13 = r19;
             r16 = r0;
      */
-    /* JADX WARNING: Missing block: B:44:0x011e, code:
+    /* JADX WARNING: Missing block: B:44:0x011e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

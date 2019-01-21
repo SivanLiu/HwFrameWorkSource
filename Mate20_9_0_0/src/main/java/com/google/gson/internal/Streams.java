@@ -8,6 +8,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.google.gson.stream.MalformedJsonException;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -66,16 +68,16 @@ public final class Streams {
             reader.peek();
             isEmpty = false;
             return (JsonElement) TypeAdapters.JSON_ELEMENT.read(reader);
-        } catch (Throwable e) {
+        } catch (EOFException e) {
             if (isEmpty) {
                 return JsonNull.INSTANCE;
             }
             throw new JsonSyntaxException(e);
-        } catch (Throwable e2) {
+        } catch (MalformedJsonException e2) {
             throw new JsonSyntaxException(e2);
-        } catch (Throwable e22) {
+        } catch (IOException e22) {
             throw new JsonIOException(e22);
-        } catch (Throwable e222) {
+        } catch (NumberFormatException e222) {
             throw new JsonSyntaxException(e222);
         }
     }

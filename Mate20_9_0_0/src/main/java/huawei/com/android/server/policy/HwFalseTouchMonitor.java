@@ -141,7 +141,7 @@ public class HwFalseTouchMonitor {
             super();
         }
 
-        /* JADX WARNING: Missing block: B:11:0x009e, code:
+        /* JADX WARNING: Missing block: B:11:0x009e, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -496,28 +496,28 @@ public class HwFalseTouchMonitor {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0039, code:
+    /* JADX WARNING: Missing block: B:20:0x0039, code skipped:
             if (r0 <= 0) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:22:0x003f, code:
+    /* JADX WARNING: Missing block: B:22:0x003f, code skipped:
             if (r0 >= QUICK_QUIT_WINDOW_TIMEOUT) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:24:0x0045, code:
+    /* JADX WARNING: Missing block: B:24:0x0045, code skipped:
             if (r2 <= TAP_RESPOND_MIN_TIME) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:26:0x004b, code:
+    /* JADX WARNING: Missing block: B:26:0x004b, code skipped:
             if (r2 >= 500) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:27:0x004d, code:
+    /* JADX WARNING: Missing block: B:27:0x004d, code skipped:
             android.util.Log.i(TAG, "enter current window and quit it quickly");
      */
-    /* JADX WARNING: Missing block: B:28:0x0058, code:
+    /* JADX WARNING: Missing block: B:28:0x0058, code skipped:
             if (checkStatistic() == false) goto L_0x0085;
      */
-    /* JADX WARNING: Missing block: B:29:0x005a, code:
+    /* JADX WARNING: Missing block: B:29:0x005a, code skipped:
             reportQuickQuitWindow();
      */
-    /* JADX WARNING: Missing block: B:30:0x005e, code:
+    /* JADX WARNING: Missing block: B:30:0x005e, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("handleKeyEvent current window enter ");
@@ -680,21 +680,22 @@ public class HwFalseTouchMonitor {
         return stringBuilder.toString();
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002e, code:
+    /* JADX WARNING: Missing block: B:17:0x002e, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean checkStatistic() {
         synchronized (this.mStatisticLock) {
-            if (this.mStatisticStartTime == 0 || this.mStatisticCount <= 200) {
-            } else {
-                long now = System.currentTimeMillis();
-                if (now - this.mStatisticStartTime > 3600000) {
-                    this.mStatisticStartTime = now;
-                    this.mStatisticCount = 0;
-                    return true;
+            if (this.mStatisticStartTime != 0) {
+                if (this.mStatisticCount > 200) {
+                    long now = System.currentTimeMillis();
+                    if (now - this.mStatisticStartTime > 3600000) {
+                        this.mStatisticStartTime = now;
+                        this.mStatisticCount = 0;
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
         }
     }

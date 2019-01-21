@@ -48,7 +48,7 @@ public class SarManager {
     }
 
     private void registerListeners() {
-        this.mEnableSarTxPowerLimit = this.mContext.getResources().getBoolean(17957081);
+        this.mEnableSarTxPowerLimit = this.mContext.getResources().getBoolean(17957082);
         if (this.mEnableSarTxPowerLimit) {
             Log.d(TAG, "Registering Listeners for the SAR Manager");
             registerPhoneListener();

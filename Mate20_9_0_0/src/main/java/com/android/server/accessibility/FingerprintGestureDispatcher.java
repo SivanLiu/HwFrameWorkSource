@@ -92,17 +92,17 @@ public class FingerprintGestureDispatcher extends Stub implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0026, code:
+    /* JADX WARNING: Missing block: B:16:0x0026, code skipped:
             r0 = r2;
      */
-    /* JADX WARNING: Missing block: B:16:0x002b, code:
+    /* JADX WARNING: Missing block: B:17:0x002b, code skipped:
             if (r0 >= r3.size()) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:17:0x002d, code:
+    /* JADX WARNING: Missing block: B:18:0x002d, code skipped:
             ((com.android.server.accessibility.FingerprintGestureDispatcher.FingerprintGestureClient) r3.get(r0)).onFingerprintGesture(r1);
             r2 = r0 + 1;
      */
-    /* JADX WARNING: Missing block: B:19:0x003a, code:
+    /* JADX WARNING: Missing block: B:20:0x003a, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

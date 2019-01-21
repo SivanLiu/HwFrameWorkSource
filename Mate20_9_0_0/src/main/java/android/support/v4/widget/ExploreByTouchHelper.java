@@ -489,7 +489,7 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x003b, code:
+    /* JADX WARNING: Missing block: B:19:0x003b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -512,7 +512,7 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0031, code:
+    /* JADX WARNING: Missing block: B:12:0x0031, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

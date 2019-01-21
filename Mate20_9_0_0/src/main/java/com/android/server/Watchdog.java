@@ -217,21 +217,6 @@ public class Watchdog extends Thread {
             this.mFdHighWaterMark = fdThreshold;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x0059 A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_2 'ex' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:4:0x0059, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:5:0x005a, code:
-            r1 = com.android.server.Watchdog.TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Unable to dump open descriptors: ");
-            r2.append(r0);
-            android.util.Slog.w(r1, r2.toString());
-     */
-        /* JADX WARNING: Missing block: B:6:?, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         private void dumpOpenDescriptors() {
             try {
                 File dumpFile = File.createTempFile("anr_fd_", BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, this.mDumpDir);
@@ -244,7 +229,12 @@ public class Watchdog extends Thread {
                     Slog.w(str, stringBuilder.toString());
                     dumpFile.delete();
                 }
-            } catch (Exception ex) {
+            } catch (IOException | InterruptedException ex) {
+                String str2 = Watchdog.TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Unable to dump open descriptors: ");
+                stringBuilder2.append(ex);
+                Slog.w(str2, stringBuilder2.toString());
             }
         }
 

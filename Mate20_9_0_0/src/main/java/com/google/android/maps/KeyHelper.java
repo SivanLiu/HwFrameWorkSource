@@ -18,19 +18,21 @@ class KeyHelper {
                 return "SYSTEM";
             }
             PackageInfo pi = pm.getPackageInfo(packageName, 64);
-            if (pi == null || pi.signatures == null || pi.signatures.length == 0 || pi.signatures[0] == null) {
-                return null;
+            if (!(pi == null || pi.signatures == null || pi.signatures.length == 0)) {
+                if (pi.signatures[0] != null) {
+                    byte[] signature = pi.signatures[0].toByteArray();
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    if (md == null) {
+                        return null;
+                    }
+                    byte[] digest = md.digest(signature);
+                    if (digest == null) {
+                        return null;
+                    }
+                    return toHex(digest);
+                }
             }
-            byte[] signature = pi.signatures[0].toByteArray();
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            if (md == null) {
-                return null;
-            }
-            byte[] digest = md.digest(signature);
-            if (digest == null) {
-                return null;
-            }
-            return toHex(digest);
+            return null;
         } catch (NameNotFoundException e) {
             return null;
         } catch (NoSuchAlgorithmException e2) {

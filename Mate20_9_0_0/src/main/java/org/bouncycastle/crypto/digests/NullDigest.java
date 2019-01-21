@@ -7,7 +7,7 @@ public class NullDigest implements Digest {
     private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
     public int doFinal(byte[] bArr, int i) {
-        Object toByteArray = this.bOut.toByteArray();
+        byte[] toByteArray = this.bOut.toByteArray();
         System.arraycopy(toByteArray, 0, bArr, i, toByteArray.length);
         reset();
         return toByteArray.length;

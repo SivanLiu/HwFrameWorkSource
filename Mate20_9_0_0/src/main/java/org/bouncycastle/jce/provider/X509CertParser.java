@@ -83,13 +83,13 @@ public class X509CertParser extends X509StreamParserSpi {
                 this.sDataObjectCount = 0;
                 return null;
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new StreamParsingException(e.toString(), e);
         }
     }
 
     public Collection engineReadAll() throws StreamParsingException {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         while (true) {
             Certificate certificate = (Certificate) engineRead();
             if (certificate == null) {

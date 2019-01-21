@@ -47,7 +47,7 @@ public class TlsSRPUtils {
 
     public static byte[] readSRPExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             bArr = TlsUtils.readOpaque8(byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             return bArr;

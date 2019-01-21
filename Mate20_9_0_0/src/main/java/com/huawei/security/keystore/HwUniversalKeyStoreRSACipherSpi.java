@@ -599,17 +599,6 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0021 A:{ExcHandler: java.security.InvalidKeyException (r0_3 'e' java.security.GeneralSecurityException), Splitter: B:3:0x0008} */
-    /* JADX WARNING: Missing block: B:14:0x0021, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:15:0x0022, code:
-            r3.mCachedException = r0;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0024, code:
-            return r1;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected final byte[] engineUpdate(byte[] input, int inputOffset, int inputLen) {
         byte[] output = new byte[0];
         if (this.mCachedException != null) {
@@ -627,7 +616,9 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                 this.mCachedException = e;
                 return new byte[0];
             }
-        } catch (GeneralSecurityException e2) {
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException e2) {
+            this.mCachedException = e2;
+            return output;
         }
     }
 
@@ -666,17 +657,6 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
         throw new ShortBufferException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x0051 A:{ExcHandler: java.security.InvalidKeyException (r0_8 'e' java.security.GeneralSecurityException), Splitter: B:3:0x0005} */
-    /* JADX WARNING: Missing block: B:24:0x0051, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:25:0x0052, code:
-            r4.mCachedException = r0;
-     */
-    /* JADX WARNING: Missing block: B:26:0x0054, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected final void engineUpdateAAD(byte[] input, int inputOffset, int inputLen) {
         if (this.mCachedException == null) {
             try {
@@ -699,7 +679,8 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                 } else {
                     throw new IllegalStateException("This cipher does not support AAD");
                 }
-            } catch (GeneralSecurityException e2) {
+            } catch (InvalidAlgorithmParameterException | InvalidKeyException e2) {
+                this.mCachedException = e2;
             }
         }
     }
@@ -763,14 +744,6 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0066 A:{ExcHandler: java.security.InvalidKeyException (r0_4 'e' java.security.GeneralSecurityException), Splitter: B:2:0x0004} */
-    /* JADX WARNING: Missing block: B:23:0x0066, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:25:0x0072, code:
-            throw ((javax.crypto.IllegalBlockSizeException) new javax.crypto.IllegalBlockSizeException().initCause(r0));
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected final byte[] engineDoFinal(byte[] input, int inputOffset, int inputLen) throws IllegalBlockSizeException, BadPaddingException {
         if (this.mCachedException == null) {
             try {
@@ -792,11 +765,11 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                         throw ((IllegalBlockSizeException) new IllegalBlockSizeException().initCause(e));
                     }
                 }
-            } catch (GeneralSecurityException e2) {
+            } catch (InvalidAlgorithmParameterException | InvalidKeyException e2) {
+                throw ((IllegalBlockSizeException) new IllegalBlockSizeException().initCause(e2));
             }
-        } else {
-            throw ((IllegalBlockSizeException) new IllegalBlockSizeException().initCause(this.mCachedException));
         }
+        throw ((IllegalBlockSizeException) new IllegalBlockSizeException().initCause(this.mCachedException));
     }
 
     protected int getAdditionalEntropyAmountForFinish() {
@@ -858,28 +831,6 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x003d A:{ExcHandler: java.security.NoSuchAlgorithmException (r1_5 'e' java.security.GeneralSecurityException), Splitter: B:11:0x0023} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0072 A:{ExcHandler: java.security.NoSuchAlgorithmException (r1_11 'e' java.security.GeneralSecurityException), Splitter: B:23:0x005c} */
-    /* JADX WARNING: Removed duplicated region for block: B:38:0x00a7 A:{ExcHandler: java.security.NoSuchAlgorithmException (r1_17 'e' java.security.GeneralSecurityException), Splitter: B:35:0x0091} */
-    /* JADX WARNING: Missing block: B:14:0x003d, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0045, code:
-            throw new java.security.InvalidKeyException("Failed to wrap key because it does not export its key material", r1);
-     */
-    /* JADX WARNING: Missing block: B:26:0x0072, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:28:0x007a, code:
-            throw new java.security.InvalidKeyException("Failed to wrap key because it does not export its key material", r1);
-     */
-    /* JADX WARNING: Missing block: B:38:0x00a7, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:40:0x00af, code:
-            throw new java.security.InvalidKeyException("Failed to wrap key because it does not export its key material", r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected final byte[] engineWrap(Key key) throws IllegalBlockSizeException, InvalidKeyException {
         if (this.mKey == null) {
             throw new IllegalStateException("Not initilized");
@@ -894,7 +845,8 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                 if (encoded == null) {
                     try {
                         encoded = ((SecretKeySpec) SecretKeyFactory.getInstance(key.getAlgorithm()).getKeySpec((SecretKey) key, SecretKeySpec.class)).getEncoded();
-                    } catch (GeneralSecurityException e) {
+                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                        throw new InvalidKeyException("Failed to wrap key because it does not export its key material", e);
                     }
                 }
             } else if (key instanceof PrivateKey) {
@@ -904,7 +856,8 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                 if (encoded == null) {
                     try {
                         encoded = ((PKCS8EncodedKeySpec) KeyFactory.getInstance(key.getAlgorithm()).getKeySpec(key, PKCS8EncodedKeySpec.class)).getEncoded();
-                    } catch (GeneralSecurityException e2) {
+                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e2) {
+                        throw new InvalidKeyException("Failed to wrap key because it does not export its key material", e2);
                     }
                 }
             } else if (key instanceof PublicKey) {
@@ -914,7 +867,8 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                 if (encoded == null) {
                     try {
                         encoded = ((X509EncodedKeySpec) KeyFactory.getInstance(key.getAlgorithm()).getKeySpec(key, X509EncodedKeySpec.class)).getEncoded();
-                    } catch (GeneralSecurityException e3) {
+                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e22) {
+                        throw new InvalidKeyException("Failed to wrap key because it does not export its key material", e22);
                     }
                 }
             } else {
@@ -926,8 +880,8 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
             if (encoded != null) {
                 try {
                     return engineDoFinal(encoded, 0, encoded.length);
-                } catch (BadPaddingException e4) {
-                    throw ((IllegalBlockSizeException) new IllegalBlockSizeException().initCause(e4));
+                } catch (BadPaddingException e3) {
+                    throw ((IllegalBlockSizeException) new IllegalBlockSizeException().initCause(e3));
                 }
             }
             throw new InvalidKeyException("Failed to wrap key because it does not export its key material");
@@ -936,14 +890,6 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0062 A:{ExcHandler: javax.crypto.IllegalBlockSizeException (r0_4 'e' java.security.GeneralSecurityException), Splitter: B:6:0x000d} */
-    /* JADX WARNING: Missing block: B:27:0x0062, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:29:0x006a, code:
-            throw new java.security.InvalidKeyException("Failed to unwrap key", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected final Key engineUnwrap(byte[] wrappedKey, String wrappedKeyAlgorithm, int wrappedKeyType) throws InvalidKeyException, NoSuchAlgorithmException {
         if (this.mKey == null) {
             throw new IllegalStateException("Not initilized");
@@ -973,7 +919,8 @@ public class HwUniversalKeyStoreRSACipherSpi extends CipherSpi implements KeySto
                         stringBuilder.append(wrappedKeyType);
                         throw new InvalidParameterException(stringBuilder.toString());
                 }
-            } catch (GeneralSecurityException e3) {
+            } catch (BadPaddingException | IllegalBlockSizeException e3) {
+                throw new InvalidKeyException("Failed to unwrap key", e3);
             }
         } else {
             throw new NullPointerException("wrappedKey == null");

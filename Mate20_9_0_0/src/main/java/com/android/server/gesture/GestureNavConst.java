@@ -17,9 +17,9 @@ public class GestureNavConst {
     public static final boolean CHINA_REGION = "CN".equalsIgnoreCase(SystemProperties.get(WifiProCommonUtils.KEY_PROP_LOCALE, ""));
     public static final int COMPENSATE_MOVE_MAX_TIME = 500;
     public static final int COMPENSATE_MOVE_MIN_TIME = 80;
-    public static final boolean DEBUG = Log.HWINFO;
+    public static final boolean DEBUG;
     public static final boolean DEBUG_ALL;
-    public static final boolean DEBUG_DUMP = Log.HWINFO;
+    public static final boolean DEBUG_DUMP = DEBUG;
     public static final String DEFAULT_LAUNCHER_DRAWER_WINDOW = "com.huawei.android.launcher/com.huawei.android.launcher.drawer.DrawerLauncher";
     public static final String DEFAULT_LAUNCHER_MAIN_WINDOW = "com.huawei.android.launcher/com.huawei.android.launcher.unihome.UniHomeLauncher";
     public static final String DEFAULT_LAUNCHER_PACKAGE = "com.huawei.android.launcher";
@@ -39,6 +39,9 @@ public class GestureNavConst {
     public static final int GESTURE_MOVE_TIME_THRESHOLD_2 = 150;
     public static final int GESTURE_MOVE_TIME_THRESHOLD_3 = 200;
     public static final int GESTURE_MOVE_TIME_THRESHOLD_4 = 250;
+    public static final int GESTURE_NAV_MODE_DEFAULT = 0;
+    public static final int GESTURE_NAV_MODE_FORCE_DISABLE = 2;
+    public static final int GESTURE_NAV_MODE_FORCE_ENABLE = 1;
     public static final int GESTURE_SLIDE_OUT_MAX_ANGLE = 45;
     public static final int ID_GESTURE_NAV_BOTTOM = 3;
     public static final int ID_GESTURE_NAV_LEFT = 1;
@@ -69,7 +72,9 @@ public class GestureNavConst {
     static {
         float f;
         boolean z = false;
-        boolean z2 = DEBUG && Log.HWLog;
+        boolean z2 = "1".equals(SystemProperties.get("ro.debuggable", "0")) || SystemProperties.getInt("ro.logsystem.usertype", 1) == 3 || SystemProperties.getInt("ro.logsystem.usertype", 1) == 5;
+        DEBUG = z2;
+        z2 = DEBUG && Log.HWLog;
         DEBUG_ALL = z2;
         if (SystemProperties.getInt("ro.config.curved_screen", 0) == 1) {
             f = 1.8f;

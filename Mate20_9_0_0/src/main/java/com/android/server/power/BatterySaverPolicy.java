@@ -338,7 +338,14 @@ public class BatterySaverPolicy extends ContentObserver {
     public ArrayMap<String, String> getFileValues(boolean interactive) {
         ArrayMap<String, String> arrayMap;
         synchronized (this.mLock) {
-            arrayMap = interactive ? this.mFilesForInteractive : this.mFilesForNoninteractive;
+            if (interactive) {
+                try {
+                    arrayMap = this.mFilesForInteractive;
+                } catch (Throwable th) {
+                }
+            } else {
+                arrayMap = this.mFilesForNoninteractive;
+            }
         }
         return arrayMap;
     }

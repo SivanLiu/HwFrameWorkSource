@@ -113,7 +113,10 @@ public class IOLimitFeature {
         boolean ioLimitTaskList;
         synchronized (this.lock) {
             if (removeExisted) {
-                removeOneGroupPID(groupType);
+                try {
+                    removeOneGroupPID(groupType);
+                } catch (Throwable th) {
+                }
             }
             ioLimitTaskList = setIoLimitTaskList(groupType, pidList);
         }

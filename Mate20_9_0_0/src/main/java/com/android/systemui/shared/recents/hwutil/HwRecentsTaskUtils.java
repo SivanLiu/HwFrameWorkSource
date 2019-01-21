@@ -110,10 +110,10 @@ public class HwRecentsTaskUtils {
         synchronized (HwRecentsTaskUtils.class) {
             if (lockStateMap == null) {
                 Log.e(TAG, "when call searchFromCache, lockStateMap is null!!");
-                Map hashMap = new HashMap();
+                HashMap hashMap = new HashMap();
                 return hashMap;
             }
-            Map<String, Boolean> map = lockStateMap;
+            Map map = lockStateMap;
             return map;
         }
     }
@@ -124,16 +124,16 @@ public class HwRecentsTaskUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0055, code:
+    /* JADX WARNING: Missing block: B:12:0x0055, code skipped:
             if (r2 == null) goto L_0x006b;
      */
-    /* JADX WARNING: Missing block: B:12:0x0057, code:
+    /* JADX WARNING: Missing block: B:13:0x0057, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:17:0x0068, code:
+    /* JADX WARNING: Missing block: B:18:0x0068, code skipped:
             if (r2 == null) goto L_0x006b;
      */
-    /* JADX WARNING: Missing block: B:18:0x006b, code:
+    /* JADX WARNING: Missing block: B:19:0x006b, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -188,7 +188,7 @@ public class HwRecentsTaskUtils {
         musiclist = MediaTransactWrapper.playingMusicUidSet();
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0055, code:
+    /* JADX WARNING: Missing block: B:20:0x0055, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

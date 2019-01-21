@@ -79,10 +79,10 @@ public class RSAEncryptUtils {
         return null;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0051 A:{SYNTHETIC, Splitter: B:26:0x0051} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0051 A:{SYNTHETIC, Splitter: B:26:0x0051} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0051 A:{SYNTHETIC, Splitter: B:26:0x0051} */
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x0061 A:{SYNTHETIC, Splitter: B:32:0x0061} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0051 A:{SYNTHETIC, Splitter:B:26:0x0051} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0051 A:{SYNTHETIC, Splitter:B:26:0x0051} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0051 A:{SYNTHETIC, Splitter:B:26:0x0051} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x0061 A:{SYNTHETIC, Splitter:B:32:0x0061} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static byte[] processByCipher(byte[] data, Cipher cipher, int maxCountOnce) {
         byte[] toByteArray;
@@ -177,7 +177,6 @@ public class RSAEncryptUtils {
     }
 
     private static byte[] encrypt(byte[] data, Key key) {
-        GeneralSecurityException e;
         if (data == null || data.length == 0 || key == null) {
             DSLog.e("Failed to encrypt data, error: invalid parameters.", new Object[0]);
             return new byte[0];
@@ -186,19 +185,13 @@ public class RSAEncryptUtils {
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
             cipher.init(1, key);
             return processByCipher(data, cipher, MAX_ENCRYPT_BLOCK);
-        } catch (NoSuchAlgorithmException e2) {
-            e = e2;
-        } catch (NoSuchPaddingException e3) {
-            e = e3;
-        } catch (InvalidKeyException e4) {
-            e = e4;
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            DSLog.e("Failed to encrypt data, error: %s.", e.getClass().getSimpleName());
+            return new byte[0];
         }
-        DSLog.e("Failed to encrypt data, error: %s.", e.getClass().getSimpleName());
-        return new byte[0];
     }
 
     private static byte[] decrypt(byte[] data, Key key) {
-        GeneralSecurityException e;
         if (data == null || data.length == 0 || key == null) {
             DSLog.e("Failed to decrypt data, error: invalid parameters.", new Object[0]);
             return new byte[0];
@@ -207,19 +200,13 @@ public class RSAEncryptUtils {
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
             cipher.init(2, key);
             return processByCipher(data, cipher, 256);
-        } catch (NoSuchAlgorithmException e2) {
-            e = e2;
-        } catch (NoSuchPaddingException e3) {
-            e = e3;
-        } catch (InvalidKeyException e4) {
-            e = e4;
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            DSLog.e("Failed to encrypt data, error: %s.", e.getClass().getSimpleName());
+            return new byte[0];
         }
-        DSLog.e("Failed to encrypt data, error: %s.", e.getClass().getSimpleName());
-        return new byte[0];
     }
 
     private static Key convertToPublicKey(String publicKey) {
-        GeneralSecurityException e;
         Key key = null;
         byte[] keyBytes = decodeToByte(publicKey);
         if (keyBytes == null || keyBytes.length == 0) {
@@ -228,17 +215,13 @@ public class RSAEncryptUtils {
         }
         try {
             return KeyFactory.getInstance(KEY_ALGORITHM).generatePublic(new X509EncodedKeySpec(keyBytes));
-        } catch (NoSuchAlgorithmException e2) {
-            e = e2;
-        } catch (InvalidKeySpecException e3) {
-            e = e3;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            DSLog.e("Failed to convert to public key, error: %s.", e.getClass().getSimpleName());
+            return key;
         }
-        DSLog.e("Failed to convert to public key, error: %s.", e.getClass().getSimpleName());
-        return key;
     }
 
     private static Key convertToPrivateKey(String privateKey) {
-        GeneralSecurityException e;
         Key key = null;
         byte[] keyBytes = decodeToByte(privateKey);
         if (keyBytes == null) {
@@ -247,13 +230,10 @@ public class RSAEncryptUtils {
         }
         try {
             return KeyFactory.getInstance(KEY_ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
-        } catch (NoSuchAlgorithmException e2) {
-            e = e2;
-        } catch (InvalidKeySpecException e3) {
-            e = e3;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            DSLog.e("Failed to convert to private key, error: %s.", e.getClass().getSimpleName());
+            return key;
         }
-        DSLog.e("Failed to convert to private key, error: %s.", e.getClass().getSimpleName());
-        return key;
     }
 
     private static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey) {

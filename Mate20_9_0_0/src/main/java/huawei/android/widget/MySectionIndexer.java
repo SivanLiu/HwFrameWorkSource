@@ -1,0 +1,73 @@
+package huawei.android.widget;
+
+import android.util.Log;
+import android.widget.SectionIndexer;
+import java.util.Arrays;
+
+public class MySectionIndexer implements SectionIndexer {
+    private int mCount;
+    private int[] mPositions;
+    private String[] mSections;
+
+    public MySectionIndexer(String[] sections, int[] counts, boolean digitLast) {
+        if (sections == null || counts == null) {
+            throw new NullPointerException();
+        } else if (sections.length == counts.length) {
+            int size = sections.length;
+            this.mSections = new String[size];
+            int i = 0;
+            System.arraycopy(sections, 0, this.mSections, 0, size);
+            this.mPositions = new int[size];
+            int position = 0;
+            while (i < size) {
+                if (this.mSections[i] == null) {
+                    this.mSections[i] = "";
+                } else {
+                    this.mSections[i] = this.mSections[i].trim();
+                }
+                this.mPositions[i] = position;
+                position += counts[i];
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(this.mSections[i]);
+                stringBuilder.append("  counts[");
+                stringBuilder.append(i);
+                stringBuilder.append("]:");
+                stringBuilder.append(counts[i]);
+                Log.i("MySectionIndexer", stringBuilder.toString());
+                i++;
+            }
+            this.mCount = position;
+        } else {
+            throw new IllegalArgumentException("The sections and counts arrays must have the same length");
+        }
+    }
+
+    public MySectionIndexer(String[] sections, int[] counts) {
+        this(sections, counts, false);
+    }
+
+    public Object[] getSections() {
+        if (this.mSections == null || this.mSections.length == 0) {
+            return new String[0];
+        }
+        int size = this.mSections.length;
+        String[] sections = new String[size];
+        System.arraycopy(this.mSections, 0, sections, 0, size);
+        return sections;
+    }
+
+    public int getPositionForSection(int section) {
+        if (section < 0 || section >= this.mSections.length) {
+            return -1;
+        }
+        return this.mPositions[section];
+    }
+
+    public int getSectionForPosition(int position) {
+        if (position < 0 || position >= this.mCount) {
+            return -1;
+        }
+        int index = Arrays.binarySearch(this.mPositions, position);
+        return index >= 0 ? index : (-index) - 2;
+    }
+}

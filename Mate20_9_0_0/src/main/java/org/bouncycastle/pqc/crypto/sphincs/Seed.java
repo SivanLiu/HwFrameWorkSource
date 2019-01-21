@@ -1,6 +1,5 @@
 package org.bouncycastle.pqc.crypto.sphincs;
 
-import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -21,7 +20,7 @@ class Seed {
 
     static void prg(byte[] bArr, int i, long j, byte[] bArr2, int i2) {
         byte[] bArr3 = new byte[8];
-        StreamCipher chaChaEngine = new ChaChaEngine(12);
+        ChaChaEngine chaChaEngine = new ChaChaEngine(12);
         chaChaEngine.init(true, new ParametersWithIV(new KeyParameter(bArr2, i2, 32), bArr3));
         chaChaEngine.processBytes(bArr, i, (int) j, bArr, i);
     }

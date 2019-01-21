@@ -181,7 +181,7 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0039, code:
+        /* JADX WARNING: Missing block: B:13:0x0039, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -202,7 +202,7 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0039, code:
+        /* JADX WARNING: Missing block: B:13:0x0039, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -223,10 +223,10 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0024, code:
+        /* JADX WARNING: Missing block: B:10:0x0024, code skipped:
             return r3;
      */
-        /* JADX WARNING: Missing block: B:14:0x0040, code:
+        /* JADX WARNING: Missing block: B:15:0x0040, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -266,7 +266,7 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0039, code:
+        /* JADX WARNING: Missing block: B:13:0x0039, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -326,7 +326,7 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0035, code:
+        /* JADX WARNING: Missing block: B:13:0x0035, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -347,7 +347,7 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0052, code:
+        /* JADX WARNING: Missing block: B:13:0x0052, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -386,13 +386,13 @@ public final class AutofillManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0047, code:
+        /* JADX WARNING: Missing block: B:12:0x0047, code skipped:
             if (r14 == false) goto L_0x0062;
      */
-        /* JADX WARNING: Missing block: B:14:0x0061, code:
+        /* JADX WARNING: Missing block: B:14:0x0061, code skipped:
             return startSession(r16, r17, r18, r19, r20, r13, r22, r23, r24, r27);
      */
-        /* JADX WARNING: Missing block: B:15:0x0062, code:
+        /* JADX WARNING: Missing block: B:15:0x0062, code skipped:
             return r25;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -487,11 +487,11 @@ public final class AutofillManagerService extends SystemService {
         }
 
         public boolean isServiceSupported(int userId) {
-            boolean z;
+            int i;
             synchronized (AutofillManagerService.this.mLock) {
-                z = AutofillManagerService.this.mDisabledUsers.get(userId) ^ 1;
+                i = AutofillManagerService.this.mDisabledUsers.get(userId) ^ 1;
             }
-            return z;
+            return i;
         }
 
         public boolean isServiceEnabled(int userId, String packageName) {
@@ -650,7 +650,7 @@ public final class AutofillManagerService extends SystemService {
         AutofillCompatState() {
         }
 
-        /* JADX WARNING: Missing block: B:19:0x002b, code:
+        /* JADX WARNING: Missing block: B:19:0x002b, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1026,9 +1026,14 @@ public final class AutofillManagerService extends SystemService {
         this.mContext.enforceCallingPermission("android.permission.MANAGE_AUTO_FILL", TAG);
         synchronized (this.mLock) {
             if (userId != -1) {
-                AutofillManagerServiceImpl service = peekServiceForUserLocked(userId);
-                if (service != null) {
-                    service.destroySessionsLocked();
+                try {
+                    AutofillManagerServiceImpl service = peekServiceForUserLocked(userId);
+                    if (service != null) {
+                        service.destroySessionsLocked();
+                    }
+                } catch (Throwable th) {
+                    while (true) {
+                    }
                 }
             } else {
                 int size = this.mServicesCache.size();
@@ -1054,9 +1059,14 @@ public final class AutofillManagerService extends SystemService {
         ArrayList<String> sessions = new ArrayList();
         synchronized (this.mLock) {
             if (userId != -1) {
-                AutofillManagerServiceImpl service = peekServiceForUserLocked(userId);
-                if (service != null) {
-                    service.listSessionsLocked(sessions);
+                try {
+                    AutofillManagerServiceImpl service = peekServiceForUserLocked(userId);
+                    if (service != null) {
+                        service.listSessionsLocked(sessions);
+                    }
+                } catch (Throwable th) {
+                    while (true) {
+                    }
                 }
             } else {
                 int size = this.mServicesCache.size();

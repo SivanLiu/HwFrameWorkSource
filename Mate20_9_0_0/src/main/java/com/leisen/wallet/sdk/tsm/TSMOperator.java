@@ -38,7 +38,10 @@ public class TSMOperator implements ITSMOperator, TSMOperatorResponse {
         TSMOperator tSMOperator;
         synchronized (TSMOperator.class) {
             if (url != null) {
-                AppConfig.STREAMURL = url;
+                try {
+                    AppConfig.STREAMURL = url;
+                } catch (Throwable th) {
+                }
             }
             tSMOperator = new TSMOperator(context);
         }

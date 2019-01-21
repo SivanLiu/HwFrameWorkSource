@@ -57,7 +57,7 @@ public final class HwBackgroundDexOptServiceEx implements IHwBackgroundDexOptSer
         return speedPkgs;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x0043 A:{SYNTHETIC, Splitter: B:16:0x0043} */
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0043 A:{SYNTHETIC, Splitter:B:16:0x0043} */
     /* JADX WARNING: Removed duplicated region for block: B:11:0x0032 A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00a9, all -> 0x00a7 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private ArraySet<String> readSpeedAppsFromXml(File config) {

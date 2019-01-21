@@ -111,14 +111,14 @@ public class EAXBlockCipher implements AEADBlockCipher {
     public int doFinal(byte[] bArr, int i) throws IllegalStateException, InvalidCipherTextException {
         initCipher();
         int i2 = this.bufOff;
-        Object obj = new byte[this.bufBlock.length];
+        byte[] bArr2 = new byte[this.bufBlock.length];
         this.bufOff = 0;
         if (this.forEncryption) {
             int i3 = i + i2;
             if (bArr.length >= this.macSize + i3) {
-                this.cipher.processBlock(this.bufBlock, 0, obj, 0);
-                System.arraycopy(obj, 0, bArr, i, i2);
-                this.mac.update(obj, 0, i2);
+                this.cipher.processBlock(this.bufBlock, 0, bArr2, 0);
+                System.arraycopy(bArr2, 0, bArr, i, i2);
+                this.mac.update(bArr2, 0, i2);
                 calculateMac();
                 System.arraycopy(this.macBlock, 0, bArr, i3, this.macSize);
                 reset(false);
@@ -130,8 +130,8 @@ public class EAXBlockCipher implements AEADBlockCipher {
         } else if (bArr.length >= (i + i2) - this.macSize) {
             if (i2 > this.macSize) {
                 this.mac.update(this.bufBlock, 0, i2 - this.macSize);
-                this.cipher.processBlock(this.bufBlock, 0, obj, 0);
-                System.arraycopy(obj, 0, bArr, i, i2 - this.macSize);
+                this.cipher.processBlock(this.bufBlock, 0, bArr2, 0);
+                System.arraycopy(bArr2, 0, bArr, i, i2 - this.macSize);
             }
             calculateMac();
             if (verifyMac(this.bufBlock, i2 - this.macSize)) {
@@ -156,9 +156,9 @@ public class EAXBlockCipher implements AEADBlockCipher {
     }
 
     public byte[] getMac() {
-        Object obj = new byte[this.macSize];
-        System.arraycopy(this.macBlock, 0, obj, 0, this.macSize);
-        return obj;
+        byte[] bArr = new byte[this.macSize];
+        System.arraycopy(this.macBlock, 0, bArr, 0, this.macSize);
+        return bArr;
     }
 
     public int getOutputSize(int i) {

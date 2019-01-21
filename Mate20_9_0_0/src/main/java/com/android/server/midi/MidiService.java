@@ -750,6 +750,8 @@ public class MidiService extends Stub {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:111:0x0247  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void addPackageDeviceServer(ServiceInfo serviceInfo) {
         Throwable th;
         String str;
@@ -781,154 +783,157 @@ public class MidiService extends Stub {
                     while (true) {
                         ArrayList<String> outputPortNames3 = outputPortNames2;
                         int eventType = parser2.next();
-                        if (eventType != 1) {
-                            ArrayList<String> outputPortNames4;
-                            int i2 = 0;
-                            String str2;
-                            StringBuilder stringBuilder2;
-                            String value;
-                            if (eventType == 2) {
-                                tagName = parser2.getName();
-                                int count;
-                                String name;
-                                String value2;
-                                if ("device".equals(tagName)) {
-                                    if (properties != null) {
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("nested <device> elements in metadata for ");
-                                        stringBuilder2.append(serviceInfo2.packageName);
-                                        Log.w(str2, stringBuilder2.toString());
-                                    } else {
-                                        Bundle properties2 = new Bundle();
-                                        properties2.putParcelable("service_info", serviceInfo2);
-                                        boolean isPrivate2 = false;
-                                        int count2 = parser2.getAttributeCount();
-                                        while (i2 < count2) {
-                                            String name2 = parser2.getAttributeName(i2);
-                                            value = parser2.getAttributeValue(i2);
-                                            if ("private".equals(name2)) {
-                                                isPrivate2 = "true".equals(value);
-                                            } else {
-                                                properties2.putString(name2, value);
-                                            }
-                                            i2++;
-                                        }
-                                        properties = properties2;
-                                        numInputPorts = 0;
-                                        numOutputPorts = 0;
-                                        isPrivate = isPrivate2;
-                                    }
-                                } else if ("input-port".equals(tagName)) {
-                                    if (properties == null) {
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("<input-port> outside of <device> in metadata for ");
-                                        stringBuilder2.append(serviceInfo2.packageName);
-                                        Log.w(str2, stringBuilder2.toString());
-                                    } else {
-                                        numInputPorts++;
-                                        portName = null;
-                                        count = parser2.getAttributeCount();
-                                        while (i2 < count) {
-                                            name = parser2.getAttributeName(i2);
-                                            value2 = parser2.getAttributeValue(i2);
-                                            if (Settings.ATTR_NAME.equals(name)) {
-                                                portName = value2;
-                                                break;
-                                            }
-                                            i2++;
-                                        }
-                                        inputPortNames.add(portName);
-                                    }
-                                } else if ("output-port".equals(tagName)) {
-                                    if (properties == null) {
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("<output-port> outside of <device> in metadata for ");
-                                        stringBuilder2.append(serviceInfo2.packageName);
-                                        Log.w(str2, stringBuilder2.toString());
-                                    } else {
-                                        numOutputPorts++;
-                                        portName = null;
-                                        count = parser2.getAttributeCount();
-                                        while (i2 < count) {
-                                            name = parser2.getAttributeName(i2);
-                                            value2 = parser2.getAttributeValue(i2);
-                                            if (Settings.ATTR_NAME.equals(name)) {
-                                                portName = value2;
-                                                break;
-                                            }
-                                            i2++;
-                                        }
-                                        outputPortNames3.add(portName);
-                                    }
-                                }
-                                outputPortNames4 = outputPortNames3;
-                                outputPortNames2 = outputPortNames4;
-                                outputPortNames = this;
-                            } else {
-                                if (eventType == 3) {
-                                    value = parser2.getName();
-                                    if ("device".equals(value) && properties != null) {
-                                        if (numInputPorts == 0 && numOutputPorts == 0) {
-                                            tagName = TAG;
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("<device> with no ports in metadata for ");
-                                            stringBuilder.append(serviceInfo2.packageName);
-                                            Log.w(tagName, stringBuilder.toString());
+                        if (eventType == 1) {
+                            break;
+                        }
+                        ArrayList<String> outputPortNames4;
+                        int i2 = 0;
+                        String str2;
+                        StringBuilder stringBuilder2;
+                        String value;
+                        if (eventType == 2) {
+                            tagName = parser2.getName();
+                            int count;
+                            String name;
+                            String value2;
+                            if ("device".equals(tagName)) {
+                                if (properties != null) {
+                                    str2 = TAG;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("nested <device> elements in metadata for ");
+                                    stringBuilder2.append(serviceInfo2.packageName);
+                                    Log.w(str2, stringBuilder2.toString());
+                                } else {
+                                    Bundle properties2 = new Bundle();
+                                    properties2.putParcelable("service_info", serviceInfo2);
+                                    boolean isPrivate2 = false;
+                                    int count2 = parser2.getAttributeCount();
+                                    while (i2 < count2) {
+                                        String name2 = parser2.getAttributeName(i2);
+                                        value = parser2.getAttributeValue(i2);
+                                        if ("private".equals(name2)) {
+                                            isPrivate2 = "true".equals(value);
                                         } else {
-                                            try {
-                                                int uid = outputPortNames.mPackageManager.getApplicationInfo(serviceInfo2.packageName, 0).uid;
-                                                HashMap hashMap = outputPortNames.mDevicesByInfo;
-                                                synchronized (hashMap) {
-                                                    HashMap hashMap2;
-                                                    try {
-                                                        MidiService midiService = outputPortNames;
-                                                        hashMap2 = hashMap;
-                                                        outputPortNames4 = outputPortNames3;
-                                                        try {
-                                                            midiService.addDeviceLocked(2, numInputPorts, numOutputPorts, (String[]) inputPortNames.toArray(EMPTY_STRING_ARRAY), (String[]) outputPortNames3.toArray(EMPTY_STRING_ARRAY), properties, null, serviceInfo2, isPrivate, uid);
-                                                            properties = null;
-                                                            inputPortNames.clear();
-                                                            outputPortNames4.clear();
-                                                            outputPortNames2 = outputPortNames4;
-                                                            outputPortNames = this;
-                                                        } catch (Throwable th2) {
-                                                            th = th2;
-                                                            throw th;
-                                                        }
-                                                    } catch (Throwable th3) {
-                                                        th = th3;
-                                                        hashMap2 = hashMap;
-                                                        str = value;
-                                                        i = eventType;
-                                                        outputPortNames4 = outputPortNames3;
-                                                    }
-                                                }
-                                            } catch (NameNotFoundException e2) {
-                                                str = value;
-                                                i = eventType;
-                                                outputPortNames4 = outputPortNames3;
-                                                str2 = TAG;
-                                                stringBuilder2 = new StringBuilder();
-                                                stringBuilder2.append("could not fetch ApplicationInfo for ");
-                                                stringBuilder2.append(serviceInfo2.packageName);
-                                                Log.e(str2, stringBuilder2.toString());
-                                            }
+                                            properties2.putString(name2, value);
                                         }
+                                        i2++;
                                     }
+                                    properties = properties2;
+                                    numInputPorts = 0;
+                                    numOutputPorts = 0;
+                                    isPrivate = isPrivate2;
                                 }
-                                outputPortNames4 = outputPortNames3;
-                                outputPortNames2 = outputPortNames4;
-                                outputPortNames = this;
+                            } else if ("input-port".equals(tagName)) {
+                                if (properties == null) {
+                                    str2 = TAG;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("<input-port> outside of <device> in metadata for ");
+                                    stringBuilder2.append(serviceInfo2.packageName);
+                                    Log.w(str2, stringBuilder2.toString());
+                                } else {
+                                    numInputPorts++;
+                                    portName = null;
+                                    count = parser2.getAttributeCount();
+                                    while (i2 < count) {
+                                        name = parser2.getAttributeName(i2);
+                                        value2 = parser2.getAttributeValue(i2);
+                                        if (Settings.ATTR_NAME.equals(name)) {
+                                            portName = value2;
+                                            break;
+                                        }
+                                        i2++;
+                                    }
+                                    inputPortNames.add(portName);
+                                }
+                            } else if ("output-port".equals(tagName)) {
+                                if (properties == null) {
+                                    str2 = TAG;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("<output-port> outside of <device> in metadata for ");
+                                    stringBuilder2.append(serviceInfo2.packageName);
+                                    Log.w(str2, stringBuilder2.toString());
+                                } else {
+                                    numOutputPorts++;
+                                    portName = null;
+                                    count = parser2.getAttributeCount();
+                                    while (i2 < count) {
+                                        name = parser2.getAttributeName(i2);
+                                        value2 = parser2.getAttributeValue(i2);
+                                        if (Settings.ATTR_NAME.equals(name)) {
+                                            portName = value2;
+                                            break;
+                                        }
+                                        i2++;
+                                    }
+                                    outputPortNames3.add(portName);
+                                }
                             }
                             outputPortNames4 = outputPortNames3;
                             outputPortNames2 = outputPortNames4;
                             outputPortNames = this;
-                        } else if (parser2 != null) {
-                            parser2.close();
+                        } else {
+                            if (eventType == 3) {
+                                value = parser2.getName();
+                                if ("device".equals(value) && properties != null) {
+                                    if (numInputPorts == 0 && numOutputPorts == 0) {
+                                        tagName = TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("<device> with no ports in metadata for ");
+                                        stringBuilder.append(serviceInfo2.packageName);
+                                        Log.w(tagName, stringBuilder.toString());
+                                    } else {
+                                        try {
+                                            int uid = outputPortNames.mPackageManager.getApplicationInfo(serviceInfo2.packageName, 0).uid;
+                                            HashMap hashMap = outputPortNames.mDevicesByInfo;
+                                            synchronized (hashMap) {
+                                                HashMap hashMap2;
+                                                try {
+                                                    MidiService midiService = outputPortNames;
+                                                    hashMap2 = hashMap;
+                                                    outputPortNames4 = outputPortNames3;
+                                                    try {
+                                                        midiService.addDeviceLocked(2, numInputPorts, numOutputPorts, (String[]) inputPortNames.toArray(EMPTY_STRING_ARRAY), (String[]) outputPortNames3.toArray(EMPTY_STRING_ARRAY), properties, null, serviceInfo2, isPrivate, uid);
+                                                        properties = null;
+                                                        inputPortNames.clear();
+                                                        outputPortNames4.clear();
+                                                        outputPortNames2 = outputPortNames4;
+                                                        outputPortNames = this;
+                                                    } catch (Throwable th2) {
+                                                        th = th2;
+                                                        throw th;
+                                                    }
+                                                } catch (Throwable th3) {
+                                                    th = th3;
+                                                    hashMap2 = hashMap;
+                                                    str = value;
+                                                    i = eventType;
+                                                    outputPortNames4 = outputPortNames3;
+                                                    throw th;
+                                                }
+                                            }
+                                        } catch (NameNotFoundException e2) {
+                                            str = value;
+                                            i = eventType;
+                                            outputPortNames4 = outputPortNames3;
+                                            str2 = TAG;
+                                            stringBuilder2 = new StringBuilder();
+                                            stringBuilder2.append("could not fetch ApplicationInfo for ");
+                                            stringBuilder2.append(serviceInfo2.packageName);
+                                            Log.e(str2, stringBuilder2.toString());
+                                        }
+                                    }
+                                }
+                            }
+                            outputPortNames4 = outputPortNames3;
+                            outputPortNames2 = outputPortNames4;
+                            outputPortNames = this;
                         }
+                        outputPortNames4 = outputPortNames3;
+                        outputPortNames2 = outputPortNames4;
+                        outputPortNames = this;
+                    }
+                    if (parser2 != null) {
+                        parser2.close();
                     }
                 }
                 tagName = TAG;
@@ -946,6 +951,9 @@ public class MidiService extends Stub {
                 parser = parser2;
             } catch (Throwable th4) {
                 th = th4;
+                if (parser2 != null) {
+                }
+                throw th;
             }
         } catch (Exception e4) {
             e = e4;

@@ -3,6 +3,9 @@ package org.bouncycastle.eac.operator.jcajce;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -34,7 +37,7 @@ public class JcaEACSignatureVerifierBuilder {
         public void write(int i) throws IOException {
             try {
                 this.sig.update((byte) i);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -45,7 +48,7 @@ public class JcaEACSignatureVerifierBuilder {
         public void write(byte[] bArr) throws IOException {
             try {
                 this.sig.update(bArr);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -56,7 +59,7 @@ public class JcaEACSignatureVerifierBuilder {
         public void write(byte[] bArr, int i, int i2) throws IOException {
             try {
                 this.sig.update(bArr, i, i2);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -67,13 +70,13 @@ public class JcaEACSignatureVerifierBuilder {
 
     private static byte[] derEncode(byte[] bArr) throws IOException {
         int length = bArr.length / 2;
-        Object obj = new byte[length];
-        Object obj2 = new byte[length];
-        System.arraycopy(bArr, 0, obj, 0, length);
-        System.arraycopy(bArr, length, obj2, 0, length);
+        byte[] bArr2 = new byte[length];
+        byte[] bArr3 = new byte[length];
+        System.arraycopy(bArr, 0, bArr2, 0, length);
+        System.arraycopy(bArr, length, bArr3, 0, length);
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
-        aSN1EncodableVector.add(new ASN1Integer(new BigInteger(1, obj)));
-        aSN1EncodableVector.add(new ASN1Integer(new BigInteger(1, obj2)));
+        aSN1EncodableVector.add(new ASN1Integer(new BigInteger(1, bArr2)));
+        aSN1EncodableVector.add(new ASN1Integer(new BigInteger(1, bArr3)));
         return new DERSequence(aSN1EncodableVector).getEncoded();
     }
 
@@ -102,7 +105,7 @@ public class JcaEACSignatureVerifierBuilder {
                         } catch (Exception e) {
                             return false;
                         }
-                    } catch (Throwable e2) {
+                    } catch (SignatureException e2) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("exception obtaining signature: ");
                         stringBuilder.append(e2.getMessage());
@@ -110,21 +113,21 @@ public class JcaEACSignatureVerifierBuilder {
                     }
                 }
             };
-        } catch (Throwable e) {
+        } catch (NoSuchAlgorithmException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("unable to find algorithm: ");
             stringBuilder.append(e.getMessage());
             throw new OperatorCreationException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchProviderException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("unable to find provider: ");
             stringBuilder.append(e2.getMessage());
             throw new OperatorCreationException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (InvalidKeyException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("invalid key: ");
-            stringBuilder.append(e22.getMessage());
-            throw new OperatorCreationException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new OperatorCreationException(stringBuilder.toString(), e3);
         }
     }
 

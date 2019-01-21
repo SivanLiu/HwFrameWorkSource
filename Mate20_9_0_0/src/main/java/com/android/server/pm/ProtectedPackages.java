@@ -11,7 +11,7 @@ public class ProtectedPackages {
     @GuardedBy("this")
     private int mDeviceOwnerUserId;
     @GuardedBy("this")
-    private final String mDeviceProvisioningPackage = this.mContext.getResources().getString(17039793);
+    private final String mDeviceProvisioningPackage = this.mContext.getResources().getString(17039794);
     @GuardedBy("this")
     private SparseArray<String> mProfileOwnerPackages;
 
@@ -29,7 +29,7 @@ public class ProtectedPackages {
         this.mProfileOwnerPackages = sparseArray;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x002c, code:
+    /* JADX WARNING: Missing block: B:22:0x002c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

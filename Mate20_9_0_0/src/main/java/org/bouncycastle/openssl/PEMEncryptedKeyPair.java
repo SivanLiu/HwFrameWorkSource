@@ -1,6 +1,7 @@
 package org.bouncycastle.openssl;
 
 import java.io.IOException;
+import org.bouncycastle.operator.OperatorCreationException;
 
 public class PEMEncryptedKeyPair {
     private final String dekAlgName;
@@ -21,16 +22,16 @@ public class PEMEncryptedKeyPair {
             return this.parser.parse(pEMDecryptorProvider.get(this.dekAlgName).decrypt(this.keyBytes, this.iv));
         } catch (IOException e) {
             throw e;
-        } catch (Exception e2) {
+        } catch (OperatorCreationException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create extraction operator: ");
             stringBuilder.append(e2.getMessage());
             throw new PEMException(stringBuilder.toString(), e2);
-        } catch (Exception e22) {
+        } catch (Exception e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception processing key pair: ");
-            stringBuilder.append(e22.getMessage());
-            throw new PEMException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new PEMException(stringBuilder.toString(), e3);
         }
     }
 }

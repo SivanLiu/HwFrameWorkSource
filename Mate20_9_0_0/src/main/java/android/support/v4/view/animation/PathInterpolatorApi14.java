@@ -43,8 +43,10 @@ class PathInterpolatorApi14 implements Interpolator {
         while (endIndex - startIndex > 1) {
             int midIndex = (startIndex + endIndex) / 2;
             if (t < this.mX[midIndex]) {
+                endIndex = midIndex;
+            } else {
+                startIndex = midIndex;
             }
-            startIndex = midIndex;
         }
         float xRange = this.mX[endIndex] - this.mX[startIndex];
         if (xRange == 0.0f) {

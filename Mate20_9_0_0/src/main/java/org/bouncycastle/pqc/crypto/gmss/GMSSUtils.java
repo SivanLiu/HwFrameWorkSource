@@ -27,36 +27,36 @@ class GMSSUtils {
         if (gMSSLeafArr == null) {
             return null;
         }
-        Object obj = new GMSSLeaf[gMSSLeafArr.length];
-        System.arraycopy(gMSSLeafArr, 0, obj, 0, gMSSLeafArr.length);
-        return obj;
+        GMSSLeaf[] gMSSLeafArr2 = new GMSSLeaf[gMSSLeafArr.length];
+        System.arraycopy(gMSSLeafArr, 0, gMSSLeafArr2, 0, gMSSLeafArr.length);
+        return gMSSLeafArr2;
     }
 
     static GMSSRootCalc[] clone(GMSSRootCalc[] gMSSRootCalcArr) {
         if (gMSSRootCalcArr == null) {
             return null;
         }
-        Object obj = new GMSSRootCalc[gMSSRootCalcArr.length];
-        System.arraycopy(gMSSRootCalcArr, 0, obj, 0, gMSSRootCalcArr.length);
-        return obj;
+        GMSSRootCalc[] gMSSRootCalcArr2 = new GMSSRootCalc[gMSSRootCalcArr.length];
+        System.arraycopy(gMSSRootCalcArr, 0, gMSSRootCalcArr2, 0, gMSSRootCalcArr.length);
+        return gMSSRootCalcArr2;
     }
 
     static GMSSRootSig[] clone(GMSSRootSig[] gMSSRootSigArr) {
         if (gMSSRootSigArr == null) {
             return null;
         }
-        Object obj = new GMSSRootSig[gMSSRootSigArr.length];
-        System.arraycopy(gMSSRootSigArr, 0, obj, 0, gMSSRootSigArr.length);
-        return obj;
+        GMSSRootSig[] gMSSRootSigArr2 = new GMSSRootSig[gMSSRootSigArr.length];
+        System.arraycopy(gMSSRootSigArr, 0, gMSSRootSigArr2, 0, gMSSRootSigArr.length);
+        return gMSSRootSigArr2;
     }
 
     static Treehash[] clone(Treehash[] treehashArr) {
         if (treehashArr == null) {
             return null;
         }
-        Object obj = new Treehash[treehashArr.length];
-        System.arraycopy(treehashArr, 0, obj, 0, treehashArr.length);
-        return obj;
+        Treehash[] treehashArr2 = new Treehash[treehashArr.length];
+        System.arraycopy(treehashArr, 0, treehashArr2, 0, treehashArr.length);
+        return treehashArr2;
     }
 
     static byte[][] clone(byte[][] bArr) {

@@ -356,7 +356,7 @@ public class AwareUserHabitAlgorithm {
         return result;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x001e, code:
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -466,6 +466,9 @@ public class AwareUserHabitAlgorithm {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x0073 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x006e  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     List<String> getMostFreqAppByType(int appType, int appNum) {
         if (appNum <= 0) {
             return null;
@@ -492,10 +495,18 @@ public class AwareUserHabitAlgorithm {
                 if (num <= 0) {
                     break;
                 }
-                boolean isFilted = containsFilterPkg(pkgName) || containsFilter2Pkg(pkgName);
-                if (!isFilted) {
-                    result.add(pkgName);
-                    num--;
+                boolean isFilted;
+                if (!containsFilterPkg(pkgName)) {
+                    if (!containsFilter2Pkg(pkgName)) {
+                        isFilted = false;
+                        if (isFilted) {
+                            result.add(pkgName);
+                            num--;
+                        }
+                    }
+                }
+                isFilted = true;
+                if (isFilted) {
                 }
             }
             String str2 = TAG;
@@ -508,7 +519,11 @@ public class AwareUserHabitAlgorithm {
         }
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0071, code:
+    /* JADX WARNING: Removed duplicated region for block: B:27:0x0063  */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0062  */
+    /* JADX WARNING: Removed duplicated region for block: B:43:0x006f A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x006a  */
+    /* JADX WARNING: Missing block: B:33:0x0071, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -525,17 +540,28 @@ public class AwareUserHabitAlgorithm {
             List<Entry<String, Integer>> entries = new ArrayList(this.mUsageCount.entrySet());
             Collections.sort(entries, new AppCountDescComparator());
             for (Entry<String, Integer> entry : entries) {
-                if (num <= 0 || ((Integer) entry.getValue()).intValue() <= minCount) {
-                } else {
-                    String pkgName = (String) entry.getKey();
-                    int i = 0;
-                    boolean isFilted = containsFilterPkg(pkgName) || containsFilter2Pkg(pkgName);
-                    if (filterAppSet != null) {
-                        i = filterAppSet.contains(pkgName);
-                    }
-                    if (!(isFilted | i)) {
-                        result.add(pkgName);
-                        num--;
+                if (num > 0) {
+                    if (((Integer) entry.getValue()).intValue() > minCount) {
+                        boolean isFilted;
+                        String pkgName = (String) entry.getKey();
+                        int i = 0;
+                        if (!containsFilterPkg(pkgName)) {
+                            if (!containsFilter2Pkg(pkgName)) {
+                                isFilted = false;
+                                if (filterAppSet == null) {
+                                    i = filterAppSet.contains(pkgName);
+                                }
+                                if (isFilted | i) {
+                                    result.add(pkgName);
+                                    num--;
+                                }
+                            }
+                        }
+                        isFilted = true;
+                        if (filterAppSet == null) {
+                        }
+                        if (isFilted | i) {
+                        }
                     }
                 }
             }
@@ -826,17 +852,22 @@ public class AwareUserHabitAlgorithm {
             while (it.hasNext()) {
                 String pkgName = (String) it.next();
                 int appType = AppTypeRecoManager.getInstance().getAppType(pkgName);
-                if (appType == 0 || appType == MemoryConstant.MSG_SET_PREREAD_PATH) {
-                    if (curImCount < imCount) {
-                        result.add(pkgName);
-                        curImCount++;
+                if (appType != 0) {
+                    if (appType != MemoryConstant.MSG_SET_PREREAD_PATH) {
+                        if ((appType == 1 || appType == MemoryConstant.MSG_DIRECT_SWAPPINESS) && curEmailCount < emailCount) {
+                            result.add(pkgName);
+                            curEmailCount++;
+                        }
+                        if (curImCount != imCount && curEmailCount == emailCount) {
+                            break;
+                        }
                     }
-                } else if ((appType == 1 || appType == MemoryConstant.MSG_DIRECT_SWAPPINESS) && curEmailCount < emailCount) {
-                    result.add(pkgName);
-                    curEmailCount++;
                 }
-                if (curImCount == imCount && curEmailCount == emailCount) {
-                    break;
+                if (curImCount < imCount) {
+                    result.add(pkgName);
+                    curImCount++;
+                }
+                if (curImCount != imCount) {
                 }
             }
         }
@@ -1130,7 +1161,7 @@ public class AwareUserHabitAlgorithm {
     }
 
     protected List<String> getGCMAppsList() {
-        List arrayList;
+        ArrayList arrayList;
         synchronized (this.mGCMAppsArrayMap) {
             arrayList = new ArrayList(this.mGCMAppsArrayMap.keySet());
         }

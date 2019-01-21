@@ -18,12 +18,12 @@ public class DisplayText extends ASN1Object implements ASN1Choice {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:12:0x0035 in {2, 5, 7, 8, 9, 10, 11} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -41,10 +41,8 @@ public class DisplayText extends ASN1Object implements ASN1Choice {
         r0 = r4.length();
         r1 = 200; // 0xc8 float:2.8E-43 double:9.9E-322;
         if (r0 <= r1) goto L_0x0010;
-    L_0x000b:
         r0 = 0;
         r4 = r4.substring(r0, r1);
-    L_0x0010:
         r2.contentType = r3;
         switch(r3) {
             case 0: goto L_0x002f;
@@ -53,25 +51,19 @@ public class DisplayText extends ASN1Object implements ASN1Choice {
             case 3: goto L_0x001d;
             default: goto L_0x0015;
         };
-    L_0x0015:
         r3 = new org.bouncycastle.asn1.DERUTF8String;
         r3.<init>(r4);
-    L_0x001a:
         r2.contents = r3;
         return;
-    L_0x001d:
         r3 = new org.bouncycastle.asn1.DERVisibleString;
         r3.<init>(r4);
         goto L_0x001a;
-    L_0x0023:
         r3 = new org.bouncycastle.asn1.DERUTF8String;
         r3.<init>(r4);
         goto L_0x001a;
-    L_0x0029:
         r3 = new org.bouncycastle.asn1.DERBMPString;
         r3.<init>(r4);
         goto L_0x001a;
-    L_0x002f:
         r3 = new org.bouncycastle.asn1.DERIA5String;
         r3.<init>(r4);
         goto L_0x001a;
@@ -90,12 +82,12 @@ public class DisplayText extends ASN1Object implements ASN1Choice {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:14:0x001f in {2, 4, 7, 10, 13, 16} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -113,31 +105,22 @@ public class DisplayText extends ASN1Object implements ASN1Choice {
         r1.contents = r2;
         r0 = r2 instanceof org.bouncycastle.asn1.DERUTF8String;
         if (r0 == 0) goto L_0x000d;
-    L_0x0009:
         r2 = 2;
-    L_0x000a:
         r1.contentType = r2;
         return;
-    L_0x000d:
         r0 = r2 instanceof org.bouncycastle.asn1.DERBMPString;
         if (r0 == 0) goto L_0x0013;
-    L_0x0011:
         r2 = 1;
         goto L_0x000a;
-    L_0x0013:
         r0 = r2 instanceof org.bouncycastle.asn1.DERIA5String;
         if (r0 == 0) goto L_0x0019;
-    L_0x0017:
         r2 = 0;
         goto L_0x000a;
-    L_0x0019:
         r2 = r2 instanceof org.bouncycastle.asn1.DERVisibleString;
         if (r2 == 0) goto L_0x0020;
-    L_0x001d:
         r2 = 3;
         goto L_0x000a;
         return;
-    L_0x0020:
         r2 = new java.lang.IllegalArgumentException;
         r0 = "unknown STRING type in DisplayText";
         r2.<init>(r0);

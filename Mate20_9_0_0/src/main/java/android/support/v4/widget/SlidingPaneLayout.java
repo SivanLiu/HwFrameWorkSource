@@ -486,15 +486,18 @@ public class SlidingPaneLayout extends ViewGroup {
         this.mPostedRunnables.clear();
     }
 
+    /* JADX WARNING: Missing block: B:35:0x00bb, code skipped:
+            if (r14.width == 0) goto L_0x00ac;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int i;
         View child;
-        boolean heightSize;
-        int childWidthSpec;
+        int heightSize;
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        boolean heightSize2 = MeasureSpec.getSize(heightMeasureSpec);
+        int heightSize2 = MeasureSpec.getSize(heightMeasureSpec);
         if (widthMode != 1073741824) {
             if (!isInEditMode()) {
                 throw new IllegalStateException("Width must have an exact value or MATCH_PARENT");
@@ -509,7 +512,7 @@ public class SlidingPaneLayout extends ViewGroup {
                 throw new IllegalStateException("Height must not be UNSPECIFIED");
             } else if (heightMode == 0) {
                 heightMode = Integer.MIN_VALUE;
-                heightSize2 = true;
+                heightSize2 = 300;
             }
         }
         int layoutHeight = 0;
@@ -546,17 +549,15 @@ public class SlidingPaneLayout extends ViewGroup {
             } else {
                 if (lp.weight > 0) {
                     weightSum += lp.weight;
-                    if (lp.width == 0) {
-                    }
                 }
                 widthMode = lp.leftMargin + lp.rightMargin;
                 heightSize = heightSize2;
                 if (lp.width == -2) {
-                    childWidthSpec = MeasureSpec.makeMeasureSpec(widthAvailable - widthMode, Integer.MIN_VALUE);
+                    heightSize2 = MeasureSpec.makeMeasureSpec(widthAvailable - widthMode, Integer.MIN_VALUE);
                 } else if (lp.width == -1) {
-                    childWidthSpec = MeasureSpec.makeMeasureSpec(widthAvailable - widthMode, 1073741824);
+                    heightSize2 = MeasureSpec.makeMeasureSpec(widthAvailable - widthMode, 1073741824);
                 } else {
-                    childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, 1073741824);
+                    heightSize2 = MeasureSpec.makeMeasureSpec(lp.width, 1073741824);
                 }
                 int horizontalMargin = widthMode;
                 if (lp.height == -2) {
@@ -567,7 +568,7 @@ public class SlidingPaneLayout extends ViewGroup {
                     i = MeasureSpec.makeMeasureSpec(lp.height, 1073741824);
                 }
                 widthMode = i;
-                child.measure(childWidthSpec, widthMode);
+                child.measure(heightSize2, widthMode);
                 i = child.getMeasuredWidth();
                 int childHeightSpec = widthMode;
                 widthMode = child.getMeasuredHeight();
@@ -575,14 +576,18 @@ public class SlidingPaneLayout extends ViewGroup {
                     widthRemaining = Math.min(widthMode, maxLayoutHeight);
                 }
                 widthRemaining2 -= i;
-                heightSize2 = widthRemaining2 < 0;
-                lp.slideable = heightSize2;
-                heightSize2 |= canSlide;
+                boolean canSlide2 = widthRemaining2 < 0;
+                lp.slideable = canSlide2;
+                canSlide2 |= canSlide;
                 if (lp.slideable) {
                     this.mSlideableView = child;
                 }
+                canSlide = canSlide2;
+                layoutHeight++;
+                widthMode = widthMode2;
+                heightSize2 = heightSize;
             }
-            canSlide = heightSize2;
+            heightSize = heightSize2;
             layoutHeight++;
             widthMode = widthMode2;
             heightSize2 = heightSize;
@@ -592,11 +597,11 @@ public class SlidingPaneLayout extends ViewGroup {
             int childCount2;
             int maxLayoutHeight2;
             widthMode = widthAvailable - this.mOverhangSize;
-            childWidthSpec = 0;
-            while (childWidthSpec < childCount) {
+            heightSize2 = 0;
+            while (heightSize2 < childCount) {
                 int heightMode2;
                 int fixedPanelWidthLimit;
-                child = getChildAt(childWidthSpec);
+                child = getChildAt(heightSize2);
                 if (child.getVisibility() != i) {
                     LayoutParams lp2 = (LayoutParams) child.getLayoutParams();
                     if (child.getVisibility() != i) {
@@ -634,7 +639,7 @@ public class SlidingPaneLayout extends ViewGroup {
                                 fixedPanelWidthLimit = widthMode;
                                 maxLayoutHeight2 = maxLayoutHeight;
                             }
-                            childWidthSpec++;
+                            heightSize2++;
                             heightMode = heightMode2;
                             childCount = childCount2;
                             widthMode = fixedPanelWidthLimit;
@@ -647,7 +652,7 @@ public class SlidingPaneLayout extends ViewGroup {
                                     fixedPanelWidthLimit = widthMode;
                                     maxLayoutHeight2 = maxLayoutHeight;
                                     childCount2 = childCount;
-                                    childWidthSpec++;
+                                    heightSize2++;
                                     heightMode = heightMode2;
                                     childCount = childCount2;
                                     widthMode = fixedPanelWidthLimit;
@@ -677,7 +682,7 @@ public class SlidingPaneLayout extends ViewGroup {
                             child.measure(MeasureSpec.makeMeasureSpec(widthMode, heightMode), childCount);
                             fixedPanelWidthLimit = widthMode;
                             maxLayoutHeight2 = maxLayoutHeight;
-                            childWidthSpec++;
+                            heightSize2++;
                             heightMode = heightMode2;
                             childCount = childCount2;
                             widthMode = fixedPanelWidthLimit;
@@ -688,7 +693,7 @@ public class SlidingPaneLayout extends ViewGroup {
                             childCount2 = childCount;
                             fixedPanelWidthLimit = widthMode;
                             maxLayoutHeight2 = maxLayoutHeight;
-                            childWidthSpec++;
+                            heightSize2++;
                             heightMode = heightMode2;
                             childCount = childCount2;
                             widthMode = fixedPanelWidthLimit;
@@ -701,7 +706,7 @@ public class SlidingPaneLayout extends ViewGroup {
                 heightMode2 = heightMode;
                 maxLayoutHeight2 = maxLayoutHeight;
                 childCount2 = childCount;
-                childWidthSpec++;
+                heightSize2++;
                 heightMode = heightMode2;
                 childCount = childCount2;
                 widthMode = fixedPanelWidthLimit;
@@ -818,7 +823,7 @@ public class SlidingPaneLayout extends ViewGroup {
         if (!this.mCanSlide && action == 0 && getChildCount() > 1) {
             View secondChild = getChildAt(1);
             if (secondChild != null) {
-                this.mPreservedOpenState = this.mDragHelper.isViewUnder(secondChild, (int) ev.getX(), (int) ev.getY()) ^ true;
+                this.mPreservedOpenState = this.mDragHelper.isViewUnder(secondChild, (int) ev.getX(), (int) ev.getY()) ^ 1;
             }
         }
         if (!this.mCanSlide || (this.mIsUnableToDrag && action != 0)) {
@@ -1141,7 +1146,7 @@ public class SlidingPaneLayout extends ViewGroup {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x006f, code:
+    /* JADX WARNING: Missing block: B:22:0x006f, code skipped:
             if (r0.canScrollHorizontally(isLayoutRtlSupport() ? r17 : -r17) != false) goto L_0x0075;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

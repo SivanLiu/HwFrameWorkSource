@@ -353,7 +353,7 @@ public class VibratorService extends Stub implements InputDeviceListener {
         public boolean playWaveform() {
             Trace.traceBegin(8388608, "playWaveform");
             try {
-                boolean z;
+                int i;
                 synchronized (this) {
                     long[] timings = this.mWaveform.getTimings();
                     int[] amplitudes = this.mWaveform.getAmplitudes();
@@ -401,10 +401,10 @@ public class VibratorService extends Stub implements InputDeviceListener {
                         }
                         j = 0;
                     }
-                    z = this.mForceStop ^ 1;
+                    i = this.mForceStop ^ 1;
                 }
                 Trace.traceEnd(8388608);
-                return z;
+                return i;
             } catch (Throwable th) {
                 Trace.traceEnd(8388608);
             }
@@ -659,10 +659,10 @@ public class VibratorService extends Stub implements InputDeviceListener {
             x1.close();
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0037, code:
+        /* JADX WARNING: Missing block: B:9:0x0037, code skipped:
             if (r0 != null) goto L_0x0039;
      */
-        /* JADX WARNING: Missing block: B:10:0x0039, code:
+        /* JADX WARNING: Missing block: B:10:0x0039, code skipped:
             $closeResource(r1, r0);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -823,41 +823,42 @@ public class VibratorService extends Stub implements InputDeviceListener {
         String str = opPkg;
         Trace.traceBegin(8388608, "hwVibrate");
         try {
-            if (!"com.huawei.android.launcher".equals(str) || this.mContext.checkCallingOrSelfPermission("android.permission.VIBRATE") == 0) {
-                verifyIncomingUid(uid);
-                String str2 = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("hw Vibrating for  opPkg ");
-                stringBuilder.append(str);
-                Slog.d(str2, stringBuilder.toString());
-                Vibration vib = new Vibration(this, token, VibrationEffect.createOneShot(DEFAULT_VIBRATE_TIME, -1), usageHint, uid, str, null);
-                try {
-                    vib.setMode(mode);
-                    linkVibration(vib);
-                    long ident = Binder.clearCallingIdentity();
-                    try {
-                        synchronized (this.mLock) {
-                            doCancelVibrateLocked();
-                            this.mCurrentVibration = vib;
-                            if (-1 == startVibrationLocked(vib)) {
-                                vib.setMode(0);
-                                startVibrationLocked(vib);
-                            }
-                            addToPreviousVibrationsLocked(vib);
-                        }
-                        Binder.restoreCallingIdentity(ident);
-                        Trace.traceEnd(8388608);
-                        return;
-                    } catch (Throwable th2) {
-                        Binder.restoreCallingIdentity(ident);
-                    }
-                } catch (Throwable th3) {
-                    th = th3;
-                    Trace.traceEnd(8388608);
-                    throw th;
+            if ("com.huawei.android.launcher".equals(str)) {
+                if (this.mContext.checkCallingOrSelfPermission("android.permission.VIBRATE") != 0) {
+                    throw new SecurityException("Requires VIBRATE permission");
                 }
             }
-            throw new SecurityException("Requires VIBRATE permission");
+            verifyIncomingUid(uid);
+            String str2 = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("hw Vibrating for  opPkg ");
+            stringBuilder.append(str);
+            Slog.d(str2, stringBuilder.toString());
+            Vibration vib = new Vibration(this, token, VibrationEffect.createOneShot(DEFAULT_VIBRATE_TIME, -1), usageHint, uid, str, null);
+            try {
+                vib.setMode(mode);
+                linkVibration(vib);
+                long ident = Binder.clearCallingIdentity();
+                try {
+                    synchronized (this.mLock) {
+                        doCancelVibrateLocked();
+                        this.mCurrentVibration = vib;
+                        if (-1 == startVibrationLocked(vib)) {
+                            vib.setMode(0);
+                            startVibrationLocked(vib);
+                        }
+                        addToPreviousVibrationsLocked(vib);
+                    }
+                    Binder.restoreCallingIdentity(ident);
+                    Trace.traceEnd(8388608);
+                } catch (Throwable th2) {
+                    Binder.restoreCallingIdentity(ident);
+                }
+            } catch (Throwable th3) {
+                th = th3;
+                Trace.traceEnd(8388608);
+                throw th;
+            }
         } catch (Throwable th4) {
             th = th4;
             int i = mode;

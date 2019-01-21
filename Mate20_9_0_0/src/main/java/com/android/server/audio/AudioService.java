@@ -172,6 +172,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
     protected static final boolean DEBUG_MODE = true;
     protected static final boolean DEBUG_VOL = true;
     private static final int DEFAULT_STREAM_TYPE_OVERRIDE_DELAY_MS = 0;
+    protected static final String DEFAULT_VOLUME_KEY_CTL = "default_volume_key_control";
     protected static final int DEFAULT_VOL_STREAM_NO_PLAYBACK = 3;
     private static final int DEVICE_MEDIA_UNMUTED_ON_PLUG = 604137356;
     private static final int DEVICE_OVERRIDE_A2DP_ROUTE_ON_PLUG = 604135436;
@@ -417,6 +418,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
     private final Context mContext;
     final AudioRoutesInfo mCurAudioRoutes = new AudioRoutesInfo();
     private HwCustAudioService mCust = null;
+    protected int mDefaultVolStream = 3;
     private String mDockAddress;
     private boolean mDockAudioMediaEnabled = true;
     private int mDockState = 0;
@@ -622,13 +624,13 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             return stringBuilder.toString();
         }
 
-        /* JADX WARNING: Missing block: B:79:0x0209, code:
+        /* JADX WARNING: Missing block: B:81:0x0209, code skipped:
             if (r0 != 0) goto L_0x020d;
      */
-        /* JADX WARNING: Missing block: B:80:0x020b, code:
+        /* JADX WARNING: Missing block: B:82:0x020b, code skipped:
             r3 = true;
      */
-        /* JADX WARNING: Missing block: B:81:0x020d, code:
+        /* JADX WARNING: Missing block: B:83:0x020d, code skipped:
             return r3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -771,14 +773,14 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                 for (fileIdx = 0; fileIdx < AudioService.SOUND_EFFECT_FILES.size(); fileIdx++) {
                     poolId[fileIdx] = 0;
                 }
-                fileIdx = 0;
-                while (fileIdx < 10) {
-                    if (AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][1] > 0 && poolId[AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][0]] == 0) {
-                        AudioService.this.mSoundPool.unload(AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][1]);
-                        AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][1] = -1;
-                        poolId[AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][0]] = -1;
+                for (fileIdx = 0; fileIdx < 10; fileIdx++) {
+                    if (AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][1] > 0) {
+                        if (poolId[AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][0]] == 0) {
+                            AudioService.this.mSoundPool.unload(AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][1]);
+                            AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][1] = -1;
+                            poolId[AudioService.this.SOUND_EFFECT_FILES_MAP[fileIdx][0]] = -1;
+                        }
                     }
-                    fileIdx++;
                 }
                 AudioService.this.mSoundPool.release();
                 AudioService.this.mSoundPool = null;
@@ -1173,13 +1175,13 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             this();
         }
 
-        /* JADX WARNING: Missing block: B:67:0x0150, code:
+        /* JADX WARNING: Missing block: B:69:0x0150, code skipped:
             r1 = false;
      */
-        /* JADX WARNING: Missing block: B:69:0x0152, code:
+        /* JADX WARNING: Missing block: B:71:0x0152, code skipped:
             if (r1 == false) goto L_0x039e;
      */
-        /* JADX WARNING: Missing block: B:70:0x0154, code:
+        /* JADX WARNING: Missing block: B:72:0x0154, code skipped:
             com.android.server.audio.AudioService.access$2400(r13.this$0, r6);
             r2 = new android.content.Intent("android.media.SCO_AUDIO_STATE_CHANGED");
             r2.putExtra("android.media.extra.SCO_AUDIO_STATE", r6);
@@ -1254,6 +1256,8 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                                     AudioService.this.mScoAudioState = 2;
                                 }
                                 AudioService.this.setBluetoothScoOn(true);
+                                break;
+                            default:
                                 break;
                         }
                     }
@@ -1383,24 +1387,37 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             }
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:14:0x0030  */
+        /* JADX WARNING: Removed duplicated region for block: B:22:0x004f  */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setAccessibilityServiceUids(IntArray uids) {
             synchronized (AudioService.this.mAccessibilityServiceUidsLock) {
                 if (uids.size() == 0) {
                     AudioService.this.mAccessibilityServiceUids = null;
                 } else {
+                    boolean changed;
                     int i = 0;
-                    boolean changed = AudioService.this.mAccessibilityServiceUids == null || AudioService.this.mAccessibilityServiceUids.length != uids.size();
-                    if (!changed) {
-                        while (i < AudioService.this.mAccessibilityServiceUids.length) {
-                            if (uids.get(i) != AudioService.this.mAccessibilityServiceUids[i]) {
-                                changed = true;
-                                break;
+                    if (AudioService.this.mAccessibilityServiceUids != null) {
+                        if (AudioService.this.mAccessibilityServiceUids.length == uids.size()) {
+                            changed = false;
+                            if (!changed) {
+                                while (i < AudioService.this.mAccessibilityServiceUids.length) {
+                                    if (uids.get(i) != AudioService.this.mAccessibilityServiceUids[i]) {
+                                        changed = true;
+                                        break;
+                                    }
+                                    i++;
+                                }
                             }
-                            i++;
+                            if (changed) {
+                                AudioService.this.mAccessibilityServiceUids = uids.toArray();
+                            }
                         }
                     }
+                    changed = true;
+                    if (!changed) {
+                    }
                     if (changed) {
-                        AudioService.this.mAccessibilityServiceUids = uids.toArray();
                     }
                 }
             }
@@ -1929,6 +1946,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             AudioService.this.mContentResolver.registerContentObserver(Global.getUriFor("encoded_surround_output"), false, this);
             AudioService.this.mEnabledSurroundFormats = Global.getString(AudioService.this.mContentResolver, "encoded_surround_output_enabled_formats");
             AudioService.this.mContentResolver.registerContentObserver(Global.getUriFor("encoded_surround_output_enabled_formats"), false, this);
+            AudioService.this.mContentResolver.registerContentObserver(System.getUriFor(AudioService.DEFAULT_VOLUME_KEY_CTL), false, this);
         }
 
         public void onChange(boolean selfChange) {
@@ -1941,6 +1959,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                 AudioService.this.updateMasterMono(AudioService.this.mContentResolver);
                 updateEncodedSurroundOutput();
                 AudioService.this.sendEnabledSurroundFormats(AudioService.this.mContentResolver, AudioService.this.mSurroundModeChanged);
+                AudioService.this.updateDefaultStream();
             }
         }
 
@@ -2255,95 +2274,95 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             return (this.mVolumeIndexSettingName == null || this.mVolumeIndexSettingName.isEmpty()) ? false : true;
         }
 
-        /* JADX WARNING: Missing block: B:21:0x002e, code:
+        /* JADX WARNING: Missing block: B:22:0x002e, code skipped:
             r1 = com.android.server.audio.AudioService.VolumeStreamState.class;
      */
-        /* JADX WARNING: Missing block: B:22:0x0030, code:
+        /* JADX WARNING: Missing block: B:23:0x0030, code skipped:
             monitor-enter(r1);
      */
-        /* JADX WARNING: Missing block: B:23:0x0031, code:
+        /* JADX WARNING: Missing block: B:24:0x0031, code skipped:
             r6 = 1879048191;
             r0 = 0;
      */
-        /* JADX WARNING: Missing block: B:24:0x0037, code:
+        /* JADX WARNING: Missing block: B:25:0x0037, code skipped:
             if (r6 == 0) goto L_0x00a2;
      */
-        /* JADX WARNING: Missing block: B:25:0x0039, code:
+        /* JADX WARNING: Missing block: B:26:0x0039, code skipped:
             r7 = 1 << r0;
      */
-        /* JADX WARNING: Missing block: B:26:0x003d, code:
+        /* JADX WARNING: Missing block: B:27:0x003d, code skipped:
             if ((r7 & r6) != 0) goto L_0x0041;
      */
-        /* JADX WARNING: Missing block: B:27:0x0041, code:
+        /* JADX WARNING: Missing block: B:28:0x0041, code skipped:
             r6 = r6 & (~r7);
      */
-        /* JADX WARNING: Missing block: B:30:0x0046, code:
+        /* JADX WARNING: Missing block: B:31:0x0046, code skipped:
             if (r15.mStreamType != 3) goto L_0x004d;
      */
-        /* JADX WARNING: Missing block: B:32:0x0049, code:
+        /* JADX WARNING: Missing block: B:33:0x0049, code skipped:
             if (r7 != 2) goto L_0x004d;
      */
-        /* JADX WARNING: Missing block: B:33:0x004b, code:
+        /* JADX WARNING: Missing block: B:34:0x004b, code skipped:
             r8 = true;
      */
-        /* JADX WARNING: Missing block: B:34:0x004d, code:
+        /* JADX WARNING: Missing block: B:35:0x004d, code skipped:
             r8 = false;
      */
-        /* JADX WARNING: Missing block: B:36:0x004f, code:
+        /* JADX WARNING: Missing block: B:37:0x004f, code skipped:
             if (r7 == 1073741824) goto L_0x0056;
      */
-        /* JADX WARNING: Missing block: B:37:0x0051, code:
+        /* JADX WARNING: Missing block: B:38:0x0051, code skipped:
             if (r8 == false) goto L_0x0054;
      */
-        /* JADX WARNING: Missing block: B:38:0x0054, code:
+        /* JADX WARNING: Missing block: B:40:0x0054, code skipped:
             r11 = -1;
      */
-        /* JADX WARNING: Missing block: B:39:0x0056, code:
+        /* JADX WARNING: Missing block: B:41:0x0056, code skipped:
             r11 = android.media.AudioSystem.DEFAULT_STREAM_VOLUME[r15.mStreamType];
      */
-        /* JADX WARNING: Missing block: B:41:0x0060, code:
+        /* JADX WARNING: Missing block: B:43:0x0060, code skipped:
             if (hasValidSettingsName() != false) goto L_0x0065;
      */
-        /* JADX WARNING: Missing block: B:42:0x0062, code:
+        /* JADX WARNING: Missing block: B:44:0x0062, code skipped:
             r13 = r11;
      */
-        /* JADX WARNING: Missing block: B:43:0x0065, code:
+        /* JADX WARNING: Missing block: B:45:0x0065, code skipped:
             r13 = android.provider.Settings.System.getIntForUser(com.android.server.audio.AudioService.access$2800(r15.this$0), getSettingNameForDevice(r7), r11, -2);
      */
-        /* JADX WARNING: Missing block: B:44:0x0074, code:
+        /* JADX WARNING: Missing block: B:46:0x0074, code skipped:
             r12 = r13;
      */
-        /* JADX WARNING: Missing block: B:45:0x0075, code:
+        /* JADX WARNING: Missing block: B:47:0x0075, code skipped:
             if (r12 != -1) goto L_0x0086;
      */
-        /* JADX WARNING: Missing block: B:47:0x0079, code:
+        /* JADX WARNING: Missing block: B:49:0x0079, code skipped:
             if (r15.mStreamType != 3) goto L_0x0086;
      */
-        /* JADX WARNING: Missing block: B:49:0x007d, code:
+        /* JADX WARNING: Missing block: B:51:0x007d, code skipped:
             if (r7 != 128) goto L_0x0086;
      */
-        /* JADX WARNING: Missing block: B:50:0x007f, code:
+        /* JADX WARNING: Missing block: B:52:0x007f, code skipped:
             r12 = android.media.AudioSystem.DEFAULT_STREAM_VOLUME[r15.mStreamType];
      */
-        /* JADX WARNING: Missing block: B:51:0x0086, code:
+        /* JADX WARNING: Missing block: B:53:0x0086, code skipped:
             if (r12 != -1) goto L_0x0094;
      */
-        /* JADX WARNING: Missing block: B:53:0x008a, code:
+        /* JADX WARNING: Missing block: B:55:0x008a, code skipped:
             if (r15.mVSSCust == null) goto L_0x009f;
      */
-        /* JADX WARNING: Missing block: B:54:0x008c, code:
+        /* JADX WARNING: Missing block: B:56:0x008c, code skipped:
             r15.mVSSCust.readSettings(r15.mStreamType, r7);
      */
-        /* JADX WARNING: Missing block: B:55:0x0094, code:
+        /* JADX WARNING: Missing block: B:57:0x0094, code skipped:
             r15.mIndexMap.put(r7, getValidIndex(10 * r12));
      */
-        /* JADX WARNING: Missing block: B:56:0x009f, code:
+        /* JADX WARNING: Missing block: B:58:0x009f, code skipped:
             r0 = r0 + 1;
      */
-        /* JADX WARNING: Missing block: B:57:0x00a2, code:
+        /* JADX WARNING: Missing block: B:59:0x00a2, code skipped:
             monitor-exit(r1);
      */
-        /* JADX WARNING: Missing block: B:58:0x00a3, code:
+        /* JADX WARNING: Missing block: B:60:0x00a3, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2352,13 +2371,17 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                 synchronized (VolumeStreamState.class) {
                     if (AudioService.this.mUseFixedVolume) {
                         this.mIndexMap.put(1073741824, this.mIndexMax);
-                    } else if (this.mStreamType == 1 || this.mStreamType == 7) {
-                        int index = 10 * AudioSystem.DEFAULT_STREAM_VOLUME[this.mStreamType];
-                        if (AudioService.this.mCameraSoundForced) {
-                            index = this.mIndexMax;
-                        }
-                        this.mIndexMap.put(1073741824, index);
+                        return;
                     }
+                    if (this.mStreamType != 1) {
+                        if (this.mStreamType == 7) {
+                        }
+                    }
+                    int index = 10 * AudioSystem.DEFAULT_STREAM_VOLUME[this.mStreamType];
+                    if (AudioService.this.mCameraSoundForced) {
+                        index = this.mIndexMax;
+                    }
+                    this.mIndexMap.put(1073741824, index);
                 }
             }
         }
@@ -2388,6 +2411,8 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             AudioSystem.setStreamVolumeIndex(this.mStreamType, index, device);
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:39:0x008c  */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void applyAllVolumes() {
             synchronized (VolumeStreamState.class) {
                 int i;
@@ -2398,18 +2423,34 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                 for (i = 0; i < this.mIndexMap.size(); i++) {
                     int device = this.mIndexMap.keyAt(i);
                     if (device != 1073741824) {
-                        int index = (this.mIsMuted || isTurnOff) ? 0 : ((device & 896) == 0 || !AudioService.this.mAvrcpAbsVolSupported) ? (AudioService.this.mFullVolumeDevices & device) != 0 ? (this.mIndexMax + 5) / 10 : (134217728 & device) != 0 ? (this.mIndexMax + 5) / 10 : (this.mIndexMap.valueAt(i) + 5) / 10 : getAbsoluteVolumeIndex((getIndex(device) + 5) / 10);
+                        int index;
+                        if (!this.mIsMuted) {
+                            if (!isTurnOff) {
+                                if ((device & 896) == 0 || !AudioService.this.mAvrcpAbsVolSupported) {
+                                    index = (AudioService.this.mFullVolumeDevices & device) != 0 ? (this.mIndexMax + 5) / 10 : (134217728 & device) != 0 ? (this.mIndexMax + 5) / 10 : (this.mIndexMap.valueAt(i) + 5) / 10;
+                                    AudioSystem.setStreamVolumeIndex(this.mStreamType, index, device);
+                                } else {
+                                    index = getAbsoluteVolumeIndex((getIndex(device) + 5) / 10);
+                                    AudioSystem.setStreamVolumeIndex(this.mStreamType, index, device);
+                                }
+                            }
+                        }
+                        index = 0;
                         AudioSystem.setStreamVolumeIndex(this.mStreamType, index, device);
                     }
                 }
-                if (this.mIsMuted || isTurnOff) {
-                    i = 0;
-                } else {
-                    i = (getIndex(1073741824) + 5) / 10;
+                if (!this.mIsMuted) {
+                    if (!isTurnOff) {
+                        i = (getIndex(1073741824) + 5) / 10;
+                        AudioSystem.setStreamVolumeIndex(this.mStreamType, i, 1073741824);
+                        if (this.mVSSCust != null) {
+                            this.mVSSCust.applyAllVolumes(this.mIsMuted, this.mStreamType);
+                        }
+                    }
                 }
+                i = 0;
                 AudioSystem.setStreamVolumeIndex(this.mStreamType, i, 1073741824);
                 if (this.mVSSCust != null) {
-                    this.mVSSCust.applyAllVolumes(this.mIsMuted, this.mStreamType);
                 }
             }
         }
@@ -2678,596 +2719,6 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    protected void adjustStreamVolume(int r33, int r34, int r35, java.lang.String r36, java.lang.String r37, int r38) {
-        /*
-        r32 = this;
-        r8 = r32;
-        r9 = r33;
-        r10 = r34;
-        r1 = r35;
-        r0 = r32.checkEnbaleVolumeAdjust();
-        if (r0 != 0) goto L_0x000f;
-    L_0x000e:
-        return;
-    L_0x000f:
-        r0 = r8.mUseFixedVolume;
-        if (r0 == 0) goto L_0x0014;
-    L_0x0013:
-        return;
-    L_0x0014:
-        r0 = "AudioService";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "adjustStreamVolume() stream=";
-        r2.append(r3);
-        r2.append(r9);
-        r3 = ", dir=";
-        r2.append(r3);
-        r2.append(r10);
-        r3 = ", flags=";
-        r2.append(r3);
-        r2.append(r1);
-        r3 = ", caller=";
-        r2.append(r3);
-        r3 = android.os.Binder.getCallingPid();
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Log.d(r0, r2);
-        r8.ensureValidDirection(r10);
-        r32.ensureValidStreamType(r33);
-        r11 = r8.isMuteAdjust(r10);
-        if (r11 == 0) goto L_0x0059;
-    L_0x0052:
-        r0 = r32.isStreamAffectedByMute(r33);
-        if (r0 != 0) goto L_0x0059;
-    L_0x0058:
-        return;
-    L_0x0059:
-        if (r11 == 0) goto L_0x008e;
-    L_0x005b:
-        if (r9 != 0) goto L_0x008e;
-    L_0x005d:
-        r0 = r8.mContext;
-        r2 = "android.permission.MODIFY_PHONE_STATE";
-        r0 = r0.checkCallingOrSelfPermission(r2);
-        if (r0 == 0) goto L_0x008e;
-    L_0x0067:
-        r0 = "AudioService";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "MODIFY_PHONE_STATE Permission Denial: adjustStreamVolume from pid=";
-        r2.append(r3);
-        r3 = android.os.Binder.getCallingPid();
-        r2.append(r3);
-        r3 = ", uid=";
-        r2.append(r3);
-        r3 = android.os.Binder.getCallingUid();
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Log.w(r0, r2);
-        return;
-    L_0x008e:
-        r0 = mStreamVolumeAlias;
-        r12 = r0[r9];
-        r0 = r8.mStreamStates;
-        r13 = r0[r12];
-        r14 = r8.getDeviceForStream(r12);
-        r2 = r13.getIndex(r14);
-        r15 = 1;
-        r16 = 0;
-        r0 = r14 & 896;
-        if (r0 != 0) goto L_0x00aa;
-    L_0x00a5:
-        r0 = r1 & 64;
-        if (r0 == 0) goto L_0x00aa;
-    L_0x00a9:
-        return;
-    L_0x00aa:
-        r0 = 1000; // 0x3e8 float:1.401E-42 double:4.94E-321;
-        r3 = r38;
-        if (r3 != r0) goto L_0x00be;
-    L_0x00b0:
-        r0 = r32.getCurrentUserId();
-        r4 = android.os.UserHandle.getAppId(r38);
-        r0 = android.os.UserHandle.getUid(r0, r4);
-        r7 = r0;
-        goto L_0x00bf;
-    L_0x00be:
-        r7 = r3;
-    L_0x00bf:
-        r0 = r8.mAppOps;	 Catch:{ SecurityException -> 0x0377 }
-        r3 = STREAM_VOLUME_OPS;	 Catch:{ SecurityException -> 0x0377 }
-        r3 = r3[r12];	 Catch:{ SecurityException -> 0x0377 }
-        r6 = r36;	 Catch:{ SecurityException -> 0x0377 }
-        r0 = r0.noteOp(r3, r7, r6);	 Catch:{ SecurityException -> 0x0377 }
-        if (r0 == 0) goto L_0x00ce;
-    L_0x00cd:
-        return;
-        r3 = r8.mSafeMediaVolumeState;
-        monitor-enter(r3);
-        r0 = 0;
-        r8.mPendingVolumeCommand = r0;	 Catch:{ all -> 0x036e }
-        monitor-exit(r3);	 Catch:{ all -> 0x036e }
-        r0 = r1 & -33;
-        r5 = 3;
-        if (r12 != r5) goto L_0x00fd;
-    L_0x00db:
-        r1 = r8.mFixedVolumeDevices;
-        r1 = r1 & r14;
-        if (r1 == 0) goto L_0x00fd;
-    L_0x00e0:
-        r0 = r0 | 32;
-        r1 = r8.mSafeMediaVolumeState;
-        r1 = r1.intValue();
-        if (r1 != r5) goto L_0x00f5;
-    L_0x00ea:
-        r1 = 603979788; // 0x2400000c float:2.7755615E-17 double:2.98405664E-315;
-        r1 = r1 & r14;
-        if (r1 == 0) goto L_0x00f5;
-    L_0x00f0:
-        r1 = r8.safeMediaVolumeIndex(r14);
-        goto L_0x00f9;
-    L_0x00f5:
-        r1 = r13.getMaxIndex();
-    L_0x00f9:
-        if (r2 == 0) goto L_0x0103;
-    L_0x00fb:
-        r2 = r1;
-        goto L_0x0103;
-    L_0x00fd:
-        r1 = 10;
-        r1 = r8.rescaleIndex(r1, r9, r12);
-    L_0x0103:
-        r17 = r2;
-        r2 = LOUD_VOICE_MODE_SUPPORT;
-        if (r2 == 0) goto L_0x011b;
-    L_0x0109:
-        if (r9 != 0) goto L_0x011b;
-    L_0x010b:
-        r2 = "true";
-        r3 = "VOICE_LVM_Enable";
-        r3 = android.media.AudioSystem.getParameters(r3);
-        r2 = r2.equals(r3);
-        if (r2 == 0) goto L_0x011b;
-    L_0x011a:
-        r1 = 0;
-    L_0x011b:
-        r18 = r1;
-        r1 = r0 & 2;
-        r4 = 0;
-        r3 = 1;
-        if (r1 != 0) goto L_0x0130;
-    L_0x0123:
-        r1 = r32.getUiSoundsStreamType();
-        if (r12 != r1) goto L_0x012a;
-    L_0x0129:
-        goto L_0x0130;
-    L_0x012a:
-        r19 = r7;
-        r2 = r15;
-        r7 = r0;
-        r15 = r3;
-        goto L_0x0170;
-    L_0x0130:
-        r2 = r32.getRingerModeInternal();
-        if (r2 != r3) goto L_0x0138;
-    L_0x0136:
-        r0 = r0 & -17;
-        r19 = r13.mIsMuted;
-        r1 = r8;
-        r20 = r2;
-        r2 = r17;
-        r21 = r15;
-        r15 = r3;
-        r3 = r10;
-        r4 = r18;
-        r5 = r19;
-        r6 = r36;
-        r19 = r7;
-        r7 = r0;
-        r1 = r1.checkForRingerModeChange(r2, r3, r4, r5, r6, r7);
-        r2 = r1 & 1;
-        if (r2 == 0) goto L_0x0159;
-    L_0x0157:
-        r2 = r15;
-        goto L_0x015a;
-    L_0x0159:
-        r2 = 0;
-    L_0x015a:
-        r3 = r1 & 2;
-        if (r3 == 0) goto L_0x0160;
-    L_0x015e:
-        r3 = r15;
-        goto L_0x0161;
-    L_0x0160:
-        r3 = 0;
-    L_0x0161:
-        r16 = r3;
-        r3 = r1 & 128;
-        if (r3 == 0) goto L_0x0169;
-    L_0x0167:
-        r0 = r0 | 128;
-    L_0x0169:
-        r3 = r1 & 2048;
-        if (r3 == 0) goto L_0x016f;
-    L_0x016d:
-        r0 = r0 | 2048;
-    L_0x016f:
-        r7 = r0;
-    L_0x0170:
-        r0 = r8.volumeAdjustmentAllowedByDnd(r12, r7);
-        if (r0 != 0) goto L_0x0177;
-    L_0x0176:
-        r2 = 0;
-    L_0x0177:
-        r20 = r2;
-        r0 = r8.mStreamStates;
-        r0 = r0[r9];
-        r6 = r0.getIndex(r14);
-        if (r20 == 0) goto L_0x02e5;
-    L_0x0183:
-        if (r10 == 0) goto L_0x02e5;
-    L_0x0185:
-        r0 = r8.mAudioHandler;
-        r5 = 24;
-        r0.removeMessages(r5);
-        r0 = -1;
-        if (r11 == 0) goto L_0x01cf;
-    L_0x018f:
-        r1 = 101; // 0x65 float:1.42E-43 double:5.0E-322;
-        if (r10 != r1) goto L_0x0199;
-    L_0x0193:
-        r1 = r13.mIsMuted;
-        r1 = r1 ^ r15;
-        goto L_0x01a0;
-    L_0x0199:
-        r1 = -100;
-        if (r10 != r1) goto L_0x019f;
-    L_0x019d:
-        r1 = r15;
-        goto L_0x01a0;
-    L_0x019f:
-        r1 = 0;
-    L_0x01a0:
-        r4 = 3;
-        if (r12 != r4) goto L_0x01a6;
-    L_0x01a3:
-        r8.setSystemAudioMute(r1);
-    L_0x01a6:
-        r2 = 0;
-    L_0x01a7:
-        r3 = r8.mStreamStates;
-        r3 = r3.length;
-        if (r2 >= r3) goto L_0x01f4;
-    L_0x01ac:
-        r3 = mStreamVolumeAlias;
-        r3 = r3[r2];
-        if (r12 != r3) goto L_0x01ca;
-    L_0x01b2:
-        r3 = r32.readCameraSoundForced();
-        if (r3 == 0) goto L_0x01c3;
-    L_0x01b8:
-        r3 = r8.mStreamStates;
-        r3 = r3[r2];
-        r3 = r3.getStreamType();
-        r4 = 7;
-        if (r3 == r4) goto L_0x01ca;
-    L_0x01c3:
-        r3 = r8.mStreamStates;
-        r3 = r3[r2];
-        r3.mute(r1);
-    L_0x01ca:
-        r2 = r2 + 1;
-        r4 = 3;
-        goto L_0x01a7;
-    L_0x01ce:
-        goto L_0x01f4;
-    L_0x01cf:
-        if (r10 != r15) goto L_0x01fc;
-    L_0x01d1:
-        r1 = r17 + r18;
-        r1 = r8.checkSafeMediaVolume(r12, r1, r14);
-        if (r1 != 0) goto L_0x01fc;
-    L_0x01d9:
-        r1 = "AudioService";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "adjustStreamVolume() safe volume index = ";
-        r2.append(r3);
-        r2.append(r6);
-        r2 = r2.toString();
-        android.util.Log.e(r1, r2);
-        r1 = r8.mVolumeController;
-        r1.postDisplaySafeVolumeWarning(r7);
-    L_0x01f4:
-        r21 = r5;
-        r27 = r6;
-        r28 = r7;
-        r15 = 3;
-        goto L_0x0256;
-    L_0x01fc:
-        r1 = r10 * r18;
-        r4 = r37;
-        r1 = r13.adjustIndex(r1, r14, r4);
-        if (r1 != 0) goto L_0x020c;
-    L_0x0206:
-        r1 = r13.mIsMuted;
-        if (r1 == 0) goto L_0x01f4;
-    L_0x020c:
-        r1 = r13.mIsMuted;
-        if (r1 == 0) goto L_0x0244;
-    L_0x0212:
-        if (r10 != r15) goto L_0x0220;
-    L_0x0214:
-        r3 = 0;
-        r13.mute(r3);
-        r21 = r5;
-        r27 = r6;
-        r28 = r7;
-        r15 = 3;
-        goto L_0x024b;
-    L_0x0220:
-        r3 = 0;
-        if (r10 != r0) goto L_0x0244;
-    L_0x0223:
-        r1 = r8.mIsSingleVolume;
-        if (r1 == 0) goto L_0x0244;
-    L_0x0227:
-        r1 = r8.mAudioHandler;
-        r2 = 24;
-        r21 = 2;
-        r22 = 0;
-        r23 = 350; // 0x15e float:4.9E-43 double:1.73E-321;
-        r3 = r21;
-        r15 = 3;
-        r4 = r12;
-        r21 = r5;
-        r5 = r7;
-        r27 = r6;
-        r6 = r22;
-        r28 = r7;
-        r7 = r23;
-        sendMsg(r1, r2, r3, r4, r5, r6, r7);
-        goto L_0x024b;
-    L_0x0244:
-        r21 = r5;
-        r27 = r6;
-        r28 = r7;
-        r15 = 3;
-    L_0x024b:
-        r1 = r8.mAudioHandler;
-        r2 = 0;
-        r3 = 2;
-        r5 = 0;
-        r7 = 0;
-        r4 = r14;
-        r6 = r13;
-        sendMsg(r1, r2, r3, r4, r5, r6, r7);
-    L_0x0256:
-        r1 = r8.mStreamStates;
-        r1 = r1[r9];
-        r1 = r1.getIndex(r14);
-        if (r12 != r15) goto L_0x0281;
-    L_0x0260:
-        r2 = r14 & 896;
-        if (r2 == 0) goto L_0x0281;
-    L_0x0264:
-        r7 = r28;
-        r2 = r7 & 64;
-        if (r2 != 0) goto L_0x0283;
-    L_0x026a:
-        r2 = r8.mA2dpAvrcpLock;
-        monitor-enter(r2);
-        r3 = r8.mA2dp;
-        if (r3 == 0) goto L_0x027c;
-    L_0x0271:
-        r3 = r8.mAvrcpAbsVolSupported;
-        if (r3 == 0) goto L_0x027c;
-    L_0x0275:
-        r3 = r8.mA2dp;
-        r4 = r1 / 10;
-        r3.setAvrcpAbsoluteVolume(r4);
-    L_0x027c:
-        monitor-exit(r2);
-        goto L_0x0283;
-    L_0x027e:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x0281:
-        r7 = r28;
-    L_0x0283:
-        r2 = 134217728; // 0x8000000 float:3.85186E-34 double:6.63123685E-316;
-        r2 = r2 & r14;
-        if (r2 == 0) goto L_0x028b;
-    L_0x0288:
-        r8.setHearingAidVolume(r1, r9);
-    L_0x028b:
-        if (r12 != r15) goto L_0x0297;
-    L_0x028d:
-        r2 = r32.getStreamMaxVolume(r33);
-        r6 = r27;
-        r8.setSystemAudioVolume(r6, r1, r2, r7);
-        goto L_0x0299;
-    L_0x0297:
-        r6 = r27;
-    L_0x0299:
-        r2 = r8.mHdmiManager;
-        if (r2 == 0) goto L_0x02e0;
-    L_0x029d:
-        r2 = r8.mHdmiManager;
-        monitor-enter(r2);
-        r3 = r8.mHdmiCecSink;
-        if (r3 == 0) goto L_0x02db;
-    L_0x02a4:
-        if (r12 != r15) goto L_0x02db;
-    L_0x02a6:
-        if (r6 == r1) goto L_0x02db;
-    L_0x02a8:
-        r3 = r8.mHdmiPlaybackClient;
-        monitor-enter(r3);
-        if (r10 != r0) goto L_0x02b0;
-    L_0x02ad:
-        r5 = 25;
-        goto L_0x02b2;
-    L_0x02b0:
-        r5 = r21;
-    L_0x02b2:
-        r4 = r5;
-        r21 = android.os.Binder.clearCallingIdentity();	 Catch:{ all -> 0x02cf }
-        r29 = r21;
-        r0 = r8.mHdmiPlaybackClient;	 Catch:{ all -> 0x02cf }
-        r5 = 1;	 Catch:{ all -> 0x02cf }
-        r0.sendKeyEvent(r4, r5);	 Catch:{ all -> 0x02cf }
-        r0 = r8.mHdmiPlaybackClient;	 Catch:{ all -> 0x02cf }
-        r5 = 0;	 Catch:{ all -> 0x02cf }
-        r0.sendKeyEvent(r4, r5);	 Catch:{ all -> 0x02cf }
-        r31 = r4;
-        r4 = r29;
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x02cf }
-        monitor-exit(r3);	 Catch:{ all -> 0x02cf }
-        goto L_0x02db;	 Catch:{ all -> 0x02cf }
-    L_0x02cf:
-        r0 = move-exception;	 Catch:{ all -> 0x02cf }
-        r31 = r4;	 Catch:{ all -> 0x02cf }
-        r4 = r29;	 Catch:{ all -> 0x02cf }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x02cf }
-        throw r0;	 Catch:{ all -> 0x02cf }
-    L_0x02d8:
-        r0 = move-exception;	 Catch:{ all -> 0x02cf }
-        monitor-exit(r3);	 Catch:{ all -> 0x02cf }
-        throw r0;
-    L_0x02db:
-        monitor-exit(r2);
-        goto L_0x02e0;
-    L_0x02dd:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-        r15 = r6;
-        r21 = r7;
-        goto L_0x02fa;
-    L_0x02e5:
-        if (r16 == 0) goto L_0x02f7;
-    L_0x02e7:
-        r1 = r8.mAudioHandler;
-        r2 = 0;
-        r3 = 2;
-        r5 = 0;
-        r0 = 0;
-        r4 = r14;
-        r15 = r6;
-        r6 = r13;
-        r21 = r7;
-        r7 = r0;
-        sendMsg(r1, r2, r3, r4, r5, r6, r7);
-        goto L_0x02fa;
-    L_0x02f7:
-        r15 = r6;
-        r21 = r7;
-    L_0x02fa:
-        r0 = r8.mStreamStates;
-        r0 = r0[r9];
-        r0 = r0.getIndex(r14);
-        r1 = r21 & 4;
-        if (r1 == 0) goto L_0x0315;
-    L_0x0306:
-        r1 = r8.mKeyguardManager;
-        if (r1 == 0) goto L_0x0315;
-    L_0x030a:
-        r1 = r8.mKeyguardManager;
-        r1 = r1.isKeyguardLocked();
-        if (r1 == 0) goto L_0x0315;
-    L_0x0312:
-        r7 = r21 & -5;
-        goto L_0x0317;
-    L_0x0315:
-        r7 = r21;
-    L_0x0317:
-        r1 = r7 & 1;
-        if (r1 == 0) goto L_0x0321;
-    L_0x031b:
-        r1 = r8.mScreenOn;
-        if (r1 != 0) goto L_0x0321;
-    L_0x031f:
-        r7 = r7 & -2;
-    L_0x0321:
-        r1 = "AudioService";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "adjustStreamVolume() stream=";
-        r2.append(r3);
-        r2.append(r9);
-        r3 = ", flags=";
-        r2.append(r3);
-        r2.append(r7);
-        r3 = ",mScreenOn= ";
-        r2.append(r3);
-        r3 = r8.mScreenOn;
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Log.d(r1, r2);
-        r8.sendVolumeUpdate(r9, r15, r0, r7);
-        r1 = LOUD_VOICE_MODE_SUPPORT;
-        if (r1 == 0) goto L_0x036d;
-    L_0x0350:
-        r6 = r8.mAudioHandler;
-        r22 = 10001; // 0x2711 float:1.4014E-41 double:4.941E-320;
-        r23 = 0;
-        r24 = 1;
-        r25 = 0;
-        r26 = new com.android.server.audio.AbsAudioService$DeviceVolumeState;
-        r1 = r26;
-        r2 = r8;
-        r3 = r10;
-        r4 = r14;
-        r5 = r15;
-        r21 = r6;
-        r6 = r9;
-        r1.<init>(r3, r4, r5, r6);
-        r27 = 0;
-        sendMsg(r21, r22, r23, r24, r25, r26, r27);
-    L_0x036d:
-        return;
-    L_0x036e:
-        r0 = move-exception;
-        r19 = r7;
-        r21 = r15;
-    L_0x0373:
-        monitor-exit(r3);	 Catch:{ all -> 0x0375 }
-        throw r0;
-    L_0x0375:
-        r0 = move-exception;
-        goto L_0x0373;
-    L_0x0377:
-        r0 = move-exception;
-        r19 = r7;
-        r21 = r15;
-        r3 = "AudioService";
-        r4 = "mAppOps.noteOp cannot match the uid and packagename";
-        android.util.Log.e(r3, r4);
-        return;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.audio.AudioService.adjustStreamVolume(int, int, int, java.lang.String, java.lang.String, int):void");
-    }
-
     private boolean isPlatformVoice() {
         return this.mPlatformType == 1;
     }
@@ -3302,6 +2753,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
     public AudioService(Context context) {
         int maxStreamVolumeFromDtsi;
         int i;
+        int index;
         int i2;
         Context context2 = context;
         this.mContext = context2;
@@ -3345,8 +2797,8 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
         int maxVolume = SystemProperties.getInt("ro.config.vol_steps", -1);
         if (maxVolume > 0) {
-            for (i = 0; i < MAX_STREAM_VOLUME.length; i++) {
-                MAX_STREAM_VOLUME[i] = maxVolume;
+            for (index = 0; index < MAX_STREAM_VOLUME.length; index++) {
+                MAX_STREAM_VOLUME[index] = maxVolume;
             }
         }
         int voiceCallMaxVolume = SystemProperties.getInt("ro.config.vc_call_vol_steps", -1);
@@ -3358,21 +2810,21 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         if (maxAlarmVolume != -1) {
             MAX_STREAM_VOLUME[4] = maxAlarmVolume;
         }
-        i = SystemProperties.getInt("ro.config.alarm_vol_default", -1);
-        if (i == -1 || i > MAX_STREAM_VOLUME[4]) {
+        index = SystemProperties.getInt("ro.config.alarm_vol_default", -1);
+        if (index == -1 || index > MAX_STREAM_VOLUME[4]) {
             AudioSystem.DEFAULT_STREAM_VOLUME[4] = (6 * MAX_STREAM_VOLUME[4]) / 7;
         } else {
-            AudioSystem.DEFAULT_STREAM_VOLUME[4] = i;
+            AudioSystem.DEFAULT_STREAM_VOLUME[4] = index;
         }
         int maxSystemVolume = SystemProperties.getInt("ro.config.system_vol_steps", -1);
         if (maxSystemVolume != -1) {
             MAX_STREAM_VOLUME[1] = maxSystemVolume;
         }
-        int defaultSystemVolume = SystemProperties.getInt("ro.config.system_vol_default", -1);
-        if (defaultSystemVolume == -1 || defaultSystemVolume > MAX_STREAM_VOLUME[1]) {
+        i = SystemProperties.getInt("ro.config.system_vol_default", -1);
+        if (i == -1 || i > MAX_STREAM_VOLUME[1]) {
             AudioSystem.DEFAULT_STREAM_VOLUME[1] = MAX_STREAM_VOLUME[1];
         } else {
-            AudioSystem.DEFAULT_STREAM_VOLUME[1] = defaultSystemVolume;
+            AudioSystem.DEFAULT_STREAM_VOLUME[1] = i;
         }
         sSoundEffectVolumeDb = context.getResources().getInteger(17694867);
         this.mForcedUseForComm = 0;
@@ -3387,7 +2839,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             i2 = 0;
         }
         sendMsg(handler, 8, 2, 4, i2, new String("AudioService ctor"), 0);
-        int maxSystemVolume2 = maxSystemVolume;
+        int defaultAlarmVolume = index;
         this.mSafeMediaVolumeState = new Integer(Global.getInt(this.mContentResolver, "audio_safe_volume_state", 0));
         this.mSafeMediaVolumeIndex = this.mContext.getResources().getInteger(17694852) * 10;
         if (usingHwSafeMediaConfig()) {
@@ -3395,7 +2847,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             this.mSafeMediaVolumeState = Integer.valueOf(isHwSafeMediaVolumeEnabled() ? new Integer(Global.getInt(this.mContentResolver, "audio_safe_volume_state", 0)).intValue() : 1);
         }
         this.mIsChineseZone = SystemProperties.getInt("ro.config.hw_optb", CHINAZONE_IDENTIFIER) == CHINAZONE_IDENTIFIER;
-        this.mUseFixedVolume = this.mContext.getResources().getBoolean(17957059);
+        this.mUseFixedVolume = this.mContext.getResources().getBoolean(17957060);
         updateStreamVolumeAlias(false, TAG);
         readPersistedSettings();
         readUserRestrictions();
@@ -3437,6 +2889,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         if (!this.mIsChineseZone) {
             intentFilter.addAction(ACTION_CHECK_MUSIC_ACTIVE);
         }
+        IntentFilter intentFilter2 = intentFilter;
         context2.registerReceiverAsUser(this.mReceiver, UserHandle.ALL, intentFilter, null, null);
         LocalServices.addService(AudioManagerInternal.class, new AudioServiceInternal());
         this.mUserManagerInternal.addUserRestrictionsListener(this.mUserRestrictionsListener);
@@ -3464,7 +2917,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         resetBluetoothSco();
         getBluetoothHeadset();
         Intent newIntent = new Intent("android.media.SCO_AUDIO_STATE_CHANGED");
-        boolean z = false;
+        int i = 0;
         newIntent.putExtra("android.media.extra.SCO_AUDIO_STATE", 0);
         sendStickyBroadcastToAll(newIntent);
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -3484,12 +2937,12 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             }
         }
         this.mNm = (NotificationManager) this.mContext.getSystemService("notification");
-        Handler handler = this.mAudioHandler;
+        AudioHandler audioHandler = this.mAudioHandler;
         String str = TAG;
         if (!SystemProperties.getBoolean("audio.safemedia.bypass", false)) {
-            z = true;
+            i = SAFE_VOLUME_CONFIGURE_TIMEOUT_MS;
         }
-        sendMsg(handler, 17, 0, 0, 0, str, z);
+        sendMsg(audioHandler, 17, 0, 0, 0, str, i);
         initA11yMonitoring();
         onIndicateSystemReady();
     }
@@ -3747,11 +3200,11 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             z = false;
         }
         this.mDockAudioMediaEnabled = z;
-        Handler handler = this.mAudioHandler;
+        AudioHandler audioHandler = this.mAudioHandler;
         if (this.mDockAudioMediaEnabled) {
             i = 8;
         }
-        sendMsg(handler, 8, 2, 3, i, new String("readDockAudioSettings"), 0);
+        sendMsg(audioHandler, 8, 2, 3, i, new String("readDockAudioSettings"), 0);
     }
 
     private void updateMasterMono(ContentResolver cr) {
@@ -3879,6 +3332,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
         this.mMuteAffectedStreams = System.getIntForUser(cr, "mute_streams_affected", 47, -2);
         updateMasterMono(cr);
+        updateDefaultStream();
         readPersistedSettingsEx(cr);
         broadcastRingerMode("android.media.RINGER_MODE_CHANGED", this.mRingerModeExternal);
         broadcastRingerMode("android.media.INTERNAL_RINGER_MODE_CHANGED_ACTION", this.mRingerMode);
@@ -3922,6 +3376,8 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         adjustSuggestedStreamVolume(direction, suggestedStreamType, flags, callingPackage, caller, Binder.getCallingUid());
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x0092  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void adjustSuggestedStreamVolume(int direction, int suggestedStreamType, int flags, String callingPackage, String caller, int uid) {
         int maybeActiveStreamType;
         int direction2;
@@ -3958,16 +3414,21 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             } else {
                 boolean activeForReal;
                 maybeActiveStreamType = getActiveStreamType(i);
-                if (maybeActiveStreamType == 2 || maybeActiveStreamType == 5) {
-                    activeForReal = wasStreamActiveRecently(maybeActiveStreamType, 0);
-                } else {
-                    activeForReal = AudioSystem.isStreamActive(maybeActiveStreamType, 0);
+                if (maybeActiveStreamType != 2) {
+                    if (maybeActiveStreamType != 5) {
+                        activeForReal = AudioSystem.isStreamActive(maybeActiveStreamType, 0);
+                        if (!activeForReal) {
+                            if (this.mVolumeControlStream != -1) {
+                                streamType = this.mVolumeControlStream;
+                            }
+                        }
+                        streamType = maybeActiveStreamType;
+                    }
                 }
-                if (activeForReal || this.mVolumeControlStream == -1) {
-                    streamType = maybeActiveStreamType;
-                } else {
-                    streamType = this.mVolumeControlStream;
+                activeForReal = wasStreamActiveRecently(maybeActiveStreamType, 0);
+                if (activeForReal) {
                 }
+                streamType = maybeActiveStreamType;
             }
             maybeActiveStreamType = streamType;
         }
@@ -4002,6 +3463,153 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         stringBuilder.append(callingPackage);
         Log.w(str, stringBuilder.toString());
     }
+
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x0288  */
+    /* JADX WARNING: Removed duplicated region for block: B:152:0x0297  */
+    /* JADX WARNING: Removed duplicated region for block: B:151:0x028d  */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x029d  */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x0260  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x0288  */
+    /* JADX WARNING: Removed duplicated region for block: B:151:0x028d  */
+    /* JADX WARNING: Removed duplicated region for block: B:152:0x0297  */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x029d  */
+    /* JADX WARNING: Removed duplicated region for block: B:80:0x0176  */
+    /* JADX WARNING: Removed duplicated region for block: B:193:0x02f7  */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x02e7  */
+    /* JADX WARNING: Removed duplicated region for block: B:209:0x0350  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    protected void adjustStreamVolume(int streamType, int direction, int flags, String callingPackage, String caller, int uid) {
+        int i;
+        int i2 = streamType;
+        boolean z = direction;
+        int i3 = flags;
+        if (checkEnbaleVolumeAdjust() && !this.mUseFixedVolume) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("adjustStreamVolume() stream=");
+            stringBuilder.append(i2);
+            stringBuilder.append(", dir=");
+            stringBuilder.append(z);
+            stringBuilder.append(", flags=");
+            stringBuilder.append(i3);
+            stringBuilder.append(", caller=");
+            stringBuilder.append(Binder.getCallingPid());
+            Log.d(str, stringBuilder.toString());
+            ensureValidDirection(z);
+            ensureValidStreamType(streamType);
+            boolean isMuteAdjust = isMuteAdjust(z);
+            if (isMuteAdjust && !isStreamAffectedByMute(streamType)) {
+                return;
+            }
+            if (isMuteAdjust && i2 == 0 && this.mContext.checkCallingOrSelfPermission("android.permission.MODIFY_PHONE_STATE") != 0) {
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("MODIFY_PHONE_STATE Permission Denial: adjustStreamVolume from pid=");
+                stringBuilder.append(Binder.getCallingPid());
+                stringBuilder.append(", uid=");
+                stringBuilder.append(Binder.getCallingUid());
+                Log.w(str, stringBuilder.toString());
+                return;
+            }
+            int streamTypeAlias = mStreamVolumeAlias[i2];
+            VolumeStreamState streamState = this.mStreamStates[streamTypeAlias];
+            int device = getDeviceForStream(streamTypeAlias);
+            boolean adjustVolume = streamState.getIndex(device);
+            boolean adjustVolume2 = true;
+            boolean persistVolume = false;
+            if ((device & 896) != 0 || (i3 & 64) == 0) {
+                int flags2;
+                int i4 = uid;
+                if (i4 == 1000) {
+                    flags2 = UserHandle.getUid(getCurrentUserId(), UserHandle.getAppId(uid));
+                } else {
+                    flags2 = i4;
+                }
+                int i5;
+                try {
+                    if (this.mAppOps.noteOp(STREAM_VOLUME_OPS[streamTypeAlias], flags2, callingPackage) == 0) {
+                        int flags3;
+                        int aliasIndex;
+                        boolean z2 = this.mSafeMediaVolumeState;
+                        synchronized (z2) {
+                            flags3 = 0;
+                            try {
+                                this.mPendingVolumeCommand = null;
+                            } finally {
+                                adjustVolume2 = 
+/*
+Method generation error in method: com.android.server.audio.AudioService.adjustStreamVolume(int, int, int, java.lang.String, java.lang.String, int):void, dex: 
+jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r15_13 'adjustVolume2' boolean) = (r15_0 'adjustVolume2' boolean), (r3_49 'z2' boolean) in method: com.android.server.audio.AudioService.adjustStreamVolume(int, int, int, java.lang.String, java.lang.String, int):void, dex: 
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:230)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:67)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:280)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
+	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
+	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
+	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
+	at jadx.core.codegen.ClassGen.addClassCode(ClassGen.java:111)
+	at jadx.core.codegen.ClassGen.makeClass(ClassGen.java:77)
+	at jadx.core.codegen.CodeGen.visit(CodeGen.java:10)
+	at jadx.core.ProcessClass.process(ProcessClass.java:38)
+	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
+	at jadx.api.JavaClass.decompile(JavaClass.java:62)
+	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
+Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only in fallback mode
+	at jadx.core.codegen.InsnGen.fallbackOnlyInsn(InsnGen.java:539)
+	at jadx.core.codegen.InsnGen.makeInsnBody(InsnGen.java:511)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:222)
+	... 62 more
+
+*/
 
     private void onUnmuteStream(int stream, int flags) {
         this.mStreamStates[stream].mute(false);
@@ -4105,7 +3713,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x002b, code:
+    /* JADX WARNING: Missing block: B:18:0x002b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4124,36 +3732,36 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:101:0x0174 A:{Catch:{ all -> 0x01c0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:97:0x015e A:{Catch:{ all -> 0x01c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:102:0x0174 A:{Catch:{ all -> 0x01c0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:98:0x015e A:{Catch:{ all -> 0x01c5 }} */
     /* JADX WARNING: Removed duplicated region for block: B:63:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0124 A:{Catch:{ all -> 0x00de }} */
-    /* JADX WARNING: Removed duplicated region for block: B:78:0x0129 A:{Catch:{ all -> 0x00de }} */
-    /* JADX WARNING: Removed duplicated region for block: B:85:0x013d A:{Catch:{ all -> 0x00de }} */
-    /* JADX WARNING: Removed duplicated region for block: B:97:0x015e A:{Catch:{ all -> 0x01c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:101:0x0174 A:{Catch:{ all -> 0x01c0 }} */
-    /* JADX WARNING: Missing block: B:104:0x018f, code:
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0124 A:{Catch:{ all -> 0x00de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x0129 A:{Catch:{ all -> 0x00de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:86:0x013d A:{Catch:{ all -> 0x00de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:98:0x015e A:{Catch:{ all -> 0x01c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:102:0x0174 A:{Catch:{ all -> 0x01c0 }} */
+    /* JADX WARNING: Missing block: B:105:0x018f, code skipped:
             if ((r16 & 1) == 0) goto L_0x0199;
      */
-    /* JADX WARNING: Missing block: B:106:0x0193, code:
+    /* JADX WARNING: Missing block: B:107:0x0193, code skipped:
             if (r7.mScreenOn != false) goto L_0x0199;
      */
-    /* JADX WARNING: Missing block: B:107:0x0195, code:
+    /* JADX WARNING: Missing block: B:108:0x0195, code skipped:
             r0 = r16 & -2;
      */
-    /* JADX WARNING: Missing block: B:108:0x0199, code:
+    /* JADX WARNING: Missing block: B:109:0x0199, code skipped:
             r0 = r16;
      */
-    /* JADX WARNING: Missing block: B:109:0x019b, code:
+    /* JADX WARNING: Missing block: B:110:0x019b, code skipped:
             sendVolumeUpdate(r8, r14, r15, r0);
      */
-    /* JADX WARNING: Missing block: B:110:0x01a0, code:
+    /* JADX WARNING: Missing block: B:111:0x01a0, code skipped:
             if (LOUD_VOICE_MODE_SUPPORT == false) goto L_0x01bf;
      */
-    /* JADX WARNING: Missing block: B:111:0x01a2, code:
+    /* JADX WARNING: Missing block: B:112:0x01a2, code skipped:
             sendMsg(r7.mAudioHandler, 10001, 0, 1, 0, new com.android.server.audio.AbsAudioService.DeviceVolumeState(r7, 0, r11, r14, r8), 0);
      */
-    /* JADX WARNING: Missing block: B:112:0x01bf, code:
+    /* JADX WARNING: Missing block: B:113:0x01bf, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4522,14 +4130,17 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             synchronized (this.mRmtSbmxFullVolDeathHandlers) {
                 boolean applyRequired = false;
                 if (startForcing) {
-                    if (!hasRmtSbmxFullVolDeathHandlerFor(cb)) {
-                        this.mRmtSbmxFullVolDeathHandlers.add(new RmtSbmxFullVolDeathHandler(cb));
-                        if (this.mRmtSbmxFullVolRefCount == 0) {
-                            this.mFullVolumeDevices |= 32768;
-                            this.mFixedVolumeDevices |= 32768;
-                            applyRequired = true;
+                    try {
+                        if (!hasRmtSbmxFullVolDeathHandlerFor(cb)) {
+                            this.mRmtSbmxFullVolDeathHandlers.add(new RmtSbmxFullVolDeathHandler(cb));
+                            if (this.mRmtSbmxFullVolRefCount == 0) {
+                                this.mFullVolumeDevices |= 32768;
+                                this.mFixedVolumeDevices |= 32768;
+                                applyRequired = true;
+                            }
+                            this.mRmtSbmxFullVolRefCount++;
                         }
-                        this.mRmtSbmxFullVolRefCount++;
+                    } catch (Throwable th) {
                     }
                 } else if (discardRmtSbmxFullVolDeathHandlerFor(cb) && this.mRmtSbmxFullVolRefCount > 0) {
                     this.mRmtSbmxFullVolRefCount--;
@@ -4692,19 +4303,19 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         int ringerMode = 0;
         int toastText = 0;
         int silenceRingerSetting = 0;
-        if (this.mContext.getResources().getBoolean(17957068)) {
+        if (this.mContext.getResources().getBoolean(17957069)) {
             silenceRingerSetting = Secure.getIntForUser(this.mContentResolver, "volume_hush_gesture", 0, -2);
         }
         switch (silenceRingerSetting) {
             case 1:
                 effect = VibrationEffect.get(5);
                 ringerMode = 1;
-                toastText = 17041322;
+                toastText = 17041323;
                 break;
             case 2:
                 effect = VibrationEffect.get(1);
                 ringerMode = 0;
-                toastText = 17041321;
+                toastText = 17041322;
                 break;
         }
         maybeVibrate(effect);
@@ -4982,17 +4593,32 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                 stringBuilder2.append(Binder.getCallingUid());
                 Log.w(str, stringBuilder2.toString());
             } else if (mode >= -1 && mode < 4) {
-                if (this.mMode == 2 && mode == 3 && this.mIsHisiPlatform) {
-                    str = TAG;
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("Forbid set MODE_IN_COMMUNICATION when current mode is MODE_IN_CALL from pid=");
-                    stringBuilder2.append(Binder.getCallingPid());
-                    stringBuilder2.append(", uid=");
-                    stringBuilder2.append(Binder.getCallingUid());
-                    Log.w(str, stringBuilder2.toString());
-                    return;
-                }
                 int newModeOwnerPid;
+                if (this.mMode == 2 && mode == 3 && this.mIsHisiPlatform) {
+                    synchronized (this.mSetModeDeathHandlers) {
+                        int pid = Binder.getCallingPid();
+                        boolean flag = true;
+                        Iterator iter = this.mSetModeDeathHandlers.iterator();
+                        while (iter.hasNext()) {
+                            SetModeDeathHandler h = (SetModeDeathHandler) iter.next();
+                            if (h.getPid() == pid && h.getMode() == 2) {
+                                flag = false;
+                                Log.w(TAG, "reset the mode by the same pid");
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            str = TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Forbid set MODE_IN_COMMUNICATION when current mode is MODE_IN_CALL from pid=");
+                            stringBuilder2.append(Binder.getCallingPid());
+                            stringBuilder2.append(", uid=");
+                            stringBuilder2.append(Binder.getCallingUid());
+                            Log.w(str, stringBuilder2.toString());
+                            return;
+                        }
+                    }
+                }
                 int oldModeOwnerPid = 0;
                 synchronized (this.mSetModeDeathHandlers) {
                     if (!this.mSetModeDeathHandlers.isEmpty()) {
@@ -5173,23 +4799,11 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x00b9, code:
+    /* JADX WARNING: Missing block: B:34:0x00b9, code skipped:
             if (r0 != null) goto L_0x00bb;
      */
-    /* JADX WARNING: Missing block: B:33:0x00bb, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:38:0x00c9, code:
+    /* JADX WARNING: Missing block: B:48:0x00df, code skipped:
             if (r0 == null) goto L_0x00e2;
-     */
-    /* JADX WARNING: Missing block: B:41:0x00d4, code:
-            if (r0 == null) goto L_0x00e2;
-     */
-    /* JADX WARNING: Missing block: B:44:0x00df, code:
-            if (r0 == null) goto L_0x00e2;
-     */
-    /* JADX WARNING: Missing block: B:45:0x00e2, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadTouchSoundAssets() {
@@ -5217,25 +4831,29 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                     while (inTouchSoundsGroup) {
                         XmlUtils.nextElement(parser);
                         element = parser.getName();
-                        if (element == null || !element.equals(TAG_ASSET)) {
-                            break;
-                        }
-                        String id = parser.getAttributeValue(null, ATTR_ASSET_ID);
-                        String file = parser.getAttributeValue(null, ATTR_ASSET_FILE);
-                        try {
-                            int fx = AudioManager.class.getField(id).getInt(null);
-                            int i = SOUND_EFFECT_FILES.indexOf(file);
-                            if (i == -1) {
-                                i = SOUND_EFFECT_FILES.size();
-                                SOUND_EFFECT_FILES.add(file);
+                        if (element != null) {
+                            if (!element.equals(TAG_ASSET)) {
+                                break;
                             }
-                            this.SOUND_EFFECT_FILES_MAP[fx][0] = i;
-                        } catch (Exception e) {
-                            String str = TAG;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("Invalid touch sound ID: ");
-                            stringBuilder.append(id);
-                            Log.w(str, stringBuilder.toString());
+                            String id = parser.getAttributeValue(null, ATTR_ASSET_ID);
+                            String file = parser.getAttributeValue(null, ATTR_ASSET_FILE);
+                            try {
+                                int fx = AudioManager.class.getField(id).getInt(null);
+                                int i = SOUND_EFFECT_FILES.indexOf(file);
+                                if (i == -1) {
+                                    i = SOUND_EFFECT_FILES.size();
+                                    SOUND_EFFECT_FILES.add(file);
+                                }
+                                this.SOUND_EFFECT_FILES_MAP[fx][0] = i;
+                            } catch (Exception e) {
+                                String str = TAG;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("Invalid touch sound ID: ");
+                                stringBuilder.append(id);
+                                Log.w(str, stringBuilder.toString());
+                            }
+                        } else {
+                            break;
                         }
                     }
                 }
@@ -5243,8 +4861,14 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                 Log.w(TAG, "audio assets file not found", e2);
             } catch (XmlPullParserException e3) {
                 Log.w(TAG, "XML parser exception reading touch sound assets", e3);
+                if (parser != null) {
+                    parser.close();
+                }
             } catch (IOException e4) {
                 Log.w(TAG, "I/O exception reading touch sound assets", e4);
+                if (parser != null) {
+                    parser.close();
+                }
             } catch (Throwable th) {
                 if (parser != null) {
                     parser.close();
@@ -5273,13 +4897,13 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0031, code:
+    /* JADX WARNING: Missing block: B:20:0x0031, code skipped:
             if (r1.mStatus != 0) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:31:?, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:33:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5415,7 +5039,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0059, code:
+    /* JADX WARNING: Missing block: B:13:0x0059, code skipped:
             r10.mForcedUseForComm = 3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5854,42 +5478,60 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             } else if (gainDB == this.mSafeUsbMediaVolumeDbfs) {
                 min = index;
                 break;
+            } else if (gainDB < this.mSafeUsbMediaVolumeDbfs) {
+                min = index;
             } else {
-                if (gainDB < this.mSafeUsbMediaVolumeDbfs) {
-                }
                 max = index;
             }
         }
         return min * 10;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0059  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void onConfigureSafeVolume(boolean force, String caller) {
         synchronized (this.mSafeMediaVolumeState) {
             int mcc = this.mContext.getResources().getConfiguration().mcc;
             if (this.mMcc != mcc || (this.mMcc == 0 && force)) {
+                boolean safeMediaVolumeEnabled;
+                boolean safeMediaVolumeBypass;
                 int persistedState;
                 this.mSafeMediaVolumeIndex = this.mContext.getResources().getInteger(17694852) * 10;
                 this.mSafeUsbMediaVolumeIndex = getSafeUsbMediaVolumeIndex();
-                boolean safeMediaVolumeEnabled = SystemProperties.getBoolean("audio.safemedia.force", false) || this.mContext.getResources().getBoolean(17957011);
-                boolean safeMediaVolumeBypass = SystemProperties.getBoolean("audio.safemedia.bypass", false);
-                if (usingHwSafeMediaConfig()) {
-                    this.mSafeMediaVolumeIndex = getHwSafeMediaVolumeIndex();
-                    safeMediaVolumeEnabled = isHwSafeMediaVolumeEnabled();
-                }
-                if (!safeMediaVolumeEnabled || safeMediaVolumeBypass) {
-                    this.mSafeMediaVolumeState = Integer.valueOf(1);
-                    persistedState = 1;
-                } else {
-                    persistedState = 3;
-                    if (this.mSafeMediaVolumeState.intValue() != 2) {
-                        if (this.mMusicActiveMs == 0) {
-                            this.mSafeMediaVolumeState = Integer.valueOf(3);
-                            enforceSafeMediaVolume(caller);
-                        } else {
-                            this.mSafeMediaVolumeState = Integer.valueOf(2);
+                if (!SystemProperties.getBoolean("audio.safemedia.force", false)) {
+                    if (!this.mContext.getResources().getBoolean(17957011)) {
+                        safeMediaVolumeEnabled = false;
+                        safeMediaVolumeBypass = SystemProperties.getBoolean("audio.safemedia.bypass", false);
+                        if (usingHwSafeMediaConfig()) {
+                            this.mSafeMediaVolumeIndex = getHwSafeMediaVolumeIndex();
+                            safeMediaVolumeEnabled = isHwSafeMediaVolumeEnabled();
                         }
+                        if (safeMediaVolumeEnabled || safeMediaVolumeBypass) {
+                            this.mSafeMediaVolumeState = Integer.valueOf(1);
+                            persistedState = 1;
+                        } else {
+                            persistedState = 3;
+                            if (this.mSafeMediaVolumeState.intValue() != 2) {
+                                if (this.mMusicActiveMs == 0) {
+                                    this.mSafeMediaVolumeState = Integer.valueOf(3);
+                                    enforceSafeMediaVolume(caller);
+                                } else {
+                                    this.mSafeMediaVolumeState = Integer.valueOf(2);
+                                }
+                            }
+                        }
+                        this.mMcc = mcc;
+                        sendMsg(this.mAudioHandler, 18, 2, persistedState, 0, null, 0);
                     }
                 }
+                safeMediaVolumeEnabled = true;
+                safeMediaVolumeBypass = SystemProperties.getBoolean("audio.safemedia.bypass", false);
+                if (usingHwSafeMediaConfig()) {
+                }
+                if (safeMediaVolumeEnabled) {
+                }
+                this.mSafeMediaVolumeState = Integer.valueOf(1);
+                persistedState = 1;
                 this.mMcc = mcc;
                 sendMsg(this.mAudioHandler, 18, 2, persistedState, 0, null, 0);
             }
@@ -6138,7 +5780,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                         return 5;
                     } else {
                         Log.v(TAG, "getActiveStreamType: Forcing DEFAULT_VOL_STREAM_NO_PLAYBACK(3) b/c default");
-                        return 3;
+                        return this.mDefaultVolStream;
                     }
                 } else if (wasStreamActiveRecently(5, sStreamOverrideDelayMs)) {
                     Log.v(TAG, "getActiveStreamType: Forcing STREAM_NOTIFICATION stream active");
@@ -6177,7 +5819,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
             return 2;
         } else {
             Log.v(TAG, "getActiveStreamType: Forcing DEFAULT_VOL_STREAM_NO_PLAYBACK(3) b/c default");
-            return 3;
+            return this.mDefaultVolStream;
         }
     }
 
@@ -6622,7 +6264,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x005f, code:
+    /* JADX WARNING: Missing block: B:19:0x005f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6658,7 +6300,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:51:0x018c, code:
+    /* JADX WARNING: Missing block: B:51:0x018c, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6838,15 +6480,14 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
         synchronized (this.mCurAudioRoutes) {
             if (connType != 0) {
-                int newConn = this.mCurAudioRoutes.mainType;
-                if (state != 0) {
-                    newConn |= connType;
-                } else {
-                    newConn &= ~connType;
-                }
-                if (newConn != this.mCurAudioRoutes.mainType) {
-                    this.mCurAudioRoutes.mainType = newConn;
-                    sendMsg(this.mAudioHandler, 12, 1, 0, 0, null, 0);
+                try {
+                    int newConn = this.mCurAudioRoutes.mainType;
+                    newConn = state != 0 ? newConn | connType : newConn & (~connType);
+                    if (newConn != this.mCurAudioRoutes.mainType) {
+                        this.mCurAudioRoutes.mainType = newConn;
+                        sendMsg(this.mAudioHandler, 12, 1, 0, 0, null, 0);
+                    }
+                } finally {
                 }
             }
         }
@@ -6927,7 +6568,10 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         Slog.i(str3, stringBuilder.toString());
         synchronized (this.mConnectedDevices) {
             if (i2 == 0 && (i & DEVICE_OVERRIDE_A2DP_ROUTE_ON_PLUG) != 0) {
-                setBluetoothA2dpOnInt(true, "onSetWiredDeviceConnectionState state 0");
+                try {
+                    setBluetoothA2dpOnInt(true, "onSetWiredDeviceConnectionState state 0");
+                } catch (Throwable th) {
+                }
             }
             if (handleDeviceConnection(i2 == 1, i, str, str2)) {
                 boolean z;
@@ -7090,7 +6734,7 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x003f, code:
+    /* JADX WARNING: Missing block: B:27:0x003f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7187,11 +6831,11 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
                         }
                         setRingerModeInt(getRingerModeInternal(), false);
                     }
-                    Handler handler = this.mAudioHandler;
+                    AudioHandler audioHandler = this.mAudioHandler;
                     if (cameraSoundForced) {
                         z = true;
                     }
-                    sendMsg(handler, 8, 2, 4, z, new String("handleConfigurationChanged"), 0);
+                    sendMsg(audioHandler, 8, 2, 4, z, new String("handleConfigurationChanged"), 0);
                     sendMsg(this.mAudioHandler, 10, 2, 0, 0, this.mStreamStates[7], 0);
                 }
             }
@@ -8021,9 +7665,12 @@ public class AudioService extends AbsAudioService implements TouchExplorationSta
     protected void onUserForeground(int userId) {
     }
 
+    protected void updateDefaultStream() {
+    }
+
     private boolean isHisiPlatform() {
         String platform = SystemProperties.get("ro.board.platform", Shell.NIGHT_MODE_STR_UNKNOWN);
-        if (platform == null || !platform.startsWith("hi")) {
+        if (platform == null || (!platform.startsWith("hi") && !platform.startsWith("kirin"))) {
             return false;
         }
         return true;

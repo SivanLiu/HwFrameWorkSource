@@ -63,7 +63,7 @@ final class WOTSPlus {
         } else if (i == 4 || i == 16) {
             int log2 = XMSSUtil.log2(i);
             if (i2 <= (bArr.length * 8) / log2) {
-                List<Integer> arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 for (byte b : bArr) {
                     for (int i3 = 8 - log2; i3 >= 0; i3 -= log2) {
                         arrayList.add(Integer.valueOf((b >> i3) & (i - 1)));

@@ -187,7 +187,7 @@ public abstract class Primes {
         return new BigInteger(1, bArr2);
     }
 
-    /* JADX WARNING: Missing block: B:106:0x0169, code:
+    /* JADX WARNING: Missing block: B:106:0x0169, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -378,7 +378,7 @@ public abstract class Primes {
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x0060, code:
+    /* JADX WARNING: Missing block: B:32:0x0060, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

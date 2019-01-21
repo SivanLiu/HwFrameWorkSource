@@ -233,32 +233,33 @@ public class MemoryUtils {
                         while (it.hasNext()) {
                             String filterStr = (String) it.next();
                             if (!TextUtils.isEmpty(filterStr)) {
-                                byte[] stringBytes = filterStr.getBytes("UTF-8");
                                 String str2;
                                 StringBuilder stringBuilder2;
-                                if (stringBytes.length < 1 || stringBytes.length > 255) {
-                                    str2 = TAG;
-                                    stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("setPackageProtectLru incorrect filterStr = ");
-                                    stringBuilder2.append(filterStr);
-                                    AwareLog.w(str2, stringBuilder2.toString());
-                                } else {
-                                    str2 = TAG;
-                                    stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("setPackageProtectLru filterStr = ");
-                                    stringBuilder2.append(filterStr);
-                                    AwareLog.d(str2, stringBuilder2.toString());
-                                    buffer.clear();
-                                    buffer.putInt(commandType);
-                                    buffer.putInt(isDir);
-                                    buffer.putInt(index);
-                                    buffer.putInt(stringBytes.length);
-                                    buffer.put(stringBytes);
-                                    buffer.putChar(0);
-                                    if (sendPacket(buffer) != 0) {
-                                        AwareLog.w(TAG, "setPackageProtectLru sendPacket failed");
+                                byte[] stringBytes = filterStr.getBytes("UTF-8");
+                                if (stringBytes.length >= 1) {
+                                    if (stringBytes.length <= 255) {
+                                        str2 = TAG;
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("setPackageProtectLru filterStr = ");
+                                        stringBuilder2.append(filterStr);
+                                        AwareLog.d(str2, stringBuilder2.toString());
+                                        buffer.clear();
+                                        buffer.putInt(commandType);
+                                        buffer.putInt(isDir);
+                                        buffer.putInt(index);
+                                        buffer.putInt(stringBytes.length);
+                                        buffer.put(stringBytes);
+                                        buffer.putChar(0);
+                                        if (sendPacket(buffer) != 0) {
+                                            AwareLog.w(TAG, "setPackageProtectLru sendPacket failed");
+                                        }
                                     }
                                 }
+                                str2 = TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("setPackageProtectLru incorrect filterStr = ");
+                                stringBuilder2.append(filterStr);
+                                AwareLog.w(str2, stringBuilder2.toString());
                             }
                         }
                         i++;
@@ -276,30 +277,32 @@ public class MemoryUtils {
         if (checkLimitConfigStr(lruConfigStr)) {
             ByteBuffer buffer = ByteBuffer.allocate(268);
             try {
-                byte[] stringBytes = lruConfigStr.getBytes("UTF-8");
                 String str;
                 StringBuilder stringBuilder;
-                if (stringBytes.length < 1 || stringBytes.length > 255) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("setProtectLruLimit incorrect config = ");
-                    stringBuilder.append(lruConfigStr);
-                    AwareLog.w(str, stringBuilder.toString());
-                    return;
+                byte[] stringBytes = lruConfigStr.getBytes("UTF-8");
+                if (stringBytes.length >= 1) {
+                    if (stringBytes.length <= 255) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("setProtectLruLimit configstr=");
+                        stringBuilder.append(lruConfigStr);
+                        AwareLog.d(str, stringBuilder.toString());
+                        buffer.clear();
+                        buffer.putInt(305);
+                        buffer.putInt(stringBytes.length);
+                        buffer.put(stringBytes);
+                        buffer.putChar(0);
+                        if (sendPacket(buffer) != 0) {
+                            AwareLog.w(TAG, "setProtectLruLimit sendPacket failed");
+                        }
+                        return;
+                    }
                 }
                 str = TAG;
                 stringBuilder = new StringBuilder();
-                stringBuilder.append("setProtectLruLimit configstr=");
+                stringBuilder.append("setProtectLruLimit incorrect config = ");
                 stringBuilder.append(lruConfigStr);
-                AwareLog.d(str, stringBuilder.toString());
-                buffer.clear();
-                buffer.putInt(305);
-                buffer.putInt(stringBytes.length);
-                buffer.put(stringBytes);
-                buffer.putChar(0);
-                if (sendPacket(buffer) != 0) {
-                    AwareLog.w(TAG, "setProtectLruLimit sendPacket failed");
-                }
+                AwareLog.w(str, stringBuilder.toString());
             } catch (UnsupportedEncodingException e) {
                 AwareLog.w(TAG, "setProtectLruLimit UTF-8 not supported?!?");
             }
@@ -429,36 +432,38 @@ public class MemoryUtils {
     public static void sendActivityDisplayedTime(String activityName, int pid, int time) {
         ByteBuffer buffer = ByteBuffer.allocate(276);
         try {
-            byte[] stringBytes = activityName.getBytes("UTF-8");
             String str;
             StringBuilder stringBuilder;
-            if (stringBytes.length < 1 || stringBytes.length > 255) {
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("sendActivityDisplayedTime incorrect activityName = ");
-                stringBuilder.append(activityName);
-                AwareLog.w(str, stringBuilder.toString());
-                return;
+            byte[] stringBytes = activityName.getBytes("UTF-8");
+            if (stringBytes.length >= 1) {
+                if (stringBytes.length <= 255) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("sendActivityDisplayedTime: ");
+                    stringBuilder.append(activityName);
+                    stringBuilder.append(" ");
+                    stringBuilder.append(pid);
+                    stringBuilder.append(" ");
+                    stringBuilder.append(time);
+                    AwareLog.d(str, stringBuilder.toString());
+                    buffer.clear();
+                    buffer.putInt(MemoryConstant.MSG_ACTIVITY_DISPLAY_STATISTICS);
+                    buffer.putInt(pid);
+                    buffer.putInt(time);
+                    buffer.putInt(stringBytes.length);
+                    buffer.put(stringBytes);
+                    buffer.putChar(0);
+                    if (sendPacket(buffer) != 0) {
+                        AwareLog.w(TAG, "sendActivityDisplayedTime sendPacket failed");
+                    }
+                    return;
+                }
             }
             str = TAG;
             stringBuilder = new StringBuilder();
-            stringBuilder.append("sendActivityDisplayedTime: ");
+            stringBuilder.append("sendActivityDisplayedTime incorrect activityName = ");
             stringBuilder.append(activityName);
-            stringBuilder.append(" ");
-            stringBuilder.append(pid);
-            stringBuilder.append(" ");
-            stringBuilder.append(time);
-            AwareLog.d(str, stringBuilder.toString());
-            buffer.clear();
-            buffer.putInt(MemoryConstant.MSG_ACTIVITY_DISPLAY_STATISTICS);
-            buffer.putInt(pid);
-            buffer.putInt(time);
-            buffer.putInt(stringBytes.length);
-            buffer.put(stringBytes);
-            buffer.putChar(0);
-            if (sendPacket(buffer) != 0) {
-                AwareLog.w(TAG, "sendActivityDisplayedTime sendPacket failed");
-            }
+            AwareLog.w(str, stringBuilder.toString());
         } catch (UnsupportedEncodingException e) {
             AwareLog.w(TAG, "sendActivityDisplayedTime UTF-8 not supported?!?");
         }
@@ -525,6 +530,16 @@ public class MemoryUtils {
         }
     }
 
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:4:0x0006, B:16:0x001e] */
+    /* JADX WARNING: Missing block: B:22:0x0034, code skipped:
+            android.rms.iaware.AwareLog.e(TAG, "mOutputStream write failed! happend IOException");
+            destroySocket();
+            r2 = r2 - 1;
+     */
+    /* JADX WARNING: Missing block: B:29:0x0040, code skipped:
+            continue;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static int sendPacket(ByteBuffer buffer) {
         synchronized (mLock) {
             if (buffer == null) {
@@ -537,16 +552,9 @@ public class MemoryUtils {
                     createSocket();
                 }
                 if (mOutputStream != null) {
-                    try {
-                        mOutputStream.write(buffer.array(), 0, buffer.position());
-                        flush(FLUSH_TIMEOUT);
-                        return 0;
-                    } catch (IOException e) {
-                        AwareLog.e(TAG, "mOutputStream write failed! happend IOException");
-                        destroySocket();
-                        retry--;
-                        continue;
-                    }
+                    mOutputStream.write(buffer.array(), 0, buffer.position());
+                    flush(FLUSH_TIMEOUT);
+                    return 0;
                 }
             } while (retry > 0);
             return -1;

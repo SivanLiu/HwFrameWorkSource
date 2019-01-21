@@ -10,12 +10,12 @@ public abstract class ASN1TaggedObject extends ASN1Primitive implements ASN1Tagg
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:9:0x0025 in {2, 3, 7, 8} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -38,19 +38,14 @@ public abstract class ASN1TaggedObject extends ASN1Primitive implements ASN1Tagg
         r2.obj = r1;
         r1 = r5 instanceof org.bouncycastle.asn1.ASN1Choice;
         if (r1 == 0) goto L_0x0013;
-    L_0x0010:
         r2.explicit = r0;
         goto L_0x0015;
-    L_0x0013:
         r2.explicit = r3;
-    L_0x0015:
         r2.tagNo = r4;
         r3 = r2.explicit;
         if (r3 == 0) goto L_0x001e;
-    L_0x001b:
         r2.obj = r5;
         return;
-    L_0x001e:
         r3 = r5.toASN1Primitive();
         r3 = r3 instanceof org.bouncycastle.asn1.ASN1Set;
         goto L_0x001b;
@@ -87,7 +82,7 @@ public abstract class ASN1TaggedObject extends ASN1Primitive implements ASN1Tagg
         throw new IllegalArgumentException("implicitly tagged tagged object");
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0039, code:
+    /* JADX WARNING: Missing block: B:20:0x0039, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

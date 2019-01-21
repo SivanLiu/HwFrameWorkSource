@@ -25,7 +25,7 @@ public class TBSCertificate extends ASN1Object {
 
     private TBSCertificate(ASN1Sequence aSN1Sequence) {
         int i;
-        boolean z;
+        int i2;
         this.seq = aSN1Sequence;
         if (aSN1Sequence.getObjectAt(0) instanceof ASN1TaggedObject) {
             this.version = ASN1Integer.getInstance((ASN1TaggedObject) aSN1Sequence.getObjectAt(0), true);
@@ -34,16 +34,16 @@ public class TBSCertificate extends ASN1Object {
             this.version = new ASN1Integer(0);
             i = -1;
         }
-        boolean z2;
+        boolean z;
         if (this.version.getValue().equals(BigInteger.valueOf(0))) {
-            z = false;
-            z2 = true;
-        } else if (this.version.getValue().equals(BigInteger.valueOf(1))) {
-            z2 = false;
+            i2 = 0;
             z = true;
+        } else if (this.version.getValue().equals(BigInteger.valueOf(1))) {
+            z = false;
+            i2 = true;
         } else if (this.version.getValue().equals(BigInteger.valueOf(2))) {
-            z2 = false;
-            z = z2;
+            z = false;
+            i2 = z;
         } else {
             throw new IllegalArgumentException("version number not recognised");
         }
@@ -57,7 +57,7 @@ public class TBSCertificate extends ASN1Object {
         i += 6;
         this.subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(aSN1Sequence.getObjectAt(i));
         int size = (aSN1Sequence.size() - i) - 1;
-        if (size == 0 || !z2) {
+        if (size == 0 || !z) {
             while (size > 0) {
                 ASN1TaggedObject aSN1TaggedObject = (ASN1TaggedObject) aSN1Sequence.getObjectAt(i + size);
                 switch (aSN1TaggedObject.getTagNo()) {
@@ -68,7 +68,7 @@ public class TBSCertificate extends ASN1Object {
                         this.subjectUniqueId = DERBitString.getInstance(aSN1TaggedObject, false);
                         break;
                     case 3:
-                        if (!z) {
+                        if (i2 == 0) {
                             this.extensions = Extensions.getInstance(ASN1Sequence.getInstance(aSN1TaggedObject, true));
                             break;
                         }

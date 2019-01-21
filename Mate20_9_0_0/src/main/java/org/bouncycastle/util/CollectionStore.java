@@ -15,7 +15,7 @@ public class CollectionStore<T> implements Store<T>, Iterable<T> {
         if (selector == null) {
             return new ArrayList(this._local);
         }
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (Object next : this._local) {
             if (selector.match(next)) {
                 arrayList.add(next);

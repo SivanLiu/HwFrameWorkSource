@@ -80,11 +80,14 @@ class HsmDataCache {
         synchronized (this.mStartupSetting) {
             HwAppStartupSetting setting;
             if (pkgList == null) {
-                for (Entry<String, HwAppStartupSetting> entry : this.mStartupSetting.entrySet()) {
-                    setting = (HwAppStartupSetting) entry.getValue();
-                    if (filterAppStartupSetting(setting, policy, modifier, show)) {
-                        settingList.add(new HwAppStartupSetting(setting));
+                try {
+                    for (Entry<String, HwAppStartupSetting> entry : this.mStartupSetting.entrySet()) {
+                        setting = (HwAppStartupSetting) entry.getValue();
+                        if (filterAppStartupSetting(setting, policy, modifier, show)) {
+                            settingList.add(new HwAppStartupSetting(setting));
+                        }
                     }
+                } catch (Throwable th) {
                 }
             } else {
                 for (String pkg : pkgList) {
@@ -195,7 +198,7 @@ class HsmDataCache {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

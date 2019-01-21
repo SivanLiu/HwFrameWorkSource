@@ -448,47 +448,47 @@ public class AwareUserHabit {
         return this.mAwareHSMListHandler.getAllUnProtectSet();
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0037, code:
+    /* JADX WARNING: Missing block: B:14:0x0037, code skipped:
             r0 = r1.mAwareUserHabitAlgorithm.getForceProtectAppsFromHabitProtect(r8, r9, r6);
             r5.addAll(r0);
             r6.addAll(r0);
             r11 = r1.mAwareUserHabitAlgorithm.getMostFrequentUsedApp(r10, -1, r6);
      */
-    /* JADX WARNING: Missing block: B:15:0x004a, code:
+    /* JADX WARNING: Missing block: B:15:0x004a, code skipped:
             if (r11 == null) goto L_0x0058;
      */
-    /* JADX WARNING: Missing block: B:17:0x0050, code:
+    /* JADX WARNING: Missing block: B:17:0x0050, code skipped:
             if (r11.size() <= 0) goto L_0x0058;
      */
-    /* JADX WARNING: Missing block: B:18:0x0052, code:
+    /* JADX WARNING: Missing block: B:18:0x0052, code skipped:
             r5.addAll(r11);
             r6.addAll(r11);
      */
-    /* JADX WARNING: Missing block: B:19:0x0058, code:
+    /* JADX WARNING: Missing block: B:19:0x0058, code skipped:
             r13 = r1.mAwareUserHabitAlgorithm.getForceProtectAppsFromLRU(com.android.server.rms.iaware.appmng.AwareAppAssociate.getInstance().getDefaultHomePackages(), r7);
      */
-    /* JADX WARNING: Missing block: B:20:0x0066, code:
+    /* JADX WARNING: Missing block: B:20:0x0066, code skipped:
             if (r13 == null) goto L_0x0088;
      */
-    /* JADX WARNING: Missing block: B:22:0x006c, code:
+    /* JADX WARNING: Missing block: B:22:0x006c, code skipped:
             if (r13.size() <= 0) goto L_0x0088;
      */
-    /* JADX WARNING: Missing block: B:23:0x006e, code:
+    /* JADX WARNING: Missing block: B:23:0x006e, code skipped:
             r14 = r13.iterator();
      */
-    /* JADX WARNING: Missing block: B:25:0x0076, code:
+    /* JADX WARNING: Missing block: B:25:0x0076, code skipped:
             if (r14.hasNext() == false) goto L_0x0088;
      */
-    /* JADX WARNING: Missing block: B:26:0x0078, code:
+    /* JADX WARNING: Missing block: B:26:0x0078, code skipped:
             r15 = (java.lang.String) r14.next();
      */
-    /* JADX WARNING: Missing block: B:27:0x0082, code:
+    /* JADX WARNING: Missing block: B:27:0x0082, code skipped:
             if (r6.contains(r15) != false) goto L_0x0087;
      */
-    /* JADX WARNING: Missing block: B:28:0x0084, code:
+    /* JADX WARNING: Missing block: B:28:0x0084, code skipped:
             r5.add(r15);
      */
-    /* JADX WARNING: Missing block: B:30:0x0088, code:
+    /* JADX WARNING: Missing block: B:30:0x0088, code skipped:
             r14 = TAG;
             r15 = new java.lang.StringBuilder();
             r17 = r0;
@@ -500,7 +500,7 @@ public class AwareUserHabit {
             r15.append(r5);
             android.rms.iaware.AwareLog.d(r14, r15.toString());
      */
-    /* JADX WARNING: Missing block: B:31:0x00b2, code:
+    /* JADX WARNING: Missing block: B:31:0x00b2, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -604,10 +604,10 @@ public class AwareUserHabit {
         return this.mAppMngLastPkgName;
     }
 
-    /* JADX WARNING: Missing block: B:40:0x0150, code:
+    /* JADX WARNING: Missing block: B:40:0x0150, code skipped:
             return r19;
      */
-    /* JADX WARNING: Missing block: B:44:0x0157, code:
+    /* JADX WARNING: Missing block: B:44:0x0157, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

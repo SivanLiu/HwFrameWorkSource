@@ -31,7 +31,7 @@ public class WifiEapUIManager {
     }
 
     public void showDialog(int errorcode) {
-        showDialog(Resources.getSystem().getString(33686180), getMessage(errorcode));
+        showDialog(Resources.getSystem().getString(33686183), getMessage(errorcode));
     }
 
     private String getMessage(int errorcode) {

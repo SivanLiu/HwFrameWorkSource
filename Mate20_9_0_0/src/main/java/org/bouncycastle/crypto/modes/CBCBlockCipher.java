@@ -74,7 +74,7 @@ public class CBCBlockCipher implements BlockCipher {
         this.encrypting = z;
         if (cipherParameters instanceof ParametersWithIV) {
             ParametersWithIV parametersWithIV = (ParametersWithIV) cipherParameters;
-            Object iv = parametersWithIV.getIV();
+            byte[] iv = parametersWithIV.getIV();
             if (iv.length == this.blockSize) {
                 System.arraycopy(iv, 0, this.IV, 0, iv.length);
                 reset();

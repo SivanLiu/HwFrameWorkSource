@@ -335,10 +335,15 @@ public class UsbDeviceManager extends AbsUsbDeviceManager implements ScreenObser
             } else {
                 this.mScreenUnlockedFunctions = UsbManager.usbFunctionsFromString(this.mSettings.getString(String.format(Locale.ENGLISH, UsbDeviceManager.UNLOCKED_CONFIG_PREF, new Object[]{Integer.valueOf(this.mCurrentUser)}), BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS));
             }
-            StorageVolume primary = StorageManager.from(this.mContext).getPrimaryVolume();
-            boolean z = primary != null && primary.allowMassStorage();
-            z = !z && this.mContext.getResources().getBoolean(17957055);
-            this.mUseUsbNotification = z;
+            boolean massStorageSupported = false;
+            StorageManager storageManager = StorageManager.from(this.mContext);
+            if (storageManager != null) {
+                StorageVolume primary = storageManager.getPrimaryVolume();
+                boolean z = primary != null && primary.allowMassStorage();
+                massStorageSupported = z;
+            }
+            massStorageSupported = !massStorageSupported && this.mContext.getResources().getBoolean(17957056);
+            this.mUseUsbNotification = massStorageSupported;
             try {
                 if (System.getInt(this.mContentResolver, "hdb_enabled", 0) > 0) {
                     this.settingsHdbEnabled = true;
@@ -1087,7 +1092,7 @@ public class UsbDeviceManager extends AbsUsbDeviceManager implements ScreenObser
                 }
                 if (!this.mHideUsbNotification || this.mSupportsAllCombinations) {
                     Resources r = this.mContext.getResources();
-                    CharSequence message = r.getText(17041283);
+                    CharSequence message = r.getText(17041284);
                     if (!this.mAudioAccessoryConnected || this.mAudioAccessorySupported) {
                         if (this.mConnected) {
                             if (!(this.mCurrentFunctions == 4 || this.mCurrentFunctions == 16 || this.mCurrentFunctions == 8 || this.mCurrentFunctions == 32)) {
@@ -1107,7 +1112,7 @@ public class UsbDeviceManager extends AbsUsbDeviceManager implements ScreenObser
                             String channel;
                             CharSequence title = r.getText(0);
                             PendingIntent pi;
-                            if (null != 17041302) {
+                            if (null != 17041303) {
                                 pi = PendingIntent.getActivityAsUser(this.mContext, 0, Intent.makeRestartActivityTask(new ComponentName("com.android.settings", "com.android.settings.Settings$UsbDetailsActivity")), 0, null, UserHandle.CURRENT);
                                 channel = SystemNotificationChannels.USB;
                             } else {
@@ -1120,10 +1125,10 @@ public class UsbDeviceManager extends AbsUsbDeviceManager implements ScreenObser
                                     pi = null;
                                 }
                                 channel = SystemNotificationChannels.ALERTS;
-                                message = r.getText(17041301);
+                                message = r.getText(17041302);
                             }
                             Builder builder = new Builder(this.mContext, channel).setSmallIcon(17303482).setWhen(0).setOngoing(true).setTicker(title).setDefaults(0).setColor(this.mContext.getColor(17170784)).setContentTitle(title).setContentText(message).setVisibility(1);
-                            if (null == 17041302) {
+                            if (null == 17041303) {
                                 builder.setStyle(new BigTextStyle().bigText(message));
                             }
                             this.mNotificationManager.notifyAsUser(null, 0, builder.build(), UserHandle.ALL);
@@ -1494,7 +1499,7 @@ public class UsbDeviceManager extends AbsUsbDeviceManager implements ScreenObser
                     return;
                 case 17:
                     if (msg.arg1 != 1) {
-                        setEnabledFunctions(0, this.mAdbEnabled ^ true);
+                        setEnabledFunctions(0, this.mAdbEnabled ^ 1);
                         return;
                     }
                     return;
@@ -2057,7 +2062,12 @@ public class UsbDeviceManager extends AbsUsbDeviceManager implements ScreenObser
         };
         BroadcastReceiver hostReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                Object devices = ((UsbManager) context.getSystemService("usb")).getDeviceList().entrySet().iterator();
+                UsbManager usbManager = (UsbManager) context.getSystemService("usb");
+                if (usbManager == null) {
+                    Slog.e(UsbDeviceManager.TAG, "usbManager is null, return!!");
+                    return;
+                }
+                Object devices = usbManager.getDeviceList().entrySet().iterator();
                 if (intent.getAction().equals("android.hardware.usb.action.USB_DEVICE_ATTACHED")) {
                     UsbDeviceManager.this.mHandler.sendMessage(10, devices, true);
                 } else {

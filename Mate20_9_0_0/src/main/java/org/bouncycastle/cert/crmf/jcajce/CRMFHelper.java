@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.crmf.jcajce;
 
+import java.io.IOException;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
@@ -85,18 +86,18 @@ class CRMFHelper {
     static Object execute(JCECallback jCECallback) throws CRMFException {
         try {
             return jCECallback.doInJCE();
-        } catch (Throwable e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new CRMFException("can't find algorithm.", e);
-        } catch (Throwable e2) {
+        } catch (InvalidKeyException e2) {
             throw new CRMFException("key invalid in message.", e2);
-        } catch (Throwable e22) {
-            throw new CRMFException("can't find provider.", e22);
-        } catch (Throwable e222) {
-            throw new CRMFException("required padding not supported.", e222);
-        } catch (Throwable e2222) {
-            throw new CRMFException("algorithm parameters invalid.", e2222);
-        } catch (Throwable e22222) {
-            throw new CRMFException("MAC algorithm parameter spec invalid.", e22222);
+        } catch (NoSuchProviderException e3) {
+            throw new CRMFException("can't find provider.", e3);
+        } catch (NoSuchPaddingException e4) {
+            throw new CRMFException("required padding not supported.", e4);
+        } catch (InvalidAlgorithmParameterException e5) {
+            throw new CRMFException("algorithm parameters invalid.", e5);
+        } catch (InvalidParameterSpecException e6) {
+            throw new CRMFException("MAC algorithm parameter spec invalid.", e6);
         }
     }
 
@@ -132,7 +133,7 @@ class CRMFHelper {
                 }
             }
             return this.helper.createCipher(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create cipher: ");
             stringBuilder.append(e2.getMessage());
@@ -152,7 +153,7 @@ class CRMFHelper {
                         AlgorithmParametersUtils.loadParameters(createAlgorithmParameters, aSN1Primitive);
                         createCipher.init(2, key, createAlgorithmParameters);
                         return createCipher;
-                    } catch (Throwable e) {
+                    } catch (IOException e) {
                         throw new CRMFException("error decoding algorithm parameters.", e);
                     } catch (NoSuchAlgorithmException e2) {
                         if (algorithm.equals(CMSAlgorithm.DES_EDE3_CBC) || algorithm.equals(CMSAlgorithm.IDEA_CBC) || algorithm.equals(CMSAlgorithm.AES128_CBC) || algorithm.equals(CMSAlgorithm.AES192_CBC) || algorithm.equals(CMSAlgorithm.AES256_CBC)) {
@@ -182,7 +183,7 @@ class CRMFHelper {
                 }
             }
             return this.helper.createDigest(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create cipher: ");
             stringBuilder.append(e2.getMessage());
@@ -200,7 +201,7 @@ class CRMFHelper {
                 }
             }
             return this.helper.createKeyFactory(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create cipher: ");
             stringBuilder.append(e2.getMessage());
@@ -218,7 +219,7 @@ class CRMFHelper {
                 }
             }
             return this.helper.createKeyGenerator(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key generator: ");
             stringBuilder.append(e2.getMessage());
@@ -236,7 +237,7 @@ class CRMFHelper {
                 }
             }
             return this.helper.createMac(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create mac: ");
             stringBuilder.append(e2.getMessage());
@@ -254,14 +255,14 @@ class CRMFHelper {
                 createAlgorithmParameterGenerator.init(new RC2ParameterSpec(secretKey.getEncoded().length * 8, bArr), secureRandom);
             }
             return createAlgorithmParameterGenerator.generateParameters();
-        } catch (Throwable e) {
+        } catch (InvalidAlgorithmParameterException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("parameters generation error: ");
             stringBuilder.append(e);
             throw new CRMFException(stringBuilder.toString(), e);
         } catch (NoSuchAlgorithmException e2) {
             return null;
-        } catch (Throwable e3) {
+        } catch (GeneralSecurityException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception creating algorithm parameter generator: ");
             stringBuilder.append(e3);
@@ -274,7 +275,7 @@ class CRMFHelper {
         if (algorithmParameters != null) {
             try {
                 extractParameters = AlgorithmParametersUtils.extractParameters(algorithmParameters);
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("cannot encode parameters: ");
                 stringBuilder.append(e.getMessage());
@@ -288,7 +289,7 @@ class CRMFHelper {
     PublicKey toPublicKey(SubjectPublicKeyInfo subjectPublicKeyInfo) throws CRMFException {
         try {
             return createKeyFactory(subjectPublicKeyInfo.getAlgorithm().getAlgorithm()).generatePublic(new X509EncodedKeySpec(subjectPublicKeyInfo.getEncoded()));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("invalid key: ");
             stringBuilder.append(e.getMessage());

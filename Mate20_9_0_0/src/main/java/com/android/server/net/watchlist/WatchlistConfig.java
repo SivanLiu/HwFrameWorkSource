@@ -68,33 +68,42 @@ class WatchlistConfig {
         reloadConfig();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x008e A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x009d A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x0099 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:33:0x0095 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x0091 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x008e A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x009d A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x0099 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:33:0x0095 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x0091 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x008e A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x009d A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x0099 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:33:0x0095 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x0091 A:{Catch:{ all -> 0x00f0, Throwable -> 0x00fa, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103, IllegalStateException -> 0x0103 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0103 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0103 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0103 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0103 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0103 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:22:0x0072, code:
-            if (r7.equals("sha256-ip") != false) goto L_0x008b;
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x008e A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009d A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x0099 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x0095 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x0091 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x008e A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009d A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x0099 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x0095 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x0091 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x008e A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009d A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x0099 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x0095 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x0091 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x008e A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009d A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x0099 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x0095 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x0091 A:{Catch:{ all -> 0x00f0, IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException -> 0x0103 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0103 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_3 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0103 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_3 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0103 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_3 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0103 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_3 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0103 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_3 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:50:0x00fa, code skipped:
+            r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:53:0x0103, code:
+    /* JADX WARNING: Missing block: B:52:?, code skipped:
+            r1.addSuppressed(r3);
+     */
+    /* JADX WARNING: Missing block: B:55:0x0103, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:54:0x0104, code:
+    /* JADX WARNING: Missing block: B:56:0x0104, code skipped:
             android.util.Slog.e(TAG, "Failed parsing xml", r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -148,8 +157,23 @@ class WatchlistConfig {
                                         break;
                                 }
                             }
-                        } else if (hashCode != 835385997) {
-                            if (hashCode == 1718657537 && tagName.equals("crc32-ip")) {
+                        } else if (hashCode == 835385997) {
+                            if (tagName.equals("sha256-ip")) {
+                                switch (i) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        break;
+                                    case 2:
+                                        break;
+                                    case 3:
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        } else if (hashCode == 1718657537) {
+                            if (tagName.equals("crc32-ip")) {
                                 i = 1;
                                 switch (i) {
                                     case 0:
@@ -196,9 +220,13 @@ class WatchlistConfig {
                     stream.close();
                     return;
                 }
-            } catch (Exception e) {
+            } catch (IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e) {
             } catch (Throwable th) {
-                r1.addSuppressed(th);
+                if (r1 != null) {
+                    stream.close();
+                } else {
+                    stream.close();
+                }
             }
         }
     }
@@ -257,24 +285,15 @@ class WatchlistConfig {
         return this.mIsSecureConfig;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0011 A:{Splitter: B:3:0x000a, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0011, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:7:0x0012, code:
-            android.util.Log.e(TAG, "Unable to get watchlist config hash", r0);
-     */
-    /* JADX WARNING: Missing block: B:8:0x0019, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public byte[] getWatchlistConfigHash() {
         if (!this.mXmlFile.exists()) {
             return null;
         }
         try {
             return DigestUtils.getSha256Hash(this.mXmlFile);
-        } catch (Exception e) {
+        } catch (IOException | NoSuchAlgorithmException e) {
+            Log.e(TAG, "Unable to get watchlist config hash", e);
+            return null;
         }
     }
 

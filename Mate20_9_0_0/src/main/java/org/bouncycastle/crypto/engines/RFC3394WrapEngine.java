@@ -54,33 +54,33 @@ public class RFC3394WrapEngine implements Wrapper {
         }
         int i3 = i2 / 8;
         if (i3 * 8 == i2) {
-            Object obj = new byte[(i2 - this.iv.length)];
-            Object obj2 = new byte[this.iv.length];
-            Object obj3 = new byte[(this.iv.length + 8)];
-            System.arraycopy(bArr, i, obj2, 0, this.iv.length);
-            System.arraycopy(bArr, i + this.iv.length, obj, 0, i2 - this.iv.length);
-            this.engine.init(this.wrapCipherMode ^ true, this.param);
+            byte[] bArr2 = new byte[(i2 - this.iv.length)];
+            byte[] bArr3 = new byte[this.iv.length];
+            byte[] bArr4 = new byte[(this.iv.length + 8)];
+            System.arraycopy(bArr, i, bArr3, 0, this.iv.length);
+            System.arraycopy(bArr, i + this.iv.length, bArr2, 0, i2 - this.iv.length);
+            this.engine.init(this.wrapCipherMode ^ 1, this.param);
             i3--;
             for (int i4 = 5; i4 >= 0; i4--) {
                 for (i = i3; i >= 1; i--) {
-                    System.arraycopy(obj2, 0, obj3, 0, this.iv.length);
+                    System.arraycopy(bArr3, 0, bArr4, 0, this.iv.length);
                     int i5 = (i - 1) * 8;
-                    System.arraycopy(obj, i5, obj3, this.iv.length, 8);
+                    System.arraycopy(bArr2, i5, bArr4, this.iv.length, 8);
                     int i6 = (i3 * i4) + i;
                     int i7 = 1;
                     while (i6 != 0) {
                         int length = this.iv.length - i7;
-                        obj3[length] = (byte) (((byte) i6) ^ obj3[length]);
+                        bArr4[length] = (byte) (((byte) i6) ^ bArr4[length]);
                         i6 >>>= 8;
                         i7++;
                     }
-                    this.engine.processBlock(obj3, 0, obj3, 0);
-                    System.arraycopy(obj3, 0, obj2, 0, 8);
-                    System.arraycopy(obj3, 8, obj, i5, 8);
+                    this.engine.processBlock(bArr4, 0, bArr4, 0);
+                    System.arraycopy(bArr4, 0, bArr3, 0, 8);
+                    System.arraycopy(bArr4, 8, bArr2, i5, 8);
                 }
             }
-            if (Arrays.constantTimeAreEqual(obj2, this.iv)) {
-                return obj;
+            if (Arrays.constantTimeAreEqual(bArr3, this.iv)) {
+                return bArr2;
             }
             throw new InvalidCipherTextException("checksum failed");
         }
@@ -91,30 +91,30 @@ public class RFC3394WrapEngine implements Wrapper {
         if (this.forWrapping) {
             int i3 = i2 / 8;
             if (i3 * 8 == i2) {
-                Object obj = new byte[(this.iv.length + i2)];
-                Object obj2 = new byte[(this.iv.length + 8)];
-                System.arraycopy(this.iv, 0, obj, 0, this.iv.length);
-                System.arraycopy(bArr, i, obj, this.iv.length, i2);
+                byte[] bArr2 = new byte[(this.iv.length + i2)];
+                byte[] bArr3 = new byte[(this.iv.length + 8)];
+                System.arraycopy(this.iv, 0, bArr2, 0, this.iv.length);
+                System.arraycopy(bArr, i, bArr2, this.iv.length, i2);
                 this.engine.init(this.wrapCipherMode, this.param);
                 for (int i4 = 0; i4 != 6; i4++) {
                     for (i2 = 1; i2 <= i3; i2++) {
-                        System.arraycopy(obj, 0, obj2, 0, this.iv.length);
+                        System.arraycopy(bArr2, 0, bArr3, 0, this.iv.length);
                         int i5 = 8 * i2;
-                        System.arraycopy(obj, i5, obj2, this.iv.length, 8);
-                        this.engine.processBlock(obj2, 0, obj2, 0);
+                        System.arraycopy(bArr2, i5, bArr3, this.iv.length, 8);
+                        this.engine.processBlock(bArr3, 0, bArr3, 0);
                         int i6 = (i3 * i4) + i2;
                         int i7 = 1;
                         while (i6 != 0) {
                             int length = this.iv.length - i7;
-                            obj2[length] = (byte) (((byte) i6) ^ obj2[length]);
+                            bArr3[length] = (byte) (((byte) i6) ^ bArr3[length]);
                             i6 >>>= 8;
                             i7++;
                         }
-                        System.arraycopy(obj2, 0, obj, 0, 8);
-                        System.arraycopy(obj2, 8, obj, i5, 8);
+                        System.arraycopy(bArr3, 0, bArr2, 0, 8);
+                        System.arraycopy(bArr3, 8, bArr2, i5, 8);
                     }
                 }
-                return obj;
+                return bArr2;
             }
             throw new DataLengthException("wrap data must be a multiple of 8 bytes");
         }

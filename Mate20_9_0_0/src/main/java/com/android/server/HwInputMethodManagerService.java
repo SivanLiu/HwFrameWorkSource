@@ -32,6 +32,7 @@ import com.android.server.wifipro.WifiProCommonUtils;
 import huawei.android.view.inputmethod.HwSecImmHelper;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
@@ -165,8 +166,7 @@ public class HwInputMethodManagerService extends InputMethodManagerService {
                 if (context.createPackageContext(imi.getPackageName(), 0).getResources().getBoolean(imi.getIsDefaultResourceId()) && containsSubtypeOf(imi, context.getResources().getConfiguration().locale.getLanguage())) {
                     return true;
                 }
-            } catch (NameNotFoundException e) {
-            } catch (NotFoundException e2) {
+            } catch (NameNotFoundException | NotFoundException e) {
             }
         }
         if (imi.getSubtypeCount() == 0) {
@@ -526,35 +526,24 @@ public class HwInputMethodManagerService extends InputMethodManagerService {
         return defValue;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0041 A:{ExcHandler: java.lang.ClassNotFoundException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0001} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0041 A:{ExcHandler: java.lang.ClassNotFoundException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0001} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0041 A:{ExcHandler: java.lang.ClassNotFoundException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0001} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0041 A:{ExcHandler: java.lang.ClassNotFoundException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0001} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0041 A:{ExcHandler: java.lang.ClassNotFoundException (r1_3 'e' java.lang.Exception), Splitter: B:1:0x0001} */
-    /* JADX WARNING: Missing block: B:6:0x0041, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:7:0x0042, code:
-            r2 = TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("isTrikeyExist, reflect method handle, and has exception: ");
-            r3.append(r1);
-            android.util.Slog.e(r2, r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:10:?, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean isTrikeyExist() {
+        String str;
+        StringBuilder stringBuilder;
         try {
             Class clazz = Class.forName("huawei.android.os.HwGeneralManager");
             return ((Boolean) clazz.getDeclaredMethod("isSupportTrikey", null).invoke(clazz.getDeclaredMethod(WifiProCHRManager.LOG_GET_INSTANCE_API_NAME, null).invoke(clazz, (Object[]) null), (Object[]) null)).booleanValue();
-        } catch (Exception e) {
-        } catch (Exception ex) {
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | NullPointerException | InvocationTargetException e) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("isTrikeyExist, reflect method handle, and has exception: ");
+            stringBuilder.append(e);
+            Slog.e(str, stringBuilder.toString());
+            return false;
+        } catch (Exception e2) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("isTrikeyExist, other exception: ");
-            stringBuilder.append(ex);
+            stringBuilder.append(e2);
             Slog.e(str, stringBuilder.toString());
             return false;
         }

@@ -124,15 +124,6 @@ final class PersistentDataStore {
         this.mParentalControlsEnabled = false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0023 A:{Splitter: B:3:0x000b, ExcHandler: java.io.IOException (r1_1 'ex' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0023, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:?, code:
-            android.util.Slog.w(TAG, "Failed to load tv input manager persistent store data.", r1);
-            clearState();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void load() {
         clearState();
         try {
@@ -141,7 +132,9 @@ final class PersistentDataStore {
                 XmlPullParser parser = Xml.newPullParser();
                 parser.setInput(new BufferedInputStream(is), StandardCharsets.UTF_8.name());
                 loadFromXml(parser);
-            } catch (Exception ex) {
+            } catch (IOException | XmlPullParserException ex) {
+                Slog.w(TAG, "Failed to load tv input manager persistent store data.", ex);
+                clearState();
             } catch (Throwable th) {
                 IoUtils.closeQuietly(is);
             }
@@ -166,9 +159,9 @@ final class PersistentDataStore {
             if (true) {
                 this.mAtomicFile.finishWrite(os);
                 broadcastChangesIfNeeded();
-                return;
+            } else {
+                this.mAtomicFile.failWrite(os);
             }
-            this.mAtomicFile.failWrite(os);
         } catch (IOException ex) {
             Slog.w(TAG, "Failed to save tv input manager persistent store data.", ex);
         } catch (Throwable th) {

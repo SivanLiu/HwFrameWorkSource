@@ -56,7 +56,7 @@ public class TlsRSAKeyExchange extends AbstractTlsKeyExchange {
             this.rsaServerPublicKey = validateRSAPublicKey((RSAKeyParameters) this.serverPublicKey);
             TlsUtils.validateKeyUsage(certificateAt, 32);
             super.processServerCertificate(certificate);
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
             throw new TlsFatalAlert((short) 43, e);
         }
     }

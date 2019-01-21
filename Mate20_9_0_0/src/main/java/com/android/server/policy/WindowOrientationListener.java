@@ -224,216 +224,241 @@ public abstract class WindowOrientationListener {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:80:0x026d  */
+        /* JADX WARNING: Removed duplicated region for block: B:28:0x010c  */
+        /* JADX WARNING: Removed duplicated region for block: B:88:0x028f  */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onSensorChanged(SensorEvent event) {
             int oldProposedRotation;
             int proposedRotation;
             SensorEvent sensorEvent = event;
             synchronized (WindowOrientationListener.this.mLock) {
                 boolean skipSample;
-                StringBuilder stringBuilder;
-                String str;
+                boolean isAccelerating;
+                boolean isFlat;
+                boolean isSwinging;
                 float x = sensorEvent.values[0];
                 float y = sensorEvent.values[1];
                 float z = sensorEvent.values[2];
                 if (WindowOrientationListener.LOG) {
-                    String str2 = WindowOrientationListener.TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("Raw acceleration vector: x=");
-                    stringBuilder2.append(x);
-                    stringBuilder2.append(", y=");
-                    stringBuilder2.append(y);
-                    stringBuilder2.append(", z=");
-                    stringBuilder2.append(z);
-                    stringBuilder2.append(", magnitude=");
-                    stringBuilder2.append(Math.sqrt((double) (((x * x) + (y * y)) + (z * z))));
-                    Slog.v(str2, stringBuilder2.toString());
+                    String str = WindowOrientationListener.TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Raw acceleration vector: x=");
+                    stringBuilder.append(x);
+                    stringBuilder.append(", y=");
+                    stringBuilder.append(y);
+                    stringBuilder.append(", z=");
+                    stringBuilder.append(z);
+                    stringBuilder.append(", magnitude=");
+                    stringBuilder.append(Math.sqrt((double) (((x * x) + (y * y)) + (z * z))));
+                    Slog.v(str, stringBuilder.toString());
                 }
                 long now = sensorEvent.timestamp;
                 long then = this.mLastFilteredTimestampNanos;
                 float timeDeltaMS = ((float) (now - then)) * 1.0E-6f;
-                if (now < then || now > 1000000000 + then || (x == 0.0f && y == 0.0f && z == 0.0f)) {
-                    if (WindowOrientationListener.LOG) {
-                        Slog.v(WindowOrientationListener.TAG, "Resetting orientation listener.");
+                if (now >= then && now <= 1000000000 + then) {
+                    if (x != 0.0f || y != 0.0f || z != 0.0f) {
+                        StringBuilder stringBuilder2;
+                        float z2;
+                        String str2;
+                        float alpha = timeDeltaMS / (FILTER_TIME_CONSTANT_MS + timeDeltaMS);
+                        x = ((x - this.mLastFilteredX) * alpha) + this.mLastFilteredX;
+                        y = ((y - this.mLastFilteredY) * alpha) + this.mLastFilteredY;
+                        z = ((z - this.mLastFilteredZ) * alpha) + this.mLastFilteredZ;
+                        if (WindowOrientationListener.LOG) {
+                            String str3 = WindowOrientationListener.TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Filtered acceleration vector: x=");
+                            stringBuilder2.append(x);
+                            stringBuilder2.append(", y=");
+                            stringBuilder2.append(y);
+                            stringBuilder2.append(", z=");
+                            stringBuilder2.append(z);
+                            stringBuilder2.append(", magnitude=");
+                            z2 = z;
+                            stringBuilder2.append(Math.sqrt((double) (((x * x) + (y * y)) + (z * z))));
+                            Slog.v(str3, stringBuilder2.toString());
+                        } else {
+                            z2 = z;
+                        }
+                        z = z2;
+                        skipSample = false;
+                        this.mLastFilteredTimestampNanos = now;
+                        this.mLastFilteredX = x;
+                        this.mLastFilteredY = y;
+                        this.mLastFilteredZ = z;
+                        isAccelerating = false;
+                        isFlat = false;
+                        isSwinging = false;
+                        if (skipSample) {
+                            float magnitude = (float) Math.sqrt((double) (((x * x) + (y * y)) + (z * z)));
+                            if (magnitude < 1.0f) {
+                                if (WindowOrientationListener.LOG) {
+                                    Slog.v(WindowOrientationListener.TAG, "Ignoring sensor data, magnitude too close to zero.");
+                                }
+                                clearPredictedRotationLocked();
+                                float f = z;
+                            } else {
+                                boolean isFlat2;
+                                boolean isSwinging2;
+                                if (isAcceleratingLocked(magnitude)) {
+                                    isAccelerating = true;
+                                    this.mAccelerationTimestampNanos = now;
+                                }
+                                boolean isAccelerating2 = isAccelerating;
+                                int tiltAngle = (int) Math.round(Math.asin((double) (z / magnitude)) * 57.295780181884766d);
+                                addTiltHistoryEntryLocked(now, (float) tiltAngle);
+                                if (isFlatLocked(now) != null) {
+                                    isFlat = true;
+                                    this.mFlatTimestampNanos = now;
+                                }
+                                if (isSwingingLocked(now, (float) tiltAngle) != null) {
+                                    isSwinging = true;
+                                    this.mSwingTimestampNanos = now;
+                                }
+                                if (tiltAngle <= TILT_OVERHEAD_ENTER) {
+                                    this.mOverhead = true;
+                                } else if (tiltAngle >= TILT_OVERHEAD_EXIT) {
+                                    this.mOverhead = false;
+                                }
+                                StringBuilder stringBuilder3;
+                                if (this.mOverhead != null) {
+                                    if (WindowOrientationListener.LOG != null) {
+                                        z = WindowOrientationListener.TAG;
+                                        stringBuilder3 = new StringBuilder();
+                                        stringBuilder3.append("Ignoring sensor data, device is overhead: tiltAngle=");
+                                        stringBuilder3.append(tiltAngle);
+                                        Slog.v(z, stringBuilder3.toString());
+                                    }
+                                    clearPredictedRotationLocked();
+                                } else if (Math.abs(tiltAngle) > 80) {
+                                    if (WindowOrientationListener.LOG != null) {
+                                        z = WindowOrientationListener.TAG;
+                                        stringBuilder3 = new StringBuilder();
+                                        stringBuilder3.append("Ignoring sensor data, tilt angle too high: tiltAngle=");
+                                        stringBuilder3.append(tiltAngle);
+                                        Slog.v(z, stringBuilder3.toString());
+                                    }
+                                    clearPredictedRotationLocked();
+                                } else {
+                                    isFlat2 = isFlat;
+                                    isSwinging2 = isSwinging;
+                                    z = (int) Math.round((-Math.atan2((double) (-x), (double) y)) * 57.295780181884766d);
+                                    if (z < null) {
+                                        z += 360;
+                                    }
+                                    then = (z + 45) / 90;
+                                    if (then == 4) {
+                                        then = null;
+                                    }
+                                    StringBuilder stringBuilder4;
+                                    if (isTiltAngleAcceptableLocked(then, tiltAngle) && isOrientationAngleAcceptableLocked(then, z)) {
+                                        updatePredictedRotationLocked(now, then);
+                                        if (WindowOrientationListener.LOG) {
+                                            str2 = WindowOrientationListener.TAG;
+                                            stringBuilder4 = new StringBuilder();
+                                            stringBuilder4.append("Predicted: tiltAngle=");
+                                            stringBuilder4.append(tiltAngle);
+                                            stringBuilder4.append(", orientationAngle=");
+                                            stringBuilder4.append(z);
+                                            stringBuilder4.append(", predictedRotation=");
+                                            stringBuilder4.append(this.mPredictedRotation);
+                                            stringBuilder4.append(", predictedRotationAgeMS=");
+                                            stringBuilder4.append(((float) (now - this.mPredictedRotationTimestampNanos)) * 1.0E-6f);
+                                            Slog.v(str2, stringBuilder4.toString());
+                                        }
+                                        isAccelerating = isAccelerating2;
+                                        isFlat = isFlat2;
+                                        isSwinging = isSwinging2;
+                                    } else {
+                                        if (WindowOrientationListener.LOG) {
+                                            str2 = WindowOrientationListener.TAG;
+                                            stringBuilder4 = new StringBuilder();
+                                            stringBuilder4.append("Ignoring sensor data, no predicted rotation: tiltAngle=");
+                                            stringBuilder4.append(tiltAngle);
+                                            stringBuilder4.append(", orientationAngle=");
+                                            stringBuilder4.append(z);
+                                            Slog.v(str2, stringBuilder4.toString());
+                                        }
+                                        clearPredictedRotationLocked();
+                                        isAccelerating = isAccelerating2;
+                                        isFlat = isFlat2;
+                                        isSwinging = isSwinging2;
+                                    }
+                                }
+                                isFlat2 = isFlat;
+                                isSwinging2 = isSwinging;
+                                isAccelerating = isAccelerating2;
+                                isFlat = isFlat2;
+                                isSwinging = isSwinging2;
+                            }
+                        } else {
+                            long j = then;
+                        }
+                        this.mFlat = isFlat;
+                        this.mSwinging = isSwinging;
+                        this.mAccelerating = isAccelerating;
+                        oldProposedRotation = this.mProposedRotation;
+                        if (this.mPredictedRotation < 0 || isPredictedRotationAcceptableLocked(now)) {
+                            this.mProposedRotation = this.mPredictedRotation;
+                        }
+                        proposedRotation = this.mProposedRotation;
+                        if (WindowOrientationListener.LOG) {
+                            str2 = WindowOrientationListener.TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Result: currentRotation=");
+                            stringBuilder2.append(WindowOrientationListener.this.mCurrentRotation);
+                            stringBuilder2.append(", proposedRotation=");
+                            stringBuilder2.append(proposedRotation);
+                            stringBuilder2.append(", predictedRotation=");
+                            stringBuilder2.append(this.mPredictedRotation);
+                            stringBuilder2.append(", timeDeltaMS=");
+                            stringBuilder2.append(timeDeltaMS);
+                            stringBuilder2.append(", isAccelerating=");
+                            stringBuilder2.append(isAccelerating);
+                            stringBuilder2.append(", isFlat=");
+                            stringBuilder2.append(isFlat);
+                            stringBuilder2.append(", isSwinging=");
+                            stringBuilder2.append(isSwinging);
+                            stringBuilder2.append(", isOverhead=");
+                            stringBuilder2.append(this.mOverhead);
+                            stringBuilder2.append(", isTouched=");
+                            stringBuilder2.append(this.mTouched);
+                            stringBuilder2.append(", timeUntilSettledMS=");
+                            stringBuilder2.append(remainingMS(now, this.mPredictedRotationTimestampNanos + PROPOSAL_SETTLE_TIME_NANOS));
+                            stringBuilder2.append(", timeUntilAccelerationDelayExpiredMS=");
+                            stringBuilder2.append(remainingMS(now, this.mAccelerationTimestampNanos + 500000000));
+                            stringBuilder2.append(", timeUntilFlatDelayExpiredMS=");
+                            stringBuilder2.append(remainingMS(now, this.mFlatTimestampNanos + 500000000));
+                            stringBuilder2.append(", timeUntilSwingDelayExpiredMS=");
+                            stringBuilder2.append(remainingMS(now, this.mSwingTimestampNanos + 300000000));
+                            stringBuilder2.append(", timeUntilTouchDelayExpiredMS=");
+                            stringBuilder2.append(remainingMS(now, this.mTouchEndedTimestampNanos + 500000000));
+                            Slog.v(str2, stringBuilder2.toString());
+                        }
                     }
-                    resetLocked(true);
-                    skipSample = true;
-                } else {
-                    float z2;
-                    float alpha = timeDeltaMS / (FILTER_TIME_CONSTANT_MS + timeDeltaMS);
-                    x = ((x - this.mLastFilteredX) * alpha) + this.mLastFilteredX;
-                    y = ((y - this.mLastFilteredY) * alpha) + this.mLastFilteredY;
-                    z = ((z - this.mLastFilteredZ) * alpha) + this.mLastFilteredZ;
-                    if (WindowOrientationListener.LOG) {
-                        String str3 = WindowOrientationListener.TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Filtered acceleration vector: x=");
-                        stringBuilder.append(x);
-                        stringBuilder.append(", y=");
-                        stringBuilder.append(y);
-                        stringBuilder.append(", z=");
-                        stringBuilder.append(z);
-                        stringBuilder.append(", magnitude=");
-                        z2 = z;
-                        stringBuilder.append(Math.sqrt((double) (((x * x) + (y * y)) + (z * z))));
-                        Slog.v(str3, stringBuilder.toString());
-                    } else {
-                        z2 = z;
-                    }
-                    z = z2;
-                    skipSample = false;
                 }
+                if (WindowOrientationListener.LOG) {
+                    Slog.v(WindowOrientationListener.TAG, "Resetting orientation listener.");
+                }
+                resetLocked(true);
+                skipSample = true;
                 this.mLastFilteredTimestampNanos = now;
                 this.mLastFilteredX = x;
                 this.mLastFilteredY = y;
                 this.mLastFilteredZ = z;
-                boolean isAccelerating = false;
-                boolean isFlat = false;
-                boolean isSwinging = false;
+                isAccelerating = false;
+                isFlat = false;
+                isSwinging = false;
                 if (skipSample) {
-                    long j = then;
-                } else {
-                    float magnitude = (float) Math.sqrt((double) (((x * x) + (y * y)) + (z * z)));
-                    if (magnitude < 1.0f) {
-                        if (WindowOrientationListener.LOG) {
-                            Slog.v(WindowOrientationListener.TAG, "Ignoring sensor data, magnitude too close to zero.");
-                        }
-                        clearPredictedRotationLocked();
-                        float f = z;
-                    } else {
-                        boolean isFlat2;
-                        boolean isSwinging2;
-                        if (isAcceleratingLocked(magnitude)) {
-                            isAccelerating = true;
-                            this.mAccelerationTimestampNanos = now;
-                        }
-                        boolean isAccelerating2 = isAccelerating;
-                        int tiltAngle = (int) Math.round(Math.asin((double) (z / magnitude)) * 57.295780181884766d);
-                        addTiltHistoryEntryLocked(now, (float) tiltAngle);
-                        if (isFlatLocked(now) != null) {
-                            isFlat = true;
-                            this.mFlatTimestampNanos = now;
-                        }
-                        if (isSwingingLocked(now, (float) tiltAngle) != null) {
-                            isSwinging = true;
-                            this.mSwingTimestampNanos = now;
-                        }
-                        if (tiltAngle <= TILT_OVERHEAD_ENTER) {
-                            this.mOverhead = true;
-                        } else if (tiltAngle >= TILT_OVERHEAD_EXIT) {
-                            this.mOverhead = false;
-                        }
-                        StringBuilder stringBuilder3;
-                        if (this.mOverhead != null) {
-                            if (WindowOrientationListener.LOG != null) {
-                                z = WindowOrientationListener.TAG;
-                                stringBuilder3 = new StringBuilder();
-                                stringBuilder3.append("Ignoring sensor data, device is overhead: tiltAngle=");
-                                stringBuilder3.append(tiltAngle);
-                                Slog.v(z, stringBuilder3.toString());
-                            }
-                            clearPredictedRotationLocked();
-                        } else if (Math.abs(tiltAngle) > 80) {
-                            if (WindowOrientationListener.LOG != null) {
-                                z = WindowOrientationListener.TAG;
-                                stringBuilder3 = new StringBuilder();
-                                stringBuilder3.append("Ignoring sensor data, tilt angle too high: tiltAngle=");
-                                stringBuilder3.append(tiltAngle);
-                                Slog.v(z, stringBuilder3.toString());
-                            }
-                            clearPredictedRotationLocked();
-                        } else {
-                            isFlat2 = isFlat;
-                            isSwinging2 = isSwinging;
-                            z = (int) Math.round((-Math.atan2((double) (-x), (double) y)) * 57.295780181884766d);
-                            if (z < null) {
-                                z += 360;
-                            }
-                            then = (z + 45) / 90;
-                            if (then == 4) {
-                                then = null;
-                            }
-                            StringBuilder stringBuilder4;
-                            if (isTiltAngleAcceptableLocked(then, tiltAngle) && isOrientationAngleAcceptableLocked(then, z)) {
-                                updatePredictedRotationLocked(now, then);
-                                if (WindowOrientationListener.LOG) {
-                                    str = WindowOrientationListener.TAG;
-                                    stringBuilder4 = new StringBuilder();
-                                    stringBuilder4.append("Predicted: tiltAngle=");
-                                    stringBuilder4.append(tiltAngle);
-                                    stringBuilder4.append(", orientationAngle=");
-                                    stringBuilder4.append(z);
-                                    stringBuilder4.append(", predictedRotation=");
-                                    stringBuilder4.append(this.mPredictedRotation);
-                                    stringBuilder4.append(", predictedRotationAgeMS=");
-                                    stringBuilder4.append(((float) (now - this.mPredictedRotationTimestampNanos)) * 1.0E-6f);
-                                    Slog.v(str, stringBuilder4.toString());
-                                }
-                                isAccelerating = isAccelerating2;
-                                isFlat = isFlat2;
-                                isSwinging = isSwinging2;
-                            } else {
-                                if (WindowOrientationListener.LOG) {
-                                    str = WindowOrientationListener.TAG;
-                                    stringBuilder4 = new StringBuilder();
-                                    stringBuilder4.append("Ignoring sensor data, no predicted rotation: tiltAngle=");
-                                    stringBuilder4.append(tiltAngle);
-                                    stringBuilder4.append(", orientationAngle=");
-                                    stringBuilder4.append(z);
-                                    Slog.v(str, stringBuilder4.toString());
-                                }
-                                clearPredictedRotationLocked();
-                                isAccelerating = isAccelerating2;
-                                isFlat = isFlat2;
-                                isSwinging = isSwinging2;
-                            }
-                        }
-                        isFlat2 = isFlat;
-                        isSwinging2 = isSwinging;
-                        isAccelerating = isAccelerating2;
-                        isFlat = isFlat2;
-                        isSwinging = isSwinging2;
-                    }
                 }
                 this.mFlat = isFlat;
                 this.mSwinging = isSwinging;
                 this.mAccelerating = isAccelerating;
                 oldProposedRotation = this.mProposedRotation;
-                if (this.mPredictedRotation < 0 || isPredictedRotationAcceptableLocked(now)) {
-                    this.mProposedRotation = this.mPredictedRotation;
-                }
+                this.mProposedRotation = this.mPredictedRotation;
                 proposedRotation = this.mProposedRotation;
                 if (WindowOrientationListener.LOG) {
-                    str = WindowOrientationListener.TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Result: currentRotation=");
-                    stringBuilder.append(WindowOrientationListener.this.mCurrentRotation);
-                    stringBuilder.append(", proposedRotation=");
-                    stringBuilder.append(proposedRotation);
-                    stringBuilder.append(", predictedRotation=");
-                    stringBuilder.append(this.mPredictedRotation);
-                    stringBuilder.append(", timeDeltaMS=");
-                    stringBuilder.append(timeDeltaMS);
-                    stringBuilder.append(", isAccelerating=");
-                    stringBuilder.append(isAccelerating);
-                    stringBuilder.append(", isFlat=");
-                    stringBuilder.append(isFlat);
-                    stringBuilder.append(", isSwinging=");
-                    stringBuilder.append(isSwinging);
-                    stringBuilder.append(", isOverhead=");
-                    stringBuilder.append(this.mOverhead);
-                    stringBuilder.append(", isTouched=");
-                    stringBuilder.append(this.mTouched);
-                    stringBuilder.append(", timeUntilSettledMS=");
-                    stringBuilder.append(remainingMS(now, this.mPredictedRotationTimestampNanos + PROPOSAL_SETTLE_TIME_NANOS));
-                    stringBuilder.append(", timeUntilAccelerationDelayExpiredMS=");
-                    stringBuilder.append(remainingMS(now, this.mAccelerationTimestampNanos + 500000000));
-                    stringBuilder.append(", timeUntilFlatDelayExpiredMS=");
-                    stringBuilder.append(remainingMS(now, this.mFlatTimestampNanos + 500000000));
-                    stringBuilder.append(", timeUntilSwingDelayExpiredMS=");
-                    stringBuilder.append(remainingMS(now, this.mSwingTimestampNanos + 300000000));
-                    stringBuilder.append(", timeUntilTouchDelayExpiredMS=");
-                    stringBuilder.append(remainingMS(now, this.mTouchEndedTimestampNanos + 500000000));
-                    Slog.v(str, stringBuilder.toString());
                 }
             }
             int proposedRotation2 = proposedRotation;
@@ -754,14 +779,17 @@ public abstract class WindowOrientationListener {
         this.mHandler = handler;
         this.mSensorManager = (SensorManager) context.getSystemService("sensor");
         this.mRate = rate;
+        Sensor wakeUpDeviceOrientationSensor = null;
         Sensor nonWakeUpDeviceOrientationSensor = null;
         for (Sensor s : this.mSensorManager.getSensorList(27)) {
             if (s.isWakeUpSensor()) {
+                wakeUpDeviceOrientationSensor = s;
+            } else {
+                nonWakeUpDeviceOrientationSensor = s;
             }
-            nonWakeUpDeviceOrientationSensor = s;
         }
-        if (null != null) {
-            this.mSensor = null;
+        if (wakeUpDeviceOrientationSensor != null) {
+            this.mSensor = wakeUpDeviceOrientationSensor;
         } else {
             this.mSensor = nonWakeUpDeviceOrientationSensor;
         }
@@ -807,7 +835,7 @@ public abstract class WindowOrientationListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0031, code:
+    /* JADX WARNING: Missing block: B:16:0x0031, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -866,10 +894,10 @@ public abstract class WindowOrientationListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0010, code:
+    /* JADX WARNING: Missing block: B:9:0x0010, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:14:0x0018, code:
+    /* JADX WARNING: Missing block: B:14:0x0018, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

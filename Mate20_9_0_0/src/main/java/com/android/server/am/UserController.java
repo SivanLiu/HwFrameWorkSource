@@ -20,8 +20,7 @@ import android.os.Debug;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.IProgressListener;
-import android.os.IRemoteCallback.Stub;
-import android.os.IUserManager;
+import android.os.IUserManager.Stub;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteCallbackList;
@@ -64,7 +63,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class UserController implements Callback {
     static final int CONTINUE_USER_SWITCH_MSG = 20;
@@ -120,64 +118,6 @@ class UserController implements Callback {
     private final RemoteCallbackList<IUserSwitchObserver> mUserSwitchObservers;
     boolean mUserSwitchUiEnabled;
     boolean misHiddenSpaceSwitch;
-
-    /* renamed from: com.android.server.am.UserController$8 */
-    class AnonymousClass8 extends Stub {
-        final /* synthetic */ ArraySet val$curWaitingUserSwitchCallbacks;
-        final /* synthetic */ long val$dispatchStartedTime;
-        final /* synthetic */ String val$name;
-        final /* synthetic */ int val$newUserId;
-        final /* synthetic */ int val$observerCount;
-        final /* synthetic */ int val$oldUserId;
-        final /* synthetic */ UserState val$uss;
-        final /* synthetic */ AtomicInteger val$waitingCallbacksCount;
-
-        AnonymousClass8(long j, String str, int i, ArraySet arraySet, AtomicInteger atomicInteger, int i2, UserState userState, int i3) {
-            this.val$dispatchStartedTime = j;
-            this.val$name = str;
-            this.val$observerCount = i;
-            this.val$curWaitingUserSwitchCallbacks = arraySet;
-            this.val$waitingCallbacksCount = atomicInteger;
-            this.val$newUserId = i2;
-            this.val$uss = userState;
-            this.val$oldUserId = i3;
-        }
-
-        public void sendResult(Bundle data) throws RemoteException {
-            synchronized (UserController.this.mLock) {
-                StringBuilder stringBuilder;
-                long delay = SystemClock.elapsedRealtime() - this.val$dispatchStartedTime;
-                if (delay > 3000) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("User switch timeout: observer ");
-                    stringBuilder.append(this.val$name);
-                    stringBuilder.append(" sent result after ");
-                    stringBuilder.append(delay);
-                    stringBuilder.append(" ms");
-                    Slog.e("ActivityManager", stringBuilder.toString());
-                }
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("_StartUser User switch done: observer ");
-                stringBuilder.append(this.val$name);
-                stringBuilder.append(" sent result after ");
-                stringBuilder.append(delay);
-                stringBuilder.append(" ms, total:");
-                stringBuilder.append(this.val$observerCount);
-                Slog.d("ActivityManager", stringBuilder.toString());
-                this.val$curWaitingUserSwitchCallbacks.remove(this.val$name);
-                if (this.val$waitingCallbacksCount.decrementAndGet() == 0 && this.val$curWaitingUserSwitchCallbacks == UserController.this.mCurWaitingUserSwitchCallbacks) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("_StartUser dispatchUserSwitch userid:");
-                    stringBuilder.append(this.val$newUserId);
-                    stringBuilder.append(" cost ");
-                    stringBuilder.append(SystemClock.elapsedRealtime() - this.val$dispatchStartedTime);
-                    stringBuilder.append(" ms");
-                    Slog.i("ActivityManager", stringBuilder.toString());
-                    UserController.this.sendContinueUserSwitchLU(this.val$uss, this.val$oldUserId, this.val$newUserId);
-                }
-            }
-        }
-    }
 
     @VisibleForTesting
     static class Injector {
@@ -247,7 +187,7 @@ class UserController implements Callback {
 
         protected UserManagerService getUserManager() {
             if (this.mUserManager == null) {
-                this.mUserManager = (UserManagerService) IUserManager.Stub.asInterface(ServiceManager.getService("user"));
+                this.mUserManager = (UserManagerService) Stub.asInterface(ServiceManager.getService("user"));
             }
             return this.mUserManager;
         }
@@ -473,7 +413,7 @@ class UserController implements Callback {
         }
 
         private boolean shouldSkipKeyguard(UserInfo first, UserInfo second) {
-            return this.mService.isHiddenSpaceSwitch(first, second) && getKeyguardManager().isKeyguardLocked();
+            return this.mService.isHiddenSpaceSwitch(first, second) && getWindowManager().isKeyguardLocked();
         }
 
         void cleanAppForHiddenSpace() {
@@ -522,786 +462,6 @@ class UserController implements Callback {
             stringBuilder.append(" ms");
             Slog.d("ActivityManager", stringBuilder.toString());
         }
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    void dispatchUserSwitch(com.android.server.am.UserState r22, int r23, int r24) {
-        /*
-        r21 = this;
-        r12 = r21;
-        r13 = r24;
-        r0 = "ActivityManager";
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Dispatch onUserSwitching oldUser #";
-        r1.append(r2);
-        r14 = r23;
-        r1.append(r14);
-        r2 = " newUser #";
-        r1.append(r2);
-        r1.append(r13);
-        r1 = r1.toString();
-        android.util.Slog.d(r0, r1);
-        r0 = r12.mUserSwitchObservers;
-        r15 = r0.beginBroadcast();
-        if (r15 <= 0) goto L_0x00bd;
-    L_0x002c:
-        r0 = new android.util.ArraySet;
-        r0.<init>();
-        r11 = r0;
-        r1 = r12.mLock;
-        monitor-enter(r1);
-        r0 = 1;
-        r10 = r22;
-        r10.switching = r0;	 Catch:{ all -> 0x00b4 }
-        r12.mCurWaitingUserSwitchCallbacks = r11;	 Catch:{ all -> 0x00b4 }
-        monitor-exit(r1);	 Catch:{ all -> 0x00b4 }
-        r8 = new java.util.concurrent.atomic.AtomicInteger;
-        r8.<init>(r15);
-        r16 = android.os.SystemClock.elapsedRealtime();
-        r0 = 0;
-    L_0x0047:
-        r9 = r0;
-        if (r9 >= r15) goto L_0x00b1;
-    L_0x004a:
-        r0 = new java.lang.StringBuilder;	 Catch:{ RemoteException -> 0x00a2 }
-        r0.<init>();	 Catch:{ RemoteException -> 0x00a2 }
-        r1 = "#";	 Catch:{ RemoteException -> 0x00a2 }
-        r0.append(r1);	 Catch:{ RemoteException -> 0x00a2 }
-        r0.append(r9);	 Catch:{ RemoteException -> 0x00a2 }
-        r1 = " ";	 Catch:{ RemoteException -> 0x00a2 }
-        r0.append(r1);	 Catch:{ RemoteException -> 0x00a2 }
-        r1 = r12.mUserSwitchObservers;	 Catch:{ RemoteException -> 0x00a2 }
-        r1 = r1.getBroadcastCookie(r9);	 Catch:{ RemoteException -> 0x00a2 }
-        r0.append(r1);	 Catch:{ RemoteException -> 0x00a2 }
-        r0 = r0.toString();	 Catch:{ RemoteException -> 0x00a2 }
-        r7 = r0;	 Catch:{ RemoteException -> 0x00a2 }
-        r1 = r12.mLock;	 Catch:{ RemoteException -> 0x00a2 }
-        monitor-enter(r1);	 Catch:{ RemoteException -> 0x00a2 }
-        r11.add(r7);	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        monitor-exit(r1);	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        r0 = new com.android.server.am.UserController$8;	 Catch:{ RemoteException -> 0x00a2 }
-        r1 = r0;
-        r2 = r12;
-        r3 = r16;
-        r5 = r7;
-        r6 = r15;
-        r18 = r7;
-        r7 = r11;
-        r19 = r15;
-        r15 = r9;
-        r9 = r13;
-        r10 = r22;
-        r20 = r11;
-        r11 = r14;
-        r1.<init>(r3, r5, r6, r7, r8, r9, r10, r11);	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        r1 = r12.mUserSwitchObservers;	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        r1 = r1.getBroadcastItem(r15);	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        r1 = (android.app.IUserSwitchObserver) r1;	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        r1.onUserSwitching(r13, r0);	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-        goto L_0x00a8;
-    L_0x0094:
-        r0 = move-exception;
-        r18 = r7;
-        r20 = r11;
-        r19 = r15;
-        r15 = r9;
-    L_0x009c:
-        monitor-exit(r1);	 Catch:{ all -> 0x00a0 }
-        throw r0;	 Catch:{ all -> 0x0094, RemoteException -> 0x009e }
-    L_0x009e:
-        r0 = move-exception;
-        goto L_0x00a8;
-    L_0x00a0:
-        r0 = move-exception;
-        goto L_0x009c;
-    L_0x00a2:
-        r0 = move-exception;
-        r20 = r11;
-        r19 = r15;
-        r15 = r9;
-    L_0x00a8:
-        r0 = r15 + 1;
-        r10 = r22;
-        r15 = r19;
-        r11 = r20;
-        goto L_0x0047;
-    L_0x00b1:
-        r19 = r15;
-        goto L_0x00c6;
-    L_0x00b4:
-        r0 = move-exception;
-        r20 = r11;
-        r19 = r15;
-    L_0x00b9:
-        monitor-exit(r1);	 Catch:{ all -> 0x00bb }
-        throw r0;
-    L_0x00bb:
-        r0 = move-exception;
-        goto L_0x00b9;
-    L_0x00bd:
-        r19 = r15;
-        r1 = r12.mLock;
-        monitor-enter(r1);
-        r21.sendContinueUserSwitchLU(r22, r23, r24);
-        monitor-exit(r1);
-    L_0x00c6:
-        r0 = r12.mUserSwitchObservers;
-        r0.finishBroadcast();
-        return;
-    L_0x00cc:
-        r0 = move-exception;
-        monitor-exit(r1);
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.UserController.dispatchUserSwitch(com.android.server.am.UserState, int, int):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    boolean startUser(int r50, boolean r51, android.os.IProgressListener r52) {
-        /*
-        r49 = this;
-        r1 = r49;
-        r15 = r50;
-        r14 = r51;
-        r13 = r52;
-        r0 = r1.mInjector;
-        r2 = "android.permission.INTERACT_ACROSS_USERS_FULL";
-        r0 = r0.checkCallingPermission(r2);
-        if (r0 != 0) goto L_0x042b;
-    L_0x0012:
-        r11 = android.os.SystemClock.elapsedRealtime();
-        r1.SwitchUser_Time = r11;
-        r0 = "ActivityManager";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "Starting userid:";
-        r2.append(r3);
-        r2.append(r15);
-        r3 = " fg:";
-        r2.append(r3);
-        r2.append(r14);
-        r2 = r2.toString();
-        android.util.Slog.i(r0, r2);
-        r2 = android.os.Binder.clearCallingIdentity();
-        r9 = r2;
-        r0 = r49.getCurrentUserId();	 Catch:{ all -> 0x0420 }
-        r8 = r0;
-        r0 = 1;
-        if (r8 != r15) goto L_0x0048;
-        android.os.Binder.restoreCallingIdentity(r9);
-        return r0;
-    L_0x0048:
-        if (r14 == 0) goto L_0x005c;
-    L_0x004a:
-        r2 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r3 = "startUser";	 Catch:{ all -> 0x0053 }
-        r2.clearAllLockedTasks(r3);	 Catch:{ all -> 0x0053 }
-        goto L_0x005c;
-    L_0x0053:
-        r0 = move-exception;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        goto L_0x0427;
-    L_0x005c:
-        r2 = r49.getUserInfo(r50);	 Catch:{ all -> 0x0420 }
-        r7 = r2;
-        r2 = 0;
-        if (r7 != 0) goto L_0x007f;
-    L_0x0064:
-        r0 = "ActivityManager";	 Catch:{ all -> 0x0053 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0053 }
-        r3.<init>();	 Catch:{ all -> 0x0053 }
-        r4 = "No user info for user #";	 Catch:{ all -> 0x0053 }
-        r3.append(r4);	 Catch:{ all -> 0x0053 }
-        r3.append(r15);	 Catch:{ all -> 0x0053 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0053 }
-        android.util.Slog.w(r0, r3);	 Catch:{ all -> 0x0053 }
-        android.os.Binder.restoreCallingIdentity(r9);
-        return r2;
-    L_0x007f:
-        if (r14 == 0) goto L_0x00a7;
-    L_0x0081:
-        r3 = r7.isManagedProfile();	 Catch:{ all -> 0x0053 }
-        if (r3 == 0) goto L_0x00a7;	 Catch:{ all -> 0x0053 }
-    L_0x0087:
-        r0 = "ActivityManager";	 Catch:{ all -> 0x0053 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0053 }
-        r3.<init>();	 Catch:{ all -> 0x0053 }
-        r4 = "Cannot switch to User #";	 Catch:{ all -> 0x0053 }
-        r3.append(r4);	 Catch:{ all -> 0x0053 }
-        r3.append(r15);	 Catch:{ all -> 0x0053 }
-        r4 = ": not a full user";	 Catch:{ all -> 0x0053 }
-        r3.append(r4);	 Catch:{ all -> 0x0053 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0053 }
-        android.util.Slog.w(r0, r3);	 Catch:{ all -> 0x0053 }
-        android.os.Binder.restoreCallingIdentity(r9);
-        return r2;
-    L_0x00a7:
-        r3 = r1.mInjector;	 Catch:{ all -> 0x0420 }
-        r3 = r3.getWindowManager();	 Catch:{ all -> 0x0420 }
-        r1.setMultiDpi(r3, r15);	 Catch:{ all -> 0x0420 }
-        r3 = r1.mCurrentUserId;	 Catch:{ all -> 0x0420 }
-        r3 = r1.getUserInfo(r3);	 Catch:{ all -> 0x0420 }
-        r6 = r3;
-        if (r14 == 0) goto L_0x00d4;
-    L_0x00b9:
-        r3 = r1.mUserSwitchUiEnabled;	 Catch:{ all -> 0x0053 }
-        if (r3 == 0) goto L_0x00d4;	 Catch:{ all -> 0x0053 }
-    L_0x00bd:
-        r3 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r3 = r3.shouldSkipKeyguard(r6, r7);	 Catch:{ all -> 0x0053 }
-        if (r3 != 0) goto L_0x00d4;	 Catch:{ all -> 0x0053 }
-    L_0x00c5:
-        r3 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r3 = r3.getWindowManager();	 Catch:{ all -> 0x0053 }
-        r4 = 17432717; // 0x10a008d float:2.5346992E-38 double:8.6129066E-317;	 Catch:{ all -> 0x0053 }
-        r5 = 17432716; // 0x10a008c float:2.534699E-38 double:8.612906E-317;	 Catch:{ all -> 0x0053 }
-        r3.startFreezingScreen(r4, r5);	 Catch:{ all -> 0x0053 }
-    L_0x00d4:
-        r3 = 0;
-        r4 = 0;
-        r5 = r1.mLock;	 Catch:{ all -> 0x0420 }
-        monitor-enter(r5);	 Catch:{ all -> 0x0420 }
-        r2 = r1.mStartedUsers;	 Catch:{ all -> 0x040a }
-        r2 = r2.get(r15);	 Catch:{ all -> 0x040a }
-        r2 = (com.android.server.am.UserState) r2;	 Catch:{ all -> 0x040a }
-        if (r2 != 0) goto L_0x012f;
-    L_0x00e3:
-        r0 = new com.android.server.am.UserState;	 Catch:{ all -> 0x011d }
-        r20 = r3;
-        r3 = android.os.UserHandle.of(r50);	 Catch:{ all -> 0x010b }
-        r0.<init>(r3);	 Catch:{ all -> 0x010b }
-        r2 = r0;	 Catch:{ all -> 0x010b }
-        r0 = r2.mUnlockProgress;	 Catch:{ all -> 0x010b }
-        r3 = new com.android.server.am.UserController$UserProgressListener;	 Catch:{ all -> 0x010b }
-        r21 = r4;
-        r4 = 0;
-        r3.<init>(r4);	 Catch:{ all -> 0x0169 }
-        r0.addListener(r3);	 Catch:{ all -> 0x0169 }
-        r0 = r1.mStartedUsers;	 Catch:{ all -> 0x0169 }
-        r0.put(r15, r2);	 Catch:{ all -> 0x0169 }
-        r49.updateStartedUserArrayLU();	 Catch:{ all -> 0x0169 }
-        r0 = 1;
-        r4 = 1;
-        r3 = r0;
-        r21 = r4;
-        goto L_0x017d;
-    L_0x010b:
-        r0 = move-exception;
-        r21 = r4;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        r3 = r20;
-        goto L_0x041a;
-    L_0x011d:
-        r0 = move-exception;
-        r20 = r3;
-        r21 = r4;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        goto L_0x041a;
-    L_0x012f:
-        r20 = r3;
-        r21 = r4;
-        r0 = r2.state;	 Catch:{ all -> 0x03f9 }
-        r3 = 5;
-        if (r0 != r3) goto L_0x017b;
-    L_0x0138:
-        r0 = r49.isCallingOnHandlerThread();	 Catch:{ all -> 0x0169 }
-        if (r0 != 0) goto L_0x017b;	 Catch:{ all -> 0x0169 }
-    L_0x013e:
-        r0 = "ActivityManager";	 Catch:{ all -> 0x0169 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0169 }
-        r3.<init>();	 Catch:{ all -> 0x0169 }
-        r4 = "User #";	 Catch:{ all -> 0x0169 }
-        r3.append(r4);	 Catch:{ all -> 0x0169 }
-        r3.append(r15);	 Catch:{ all -> 0x0169 }
-        r4 = " is shutting down - will start after full stop";	 Catch:{ all -> 0x0169 }
-        r3.append(r4);	 Catch:{ all -> 0x0169 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0169 }
-        android.util.Slog.i(r0, r3);	 Catch:{ all -> 0x0169 }
-        r0 = r1.mHandler;	 Catch:{ all -> 0x0169 }
-        r3 = new com.android.server.am.-$$Lambda$UserController$itozNmdxq9RsTKqW4_f-sH8yPdY;	 Catch:{ all -> 0x0169 }
-        r3.<init>(r1, r15, r14, r13);	 Catch:{ all -> 0x0169 }
-        r0.post(r3);	 Catch:{ all -> 0x0169 }
-        monitor-exit(r5);	 Catch:{ all -> 0x0169 }
-        android.os.Binder.restoreCallingIdentity(r9);
-        r0 = 1;
-        return r0;
-    L_0x0169:
-        r0 = move-exception;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        r3 = r20;
-    L_0x0177:
-        r4 = r21;
-        goto L_0x041a;
-    L_0x017b:
-        r3 = r20;
-    L_0x017d:
-        r0 = java.lang.Integer.valueOf(r50);	 Catch:{ all -> 0x03ec }
-        r4 = r0.intValue();	 Catch:{ all -> 0x03ec }
-        r4 = r1.getUserInfo(r4);	 Catch:{ all -> 0x03ec }
-        if (r4 == 0) goto L_0x01a7;
-    L_0x018b:
-        r4 = r0.intValue();	 Catch:{ all -> 0x019a }
-        r4 = r1.getUserInfo(r4);	 Catch:{ all -> 0x019a }
-        r4 = r4.isClonedProfile();	 Catch:{ all -> 0x019a }
-        if (r4 != 0) goto L_0x01b1;
-    L_0x0199:
-        goto L_0x01a7;
-    L_0x019a:
-        r0 = move-exception;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        goto L_0x0177;
-    L_0x01a7:
-        r4 = r1.mUserLru;	 Catch:{ all -> 0x03ec }
-        r4.remove(r0);	 Catch:{ all -> 0x03ec }
-        r4 = r1.mUserLru;	 Catch:{ all -> 0x03ec }
-        r4.add(r0);	 Catch:{ all -> 0x03ec }
-    L_0x01b1:
-        monitor-exit(r5);	 Catch:{ all -> 0x03ec }
-        r5 = r2;
-        if (r13 == 0) goto L_0x01ba;
-    L_0x01b5:
-        r0 = r5.mUnlockProgress;	 Catch:{ all -> 0x0053 }
-        r0.addListener(r13);	 Catch:{ all -> 0x0053 }
-    L_0x01ba:
-        if (r21 == 0) goto L_0x01c7;	 Catch:{ all -> 0x0053 }
-    L_0x01bc:
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.getUserManagerInternal();	 Catch:{ all -> 0x0053 }
-        r2 = r5.state;	 Catch:{ all -> 0x0053 }
-        r0.setUserState(r15, r2);	 Catch:{ all -> 0x0053 }
-    L_0x01c7:
-        if (r14 == 0) goto L_0x021b;	 Catch:{ all -> 0x0053 }
-    L_0x01c9:
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r2 = 16;	 Catch:{ all -> 0x0053 }
-        r0.reportGlobalUsageEventLocked(r2);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mLock;	 Catch:{ all -> 0x0053 }
-        monitor-enter(r2);	 Catch:{ all -> 0x0053 }
-        r1.mCurrentUserId = r15;	 Catch:{ all -> 0x0053 }
-        r0 = -10000; // 0xffffffffffffd8f0 float:NaN double:NaN;	 Catch:{ all -> 0x0053 }
-        r1.mTargetUserId = r0;	 Catch:{ all -> 0x0053 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0.updateUserConfiguration();	 Catch:{ all -> 0x0053 }
-        r49.updateCurrentProfileIds();	 Catch:{ all -> 0x0053 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.getWindowManager();	 Catch:{ all -> 0x0053 }
-        r2 = r49.getCurrentProfileIds();	 Catch:{ all -> 0x0053 }
-        r0.setCurrentUser(r15, r2);	 Catch:{ all -> 0x0053 }
-        android.hwtheme.HwThemeManager.linkDataSkinDirAsUser(r50);	 Catch:{ all -> 0x0053 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0.reportCurWakefulnessUsageEvent();	 Catch:{ all -> 0x0053 }
-        r0 = r1.mUserSwitchUiEnabled;	 Catch:{ all -> 0x0053 }
-        if (r0 == 0) goto L_0x0240;	 Catch:{ all -> 0x0053 }
-    L_0x01fb:
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.shouldSkipKeyguard(r6, r7);	 Catch:{ all -> 0x0053 }
-        if (r0 != 0) goto L_0x0240;	 Catch:{ all -> 0x0053 }
-    L_0x0203:
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.getWindowManager();	 Catch:{ all -> 0x0053 }
-        r2 = 1;	 Catch:{ all -> 0x0053 }
-        r0.setSwitchingUser(r2);	 Catch:{ all -> 0x0053 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.getWindowManager();	 Catch:{ all -> 0x0053 }
-        r2 = 0;	 Catch:{ all -> 0x0053 }
-        r0.lockNow(r2);	 Catch:{ all -> 0x0053 }
-        goto L_0x0240;
-    L_0x0218:
-        r0 = move-exception;
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        throw r0;	 Catch:{ all -> 0x0053 }
-    L_0x021b:
-        r0 = r1.mCurrentUserId;	 Catch:{ all -> 0x0420 }
-        r0 = java.lang.Integer.valueOf(r0);	 Catch:{ all -> 0x0420 }
-        r2 = r0;	 Catch:{ all -> 0x0420 }
-        r49.updateCurrentProfileIds();	 Catch:{ all -> 0x0420 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0420 }
-        r0 = r0.getWindowManager();	 Catch:{ all -> 0x0420 }
-        r4 = r49.getCurrentProfileIds();	 Catch:{ all -> 0x0420 }
-        r0.setCurrentProfileIds(r4);	 Catch:{ all -> 0x0420 }
-        r4 = r1.mLock;	 Catch:{ all -> 0x0420 }
-        monitor-enter(r4);	 Catch:{ all -> 0x0420 }
-        r0 = r1.mUserLru;	 Catch:{ all -> 0x03dc, all -> 0x041c }
-        r0.remove(r2);	 Catch:{ all -> 0x03dc, all -> 0x041c }
-        r0 = r1.mUserLru;	 Catch:{ all -> 0x03dc, all -> 0x041c }
-        r0.add(r2);	 Catch:{ all -> 0x03dc, all -> 0x041c }
-        monitor-exit(r4);	 Catch:{ all -> 0x03dc, all -> 0x041c }
-    L_0x0240:
-        r0 = r5.state;	 Catch:{ all -> 0x0420 }
-        r2 = 4;
-        if (r0 != r2) goto L_0x0261;
-    L_0x0245:
-        r0 = r5.lastState;	 Catch:{ all -> 0x0053 }
-        r5.setState(r0);	 Catch:{ all -> 0x0053 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.getUserManagerInternal();	 Catch:{ all -> 0x0053 }
-        r2 = r5.state;	 Catch:{ all -> 0x0053 }
-        r0.setUserState(r15, r2);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mLock;	 Catch:{ all -> 0x0053 }
-        monitor-enter(r2);	 Catch:{ all -> 0x0053 }
-        r49.updateStartedUserArrayLU();	 Catch:{ all -> 0x0053 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        r3 = 1;	 Catch:{ all -> 0x0053 }
-        goto L_0x0281;	 Catch:{ all -> 0x0053 }
-    L_0x025e:
-        r0 = move-exception;	 Catch:{ all -> 0x0053 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        throw r0;	 Catch:{ all -> 0x0053 }
-    L_0x0261:
-        r0 = r5.state;	 Catch:{ all -> 0x0420 }
-        r2 = 5;
-        if (r0 != r2) goto L_0x0281;
-    L_0x0266:
-        r0 = 0;
-        r5.setState(r0);	 Catch:{ all -> 0x0053 }
-        r0 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r0 = r0.getUserManagerInternal();	 Catch:{ all -> 0x0053 }
-        r2 = r5.state;	 Catch:{ all -> 0x0053 }
-        r0.setUserState(r15, r2);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mLock;	 Catch:{ all -> 0x0053 }
-        monitor-enter(r2);	 Catch:{ all -> 0x0053 }
-        r49.updateStartedUserArrayLU();	 Catch:{ all -> 0x0053 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        r3 = 1;	 Catch:{ all -> 0x0053 }
-        goto L_0x0281;	 Catch:{ all -> 0x0053 }
-    L_0x027e:
-        r0 = move-exception;	 Catch:{ all -> 0x0053 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        throw r0;	 Catch:{ all -> 0x0053 }
-    L_0x0281:
-        r0 = r3;
-        r2 = r5.state;	 Catch:{ all -> 0x0420 }
-        if (r2 != 0) goto L_0x02a0;
-    L_0x0286:
-        r2 = r1.mInjector;	 Catch:{ all -> 0x0053 }
-        r2 = r2.getUserManager();	 Catch:{ all -> 0x0053 }
-        r2.onBeforeStartUser(r15);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r3 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r4 = 50;	 Catch:{ all -> 0x0053 }
-        r22 = r6;	 Catch:{ all -> 0x0053 }
-        r6 = 0;	 Catch:{ all -> 0x0053 }
-        r3 = r3.obtainMessage(r4, r15, r6);	 Catch:{ all -> 0x0053 }
-        r2.sendMessage(r3);	 Catch:{ all -> 0x0053 }
-        goto L_0x02a2;	 Catch:{ all -> 0x0053 }
-    L_0x02a0:
-        r22 = r6;	 Catch:{ all -> 0x0053 }
-    L_0x02a2:
-        if (r14 == 0) goto L_0x02da;	 Catch:{ all -> 0x0053 }
-    L_0x02a4:
-        r2 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r3 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r4 = 60;	 Catch:{ all -> 0x0053 }
-        r3 = r3.obtainMessage(r4, r15, r8);	 Catch:{ all -> 0x0053 }
-        r2.sendMessage(r3);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r3 = 10;	 Catch:{ all -> 0x0053 }
-        r2.removeMessages(r3);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r4 = 30;	 Catch:{ all -> 0x0053 }
-        r2.removeMessages(r4);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r6 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r3 = r6.obtainMessage(r3, r8, r15, r5);	 Catch:{ all -> 0x0053 }
-        r2.sendMessage(r3);	 Catch:{ all -> 0x0053 }
-        r2 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r3 = r1.mHandler;	 Catch:{ all -> 0x0053 }
-        r3 = r3.obtainMessage(r4, r8, r15, r5);	 Catch:{ all -> 0x0053 }
-        r23 = r5;	 Catch:{ all -> 0x0053 }
-        r4 = 3000; // 0xbb8 float:4.204E-42 double:1.482E-320;	 Catch:{ all -> 0x0053 }
-        r2.sendMessageDelayed(r3, r4);	 Catch:{ all -> 0x0053 }
-        goto L_0x02dc;
-    L_0x02da:
-        r23 = r5;
-    L_0x02dc:
-        if (r0 == 0) goto L_0x033f;
-    L_0x02de:
-        r2 = new android.content.Intent;	 Catch:{ all -> 0x0335 }
-        r3 = "android.intent.action.USER_STARTED";	 Catch:{ all -> 0x0335 }
-        r2.<init>(r3);	 Catch:{ all -> 0x0335 }
-        r6 = r2;	 Catch:{ all -> 0x0335 }
-        r2 = 1342177280; // 0x50000000 float:8.5899346E9 double:6.631236847E-315;	 Catch:{ all -> 0x0335 }
-        r6.addFlags(r2);	 Catch:{ all -> 0x0335 }
-        r2 = "android.intent.extra.user_handle";	 Catch:{ all -> 0x0335 }
-        r6.putExtra(r2, r15);	 Catch:{ all -> 0x0335 }
-        r2 = r1.mInjector;	 Catch:{ all -> 0x0335 }
-        r4 = 0;	 Catch:{ all -> 0x0335 }
-        r5 = 0;	 Catch:{ all -> 0x0335 }
-        r16 = 0;	 Catch:{ all -> 0x0335 }
-        r17 = 0;	 Catch:{ all -> 0x0335 }
-        r18 = 0;	 Catch:{ all -> 0x0335 }
-        r19 = 0;	 Catch:{ all -> 0x0335 }
-        r20 = -1;	 Catch:{ all -> 0x0335 }
-        r24 = 0;	 Catch:{ all -> 0x0335 }
-        r25 = 0;	 Catch:{ all -> 0x0335 }
-        r26 = 0;	 Catch:{ all -> 0x0335 }
-        r27 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x0335 }
-        r28 = 1000; // 0x3e8 float:1.401E-42 double:4.94E-321;
-        r3 = r6;
-        r29 = r23;
-        r23 = r6;
-        r6 = r16;
-        r30 = r7;
-        r7 = r17;
-        r31 = r8;
-        r8 = r18;
-        r32 = r9;
-        r9 = r19;
-        r10 = r20;
-        r18 = r11;
-        r11 = r24;
-        r12 = r25;
-        r13 = r26;
-        r17 = r14;
-        r14 = r27;
-        r15 = r28;
-        r16 = r50;
-        r2.broadcastIntent(r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16);	 Catch:{ all -> 0x0331 }
-        goto L_0x034b;
-    L_0x0331:
-        r0 = move-exception;
-        r6 = r50;
-        goto L_0x0358;
-    L_0x0335:
-        r0 = move-exception;
-        r18 = r11;
-        r17 = r14;
-        r6 = r50;
-        r8 = r9;
-        goto L_0x0427;
-    L_0x033f:
-        r30 = r7;
-        r31 = r8;
-        r32 = r9;
-        r18 = r11;
-        r17 = r14;
-        r29 = r23;
-    L_0x034b:
-        if (r17 == 0) goto L_0x035c;
-    L_0x034d:
-        r6 = r50;
-        r5 = r29;
-        r7 = r31;
-        r1.moveUserToForeground(r5, r7, r6);	 Catch:{ all -> 0x0357 }
-        goto L_0x0365;
-    L_0x0357:
-        r0 = move-exception;
-    L_0x0358:
-        r8 = r32;
-        goto L_0x0427;
-    L_0x035c:
-        r6 = r50;
-        r5 = r29;
-        r7 = r31;
-        r1.finishUserBoot(r5);	 Catch:{ all -> 0x03d7 }
-    L_0x0365:
-        if (r0 == 0) goto L_0x03a4;
-    L_0x0367:
-        r2 = new android.content.Intent;	 Catch:{ all -> 0x0357 }
-        r3 = "android.intent.action.USER_STARTING";	 Catch:{ all -> 0x0357 }
-        r2.<init>(r3);	 Catch:{ all -> 0x0357 }
-        r3 = 1073741824; // 0x40000000 float:2.0 double:5.304989477E-315;	 Catch:{ all -> 0x0357 }
-        r2.addFlags(r3);	 Catch:{ all -> 0x0357 }
-        r3 = "android.intent.extra.user_handle";	 Catch:{ all -> 0x0357 }
-        r2.putExtra(r3, r6);	 Catch:{ all -> 0x0357 }
-        r3 = r1.mInjector;	 Catch:{ all -> 0x0357 }
-        r36 = 0;	 Catch:{ all -> 0x0357 }
-        r4 = new com.android.server.am.UserController$6;	 Catch:{ all -> 0x0357 }
-        r4.<init>();	 Catch:{ all -> 0x0357 }
-        r38 = 0;	 Catch:{ all -> 0x0357 }
-        r39 = 0;	 Catch:{ all -> 0x0357 }
-        r40 = 0;	 Catch:{ all -> 0x0357 }
-        r8 = "android.permission.INTERACT_ACROSS_USERS";	 Catch:{ all -> 0x0357 }
-        r41 = new java.lang.String[]{r8};	 Catch:{ all -> 0x0357 }
-        r42 = -1;	 Catch:{ all -> 0x0357 }
-        r43 = 0;	 Catch:{ all -> 0x0357 }
-        r44 = 1;	 Catch:{ all -> 0x0357 }
-        r45 = 0;	 Catch:{ all -> 0x0357 }
-        r46 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x0357 }
-        r47 = 1000; // 0x3e8 float:1.401E-42 double:4.94E-321;	 Catch:{ all -> 0x0357 }
-        r48 = -1;	 Catch:{ all -> 0x0357 }
-        r34 = r3;	 Catch:{ all -> 0x0357 }
-        r35 = r2;	 Catch:{ all -> 0x0357 }
-        r37 = r4;	 Catch:{ all -> 0x0357 }
-        r34.broadcastIntent(r35, r36, r37, r38, r39, r40, r41, r42, r43, r44, r45, r46, r47, r48);	 Catch:{ all -> 0x0357 }
-    L_0x03a4:
-        r1.isColdStart = r0;	 Catch:{ all -> 0x03d7 }
-        r8 = r32;
-        android.os.Binder.restoreCallingIdentity(r8);
-        r0 = "ActivityManager";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "_StartUser startUser userid:";
-        r2.append(r3);
-        r2.append(r6);
-        r3 = " cost ";
-        r2.append(r3);
-        r3 = android.os.SystemClock.elapsedRealtime();
-        r3 = r3 - r18;
-        r2.append(r3);
-        r3 = " ms";
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Slog.i(r0, r2);
-        r0 = 1;
-        return r0;
-    L_0x03d7:
-        r0 = move-exception;
-        r8 = r32;
-        goto L_0x0427;
-    L_0x03dc:
-        r0 = move-exception;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-    L_0x03e8:
-        monitor-exit(r4);	 Catch:{ all -> 0x03ea }
-        throw r0;	 Catch:{ all -> 0x03dc, all -> 0x041c }
-    L_0x03ea:
-        r0 = move-exception;
-        goto L_0x03e8;
-    L_0x03ec:
-        r0 = move-exception;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        goto L_0x0407;
-    L_0x03f9:
-        r0 = move-exception;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-        r3 = r20;
-    L_0x0407:
-        r4 = r21;
-        goto L_0x041a;
-    L_0x040a:
-        r0 = move-exception;
-        r20 = r3;
-        r21 = r4;
-        r22 = r6;
-        r30 = r7;
-        r7 = r8;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-    L_0x041a:
-        monitor-exit(r5);	 Catch:{ all -> 0x041e }
-        throw r0;	 Catch:{ all -> 0x03dc, all -> 0x041c }
-    L_0x041c:
-        r0 = move-exception;
-        goto L_0x0427;
-    L_0x041e:
-        r0 = move-exception;
-        goto L_0x041a;
-    L_0x0420:
-        r0 = move-exception;
-        r8 = r9;
-        r18 = r11;
-        r17 = r14;
-        r6 = r15;
-    L_0x0427:
-        android.os.Binder.restoreCallingIdentity(r8);
-        throw r0;
-    L_0x042b:
-        r17 = r14;
-        r6 = r15;
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r2 = "Permission Denial: switchUser() from pid=";
-        r0.append(r2);
-        r2 = android.os.Binder.getCallingPid();
-        r0.append(r2);
-        r2 = ", uid=";
-        r0.append(r2);
-        r2 = android.os.Binder.getCallingUid();
-        r0.append(r2);
-        r2 = " requires ";
-        r0.append(r2);
-        r2 = "android.permission.INTERACT_ACROSS_USERS_FULL";
-        r0.append(r2);
-        r0 = r0.toString();
-        r2 = "ActivityManager";
-        android.util.Slog.w(r2, r0);
-        r2 = new java.lang.SecurityException;
-        r2.<init>(r0);
-        throw r2;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.UserController.startUser(int, boolean, android.os.IProgressListener):boolean");
     }
 
     UserController(ActivityManagerService service) {
@@ -1397,35 +557,35 @@ class UserController implements Callback {
         finishUserBoot(uss, null);
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0038, code:
+    /* JADX WARNING: Missing block: B:13:0x0038, code skipped:
             if (r2.setState(0, 1) == false) goto L_0x00c8;
      */
-    /* JADX WARNING: Missing block: B:14:0x003a, code:
+    /* JADX WARNING: Missing block: B:14:0x003a, code skipped:
             r1.mInjector.getUserManagerInternal().setUserState(r15, r2.state);
      */
-    /* JADX WARNING: Missing block: B:15:0x0045, code:
+    /* JADX WARNING: Missing block: B:15:0x0045, code skipped:
             if (r15 != 0) goto L_0x0086;
      */
-    /* JADX WARNING: Missing block: B:17:0x004d, code:
+    /* JADX WARNING: Missing block: B:17:0x004d, code skipped:
             if (r1.mInjector.isRuntimeRestarted() != false) goto L_0x0086;
      */
-    /* JADX WARNING: Missing block: B:19:0x0055, code:
+    /* JADX WARNING: Missing block: B:19:0x0055, code skipped:
             if (r1.mInjector.isFirstBootOrUpgrade() != false) goto L_0x0086;
      */
-    /* JADX WARNING: Missing block: B:20:0x0057, code:
+    /* JADX WARNING: Missing block: B:20:0x0057, code skipped:
             r0 = (int) (android.os.SystemClock.elapsedRealtime() / 1000);
             com.android.internal.logging.MetricsLogger.histogram(r1.mInjector.getContext(), "framework_locked_boot_completed", r0);
      */
-    /* JADX WARNING: Missing block: B:21:0x006e, code:
+    /* JADX WARNING: Missing block: B:21:0x006e, code skipped:
             if (r0 <= START_USER_SWITCH_FG_MSG) goto L_0x0086;
      */
-    /* JADX WARNING: Missing block: B:22:0x0070, code:
+    /* JADX WARNING: Missing block: B:22:0x0070, code skipped:
             r6 = new java.lang.StringBuilder();
             r6.append("finishUserBoot took too long. uptimeSeconds=");
             r6.append(r0);
             android.util.Slog.wtf("SystemServerTiming", r6.toString());
      */
-    /* JADX WARNING: Missing block: B:23:0x0086, code:
+    /* JADX WARNING: Missing block: B:23:0x0086, code skipped:
             r1.mHandler.sendMessage(r1.mHandler.obtainMessage(110, r15, 0));
             r0 = new android.content.Intent("android.intent.action.LOCKED_BOOT_COMPLETED", null);
             r0.putExtra("android.intent.extra.user_handle", r15);
@@ -1433,31 +593,31 @@ class UserController implements Callback {
             r18 = r15;
             r1.mInjector.broadcastIntent(r0, null, r21, 0, null, null, new java.lang.String[]{"android.permission.RECEIVE_BOOT_COMPLETED"}, -1, null, true, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, r18);
      */
-    /* JADX WARNING: Missing block: B:24:0x00c8, code:
+    /* JADX WARNING: Missing block: B:24:0x00c8, code skipped:
             r18 = r15;
      */
-    /* JADX WARNING: Missing block: B:25:0x00ca, code:
+    /* JADX WARNING: Missing block: B:25:0x00ca, code skipped:
             r4 = r18;
      */
-    /* JADX WARNING: Missing block: B:26:0x00d6, code:
+    /* JADX WARNING: Missing block: B:26:0x00d6, code skipped:
             if (r1.mInjector.getUserManager().isManagedProfile(r4) != false) goto L_0x00e9;
      */
-    /* JADX WARNING: Missing block: B:28:0x00e2, code:
+    /* JADX WARNING: Missing block: B:28:0x00e2, code skipped:
             if (r1.mInjector.getUserManager().isClonedProfile(r4) == false) goto L_0x00e5;
      */
-    /* JADX WARNING: Missing block: B:29:0x00e5, code:
+    /* JADX WARNING: Missing block: B:29:0x00e5, code skipped:
             maybeUnlockUser(r4);
      */
-    /* JADX WARNING: Missing block: B:30:0x00e9, code:
+    /* JADX WARNING: Missing block: B:30:0x00e9, code skipped:
             r0 = r1.mInjector.getUserManager().getProfileParent(r4);
      */
-    /* JADX WARNING: Missing block: B:31:0x00f3, code:
+    /* JADX WARNING: Missing block: B:31:0x00f3, code skipped:
             if (r0 == null) goto L_0x0127;
      */
-    /* JADX WARNING: Missing block: B:33:0x00fc, code:
+    /* JADX WARNING: Missing block: B:33:0x00fc, code skipped:
             if (isUserRunning(r0.id, 4) == false) goto L_0x0127;
      */
-    /* JADX WARNING: Missing block: B:34:0x00fe, code:
+    /* JADX WARNING: Missing block: B:34:0x00fe, code skipped:
             r5 = new java.lang.StringBuilder();
             r5.append("User ");
             r5.append(r4);
@@ -1467,16 +627,16 @@ class UserController implements Callback {
             android.util.Slog.d("ActivityManager", r5.toString());
             maybeUnlockUser(r4);
      */
-    /* JADX WARNING: Missing block: B:35:0x0127, code:
+    /* JADX WARNING: Missing block: B:35:0x0127, code skipped:
             if (r0 != null) goto L_0x012c;
      */
-    /* JADX WARNING: Missing block: B:36:0x0129, code:
+    /* JADX WARNING: Missing block: B:36:0x0129, code skipped:
             r3 = "<null>";
      */
-    /* JADX WARNING: Missing block: B:37:0x012c, code:
+    /* JADX WARNING: Missing block: B:37:0x012c, code skipped:
             r3 = java.lang.String.valueOf(r0.id);
      */
-    /* JADX WARNING: Missing block: B:38:0x0132, code:
+    /* JADX WARNING: Missing block: B:38:0x0132, code skipped:
             r6 = new java.lang.StringBuilder();
             r6.append("User ");
             r6.append(r4);
@@ -1485,7 +645,7 @@ class UserController implements Callback {
             r6.append("): delaying unlock because parent is locked");
             android.util.Slog.d("ActivityManager", r6.toString());
      */
-    /* JADX WARNING: Missing block: B:39:0x0156, code:
+    /* JADX WARNING: Missing block: B:39:0x0156, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1530,11 +690,13 @@ class UserController implements Callback {
         int userId = uss.mHandle.getIdentifier();
         if (StorageManager.isUserKeyUnlocked(userId)) {
             synchronized (this.mLock) {
-                if (this.mStartedUsers.get(userId) == uss && uss.state == 1) {
-                    uss.mUnlockProgress.start();
-                    uss.mUnlockProgress.setProgress(5, this.mInjector.getContext().getString(17039579));
-                    FgThread.getHandler().post(new -$$Lambda$UserController$o6oQFjGYYIfx-I94cSakTLPLt6s(this, userId, uss));
-                    return;
+                if (this.mStartedUsers.get(userId) == uss) {
+                    if (uss.state == 1) {
+                        uss.mUnlockProgress.start();
+                        uss.mUnlockProgress.setProgress(5, this.mInjector.getContext().getString(17039579));
+                        FgThread.getHandler().post(new -$$Lambda$UserController$o6oQFjGYYIfx-I94cSakTLPLt6s(this, userId, uss));
+                        return;
+                    }
                 }
             }
         }
@@ -1556,17 +718,17 @@ class UserController implements Callback {
         Slog.w("ActivityManager", "User key got locked unexpectedly, leaving user locked.");
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0033, code:
+    /* JADX WARNING: Missing block: B:22:0x0033, code skipped:
             r1.mInjector.getUserManagerInternal().setUserState(r15, r2.state);
             r2.mUnlockProgress.finish();
      */
-    /* JADX WARNING: Missing block: B:23:0x0043, code:
+    /* JADX WARNING: Missing block: B:23:0x0043, code skipped:
             if (r15 != 0) goto L_0x004c;
      */
-    /* JADX WARNING: Missing block: B:24:0x0045, code:
+    /* JADX WARNING: Missing block: B:24:0x0045, code skipped:
             r1.mInjector.startPersistentApps(262144);
      */
-    /* JADX WARNING: Missing block: B:25:0x004c, code:
+    /* JADX WARNING: Missing block: B:25:0x004c, code skipped:
             r1.mInjector.installEncryptionUnawareProviders(r15);
             r0 = new android.content.Intent("android.intent.action.USER_UNLOCKED");
             r0.putExtra("android.intent.extra.user_handle", r15);
@@ -1575,52 +737,52 @@ class UserController implements Callback {
             r1.mInjector.broadcastIntent(r0, null, null, 0, null, null, null, -1, null, false, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, r19);
             r4 = r19;
      */
-    /* JADX WARNING: Missing block: B:26:0x008b, code:
+    /* JADX WARNING: Missing block: B:26:0x008b, code skipped:
             if (getUserInfo(r4).isManagedProfile() == false) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:27:0x008d, code:
+    /* JADX WARNING: Missing block: B:27:0x008d, code skipped:
             r3 = r1.mInjector.getUserManager().getProfileParent(r4);
      */
-    /* JADX WARNING: Missing block: B:28:0x0097, code:
+    /* JADX WARNING: Missing block: B:28:0x0097, code skipped:
             if (r3 == null) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:29:0x0099, code:
+    /* JADX WARNING: Missing block: B:29:0x0099, code skipped:
             r5 = new android.content.Intent("android.intent.action.MANAGED_PROFILE_UNLOCKED");
             r5.putExtra("android.intent.extra.USER", android.os.UserHandle.of(r4));
             r5.addFlags(1342177280);
             r1.mInjector.broadcastIntent(r5, null, null, 0, null, null, null, -1, null, false, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, r3.id);
      */
-    /* JADX WARNING: Missing block: B:30:0x00d3, code:
+    /* JADX WARNING: Missing block: B:30:0x00d3, code skipped:
             r3 = getUserInfo(r4);
      */
-    /* JADX WARNING: Missing block: B:31:0x00df, code:
+    /* JADX WARNING: Missing block: B:31:0x00df, code skipped:
             if (java.util.Objects.equals(r3.lastLoggedInFingerprint, android.os.Build.FINGERPRINT) != false) goto L_0x010b;
      */
-    /* JADX WARNING: Missing block: B:32:0x00e1, code:
+    /* JADX WARNING: Missing block: B:32:0x00e1, code skipped:
             r6 = false;
      */
-    /* JADX WARNING: Missing block: B:33:0x00e6, code:
+    /* JADX WARNING: Missing block: B:33:0x00e6, code skipped:
             if (r3.isManagedProfile() != false) goto L_0x00f0;
      */
-    /* JADX WARNING: Missing block: B:35:0x00ec, code:
+    /* JADX WARNING: Missing block: B:35:0x00ec, code skipped:
             if (r3.isClonedProfile() == false) goto L_0x00ff;
      */
-    /* JADX WARNING: Missing block: B:37:0x00f2, code:
+    /* JADX WARNING: Missing block: B:37:0x00f2, code skipped:
             if (r2.tokenProvided == false) goto L_0x00fe;
      */
-    /* JADX WARNING: Missing block: B:39:0x00fa, code:
+    /* JADX WARNING: Missing block: B:39:0x00fa, code skipped:
             if (r1.mLockPatternUtils.isSeparateProfileChallengeEnabled(r4) != false) goto L_0x00ff;
      */
-    /* JADX WARNING: Missing block: B:40:0x00fe, code:
+    /* JADX WARNING: Missing block: B:40:0x00fe, code skipped:
             r6 = true;
      */
-    /* JADX WARNING: Missing block: B:41:0x00ff, code:
+    /* JADX WARNING: Missing block: B:41:0x00ff, code skipped:
             r1.mInjector.sendPreBootBroadcast(r4, r6, new com.android.server.am.-$$Lambda$UserController$d0zeElfogOIugnQQLWhCzumk53k(r1, r2));
      */
-    /* JADX WARNING: Missing block: B:42:0x010b, code:
+    /* JADX WARNING: Missing block: B:42:0x010b, code skipped:
             finishUserUnlockedCompleted(r35);
      */
-    /* JADX WARNING: Missing block: B:43:0x010e, code:
+    /* JADX WARNING: Missing block: B:43:0x010e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1660,31 +822,31 @@ class UserController implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0023, code:
+    /* JADX WARNING: Missing block: B:12:0x0023, code skipped:
             r0 = getUserInfo(r15);
      */
-    /* JADX WARNING: Missing block: B:13:0x0027, code:
+    /* JADX WARNING: Missing block: B:13:0x0027, code skipped:
             if (r0 != null) goto L_0x002a;
      */
-    /* JADX WARNING: Missing block: B:14:0x0029, code:
+    /* JADX WARNING: Missing block: B:14:0x0029, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:16:0x002e, code:
+    /* JADX WARNING: Missing block: B:16:0x002e, code skipped:
             if (android.os.storage.StorageManager.isUserKeyUnlocked(r15) != false) goto L_0x0031;
      */
-    /* JADX WARNING: Missing block: B:17:0x0030, code:
+    /* JADX WARNING: Missing block: B:17:0x0030, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:0x0031, code:
+    /* JADX WARNING: Missing block: B:18:0x0031, code skipped:
             r1.mInjector.getUserManager().onUserLoggedIn(r15);
      */
-    /* JADX WARNING: Missing block: B:19:0x003e, code:
+    /* JADX WARNING: Missing block: B:19:0x003e, code skipped:
             if (r0.isInitialized() != false) goto L_0x008b;
      */
-    /* JADX WARNING: Missing block: B:20:0x0040, code:
+    /* JADX WARNING: Missing block: B:20:0x0040, code skipped:
             if (r15 == 0) goto L_0x008b;
      */
-    /* JADX WARNING: Missing block: B:21:0x0042, code:
+    /* JADX WARNING: Missing block: B:21:0x0042, code skipped:
             r4 = new java.lang.StringBuilder();
             r4.append("Initializing user #");
             r4.append(r15);
@@ -1695,29 +857,29 @@ class UserController implements Callback {
             r20 = r15;
             r1.mInjector.broadcastIntent(r14, null, new com.android.server.am.UserController.AnonymousClass1(r1), 0, null, null, null, -1, null, true, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, r20);
      */
-    /* JADX WARNING: Missing block: B:22:0x008b, code:
+    /* JADX WARNING: Missing block: B:22:0x008b, code skipped:
             r20 = r15;
      */
-    /* JADX WARNING: Missing block: B:23:0x008d, code:
+    /* JADX WARNING: Missing block: B:23:0x008d, code skipped:
             r4 = new java.lang.StringBuilder();
             r4.append("Sending BOOT_COMPLETE user #");
             r15 = r20;
             r4.append(r15);
             android.util.Slog.i("ActivityManager", r4.toString());
      */
-    /* JADX WARNING: Missing block: B:24:0x00a5, code:
+    /* JADX WARNING: Missing block: B:24:0x00a5, code skipped:
             if (r15 != 0) goto L_0x00ca;
      */
-    /* JADX WARNING: Missing block: B:26:0x00ad, code:
+    /* JADX WARNING: Missing block: B:26:0x00ad, code skipped:
             if (r1.mInjector.isRuntimeRestarted() != false) goto L_0x00ca;
      */
-    /* JADX WARNING: Missing block: B:28:0x00b5, code:
+    /* JADX WARNING: Missing block: B:28:0x00b5, code skipped:
             if (r1.mInjector.isFirstBootOrUpgrade() != false) goto L_0x00ca;
      */
-    /* JADX WARNING: Missing block: B:29:0x00b7, code:
+    /* JADX WARNING: Missing block: B:29:0x00b7, code skipped:
             com.android.internal.logging.MetricsLogger.histogram(r1.mInjector.getContext(), "framework_boot_completed", (int) (android.os.SystemClock.elapsedRealtime() / 1000));
      */
-    /* JADX WARNING: Missing block: B:30:0x00ca, code:
+    /* JADX WARNING: Missing block: B:30:0x00ca, code skipped:
             r14 = new android.content.Intent("android.intent.action.BOOT_COMPLETED", null);
             r14.putExtra("android.intent.extra.user_handle", r15);
             r14.addFlags(150994944);
@@ -1725,7 +887,7 @@ class UserController implements Callback {
             r19 = r14;
             r1.mInjector.broadcastIntent(r4, null, new com.android.server.am.UserController.AnonymousClass2(r1), 0, null, null, new java.lang.String[]{"android.permission.RECEIVE_BOOT_COMPLETED"}, -1, null, true, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, r15);
      */
-    /* JADX WARNING: Missing block: B:31:0x0106, code:
+    /* JADX WARNING: Missing block: B:31:0x0106, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1946,14 +1108,15 @@ class UserController implements Callback {
         int userId = uss.mHandle.getIdentifier();
         synchronized (this.mLock) {
             callbacks = new ArrayList(uss.mStopCallbacks);
-            if (this.mStartedUsers.get(userId) == uss && uss.state == 5) {
-                stopped = true;
-                this.mStartedUsers.remove(userId);
-                this.mUserLru.remove(Integer.valueOf(userId));
-                updateStartedUserArrayLU();
-            } else {
-                stopped = false;
+            if (this.mStartedUsers.get(userId) == uss) {
+                if (uss.state == 5) {
+                    stopped = true;
+                    this.mStartedUsers.remove(userId);
+                    this.mUserLru.remove(Integer.valueOf(userId));
+                    updateStartedUserArrayLU();
+                }
             }
+            stopped = false;
         }
         boolean stopped2 = stopped;
         if (stopped2) {
@@ -1981,40 +1144,40 @@ class UserController implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0015, code:
+    /* JADX WARNING: Missing block: B:9:0x0015, code skipped:
             r0 = r4.getUserInfo(r5);
      */
-    /* JADX WARNING: Missing block: B:10:0x0019, code:
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
             if (r0 == null) goto L_0x0023;
      */
-    /* JADX WARNING: Missing block: B:12:0x001f, code:
+    /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             if (r0.isHwHiddenSpace() == false) goto L_0x0023;
      */
-    /* JADX WARNING: Missing block: B:13:0x0021, code:
+    /* JADX WARNING: Missing block: B:13:0x0021, code skipped:
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:14:0x0023, code:
+    /* JADX WARNING: Missing block: B:14:0x0023, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:15:0x0024, code:
+    /* JADX WARNING: Missing block: B:15:0x0024, code skipped:
             if (r1 != false) goto L_0x0040;
      */
-    /* JADX WARNING: Missing block: B:18:0x0028, code:
+    /* JADX WARNING: Missing block: B:18:0x0028, code skipped:
             if (r4.mIsSupportISec != false) goto L_0x0032;
      */
-    /* JADX WARNING: Missing block: B:19:0x002a, code:
+    /* JADX WARNING: Missing block: B:19:0x002a, code skipped:
             r4.getStorageManager().lockUserKey(r5);
      */
-    /* JADX WARNING: Missing block: B:20:0x0032, code:
+    /* JADX WARNING: Missing block: B:20:0x0032, code skipped:
             r4.getStorageManager().lockUserKeyISec(r5);
      */
-    /* JADX WARNING: Missing block: B:21:0x003a, code:
+    /* JADX WARNING: Missing block: B:21:0x003a, code skipped:
             r2 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:23:0x003f, code:
+    /* JADX WARNING: Missing block: B:23:0x003f, code skipped:
             throw r2.rethrowAsRuntimeException();
      */
-    /* JADX WARNING: Missing block: B:24:0x0040, code:
+    /* JADX WARNING: Missing block: B:24:0x0040, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2054,34 +1217,34 @@ class UserController implements Callback {
         this.mInjector.broadcastIntent(intent, null, null, 0, null, null, null, -1, null, false, false, ActivityManagerService.MY_PID, 1000, -1);
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0039, code:
+    /* JADX WARNING: Missing block: B:17:0x0039, code skipped:
             r1 = getUserInfo(r5);
      */
-    /* JADX WARNING: Missing block: B:17:0x0041, code:
+    /* JADX WARNING: Missing block: B:18:0x0041, code skipped:
             if (r1.isEphemeral() == false) goto L_0x004e;
      */
-    /* JADX WARNING: Missing block: B:18:0x0043, code:
+    /* JADX WARNING: Missing block: B:19:0x0043, code skipped:
             ((android.os.UserManagerInternal) com.android.server.LocalServices.getService(android.os.UserManagerInternal.class)).onEphemeralUserStop(r5);
      */
-    /* JADX WARNING: Missing block: B:20:0x0052, code:
+    /* JADX WARNING: Missing block: B:21:0x0052, code skipped:
             if (r1.isGuest() != false) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:22:0x0058, code:
+    /* JADX WARNING: Missing block: B:23:0x0058, code skipped:
             if (r1.isEphemeral() == false) goto L_0x0063;
      */
-    /* JADX WARNING: Missing block: B:23:0x005a, code:
+    /* JADX WARNING: Missing block: B:24:0x005a, code skipped:
             r2 = r4.mLock;
      */
-    /* JADX WARNING: Missing block: B:24:0x005c, code:
+    /* JADX WARNING: Missing block: B:25:0x005c, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:27:?, code:
+    /* JADX WARNING: Missing block: B:28:?, code skipped:
             stopUsersLU(r5, true, null);
      */
-    /* JADX WARNING: Missing block: B:28:0x0062, code:
+    /* JADX WARNING: Missing block: B:29:0x0062, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:29:0x0063, code:
+    /* JADX WARNING: Missing block: B:30:0x0063, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2094,7 +1257,9 @@ class UserController implements Callback {
         }
         synchronized (this.mLock) {
             UserState oldUss = (UserState) this.mStartedUsers.get(oldUserId);
-            if (oldUserId == 0 || oldUserId == this.mCurrentUserId || oldUss == null || oldUss.state == 4 || oldUss.state == 5) {
+            if (!(oldUserId == 0 || oldUserId == this.mCurrentUserId || oldUss == null || oldUss.state == 4)) {
+                if (oldUss.state == 5) {
+                }
             }
         }
     }
@@ -2162,6 +1327,488 @@ class UserController implements Callback {
         }
     }
 
+    /* JADX WARNING: Missing block: B:80:0x0197, code skipped:
+            if (getUserInfo(r0.intValue()).isClonedProfile() == false) goto L_0x01a7;
+     */
+    /* JADX WARNING: Missing block: B:86:0x01b2, code skipped:
+            r5 = r2;
+     */
+    /* JADX WARNING: Missing block: B:87:0x01b3, code skipped:
+            if (r13 == null) goto L_0x01ba;
+     */
+    /* JADX WARNING: Missing block: B:89:?, code skipped:
+            r5.mUnlockProgress.addListener(r13);
+     */
+    /* JADX WARNING: Missing block: B:90:0x01ba, code skipped:
+            if (r21 == false) goto L_0x01c7;
+     */
+    /* JADX WARNING: Missing block: B:91:0x01bc, code skipped:
+            r1.mInjector.getUserManagerInternal().setUserState(r15, r5.state);
+     */
+    /* JADX WARNING: Missing block: B:92:0x01c7, code skipped:
+            if (r14 == false) goto L_0x021b;
+     */
+    /* JADX WARNING: Missing block: B:93:0x01c9, code skipped:
+            r1.mInjector.reportGlobalUsageEventLocked(16);
+            r2 = r1.mLock;
+     */
+    /* JADX WARNING: Missing block: B:94:0x01d2, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:96:?, code skipped:
+            r1.mCurrentUserId = r15;
+            r1.mTargetUserId = -10000;
+     */
+    /* JADX WARNING: Missing block: B:97:0x01d9, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:99:?, code skipped:
+            r1.mInjector.updateUserConfiguration();
+            updateCurrentProfileIds();
+            r1.mInjector.getWindowManager().setCurrentUser(r15, getCurrentProfileIds());
+            android.hwtheme.HwThemeManager.linkDataSkinDirAsUser(r50);
+            r1.mInjector.reportCurWakefulnessUsageEvent();
+     */
+    /* JADX WARNING: Missing block: B:100:0x01f9, code skipped:
+            if (r1.mUserSwitchUiEnabled == false) goto L_0x0240;
+     */
+    /* JADX WARNING: Missing block: B:102:0x0201, code skipped:
+            if (com.android.server.am.UserController.Injector.access$200(r1.mInjector, r6, r7) != false) goto L_0x0240;
+     */
+    /* JADX WARNING: Missing block: B:103:0x0203, code skipped:
+            r1.mInjector.getWindowManager().setSwitchingUser(true);
+            r1.mInjector.getWindowManager().lockNow(null);
+     */
+    /* JADX WARNING: Missing block: B:110:?, code skipped:
+            r2 = java.lang.Integer.valueOf(r1.mCurrentUserId);
+            updateCurrentProfileIds();
+            r1.mInjector.getWindowManager().setCurrentProfileIds(getCurrentProfileIds());
+            r4 = r1.mLock;
+     */
+    /* JADX WARNING: Missing block: B:111:0x0234, code skipped:
+            monitor-enter(r4);
+     */
+    /* JADX WARNING: Missing block: B:113:?, code skipped:
+            r1.mUserLru.remove(r2);
+            r1.mUserLru.add(r2);
+     */
+    /* JADX WARNING: Missing block: B:114:0x023f, code skipped:
+            monitor-exit(r4);
+     */
+    /* JADX WARNING: Missing block: B:118:0x0243, code skipped:
+            if (r5.state != 4) goto L_0x0261;
+     */
+    /* JADX WARNING: Missing block: B:120:?, code skipped:
+            r5.setState(r5.lastState);
+            r1.mInjector.getUserManagerInternal().setUserState(r15, r5.state);
+            r2 = r1.mLock;
+     */
+    /* JADX WARNING: Missing block: B:121:0x0257, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:123:?, code skipped:
+            updateStartedUserArrayLU();
+     */
+    /* JADX WARNING: Missing block: B:124:0x025b, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:125:0x025c, code skipped:
+            r3 = true;
+     */
+    /* JADX WARNING: Missing block: B:133:0x0264, code skipped:
+            if (r5.state != 5) goto L_0x0281;
+     */
+    /* JADX WARNING: Missing block: B:136:?, code skipped:
+            r5.setState(0);
+            r1.mInjector.getUserManagerInternal().setUserState(r15, r5.state);
+            r2 = r1.mLock;
+     */
+    /* JADX WARNING: Missing block: B:137:0x0277, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:139:?, code skipped:
+            updateStartedUserArrayLU();
+     */
+    /* JADX WARNING: Missing block: B:140:0x027b, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:141:0x027c, code skipped:
+            r3 = true;
+     */
+    /* JADX WARNING: Missing block: B:146:0x0281, code skipped:
+            r0 = r3;
+     */
+    /* JADX WARNING: Missing block: B:149:0x0284, code skipped:
+            if (r5.state != 0) goto L_0x02a0;
+     */
+    /* JADX WARNING: Missing block: B:151:?, code skipped:
+            r1.mInjector.getUserManager().onBeforeStartUser(r15);
+            r22 = r6;
+            r1.mHandler.sendMessage(r1.mHandler.obtainMessage(50, r15, null));
+     */
+    /* JADX WARNING: Missing block: B:152:0x02a0, code skipped:
+            r22 = r6;
+     */
+    /* JADX WARNING: Missing block: B:153:0x02a2, code skipped:
+            if (r14 == false) goto L_0x02da;
+     */
+    /* JADX WARNING: Missing block: B:154:0x02a4, code skipped:
+            r1.mHandler.sendMessage(r1.mHandler.obtainMessage(60, r15, r8));
+            r1.mHandler.removeMessages(10);
+            r1.mHandler.removeMessages(30);
+            r1.mHandler.sendMessage(r1.mHandler.obtainMessage(10, r8, r15, r5));
+            r23 = r5;
+            r1.mHandler.sendMessageDelayed(r1.mHandler.obtainMessage(30, r8, r15, r5), 3000);
+     */
+    /* JADX WARNING: Missing block: B:155:0x02da, code skipped:
+            r23 = r5;
+     */
+    /* JADX WARNING: Missing block: B:156:0x02dc, code skipped:
+            if (r0 == false) goto L_0x033f;
+     */
+    /* JADX WARNING: Missing block: B:158:?, code skipped:
+            r6 = new android.content.Intent("android.intent.action.USER_STARTED");
+            r6.addFlags(1342177280);
+            r6.putExtra("android.intent.extra.user_handle", r15);
+     */
+    /* JADX WARNING: Missing block: B:159:0x0306, code skipped:
+            r29 = r23;
+            r23 = r6;
+            r30 = r7;
+            r31 = r8;
+            r32 = r9;
+            r18 = r11;
+            r17 = r14;
+     */
+    /* JADX WARNING: Missing block: B:161:?, code skipped:
+            r1.mInjector.broadcastIntent(r6, null, null, 0, null, null, null, -1, null, false, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, r50);
+     */
+    /* JADX WARNING: Missing block: B:162:0x0331, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:163:0x0332, code skipped:
+            r6 = r50;
+     */
+    /* JADX WARNING: Missing block: B:164:0x0335, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:165:0x0336, code skipped:
+            r18 = r11;
+            r17 = r14;
+            r6 = r50;
+            r8 = r9;
+     */
+    /* JADX WARNING: Missing block: B:166:0x033f, code skipped:
+            r30 = r7;
+            r31 = r8;
+            r32 = r9;
+            r18 = r11;
+            r17 = r14;
+            r29 = r23;
+     */
+    /* JADX WARNING: Missing block: B:167:0x034b, code skipped:
+            if (r17 == false) goto L_0x035c;
+     */
+    /* JADX WARNING: Missing block: B:168:0x034d, code skipped:
+            r6 = r50;
+     */
+    /* JADX WARNING: Missing block: B:170:?, code skipped:
+            moveUserToForeground(r29, r31, r6);
+     */
+    /* JADX WARNING: Missing block: B:171:0x0357, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:173:0x035c, code skipped:
+            r6 = r50;
+            r7 = r31;
+     */
+    /* JADX WARNING: Missing block: B:175:?, code skipped:
+            finishUserBoot(r29);
+     */
+    /* JADX WARNING: Missing block: B:176:0x0365, code skipped:
+            if (r0 == false) goto L_0x03a4;
+     */
+    /* JADX WARNING: Missing block: B:178:?, code skipped:
+            r2 = new android.content.Intent("android.intent.action.USER_STARTING");
+            r2.addFlags(1073741824);
+            r2.putExtra("android.intent.extra.user_handle", r6);
+            r3 = r1.mInjector;
+            r3.broadcastIntent(r2, null, new com.android.server.am.UserController.AnonymousClass6(r1), 0, null, null, new java.lang.String[]{"android.permission.INTERACT_ACROSS_USERS"}, -1, null, true, false, com.android.server.am.ActivityManagerService.MY_PID, 1000, -1);
+     */
+    /* JADX WARNING: Missing block: B:180:?, code skipped:
+            r1.isColdStart = r0;
+     */
+    /* JADX WARNING: Missing block: B:181:0x03a6, code skipped:
+            android.os.Binder.restoreCallingIdentity(r32);
+            r2 = new java.lang.StringBuilder();
+            r2.append("_StartUser startUser userid:");
+            r2.append(r6);
+            r2.append(" cost ");
+            r2.append(android.os.SystemClock.elapsedRealtime() - r18);
+            r2.append(" ms");
+            android.util.Slog.i("ActivityManager", r2.toString());
+     */
+    /* JADX WARNING: Missing block: B:182:0x03d6, code skipped:
+            return true;
+     */
+    /* JADX WARNING: Missing block: B:183:0x03d7, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:184:0x03d8, code skipped:
+            r8 = r32;
+     */
+    /* JADX WARNING: Missing block: B:186:0x03dd, code skipped:
+            r22 = r6;
+            r30 = r7;
+            r7 = r8;
+            r8 = r9;
+            r18 = r11;
+            r17 = r14;
+            r6 = r15;
+     */
+    /* JADX WARNING: Missing block: B:204:0x041c, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    boolean startUser(int userId, boolean foreground, IProgressListener unlockListener) {
+        Throwable th;
+        long ident;
+        long j;
+        boolean z;
+        int i;
+        boolean needStart;
+        UserInfo userInfo;
+        UserInfo userInfo2;
+        int i2 = userId;
+        boolean z2 = foreground;
+        IProgressListener iProgressListener = unlockListener;
+        if (this.mInjector.checkCallingPermission("android.permission.INTERACT_ACROSS_USERS_FULL") == 0) {
+            long startedTime = SystemClock.elapsedRealtime();
+            this.SwitchUser_Time = startedTime;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Starting userid:");
+            stringBuilder.append(i2);
+            stringBuilder.append(" fg:");
+            stringBuilder.append(z2);
+            Slog.i("ActivityManager", stringBuilder.toString());
+            long ident2 = Binder.clearCallingIdentity();
+            int oldUserId = getCurrentUserId();
+            if (oldUserId == i2) {
+                Binder.restoreCallingIdentity(ident2);
+                return true;
+            }
+            if (z2) {
+                try {
+                    this.mInjector.clearAllLockedTasks("startUser");
+                } catch (Throwable th2) {
+                    th = th2;
+                    ident = ident2;
+                    j = startedTime;
+                    z = z2;
+                    i = i2;
+                }
+            }
+            try {
+                UserInfo userInfo3 = getUserInfo(userId);
+                StringBuilder stringBuilder2;
+                if (userInfo3 == null) {
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("No user info for user #");
+                    stringBuilder2.append(i2);
+                    Slog.w("ActivityManager", stringBuilder2.toString());
+                    Binder.restoreCallingIdentity(ident2);
+                    return false;
+                }
+                if (z2) {
+                    if (userInfo3.isManagedProfile()) {
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Cannot switch to User #");
+                        stringBuilder2.append(i2);
+                        stringBuilder2.append(": not a full user");
+                        Slog.w("ActivityManager", stringBuilder2.toString());
+                        Binder.restoreCallingIdentity(ident2);
+                        return false;
+                    }
+                }
+                setMultiDpi(this.mInjector.getWindowManager(), i2);
+                UserInfo lastUserInfo = getUserInfo(this.mCurrentUserId);
+                if (z2) {
+                    if (this.mUserSwitchUiEnabled && !this.mInjector.shouldSkipKeyguard(lastUserInfo, userInfo3)) {
+                        this.mInjector.getWindowManager().startFreezingScreen(17432717, 17432716);
+                    }
+                }
+                synchronized (this.mLock) {
+                    boolean updateUmState;
+                    try {
+                        UserState uss = (UserState) this.mStartedUsers.get(i2);
+                        boolean needStart2;
+                        if (uss == null) {
+                            try {
+                                needStart = false;
+                                try {
+                                    uss = new UserState(UserHandle.of(userId));
+                                    updateUmState = false;
+                                    try {
+                                        uss.mUnlockProgress.addListener(new UserProgressListener());
+                                        this.mStartedUsers.put(i2, uss);
+                                        updateStartedUserArrayLU();
+                                        needStart2 = true;
+                                        updateUmState = true;
+                                    } catch (Throwable th3) {
+                                        th = th3;
+                                        userInfo3 = oldUserId;
+                                        ident = ident2;
+                                        z = z2;
+                                        i = i2;
+                                        while (true) {
+                                            try {
+                                                break;
+                                            } catch (Throwable th4) {
+                                                th = th4;
+                                            }
+                                        }
+                                        throw th;
+                                    }
+                                } catch (Throwable th5) {
+                                    th = th5;
+                                    updateUmState = false;
+                                    userInfo = lastUserInfo;
+                                    userInfo2 = userInfo3;
+                                    userInfo3 = oldUserId;
+                                    ident = ident2;
+                                    j = startedTime;
+                                    z = z2;
+                                    lastUserInfo = i2;
+                                    needStart2 = needStart;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
+                                }
+                            } catch (Throwable th6) {
+                                th = th6;
+                                needStart = false;
+                                updateUmState = false;
+                                userInfo = lastUserInfo;
+                                ident = ident2;
+                                z = z2;
+                                lastUserInfo = i2;
+                                while (true) {
+                                    break;
+                                }
+                                throw th;
+                            }
+                        } else {
+                            needStart = false;
+                            updateUmState = false;
+                            try {
+                                if (uss.state == 5) {
+                                    if (!isCallingOnHandlerThread()) {
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("User #");
+                                        stringBuilder2.append(i2);
+                                        stringBuilder2.append(" is shutting down - will start after full stop");
+                                        Slog.i("ActivityManager", stringBuilder2.toString());
+                                        this.mHandler.post(new -$$Lambda$UserController$itozNmdxq9RsTKqW4_f-sH8yPdY(this, i2, z2, iProgressListener));
+                                        Binder.restoreCallingIdentity(ident2);
+                                        return true;
+                                    }
+                                }
+                                needStart2 = needStart;
+                            } catch (Throwable th7) {
+                                th = th7;
+                                userInfo = lastUserInfo;
+                                userInfo2 = userInfo3;
+                                userInfo3 = oldUserId;
+                                ident = ident2;
+                                j = startedTime;
+                                z = z2;
+                                lastUserInfo = i2;
+                                needStart2 = needStart;
+                                while (true) {
+                                    break;
+                                }
+                                throw th;
+                            }
+                        }
+                        try {
+                            Integer userIdInt = Integer.valueOf(userId);
+                            if (getUserInfo(userIdInt.intValue()) != null) {
+                                try {
+                                } catch (Throwable th8) {
+                                    th = th8;
+                                    userInfo = lastUserInfo;
+                                    userInfo2 = userInfo3;
+                                    userInfo3 = oldUserId;
+                                    ident = ident2;
+                                    j = startedTime;
+                                    z = z2;
+                                    lastUserInfo = i2;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
+                                }
+                            }
+                            this.mUserLru.remove(userIdInt);
+                            this.mUserLru.add(userIdInt);
+                        } catch (Throwable th9) {
+                            th = th9;
+                            userInfo = lastUserInfo;
+                            userInfo2 = userInfo3;
+                            userInfo3 = oldUserId;
+                            ident = ident2;
+                            j = startedTime;
+                            z = z2;
+                            lastUserInfo = i2;
+                            while (true) {
+                                break;
+                            }
+                            throw th;
+                        }
+                    } catch (Throwable th10) {
+                        th = th10;
+                        needStart = false;
+                        updateUmState = false;
+                        userInfo = lastUserInfo;
+                        userInfo2 = userInfo3;
+                        ident = ident2;
+                        j = startedTime;
+                        z = z2;
+                        lastUserInfo = i2;
+                        while (true) {
+                            break;
+                        }
+                        throw th;
+                    }
+                }
+            } catch (Throwable th11) {
+                th = th11;
+                ident = ident2;
+                j = startedTime;
+                z = z2;
+                i = i2;
+                Binder.restoreCallingIdentity(ident);
+                throw th;
+            }
+        }
+        z = z2;
+        i = i2;
+        String msg = new StringBuilder();
+        msg.append("Permission Denial: switchUser() from pid=");
+        msg.append(Binder.getCallingPid());
+        msg.append(", uid=");
+        msg.append(Binder.getCallingUid());
+        msg.append(" requires ");
+        msg.append("android.permission.INTERACT_ACROSS_USERS_FULL");
+        msg = msg.toString();
+        Slog.w("ActivityManager", msg);
+        throw new SecurityException(msg);
+        ident = ident;
+        Binder.restoreCallingIdentity(ident);
+        throw th;
+    }
+
     private boolean isCallingOnHandlerThread() {
         return Looper.myLooper() == this.mHandler.getLooper();
     }
@@ -2212,41 +1859,15 @@ class UserController implements Callback {
     /* JADX WARNING: Removed duplicated region for block: B:44:0x00e4 A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:57:0x0104  */
     /* JADX WARNING: Removed duplicated region for block: B:55:0x00ff  */
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x0098 A:{Splitter: B:29:0x008f, ExcHandler: android.os.RemoteException (r0_13 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x003e A:{Splitter: B:2:0x001a, ExcHandler: android.os.RemoteException (r0_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:9:0x002f, code:
+    /* JADX WARNING: Missing block: B:9:0x002f, code skipped:
             if (r13.isClonedProfile() != false) goto L_0x0031;
      */
-    /* JADX WARNING: Missing block: B:10:0x0031, code:
+    /* JADX WARNING: Missing block: B:10:0x0031, code skipped:
             android.util.Slog.i("ActivityManager", "ClonedProfile user unlock, set mHaveTryCloneProUserUnlock true!");
             r8.mHaveTryCloneProUserUnlock = true;
      */
-    /* JADX WARNING: Missing block: B:12:0x003e, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:14:?, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to unlock: ");
-            r2.append(r0.getMessage());
-            r2.append(" ,SupportISec: ");
-            r2.append(r8.mIsSupportISec);
-            android.util.Slog.w("ActivityManager", r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:15:0x0063, code:
-            if (r13 != null) goto L_0x0065;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0069, code:
+    /* JADX WARNING: Missing block: B:17:0x0069, code skipped:
             if (r13.isClonedProfile() != false) goto L_0x0031;
-     */
-    /* JADX WARNING: Missing block: B:32:0x0098, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:33:0x0099, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("is SupportISec,Failed to setScreenStateFlag: ");
-            r3.append(r0.getMessage());
-            android.util.Slog.w("ActivityManager", r3.toString());
-            r0 = r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     boolean unlockUserCleared(int userId, byte[] token, byte[] secret, IProgressListener listener) {
@@ -2269,7 +1890,15 @@ class UserController implements Callback {
                 }
                 if (userInfo != null) {
                 }
-            } catch (Exception e) {
+            } catch (RemoteException | RuntimeException e) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to unlock: ");
+                stringBuilder.append(e.getMessage());
+                stringBuilder.append(" ,SupportISec: ");
+                stringBuilder.append(this.mIsSupportISec);
+                Slog.w("ActivityManager", stringBuilder.toString());
+                if (userInfo != null) {
+                }
             } catch (Throwable th) {
                 if (userInfo != null && userInfo.isClonedProfile()) {
                     Slog.i("ActivityManager", "ClonedProfile user unlock, set mHaveTryCloneProUserUnlock true!");
@@ -2284,7 +1913,12 @@ class UserController implements Callback {
                 boolean isSuccess2 = false;
                 try {
                     isSuccess = storageManager.setScreenStateFlag(i, userInfo.serialNumber, 2);
-                } catch (Exception e2) {
+                } catch (RemoteException | RuntimeException e2) {
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("is SupportISec,Failed to setScreenStateFlag: ");
+                    stringBuilder2.append(e2.getMessage());
+                    Slog.w("ActivityManager", stringBuilder2.toString());
+                    isSuccess = isSuccess2;
                 }
                 if (isSuccess) {
                     final IStorageManager iStorageManager = storageManager;
@@ -2296,24 +1930,14 @@ class UserController implements Callback {
                     z = true;
                     final byte[] bArr4 = bArr2;
                     AnonymousClass7 anonymousClass72 = new Runnable() {
-                        /* JADX WARNING: Removed duplicated region for block: B:2:0x0011 A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_1 'e' java.lang.Exception)} */
-                        /* JADX WARNING: Missing block: B:2:0x0011, code:
-            r0 = move-exception;
-     */
-                        /* JADX WARNING: Missing block: B:3:0x0012, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("is SupportISec,Failed to unlockUserScreenISec: ");
-            r2.append(r0.getMessage());
-            android.util.Slog.w("ActivityManager", r2.toString());
-     */
-                        /* JADX WARNING: Missing block: B:4:?, code:
-            return;
-     */
-                        /* Code decompiled incorrectly, please refer to instructions dump. */
                         public void run() {
                             try {
                                 iStorageManager.unlockUserScreenISec(i2, userInfo2.serialNumber, bArr3, bArr4, 1);
-                            } catch (Exception e) {
+                            } catch (RemoteException | RuntimeException e) {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("is SupportISec,Failed to unlockUserScreenISec: ");
+                                stringBuilder.append(e.getMessage());
+                                Slog.w("ActivityManager", stringBuilder.toString());
                             }
                         }
                     };
@@ -2355,14 +1979,14 @@ class UserController implements Callback {
                         if (parent == null || parent.id != i || i3 == i) {
                             userIds2 = userIds;
                         } else {
-                            StringBuilder stringBuilder = new StringBuilder();
+                            StringBuilder stringBuilder3 = new StringBuilder();
                             userIds2 = userIds;
-                            stringBuilder.append("User ");
-                            stringBuilder.append(i3);
-                            stringBuilder.append(" (parent ");
-                            stringBuilder.append(parent.id);
-                            stringBuilder.append("): attempting unlock because parent was just unlocked");
-                            Slog.d("ActivityManager", stringBuilder.toString());
+                            stringBuilder3.append("User ");
+                            stringBuilder3.append(i3);
+                            stringBuilder3.append(" (parent ");
+                            stringBuilder3.append(parent.id);
+                            stringBuilder3.append("): attempting unlock because parent was just unlocked");
+                            Slog.d("ActivityManager", stringBuilder3.toString());
                             maybeUnlockUser(i3);
                         }
                         i4++;
@@ -2547,6 +2171,90 @@ class UserController implements Callback {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x004a A:{SYNTHETIC, Splitter:B:11:0x004a} */
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x004a A:{SYNTHETIC, Splitter:B:11:0x004a} */
+    /* JADX WARNING: Can't wrap try/catch for region: R(3:14|15|16) */
+    /* JADX WARNING: Missing block: B:23:0x0095, code skipped:
+            r18 = r7;
+            r20 = r11;
+            r19 = r15;
+            r15 = r9;
+     */
+    /* JADX WARNING: Missing block: B:39:0x00bb, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    void dispatchUserSwitch(UserState uss, int oldUserId, int newUserId) {
+        ArraySet<String> curWaitingUserSwitchCallbacks;
+        int observerCount;
+        int i;
+        int i2;
+        int i3 = newUserId;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Dispatch onUserSwitching oldUser #");
+        int i4 = oldUserId;
+        stringBuilder.append(i4);
+        UserController userController = " newUser #";
+        stringBuilder.append(userController);
+        stringBuilder.append(i3);
+        Slog.d("ActivityManager", stringBuilder.toString());
+        int observerCount2 = this.mUserSwitchObservers.beginBroadcast();
+        if (observerCount2 > 0) {
+            UserState userState;
+            ArraySet<String> curWaitingUserSwitchCallbacks2 = new ArraySet();
+            AnonymousClass8 anonymousClass8 = this.mLock;
+            synchronized (anonymousClass8) {
+                userState = uss;
+                try {
+                    userState.switching = true;
+                    this.mCurWaitingUserSwitchCallbacks = curWaitingUserSwitchCallbacks2;
+                } finally {
+                    observerCount2 = 
+/*
+Method generation error in method: com.android.server.am.UserController.dispatchUserSwitch(com.android.server.am.UserState, int, int):void, dex: 
+jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r15_10 'observerCount2' int) = (r15_9 'observerCount2' int), (r14_0 'i4' int) in method: com.android.server.am.UserController.dispatchUserSwitch(com.android.server.am.UserState, int, int):void, dex: 
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:230)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:67)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
+	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
+	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
+	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
+	at jadx.core.codegen.ClassGen.addClassCode(ClassGen.java:111)
+	at jadx.core.codegen.ClassGen.makeClass(ClassGen.java:77)
+	at jadx.core.codegen.CodeGen.visit(CodeGen.java:10)
+	at jadx.core.ProcessClass.process(ProcessClass.java:38)
+	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
+	at jadx.api.JavaClass.decompile(JavaClass.java:62)
+	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
+Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only in fallback mode
+	at jadx.core.codegen.InsnGen.fallbackOnlyInsn(InsnGen.java:539)
+	at jadx.core.codegen.InsnGen.makeInsnBody(InsnGen.java:511)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:222)
+	... 33 more
+
+*/
+
     void sendContinueUserSwitchLU(UserState uss, int oldUserId, int newUserId) {
         this.mCurWaitingUserSwitchCallbacks = null;
         this.mHandler.removeMessages(30);
@@ -2609,6 +2317,7 @@ class UserController implements Callback {
                 }
             } catch (Throwable th) {
                 Binder.restoreCallingIdentity(ident);
+                throw th;
             }
         }
         if (i3 >= 0) {
@@ -3037,25 +2746,25 @@ class UserController implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0015, code:
+    /* JADX WARNING: Missing block: B:9:0x0015, code skipped:
             if (r3.mLockPatternUtils.isSeparateProfileChallengeEnabled(r4) != false) goto L_0x0018;
      */
-    /* JADX WARNING: Missing block: B:10:0x0017, code:
+    /* JADX WARNING: Missing block: B:10:0x0017, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:11:0x0018, code:
+    /* JADX WARNING: Missing block: B:11:0x0018, code skipped:
             r0 = r3.mInjector.getKeyguardManager();
      */
-    /* JADX WARNING: Missing block: B:12:0x0022, code:
+    /* JADX WARNING: Missing block: B:12:0x0022, code skipped:
             if (r0.isDeviceLocked(r4) == false) goto L_0x002c;
      */
-    /* JADX WARNING: Missing block: B:14:0x0028, code:
+    /* JADX WARNING: Missing block: B:14:0x0028, code skipped:
             if (r0.isDeviceSecure(r4) == false) goto L_0x002c;
      */
-    /* JADX WARNING: Missing block: B:15:0x002a, code:
+    /* JADX WARNING: Missing block: B:15:0x002a, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:16:0x002c, code:
+    /* JADX WARNING: Missing block: B:16:0x002c, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

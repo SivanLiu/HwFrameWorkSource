@@ -10,9 +10,14 @@ import com.huawei.security.hccm.param.EnrollmentContext;
 import com.huawei.security.hccm.param.EnrollmentParamsSpec;
 import com.huawei.security.hccm.param.EnrollmentParamsSpec.Builder;
 import com.huawei.security.hccm.param.ProtocolParamCMP;
+import java.io.IOException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.concurrent.locks.ReentrantLock;
 
 public final class LocalClientCertificateManager extends ClientCertificateManager {
@@ -30,15 +35,6 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
         this.mKeyStoreProvider = keyStoreProvider;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x009b A:{Catch:{ NullPointerException -> 0x009b, NullPointerException -> 0x009b, EnrollmentException -> 0x008b, Exception -> 0x0075, all -> 0x0073 }, Splitter: B:1:0x000d, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Missing block: B:28:0x009c, code:
-            r6.mErrorMsg = "some of the enrollment params are null or illegal";
-            android.util.Log.e(TAG, r6.mErrorMsg);
-     */
-    /* JADX WARNING: Missing block: B:29:0x00af, code:
-            throw new com.huawei.security.hccm.EnrollmentException(r6.mErrorMsg, -1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public Certificate[] enroll(@NonNull EnrollmentParamsSpec params) throws Exception {
         Log.i(TAG, "start to enroll certificate");
         int i = 0;
@@ -72,7 +68,10 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
             String msg = "Alias associated key pair does not exist in the key store.";
             Log.e(TAG, msg);
             throw new EnrollmentException(msg, -30);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
+            this.mErrorMsg = "some of the enrollment params are null or illegal";
+            Log.e(TAG, this.mErrorMsg);
+            throw new EnrollmentException(this.mErrorMsg, -1);
         } catch (EnrollmentException e2) {
             Log.e(TAG, e2.getMessage());
             int result = e2.getErrorCode();
@@ -93,33 +92,17 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x006c A:{Splitter: B:1:0x000c, PHI: r0 , ExcHandler: java.security.KeyStoreException (r3_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x006c A:{Splitter: B:1:0x000c, PHI: r0 , ExcHandler: java.security.KeyStoreException (r3_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x006c A:{Splitter: B:1:0x000c, PHI: r0 , ExcHandler: java.security.KeyStoreException (r3_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:15:0x006c, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:17:?, code:
-            r4 = TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("store cert failed because of ");
-            r5.append(r3.getMessage());
-            android.util.Log.e(r4, r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x0091, code:
-            throw new com.huawei.security.hccm.EnrollmentException(r3.getMessage(), -4);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void store(@NonNull EnrollmentContext context) throws EnrollmentException {
         Log.i(TAG, "start to store certificate");
         int result = 0;
+        String alias;
         int bigDataReportResult;
         try {
             this.mLock.lock();
             Log.d(TAG, "store");
             Certificate[] chain = context.getClientCertificateChain();
             if (chain.length != 0) {
-                String alias = context.getEnrollmentParams().getAlias();
+                alias = context.getEnrollmentParams().getAlias();
                 KeyStore ks = KeyStore.getInstance(this.mKeyStoreType);
                 ks.load(null, null);
                 ks.setKeyEntry(alias, null, chain);
@@ -137,39 +120,26 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
             }
             result = -25;
             throw new EnrollmentException("Client certificate chain is empty", -25);
-        } catch (Exception e) {
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            alias = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("store cert failed because of ");
+            stringBuilder2.append(e.getMessage());
+            Log.e(alias, stringBuilder2.toString());
+            throw new EnrollmentException(e.getMessage(), -4);
         } catch (Throwable th) {
             bigDataReportResult = BigDataUpload.reportToBigData(CERT_STORAGE_RESULT, HCCM_BIG_DATA_PNAME_INT, result);
             if (bigDataReportResult != 0) {
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("report cert storage data failed ");
-                stringBuilder2.append(bigDataReportResult);
-                Log.e(TAG, stringBuilder2.toString());
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("report cert storage data failed ");
+                stringBuilder3.append(bigDataReportResult);
+                Log.e(TAG, stringBuilder3.toString());
             }
             Log.d(TAG, "report cert storage data succeed");
             this.mLock.unlock();
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0062 A:{Splitter: B:0:0x0000, ExcHandler: com.huawei.security.hccm.EnrollmentException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0062 A:{Splitter: B:0:0x0000, ExcHandler: com.huawei.security.hccm.EnrollmentException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0062 A:{Splitter: B:0:0x0000, ExcHandler: com.huawei.security.hccm.EnrollmentException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0062 A:{Splitter: B:0:0x0000, ExcHandler: com.huawei.security.hccm.EnrollmentException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0062 A:{Splitter: B:0:0x0000, ExcHandler: com.huawei.security.hccm.EnrollmentException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:10:0x0062, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:?, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("delete cert failed because of ");
-            r2.append(r0.getMessage());
-            android.util.Log.e(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:13:0x0088, code:
-            throw new com.huawei.security.hccm.EnrollmentException(r0.getMessage(), -26);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void delete(@NonNull String alias) throws EnrollmentException {
         try {
             this.mLock.lock();
@@ -192,26 +162,18 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
             stringBuilder.append(alias);
             stringBuilder.append("' does not exist!");
             throw new EnrollmentException(stringBuilder.toString(), -8);
-        } catch (Exception e) {
+        } catch (EnrollmentException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException e) {
+            String str2 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("delete cert failed because of ");
+            stringBuilder2.append(e.getMessage());
+            Log.e(str2, stringBuilder2.toString());
+            throw new EnrollmentException(e.getMessage(), -26);
         } catch (Throwable th) {
             this.mLock.unlock();
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x005e A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x005e A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x005e A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x005e A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x005e, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            android.util.Log.e(TAG, "find context failed");
-     */
-    /* JADX WARNING: Missing block: B:14:0x0071, code:
-            throw new com.huawei.security.hccm.EnrollmentException(r0.getMessage(), -27);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public EnrollmentContext find(@NonNull String alias) throws EnrollmentException {
         try {
             this.mLock.lock();
@@ -232,7 +194,9 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
             ctx.setClientCertificateChain(ks.getCertificateChain(alias));
             this.mLock.unlock();
             return ctx;
-        } catch (Exception e) {
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException e) {
+            Log.e(TAG, "find context failed");
+            throw new EnrollmentException(e.getMessage(), -27);
         } catch (Throwable th) {
             this.mLock.unlock();
         }
@@ -253,7 +217,7 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
     /* JADX WARNING: Removed duplicated region for block: B:40:0x00ae  */
     /* JADX WARNING: Removed duplicated region for block: B:49:0x00e7  */
     /* JADX WARNING: Removed duplicated region for block: B:48:0x00e6 A:{RETURN} */
-    /* JADX WARNING: Missing block: B:33:0x0083, code:
+    /* JADX WARNING: Missing block: B:33:0x0083, code skipped:
             if (r3.equals(com.huawei.security.hccm.param.EnrollmentParamsSpec.ENROLLMENT_PROTOCOL_CMP) != false) goto L_0x0091;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -357,28 +321,17 @@ public final class LocalClientCertificateManager extends ClientCertificateManage
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x0016 A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x0016 A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x0016 A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:5:0x0016, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:6:0x0017, code:
-            r1 = new java.lang.StringBuilder();
-            r1.append("get keystore in failed withe message");
-            r1.append(r0.getMessage());
-            android.util.Log.e(TAG, r1.toString());
-     */
-    /* JADX WARNING: Missing block: B:7:0x0031, code:
-            throw r0;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean privateKeyExists(String alias) throws Exception {
         try {
             KeyStore ks = KeyStore.getInstance(this.mKeyStoreType);
             ks.load(null);
             return ((PrivateKey) ks.getKey(alias, null)) != null;
-        } catch (Exception e) {
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("get keystore in failed withe message");
+            stringBuilder.append(e.getMessage());
+            Log.e(TAG, stringBuilder.toString());
+            throw e;
         }
     }
 

@@ -66,7 +66,7 @@ public final class DTCPAdapter {
         this(x0, x1);
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0015, code:
+    /* JADX WARNING: Missing block: B:12:0x0015, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

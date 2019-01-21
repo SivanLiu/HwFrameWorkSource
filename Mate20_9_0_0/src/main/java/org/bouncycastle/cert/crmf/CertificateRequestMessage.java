@@ -15,6 +15,7 @@ import org.bouncycastle.asn1.crmf.ProofOfPossession;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.operator.ContentVerifier;
 import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Encodable;
 
 public class CertificateRequestMessage implements Encodable {
@@ -51,12 +52,12 @@ public class CertificateRequestMessage implements Encodable {
         StringBuilder stringBuilder;
         try {
             return CertReqMsg.getInstance(ASN1Primitive.fromByteArray(bArr));
-        } catch (Throwable e) {
+        } catch (ClassCastException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());
             throw new CertIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e2.getMessage());
@@ -69,7 +70,7 @@ public class CertificateRequestMessage implements Encodable {
             ContentVerifier contentVerifier = contentVerifierProvider.get(pOPOSigningKey.getAlgorithmIdentifier());
             CRMFUtil.derEncodeToStream(pOPOSigningKey.getPoposkInput() != null ? pOPOSigningKey.getPoposkInput() : this.certReqMsg.getCertReq(), contentVerifier.getOutputStream());
             return contentVerifier.verify(pOPOSigningKey.getSignature().getOctets());
-        } catch (Throwable e) {
+        } catch (OperatorCreationException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to create verifier: ");
             stringBuilder.append(e.getMessage());

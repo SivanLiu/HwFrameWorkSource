@@ -149,99 +149,134 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:97:0x0222 A:{SYNTHETIC, Splitter: B:97:0x0222} */
-    /* JADX WARNING: Removed duplicated region for block: B:78:0x01c6 A:{SYNTHETIC, Splitter: B:78:0x01c6} */
-    /* JADX WARNING: Removed duplicated region for block: B:421:0x0576 A:{SYNTHETIC, EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  , EDGE_INSN: B:421:0x0576->B:250:0x0576 ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x0368 A:{SYNTHETIC, Splitter: B:168:0x0368} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06bf A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:302:0x0692 A:{SYNTHETIC, Splitter: B:302:0x0692} */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06bf A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:302:0x0692 A:{SYNTHETIC, Splitter: B:302:0x0692} */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06bf A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:264:0x05e8 A:{Splitter: B:255:0x0589, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x05e5 A:{Splitter: B:255:0x0589, ExcHandler: java.lang.Exception (e java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:108:0x0256 A:{Splitter: B:100:0x0237, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x023a A:{Splitter: B:100:0x0237, ExcHandler: all (th java.lang.Throwable)} */
-    /* JADX WARNING: Removed duplicated region for block: B:302:0x0692 A:{SYNTHETIC, Splitter: B:302:0x0692} */
-    /* JADX WARNING: Removed duplicated region for block: B:309:0x06bf A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:324:0x0701 A:{Splitter: B:97:0x0222, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:320:0x06e9 A:{Splitter: B:97:0x0222, ExcHandler: all (th java.lang.Throwable)} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:352:0x0783 A:{SYNTHETIC, Splitter: B:352:0x0783} */
-    /* JADX WARNING: Removed duplicated region for block: B:359:0x07b0 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:334:0x0733 A:{SYNTHETIC, Splitter: B:334:0x0733} */
-    /* JADX WARNING: Removed duplicated region for block: B:341:0x0760 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07dd A:{SYNTHETIC, Splitter: B:373:0x07dd} */
-    /* JADX WARNING: Removed duplicated region for block: B:380:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:337:0x072a=Splitter:B:337:0x072a, B:357:0x077a=Splitter:B:357:0x077a} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x0222 A:{SYNTHETIC, Splitter:B:99:0x0222} */
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x01c6 A:{SYNTHETIC, Splitter:B:79:0x01c6} */
+    /* JADX WARNING: Removed duplicated region for block: B:315:0x06bf A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:307:0x0692 A:{SYNTHETIC, Splitter:B:307:0x0692} */
+    /* JADX WARNING: Removed duplicated region for block: B:315:0x06bf A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:307:0x0692 A:{SYNTHETIC, Splitter:B:307:0x0692} */
+    /* JADX WARNING: Removed duplicated region for block: B:315:0x06bf A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:267:0x05e8 A:{ExcHandler: RemoteException (e android.os.RemoteException), Splitter:B:258:0x0589} */
+    /* JADX WARNING: Removed duplicated region for block: B:266:0x05e5 A:{ExcHandler: Exception (e java.lang.Exception), Splitter:B:258:0x0589} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:330:0x0701 A:{ExcHandler: RemoteException (e android.os.RemoteException), Splitter:B:99:0x0222} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:326:0x06e9 A:{ExcHandler: all (th java.lang.Throwable), Splitter:B:99:0x0222} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:307:0x0692 A:{SYNTHETIC, Splitter:B:307:0x0692} */
+    /* JADX WARNING: Removed duplicated region for block: B:315:0x06bf A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0256 A:{ExcHandler: RemoteException (e android.os.RemoteException), Splitter:B:102:0x0237} */
+    /* JADX WARNING: Removed duplicated region for block: B:104:0x023a A:{ExcHandler: all (th java.lang.Throwable), Splitter:B:102:0x0237} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:413:0x0576 A:{SYNTHETIC, EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  , EDGE_INSN: B:413:0x0576->B:253:0x0576 ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x0368 A:{SYNTHETIC, Splitter:B:170:0x0368} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:360:0x0783 A:{SYNTHETIC, Splitter:B:360:0x0783} */
+    /* JADX WARNING: Removed duplicated region for block: B:368:0x07b0 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:340:0x0733 A:{SYNTHETIC, Splitter:B:340:0x0733} */
+    /* JADX WARNING: Removed duplicated region for block: B:348:0x0760 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:382:0x07dd A:{SYNTHETIC, Splitter:B:382:0x07dd} */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x080a A:{SYNTHETIC} */
     /* JADX WARNING: Failed to process nested try/catch */
     /* JADX WARNING: Failed to process nested try/catch */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:102:0x023a, code:
+    /* JADX WARNING: Missing block: B:104:0x023a, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:103:0x023b, code:
+    /* JADX WARNING: Missing block: B:105:0x023b, code skipped:
             r29 = r3;
             r31 = r6;
             r32 = r7;
@@ -249,29 +284,27 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             r19 = r9;
             r28 = r11;
      */
-    /* JADX WARNING: Missing block: B:104:0x0246, code:
+    /* JADX WARNING: Missing block: B:106:0x0246, code skipped:
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:109:0x0257, code:
-            r31 = r6;
-            r32 = r7;
-            r1 = r8;
-            r19 = r9;
-            r28 = r11;
-     */
-    /* JADX WARNING: Missing block: B:118:0x0270, code:
+    /* JADX WARNING: Missing block: B:107:0x0249, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:119:0x0271, code:
+    /* JADX WARNING: Missing block: B:108:0x024a, code skipped:
             r31 = r6;
             r32 = r7;
             r1 = r8;
             r19 = r9;
-            r27 = r10;
             r28 = r11;
-            r5 = true;
      */
-    /* JADX WARNING: Missing block: B:250:0x0576, code:
+    /* JADX WARNING: Missing block: B:111:0x0257, code skipped:
+            r31 = r6;
+            r32 = r7;
+            r1 = r8;
+            r19 = r9;
+            r28 = r11;
+     */
+    /* JADX WARNING: Missing block: B:253:0x0576, code skipped:
             r2 = r5;
             r31 = r6;
             r32 = r7;
@@ -280,16 +313,16 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             r33 = r19;
             r19 = r9;
      */
-    /* JADX WARNING: Missing block: B:253:0x0585, code:
+    /* JADX WARNING: Missing block: B:256:0x0585, code skipped:
             if (r12.mKeyValue == false) goto L_0x05eb;
      */
-    /* JADX WARNING: Missing block: B:256:?, code:
+    /* JADX WARNING: Missing block: B:259:?, code skipped:
             r4 = r33.iterator();
      */
-    /* JADX WARNING: Missing block: B:258:0x0591, code:
+    /* JADX WARNING: Missing block: B:261:0x0591, code skipped:
             if (r4.hasNext() == false) goto L_0x05ed;
      */
-    /* JADX WARNING: Missing block: B:259:0x0593, code:
+    /* JADX WARNING: Missing block: B:262:0x0593, code skipped:
             r5 = (android.content.pm.PackageInfo) r4.next();
             r6 = com.android.server.backup.BackupManagerService.TAG;
             r7 = new java.lang.StringBuilder();
@@ -301,79 +334,79 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             sendOnBackupPackage(r5.packageName);
             r20.backupOnePackage();
      */
-    /* JADX WARNING: Missing block: B:261:0x05e0, code:
+    /* JADX WARNING: Missing block: B:264:0x05e0, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:262:0x05e1, code:
+    /* JADX WARNING: Missing block: B:265:0x05e1, code skipped:
             r29 = r3;
      */
-    /* JADX WARNING: Missing block: B:263:0x05e5, code:
+    /* JADX WARNING: Missing block: B:266:0x05e5, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:265:0x05eb, code:
+    /* JADX WARNING: Missing block: B:268:0x05eb, code skipped:
             r1 = r33;
      */
-    /* JADX WARNING: Missing block: B:267:?, code:
+    /* JADX WARNING: Missing block: B:270:?, code skipped:
             finalizeBackup(r2);
      */
-    /* JADX WARNING: Missing block: B:268:0x05f0, code:
+    /* JADX WARNING: Missing block: B:271:0x05f0, code skipped:
             if (r2 == null) goto L_0x05fb;
      */
-    /* JADX WARNING: Missing block: B:270:?, code:
+    /* JADX WARNING: Missing block: B:273:?, code skipped:
             r2.flush();
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:271:0x05f9, code:
+    /* JADX WARNING: Missing block: B:274:0x05f9, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:272:0x05fb, code:
+    /* JADX WARNING: Missing block: B:276:0x05fb, code skipped:
             r12.mOutputFile.close();
      */
-    /* JADX WARNING: Missing block: B:273:0x0601, code:
+    /* JADX WARNING: Missing block: B:277:0x0601, code skipped:
             r4 = com.android.server.backup.BackupManagerService.TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("IO error closing adb backup file: ");
             r5.append(r0.getMessage());
             android.util.Slog.e(r4, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:275:0x061e, code:
+    /* JADX WARNING: Missing block: B:279:0x061e, code skipped:
             monitor-enter(r12.mLatch);
      */
-    /* JADX WARNING: Missing block: B:277:?, code:
+    /* JADX WARNING: Missing block: B:281:?, code skipped:
             r12.mLatch.set(true);
             r12.mLatch.notifyAll();
      */
-    /* JADX WARNING: Missing block: B:282:0x0630, code:
+    /* JADX WARNING: Missing block: B:287:0x0630, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:283:0x0631, code:
+    /* JADX WARNING: Missing block: B:288:0x0631, code skipped:
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:284:0x0634, code:
+    /* JADX WARNING: Missing block: B:289:0x0634, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:285:0x0635, code:
+    /* JADX WARNING: Missing block: B:290:0x0635, code skipped:
             r1 = r33;
             r5 = true;
             r29 = r3;
             r3 = r2;
             r2 = r0;
      */
-    /* JADX WARNING: Missing block: B:286:0x063e, code:
+    /* JADX WARNING: Missing block: B:291:0x063e, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:287:0x063f, code:
+    /* JADX WARNING: Missing block: B:292:0x063f, code skipped:
             r1 = r33;
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:289:0x0645, code:
+    /* JADX WARNING: Missing block: B:294:0x0645, code skipped:
             r1 = r33;
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:296:0x067b, code:
+    /* JADX WARNING: Missing block: B:301:0x067b, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:297:0x067c, code:
+    /* JADX WARNING: Missing block: B:302:0x067c, code skipped:
             r31 = r6;
             r32 = r7;
             r1 = r8;
@@ -382,28 +415,10 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             r28 = r11;
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:303:?, code:
-            r2.flush();
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:304:0x0699, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:306:0x06a1, code:
-            r7 = com.android.server.backup.BackupManagerService.TAG;
-            r8 = new java.lang.StringBuilder();
-            r8.append("IO error closing adb backup file: ");
-            r8.append(r0.getMessage());
-            android.util.Slog.e(r7, r8.toString());
-     */
-    /* JADX WARNING: Missing block: B:310:?, code:
-            r12.mLatch.set(r5);
-            r12.mLatch.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:320:0x06e9, code:
+    /* JADX WARNING: Missing block: B:326:0x06e9, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:321:0x06ea, code:
+    /* JADX WARNING: Missing block: B:327:0x06ea, code skipped:
             r31 = r6;
             r32 = r7;
             r1 = r8;
@@ -411,66 +426,13 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             r28 = r11;
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:325:0x0702, code:
+    /* JADX WARNING: Missing block: B:331:0x0702, code skipped:
             r31 = r6;
             r32 = r7;
             r1 = r8;
             r19 = r9;
             r28 = r11;
             r5 = true;
-     */
-    /* JADX WARNING: Missing block: B:335:?, code:
-            r2.flush();
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:336:0x073a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:338:0x0742, code:
-            r4 = com.android.server.backup.BackupManagerService.TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("IO error closing adb backup file: ");
-            r6.append(r0.getMessage());
-            android.util.Slog.e(r4, r6.toString());
-     */
-    /* JADX WARNING: Missing block: B:342:?, code:
-            r12.mLatch.set(r5);
-            r12.mLatch.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:353:?, code:
-            r2.flush();
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:354:0x078a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:356:0x0792, code:
-            r4 = com.android.server.backup.BackupManagerService.TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("IO error closing adb backup file: ");
-            r6.append(r0.getMessage());
-            android.util.Slog.e(r4, r6.toString());
-     */
-    /* JADX WARNING: Missing block: B:360:?, code:
-            r12.mLatch.set(r5);
-            r12.mLatch.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:374:?, code:
-            r3.flush();
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:375:0x07e4, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:377:0x07ec, code:
-            r4 = new java.lang.StringBuilder();
-            r4.append("IO error closing adb backup file: ");
-            r4.append(r0.getMessage());
-            android.util.Slog.e(com.android.server.backup.BackupManagerService.TAG, r4.toString());
-     */
-    /* JADX WARNING: Missing block: B:381:?, code:
-            r12.mLatch.set(r5);
-            r12.mLatch.notifyAll();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void run() {
@@ -484,13 +446,13 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
         ArrayList<PackageInfo> arrayList;
         ArrayList<PackageInfo> arrayList2;
         Iterator<Entry<String, PackageInfo>> it;
+        StringBuilder stringBuilder2;
         PackageManager packageManager;
         boolean z;
         Throwable N;
         OutputStream pkg;
         Throwable th;
         boolean keyValueBackupQueue;
-        StringBuilder stringBuilder2;
         Iterator<Entry<String, PackageInfo>> it2;
         OutputStream out;
         FileOutputStream fileOutputStream;
@@ -501,13 +463,17 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
         ArrayList<PackageInfo> keyValueBackupQueue2;
         Object out2;
         PackageInfo pkg2;
+        OutputStream out3;
+        String str3;
+        StringBuilder stringBuilder3;
+        StringBuilder stringBuilder4;
         String includeKeyValue = this.mKeyValue ? ", including key-value backups" : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
-        String str3 = BackupManagerService.TAG;
-        StringBuilder stringBuilder3 = new StringBuilder();
-        stringBuilder3.append("--- Performing adb backup");
-        stringBuilder3.append(includeKeyValue);
-        stringBuilder3.append(" ---");
-        Slog.i(str3, stringBuilder3.toString());
+        String str4 = BackupManagerService.TAG;
+        StringBuilder stringBuilder5 = new StringBuilder();
+        stringBuilder5.append("--- Performing adb backup");
+        stringBuilder5.append(includeKeyValue);
+        stringBuilder5.append(" ---");
+        Slog.i(str4, stringBuilder5.toString());
         TreeMap<String, PackageInfo> packagesToBackup = new TreeMap();
         FullBackupObbConnection obbConnection = new FullBackupObbConnection(this.backupManagerService);
         obbConnection.establish();
@@ -539,37 +505,37 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                 break;
             }
             PackageInfo pkg4 = (PackageInfo) ((Entry) iter.next()).getValue();
-            StringBuilder stringBuilder4;
+            StringBuilder stringBuilder6;
             if (!AppBackupUtils.appIsEligibleForBackup(pkg4.applicationInfo, pm) || AppBackupUtils.appIsStopped(pkg4.applicationInfo)) {
                 iter.remove();
                 str = BackupManagerService.TAG;
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("Package ");
-                stringBuilder4.append(pkg4.packageName);
-                stringBuilder4.append(" is not eligible for backup, removing.");
-                Slog.i(str, stringBuilder4.toString());
+                stringBuilder6 = new StringBuilder();
+                stringBuilder6.append("Package ");
+                stringBuilder6.append(pkg4.packageName);
+                stringBuilder6.append(" is not eligible for backup, removing.");
+                Slog.i(str, stringBuilder6.toString());
             } else if (AppBackupUtils.appIsKeyValueOnly(pkg4)) {
                 iter.remove();
                 str = BackupManagerService.TAG;
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("Package ");
-                stringBuilder4.append(pkg4.packageName);
-                stringBuilder4.append(" is key-value.");
-                Slog.i(str, stringBuilder4.toString());
+                stringBuilder6 = new StringBuilder();
+                stringBuilder6.append("Package ");
+                stringBuilder6.append(pkg4.packageName);
+                stringBuilder6.append(" is key-value.");
+                Slog.i(str, stringBuilder6.toString());
                 keyValueBackupQueue3.add(pkg4);
             }
             iter3 = iter;
         }
         ArrayList<PackageInfo> backupQueue = new ArrayList(packagesToBackup.values());
         FileOutputStream ofstream = new FileOutputStream(this.mOutputFile.getFileDescriptor());
-        OutputStream out3 = null;
         OutputStream out4 = null;
+        OutputStream out5 = null;
         try {
             boolean z2;
             boolean encrypting;
             OutputStream finalOutput;
             if (this.mEncryptPassword != null) {
-                PackageInfo pkg5;
+                PackageInfo packageInfo;
                 try {
                     if (this.mEncryptPassword.length() > 0) {
                         z2 = true;
@@ -578,10 +544,10 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                             finalOutput = ofstream;
                             if (this.backupManagerService.backupPasswordMatches(this.mCurrentPassword)) {
                                 Slog.w(BackupManagerService.TAG, "Backup password mismatch; aborting");
-                                if (out3 != null) {
+                                if (out4 != null) {
                                     try {
-                                        out3.flush();
-                                        out3.close();
+                                        out4.flush();
+                                        out4.close();
                                     } catch (IOException e2) {
                                         str2 = BackupManagerService.TAG;
                                         stringBuilder = new StringBuilder();
@@ -609,32 +575,18 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                 headerbuf.append(5);
                                 if (this.mCompress) {
                                     try {
-                                        str3 = "\n1\n";
-                                    } catch (RemoteException e3) {
-                                    } catch (Exception e4) {
-                                        e = e4;
+                                        str4 = "\n1\n";
+                                    } catch (Exception e3) {
+                                        e = e3;
                                         outputStream = ofstream;
                                         arrayList = backupQueue;
                                         arrayList2 = keyValueBackupQueue3;
                                         it = iter;
+                                        stringBuilder2 = headerbuf;
                                         packageManager = pm;
                                         z = true;
                                         try {
-                                            Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                            if (out3 != null) {
-                                            }
-                                            this.mOutputFile.close();
-                                            synchronized (this.mLatch) {
-                                            }
-                                            sendEndBackup();
-                                            obbConnection.tearDown();
-                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                            this.backupManagerService.getWakelock().release();
-                                        } catch (Throwable th2) {
-                                            N = th2;
-                                            pkg = out4;
-                                            out4 = out3;
-                                            th = N;
+                                            Slog.e(BackupManagerService.TAG, "Unable to emit archive header", e);
                                             if (out4 != null) {
                                             }
                                             this.mOutputFile.close();
@@ -644,14 +596,55 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                             obbConnection.tearDown();
                                             Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
                                             this.backupManagerService.getWakelock().release();
-                                            throw th;
+                                            return;
+                                        } catch (RemoteException e4) {
+                                            Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                            if (out4 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                        } catch (Exception e5) {
+                                            e = e5;
+                                            try {
+                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Throwable th2) {
+                                                N = th2;
+                                                pkg = out5;
+                                                out5 = out4;
+                                                th = N;
+                                                if (out5 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                                throw th;
+                                            }
                                         }
+                                    } catch (RemoteException e6) {
                                     } catch (Throwable th3) {
                                     }
                                 } else {
-                                    str3 = "\n0\n";
+                                    str4 = "\n0\n";
                                 }
-                                headerbuf.append(str3);
+                                headerbuf.append(str4);
                                 if (encrypting) {
                                     finalOutput = emitAesBackupHeader(headerbuf, finalOutput);
                                 } else {
@@ -664,8 +657,8 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                         keyValueBackupQueue = true;
                                         try {
                                             finalOutput2 = new DeflaterOutputStream(finalOutput, new Deflater(9), true);
-                                        } catch (Exception e5) {
-                                            e = e5;
+                                        } catch (Exception e7) {
+                                            e = e7;
                                             outputStream = ofstream;
                                             arrayList = backupQueue;
                                             z = true;
@@ -673,48 +666,42 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                             packageManager = pm;
                                             it2 = it;
                                             it = iter;
-                                            try {
-                                                Slog.e(BackupManagerService.TAG, "Unable to emit archive header", e);
-                                                if (out3 != null) {
+                                            Slog.e(BackupManagerService.TAG, "Unable to emit archive header", e);
+                                            if (out4 != null) {
+                                                try {
+                                                    out4.flush();
+                                                    out4.close();
+                                                } catch (IOException e22) {
+                                                    String str5 = BackupManagerService.TAG;
+                                                    StringBuilder stringBuilder7 = new StringBuilder();
+                                                    stringBuilder7.append("IO error closing adb backup file: ");
+                                                    stringBuilder7.append(e22.getMessage());
+                                                    Slog.e(str5, stringBuilder7.toString());
+                                                    synchronized (this.mLatch) {
+                                                        this.mLatch.set(z);
+                                                        this.mLatch.notifyAll();
+                                                    }
+                                                    sendEndBackup();
+                                                    obbConnection.tearDown();
+                                                    Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                    this.backupManagerService.getWakelock().release();
+                                                    return;
                                                 }
-                                                this.mOutputFile.close();
-                                                synchronized (this.mLatch) {
-                                                }
-                                                sendEndBackup();
-                                                obbConnection.tearDown();
-                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                this.backupManagerService.getWakelock().release();
-                                                return;
-                                            } catch (RemoteException e6) {
-                                                Slog.e(BackupManagerService.TAG, "App died during full backup");
-                                                if (out3 != null) {
-                                                }
-                                                this.mOutputFile.close();
-                                                synchronized (this.mLatch) {
-                                                }
-                                                sendEndBackup();
-                                                obbConnection.tearDown();
-                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                this.backupManagerService.getWakelock().release();
-                                            } catch (Exception e7) {
-                                                e = e7;
-                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                                if (out3 != null) {
-                                                }
-                                                this.mOutputFile.close();
-                                                synchronized (this.mLatch) {
-                                                }
-                                                sendEndBackup();
-                                                obbConnection.tearDown();
-                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                this.backupManagerService.getWakelock().release();
                                             }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                            return;
                                         } catch (RemoteException e8) {
                                             z = keyValueBackupQueue;
                                             it2 = it;
                                             it = iter;
                                             Slog.e(BackupManagerService.TAG, "App died during full backup");
-                                            if (out3 != null) {
+                                            if (out4 != null) {
                                             }
                                             this.mOutputFile.close();
                                             synchronized (this.mLatch) {
@@ -725,15 +712,15 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                             this.backupManagerService.getWakelock().release();
                                         } catch (Throwable th4) {
                                             N = th4;
-                                            pkg = out4;
+                                            pkg = out5;
                                             outputStream = ofstream;
                                             arrayList = backupQueue;
                                             z = true;
                                             packageManager = pm;
                                             arrayList2 = it;
-                                            out4 = out3;
+                                            out5 = out4;
                                             th = N;
-                                            if (out4 != null) {
+                                            if (out5 != null) {
                                             }
                                             this.mOutputFile.close();
                                             synchronized (this.mLatch) {
@@ -754,7 +741,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                         z = true;
                                         it = iter;
                                         Slog.e(BackupManagerService.TAG, "Unable to emit archive header", e);
-                                        if (out3 != null) {
+                                        if (out4 != null) {
                                         }
                                         this.mOutputFile.close();
                                         synchronized (this.mLatch) {
@@ -772,7 +759,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                         z = true;
                                         it = iter;
                                         Slog.e(BackupManagerService.TAG, "App died during full backup");
-                                        if (out3 != null) {
+                                        if (out4 != null) {
                                         }
                                         this.mOutputFile.close();
                                         synchronized (this.mLatch) {
@@ -782,16 +769,16 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                         Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
                                         this.backupManagerService.getWakelock().release();
                                     } catch (Throwable N3) {
-                                        pkg = out4;
+                                        pkg = out5;
                                         outputStream = ofstream;
                                         arrayList = backupQueue;
                                         packageManager = pm;
                                         arrayList2 = keyValueBackupQueue3;
                                         z = true;
-                                        out4 = out3;
+                                        out5 = out4;
                                         it = iter;
                                         th = N3;
-                                        if (out4 != null) {
+                                        if (out5 != null) {
                                         }
                                         this.mOutputFile.close();
                                         synchronized (this.mLatch) {
@@ -817,7 +804,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                 packageManager = pm;
                                 z = true;
                                 Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                if (out3 != null) {
+                                if (out4 != null) {
                                 }
                                 this.mOutputFile.close();
                                 synchronized (this.mLatch) {
@@ -833,8 +820,8 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                     try {
                                         i = 0;
                                         try {
-                                            out4 = this.backupManagerService.getPackageManager().getPackageInfo(BackupManagerService.SHARED_BACKUP_AGENT_PACKAGE, 0);
-                                            backupQueue.add(out4);
+                                            out5 = this.backupManagerService.getPackageManager().getPackageInfo(BackupManagerService.SHARED_BACKUP_AGENT_PACKAGE, 0);
+                                            backupQueue.add(out5);
                                         } catch (NameNotFoundException e13) {
                                         }
                                     } catch (NameNotFoundException e14) {
@@ -846,7 +833,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                                 i2 = i;
                                                 if (i2 < N2) {
                                                 }
-                                                out = out3;
+                                                out = out4;
                                                 i = i3 + 1;
                                                 iter = it;
                                                 headerbuf = stringBuilder2;
@@ -858,10 +845,10 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                                 out2 = pkg2;
                                             }
                                         } catch (RemoteException e15) {
-                                            out3 = out;
+                                            out4 = out;
                                         } catch (Exception e16) {
                                             e = e16;
-                                            out3 = out;
+                                            out4 = out;
                                             outputStream = ofstream;
                                             arrayList = backupQueue;
                                             z = keyValueBackupQueue;
@@ -869,7 +856,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                             it2 = iter2;
                                             it = iter;
                                             Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                            if (out3 != null) {
+                                            if (out4 != null) {
                                             }
                                             this.mOutputFile.close();
                                             synchronized (this.mLatch) {
@@ -880,15 +867,15 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                             this.backupManagerService.getWakelock().release();
                                         } catch (Throwable N32) {
                                             th = N32;
-                                            pkg = out4;
-                                            out4 = out;
+                                            pkg = out5;
+                                            out5 = out;
                                             outputStream = ofstream;
                                             arrayList = backupQueue;
                                             z = keyValueBackupQueue;
                                             packageManager = pm;
                                             it2 = iter2;
                                             it = iter;
-                                            if (out4 != null) {
+                                            if (out5 != null) {
                                             }
                                             this.mOutputFile.close();
                                             synchronized (this.mLatch) {
@@ -912,291 +899,152 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                     if (i2 < N2) {
                                         break;
                                     }
+                                    boolean isSharedStorage;
+                                    Iterator<Entry<String, PackageInfo>> iter4;
+                                    FullBackupEngine fullBackupEngine;
+                                    FullBackupEngine fullBackupEngine2;
                                     try {
-                                        out4 = (PackageInfo) backupQueue.get(i2);
+                                        out5 = (PackageInfo) backupQueue.get(i2);
                                         try {
                                             str2 = BackupManagerService.TAG;
-                                            StringBuilder stringBuilder5 = new StringBuilder();
+                                            StringBuilder stringBuilder8 = new StringBuilder();
                                             try {
-                                                stringBuilder5.append("--- Performing full backup for package ");
-                                                stringBuilder5.append(out4.packageName);
-                                                stringBuilder5.append(" ---");
-                                                Slog.i(str2, stringBuilder5.toString());
-                                                boolean isSharedStorage = out4.packageName.equals(BackupManagerService.SHARED_BACKUP_AGENT_PACKAGE);
-                                                Iterator<Entry<String, PackageInfo>> iter4 = iter;
-                                                try {
-                                                    FullBackupEngine fullBackupEngine = fullBackupEngine;
-                                                    pkg5 = out4;
-                                                    i3 = i2;
-                                                    OutputStream out5 = out;
-                                                    fileOutputStream = ofstream;
-                                                    arrayList = backupQueue;
-                                                    FullBackupEngine fullBackupEngine2 = fullBackupEngine;
-                                                    keyValueBackupQueue2 = iter2;
-                                                    it = iter4;
-                                                    stringBuilder2 = headerbuf;
-                                                    packageManager = pm;
-                                                    try {
-                                                        fullBackupEngine = new FullBackupEngine(this.backupManagerService, out, null, pkg5, this.mIncludeApks, this, JobStatus.NO_LATEST_RUNTIME, this.mCurrentOpToken, null);
-                                                        this.mBackupEngine = fullBackupEngine2;
-                                                        if (isSharedStorage) {
-                                                            try {
-                                                                str = "Shared storage";
-                                                                pkg2 = pkg5;
-                                                            } catch (RemoteException e17) {
-                                                                out4 = pkg5;
-                                                                out3 = out5;
-                                                            } catch (Exception e18) {
-                                                                e = e18;
-                                                                out4 = pkg5;
-                                                                out3 = out5;
-                                                            } catch (Throwable N322) {
-                                                                th = N322;
-                                                                out4 = out5;
-                                                                arrayList2 = keyValueBackupQueue2;
-                                                                z = true;
-                                                            }
-                                                        } else {
-                                                            pkg2 = pkg5;
-                                                            try {
-                                                                str = pkg2.packageName;
-                                                            } catch (RemoteException e19) {
-                                                                out3 = out5;
-                                                                out4 = pkg2;
-                                                                arrayList2 = keyValueBackupQueue2;
-                                                                z = true;
-                                                                Slog.e(BackupManagerService.TAG, "App died during full backup");
-                                                                if (out3 != null) {
-                                                                }
-                                                                this.mOutputFile.close();
-                                                                synchronized (this.mLatch) {
-                                                                }
-                                                                sendEndBackup();
-                                                                obbConnection.tearDown();
-                                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                                this.backupManagerService.getWakelock().release();
-                                                            } catch (Exception e20) {
-                                                                e = e20;
-                                                                out3 = out5;
-                                                                out4 = pkg2;
-                                                                arrayList2 = keyValueBackupQueue2;
-                                                                z = true;
-                                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                                                if (out3 != null) {
-                                                                }
-                                                                this.mOutputFile.close();
-                                                                synchronized (this.mLatch) {
-                                                                }
-                                                                sendEndBackup();
-                                                                obbConnection.tearDown();
-                                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                                this.backupManagerService.getWakelock().release();
-                                                            } catch (Throwable N3222) {
-                                                                pkg5 = pkg2;
-                                                                out4 = out5;
-                                                                arrayList2 = keyValueBackupQueue2;
-                                                                z = true;
-                                                                th = N3222;
-                                                                if (out4 != null) {
-                                                                }
-                                                                this.mOutputFile.close();
-                                                                synchronized (this.mLatch) {
-                                                                }
-                                                                sendEndBackup();
-                                                                obbConnection.tearDown();
-                                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                                this.backupManagerService.getWakelock().release();
-                                                                throw th;
-                                                            }
-                                                        }
-                                                        sendOnBackupPackage(str);
-                                                        this.mCurrentTarget = pkg2;
-                                                        this.mBackupEngine.backupOnePackage();
-                                                        if (!this.mIncludeObbs || isSharedStorage) {
-                                                            out3 = out5;
-                                                        } else {
-                                                            out3 = out5;
-                                                            try {
-                                                                if (obbConnection.backupObbs(pkg2, out3) == null) {
-                                                                    stringBuilder = new StringBuilder();
-                                                                    stringBuilder.append("Failure writing OBB stack for ");
-                                                                    stringBuilder.append(pkg2);
-                                                                    throw new RuntimeException(stringBuilder.toString());
-                                                                }
-                                                            } catch (RemoteException e21) {
-                                                                out2 = pkg2;
-                                                                z = true;
-                                                                Slog.e(BackupManagerService.TAG, "App died during full backup");
-                                                                if (out3 != null) {
-                                                                }
-                                                                this.mOutputFile.close();
-                                                                synchronized (this.mLatch) {
-                                                                }
-                                                                sendEndBackup();
-                                                                obbConnection.tearDown();
-                                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                                this.backupManagerService.getWakelock().release();
-                                                            } catch (Exception e22) {
-                                                                e = e22;
-                                                                out2 = pkg2;
-                                                                z = true;
-                                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                                                if (out3 != null) {
-                                                                }
-                                                                this.mOutputFile.close();
-                                                                synchronized (this.mLatch) {
-                                                                }
-                                                                sendEndBackup();
-                                                                obbConnection.tearDown();
-                                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                                this.backupManagerService.getWakelock().release();
-                                                            } catch (Throwable th6) {
-                                                                N3222 = th6;
-                                                                pkg5 = pkg2;
-                                                                out4 = out3;
-                                                                arrayList2 = keyValueBackupQueue2;
-                                                                z = true;
-                                                                th = N3222;
-                                                                if (out4 != null) {
-                                                                }
-                                                                this.mOutputFile.close();
-                                                                synchronized (this.mLatch) {
-                                                                }
-                                                                sendEndBackup();
-                                                                obbConnection.tearDown();
-                                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-                                                                this.backupManagerService.getWakelock().release();
-                                                                throw th;
-                                                            }
-                                                        }
-                                                        out = out3;
-                                                        i = i3 + 1;
-                                                        iter = it;
-                                                        headerbuf = stringBuilder2;
-                                                        pm = packageManager;
-                                                        ofstream = fileOutputStream;
-                                                        backupQueue = arrayList;
-                                                        iter2 = keyValueBackupQueue2;
-                                                        keyValueBackupQueue = true;
-                                                        out2 = pkg2;
-                                                    } catch (RemoteException e23) {
-                                                        out3 = out5;
-                                                        out4 = pkg5;
-                                                        arrayList2 = keyValueBackupQueue2;
-                                                        z = true;
-                                                    } catch (Exception e24) {
-                                                        e = e24;
-                                                        out3 = out5;
-                                                        out4 = pkg5;
-                                                        arrayList2 = keyValueBackupQueue2;
-                                                        z = true;
-                                                    } catch (Throwable N32222) {
-                                                        pkg2 = pkg5;
-                                                        out4 = out5;
-                                                        arrayList2 = keyValueBackupQueue2;
-                                                        z = true;
-                                                        th = N32222;
-                                                    }
-                                                } catch (RemoteException e25) {
-                                                    pkg2 = out4;
-                                                    out3 = out;
-                                                    fileOutputStream = ofstream;
-                                                    arrayList = backupQueue;
-                                                    keyValueBackupQueue2 = iter2;
-                                                    it = iter4;
-                                                    arrayList2 = keyValueBackupQueue2;
-                                                    z = true;
-                                                } catch (Exception e26) {
-                                                    e = e26;
-                                                    pkg2 = out4;
-                                                    out3 = out;
-                                                    fileOutputStream = ofstream;
-                                                    arrayList = backupQueue;
-                                                    keyValueBackupQueue2 = iter2;
-                                                    it = iter4;
-                                                    packageManager = pm;
-                                                    arrayList2 = keyValueBackupQueue2;
-                                                    z = true;
-                                                } catch (Throwable N322222) {
-                                                    fileOutputStream = ofstream;
-                                                    arrayList = backupQueue;
-                                                    keyValueBackupQueue2 = iter2;
-                                                    it = iter4;
-                                                    packageManager = pm;
-                                                    pkg5 = out4;
-                                                    out4 = out;
-                                                    arrayList2 = keyValueBackupQueue2;
-                                                    z = true;
-                                                    th = N322222;
-                                                }
-                                            } catch (RemoteException e27) {
-                                                pkg2 = out4;
-                                                out3 = out;
-                                                fileOutputStream = ofstream;
-                                                arrayList = backupQueue;
-                                                packageManager = pm;
-                                                keyValueBackupQueue2 = iter2;
-                                                it = iter;
-                                                arrayList2 = keyValueBackupQueue2;
-                                                z = true;
-                                            } catch (Exception e28) {
-                                                e = e28;
-                                                pkg2 = out4;
-                                                out3 = out;
-                                                fileOutputStream = ofstream;
-                                                arrayList = backupQueue;
-                                                packageManager = pm;
-                                                keyValueBackupQueue2 = iter2;
-                                                it = iter;
-                                                arrayList2 = keyValueBackupQueue2;
-                                                z = true;
-                                            } catch (Throwable th7) {
-                                                N322222 = th7;
-                                                fileOutputStream = ofstream;
-                                                arrayList = backupQueue;
-                                                packageManager = pm;
-                                                keyValueBackupQueue2 = iter2;
-                                                it = iter;
-                                                pkg5 = out4;
+                                                stringBuilder8.append("--- Performing full backup for package ");
+                                                stringBuilder8.append(out5.packageName);
+                                                stringBuilder8.append(" ---");
+                                                Slog.i(str2, stringBuilder8.toString());
+                                                isSharedStorage = out5.packageName.equals(BackupManagerService.SHARED_BACKUP_AGENT_PACKAGE);
+                                                iter4 = iter;
+                                            } catch (RemoteException e17) {
+                                                pkg2 = out5;
                                                 out4 = out;
+                                                fileOutputStream = ofstream;
+                                                arrayList = backupQueue;
+                                                packageManager = pm;
+                                                keyValueBackupQueue2 = iter2;
+                                                it = iter;
                                                 arrayList2 = keyValueBackupQueue2;
                                                 z = true;
+                                                Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Exception e18) {
+                                                e = e18;
+                                                pkg2 = out5;
+                                                out4 = out;
+                                                fileOutputStream = ofstream;
+                                                arrayList = backupQueue;
+                                                packageManager = pm;
+                                                keyValueBackupQueue2 = iter2;
+                                                it = iter;
+                                                arrayList2 = keyValueBackupQueue2;
+                                                z = true;
+                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Throwable th6) {
+                                                N32 = th6;
+                                                fileOutputStream = ofstream;
+                                                arrayList = backupQueue;
+                                                packageManager = pm;
+                                                keyValueBackupQueue2 = iter2;
+                                                it = iter;
+                                                packageInfo = out5;
+                                                out5 = out;
+                                                arrayList2 = keyValueBackupQueue2;
+                                                z = true;
+                                                th = N32;
+                                                if (out5 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                                throw th;
                                             }
-                                        } catch (RemoteException e29) {
-                                            pkg2 = out4;
-                                            out3 = out;
-                                            fileOutputStream = ofstream;
-                                            arrayList = backupQueue;
-                                            packageManager = pm;
-                                            keyValueBackupQueue2 = iter2;
-                                            it = iter;
-                                            z = keyValueBackupQueue;
-                                            arrayList2 = keyValueBackupQueue2;
-                                        } catch (Exception e30) {
-                                            e = e30;
-                                            pkg2 = out4;
-                                            out3 = out;
-                                            fileOutputStream = ofstream;
-                                            arrayList = backupQueue;
-                                            packageManager = pm;
-                                            keyValueBackupQueue2 = iter2;
-                                            it = iter;
-                                            z = keyValueBackupQueue;
-                                            arrayList2 = keyValueBackupQueue2;
-                                        } catch (Throwable th8) {
-                                            N322222 = th8;
-                                            fileOutputStream = ofstream;
-                                            arrayList = backupQueue;
-                                            packageManager = pm;
-                                            keyValueBackupQueue2 = iter2;
-                                            it = iter;
-                                            pkg5 = out4;
+                                        } catch (RemoteException e19) {
+                                            pkg2 = out5;
                                             out4 = out;
+                                            fileOutputStream = ofstream;
+                                            arrayList = backupQueue;
+                                            packageManager = pm;
+                                            keyValueBackupQueue2 = iter2;
+                                            it = iter;
                                             z = keyValueBackupQueue;
                                             arrayList2 = keyValueBackupQueue2;
+                                            Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                            if (out4 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                        } catch (Exception e20) {
+                                            e = e20;
+                                            pkg2 = out5;
+                                            out4 = out;
+                                            fileOutputStream = ofstream;
+                                            arrayList = backupQueue;
+                                            packageManager = pm;
+                                            keyValueBackupQueue2 = iter2;
+                                            it = iter;
+                                            z = keyValueBackupQueue;
+                                            arrayList2 = keyValueBackupQueue2;
+                                            Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                            if (out4 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                        } catch (Throwable th7) {
+                                            N32 = th7;
+                                            fileOutputStream = ofstream;
+                                            arrayList = backupQueue;
+                                            packageManager = pm;
+                                            keyValueBackupQueue2 = iter2;
+                                            it = iter;
+                                            packageInfo = out5;
+                                            out5 = out;
+                                            z = keyValueBackupQueue;
+                                            arrayList2 = keyValueBackupQueue2;
+                                            th = N32;
+                                            if (out5 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                            throw th;
                                         }
-                                    } catch (RemoteException e31) {
-                                        out3 = out;
+                                    } catch (RemoteException e21) {
+                                        out4 = out;
                                         fileOutputStream = ofstream;
                                         arrayList = backupQueue;
                                         packageManager = pm;
@@ -1204,9 +1052,19 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                         it = iter;
                                         z = keyValueBackupQueue;
                                         arrayList2 = keyValueBackupQueue2;
-                                    } catch (Exception e32) {
-                                        e = e32;
-                                        out3 = out;
+                                        Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                        if (out4 != null) {
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                    } catch (Exception e23) {
+                                        e = e23;
+                                        out4 = out;
                                         fileOutputStream = ofstream;
                                         arrayList = backupQueue;
                                         packageManager = pm;
@@ -1214,30 +1072,400 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                         it = iter;
                                         z = keyValueBackupQueue;
                                         arrayList2 = keyValueBackupQueue2;
-                                    } catch (Throwable N3222222) {
-                                        out3 = out;
+                                        Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                        if (out4 != null) {
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                    } catch (Throwable N322) {
+                                        out4 = out;
                                         fileOutputStream = ofstream;
                                         arrayList = backupQueue;
                                         packageManager = pm;
                                         keyValueBackupQueue2 = iter2;
                                         it = iter;
-                                        pkg = out4;
+                                        pkg = out5;
                                         z = keyValueBackupQueue;
                                         arrayList2 = keyValueBackupQueue2;
+                                        out5 = out4;
+                                        th = N322;
+                                        if (out5 != null) {
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                        throw th;
+                                    }
+                                    try {
+                                        fullBackupEngine = fullBackupEngine;
+                                        packageInfo = out5;
+                                        i3 = i2;
+                                        out3 = out;
+                                        fileOutputStream = ofstream;
+                                        arrayList = backupQueue;
+                                        fullBackupEngine2 = fullBackupEngine;
+                                        keyValueBackupQueue2 = iter2;
+                                        it = iter4;
+                                        stringBuilder2 = headerbuf;
+                                        packageManager = pm;
+                                    } catch (RemoteException e24) {
+                                        pkg2 = out5;
+                                        out4 = out;
+                                        fileOutputStream = ofstream;
+                                        arrayList = backupQueue;
+                                        keyValueBackupQueue2 = iter2;
+                                        it = iter4;
+                                        arrayList2 = keyValueBackupQueue2;
+                                        z = true;
+                                        Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                        if (out4 != null) {
+                                            try {
+                                                out4.flush();
+                                                out4.close();
+                                            } catch (IOException e222) {
+                                                str3 = BackupManagerService.TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("IO error closing adb backup file: ");
+                                                stringBuilder3.append(e222.getMessage());
+                                                Slog.e(str3, stringBuilder3.toString());
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            }
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                            this.mLatch.set(z);
+                                            this.mLatch.notifyAll();
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                    } catch (Exception e25) {
+                                        e = e25;
+                                        pkg2 = out5;
+                                        out4 = out;
+                                        fileOutputStream = ofstream;
+                                        arrayList = backupQueue;
+                                        keyValueBackupQueue2 = iter2;
+                                        it = iter4;
+                                        packageManager = pm;
+                                        arrayList2 = keyValueBackupQueue2;
+                                        z = true;
+                                        Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                        if (out4 != null) {
+                                            try {
+                                                out4.flush();
+                                                out4.close();
+                                            } catch (IOException e2222) {
+                                                str3 = BackupManagerService.TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("IO error closing adb backup file: ");
+                                                stringBuilder3.append(e2222.getMessage());
+                                                Slog.e(str3, stringBuilder3.toString());
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            }
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                            this.mLatch.set(z);
+                                            this.mLatch.notifyAll();
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                    } catch (Throwable N3222) {
+                                        fileOutputStream = ofstream;
+                                        arrayList = backupQueue;
+                                        keyValueBackupQueue2 = iter2;
+                                        it = iter4;
+                                        packageManager = pm;
+                                        packageInfo = out5;
+                                        out5 = out;
+                                        arrayList2 = keyValueBackupQueue2;
+                                        z = true;
+                                        th = N3222;
+                                        if (out5 != null) {
+                                            try {
+                                                out5.flush();
+                                                out5.close();
+                                            } catch (IOException e22222) {
+                                                stringBuilder4 = new StringBuilder();
+                                                stringBuilder4.append("IO error closing adb backup file: ");
+                                                stringBuilder4.append(e22222.getMessage());
+                                                Slog.e(BackupManagerService.TAG, stringBuilder4.toString());
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                                throw th;
+                                            }
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                            this.mLatch.set(z);
+                                            this.mLatch.notifyAll();
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                        throw th;
+                                    }
+                                    try {
+                                        fullBackupEngine = new FullBackupEngine(this.backupManagerService, out, null, packageInfo, this.mIncludeApks, this, JobStatus.NO_LATEST_RUNTIME, this.mCurrentOpToken, null);
+                                        this.mBackupEngine = fullBackupEngine2;
+                                        if (isSharedStorage) {
+                                            try {
+                                                str = "Shared storage";
+                                                pkg2 = packageInfo;
+                                            } catch (RemoteException e26) {
+                                                out5 = packageInfo;
+                                                out4 = out3;
+                                                z = true;
+                                                Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Exception e27) {
+                                                e = e27;
+                                                out5 = packageInfo;
+                                                out4 = out3;
+                                                z = true;
+                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Throwable N32222) {
+                                                th = N32222;
+                                                out5 = out3;
+                                                arrayList2 = keyValueBackupQueue2;
+                                                z = true;
+                                                if (out5 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                                throw th;
+                                            }
+                                        }
+                                        pkg2 = packageInfo;
+                                        try {
+                                            str = pkg2.packageName;
+                                        } catch (RemoteException e28) {
+                                            out4 = out3;
+                                            out5 = pkg2;
+                                            arrayList2 = keyValueBackupQueue2;
+                                            z = true;
+                                            Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                            if (out4 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                        } catch (Exception e29) {
+                                            e = e29;
+                                            out4 = out3;
+                                            out5 = pkg2;
+                                            arrayList2 = keyValueBackupQueue2;
+                                            z = true;
+                                            Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                            if (out4 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                        } catch (Throwable N322222) {
+                                            packageInfo = pkg2;
+                                            out5 = out3;
+                                            arrayList2 = keyValueBackupQueue2;
+                                            z = true;
+                                            th = N322222;
+                                            if (out5 != null) {
+                                            }
+                                            this.mOutputFile.close();
+                                            synchronized (this.mLatch) {
+                                            }
+                                            sendEndBackup();
+                                            obbConnection.tearDown();
+                                            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                            this.backupManagerService.getWakelock().release();
+                                            throw th;
+                                        }
+                                        sendOnBackupPackage(str);
+                                        this.mCurrentTarget = pkg2;
+                                        this.mBackupEngine.backupOnePackage();
+                                        if (!this.mIncludeObbs || isSharedStorage) {
+                                            out4 = out3;
+                                        } else {
+                                            out4 = out3;
+                                            try {
+                                                if (obbConnection.backupObbs(pkg2, out4) == null) {
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("Failure writing OBB stack for ");
+                                                    stringBuilder.append(pkg2);
+                                                    throw new RuntimeException(stringBuilder.toString());
+                                                }
+                                            } catch (RemoteException e30) {
+                                                out2 = pkg2;
+                                                z = true;
+                                                Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Exception e31) {
+                                                e = e31;
+                                                out2 = pkg2;
+                                                z = true;
+                                                Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                                if (out4 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                            } catch (Throwable th8) {
+                                                N322222 = th8;
+                                                packageInfo = pkg2;
+                                                out5 = out4;
+                                                arrayList2 = keyValueBackupQueue2;
+                                                z = true;
+                                                th = N322222;
+                                                if (out5 != null) {
+                                                }
+                                                this.mOutputFile.close();
+                                                synchronized (this.mLatch) {
+                                                }
+                                                sendEndBackup();
+                                                obbConnection.tearDown();
+                                                Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                                this.backupManagerService.getWakelock().release();
+                                                throw th;
+                                            }
+                                        }
+                                        out = out4;
+                                        i = i3 + 1;
+                                        iter = it;
+                                        headerbuf = stringBuilder2;
+                                        pm = packageManager;
+                                        ofstream = fileOutputStream;
+                                        backupQueue = arrayList;
+                                        iter2 = keyValueBackupQueue2;
+                                        keyValueBackupQueue = true;
+                                        out2 = pkg2;
+                                    } catch (RemoteException e32) {
                                         out4 = out3;
+                                        out5 = packageInfo;
+                                        arrayList2 = keyValueBackupQueue2;
+                                        z = true;
+                                        Slog.e(BackupManagerService.TAG, "App died during full backup");
+                                        if (out4 != null) {
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                    } catch (Exception e33) {
+                                        e = e33;
+                                        out4 = out3;
+                                        out5 = packageInfo;
+                                        arrayList2 = keyValueBackupQueue2;
+                                        z = true;
+                                        Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
+                                        if (out4 != null) {
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                    } catch (Throwable N3222222) {
+                                        pkg2 = packageInfo;
+                                        out5 = out3;
+                                        arrayList2 = keyValueBackupQueue2;
+                                        z = true;
                                         th = N3222222;
+                                        if (out5 != null) {
+                                        }
+                                        this.mOutputFile.close();
+                                        synchronized (this.mLatch) {
+                                        }
+                                        sendEndBackup();
+                                        obbConnection.tearDown();
+                                        Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
+                                        this.backupManagerService.getWakelock().release();
+                                        throw th;
                                     }
                                 }
-                            } catch (RemoteException e33) {
-                                out3 = out;
+                            } catch (RemoteException e34) {
+                                out4 = out;
                                 fileOutputStream = ofstream;
                                 arrayList = backupQueue;
                                 z = keyValueBackupQueue;
                                 packageManager = pm;
                                 arrayList2 = iter2;
-                            } catch (Exception e34) {
-                                e = e34;
-                                out3 = out;
+                            } catch (Exception e35) {
+                                e = e35;
+                                out4 = out;
                                 fileOutputStream = ofstream;
                                 arrayList = backupQueue;
                                 z = keyValueBackupQueue;
@@ -1245,7 +1473,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                 arrayList2 = iter2;
                                 it = iter;
                                 Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                                if (out3 != null) {
+                                if (out4 != null) {
                                 }
                                 this.mOutputFile.close();
                                 synchronized (this.mLatch) {
@@ -1255,17 +1483,17 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                                 Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
                                 this.backupManagerService.getWakelock().release();
                             } catch (Throwable N32222222) {
-                                out3 = out;
+                                out4 = out;
                                 fileOutputStream = ofstream;
                                 arrayList = backupQueue;
                                 z = keyValueBackupQueue;
                                 packageManager = pm;
                                 arrayList2 = iter2;
                                 it = iter;
-                                pkg = out4;
-                                out4 = out3;
+                                pkg = out5;
+                                out5 = out4;
                                 th = N32222222;
-                                if (out4 != null) {
+                                if (out5 != null) {
                                 }
                                 this.mOutputFile.close();
                                 synchronized (this.mLatch) {
@@ -1282,16 +1510,16 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                             this.backupManagerService.getWakelock().release();
                         }
                         Slog.e(BackupManagerService.TAG, "Unencrypted backup of encrypted device; aborting");
-                        if (out3 != null) {
+                        if (out4 != null) {
                             try {
-                                out3.flush();
-                                out3.close();
-                            } catch (IOException e210) {
+                                out4.flush();
+                                out4.close();
+                            } catch (IOException e222222) {
                                 str2 = BackupManagerService.TAG;
-                                StringBuilder stringBuilder6 = new StringBuilder();
-                                stringBuilder6.append("IO error closing adb backup file: ");
-                                stringBuilder6.append(e210.getMessage());
-                                Slog.e(str2, stringBuilder6.toString());
+                                stringBuilder4 = new StringBuilder();
+                                stringBuilder4.append("IO error closing adb backup file: ");
+                                stringBuilder4.append(e222222.getMessage());
+                                Slog.e(str2, stringBuilder4.toString());
                             }
                         }
                         this.mOutputFile.close();
@@ -1305,7 +1533,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                         this.backupManagerService.getWakelock().release();
                         return;
                     }
-                } catch (RemoteException e35) {
+                } catch (RemoteException e36) {
                     fileOutputStream = ofstream;
                     arrayList = backupQueue;
                     arrayList2 = keyValueBackupQueue3;
@@ -1313,7 +1541,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                     z = true;
                     packageManager = pm;
                     Slog.e(BackupManagerService.TAG, "App died during full backup");
-                    if (out3 != null) {
+                    if (out4 != null) {
                     }
                     this.mOutputFile.close();
                     synchronized (this.mLatch) {
@@ -1322,8 +1550,8 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                     obbConnection.tearDown();
                     Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
                     this.backupManagerService.getWakelock().release();
-                } catch (Exception e36) {
-                    e = e36;
+                } catch (Exception e37) {
+                    e = e37;
                     fileOutputStream = ofstream;
                     arrayList = backupQueue;
                     arrayList2 = keyValueBackupQueue3;
@@ -1331,7 +1559,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                     z = true;
                     packageManager = pm;
                     Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-                    if (out3 != null) {
+                    if (out4 != null) {
                     }
                     this.mOutputFile.close();
                     synchronized (this.mLatch) {
@@ -1342,16 +1570,16 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
                     this.backupManagerService.getWakelock().release();
                 } catch (Throwable th9) {
                     N32222222 = th9;
-                    pkg5 = out4;
+                    packageInfo = out5;
                     fileOutputStream = ofstream;
                     arrayList = backupQueue;
                     arrayList2 = keyValueBackupQueue3;
                     it = iter;
                     z = true;
                     packageManager = pm;
-                    out4 = out3;
+                    out5 = out4;
                     th = N32222222;
-                    if (out4 != null) {
+                    if (out5 != null) {
                     }
                     this.mOutputFile.close();
                     synchronized (this.mLatch) {
@@ -1370,7 +1598,14 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             finalOutput = ofstream;
             if (this.backupManagerService.backupPasswordMatches(this.mCurrentPassword)) {
             }
-            th = N32222222;
+        } catch (RemoteException e38) {
+            fileOutputStream = ofstream;
+            arrayList = backupQueue;
+            arrayList2 = keyValueBackupQueue3;
+            it = iter;
+            z = true;
+            packageManager = pm;
+            Slog.e(BackupManagerService.TAG, "App died during full backup");
             if (out4 != null) {
             }
             this.mOutputFile.close();
@@ -1380,26 +1615,8 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             obbConnection.tearDown();
             Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
             this.backupManagerService.getWakelock().release();
-            throw th;
-        } catch (RemoteException e37) {
-            fileOutputStream = ofstream;
-            arrayList = backupQueue;
-            arrayList2 = keyValueBackupQueue3;
-            it = iter;
-            z = true;
-            packageManager = pm;
-            Slog.e(BackupManagerService.TAG, "App died during full backup");
-            if (out3 != null) {
-            }
-            this.mOutputFile.close();
-            synchronized (this.mLatch) {
-            }
-            sendEndBackup();
-            obbConnection.tearDown();
-            Slog.d(BackupManagerService.TAG, "Full backup pass complete.");
-            this.backupManagerService.getWakelock().release();
-        } catch (Exception e38) {
-            e = e38;
+        } catch (Exception e39) {
+            e = e39;
             fileOutputStream = ofstream;
             arrayList = backupQueue;
             arrayList2 = keyValueBackupQueue3;
@@ -1407,7 +1624,7 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             z = true;
             packageManager = pm;
             Slog.e(BackupManagerService.TAG, "Internal exception during full backup", e);
-            if (out3 != null) {
+            if (out4 != null) {
             }
             this.mOutputFile.close();
             synchronized (this.mLatch) {
@@ -1424,10 +1641,10 @@ public class PerformAdbBackupTask extends FullBackupTask implements BackupRestor
             it = iter;
             z = true;
             packageManager = pm;
-            pkg = out4;
-            out4 = out3;
+            pkg = out5;
+            out5 = out4;
             th = N32222222;
-            if (out4 != null) {
+            if (out5 != null) {
             }
             this.mOutputFile.close();
             synchronized (this.mLatch) {

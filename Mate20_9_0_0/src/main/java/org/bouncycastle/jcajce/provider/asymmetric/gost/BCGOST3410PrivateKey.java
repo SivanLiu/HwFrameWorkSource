@@ -87,14 +87,18 @@ public class BCGOST3410PrivateKey implements GOST3410PrivateKey, PKCS12BagAttrib
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0050 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
+        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
+        	at java.lang.Iterable.forEach(Iterable.java:75)
+        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
+        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
         	at jadx.api.JavaClass.decompile(JavaClass.java:62)
         	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
@@ -106,10 +110,8 @@ public class BCGOST3410PrivateKey implements GOST3410PrivateKey, PKCS12BagAttrib
         r0 = r1.gost3410Spec;
         r0 = r0.getPublicKeyParamSetOID();
         if (r0 == 0) goto L_0x0027;
-    L_0x000b:
         r0 = r1.gost3410Spec;
         r0 = r0.getPublicKeyParamSetOID();
-    L_0x0011:
         r2.writeObject(r0);
         r0 = r1.gost3410Spec;
         r0 = r0.getDigestParamSetOID();
@@ -118,7 +120,6 @@ public class BCGOST3410PrivateKey implements GOST3410PrivateKey, PKCS12BagAttrib
         r0 = r0.getEncryptionParamSetOID();
         r2.writeObject(r0);
         return;
-    L_0x0027:
         r0 = 0;
         r2.writeObject(r0);
         r0 = r1.gost3410Spec;

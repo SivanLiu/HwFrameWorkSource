@@ -12,6 +12,7 @@ import org.bouncycastle.crypto.digests.SHA224Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.crypto.rainbow.RainbowSigner;
 
@@ -68,7 +69,7 @@ public class SignatureSpi extends java.security.SignatureSpi {
     }
 
     protected void engineInitVerify(PublicKey publicKey) throws InvalidKeyException {
-        CipherParameters generatePublicKeyParameter = RainbowKeysToParams.generatePublicKeyParameter(publicKey);
+        AsymmetricKeyParameter generatePublicKeyParameter = RainbowKeysToParams.generatePublicKeyParameter(publicKey);
         this.digest.reset();
         this.signer.init(false, generatePublicKeyParameter);
     }

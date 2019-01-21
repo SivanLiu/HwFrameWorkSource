@@ -14,7 +14,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.PasswordConverter;
@@ -344,7 +343,7 @@ public final class DES {
 
     public static class PBEWithMD2 extends BaseBlockCipher {
         public PBEWithMD2() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
             super(cBCBlockCipher, 0, 5, 64, 8);
         }
     }
@@ -357,7 +356,7 @@ public final class DES {
 
     public static class PBEWithMD5 extends BaseBlockCipher {
         public PBEWithMD5() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
             super(cBCBlockCipher, 0, 0, 64, 8);
         }
     }
@@ -370,7 +369,7 @@ public final class DES {
 
     public static class PBEWithSHA1 extends BaseBlockCipher {
         public PBEWithSHA1() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
             super(cBCBlockCipher, 0, 1, 64, 8);
         }
     }

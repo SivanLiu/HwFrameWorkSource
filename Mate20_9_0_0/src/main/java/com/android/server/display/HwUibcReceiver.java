@@ -173,129 +173,129 @@ public class HwUibcReceiver extends HandlerThread implements IHwUibcReceiver {
             return 1;
         }
 
-        /* JADX WARNING: Missing block: B:26:0x00a8, code:
+        /* JADX WARNING: Missing block: B:27:0x00a8, code skipped:
             r0 = -1;
      */
-        /* JADX WARNING: Missing block: B:27:0x00ab, code:
+        /* JADX WARNING: Missing block: B:28:0x00ab, code skipped:
             if (r1.isMultiTouch != false) goto L_0x00b2;
      */
-        /* JADX WARNING: Missing block: B:29:0x00ae, code:
+        /* JADX WARNING: Missing block: B:30:0x00ae, code skipped:
             if (r5 <= 1) goto L_0x00b2;
      */
-        /* JADX WARNING: Missing block: B:30:0x00b0, code:
+        /* JADX WARNING: Missing block: B:31:0x00b0, code skipped:
             r1.isMultiTouch = true;
      */
-        /* JADX WARNING: Missing block: B:32:0x00b4, code:
+        /* JADX WARNING: Missing block: B:33:0x00b4, code skipped:
             if (r1.isMultiTouch == false) goto L_0x0199;
      */
-        /* JADX WARNING: Missing block: B:34:0x00b8, code:
+        /* JADX WARNING: Missing block: B:35:0x00b8, code skipped:
             if (r1.prevEvent == null) goto L_0x016a;
      */
-        /* JADX WARNING: Missing block: B:36:0x00c0, code:
+        /* JADX WARNING: Missing block: B:37:0x00c0, code skipped:
             if (r1.prevEvent.getPointerCount() >= r5) goto L_0x00c4;
      */
-        /* JADX WARNING: Missing block: B:38:0x00ca, code:
+        /* JADX WARNING: Missing block: B:39:0x00ca, code skipped:
             if (r1.prevEvent.getPointerCount() <= r5) goto L_0x0167;
      */
-        /* JADX WARNING: Missing block: B:39:0x00cc, code:
+        /* JADX WARNING: Missing block: B:40:0x00cc, code skipped:
             android.util.Log.d(com.android.server.display.HwUibcReceiver.TAG, "UIBC  pointer up");
             r4 = new java.util.ArrayList();
             r6 = r1.prevEvent.getPointerCount();
             r7 = 0;
      */
-        /* JADX WARNING: Missing block: B:40:0x00e0, code:
+        /* JADX WARNING: Missing block: B:41:0x00e0, code skipped:
             if (r7 >= r6) goto L_0x00f2;
      */
-        /* JADX WARNING: Missing block: B:41:0x00e2, code:
+        /* JADX WARNING: Missing block: B:42:0x00e2, code skipped:
             r4.add(java.lang.Integer.valueOf(r1.prevEvent.getPointerId(r7)));
             r7 = r7 + 1;
      */
-        /* JADX WARNING: Missing block: B:42:0x00f2, code:
+        /* JADX WARNING: Missing block: B:43:0x00f2, code skipped:
             r7 = 0;
      */
-        /* JADX WARNING: Missing block: B:43:0x00f3, code:
+        /* JADX WARNING: Missing block: B:44:0x00f3, code skipped:
             if (r7 >= r5) goto L_0x0105;
      */
-        /* JADX WARNING: Missing block: B:44:0x00f5, code:
+        /* JADX WARNING: Missing block: B:45:0x00f5, code skipped:
             r4.remove(java.lang.Integer.valueOf(r1.prevEvent.getPointerId(r7)));
             r7 = r7 + 1;
      */
-        /* JADX WARNING: Missing block: B:46:0x010a, code:
+        /* JADX WARNING: Missing block: B:47:0x010a, code skipped:
             if (r4.size() == 1) goto L_0x0110;
      */
-        /* JADX WARNING: Missing block: B:47:0x010c, code:
+        /* JADX WARNING: Missing block: B:48:0x010c, code skipped:
             r7 = 0;
             r1.isMultiTouch = false;
      */
-        /* JADX WARNING: Missing block: B:48:0x0110, code:
+        /* JADX WARNING: Missing block: B:49:0x0110, code skipped:
             r7 = 0;
      */
-        /* JADX WARNING: Missing block: B:49:0x0111, code:
+        /* JADX WARNING: Missing block: B:50:0x0111, code skipped:
             r2 = (6 & 255) | (r1.prevEvent.findPointerIndex(((java.lang.Integer) r4.get(r7)).intValue()) << 8);
             com.android.server.display.HwUibcReceiver.access$1800()[0] = android.view.MotionEvent.obtain(r1.prevEvent.getDownTime(), android.os.SystemClock.uptimeMillis(), r2, r1.prevEvent.getPointerCount(), r1.pointerProperties, r1.pointerCoords, 0, 1, 2.0f, 2.1f, 0, 0, 4098, 0);
             r14 = 1;
      */
-        /* JADX WARNING: Missing block: B:50:0x015d, code:
+        /* JADX WARNING: Missing block: B:51:0x015d, code skipped:
             if (r5 != 1) goto L_0x0164;
      */
-        /* JADX WARNING: Missing block: B:51:0x015f, code:
+        /* JADX WARNING: Missing block: B:52:0x015f, code skipped:
             r1.isMultiTouch = false;
             r0 = r43;
      */
-        /* JADX WARNING: Missing block: B:52:0x0164, code:
+        /* JADX WARNING: Missing block: B:53:0x0164, code skipped:
             r3 = 0 + 1;
      */
-        /* JADX WARNING: Missing block: B:53:0x0167, code:
+        /* JADX WARNING: Missing block: B:54:0x0167, code skipped:
             r14 = 1;
             r0 = 2;
      */
-        /* JADX WARNING: Missing block: B:54:0x016a, code:
+        /* JADX WARNING: Missing block: B:55:0x016a, code skipped:
             r14 = 1;
             android.util.Log.d(com.android.server.display.HwUibcReceiver.TAG, "UIBC  pointer down");
             r0 = 5 & 255;
             r2 = 0;
      */
-        /* JADX WARNING: Missing block: B:55:0x0176, code:
+        /* JADX WARNING: Missing block: B:56:0x0176, code skipped:
             if (r2 >= r5) goto L_0x019c;
      */
-        /* JADX WARNING: Missing block: B:57:0x017a, code:
+        /* JADX WARNING: Missing block: B:58:0x017a, code skipped:
             if (r1.prevEvent == null) goto L_0x018f;
      */
-        /* JADX WARNING: Missing block: B:59:0x0189, code:
+        /* JADX WARNING: Missing block: B:60:0x0189, code skipped:
             if (r1.prevEvent.findPointerIndex(r1.pointerProperties[r2].id) != -1) goto L_0x018c;
      */
-        /* JADX WARNING: Missing block: B:60:0x018c, code:
+        /* JADX WARNING: Missing block: B:61:0x018c, code skipped:
             r2 = r2 + 1;
      */
-        /* JADX WARNING: Missing block: B:61:0x018f, code:
+        /* JADX WARNING: Missing block: B:62:0x018f, code skipped:
             r0 = r0 | (r1.pointerProperties[r2].id << 8);
      */
-        /* JADX WARNING: Missing block: B:62:0x0199, code:
+        /* JADX WARNING: Missing block: B:63:0x0199, code skipped:
             r14 = 1;
             r0 = r43;
      */
-        /* JADX WARNING: Missing block: B:63:0x019c, code:
+        /* JADX WARNING: Missing block: B:64:0x019c, code skipped:
             if (r5 != 0) goto L_0x01a7;
      */
-        /* JADX WARNING: Missing block: B:64:0x019e, code:
+        /* JADX WARNING: Missing block: B:65:0x019e, code skipped:
             android.util.Log.w(com.android.server.display.HwUibcReceiver.TAG, "numPointers is zero");
      */
-        /* JADX WARNING: Missing block: B:65:0x01a6, code:
+        /* JADX WARNING: Missing block: B:66:0x01a6, code skipped:
             return 0;
      */
-        /* JADX WARNING: Missing block: B:66:0x01a7, code:
+        /* JADX WARNING: Missing block: B:67:0x01a7, code skipped:
             r23 = r14;
             com.android.server.display.HwUibcReceiver.access$1800()[r3] = android.view.MotionEvent.obtain(android.os.SystemClock.uptimeMillis(), android.os.SystemClock.uptimeMillis(), r0, r5, r1.pointerProperties, r1.pointerCoords, 0, 1, 2.0f, 2.1f, 0, 0, 4098, 0);
             r1.prevEvent = (android.view.MotionEvent) com.android.server.display.HwUibcReceiver.access$1800()[r3];
             r3 = r3 + 1;
      */
-        /* JADX WARNING: Missing block: B:67:0x01dd, code:
+        /* JADX WARNING: Missing block: B:68:0x01dd, code skipped:
             if (r22 != false) goto L_0x01e1;
      */
-        /* JADX WARNING: Missing block: B:69:0x01e0, code:
+        /* JADX WARNING: Missing block: B:70:0x01e0, code skipped:
             return 0;
      */
-        /* JADX WARNING: Missing block: B:70:0x01e1, code:
+        /* JADX WARNING: Missing block: B:71:0x01e1, code skipped:
             return r3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -311,31 +311,33 @@ public class HwUibcReceiver extends HandlerThread implements IHwUibcReceiver {
             this.curPointerIndex = 0;
             synchronized (HwUibcReceiver.class) {
                 try {
-                    if (HwUibcReceiver.this.screenHeight == 0 || HwUibcReceiver.this.screenWidth == 0 || HwUibcReceiver.this.remoteHeight == 0 || HwUibcReceiver.this.remoteWidth == 0) {
-                        Log.w(HwUibcReceiver.TAG, "screen size is wrong");
-                        return 0;
-                    }
-                    if (numPointers >= 0) {
-                        int i = 1;
-                        if (((index + 7) + 1) + ((numPointers - 1) * 5) < bArr.length) {
-                            boolean injectFlag = true;
-                            int i2 = 0;
-                            while (i2 < numPointers) {
-                                try {
-                                    int lowX = bArr[((index + 5) + i) + (i2 * 5)] & 255;
-                                    injectFlag = doTranslateCoord(((float) (((bArr[(index + 5) + (i2 * 5)] & 255) << 8) | lowX)) / ((float) HwUibcReceiver.this.remoteWidth), ((float) (((bArr[(index + 7) + (i2 * 5)] & 255) << 8) | (bArr[((index + 7) + i) + (i2 * 5)] & 255))) / ((float) HwUibcReceiver.this.remoteHeight), bArr[(index + 4) + (i2 * 5)]);
-                                    i2++;
-                                    bArr = payload;
-                                    i = 1;
-                                } catch (Throwable th2) {
-                                    th = th2;
-                                    boolean z = injectFlag;
-                                    throw th;
+                    if (!(HwUibcReceiver.this.screenHeight == 0 || HwUibcReceiver.this.screenWidth == 0 || HwUibcReceiver.this.remoteHeight == 0)) {
+                        if (HwUibcReceiver.this.remoteWidth != 0) {
+                            if (numPointers >= 0) {
+                                int i = 1;
+                                if (((index + 7) + 1) + ((numPointers - 1) * 5) < bArr.length) {
+                                    boolean injectFlag = true;
+                                    int i2 = 0;
+                                    while (i2 < numPointers) {
+                                        try {
+                                            int lowX = bArr[((index + 5) + i) + (i2 * 5)] & 255;
+                                            injectFlag = doTranslateCoord(((float) (((bArr[(index + 5) + (i2 * 5)] & 255) << 8) | lowX)) / ((float) HwUibcReceiver.this.remoteWidth), ((float) (((bArr[(index + 7) + (i2 * 5)] & 255) << 8) | (bArr[((index + 7) + i) + (i2 * 5)] & 255))) / ((float) HwUibcReceiver.this.remoteHeight), bArr[(index + 4) + (i2 * 5)]);
+                                            i2++;
+                                            bArr = payload;
+                                            i = 1;
+                                        } catch (Throwable th2) {
+                                            th = th2;
+                                            boolean z = injectFlag;
+                                            throw th;
+                                        }
+                                    }
                                 }
                             }
+                            Log.w(HwUibcReceiver.TAG, "createTouchEvents  numPointers  overflow, not expect go in");
+                            return 0;
                         }
                     }
-                    Log.w(HwUibcReceiver.TAG, "createTouchEvents  numPointers  overflow, not expect go in");
+                    Log.w(HwUibcReceiver.TAG, "screen size is wrong");
                     return 0;
                 } catch (Throwable th3) {
                     th = th3;
@@ -513,17 +515,19 @@ public class HwUibcReceiver extends HandlerThread implements IHwUibcReceiver {
                         }
                         int readCount = HwUibcReceiver.this.mInput.read(HwUibcReceiver.this.mUibcBuffer, HwUibcReceiver.this.mReceiveBytes, 100 - HwUibcReceiver.this.mReceiveBytes);
                         if (!HwUibcReceiver.this.skiponce) {
-                            if (HwUibcReceiver.this.mState != ReceiverState.STATE_SUSPENDING && !HwPCUtils.isPcCastModeInServer()) {
-                                if (readCount > 0) {
-                                    HwUibcReceiver.access$912(HwUibcReceiver.this, readCount);
-                                    HwUibcReceiver.this.mParseBytes = 0;
-                                }
-                                if (readCount > 0 || (readCount == 0 && HwUibcReceiver.this.mReceiveBytes == 100)) {
-                                    consumePacket();
-                                }
-                                if (HwUibcReceiver.this.mState == ReceiverState.STATE_WORKING) {
-                                    HwUibcReceiver.this.receiveEvent();
-                                    break;
+                            if (HwUibcReceiver.this.mState != ReceiverState.STATE_SUSPENDING) {
+                                if (!HwPCUtils.isPcCastModeInServer()) {
+                                    if (readCount > 0) {
+                                        HwUibcReceiver.access$912(HwUibcReceiver.this, readCount);
+                                        HwUibcReceiver.this.mParseBytes = 0;
+                                    }
+                                    if (readCount > 0 || (readCount == 0 && HwUibcReceiver.this.mReceiveBytes == 100)) {
+                                        consumePacket();
+                                    }
+                                    if (HwUibcReceiver.this.mState == ReceiverState.STATE_WORKING) {
+                                        HwUibcReceiver.this.receiveEvent();
+                                        break;
+                                    }
                                 }
                             }
                             HwUibcReceiver.this.mReceiveBytes = HwUibcReceiver.this.mParseBytes;
@@ -925,20 +929,22 @@ public class HwUibcReceiver extends HandlerThread implements IHwUibcReceiver {
         this.mHandler.sendEmptyMessage(message);
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0017, code:
+    /* JADX WARNING: Missing block: B:11:0x0017, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private synchronized void makeAllUserToastAndShow(final String text) {
-        if (this.mContext != null && this.mDisplayHandler != null) {
-            this.mDisplayHandler.post(new Runnable() {
-                public void run() {
-                    Toast toast = Toast.makeText(HwUibcReceiver.this.mContext, text, 1);
-                    LayoutParams windowParams = toast.getWindowParams();
-                    windowParams.privateFlags |= 16;
-                    toast.show();
-                }
-            });
+        if (this.mContext != null) {
+            if (this.mDisplayHandler != null) {
+                this.mDisplayHandler.post(new Runnable() {
+                    public void run() {
+                        Toast toast = Toast.makeText(HwUibcReceiver.this.mContext, text, 1);
+                        LayoutParams windowParams = toast.getWindowParams();
+                        windowParams.privateFlags |= 16;
+                        toast.show();
+                    }
+                });
+            }
         }
     }
 

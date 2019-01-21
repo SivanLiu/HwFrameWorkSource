@@ -187,12 +187,16 @@ public final class NotificationRecord {
             return null;
         }
         Uri sound = this.mChannel.getSound();
-        if (this.mPreChannelsNotification && (getChannel().getUserLockedFields() & 32) == 0) {
+        if (this.mPreChannelsNotification) {
             boolean z = true;
             if ((n.defaults & 1) == 0) {
                 z = false;
             }
-            sound = z ? System.DEFAULT_NOTIFICATION_URI : n.sound;
+            if (z) {
+                sound = System.DEFAULT_NOTIFICATION_URI;
+            } else {
+                sound = n.sound;
+            }
         }
         return sound;
     }
@@ -854,14 +858,14 @@ public final class NotificationRecord {
 
     private String getUserExplanation() {
         if (this.mUserExplanation == null) {
-            this.mUserExplanation = this.mContext.getResources().getString(17040216);
+            this.mUserExplanation = this.mContext.getResources().getString(17040217);
         }
         return this.mUserExplanation;
     }
 
     private String getPeopleExplanation() {
         if (this.mPeopleExplanation == null) {
-            this.mPeopleExplanation = this.mContext.getResources().getString(17040215);
+            this.mPeopleExplanation = this.mContext.getResources().getString(17040216);
         }
         return this.mPeopleExplanation;
     }

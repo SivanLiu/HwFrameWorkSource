@@ -421,7 +421,7 @@ public abstract class DhcpPacket {
         return udpSrcPort == DHCP_SERVER && udpDstPort == DHCP_SERVER;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x03e7 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x03e7 A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:134:0x03de  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
@@ -691,7 +691,8 @@ public abstract class DhcpPacket {
                                                                 } catch (BufferUnderflowException e2) {
                                                                     e = e2;
                                                                     Short sh = mtu2;
-                                                                    break;
+                                                                    domainName = ipv4addr;
+                                                                    throw new ParseException(DhcpErrorEvent.errorCodeWithOption(DhcpErrorEvent.BUFFER_UNDERFLOW, hops), "BufferUnderflowException", new Object[null]);
                                                                 }
                                                             case (byte) 56:
                                                                 expectedLen = optionLen;
@@ -801,6 +802,8 @@ public abstract class DhcpPacket {
                                     } catch (BufferUnderflowException e8) {
                                         e = e8;
                                         mtu = mtu2;
+                                        domainName = ipv4addr;
+                                        throw new ParseException(DhcpErrorEvent.errorCodeWithOption(DhcpErrorEvent.BUFFER_UNDERFLOW, hops), "BufferUnderflowException", new Object[null]);
                                     }
                                 }
                                 requestedIp3 = requestedIp;

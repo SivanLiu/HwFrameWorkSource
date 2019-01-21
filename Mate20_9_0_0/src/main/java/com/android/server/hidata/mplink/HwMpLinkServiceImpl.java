@@ -124,6 +124,7 @@ public class HwMpLinkServiceImpl extends StateMachine implements IMpLinkStateObs
                             HwMpLinkServiceImpl.this.notifyNetCoexistFailed(1);
                             break;
                         case HwMpLinkServiceImpl.MPLINK_MSG_HIBRAIN_MPLINK_CLOSE /*212*/:
+                            HwMpLinkServiceImpl.this.mHwMpLinkTelephonyImpl.closeMobileDataIfOpened();
                             HwMpLinkServiceImpl.this.notifyNetCoexistFailed(true);
                             break;
                         case HwMpLinkServiceImpl.MPLINK_MSG_WIFI_CONNECTED /*213*/:
@@ -187,13 +188,9 @@ public class HwMpLinkServiceImpl extends StateMachine implements IMpLinkStateObs
                                 HwMpLinkServiceImpl.this.openMpLinkNetworkCoexist();
                                 break;
                             case HwMpLinkServiceImpl.MPLINK_MSG_HIBRAIN_MPLINK_CLOSE /*212*/:
-                                if (!(HwMpLinkServiceImpl.this.mHwMpLinkWifiImpl.isWifiConnected() && HwMpLinkServiceImpl.this.mHwMpLinkTelephonyImpl.isMobileConnected())) {
-                                    HwMpLinkServiceImpl.this.notifyNetCoexistFailed(true);
-                                }
-                                if (HwMpLinkServiceImpl.this.mHwMpLinkWifiImpl.isWifiConnected() && !HwMpLinkServiceImpl.this.mHwMpLinkTelephonyImpl.isMobileConnected()) {
-                                    HwMpLinkServiceImpl.this.disableMpLinkOpenedMobileData();
-                                    break;
-                                }
+                                HwMpLinkServiceImpl.this.mHwMpLinkTelephonyImpl.closeMobileDataIfOpened();
+                                HwMpLinkServiceImpl.this.notifyNetCoexistFailed(true);
+                                break;
                             case HwMpLinkServiceImpl.MPLINK_MSG_WIFI_CONNECTED /*213*/:
                                 if (HwMpLinkServiceImpl.this.mHwMpLinkTelephonyImpl.isMobileConnected()) {
                                     HwMpLinkServiceImpl.this.shouldIgnoreDefaultChange = true;
@@ -226,7 +223,6 @@ public class HwMpLinkServiceImpl extends StateMachine implements IMpLinkStateObs
                             default:
                                 return true;
                         }
-                        break;
                 }
             } else if (message.arg1 == 0) {
                 HwMpLinkServiceImpl.this.requestWiFiAndCellCoexist(true);
@@ -480,11 +476,6 @@ public class HwMpLinkServiceImpl extends StateMachine implements IMpLinkStateObs
         MpLinkCommonUtils.logD(TAG, "request close mplink network coexist");
         this.mHwMpLinkTelephonyImpl.mplinkSetMobileData(false);
         this.mInternalMplinkEnable = false;
-    }
-
-    private void disableMpLinkOpenedMobileData() {
-        MpLinkCommonUtils.logD(TAG, "disableMpLinkOpenedMobileData");
-        this.mHwMpLinkTelephonyImpl.mplinkSetMobileData(false);
     }
 
     public boolean isMpLinkConditionSatisfy() {
@@ -874,7 +865,7 @@ public class HwMpLinkServiceImpl extends StateMachine implements IMpLinkStateObs
         return ret;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x004a, code:
+    /* JADX WARNING: Missing block: B:14:0x004a, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

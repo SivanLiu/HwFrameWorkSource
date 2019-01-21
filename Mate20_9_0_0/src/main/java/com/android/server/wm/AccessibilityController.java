@@ -289,10 +289,10 @@ final class AccessibilityController {
                     }
                 }
 
-                /* JADX WARNING: Missing block: B:28:0x0081, code:
+                /* JADX WARNING: Missing block: B:27:0x0081, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-                /* JADX WARNING: Missing block: B:29:0x0084, code:
+                /* JADX WARNING: Missing block: B:28:0x0084, code skipped:
             return;
      */
                 /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -311,8 +311,7 @@ final class AccessibilityController {
                                         }
                                         this.mDirtyRect.inset(-MagnifiedViewport.this.mHalfBorderWidth, -MagnifiedViewport.this.mHalfBorderWidth);
                                         canvas = this.mSurface.lockCanvas(this.mDirtyRect);
-                                    } catch (IllegalArgumentException e) {
-                                    } catch (OutOfResourcesException e2) {
+                                    } catch (OutOfResourcesException | IllegalArgumentException e) {
                                     }
                                     if (canvas == null) {
                                         WindowManagerService.resetPriorityAfterLockedSection();
@@ -762,22 +761,19 @@ final class AccessibilityController {
             }
         }
 
-        /* JADX WARNING: Missing block: B:24:0x008c, code:
-            if (r15.mAttrs.type != 2034) goto L_0x009d;
-     */
-        /* JADX WARNING: Missing block: B:85:0x019e, code:
+        /* JADX WARNING: Missing block: B:88:0x019e, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-        /* JADX WARNING: Missing block: B:86:0x01a1, code:
+        /* JADX WARNING: Missing block: B:89:0x01a1, code skipped:
             if (r2 == false) goto L_0x01a8;
      */
-        /* JADX WARNING: Missing block: B:87:0x01a3, code:
+        /* JADX WARNING: Missing block: B:90:0x01a3, code skipped:
             r1.mCallback.onWindowsForAccessibilityChanged(r3);
      */
-        /* JADX WARNING: Missing block: B:88:0x01a8, code:
+        /* JADX WARNING: Missing block: B:91:0x01a8, code skipped:
             clearAndRecycleWindows(r3);
      */
-        /* JADX WARNING: Missing block: B:89:0x01ab, code:
+        /* JADX WARNING: Missing block: B:92:0x01ab, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -845,12 +841,27 @@ final class AccessibilityController {
                         windowsChanged2 = windowsChanged;
                         if ((flags & 16) != 0) {
                             screenWidth = screenWidth2;
+                            if (windowState.mAttrs.type != 2034) {
+                                screenHeight = screenHeight2;
+                                i3--;
+                                windowManager = windowManager2;
+                                windowsChanged = windowsChanged2;
+                                screenWidth2 = screenWidth;
+                                screenHeight2 = screenHeight;
+                            }
                         } else {
                             screenWidth = screenWidth2;
                         }
                         Rect boundsInScreen = this.mTempRect;
                         computeWindowBoundsInScreen(windowState, boundsInScreen);
-                        if (!unaccountedSpace.quickReject(boundsInScreen)) {
+                        if (unaccountedSpace.quickReject(boundsInScreen)) {
+                            screenHeight = screenHeight2;
+                            i3--;
+                            windowManager = windowManager2;
+                            windowsChanged = windowsChanged2;
+                            screenWidth2 = screenWidth;
+                            screenHeight2 = screenHeight;
+                        } else {
                             if (isReportedWindowType(windowState.mAttrs.type)) {
                                 addPopulatedWindowInfo(windowState, boundsInScreen, windows, addedWindows);
                                 if (windowState.isFocused()) {
@@ -882,12 +893,6 @@ final class AccessibilityController {
                             screenWidth2 = screenWidth;
                             screenHeight2 = screenHeight;
                         }
-                        screenHeight = screenHeight2;
-                        i3--;
-                        windowManager = windowManager2;
-                        windowsChanged = windowsChanged2;
-                        screenWidth2 = screenWidth;
-                        screenHeight2 = screenHeight;
                     }
                     windowsChanged2 = windowsChanged;
                     screenWidth = screenWidth2;

@@ -3,6 +3,9 @@ package org.bouncycastle.eac.operator.jcajce;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Signature;
@@ -36,7 +39,7 @@ public class JcaEACSignerBuilder {
         public void write(int i) throws IOException {
             try {
                 this.sig.update((byte) i);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -47,7 +50,7 @@ public class JcaEACSignerBuilder {
         public void write(byte[] bArr) throws IOException {
             try {
                 this.sig.update(bArr);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -58,7 +61,7 @@ public class JcaEACSignerBuilder {
         public void write(byte[] bArr, int i, int i2) throws IOException {
             try {
                 this.sig.update(bArr, i, i2);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -136,7 +139,7 @@ public class JcaEACSignerBuilder {
                     try {
                         byte[] signature = signatureOutputStream.getSignature();
                         return aSN1ObjectIdentifier.on(EACObjectIdentifiers.id_TA_ECDSA) ? JcaEACSignerBuilder.reencode(signature) : signature;
-                    } catch (Throwable e) {
+                    } catch (SignatureException e) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("exception obtaining signature: ");
                         stringBuilder.append(e.getMessage());
@@ -148,21 +151,21 @@ public class JcaEACSignerBuilder {
                     return aSN1ObjectIdentifier;
                 }
             };
-        } catch (Throwable e) {
+        } catch (NoSuchAlgorithmException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("unable to find algorithm: ");
             stringBuilder.append(e.getMessage());
             throw new OperatorCreationException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchProviderException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("unable to find provider: ");
             stringBuilder.append(e2.getMessage());
             throw new OperatorCreationException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (InvalidKeyException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("invalid key: ");
-            stringBuilder.append(e22.getMessage());
-            throw new OperatorCreationException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new OperatorCreationException(stringBuilder.toString(), e3);
         }
     }
 

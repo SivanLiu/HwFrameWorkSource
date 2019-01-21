@@ -20,6 +20,8 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import com.google.gson.stream.MalformedJsonException;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -393,7 +395,7 @@ public final class Gson {
     public void toJson(Object src, Type typeOfSrc, Appendable writer) throws JsonIOException {
         try {
             toJson(src, typeOfSrc, newJsonWriter(Streams.writerForAppendable(writer)));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new JsonIOException(e);
         }
     }
@@ -411,7 +413,7 @@ public final class Gson {
             writer.setLenient(oldLenient);
             writer.setHtmlSafe(oldHtmlSafe);
             writer.setSerializeNulls(oldSerializeNulls);
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new JsonIOException(e);
         } catch (Throwable th) {
             writer.setLenient(oldLenient);
@@ -429,7 +431,7 @@ public final class Gson {
     public void toJson(JsonElement jsonElement, Appendable writer) throws JsonIOException {
         try {
             toJson(jsonElement, newJsonWriter(Streams.writerForAppendable(writer)));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new JsonIOException(e);
         }
     }
@@ -464,7 +466,7 @@ public final class Gson {
             writer.setLenient(oldLenient);
             writer.setHtmlSafe(oldHtmlSafe);
             writer.setSerializeNulls(oldSerializeNulls);
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new JsonIOException(e);
         } catch (Throwable th) {
             writer.setLenient(oldLenient);
@@ -504,9 +506,9 @@ public final class Gson {
                 if (reader.peek() != JsonToken.END_DOCUMENT) {
                     throw new JsonIOException("JSON document was not fully consumed.");
                 }
-            } catch (Throwable e) {
+            } catch (MalformedJsonException e) {
                 throw new JsonSyntaxException(e);
-            } catch (Throwable e2) {
+            } catch (IOException e2) {
                 throw new JsonIOException(e2);
             }
         }
@@ -522,15 +524,15 @@ public final class Gson {
             T object = getAdapter(TypeToken.get(typeOfT)).read(reader);
             reader.setLenient(oldLenient);
             return object;
-        } catch (Throwable e) {
+        } catch (EOFException e) {
             if (isEmpty) {
                 reader.setLenient(oldLenient);
                 return null;
             }
             throw new JsonSyntaxException(e);
-        } catch (Throwable e2) {
+        } catch (IllegalStateException e2) {
             throw new JsonSyntaxException(e2);
-        } catch (Throwable e22) {
+        } catch (IOException e22) {
             throw new JsonSyntaxException(e22);
         } catch (Throwable th) {
             reader.setLenient(oldLenient);

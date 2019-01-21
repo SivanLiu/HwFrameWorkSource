@@ -29,28 +29,17 @@ public class ODMFSQLiteDatabase implements DataBase {
     }
 
     public void beginTransaction() {
-        SQLException e;
         try {
             this.mODMFDatabase.beginTransaction();
-        } catch (SQLiteDatabaseCorruptException e2) {
-            e = e2;
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e) {
             LOG.logE("Begin Transaction failed : A SQLiteDatabaseCorruptException occurred when begin transaction.");
             throw new ODMFSQLiteDatabaseCorruptException("Close database failed : " + e.getMessage(), e);
-        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
-            e = e3;
-            LOG.logE("Begin Transaction failed : A SQLiteDatabaseCorruptException occurred when begin transaction.");
-            throw new ODMFSQLiteDatabaseCorruptException("Close database failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e4) {
-            e = e4;
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e2) {
             LOG.logE("Begin Transaction failed : A SQLiteDiskIOException occurred when begin transaction..");
-            throw new ODMFSQLiteDiskIOException("Close database failed : " + e.getMessage(), e);
-        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e5) {
-            e = e5;
-            LOG.logE("Begin Transaction failed : A SQLiteDiskIOException occurred when begin transaction..");
-            throw new ODMFSQLiteDiskIOException("Close database failed : " + e.getMessage(), e);
-        } catch (RuntimeException e6) {
+            throw new ODMFSQLiteDiskIOException("Close database failed : " + e2.getMessage(), e2);
+        } catch (RuntimeException e3) {
             LOG.logE("Begin Transaction failed : A RuntimeException occurred when begin transaction.");
-            throw new ODMFRuntimeException("Close database failed : " + e6.getMessage(), e6);
+            throw new ODMFRuntimeException("Close database failed : " + e3.getMessage(), e3);
         }
     }
 
@@ -58,40 +47,24 @@ public class ODMFSQLiteDatabase implements DataBase {
         endTransaction(false);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:21:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0033  */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void endTransaction(boolean hasCorruptException) {
-        SQLException e;
         try {
             this.mODMFDatabase.endTransaction();
-            return;
-        } catch (SQLiteDatabaseCorruptException e2) {
-            e = e2;
-        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
-            e = e3;
-        } catch (SQLiteDiskIOException e4) {
-            e = e4;
-            LOG.logE("End Transaction failed : A SQLiteDiskIOException occurred when end transaction.");
-            if (hasCorruptException) {
-                throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e) {
+            LOG.logE("End Transaction failed : A SQLiteDatabaseCorruptException occurred when end transaction.");
+            if (!hasCorruptException) {
+                throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
             }
-            return;
-        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e5) {
-            e = e5;
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e2) {
             LOG.logE("End Transaction failed : A SQLiteDiskIOException occurred when end transaction.");
-            if (hasCorruptException) {
+            if (!hasCorruptException) {
+                throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e2.getMessage(), e2);
             }
-        } catch (RuntimeException e6) {
+        } catch (RuntimeException e3) {
             LOG.logE("End Transaction failed : A RuntimeException occurred when end transaction.");
             if (!hasCorruptException) {
-                throw new ODMFRuntimeException("End Transaction failed : " + e6.getMessage(), e6);
+                throw new ODMFRuntimeException("End Transaction failed : " + e3.getMessage(), e3);
             }
-            return;
-        }
-        LOG.logE("End Transaction failed : A SQLiteDatabaseCorruptException occurred when end transaction.");
-        if (!hasCorruptException) {
-            throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
         }
     }
 
@@ -160,17 +133,12 @@ public class ODMFSQLiteDatabase implements DataBase {
     }
 
     public void resetDatabaseEncryptKey(byte[] oldKey, byte[] newKey) {
-        RuntimeException e;
         try {
             this.mODMFDatabase.changeEncryptKey(oldKey, newKey);
-        } catch (SQLiteBusyException e2) {
+        } catch (SQLiteBusyException e) {
             throw new ODMFRuntimeException("error happens when changing key for encrypted database");
-        } catch (IllegalArgumentException e3) {
-            e = e3;
-            throw new ODMFRuntimeException("error happens when changing key for encrypted database : " + e.getMessage());
-        } catch (IllegalStateException e4) {
-            e = e4;
-            throw new ODMFRuntimeException("error happens when changing key for encrypted database : " + e.getMessage());
+        } catch (IllegalArgumentException | IllegalStateException e2) {
+            throw new ODMFRuntimeException("error happens when changing key for encrypted database : " + e2.getMessage());
         }
     }
 

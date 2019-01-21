@@ -29,7 +29,7 @@ final class SystemAudioAutoInitiationAction extends HdmiCecFeatureAction {
         });
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0020, code:
+    /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

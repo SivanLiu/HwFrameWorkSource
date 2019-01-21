@@ -1,19 +1,29 @@
 package com.huawei.android.pushagent.model.d;
 
 import android.content.Context;
-import com.huawei.android.pushagent.datatype.tcp.PushDataReqMessage;
+import android.content.Intent;
+import com.huawei.android.pushagent.utils.b.a;
 
-public class d {
-    public static b zn(Context context, int i, PushDataReqMessage pushDataReqMessage) {
-        switch (i) {
-            case 0:
-                return new e(context, pushDataReqMessage);
-            case 1:
-                return new f(context, pushDataReqMessage);
-            case 2:
-                return new c(context, pushDataReqMessage);
-            default:
-                return null;
+public class d implements c {
+    private static String TAG = "PushLog3414";
+
+    public d(Context context) {
+    }
+
+    public void onReceive(Context context, Intent intent) {
+        a.st(TAG, "enter ChannelStatusReceiver:onReceive");
+        if ("com.huawei.android.push.intent.GET_PUSH_STATE".equals(intent.getAction())) {
+            boolean cp = com.huawei.android.pushagent.model.channel.a.dz().cp();
+            String stringExtra = intent.getStringExtra("pkg_name");
+            a.sv(TAG, "packageName: " + stringExtra + " get push status, current push state is:" + cp);
+            rq(context, cp, stringExtra);
         }
+    }
+
+    private static void rq(Context context, boolean z, String str) {
+        Intent intent = new Intent();
+        a.st(TAG, "sendStateBroadcast the current push state is: " + z);
+        intent.setAction("com.huawei.intent.action.PUSH_STATE").putExtra("push_state", z).setFlags(32).setPackage(str);
+        context.sendBroadcast(intent);
     }
 }

@@ -309,8 +309,11 @@ public class WifiProCommonUtils {
         boolean allowed = false;
         synchronized (mBackgroundLock) {
             if (config != null) {
-                if (config.noInternetAccess && !allowWifiConfigRecovery(config.internetHistory) && config.internetRecoveryStatus == 3 && !isQueryActivityMatched(context, HUAWEI_SETTINGS_WLAN) && scanResult != null && ((scanResult.is24GHz() && scanResult.level >= -75) || (scanResult.is5GHz() && scanResult.level >= -72))) {
-                    allowed = true;
+                try {
+                    if (config.noInternetAccess && !allowWifiConfigRecovery(config.internetHistory) && config.internetRecoveryStatus == 3 && !isQueryActivityMatched(context, HUAWEI_SETTINGS_WLAN) && scanResult != null && ((scanResult.is24GHz() && scanResult.level >= -75) || (scanResult.is5GHz() && scanResult.level >= -72))) {
+                        allowed = true;
+                    }
+                } catch (Throwable th) {
                 }
             }
         }
@@ -320,7 +323,10 @@ public class WifiProCommonUtils {
     public static void setBackgroundConnTag(Context context, boolean background) {
         synchronized (mBackgroundLock) {
             if (context != null) {
-                Secure.putInt(context.getContentResolver(), WIFI_BACKGROUND_CONN_TAG, background);
+                try {
+                    Secure.putInt(context.getContentResolver(), WIFI_BACKGROUND_CONN_TAG, background);
+                } catch (Throwable th) {
+                }
             }
         }
     }
@@ -549,8 +555,7 @@ public class WifiProCommonUtils {
                         }
                     }
                     i++;
-                } catch (UnknownHostException e) {
-                } catch (IllegalArgumentException e2) {
+                } catch (IllegalArgumentException | UnknownHostException e) {
                 }
             }
             if (!(ipAddr == null || prefLength == -1 || staticIpConfig.gateway == null || staticIpConfig.dnsServers.size() <= 0)) {

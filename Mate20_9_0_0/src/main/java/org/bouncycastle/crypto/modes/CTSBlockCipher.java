@@ -25,21 +25,21 @@ public class CTSBlockCipher extends BufferedBlockCipher {
             int i2;
             int blockSize = this.cipher.getBlockSize();
             int i3 = this.bufOff - blockSize;
-            Object obj = new byte[blockSize];
+            byte[] bArr2 = new byte[blockSize];
             if (this.forEncryption) {
                 if (this.bufOff >= blockSize) {
-                    this.cipher.processBlock(this.buf, 0, obj, 0);
+                    this.cipher.processBlock(this.buf, 0, bArr2, 0);
                     if (this.bufOff > blockSize) {
                         int i4;
                         for (i4 = this.bufOff; i4 != this.buf.length; i4++) {
-                            this.buf[i4] = obj[i4 - blockSize];
+                            this.buf[i4] = bArr2[i4 - blockSize];
                         }
                         for (i4 = blockSize; i4 != this.bufOff; i4++) {
-                            byte[] bArr2 = this.buf;
-                            bArr2[i4] = (byte) (bArr2[i4] ^ obj[i4 - blockSize]);
+                            byte[] bArr3 = this.buf;
+                            bArr3[i4] = (byte) (bArr3[i4] ^ bArr2[i4 - blockSize]);
                         }
                         (this.cipher instanceof CBCBlockCipher ? ((CBCBlockCipher) this.cipher).getUnderlyingCipher() : this.cipher).processBlock(this.buf, blockSize, bArr, i);
-                        System.arraycopy(obj, 0, bArr, i + blockSize, i3);
+                        System.arraycopy(bArr2, 0, bArr, i + blockSize, i3);
                         i2 = this.bufOff;
                         reset();
                         return i2;
@@ -47,25 +47,25 @@ public class CTSBlockCipher extends BufferedBlockCipher {
                 }
                 throw new DataLengthException("need at least one block of input for CTS");
             } else if (this.bufOff >= blockSize) {
-                Object obj2 = new byte[blockSize];
+                byte[] bArr4 = new byte[blockSize];
                 if (this.bufOff > blockSize) {
-                    (this.cipher instanceof CBCBlockCipher ? ((CBCBlockCipher) this.cipher).getUnderlyingCipher() : this.cipher).processBlock(this.buf, 0, obj, 0);
+                    (this.cipher instanceof CBCBlockCipher ? ((CBCBlockCipher) this.cipher).getUnderlyingCipher() : this.cipher).processBlock(this.buf, 0, bArr2, 0);
                     for (int i5 = blockSize; i5 != this.bufOff; i5++) {
                         int i6 = i5 - blockSize;
-                        obj2[i6] = (byte) (obj[i6] ^ this.buf[i5]);
+                        bArr4[i6] = (byte) (bArr2[i6] ^ this.buf[i5]);
                     }
-                    System.arraycopy(this.buf, blockSize, obj, 0, i3);
-                    this.cipher.processBlock(obj, 0, bArr, i);
-                    System.arraycopy(obj2, 0, bArr, i + blockSize, i3);
+                    System.arraycopy(this.buf, blockSize, bArr2, 0, i3);
+                    this.cipher.processBlock(bArr2, 0, bArr, i);
+                    System.arraycopy(bArr4, 0, bArr, i + blockSize, i3);
                     i2 = this.bufOff;
                     reset();
                     return i2;
                 }
-                this.cipher.processBlock(this.buf, 0, obj, 0);
+                this.cipher.processBlock(this.buf, 0, bArr2, 0);
             } else {
                 throw new DataLengthException("need at least one block of input for CTS");
             }
-            System.arraycopy(obj, 0, bArr, i, blockSize);
+            System.arraycopy(bArr2, 0, bArr, i, blockSize);
             i2 = this.bufOff;
             reset();
             return i2;

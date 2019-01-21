@@ -4,6 +4,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.operator.AsymmetricKeyUnwrapper;
 import org.bouncycastle.operator.GenericKey;
@@ -25,7 +26,7 @@ public abstract class BcAsymmetricKeyUnwrapper extends AsymmetricKeyUnwrapper {
         try {
             bArr = createAsymmetricUnwrapper.processBlock(bArr, 0, bArr.length);
             return algorithmIdentifier.getAlgorithm().equals(PKCSObjectIdentifiers.des_EDE3_CBC) ? new GenericKey(algorithmIdentifier, bArr) : new GenericKey(algorithmIdentifier, bArr);
-        } catch (Throwable e) {
+        } catch (InvalidCipherTextException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to recover secret key: ");
             stringBuilder.append(e.getMessage());

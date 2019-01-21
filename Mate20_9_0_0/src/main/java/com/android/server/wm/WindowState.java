@@ -43,6 +43,7 @@ import android.view.InputChannel;
 import android.view.InputEvent;
 import android.view.InputEventReceiver;
 import android.view.SurfaceControl;
+import android.view.SurfaceControl.Builder;
 import android.view.SurfaceControl.Transaction;
 import android.view.SurfaceSession;
 import android.view.WindowInfo;
@@ -270,6 +271,9 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
                     stringBuilder.append(win);
                     Slog.i(str, stringBuilder.toString());
                     if (win != null) {
+                        if (WindowState.this.mService.getSecureScreenWindow().contains(win)) {
+                            WindowState.this.mService.removeSecureScreenWindow(win);
+                        }
                         DisplayContent dc = WindowState.this.getDisplayContent();
                         if (win.mAppToken != null && win.mAppToken.findMainWindow() == win) {
                             WindowState.this.mService.mTaskSnapshotController.onAppDied(win.mAppToken);
@@ -403,6 +407,50 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
             proto.write(1112396529667L, this.mDuration);
             proto.end(token);
         }
+    }
+
+    public /* bridge */ /* synthetic */ void commitPendingTransaction() {
+        super.commitPendingTransaction();
+    }
+
+    public /* bridge */ /* synthetic */ int compareTo(WindowContainer windowContainer) {
+        return super.compareTo(windowContainer);
+    }
+
+    public /* bridge */ /* synthetic */ SurfaceControl getAnimationLeashParent() {
+        return super.getAnimationLeashParent();
+    }
+
+    public /* bridge */ /* synthetic */ SurfaceControl getParentSurfaceControl() {
+        return super.getParentSurfaceControl();
+    }
+
+    public /* bridge */ /* synthetic */ Transaction getPendingTransaction() {
+        return super.getPendingTransaction();
+    }
+
+    public /* bridge */ /* synthetic */ SurfaceControl getSurfaceControl() {
+        return super.getSurfaceControl();
+    }
+
+    public /* bridge */ /* synthetic */ int getSurfaceHeight() {
+        return super.getSurfaceHeight();
+    }
+
+    public /* bridge */ /* synthetic */ int getSurfaceWidth() {
+        return super.getSurfaceWidth();
+    }
+
+    public /* bridge */ /* synthetic */ Builder makeAnimationLeash() {
+        return super.makeAnimationLeash();
+    }
+
+    public /* bridge */ /* synthetic */ void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+    }
+
+    public /* bridge */ /* synthetic */ void onOverrideConfigurationChanged(Configuration configuration) {
+        super.onOverrideConfigurationChanged(configuration);
     }
 
     WindowState(WindowManagerService service, Session s, IWindow c, WindowToken token, WindowState parentWindow, int appOp, int seq, LayoutParams a, int viewVisibility, int ownerId, boolean ownerCanAddInternalSystemWindow, int forceCompatFlag) {
@@ -666,7 +714,7 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
     /* JADX WARNING: Removed duplicated region for block: B:165:0x066e  */
     /* JADX WARNING: Removed duplicated region for block: B:168:0x0674  */
     /* JADX WARNING: Removed duplicated region for block: B:169:0x067a  */
-    /* JADX WARNING: Missing block: B:160:0x0650, code:
+    /* JADX WARNING: Missing block: B:160:0x0650, code skipped:
             if (r26 != r6.mFrame.height()) goto L_0x0655;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1309,13 +1357,13 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
         return this.mAppToken != null && (this.mAppToken.firstWindowDrawn || this.mAppToken.startingDisplayed);
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0034, code:
+    /* JADX WARNING: Missing block: B:19:0x0034, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:20:0x0035, code:
+    /* JADX WARNING: Missing block: B:20:0x0035, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:21:0x0036, code:
+    /* JADX WARNING: Missing block: B:21:0x0036, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2107,7 +2155,7 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
         this.mHScale = 1.0f;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0032, code:
+    /* JADX WARNING: Missing block: B:14:0x0032, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2224,7 +2272,7 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0029, code:
+    /* JADX WARNING: Missing block: B:14:0x0029, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2239,7 +2287,7 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0029, code:
+    /* JADX WARNING: Missing block: B:14:0x0029, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2490,7 +2538,13 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
             case 3:
                 outRegion.set(this.mGivenTouchableRegion);
                 outRegion.translate(frame.left, frame.top);
-                break;
+                WindowManagerService windowManagerService = this.mService;
+                if (WindowManagerService.mSupporInputMethodFilletAdaptation && isImeWithHwFlag() && this.mService.mPolicy.isInputMethodMovedUp()) {
+                    Rect tmpRect = outRegion.getBounds();
+                    tmpRect.bottom = frame.bottom;
+                    outRegion.set(tmpRect);
+                    break;
+                }
             default:
                 outRegion.set(frame);
                 break;
@@ -2779,7 +2833,7 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
 
     public boolean isLetterboxedForDisplayCutoutLw() {
         if (this.mAppToken != null && this.mParentFrameWasClippedByDisplayCutout && this.mAttrs.layoutInDisplayCutoutMode != 1 && this.mAttrs.isFullscreen()) {
-            return frameCoversEntireAppTokenBounds() ^ true;
+            return frameCoversEntireAppTokenBounds() ^ 1;
         }
         return false;
     }
@@ -4454,7 +4508,7 @@ public class WindowState extends WindowContainer<WindowState> implements com.and
         return this.mAttrs.type == IHwShutdownThread.SHUTDOWN_ANIMATION_WAIT_TIME || this.mAttrs.type == 2014 || this.mAttrs.type == 2019 || this.mAttrs.type == 2024;
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0017, code:
+    /* JADX WARNING: Missing block: B:6:0x0017, code skipped:
             return 2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

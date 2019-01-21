@@ -65,25 +65,26 @@ public class HwMSSBlackListManager implements IHwMSSBlacklistMgr {
     }
 
     public static synchronized IHwMSSBlacklistMgr getInstance(Context context) {
-        IHwMSSBlacklistMgr iHwMSSBlacklistMgr;
+        HwMSSBlackListManager hwMSSBlackListManager;
         synchronized (HwMSSBlackListManager.class) {
             if (mHwMSSBlackListManager == null) {
                 mHwMSSBlackListManager = new HwMSSBlackListManager(context);
             }
-            iHwMSSBlacklistMgr = mHwMSSBlackListManager;
+            hwMSSBlackListManager = mHwMSSBlackListManager;
         }
-        return iHwMSSBlacklistMgr;
+        return hwMSSBlackListManager;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0018, code:
+    /* JADX WARNING: Missing block: B:12:0x0018, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeDB() {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    this.mDatabase.close();
+                }
             }
         }
     }
@@ -99,42 +100,44 @@ public class HwMSSBlackListManager implements IHwMSSBlacklistMgr {
         dbg(stringBuilder.toString());
         synchronized (this.mLock) {
             StringBuilder stringBuilder2;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || ssid == null) {
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Failed to add to blacklist. ssid: ");
-                stringBuilder2.append(ssid);
-                dbg(stringBuilder2.toString());
-                return false;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (ssid != null) {
+                    bssid = hideBssid(bssid);
+                    boolean inlineUpdateBlacklist;
+                    if (inlineIsRecordInDatabase(ssid)) {
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append(ssid);
+                        stringBuilder2.append(" is already in blacklist, update it.");
+                        dbg(stringBuilder2.toString());
+                        inlineUpdateBlacklist = inlineUpdateBlacklist(ssid, bssid, reasoncode);
+                        return inlineUpdateBlacklist;
+                    }
+                    inlineCheckIfDatabaseFull();
+                    inlineUpdateBlacklist = inlineAddBlacklist(ssid, bssid, reasoncode);
+                    return inlineUpdateBlacklist;
+                }
             }
-            bssid = hideBssid(bssid);
-            boolean inlineUpdateBlacklist;
-            if (inlineIsRecordInDatabase(ssid)) {
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(ssid);
-                stringBuilder2.append(" is already in blacklist, update it.");
-                dbg(stringBuilder2.toString());
-                inlineUpdateBlacklist = inlineUpdateBlacklist(ssid, bssid, reasoncode);
-                return inlineUpdateBlacklist;
-            }
-            inlineCheckIfDatabaseFull();
-            inlineUpdateBlacklist = inlineAddBlacklist(ssid, bssid, reasoncode);
-            return inlineUpdateBlacklist;
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Failed to add to blacklist. ssid: ");
+            stringBuilder2.append(ssid);
+            dbg(stringBuilder2.toString());
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x005d, code:
+    /* JADX WARNING: Missing block: B:20:0x005d, code skipped:
             if (r2 != null) goto L_0x005f;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:27:0x006d, code:
+    /* JADX WARNING: Missing block: B:27:0x006d, code skipped:
             if (r2 == null) goto L_0x0070;
      */
-    /* JADX WARNING: Missing block: B:30:0x0071, code:
+    /* JADX WARNING: Missing block: B:30:0x0071, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:35:0x0079, code:
+    /* JADX WARNING: Missing block: B:35:0x0079, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -185,48 +188,50 @@ public class HwMSSBlackListManager implements IHwMSSBlacklistMgr {
         return new ArrayList();
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0019, code:
+    /* JADX WARNING: Missing block: B:14:0x0019, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void delBlacklistBySsid(String ssid) {
         if (ssid != null) {
             synchronized (this.mLock) {
-                if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                } else {
-                    inlineDeleteBlacklistBySsid(ssid);
+                if (this.mDatabase != null) {
+                    if (this.mDatabase.isOpen()) {
+                        inlineDeleteBlacklistBySsid(ssid);
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001f, code:
+    /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void delBlacklistAll() {
         dbg("delete all blacklist");
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                this.mDatabase.execSQL("DELETE FROM BlackListTable");
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    this.mDatabase.execSQL("DELETE FROM BlackListTable");
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0082, code:
+    /* JADX WARNING: Missing block: B:15:0x0082, code skipped:
             if (r2 != null) goto L_0x0084;
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:22:0x0092, code:
+    /* JADX WARNING: Missing block: B:22:0x0092, code skipped:
             if (r2 == null) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:25:0x0096, code:
+    /* JADX WARNING: Missing block: B:25:0x0096, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:30:0x009e, code:
+    /* JADX WARNING: Missing block: B:30:0x009e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -293,31 +298,31 @@ public class HwMSSBlackListManager implements IHwMSSBlacklistMgr {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0037, code:
+    /* JADX WARNING: Missing block: B:11:0x0037, code skipped:
             if (r5 != null) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:12:0x0039, code:
+    /* JADX WARNING: Missing block: B:12:0x0039, code skipped:
             r5.close();
      */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             if (r5 == null) goto L_0x004a;
      */
-    /* JADX WARNING: Missing block: B:19:0x004c, code:
+    /* JADX WARNING: Missing block: B:19:0x004c, code skipped:
             if (r3 < 500) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:20:0x004e, code:
+    /* JADX WARNING: Missing block: B:20:0x004e, code skipped:
             if (r2 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:21:0x0050, code:
+    /* JADX WARNING: Missing block: B:21:0x0050, code skipped:
             inlineDeleteBlacklistBySsid(r2);
      */
-    /* JADX WARNING: Missing block: B:29:?, code:
+    /* JADX WARNING: Missing block: B:29:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:30:?, code:
+    /* JADX WARNING: Missing block: B:30:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:31:?, code:
+    /* JADX WARNING: Missing block: B:31:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -346,16 +351,16 @@ public class HwMSSBlackListManager implements IHwMSSBlacklistMgr {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x001a, code:
+    /* JADX WARNING: Missing block: B:7:0x001a, code skipped:
             if (r1 != null) goto L_0x001c;
      */
-    /* JADX WARNING: Missing block: B:8:0x001c, code:
+    /* JADX WARNING: Missing block: B:8:0x001c, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:13:0x002a, code:
+    /* JADX WARNING: Missing block: B:13:0x002a, code skipped:
             if (r1 == null) goto L_0x002d;
      */
-    /* JADX WARNING: Missing block: B:14:0x002d, code:
+    /* JADX WARNING: Missing block: B:14:0x002d, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

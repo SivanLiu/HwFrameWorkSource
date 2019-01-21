@@ -147,22 +147,24 @@ public class PerformBackupTask implements BackupRestoreTask {
                         Slog.e(TAG, "Duplicate finish of K/V pass");
                         break;
                     }
+                default:
+                    break;
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:33:0x0177, code:
+    /* JADX WARNING: Missing block: B:33:0x0177, code skipped:
             if (r10.mStatus != 0) goto L_0x0179;
      */
-    /* JADX WARNING: Missing block: B:34:0x0179, code:
+    /* JADX WARNING: Missing block: B:34:0x0179, code skipped:
             r10.backupManagerService.resetBackupState(r10.mStateDir);
             com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r10.mObserver, com.android.server.job.JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE);
             executeNextState(com.android.server.backup.internal.BackupState.FINAL);
      */
-    /* JADX WARNING: Missing block: B:40:0x01c7, code:
+    /* JADX WARNING: Missing block: B:40:0x01c7, code skipped:
             if (r10.mStatus == 0) goto L_0x01ca;
      */
-    /* JADX WARNING: Missing block: B:41:0x01ca, code:
+    /* JADX WARNING: Missing block: B:41:0x01ca, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -332,17 +334,17 @@ public class PerformBackupTask implements BackupRestoreTask {
         return JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
     }
 
-    /* JADX WARNING: Missing block: B:83:0x0295, code:
+    /* JADX WARNING: Missing block: B:83:0x0295, code skipped:
             if (r11.mStatus == -1004) goto L_0x02e2;
      */
-    /* JADX WARNING: Missing block: B:97:0x02e0, code:
+    /* JADX WARNING: Missing block: B:97:0x02e0, code skipped:
             if (r11.mStatus == -1004) goto L_0x02e2;
      */
-    /* JADX WARNING: Missing block: B:98:0x02e2, code:
+    /* JADX WARNING: Missing block: B:98:0x02e2, code skipped:
             r11.mStatus = 0;
             com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r11.mObserver, r1.packageName, -2002);
      */
-    /* JADX WARNING: Missing block: B:99:0x02ec, code:
+    /* JADX WARNING: Missing block: B:99:0x02ec, code skipped:
             revertAndEndBackup();
             r6 = com.android.server.backup.internal.BackupState.FINAL;
      */
@@ -797,10 +799,10 @@ public class PerformBackupTask implements BackupRestoreTask {
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x005e, code:
+    /* JADX WARNING: Missing block: B:32:0x005e, code skipped:
             $closeResource(r4, r5);
      */
-    /* JADX WARNING: Missing block: B:58:0x009b, code:
+    /* JADX WARNING: Missing block: B:58:0x009b, code skipped:
             $closeResource(r4, r6);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -880,7 +882,7 @@ public class PerformBackupTask implements BackupRestoreTask {
         x1.close();
     }
 
-    /* JADX WARNING: Missing block: B:33:0x008f, code:
+    /* JADX WARNING: Missing block: B:33:0x008f, code skipped:
             r7 = r1.mAgentBinder;
             r9 = new java.lang.StringBuilder();
             r9.append("Illegal backup key: ");
@@ -902,19 +904,19 @@ public class PerformBackupTask implements BackupRestoreTask {
             com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r1.mObserver, r3, -1003);
             errorCleanup();
      */
-    /* JADX WARNING: Missing block: B:34:0x00f7, code:
+    /* JADX WARNING: Missing block: B:34:0x00f7, code skipped:
             if (r14 == null) goto L_0x00fc;
      */
-    /* JADX WARNING: Missing block: B:36:?, code:
+    /* JADX WARNING: Missing block: B:36:?, code skipped:
             r14.close();
      */
-    /* JADX WARNING: Missing block: B:39:0x00fd, code:
+    /* JADX WARNING: Missing block: B:39:0x00fd, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:43:0x0109, code:
+    /* JADX WARNING: Missing block: B:43:0x0109, code skipped:
             if (r14 == null) goto L_0x0116;
      */
-    /* JADX WARNING: Missing block: B:45:?, code:
+    /* JADX WARNING: Missing block: B:45:?, code skipped:
             r14.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1088,34 +1090,38 @@ public class PerformBackupTask implements BackupRestoreTask {
                         backupData3.close();
                     }
                 }
-                if (this.mStatus == 0 || this.mStatus == JobSchedulerShellCommand.CMD_ERR_CONSTRAINTS) {
-                    nextState = this.mQueue.isEmpty() ? BackupState.FINAL : BackupState.RUNNING_QUEUE;
-                } else if (this.mStatus == -1006) {
-                    nextState = BackupManagerService.PACKAGE_MANAGER_SENTINEL.equals(pkgName) ? BackupState.BACKUP_PM : BackupState.RUNNING_QUEUE;
-                } else if (this.mStatus == -1005) {
-                    if (this.mAgentBinder != null) {
-                        try {
-                            TransportUtils.checkTransportNotNull(transport);
-                            this.mAgentBinder.doQuotaExceeded(size, transport.getBackupQuota(this.mCurrentPackage.packageName, 0));
-                        } catch (Exception e42) {
-                            backupData = TAG;
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("Unable to notify about quota exceeded: ");
-                            stringBuilder2.append(e42.getMessage());
-                            Slog.e(backupData, stringBuilder2.toString());
+                if (this.mStatus != 0) {
+                    if (this.mStatus != JobSchedulerShellCommand.CMD_ERR_CONSTRAINTS) {
+                        if (this.mStatus == -1006) {
+                            nextState = BackupManagerService.PACKAGE_MANAGER_SENTINEL.equals(pkgName) ? BackupState.BACKUP_PM : BackupState.RUNNING_QUEUE;
+                        } else if (this.mStatus == -1005) {
+                            if (this.mAgentBinder != null) {
+                                try {
+                                    TransportUtils.checkTransportNotNull(transport);
+                                    this.mAgentBinder.doQuotaExceeded(size, transport.getBackupQuota(this.mCurrentPackage.packageName, 0));
+                                } catch (Exception e42) {
+                                    backupData = TAG;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("Unable to notify about quota exceeded: ");
+                                    stringBuilder2.append(e42.getMessage());
+                                    Slog.e(backupData, stringBuilder2.toString());
+                                }
+                            }
+                            nextState = this.mQueue.isEmpty() ? BackupState.FINAL : BackupState.RUNNING_QUEUE;
+                        } else {
+                            revertAndEndBackup();
+                            nextState = BackupState.FINAL;
                         }
+                        executeNextState(nextState);
                     }
-                    nextState = this.mQueue.isEmpty() ? BackupState.FINAL : BackupState.RUNNING_QUEUE;
-                } else {
-                    revertAndEndBackup();
-                    nextState = BackupState.FINAL;
                 }
+                nextState = this.mQueue.isEmpty() ? BackupState.FINAL : BackupState.RUNNING_QUEUE;
                 executeNextState(nextState);
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0091, code:
+    /* JADX WARNING: Missing block: B:20:0x0091, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

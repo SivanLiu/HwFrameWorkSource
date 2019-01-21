@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public final class BundleCompat {
@@ -20,16 +21,6 @@ public final class BundleCompat {
         private BundleCompatBaseImpl() {
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:12:0x0038 A:{Splitter: B:9:0x002b, ExcHandler: java.lang.reflect.InvocationTargetException (r0_9 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:12:0x0038 A:{Splitter: B:9:0x002b, ExcHandler: java.lang.reflect.InvocationTargetException (r0_9 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:12:0x0038, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:13:0x0039, code:
-            android.util.Log.i(TAG, "Failed to invoke getIBinder via reflection", r0);
-            sGetIBinderMethod = null;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public static IBinder getBinder(Bundle bundle, String key) {
             if (!sGetIBinderMethodFetched) {
                 try {
@@ -43,25 +34,14 @@ public final class BundleCompat {
             if (sGetIBinderMethod != null) {
                 try {
                     return (IBinder) sGetIBinderMethod.invoke(bundle, new Object[]{key});
-                } catch (Exception e2) {
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e2) {
+                    Log.i(TAG, "Failed to invoke getIBinder via reflection", e2);
+                    sGetIBinderMethod = null;
                 }
             }
             return null;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:11:0x003b A:{Splitter: B:9:0x002f, ExcHandler: java.lang.reflect.InvocationTargetException (r0_7 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:11:0x003b A:{Splitter: B:9:0x002f, ExcHandler: java.lang.reflect.InvocationTargetException (r0_7 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:11:0x003b, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:12:0x003c, code:
-            android.util.Log.i(TAG, "Failed to invoke putIBinder via reflection", r0);
-            sPutIBinderMethod = null;
-     */
-        /* JADX WARNING: Missing block: B:13:?, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public static void putBinder(Bundle bundle, String key, IBinder binder) {
             if (!sPutIBinderMethodFetched) {
                 try {
@@ -75,7 +55,9 @@ public final class BundleCompat {
             if (sPutIBinderMethod != null) {
                 try {
                     sPutIBinderMethod.invoke(bundle, new Object[]{key, binder});
-                } catch (Exception e2) {
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e2) {
+                    Log.i(TAG, "Failed to invoke putIBinder via reflection", e2);
+                    sPutIBinderMethod = null;
                 }
             }
         }

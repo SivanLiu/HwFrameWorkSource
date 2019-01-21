@@ -411,29 +411,29 @@ class LockSettingsStorage {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001a, code:
+    /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             r0 = DEFAULT;
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r2 = r12.mOpenHelper.getReadableDatabase().query(TABLE, COLUMNS_FOR_QUERY, "user=? AND name=?", new java.lang.String[]{java.lang.Integer.toString(r15), r13}, null, null, null);
             r4 = r2;
      */
-    /* JADX WARNING: Missing block: B:13:0x003f, code:
+    /* JADX WARNING: Missing block: B:13:0x003f, code skipped:
             if (r2 == null) goto L_0x0059;
      */
-    /* JADX WARNING: Missing block: B:15:0x0045, code:
+    /* JADX WARNING: Missing block: B:15:0x0045, code skipped:
             if (r4.moveToFirst() == false) goto L_0x004c;
      */
-    /* JADX WARNING: Missing block: B:16:0x0047, code:
+    /* JADX WARNING: Missing block: B:16:0x0047, code skipped:
             r0 = r4.getString(0);
      */
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             r4.close();
      */
-    /* JADX WARNING: Missing block: B:18:0x0050, code:
+    /* JADX WARNING: Missing block: B:18:0x0050, code skipped:
             r2 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:19:0x0051, code:
+    /* JADX WARNING: Missing block: B:19:0x0051, code skipped:
             android.util.Log.w(TAG, "readKeyValue got err:", r2);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -450,26 +450,26 @@ class LockSettingsStorage {
         return result == DEFAULT ? defaultValue : (String) result;
     }
 
-    /* JADX WARNING: Missing block: B:10:?, code:
+    /* JADX WARNING: Missing block: B:10:?, code skipped:
             r3 = r11.mOpenHelper.getReadableDatabase().query(TABLE, COLUMNS_FOR_PREFETCH, "user=?", new java.lang.String[]{java.lang.Integer.toString(r12)}, null, null, null);
             r4 = r3;
      */
-    /* JADX WARNING: Missing block: B:11:0x0039, code:
+    /* JADX WARNING: Missing block: B:11:0x0039, code skipped:
             if (r3 == null) goto L_0x005c;
      */
-    /* JADX WARNING: Missing block: B:13:0x003f, code:
+    /* JADX WARNING: Missing block: B:13:0x003f, code skipped:
             if (r4.moveToNext() == false) goto L_0x004f;
      */
-    /* JADX WARNING: Missing block: B:14:0x0041, code:
+    /* JADX WARNING: Missing block: B:14:0x0041, code skipped:
             r11.mCache.putKeyValueIfUnchanged(r4.getString(0), r4.getString(1), r12, r1);
      */
-    /* JADX WARNING: Missing block: B:15:0x004f, code:
+    /* JADX WARNING: Missing block: B:15:0x004f, code skipped:
             r4.close();
      */
-    /* JADX WARNING: Missing block: B:16:0x0053, code:
+    /* JADX WARNING: Missing block: B:16:0x0053, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:17:0x0054, code:
+    /* JADX WARNING: Missing block: B:17:0x0054, code skipped:
             android.util.Log.w(TAG, "prefetchUser got err:", r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -571,62 +571,62 @@ class LockSettingsStorage {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:31:0x008e  */
-    /* JADX WARNING: Missing block: B:12:0x0028, code:
+    /* JADX WARNING: Missing block: B:12:0x0028, code skipped:
             r0 = null;
             r2 = null;
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             r0 = new java.io.RandomAccessFile(r8, "r");
             r2 = new byte[((int) r0.length())];
             r0.readFully(r2, 0, r2.length);
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:17:0x0048, code:
+    /* JADX WARNING: Missing block: B:17:0x0048, code skipped:
             r3 = e;
      */
-    /* JADX WARNING: Missing block: B:18:0x0049, code:
+    /* JADX WARNING: Missing block: B:18:0x0049, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
      */
-    /* JADX WARNING: Missing block: B:21:0x0062, code:
+    /* JADX WARNING: Missing block: B:21:0x0062, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Cannot read file ");
             r5.append(r3);
             android.util.Slog.e(r4, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:24:0x0079, code:
+    /* JADX WARNING: Missing block: B:24:0x0079, code skipped:
             if (r0 != null) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:27:0x007f, code:
+    /* JADX WARNING: Missing block: B:27:0x007f, code skipped:
             r3 = e;
      */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
+    /* JADX WARNING: Missing block: B:28:0x0080, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
      */
-    /* JADX WARNING: Missing block: B:31:0x008e, code:
+    /* JADX WARNING: Missing block: B:31:0x008e, code skipped:
             dumpFileInfo(r8);
      */
-    /* JADX WARNING: Missing block: B:34:0x0097, code:
+    /* JADX WARNING: Missing block: B:34:0x0097, code skipped:
             if (r0 != null) goto L_0x0099;
      */
-    /* JADX WARNING: Missing block: B:36:?, code:
+    /* JADX WARNING: Missing block: B:36:?, code skipped:
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:37:0x009d, code:
+    /* JADX WARNING: Missing block: B:37:0x009d, code skipped:
             r4 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:38:0x009e, code:
+    /* JADX WARNING: Missing block: B:38:0x009e, code skipped:
             r5 = new java.lang.StringBuilder();
             r5.append("Error closing file ");
             r5.append(r4);
@@ -672,119 +672,72 @@ class LockSettingsStorage {
         }
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.locksettings.LockSettingsStorage.writeFile(java.lang.String, byte[]):void, dom blocks: [B:11:0x0022, B:19:0x0041]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    protected void writeFile(java.lang.String r8, byte[] r9) {
-        /*
-        r7 = this;
-        r0 = r7.mFileWriteLock;
-        monitor-enter(r0);
-        r1 = 0;
-        r2 = new java.io.RandomAccessFile;	 Catch:{ IOException -> 0x0040 }
-        r3 = "rws";	 Catch:{ IOException -> 0x0040 }
-        r2.<init>(r8, r3);	 Catch:{ IOException -> 0x0040 }
-        r1 = r2;	 Catch:{ IOException -> 0x0040 }
-        if (r9 == 0) goto L_0x0019;	 Catch:{ IOException -> 0x0040 }
-    L_0x000f:
-        r2 = r9.length;	 Catch:{ IOException -> 0x0040 }
-        if (r2 != 0) goto L_0x0013;	 Catch:{ IOException -> 0x0040 }
-    L_0x0012:
-        goto L_0x0019;	 Catch:{ IOException -> 0x0040 }
-    L_0x0013:
-        r2 = 0;	 Catch:{ IOException -> 0x0040 }
-        r3 = r9.length;	 Catch:{ IOException -> 0x0040 }
-        r1.write(r9, r2, r3);	 Catch:{ IOException -> 0x0040 }
-        goto L_0x001e;	 Catch:{ IOException -> 0x0040 }
-    L_0x0019:
-        r2 = 0;	 Catch:{ IOException -> 0x0040 }
-        r1.setLength(r2);	 Catch:{ IOException -> 0x0040 }
-    L_0x001e:
-        r1.close();	 Catch:{ IOException -> 0x0040 }
-        r1.close();	 Catch:{ IOException -> 0x0026 }
-    L_0x0025:
-        goto L_0x0072;
-    L_0x0026:
-        r2 = move-exception;
-        r3 = "LockSettingsStorage";	 Catch:{ all -> 0x007f }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x007f }
-        r4.<init>();	 Catch:{ all -> 0x007f }
-        r5 = "Error closing file ";	 Catch:{ all -> 0x007f }
-        r4.append(r5);	 Catch:{ all -> 0x007f }
-        r4.append(r2);	 Catch:{ all -> 0x007f }
-        r4 = r4.toString();	 Catch:{ all -> 0x007f }
-    L_0x003a:
-        android.util.Slog.e(r3, r4);	 Catch:{ all -> 0x007f }
-        goto L_0x0025;
-    L_0x003e:
-        r2 = move-exception;
-        goto L_0x0079;
-    L_0x0040:
-        r2 = move-exception;
-        r3 = "LockSettingsStorage";	 Catch:{ all -> 0x003e }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x003e }
-        r4.<init>();	 Catch:{ all -> 0x003e }
-        r5 = "Error writing to file ";	 Catch:{ all -> 0x003e }
-        r4.append(r5);	 Catch:{ all -> 0x003e }
-        r4.append(r2);	 Catch:{ all -> 0x003e }
-        r4 = r4.toString();	 Catch:{ all -> 0x003e }
-        android.util.Slog.e(r3, r4);	 Catch:{ all -> 0x003e }
-        if (r1 == 0) goto L_0x0072;
-    L_0x0059:
-        r1.close();	 Catch:{ IOException -> 0x005d }
-        goto L_0x0025;
-    L_0x005d:
-        r2 = move-exception;
-        r3 = "LockSettingsStorage";	 Catch:{ all -> 0x007f }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x007f }
-        r4.<init>();	 Catch:{ all -> 0x007f }
-        r5 = "Error closing file ";	 Catch:{ all -> 0x007f }
-        r4.append(r5);	 Catch:{ all -> 0x007f }
-        r4.append(r2);	 Catch:{ all -> 0x007f }
-        r4 = r4.toString();	 Catch:{ all -> 0x007f }
-        goto L_0x003a;	 Catch:{ all -> 0x007f }
-    L_0x0072:
-        r2 = r7.mCache;	 Catch:{ all -> 0x007f }
-        r2.putFile(r8, r9);	 Catch:{ all -> 0x007f }
-        monitor-exit(r0);	 Catch:{ all -> 0x007f }
-        return;
-    L_0x0079:
-        if (r1 == 0) goto L_0x0098;
-    L_0x007b:
-        r1.close();	 Catch:{ IOException -> 0x0081 }
-        goto L_0x0098;
-    L_0x007f:
-        r1 = move-exception;
-        goto L_0x0099;
-    L_0x0081:
-        r3 = move-exception;
-        r4 = "LockSettingsStorage";	 Catch:{ all -> 0x007f }
-        r5 = new java.lang.StringBuilder;	 Catch:{ all -> 0x007f }
-        r5.<init>();	 Catch:{ all -> 0x007f }
-        r6 = "Error closing file ";	 Catch:{ all -> 0x007f }
-        r5.append(r6);	 Catch:{ all -> 0x007f }
-        r5.append(r3);	 Catch:{ all -> 0x007f }
-        r5 = r5.toString();	 Catch:{ all -> 0x007f }
-        android.util.Slog.e(r4, r5);	 Catch:{ all -> 0x007f }
-    L_0x0098:
-        throw r2;	 Catch:{ all -> 0x007f }
-    L_0x0099:
-        monitor-exit(r0);	 Catch:{ all -> 0x007f }
-        throw r1;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.locksettings.LockSettingsStorage.writeFile(java.lang.String, byte[]):void");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:12:0x0022, B:20:0x0041] */
+    /* JADX WARNING: Missing block: B:14:0x0026, code skipped:
+            r2 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
+            r3 = TAG;
+            r4 = new java.lang.StringBuilder();
+            r4.append("Error closing file ");
+            r4.append(r2);
+            r4 = r4.toString();
+     */
+    /* JADX WARNING: Missing block: B:31:0x0079, code skipped:
+            if (r1 != null) goto L_0x007b;
+     */
+    /* JADX WARNING: Missing block: B:33:?, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:35:0x0081, code skipped:
+            r3 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:37:?, code skipped:
+            r4 = TAG;
+            r5 = new java.lang.StringBuilder();
+            r5.append("Error closing file ");
+            r5.append(r3);
+            android.util.Slog.e(r4, r5.toString());
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    protected void writeFile(String name, byte[] hash) {
+        synchronized (this.mFileWriteLock) {
+            RandomAccessFile raf = null;
+            try {
+                raf = new RandomAccessFile(name, "rws");
+                if (hash != null) {
+                    if (hash.length != 0) {
+                        raf.write(hash, 0, hash.length);
+                        raf.close();
+                        raf.close();
+                        this.mCache.putFile(name, hash);
+                    }
+                }
+                raf.setLength(0);
+                raf.close();
+                raf.close();
+            } catch (IOException e) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Error writing to file ");
+                stringBuilder.append(e);
+                Slog.e(str, stringBuilder.toString());
+                if (raf != null) {
+                    try {
+                        raf.close();
+                    } catch (IOException e2) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Error closing file ");
+                        stringBuilder.append(e2);
+                        String stringBuilder2 = stringBuilder.toString();
+                        Slog.e(str, stringBuilder2);
+                        this.mCache.putFile(name, hash);
+                    }
+                }
+            }
+            this.mCache.putFile(name, hash);
+        }
     }
 
     protected void deleteFile(String name) {

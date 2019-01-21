@@ -6,6 +6,7 @@ import android.app.IProcessObserver.Stub;
 import android.os.RemoteException;
 import android.rms.iaware.AwareLog;
 import android.util.ArrayMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,305 +59,6 @@ public class ProcStateStatisData {
     private Map<String, Long> mPssMap = new ArrayMap();
     private long[] mTestIntervalTime = new long[]{2000, 15000};
     private String[] stateStatus = new String[]{TOP, "background"};
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        */
-    public void addPssToMap(java.lang.String r23, int r24, int r25, int r26, long r27, long r29, boolean r31) {
-        /*
-        r22 = this;
-        r1 = r22;
-        r2 = r23;
-        r3 = r24;
-        r4 = r25;
-        r5 = r26;
-        r14 = r27;
-        r13 = r31;
-        r0 = r1.mEnabled;
-        if (r0 != 0) goto L_0x001a;
-    L_0x0012:
-        r0 = "AwareMem_PSSData";
-        r6 = "not enabled";
-        android.rms.iaware.AwareLog.d(r0, r6);
-        return;
-    L_0x001a:
-        if (r2 != 0) goto L_0x0024;
-    L_0x001c:
-        r0 = "AwareMem_PSSData";
-        r6 = "addPssToMap: procName is null!";
-        android.rms.iaware.AwareLog.d(r0, r6);
-        return;
-    L_0x0024:
-        r0 = "AwareMem_PSSData";
-        r6 = new java.lang.StringBuilder;
-        r6.<init>();
-        r7 = "procName=";
-        r6.append(r7);
-        r6.append(r2);
-        r7 = ";uid=";
-        r6.append(r7);
-        r6.append(r3);
-        r7 = ";pid=";
-        r6.append(r7);
-        r6.append(r4);
-        r7 = ";procState=";
-        r6.append(r7);
-        r6.append(r5);
-        r7 = ";pss=";
-        r6.append(r7);
-        r6.append(r14);
-        r7 = ";test=";
-        r6.append(r7);
-        r6.append(r13);
-        r6 = r6.toString();
-        android.rms.iaware.AwareLog.d(r0, r6);
-        r0 = 2;
-        if (r5 == r0) goto L_0x006e;
-    L_0x0065:
-        r0 = 11;
-        if (r5 != r0) goto L_0x006a;
-    L_0x0069:
-        goto L_0x006e;
-    L_0x006a:
-        r0 = 1;
-        r1.customProcessState = r0;
-        goto L_0x0071;
-    L_0x006e:
-        r0 = 0;
-        r1.customProcessState = r0;
-    L_0x0071:
-        r0 = r1.customProcessState;
-        r0 = r1.isValidProcState(r0);
-        if (r0 != 0) goto L_0x007a;
-    L_0x0079:
-        return;
-    L_0x007a:
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r0.append(r3);
-        r6 = "|";
-        r0.append(r6);
-        r0.append(r4);
-        r11 = r0.toString();
-        if (r13 == 0) goto L_0x0098;
-    L_0x0091:
-        r0 = r1.mTestIntervalTime;
-        r6 = r1.customProcessState;
-        r6 = r0[r6];
-        goto L_0x009e;
-    L_0x0098:
-        r0 = r1.mIntervalTime;
-        r6 = r1.customProcessState;
-        r6 = r0[r6];
-    L_0x009e:
-        r9 = r6;
-        r6 = r1.mPssMap;
-        monitor-enter(r6);
-        r0 = r1.mPssMap;	 Catch:{ all -> 0x0211 }
-        r7 = java.lang.Long.valueOf(r27);	 Catch:{ all -> 0x0211 }
-        r0.put(r11, r7);	 Catch:{ all -> 0x0211 }
-        monitor-exit(r6);	 Catch:{ all -> 0x0211 }
-        r12 = r1.mLock;
-        monitor-enter(r12);
-        r0 = r1.mPssListMap;	 Catch:{ all -> 0x0207 }
-        r0 = r0.containsKey(r11);	 Catch:{ all -> 0x0207 }
-        if (r0 == 0) goto L_0x01a4;
-    L_0x00b7:
-        r0 = "AwareMem_PSSData";	 Catch:{ all -> 0x019c }
-        r6 = new java.lang.StringBuilder;	 Catch:{ all -> 0x019c }
-        r6.<init>();	 Catch:{ all -> 0x019c }
-        r7 = "addPssToMap=";	 Catch:{ all -> 0x019c }
-        r6.append(r7);	 Catch:{ all -> 0x019c }
-        r6.append(r11);	 Catch:{ all -> 0x019c }
-        r6 = r6.toString();	 Catch:{ all -> 0x019c }
-        android.rms.iaware.AwareLog.d(r0, r6);	 Catch:{ all -> 0x019c }
-        r0 = r1.mPssListMap;	 Catch:{ all -> 0x019c }
-        r0 = r0.get(r11);	 Catch:{ all -> 0x019c }
-        r0 = (java.util.List) r0;	 Catch:{ all -> 0x019c }
-        r6 = 0;	 Catch:{ all -> 0x019c }
-        r7 = r0.iterator();	 Catch:{ all -> 0x019c }
-        r8 = r6;	 Catch:{ all -> 0x019c }
-    L_0x00db:
-        r6 = r7.hasNext();	 Catch:{ all -> 0x019c }
-        if (r6 == 0) goto L_0x014c;	 Catch:{ all -> 0x019c }
-    L_0x00e1:
-        r6 = r7.next();	 Catch:{ all -> 0x019c }
-        r6 = (com.android.server.rms.memrepair.ProcStateData) r6;	 Catch:{ all -> 0x019c }
-        r3 = r6.getState();	 Catch:{ all -> 0x019c }
-        r5 = r1.customProcessState;	 Catch:{ all -> 0x019c }
-        if (r3 != r5) goto L_0x0133;	 Catch:{ all -> 0x019c }
-    L_0x00ef:
-        r3 = r6.getProcName();	 Catch:{ all -> 0x019c }
-        r3 = r2.equals(r3);	 Catch:{ all -> 0x019c }
-        if (r3 == 0) goto L_0x0133;	 Catch:{ all -> 0x019c }
-    L_0x00f9:
-        r3 = "AwareMem_PSSData";	 Catch:{ all -> 0x019c }
-        r5 = new java.lang.StringBuilder;	 Catch:{ all -> 0x019c }
-        r5.<init>();	 Catch:{ all -> 0x019c }
-        r16 = r6;	 Catch:{ all -> 0x019c }
-        r6 = "processState=";	 Catch:{ all -> 0x019c }
-        r5.append(r6);	 Catch:{ all -> 0x019c }
-        r6 = r1.customProcessState;	 Catch:{ all -> 0x019c }
-        r5.append(r6);	 Catch:{ all -> 0x019c }
-        r5 = r5.toString();	 Catch:{ all -> 0x019c }
-        android.rms.iaware.AwareLog.d(r3, r5);	 Catch:{ all -> 0x019c }
-        r3 = r1.mCollectCounts;	 Catch:{ all -> 0x019c }
-        r5 = r1.customProcessState;	 Catch:{ all -> 0x019c }
-        r3 = r3[r5];	 Catch:{ all -> 0x019c }
-        r5 = r16;
-        r6 = r5;
-        r17 = r5;
-        r16 = r7;
-        r5 = r8;
-        r7 = r14;
-        r18 = r9;
-        r9 = r29;
-        r20 = r11;
-        r21 = r12;
-        r11 = r18;
-        r13 = r3;
-        r6.addPssToList(r7, r9, r11, r13);	 Catch:{ all -> 0x018f }
-        r3 = 1;	 Catch:{ all -> 0x018f }
-        r8 = r3;	 Catch:{ all -> 0x018f }
-        goto L_0x013d;	 Catch:{ all -> 0x018f }
-    L_0x0133:
-        r16 = r7;	 Catch:{ all -> 0x018f }
-        r5 = r8;	 Catch:{ all -> 0x018f }
-        r18 = r9;	 Catch:{ all -> 0x018f }
-        r20 = r11;	 Catch:{ all -> 0x018f }
-        r21 = r12;	 Catch:{ all -> 0x018f }
-        r8 = r5;	 Catch:{ all -> 0x018f }
-    L_0x013d:
-        r13 = r31;	 Catch:{ all -> 0x018f }
-        r7 = r16;	 Catch:{ all -> 0x018f }
-        r9 = r18;	 Catch:{ all -> 0x018f }
-        r11 = r20;	 Catch:{ all -> 0x018f }
-        r12 = r21;	 Catch:{ all -> 0x018f }
-        r3 = r24;	 Catch:{ all -> 0x018f }
-        r5 = r26;	 Catch:{ all -> 0x018f }
-        goto L_0x00db;	 Catch:{ all -> 0x018f }
-    L_0x014c:
-        r5 = r8;	 Catch:{ all -> 0x018f }
-        r18 = r9;	 Catch:{ all -> 0x018f }
-        r20 = r11;	 Catch:{ all -> 0x018f }
-        r21 = r12;	 Catch:{ all -> 0x018f }
-        if (r5 != 0) goto L_0x0196;	 Catch:{ all -> 0x018f }
-    L_0x0155:
-        r3 = "AwareMem_PSSData";	 Catch:{ all -> 0x018f }
-        r6 = new java.lang.StringBuilder;	 Catch:{ all -> 0x018f }
-        r6.<init>();	 Catch:{ all -> 0x018f }
-        r7 = "processState=";	 Catch:{ all -> 0x018f }
-        r6.append(r7);	 Catch:{ all -> 0x018f }
-        r7 = r1.customProcessState;	 Catch:{ all -> 0x018f }
-        r6.append(r7);	 Catch:{ all -> 0x018f }
-        r7 = "exist=";	 Catch:{ all -> 0x018f }
-        r6.append(r7);	 Catch:{ all -> 0x018f }
-        r6.append(r5);	 Catch:{ all -> 0x018f }
-        r6 = r6.toString();	 Catch:{ all -> 0x018f }
-        android.rms.iaware.AwareLog.d(r3, r6);	 Catch:{ all -> 0x018f }
-        r3 = new com.android.server.rms.memrepair.ProcStateData;	 Catch:{ all -> 0x018f }
-        r6 = r1.customProcessState;	 Catch:{ all -> 0x018f }
-        r3.<init>(r4, r2, r6);	 Catch:{ all -> 0x018f }
-        r6 = r1.mCollectCounts;	 Catch:{ all -> 0x018f }
-        r7 = r1.customProcessState;	 Catch:{ all -> 0x018f }
-        r13 = r6[r7];	 Catch:{ all -> 0x018f }
-        r6 = r3;	 Catch:{ all -> 0x018f }
-        r7 = r14;	 Catch:{ all -> 0x018f }
-        r9 = r29;	 Catch:{ all -> 0x018f }
-        r11 = r18;	 Catch:{ all -> 0x018f }
-        r6.addPssToList(r7, r9, r11, r13);	 Catch:{ all -> 0x018f }
-        r0.add(r3);	 Catch:{ all -> 0x018f }
-        goto L_0x0196;
-    L_0x018f:
-        r0 = move-exception;
-        r16 = r18;
-        r5 = r20;
-        goto L_0x020d;
-        r16 = r18;
-        r5 = r20;
-        goto L_0x01f7;
-    L_0x019c:
-        r0 = move-exception;
-        r21 = r12;
-        r16 = r9;
-        r5 = r11;
-        goto L_0x020d;
-    L_0x01a4:
-        r18 = r9;
-        r20 = r11;
-        r21 = r12;
-        r0 = "AwareMem_PSSData";	 Catch:{ all -> 0x0201 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0201 }
-        r3.<init>();	 Catch:{ all -> 0x0201 }
-        r5 = "else addPssToMap=";	 Catch:{ all -> 0x0201 }
-        r3.append(r5);	 Catch:{ all -> 0x0201 }
-        r5 = r20;
-        r3.append(r5);	 Catch:{ all -> 0x01fd }
-        r6 = ";pss=";	 Catch:{ all -> 0x01fd }
-        r3.append(r6);	 Catch:{ all -> 0x01fd }
-        r3.append(r14);	 Catch:{ all -> 0x01fd }
-        r6 = ";interval=";	 Catch:{ all -> 0x01fd }
-        r3.append(r6);	 Catch:{ all -> 0x01fd }
-        r11 = r18;
-        r3.append(r11);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r3 = r3.toString();	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        android.rms.iaware.AwareLog.d(r0, r3);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r0 = new java.util.ArrayList;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r0.<init>();	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r3 = new com.android.server.rms.memrepair.ProcStateData;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r6 = r1.customProcessState;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r3.<init>(r4, r2, r6);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r6 = r1.mCollectCounts;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r7 = r1.customProcessState;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r13 = r6[r7];	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r6 = r3;
-        r7 = r14;
-        r9 = r29;
-        r16 = r11;
-        r6.addPssToList(r7, r9, r11, r13);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r0.add(r3);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r6 = r1.mPssListMap;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r6.put(r5, r0);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-    L_0x01f7:
-        monitor-exit(r21);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        return;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-    L_0x01f9:
-        r0 = move-exception;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r16 = r11;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        goto L_0x020d;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-    L_0x01fd:
-        r0 = move-exception;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r16 = r18;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        goto L_0x020d;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-    L_0x0201:
-        r0 = move-exception;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r16 = r18;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r5 = r20;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        goto L_0x020d;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-    L_0x0207:
-        r0 = move-exception;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r16 = r9;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r5 = r11;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        r21 = r12;	 Catch:{ all -> 0x01f9, all -> 0x020f }
-    L_0x020d:
-        monitor-exit(r21);	 Catch:{ all -> 0x01f9, all -> 0x020f }
-        throw r0;
-    L_0x020f:
-        r0 = move-exception;
-        goto L_0x020d;
-    L_0x0211:
-        r0 = move-exception;
-        r16 = r9;
-        r5 = r11;
-    L_0x0215:
-        monitor-exit(r6);	 Catch:{ all -> 0x0217 }
-        throw r0;
-    L_0x0217:
-        r0 = move-exception;
-        goto L_0x0215;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.rms.memrepair.ProcStateStatisData.addPssToMap(java.lang.String, int, int, int, long, long, boolean):void");
-    }
 
     private ProcStateStatisData() {
     }
@@ -423,6 +125,129 @@ public class ProcStateStatisData {
             return longValue;
         }
     }
+
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x00e1 A:{Catch:{ all -> 0x019c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x00e1 A:{Catch:{ all -> 0x019c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x014c A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x00e1 A:{Catch:{ all -> 0x019c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x00e1 A:{Catch:{ all -> 0x019c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x0155 A:{Catch:{ all -> 0x018f }} */
+    /* JADX WARNING: Missing block: B:81:0x0217, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public void addPssToMap(String procName, int uid, int pid, int procState, long pss, long now, boolean test) {
+        Iterator it;
+        boolean z;
+        Iterator it2;
+        long intervalTime;
+        String procKey;
+        Object obj;
+        Object obj2;
+        int i;
+        boolean isExist;
+        boolean isExist2;
+        long j;
+        Throwable th;
+        String str = procName;
+        long j2 = uid;
+        int i2 = pid;
+        int i3 = procState;
+        long j3 = pss;
+        int i4 = test;
+        if (!this.mEnabled) {
+            AwareLog.d(TAG, "not enabled");
+        } else if (str == null) {
+            AwareLog.d(TAG, "addPssToMap: procName is null!");
+        } else {
+            String str2 = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("procName=");
+            stringBuilder.append(str);
+            stringBuilder.append(";uid=");
+            stringBuilder.append(j2);
+            stringBuilder.append(";pid=");
+            stringBuilder.append(i2);
+            stringBuilder.append(";procState=");
+            stringBuilder.append(i3);
+            stringBuilder.append(";pss=");
+            stringBuilder.append(j3);
+            long j4 = ";test=";
+            stringBuilder.append(j4);
+            stringBuilder.append(i4);
+            AwareLog.d(str2, stringBuilder.toString());
+            if (i3 == 2 || i3 == 11) {
+                this.customProcessState = 0;
+            } else {
+                this.customProcessState = 1;
+            }
+            if (isValidProcState(this.customProcessState)) {
+                String str3;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append(j2);
+                stringBuilder2.append("|");
+                stringBuilder2.append(i2);
+                long procKey2 = stringBuilder2.toString();
+                long intervalTime2 = i4 != false ? this.mTestIntervalTime[this.customProcessState] : this.mIntervalTime[this.customProcessState];
+                ProcStateData procStateData = this.mPssMap;
+                synchronized (procStateData) {
+                    try {
+                        this.mPssMap.put(procKey2, Long.valueOf(pss));
+                    } finally {
+                        procKey2 = 
+/*
+Method generation error in method: com.android.server.rms.memrepair.ProcStateStatisData.addPssToMap(java.lang.String, int, int, int, long, long, boolean):void, dex: 
+jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r11_7 'procKey2' long) = (r11_6 'procKey2' long), (r3_14 'j2' long) in method: com.android.server.rms.memrepair.ProcStateStatisData.addPssToMap(java.lang.String, int, int, int, long, long, boolean):void, dex: 
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:230)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:67)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
+	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
+	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
+	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
+	at jadx.core.codegen.ClassGen.addClassCode(ClassGen.java:111)
+	at jadx.core.codegen.ClassGen.makeClass(ClassGen.java:77)
+	at jadx.core.codegen.CodeGen.visit(CodeGen.java:10)
+	at jadx.core.ProcessClass.process(ProcessClass.java:38)
+	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
+	at jadx.api.JavaClass.decompile(JavaClass.java:62)
+	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
+Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only in fallback mode
+	at jadx.core.codegen.InsnGen.fallbackOnlyInsn(InsnGen.java:539)
+	at jadx.core.codegen.InsnGen.makeInsnBody(InsnGen.java:511)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:222)
+	... 42 more
+
+*/
 
     public Map<String, List<ProcStateData>> getPssListMap() {
         AwareLog.d(TAG, "enter getPssListMap...");

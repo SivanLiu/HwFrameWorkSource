@@ -45,7 +45,7 @@ public class GOST3410Signer implements DSA {
         this.key = gOST3410KeyParameters;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x00b2, code:
+    /* JADX WARNING: Missing block: B:16:0x00b2, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

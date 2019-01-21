@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.dane;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.util.Strings;
@@ -24,7 +25,7 @@ public class DANEEntrySelectorFactory {
             stringBuilder.append("._smimecert.");
             stringBuilder.append(str.substring(str.indexOf(64) + 1));
             return new DANEEntrySelector(stringBuilder.toString());
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder2 = new StringBuilder();
             stringBuilder2.append("Unable to calculate digest string: ");
             stringBuilder2.append(e.getMessage());

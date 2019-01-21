@@ -20,6 +20,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.os.Trace;
 import android.os.UserHandle;
 import android.provider.Settings.Global;
 import android.provider.Settings.Secure;
@@ -37,13 +38,20 @@ import android.zrhung.IZrHung;
 import android.zrhung.ZrHungData;
 import com.android.internal.app.ProcessMap;
 import com.android.internal.logging.MetricsLogger;
+import com.android.internal.os.ProcessCpuTracker;
+import com.android.server.HwServiceFactory;
 import com.android.server.RescueParty;
 import com.android.server.Watchdog;
 import com.android.server.pm.DumpState;
+import com.android.server.policy.PhoneWindowManager;
 import com.android.server.slice.SliceClientPermissions.SliceAuthority;
 import com.android.server.zrhung.IZRHungService;
 import huawei.cust.HwCustUtils;
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -267,7 +275,7 @@ class AppErrors {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0055, code:
+    /* JADX WARNING: Missing block: B:10:0x0055, code skipped:
             if (r4.pkgList.containsKey(r2) == null) goto L_0x005a;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -522,19 +530,19 @@ class AppErrors {
         }
     }
 
-    /* JADX WARNING: Missing block: B:107:0x01e8, code:
+    /* JADX WARNING: Missing block: B:107:0x01e8, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:108:0x01eb, code:
+    /* JADX WARNING: Missing block: B:108:0x01eb, code skipped:
             if (r1 == null) goto L_0x0202;
      */
-    /* JADX WARNING: Missing block: B:110:?, code:
+    /* JADX WARNING: Missing block: B:110:?, code skipped:
             r11.mContext.startActivityAsUser(r1, new android.os.UserHandle(r12.userId));
      */
-    /* JADX WARNING: Missing block: B:111:0x01fa, code:
+    /* JADX WARNING: Missing block: B:111:0x01fa, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:112:0x01fb, code:
+    /* JADX WARNING: Missing block: B:112:0x01fb, code skipped:
             android.util.Slog.w("ActivityManager", "bug report receiver dissappeared", r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1012,54 +1020,54 @@ class AppErrors {
         return true;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x0226 A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:133:0x01c3 A:{SYNTHETIC, Splitter: B:133:0x01c3} */
-    /* JADX WARNING: Removed duplicated region for block: B:176:0x02ac A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:166:0x0251 A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x0166 A:{SYNTHETIC, Splitter: B:98:0x0166} */
-    /* JADX WARNING: Removed duplicated region for block: B:133:0x01c3 A:{SYNTHETIC, Splitter: B:133:0x01c3} */
-    /* JADX WARNING: Removed duplicated region for block: B:138:0x01d6 A:{Catch:{ all -> 0x02dd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:166:0x0251 A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:176:0x02ac A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:65:0x00e6 A:{SYNTHETIC, Splitter: B:65:0x00e6} */
+    /* JADX WARNING: Removed duplicated region for block: B:164:0x0226 A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:134:0x01c3 A:{SYNTHETIC, Splitter:B:134:0x01c3} */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x02ac A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:167:0x0251 A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:98:0x0166 A:{SYNTHETIC, Splitter:B:98:0x0166} */
+    /* JADX WARNING: Removed duplicated region for block: B:134:0x01c3 A:{SYNTHETIC, Splitter:B:134:0x01c3} */
+    /* JADX WARNING: Removed duplicated region for block: B:139:0x01d6 A:{Catch:{ all -> 0x02dd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:167:0x0251 A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x02ac A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x00e6 A:{SYNTHETIC, Splitter:B:65:0x00e6} */
     /* JADX WARNING: Removed duplicated region for block: B:83:0x0134 A:{Catch:{ all -> 0x02dd }} */
     /* JADX WARNING: Removed duplicated region for block: B:82:0x0132 A:{Catch:{ all -> 0x02dd }} */
     /* JADX WARNING: Removed duplicated region for block: B:87:0x014e A:{Catch:{ all -> 0x02dd }} */
     /* JADX WARNING: Removed duplicated region for block: B:86:0x014c A:{Catch:{ all -> 0x02dd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:90:0x0153 A:{SYNTHETIC, Splitter: B:90:0x0153} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x0166 A:{SYNTHETIC, Splitter: B:98:0x0166} */
-    /* JADX WARNING: Removed duplicated region for block: B:116:0x0198 A:{Catch:{ all -> 0x0035 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:133:0x01c3 A:{SYNTHETIC, Splitter: B:133:0x01c3} */
-    /* JADX WARNING: Removed duplicated region for block: B:138:0x01d6 A:{Catch:{ all -> 0x02dd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:176:0x02ac A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:166:0x0251 A:{Catch:{ all -> 0x02e5 }} */
-    /* JADX WARNING: Missing block: B:27:0x0073, code:
+    /* JADX WARNING: Removed duplicated region for block: B:90:0x0153 A:{SYNTHETIC, Splitter:B:90:0x0153} */
+    /* JADX WARNING: Removed duplicated region for block: B:98:0x0166 A:{SYNTHETIC, Splitter:B:98:0x0166} */
+    /* JADX WARNING: Removed duplicated region for block: B:117:0x0198 A:{Catch:{ all -> 0x0035 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:134:0x01c3 A:{SYNTHETIC, Splitter:B:134:0x01c3} */
+    /* JADX WARNING: Removed duplicated region for block: B:139:0x01d6 A:{Catch:{ all -> 0x02dd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x02ac A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:167:0x0251 A:{Catch:{ all -> 0x02e5 }} */
+    /* JADX WARNING: Missing block: B:27:0x0073, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:28:0x0076, code:
+    /* JADX WARNING: Missing block: B:28:0x0076, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:50:0x00c1, code:
+    /* JADX WARNING: Missing block: B:50:0x00c1, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:51:0x00c4, code:
+    /* JADX WARNING: Missing block: B:51:0x00c4, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:77:0x011f, code:
+    /* JADX WARNING: Missing block: B:77:0x011f, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:78:0x0122, code:
+    /* JADX WARNING: Missing block: B:78:0x0122, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:179:0x02b4, code:
+    /* JADX WARNING: Missing block: B:181:0x02b4, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
             r0 = r10;
             r2 = r12;
      */
-    /* JADX WARNING: Missing block: B:180:0x02b9, code:
+    /* JADX WARNING: Missing block: B:182:0x02b9, code skipped:
             if (r7 == null) goto L_0x02dc;
      */
-    /* JADX WARNING: Missing block: B:181:0x02bb, code:
+    /* JADX WARNING: Missing block: B:183:0x02bb, code skipped:
             r5 = new java.lang.StringBuilder();
             r5.append("Showing crash dialog for package ");
             r5.append(r0);
@@ -1068,7 +1076,7 @@ class AppErrors {
             android.util.Slog.i("ActivityManager", r5.toString());
             r7.show();
      */
-    /* JADX WARNING: Missing block: B:182:0x02dc, code:
+    /* JADX WARNING: Missing block: B:184:0x02dc, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1186,7 +1194,7 @@ class AppErrors {
                                                             context = tmpContext;
                                                         }
                                                     }
-                                                    Dialog appErrorDialog = new AppErrorDialog(context, this.mService, data);
+                                                    AppErrorDialog appErrorDialog = new AppErrorDialog(context, this.mService, data);
                                                     dialogToShow = appErrorDialog;
                                                     proc.crashDialog = appErrorDialog;
                                                     if (this.mAppEyeANR != null) {
@@ -1293,980 +1301,678 @@ class AppErrors {
         appNotResponding(app.pid, app, activity, parent, aboveSystem, annotation);
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.am.AppErrors.appNotResponding(int, com.android.server.am.ProcessRecord, com.android.server.am.ActivityRecord, com.android.server.am.ActivityRecord, boolean, java.lang.String):void, dom blocks: [B:230:0x0534, B:234:0x053c]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x0245 A:{SYNTHETIC, Splitter: B:70:0x0245} */
-    /* JADX WARNING: Removed duplicated region for block: B:174:0x0412  */
-    /* JADX WARNING: Removed duplicated region for block: B:166:0x03eb  */
-    /* JADX WARNING: Removed duplicated region for block: B:178:0x041d  */
-    /* JADX WARNING: Removed duplicated region for block: B:177:0x041a  */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0425  */
-    /* JADX WARNING: Removed duplicated region for block: B:187:0x044f  */
-    /* JADX WARNING: Removed duplicated region for block: B:186:0x044c  */
-    /* JADX WARNING: Removed duplicated region for block: B:190:0x0455  */
-    /* JADX WARNING: Removed duplicated region for block: B:189:0x0452  */
-    /* JADX WARNING: Removed duplicated region for block: B:193:0x0478 A:{SYNTHETIC, Splitter: B:193:0x0478} */
-    /* JADX WARNING: Removed duplicated region for block: B:306:0x0648 A:{SYNTHETIC, Splitter: B:306:0x0648} */
-    /* JADX WARNING: Removed duplicated region for block: B:310:0x0650 A:{Catch:{ IOException -> 0x064c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x0567 A:{SYNTHETIC, Splitter: B:254:0x0567} */
-    /* JADX WARNING: Removed duplicated region for block: B:166:0x03eb  */
-    /* JADX WARNING: Removed duplicated region for block: B:174:0x0412  */
-    /* JADX WARNING: Removed duplicated region for block: B:177:0x041a  */
-    /* JADX WARNING: Removed duplicated region for block: B:178:0x041d  */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0425  */
-    /* JADX WARNING: Removed duplicated region for block: B:186:0x044c  */
-    /* JADX WARNING: Removed duplicated region for block: B:187:0x044f  */
-    /* JADX WARNING: Removed duplicated region for block: B:189:0x0452  */
-    /* JADX WARNING: Removed duplicated region for block: B:190:0x0455  */
-    /* JADX WARNING: Removed duplicated region for block: B:193:0x0478 A:{SYNTHETIC, Splitter: B:193:0x0478} */
-    final void appNotResponding(int r42, com.android.server.am.ProcessRecord r43, com.android.server.am.ActivityRecord r44, com.android.server.am.ActivityRecord r45, boolean r46, java.lang.String r47) {
-        /*
-        r41 = this;
-        r1 = r41;
-        r2 = r42;
-        r13 = r43;
-        r14 = r44;
-        r15 = r45;
-        r12 = r47;
-        r0 = IS_DEBUG_VERSION;
-        r11 = 0;
-        if (r0 == 0) goto L_0x0037;
-    L_0x0011:
-        r0 = new android.util.ArrayMap;
-        r0.<init>();
-        r3 = "checkType";
-        r4 = "FocusWindowNullScene";
-        r0.put(r3, r4);
-        r3 = "anrActivityName";
-        if (r14 == 0) goto L_0x0026;
-    L_0x0021:
-        r4 = r44.toString();
-        goto L_0x0027;
-    L_0x0026:
-        r4 = r11;
-    L_0x0027:
-        r0.put(r3, r4);
-        r3 = com.android.server.HwServiceFactory.getWinFreezeScreenMonitor();
-        if (r3 == 0) goto L_0x0037;
-    L_0x0030:
-        r3 = com.android.server.HwServiceFactory.getWinFreezeScreenMonitor();
-        r3.cancelCheckFreezeScreen(r0);
-    L_0x0037:
-        r0 = new java.util.ArrayList;
-        r3 = 5;
-        r0.<init>(r3);
-        r10 = r0;
-        r0 = new android.util.SparseArray;
-        r4 = 20;
-        r0.<init>(r4);
-        r9 = r0;
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r4 = "anr_event_sync: appPid=";
-        r0.append(r4);
-        r4 = r13.pid;
-        r0.append(r4);
-        r4 = ", appName=";
-        r0.append(r4);
-        r4 = r13.processName;
-        r0.append(r4);
-        r4 = ", category=";
-        r0.append(r4);
-        r0.append(r12);
-        r8 = r0.toString();
-        r4 = 64;
-        android.os.Trace.traceBegin(r4, r8);
-        android.os.Trace.traceEnd(r4);
-        r0 = android.util.Log.HWINFO;
-        if (r0 == 0) goto L_0x0082;
-    L_0x0077:
-        r0 = android.common.HwFrameworkFactory.getLogException();
-        r4 = "action";
-        r5 = "copy_systrace_to_cache";
-        r0.cmd(r4, r5);
-    L_0x0082:
-        r0 = r1.mService;
-        r0 = r0.mController;
-        r7 = 1;
-        if (r0 == 0) goto L_0x00af;
-    L_0x0089:
-        r0 = r1.mService;	 Catch:{ RemoteException -> 0x00a3 }
-        r0 = r0.mController;	 Catch:{ RemoteException -> 0x00a3 }
-        r4 = r13.processName;	 Catch:{ RemoteException -> 0x00a3 }
-        r5 = r13.pid;	 Catch:{ RemoteException -> 0x00a3 }
-        r0 = r0.appEarlyNotResponding(r4, r5, r12);	 Catch:{ RemoteException -> 0x00a3 }
-        if (r0 >= 0) goto L_0x00a2;	 Catch:{ RemoteException -> 0x00a3 }
-    L_0x0097:
-        r4 = r13.pid;	 Catch:{ RemoteException -> 0x00a3 }
-        r5 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ RemoteException -> 0x00a3 }
-        if (r4 == r5) goto L_0x00a2;	 Catch:{ RemoteException -> 0x00a3 }
-    L_0x009d:
-        r4 = "anr";	 Catch:{ RemoteException -> 0x00a3 }
-        r13.kill(r4, r7);	 Catch:{ RemoteException -> 0x00a3 }
-    L_0x00a2:
-        goto L_0x00af;
-    L_0x00a3:
-        r0 = move-exception;
-        r4 = r1.mService;
-        r4.mController = r11;
-        r4 = com.android.server.Watchdog.getInstance();
-        r4.setActivityController(r11);
-    L_0x00af:
-        r5 = android.os.SystemClock.uptimeMillis();
-        r0 = r1.mService;
-        r0.updateCpuStatsNow();
-        r0 = r1.mContext;
-        r0 = r0.getContentResolver();
-        r4 = "anr_show_background";
-        r11 = 0;
-        r0 = android.provider.Settings.Secure.getInt(r0, r4, r11);
-        if (r0 == 0) goto L_0x00c9;
-    L_0x00c7:
-        r0 = r7;
-        goto L_0x00ca;
-    L_0x00c9:
-        r0 = r11;
-    L_0x00ca:
-        r17 = r0;
-        r0 = r1.mService;
-        r0 = r0.mShuttingDown;
-        if (r0 == 0) goto L_0x00f1;
-    L_0x00d2:
-        r0 = "ActivityManager";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "During shutdown skipping ANR: ";
-        r3.append(r4);
-        r3.append(r13);
-        r4 = " ";
-        r3.append(r4);
-        r3.append(r12);
-        r3 = r3.toString();
-        android.util.Slog.i(r0, r3);
-        return;
-    L_0x00f1:
-        r0 = r13.notResponding;
-        if (r0 == 0) goto L_0x0114;
-    L_0x00f5:
-        r0 = "ActivityManager";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "Skipping duplicate ANR: ";
-        r3.append(r4);
-        r3.append(r13);
-        r4 = " ";
-        r3.append(r4);
-        r3.append(r12);
-        r3 = r3.toString();
-        android.util.Slog.i(r0, r3);
-        return;
-    L_0x0114:
-        r0 = r13.crashing;
-        if (r0 == 0) goto L_0x0137;
-    L_0x0118:
-        r0 = "ActivityManager";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "Crashing app skipping ANR: ";
-        r3.append(r4);
-        r3.append(r13);
-        r4 = " ";
-        r3.append(r4);
-        r3.append(r12);
-        r3 = r3.toString();
-        android.util.Slog.i(r0, r3);
-        return;
-    L_0x0137:
-        r0 = r13.killedByAm;
-        if (r0 == 0) goto L_0x015a;
-    L_0x013b:
-        r0 = "ActivityManager";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "App already killed by AM skipping ANR: ";
-        r3.append(r4);
-        r3.append(r13);
-        r4 = " ";
-        r3.append(r4);
-        r3.append(r12);
-        r3 = r3.toString();
-        android.util.Slog.i(r0, r3);
-        return;
-    L_0x015a:
-        r0 = r13.killed;
-        r4 = 2;
-        if (r0 == 0) goto L_0x017e;
-    L_0x015f:
-        r0 = "ActivityManager";
-        r11 = new java.lang.StringBuilder;
-        r11.<init>();
-        r3 = "Skipping died app ANR: ";
-        r11.append(r3);
-        r11.append(r13);
-        r3 = " ";
-        r11.append(r3);
-        r11.append(r12);
-        r3 = r11.toString();
-        android.util.Slog.i(r0, r3);
-        goto L_0x01e9;
-    L_0x017e:
-        r0 = r13.pid;
-        if (r2 == r0) goto L_0x01b5;
-    L_0x0182:
-        r0 = "ActivityManager";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "Skipping ANR because pid of ";
-        r3.append(r4);
-        r4 = r13.processName;
-        r3.append(r4);
-        r4 = " is changed: anr pid: ";
-        r3.append(r4);
-        r3.append(r2);
-        r4 = ", new pid: ";
-        r3.append(r4);
-        r4 = r13.pid;
-        r3.append(r4);
-        r4 = " ";
-        r3.append(r4);
-        r3.append(r12);
-        r3 = r3.toString();
-        android.util.Slog.i(r0, r3);
-        return;
-    L_0x01b5:
-        r0 = r1.mService;
-        r3 = r13.uid;
-        r0 = r0.handleANRFilterFIFO(r3, r4);
-        if (r0 == 0) goto L_0x01e9;
-    L_0x01bf:
-        r0 = "ActivityManager";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "During holding skipping ANR: ";
-        r3.append(r4);
-        r3.append(r13);
-        r4 = " ";
-        r3.append(r4);
-        r3.append(r12);
-        r4 = "uid = ";
-        r3.append(r4);
-        r4 = r13.uid;
-        r3.append(r4);
-        r3 = r3.toString();
-        android.util.Slog.i(r0, r3);
-        return;
-    L_0x01e9:
-        r13.notResponding = r7;
-        r0 = 30008; // 0x7538 float:4.205E-41 double:1.4826E-319;
-        r3 = 5;
-        r3 = new java.lang.Object[r3];
-        r11 = r13.userId;
-        r11 = java.lang.Integer.valueOf(r11);
-        r18 = 0;
-        r3[r18] = r11;
-        r11 = r13.pid;
-        r11 = java.lang.Integer.valueOf(r11);
-        r3[r7] = r11;
-        r11 = r13.processName;
-        r3[r4] = r11;
-        r11 = r13.info;
-        r11 = r11.flags;
-        r11 = java.lang.Integer.valueOf(r11);
-        r4 = 3;
-        r3[r4] = r11;
-        r11 = 4;
-        r3[r11] = r12;
-        android.util.EventLog.writeEvent(r0, r3);
-        r0 = r13.pid;
-        r0 = java.lang.Integer.valueOf(r0);
-        r10.add(r0);
-        r0 = r1.mAppEyeANR;
-        if (r0 == 0) goto L_0x02db;
-    L_0x0224:
-        r0 = r1.mAppEyeANR;
-        r3 = 0;
-        r0 = r0.check(r3);
-        if (r0 != 0) goto L_0x02db;
-    L_0x022d:
-        r3 = r1.mService;
-        monitor-enter(r3);
-        com.android.server.am.ActivityManagerService.boostPriorityForLockedSection();	 Catch:{ all -> 0x02d1 }
-        if (r17 != 0) goto L_0x0242;
-    L_0x0235:
-        r0 = isInterestingForBackgroundTraces(r43);	 Catch:{ all -> 0x023d }
-        if (r0 != 0) goto L_0x0242;
-    L_0x023b:
-        r0 = r7;
-        goto L_0x0243;
-    L_0x023d:
-        r0 = move-exception;
-        r23 = r5;
-        goto L_0x02d4;
-    L_0x0242:
-        r0 = 0;
-    L_0x0243:
-        if (r0 != 0) goto L_0x02c9;
-    L_0x0245:
-        r11 = r13.pid;	 Catch:{ all -> 0x02d1 }
-        if (r15 == 0) goto L_0x0258;
-    L_0x0249:
-        r4 = r15.app;	 Catch:{ all -> 0x023d }
-        if (r4 == 0) goto L_0x0258;	 Catch:{ all -> 0x023d }
-    L_0x024d:
-        r4 = r15.app;	 Catch:{ all -> 0x023d }
-        r4 = r4.pid;	 Catch:{ all -> 0x023d }
-        if (r4 <= 0) goto L_0x0258;	 Catch:{ all -> 0x023d }
-    L_0x0253:
-        r4 = r15.app;	 Catch:{ all -> 0x023d }
-        r4 = r4.pid;	 Catch:{ all -> 0x023d }
-        r11 = r4;
-    L_0x0258:
-        r4 = r13.pid;	 Catch:{ all -> 0x02d1 }
-        if (r11 == r4) goto L_0x0263;
-    L_0x025c:
-        r4 = java.lang.Integer.valueOf(r11);	 Catch:{ all -> 0x023d }
-        r10.add(r4);	 Catch:{ all -> 0x023d }
-    L_0x0263:
-        r4 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x02d1 }
-        r7 = r13.pid;	 Catch:{ all -> 0x02d1 }
-        if (r4 == r7) goto L_0x0276;
-    L_0x0269:
-        r4 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x023d }
-        if (r4 == r11) goto L_0x0276;	 Catch:{ all -> 0x023d }
-    L_0x026d:
-        r4 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x023d }
-        r4 = java.lang.Integer.valueOf(r4);	 Catch:{ all -> 0x023d }
-        r10.add(r4);	 Catch:{ all -> 0x023d }
-    L_0x0276:
-        r4 = r1.mService;	 Catch:{ all -> 0x02d1 }
-        r4 = r4.mLruProcesses;	 Catch:{ all -> 0x02d1 }
-        r4 = r4.size();	 Catch:{ all -> 0x02d1 }
-        r7 = 1;	 Catch:{ all -> 0x02d1 }
-        r4 = r4 - r7;	 Catch:{ all -> 0x02d1 }
-    L_0x0280:
-        if (r4 < 0) goto L_0x02c9;	 Catch:{ all -> 0x02d1 }
-    L_0x0282:
-        r7 = r1.mService;	 Catch:{ all -> 0x02d1 }
-        r7 = r7.mLruProcesses;	 Catch:{ all -> 0x02d1 }
-        r7 = r7.get(r4);	 Catch:{ all -> 0x02d1 }
-        r7 = (com.android.server.am.ProcessRecord) r7;	 Catch:{ all -> 0x02d1 }
-        if (r7 == 0) goto L_0x02c0;	 Catch:{ all -> 0x02d1 }
-    L_0x028e:
-        r2 = r7.thread;	 Catch:{ all -> 0x02d1 }
-        if (r2 == 0) goto L_0x02c0;	 Catch:{ all -> 0x02d1 }
-    L_0x0292:
-        r2 = r7.pid;	 Catch:{ all -> 0x02d1 }
-        if (r2 <= 0) goto L_0x02c0;
-    L_0x0296:
-        r23 = r5;
-        r5 = r13.pid;	 Catch:{ all -> 0x02d9 }
-        if (r2 == r5) goto L_0x02c2;	 Catch:{ all -> 0x02d9 }
-    L_0x029c:
-        if (r2 == r11) goto L_0x02c2;	 Catch:{ all -> 0x02d9 }
-    L_0x029e:
-        r5 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x02d9 }
-        if (r2 == r5) goto L_0x02c2;	 Catch:{ all -> 0x02d9 }
-    L_0x02a2:
-        r5 = r7.persistent;	 Catch:{ all -> 0x02d9 }
-        if (r5 == 0) goto L_0x02ae;	 Catch:{ all -> 0x02d9 }
-    L_0x02a6:
-        r5 = java.lang.Integer.valueOf(r2);	 Catch:{ all -> 0x02d9 }
-        r10.add(r5);	 Catch:{ all -> 0x02d9 }
-        goto L_0x02c2;	 Catch:{ all -> 0x02d9 }
-    L_0x02ae:
-        r5 = r7.treatLikeActivity;	 Catch:{ all -> 0x02d9 }
-        if (r5 == 0) goto L_0x02ba;	 Catch:{ all -> 0x02d9 }
-    L_0x02b2:
-        r5 = java.lang.Integer.valueOf(r2);	 Catch:{ all -> 0x02d9 }
-        r10.add(r5);	 Catch:{ all -> 0x02d9 }
-        goto L_0x02c2;	 Catch:{ all -> 0x02d9 }
-    L_0x02ba:
-        r5 = java.lang.Boolean.TRUE;	 Catch:{ all -> 0x02d9 }
-        r9.put(r2, r5);	 Catch:{ all -> 0x02d9 }
-        goto L_0x02c2;	 Catch:{ all -> 0x02d9 }
-    L_0x02c0:
-        r23 = r5;	 Catch:{ all -> 0x02d9 }
-    L_0x02c2:
-        r4 = r4 + -1;	 Catch:{ all -> 0x02d9 }
-        r5 = r23;	 Catch:{ all -> 0x02d9 }
-        r2 = r42;	 Catch:{ all -> 0x02d9 }
-        goto L_0x0280;	 Catch:{ all -> 0x02d9 }
-    L_0x02c9:
-        r23 = r5;	 Catch:{ all -> 0x02d9 }
-        monitor-exit(r3);	 Catch:{ all -> 0x02d9 }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
-        r11 = r0;
-        goto L_0x02de;
-    L_0x02d1:
-        r0 = move-exception;
-        r23 = r5;
-    L_0x02d4:
-        monitor-exit(r3);	 Catch:{ all -> 0x02d9 }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
-        throw r0;
-    L_0x02d9:
-        r0 = move-exception;
-        goto L_0x02d4;
-    L_0x02db:
-        r23 = r5;
-        r11 = 0;
-    L_0x02de:
-        r2 = r11;
-        r0 = r1.mAppEyeANR;
-        if (r0 == 0) goto L_0x031c;
-    L_0x02e3:
-        r0 = new android.zrhung.ZrHungData;
-        r0.<init>();
-        r3 = "processName";
-        r4 = r13.processName;
-        r0.putString(r3, r4);
-        r3 = "pid";
-        r4 = r13.pid;
-        r0.putInt(r3, r4);
-        r3 = "isSilentANR";
-        r0.putBoolean(r3, r2);
-        r3 = "packageName";
-        r4 = r13.info;
-        r4 = r4.packageName;
-        r0.putString(r3, r4);
-        r3 = "reason";
-        r0.putString(r3, r12);
-        if (r14 == 0) goto L_0x0317;
-    L_0x0310:
-        r3 = "activityName";
-        r4 = r14.shortComponentName;
-        r0.putString(r3, r4);
-    L_0x0317:
-        r3 = r1.mAppEyeANR;
-        r3.sendEvent(r0);
-    L_0x031c:
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r11 = r0;
-        r3 = 0;
-        r11.setLength(r3);
-        r0 = "ANR in ";
-        r11.append(r0);
-        r0 = r13.processName;
-        r11.append(r0);
-        if (r14 == 0) goto L_0x0345;
-    L_0x0332:
-        r0 = r14.shortComponentName;
-        if (r0 == 0) goto L_0x0345;
-    L_0x0336:
-        r0 = " (";
-        r11.append(r0);
-        r0 = r14.shortComponentName;
-        r11.append(r0);
-        r0 = ")";
-        r11.append(r0);
-    L_0x0345:
-        r0 = "\n";
-        r11.append(r0);
-        r0 = "PID: ";
-        r11.append(r0);
-        r0 = r13.pid;
-        r11.append(r0);
-        r0 = "\n";
-        r11.append(r0);
-        if (r12 == 0) goto L_0x0368;
-    L_0x035b:
-        r0 = "Reason: ";
-        r11.append(r0);
-        r11.append(r12);
-        r0 = "\n";
-        r11.append(r0);
-    L_0x0368:
-        if (r15 == 0) goto L_0x037b;
-    L_0x036a:
-        if (r15 == r14) goto L_0x037b;
-    L_0x036c:
-        r0 = "Parent: ";
-        r11.append(r0);
-        r0 = r15.shortComponentName;
-        r11.append(r0);
-        r0 = "\n";
-        r11.append(r0);
-    L_0x037b:
-        r0 = new com.android.internal.os.ProcessCpuTracker;
-        r3 = 1;
-        r0.<init>(r3);
-        r7 = r0;
-        r3 = 0;
-        r16 = 0;
-        r4 = r16;
-        r0 = new java.io.FileOutputStream;	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r5 = new java.io.File;	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r6 = "/proc/sysrq-trigger";	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r5.<init>(r6);	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r0.<init>(r5);	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r4 = r0;	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r0 = new java.io.OutputStreamWriter;	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r5 = "UTF-8";	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r0.<init>(r4, r5);	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r3 = r0;	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r0 = "w";	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r3.write(r0);	 Catch:{ IOException -> 0x03c4, all -> 0x03ae }
-        r3.close();	 Catch:{ IOException -> 0x03a7 }
-        goto L_0x03a9;	 Catch:{ IOException -> 0x03a7 }
-    L_0x03a7:
-        r0 = move-exception;	 Catch:{ IOException -> 0x03a7 }
-        goto L_0x03da;	 Catch:{ IOException -> 0x03a7 }
-        r4.close();	 Catch:{ IOException -> 0x03a7 }
-        goto L_0x03e3;
-    L_0x03ae:
-        r0 = move-exception;
-        r29 = r2;
-        r5 = r4;
-        r33 = r7;
-        r26 = r9;
-        r18 = r10;
-        r2 = r11;
-        r6 = r12;
-        r31 = r23;
-        r7 = r46;
-        r4 = r3;
-        r23 = r8;
-        r3 = r0;
-        goto L_0x0646;
-    L_0x03c4:
-        r0 = move-exception;
-        r5 = "ActivityManager";	 Catch:{ all -> 0x0632 }
-        r6 = "Failed to write to /proc/sysrq-trigger";	 Catch:{ all -> 0x0632 }
-        android.util.Slog.e(r5, r6);	 Catch:{ all -> 0x0632 }
-        if (r3 == 0) goto L_0x03d4;
-    L_0x03ce:
-        r3.close();	 Catch:{ IOException -> 0x03d2 }
-        goto L_0x03d4;	 Catch:{ IOException -> 0x03d2 }
-    L_0x03d2:
-        r0 = move-exception;	 Catch:{ IOException -> 0x03d2 }
-        goto L_0x03da;	 Catch:{ IOException -> 0x03d2 }
-    L_0x03d4:
-        if (r4 == 0) goto L_0x03e3;	 Catch:{ IOException -> 0x03d2 }
-    L_0x03d6:
-        r4.close();	 Catch:{ IOException -> 0x03d2 }
-        goto L_0x03e3;
-        r5 = "ActivityManager";
-        r6 = "Failed to write to /proc/sysrq-trigger";
-        android.util.Slog.e(r5, r6);
-        goto L_0x03e4;
-    L_0x03e4:
-        r19 = r3;
-        r25 = r4;
-        r0 = 0;
-        if (r2 == 0) goto L_0x0412;
-    L_0x03eb:
-        r3 = 0;
-    L_0x03ec:
-        r4 = com.android.server.Watchdog.NATIVE_STACKS_OF_INTEREST;
-        r4 = r4.length;
-        if (r3 >= r4) goto L_0x040e;
-    L_0x03f1:
-        r4 = com.android.server.Watchdog.NATIVE_STACKS_OF_INTEREST;
-        r4 = r4[r3];
-        r5 = r13.processName;
-        r4 = r4.equals(r5);
-        if (r4 == 0) goto L_0x0408;
-    L_0x03fd:
-        r6 = 1;
-        r4 = new java.lang.String[r6];
-        r5 = r13.processName;
-        r18 = 0;
-        r4[r18] = r5;
-        r0 = r4;
-        goto L_0x0417;
-    L_0x0408:
-        r6 = 1;
-        r18 = 0;
-        r3 = r3 + 1;
-        goto L_0x03ec;
-    L_0x040e:
-        r6 = 1;
-        r18 = 0;
-        goto L_0x0417;
-    L_0x0412:
-        r6 = 1;
-        r18 = 0;
-        r0 = com.android.server.Watchdog.NATIVE_STACKS_OF_INTEREST;
-    L_0x0417:
-        r5 = r0;
-        if (r5 != 0) goto L_0x041d;
-    L_0x041a:
-        r0 = r16;
-        goto L_0x0421;
-    L_0x041d:
-        r0 = android.os.Process.getPidsForCommands(r5);
-    L_0x0421:
-        r4 = r0;
-        r0 = 0;
-        if (r4 == 0) goto L_0x0445;
-    L_0x0425:
-        r3 = new java.util.ArrayList;
-        r6 = r4.length;
-        r3.<init>(r6);
-        r0 = r3;
-        r3 = r4.length;
-        r6 = r18;
-    L_0x042f:
-        if (r6 >= r3) goto L_0x0445;
-    L_0x0431:
-        r27 = r3;
-        r3 = r4[r6];
-        r28 = r4;
-        r4 = java.lang.Integer.valueOf(r3);
-        r0.add(r4);
-        r6 = r6 + 1;
-        r3 = r27;
-        r4 = r28;
-        goto L_0x042f;
-    L_0x0445:
-        r28 = r4;
-        r22 = r0;
-        r4 = 1;
-        if (r2 == 0) goto L_0x044f;
-    L_0x044c:
-        r6 = r16;
-        goto L_0x0450;
-    L_0x044f:
-        r6 = r7;
-    L_0x0450:
-        if (r2 == 0) goto L_0x0455;
-    L_0x0452:
-        r0 = r16;
-        goto L_0x0456;
-    L_0x0455:
-        r0 = r9;
-    L_0x0456:
-        r3 = r13;
-        r29 = r2;
-        r20 = r28;
-        r2 = 3;
-        r21 = r5;
-        r30 = r23;
-        r5 = r10;
-        r23 = 1;
-        r2 = r7;
-        r7 = r0;
-        r23 = r8;
-        r8 = r22;
-        r24 = com.android.server.am.ActivityManagerService.dumpStackTraces(r3, r4, r5, r6, r7, r8);
-        r3 = 0;
-        r0 = r1.mService;
-        r0.updateCpuStatsNow();
-        r0 = r1.mService;
-        r5 = r0.mProcessCpuTracker;
-        monitor-enter(r5);
-        r0 = r1.mService;	 Catch:{ all -> 0x0621 }
-        r0 = r0.mProcessCpuTracker;	 Catch:{ all -> 0x0621 }
-        r7 = r30;
-        r0 = r0.printCurrentState(r7);	 Catch:{ all -> 0x0613 }
-        r6 = r0;
-        monitor-exit(r5);	 Catch:{ all -> 0x0601 }
-        r0 = r2.printCurrentLoad();
-        r11.append(r0);
-        r11.append(r6);
-        r5 = r2.printCurrentState(r7);
-        r11.append(r5);
-        r0 = "ActivityManager";
-        r3 = r11.toString();
-        android.util.Slog.e(r0, r3);
-        r0 = "ActivityManager";
-        android.util.Slog.e(r0, r5);
-        if (r24 != 0) goto L_0x04ab;
-    L_0x04a5:
-        r0 = r13.pid;
-        r3 = 3;
-        android.os.Process.sendSignal(r0, r3);
-    L_0x04ab:
-        r4 = r13.uid;
-        r0 = r13.processName;
-        if (r14 != 0) goto L_0x04b5;
-    L_0x04b1:
-        r26 = "unknown";
-        goto L_0x04b9;
-    L_0x04b5:
-        r3 = r14.shortComponentName;
-        r26 = r3;
-    L_0x04b9:
-        r3 = r13.info;
-        if (r3 == 0) goto L_0x04cd;
-    L_0x04bd:
-        r3 = r13.info;
-        r3 = r3.isInstantApp();
-        if (r3 == 0) goto L_0x04c9;
-        r27 = 2;
-        goto L_0x04d0;
-        r27 = 1;
-        goto L_0x04d0;
-        r27 = r18;
-    L_0x04d0:
-        if (r13 == 0) goto L_0x04e0;
-    L_0x04d2:
-        r3 = r43.isInterestingToUserLocked();
-        if (r3 == 0) goto L_0x04dc;
-        r18 = 2;
-        goto L_0x04e1;
-        r18 = 1;
-        goto L_0x04e1;
-    L_0x04e1:
-        r3 = 79;
-        r28 = r5;
-        r5 = r0;
-        r30 = r6;
-        r6 = r26;
-        r31 = r7;
-        r7 = r12;
-        r8 = r27;
-        r26 = r9;
-        r9 = r18;
-        android.util.StatsLog.write(r3, r4, r5, r6, r7, r8, r9);
-        r3 = r1.mService;
-        r4 = "anr";
-        r6 = r13.processName;
-        r0 = 0;
-        r5 = r13;
-        r7 = r14;
-        r8 = r15;
-        r9 = r12;
-        r18 = r10;
-        r10 = r30;
-        r33 = r2;
-        r2 = r11;
-        r15 = r16;
-        r11 = r24;
-        r12 = r0;
-        r3.addErrorToDropBox(r4, r5, r6, r7, r8, r9, r10, r11, r12);
-        r0 = r1.mService;
-        r0 = r0.mController;
-        if (r0 == 0) goto L_0x0563;
-    L_0x0516:
-        r0 = r1.mService;	 Catch:{ RemoteException -> 0x0555 }
-        r0 = r0.mController;	 Catch:{ RemoteException -> 0x0555 }
-        r3 = r13.processName;	 Catch:{ RemoteException -> 0x0555 }
-        r4 = r13.pid;	 Catch:{ RemoteException -> 0x0555 }
-        r5 = r2.toString();	 Catch:{ RemoteException -> 0x0555 }
-        r0 = r0.appNotResponding(r3, r4, r5);	 Catch:{ RemoteException -> 0x0555 }
-        r3 = r0;	 Catch:{ RemoteException -> 0x0555 }
-        if (r3 == 0) goto L_0x0553;	 Catch:{ RemoteException -> 0x0555 }
-    L_0x0529:
-        if (r3 >= 0) goto L_0x0538;	 Catch:{ RemoteException -> 0x0555 }
-    L_0x052b:
-        r0 = r13.pid;	 Catch:{ RemoteException -> 0x0555 }
-        r4 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ RemoteException -> 0x0555 }
-        if (r0 == r4) goto L_0x0538;	 Catch:{ RemoteException -> 0x0555 }
-    L_0x0531:
-        r0 = "anr";	 Catch:{ RemoteException -> 0x0555 }
-        r4 = 1;
-        r13.kill(r0, r4);	 Catch:{ RemoteException -> 0x0551 }
-        goto L_0x054a;	 Catch:{ RemoteException -> 0x0551 }
-    L_0x0538:
-        r4 = 1;	 Catch:{ RemoteException -> 0x0551 }
-        r5 = r1.mService;	 Catch:{ RemoteException -> 0x0551 }
-        monitor-enter(r5);	 Catch:{ RemoteException -> 0x0551 }
-        com.android.server.am.ActivityManagerService.boostPriorityForLockedSection();	 Catch:{ all -> 0x054b }
-        r0 = r1.mService;	 Catch:{ all -> 0x054b }
-        r0 = r0.mServices;	 Catch:{ all -> 0x054b }
-        r0.scheduleServiceTimeoutLocked(r13);	 Catch:{ all -> 0x054b }
-        monitor-exit(r5);	 Catch:{ all -> 0x054b }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();	 Catch:{ RemoteException -> 0x0551 }
-    L_0x054a:
-        return;
-    L_0x054b:
-        r0 = move-exception;
-        monitor-exit(r5);	 Catch:{ all -> 0x054b }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();	 Catch:{ RemoteException -> 0x0551 }
-        throw r0;	 Catch:{ RemoteException -> 0x0551 }
-    L_0x0551:
-        r0 = move-exception;
-        goto L_0x0557;
-    L_0x0553:
-        r4 = 1;
-        goto L_0x0564;
-    L_0x0555:
-        r0 = move-exception;
-        r4 = 1;
-    L_0x0557:
-        r3 = r1.mService;
-        r3.mController = r15;
-        r3 = com.android.server.Watchdog.getInstance();
-        r3.setActivityController(r15);
-        goto L_0x0564;
-    L_0x0563:
-        r4 = 1;
-    L_0x0564:
-        r3 = r1.mService;
-        monitor-enter(r3);
-        com.android.server.am.ActivityManagerService.boostPriorityForLockedSection();	 Catch:{ all -> 0x05f5 }
-        r0 = r1.mService;	 Catch:{ all -> 0x05f5 }
-        r0 = r0.mBatteryStatsService;	 Catch:{ all -> 0x05f5 }
-        r5 = r13.processName;	 Catch:{ all -> 0x05f5 }
-        r6 = r13.uid;	 Catch:{ all -> 0x05f5 }
-        r0.noteProcessAnr(r5, r6);	 Catch:{ all -> 0x05f5 }
-        if (r17 != 0) goto L_0x058d;	 Catch:{ all -> 0x05f5 }
-    L_0x0577:
-        r0 = r43.isInterestingToUserLocked();	 Catch:{ all -> 0x05f5 }
-        if (r0 != 0) goto L_0x058d;	 Catch:{ all -> 0x05f5 }
-    L_0x057d:
-        r0 = r13.pid;	 Catch:{ all -> 0x05f5 }
-        r5 = com.android.server.am.ActivityManagerService.MY_PID;	 Catch:{ all -> 0x05f5 }
-        if (r0 == r5) goto L_0x058d;	 Catch:{ all -> 0x05f5 }
-    L_0x0583:
-        r0 = "bg anr";	 Catch:{ all -> 0x05f5 }
-        r13.kill(r0, r4);	 Catch:{ all -> 0x05f5 }
-        monitor-exit(r3);	 Catch:{ all -> 0x05f5 }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
-        return;
-        if (r14 == 0) goto L_0x0593;
-    L_0x0590:
-        r11 = r14.shortComponentName;	 Catch:{ all -> 0x05f5 }
-        goto L_0x0594;
-    L_0x0593:
-        r11 = r15;
-    L_0x0594:
-        r6 = r47;
-        if (r6 == 0) goto L_0x05ae;
-    L_0x0598:
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x05aa }
-        r0.<init>();	 Catch:{ all -> 0x05aa }
-        r5 = "ANR ";	 Catch:{ all -> 0x05aa }
-        r0.append(r5);	 Catch:{ all -> 0x05aa }
-        r0.append(r6);	 Catch:{ all -> 0x05aa }
-        r0 = r0.toString();	 Catch:{ all -> 0x05aa }
-        goto L_0x05b0;	 Catch:{ all -> 0x05aa }
-    L_0x05aa:
-        r0 = move-exception;	 Catch:{ all -> 0x05aa }
-        r7 = r46;	 Catch:{ all -> 0x05aa }
-        goto L_0x05fa;	 Catch:{ all -> 0x05aa }
-    L_0x05ae:
-        r0 = "ANR";	 Catch:{ all -> 0x05aa }
-    L_0x05b0:
-        r5 = r2.toString();	 Catch:{ all -> 0x05aa }
-        r1.makeAppNotRespondingLocked(r13, r11, r0, r5);	 Catch:{ all -> 0x05aa }
-        r0 = android.os.Message.obtain();	 Catch:{ all -> 0x05aa }
-        r5 = 2;	 Catch:{ all -> 0x05aa }
-        r0.what = r5;	 Catch:{ all -> 0x05aa }
-        r5 = new com.android.server.am.AppNotRespondingDialog$Data;	 Catch:{ all -> 0x05aa }
-        r7 = r46;
-        r5.<init>(r13, r14, r7);	 Catch:{ all -> 0x05ff }
-        r0.obj = r5;	 Catch:{ all -> 0x05ff }
-        r5 = r1.mService;	 Catch:{ all -> 0x05ff }
-        r35 = "showanrdialog";	 Catch:{ all -> 0x05ff }
-        r8 = r13.pid;	 Catch:{ all -> 0x05ff }
-        r9 = r13.uid;	 Catch:{ all -> 0x05ff }
-        r10 = r13.info;	 Catch:{ all -> 0x05ff }
-        r10 = r10.packageName;	 Catch:{ all -> 0x05ff }
-        r39 = 0;	 Catch:{ all -> 0x05ff }
-        r40 = "original";	 Catch:{ all -> 0x05ff }
-        r34 = r5;	 Catch:{ all -> 0x05ff }
-        r36 = r8;	 Catch:{ all -> 0x05ff }
-        r37 = r9;	 Catch:{ all -> 0x05ff }
-        r38 = r10;	 Catch:{ all -> 0x05ff }
-        r5 = r34.zrHungSendEvent(r35, r36, r37, r38, r39, r40);	 Catch:{ all -> 0x05ff }
-        if (r5 == 0) goto L_0x05f0;	 Catch:{ all -> 0x05ff }
-    L_0x05e7:
-        r13.anrType = r4;	 Catch:{ all -> 0x05ff }
-        r4 = r1.mService;	 Catch:{ all -> 0x05ff }
-        r4 = r4.mUiHandler;	 Catch:{ all -> 0x05ff }
-        r4.sendMessage(r0);	 Catch:{ all -> 0x05ff }
-    L_0x05f0:
-        monitor-exit(r3);	 Catch:{ all -> 0x05ff }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
-        return;
-    L_0x05f5:
-        r0 = move-exception;
-        r7 = r46;
-        r6 = r47;
-    L_0x05fa:
-        monitor-exit(r3);	 Catch:{ all -> 0x05ff }
-        com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
-        throw r0;
-    L_0x05ff:
-        r0 = move-exception;
-        goto L_0x05fa;
-    L_0x0601:
-        r0 = move-exception;
-        r33 = r2;
-        r30 = r6;
-        r31 = r7;
-        r26 = r9;
-        r18 = r10;
-        r2 = r11;
-        r6 = r12;
-        r7 = r46;
-        r3 = r30;
-        goto L_0x062e;
-    L_0x0613:
-        r0 = move-exception;
-        r33 = r2;
-        r31 = r7;
-        r26 = r9;
-        r18 = r10;
-        r2 = r11;
-        r6 = r12;
-        r7 = r46;
-        goto L_0x062e;
-    L_0x0621:
-        r0 = move-exception;
-        r7 = r46;
-        r33 = r2;
-        r26 = r9;
-        r18 = r10;
-        r2 = r11;
-        r6 = r12;
-        r31 = r30;
-    L_0x062e:
-        monitor-exit(r5);	 Catch:{ all -> 0x0630 }
-        throw r0;
-    L_0x0630:
-        r0 = move-exception;
-        goto L_0x062e;
-    L_0x0632:
-        r0 = move-exception;
-        r29 = r2;
-        r33 = r7;
-        r26 = r9;
-        r18 = r10;
-        r2 = r11;
-        r6 = r12;
-        r31 = r23;
-        r7 = r46;
-        r23 = r8;
-        r5 = r4;
-        r4 = r3;
-        r3 = r0;
-    L_0x0646:
-        if (r4 == 0) goto L_0x064e;
-    L_0x0648:
-        r4.close();	 Catch:{ IOException -> 0x064c }
-        goto L_0x064e;	 Catch:{ IOException -> 0x064c }
-    L_0x064c:
-        r0 = move-exception;	 Catch:{ IOException -> 0x064c }
-        goto L_0x0654;	 Catch:{ IOException -> 0x064c }
-    L_0x064e:
-        if (r5 == 0) goto L_0x065d;	 Catch:{ IOException -> 0x064c }
-    L_0x0650:
-        r5.close();	 Catch:{ IOException -> 0x064c }
-        goto L_0x065d;
-        r8 = "ActivityManager";
-        r9 = "Failed to write to /proc/sysrq-trigger";
-        android.util.Slog.e(r8, r9);
-    L_0x065d:
-        throw r3;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.AppErrors.appNotResponding(int, com.android.server.am.ProcessRecord, com.android.server.am.ActivityRecord, com.android.server.am.ActivityRecord, boolean, java.lang.String):void");
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x0245 A:{SYNTHETIC, Splitter:B:70:0x0245} */
+    /* JADX WARNING: Removed duplicated region for block: B:176:0x0412  */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x03eb  */
+    /* JADX WARNING: Removed duplicated region for block: B:180:0x041d  */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x041a  */
+    /* JADX WARNING: Removed duplicated region for block: B:183:0x0425  */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x044f  */
+    /* JADX WARNING: Removed duplicated region for block: B:188:0x044c  */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x0455  */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x0452  */
+    /* JADX WARNING: Removed duplicated region for block: B:195:0x0478 A:{SYNTHETIC, Splitter:B:195:0x0478} */
+    /* JADX WARNING: Removed duplicated region for block: B:256:0x0567 A:{SYNTHETIC, Splitter:B:256:0x0567} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x03eb  */
+    /* JADX WARNING: Removed duplicated region for block: B:176:0x0412  */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x041a  */
+    /* JADX WARNING: Removed duplicated region for block: B:180:0x041d  */
+    /* JADX WARNING: Removed duplicated region for block: B:183:0x0425  */
+    /* JADX WARNING: Removed duplicated region for block: B:188:0x044c  */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x044f  */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x0452  */
+    /* JADX WARNING: Removed duplicated region for block: B:192:0x0455  */
+    /* JADX WARNING: Removed duplicated region for block: B:195:0x0478 A:{SYNTHETIC, Splitter:B:195:0x0478} */
+    /* JADX WARNING: Removed duplicated region for block: B:308:0x0648 A:{SYNTHETIC, Splitter:B:308:0x0648} */
+    /* JADX WARNING: Removed duplicated region for block: B:313:0x0650 A:{Catch:{ IOException -> 0x064c }} */
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:232:0x0534, B:236:0x053c] */
+    /* JADX WARNING: Missing block: B:119:0x02cc, code skipped:
+            com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
+            r11 = r0;
+     */
+    /* JADX WARNING: Missing block: B:203:0x0484, code skipped:
+            r11.append(r2.printCurrentLoad());
+            r11.append(r6);
+            r5 = r2.printCurrentState(r7);
+            r11.append(r5);
+            android.util.Slog.e("ActivityManager", r11.toString());
+            android.util.Slog.e("ActivityManager", r5);
+     */
+    /* JADX WARNING: Missing block: B:204:0x04a3, code skipped:
+            if (r24 != null) goto L_0x04ab;
+     */
+    /* JADX WARNING: Missing block: B:205:0x04a5, code skipped:
+            android.os.Process.sendSignal(r13.pid, 3);
+     */
+    /* JADX WARNING: Missing block: B:206:0x04ab, code skipped:
+            r4 = r13.uid;
+            r0 = r13.processName;
+     */
+    /* JADX WARNING: Missing block: B:207:0x04af, code skipped:
+            if (r14 != null) goto L_0x04b5;
+     */
+    /* JADX WARNING: Missing block: B:208:0x04b1, code skipped:
+            r26 = com.android.server.UiModeManagerService.Shell.NIGHT_MODE_STR_UNKNOWN;
+     */
+    /* JADX WARNING: Missing block: B:209:0x04b5, code skipped:
+            r26 = r14.shortComponentName;
+     */
+    /* JADX WARNING: Missing block: B:211:0x04bb, code skipped:
+            if (r13.info == null) goto L_0x04cd;
+     */
+    /* JADX WARNING: Missing block: B:213:0x04c3, code skipped:
+            if (r13.info.isInstantApp() == false) goto L_0x04c9;
+     */
+    /* JADX WARNING: Missing block: B:214:0x04c5, code skipped:
+            r27 = 2;
+     */
+    /* JADX WARNING: Missing block: B:215:0x04c9, code skipped:
+            r27 = 1;
+     */
+    /* JADX WARNING: Missing block: B:216:0x04cd, code skipped:
+            r27 = r18;
+     */
+    /* JADX WARNING: Missing block: B:217:0x04d0, code skipped:
+            if (r13 == null) goto L_0x04e1;
+     */
+    /* JADX WARNING: Missing block: B:219:0x04d6, code skipped:
+            if (r43.isInterestingToUserLocked() == false) goto L_0x04dc;
+     */
+    /* JADX WARNING: Missing block: B:220:0x04d8, code skipped:
+            r18 = 2;
+     */
+    /* JADX WARNING: Missing block: B:221:0x04dc, code skipped:
+            r18 = 1;
+     */
+    /* JADX WARNING: Missing block: B:222:0x04e1, code skipped:
+            r28 = r5;
+            r30 = r6;
+            r31 = r7;
+            r26 = r9;
+            android.util.StatsLog.write(79, r4, r0, r26, r12, r27, r18);
+            r18 = r10;
+            r33 = r2;
+            r2 = r11;
+            r15 = null;
+            r1.mService.addErrorToDropBox("anr", r13, r13.processName, r14, r15, r12, r30, r24, null);
+     */
+    /* JADX WARNING: Missing block: B:223:0x0514, code skipped:
+            if (r1.mService.mController == null) goto L_0x0563;
+     */
+    /* JADX WARNING: Missing block: B:225:?, code skipped:
+            r3 = r1.mService.mController.appNotResponding(r13.processName, r13.pid, r2.toString());
+     */
+    /* JADX WARNING: Missing block: B:226:0x0527, code skipped:
+            if (r3 == 0) goto L_0x0553;
+     */
+    /* JADX WARNING: Missing block: B:227:0x0529, code skipped:
+            if (r3 >= 0) goto L_0x0538;
+     */
+    /* JADX WARNING: Missing block: B:229:0x052f, code skipped:
+            if (r13.pid == com.android.server.am.ActivityManagerService.MY_PID) goto L_0x0538;
+     */
+    /* JADX WARNING: Missing block: B:231:0x0533, code skipped:
+            r4 = true;
+     */
+    /* JADX WARNING: Missing block: B:233:?, code skipped:
+            r13.kill("anr", true);
+     */
+    /* JADX WARNING: Missing block: B:234:0x0538, code skipped:
+            r4 = true;
+            r5 = r1.mService;
+     */
+    /* JADX WARNING: Missing block: B:235:0x053b, code skipped:
+            monitor-enter(r5);
+     */
+    /* JADX WARNING: Missing block: B:237:?, code skipped:
+            com.android.server.am.ActivityManagerService.boostPriorityForLockedSection();
+            r1.mService.mServices.scheduleServiceTimeoutLocked(r13);
+     */
+    /* JADX WARNING: Missing block: B:238:0x0546, code skipped:
+            monitor-exit(r5);
+     */
+    /* JADX WARNING: Missing block: B:240:?, code skipped:
+            com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
+     */
+    /* JADX WARNING: Missing block: B:241:0x054a, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:246:?, code skipped:
+            com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
+     */
+    /* JADX WARNING: Missing block: B:249:0x0553, code skipped:
+            r4 = true;
+     */
+    /* JADX WARNING: Missing block: B:251:0x0556, code skipped:
+            r4 = true;
+     */
+    /* JADX WARNING: Missing block: B:252:0x0557, code skipped:
+            r1.mService.mController = r15;
+            com.android.server.Watchdog.getInstance().setActivityController(r15);
+     */
+    /* JADX WARNING: Missing block: B:253:0x0563, code skipped:
+            r4 = true;
+     */
+    /* JADX WARNING: Missing block: B:255:0x0566, code skipped:
+            monitor-enter(r1.mService);
+     */
+    /* JADX WARNING: Missing block: B:257:?, code skipped:
+            com.android.server.am.ActivityManagerService.boostPriorityForLockedSection();
+            r1.mService.mBatteryStatsService.noteProcessAnr(r13.processName, r13.uid);
+     */
+    /* JADX WARNING: Missing block: B:258:0x0575, code skipped:
+            if (r17 != false) goto L_0x058e;
+     */
+    /* JADX WARNING: Missing block: B:263:0x0583, code skipped:
+            r13.kill("bg anr", r4);
+     */
+    /* JADX WARNING: Missing block: B:265:0x0589, code skipped:
+            com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
+     */
+    /* JADX WARNING: Missing block: B:266:0x058c, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:267:0x058e, code skipped:
+            if (r14 != null) goto L_0x0590;
+     */
+    /* JADX WARNING: Missing block: B:269:?, code skipped:
+            r11 = r14.shortComponentName;
+     */
+    /* JADX WARNING: Missing block: B:270:0x0593, code skipped:
+            r11 = r15;
+     */
+    /* JADX WARNING: Missing block: B:271:0x0594, code skipped:
+            r6 = r47;
+     */
+    /* JADX WARNING: Missing block: B:272:0x0596, code skipped:
+            if (r6 != null) goto L_0x0598;
+     */
+    /* JADX WARNING: Missing block: B:274:?, code skipped:
+            r0 = new java.lang.StringBuilder();
+            r0.append("ANR ");
+            r0.append(r6);
+            r0 = r0.toString();
+     */
+    /* JADX WARNING: Missing block: B:275:0x05aa, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:276:0x05ab, code skipped:
+            r7 = r46;
+     */
+    /* JADX WARNING: Missing block: B:277:0x05ae, code skipped:
+            r0 = "ANR";
+     */
+    /* JADX WARNING: Missing block: B:278:0x05b0, code skipped:
+            makeAppNotRespondingLocked(r13, r11, r0, r2.toString());
+            r0 = android.os.Message.obtain();
+            r0.what = 2;
+     */
+    /* JADX WARNING: Missing block: B:281:?, code skipped:
+            r0.obj = new com.android.server.am.AppNotRespondingDialog.Data(r13, r14, r46);
+     */
+    /* JADX WARNING: Missing block: B:282:0x05e5, code skipped:
+            if (r1.mService.zrHungSendEvent(com.android.server.zrhung.IZRHungService.EVENT_SHOWANRDIALOG, r13.pid, r13.uid, r13.info.packageName, null, com.android.server.zrhung.IZRHungService.TYPE_ORIGINAL) != false) goto L_0x05e7;
+     */
+    /* JADX WARNING: Missing block: B:283:0x05e7, code skipped:
+            r13.anrType = r4;
+            r1.mService.mUiHandler.sendMessage(r0);
+     */
+    /* JADX WARNING: Missing block: B:285:0x05f1, code skipped:
+            com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
+     */
+    /* JADX WARNING: Missing block: B:286:0x05f4, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:287:0x05f5, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:288:0x05f6, code skipped:
+            r7 = r46;
+            r6 = r47;
+     */
+    /* JADX WARNING: Missing block: B:291:0x05fb, code skipped:
+            com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
+     */
+    /* JADX WARNING: Missing block: B:292:0x05fe, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:293:0x05ff, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    final void appNotResponding(int anrPid, ProcessRecord app, ActivityRecord activity, ActivityRecord parent, boolean aboveSystem, String annotation) {
+        Throwable th;
+        String[] nativeProcs;
+        String[] nativeProcs2;
+        int[] pids;
+        ArrayList<Integer> nativePids;
+        ArrayList<Integer> nativePids2;
+        ProcessCpuTracker processCpuTracker;
+        SparseArray<Boolean> sparseArray;
+        ProcessCpuTracker processCpuTracker2;
+        File tracesFile;
+        boolean z;
+        FileOutputStream sysrq_trigger_io_stream;
+        ProcessCpuTracker processCpuTracker3;
+        SparseArray<Boolean> sparseArray2;
+        ArrayList<Integer> arrayList;
+        String str;
+        long j;
+        OutputStreamWriter sysrq_trigger;
+        StringBuilder processCpuTracker4;
+        int i = anrPid;
+        ProcessRecord processRecord = app;
+        ActivityRecord activityRecord = activity;
+        ActivityRecord activityRecord2 = parent;
+        String str2 = annotation;
+        if (IS_DEBUG_VERSION) {
+            ArrayMap<String, Object> params = new ArrayMap();
+            params.put("checkType", "FocusWindowNullScene");
+            params.put("anrActivityName", activityRecord != null ? activity.toString() : null);
+            if (HwServiceFactory.getWinFreezeScreenMonitor() != null) {
+                HwServiceFactory.getWinFreezeScreenMonitor().cancelCheckFreezeScreen(params);
+            }
+        }
+        ArrayList<Integer> firstPids = new ArrayList(5);
+        SparseArray<Boolean> lastPids = new SparseArray(20);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("anr_event_sync: appPid=");
+        stringBuilder.append(processRecord.pid);
+        stringBuilder.append(", appName=");
+        stringBuilder.append(processRecord.processName);
+        stringBuilder.append(", category=");
+        stringBuilder.append(str2);
+        String traceMark = stringBuilder.toString();
+        Trace.traceBegin(64, traceMark);
+        Trace.traceEnd(64);
+        if (Log.HWINFO) {
+            HwFrameworkFactory.getLogException().cmd(HwBroadcastRadarUtil.KEY_ACTION, "copy_systrace_to_cache");
+        }
+        if (this.mService.mController != null) {
+            try {
+                if (this.mService.mController.appEarlyNotResponding(processRecord.processName, processRecord.pid, str2) < 0 && processRecord.pid != ActivityManagerService.MY_PID) {
+                    processRecord.kill("anr", true);
+                }
+            } catch (RemoteException e) {
+                this.mService.mController = null;
+                Watchdog.getInstance().setActivityController(null);
+            }
+        }
+        long anrTime = SystemClock.uptimeMillis();
+        this.mService.updateCpuStatsNow();
+        boolean showBackground = Secure.getInt(this.mContext.getContentResolver(), "anr_show_background", 0) != 0;
+        StringBuilder stringBuilder2;
+        if (this.mService.mShuttingDown) {
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("During shutdown skipping ANR: ");
+            stringBuilder2.append(processRecord);
+            stringBuilder2.append(" ");
+            stringBuilder2.append(str2);
+            Slog.i("ActivityManager", stringBuilder2.toString());
+        } else if (processRecord.notResponding) {
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Skipping duplicate ANR: ");
+            stringBuilder2.append(processRecord);
+            stringBuilder2.append(" ");
+            stringBuilder2.append(str2);
+            Slog.i("ActivityManager", stringBuilder2.toString());
+        } else if (processRecord.crashing) {
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Crashing app skipping ANR: ");
+            stringBuilder2.append(processRecord);
+            stringBuilder2.append(" ");
+            stringBuilder2.append(str2);
+            Slog.i("ActivityManager", stringBuilder2.toString());
+        } else if (processRecord.killedByAm) {
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("App already killed by AM skipping ANR: ");
+            stringBuilder2.append(processRecord);
+            stringBuilder2.append(" ");
+            stringBuilder2.append(str2);
+            Slog.i("ActivityManager", stringBuilder2.toString());
+        } else {
+            StringBuilder stringBuilder3;
+            long anrTime2;
+            boolean isSilentANR;
+            int[] pids2;
+            long anrTime3;
+            int i2;
+            int i3;
+            if (processRecord.killed) {
+                stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("Skipping died app ANR: ");
+                stringBuilder3.append(processRecord);
+                stringBuilder3.append(" ");
+                stringBuilder3.append(str2);
+                Slog.i("ActivityManager", stringBuilder3.toString());
+            } else if (i != processRecord.pid) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Skipping ANR because pid of ");
+                stringBuilder2.append(processRecord.processName);
+                stringBuilder2.append(" is changed: anr pid: ");
+                stringBuilder2.append(i);
+                stringBuilder2.append(", new pid: ");
+                stringBuilder2.append(processRecord.pid);
+                stringBuilder2.append(" ");
+                stringBuilder2.append(str2);
+                Slog.i("ActivityManager", stringBuilder2.toString());
+                return;
+            } else if (this.mService.handleANRFilterFIFO(processRecord.uid, 2)) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("During holding skipping ANR: ");
+                stringBuilder2.append(processRecord);
+                stringBuilder2.append(" ");
+                stringBuilder2.append(str2);
+                stringBuilder2.append("uid = ");
+                stringBuilder2.append(processRecord.uid);
+                Slog.i("ActivityManager", stringBuilder2.toString());
+                return;
+            }
+            processRecord.notResponding = true;
+            EventLog.writeEvent(EventLogTags.AM_ANR, new Object[]{Integer.valueOf(processRecord.userId), Integer.valueOf(processRecord.pid), processRecord.processName, Integer.valueOf(processRecord.info.flags), str2});
+            firstPids.add(Integer.valueOf(processRecord.pid));
+            if (this.mAppEyeANR == null || this.mAppEyeANR.check(null)) {
+                anrTime2 = anrTime;
+                isSilentANR = false;
+            } else {
+                synchronized (this.mService) {
+                    boolean isSilentANR2;
+                    ActivityManagerService.boostPriorityForLockedSection();
+                    if (!showBackground) {
+                        try {
+                            if (!isInterestingForBackgroundTraces(app)) {
+                                isSilentANR2 = true;
+                                if (!isSilentANR2) {
+                                    int parentPid = processRecord.pid;
+                                    if (activityRecord2 != null) {
+                                        if (activityRecord2.app != null && activityRecord2.app.pid > 0) {
+                                            parentPid = activityRecord2.app.pid;
+                                        }
+                                    }
+                                    try {
+                                        if (parentPid != processRecord.pid) {
+                                            firstPids.add(Integer.valueOf(parentPid));
+                                        }
+                                        if (ActivityManagerService.MY_PID != processRecord.pid) {
+                                            if (ActivityManagerService.MY_PID != parentPid) {
+                                                firstPids.add(Integer.valueOf(ActivityManagerService.MY_PID));
+                                            }
+                                        }
+                                        int i4 = this.mService.mLruProcesses.size() - 1;
+                                        while (i4 >= 0) {
+                                            ProcessRecord r = (ProcessRecord) this.mService.mLruProcesses.get(i4);
+                                            if (!(r == null || r.thread == null)) {
+                                                i = r.pid;
+                                                if (i > 0) {
+                                                    anrTime2 = anrTime;
+                                                    try {
+                                                        if (!(i == processRecord.pid || i == parentPid || i == ActivityManagerService.MY_PID)) {
+                                                            if (r.persistent) {
+                                                                firstPids.add(Integer.valueOf(i));
+                                                            } else if (r.treatLikeActivity) {
+                                                                firstPids.add(Integer.valueOf(i));
+                                                            } else {
+                                                                lastPids.put(i, Boolean.TRUE);
+                                                            }
+                                                        }
+                                                        i4--;
+                                                        anrTime = anrTime2;
+                                                        i = anrPid;
+                                                    } catch (Throwable th2) {
+                                                        th = th2;
+                                                        ActivityManagerService.resetPriorityAfterLockedSection();
+                                                        throw th;
+                                                    }
+                                                }
+                                            }
+                                            anrTime2 = anrTime;
+                                            i4--;
+                                            anrTime = anrTime2;
+                                            i = anrPid;
+                                        }
+                                    } catch (Throwable th3) {
+                                        th = th3;
+                                        anrTime2 = anrTime;
+                                        ActivityManagerService.resetPriorityAfterLockedSection();
+                                        throw th;
+                                    }
+                                }
+                                anrTime2 = anrTime;
+                            }
+                        } catch (Throwable th4) {
+                            th = th4;
+                            anrTime2 = anrTime;
+                            ActivityManagerService.resetPriorityAfterLockedSection();
+                            throw th;
+                        }
+                    }
+                    isSilentANR2 = false;
+                    if (isSilentANR2) {
+                    }
+                    anrTime2 = anrTime;
+                }
+            }
+            boolean isSilentANR3 = isSilentANR;
+            if (this.mAppEyeANR != null) {
+                ZrHungData arg = new ZrHungData();
+                arg.putString(IZRHungService.PARA_PROCNAME, processRecord.processName);
+                arg.putInt(IZRHungService.PARAM_PID, processRecord.pid);
+                arg.putBoolean("isSilentANR", isSilentANR3);
+                arg.putString("packageName", processRecord.info.packageName);
+                arg.putString(PhoneWindowManager.SYSTEM_DIALOG_REASON_KEY, str2);
+                if (activityRecord != null) {
+                    arg.putString("activityName", activityRecord.shortComponentName);
+                }
+                this.mAppEyeANR.sendEvent(arg);
+            }
+            stringBuilder3 = new StringBuilder();
+            stringBuilder3.setLength(0);
+            stringBuilder3.append("ANR in ");
+            stringBuilder3.append(processRecord.processName);
+            if (!(activityRecord == null || activityRecord.shortComponentName == null)) {
+                stringBuilder3.append(" (");
+                stringBuilder3.append(activityRecord.shortComponentName);
+                stringBuilder3.append(")");
+            }
+            stringBuilder3.append("\n");
+            stringBuilder3.append("PID: ");
+            stringBuilder3.append(processRecord.pid);
+            stringBuilder3.append("\n");
+            if (str2 != null) {
+                stringBuilder3.append("Reason: ");
+                stringBuilder3.append(str2);
+                stringBuilder3.append("\n");
+            }
+            if (!(activityRecord2 == null || activityRecord2 == activityRecord)) {
+                stringBuilder3.append("Parent: ");
+                stringBuilder3.append(activityRecord2.shortComponentName);
+                stringBuilder3.append("\n");
+            }
+            ProcessCpuTracker processCpuTracker5 = new ProcessCpuTracker(true);
+            OutputStreamWriter sysrq_trigger2 = null;
+            FileOutputStream sysrq_trigger_io_stream2 = null;
+            try {
+                sysrq_trigger_io_stream2 = new FileOutputStream(new File("/proc/sysrq-trigger"));
+                sysrq_trigger2 = new OutputStreamWriter(sysrq_trigger_io_stream2, "UTF-8");
+                sysrq_trigger2.write("w");
+                try {
+                    sysrq_trigger2.close();
+                    sysrq_trigger_io_stream2.close();
+                } catch (IOException e2) {
+                    Slog.e("ActivityManager", "Failed to write to /proc/sysrq-trigger");
+                    nativeProcs = null;
+                    if (isSilentANR3) {
+                    }
+                    nativeProcs2 = nativeProcs;
+                    if (nativeProcs2 == null) {
+                    }
+                    pids = nativeProcs2 == null ? null : Process.getPidsForCommands(nativeProcs2);
+                    nativePids = null;
+                    if (pids != null) {
+                    }
+                    pids2 = pids;
+                    nativePids2 = nativePids;
+                    if (isSilentANR3) {
+                    }
+                    if (isSilentANR3) {
+                    }
+                    anrTime3 = anrTime2;
+                    processCpuTracker2 = processCpuTracker5;
+                    anrTime2 = traceMark;
+                    tracesFile = ActivityManagerService.dumpStackTraces(processRecord, true, firstPids, processCpuTracker, sparseArray, nativePids2);
+                    this.mService.updateCpuStatsNow();
+                    synchronized (this.mService.mProcessCpuTracker) {
+                    }
+                }
+            } catch (IOException e3) {
+                Slog.e("ActivityManager", "Failed to write to /proc/sysrq-trigger");
+                if (sysrq_trigger2 != null) {
+                    try {
+                        sysrq_trigger2.close();
+                    } catch (IOException e4) {
+                        Slog.e("ActivityManager", "Failed to write to /proc/sysrq-trigger");
+                        nativeProcs = null;
+                        if (isSilentANR3) {
+                        }
+                        nativeProcs2 = nativeProcs;
+                        if (nativeProcs2 == null) {
+                        }
+                        pids = nativeProcs2 == null ? null : Process.getPidsForCommands(nativeProcs2);
+                        nativePids = null;
+                        if (pids != null) {
+                        }
+                        pids2 = pids;
+                        nativePids2 = nativePids;
+                        if (isSilentANR3) {
+                        }
+                        if (isSilentANR3) {
+                        }
+                        anrTime3 = anrTime2;
+                        processCpuTracker2 = processCpuTracker5;
+                        anrTime2 = traceMark;
+                        tracesFile = ActivityManagerService.dumpStackTraces(processRecord, true, firstPids, processCpuTracker, sparseArray, nativePids2);
+                        this.mService.updateCpuStatsNow();
+                        synchronized (this.mService.mProcessCpuTracker) {
+                        }
+                    }
+                }
+                if (sysrq_trigger_io_stream2 != null) {
+                    sysrq_trigger_io_stream2.close();
+                }
+            } catch (Throwable th5) {
+                z = isSilentANR3;
+                processCpuTracker3 = processCpuTracker5;
+                sparseArray2 = lastPids;
+                arrayList = firstPids;
+                str = str2;
+                j = anrTime2;
+                processCpuTracker5 = aboveSystem;
+                sysrq_trigger_io_stream = sysrq_trigger_io_stream2;
+                sysrq_trigger = sysrq_trigger2;
+                sysrq_trigger2 = th5;
+                if (sysrq_trigger != null) {
+                }
+                if (sysrq_trigger_io_stream != null) {
+                }
+                throw sysrq_trigger2;
+            }
+            nativeProcs = null;
+            if (isSilentANR3) {
+                for (String equals : Watchdog.NATIVE_STACKS_OF_INTEREST) {
+                    if (equals.equals(processRecord.processName)) {
+                        String[] strArr = new String[1];
+                        i3 = 0;
+                        strArr[0] = processRecord.processName;
+                        nativeProcs = strArr;
+                        break;
+                    }
+                }
+                i3 = 0;
+            } else {
+                i3 = 0;
+                nativeProcs = Watchdog.NATIVE_STACKS_OF_INTEREST;
+            }
+            nativeProcs2 = nativeProcs;
+            pids = nativeProcs2 == null ? null : Process.getPidsForCommands(nativeProcs2);
+            nativePids = null;
+            if (pids != null) {
+                nativePids = new ArrayList(pids.length);
+                i2 = pids.length;
+                int i5 = i3;
+                while (i5 < i2) {
+                    int i6 = i2;
+                    pids2 = pids;
+                    nativePids.add(Integer.valueOf(pids[i5]));
+                    i5++;
+                    i2 = i6;
+                    pids = pids2;
+                }
+            }
+            pids2 = pids;
+            nativePids2 = nativePids;
+            processCpuTracker = isSilentANR3 ? null : processCpuTracker5;
+            sparseArray = isSilentANR3 ? null : lastPids;
+            anrTime3 = anrTime2;
+            processCpuTracker2 = processCpuTracker5;
+            anrTime2 = traceMark;
+            tracesFile = ActivityManagerService.dumpStackTraces(processRecord, true, firstPids, processCpuTracker, sparseArray, nativePids2);
+            this.mService.updateCpuStatsNow();
+            synchronized (this.mService.mProcessCpuTracker) {
+                try {
+                    long anrTime4 = anrTime3;
+                    try {
+                        str = this.mService.mProcessCpuTracker.printCurrentState(anrTime4);
+                    } catch (Throwable th6) {
+                        th5 = th6;
+                        processCpuTracker3 = processCpuTracker2;
+                        j = anrTime4;
+                        sparseArray2 = lastPids;
+                        arrayList = firstPids;
+                        processCpuTracker4 = stringBuilder3;
+                        str = str2;
+                        anrTime4 = aboveSystem;
+                        while (true) {
+                            try {
+                                break;
+                            } catch (Throwable th7) {
+                                th5 = th7;
+                            }
+                        }
+                        throw th5;
+                    }
+                    try {
+                    } catch (Throwable th8) {
+                        th5 = th8;
+                        processCpuTracker3 = processCpuTracker2;
+                        anrTime3 = str;
+                        j = anrTime4;
+                        sparseArray2 = lastPids;
+                        arrayList = firstPids;
+                        processCpuTracker4 = stringBuilder3;
+                        str = str2;
+                        anrTime4 = aboveSystem;
+                        sysrq_trigger2 = anrTime3;
+                        while (true) {
+                            break;
+                        }
+                        throw th5;
+                    }
+                } catch (Throwable th9) {
+                    th5 = th9;
+                    processCpuTracker5 = aboveSystem;
+                    processCpuTracker3 = processCpuTracker2;
+                    sparseArray2 = lastPids;
+                    arrayList = firstPids;
+                    isSilentANR3 = stringBuilder3;
+                    str = str2;
+                    j = anrTime3;
+                    while (true) {
+                        break;
+                    }
+                    throw th5;
+                }
+            }
+        }
     }
 
     private void makeAppNotRespondingLocked(ProcessRecord app, String activity, String shortMsg, String longMsg) {
@@ -2276,16 +1982,16 @@ class AppErrors {
         app.stopFreezingAllLocked();
     }
 
-    /* JADX WARNING: Missing block: B:56:0x00fe, code:
+    /* JADX WARNING: Missing block: B:56:0x00fe, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:57:0x0101, code:
+    /* JADX WARNING: Missing block: B:57:0x0101, code skipped:
             if (r2 == null) goto L_0x0106;
      */
-    /* JADX WARNING: Missing block: B:58:0x0103, code:
+    /* JADX WARNING: Missing block: B:58:0x0103, code skipped:
             r2.show();
      */
-    /* JADX WARNING: Missing block: B:59:0x0106, code:
+    /* JADX WARNING: Missing block: B:59:0x0106, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

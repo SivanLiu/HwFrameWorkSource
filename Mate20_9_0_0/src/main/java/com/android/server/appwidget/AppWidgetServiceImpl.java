@@ -35,6 +35,9 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.pm.ShortcutServiceInternal;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -56,6 +59,7 @@ import android.os.UserManager;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.util.AtomicFile;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Pair;
@@ -63,11 +67,13 @@ import android.util.Slog;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.util.SparseLongArray;
+import android.util.TypedValue;
 import android.util.Xml;
 import android.util.proto.ProtoOutputStream;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
+import com.android.internal.R;
 import com.android.internal.app.SuspendedAppActivity;
 import com.android.internal.app.UnlaunchableAppActivity;
 import com.android.internal.appwidget.IAppWidgetHost;
@@ -391,23 +397,6 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:113:0x02f0 A:{Splitter: B:111:0x02ef, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:117:0x02f8 A:{Splitter: B:1:0x002c, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:113:0x02f0 A:{Splitter: B:111:0x02ef, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-        /* JADX WARNING: Missing block: B:118:0x02f9, code:
-            r17 = r5;
-     */
-        /* JADX WARNING: Missing block: B:120:?, code:
-            r4 = TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("Unable to restore widget state for ");
-            r5.append(r2);
-            android.util.Slog.w(r4, r5.toString());
-     */
-        /* JADX WARNING: Missing block: B:123:0x0318, code:
-            r0 = th;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void restoreWidgetState(String packageName, byte[] restoredState, int userId) {
             Throwable type;
             String str = packageName;
@@ -421,6 +410,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
             Slog.i(str2, stringBuilder.toString());
             ByteArrayInputStream stream = new ByteArrayInputStream(restoredState);
             ByteArrayInputStream stream2;
+            String str3;
             try {
                 ArrayList<Provider> restoredProviders = new ArrayList();
                 ArrayList<Host> restoredHosts = new ArrayList();
@@ -434,7 +424,6 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                             int type2 = parser.next();
                             if (type2 == 2) {
                                 String tag = parser.getName();
-                                String str3;
                                 if ("ws".equals(tag)) {
                                     try {
                                         String version = parser.getAttributeValue(null, "version");
@@ -458,7 +447,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                                         stream2 = stream;
                                         try {
                                             throw type;
-                                        } catch (XmlPullParserException e) {
+                                        } catch (IOException | XmlPullParserException e) {
                                         }
                                     }
                                 } else if ("p".equals(tag)) {
@@ -537,6 +526,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                                                     type = th5;
                                                     arrayList = restoredProviders;
                                                     arrayList2 = restoredHosts;
+                                                    throw type;
                                                 }
                                             } else {
                                                 String str6;
@@ -570,6 +560,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                                                         AppWidgetServiceImpl.this.addWidgetLocked(stream);
                                                     } catch (Throwable th6) {
                                                         type = th6;
+                                                        throw type;
                                                     }
                                                 } else {
                                                     arrayList2 = restoredHosts;
@@ -602,6 +593,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                                         type = th7;
                                         arrayList = restoredProviders;
                                         arrayList2 = restoredHosts;
+                                        throw type;
                                     }
                                 }
                                 arrayList = restoredProviders;
@@ -622,13 +614,27 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                             stream2 = stream;
                             arrayList = restoredProviders;
                             arrayList2 = restoredHosts;
+                            throw type;
                         }
                     }
                     AppWidgetServiceImpl.this.saveGroupStateAsync(i);
                 }
-            } catch (XmlPullParserException e2) {
-            } catch (Throwable th9) {
-                type = th9;
+            } catch (IOException | XmlPullParserException e2) {
+                stream2 = stream;
+                try {
+                    str3 = TAG;
+                    StringBuilder stringBuilder5 = new StringBuilder();
+                    stringBuilder5.append("Unable to restore widget state for ");
+                    stringBuilder5.append(str);
+                    Slog.w(str3, stringBuilder5.toString());
+                    AppWidgetServiceImpl.this.saveGroupStateAsync(i);
+                } catch (Throwable th9) {
+                    type = th9;
+                    AppWidgetServiceImpl.this.saveGroupStateAsync(i);
+                    throw type;
+                }
+            } catch (Throwable th10) {
+                type = th10;
                 stream2 = stream;
                 AppWidgetServiceImpl.this.saveGroupStateAsync(i);
                 throw type;
@@ -1338,26 +1344,25 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
             try {
                 ServiceInfo serviceInfo = AppWidgetServiceImpl.this.mPackageManager.getServiceInfo(componentName, 4096, userId);
                 StringBuilder stringBuilder;
-                if (serviceInfo != null) {
-                    if (!"android.permission.BIND_REMOTEVIEWS".equals(serviceInfo.permission)) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Service ");
-                        stringBuilder.append(componentName);
-                        stringBuilder.append(" in user ");
-                        stringBuilder.append(userId);
-                        stringBuilder.append("does not require ");
-                        stringBuilder.append("android.permission.BIND_REMOTEVIEWS");
-                        throw new SecurityException(stringBuilder.toString());
-                    }
+                if (serviceInfo == null) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Service ");
+                    stringBuilder.append(componentName);
+                    stringBuilder.append(" not installed for user ");
+                    stringBuilder.append(userId);
+                    throw new SecurityException(stringBuilder.toString());
+                } else if ("android.permission.BIND_REMOTEVIEWS".equals(serviceInfo.permission)) {
                     Binder.restoreCallingIdentity(identity);
-                    return;
+                } else {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Service ");
+                    stringBuilder.append(componentName);
+                    stringBuilder.append(" in user ");
+                    stringBuilder.append(userId);
+                    stringBuilder.append("does not require ");
+                    stringBuilder.append("android.permission.BIND_REMOTEVIEWS");
+                    throw new SecurityException(stringBuilder.toString());
                 }
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Service ");
-                stringBuilder.append(componentName);
-                stringBuilder.append(" not installed for user ");
-                stringBuilder.append(userId);
-                throw new SecurityException(stringBuilder.toString());
             } catch (RemoteException e) {
             } catch (Throwable th) {
                 Binder.restoreCallingIdentity(identity);
@@ -1658,14 +1663,16 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                 for (i = installedProviders.size() - 1; i >= 0; i--) {
                     Provider provider = (Provider) installedProviders.get(i);
                     int userId = provider.getUserId();
-                    if (this.mUserManager.isUserUnlockingOrUnlocked(userId) && !isProfileWithLockedParent(userId)) {
-                        ensureGroupStateLoadedLocked(userId);
-                        if (!removedProviders.contains(provider.id) && updateProvidersForPackageLocked(provider.id.componentName.getPackageName(), provider.getUserId(), removedProviders)) {
-                            if (changedGroups == null) {
-                                changedGroups = new SparseIntArray();
+                    if (this.mUserManager.isUserUnlockingOrUnlocked(userId)) {
+                        if (!isProfileWithLockedParent(userId)) {
+                            ensureGroupStateLoadedLocked(userId);
+                            if (!removedProviders.contains(provider.id) && updateProvidersForPackageLocked(provider.id.componentName.getPackageName(), provider.getUserId(), removedProviders)) {
+                                if (changedGroups == null) {
+                                    changedGroups = new SparseIntArray();
+                                }
+                                int groupId = this.mSecurityPolicy.getGroupParent(provider.getUserId());
+                                changedGroups.put(groupId, groupId);
                             }
-                            int groupId = this.mSecurityPolicy.getGroupParent(provider.getUserId());
-                            changedGroups.put(groupId, groupId);
                         }
                     }
                 }
@@ -1679,7 +1686,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
-    /* JADX WARNING: Missing block: B:73:0x00fb, code:
+    /* JADX WARNING: Missing block: B:77:0x00fb, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1759,37 +1766,42 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                 }
                 ensureGroupStateLoadedLocked(userId, false);
                 Bundle extras = intent.getExtras();
-                if (added || changed) {
-                    if ((!added || (extras != null && extras.getBoolean("android.intent.extra.REPLACING", false))) && !cotaFlag) {
-                        packageRemovedPermanently = false;
-                    }
-                    int length = pkgList.length;
-                    while (i < length) {
-                        String pkgName = pkgList[i];
-                        componentsModified |= updateProvidersForPackageLocked(pkgName, userId, null);
-                        if (packageRemovedPermanently && userId == 0) {
-                            int uid = getUidForPackage(pkgName, userId);
-                            if (uid >= 0) {
-                                resolveHostUidLocked(pkgName, uid);
+                if (!added) {
+                    if (!changed) {
+                        if (extras != null) {
+                            if (extras.getBoolean("android.intent.extra.REPLACING", false)) {
+                                packageRemovedPermanently = false;
                             }
                         }
-                        i++;
-                    }
-                } else {
-                    if (extras != null && extras.getBoolean("android.intent.extra.REPLACING", false)) {
-                        packageRemovedPermanently = false;
-                    }
-                    if (packageRemovedPermanently) {
-                        while (i < pkgList.length) {
-                            componentsModified |= removeHostsAndProvidersForPackageLocked(pkgList[i], userId);
-                            i++;
+                        if (packageRemovedPermanently) {
+                            while (i < pkgList.length) {
+                                componentsModified |= removeHostsAndProvidersForPackageLocked(pkgList[i], userId);
+                                i++;
+                            }
+                        }
+                        if (componentsModified || cotaFlag) {
+                            saveGroupStateAsync(userId);
+                            scheduleNotifyGroupHostsForProvidersChangedLocked(userId);
                         }
                     }
                 }
-                if (componentsModified || cotaFlag) {
-                    saveGroupStateAsync(userId);
-                    scheduleNotifyGroupHostsForProvidersChangedLocked(userId);
+                if ((!added || (extras != null && extras.getBoolean("android.intent.extra.REPLACING", false))) && !cotaFlag) {
+                    packageRemovedPermanently = false;
                 }
+                int length = pkgList.length;
+                while (i < length) {
+                    String pkgName = pkgList[i];
+                    componentsModified |= updateProvidersForPackageLocked(pkgName, userId, null);
+                    if (packageRemovedPermanently && userId == 0) {
+                        int uid = getUidForPackage(pkgName, userId);
+                        if (uid >= 0) {
+                            resolveHostUidLocked(pkgName, uid);
+                        }
+                    }
+                    i++;
+                }
+                saveGroupStateAsync(userId);
+                scheduleNotifyGroupHostsForProvidersChangedLocked(userId);
             }
         }
     }
@@ -1847,11 +1859,15 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                 int N = this.mProviders.size();
                 for (int i = 0; i < N; i++) {
                     Provider provider = (Provider) this.mProviders.get(i);
-                    if (provider.getUserId() == profileId && packages.contains(provider.info.provider.getPackageName()) && provider.setMaskedBySuspendedPackageLocked(suspended)) {
-                        if (provider.isMaskedLocked()) {
-                            maskWidgetsViewsLocked(provider, null);
-                        } else {
-                            unmaskWidgetsViewsLocked(provider);
+                    if (provider.getUserId() == profileId) {
+                        if (packages.contains(provider.info.provider.getPackageName())) {
+                            if (provider.setMaskedBySuspendedPackageLocked(suspended)) {
+                                if (provider.isMaskedLocked()) {
+                                    maskWidgetsViewsLocked(provider, null);
+                                } else {
+                                    unmaskWidgetsViewsLocked(provider);
+                                }
+                            }
                         }
                     }
                 }
@@ -2140,7 +2156,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         this.mSecurityPolicy.enforceCallFromPackage(str2);
         synchronized (this.mLock) {
             try {
-                ParceledListSlice<PendingHostUpdate> emptyList;
+                ParceledListSlice emptyList;
                 if (this.mSecurityPolicy.isInstantAppLocked(str2, userId)) {
                     str = TAG;
                     StringBuilder stringBuilder2 = new StringBuilder();
@@ -2218,7 +2234,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x00a7, code:
+    /* JADX WARNING: Missing block: B:18:0x00a7, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2266,7 +2282,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0063, code:
+    /* JADX WARNING: Missing block: B:14:0x0063, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2401,7 +2417,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         return intentSender;
     }
 
-    /* JADX WARNING: Missing block: B:56:0x019b, code:
+    /* JADX WARNING: Missing block: B:56:0x019b, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2655,7 +2671,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x005d, code:
+    /* JADX WARNING: Missing block: B:14:0x005d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2735,8 +2751,30 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
             if (widget == null || widget.provider == null || widget.provider.zombie) {
                 return null;
             }
+            resetAppWidgetProviderInfo(widget.provider.info);
             AppWidgetProviderInfo cloneIfLocalBinder = cloneIfLocalBinder(widget.provider.info);
             return cloneIfLocalBinder;
+        }
+    }
+
+    private void resetAppWidgetProviderInfo(AppWidgetProviderInfo info) {
+        if (info != null && info.providerInfo != null && info.providerInfo.applicationInfo != null) {
+            long origId = Binder.clearCallingIdentity();
+            try {
+                PackageManager pm = this.mContext.getPackageManager();
+                String packageName = info.providerInfo.applicationInfo.packageName;
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("resetAppWidgetProviderInfo ");
+                stringBuilder.append(packageName);
+                Slog.d(str, stringBuilder.toString());
+                info.providerInfo.applicationInfo = pm.getApplicationInfoAsUser(packageName, null, UserHandle.getUserId(info.providerInfo.applicationInfo.uid));
+            } catch (NameNotFoundException e) {
+                Slog.w(TAG, "resetAppWidgetProviderInfo fail ");
+            } catch (Throwable th) {
+                Binder.restoreCallingIdentity(origId);
+            }
+            Binder.restoreCallingIdentity(origId);
         }
     }
 
@@ -2855,7 +2893,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0081, code:
+    /* JADX WARNING: Missing block: B:17:0x0081, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2966,17 +3004,22 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         synchronized (this.mLock) {
             ensureGroupStateLoadedLocked(userId);
             Provider provider = lookupProviderLocked(new ProviderId(callingUid, componentName, null));
-            if (provider == null || provider.zombie) {
-                return false;
+            if (provider != null) {
+                if (!provider.zombie) {
+                    AppWidgetProviderInfo info = provider.info;
+                    if ((info.widgetCategory & 1) == 0) {
+                        return false;
+                    }
+                    return ((ShortcutServiceInternal) LocalServices.getService(ShortcutServiceInternal.class)).requestPinAppWidget(callingPackage, info, extras, resultSender, userId);
+                }
             }
-            AppWidgetProviderInfo info = provider.info;
-            if ((info.widgetCategory & 1) == 0) {
-                return false;
-            }
-            return ((ShortcutServiceInternal) LocalServices.getService(ShortcutServiceInternal.class)).requestPinAppWidget(callingPackage, info, extras, resultSender, userId);
+            return false;
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x009a  */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x0099  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public ParceledListSlice<AppWidgetProviderInfo> getInstalledProvidersForProfile(int categoryFilter, int profileId, String packageName) {
         String str;
         int i = profileId;
@@ -3000,27 +3043,37 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                 stringBuilder2.append(Binder.getCallingUid());
                 stringBuilder2.append(" cannot access widget providers");
                 Slog.w(str, stringBuilder2.toString());
-                ParceledListSlice<AppWidgetProviderInfo> emptyList = ParceledListSlice.emptyList();
+                ParceledListSlice emptyList = ParceledListSlice.emptyList();
                 return emptyList;
             }
             ensureGroupStateLoadedLocked(userId);
             ArrayList<AppWidgetProviderInfo> result = new ArrayList();
             int providerCount = this.mProviders.size();
             for (int i2 = 0; i2 < providerCount; i2++) {
+                boolean inPackage;
                 Provider provider = (Provider) this.mProviders.get(i2);
                 AppWidgetProviderInfo info = provider.info;
-                boolean inPackage = str2 == null || provider.id.componentName.getPackageName().equals(str2);
-                if (!(provider.zombie || (info.widgetCategory & categoryFilter) == 0 || !inPackage)) {
-                    ComponentName cn = info.provider;
-                    if (!HIDE_HUAWEI_WEATHER_WIDGET || cn == null || !HIDDEN_WEATHER_WIDGETS.containsKey(cn.getClassName()) || !isThirdPartyLauncherActive()) {
-                        int providerProfileId = info.getProfile().getIdentifier();
-                        if (providerProfileId == i && this.mSecurityPolicy.isProviderInCallerOrInProfileAndWhitelListed(provider.id.componentName.getPackageName(), providerProfileId)) {
-                            result.add(cloneIfLocalBinder(info));
+                if (str2 != null) {
+                    if (!provider.id.componentName.getPackageName().equals(str2)) {
+                        inPackage = false;
+                        if (!(provider.zombie || (info.widgetCategory & categoryFilter) == 0)) {
+                            if (!inPackage) {
+                                ComponentName cn = info.provider;
+                                if (!HIDE_HUAWEI_WEATHER_WIDGET || cn == null || !HIDDEN_WEATHER_WIDGETS.containsKey(cn.getClassName()) || !isThirdPartyLauncherActive()) {
+                                    int providerProfileId = info.getProfile().getIdentifier();
+                                    if (providerProfileId == i && this.mSecurityPolicy.isProviderInCallerOrInProfileAndWhitelListed(provider.id.componentName.getPackageName(), providerProfileId)) {
+                                        result.add(cloneIfLocalBinder(info));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                inPackage = true;
+                if (!inPackage) {
+                }
             }
-            ParceledListSlice<AppWidgetProviderInfo> parceledListSlice = new ParceledListSlice(result);
+            ParceledListSlice parceledListSlice = new ParceledListSlice(result);
             return parceledListSlice;
         }
     }
@@ -3271,23 +3324,26 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
         synchronized (this.mLock) {
             if (callbacks == null) {
-                host.callbacks = null;
-                for (Pair<Integer, FilterComparison> key : this.mRemoteViewsServicesAppWidgets.keySet()) {
-                    if (((HashSet) this.mRemoteViewsServicesAppWidgets.get(key)).contains(Integer.valueOf(appWidgetId))) {
-                        bindService(((FilterComparison) key.second).getIntent(), new ServiceConnection() {
-                            public void onServiceConnected(ComponentName name, IBinder service) {
-                                try {
-                                    IRemoteViewsFactory.Stub.asInterface(service).onDataSetChangedAsync();
-                                } catch (RemoteException e) {
-                                    Slog.e(AppWidgetServiceImpl.TAG, "Error calling onDataSetChangedAsync()", e);
+                try {
+                    host.callbacks = null;
+                    for (Pair<Integer, FilterComparison> key : this.mRemoteViewsServicesAppWidgets.keySet()) {
+                        if (((HashSet) this.mRemoteViewsServicesAppWidgets.get(key)).contains(Integer.valueOf(appWidgetId))) {
+                            bindService(((FilterComparison) key.second).getIntent(), new ServiceConnection() {
+                                public void onServiceConnected(ComponentName name, IBinder service) {
+                                    try {
+                                        IRemoteViewsFactory.Stub.asInterface(service).onDataSetChangedAsync();
+                                    } catch (RemoteException e) {
+                                        Slog.e(AppWidgetServiceImpl.TAG, "Error calling onDataSetChangedAsync()", e);
+                                    }
+                                    AppWidgetServiceImpl.this.mContext.unbindService(this);
                                 }
-                                AppWidgetServiceImpl.this.mContext.unbindService(this);
-                            }
 
-                            public void onServiceDisconnected(ComponentName name) {
-                            }
-                        }, new UserHandle(UserHandle.getUserId(((Integer) key.first).intValue())));
+                                public void onServiceDisconnected(ComponentName name) {
+                                }
+                            }, new UserHandle(UserHandle.getUserId(((Integer) key.first).intValue())));
+                        }
                     }
+                } catch (Throwable th) {
                 }
             }
         }
@@ -3311,6 +3367,8 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         this.mCallbackHandler.obtainMessage(1, args).sendToTarget();
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handleNotifyUpdateAppWidget(Host host, IAppWidgetHost callbacks, int appWidgetId, RemoteViews views, long requestId) {
         try {
             callbacks.updateAppWidget(appWidgetId, views);
@@ -3361,6 +3419,8 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handleNotifyProviderChanged(Host host, IAppWidgetHost callbacks, int appWidgetId, AppWidgetProviderInfo info, long requestId) {
         try {
             callbacks.providerChanged(appWidgetId, info);
@@ -3397,6 +3457,8 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handleNotifyProvidersChanged(Host host, IAppWidgetHost callbacks) {
         try {
             callbacks.providersChanged();
@@ -3802,254 +3864,119 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         return provider;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.appwidget.AppWidgetServiceImpl.parseAppWidgetProviderInfo(com.android.server.appwidget.AppWidgetServiceImpl$ProviderId, android.content.pm.ActivityInfo, java.lang.String):android.appwidget.AppWidgetProviderInfo, dom blocks: [B:5:0x0017, B:14:0x0048, B:30:0x00a0, B:66:0x0180]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0187 A:{Splitter: B:1:0x0009, ExcHandler: java.io.IOException (r0_39 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0187 A:{Splitter: B:1:0x0009, ExcHandler: java.io.IOException (r0_39 'e' java.lang.Exception)} */
-    private android.appwidget.AppWidgetProviderInfo parseAppWidgetProviderInfo(com.android.server.appwidget.AppWidgetServiceImpl.ProviderId r19, android.content.pm.ActivityInfo r20, java.lang.String r21) {
-        /*
-        r18 = this;
-        r1 = r18;
-        r2 = r19;
-        r3 = r20;
-        r4 = r21;
-        r5 = 0;
-        r0 = r1.mContext;	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-        r0 = r0.getPackageManager();	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-        r0 = r3.loadXmlMetaData(r0, r4);	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-        r6 = r0;
-        if (r6 != 0) goto L_0x0048;
-    L_0x0017:
-        r0 = "AppWidgetServiceImpl";	 Catch:{ Throwable -> 0x0044 }
-        r7 = new java.lang.StringBuilder;	 Catch:{ Throwable -> 0x0044 }
-        r7.<init>();	 Catch:{ Throwable -> 0x0044 }
-        r8 = "No ";	 Catch:{ Throwable -> 0x0044 }
-        r7.append(r8);	 Catch:{ Throwable -> 0x0044 }
-        r7.append(r4);	 Catch:{ Throwable -> 0x0044 }
-        r8 = " meta-data for AppWidget provider '";	 Catch:{ Throwable -> 0x0044 }
-        r7.append(r8);	 Catch:{ Throwable -> 0x0044 }
-        r7.append(r2);	 Catch:{ Throwable -> 0x0044 }
-        r8 = 39;	 Catch:{ Throwable -> 0x0044 }
-        r7.append(r8);	 Catch:{ Throwable -> 0x0044 }
-        r7 = r7.toString();	 Catch:{ Throwable -> 0x0044 }
-        android.util.Slog.w(r0, r7);	 Catch:{ Throwable -> 0x0044 }
-        if (r6 == 0) goto L_0x0040;
-    L_0x003d:
-        $closeResource(r5, r6);	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-    L_0x0040:
-        return r5;
-    L_0x0041:
-        r0 = move-exception;
-        goto L_0x0181;
-    L_0x0044:
-        r0 = move-exception;
-        r5 = r0;
-        goto L_0x0180;
-    L_0x0048:
-        r0 = android.util.Xml.asAttributeSet(r6);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x004c:
-        r7 = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r6.next();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r8 = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r9 = 2;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = 1;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r0 == r10) goto L_0x005a;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x0056:
-        if (r8 == r9) goto L_0x005a;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x0058:
-        r0 = r7;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        goto L_0x004c;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x005a:
-        r0 = r6.getName();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r11 = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = "appwidget-provider";	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r0.equals(r11);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r0 != 0) goto L_0x0090;
-    L_0x0067:
-        r0 = "AppWidgetServiceImpl";	 Catch:{ Throwable -> 0x0044 }
-        r9 = new java.lang.StringBuilder;	 Catch:{ Throwable -> 0x0044 }
-        r9.<init>();	 Catch:{ Throwable -> 0x0044 }
-        r10 = "Meta-data does not start with appwidget-provider tag for AppWidget provider ";	 Catch:{ Throwable -> 0x0044 }
-        r9.append(r10);	 Catch:{ Throwable -> 0x0044 }
-        r10 = r2.componentName;	 Catch:{ Throwable -> 0x0044 }
-        r9.append(r10);	 Catch:{ Throwable -> 0x0044 }
-        r10 = " for user ";	 Catch:{ Throwable -> 0x0044 }
-        r9.append(r10);	 Catch:{ Throwable -> 0x0044 }
-        r10 = r2.uid;	 Catch:{ Throwable -> 0x0044 }
-        r9.append(r10);	 Catch:{ Throwable -> 0x0044 }
-        r9 = r9.toString();	 Catch:{ Throwable -> 0x0044 }
-        android.util.Slog.w(r0, r9);	 Catch:{ Throwable -> 0x0044 }
-        if (r6 == 0) goto L_0x008f;
-    L_0x008c:
-        $closeResource(r5, r6);	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-    L_0x008f:
-        return r5;
-    L_0x0090:
-        r0 = new android.appwidget.AppWidgetProviderInfo;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0.<init>();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12 = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r2.componentName;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.provider = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.providerInfo = r3;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r13 = android.os.Binder.clearCallingIdentity();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r1.mContext;	 Catch:{ all -> 0x0178 }
-        r0 = r0.getPackageManager();	 Catch:{ all -> 0x0178 }
-        r15 = r2.uid;	 Catch:{ all -> 0x0178 }
-        r15 = android.os.UserHandle.getUserId(r15);	 Catch:{ all -> 0x0178 }
-        r5 = r3.packageName;	 Catch:{ all -> 0x0178 }
-        r9 = 0;	 Catch:{ all -> 0x0178 }
-        r5 = r0.getApplicationInfoAsUser(r5, r9, r15);	 Catch:{ all -> 0x0178 }
-        r16 = r0.getResourcesForApplication(r5);	 Catch:{ all -> 0x0178 }
-        r0 = r16;
-        android.os.Binder.restoreCallingIdentity(r13);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r5 = com.android.internal.R.styleable.AppWidgetProviderInfo;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r5 = r0.obtainAttributes(r7, r5);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = r5.peekValue(r9);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r15 == 0) goto L_0x00ce;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00cb:
-        r9 = r15.data;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        goto L_0x00cf;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00ce:
-        r9 = 0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00cf:
-        r12.minWidth = r9;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r9 = r5.peekValue(r10);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r9 == 0) goto L_0x00da;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00d7:
-        r15 = r9.data;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        goto L_0x00db;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00da:
-        r15 = 0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00db:
-        r12.minHeight = r15;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 8;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = r5.peekValue(r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r9 = r15;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r9 == 0) goto L_0x00e9;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00e6:
-        r15 = r9.data;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        goto L_0x00eb;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00e9:
-        r15 = r12.minWidth;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00eb:
-        r12.minResizeWidth = r15;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 9;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = r5.peekValue(r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r9 = r15;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r9 == 0) goto L_0x00f9;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00f6:
-        r15 = r9.data;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        goto L_0x00fb;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00f9:
-        r15 = r12.minHeight;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x00fb:
-        r12.minResizeHeight = r15;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = 2;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = r5.getInt(r10, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.updatePeriodMillis = r10;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = 3;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = r5.getResourceId(r10, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.initialLayout = r10;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = 10;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = r5.getResourceId(r10, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.initialKeyguardLayout = r10;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = 4;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r10 = r5.getString(r10);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r10 == 0) goto L_0x012b;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x011b:
-        r15 = new android.content.ComponentName;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r17 = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r2.componentName;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r0.getPackageName();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15.<init>(r0, r10);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.configure = r15;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        goto L_0x012d;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x012b:
-        r17 = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x012d:
-        r0 = r1.mContext;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r0.getPackageManager();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r3.loadLabel(r0);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r0.toString();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.label = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r20.getIconResource();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.icon = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = 5;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r5.getResourceId(r0, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.previewImage = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = 6;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = -1;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r5.getResourceId(r0, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.autoAdvanceViewId = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = 7;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r5.getInt(r0, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.resizeMode = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = 11;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 1;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r5.getInt(r0, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.widgetCategory = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = 12;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r15 = 0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r0 = r5.getInt(r0, r15);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r12.widgetFeatures = r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        r5.recycle();	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        if (r6 == 0) goto L_0x0177;
-    L_0x0173:
-        r15 = 0;
-        $closeResource(r15, r6);	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-    L_0x0177:
-        return r12;
-    L_0x0178:
-        r0 = move-exception;
-        android.os.Binder.restoreCallingIdentity(r13);	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-        throw r0;	 Catch:{ Throwable -> 0x0044, all -> 0x017d }
-    L_0x017d:
-        r0 = move-exception;
-        r5 = 0;
-        goto L_0x0181;
-    L_0x0180:
-        throw r5;	 Catch:{ all -> 0x0041 }
-    L_0x0181:
-        if (r6 == 0) goto L_0x0186;
-    L_0x0183:
-        $closeResource(r5, r6);	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-    L_0x0186:
-        throw r0;	 Catch:{ IOException -> 0x0187, IOException -> 0x0187, IOException -> 0x0187 }
-    L_0x0187:
-        r0 = move-exception;
-        r5 = "AppWidgetServiceImpl";
-        r6 = new java.lang.StringBuilder;
-        r6.<init>();
-        r7 = "XML parsing failed for AppWidget provider ";
-        r6.append(r7);
-        r7 = r2.componentName;
-        r6.append(r7);
-        r7 = " for user ";
-        r6.append(r7);
-        r7 = r2.uid;
-        r6.append(r7);
-        r6 = r6.toString();
-        android.util.Slog.w(r5, r6, r0);
-        r5 = 0;
-        return r5;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.appwidget.AppWidgetServiceImpl.parseAppWidgetProviderInfo(com.android.server.appwidget.AppWidgetServiceImpl$ProviderId, android.content.pm.ActivityInfo, java.lang.String):android.appwidget.AppWidgetProviderInfo");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:5:0x0017, B:14:0x0048, B:30:0x00a0, B:66:0x0180] */
+    /* JADX WARNING: Missing block: B:11:0x0041, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:62:?, code skipped:
+            android.os.Binder.restoreCallingIdentity(r13);
+     */
+    /* JADX WARNING: Missing block: B:64:0x017d, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:65:0x017e, code skipped:
+            r5 = null;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private AppWidgetProviderInfo parseAppWidgetProviderInfo(ProviderId providerId, ActivityInfo activityInfo, String metadataKey) {
+        ProviderId providerId2 = providerId;
+        ActivityInfo activityInfo2 = activityInfo;
+        String str = metadataKey;
+        try {
+            Throwable th;
+            XmlResourceParser parser = activityInfo2.loadXmlMetaData(this.mContext.getPackageManager(), str);
+            String str2;
+            if (parser == null) {
+                try {
+                    str2 = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("No ");
+                    stringBuilder.append(str);
+                    stringBuilder.append(" meta-data for AppWidget provider '");
+                    stringBuilder.append(providerId2);
+                    stringBuilder.append('\'');
+                    Slog.w(str2, stringBuilder.toString());
+                    if (parser != null) {
+                        $closeResource(null, parser);
+                    }
+                    return null;
+                } catch (Throwable th2) {
+                    th = th2;
+                }
+            } else {
+                AttributeSet attrs;
+                AttributeSet attrs2 = Xml.asAttributeSet(parser);
+                while (true) {
+                    attrs = attrs2;
+                    int next = parser.next();
+                    int type = next;
+                    if (next != 1 && type != 2) {
+                        attrs2 = attrs;
+                    }
+                }
+                if ("appwidget-provider".equals(parser.getName())) {
+                    AppWidgetProviderInfo info = new AppWidgetProviderInfo();
+                    info.provider = providerId2.componentName;
+                    info.providerInfo = activityInfo2;
+                    long identity = Binder.clearCallingIdentity();
+                    PackageManager pm = this.mContext.getPackageManager();
+                    Resources resources = pm.getResourcesForApplication(pm.getApplicationInfoAsUser(activityInfo2.packageName, 0, UserHandle.getUserId(providerId2.uid)));
+                    Binder.restoreCallingIdentity(identity);
+                    TypedArray sa = resources.obtainAttributes(attrs, R.styleable.AppWidgetProviderInfo);
+                    TypedValue value = sa.peekValue(0);
+                    info.minWidth = value != null ? value.data : 0;
+                    TypedValue value2 = sa.peekValue(1);
+                    info.minHeight = value2 != null ? value2.data : 0;
+                    value2 = sa.peekValue(8);
+                    info.minResizeWidth = value2 != null ? value2.data : info.minWidth;
+                    value2 = sa.peekValue(9);
+                    info.minResizeHeight = value2 != null ? value2.data : info.minHeight;
+                    info.updatePeriodMillis = sa.getInt(2, 0);
+                    info.initialLayout = sa.getResourceId(3, 0);
+                    info.initialKeyguardLayout = sa.getResourceId(10, 0);
+                    String className = sa.getString(4);
+                    if (className != null) {
+                        info.configure = new ComponentName(providerId2.componentName.getPackageName(), className);
+                    }
+                    info.label = activityInfo2.loadLabel(this.mContext.getPackageManager()).toString();
+                    info.icon = activityInfo.getIconResource();
+                    info.previewImage = sa.getResourceId(5, 0);
+                    info.autoAdvanceViewId = sa.getResourceId(6, -1);
+                    info.resizeMode = sa.getInt(7, 0);
+                    info.widgetCategory = sa.getInt(11, 1);
+                    info.widgetFeatures = sa.getInt(12, 0);
+                    sa.recycle();
+                    if (parser != null) {
+                        $closeResource(null, parser);
+                    }
+                    return info;
+                }
+                str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Meta-data does not start with appwidget-provider tag for AppWidget provider ");
+                stringBuilder2.append(providerId2.componentName);
+                stringBuilder2.append(" for user ");
+                stringBuilder2.append(providerId2.uid);
+                Slog.w(str2, stringBuilder2.toString());
+                if (parser != null) {
+                    $closeResource(null, parser);
+                }
+                return null;
+            }
+            if (parser != null) {
+                $closeResource(th, parser);
+            }
+            throw th2;
+        } catch (NameNotFoundException | IOException | XmlPullParserException e) {
+            String str3 = TAG;
+            StringBuilder stringBuilder3 = new StringBuilder();
+            stringBuilder3.append("XML parsing failed for AppWidget provider ");
+            stringBuilder3.append(providerId2.componentName);
+            stringBuilder3.append(" for user ");
+            stringBuilder3.append(providerId2.uid);
+            Slog.w(str3, stringBuilder3.toString(), e);
+            return null;
+        }
     }
 
     private static /* synthetic */ void $closeResource(Throwable x0, AutoCloseable x1) {
@@ -4123,16 +4050,18 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                     int N = this.mProviders.size();
                     for (int i = 0; i < N; i++) {
                         Provider provider = (Provider) this.mProviders.get(i);
-                        if (provider.getUserId() == userId && provider.widgets.size() > 0) {
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("appwidget init ");
-                            stringBuilder.append(provider.info.provider.getPackageName());
-                            Trace.traceBegin(64, stringBuilder.toString());
-                            sendEnableIntentLocked(provider);
-                            int[] appWidgetIds = getWidgetIds(provider.widgets);
-                            sendUpdateIntentLocked(provider, appWidgetIds);
-                            registerForBroadcastsLocked(provider, appWidgetIds);
-                            Trace.traceEnd(64);
+                        if (provider.getUserId() == userId) {
+                            if (provider.widgets.size() > 0) {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("appwidget init ");
+                                stringBuilder.append(provider.info.provider.getPackageName());
+                                Trace.traceBegin(64, stringBuilder.toString());
+                                sendEnableIntentLocked(provider);
+                                int[] appWidgetIds = getWidgetIds(provider.widgets);
+                                sendUpdateIntentLocked(provider, appWidgetIds);
+                                registerForBroadcastsLocked(provider, appWidgetIds);
+                                Trace.traceEnd(64);
+                            }
                         }
                     }
                 }
@@ -4388,8 +4317,10 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
             int N = this.mProviders.size();
             for (i = 0; i < N; i++) {
                 Provider provider = (Provider) this.mProviders.get(i);
-                if (provider.getUserId() == userId && provider.shouldBePersisted()) {
-                    serializeProvider(out, provider);
+                if (provider.getUserId() == userId) {
+                    if (provider.shouldBePersisted()) {
+                        serializeProvider(out, provider);
+                    }
                 }
             }
             N = this.mHosts.size();
@@ -4428,73 +4359,42 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x026d A:{LOOP_END, LOOP:0: B:7:0x001a->B:102:0x026d} */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x026c A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:103:0x0274 A:{Splitter: B:8:0x001b, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:103:0x0274 A:{Splitter: B:8:0x001b, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:103:0x0274 A:{Splitter: B:8:0x001b, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:103:0x0274 A:{Splitter: B:8:0x001b, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:106:0x027a A:{Splitter: B:1:0x0006, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:106:0x027a A:{Splitter: B:1:0x0006, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:106:0x027a A:{Splitter: B:1:0x0006, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:106:0x027a A:{Splitter: B:1:0x0006, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:105:0x0278 A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:105:0x0278 A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:105:0x0278 A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:105:0x0278 A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x0265 A:{Splitter: B:96:0x0261, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x0265 A:{Splitter: B:96:0x0261, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x0265 A:{Splitter: B:96:0x0261, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x0265 A:{Splitter: B:96:0x0261, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Missing block: B:98:0x0265, code:
+    /* JADX WARNING: Removed duplicated region for block: B:108:0x026d A:{LOOP_END, LOOP:0: B:7:0x001a->B:108:0x026d} */
+    /* JADX WARNING: Removed duplicated region for block: B:117:0x026c A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:117:0x026c A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:108:0x026d A:{LOOP_END, LOOP:0: B:7:0x001a->B:108:0x026d} */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x0274 A:{ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:8:0x001b} */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x0274 A:{ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:8:0x001b} */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x0274 A:{ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:8:0x001b} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:109:0x0274, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:103:0x0274, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:104:0x0275, code:
+    /* JADX WARNING: Missing block: B:110:0x0275, code skipped:
             r1 = r30;
-     */
-    /* JADX WARNING: Missing block: B:105:0x0278, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:106:0x027a, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:107:0x027b, code:
-            r6 = r28;
-     */
-    /* JADX WARNING: Missing block: B:108:0x027d, code:
-            r1 = r30;
-            r7 = r4;
-     */
-    /* JADX WARNING: Missing block: B:109:0x0280, code:
-            r2 = TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("failed parsing ");
-            r3.append(r0);
-            android.util.Slog.w(r2, r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:110:0x0297, code:
-            return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int readProfileStateFromFileLocked(FileInputStream stream, int userId, List<LoadedWidgetState> outLoadedWidgets) {
+        Exception e;
+        StringBuilder stringBuilder;
         AppWidgetServiceImpl appWidgetServiceImpl = this;
         int i = userId;
         int i2 = -1;
+        int version;
+        List<LoadedWidgetState> list;
+        String maxWidthString;
         try {
             XmlPullParser parser = Xml.newPullParser();
             try {
                 parser.setInput(stream, StandardCharsets.UTF_8.name());
-                int version = i2;
+                version = i2;
                 i2 = -1;
                 int legacyHostIndex = -1;
                 while (true) {
+                    int type;
                     int legacyHostIndex2 = legacyHostIndex;
                     try {
-                        List<LoadedWidgetState> list;
-                        int type = parser.next();
+                        type = parser.next();
                         if (type == 2) {
                             String tag = parser.getName();
                             String pkg;
@@ -4503,14 +4403,15 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                             int uid;
                             String tagAttribute;
                             if ("gs".equals(tag)) {
-                                try {
-                                    legacyHostIndex = Integer.parseInt(parser.getAttributeValue(null, "version"));
-                                } catch (NumberFormatException e) {
-                                    NumberFormatException numberFormatException = e;
-                                    legacyHostIndex = 0;
-                                }
+                                legacyHostIndex = Integer.parseInt(parser.getAttributeValue(null, "version"));
                                 list = outLoadedWidgets;
                                 version = legacyHostIndex;
+                                legacyHostIndex = legacyHostIndex2;
+                                if (type == 1) {
+                                    return version;
+                                }
+                                appWidgetServiceImpl = this;
+                                i = userId;
                             } else if ("p".equals(tag)) {
                                 i2++;
                                 pkg = parser.getAttributeValue(null, AbsLocationManagerService.DEL_PKG);
@@ -4590,7 +4491,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                                 if (tagAttribute != null) {
                                     options.putInt("appWidgetMinHeight", Integer.parseInt(tagAttribute, 16));
                                 }
-                                String maxWidthString = parser.getAttributeValue(null, "max_width");
+                                maxWidthString = parser.getAttributeValue(null, "max_width");
                                 if (maxWidthString != null) {
                                     options.putInt("appWidgetMaxWidth", Integer.parseInt(maxWidthString, 16));
                                 }
@@ -4611,26 +4512,46 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                                 }
                                 try {
                                     outLoadedWidgets.add(new LoadedWidgetState(widget, providerTag, i));
-                                } catch (NullPointerException e2) {
+                                    legacyHostIndex = legacyHostIndex2;
+                                    if (type == 1) {
+                                    }
+                                } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e2) {
+                                    e = e2;
                                 }
                             }
-                            legacyHostIndex = legacyHostIndex2;
-                            if (type != 1) {
-                                return version;
-                            }
-                            appWidgetServiceImpl = this;
-                            i = userId;
                         }
                         list = outLoadedWidgets;
-                        legacyHostIndex = legacyHostIndex2;
-                        if (type != 1) {
-                        }
-                    } catch (NullPointerException e3) {
+                    } catch (NumberFormatException e3) {
+                        NumberFormatException numberFormatException = e3;
+                        legacyHostIndex = 0;
+                    } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e4) {
+                    }
+                    legacyHostIndex = legacyHostIndex2;
+                    if (type == 1) {
                     }
                 }
-            } catch (NullPointerException e4) {
+            } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e5) {
+                e = e5;
+                list = outLoadedWidgets;
+                version = i2;
+                maxWidthString = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("failed parsing ");
+                stringBuilder.append(e);
+                Slog.w(maxWidthString, stringBuilder.toString());
+                return -1;
             }
-        } catch (NullPointerException e5) {
+        } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e6) {
+            e = e6;
+            FileInputStream fileInputStream = stream;
+            list = outLoadedWidgets;
+            version = i2;
+            maxWidthString = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("failed parsing ");
+            stringBuilder.append(e);
+            Slog.w(maxWidthString, stringBuilder.toString());
+            return -1;
         }
     }
 
@@ -4689,7 +4610,7 @@ class AppWidgetServiceImpl extends Stub implements WidgetBackupProvider, OnCross
                 Widget widget = (Widget) this.mWidgets.get(i2);
                 boolean hostInUser = widget.host.getUserId() == userId;
                 boolean hasProvider = widget.provider != null;
-                if (!(hasProvider && widget.provider.getUserId() == userId)) {
+                if (!hasProvider || widget.provider.getUserId() != userId) {
                     providerInUser = false;
                 }
                 if (hostInUser && (!hasProvider || providerInUser)) {

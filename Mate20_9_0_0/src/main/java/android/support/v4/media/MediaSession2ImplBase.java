@@ -353,64 +353,64 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:29:0x004b, code:
+    /* JADX WARNING: Missing block: B:29:0x004b, code skipped:
             if (r13 != null) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:30:0x004d, code:
+    /* JADX WARNING: Missing block: B:30:0x004d, code skipped:
             r10.mSessionCompat.setPlaybackToLocal(getLegacyStreamType(r11.getAudioAttributes()));
      */
-    /* JADX WARNING: Missing block: B:31:0x005a, code:
+    /* JADX WARNING: Missing block: B:31:0x005a, code skipped:
             if (r11 == r5) goto L_0x006a;
      */
-    /* JADX WARNING: Missing block: B:32:0x005c, code:
+    /* JADX WARNING: Missing block: B:32:0x005c, code skipped:
             r11.registerPlayerEventCallback(r10.mCallbackExecutor, r10.mPlayerEventCallback);
      */
-    /* JADX WARNING: Missing block: B:33:0x0063, code:
+    /* JADX WARNING: Missing block: B:33:0x0063, code skipped:
             if (r5 == null) goto L_0x006a;
      */
-    /* JADX WARNING: Missing block: B:34:0x0065, code:
+    /* JADX WARNING: Missing block: B:34:0x0065, code skipped:
             r5.unregisterPlayerEventCallback(r10.mPlayerEventCallback);
      */
-    /* JADX WARNING: Missing block: B:35:0x006a, code:
+    /* JADX WARNING: Missing block: B:35:0x006a, code skipped:
             if (r12 == r2) goto L_0x007a;
      */
-    /* JADX WARNING: Missing block: B:36:0x006c, code:
+    /* JADX WARNING: Missing block: B:36:0x006c, code skipped:
             r12.registerPlaylistEventCallback(r10.mCallbackExecutor, r10.mPlaylistEventCallback);
      */
-    /* JADX WARNING: Missing block: B:37:0x0073, code:
+    /* JADX WARNING: Missing block: B:37:0x0073, code skipped:
             if (r2 == null) goto L_0x007a;
      */
-    /* JADX WARNING: Missing block: B:38:0x0075, code:
+    /* JADX WARNING: Missing block: B:38:0x0075, code skipped:
             r2.unregisterPlaylistEventCallback(r10.mPlaylistEventCallback);
      */
-    /* JADX WARNING: Missing block: B:39:0x007a, code:
+    /* JADX WARNING: Missing block: B:39:0x007a, code skipped:
             if (r5 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:40:0x007c, code:
+    /* JADX WARNING: Missing block: B:40:0x007c, code skipped:
             if (r6 == false) goto L_0x0081;
      */
-    /* JADX WARNING: Missing block: B:41:0x007e, code:
+    /* JADX WARNING: Missing block: B:41:0x007e, code skipped:
             notifyAgentUpdatedNotLocked(r2);
      */
-    /* JADX WARNING: Missing block: B:42:0x0081, code:
+    /* JADX WARNING: Missing block: B:42:0x0081, code skipped:
             if (r4 == false) goto L_0x0086;
      */
-    /* JADX WARNING: Missing block: B:43:0x0083, code:
+    /* JADX WARNING: Missing block: B:43:0x0083, code skipped:
             notifyPlayerUpdatedNotLocked(r5);
      */
-    /* JADX WARNING: Missing block: B:44:0x0086, code:
+    /* JADX WARNING: Missing block: B:44:0x0086, code skipped:
             if (r3 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:45:0x0088, code:
+    /* JADX WARNING: Missing block: B:45:0x0088, code skipped:
             notifyToAllControllers(new android.support.v4.media.MediaSession2ImplBase.AnonymousClass1(r10));
      */
-    /* JADX WARNING: Missing block: B:64:?, code:
+    /* JADX WARNING: Missing block: B:64:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:65:?, code:
+    /* JADX WARNING: Missing block: B:65:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:66:?, code:
+    /* JADX WARNING: Missing block: B:66:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -516,7 +516,7 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         return stream;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0044, code:
+    /* JADX WARNING: Missing block: B:14:0x0044, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -637,34 +637,34 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x001c;
      */
-    /* JADX WARNING: Missing block: B:8:0x000e, code:
+    /* JADX WARNING: Missing block: B:8:0x000e, code skipped:
             if (r4.mAudioFocusHandler.onPlayRequested() == false) goto L_0x0014;
      */
-    /* JADX WARNING: Missing block: B:9:0x0010, code:
+    /* JADX WARNING: Missing block: B:9:0x0010, code skipped:
             r1.play();
      */
-    /* JADX WARNING: Missing block: B:10:0x0014, code:
+    /* JADX WARNING: Missing block: B:10:0x0014, code skipped:
             android.util.Log.w(TAG, "play() wouldn't be called because of the failure in audio focus");
      */
-    /* JADX WARNING: Missing block: B:12:0x001e, code:
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:13:0x0020, code:
+    /* JADX WARNING: Missing block: B:13:0x0020, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -685,34 +685,34 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x001c;
      */
-    /* JADX WARNING: Missing block: B:8:0x000e, code:
+    /* JADX WARNING: Missing block: B:8:0x000e, code skipped:
             if (r4.mAudioFocusHandler.onPauseRequested() == false) goto L_0x0014;
      */
-    /* JADX WARNING: Missing block: B:9:0x0010, code:
+    /* JADX WARNING: Missing block: B:9:0x0010, code skipped:
             r1.pause();
      */
-    /* JADX WARNING: Missing block: B:10:0x0014, code:
+    /* JADX WARNING: Missing block: B:10:0x0014, code skipped:
             android.util.Log.w(TAG, "pause() wouldn't be called of the failure in audio focus");
      */
-    /* JADX WARNING: Missing block: B:12:0x001e, code:
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:13:0x0020, code:
+    /* JADX WARNING: Missing block: B:13:0x0020, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -733,25 +733,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.reset();
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -772,25 +772,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.prepare();
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -811,25 +811,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.seekTo(r5);
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -872,19 +872,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         });
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getPlayerState();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return 3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -905,19 +905,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getCurrentPosition();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001f, code:
+    /* JADX WARNING: Missing block: B:13:0x001f, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -938,19 +938,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getDuration();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001f, code:
+    /* JADX WARNING: Missing block: B:13:0x001f, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -971,19 +971,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getBufferedPosition();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001f, code:
+    /* JADX WARNING: Missing block: B:13:0x001f, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1004,19 +1004,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getBufferingState();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1037,19 +1037,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getPlaybackSpeed();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001f, code:
+    /* JADX WARNING: Missing block: B:13:0x001f, code skipped:
             return 1.0f;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1070,25 +1070,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.setPlaybackSpeed(r5);
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1131,19 +1131,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0007, code:
+    /* JADX WARNING: Missing block: B:7:0x0007, code skipped:
             if (r2 == null) goto L_0x000e;
      */
-    /* JADX WARNING: Missing block: B:9:0x000d, code:
+    /* JADX WARNING: Missing block: B:9:0x000d, code skipped:
             return r2.getPlaylist();
      */
-    /* JADX WARNING: Missing block: B:11:0x0010, code:
+    /* JADX WARNING: Missing block: B:11:0x0010, code skipped:
             if (DEBUG == false) goto L_0x001e;
      */
-    /* JADX WARNING: Missing block: B:12:0x0012, code:
+    /* JADX WARNING: Missing block: B:12:0x0012, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1166,25 +1166,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             if (r1 == null) goto L_0x000e;
      */
-    /* JADX WARNING: Missing block: B:8:0x000a, code:
+    /* JADX WARNING: Missing block: B:8:0x000a, code skipped:
             r1.setPlaylist(r5, r6);
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:11:0x0012, code:
+    /* JADX WARNING: Missing block: B:11:0x0012, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1208,25 +1208,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         throw new IllegalArgumentException("list shouldn't be null");
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             if (r1 == null) goto L_0x000e;
      */
-    /* JADX WARNING: Missing block: B:8:0x000a, code:
+    /* JADX WARNING: Missing block: B:8:0x000a, code skipped:
             r1.skipToPlaylistItem(r5);
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:11:0x0012, code:
+    /* JADX WARNING: Missing block: B:11:0x0012, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1250,25 +1250,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         throw new IllegalArgumentException("item shouldn't be null");
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.skipToPreviousItem();
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1289,25 +1289,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.skipToNextItem();
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1328,19 +1328,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0007, code:
+    /* JADX WARNING: Missing block: B:7:0x0007, code skipped:
             if (r2 == null) goto L_0x000e;
      */
-    /* JADX WARNING: Missing block: B:9:0x000d, code:
+    /* JADX WARNING: Missing block: B:9:0x000d, code skipped:
             return r2.getPlaylistMetadata();
      */
-    /* JADX WARNING: Missing block: B:11:0x0010, code:
+    /* JADX WARNING: Missing block: B:11:0x0010, code skipped:
             if (DEBUG == false) goto L_0x001e;
      */
-    /* JADX WARNING: Missing block: B:12:0x0012, code:
+    /* JADX WARNING: Missing block: B:12:0x0012, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1363,25 +1363,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x000a, code:
+    /* JADX WARNING: Missing block: B:8:0x000a, code skipped:
             if (r1 == null) goto L_0x0010;
      */
-    /* JADX WARNING: Missing block: B:9:0x000c, code:
+    /* JADX WARNING: Missing block: B:9:0x000c, code skipped:
             r1.addPlaylistItem(r5, r6);
      */
-    /* JADX WARNING: Missing block: B:11:0x0012, code:
+    /* JADX WARNING: Missing block: B:11:0x0012, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:12:0x0014, code:
+    /* JADX WARNING: Missing block: B:12:0x0014, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1408,25 +1408,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             if (r1 == null) goto L_0x000e;
      */
-    /* JADX WARNING: Missing block: B:8:0x000a, code:
+    /* JADX WARNING: Missing block: B:8:0x000a, code skipped:
             r1.removePlaylistItem(r5);
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:11:0x0012, code:
+    /* JADX WARNING: Missing block: B:11:0x0012, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1450,25 +1450,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         throw new IllegalArgumentException("item shouldn't be null");
     }
 
-    /* JADX WARNING: Missing block: B:8:0x000a, code:
+    /* JADX WARNING: Missing block: B:8:0x000a, code skipped:
             if (r1 == null) goto L_0x0010;
      */
-    /* JADX WARNING: Missing block: B:9:0x000c, code:
+    /* JADX WARNING: Missing block: B:9:0x000c, code skipped:
             r1.replacePlaylistItem(r5, r6);
      */
-    /* JADX WARNING: Missing block: B:11:0x0012, code:
+    /* JADX WARNING: Missing block: B:11:0x0012, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:12:0x0014, code:
+    /* JADX WARNING: Missing block: B:12:0x0014, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1495,19 +1495,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0007, code:
+    /* JADX WARNING: Missing block: B:7:0x0007, code skipped:
             if (r2 == null) goto L_0x000e;
      */
-    /* JADX WARNING: Missing block: B:9:0x000d, code:
+    /* JADX WARNING: Missing block: B:9:0x000d, code skipped:
             return r2.getCurrentMediaItem();
      */
-    /* JADX WARNING: Missing block: B:11:0x0010, code:
+    /* JADX WARNING: Missing block: B:11:0x0010, code skipped:
             if (DEBUG == false) goto L_0x001e;
      */
-    /* JADX WARNING: Missing block: B:12:0x0012, code:
+    /* JADX WARNING: Missing block: B:12:0x0012, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1530,25 +1530,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.updatePlaylistMetadata(r5);
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1569,19 +1569,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getRepeatMode();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1602,25 +1602,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.setRepeatMode(r5);
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1641,19 +1641,19 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000d;
      */
-    /* JADX WARNING: Missing block: B:8:0x000c, code:
+    /* JADX WARNING: Missing block: B:8:0x000c, code skipped:
             return r1.getShuffleMode();
      */
-    /* JADX WARNING: Missing block: B:10:0x000f, code:
+    /* JADX WARNING: Missing block: B:10:0x000f, code skipped:
             if (DEBUG == false) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
+    /* JADX WARNING: Missing block: B:11:0x0011, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1674,25 +1674,25 @@ class MediaSession2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_0x000c;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             r1.setShuffleMode(r5);
      */
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             if (DEBUG == false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             android.util.Log.d(TAG, "API calls after the close()", new java.lang.IllegalStateException());
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -7,8 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ComponentInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Rect;
 import android.hdm.HwDeviceManager;
@@ -59,22 +58,26 @@ public final class HwActivityStackSupervisor extends ActivityStackSupervisor {
         super(service, looper);
     }
 
-    private boolean isUninstallableApk(String pkgName) {
+    private boolean isUninstallableApk(String pkgName, Intent homeIntent, int userId) {
         if (pkgName == null || "android".equals(pkgName)) {
             return false;
         }
         try {
-            PackageInfo pInfo = this.mService.mContext.getPackageManager().getPackageInfo(pkgName, 0);
-            if (pInfo == null || (pInfo.applicationInfo.flags & 1) == 0) {
+            ResolveInfo homeInfo = resolveIntent(homeIntent, homeIntent.resolveTypeIfNeeded(this.mService.mContext.getContentResolver()), userId, 786432, Binder.getCallingUid());
+            if (homeInfo == null) {
+                return false;
+            }
+            ComponentInfo ci = homeInfo.getComponentInfo();
+            if (ci != null && (ci.applicationInfo.flags & 1) == 0 && pkgName.equals(ci.packageName)) {
                 return true;
             }
             return false;
-        } catch (NameNotFoundException e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public void recognitionMaliciousApp(IApplicationThread caller, Intent intent) {
+    public void recognitionMaliciousApp(IApplicationThread caller, Intent intent, int userId) {
         if (caller == null) {
             Intent homeIntent = this.mService.getHomeIntent();
             String action = intent.getAction();
@@ -92,7 +95,9 @@ public final class HwActivityStackSupervisor extends ActivityStackSupervisor {
                         stringBuilder.append(strPkg2);
                         stringBuilder.append(" is a ignored frequent relaunch app set by MDM!");
                         Slog.i("ActivityManager", stringBuilder.toString());
-                    } else if (isUninstallableApk(strPkg2)) {
+                        return;
+                    }
+                    if (isUninstallableApk(strPkg2, homeIntent, userId)) {
                         if (strPkg2.equals(this.mLastHomePkg)) {
                             this.mCrashTimes++;
                             long now = SystemClock.uptimeMillis();
@@ -117,8 +122,10 @@ public final class HwActivityStackSupervisor extends ActivityStackSupervisor {
                         }
                     }
                 }
+                return;
             }
         }
+        int i = userId;
     }
 
     ResolveInfo resolveIntent(Intent intent, String resolvedType, int userId, int flags, int filterCallingUid) {

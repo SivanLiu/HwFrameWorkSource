@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import javax.security.auth.x500.X500Principal;
@@ -70,6 +69,7 @@ import org.bouncycastle.i18n.filter.UntrustedInput;
 import org.bouncycastle.i18n.filter.UntrustedUrlInput;
 import org.bouncycastle.jce.provider.AnnotatedException;
 import org.bouncycastle.jce.provider.PKIXNameConstraintValidator;
+import org.bouncycastle.jce.provider.PKIXNameConstraintValidatorException;
 import org.bouncycastle.jce.provider.PKIXPolicyNode;
 import org.bouncycastle.util.Integers;
 
@@ -112,7 +112,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         for (PKIXCertPathChecker init : certPathCheckers) {
             try {
                 init.init(false);
-            } catch (Throwable e) {
+            } catch (CertPathValidatorException e) {
                 throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.certPathCheckerError", new Object[]{e.getMessage(), e, e.getClass().getName()}), e);
             } catch (CertPathValidatorException e2) {
                 throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.criticalExtensionError", new Object[]{e2.getMessage(), e2, e2.getClass().getName()}), e2.getCause(), this.certPath, r1);
@@ -125,27 +125,29 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         while (size >= 0) {
             X509Certificate x509Certificate = (X509Certificate) this.certs.get(size);
             Set criticalExtensionOIDs = x509Certificate.getCriticalExtensionOIDs();
-            if (!(criticalExtensionOIDs == null || criticalExtensionOIDs.isEmpty())) {
-                criticalExtensionOIDs.remove(KEY_USAGE);
-                criticalExtensionOIDs.remove(CERTIFICATE_POLICIES);
-                criticalExtensionOIDs.remove(POLICY_MAPPINGS);
-                criticalExtensionOIDs.remove(INHIBIT_ANY_POLICY);
-                criticalExtensionOIDs.remove(ISSUING_DISTRIBUTION_POINT);
-                criticalExtensionOIDs.remove(DELTA_CRL_INDICATOR);
-                criticalExtensionOIDs.remove(POLICY_CONSTRAINTS);
-                criticalExtensionOIDs.remove(BASIC_CONSTRAINTS);
-                criticalExtensionOIDs.remove(SUBJECT_ALTERNATIVE_NAME);
-                criticalExtensionOIDs.remove(NAME_CONSTRAINTS);
-                if (criticalExtensionOIDs.contains(QC_STATEMENT) && processQcStatements(x509Certificate, size)) {
-                    criticalExtensionOIDs.remove(QC_STATEMENT);
-                }
-                for (PKIXCertPathChecker check : certPathCheckers) {
-                    check.check(x509Certificate, criticalExtensionOIDs);
-                }
+            if (criticalExtensionOIDs != null) {
                 if (!criticalExtensionOIDs.isEmpty()) {
-                    Iterator it = criticalExtensionOIDs.iterator();
-                    while (it.hasNext()) {
-                        addError(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.unknownCriticalExt", new Object[]{new ASN1ObjectIdentifier((String) it.next())}), size);
+                    criticalExtensionOIDs.remove(KEY_USAGE);
+                    criticalExtensionOIDs.remove(CERTIFICATE_POLICIES);
+                    criticalExtensionOIDs.remove(POLICY_MAPPINGS);
+                    criticalExtensionOIDs.remove(INHIBIT_ANY_POLICY);
+                    criticalExtensionOIDs.remove(ISSUING_DISTRIBUTION_POINT);
+                    criticalExtensionOIDs.remove(DELTA_CRL_INDICATOR);
+                    criticalExtensionOIDs.remove(POLICY_CONSTRAINTS);
+                    criticalExtensionOIDs.remove(BASIC_CONSTRAINTS);
+                    criticalExtensionOIDs.remove(SUBJECT_ALTERNATIVE_NAME);
+                    criticalExtensionOIDs.remove(NAME_CONSTRAINTS);
+                    if (criticalExtensionOIDs.contains(QC_STATEMENT) && processQcStatements(x509Certificate, size)) {
+                        criticalExtensionOIDs.remove(QC_STATEMENT);
+                    }
+                    for (PKIXCertPathChecker check : certPathCheckers) {
+                        check.check(x509Certificate, criticalExtensionOIDs);
+                    }
+                    if (!criticalExtensionOIDs.isEmpty()) {
+                        Iterator it = criticalExtensionOIDs.iterator();
+                        while (it.hasNext()) {
+                            addError(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.unknownCriticalExt", new Object[]{new ASN1ObjectIdentifier((String) it.next())}), size);
+                        }
                     }
                 }
             }
@@ -173,20 +175,20 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                             pKIXNameConstraintValidator.checkExcluded(instance);
                         }
                     }
-                } catch (Throwable e) {
+                } catch (AnnotatedException e) {
                     throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.ncExtError"), e, this.certPath, size);
-                } catch (Throwable e2) {
+                } catch (IOException e2) {
                     throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.ncSubjectNameError", new Object[]{new UntrustedInput(r4)}), e2, this.certPath, size);
-                } catch (Throwable e22) {
-                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.notPermittedDN", new Object[]{new UntrustedInput(r4.getName())}), e22, this.certPath, size);
-                } catch (Throwable e222) {
-                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.excludedDN", new Object[]{new UntrustedInput(r4.getName())}), e222, this.certPath, size);
-                } catch (Throwable e2222) {
-                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.subjAltNameExtError"), e2222, this.certPath, size);
-                } catch (Throwable e22222) {
-                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.notPermittedEmail", new Object[]{new UntrustedInput(instance)}), e22222, this.certPath, size);
-                } catch (CertPathReviewerException e3) {
-                    addError(e3.getErrorMessage(), e3.getIndex());
+                } catch (PKIXNameConstraintValidatorException e3) {
+                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.notPermittedDN", new Object[]{new UntrustedInput(r4.getName())}), e3, this.certPath, size);
+                } catch (PKIXNameConstraintValidatorException e32) {
+                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.excludedDN", new Object[]{new UntrustedInput(r4.getName())}), e32, this.certPath, size);
+                } catch (AnnotatedException e4) {
+                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.subjAltNameExtError"), e4, this.certPath, size);
+                } catch (PKIXNameConstraintValidatorException e322) {
+                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.notPermittedEmail", new Object[]{new UntrustedInput(instance)}), e322, this.certPath, size);
+                } catch (CertPathReviewerException e5) {
+                    addError(e5.getErrorMessage(), e5.getIndex());
                     return;
                 }
             }
@@ -241,30 +243,38 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.totalPathLength", new Object[]{Integers.valueOf(i2)}));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:177:0x03bc A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
-    /* JADX WARNING: Removed duplicated region for block: B:192:0x0400 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x0235 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:111:0x0261 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x0235 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:111:0x0261 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:53:0x0119 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x0139 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x0235 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:111:0x0261 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:181:0x03bc A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:196:0x0400 A:{Catch:{ AnnotatedException -> 0x0619, AnnotatedException -> 0x0450, AnnotatedException -> 0x0432, AnnotatedException -> 0x0420, AnnotatedException -> 0x040e, AnnotatedException -> 0x0383, CertPathValidatorException -> 0x0370, CertPathValidatorException -> 0x021b, CertPathValidatorException -> 0x00d3, CertPathReviewerException -> 0x062b }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void checkPolicy() {
         int i;
         Set initialPolicies = this.pkixParams.getInitialPolicies();
-        List[] listArr = new ArrayList[(this.n + 1)];
-        for (i = 0; i < listArr.length; i++) {
-            listArr[i] = new ArrayList();
+        ArrayList[] arrayListArr = new ArrayList[(this.n + 1)];
+        for (i = 0; i < arrayListArr.length; i++) {
+            arrayListArr[i] = new ArrayList();
         }
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         hashSet.add(RFC3280CertPathUtilities.ANY_POLICY);
         PKIXPolicyNode pKIXPolicyNode = new PKIXPolicyNode(new ArrayList(), 0, hashSet, null, new HashSet(), RFC3280CertPathUtilities.ANY_POLICY, false);
-        listArr[0].add(pKIXPolicyNode);
+        arrayListArr[0].add(pKIXPolicyNode);
         int i2 = this.pkixParams.isExplicitPolicyRequired() ? 0 : this.n + 1;
         int size;
         try {
             Set set;
             PKIXPolicyNode pKIXPolicyNode2;
-            Enumeration objects;
-            PKIXPolicyNode pKIXPolicyNode3;
             int i3;
             List list;
             int i4;
+            PKIXPolicyNode pKIXPolicyNode3;
+            Enumeration objects;
             PKIXPolicyNode pKIXPolicyNode4;
             ASN1Sequence aSN1Sequence;
             int i5;
@@ -275,274 +285,317 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
             int i8 = this.pkixParams.isPolicyMappingInhibited() ? 0 : this.n + 1;
             Set set2 = null;
             PKIXPolicyNode pKIXPolicyNode5 = pKIXPolicyNode;
-            X509Extension x509Extension = null;
+            X509Certificate x509Certificate = null;
             while (size >= 0) {
                 int i9;
                 ASN1Sequence aSN1Sequence2;
-                X509Extension x509Extension2;
+                X509Extension x509Extension;
                 i = this.n - size;
-                X509Extension x509Extension3 = (X509Certificate) this.certs.get(size);
-                ASN1Sequence aSN1Sequence3 = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Extension3, CERTIFICATE_POLICIES);
+                X509Certificate x509Certificate2 = (X509Certificate) this.certs.get(size);
+                ASN1Sequence aSN1Sequence3 = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Certificate2, CERTIFICATE_POLICIES);
                 if (aSN1Sequence3 == null || pKIXPolicyNode5 == null) {
                     set = initialPolicies;
                     pKIXPolicyNode2 = pKIXPolicyNode5;
                     i9 = i7;
                     aSN1Sequence2 = aSN1Sequence3;
-                    x509Extension2 = x509Extension3;
+                    x509Extension = x509Certificate2;
                 } else {
-                    Set set3;
-                    Set set4;
+                    HashSet hashSet2;
+                    HashSet hashSet3;
                     Enumeration objects2 = aSN1Sequence3.getObjects();
-                    Set hashSet2 = new HashSet();
+                    HashSet hashSet4 = new HashSet();
                     while (objects2.hasMoreElements()) {
                         PolicyInformation instance = PolicyInformation.getInstance(objects2.nextElement());
                         ASN1ObjectIdentifier policyIdentifier = instance.getPolicyIdentifier();
                         Enumeration enumeration = objects2;
-                        hashSet2.add(policyIdentifier.getId());
+                        hashSet4.add(policyIdentifier.getId());
                         set = initialPolicies;
                         if (!RFC3280CertPathUtilities.ANY_POLICY.equals(policyIdentifier.getId())) {
                             initialPolicies = CertPathValidatorUtilities.getQualifierSet(instance.getPolicyQualifiers());
-                            if (!CertPathValidatorUtilities.processCertD1i(i, listArr, policyIdentifier, initialPolicies)) {
-                                CertPathValidatorUtilities.processCertD1ii(i, listArr, policyIdentifier, initialPolicies);
+                            if (!CertPathValidatorUtilities.processCertD1i(i, arrayListArr, policyIdentifier, initialPolicies)) {
+                                CertPathValidatorUtilities.processCertD1ii(i, arrayListArr, policyIdentifier, initialPolicies);
                             }
                         }
                         objects2 = enumeration;
                         initialPolicies = set;
                     }
                     set = initialPolicies;
-                    if (set2 == null || set2.contains(RFC3280CertPathUtilities.ANY_POLICY)) {
-                        set3 = hashSet2;
-                    } else {
-                        set3 = new HashSet();
-                        for (Object next : set2) {
-                            if (hashSet2.contains(next)) {
-                                set3.add(next);
+                    if (set2 != null) {
+                        if (!set2.contains(RFC3280CertPathUtilities.ANY_POLICY)) {
+                            hashSet2 = new HashSet();
+                            for (Object next : set2) {
+                                if (hashSet4.contains(next)) {
+                                    hashSet2.add(next);
+                                }
                             }
-                        }
-                    }
-                    if (i7 > 0 || (i < this.n && CertPathValidatorUtilities.isSelfIssued(x509Extension3))) {
-                        objects = aSN1Sequence3.getObjects();
-                        while (objects.hasMoreElements()) {
-                            PolicyInformation instance2 = PolicyInformation.getInstance(objects.nextElement());
-                            if (RFC3280CertPathUtilities.ANY_POLICY.equals(instance2.getPolicyIdentifier().getId())) {
-                                initialPolicies = CertPathValidatorUtilities.getQualifierSet(instance2.getPolicyQualifiers());
-                                List list2 = listArr[i - 1];
-                                int i10 = 0;
-                                while (i10 < list2.size()) {
-                                    List list3;
-                                    pKIXPolicyNode3 = (PKIXPolicyNode) list2.get(i10);
-                                    Iterator it = pKIXPolicyNode3.getExpectedPolicies().iterator();
-                                    while (it.hasNext()) {
-                                        String str;
-                                        Iterator it2;
-                                        set4 = set3;
-                                        Object next2 = it.next();
-                                        list3 = list2;
-                                        if (next2 instanceof String) {
-                                            str = (String) next2;
-                                        } else if (next2 instanceof ASN1ObjectIdentifier) {
-                                            str = ((ASN1ObjectIdentifier) next2).getId();
-                                        } else {
-                                            i9 = i7;
-                                            set3 = set4;
-                                            list2 = list3;
-                                        }
-                                        Iterator children = pKIXPolicyNode3.getChildren();
-                                        Object obj = null;
-                                        while (children.hasNext()) {
-                                            Iterator it3 = children;
-                                            if (str.equals(((PKIXPolicyNode) children.next()).getValidPolicy())) {
-                                                obj = 1;
+                            if (i7 <= 0) {
+                                if (i < this.n && CertPathValidatorUtilities.isSelfIssued(x509Certificate2)) {
+                                }
+                                hashSet3 = hashSet2;
+                                pKIXPolicyNode2 = pKIXPolicyNode5;
+                                i9 = i7;
+                                aSN1Sequence2 = aSN1Sequence3;
+                                x509Extension = x509Certificate2;
+                                for (i3 = i - 1; i3 >= 0; i3--) {
+                                    list = arrayListArr[i3];
+                                    pKIXPolicyNode5 = pKIXPolicyNode2;
+                                    for (i4 = 0; i4 < list.size(); i4++) {
+                                        pKIXPolicyNode3 = (PKIXPolicyNode) list.get(i4);
+                                        if (!pKIXPolicyNode3.hasChildren()) {
+                                            pKIXPolicyNode5 = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode5, arrayListArr, pKIXPolicyNode3);
+                                            if (pKIXPolicyNode5 == null) {
+                                                pKIXPolicyNode2 = pKIXPolicyNode5;
                                             }
-                                            children = it3;
                                         }
-                                        if (obj == null) {
-                                            Set hashSet3 = new HashSet();
-                                            hashSet3.add(str);
-                                            pKIXPolicyNode2 = pKIXPolicyNode5;
-                                            it2 = it;
-                                            aSN1Sequence2 = aSN1Sequence3;
-                                            i9 = i7;
-                                            x509Extension2 = x509Extension3;
-                                            PKIXPolicyNode pKIXPolicyNode6 = new PKIXPolicyNode(new ArrayList(), i, hashSet3, pKIXPolicyNode3, initialPolicies, str, false);
-                                            pKIXPolicyNode3.addChild(pKIXPolicyNode6);
-                                            listArr[i].add(pKIXPolicyNode6);
-                                        } else {
-                                            pKIXPolicyNode2 = pKIXPolicyNode5;
-                                            i9 = i7;
-                                            it2 = it;
-                                            aSN1Sequence2 = aSN1Sequence3;
-                                            x509Extension2 = x509Extension3;
+                                    }
+                                    pKIXPolicyNode2 = pKIXPolicyNode5;
+                                }
+                                initialPolicies = x509Extension.getCriticalExtensionOIDs();
+                                if (initialPolicies != null) {
+                                    boolean contains = initialPolicies.contains(CERTIFICATE_POLICIES);
+                                    list = arrayListArr[i];
+                                    for (i4 = 0; i4 < list.size(); i4++) {
+                                        ((PKIXPolicyNode) list.get(i4)).setCritical(contains);
+                                    }
+                                }
+                                set2 = hashSet3;
+                            }
+                            objects = aSN1Sequence3.getObjects();
+                            while (objects.hasMoreElements()) {
+                                PolicyInformation instance2 = PolicyInformation.getInstance(objects.nextElement());
+                                if (RFC3280CertPathUtilities.ANY_POLICY.equals(instance2.getPolicyIdentifier().getId())) {
+                                    initialPolicies = CertPathValidatorUtilities.getQualifierSet(instance2.getPolicyQualifiers());
+                                    List list2 = arrayListArr[i - 1];
+                                    int i10 = 0;
+                                    while (i10 < list2.size()) {
+                                        List list3;
+                                        X509Certificate x509Certificate3;
+                                        pKIXPolicyNode4 = (PKIXPolicyNode) list2.get(i10);
+                                        Iterator it = pKIXPolicyNode4.getExpectedPolicies().iterator();
+                                        while (it.hasNext()) {
+                                            String str;
+                                            Iterator it2;
+                                            hashSet3 = hashSet2;
+                                            Object next2 = it.next();
+                                            list3 = list2;
+                                            if (next2 instanceof String) {
+                                                str = (String) next2;
+                                            } else if (next2 instanceof ASN1ObjectIdentifier) {
+                                                str = ((ASN1ObjectIdentifier) next2).getId();
+                                            } else {
+                                                i9 = i7;
+                                                hashSet2 = hashSet3;
+                                                list2 = list3;
+                                            }
+                                            Iterator children = pKIXPolicyNode4.getChildren();
+                                            Object obj = null;
+                                            while (children.hasNext()) {
+                                                Iterator it3 = children;
+                                                if (str.equals(((PKIXPolicyNode) children.next()).getValidPolicy())) {
+                                                    obj = 1;
+                                                }
+                                                children = it3;
+                                            }
+                                            if (obj == null) {
+                                                HashSet hashSet5 = new HashSet();
+                                                hashSet5.add(str);
+                                                pKIXPolicyNode2 = pKIXPolicyNode5;
+                                                it2 = it;
+                                                aSN1Sequence2 = aSN1Sequence3;
+                                                i9 = i7;
+                                                x509Certificate3 = x509Certificate2;
+                                                PKIXPolicyNode pKIXPolicyNode6 = new PKIXPolicyNode(new ArrayList(), i, hashSet5, pKIXPolicyNode4, initialPolicies, str, false);
+                                                pKIXPolicyNode4.addChild(pKIXPolicyNode6);
+                                                arrayListArr[i].add(pKIXPolicyNode6);
+                                            } else {
+                                                pKIXPolicyNode2 = pKIXPolicyNode5;
+                                                i9 = i7;
+                                                it2 = it;
+                                                aSN1Sequence2 = aSN1Sequence3;
+                                                x509Certificate3 = x509Certificate2;
+                                            }
+                                            x509Certificate2 = x509Certificate3;
+                                            it = it2;
+                                            hashSet2 = hashSet3;
+                                            list2 = list3;
+                                            aSN1Sequence3 = aSN1Sequence2;
+                                            pKIXPolicyNode5 = pKIXPolicyNode2;
+                                            i7 = i9;
                                         }
-                                        x509Extension3 = x509Extension2;
-                                        it = it2;
-                                        set3 = set4;
-                                        list2 = list3;
-                                        aSN1Sequence3 = aSN1Sequence2;
-                                        pKIXPolicyNode5 = pKIXPolicyNode2;
+                                        hashSet3 = hashSet2;
+                                        list3 = list2;
+                                        pKIXPolicyNode2 = pKIXPolicyNode5;
+                                        i9 = i7;
+                                        aSN1Sequence2 = aSN1Sequence3;
+                                        x509Certificate3 = x509Certificate2;
+                                        i10++;
                                         i7 = i9;
                                     }
-                                    set4 = set3;
-                                    list3 = list2;
+                                    hashSet3 = hashSet2;
                                     pKIXPolicyNode2 = pKIXPolicyNode5;
                                     i9 = i7;
                                     aSN1Sequence2 = aSN1Sequence3;
-                                    x509Extension2 = x509Extension3;
-                                    i10++;
-                                    i7 = i9;
+                                    x509Extension = x509Certificate2;
+                                    while (i3 >= 0) {
+                                    }
+                                    initialPolicies = x509Extension.getCriticalExtensionOIDs();
+                                    if (initialPolicies != null) {
+                                    }
+                                    set2 = hashSet3;
+                                } else {
+                                    i9 = i7;
                                 }
-                            } else {
-                                i9 = i7;
                             }
+                            hashSet3 = hashSet2;
+                            pKIXPolicyNode2 = pKIXPolicyNode5;
+                            i9 = i7;
+                            aSN1Sequence2 = aSN1Sequence3;
+                            x509Extension = x509Certificate2;
+                            while (i3 >= 0) {
+                            }
+                            initialPolicies = x509Extension.getCriticalExtensionOIDs();
+                            if (initialPolicies != null) {
+                            }
+                            set2 = hashSet3;
                         }
                     }
-                    set4 = set3;
+                    hashSet2 = hashSet4;
+                    if (i7 <= 0) {
+                    }
+                    objects = aSN1Sequence3.getObjects();
+                    while (objects.hasMoreElements()) {
+                    }
+                    hashSet3 = hashSet2;
                     pKIXPolicyNode2 = pKIXPolicyNode5;
                     i9 = i7;
                     aSN1Sequence2 = aSN1Sequence3;
-                    x509Extension2 = x509Extension3;
-                    for (i3 = i - 1; i3 >= 0; i3--) {
-                        list = listArr[i3];
-                        pKIXPolicyNode5 = pKIXPolicyNode2;
-                        for (i4 = 0; i4 < list.size(); i4++) {
-                            pKIXPolicyNode4 = (PKIXPolicyNode) list.get(i4);
-                            if (!pKIXPolicyNode4.hasChildren()) {
-                                pKIXPolicyNode5 = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode5, listArr, pKIXPolicyNode4);
-                                if (pKIXPolicyNode5 == null) {
-                                    pKIXPolicyNode2 = pKIXPolicyNode5;
-                                }
-                            }
-                        }
-                        pKIXPolicyNode2 = pKIXPolicyNode5;
+                    x509Extension = x509Certificate2;
+                    while (i3 >= 0) {
                     }
-                    initialPolicies = x509Extension2.getCriticalExtensionOIDs();
+                    initialPolicies = x509Extension.getCriticalExtensionOIDs();
                     if (initialPolicies != null) {
-                        boolean contains = initialPolicies.contains(CERTIFICATE_POLICIES);
-                        list = listArr[i];
-                        for (i4 = 0; i4 < list.size(); i4++) {
-                            ((PKIXPolicyNode) list.get(i4)).setCritical(contains);
-                        }
                     }
-                    set2 = set4;
+                    set2 = hashSet3;
                 }
-                pKIXPolicyNode3 = pKIXPolicyNode2;
+                pKIXPolicyNode4 = pKIXPolicyNode2;
                 if (aSN1Sequence2 == null) {
-                    pKIXPolicyNode3 = null;
+                    pKIXPolicyNode4 = null;
                 }
-                if (i2 > 0 || r10 != null) {
-                    if (i != this.n) {
-                        ASN1Sequence aSN1Sequence4;
-                        ASN1Integer aSN1Integer;
-                        ASN1Primitive extensionValue = CertPathValidatorUtilities.getExtensionValue(x509Extension2, POLICY_MAPPINGS);
-                        if (extensionValue != null) {
-                            aSN1Sequence4 = (ASN1Sequence) extensionValue;
-                            i4 = 0;
-                            while (i4 < aSN1Sequence4.size()) {
-                                ASN1Sequence aSN1Sequence5 = (ASN1Sequence) aSN1Sequence4.getObjectAt(i4);
-                                ASN1ObjectIdentifier aSN1ObjectIdentifier = (ASN1ObjectIdentifier) aSN1Sequence5.getObjectAt(0);
-                                ASN1ObjectIdentifier aSN1ObjectIdentifier2 = (ASN1ObjectIdentifier) aSN1Sequence5.getObjectAt(1);
-                                if (RFC3280CertPathUtilities.ANY_POLICY.equals(aSN1ObjectIdentifier.getId())) {
-                                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.invalidPolicyMapping"), this.certPath, size);
-                                } else if (RFC3280CertPathUtilities.ANY_POLICY.equals(aSN1ObjectIdentifier2.getId())) {
-                                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.invalidPolicyMapping"), this.certPath, size);
-                                } else {
-                                    i4++;
-                                }
-                            }
-                        }
-                        if (extensionValue != null) {
-                            aSN1Sequence = (ASN1Sequence) extensionValue;
-                            Map hashMap = new HashMap();
-                            Set<String> hashSet4 = new HashSet();
-                            for (i5 = 0; i5 < aSN1Sequence.size(); i5++) {
-                                ASN1Sequence aSN1Sequence6 = (ASN1Sequence) aSN1Sequence.getObjectAt(i5);
-                                String id = ((ASN1ObjectIdentifier) aSN1Sequence6.getObjectAt(0)).getId();
-                                String id2 = ((ASN1ObjectIdentifier) aSN1Sequence6.getObjectAt(1)).getId();
-                                if (hashMap.containsKey(id)) {
-                                    ((Set) hashMap.get(id)).add(id2);
-                                } else {
-                                    Set hashSet5 = new HashSet();
-                                    hashSet5.add(id2);
-                                    hashMap.put(id, hashSet5);
-                                    hashSet4.add(id);
-                                }
-                            }
-                            for (String str2 : hashSet4) {
-                                if (i8 > 0) {
-                                    CertPathValidatorUtilities.prepareNextCertB1(i, listArr, str2, hashMap, x509Extension2);
-                                } else if (i8 <= 0) {
-                                    pKIXPolicyNode3 = CertPathValidatorUtilities.prepareNextCertB2(i, listArr, str2, pKIXPolicyNode3);
-                                }
-                            }
-                        }
-                        if (!CertPathValidatorUtilities.isSelfIssued(x509Extension2)) {
-                            if (i2 != 0) {
-                                i2--;
-                            }
-                            if (i8 != 0) {
-                                i8--;
-                            }
-                            if (i9 != 0) {
-                                i3 = i9 - 1;
-                                aSN1Sequence4 = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Extension2, POLICY_CONSTRAINTS);
-                                if (aSN1Sequence4 != null) {
-                                    Enumeration objects3 = aSN1Sequence4.getObjects();
-                                    while (objects3.hasMoreElements()) {
-                                        ASN1TaggedObject aSN1TaggedObject = (ASN1TaggedObject) objects3.nextElement();
-                                        switch (aSN1TaggedObject.getTagNo()) {
-                                            case 0:
-                                                i4 = ASN1Integer.getInstance(aSN1TaggedObject, false).getValue().intValue();
-                                                if (i4 >= i2) {
-                                                    break;
-                                                }
-                                                i2 = i4;
-                                                break;
-                                            case 1:
-                                                i4 = ASN1Integer.getInstance(aSN1TaggedObject, false).getValue().intValue();
-                                                if (i4 >= i8) {
-                                                    break;
-                                                }
-                                                i8 = i4;
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
-                                }
-                                aSN1Integer = (ASN1Integer) CertPathValidatorUtilities.getExtensionValue(x509Extension2, INHIBIT_ANY_POLICY);
-                                if (aSN1Integer != null) {
-                                    intValue = aSN1Integer.getValue().intValue();
-                                    if (intValue < i3) {
-                                        i3 = intValue;
-                                    }
-                                }
-                                i9 = i3;
-                            }
-                        }
-                        i3 = i9;
-                        aSN1Sequence4 = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Extension2, POLICY_CONSTRAINTS);
-                        if (aSN1Sequence4 != null) {
-                        }
-                        aSN1Integer = (ASN1Integer) CertPathValidatorUtilities.getExtensionValue(x509Extension2, INHIBIT_ANY_POLICY);
-                        if (aSN1Integer != null) {
-                        }
-                        i9 = i3;
+                if (i2 <= 0) {
+                    if (pKIXPolicyNode4 == null) {
+                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.noValidPolicyTree"));
                     }
-                    pKIXPolicyNode5 = pKIXPolicyNode3;
-                    size--;
-                    x509Extension = x509Extension2;
-                    initialPolicies = set;
-                    i7 = i9;
-                } else {
-                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.noValidPolicyTree"));
                 }
+                if (i != this.n) {
+                    ASN1Sequence aSN1Sequence4;
+                    ASN1Integer aSN1Integer;
+                    ASN1Primitive extensionValue = CertPathValidatorUtilities.getExtensionValue(x509Extension, POLICY_MAPPINGS);
+                    if (extensionValue != null) {
+                        aSN1Sequence4 = (ASN1Sequence) extensionValue;
+                        i4 = 0;
+                        while (i4 < aSN1Sequence4.size()) {
+                            ASN1Sequence aSN1Sequence5 = (ASN1Sequence) aSN1Sequence4.getObjectAt(i4);
+                            ASN1ObjectIdentifier aSN1ObjectIdentifier = (ASN1ObjectIdentifier) aSN1Sequence5.getObjectAt(0);
+                            ASN1ObjectIdentifier aSN1ObjectIdentifier2 = (ASN1ObjectIdentifier) aSN1Sequence5.getObjectAt(1);
+                            if (RFC3280CertPathUtilities.ANY_POLICY.equals(aSN1ObjectIdentifier.getId())) {
+                                throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.invalidPolicyMapping"), this.certPath, size);
+                            } else if (RFC3280CertPathUtilities.ANY_POLICY.equals(aSN1ObjectIdentifier2.getId())) {
+                                throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.invalidPolicyMapping"), this.certPath, size);
+                            } else {
+                                i4++;
+                            }
+                        }
+                    }
+                    if (extensionValue != null) {
+                        aSN1Sequence = (ASN1Sequence) extensionValue;
+                        HashMap hashMap = new HashMap();
+                        HashSet<String> hashSet6 = new HashSet();
+                        for (i5 = 0; i5 < aSN1Sequence.size(); i5++) {
+                            ASN1Sequence aSN1Sequence6 = (ASN1Sequence) aSN1Sequence.getObjectAt(i5);
+                            String id = ((ASN1ObjectIdentifier) aSN1Sequence6.getObjectAt(0)).getId();
+                            String id2 = ((ASN1ObjectIdentifier) aSN1Sequence6.getObjectAt(1)).getId();
+                            if (hashMap.containsKey(id)) {
+                                ((Set) hashMap.get(id)).add(id2);
+                            } else {
+                                HashSet hashSet7 = new HashSet();
+                                hashSet7.add(id2);
+                                hashMap.put(id, hashSet7);
+                                hashSet6.add(id);
+                            }
+                        }
+                        for (String str2 : hashSet6) {
+                            if (i8 > 0) {
+                                CertPathValidatorUtilities.prepareNextCertB1(i, arrayListArr, str2, hashMap, x509Extension);
+                            } else if (i8 <= 0) {
+                                pKIXPolicyNode4 = CertPathValidatorUtilities.prepareNextCertB2(i, arrayListArr, str2, pKIXPolicyNode4);
+                            }
+                        }
+                    }
+                    if (!CertPathValidatorUtilities.isSelfIssued(x509Extension)) {
+                        if (i2 != 0) {
+                            i2--;
+                        }
+                        if (i8 != 0) {
+                            i8--;
+                        }
+                        if (i9 != 0) {
+                            i3 = i9 - 1;
+                            aSN1Sequence4 = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Extension, POLICY_CONSTRAINTS);
+                            if (aSN1Sequence4 != null) {
+                                Enumeration objects3 = aSN1Sequence4.getObjects();
+                                while (objects3.hasMoreElements()) {
+                                    ASN1TaggedObject aSN1TaggedObject = (ASN1TaggedObject) objects3.nextElement();
+                                    switch (aSN1TaggedObject.getTagNo()) {
+                                        case 0:
+                                            i4 = ASN1Integer.getInstance(aSN1TaggedObject, false).getValue().intValue();
+                                            if (i4 >= i2) {
+                                                break;
+                                            }
+                                            i2 = i4;
+                                            break;
+                                        case 1:
+                                            i4 = ASN1Integer.getInstance(aSN1TaggedObject, false).getValue().intValue();
+                                            if (i4 >= i8) {
+                                                break;
+                                            }
+                                            i8 = i4;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
+                            aSN1Integer = (ASN1Integer) CertPathValidatorUtilities.getExtensionValue(x509Extension, INHIBIT_ANY_POLICY);
+                            if (aSN1Integer != null) {
+                                intValue = aSN1Integer.getValue().intValue();
+                                if (intValue < i3) {
+                                    i3 = intValue;
+                                }
+                            }
+                            i9 = i3;
+                        }
+                    }
+                    i3 = i9;
+                    aSN1Sequence4 = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Extension, POLICY_CONSTRAINTS);
+                    if (aSN1Sequence4 != null) {
+                    }
+                    aSN1Integer = (ASN1Integer) CertPathValidatorUtilities.getExtensionValue(x509Extension, INHIBIT_ANY_POLICY);
+                    if (aSN1Integer != null) {
+                    }
+                    i9 = i3;
+                }
+                pKIXPolicyNode5 = pKIXPolicyNode4;
+                size--;
+                X509Extension x509Certificate4 = x509Extension;
+                initialPolicies = set;
+                i7 = i9;
             }
             set = initialPolicies;
             pKIXPolicyNode2 = pKIXPolicyNode5;
-            if (!CertPathValidatorUtilities.isSelfIssued(x509Extension) && i2 > 0) {
+            if (!CertPathValidatorUtilities.isSelfIssued(x509Certificate4) && i2 > 0) {
                 i2--;
             }
-            aSN1Sequence = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Extension, POLICY_CONSTRAINTS);
+            aSN1Sequence = (ASN1Sequence) CertPathValidatorUtilities.getExtensionValue(x509Certificate4, POLICY_CONSTRAINTS);
             if (aSN1Sequence != null) {
                 objects = aSN1Sequence.getObjects();
                 i4 = i2;
@@ -566,31 +619,31 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         if (set2.isEmpty()) {
                             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.explicitPolicy"), this.certPath, size);
                         }
-                        Set<PKIXPolicyNode> hashSet6 = new HashSet();
-                        for (intValue = i6; intValue < listArr.length; intValue++) {
-                            List list4 = listArr[intValue];
+                        HashSet<PKIXPolicyNode> hashSet8 = new HashSet();
+                        for (intValue = i6; intValue < arrayListArr.length; intValue++) {
+                            List list4 = arrayListArr[intValue];
                             for (i2 = i6; i2 < list4.size(); i2++) {
                                 pKIXPolicyNode5 = (PKIXPolicyNode) list4.get(i2);
                                 if (RFC3280CertPathUtilities.ANY_POLICY.equals(pKIXPolicyNode5.getValidPolicy())) {
                                     Iterator children2 = pKIXPolicyNode5.getChildren();
                                     while (children2.hasNext()) {
-                                        hashSet6.add(children2.next());
+                                        hashSet8.add(children2.next());
                                     }
                                 }
                             }
                         }
-                        for (PKIXPolicyNode validPolicy : hashSet6) {
+                        for (PKIXPolicyNode validPolicy : hashSet8) {
                             set2.contains(validPolicy.getValidPolicy());
                         }
                         if (pKIXPolicyNode2 != null) {
                             i3 = this.n - 1;
                             while (i3 >= 0) {
-                                list = listArr[i3];
+                                list = arrayListArr[i3];
                                 pKIXPolicyNode = pKIXPolicyNode2;
                                 for (i = i6; i < list.size(); i++) {
                                     pKIXPolicyNode5 = (PKIXPolicyNode) list.get(i);
                                     if (!pKIXPolicyNode5.hasChildren()) {
-                                        pKIXPolicyNode = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode, listArr, pKIXPolicyNode5);
+                                        pKIXPolicyNode = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode, arrayListArr, pKIXPolicyNode5);
                                     }
                                 }
                                 i3--;
@@ -598,114 +651,114 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                             }
                         }
                     }
-                    pKIXPolicyNode3 = pKIXPolicyNode2;
+                    pKIXPolicyNode4 = pKIXPolicyNode2;
                 } else {
-                    Set<PKIXPolicyNode> hashSet7 = new HashSet();
-                    for (i = i6; i < listArr.length; i++) {
-                        List list5 = listArr[i];
+                    HashSet<PKIXPolicyNode> hashSet9 = new HashSet();
+                    for (i = i6; i < arrayListArr.length; i++) {
+                        List list5 = arrayListArr[i];
                         for (i5 = i6; i5 < list5.size(); i5++) {
-                            pKIXPolicyNode4 = (PKIXPolicyNode) list5.get(i5);
-                            if (RFC3280CertPathUtilities.ANY_POLICY.equals(pKIXPolicyNode4.getValidPolicy())) {
-                                Iterator children3 = pKIXPolicyNode4.getChildren();
+                            pKIXPolicyNode3 = (PKIXPolicyNode) list5.get(i5);
+                            if (RFC3280CertPathUtilities.ANY_POLICY.equals(pKIXPolicyNode3.getValidPolicy())) {
+                                Iterator children3 = pKIXPolicyNode3.getChildren();
                                 while (children3.hasNext()) {
                                     PKIXPolicyNode pKIXPolicyNode7 = (PKIXPolicyNode) children3.next();
                                     if (!RFC3280CertPathUtilities.ANY_POLICY.equals(pKIXPolicyNode7.getValidPolicy())) {
-                                        hashSet7.add(pKIXPolicyNode7);
+                                        hashSet9.add(pKIXPolicyNode7);
                                     }
                                 }
                             }
                         }
                     }
                     PKIXPolicyNode pKIXPolicyNode8 = pKIXPolicyNode2;
-                    for (PKIXPolicyNode pKIXPolicyNode9 : hashSet7) {
+                    for (PKIXPolicyNode pKIXPolicyNode9 : hashSet9) {
                         if (!initialPolicies.contains(pKIXPolicyNode9.getValidPolicy())) {
-                            pKIXPolicyNode8 = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode8, listArr, pKIXPolicyNode9);
+                            pKIXPolicyNode8 = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode8, arrayListArr, pKIXPolicyNode9);
                         }
                     }
                     if (pKIXPolicyNode8 != null) {
                         i3 = this.n - 1;
                         while (i3 >= 0) {
-                            list = listArr[i3];
+                            list = arrayListArr[i3];
                             pKIXPolicyNode9 = pKIXPolicyNode8;
                             for (i = i6; i < list.size(); i++) {
                                 pKIXPolicyNode5 = (PKIXPolicyNode) list.get(i);
                                 if (!pKIXPolicyNode5.hasChildren()) {
-                                    pKIXPolicyNode9 = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode9, listArr, pKIXPolicyNode5);
+                                    pKIXPolicyNode9 = CertPathValidatorUtilities.removePolicyNode(pKIXPolicyNode9, arrayListArr, pKIXPolicyNode5);
                                 }
                             }
                             i3--;
                             pKIXPolicyNode8 = pKIXPolicyNode9;
                         }
                     }
-                    pKIXPolicyNode3 = pKIXPolicyNode8;
+                    pKIXPolicyNode4 = pKIXPolicyNode8;
                 }
             } else if (this.pkixParams.isExplicitPolicyRequired()) {
                 throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.explicitPolicy"), this.certPath, size);
             } else {
-                pKIXPolicyNode3 = null;
+                pKIXPolicyNode4 = null;
             }
             if (i4 <= 0 && r10 == null) {
                 throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.invalidPolicy"));
             }
         } catch (AnnotatedException e) {
             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyConstExtError"), this.certPath, size);
-        } catch (Throwable e2) {
+        } catch (AnnotatedException e2) {
             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyExtError"), e2, this.certPath, size);
-        } catch (Throwable e22) {
+        } catch (AnnotatedException e22) {
             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyMapExtError"), e22, this.certPath, size);
         } catch (AnnotatedException e3) {
             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyConstExtError"), this.certPath, size);
         } catch (AnnotatedException e4) {
             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyInhibitExtError"), this.certPath, size);
-        } catch (Throwable e222) {
-            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyExtError"), e222, this.certPath, size);
-        } catch (Throwable e2222) {
-            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyQualifierError"), e2222, this.certPath, size);
-        } catch (Throwable e22222) {
-            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyQualifierError"), e22222, this.certPath, size);
-        } catch (Throwable e222222) {
-            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyQualifierError"), e222222, this.certPath, size);
-        } catch (CertPathReviewerException e5) {
-            addError(e5.getErrorMessage(), e5.getIndex());
+        } catch (AnnotatedException e5) {
+            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyExtError"), e5, this.certPath, size);
+        } catch (CertPathValidatorException e52) {
+            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyQualifierError"), e52, this.certPath, size);
+        } catch (CertPathValidatorException e6) {
+            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyQualifierError"), e6, this.certPath, size);
+        } catch (CertPathValidatorException e62) {
+            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.policyQualifierError"), e62, this.certPath, size);
+        } catch (CertPathReviewerException e7) {
+            addError(e7.getErrorMessage(), e7.getIndex());
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:107:0x0301 A:{LOOP_END, LOOP:1: B:105:0x02fb->B:107:0x0301} */
-    /* JADX WARNING: Removed duplicated region for block: B:111:0x032e A:{LOOP_END, LOOP:2: B:109:0x0328->B:111:0x032e} */
-    /* JADX WARNING: Removed duplicated region for block: B:100:0x02dc A:{Catch:{ AnnotatedException -> 0x02e1 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:107:0x0301 A:{LOOP_END, LOOP:1: B:105:0x02fb->B:107:0x0301} */
-    /* JADX WARNING: Removed duplicated region for block: B:111:0x032e A:{LOOP_END, LOOP:2: B:109:0x0328->B:111:0x032e} */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0153  */
+    /* JADX WARNING: Removed duplicated region for block: B:108:0x0301 A:{LOOP_END, LOOP:1: B:106:0x02fb->B:108:0x0301} */
+    /* JADX WARNING: Removed duplicated region for block: B:112:0x032e A:{LOOP_END, LOOP:2: B:110:0x0328->B:112:0x032e} */
+    /* JADX WARNING: Removed duplicated region for block: B:101:0x02dc A:{Catch:{ AnnotatedException -> 0x02e1 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:108:0x0301 A:{LOOP_END, LOOP:1: B:106:0x02fb->B:108:0x0301} */
+    /* JADX WARNING: Removed duplicated region for block: B:112:0x032e A:{LOOP_END, LOOP:2: B:110:0x0328->B:112:0x032e} */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x0153  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x0108  */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x0180  */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0156  */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x018f  */
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x03af A:{SKIP} */
-    /* JADX WARNING: Removed duplicated region for block: B:124:0x037c  */
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x03af A:{SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x0180  */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0156  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x018f  */
+    /* JADX WARNING: Removed duplicated region for block: B:131:0x03af A:{SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:125:0x037c  */
+    /* JADX WARNING: Removed duplicated region for block: B:131:0x03af A:{SKIP} */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x0108  */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0153  */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0156  */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x0180  */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x018f  */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0153  */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x0153  */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0156  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x0180  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x018f  */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x0153  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x0108  */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x0180  */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0156  */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x018f  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x0180  */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0156  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x018f  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x0108  */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0153  */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0156  */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x0180  */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x018f  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0375  */
-    /* JADX WARNING: Removed duplicated region for block: B:89:0x02b6 A:{SYNTHETIC, Splitter: B:89:0x02b6} */
-    /* JADX WARNING: Removed duplicated region for block: B:124:0x037c  */
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x03af A:{SKIP} */
-    /* JADX WARNING: Removed duplicated region for block: B:89:0x02b6 A:{SYNTHETIC, Splitter: B:89:0x02b6} */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0375  */
-    /* JADX WARNING: Removed duplicated region for block: B:124:0x037c  */
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x03af A:{SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x0153  */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0156  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x0180  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x018f  */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0375  */
+    /* JADX WARNING: Removed duplicated region for block: B:90:0x02b6 A:{SYNTHETIC, Splitter:B:90:0x02b6} */
+    /* JADX WARNING: Removed duplicated region for block: B:125:0x037c  */
+    /* JADX WARNING: Removed duplicated region for block: B:131:0x03af A:{SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:90:0x02b6 A:{SYNTHETIC, Splitter:B:90:0x02b6} */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0375  */
+    /* JADX WARNING: Removed duplicated region for block: B:125:0x037c  */
+    /* JADX WARNING: Removed duplicated region for block: B:131:0x03af A:{SKIP} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void checkSignatures() {
         TrustAnchor trustAnchor;
@@ -725,7 +778,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         ErrorBundle errorBundle;
         ErrorBundle errorBundle2;
         X509Certificate x509Certificate3;
-        X500Principal x500Principal3;
+        Object obj;
         int i;
         int i2;
         int i3;
@@ -835,14 +888,14 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         }
                     } else {
                         errorBundle2 = new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.NoIssuerPublicKey");
-                        Object extensionValue = x509Certificate2.getExtensionValue(Extension.authorityKeyIdentifier.getId());
+                        byte[] extensionValue = x509Certificate2.getExtensionValue(Extension.authorityKeyIdentifier.getId());
                         if (extensionValue != null) {
                             AuthorityKeyIdentifier instance = AuthorityKeyIdentifier.getInstance(ASN1OctetString.getInstance(extensionValue).getOctets());
                             GeneralNames authorityCertIssuer = instance.getAuthorityCertIssuer();
                             if (authorityCertIssuer != null) {
-                                Object obj = authorityCertIssuer.getNames()[i6];
+                                Object obj2 = authorityCertIssuer.getNames()[i6];
                                 if (instance.getAuthorityCertSerialNumber() != null) {
-                                    errorBundle2.setExtraArguments(new Object[]{new LocaleString(RESOURCE_NAME, "missingIssuer"), " \"", obj, "\" ", new LocaleString(RESOURCE_NAME, "missingSerial"), " ", instance.getAuthorityCertSerialNumber()});
+                                    errorBundle2.setExtraArguments(new Object[]{new LocaleString(RESOURCE_NAME, "missingIssuer"), " \"", obj2, "\" ", new LocaleString(RESOURCE_NAME, "missingSerial"), " ", instance.getAuthorityCertSerialNumber()});
                                 }
                             }
                         }
@@ -889,7 +942,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                     }
                                     x509Certificate3 = x509Certificate2;
                                     i7 = i9;
-                                    x500Principal3 = x500Principal;
+                                    obj = x500Principal;
                                     vector = cRLDistUrls;
                                     publicKey3 = publicKey;
                                     i10 = size;
@@ -908,7 +961,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                 }
                                 x509Certificate3 = x509Certificate2;
                                 i7 = i9;
-                                x500Principal3 = x500Principal;
+                                obj = x500Principal;
                                 vector = cRLDistUrls;
                                 publicKey3 = publicKey;
                                 i10 = size;
@@ -919,7 +972,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                     e = e10;
                                     i = i10;
                                     addError(e.getErrorMessage(), i);
-                                    if (x500Principal3 != null) {
+                                    if (obj != null) {
                                     }
                                     i2 = 2;
                                     i3 = 0;
@@ -967,7 +1020,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         try {
                             x509Certificate3 = x509Certificate2;
                             i7 = i9;
-                            x500Principal3 = x500Principal;
+                            obj = x500Principal;
                             vector = cRLDistUrls;
                             publicKey3 = publicKey;
                             i10 = size;
@@ -976,13 +1029,13 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         } catch (CertPathReviewerException e14) {
                             e = e14;
                             x509Certificate3 = x509Certificate2;
-                            x500Principal3 = x500Principal;
+                            obj = x500Principal;
                             publicKey3 = publicKey;
                             i10 = size;
                             i7 = i9;
                             i = i10;
                             addError(e.getErrorMessage(), i);
-                            if (x500Principal3 != null) {
+                            if (obj != null) {
                             }
                             i2 = 2;
                             i3 = 0;
@@ -1005,11 +1058,11 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                     } else {
                         x509Certificate3 = x509Certificate2;
                         i7 = i8;
-                        x500Principal3 = x500Principal;
+                        obj = x500Principal;
                         publicKey3 = publicKey;
                         i = size;
                     }
-                    if (x500Principal3 != null || x509Certificate3.getIssuerX500Principal().equals(x500Principal3)) {
+                    if (obj != null || x509Certificate3.getIssuerX500Principal().equals(obj)) {
                         i2 = 2;
                         i3 = 0;
                         i4 = 1;
@@ -1017,7 +1070,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         i2 = 2;
                         r5 = new Object[2];
                         i3 = 0;
-                        r5[0] = x500Principal3.getName();
+                        r5[0] = obj.getName();
                         i4 = 1;
                         r5[1] = x509Certificate3.getIssuerX500Principal().getName();
                         addError(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.certWrongIssuer", r5), i);
@@ -1136,7 +1189,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         x509Certificate2.checkValidity(this.validDate);
         if (this.pkixParams.isRevocationEnabled()) {
         }
-        if (x500Principal3 != null) {
+        if (obj != null) {
         }
         i2 = 2;
         i3 = 0;
@@ -1158,7 +1211,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         addError(errorBundle2, size);
         if (this.pkixParams.isRevocationEnabled()) {
         }
-        if (x500Principal3 != null) {
+        if (obj != null) {
         }
         i2 = 2;
         i3 = 0;
@@ -1182,8 +1235,10 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
     private X509CRL getCRL(String str) throws CertPathReviewerException {
         try {
             URL url = new URL(str);
-            if (!url.getProtocol().equals("http") && !url.getProtocol().equals("https")) {
-                return null;
+            if (!url.getProtocol().equals("http")) {
+                if (!url.getProtocol().equals("https")) {
+                    return null;
+                }
             }
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setUseCaches(false);
@@ -1266,9 +1321,9 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
         this.notifications[i + 1].add(errorBundle);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:96:0x028c  */
-    /* JADX WARNING: Removed duplicated region for block: B:100:0x02c2  */
-    /* JADX WARNING: Removed duplicated region for block: B:99:0x02a3  */
+    /* JADX WARNING: Removed duplicated region for block: B:97:0x028c  */
+    /* JADX WARNING: Removed duplicated region for block: B:101:0x02c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:100:0x02a3  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void checkCRLs(PKIXParameters pKIXParameters, X509Certificate x509Certificate, Date date, X509Certificate x509Certificate2, PublicKey publicKey, Vector vector, int i) throws CertPathReviewerException {
         CertPathReviewerException e;
@@ -1282,17 +1337,17 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
             Iterator it;
             Iterator it2;
             int size;
-            X509Extension x509Extension;
+            X509CRL x509crl;
             int i4;
             int i5;
             x509CRLStoreSelector.addIssuerName(CertPathValidatorUtilities.getEncodedIssuerPrincipal(x509Certificate).getEncoded());
             x509CRLStoreSelector.setCertificateChecking(x509Certificate3);
             int i6 = 0;
             try {
-                Collection findCRLs = CRL_UTIL.findCRLs(x509CRLStoreSelector, pKIXParameters2);
+                Set findCRLs = CRL_UTIL.findCRLs(x509CRLStoreSelector, pKIXParameters2);
                 it = findCRLs.iterator();
                 if (findCRLs.isEmpty()) {
-                    List arrayList = new ArrayList();
+                    ArrayList arrayList = new ArrayList();
                     for (X509CRL issuerX500Principal : CRL_UTIL.findCRLs(new X509CRLStoreSelector(), pKIXParameters2)) {
                         arrayList.add(issuerX500Principal.getIssuerX500Principal());
                     }
@@ -1303,18 +1358,18 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                 addError(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlExtractionError", new Object[]{e2.getCause().getMessage(), e2.getCause(), e2.getCause().getClass().getName()}), i3);
                 it = new ArrayList().iterator();
             }
-            X509CRL x509crl = null;
+            X509CRL x509crl2 = null;
             while (it.hasNext()) {
-                x509crl = (X509CRL) it.next();
-                if (x509crl.getNextUpdate() == null || pKIXParameters.getDate().before(x509crl.getNextUpdate())) {
-                    addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.localValidCRL", new Object[]{new TrustedInput(x509crl.getThisUpdate()), new TrustedInput(x509crl.getNextUpdate())}), i3);
-                    x509Extension = x509crl;
+                x509crl2 = (X509CRL) it.next();
+                if (x509crl2.getNextUpdate() == null || pKIXParameters.getDate().before(x509crl2.getNextUpdate())) {
+                    addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.localValidCRL", new Object[]{new TrustedInput(x509crl2.getThisUpdate()), new TrustedInput(x509crl2.getNextUpdate())}), i3);
+                    x509crl = x509crl2;
                     i4 = 1;
                     break;
                 }
-                addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.localInvalidCRL", new Object[]{new TrustedInput(x509crl.getThisUpdate()), new TrustedInput(x509crl.getNextUpdate())}), i3);
+                addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.localInvalidCRL", new Object[]{new TrustedInput(x509crl2.getThisUpdate()), new TrustedInput(x509crl2.getNextUpdate())}), i3);
             }
-            x509Extension = x509crl;
+            x509crl = x509crl2;
             i4 = 0;
             if (i4 == 0) {
                 it2 = vector.iterator();
@@ -1324,26 +1379,29 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         String str = (String) it2.next();
                         X509CRL crl = getCRL(str);
                         if (crl != null) {
-                            if (!x509Certificate.getIssuerX500Principal().equals(crl.getIssuerX500Principal())) {
-                                String str2 = RESOURCE_NAME;
-                                String str3 = "CertPathReviewer.onlineCRLWrongCA";
-                                try {
-                                    Object[] objArr = new Object[3];
-                                    objArr[i6] = new UntrustedInput(crl.getIssuerX500Principal().getName());
-                                    objArr[1] = new UntrustedInput(x509Certificate.getIssuerX500Principal().getName());
-                                    objArr[2] = new UntrustedUrlInput(str);
-                                    addNotification(new ErrorBundle(str2, str3, objArr), i3);
-                                } catch (CertPathReviewerException e3) {
-                                    e = e3;
-                                    i2 = 3;
-                                    addNotification(e.getErrorMessage(), i3);
-                                    i6 = 0;
+                            if (x509Certificate.getIssuerX500Principal().equals(crl.getIssuerX500Principal())) {
+                                if (crl.getNextUpdate() != null) {
+                                    if (!this.pkixParams.getDate().before(crl.getNextUpdate())) {
+                                        String str2 = RESOURCE_NAME;
+                                        String str3 = "CertPathReviewer.onlineInvalidCRL";
+                                        try {
+                                            Object[] objArr = new Object[3];
+                                            objArr[0] = new TrustedInput(crl.getThisUpdate());
+                                            objArr[1] = new TrustedInput(crl.getNextUpdate());
+                                            objArr[2] = new UntrustedUrlInput(str);
+                                            addNotification(new ErrorBundle(str2, str3, objArr), i3);
+                                        } catch (CertPathReviewerException e3) {
+                                            e = e3;
+                                            i2 = 3;
+                                            addNotification(e.getErrorMessage(), i3);
+                                            i6 = 0;
+                                        }
+                                    }
                                 }
-                            } else if (crl.getNextUpdate() == null || this.pkixParams.getDate().before(crl.getNextUpdate())) {
                                 try {
                                     try {
                                         addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.onlineValidCRL", new Object[]{new TrustedInput(crl.getThisUpdate()), new TrustedInput(crl.getNextUpdate()), new UntrustedUrlInput(str)}), i3);
-                                        x509Extension = crl;
+                                        x509crl = crl;
                                         i5 = 1;
                                         break;
                                     } catch (CertPathReviewerException e4) {
@@ -1357,11 +1415,11 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                 }
                             } else {
                                 String str4 = RESOURCE_NAME;
-                                String str5 = "CertPathReviewer.onlineInvalidCRL";
+                                String str5 = "CertPathReviewer.onlineCRLWrongCA";
                                 try {
                                     Object[] objArr2 = new Object[3];
-                                    objArr2[0] = new TrustedInput(crl.getThisUpdate());
-                                    objArr2[1] = new TrustedInput(crl.getNextUpdate());
+                                    objArr2[i6] = new UntrustedInput(crl.getIssuerX500Principal().getName());
+                                    objArr2[1] = new UntrustedInput(x509Certificate.getIssuerX500Principal().getName());
                                     objArr2[2] = new UntrustedUrlInput(str);
                                     addNotification(new ErrorBundle(str4, str5, objArr2), i3);
                                 } catch (CertPathReviewerException e6) {
@@ -1380,7 +1438,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
             } else {
                 i5 = i4;
             }
-            if (x509Extension != null) {
+            if (x509crl != null) {
                 if (x509Certificate2 != null) {
                     boolean[] keyUsage = x509Certificate2.getKeyUsage();
                     if (keyUsage != null && (keyUsage.length < 7 || !keyUsage[6])) {
@@ -1390,8 +1448,8 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                 if (publicKey2 != null) {
                     try {
                         int i7;
-                        x509Extension.verify(publicKey2, "BC");
-                        X509CRLEntry revokedCertificate = x509Extension.getRevokedCertificate(x509Certificate.getSerialNumber());
+                        x509crl.verify(publicKey2, "BC");
+                        X509CRLEntry revokedCertificate = x509crl.getRevokedCertificate(x509Certificate.getSerialNumber());
                         if (revokedCertificate != null) {
                             String str6;
                             LocaleString localeString;
@@ -1410,8 +1468,8 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                             addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.revokedAfterValidation", new Object[]{new TrustedInput(revokedCertificate.getRevocationDate()), localeString}), i3);
                                         }
                                     }
-                                } catch (Throwable e8) {
-                                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlReasonExtError"), e8);
+                                } catch (AnnotatedException e22) {
+                                    throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlReasonExtError"), e22);
                                 }
                             }
                             str6 = null;
@@ -1423,27 +1481,27 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         } else {
                             addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.notRevoked"), i3);
                         }
-                        if (x509Extension.getNextUpdate() == null || !x509Extension.getNextUpdate().before(this.pkixParams.getDate())) {
+                        if (x509crl.getNextUpdate() == null || !x509crl.getNextUpdate().before(this.pkixParams.getDate())) {
                             size = 0;
                             i7 = 1;
                         } else {
                             i7 = 1;
                             Object[] objArr3 = new Object[1];
                             size = 0;
-                            objArr3[0] = new TrustedInput(x509Extension.getNextUpdate());
+                            objArr3[0] = new TrustedInput(x509crl.getNextUpdate());
                             addNotification(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlUpdateAvailable", objArr3), i3);
                         }
                         try {
-                            ASN1Primitive extensionValue = CertPathValidatorUtilities.getExtensionValue(x509Extension, ISSUING_DISTRIBUTION_POINT);
+                            ASN1Primitive extensionValue = CertPathValidatorUtilities.getExtensionValue(x509crl, ISSUING_DISTRIBUTION_POINT);
                             try {
-                                ASN1Primitive extensionValue2 = CertPathValidatorUtilities.getExtensionValue(x509Extension, DELTA_CRL_INDICATOR);
+                                ASN1Primitive extensionValue2 = CertPathValidatorUtilities.getExtensionValue(x509crl, DELTA_CRL_INDICATOR);
                                 if (extensionValue2 != null) {
                                     X509CRLStoreSelector x509CRLStoreSelector2 = new X509CRLStoreSelector();
                                     try {
-                                        x509CRLStoreSelector2.addIssuerName(CertPathValidatorUtilities.getIssuerPrincipal(x509Extension).getEncoded());
+                                        x509CRLStoreSelector2.addIssuerName(CertPathValidatorUtilities.getIssuerPrincipal(x509crl).getEncoded());
                                         x509CRLStoreSelector2.setMinCRLNumber(((ASN1Integer) extensionValue2).getPositiveValue());
                                         try {
-                                            x509CRLStoreSelector2.setMaxCRLNumber(((ASN1Integer) CertPathValidatorUtilities.getExtensionValue(x509Extension, CRL_NUMBER)).getPositiveValue().subtract(BigInteger.valueOf(1)));
+                                            x509CRLStoreSelector2.setMaxCRLNumber(((ASN1Integer) CertPathValidatorUtilities.getExtensionValue(x509crl, CRL_NUMBER)).getPositiveValue().subtract(BigInteger.valueOf(1)));
                                             try {
                                                 for (X509CRL extensionValue3 : CRL_UTIL.findCRLs(x509CRLStoreSelector2, pKIXParameters2)) {
                                                     try {
@@ -1455,22 +1513,22 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                                         } else if (extensionValue.equals(extensionValue4)) {
                                                             break;
                                                         }
-                                                    } catch (Throwable e82) {
-                                                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.distrPtExtError"), e82);
+                                                    } catch (AnnotatedException e222) {
+                                                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.distrPtExtError"), e222);
                                                     }
                                                 }
                                                 i7 = size;
                                                 if (i7 == 0) {
                                                     throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.noBaseCRL"));
                                                 }
-                                            } catch (Throwable e822) {
-                                                throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlExtractionError"), e822);
+                                            } catch (AnnotatedException e2222) {
+                                                throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlExtractionError"), e2222);
                                             }
-                                        } catch (Throwable e8222) {
-                                            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlNbrExtError"), e8222);
+                                        } catch (AnnotatedException e22222) {
+                                            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlNbrExtError"), e22222);
                                         }
-                                    } catch (Throwable e82222) {
-                                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlIssuerException"), e82222);
+                                    } catch (IOException e8) {
+                                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlIssuerException"), e8);
                                     }
                                 }
                                 if (extensionValue != null) {
@@ -1484,8 +1542,8 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                                         } else if (instance2.onlyContainsAttributeCerts()) {
                                             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlOnlyAttrCert"));
                                         }
-                                    } catch (Throwable e822222) {
-                                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlBCExtError"), e822222);
+                                    } catch (AnnotatedException e222222) {
+                                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlBCExtError"), e222222);
                                     }
                                 }
                             } catch (AnnotatedException e9) {
@@ -1494,8 +1552,8 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
                         } catch (AnnotatedException e10) {
                             throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.distrPtExtError"));
                         }
-                    } catch (Throwable e8222222) {
-                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlVerifyFailed"), e8222222);
+                    } catch (Exception e11) {
+                        throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlVerifyFailed"), e11);
                     }
                 }
                 throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlNoIssuerPublicKey"));
@@ -1503,8 +1561,8 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
             if (i5 == 0) {
                 throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.noValidCrlFound"));
             }
-        } catch (Throwable e82222222) {
-            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlIssuerException"), e82222222);
+        } catch (IOException e82) {
+            throw new CertPathReviewerException(new ErrorBundle(RESOURCE_NAME, "CertPathReviewer.crlIssuerException"), e82);
         }
     }
 
@@ -1609,7 +1667,7 @@ public class PKIXCertPathReviewer extends CertPathValidatorUtilities {
     }
 
     protected Collection getTrustAnchors(X509Certificate x509Certificate, Set set) throws CertPathReviewerException {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         X509CertSelector x509CertSelector = new X509CertSelector();
         try {
             x509CertSelector.setSubject(CertPathValidatorUtilities.getEncodedIssuerPrincipal(x509Certificate).getEncoded());

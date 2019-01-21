@@ -50,7 +50,7 @@ public class HwProtectAreaService {
         return hwProtectAreaService;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x004b, code:
+    /* JADX WARNING: Missing block: B:24:0x004b, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -98,7 +98,7 @@ public class HwProtectAreaService {
         return -1;
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0039, code:
+    /* JADX WARNING: Missing block: B:21:0x0039, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

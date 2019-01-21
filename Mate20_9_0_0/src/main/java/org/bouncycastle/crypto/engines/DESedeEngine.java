@@ -17,14 +17,18 @@ public class DESedeEngine extends DESEngine {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:15:0x004f in {6, 8, 11, 13, 14, 17} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
+        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
+        	at java.lang.Iterable.forEach(Iterable.java:75)
+        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
+        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
         	at jadx.api.JavaClass.decompile(JavaClass.java:62)
         	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
@@ -34,24 +38,19 @@ public class DESedeEngine extends DESEngine {
         r6 = this;
         r0 = r8 instanceof org.bouncycastle.crypto.params.KeyParameter;
         if (r0 == 0) goto L_0x0050;
-    L_0x0004:
         r8 = (org.bouncycastle.crypto.params.KeyParameter) r8;
         r8 = r8.getKey();
         r0 = r8.length;
         r1 = 16;
         r2 = 24;
         if (r0 == r2) goto L_0x001d;
-    L_0x0011:
         r0 = r8.length;
         if (r0 != r1) goto L_0x0015;
-    L_0x0014:
         goto L_0x001d;
-    L_0x0015:
         r7 = new java.lang.IllegalArgumentException;
         r8 = "key size must be 16 or 24 bytes.";
         r7.<init>(r8);
         throw r7;
-    L_0x001d:
         r6.forEncryption = r7;
         r0 = 8;
         r3 = new byte[r0];
@@ -68,19 +67,15 @@ public class DESedeEngine extends DESEngine {
         r6.workingKey2 = r3;
         r3 = r8.length;
         if (r3 != r2) goto L_0x004c;
-    L_0x003f:
         r0 = new byte[r0];
         r2 = r0.length;
         java.lang.System.arraycopy(r8, r1, r0, r5, r2);
         r7 = r6.generateWorkingKey(r7, r0);
-    L_0x0049:
         r6.workingKey3 = r7;
         return;
-    L_0x004c:
         r7 = r6.workingKey1;
         goto L_0x0049;
         return;
-    L_0x0050:
         r7 = new java.lang.IllegalArgumentException;
         r0 = new java.lang.StringBuilder;
         r0.<init>();
@@ -98,14 +93,18 @@ public class DESedeEngine extends DESEngine {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:12:0x0043 in {8, 10, 11, 14, 16, 18} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
+        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
+        	at java.lang.Iterable.forEach(Iterable.java:75)
+        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
+        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
         	at jadx.api.JavaClass.decompile(JavaClass.java:62)
         	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
@@ -115,20 +114,16 @@ public class DESedeEngine extends DESEngine {
         r8 = this;
         r0 = r8.workingKey1;
         if (r0 == 0) goto L_0x0054;
-    L_0x0004:
         r0 = r10 + 8;
         r1 = r9.length;
         if (r0 > r1) goto L_0x004c;
-    L_0x0009:
         r0 = r12 + 8;
         r1 = r11.length;
         if (r0 > r1) goto L_0x0044;
-    L_0x000e:
         r0 = 8;
         r7 = new byte[r0];
         r1 = r8.forEncryption;
         if (r1 == 0) goto L_0x002f;
-    L_0x0016:
         r2 = r8.workingKey1;
         r6 = 0;
         r1 = r8;
@@ -141,12 +136,10 @@ public class DESedeEngine extends DESEngine {
         r3 = r7;
         r1.desFunc(r2, r3, r4, r5, r6);
         r2 = r8.workingKey3;
-    L_0x0029:
         r5 = r11;
         r6 = r12;
         r1.desFunc(r2, r3, r4, r5, r6);
         return r0;
-    L_0x002f:
         r2 = r8.workingKey3;
         r6 = 0;
         r1 = r8;
@@ -161,17 +154,14 @@ public class DESedeEngine extends DESEngine {
         r2 = r8.workingKey1;
         goto L_0x0029;
         return r0;
-    L_0x0044:
         r9 = new org.bouncycastle.crypto.OutputLengthException;
         r10 = "output buffer too short";
         r9.<init>(r10);
         throw r9;
-    L_0x004c:
         r9 = new org.bouncycastle.crypto.DataLengthException;
         r10 = "input buffer too short";
         r9.<init>(r10);
         throw r9;
-    L_0x0054:
         r9 = new java.lang.IllegalStateException;
         r10 = "DESede engine not initialised";
         r9.<init>(r10);

@@ -177,7 +177,7 @@ public class WifiConfigManager extends AbsWifiConfigManager {
         this.mDeletedEphemeralSsidsStoreData = deletedEphemeralSsidsStoreData;
         this.mWifiConfigStore.registerStoreData(this.mNetworkListStoreData);
         this.mWifiConfigStore.registerStoreData(this.mDeletedEphemeralSsidsStoreData);
-        this.mOnlyLinkSameCredentialConfigurations = this.mContext.getResources().getBoolean(17957083);
+        this.mOnlyLinkSameCredentialConfigurations = this.mContext.getResources().getBoolean(17957084);
         this.mMaxNumActiveChannelsForPartialScans = this.mContext.getResources().getInteger(17694898);
         try {
             this.mSystemUiUid = this.mContext.getPackageManager().getPackageUidAsUser(SYSUI_PACKAGE_NAME, 1048576, 0);

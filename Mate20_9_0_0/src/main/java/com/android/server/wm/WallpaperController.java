@@ -510,7 +510,7 @@ public class WallpaperController {
         return attrs.x == 0 && attrs.y == 0 && attrs.width == -1 && attrs.height == -1;
     }
 
-    /* JADX WARNING: Missing block: B:51:0x010a, code:
+    /* JADX WARNING: Missing block: B:51:0x010a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

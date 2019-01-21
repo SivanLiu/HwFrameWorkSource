@@ -55,7 +55,7 @@ public class HwWifiServiceManagerImpl implements HwWifiServiceManager {
                 StringBuilder stringBuilder;
                 try {
                     if (args[0].equals(" ")) {
-                        config.SSID = context.getString(17041410);
+                        config.SSID = context.getString(17041411);
                     } else {
                         config.SSID = args[0];
                     }

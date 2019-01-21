@@ -322,7 +322,7 @@ public class GestureNavBottomStrategy extends GestureNavBaseStrategy {
                 }
             }
             setUseProxyAngleStrategy(false);
-            this.mQuickSingleHandController.setGestureResultAtUp(this.mGestureFailed ^ true);
+            this.mQuickSingleHandController.setGestureResultAtUp(this.mGestureFailed ^ 1);
             this.mQuickSingleHandController.handleTouchEvent(event);
         }
     }
@@ -350,7 +350,7 @@ public class GestureNavBottomStrategy extends GestureNavBaseStrategy {
                         break;
                 }
             }
-            this.mQuickSlideOutController.setGestureResultAtUp(this.mGestureFailed ^ true);
+            this.mQuickSlideOutController.setGestureResultAtUp(this.mGestureFailed ^ 1);
             this.mQuickSlideOutController.handleTouchEvent(event);
         }
     }
@@ -381,7 +381,7 @@ public class GestureNavBottomStrategy extends GestureNavBaseStrategy {
         }
         this.mBottomHandler.post(new Runnable() {
             public void run() {
-                Toast toast = Toast.makeText(GestureNavBottomStrategy.this.mContext, 33686183, 0);
+                Toast toast = Toast.makeText(GestureNavBottomStrategy.this.mContext, 33686186, 0);
                 toast.getWindowParams().type = HwArbitrationDEFS.MSG_MPLINK_UNBIND_FAIL;
                 LayoutParams windowParams = toast.getWindowParams();
                 windowParams.privateFlags |= 16;

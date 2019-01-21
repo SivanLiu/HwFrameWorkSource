@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.InterfaceConfiguration;
@@ -69,6 +70,7 @@ public class HwWifiP2pService extends WifiP2pServiceImpl {
     private static final String ACTION_DEVICE_DELAY_IDLE = "com.android.server.wifi.p2p.action.DEVICE_DELAY_IDLE";
     private static final int BAND_ERROR = -1;
     private static final int BASE = 143360;
+    private static final String[] BLACKLIST_P2P_FIND = new String[]{"com.hp.android.printservice"};
     private static final int CHANNEL_ERROR = -1;
     public static final int CMD_BATTERY_CHANGED = 143469;
     public static final int CMD_DEVICE_DELAY_IDLE = 143465;
@@ -556,7 +558,7 @@ public class HwWifiP2pService extends WifiP2pServiceImpl {
                 }
             } else {
                 HwWifiP2pService.this.sendInterfaceCreatedBroadcast(message.obj);
-                HwWifiP2pService.this.mMagicLinkDeviceFlag = HwWifiP2pService.this.mLegacyGO ^ true;
+                HwWifiP2pService.this.mMagicLinkDeviceFlag = HwWifiP2pService.this.mLegacyGO ^ 1;
                 transitionTo(this.mGroupNegotiationState);
             }
             return true;
@@ -1638,18 +1640,33 @@ public class HwWifiP2pService extends WifiP2pServiceImpl {
     }
 
     protected boolean allowP2pFind(int uid) {
-        if (Process.isCoreUid(uid) || isScreenOn() || allowP2pFindByTime(uid)) {
+        if (Process.isCoreUid(uid)) {
             return true;
         }
-        String str = TAG;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("p2p find disallowed, uid:");
-        stringBuilder.append(uid);
-        Log.d(str, stringBuilder.toString());
-        return false;
+        boolean allow;
+        boolean isBlackApp = isInBlacklistForP2pFind(uid);
+        if (isScreenOn()) {
+            if (isBlackApp) {
+                allow = allowP2pFindByTime(uid);
+            } else {
+                allow = true;
+            }
+        } else if (isBlackApp) {
+            allow = false;
+        } else {
+            allow = allowP2pFindByTime(uid);
+        }
+        if (!allow) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("p2p find disallowed, uid:");
+            stringBuilder.append(uid);
+            Log.d(str, stringBuilder.toString());
+        }
+        return allow;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x002c, code:
+    /* JADX WARNING: Missing block: B:17:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1670,6 +1687,28 @@ public class HwWifiP2pService extends WifiP2pServiceImpl {
     private boolean isScreenOn() {
         if (this.mPowerManager == null || this.mPowerManager.isScreenOn()) {
             return true;
+        }
+        return false;
+    }
+
+    private boolean isInBlacklistForP2pFind(int uid) {
+        if (this.mContext == null) {
+            return false;
+        }
+        PackageManager pkgMgr = this.mContext.getPackageManager();
+        if (pkgMgr == null) {
+            return false;
+        }
+        String pkgName = pkgMgr.getNameForUid(uid);
+        for (String black : BLACKLIST_P2P_FIND) {
+            if (black.equals(pkgName)) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("p2p-find blacklist: ");
+                stringBuilder.append(pkgName);
+                Log.d(str, stringBuilder.toString());
+                return true;
+            }
         }
         return false;
     }

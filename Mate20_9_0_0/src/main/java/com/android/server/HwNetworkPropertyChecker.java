@@ -54,6 +54,18 @@ public class HwNetworkPropertyChecker {
     private static final String BUNDLE_FLAG_USED_SERVER = "usedServer";
     public static final String CHINA_MAINLAND_BACKUP_SERVER = "http://www.baidu.com";
     public static final String CHINA_MAINLAND_MAIN_SERVER = "http://connectivitycheck.platform.hicloud.com/generate_204";
+    private static final int CONNECTION_TYPE_CLOSE_10 = 10;
+    private static final int CONNECTION_TYPE_CLOSE_11 = 11;
+    private static final int CONNECTION_TYPE_CLOSE_20 = 20;
+    private static final int CONNECTION_TYPE_CLOSE_21 = 21;
+    private static final int CONNECTION_TYPE_CLOSE_30 = 30;
+    private static final int CONNECTION_TYPE_CLOSE_31 = 31;
+    private static final int CONNECTION_TYPE_KEEPALIVE_40 = 40;
+    private static final int CONNECTION_TYPE_KEEPALIVE_41 = 41;
+    private static final int CONNECTION_TYPE_NULL_50 = 50;
+    private static final int CONNECTION_TYPE_NULL_51 = 51;
+    private static final int CONNECTION_TYPE_OTHERS_60 = 60;
+    private static final int CONNECTION_TYPE_OTHERS_61 = 61;
     private static final String DEFAULT_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.32 Safari/537.36";
     private static final boolean DISABLE_BQE_SERVICE = false;
     public static final String HICLOUD_HOST_NAME = "http://connectivitycheck.platform.hicloud.com";
@@ -99,6 +111,7 @@ public class HwNetworkPropertyChecker {
     private Handler mHandler;
     private int mHtmlCheckResult = WifiProCommonUtils.HTTP_UNREACHALBE;
     private Object mHtmlDownloadWaitingLock = new Object();
+    private String mHttpRespConnection = null;
     private Object mHttpRespWaitingLock = new Object();
     private int mHttpResponseCode;
     protected boolean mIgnoreRxCounter;
@@ -155,29 +168,29 @@ public class HwNetworkPropertyChecker {
             this.mainDetectMs = mainDetectMs;
         }
 
-        /* JADX WARNING: Missing block: B:34:0x00f7, code:
-            if (r14.urlConnection != null) goto L_0x00f9;
+        /* JADX WARNING: Missing block: B:36:0x0106, code skipped:
+            if (r14.urlConnection != null) goto L_0x0108;
      */
-        /* JADX WARNING: Missing block: B:35:0x00f9, code:
+        /* JADX WARNING: Missing block: B:37:0x0108, code skipped:
             r14.urlConnection.disconnect();
      */
-        /* JADX WARNING: Missing block: B:41:0x010e, code:
-            if (r14.urlConnection == null) goto L_0x01ed;
+        /* JADX WARNING: Missing block: B:43:0x011d, code skipped:
+            if (r14.urlConnection == null) goto L_0x01fc;
      */
-        /* JADX WARNING: Missing block: B:86:0x01e9, code:
-            if (r14.urlConnection == null) goto L_0x01ed;
+        /* JADX WARNING: Missing block: B:89:0x01f8, code skipped:
+            if (r14.urlConnection == null) goto L_0x01fc;
      */
-        /* JADX WARNING: Missing block: B:87:0x01ed, code:
+        /* JADX WARNING: Missing block: B:90:0x01fc, code skipped:
             com.android.server.HwNetworkPropertyChecker.access$302(r14.this$0, r0);
             com.android.server.HwNetworkPropertyChecker.access$800(r14.this$0, r14.reconfirm, r0, com.android.server.HwNetworkPropertyChecker.access$2600(r14.this$0) - com.android.server.HwNetworkPropertyChecker.access$2500(r14.this$0), r14.mChckingServer, r14.mainHttpCode, r14.mainDetectMs, com.android.server.HwNetworkPropertyChecker.access$700(r14.this$0));
      */
-        /* JADX WARNING: Missing block: B:88:0x0220, code:
-            if (com.android.server.HwNetworkPropertyChecker.access$000(r14.this$0).get() != false) goto L_0x0237;
+        /* JADX WARNING: Missing block: B:91:0x022f, code skipped:
+            if (com.android.server.HwNetworkPropertyChecker.access$000(r14.this$0).get() != false) goto L_0x0246;
      */
-        /* JADX WARNING: Missing block: B:89:0x0222, code:
+        /* JADX WARNING: Missing block: B:92:0x0231, code skipped:
             com.android.server.HwNetworkPropertyChecker.access$100(r14.this$0).sendMessage(android.os.Message.obtain(com.android.server.HwNetworkPropertyChecker.access$100(r14.this$0), 103, 0, 0));
      */
-        /* JADX WARNING: Missing block: B:90:0x0237, code:
+        /* JADX WARNING: Missing block: B:93:0x0246, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -208,6 +221,9 @@ public class HwNetworkPropertyChecker {
                     HwNetworkPropertyChecker.this.mRequestTimestamp = SystemClock.elapsedRealtime();
                     httpResponseCode = this.urlConnection.getResponseCode();
                     HwNetworkPropertyChecker.this.mResponseTimestamp = SystemClock.elapsedRealtime();
+                    if (httpResponseCode == 200) {
+                        HwNetworkPropertyChecker.this.mHttpRespConnection = this.urlConnection.getHeaderField("Connection");
+                    }
                     if ("http://connectivitycheck.platform.hicloud.com/generate_204".equals(this.mChckingServer) && httpResponseCode == 204) {
                         String requestId = this.urlConnection.getHeaderField("X-Hwcloud-ReqId");
                         if (requestId == null || requestId.length() != 32) {
@@ -247,11 +263,14 @@ public class HwNetworkPropertyChecker {
                     HwNetworkPropertyChecker.this.mIgnoreRxCounter = true;
                 }
                 if (!(httpResponseCode == 204 || msg == null)) {
-                    if (msg.contains("ECONNRESET") || msg.contains("Connection reset")) {
-                        httpResponseCode = WifiProCommonUtils.RESP_CODE_CONN_RESET;
-                    } else if (msg.contains("ECONNREFUSED") || msg.contains("unexpected end")) {
-                        httpResponseCode = WifiProCommonUtils.RESP_CODE_UNSTABLE;
+                    if (!msg.contains("ECONNRESET")) {
+                        if (!msg.contains("Connection reset")) {
+                            if (msg.contains("ECONNREFUSED") || msg.contains("unexpected end")) {
+                                httpResponseCode = WifiProCommonUtils.RESP_CODE_UNSTABLE;
+                            }
+                        }
                     }
+                    httpResponseCode = WifiProCommonUtils.RESP_CODE_CONN_RESET;
                 }
             } catch (SecurityException e2) {
                 HwNetworkPropertyChecker.this.LOGD("NetworkCheckerThread, SecurityException se");
@@ -414,6 +433,7 @@ public class HwNetworkPropertyChecker {
                             HwNetworkPropertyChecker.this.httpRespCodeRcvd = true;
                             HwNetworkPropertyChecker.this.mHttpRespWaitingLock.notifyAll();
                         }
+                        break;
                     case 102:
                         if (HwNetworkPropertyChecker.this.mHandler.hasMessages(101)) {
                             HwNetworkPropertyChecker.this.LOGD("MSG_HTTP_RESP_TIMEOUT msg removed because of disconnected.");
@@ -430,6 +450,7 @@ public class HwNetworkPropertyChecker {
                             HwNetworkPropertyChecker.this.httpRespCodeRcvd = true;
                             HwNetworkPropertyChecker.this.mHttpRespWaitingLock.notifyAll();
                         }
+                        break;
                     case 103:
                         if (HwNetworkPropertyChecker.this.mHandler.hasMessages(101)) {
                             HwNetworkPropertyChecker.this.LOGD("MSG_HTTP_RESP_TIMEOUT msg removed because of HTTP response received.");
@@ -439,6 +460,7 @@ public class HwNetworkPropertyChecker {
                             HwNetworkPropertyChecker.this.httpRespCodeRcvd = true;
                             HwNetworkPropertyChecker.this.mHttpRespWaitingLock.notifyAll();
                         }
+                        break;
                     case 104:
                         if (HwNetworkPropertyChecker.this.mHandler.hasMessages(101)) {
                             HwNetworkPropertyChecker.this.LOGD("MSG_HTTP_RESP_TIMEOUT msg removed because of DNS response received.");
@@ -449,6 +471,7 @@ public class HwNetworkPropertyChecker {
                             HwNetworkPropertyChecker.this.httpRespCodeRcvd = true;
                             HwNetworkPropertyChecker.this.mHttpRespWaitingLock.notifyAll();
                         }
+                        break;
                     case 105:
                         if (HwNetworkPropertyChecker.this.mHandler.hasMessages(105)) {
                             HwNetworkPropertyChecker.this.LOGD("MSG_HTML_DOWNLOADED_RCVD msg removed because of html downloaded.");
@@ -459,6 +482,7 @@ public class HwNetworkPropertyChecker {
                             HwNetworkPropertyChecker.this.htmlDownloaded = true;
                             HwNetworkPropertyChecker.this.mHtmlDownloadWaitingLock.notifyAll();
                         }
+                        break;
                 }
                 super.handleMessage(msg);
             }
@@ -800,6 +824,7 @@ public class HwNetworkPropertyChecker {
         this.mCheckingCounter++;
         if (!this.mNetworkDisconnected.get()) {
             this.mPortalDetectStatisticsInfo = null;
+            this.mHttpRespConnection = null;
             httpResponseCode = transformResponseCode(recomfirmByRxCounter(recomfirmResponseCode(this.mUsedServer, getHttpRespCode(reconfirm, this.mCheckingCounter, portalNetwork, wifiBackground), reconfirm), reconfirm));
             updateWifiConfigHistory(httpResponseCode, reconfirm);
         }
@@ -1056,8 +1081,9 @@ public class HwNetworkPropertyChecker {
             }
             return respCode;
         }
+        int httpRespCode;
         if (respCode == 204 && ((WifiProCommonUtils.isOpenAndPortal(this.mCurrentWifiConfig) || WifiProCommonUtils.isOpenAndMaybePortal(this.mCurrentWifiConfig)) && usedServer != null && usedServer.contains(HICLOUD_HOST_NAME))) {
-            int httpRespCode = syncCheckNetworkProperty(this.mBackupServer, false, reconfirm, respCode, this.mResponseTimestamp - this.mRequestTimestamp);
+            httpRespCode = syncCheckNetworkProperty(this.mBackupServer, false, reconfirm, respCode, this.mResponseTimestamp - this.mRequestTimestamp);
             if (WifiProCommonUtils.isRedirectedRespCode(httpRespCode) || (WifiProCommonUtils.httpReachableHome(httpRespCode) && OVERSEA_BACKUP_SERVER.equals(this.mBackupServer))) {
                 this.mUsedServer = this.mBackupServer;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -1068,10 +1094,61 @@ public class HwNetworkPropertyChecker {
                 return 302;
             }
         }
+        if (WifiProCommonUtils.httpReachableHome(respCode) && usedServer != null && usedServer.contains(HICLOUD_HOST_NAME)) {
+            httpRespCode = -1;
+            if ("close".equalsIgnoreCase(this.mHttpRespConnection)) {
+                httpRespCode = syncCheckNetworkProperty(usedServer, false, true, respCode, this.mResponseTimestamp - this.mRequestTimestamp);
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("recheck for the situation of respCode 200 + connection:close, the new respCode= ");
+                stringBuilder2.append(httpRespCode);
+                LOGD(stringBuilder2.toString());
+                if (httpRespCode == 204) {
+                    respCode = 204;
+                }
+            }
+            replacePortalChrStatistics(httpRespCode);
+        }
         if (WifiProCommonUtils.httpReachableOrRedirected(respCode) && isPortalSpecifiedServer(usedServer)) {
             return respCode;
         }
         return recheckForAbnormalRespCode(respCode, reconfirm);
+    }
+
+    private void replacePortalChrStatistics(int secondHttpCode) {
+        if (!TextUtils.isEmpty(this.mPortalDetectStatisticsInfo)) {
+            String firstConnect = this.mPortalDetectStatisticsInfo.substring(0, 1);
+            if (TextUtils.isDigitsOnly(firstConnect)) {
+                StringBuilder stringBuilder;
+                int firstConnectEx = Integer.valueOf(firstConnect).intValue();
+                if (secondHttpCode == -1) {
+                    if ("keep-alive".equalsIgnoreCase(this.mHttpRespConnection)) {
+                        firstConnectEx = firstConnectEx == 1 ? 41 : 40;
+                    } else if (this.mHttpRespConnection == null) {
+                        firstConnectEx = firstConnectEx == 1 ? 51 : 50;
+                    } else {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("replacePortalChrStatistics, HttpRespConnection others = ");
+                        stringBuilder.append(this.mHttpRespConnection);
+                        LOGW(stringBuilder.toString());
+                        firstConnectEx = firstConnectEx == 1 ? 61 : 60;
+                    }
+                } else if (secondHttpCode == 204) {
+                    firstConnectEx = firstConnectEx == 1 ? 31 : 30;
+                } else if (secondHttpCode == 200) {
+                    firstConnectEx = firstConnectEx == 1 ? 11 : 10;
+                } else {
+                    firstConnectEx = firstConnectEx == 1 ? 21 : 20;
+                }
+                stringBuilder = new StringBuilder();
+                stringBuilder.append(firstConnectEx);
+                stringBuilder.append(this.mPortalDetectStatisticsInfo.substring(1));
+                this.mPortalDetectStatisticsInfo = stringBuilder.toString();
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("replacePortalChrStatistics, mPortalDetectStatisticsInfo = ");
+                stringBuilder2.append(this.mPortalDetectStatisticsInfo);
+                LOGW(stringBuilder2.toString());
+            }
+        }
     }
 
     private int recheckForAbnormalRespCode(int respCode, boolean reconfirm) {
@@ -1314,7 +1391,7 @@ public class HwNetworkPropertyChecker {
                 stringBuilder2.append(internetHistory);
                 internetHistory = stringBuilder2.toString();
                 this.mCurrentWifiConfig.noInternetAccess = false;
-                this.mCurrentWifiConfig.validatedInternetAccess = this.mCurrentWifiConfig.noInternetAccess ^ true;
+                this.mCurrentWifiConfig.validatedInternetAccess = this.mCurrentWifiConfig.noInternetAccess ^ 1;
                 if (newStatus == 1) {
                     this.mCurrentWifiConfig.numNoInternetAccessReports = 0;
                     this.mCurrentWifiConfig.lastHasInternetTimestamp = System.currentTimeMillis();
@@ -1359,7 +1436,8 @@ public class HwNetworkPropertyChecker {
             boolean mainServer = str.contains(SERVER_HICLOUD);
             if (!mainServer || this.mCheckingCounter >= this.mMaxAttempts || !WifiProCommonUtils.unreachableRespCode(currHttpCode)) {
                 boolean firstConnected = WifiProCommonUtils.matchedRequestByHistory(wifiConfiguration.internetHistory, 103);
-                if (firstConnected || wifiConfiguration.portalNetwork) {
+                boolean currentPortalCode = WifiProCommonUtils.isRedirectedRespCodeByGoogle(currHttpCode);
+                if (firstConnected || wifiConfiguration.portalNetwork || currentPortalCode) {
                     long currDetectMs2;
                     if (currDetectMs <= 0) {
                         currDetectMs2 = -1;
@@ -1386,7 +1464,8 @@ public class HwNetworkPropertyChecker {
                     stringBuilder.append("|");
                     stringBuilder.append(mainDetectMs);
                     stringBuilder.append("|");
-                    stringBuilder.append(backupDetectMs);
+                    long backupDetectMs2 = backupDetectMs;
+                    stringBuilder.append(backupDetectMs2);
                     this.mPortalDetectStatisticsInfo = stringBuilder.toString();
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("updatePortalDetectionStatistics, portalDetectStatisticsInfo = ");
@@ -1437,19 +1516,19 @@ public class HwNetworkPropertyChecker {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x005f, code:
+    /* JADX WARNING: Missing block: B:23:0x005f, code skipped:
             if (r1 == null) goto L_0x0091;
      */
-    /* JADX WARNING: Missing block: B:24:0x0061, code:
+    /* JADX WARNING: Missing block: B:24:0x0061, code skipped:
             r1.disconnect();
      */
-    /* JADX WARNING: Missing block: B:34:0x0079, code:
+    /* JADX WARNING: Missing block: B:34:0x0079, code skipped:
             if (r1 == null) goto L_0x0091;
      */
-    /* JADX WARNING: Missing block: B:43:0x008e, code:
+    /* JADX WARNING: Missing block: B:43:0x008e, code skipped:
             if (r1 == null) goto L_0x0091;
      */
-    /* JADX WARNING: Missing block: B:44:0x0091, code:
+    /* JADX WARNING: Missing block: B:44:0x0091, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

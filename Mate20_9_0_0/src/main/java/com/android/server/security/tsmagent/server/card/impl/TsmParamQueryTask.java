@@ -119,13 +119,14 @@ public class TsmParamQueryTask extends HttpConnTask {
             try {
                 String funcID = JSONHelper.getStringValue(dataObject, "funcID");
                 String servicID = JSONHelper.getStringValue(dataObject, "servicID");
-                if (StringUtil.isTrimedEmpty(funcID) || StringUtil.isTrimedEmpty(servicID)) {
-                    HwLog.d("readSuccessResponse, illegal funcID or servicID");
-                    response.returnCode = -99;
-                } else {
-                    response.funcID = funcID;
-                    response.servicID = servicID;
+                if (!StringUtil.isTrimedEmpty(funcID)) {
+                    if (!StringUtil.isTrimedEmpty(servicID)) {
+                        response.funcID = funcID;
+                        response.servicID = servicID;
+                    }
                 }
+                HwLog.d("readSuccessResponse, illegal funcID or servicID");
+                response.returnCode = -99;
             } catch (JSONException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("readSuccessResponse, JSONException : ");

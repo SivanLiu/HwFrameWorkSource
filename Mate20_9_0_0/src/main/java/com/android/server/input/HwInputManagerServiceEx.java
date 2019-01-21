@@ -217,23 +217,23 @@ public final class HwInputManagerServiceEx implements IHwInputManagerServiceEx {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x002a, code:
+    /* JADX WARNING: Missing block: B:18:0x002a, code skipped:
             android.util.Slog.i(TAG, "Successfully connect to TP service!");
             r1 = r5.mClients;
      */
-    /* JADX WARNING: Missing block: B:19:0x0033, code:
+    /* JADX WARNING: Missing block: B:19:0x0033, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:22:0x003b, code:
+    /* JADX WARNING: Missing block: B:22:0x003b, code skipped:
             if (r5.mClients.size() < 1) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:23:0x003d, code:
+    /* JADX WARNING: Missing block: B:23:0x003d, code skipped:
             setTHPCallback(r5.mTHPCallback);
      */
-    /* JADX WARNING: Missing block: B:24:0x0042, code:
+    /* JADX WARNING: Missing block: B:24:0x0042, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:25:0x0043, code:
+    /* JADX WARNING: Missing block: B:25:0x0043, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -435,8 +435,8 @@ public final class HwInputManagerServiceEx implements IHwInputManagerServiceEx {
                 TextView textView = (TextView) view.findViewById(34603232);
                 if (imageView != null && textView != null) {
                     imageView.setImageResource(33751966);
-                    textView.setText(context.getResources().getString(33686118));
-                    this.mAlterSoftInputDialog = buider.setTitle(33686120).setPositiveButton(33686119, -$$Lambda$HwInputManagerServiceEx$3Xt6EEjK_GXDs03-sW6_dm0X4uo.INSTANCE).setView(view).create();
+                    textView.setText(context.getResources().getString(33686120));
+                    this.mAlterSoftInputDialog = buider.setTitle(33686122).setPositiveButton(33686121, -$$Lambda$HwInputManagerServiceEx$3Xt6EEjK_GXDs03-sW6_dm0X4uo.INSTANCE).setView(view).create();
                     this.mAlterSoftInputDialog.getWindow().setType(HwArbitrationDEFS.MSG_MPLINK_BIND_FAIL);
                     this.mAlterSoftInputDialog.show();
                 }

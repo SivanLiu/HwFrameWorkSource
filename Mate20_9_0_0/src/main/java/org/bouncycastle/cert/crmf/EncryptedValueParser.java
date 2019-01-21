@@ -1,6 +1,7 @@
 package org.bouncycastle.cert.crmf;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import org.bouncycastle.asn1.crmf.EncryptedValue;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -27,7 +28,7 @@ public class EncryptedValueParser {
             try {
                 byte[] readAll = Streams.readAll(valueDecryptorGenerator.getValueDecryptor(this.value.getKeyAlg(), this.value.getSymmAlg(), this.value.getEncSymmKey().getBytes()).getInputStream(new ByteArrayInputStream(this.value.getEncValue().getBytes())));
                 return this.padder != null ? this.padder.getUnpaddedData(readAll) : readAll;
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Cannot parse decrypted data: ");
                 stringBuilder.append(e.getMessage());

@@ -8,7 +8,6 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.cert.X509ExtensionUtils;
-import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
@@ -30,7 +29,7 @@ public class BcX509ExtensionUtils extends X509ExtensionUtils {
         public byte[] getDigest() {
             byte[] toByteArray = this.bOut.toByteArray();
             this.bOut.reset();
-            Digest sHA1Digest = new SHA1Digest();
+            SHA1Digest sHA1Digest = new SHA1Digest();
             sHA1Digest.update(toByteArray, 0, toByteArray.length);
             toByteArray = new byte[sHA1Digest.getDigestSize()];
             sHA1Digest.doFinal(toByteArray, 0);

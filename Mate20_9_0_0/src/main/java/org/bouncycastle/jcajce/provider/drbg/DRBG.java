@@ -164,7 +164,7 @@ public class DRBG {
             EntropySource entropySource = createEntropySource.get(128);
             return new SP800SecureRandomBuilder(createEntropySource).setPersonalizationString(z ? generateDefaultPersonalizationString(entropySource.getEntropy()) : generateNonceIVPersonalizationString(entropySource.getEntropy())).buildHash(new SHA512Digest(), Arrays.concatenate(entropySource.getEntropy(), entropySource.getEntropy()), z);
         }
-        SecureRandom hybridSecureRandom = new HybridSecureRandom();
+        HybridSecureRandom hybridSecureRandom = new HybridSecureRandom();
         return new SP800SecureRandomBuilder(hybridSecureRandom, true).setPersonalizationString(z ? generateDefaultPersonalizationString(hybridSecureRandom.generateSeed(16)) : generateNonceIVPersonalizationString(hybridSecureRandom.generateSeed(16))).buildHash(new SHA512Digest(), hybridSecureRandom.generateSeed(32), z);
     }
 
@@ -178,7 +178,7 @@ public class DRBG {
             public EntropySourceProvider run() {
                 try {
                     return (EntropySourceProvider) ClassUtil.loadClass(DRBG.class, property).newInstance();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("entropy source ");
                     stringBuilder.append(property);

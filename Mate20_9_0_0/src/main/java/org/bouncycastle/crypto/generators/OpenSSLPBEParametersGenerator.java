@@ -11,22 +11,22 @@ public class OpenSSLPBEParametersGenerator extends PBEParametersGenerator {
     private Digest digest = DigestFactory.createMD5();
 
     private byte[] generateDerivedKey(int i) {
-        Object obj = new byte[this.digest.getDigestSize()];
-        Object obj2 = new byte[i];
+        byte[] bArr = new byte[this.digest.getDigestSize()];
+        byte[] bArr2 = new byte[i];
         int i2 = 0;
         while (true) {
             this.digest.update(this.password, 0, this.password.length);
             this.digest.update(this.salt, 0, this.salt.length);
-            this.digest.doFinal(obj, 0);
-            int length = i > obj.length ? obj.length : i;
-            System.arraycopy(obj, 0, obj2, i2, length);
+            this.digest.doFinal(bArr, 0);
+            int length = i > bArr.length ? bArr.length : i;
+            System.arraycopy(bArr, 0, bArr2, i2, length);
             i2 += length;
             i -= length;
             if (i == 0) {
-                return obj2;
+                return bArr2;
             }
             this.digest.reset();
-            this.digest.update(obj, 0, obj.length);
+            this.digest.update(bArr, 0, bArr.length);
         }
     }
 

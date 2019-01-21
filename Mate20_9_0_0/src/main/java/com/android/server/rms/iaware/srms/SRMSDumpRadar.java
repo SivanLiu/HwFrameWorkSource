@@ -379,8 +379,15 @@ public class SRMSDumpRadar {
     public ArrayList<StatisticsData> getStatisticsData() {
         ArrayList<StatisticsData> dataList = new ArrayList();
         synchronized (this.mStatisticsData) {
-            for (int i = 0; i <= 1; i++) {
-                dataList.add(new StatisticsData(RESOURCE_FEATURE_ID, 2, mSubTypeList[i], ((StatisticsData) this.mStatisticsData.get(i)).getOccurCount(), 0, 0, ((StatisticsData) this.mStatisticsData.get(i)).getStartTime(), System.currentTimeMillis()));
+            int i = 0;
+            while (i <= 1) {
+                try {
+                    dataList.add(new StatisticsData(RESOURCE_FEATURE_ID, 2, mSubTypeList[i], ((StatisticsData) this.mStatisticsData.get(i)).getOccurCount(), 0, 0, ((StatisticsData) this.mStatisticsData.get(i)).getStartTime(), System.currentTimeMillis()));
+                    i++;
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             resetStatisticsData();
         }
@@ -403,11 +410,16 @@ public class SRMSDumpRadar {
 
     private void resetStatisticsData() {
         synchronized (this.mStatisticsData) {
-            for (int i = 0; i <= 1; i++) {
-                ((StatisticsData) this.mStatisticsData.get(i)).setSubType(mSubTypeList[i]);
-                ((StatisticsData) this.mStatisticsData.get(i)).setOccurCount(0);
-                ((StatisticsData) this.mStatisticsData.get(i)).setStartTime(System.currentTimeMillis());
-                ((StatisticsData) this.mStatisticsData.get(i)).setEndTime(0);
+            int i = 0;
+            while (i <= 1) {
+                try {
+                    ((StatisticsData) this.mStatisticsData.get(i)).setSubType(mSubTypeList[i]);
+                    ((StatisticsData) this.mStatisticsData.get(i)).setOccurCount(0);
+                    ((StatisticsData) this.mStatisticsData.get(i)).setStartTime(System.currentTimeMillis());
+                    ((StatisticsData) this.mStatisticsData.get(i)).setEndTime(0);
+                    i++;
+                } catch (Throwable th) {
+                }
             }
         }
     }

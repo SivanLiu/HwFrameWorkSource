@@ -32,10 +32,15 @@ public class EthernetConfigStore {
     public void write(String iface, IpConfiguration config) {
         synchronized (this.mSync) {
             boolean modified = true;
-            if (config != null) {
+            if (config == null) {
+                try {
+                    if (this.mIpConfigurations.remove(iface) == null) {
+                        modified = false;
+                    }
+                } finally {
+                }
+            } else {
                 modified = true ^ config.equals((IpConfiguration) this.mIpConfigurations.put(iface, config));
-            } else if (this.mIpConfigurations.remove(iface) == null) {
-                modified = false;
             }
             if (modified) {
                 this.mStore.writeIpConfigurations(ipConfigFile, this.mIpConfigurations);
@@ -44,7 +49,7 @@ public class EthernetConfigStore {
     }
 
     public ArrayMap<String, IpConfiguration> getIpConfigurations() {
-        ArrayMap<String, IpConfiguration> arrayMap;
+        ArrayMap arrayMap;
         synchronized (this.mSync) {
             arrayMap = new ArrayMap(this.mIpConfigurations);
         }

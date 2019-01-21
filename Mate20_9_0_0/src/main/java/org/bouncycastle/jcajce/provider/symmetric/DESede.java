@@ -13,7 +13,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.engines.DESedeWrapEngine;
@@ -79,7 +78,7 @@ public final class DESede {
             if (this.keySizeSet) {
                 return new SecretKeySpec(this.engine.generateKey(), this.algName);
             }
-            Object generateKey = this.engine.generateKey();
+            byte[] generateKey = this.engine.generateKey();
             System.arraycopy(generateKey, 0, generateKey, 16, 8);
             return new SecretKeySpec(generateKey, this.algName);
         }
@@ -291,15 +290,15 @@ public final class DESede {
                 return new SecretKeySpec(secretKey.getEncoded(), this.algName);
             } else {
                 if (DESedeKeySpec.class.isAssignableFrom(cls)) {
-                    Object encoded = secretKey.getEncoded();
+                    byte[] encoded = secretKey.getEncoded();
                     try {
                         if (encoded.length != 16) {
                             return new DESedeKeySpec(encoded);
                         }
-                        Object obj = new byte[24];
-                        System.arraycopy(encoded, 0, obj, 0, 16);
-                        System.arraycopy(encoded, 0, obj, 16, 8);
-                        return new DESedeKeySpec(obj);
+                        byte[] bArr = new byte[24];
+                        System.arraycopy(encoded, 0, bArr, 0, 16);
+                        System.arraycopy(encoded, 0, bArr, 16, 8);
+                        return new DESedeKeySpec(bArr);
                     } catch (Exception e) {
                         throw new InvalidKeySpecException(e.toString());
                     }
@@ -335,7 +334,7 @@ public final class DESede {
 
     public static class PBEWithSHAAndDES2Key extends BaseBlockCipher {
         public PBEWithSHAAndDES2Key() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
             super(cBCBlockCipher, 2, 1, 128, 8);
         }
     }
@@ -348,7 +347,7 @@ public final class DESede {
 
     public static class PBEWithSHAAndDES3Key extends BaseBlockCipher {
         public PBEWithSHAAndDES3Key() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
             super(cBCBlockCipher, 2, 1, 192, 8);
         }
     }

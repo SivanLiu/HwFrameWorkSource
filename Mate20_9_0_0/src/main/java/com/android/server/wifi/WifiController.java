@@ -252,10 +252,10 @@ class WifiController extends AbsWifiController {
             this.mEcmEntryCount = 1;
         }
 
-        /* JADX WARNING: Missing block: B:36:0x0089, code:
+        /* JADX WARNING: Missing block: B:36:0x0089, code skipped:
             return true;
      */
-        /* JADX WARNING: Missing block: B:37:0x008a, code:
+        /* JADX WARNING: Missing block: B:37:0x008a, code skipped:
             return true;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -366,7 +366,7 @@ class WifiController extends AbsWifiController {
                         if (this.mHaveDeferredEnable) {
                             this.mDeferredEnableSerialNumber++;
                         }
-                        this.mHaveDeferredEnable ^= true;
+                        this.mHaveDeferredEnable ^= 1;
                         break;
                     }
                 case WifiController.CMD_SET_AP /*155658*/:
@@ -473,7 +473,7 @@ class WifiController extends AbsWifiController {
                         if (this.mHaveDeferredEnable) {
                             this.mDeferredEnableSerialNumber++;
                         }
-                        this.mHaveDeferredEnable ^= true;
+                        this.mHaveDeferredEnable ^= 1;
                         break;
                     }
                     break;
@@ -591,15 +591,11 @@ class WifiController extends AbsWifiController {
                 case WifiController.CMD_AP_STOPPED /*155663*/:
                     break;
                 case WifiController.CMD_STA_START_FAILURE /*155664*/:
-                    WifiController.this.mSettingsStore.handleWifiToggled(false);
-                    if (!WifiController.this.mSettingsStore.isWifiToggleEnabled()) {
-                        if (!WifiController.this.checkScanOnlyModeAvailable()) {
-                            WifiController.this.transitionTo(WifiController.this.mStaDisabledState);
-                            break;
-                        }
-                        WifiController.this.transitionTo(WifiController.this.mStaDisabledWithScanState);
+                    if (!WifiController.this.checkScanOnlyModeAvailable()) {
+                        WifiController.this.transitionTo(WifiController.this.mStaDisabledState);
                         break;
                     }
+                    WifiController.this.transitionTo(WifiController.this.mStaDisabledWithScanState);
                     break;
                 case WifiController.CMD_STA_STOPPED /*155668*/:
                     WifiController.this.transitionTo(WifiController.this.mStaDisabledState);

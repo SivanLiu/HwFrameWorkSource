@@ -393,14 +393,18 @@ public class AESEngine implements BlockCipher {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0020 in {4, 6, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
+        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
+        	at java.lang.Iterable.forEach(Iterable.java:75)
+        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
+        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
         	at jadx.api.JavaClass.decompile(JavaClass.java:62)
         	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
@@ -410,24 +414,19 @@ public class AESEngine implements BlockCipher {
         r2 = this;
         r0 = r4 instanceof org.bouncycastle.crypto.params.KeyParameter;
         if (r0 == 0) goto L_0x0021;
-    L_0x0004:
         r4 = (org.bouncycastle.crypto.params.KeyParameter) r4;
         r4 = r4.getKey();
         r4 = r2.generateWorkingKey(r4, r3);
         r2.WorkingKey = r4;
         r2.forEncryption = r3;
         if (r3 == 0) goto L_0x001d;
-    L_0x0014:
         r3 = S;
-    L_0x0016:
         r3 = org.bouncycastle.util.Arrays.clone(r3);
         r2.s = r3;
         return;
-    L_0x001d:
         r3 = Si;
         goto L_0x0016;
         return;
-    L_0x0021:
         r3 = new java.lang.IllegalArgumentException;
         r0 = new java.lang.StringBuilder;
         r0.<init>();

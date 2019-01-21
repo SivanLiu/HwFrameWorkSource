@@ -65,12 +65,12 @@ public class Extension extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0047 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -90,21 +90,17 @@ public class Extension extends ASN1Object {
         r2 = 2;
         r3 = 0;
         if (r0 != r2) goto L_0x0023;
-    L_0x000c:
         r0 = r6.getObjectAt(r3);
         r0 = org.bouncycastle.asn1.ASN1ObjectIdentifier.getInstance(r0);
         r5.extnId = r0;
         r5.critical = r3;
         r6 = r6.getObjectAt(r1);
-    L_0x001c:
         r6 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r6);
         r5.value = r6;
         return;
-    L_0x0023:
         r0 = r6.size();
         r4 = 3;
         if (r0 != r4) goto L_0x0048;
-    L_0x002a:
         r0 = r6.getObjectAt(r3);
         r0 = org.bouncycastle.asn1.ASN1ObjectIdentifier.getInstance(r0);
         r5.extnId = r0;
@@ -115,7 +111,6 @@ public class Extension extends ASN1Object {
         r6 = r6.getObjectAt(r2);
         goto L_0x001c;
         return;
-    L_0x0048:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();

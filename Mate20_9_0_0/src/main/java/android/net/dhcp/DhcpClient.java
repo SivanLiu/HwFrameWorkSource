@@ -14,6 +14,7 @@ import android.net.util.InterfaceParams;
 import android.net.util.NetworkConstants;
 import android.os.Message;
 import android.os.SystemClock;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.PacketSocketAddress;
@@ -31,6 +32,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Random;
@@ -227,25 +229,17 @@ public class DhcpClient extends AbsDhcpClient {
             DhcpClient.this.closeSockets();
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:13:0x007e A:{Splitter: B:4:0x000d, ExcHandler: java.io.IOException (r0_7 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:13:0x007e, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:15:0x0081, code:
-            if (r9.mStopped == false) goto L_0x0083;
-     */
-        /* JADX WARNING: Missing block: B:16:0x0083, code:
-            android.util.Log.e(android.net.dhcp.DhcpClient.TAG, "Read error", r0);
-            android.net.dhcp.DhcpClient.access$200(r9.this$0, android.net.metrics.DhcpErrorEvent.RECEIVE_ERROR);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             Log.d(DhcpClient.TAG, "Receive thread started");
             while (!this.mStopped) {
                 int length = 0;
                 try {
                     DhcpClient.this.sendMessage(DhcpClient.CMD_RECEIVED_PACKET, DhcpPacket.decodeFullPacket(this.mPacket, Os.read(DhcpClient.this.mPacketSock, this.mPacket, 0, this.mPacket.length), 0));
-                } catch (Exception e) {
+                } catch (ErrnoException | IOException e) {
+                    if (!this.mStopped) {
+                        Log.e(DhcpClient.TAG, "Read error", e);
+                        DhcpClient.this.logError(DhcpErrorEvent.RECEIVE_ERROR);
+                    }
                 } catch (ParseException e2) {
                     String str = DhcpClient.TAG;
                     StringBuilder stringBuilder = new StringBuilder();
@@ -980,35 +974,18 @@ public class DhcpClient extends AbsDhcpClient {
         return initPacketSocket() && initUdpSocket();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0025 A:{Splitter: B:0:0x0000, ExcHandler: java.net.SocketException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0025, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0026, code:
-            android.util.Log.e(TAG, "Error creating packet socket", r0);
-     */
-    /* JADX WARNING: Missing block: B:6:0x002e, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean initPacketSocket() {
         try {
             this.mPacketSock = Os.socket(OsConstants.AF_PACKET, OsConstants.SOCK_RAW, OsConstants.ETH_P_IP);
             Os.bind(this.mPacketSock, new PacketSocketAddress((short) OsConstants.ETH_P_IP, this.mIface.index));
             NetworkUtils.attachDhcpFilter(this.mPacketSock);
             return true;
-        } catch (Exception e) {
+        } catch (ErrnoException | SocketException e) {
+            Log.e(TAG, "Error creating packet socket", e);
+            return false;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x004f A:{Splitter: B:1:0x0007, ExcHandler: java.net.SocketException (r2_8 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:5:0x004f, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:7:?, code:
-            android.util.Log.e(TAG, "Error creating UDP socket", r2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean initUdpSocket() {
         int oldTag = TrafficStats.getAndSetThreadStatsTag(-192);
         try {
@@ -1021,29 +998,21 @@ public class DhcpClient extends AbsDhcpClient {
             Os.bind(this.mUdpSock, Inet4Address.ANY, 68);
             NetworkUtils.protectFromVpn(this.mUdpSock);
             return z;
-        } catch (Exception e) {
+        } catch (ErrnoException | SocketException e) {
+            Log.e(TAG, "Error creating UDP socket", e);
+            return false;
         } finally {
             TrafficStats.setThreadStatsTag(oldTag);
         }
-        return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0009 A:{Splitter: B:0:0x0000, ExcHandler: java.net.SocketException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0009, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000a, code:
-            android.util.Log.e(TAG, "Error connecting UDP socket", r0);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0012, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean connectUdpSock(Inet4Address to) {
         try {
             Os.connect(this.mUdpSock, to, 67);
             return true;
-        } catch (Exception e) {
+        } catch (ErrnoException | SocketException e) {
+            Log.e(TAG, "Error connecting UDP socket", e);
+            return false;
         }
     }
 
@@ -1063,17 +1032,6 @@ public class DhcpClient extends AbsDhcpClient {
         return (short) ((int) ((SystemClock.elapsedRealtime() - this.mTransactionStartMillis) / 1000));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x002c A:{Catch:{ ErrnoException -> 0x002c, ErrnoException -> 0x002c }, Splitter: B:2:0x0004, ExcHandler: android.system.ErrnoException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x002c, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0075, code:
-            android.util.Log.e(TAG, "Can't send packet: ", r0);
-     */
-    /* JADX WARNING: Missing block: B:13:0x007d, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean transmitPacket(ByteBuffer buf, String description, int encap, Inet4Address to) {
         String str;
         StringBuilder stringBuilder;
@@ -1085,7 +1043,9 @@ public class DhcpClient extends AbsDhcpClient {
                 stringBuilder.append(description);
                 Log.d(str, stringBuilder.toString());
                 Os.sendto(this.mPacketSock, buf.array(), 0, buf.limit(), 0, this.mInterfaceBroadcastAddr);
-            } catch (Exception e) {
+            } catch (ErrnoException | IOException e) {
+                Log.e(TAG, "Can't send packet: ", e);
+                return false;
             }
         } else if (encap == 2 && to.equals(DhcpPacket.INADDR_BROADCAST)) {
             str = TAG;

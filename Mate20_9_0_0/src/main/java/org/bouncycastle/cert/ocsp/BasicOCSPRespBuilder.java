@@ -101,7 +101,7 @@ public class BasicOCSPRespBuilder {
         for (ResponseObject toResponse : this.list) {
             try {
                 aSN1EncodableVector.add(toResponse.toResponse());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new OCSPException("exception creating Request", e);
             }
         }
@@ -123,7 +123,7 @@ public class BasicOCSPRespBuilder {
                 aSN1Sequence = new DERSequence(aSN1EncodableVector);
             }
             return new BasicOCSPResp(new BasicOCSPResponse(responseData, algorithmIdentifier, dERBitString, aSN1Sequence));
-        } catch (Throwable e2) {
+        } catch (Exception e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception processing TBSRequest: ");
             stringBuilder.append(e2.getMessage());

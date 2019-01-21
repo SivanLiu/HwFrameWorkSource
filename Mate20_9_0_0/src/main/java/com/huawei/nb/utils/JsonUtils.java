@@ -43,9 +43,7 @@ public class JsonUtils {
         try {
             new JsonParser().parse(content).getAsJsonObject();
             return true;
-        } catch (JsonSyntaxException e) {
-            return false;
-        } catch (IllegalStateException e2) {
+        } catch (JsonSyntaxException | IllegalStateException e) {
             return false;
         }
     }
@@ -60,9 +58,7 @@ public class JsonUtils {
                 return true;
             }
             return false;
-        } catch (JsonSyntaxException e) {
-            return false;
-        } catch (IllegalStateException e2) {
+        } catch (JsonSyntaxException | IllegalStateException e) {
             return false;
         }
     }

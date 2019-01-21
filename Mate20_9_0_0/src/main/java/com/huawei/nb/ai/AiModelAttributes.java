@@ -12,7 +12,7 @@ public class AiModelAttributes {
     private static volatile List<String> encryptedAttributes = null;
 
     public static List<String> getEncryptedAttributes() {
-        List<String> list;
+        List list;
         synchronized (AiModelAttributes.class) {
             if (encryptedAttributes == null) {
                 encryptedAttributes = new ArrayList();

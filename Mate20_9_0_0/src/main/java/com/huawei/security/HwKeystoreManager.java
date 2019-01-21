@@ -125,17 +125,19 @@ public class HwKeystoreManager {
             Log.e(TAG, "contains key is null");
             return false;
         }
-        HwExportResult result = null;
-        if (key.contains(HwCredentials.USER_PRIVATE_KEY)) {
-            result = exportKey(key, 0, null, null, uid);
-        } else if (key.contains(HwCredentials.CERTIFICATE_CHAIN)) {
-            result = get(key, uid);
+        try {
+            if (this.mBinder.contains(key) == 1) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("contains return true, uid:");
+                stringBuilder.append(uid);
+                Log.i(str, stringBuilder.toString());
+                return true;
+            }
+        } catch (RemoteException e) {
+            Log.w(TAG, "Cannot connect to HwKeystoreManager", e);
         }
-        if (result == null || result.resultCode != 1) {
-            return false;
-        }
-        Log.i(TAG, "contains return true");
-        return true;
+        return false;
     }
 
     public boolean contains(String key) {

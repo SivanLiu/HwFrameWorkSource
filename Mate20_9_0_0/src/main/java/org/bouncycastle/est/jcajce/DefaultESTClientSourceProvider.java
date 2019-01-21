@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -42,7 +41,7 @@ class DefaultESTClientSourceProvider implements ESTClientSourceProvider {
                 for (int i2 = 0; i2 != supportedCipherSuites.length; i2++) {
                     hashSet.add(supportedCipherSuites[i2]);
                 }
-                List arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 for (String str2 : this.cipherSuites) {
                     if (hashSet.contains(str2)) {
                         arrayList.add(str2);

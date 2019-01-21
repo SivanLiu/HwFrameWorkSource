@@ -20,7 +20,7 @@ public class ANQPData {
         if (anqpElements != null) {
             this.mANQPElements.putAll(anqpElements);
         }
-        this.mExpiryTime = this.mClock.getElapsedSinceBootMillis() + 3600000;
+        this.mExpiryTime = this.mClock.getElapsedSinceBootMillis() + DATA_LIFETIME_MILLISECONDS;
     }
 
     public Map<ANQPElementType, ANQPElement> getElements() {

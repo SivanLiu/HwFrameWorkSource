@@ -134,7 +134,10 @@ public final class RestrictionsManagerService extends SystemService {
         private void enforceCallerMatchesPackage(int callingUid, String packageName, String message) {
             try {
                 String[] pkgs = AppGlobals.getPackageManager().getPackagesForUid(callingUid);
-                if (pkgs != null && !ArrayUtils.contains(pkgs, packageName)) {
+                if (pkgs == null) {
+                    return;
+                }
+                if (!ArrayUtils.contains(pkgs, packageName)) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append(message);
                     stringBuilder.append(callingUid);

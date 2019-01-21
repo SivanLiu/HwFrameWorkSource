@@ -298,7 +298,7 @@ public class SystemWideActionsListener implements PointerEventListener, OnGestur
         this.vibrator = (Vibrator) context.getSystemService("vibrator");
         this.mScreenshotHelper = new ScreenshotHelper(context);
         this.mWindowManagerInternal = (WindowManagerInternal) LocalServices.getService(WindowManagerInternal.class);
-        this.mHasNotchInScreen = true ^ TextUtils.isEmpty(mNotchProp);
+        this.mHasNotchInScreen = 1 ^ TextUtils.isEmpty(mNotchProp);
         this.mHwGameObserver = new HwGameObserver(this, null);
         ActivityManagerEx.registerGameObserver(this.mHwGameObserver);
     }
@@ -511,20 +511,22 @@ public class SystemWideActionsListener implements PointerEventListener, OnGestur
     private String getCurrentPackageName(Context context1) {
         try {
             List<RunningTaskInfo> runningTaskInfos = ((ActivityManager) context1.getSystemService("activity")).getRunningTasks(1);
-            if (runningTaskInfos == null || runningTaskInfos.isEmpty()) {
-                Log.e(TAG, "running task is null");
-                return "";
+            if (runningTaskInfos != null) {
+                if (!runningTaskInfos.isEmpty()) {
+                    RunningTaskInfo runningTaskInfo = (RunningTaskInfo) runningTaskInfos.get(0);
+                    if (runningTaskInfo == null) {
+                        Log.e(TAG, "failed to get runningTaskInfo");
+                        return "";
+                    }
+                    String packageName = runningTaskInfo.topActivity.getPackageName();
+                    if (TextUtils.isEmpty(packageName)) {
+                        return "";
+                    }
+                    return packageName;
+                }
             }
-            RunningTaskInfo runningTaskInfo = (RunningTaskInfo) runningTaskInfos.get(0);
-            if (runningTaskInfo == null) {
-                Log.e(TAG, "failed to get runningTaskInfo");
-                return "";
-            }
-            String packageName = runningTaskInfo.topActivity.getPackageName();
-            if (TextUtils.isEmpty(packageName)) {
-                return "";
-            }
-            return packageName;
+            Log.e(TAG, "running task is null");
+            return "";
         } catch (Exception e) {
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();

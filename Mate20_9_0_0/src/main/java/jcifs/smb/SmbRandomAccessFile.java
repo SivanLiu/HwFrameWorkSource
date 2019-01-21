@@ -2,6 +2,7 @@ package jcifs.smb;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import jcifs.netbios.NbtException;
@@ -275,7 +276,7 @@ public class SmbRandomAccessFile implements DataOutput, DataInput {
         read(b, 0, size);
         try {
             return Encdec.dec_utf8(b, 0, size);
-        } catch (Throwable ioe) {
+        } catch (IOException ioe) {
             throw new SmbException("", ioe);
         }
     }
@@ -361,7 +362,7 @@ public class SmbRandomAccessFile implements DataOutput, DataInput {
         try {
             Encdec.enc_utf8(str, dst, 0, size);
             write(dst, 0, size);
-        } catch (Throwable ioe) {
+        } catch (IOException ioe) {
             throw new SmbException("", ioe);
         }
     }

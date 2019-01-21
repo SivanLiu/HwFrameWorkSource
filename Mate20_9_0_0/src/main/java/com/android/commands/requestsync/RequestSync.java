@@ -94,22 +94,22 @@ public class RequestSync {
         this.mOperation = Operation.REQUEST_SYNC;
         if (this.mArgs.length > 0) {
             str = this.mArgs[0];
-            boolean z = true;
+            int i = -1;
             int hashCode = str.hashCode();
             if (hashCode != -1439021497) {
                 if (hashCode == 810481092 && str.equals("remove-periodic")) {
-                    z = true;
+                    i = 1;
                 }
             } else if (str.equals("add-periodic")) {
-                z = false;
+                i = 0;
             }
-            switch (z) {
-                case false:
+            switch (i) {
+                case 0:
                     this.mNextArg++;
                     this.mOperation = Operation.ADD_PERIODIC_SYNC;
                     this.mPeriodicIntervalSeconds = Integer.parseInt(nextArgRequired());
                     break;
-                case true:
+                case 1:
                     this.mNextArg++;
                     this.mOperation = Operation.REMOVE_PERIODIC_SYNC;
                     break;

@@ -2,8 +2,8 @@ package org.bouncycastle.tsp.cms;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERIA5String;
@@ -23,11 +23,11 @@ public class CMSTimeStampedDataGenerator extends CMSTimeStampedGenerator {
     }
 
     public CMSTimeStampedData generate(TimeStampToken timeStampToken, InputStream inputStream) throws CMSException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         if (inputStream != null) {
             try {
                 Streams.pipeAll(inputStream, byteArrayOutputStream);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception encapsulating content: ");
                 stringBuilder.append(e.getMessage());

@@ -437,7 +437,7 @@ public class FingerViewController {
                 } else {
                     FingerViewController.this.updateHintView(FingerViewController.this.mContext.getString(33686067));
                 }
-                FingerViewController.this.mFingerprintView.setContentDescription(FingerViewController.this.mContext.getString(33686191));
+                FingerViewController.this.mFingerprintView.setContentDescription(FingerViewController.this.mContext.getString(33686194));
             } else if (FingerViewController.this.mBackFingerprintView != null && FingerViewController.this.mBackFingerprintView.isAttachedToWindow()) {
                 FingerViewController.this.updateBackFingerprintHintView(FingerViewController.this.mSubTitle);
             }
@@ -796,16 +796,16 @@ public class FingerViewController {
 
     private void initFingerPrintViewSubContentDes() {
         if (this.mFingerprintView != null) {
-            this.mFingerprintView.setContentDescription(this.mContext.getString(33686191));
+            this.mFingerprintView.setContentDescription(this.mContext.getString(33686194));
         }
         if (this.mCancelView != null) {
-            this.mCancelView.setContentDescription(this.mContext.getString(33686192));
+            this.mCancelView.setContentDescription(this.mContext.getString(33686195));
         }
     }
 
     private void initAddButtonViwSubContentDes() {
         if (this.mButtonView != null) {
-            this.mButtonView.setContentDescription(this.mContext.getString(33686193));
+            this.mButtonView.setContentDescription(this.mContext.getString(33686196));
         }
     }
 
@@ -1214,7 +1214,7 @@ public class FingerViewController {
                     updateHintView(this.mContext.getString(33686067));
                 }
                 if (this.mFingerprintView != null) {
-                    this.mFingerprintView.setContentDescription(this.mContext.getString(33686191));
+                    this.mFingerprintView.setContentDescription(this.mContext.getString(33686194));
                     return;
                 }
                 return;

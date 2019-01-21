@@ -34,9 +34,9 @@ public class EncryptedPrivateKeyData extends ASN1Object {
     }
 
     public Certificate[] getCertificateChain() {
-        Object obj = new Certificate[this.certificateChain.length];
-        System.arraycopy(this.certificateChain, 0, obj, 0, this.certificateChain.length);
-        return obj;
+        Certificate[] certificateArr = new Certificate[this.certificateChain.length];
+        System.arraycopy(this.certificateChain, 0, certificateArr, 0, this.certificateChain.length);
+        return certificateArr;
     }
 
     public EncryptedPrivateKeyInfo getEncryptedPrivateKeyInfo() {

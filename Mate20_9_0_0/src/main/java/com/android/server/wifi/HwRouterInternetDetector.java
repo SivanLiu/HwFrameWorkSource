@@ -102,16 +102,10 @@ public class HwRouterInternetDetector {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x006c, code:
+    /* JADX WARNING: Missing block: B:18:0x006c, code skipped:
             if (r2 != null) goto L_0x006e;
      */
-    /* JADX WARNING: Missing block: B:19:0x006e, code:
-            r2.disconnect();
-     */
-    /* JADX WARNING: Missing block: B:24:0x007a, code:
-            if (r2 == null) goto L_0x008c;
-     */
-    /* JADX WARNING: Missing block: B:27:0x0083, code:
+    /* JADX WARNING: Missing block: B:28:0x0083, code skipped:
             if (r2 == null) goto L_0x008c;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -148,6 +142,9 @@ public class HwRouterInternetDetector {
                 LOGW("isGatewayReachable, IOException, unable to HTTP gateway.");
             } catch (SecurityException e2) {
                 LOGW("isGatewayReachable, SecurityException, unable to HTTP gateway.");
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             } catch (Throwable th) {
                 if (urlConnection != null) {
                     urlConnection.disconnect();

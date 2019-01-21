@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.cmp;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DEROutputStream;
@@ -13,7 +14,7 @@ class CMPUtil {
         try {
             dEROutputStream.writeObject(aSN1Encodable);
             dEROutputStream.close();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to DER encode object: ");
             stringBuilder.append(e.getMessage());

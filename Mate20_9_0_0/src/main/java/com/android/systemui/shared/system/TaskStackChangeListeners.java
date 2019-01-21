@@ -131,6 +131,8 @@ public class TaskStackChangeListeners extends TaskStackListener {
                             ((TaskStackChangeListener) TaskStackChangeListeners.this.mTaskStackListeners.get(i)).onActivityRequestedOrientationChanged(msg.arg1, msg.arg2);
                         }
                         break;
+                    default:
+                        break;
                 }
             }
         }

@@ -12,7 +12,7 @@ public class DERExternalParser implements ASN1Encodable, InMemoryRepresentable {
     public ASN1Primitive getLoadedObject() throws IOException {
         try {
             return new DERExternal(this._parser.readVector());
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             throw new ASN1Exception(e.getMessage(), e);
         }
     }
@@ -24,9 +24,9 @@ public class DERExternalParser implements ASN1Encodable, InMemoryRepresentable {
     public ASN1Primitive toASN1Primitive() {
         try {
             return getLoadedObject();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new ASN1ParsingException("unable to get DER object", e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             throw new ASN1ParsingException("unable to get DER object", e2);
         }
     }

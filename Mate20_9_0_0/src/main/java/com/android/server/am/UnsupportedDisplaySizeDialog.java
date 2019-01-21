@@ -13,7 +13,7 @@ public class UnsupportedDisplaySizeDialog {
 
     public UnsupportedDisplaySizeDialog(AppWarnings manager, Context context, ApplicationInfo appInfo) {
         this.mPackageName = appInfo.packageName;
-        this.mDialog = new Builder(context).setPositiveButton(17039370, null).setMessage(context.getString(17041271, new Object[]{appInfo.loadSafeLabel(context.getPackageManager())})).setView(17367326).create();
+        this.mDialog = new Builder(context).setPositiveButton(17039370, null).setMessage(context.getString(17041272, new Object[]{appInfo.loadSafeLabel(context.getPackageManager())})).setView(17367326).create();
         this.mDialog.create();
         Window window = this.mDialog.getWindow();
         window.setType(2002);

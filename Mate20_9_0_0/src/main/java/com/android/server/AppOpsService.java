@@ -280,7 +280,7 @@ public class AppOpsService extends Stub {
             if (perUserExclusions == null) {
                 return true;
             }
-            return true ^ ArrayUtils.contains(perUserExclusions, packageName);
+            return 1 ^ ArrayUtils.contains(perUserExclusions, packageName);
         }
 
         public void removeUser(int userId) {
@@ -858,9 +858,7 @@ public class AppOpsService extends Stub {
                     changed = true;
                 } else {
                     ArrayMap<String, Ops> pkgs = uidState.pkgOps;
-                    if (pkgs == null) {
-                        continue;
-                    } else {
+                    if (pkgs != null) {
                         Iterator<Ops> it = pkgs.values().iterator();
                         while (it.hasNext()) {
                             Ops ops = (Ops) it.next();
@@ -923,7 +921,7 @@ public class AppOpsService extends Stub {
         });
     }
 
-    /* JADX WARNING: Missing block: B:38:0x00a2, code:
+    /* JADX WARNING: Missing block: B:39:0x00a2, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -982,38 +980,46 @@ public class AppOpsService extends Stub {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0049  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateUidProcState(int uid, int procState) {
         synchronized (this) {
             UidState uidState = getUidStateLocked(uid, true);
             int newState = PROCESS_STATE_TO_UID_STATE[procState];
             if (!(uidState == null || uidState.pendingState == newState)) {
-                long settleTime;
                 int oldPendingState = uidState.pendingState;
                 uidState.pendingState = newState;
-                if (newState < uidState.state || newState <= 2) {
-                    commitUidPendingStateLocked(uidState);
-                } else if (uidState.pendingStateCommitTime == 0) {
-                    if (uidState.state <= 1) {
-                        settleTime = this.mConstants.TOP_STATE_SETTLE_TIME;
-                    } else if (uidState.state <= 2) {
-                        settleTime = this.mConstants.FG_SERVICE_STATE_SETTLE_TIME;
-                    } else {
-                        settleTime = this.mConstants.BG_STATE_SETTLE_TIME;
-                    }
-                    uidState.pendingStateCommitTime = SystemClock.uptimeMillis() + settleTime;
-                }
-                if (uidState.startNesting != 0) {
-                    settleTime = System.currentTimeMillis();
-                    for (int i = uidState.pkgOps.size() - 1; i >= 0; i--) {
-                        Ops ops = (Ops) uidState.pkgOps.valueAt(i);
-                        for (int j = ops.size() - 1; j >= 0; j--) {
-                            Op op = (Op) ops.valueAt(j);
-                            if (op.startNesting > 0) {
-                                op.time[oldPendingState] = settleTime;
-                                op.time[newState] = settleTime;
+                if (newState >= uidState.state) {
+                    if (newState > 2) {
+                        long settleTime;
+                        if (uidState.pendingStateCommitTime == 0) {
+                            if (uidState.state <= 1) {
+                                settleTime = this.mConstants.TOP_STATE_SETTLE_TIME;
+                            } else if (uidState.state <= 2) {
+                                settleTime = this.mConstants.FG_SERVICE_STATE_SETTLE_TIME;
+                            } else {
+                                settleTime = this.mConstants.BG_STATE_SETTLE_TIME;
+                                uidState.pendingStateCommitTime = SystemClock.uptimeMillis() + settleTime;
+                            }
+                            uidState.pendingStateCommitTime = SystemClock.uptimeMillis() + settleTime;
+                        }
+                        if (uidState.startNesting != 0) {
+                            settleTime = System.currentTimeMillis();
+                            for (int i = uidState.pkgOps.size() - 1; i >= 0; i--) {
+                                Ops ops = (Ops) uidState.pkgOps.valueAt(i);
+                                for (int j = ops.size() - 1; j >= 0; j--) {
+                                    Op op = (Op) ops.valueAt(j);
+                                    if (op.startNesting > 0) {
+                                        op.time[oldPendingState] = settleTime;
+                                        op.time[newState] = settleTime;
+                                    }
+                                }
                             }
                         }
                     }
+                }
+                commitUidPendingStateLocked(uidState);
+                if (uidState.startNesting != 0) {
                 }
             }
         }
@@ -1135,28 +1141,30 @@ public class AppOpsService extends Stub {
                 while (i < uidStateCount) {
                     try {
                         UidState uidState = (UidState) this.mUidStates.valueAt(i);
-                        if (!(uidState.pkgOps == null || uidState.pkgOps.isEmpty())) {
-                            ArrayMap<String, Ops> packages = uidState.pkgOps;
-                            int packageCount = packages.size();
-                            res2 = res3;
-                            int j = 0;
-                            while (j < packageCount) {
-                                try {
-                                    Ops pkgOps = (Ops) packages.valueAt(j);
-                                    ArrayList<OpEntry> resOps = collectOps(pkgOps, ops);
-                                    if (resOps != null) {
-                                        if (res2 == null) {
-                                            res2 = new ArrayList();
+                        if (uidState.pkgOps != null) {
+                            if (!uidState.pkgOps.isEmpty()) {
+                                ArrayMap<String, Ops> packages = uidState.pkgOps;
+                                int packageCount = packages.size();
+                                res2 = res3;
+                                int j = 0;
+                                while (j < packageCount) {
+                                    try {
+                                        Ops pkgOps = (Ops) packages.valueAt(j);
+                                        ArrayList<OpEntry> resOps = collectOps(pkgOps, ops);
+                                        if (resOps != null) {
+                                            if (res2 == null) {
+                                                res2 = new ArrayList();
+                                            }
+                                            res2.add(new PackageOps(pkgOps.packageName, pkgOps.uidState.uid, resOps));
                                         }
-                                        res2.add(new PackageOps(pkgOps.packageName, pkgOps.uidState.uid, resOps));
+                                        j++;
+                                    } catch (Throwable th) {
+                                        res = th;
+                                        throw res;
                                     }
-                                    j++;
-                                } catch (Throwable th) {
-                                    res = th;
-                                    throw res;
                                 }
+                                res3 = res2;
                             }
-                            res3 = res2;
                         }
                         i++;
                     } catch (Throwable th2) {
@@ -1234,10 +1242,10 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0024, code:
+    /* JADX WARNING: Missing block: B:16:0x0024, code skipped:
             r6.mContext.enforcePermission("android.permission.MANAGE_APP_OPS_MODES", android.os.Binder.getCallingPid(), android.os.Binder.getCallingUid(), null);
      */
-    /* JADX WARNING: Missing block: B:17:0x0034, code:
+    /* JADX WARNING: Missing block: B:17:0x0034, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1251,145 +1259,147 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x007f, code:
+    /* JADX WARNING: Missing block: B:24:0x007f, code skipped:
             r13 = getPackagesForUid(r21);
             r1 = null;
      */
-    /* JADX WARNING: Missing block: B:25:0x0084, code:
+    /* JADX WARNING: Missing block: B:25:0x0084, code skipped:
             monitor-enter(r19);
      */
-    /* JADX WARNING: Missing block: B:27:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             r0 = (android.util.ArraySet) r7.mOpModeWatchers.get(r10);
      */
-    /* JADX WARNING: Missing block: B:28:0x008d, code:
+    /* JADX WARNING: Missing block: B:28:0x008d, code skipped:
             if (r0 == null) goto L_0x00b8;
      */
-    /* JADX WARNING: Missing block: B:29:0x008f, code:
+    /* JADX WARNING: Missing block: B:29:0x008f, code skipped:
             r2 = r0.size();
      */
-    /* JADX WARNING: Missing block: B:30:0x0093, code:
+    /* JADX WARNING: Missing block: B:30:0x0093, code skipped:
             r3 = null;
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:31:0x0095, code:
+    /* JADX WARNING: Missing block: B:31:0x0095, code skipped:
             if (r1 >= r2) goto L_0x00b7;
      */
-    /* JADX WARNING: Missing block: B:33:?, code:
+    /* JADX WARNING: Missing block: B:33:?, code skipped:
             r4 = (com.android.server.AppOpsService.ModeCallback) r0.valueAt(r1);
             r5 = new android.util.ArraySet();
             java.util.Collections.addAll(r5, r13);
      */
-    /* JADX WARNING: Missing block: B:34:0x00a5, code:
+    /* JADX WARNING: Missing block: B:34:0x00a5, code skipped:
             if (r3 != null) goto L_0x00ad;
      */
-    /* JADX WARNING: Missing block: B:35:0x00a7, code:
+    /* JADX WARNING: Missing block: B:35:0x00a7, code skipped:
             r3 = new android.util.ArrayMap();
      */
-    /* JADX WARNING: Missing block: B:36:0x00ad, code:
+    /* JADX WARNING: Missing block: B:36:0x00ad, code skipped:
             r3.put(r4, r5);
      */
-    /* JADX WARNING: Missing block: B:37:0x00b0, code:
+    /* JADX WARNING: Missing block: B:37:0x00b0, code skipped:
             r1 = r1 + 1;
      */
-    /* JADX WARNING: Missing block: B:38:0x00b3, code:
+    /* JADX WARNING: Missing block: B:38:0x00b3, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:39:0x00b4, code:
+    /* JADX WARNING: Missing block: B:39:0x00b4, code skipped:
             r1 = r3;
      */
-    /* JADX WARNING: Missing block: B:40:0x00b7, code:
+    /* JADX WARNING: Missing block: B:40:0x00b7, code skipped:
             r1 = r3;
      */
-    /* JADX WARNING: Missing block: B:42:?, code:
+    /* JADX WARNING: Missing block: B:42:?, code skipped:
             r2 = r13.length;
      */
-    /* JADX WARNING: Missing block: B:43:0x00b9, code:
+    /* JADX WARNING: Missing block: B:43:0x00b9, code skipped:
             r14 = r1;
             r1 = r0;
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:44:0x00bc, code:
+    /* JADX WARNING: Missing block: B:44:0x00bc, code skipped:
             if (r0 >= r2) goto L_0x0100;
      */
-    /* JADX WARNING: Missing block: B:46:?, code:
+    /* JADX WARNING: Missing block: B:46:?, code skipped:
             r3 = r13[r0];
             r1 = (android.util.ArraySet) r7.mPackageModeWatchers.get(r3);
      */
-    /* JADX WARNING: Missing block: B:47:0x00c9, code:
+    /* JADX WARNING: Missing block: B:47:0x00c9, code skipped:
             if (r1 == null) goto L_0x00f8;
      */
-    /* JADX WARNING: Missing block: B:48:0x00cb, code:
+    /* JADX WARNING: Missing block: B:48:0x00cb, code skipped:
             if (r14 != null) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:49:0x00cd, code:
+    /* JADX WARNING: Missing block: B:49:0x00cd, code skipped:
             r14 = new android.util.ArrayMap();
      */
-    /* JADX WARNING: Missing block: B:50:0x00d3, code:
+    /* JADX WARNING: Missing block: B:50:0x00d3, code skipped:
             r4 = r1.size();
             r5 = r11;
      */
-    /* JADX WARNING: Missing block: B:51:0x00d8, code:
+    /* JADX WARNING: Missing block: B:51:0x00d8, code skipped:
             if (r5 >= r4) goto L_0x00f8;
      */
-    /* JADX WARNING: Missing block: B:52:0x00da, code:
+    /* JADX WARNING: Missing block: B:52:0x00da, code skipped:
             r6 = (com.android.server.AppOpsService.ModeCallback) r1.valueAt(r5);
             r15 = (android.util.ArraySet) r14.get(r6);
      */
-    /* JADX WARNING: Missing block: B:53:0x00e6, code:
+    /* JADX WARNING: Missing block: B:53:0x00e6, code skipped:
             if (r15 != null) goto L_0x00f1;
      */
-    /* JADX WARNING: Missing block: B:54:0x00e8, code:
+    /* JADX WARNING: Missing block: B:54:0x00e8, code skipped:
             r15 = new android.util.ArraySet();
             r14.put(r6, r15);
      */
-    /* JADX WARNING: Missing block: B:55:0x00f1, code:
+    /* JADX WARNING: Missing block: B:55:0x00f1, code skipped:
             r15.add(r3);
             r5 = r5 + 1;
      */
-    /* JADX WARNING: Missing block: B:56:0x00f8, code:
+    /* JADX WARNING: Missing block: B:56:0x00f8, code skipped:
             r0 = r0 + 1;
             r11 = false;
      */
-    /* JADX WARNING: Missing block: B:57:0x00fc, code:
+    /* JADX WARNING: Missing block: B:57:0x00fc, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:58:0x00fd, code:
+    /* JADX WARNING: Missing block: B:58:0x00fd, code skipped:
             r1 = r14;
      */
-    /* JADX WARNING: Missing block: B:59:0x0100, code:
+    /* JADX WARNING: Missing block: B:59:0x0100, code skipped:
             monitor-exit(r19);
      */
-    /* JADX WARNING: Missing block: B:60:0x0101, code:
-            if (r14 != null) goto L_0x0105;
+    /* JADX WARNING: Missing block: B:60:0x0101, code skipped:
+            if (r14 != null) goto L_0x0104;
      */
-    /* JADX WARNING: Missing block: B:61:0x0103, code:
+    /* JADX WARNING: Missing block: B:61:0x0103, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:63:0x0109, code:
-            if (0 >= r14.size()) goto L_0x016f;
+    /* JADX WARNING: Missing block: B:62:0x0104, code skipped:
+            r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:64:0x010b, code:
-            r11 = (com.android.server.AppOpsService.ModeCallback) r14.keyAt(0);
-            r15 = (android.util.ArraySet) r14.valueAt(0);
+    /* JADX WARNING: Missing block: B:64:0x0109, code skipped:
+            if (r0 >= r14.size()) goto L_0x016f;
      */
-    /* JADX WARNING: Missing block: B:65:0x0119, code:
+    /* JADX WARNING: Missing block: B:65:0x010b, code skipped:
+            r11 = (com.android.server.AppOpsService.ModeCallback) r14.keyAt(r0);
+            r15 = (android.util.ArraySet) r14.valueAt(r0);
+     */
+    /* JADX WARNING: Missing block: B:66:0x0119, code skipped:
             if (r15 != null) goto L_0x0138;
      */
-    /* JADX WARNING: Missing block: B:66:0x011b, code:
-            r12 = r7.mHandler;
-            r12.sendMessage(com.android.internal.util.function.pooled.PooledLambda.obtainMessage(com.android.server.-$$Lambda$AppOpsService$lxgFmOnGguOiLyfUZbyOpNBfTVw.INSTANCE, r7, r11, java.lang.Integer.valueOf(r10), java.lang.Integer.valueOf(r21), (java.lang.String) r12));
+    /* JADX WARNING: Missing block: B:67:0x011b, code skipped:
+            r7.mHandler.sendMessage(com.android.internal.util.function.pooled.PooledLambda.obtainMessage(com.android.server.-$$Lambda$AppOpsService$lxgFmOnGguOiLyfUZbyOpNBfTVw.INSTANCE, r7, r11, java.lang.Integer.valueOf(r10), java.lang.Integer.valueOf(r21), (java.lang.String) r12));
      */
-    /* JADX WARNING: Missing block: B:67:0x0138, code:
+    /* JADX WARNING: Missing block: B:68:0x0138, code skipped:
             r12 = r15.size();
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:68:0x013d, code:
+    /* JADX WARNING: Missing block: B:69:0x013d, code skipped:
             r6 = r1;
      */
-    /* JADX WARNING: Missing block: B:69:0x013e, code:
+    /* JADX WARNING: Missing block: B:70:0x013e, code skipped:
             if (r6 >= r12) goto L_0x0169;
      */
-    /* JADX WARNING: Missing block: B:70:0x0140, code:
+    /* JADX WARNING: Missing block: B:71:0x0140, code skipped:
             r16 = (java.lang.String) r15.valueAt(r6);
             r5 = r7.mHandler;
             r8 = r5;
@@ -1398,20 +1408,21 @@ public class AppOpsService extends Stub {
             r1 = r17 + 1;
             r8 = r21;
      */
-    /* JADX WARNING: Missing block: B:71:0x0169, code:
-            r0 = 0 + 1;
+    /* JADX WARNING: Missing block: B:72:0x0169, code skipped:
+            r0 = r0 + 1;
             r8 = r21;
+            r12 = null;
      */
-    /* JADX WARNING: Missing block: B:72:0x016f, code:
+    /* JADX WARNING: Missing block: B:73:0x016f, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:73:0x0170, code:
+    /* JADX WARNING: Missing block: B:74:0x0170, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:75:?, code:
+    /* JADX WARNING: Missing block: B:76:?, code skipped:
             monitor-exit(r19);
      */
-    /* JADX WARNING: Missing block: B:76:0x0172, code:
+    /* JADX WARNING: Missing block: B:77:0x0172, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1425,7 +1436,7 @@ public class AppOpsService extends Stub {
             int defaultMode = AppOpsManager.opToDefaultMode(code2);
             boolean z = false;
             UidState uidState = getUidStateLocked(i, false);
-            SparseIntArray reportedPackageCount = null;
+            SparseIntArray sparseIntArray = null;
             if (uidState == null) {
                 if (i2 == defaultMode) {
                     return;
@@ -1546,42 +1557,30 @@ public class AppOpsService extends Stub {
         return callbacks;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:65:0x0116 A:{Catch:{ all -> 0x01dd, all -> 0x01ef }} */
-    /* JADX WARNING: Removed duplicated region for block: B:95:0x01c7 A:{Catch:{ all -> 0x01dd, all -> 0x01ef }} */
-    /* JADX WARNING: Removed duplicated region for block: B:136:0x01d5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:97:0x01d0 A:{Catch:{ all -> 0x01dd, all -> 0x01ef }} */
-    /* JADX WARNING: Missing block: B:101:0x01e5, code:
-            r22 = r5;
-            r23 = r6;
-     */
-    /* JADX WARNING: Missing block: B:102:0x01e9, code:
-            if (r0 == false) goto L_0x01f7;
-     */
-    /* JADX WARNING: Missing block: B:103:0x01eb, code:
-            scheduleFastWriteLocked();
-     */
-    /* JADX WARNING: Missing block: B:109:0x01f8, code:
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x00f7 A:{Catch:{ all -> 0x01dd, all -> 0x01ef }} */
+    /* JADX WARNING: Removed duplicated region for block: B:59:0x00f5 A:{Catch:{ all -> 0x01dd, all -> 0x01ef }} */
+    /* JADX WARNING: Missing block: B:113:0x01f8, code skipped:
             if (r11 == null) goto L_0x0262;
      */
-    /* JADX WARNING: Missing block: B:110:0x01fa, code:
+    /* JADX WARNING: Missing block: B:114:0x01fa, code skipped:
             r0 = r11.entrySet().iterator();
      */
-    /* JADX WARNING: Missing block: B:112:0x0206, code:
+    /* JADX WARNING: Missing block: B:116:0x0206, code skipped:
             if (r0.hasNext() == false) goto L_0x0262;
      */
-    /* JADX WARNING: Missing block: B:113:0x0208, code:
+    /* JADX WARNING: Missing block: B:117:0x0208, code skipped:
             r12 = (java.util.Map.Entry) r0.next();
             r13 = (com.android.server.AppOpsService.ModeCallback) r12.getKey();
             r14 = (java.util.ArrayList) r12.getValue();
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:114:0x021e, code:
+    /* JADX WARNING: Missing block: B:118:0x021e, code skipped:
             r15 = r1;
      */
-    /* JADX WARNING: Missing block: B:115:0x0223, code:
+    /* JADX WARNING: Missing block: B:119:0x0223, code skipped:
             if (r15 >= r14.size()) goto L_0x025b;
      */
-    /* JADX WARNING: Missing block: B:116:0x0225, code:
+    /* JADX WARNING: Missing block: B:120:0x0225, code skipped:
             r6 = (com.android.server.AppOpsService.ChangeRec) r14.get(r15);
             r5 = r7.mHandler;
             r1 = com.android.server.-$$Lambda$AppOpsService$lxgFmOnGguOiLyfUZbyOpNBfTVw.INSTANCE;
@@ -1597,25 +1596,17 @@ public class AppOpsService extends Stub {
             r1 = r15 + 1;
             r0 = r28;
      */
-    /* JADX WARNING: Missing block: B:117:0x025b, code:
+    /* JADX WARNING: Missing block: B:121:0x025b, code skipped:
             r28 = r0;
             r19 = r22;
             r16 = r23;
      */
-    /* JADX WARNING: Missing block: B:118:0x0262, code:
+    /* JADX WARNING: Missing block: B:122:0x0262, code skipped:
             r19 = r22;
             r16 = r23;
      */
-    /* JADX WARNING: Missing block: B:119:0x0266, code:
+    /* JADX WARNING: Missing block: B:123:0x0266, code skipped:
             return;
-     */
-    /* JADX WARNING: Missing block: B:120:0x0267, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:121:0x0268, code:
-            r19 = r22;
-            r16 = r23;
-            r1 = r11;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void resetAllModes(int reqUserId, String reqPackageName) {
@@ -1623,12 +1614,11 @@ public class AppOpsService extends Stub {
         int i;
         int i2;
         HashMap<ModeCallback, ArrayList<ChangeRec>> hashMap;
-        int callingUid;
         SparseIntArray sparseIntArray;
         String str = reqPackageName;
         int callingPid = Binder.getCallingPid();
-        int callingUid2 = Binder.getCallingUid();
-        int reqUserId2 = ActivityManager.handleIncomingUser(callingPid, callingUid2, reqUserId, true, true, "resetAllModes", null);
+        int callingUid = Binder.getCallingUid();
+        int reqUserId2 = ActivityManager.handleIncomingUser(callingPid, callingUid, reqUserId, true, true, "resetAllModes", null);
         int reqUid = -1;
         if (str != null) {
             try {
@@ -1637,10 +1627,12 @@ public class AppOpsService extends Stub {
             }
         }
         int reqUid2 = reqUid;
-        enforceManageAppOpsModes(callingPid, callingUid2, reqUid2);
+        enforceManageAppOpsModes(callingPid, callingUid, reqUid2);
         synchronized (this) {
             boolean changed = false;
             try {
+                int callingUid2;
+                int callingPid2;
                 int i3 = this.mUidStates.size() - 1;
                 HashMap<ModeCallback, ArrayList<ChangeRec>> callbacks = null;
                 while (true) {
@@ -1649,184 +1641,207 @@ public class AppOpsService extends Stub {
                         break;
                     }
                     try {
-                        int callingPid2;
-                        Map<String, Ops> packages;
-                        Iterator<Entry<String, Ops>> it;
-                        boolean uidChanged;
                         UidState uidState = (UidState) this.mUidStates.valueAt(reqUid);
                         SparseIntArray opModes = uidState.opModes;
                         if (opModes != null) {
-                            SparseIntArray opModes2;
+                            SparseIntArray sparseIntArray2;
                             String packageName;
-                            Object opModes3;
-                            if (uidState.uid == reqUid2 || reqUid2 == -1) {
-                                int j = opModes.size() - 1;
-                                while (j >= 0) {
-                                    int code = opModes.keyAt(j);
-                                    if (AppOpsManager.opAllowsReset(code)) {
-                                        opModes.removeAt(j);
-                                        if (opModes.size() <= 0) {
-                                            try {
-                                                uidState.opModes = null;
-                                            } catch (Throwable th2) {
-                                                th = th2;
-                                                i = callingUid2;
-                                                i2 = callingPid;
-                                                hashMap = callbacks;
-                                            }
-                                        }
-                                        String[] packagesForUid = getPackagesForUid(uidState.uid);
-                                        int length = packagesForUid.length;
-                                        opModes2 = opModes;
-                                        opModes = callbacks;
-                                        int callbacks2 = 0;
-                                        while (callbacks2 < length) {
-                                            int i4;
-                                            try {
-                                                i4 = length;
-                                                callingUid = callingUid2;
-                                                try {
-                                                    callingPid2 = callingPid;
-                                                    packageName = packagesForUid[callbacks2];
-                                                } catch (Throwable th3) {
-                                                    th = th3;
-                                                    sparseIntArray = opModes;
-                                                    i2 = callingPid;
-                                                    i = callingUid;
-                                                }
-                                            } catch (Throwable th4) {
-                                                th = th4;
-                                                sparseIntArray = opModes;
-                                                i = callingUid2;
-                                                i2 = callingPid;
-                                            }
-                                            try {
-                                                opModes = addCallbacks(opModes, code, uidState.uid, packageName, (ArraySet) this.mOpModeWatchers.get(code));
-                                                opModes3 = addCallbacks(opModes, code, uidState.uid, packageName, (ArraySet) this.mPackageModeWatchers.get(packageName));
-                                                callbacks2++;
-                                                length = i4;
-                                                callingUid2 = callingUid;
-                                                callingPid = callingPid2;
-                                            } catch (Throwable th5) {
-                                                th = th5;
-                                                sparseIntArray = opModes;
-                                            }
-                                        }
-                                        callingUid = callingUid2;
-                                        callingPid2 = callingPid;
-                                        callbacks = opModes;
-                                    } else {
-                                        opModes2 = opModes;
-                                        callingUid = callingUid2;
-                                        callingPid2 = callingPid;
-                                    }
-                                    j--;
-                                    opModes = opModes2;
+                            Object opModes2;
+                            if (uidState.uid != reqUid2) {
+                                if (reqUid2 != -1) {
+                                    sparseIntArray2 = opModes;
                                     callingUid2 = callingUid;
-                                    callingPid = callingPid2;
-                                }
-                            } else {
-                                opModes2 = opModes;
-                                callingUid = callingUid2;
-                                callingPid2 = callingPid;
-                                if (uidState.pkgOps != null && (reqUserId2 == -1 || reqUserId2 == UserHandle.getUserId(uidState.uid))) {
-                                    packages = uidState.pkgOps;
-                                    it = packages.entrySet().iterator();
-                                    uidChanged = false;
-                                    while (it.hasNext()) {
-                                        Entry<String, Ops> ent = (Entry) it.next();
-                                        packageName = (String) ent.getKey();
-                                        if (str == null || str.equals(packageName)) {
-                                            boolean changed2;
-                                            Map<String, Ops> packages2;
-                                            Entry<String, Ops> ent2;
-                                            Ops pkgOps = (Ops) ent.getValue();
-                                            int j2 = pkgOps.size() - 1;
-                                            while (j2 >= 0) {
-                                                Op curOp = (Op) pkgOps.valueAt(j2);
-                                                if (AppOpsManager.opAllowsReset(curOp.op)) {
-                                                    changed2 = changed;
-                                                    if (curOp.mode != AppOpsManager.opToDefaultMode(curOp.op)) {
-                                                        curOp.mode = AppOpsManager.opToDefaultMode(curOp.op);
-                                                        uidChanged = true;
-                                                        boolean changed3 = true;
-                                                        packages2 = packages;
-                                                        ent2 = ent;
-                                                        opModes3 = addCallbacks(callbacks, curOp.op, curOp.uid, packageName, (ArraySet) this.mOpModeWatchers.get(curOp.op));
-                                                        HashMap<ModeCallback, ArrayList<ChangeRec>> packages3 = addCallbacks(opModes3, curOp.op, curOp.uid, packageName, (ArraySet) this.mPackageModeWatchers.get(packageName));
-                                                        if (!curOp.hasAnyTime()) {
-                                                            pkgOps.removeAt(j2);
+                                    callingPid2 = callingPid;
+                                    if (uidState.pkgOps == null) {
+                                        if (reqUserId2 == -1 || reqUserId2 == UserHandle.getUserId(uidState.uid)) {
+                                            Map<String, Ops> packages = uidState.pkgOps;
+                                            Iterator<Entry<String, Ops>> it = packages.entrySet().iterator();
+                                            boolean uidChanged = false;
+                                            while (it.hasNext()) {
+                                                Entry<String, Ops> ent = (Entry) it.next();
+                                                packageName = (String) ent.getKey();
+                                                if (str == null || str.equals(packageName)) {
+                                                    boolean changed2;
+                                                    Map<String, Ops> packages2;
+                                                    Entry<String, Ops> ent2;
+                                                    Ops pkgOps = (Ops) ent.getValue();
+                                                    int j = pkgOps.size() - 1;
+                                                    while (j >= 0) {
+                                                        Op curOp = (Op) pkgOps.valueAt(j);
+                                                        if (AppOpsManager.opAllowsReset(curOp.op)) {
+                                                            changed2 = changed;
+                                                            if (curOp.mode != AppOpsManager.opToDefaultMode(curOp.op)) {
+                                                                curOp.mode = AppOpsManager.opToDefaultMode(curOp.op);
+                                                                uidChanged = true;
+                                                                boolean changed3 = true;
+                                                                packages2 = packages;
+                                                                ent2 = ent;
+                                                                opModes2 = addCallbacks(callbacks, curOp.op, curOp.uid, packageName, (ArraySet) this.mOpModeWatchers.get(curOp.op));
+                                                                HashMap<ModeCallback, ArrayList<ChangeRec>> packages3 = addCallbacks(opModes2, curOp.op, curOp.uid, packageName, (ArraySet) this.mPackageModeWatchers.get(packageName));
+                                                                if (!curOp.hasAnyTime()) {
+                                                                    pkgOps.removeAt(j);
+                                                                }
+                                                                callbacks = packages3;
+                                                                changed = changed3;
+                                                                j--;
+                                                                packages = packages2;
+                                                                ent = ent2;
+                                                            } else {
+                                                                packages2 = packages;
+                                                                ent2 = ent;
+                                                            }
+                                                        } else {
+                                                            changed2 = changed;
+                                                            packages2 = packages;
+                                                            ent2 = ent;
                                                         }
-                                                        callbacks = packages3;
-                                                        changed = changed3;
-                                                        j2--;
+                                                        changed = changed2;
+                                                        j--;
                                                         packages = packages2;
                                                         ent = ent2;
-                                                    } else {
-                                                        packages2 = packages;
-                                                        ent2 = ent;
                                                     }
-                                                } else {
                                                     changed2 = changed;
                                                     packages2 = packages;
                                                     ent2 = ent;
+                                                    if (pkgOps.size() == 0) {
+                                                        it.remove();
+                                                    }
+                                                    changed = changed2;
+                                                    packages = packages2;
                                                 }
-                                                changed = changed2;
-                                                j2--;
-                                                packages = packages2;
-                                                ent = ent2;
                                             }
-                                            changed2 = changed;
-                                            packages2 = packages;
-                                            ent2 = ent;
-                                            if (pkgOps.size() == 0) {
-                                                it.remove();
+                                            if (uidState.isDefault()) {
+                                                this.mUidStates.remove(uidState.uid);
                                             }
-                                            changed = changed2;
-                                            packages = packages2;
+                                            if (uidChanged) {
+                                                uidState.evalForegroundOps(this.mOpModeWatchers);
+                                            }
                                         }
                                     }
-                                    if (uidState.isDefault()) {
-                                        this.mUidStates.remove(uidState.uid);
-                                    }
-                                    if (!uidChanged) {
-                                        uidState.evalForegroundOps(this.mOpModeWatchers);
-                                    }
+                                    i3 = reqUid - 1;
+                                    callingUid = callingUid2;
+                                    callingPid = callingPid2;
                                 }
-                                i3 = reqUid - 1;
-                                callingUid2 = callingUid;
+                            }
+                            int j2 = opModes.size() - 1;
+                            while (j2 >= 0) {
+                                int code = opModes.keyAt(j2);
+                                if (AppOpsManager.opAllowsReset(code)) {
+                                    opModes.removeAt(j2);
+                                    if (opModes.size() <= 0) {
+                                        try {
+                                            uidState.opModes = null;
+                                        } catch (Throwable th2) {
+                                            th = th2;
+                                            i = callingUid;
+                                            i2 = callingPid;
+                                            hashMap = callbacks;
+                                        }
+                                    }
+                                    String[] packagesForUid = getPackagesForUid(uidState.uid);
+                                    int length = packagesForUid.length;
+                                    sparseIntArray2 = opModes;
+                                    opModes = callbacks;
+                                    int callbacks2 = 0;
+                                    while (callbacks2 < length) {
+                                        int i4;
+                                        try {
+                                            i4 = length;
+                                            callingUid2 = callingUid;
+                                        } catch (Throwable th3) {
+                                            th = th3;
+                                            sparseIntArray = opModes;
+                                            i = callingUid;
+                                            i2 = callingPid;
+                                            while (true) {
+                                                try {
+                                                    break;
+                                                } catch (Throwable th4) {
+                                                    th = th4;
+                                                }
+                                            }
+                                            throw th;
+                                        }
+                                        try {
+                                            callingPid2 = callingPid;
+                                            packageName = packagesForUid[callbacks2];
+                                        } catch (Throwable th5) {
+                                            th = th5;
+                                            sparseIntArray = opModes;
+                                            i2 = callingPid;
+                                            i = callingUid2;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
+                                        }
+                                        try {
+                                            opModes = addCallbacks(opModes, code, uidState.uid, packageName, (ArraySet) this.mOpModeWatchers.get(code));
+                                            opModes2 = addCallbacks(opModes, code, uidState.uid, packageName, (ArraySet) this.mPackageModeWatchers.get(packageName));
+                                            callbacks2++;
+                                            length = i4;
+                                            callingUid = callingUid2;
+                                            callingPid = callingPid2;
+                                        } catch (Throwable th6) {
+                                            th = th6;
+                                            sparseIntArray = opModes;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
+                                        }
+                                    }
+                                    callingUid2 = callingUid;
+                                    callingPid2 = callingPid;
+                                    callbacks = opModes;
+                                } else {
+                                    sparseIntArray2 = opModes;
+                                    callingUid2 = callingUid;
+                                    callingPid2 = callingPid;
+                                }
+                                j2--;
+                                opModes = sparseIntArray2;
+                                callingUid = callingUid2;
                                 callingPid = callingPid2;
                             }
                         }
-                        callingUid = callingUid2;
+                        callingUid2 = callingUid;
                         callingPid2 = callingPid;
-                        packages = uidState.pkgOps;
-                        it = packages.entrySet().iterator();
-                        uidChanged = false;
-                        while (it.hasNext()) {
-                        }
-                        if (uidState.isDefault()) {
-                        }
-                        if (!uidChanged) {
+                        if (uidState.pkgOps == null) {
                         }
                         i3 = reqUid - 1;
-                        callingUid2 = callingUid;
+                        callingUid = callingUid2;
                         callingPid = callingPid2;
-                    } catch (Throwable th6) {
-                        th = th6;
+                    } catch (Throwable th7) {
+                        th = th7;
                         hashMap = callbacks;
+                        while (true) {
+                            break;
+                        }
+                        throw th;
                     }
                 }
-            } catch (Throwable th7) {
-                th = th7;
-                i = callingUid2;
+                callingUid2 = callingUid;
+                callingPid2 = callingPid;
+                if (changed) {
+                    scheduleFastWriteLocked();
+                }
+                try {
+                } catch (Throwable th8) {
+                    th = th8;
+                    i = callingUid2;
+                    i2 = callingPid2;
+                    while (true) {
+                        break;
+                    }
+                    throw th;
+                }
+            } catch (Throwable th9) {
+                th = th9;
+                i = callingUid;
                 i2 = callingPid;
                 while (true) {
-                    try {
-                        break;
-                    } catch (Throwable th8) {
-                        th = th8;
-                    }
+                    break;
                 }
                 throw th;
             }
@@ -2185,7 +2200,7 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:48:0x00b8, code:
+    /* JADX WARNING: Missing block: B:49:0x00b8, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2221,7 +2236,7 @@ public class AppOpsService extends Stub {
                     }
                 }
                 int uidMode = uidState.evalMode(uidState.opModes.get(switchCode));
-                if (!(uidMode == 0 || (startIfModeDefault && uidMode == 3))) {
+                if (uidMode != 0 && (!startIfModeDefault || uidMode != 3)) {
                     op.rejectTime[uidState.state] = System.currentTimeMillis();
                     return uidMode;
                 }
@@ -2246,10 +2261,10 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x006c, code:
+    /* JADX WARNING: Missing block: B:23:0x006c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:34:0x00b3, code:
+    /* JADX WARNING: Missing block: B:34:0x00b3, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2603,7 +2618,9 @@ public class AppOpsService extends Stub {
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x00a3 A:{SYNTHETIC, Splitter: B:45:0x00a3} */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:71:0x0111=Splitter:B:71:0x0111, B:79:0x0133=Splitter:B:79:0x0133, B:87:0x0156=Splitter:B:87:0x0156, B:95:0x0179=Splitter:B:95:0x0179, B:42:0x009b=Splitter:B:42:0x009b, B:55:0x00cd=Splitter:B:55:0x00cd, B:63:0x00ef=Splitter:B:63:0x00ef} */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:115:0x0195=Splitter:B:115:0x0195, B:97:0x017e=Splitter:B:97:0x017e} */
+    /* JADX WARNING: Removed duplicated region for block: B:45:0x00a3 A:{SYNTHETIC, Splitter:B:45:0x00a3} */
     /* JADX WARNING: Removed duplicated region for block: B:16:0x002e A:{Catch:{ IllegalStateException -> 0x015b, NullPointerException -> 0x0138, NumberFormatException -> 0x0115, XmlPullParserException -> 0x00f3, IOException -> 0x00d1, IndexOutOfBoundsException -> 0x00af }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void readState() {
@@ -2613,111 +2630,111 @@ public class AppOpsService extends Stub {
             synchronized (this) {
                 try {
                     FileInputStream stream = this.mFile.openRead();
-                    this.mUidStates.clear();
-                    String versionString;
                     try {
-                        int type;
-                        XmlPullParser parser = Xml.newPullParser();
-                        parser.setInput(stream, StandardCharsets.UTF_8.name());
-                        while (true) {
-                            int next = parser.next();
-                            type = next;
-                            if (next == 2 || type == 1) {
-                                if (type != 2) {
-                                    versionString = parser.getAttributeValue(null, "v");
-                                    if (versionString != null) {
-                                        oldVersion = Integer.parseInt(versionString);
-                                    }
-                                    int outerDepth = parser.getDepth();
-                                    while (true) {
-                                        int next2 = parser.next();
-                                        type = next2;
-                                        if (next2 != 1 && (type != 3 || parser.getDepth() > outerDepth)) {
-                                            if (type != 3) {
-                                                if (type != 4) {
-                                                    String tagName = parser.getName();
-                                                    if (tagName.equals(AbsLocationManagerService.DEL_PKG)) {
-                                                        readPackage(parser);
-                                                    } else if (tagName.equals("uid")) {
-                                                        readUidOps(parser);
-                                                    } else {
-                                                        String str = TAG;
-                                                        StringBuilder stringBuilder2 = new StringBuilder();
-                                                        stringBuilder2.append("Unknown element under <app-ops>: ");
-                                                        stringBuilder2.append(parser.getName());
-                                                        Slog.w(str, stringBuilder2.toString());
-                                                        XmlUtils.skipCurrentTag(parser);
+                        this.mUidStates.clear();
+                        String versionString;
+                        try {
+                            int type;
+                            XmlPullParser parser = Xml.newPullParser();
+                            parser.setInput(stream, StandardCharsets.UTF_8.name());
+                            while (true) {
+                                int next = parser.next();
+                                type = next;
+                                if (next == 2 || type == 1) {
+                                    if (type != 2) {
+                                        versionString = parser.getAttributeValue(null, "v");
+                                        if (versionString != null) {
+                                            oldVersion = Integer.parseInt(versionString);
+                                        }
+                                        int outerDepth = parser.getDepth();
+                                        while (true) {
+                                            int next2 = parser.next();
+                                            type = next2;
+                                            if (next2 != 1 && (type != 3 || parser.getDepth() > outerDepth)) {
+                                                if (type != 3) {
+                                                    if (type != 4) {
+                                                        String tagName = parser.getName();
+                                                        if (tagName.equals(AbsLocationManagerService.DEL_PKG)) {
+                                                            readPackage(parser);
+                                                        } else if (tagName.equals("uid")) {
+                                                            readUidOps(parser);
+                                                        } else {
+                                                            String str = TAG;
+                                                            StringBuilder stringBuilder2 = new StringBuilder();
+                                                            stringBuilder2.append("Unknown element under <app-ops>: ");
+                                                            stringBuilder2.append(parser.getName());
+                                                            Slog.w(str, stringBuilder2.toString());
+                                                            XmlUtils.skipCurrentTag(parser);
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+                                        if (!true) {
+                                            this.mUidStates.clear();
+                                        }
+                                        try {
+                                            stream.close();
+                                        } catch (IOException e) {
+                                        }
+                                    } else {
+                                        throw new IllegalStateException("no start tag found");
                                     }
-                                    if (!true) {
-                                        this.mUidStates.clear();
-                                    }
-                                    try {
-                                        stream.close();
-                                    } catch (IOException e) {
-                                    }
-                                } else {
-                                    throw new IllegalStateException("no start tag found");
                                 }
                             }
-                        }
-                        if (type != 2) {
-                        }
-                    } catch (IllegalStateException e2) {
-                        versionString = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Failed parsing ");
-                        stringBuilder.append(e2);
-                        Slog.w(versionString, stringBuilder.toString());
-                        if (null == null) {
-                            this.mUidStates.clear();
-                        }
-                        stream.close();
-                    } catch (NullPointerException e3) {
-                        versionString = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Failed parsing ");
-                        stringBuilder.append(e3);
-                        Slog.w(versionString, stringBuilder.toString());
-                        if (null == null) {
-                            this.mUidStates.clear();
-                        }
-                        stream.close();
-                    } catch (NumberFormatException e4) {
-                        versionString = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Failed parsing ");
-                        stringBuilder.append(e4);
-                        Slog.w(versionString, stringBuilder.toString());
-                        if (null == null) {
-                            this.mUidStates.clear();
-                        }
-                        stream.close();
-                    } catch (XmlPullParserException e5) {
-                        versionString = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Failed parsing ");
-                        stringBuilder.append(e5);
-                        Slog.w(versionString, stringBuilder.toString());
-                        if (null == null) {
-                            this.mUidStates.clear();
-                        }
-                        stream.close();
-                    } catch (IOException e6) {
-                        versionString = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Failed parsing ");
-                        stringBuilder.append(e6);
-                        Slog.w(versionString, stringBuilder.toString());
-                        if (null == null) {
-                            this.mUidStates.clear();
-                        }
-                        stream.close();
-                    } catch (IndexOutOfBoundsException e7) {
-                        try {
+                            if (type != 2) {
+                            }
+                        } catch (IllegalStateException e2) {
+                            versionString = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed parsing ");
+                            stringBuilder.append(e2);
+                            Slog.w(versionString, stringBuilder.toString());
+                            if (null == null) {
+                                this.mUidStates.clear();
+                            }
+                            stream.close();
+                        } catch (NullPointerException e3) {
+                            versionString = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed parsing ");
+                            stringBuilder.append(e3);
+                            Slog.w(versionString, stringBuilder.toString());
+                            if (null == null) {
+                                this.mUidStates.clear();
+                            }
+                            stream.close();
+                        } catch (NumberFormatException e4) {
+                            versionString = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed parsing ");
+                            stringBuilder.append(e4);
+                            Slog.w(versionString, stringBuilder.toString());
+                            if (null == null) {
+                                this.mUidStates.clear();
+                            }
+                            stream.close();
+                        } catch (XmlPullParserException e5) {
+                            versionString = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed parsing ");
+                            stringBuilder.append(e5);
+                            Slog.w(versionString, stringBuilder.toString());
+                            if (null == null) {
+                                this.mUidStates.clear();
+                            }
+                            stream.close();
+                        } catch (IOException e6) {
+                            versionString = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed parsing ");
+                            stringBuilder.append(e6);
+                            Slog.w(versionString, stringBuilder.toString());
+                            if (null == null) {
+                                this.mUidStates.clear();
+                            }
+                            stream.close();
+                        } catch (IndexOutOfBoundsException e7) {
                             versionString = TAG;
                             stringBuilder = new StringBuilder();
                             stringBuilder.append("Failed parsing ");
@@ -2727,17 +2744,12 @@ public class AppOpsService extends Stub {
                                 this.mUidStates.clear();
                             }
                             stream.close();
-                        } catch (Throwable th) {
-                            if (null == null) {
-                                this.mUidStates.clear();
-                            }
-                            try {
-                                stream.close();
-                            } catch (IOException e8) {
-                            }
+                        }
+                    } catch (Throwable th) {
+                        while (true) {
                         }
                     }
-                } catch (FileNotFoundException e9) {
+                } catch (FileNotFoundException e8) {
                     String str2 = TAG;
                     StringBuilder stringBuilder3 = new StringBuilder();
                     stringBuilder3.append("No existing app ops ");
@@ -2866,15 +2878,15 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:104:0x020a, code:
+    /* JADX WARNING: Missing block: B:104:0x020a, code skipped:
             r24 = r0;
             r17 = 3;
             r20 = 4;
      */
-    /* JADX WARNING: Missing block: B:114:0x0280, code:
+    /* JADX WARNING: Missing block: B:114:0x0280, code skipped:
             r24 = r0;
      */
-    /* JADX WARNING: Missing block: B:115:0x0282, code:
+    /* JADX WARNING: Missing block: B:115:0x0282, code skipped:
             r9 = r9 - 1;
             r11 = r17;
             r13 = r20;
@@ -3140,63 +3152,63 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:56:?, code:
+    /* JADX WARNING: Missing block: B:56:?, code skipped:
             r10 = r9.getOps();
             r11 = r12;
      */
-    /* JADX WARNING: Missing block: B:58:0x0140, code:
+    /* JADX WARNING: Missing block: B:58:0x0140, code skipped:
             if (r11 >= r10.size()) goto L_0x021d;
      */
-    /* JADX WARNING: Missing block: B:59:0x0142, code:
+    /* JADX WARNING: Missing block: B:59:0x0142, code skipped:
             r13 = (android.app.AppOpsManager.OpEntry) r10.get(r11);
             r5.startTag(r0, "op");
             r5.attribute(r0, "n", java.lang.Integer.toString(r13.getOp()));
      */
-    /* JADX WARNING: Missing block: B:60:0x0168, code:
+    /* JADX WARNING: Missing block: B:60:0x0168, code skipped:
             if (r13.getMode() == android.app.AppOpsManager.opToDefaultMode(r13.getOp())) goto L_0x0178;
      */
-    /* JADX WARNING: Missing block: B:62:?, code:
+    /* JADX WARNING: Missing block: B:62:?, code skipped:
             r5.attribute(r0, "m", java.lang.Integer.toString(r13.getMode()));
      */
-    /* JADX WARNING: Missing block: B:63:0x0178, code:
+    /* JADX WARNING: Missing block: B:63:0x0178, code skipped:
             r14 = r12;
      */
-    /* JADX WARNING: Missing block: B:65:0x017a, code:
+    /* JADX WARNING: Missing block: B:65:0x017a, code skipped:
             if (r14 >= 6) goto L_0x01d0;
      */
-    /* JADX WARNING: Missing block: B:67:?, code:
+    /* JADX WARNING: Missing block: B:67:?, code skipped:
             r19 = r13;
             r12 = r13.getLastTimeFor(r14);
      */
-    /* JADX WARNING: Missing block: B:68:0x018a, code:
+    /* JADX WARNING: Missing block: B:68:0x018a, code skipped:
             if (r12 == 0) goto L_0x019b;
      */
-    /* JADX WARNING: Missing block: B:70:0x0194, code:
+    /* JADX WARNING: Missing block: B:70:0x0194, code skipped:
             r20 = r4;
      */
-    /* JADX WARNING: Missing block: B:72:?, code:
+    /* JADX WARNING: Missing block: B:72:?, code skipped:
             r5.attribute(null, UID_STATE_TIME_ATTRS[r14], java.lang.Long.toString(r12));
      */
-    /* JADX WARNING: Missing block: B:73:0x019b, code:
+    /* JADX WARNING: Missing block: B:73:0x019b, code skipped:
             r20 = r4;
      */
-    /* JADX WARNING: Missing block: B:74:0x019d, code:
+    /* JADX WARNING: Missing block: B:74:0x019d, code skipped:
             r0 = r19;
             r24 = r8;
             r23 = r9;
             r8 = r0.getLastRejectTimeFor(r14);
      */
-    /* JADX WARNING: Missing block: B:75:0x01af, code:
+    /* JADX WARNING: Missing block: B:75:0x01af, code skipped:
             if (r8 == 0) goto L_0x01c0;
      */
-    /* JADX WARNING: Missing block: B:76:0x01b1, code:
+    /* JADX WARNING: Missing block: B:76:0x01b1, code skipped:
             r25 = r6;
             r5.attribute(0, UID_STATE_REJECT_ATTRS[r14], java.lang.Long.toString(r8));
      */
-    /* JADX WARNING: Missing block: B:77:0x01c0, code:
+    /* JADX WARNING: Missing block: B:77:0x01c0, code skipped:
             r25 = r6;
      */
-    /* JADX WARNING: Missing block: B:78:0x01c2, code:
+    /* JADX WARNING: Missing block: B:78:0x01c2, code skipped:
             r14 = r14 + 1;
             r13 = r0;
             r4 = r20;
@@ -3204,7 +3216,7 @@ public class AppOpsService extends Stub {
             r8 = r24;
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:79:0x01d0, code:
+    /* JADX WARNING: Missing block: B:79:0x01d0, code skipped:
             r20 = r4;
             r25 = r6;
             r24 = r8;
@@ -3212,31 +3224,31 @@ public class AppOpsService extends Stub {
             r0 = r13;
             r4 = r0.getDuration();
      */
-    /* JADX WARNING: Missing block: B:80:0x01dd, code:
+    /* JADX WARNING: Missing block: B:80:0x01dd, code skipped:
             if (r4 == null) goto L_0x01e9;
      */
-    /* JADX WARNING: Missing block: B:81:0x01df, code:
+    /* JADX WARNING: Missing block: B:81:0x01df, code skipped:
             r5.attribute(null, "d", java.lang.Integer.toString(r4));
      */
-    /* JADX WARNING: Missing block: B:82:0x01e9, code:
+    /* JADX WARNING: Missing block: B:82:0x01e9, code skipped:
             r6 = r0.getProxyUid();
      */
-    /* JADX WARNING: Missing block: B:83:0x01ee, code:
+    /* JADX WARNING: Missing block: B:83:0x01ee, code skipped:
             if (r6 == -1) goto L_0x01fb;
      */
-    /* JADX WARNING: Missing block: B:84:0x01f0, code:
+    /* JADX WARNING: Missing block: B:84:0x01f0, code skipped:
             r5.attribute(null, "pu", java.lang.Integer.toString(r6));
      */
-    /* JADX WARNING: Missing block: B:85:0x01fb, code:
+    /* JADX WARNING: Missing block: B:85:0x01fb, code skipped:
             r8 = r0.getProxyPackageName();
      */
-    /* JADX WARNING: Missing block: B:86:0x01ff, code:
+    /* JADX WARNING: Missing block: B:86:0x01ff, code skipped:
             if (r8 == null) goto L_0x0208;
      */
-    /* JADX WARNING: Missing block: B:87:0x0201, code:
+    /* JADX WARNING: Missing block: B:87:0x0201, code skipped:
             r5.attribute(null, "pp", r8);
      */
-    /* JADX WARNING: Missing block: B:88:0x0208, code:
+    /* JADX WARNING: Missing block: B:88:0x0208, code skipped:
             r5.endTag(null, "op");
             r11 = r11 + 1;
             r4 = r20;
@@ -3246,18 +3258,17 @@ public class AppOpsService extends Stub {
             r0 = null;
             r12 = false;
      */
-    /* JADX WARNING: Missing block: B:89:0x021d, code:
+    /* JADX WARNING: Missing block: B:89:0x021d, code skipped:
             r20 = r4;
             r25 = r6;
             r24 = r8;
             r23 = r9;
-            r0 = "uid";
-            r5.endTag(null, r0);
+            r5.endTag(null, "uid");
      */
-    /* JADX WARNING: Missing block: B:90:0x022c, code:
+    /* JADX WARNING: Missing block: B:90:0x022c, code skipped:
             r8 = r24;
      */
-    /* JADX WARNING: Missing block: B:106:0x026a, code:
+    /* JADX WARNING: Missing block: B:106:0x026a, code skipped:
             r0 = e;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3301,14 +3312,17 @@ public class AppOpsService extends Stub {
                     } catch (IOException e2) {
                         e = e2;
                         list = allOps;
+                        Slog.w(TAG, "Failed to write state, restoring backup.", e);
+                        this.mFile.failWrite(stream);
                     }
                 }
                 int uidStateCount2;
                 if (allOps != null) {
                     String lastPkg = null;
-                    while (0 < allOps.size()) {
+                    int i2 = 0;
+                    while (i2 < allOps.size()) {
                         try {
-                            PackageOps pkg = (PackageOps) allOps.get(0);
+                            PackageOps pkg = (PackageOps) allOps.get(i2);
                             if (pkg == null) {
                                 list = allOps;
                                 uidStateCount2 = uidStateCount;
@@ -3340,29 +3354,40 @@ public class AppOpsService extends Stub {
                                                 uidStateCount2 = uidStateCount;
                                                 str = lastPkg;
                                                 packageOps = pkg;
+                                                while (true) {
+                                                    try {
+                                                        break;
+                                                    } catch (Throwable th3) {
+                                                        th = th3;
+                                                    }
+                                                }
+                                                throw th;
                                             }
-                                        } else {
-                                            z = false;
-                                            out.attribute(str2, "p", Boolean.toString(false));
                                         }
-                                    } catch (Throwable th3) {
-                                        th = th3;
+                                        z = false;
+                                        out.attribute(str2, "p", Boolean.toString(false));
+                                    } catch (Throwable th4) {
+                                        th = th4;
                                         list = allOps;
                                         uidStateCount2 = uidStateCount;
                                         str = lastPkg;
                                         packageOps = pkg;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw th;
                                     }
                                 }
                             }
-                            int i2 = 0 + 1;
+                            i2++;
                             allOps = list;
                             uidStateCount = uidStateCount2;
+                            str2 = null;
                         } catch (IOException e3) {
                             e = e3;
                             list = allOps;
                             Slog.w(TAG, "Failed to write state, restoring backup.", e);
                             this.mFile.failWrite(stream);
-                            return;
                         }
                     }
                     uidStateCount2 = uidStateCount;
@@ -3381,18 +3406,9 @@ public class AppOpsService extends Stub {
                 stringBuilder.append("Failed to write state: ");
                 stringBuilder.append(e4);
                 Slog.w(str3, stringBuilder.toString());
-                return;
+            } catch (Throwable th5) {
             }
         }
-        return;
-        while (true) {
-            try {
-                break;
-            } catch (Throwable th4) {
-                th = th4;
-            }
-        }
-        throw th;
     }
 
     public void onShellCommand(FileDescriptor in, FileDescriptor out, FileDescriptor err, String[] args, ShellCallback callback, ResultReceiver resultReceiver) {
@@ -3427,8 +3443,8 @@ public class AppOpsService extends Stub {
         pw.println("              specified, the current user is assumed.");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:198:0x01df A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x01d8 A:{Catch:{ all -> 0x00d5, RemoteException -> 0x032b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:201:0x01df A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:124:0x01d8 A:{Catch:{ all -> 0x00d5, RemoteException -> 0x032b }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     static int onShellCommand(Shell shell, String cmd) {
         Shell shell2 = shell;
@@ -3441,63 +3457,61 @@ public class AppOpsService extends Stub {
         PrintWriter err = shell.getErrPrintWriter();
         long now;
         try {
-            boolean z;
+            int i;
             switch (cmd.hashCode()) {
                 case -1703718319:
                     if (str.equals("write-settings")) {
-                        z = true;
+                        i = 4;
                         break;
                     }
                 case -1166702330:
                     if (str.equals("query-op")) {
-                        z = true;
+                        i = 2;
                         break;
                     }
                 case 102230:
                     if (str.equals("get")) {
-                        z = true;
+                        i = 1;
                         break;
                     }
                 case 113762:
                     if (str.equals("set")) {
-                        z = false;
+                        i = 0;
                         break;
                     }
                 case 3540994:
                     if (str.equals("stop")) {
-                        z = true;
+                        i = 7;
                         break;
                     }
                 case 108404047:
                     if (str.equals("reset")) {
-                        z = true;
+                        i = 3;
                         break;
                     }
                 case 109757538:
                     if (str.equals("start")) {
-                        z = true;
+                        i = 6;
                         break;
                     }
                 case 2085703290:
                     if (str.equals("read-settings")) {
-                        z = true;
+                        i = 5;
                         break;
                     }
                 default:
-                    z = true;
-                    break;
             }
-            int res;
+            i = -1;
             int mode;
             List<PackageOps> ops;
             List<OpEntry> entries;
             int j;
             OpEntry ent;
-            switch (z) {
-                case false:
-                    res = shell2.parseUserPackageOp(true, err);
-                    if (res < 0) {
-                        return res;
+            switch (i) {
+                case 0:
+                    i = shell2.parseUserPackageOp(true, err);
+                    if (i < 0) {
+                        return i;
                     }
                     String modeStr = shell.getNextArg();
                     if (modeStr == null) {
@@ -3514,115 +3528,119 @@ public class AppOpsService extends Stub {
                         shell2.mInterface.setUidMode(shell2.op, shell2.nonpackageUid, mode);
                     }
                     return 0;
-                case true:
-                    res = shell2.parseUserPackageOp(false, err);
-                    if (res < 0) {
-                        return res;
+                case 1:
+                    i = shell2.parseUserPackageOp(false, err);
+                    if (i < 0) {
+                        return i;
                     }
-                    int i;
+                    int i2;
                     int[] iArr = null;
                     IAppOpsService iAppOpsService;
                     if (shell2.packageName != null) {
                         iAppOpsService = shell2.mInterface;
-                        i = shell2.packageUid;
+                        i2 = shell2.packageUid;
                         String str2 = shell2.packageName;
                         if (shell2.op != -1) {
                             iArr = new int[]{shell2.op};
                         }
-                        ops = iAppOpsService.getOpsForPackage(i, str2, iArr);
+                        ops = iAppOpsService.getOpsForPackage(i2, str2, iArr);
                     } else {
                         iAppOpsService = shell2.mInterface;
-                        i = shell2.nonpackageUid;
+                        i2 = shell2.nonpackageUid;
                         if (shell2.op != -1) {
                             iArr = new int[]{shell2.op};
                         }
-                        ops = iAppOpsService.getUidOps(i, iArr);
+                        ops = iAppOpsService.getUidOps(i2, iArr);
                     }
-                    if (ops == null || ops.size() <= 0) {
-                        pw.println("No operations.");
-                        if (shell2.op > -1 && shell2.op < 78) {
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("Default mode: ");
-                            stringBuilder2.append(AppOpsManager.modeToName(AppOpsManager.opToDefaultMode(shell2.op)));
-                            pw.println(stringBuilder2.toString());
+                    if (ops != null) {
+                        if (ops.size() > 0) {
+                            now = System.currentTimeMillis();
+                            for (i2 = 0; i2 < ops.size(); i2++) {
+                                entries = ((PackageOps) ops.get(i2)).getOps();
+                                for (j = 0; j < entries.size(); j++) {
+                                    ent = (OpEntry) entries.get(j);
+                                    pw.print(AppOpsManager.opToName(ent.getOp()));
+                                    pw.print(": ");
+                                    pw.print(AppOpsManager.modeToName(ent.getMode()));
+                                    if (ent.getTime() != 0) {
+                                        pw.print("; time=");
+                                        TimeUtils.formatDuration(now - ent.getTime(), pw);
+                                        pw.print(" ago");
+                                    }
+                                    if (ent.getRejectTime() != 0) {
+                                        pw.print("; rejectTime=");
+                                        TimeUtils.formatDuration(now - ent.getRejectTime(), pw);
+                                        pw.print(" ago");
+                                    }
+                                    if (ent.getDuration() == -1) {
+                                        pw.print(" (running)");
+                                    } else if (ent.getDuration() != 0) {
+                                        pw.print("; duration=");
+                                        TimeUtils.formatDuration((long) ent.getDuration(), pw);
+                                    }
+                                    pw.println();
+                                }
+                            }
+                            return 0;
                         }
-                        return 0;
                     }
-                    now = System.currentTimeMillis();
-                    for (i = 0; i < ops.size(); i++) {
-                        entries = ((PackageOps) ops.get(i)).getOps();
-                        for (j = 0; j < entries.size(); j++) {
-                            ent = (OpEntry) entries.get(j);
-                            pw.print(AppOpsManager.opToName(ent.getOp()));
-                            pw.print(": ");
-                            pw.print(AppOpsManager.modeToName(ent.getMode()));
-                            if (ent.getTime() != 0) {
-                                pw.print("; time=");
-                                TimeUtils.formatDuration(now - ent.getTime(), pw);
-                                pw.print(" ago");
-                            }
-                            if (ent.getRejectTime() != 0) {
-                                pw.print("; rejectTime=");
-                                TimeUtils.formatDuration(now - ent.getRejectTime(), pw);
-                                pw.print(" ago");
-                            }
-                            if (ent.getDuration() == -1) {
-                                pw.print(" (running)");
-                            } else if (ent.getDuration() != 0) {
-                                pw.print("; duration=");
-                                TimeUtils.formatDuration((long) ent.getDuration(), pw);
-                            }
-                            pw.println();
-                        }
+                    pw.println("No operations.");
+                    if (shell2.op > -1 && shell2.op < 78) {
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Default mode: ");
+                        stringBuilder2.append(AppOpsManager.modeToName(AppOpsManager.opToDefaultMode(shell2.op)));
+                        pw.println(stringBuilder2.toString());
                     }
                     return 0;
-                case true:
-                    res = shell2.parseUserOpMode(1, err);
-                    if (res < 0) {
-                        return res;
+                case 2:
+                    i = shell2.parseUserOpMode(1, err);
+                    if (i < 0) {
+                        return i;
                     }
                     ops = shell2.mInterface.getPackagesForOps(new int[]{shell2.op});
-                    if (ops == null || ops.size() <= 0) {
-                        pw.println("No operations.");
-                        return 0;
-                    }
-                    for (mode = 0; mode < ops.size(); mode++) {
-                        PackageOps pkg = (PackageOps) ops.get(mode);
-                        boolean hasMatch = false;
-                        entries = ((PackageOps) ops.get(mode)).getOps();
-                        j = 0;
-                        while (j < entries.size()) {
-                            ent = (OpEntry) entries.get(j);
-                            if (ent.getOp() == shell2.op && ent.getMode() == shell2.mode) {
-                                hasMatch = true;
-                                if (!hasMatch) {
-                                    pw.println(pkg.getPackageName());
+                    if (ops != null) {
+                        if (ops.size() > 0) {
+                            for (mode = 0; mode < ops.size(); mode++) {
+                                PackageOps pkg = (PackageOps) ops.get(mode);
+                                boolean hasMatch = false;
+                                entries = ((PackageOps) ops.get(mode)).getOps();
+                                j = 0;
+                                while (j < entries.size()) {
+                                    ent = (OpEntry) entries.get(j);
+                                    if (ent.getOp() == shell2.op && ent.getMode() == shell2.mode) {
+                                        hasMatch = true;
+                                        if (!hasMatch) {
+                                            pw.println(pkg.getPackageName());
+                                        }
+                                    } else {
+                                        j++;
+                                    }
                                 }
-                            } else {
-                                j++;
+                                if (!hasMatch) {
+                                }
                             }
-                        }
-                        if (!hasMatch) {
+                            return 0;
                         }
                     }
+                    pw.println("No operations.");
                     return 0;
-                case true:
+                case 3:
                     String packageName = null;
-                    res = -2;
+                    i = -2;
                     while (true) {
                         String nextArg = shell.getNextArg();
                         String argument = nextArg;
                         if (nextArg == null) {
-                            if (res == -2) {
-                                res = ActivityManager.getCurrentUser();
+                            if (i == -2) {
+                                i = ActivityManager.getCurrentUser();
                             }
-                            shell2.mInterface.resetAllModes(res, packageName);
+                            shell2.mInterface.resetAllModes(i, packageName);
                             pw.print("Reset all modes for: ");
-                            if (res == -1) {
+                            if (i == -1) {
                                 pw.print("all users");
                             } else {
                                 pw.print("user ");
-                                pw.print(res);
+                                pw.print(i);
                             }
                             pw.print(", ");
                             if (packageName == null) {
@@ -3633,7 +3651,7 @@ public class AppOpsService extends Stub {
                             }
                             return 0;
                         } else if ("--user".equals(argument)) {
-                            res = UserHandle.parseUserArg(shell.getNextArgRequired());
+                            i = UserHandle.parseUserArg(shell.getNextArgRequired());
                         } else if (packageName == null) {
                             packageName = argument;
                         } else {
@@ -3644,7 +3662,7 @@ public class AppOpsService extends Stub {
                             return -1;
                         }
                     }
-                case true:
+                case 4:
                     shell2.mInternal.enforceManageAppOpsModes(Binder.getCallingPid(), Binder.getCallingUid(), -1);
                     now = Binder.clearCallingIdentity();
                     try {
@@ -3658,27 +3676,27 @@ public class AppOpsService extends Stub {
                     } catch (Throwable th) {
                         Binder.restoreCallingIdentity(now);
                     }
-                case true:
+                case 5:
                     shell2.mInternal.enforceManageAppOpsModes(Binder.getCallingPid(), Binder.getCallingUid(), -1);
                     now = Binder.clearCallingIdentity();
                     shell2.mInternal.readState();
                     pw.println("Last settings read.");
                     Binder.restoreCallingIdentity(now);
                     return 0;
-                case true:
-                    res = shell2.parseUserPackageOp(true, err);
-                    if (res < 0) {
-                        return res;
+                case 6:
+                    i = shell2.parseUserPackageOp(true, err);
+                    if (i < 0) {
+                        return i;
                     }
                     if (shell2.packageName == null) {
                         return -1;
                     }
                     shell2.mInterface.startOperation(shell2.mToken, shell2.op, shell2.packageUid, shell2.packageName, true);
                     return 0;
-                case true:
-                    res = shell2.parseUserPackageOp(true, err);
-                    if (res < 0) {
-                        return res;
+                case 7:
+                    i = shell2.parseUserPackageOp(true, err);
+                    if (i < 0) {
+                        return i;
                     }
                     if (shell2.packageName == null) {
                         return -1;
@@ -3749,16 +3767,13 @@ public class AppOpsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:276:0x0585 A:{Catch:{ all -> 0x0538 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:275:0x0582 A:{Catch:{ all -> 0x0538 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:279:0x058b A:{Catch:{ all -> 0x0538 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:278:0x0588 A:{Catch:{ all -> 0x0538 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:328:0x063c  */
-    /* JADX WARNING: Removed duplicated region for block: B:295:0x05c1 A:{Catch:{ all -> 0x0538 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:336:0x0650  */
-    /* JADX WARNING: Missing block: B:411:0x07b7, code:
-            if (r10 != r2.op) goto L_0x07c3;
-     */
+    /* JADX WARNING: Removed duplicated region for block: B:283:0x0585 A:{Catch:{ all -> 0x0538 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:282:0x0582 A:{Catch:{ all -> 0x0538 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:286:0x058b A:{Catch:{ all -> 0x0538 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0588 A:{Catch:{ all -> 0x0538 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x063c  */
+    /* JADX WARNING: Removed duplicated region for block: B:302:0x05c1 A:{Catch:{ all -> 0x0538 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:344:0x0650  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         int dumpMode;
@@ -3855,15 +3870,28 @@ public class AppOpsService extends Stub {
             }
             synchronized (this) {
                 int poi;
+                boolean printedHeader;
+                boolean needSep;
+                boolean printedHeader2;
+                int j;
+                int j2;
+                int i2;
+                String str;
+                int i3;
+                int i4;
+                PrintWriter printWriter2;
+                long now;
+                UidState uidState;
+                int dumpUid3;
                 printWriter.println("Current AppOps Service state:");
                 appOpsService.mConstants.dump(printWriter);
                 pw.println();
-                long now = System.currentTimeMillis();
+                long now2 = System.currentTimeMillis();
                 long nowElapsed = SystemClock.elapsedRealtime();
                 long nowUptime = SystemClock.uptimeMillis();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 Date date = new Date();
-                boolean needSep = false;
+                boolean needSep2 = false;
                 if (dumpOp2 < 0 && dumpMode < 0 && dumpPackage == null) {
                     if (appOpsService.mProfileOwners != null) {
                         printWriter.println("  Profile owners:");
@@ -3877,28 +3905,15 @@ public class AppOpsService extends Stub {
                         pw.println();
                     }
                 }
-                int i2;
-                String str;
-                int i3;
-                int i4;
-                PrintWriter printWriter2;
                 try {
-                    boolean printedHeader;
-                    boolean needSep2;
-                    boolean printedHeader2;
-                    int j;
                     ModeCallback cb;
-                    int j2;
-                    long now2;
-                    UidState uidState;
-                    int dumpUid3;
                     if (appOpsService.mOpModeWatchers.size() > 0) {
                         boolean needSep3;
                         printedHeader = false;
-                        needSep2 = false;
+                        needSep = false;
                         dumpUid2 = 0;
                         while (true) {
-                            needSep3 = needSep2;
+                            needSep3 = needSep;
                             if (dumpUid2 >= appOpsService.mOpModeWatchers.size()) {
                                 break;
                             }
@@ -3941,35 +3956,35 @@ public class AppOpsService extends Stub {
                                 }
                                 printedHeader = printedHeader2;
                             }
-                            needSep2 = needSep3;
+                            needSep = needSep3;
                             dumpUid2++;
                             strArr = args;
                         }
-                        needSep = needSep3;
+                        needSep2 = needSep3;
                     }
                     if (appOpsService.mPackageModeWatchers.size() <= 0 || dumpOp2 >= 0) {
-                        needSep2 = needSep;
+                        needSep = needSep2;
                     } else {
                         printedHeader = false;
-                        needSep2 = needSep;
-                        needSep = false;
-                        while (needSep < appOpsService.mPackageModeWatchers.size()) {
+                        needSep = needSep2;
+                        needSep2 = false;
+                        while (needSep2 < appOpsService.mPackageModeWatchers.size()) {
                             try {
-                                if (dumpPackage == null || dumpPackage.equals(appOpsService.mPackageModeWatchers.keyAt(needSep))) {
+                                if (dumpPackage == null || dumpPackage.equals(appOpsService.mPackageModeWatchers.keyAt(needSep2))) {
                                     boolean needSep4;
                                     boolean printedHeader3;
-                                    needSep2 = true;
+                                    needSep = true;
                                     if (!printedHeader) {
                                         printWriter.println("  Package mode watchers:");
                                         printedHeader = true;
                                     }
                                     printWriter.print("    Pkg ");
-                                    printWriter.print((String) appOpsService.mPackageModeWatchers.keyAt(needSep));
+                                    printWriter.print((String) appOpsService.mPackageModeWatchers.keyAt(needSep2));
                                     printWriter.println(":");
-                                    ArraySet<ModeCallback> callbacks3 = (ArraySet) appOpsService.mPackageModeWatchers.valueAt(needSep);
+                                    ArraySet<ModeCallback> callbacks3 = (ArraySet) appOpsService.mPackageModeWatchers.valueAt(needSep2);
                                     j2 = 0;
                                     while (true) {
-                                        needSep4 = needSep2;
+                                        needSep4 = needSep;
                                         printedHeader3 = printedHeader;
                                         j = j2;
                                         if (j >= callbacks3.size()) {
@@ -3980,13 +3995,13 @@ public class AppOpsService extends Stub {
                                         printWriter.print(": ");
                                         printWriter.println(callbacks3.valueAt(j));
                                         j2 = j + 1;
-                                        needSep2 = needSep4;
+                                        needSep = needSep4;
                                         printedHeader = printedHeader3;
                                     }
-                                    needSep2 = needSep4;
+                                    needSep = needSep4;
                                     printedHeader = printedHeader3;
                                 }
-                                needSep++;
+                                needSep2++;
                             } catch (Throwable th2) {
                                 th = th2;
                                 i2 = dumpUid;
@@ -4006,9 +4021,9 @@ public class AppOpsService extends Stub {
                             boolean needSep6;
                             cb = (ModeCallback) appOpsService.mModeWatchers.valueAt(dumpUid2);
                             if (dumpPackage != null) {
-                                needSep5 = needSep2;
+                                needSep5 = needSep;
                                 if (cb.mWatchingUid < false && dumpUid != UserHandle.getAppId(cb.mWatchingUid)) {
-                                    needSep2 = needSep5;
+                                    needSep = needSep5;
                                 }
                             }
                             if (printedHeader) {
@@ -4022,35 +4037,35 @@ public class AppOpsService extends Stub {
                             printWriter.print(Integer.toHexString(System.identityHashCode(appOpsService.mModeWatchers.keyAt(dumpUid2))));
                             printWriter.print(": ");
                             printWriter.println(cb);
-                            needSep2 = needSep6;
+                            needSep = needSep6;
                         }
-                        needSep5 = needSep2;
+                        needSep5 = needSep;
                     }
                     if (appOpsService.mActiveWatchers.size() <= 0 || dumpMode >= 0) {
-                        now2 = now;
+                        now = now2;
                         uidState = true;
                     } else {
                         boolean needSep7;
-                        needSep2 = true;
+                        needSep = true;
                         printedHeader = false;
                         dumpUid2 = 0;
                         while (dumpUid2 < appOpsService.mActiveWatchers.size()) {
                             SparseArray<ActiveCallback> activeWatchers = (SparseArray) appOpsService.mActiveWatchers.valueAt(dumpUid2);
                             if (activeWatchers.size() <= 0) {
-                                now2 = now;
-                                needSep7 = needSep2;
+                                now = now2;
+                                needSep7 = needSep;
                             } else {
-                                needSep7 = needSep2;
+                                needSep7 = needSep;
                                 ActiveCallback cb2 = (ActiveCallback) activeWatchers.valueAt(false);
                                 if (dumpOp2 < 0 || activeWatchers.indexOfKey(dumpOp2) >= 0) {
                                     ActiveCallback cb3;
                                     if (dumpPackage != null) {
-                                        now2 = now;
+                                        now = now2;
                                         cb3 = cb2;
                                         if (cb3.mWatchingUid >= null && dumpUid != UserHandle.getAppId(cb3.mWatchingUid)) {
                                         }
                                     } else {
-                                        now2 = now;
+                                        now = now2;
                                         cb3 = cb2;
                                     }
                                     if (!printedHeader) {
@@ -4061,14 +4076,14 @@ public class AppOpsService extends Stub {
                                     printWriter.print(Integer.toHexString(System.identityHashCode(appOpsService.mActiveWatchers.keyAt(dumpUid2))));
                                     printWriter.println(" ->");
                                     printWriter.print("        [");
-                                    now = activeWatchers.size();
+                                    now2 = activeWatchers.size();
                                     dumpUid2 = 0;
-                                    while (dumpUid2 < now) {
+                                    while (dumpUid2 < now2) {
                                         if (dumpUid2 > 0) {
                                             printWriter.print(' ');
                                         }
                                         printWriter.print(AppOpsManager.opToName(activeWatchers.keyAt(dumpUid2)));
-                                        if (dumpUid2 < now - 1) {
+                                        if (dumpUid2 < now2 - 1) {
                                             printWriter.print(',');
                                         }
                                         dumpUid2++;
@@ -4077,22 +4092,22 @@ public class AppOpsService extends Stub {
                                     printWriter.print("        ");
                                     printWriter.println(cb3);
                                 } else {
-                                    now2 = now;
+                                    now = now2;
                                 }
                             }
                             dumpUid2++;
-                            needSep2 = needSep7;
-                            now = now2;
+                            needSep = needSep7;
+                            now2 = now;
                         }
-                        now2 = now;
-                        needSep7 = needSep2;
+                        now = now2;
+                        needSep7 = needSep;
                         uidState = true;
                     }
                     if (appOpsService.mClients.size() <= 0 || dumpMode >= 0) {
                         dumpUid3 = dumpUid;
                     } else {
                         boolean needSep8;
-                        needSep2 = true;
+                        needSep = true;
                         boolean printedHeader4 = false;
                         dumpUid2 = 0;
                         while (dumpUid2 < appOpsService.mClients.size()) {
@@ -4110,14 +4125,14 @@ public class AppOpsService extends Stub {
                                         }
                                         Op dumpUid4 = (Op) cs.mStartedOps.get(i);
                                         if (dumpOp2 >= 0) {
-                                            needSep8 = needSep2;
+                                            needSep8 = needSep;
                                             if (dumpUid4.op != dumpOp2) {
                                                 i++;
                                                 dumpUid = dumpUid3;
-                                                needSep2 = needSep8;
+                                                needSep = needSep8;
                                             }
                                         } else {
-                                            needSep8 = needSep2;
+                                            needSep8 = needSep;
                                         }
                                         if (dumpPackage == null || dumpPackage.equals(dumpUid4.packageName)) {
                                             if (!printedHeader5) {
@@ -4145,22 +4160,22 @@ public class AppOpsService extends Stub {
                                             printWriter.println(AppOpsManager.opToName(dumpUid4.op));
                                             i++;
                                             dumpUid = dumpUid3;
-                                            needSep2 = needSep8;
+                                            needSep = needSep8;
                                         } else {
                                             i++;
                                             dumpUid = dumpUid3;
-                                            needSep2 = needSep8;
+                                            needSep = needSep8;
                                         }
                                     }
-                                    needSep8 = needSep2;
+                                    needSep8 = needSep;
                                     printedHeader4 = printedHeader5;
                                 } else {
                                     dumpUid3 = dumpUid;
-                                    needSep8 = needSep2;
+                                    needSep8 = needSep;
                                 }
                                 dumpUid2++;
                                 dumpUid = dumpUid3;
-                                needSep2 = needSep8;
+                                needSep = needSep8;
                             } catch (Throwable th3) {
                                 th = th3;
                                 i2 = dumpUid;
@@ -4173,261 +4188,237 @@ public class AppOpsService extends Stub {
                             }
                         }
                         dumpUid3 = dumpUid;
-                        needSep8 = needSep2;
+                        needSep8 = needSep;
                     }
-                    try {
-                        boolean printedHeader6;
-                        int usage;
-                        AppOpsService appOpsService2;
-                        if (appOpsService.mAudioRestrictions.size() > 0 && dumpOp2 < false && dumpPackage != null && dumpMode < 0) {
-                            printedHeader6 = false;
-                            dumpUid2 = 0;
-                            while (dumpUid2 < appOpsService.mAudioRestrictions.size()) {
-                                try {
-                                    String op = AppOpsManager.opToName(appOpsService.mAudioRestrictions.keyAt(dumpUid2));
-                                    SparseArray<Restriction> restrictions = (SparseArray) appOpsService.mAudioRestrictions.valueAt(dumpUid2);
-                                    printedHeader = printedHeader6;
-                                    dumpUid = 0;
-                                    while (dumpUid < restrictions.size()) {
-                                        SparseArray<Restriction> restrictions2;
-                                        if (!printedHeader) {
-                                            printWriter.println("  Audio Restrictions:");
-                                            printedHeader = true;
-                                            needSep2 = true;
-                                        }
-                                        usage = restrictions.keyAt(dumpUid);
-                                        boolean needSep9 = needSep2;
-                                        printWriter.print("    ");
-                                        printWriter.print(op);
-                                        printWriter.print(" usage=");
-                                        printWriter.print(AudioAttributes.usageToString(usage));
-                                        Restriction r = (Restriction) restrictions.valueAt(dumpUid);
-                                        String op2 = op;
-                                        printWriter.print(": mode=");
-                                        printWriter.println(AppOpsManager.modeToName(r.mode));
-                                        if (!r.exceptionPackages.isEmpty()) {
-                                            printWriter.println("      Exceptions:");
-                                            i = 0;
-                                            while (true) {
-                                                restrictions2 = restrictions;
-                                                if (i >= r.exceptionPackages.size()) {
-                                                    break;
-                                                }
-                                                printWriter.print("        ");
-                                                printWriter.println((String) r.exceptionPackages.valueAt(i));
-                                                i++;
-                                                restrictions = restrictions2;
-                                            }
-                                        } else {
-                                            restrictions2 = restrictions;
-                                        }
-                                        dumpUid++;
-                                        needSep2 = needSep9;
-                                        op = op2;
-                                        restrictions = restrictions2;
+                } catch (Throwable th4) {
+                    th = th4;
+                    i2 = dumpUid;
+                    str = dumpPackage;
+                    i3 = dumpMode;
+                    i4 = dumpOp2;
+                    printWriter2 = printWriter;
+                    dumpUid = appOpsService;
+                    throw th;
+                }
+                try {
+                    boolean printedHeader6;
+                    int usage;
+                    AppOpsService appOpsService2;
+                    int i5;
+                    if (appOpsService.mAudioRestrictions.size() > 0 && dumpOp2 < false && dumpPackage != null && dumpMode < 0) {
+                        printedHeader6 = false;
+                        dumpUid2 = 0;
+                        while (dumpUid2 < appOpsService.mAudioRestrictions.size()) {
+                            try {
+                                String op = AppOpsManager.opToName(appOpsService.mAudioRestrictions.keyAt(dumpUid2));
+                                SparseArray<Restriction> restrictions = (SparseArray) appOpsService.mAudioRestrictions.valueAt(dumpUid2);
+                                printedHeader = printedHeader6;
+                                dumpUid = 0;
+                                while (dumpUid < restrictions.size()) {
+                                    SparseArray<Restriction> restrictions2;
+                                    if (!printedHeader) {
+                                        printWriter.println("  Audio Restrictions:");
+                                        printedHeader = true;
+                                        needSep = true;
                                     }
-                                    dumpUid2++;
-                                    printedHeader6 = printedHeader;
-                                } catch (Throwable th4) {
-                                    th = th4;
-                                    str = dumpPackage;
-                                    i3 = dumpMode;
-                                    i4 = dumpOp2;
-                                    printWriter2 = printWriter;
-                                    appOpsService2 = appOpsService;
-                                    i2 = dumpUid3;
+                                    usage = restrictions.keyAt(dumpUid);
+                                    boolean needSep9 = needSep;
+                                    printWriter.print("    ");
+                                    printWriter.print(op);
+                                    printWriter.print(" usage=");
+                                    printWriter.print(AudioAttributes.usageToString(usage));
+                                    Restriction r = (Restriction) restrictions.valueAt(dumpUid);
+                                    String op2 = op;
+                                    printWriter.print(": mode=");
+                                    printWriter.println(AppOpsManager.modeToName(r.mode));
+                                    if (!r.exceptionPackages.isEmpty()) {
+                                        printWriter.println("      Exceptions:");
+                                        i = 0;
+                                        while (true) {
+                                            restrictions2 = restrictions;
+                                            if (i >= r.exceptionPackages.size()) {
+                                                break;
+                                            }
+                                            printWriter.print("        ");
+                                            printWriter.println((String) r.exceptionPackages.valueAt(i));
+                                            i++;
+                                            restrictions = restrictions2;
+                                        }
+                                    } else {
+                                        restrictions2 = restrictions;
+                                    }
+                                    dumpUid++;
+                                    needSep = needSep9;
+                                    op = op2;
+                                    restrictions = restrictions2;
                                 }
+                                dumpUid2++;
+                                printedHeader6 = printedHeader;
+                            } catch (Throwable th5) {
+                                th = th5;
+                                str = dumpPackage;
+                                i3 = dumpMode;
+                                i4 = dumpOp2;
+                                printWriter2 = printWriter;
+                                appOpsService2 = appOpsService;
+                                i2 = dumpUid3;
+                                throw th;
                             }
                         }
-                        if (needSep2) {
-                            pw.println();
+                    }
+                    if (needSep) {
+                        pw.println();
+                    }
+                    dumpUid2 = 0;
+                    while (true) {
+                        usage = dumpUid2;
+                        if (usage >= appOpsService.mUidStates.size()) {
+                            break;
                         }
-                        dumpUid2 = 0;
-                        while (true) {
-                            usage = dumpUid2;
-                            int i5;
-                            if (usage < appOpsService.mUidStates.size()) {
-                                int i6;
-                                SimpleDateFormat sdf2;
-                                long nowUptime2;
-                                boolean uidState2;
-                                int code;
-                                UidState uidState3 = (UidState) appOpsService.mUidStates.valueAt(usage);
-                                SparseIntArray opModes = uidState3.opModes;
-                                ArrayMap<String, Ops> pkgOps = uidState3.pkgOps;
-                                boolean needSep10;
-                                if (dumpOp2 >= 0 || dumpPackage != null || dumpMode >= 0) {
-                                    boolean hasOp;
-                                    boolean hasPackage;
-                                    if (dumpOp2 >= 0) {
-                                        if (uidState3.opModes == null || uidState3.opModes.indexOfKey(dumpOp2) < 0) {
-                                            boolean hasMode;
-                                            needSep = false;
-                                            printedHeader6 = dumpPackage != null ? uidState : false;
-                                            printedHeader2 = dumpMode >= 0 ? uidState : false;
-                                            if (!printedHeader2 || opModes == null) {
-                                                hasOp = needSep;
+                        SimpleDateFormat sdf2;
+                        int i6;
+                        long nowUptime2;
+                        boolean uidState2;
+                        int code;
+                        UidState uidState3 = (UidState) appOpsService.mUidStates.valueAt(usage);
+                        SparseIntArray opModes = uidState3.opModes;
+                        ArrayMap<String, Ops> pkgOps = uidState3.pkgOps;
+                        boolean needSep10;
+                        if (dumpOp2 >= 0 || dumpPackage != null || dumpMode >= 0) {
+                            boolean hasOp;
+                            boolean hasPackage;
+                            if (dumpOp2 >= 0) {
+                                if (uidState3.opModes == null || uidState3.opModes.indexOfKey(dumpOp2) < 0) {
+                                    boolean hasMode;
+                                    needSep2 = false;
+                                    printedHeader6 = dumpPackage != null ? uidState : false;
+                                    printedHeader2 = dumpMode >= 0 ? uidState : false;
+                                    if (!printedHeader2 || opModes == null) {
+                                        hasOp = needSep2;
+                                        hasPackage = printedHeader6;
+                                    } else {
+                                        hasMode = printedHeader2;
+                                        j2 = 0;
+                                        while (true) {
+                                            int opi = j2;
+                                            if (!hasMode) {
+                                                hasOp = needSep2;
                                                 hasPackage = printedHeader6;
+                                                dumpUid = opi;
+                                                if (dumpUid >= opModes.size()) {
+                                                    break;
+                                                }
+                                                if (opModes.valueAt(dumpUid) == dumpMode) {
+                                                    hasMode = true;
+                                                }
+                                                j2 = dumpUid + 1;
+                                                needSep2 = hasOp;
+                                                printedHeader6 = hasPackage;
+                                            } else {
+                                                hasOp = needSep2;
+                                                hasPackage = printedHeader6;
+                                                break;
+                                            }
+                                        }
+                                        printedHeader2 = hasMode;
+                                    }
+                                    if (pkgOps == null) {
+                                        printedHeader6 = hasPackage;
+                                        dumpUid2 = 0;
+                                        while (true) {
+                                            if (hasOp && printedHeader6) {
+                                                if (printedHeader2) {
+                                                    sdf2 = sdf;
+                                                    needSep10 = needSep;
+                                                    i6 = usage;
+                                                    break;
+                                                }
+                                            }
+                                            i6 = usage;
+                                            if (dumpUid2 >= pkgOps.size()) {
+                                                sdf2 = sdf;
+                                                needSep10 = needSep;
+                                                break;
+                                            }
+                                            Ops ops = (Ops) pkgOps.valueAt(dumpUid2);
+                                            if (!(hasOp || ops == null || ops.indexOfKey(dumpOp2) < 0)) {
+                                                hasOp = true;
+                                            }
+                                            if (printedHeader2) {
+                                                sdf2 = sdf;
+                                                needSep10 = needSep;
                                             } else {
                                                 hasMode = printedHeader2;
                                                 j2 = 0;
                                                 while (true) {
-                                                    int opi = j2;
+                                                    int opi2 = j2;
                                                     if (!hasMode) {
-                                                        hasOp = needSep;
-                                                        hasPackage = printedHeader6;
-                                                        dumpUid = opi;
-                                                        if (dumpUid >= opModes.size()) {
+                                                        needSep10 = needSep;
+                                                        sdf2 = sdf;
+                                                        sdf = opi2;
+                                                        if (sdf >= ops.size()) {
                                                             break;
                                                         }
-                                                        if (opModes.valueAt(dumpUid) == dumpMode) {
+                                                        if (((Op) ops.valueAt(sdf)).mode == dumpMode) {
                                                             hasMode = true;
                                                         }
-                                                        j2 = dumpUid + 1;
-                                                        needSep = hasOp;
-                                                        printedHeader6 = hasPackage;
+                                                        j2 = sdf + 1;
+                                                        needSep = needSep10;
+                                                        sdf = sdf2;
                                                     } else {
-                                                        hasOp = needSep;
-                                                        hasPackage = printedHeader6;
+                                                        sdf2 = sdf;
+                                                        needSep10 = needSep;
                                                         break;
                                                     }
                                                 }
                                                 printedHeader2 = hasMode;
                                             }
-                                            if (pkgOps == null) {
-                                                printedHeader6 = hasPackage;
-                                                dumpUid2 = 0;
-                                                while (true) {
-                                                    if (!hasOp || !printedHeader6 || !printedHeader2) {
-                                                        i6 = usage;
-                                                        if (dumpUid2 >= pkgOps.size()) {
-                                                            sdf2 = sdf;
-                                                            needSep10 = needSep2;
-                                                            break;
-                                                        }
-                                                        Ops ops = (Ops) pkgOps.valueAt(dumpUid2);
-                                                        if (!(hasOp || ops == null || ops.indexOfKey(dumpOp2) < 0)) {
-                                                            hasOp = true;
-                                                        }
-                                                        if (printedHeader2) {
-                                                            sdf2 = sdf;
-                                                            needSep10 = needSep2;
-                                                        } else {
-                                                            hasMode = printedHeader2;
-                                                            j2 = 0;
-                                                            while (true) {
-                                                                int opi2 = j2;
-                                                                if (!hasMode) {
-                                                                    needSep10 = needSep2;
-                                                                    sdf2 = sdf;
-                                                                    sdf = opi2;
-                                                                    if (sdf >= ops.size()) {
-                                                                        break;
-                                                                    }
-                                                                    if (((Op) ops.valueAt(sdf)).mode == dumpMode) {
-                                                                        hasMode = true;
-                                                                    }
-                                                                    j2 = sdf + 1;
-                                                                    needSep2 = needSep10;
-                                                                    sdf = sdf2;
-                                                                } else {
-                                                                    sdf2 = sdf;
-                                                                    needSep10 = needSep2;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            printedHeader2 = hasMode;
-                                                        }
-                                                        if (!printedHeader6 && dumpPackage.equals(ops.packageName)) {
-                                                            printedHeader6 = true;
-                                                        }
-                                                        dumpUid2++;
-                                                        usage = i6;
-                                                        needSep2 = needSep10;
-                                                        sdf = sdf2;
-                                                    } else {
-                                                        sdf2 = sdf;
-                                                        needSep10 = needSep2;
-                                                        i6 = usage;
-                                                        break;
-                                                    }
-                                                }
-                                                hasPackage = printedHeader6;
-                                            } else {
-                                                sdf2 = sdf;
-                                                needSep10 = needSep2;
-                                                i6 = usage;
+                                            if (!printedHeader6 && dumpPackage.equals(ops.packageName)) {
+                                                printedHeader6 = true;
                                             }
-                                            if (!(uidState3.foregroundOps == null || hasOp)) {
-                                                if (uidState3.foregroundOps.indexOfKey(dumpOp2) > 0) {
-                                                    hasOp = true;
-                                                }
-                                            }
-                                            if (hasOp || !hasPackage) {
-                                                nowUptime2 = nowUptime;
-                                                str = dumpPackage;
-                                                i3 = dumpMode;
-                                                i4 = dumpOp2;
-                                                printWriter2 = printWriter;
-                                                appOpsService2 = appOpsService;
-                                                now = now2;
-                                                i2 = dumpUid3;
-                                                i5 = i6;
-                                                sdf = sdf2;
-                                            } else if (!printedHeader2) {
-                                                nowUptime2 = nowUptime;
-                                                str = dumpPackage;
-                                                i3 = dumpMode;
-                                                i4 = dumpOp2;
-                                                printWriter2 = printWriter;
-                                                appOpsService2 = appOpsService;
-                                                now = now2;
-                                                i2 = dumpUid3;
-                                                i5 = i6;
-                                                sdf = sdf2;
-                                            }
-                                            needSep2 = needSep10;
-                                            printWriter = printWriter2;
-                                            appOpsService = appOpsService2;
-                                            now2 = now;
-                                            dumpUid3 = i2;
-                                            dumpPackage = str;
-                                            dumpMode = i3;
-                                            dumpOp2 = i4;
-                                            uidState2 = true;
-                                            dumpUid2 = i5 + 1;
-                                            nowUptime = nowUptime2;
+                                            dumpUid2++;
+                                            usage = i6;
+                                            needSep = needSep10;
+                                            sdf = sdf2;
+                                        }
+                                        hasPackage = printedHeader6;
+                                    } else {
+                                        sdf2 = sdf;
+                                        needSep10 = needSep;
+                                        i6 = usage;
+                                    }
+                                    if (!(uidState3.foregroundOps == null || hasOp)) {
+                                        if (uidState3.foregroundOps.indexOfKey(dumpOp2) > 0) {
+                                            hasOp = true;
                                         }
                                     }
-                                    needSep = uidState;
-                                    if (dumpPackage != null) {
+                                    if (hasOp || !hasPackage) {
+                                        nowUptime2 = nowUptime;
+                                        str = dumpPackage;
+                                        i3 = dumpMode;
+                                        i4 = dumpOp2;
+                                        printWriter2 = printWriter;
+                                        appOpsService2 = appOpsService;
+                                        now2 = now;
+                                        i2 = dumpUid3;
+                                        i5 = i6;
+                                        sdf = sdf2;
+                                    } else if (!printedHeader2) {
+                                        nowUptime2 = nowUptime;
+                                        str = dumpPackage;
+                                        i3 = dumpMode;
+                                        i4 = dumpOp2;
+                                        printWriter2 = printWriter;
+                                        appOpsService2 = appOpsService;
+                                        now2 = now;
+                                        i2 = dumpUid3;
+                                        i5 = i6;
+                                        sdf = sdf2;
                                     }
-                                    if (dumpMode >= 0) {
-                                    }
-                                    if (printedHeader2) {
-                                    }
-                                    hasOp = needSep;
-                                    hasPackage = printedHeader6;
-                                    if (pkgOps == null) {
-                                    }
-                                    if (uidState3.foregroundOps.indexOfKey(dumpOp2) > 0) {
-                                    }
-                                    if (hasOp) {
-                                    }
-                                    nowUptime2 = nowUptime;
-                                    str = dumpPackage;
-                                    i3 = dumpMode;
-                                    i4 = dumpOp2;
-                                    printWriter2 = printWriter;
-                                    appOpsService2 = appOpsService;
-                                    now = now2;
-                                    i2 = dumpUid3;
-                                    i5 = i6;
-                                    sdf = sdf2;
-                                    needSep2 = needSep10;
+                                    needSep = needSep10;
                                     printWriter = printWriter2;
                                     appOpsService = appOpsService2;
-                                    now2 = now;
+                                    now = now2;
                                     dumpUid3 = i2;
                                     dumpPackage = str;
                                     dumpMode = i3;
@@ -4435,211 +4426,152 @@ public class AppOpsService extends Stub {
                                     uidState2 = true;
                                     dumpUid2 = i5 + 1;
                                     nowUptime = nowUptime2;
-                                } else {
-                                    sdf2 = sdf;
-                                    needSep10 = needSep2;
-                                    i6 = usage;
                                 }
-                                printWriter.print("  Uid ");
-                                UserHandle.formatUid(printWriter, uidState3.uid);
-                                printWriter.println(":");
-                                printWriter.print("    state=");
-                                printWriter.println(UID_STATE_NAMES[uidState3.state]);
-                                if (uidState3.state != uidState3.pendingState) {
-                                    printWriter.print("    pendingState=");
-                                    printWriter.println(UID_STATE_NAMES[uidState3.pendingState]);
+                            }
+                            needSep2 = uidState;
+                            if (dumpPackage != null) {
+                            }
+                            if (dumpMode >= 0) {
+                            }
+                            if (printedHeader2) {
+                            }
+                            hasOp = needSep2;
+                            hasPackage = printedHeader6;
+                            if (pkgOps == null) {
+                            }
+                            if (uidState3.foregroundOps.indexOfKey(dumpOp2) > 0) {
+                            }
+                            if (hasOp) {
+                            }
+                            nowUptime2 = nowUptime;
+                            str = dumpPackage;
+                            i3 = dumpMode;
+                            i4 = dumpOp2;
+                            printWriter2 = printWriter;
+                            appOpsService2 = appOpsService;
+                            now2 = now;
+                            i2 = dumpUid3;
+                            i5 = i6;
+                            sdf = sdf2;
+                            needSep = needSep10;
+                            printWriter = printWriter2;
+                            appOpsService = appOpsService2;
+                            now = now2;
+                            dumpUid3 = i2;
+                            dumpPackage = str;
+                            dumpMode = i3;
+                            dumpOp2 = i4;
+                            uidState2 = true;
+                            dumpUid2 = i5 + 1;
+                            nowUptime = nowUptime2;
+                        } else {
+                            sdf2 = sdf;
+                            needSep10 = needSep;
+                            i6 = usage;
+                        }
+                        printWriter.print("  Uid ");
+                        UserHandle.formatUid(printWriter, uidState3.uid);
+                        printWriter.println(":");
+                        printWriter.print("    state=");
+                        printWriter.println(UID_STATE_NAMES[uidState3.state]);
+                        if (uidState3.state != uidState3.pendingState) {
+                            printWriter.print("    pendingState=");
+                            printWriter.println(UID_STATE_NAMES[uidState3.pendingState]);
+                        }
+                        if (uidState3.pendingStateCommitTime != 0) {
+                            printWriter.print("    pendingStateCommitTime=");
+                            TimeUtils.formatDuration(uidState3.pendingStateCommitTime, nowUptime, printWriter);
+                            pw.println();
+                        }
+                        if (uidState3.startNesting != 0) {
+                            printWriter.print("    startNesting=");
+                            printWriter.println(uidState3.startNesting);
+                        }
+                        if (uidState3.foregroundOps != null && (dumpMode < 0 || dumpMode == 4)) {
+                            printWriter.println("    foregroundOps:");
+                            dumpUid2 = 0;
+                            while (dumpUid2 < uidState3.foregroundOps.size()) {
+                                if (dumpOp2 < 0 || dumpOp2 == uidState3.foregroundOps.keyAt(dumpUid2)) {
+                                    printWriter.print("      ");
+                                    printWriter.print(AppOpsManager.opToName(uidState3.foregroundOps.keyAt(dumpUid2)));
+                                    printWriter.print(": ");
+                                    printWriter.println(uidState3.foregroundOps.valueAt(dumpUid2) ? "WATCHER" : "SILENT");
                                 }
-                                if (uidState3.pendingStateCommitTime != 0) {
-                                    printWriter.print("    pendingStateCommitTime=");
-                                    TimeUtils.formatDuration(uidState3.pendingStateCommitTime, nowUptime, printWriter);
-                                    pw.println();
-                                }
-                                if (uidState3.startNesting != 0) {
-                                    printWriter.print("    startNesting=");
-                                    printWriter.println(uidState3.startNesting);
-                                }
-                                if (uidState3.foregroundOps != null && (dumpMode < 0 || dumpMode == 4)) {
-                                    printWriter.println("    foregroundOps:");
-                                    dumpUid2 = 0;
-                                    while (dumpUid2 < uidState3.foregroundOps.size()) {
-                                        if (dumpOp2 < 0 || dumpOp2 == uidState3.foregroundOps.keyAt(dumpUid2)) {
-                                            printWriter.print("      ");
-                                            printWriter.print(AppOpsManager.opToName(uidState3.foregroundOps.keyAt(dumpUid2)));
-                                            printWriter.print(": ");
-                                            printWriter.println(uidState3.foregroundOps.valueAt(dumpUid2) ? "WATCHER" : "SILENT");
-                                        }
-                                        dumpUid2++;
+                                dumpUid2++;
+                            }
+                            printWriter.print("    hasForegroundWatchers=");
+                            printWriter.println(uidState3.hasForegroundWatchers);
+                        }
+                        if (opModes != null) {
+                            dumpUid2 = opModes.size();
+                            for (dumpUid = 0; dumpUid < dumpUid2; dumpUid++) {
+                                code = opModes.keyAt(dumpUid);
+                                poi = opModes.valueAt(dumpUid);
+                                if (dumpOp2 < 0 || dumpOp2 == code) {
+                                    if (dumpMode < 0 || dumpMode == poi) {
+                                        printWriter.print("      ");
+                                        printWriter.print(AppOpsManager.opToName(code));
+                                        printWriter.print(": mode=");
+                                        printWriter.println(AppOpsManager.modeToName(poi));
                                     }
-                                    printWriter.print("    hasForegroundWatchers=");
-                                    printWriter.println(uidState3.hasForegroundWatchers);
                                 }
-                                if (opModes != null) {
-                                    dumpUid2 = opModes.size();
-                                    for (dumpUid = 0; dumpUid < dumpUid2; dumpUid++) {
-                                        code = opModes.keyAt(dumpUid);
-                                        poi = opModes.valueAt(dumpUid);
-                                        if ((dumpOp2 < 0 || dumpOp2 == code) && (dumpMode < 0 || dumpMode == poi)) {
-                                            printWriter.print("      ");
-                                            printWriter.print(AppOpsManager.opToName(code));
-                                            printWriter.print(": mode=");
-                                            printWriter.println(AppOpsManager.modeToName(poi));
-                                        }
+                            }
+                        }
+                        if (pkgOps == null) {
+                            nowUptime2 = nowUptime;
+                            str = dumpPackage;
+                            i3 = dumpMode;
+                            i4 = dumpOp2;
+                            printWriter2 = printWriter;
+                            appOpsService2 = appOpsService;
+                            now2 = now;
+                            i2 = dumpUid3;
+                            i5 = i6;
+                            sdf = sdf2;
+                        } else {
+                            dumpUid2 = 0;
+                            while (true) {
+                                usage = dumpUid2;
+                                if (usage >= pkgOps.size()) {
+                                    break;
+                                }
+                                Ops ops2 = (Ops) pkgOps.valueAt(usage);
+                                if (dumpPackage != null) {
+                                    if (!dumpPackage.equals(ops2.packageName)) {
+                                        i6 = i6;
+                                        printWriter = printWriter;
+                                        appOpsService = appOpsService;
+                                        dumpUid2 = usage + 1;
+                                        now = now;
+                                        sdf2 = sdf2;
+                                        uidState3 = uidState3;
+                                        dumpUid3 = dumpUid3;
+                                        dumpPackage = dumpPackage;
+                                        dumpMode = dumpMode;
+                                        pkgOps = pkgOps;
+                                        dumpOp2 = dumpOp2;
+                                        uidState2 = true;
+                                        opModes = opModes;
+                                        nowUptime = nowUptime;
                                     }
                                 }
-                                if (pkgOps != null) {
-                                    dumpUid2 = 0;
-                                    while (true) {
-                                        usage = dumpUid2;
-                                        if (usage >= pkgOps.size()) {
-                                            nowUptime2 = nowUptime;
-                                            str = dumpPackage;
-                                            i3 = dumpMode;
-                                            i4 = dumpOp2;
-                                            printWriter2 = printWriter;
-                                            appOpsService2 = appOpsService;
-                                            now = now2;
-                                            i2 = dumpUid3;
-                                            i5 = i6;
-                                            sdf = sdf2;
-                                            break;
-                                        }
-                                        Ops ops2 = (Ops) pkgOps.valueAt(usage);
-                                        if (dumpPackage != null) {
-                                            if (!dumpPackage.equals(ops2.packageName)) {
-                                                continue;
-                                                i6 = i6;
-                                                printWriter = printWriter;
-                                                appOpsService = appOpsService;
-                                                dumpUid2 = usage + 1;
-                                                now2 = now2;
-                                                sdf2 = sdf2;
-                                                uidState3 = uidState3;
-                                                dumpUid3 = dumpUid3;
-                                                dumpPackage = dumpPackage;
-                                                dumpMode = dumpMode;
-                                                pkgOps = pkgOps;
-                                                dumpOp2 = dumpOp2;
-                                                uidState2 = true;
-                                                opModes = opModes;
-                                                nowUptime = nowUptime;
-                                            }
-                                        }
-                                        printedHeader6 = false;
-                                        dumpUid2 = 0;
-                                        while (true) {
-                                            code = dumpUid2;
-                                            if (code >= ops2.size()) {
-                                                continue;
-                                                break;
-                                            }
-                                            long nowUptime3;
-                                            boolean printedPackage;
-                                            ArrayMap<String, Ops> pkgOps2;
-                                            int j3;
-                                            Ops ops3;
-                                            int pkgi;
-                                            Op op3 = (Op) ops2.valueAt(code);
-                                            if (dumpOp2 >= 0) {
-                                                nowUptime3 = nowUptime;
-                                            } else {
-                                                nowUptime3 = nowUptime;
-                                            }
-                                            if (dumpMode < 0 || dumpMode == op3.mode) {
-                                                if (!printedHeader6) {
-                                                    printWriter.print("    Package ");
-                                                    printWriter.print(ops2.packageName);
-                                                    printWriter.println(":");
-                                                    printedHeader6 = true;
-                                                }
-                                                nowUptime = printedHeader6;
-                                                printWriter.print("      ");
-                                                printWriter.print(AppOpsManager.opToName(op3.op));
-                                                printWriter.print(" (");
-                                                printWriter.print(AppOpsManager.modeToName(op3.mode));
-                                                dumpUid = AppOpsManager.opToSwitch(op3.op);
-                                                if (dumpUid != op3.op) {
-                                                    printWriter.print(" / switch ");
-                                                    printWriter.print(AppOpsManager.opToName(dumpUid));
-                                                    Op switchObj = (Op) ops2.get(dumpUid);
-                                                    if (switchObj != null) {
-                                                        printedPackage = nowUptime;
-                                                        nowUptime = switchObj.mode;
-                                                    } else {
-                                                        printedPackage = nowUptime;
-                                                        nowUptime = AppOpsManager.opToDefaultMode(dumpUid);
-                                                    }
-                                                    printWriter.print("=");
-                                                    printWriter.print(AppOpsManager.modeToName(nowUptime));
-                                                } else {
-                                                    printedPackage = nowUptime;
-                                                }
-                                                printWriter.println("): ");
-                                                nowUptime2 = nowUptime3;
-                                                int pkgi2 = usage;
-                                                Op op4 = op3;
-                                                i2 = dumpUid3;
-                                                str = dumpPackage;
-                                                i3 = dumpMode;
-                                                nowUptime = opModes;
-                                                pkgOps2 = pkgOps;
-                                                j3 = code;
-                                                now = now2;
-                                                sdf = sdf2;
-                                                try {
-                                                    appOpsService.dumpTimesLocked(printWriter, "          Access: ", "                  ", op3.time, now, sdf, date);
-                                                    dumpPackage2 = "          Reject: ";
-                                                    String str2 = "                  ";
-                                                    long[] jArr = op4.rejectTime;
-                                                    i4 = dumpOp2;
-                                                    ops3 = ops2;
-                                                    dumpMode2 = uidState;
-                                                    PrintWriter printWriter3 = printWriter;
-                                                    uidState = uidState3;
-                                                    Object obj = null;
-                                                    String str3 = dumpPackage2;
-                                                    Op op5 = op4;
-                                                    i5 = i6;
-                                                    pkgi = pkgi2;
-                                                    String str4 = str2;
-                                                    printWriter2 = printWriter;
-                                                    long[] jArr2 = jArr;
-                                                    appOpsService2 = appOpsService;
-                                                    appOpsService.dumpTimesLocked(printWriter3, str3, str4, jArr2, now, sdf, date);
-                                                    if (op5.duration == -1) {
-                                                        printWriter2.print("          Running start at: ");
-                                                        TimeUtils.formatDuration(nowElapsed - op5.startRealtime, printWriter2);
-                                                        pw.println();
-                                                    } else if (op5.duration != 0) {
-                                                        printWriter2.print("          duration=");
-                                                        TimeUtils.formatDuration((long) op5.duration, printWriter2);
-                                                        pw.println();
-                                                    }
-                                                    if (op5.startNesting != 0) {
-                                                        printWriter2.print("          startNesting=");
-                                                        printWriter2.println(op5.startNesting);
-                                                    }
-                                                    i6 = i5;
-                                                    printWriter = printWriter2;
-                                                    appOpsService = appOpsService2;
-                                                    dumpUid2 = j3 + 1;
-                                                    ops2 = ops3;
-                                                    now2 = now;
-                                                    sdf2 = sdf;
-                                                    uidState3 = uidState;
-                                                    usage = pkgi;
-                                                    dumpUid3 = i2;
-                                                    dumpPackage = str;
-                                                    dumpMode = i3;
-                                                    pkgOps = pkgOps2;
-                                                    printedHeader6 = printedPackage;
-                                                    dumpOp2 = i4;
-                                                    uidState2 = true;
-                                                    opModes = nowUptime;
-                                                    nowUptime = nowUptime2;
-                                                } catch (Throwable th5) {
-                                                    th = th5;
-                                                }
-                                            }
+                                printedHeader6 = false;
+                                dumpUid2 = 0;
+                                while (true) {
+                                    code = dumpUid2;
+                                    if (code >= ops2.size()) {
+                                        break;
+                                    }
+                                    long nowUptime3;
+                                    boolean printedPackage;
+                                    ArrayMap<String, Ops> pkgOps2;
+                                    int j3;
+                                    Ops ops3;
+                                    int pkgi;
+                                    Op op3 = (Op) ops2.valueAt(code);
+                                    if (dumpOp2 >= 0) {
+                                        nowUptime3 = nowUptime;
+                                        if (dumpOp2 != op3.op) {
                                             printedPackage = printedHeader6;
                                             str = dumpPackage;
                                             i3 = dumpMode;
@@ -4652,7 +4584,7 @@ public class AppOpsService extends Stub {
                                             pkgi = usage;
                                             printWriter2 = printWriter;
                                             appOpsService2 = appOpsService;
-                                            now = now2;
+                                            now2 = now;
                                             i2 = dumpUid3;
                                             i5 = i6;
                                             sdf = sdf2;
@@ -4662,7 +4594,7 @@ public class AppOpsService extends Stub {
                                             appOpsService = appOpsService2;
                                             dumpUid2 = j3 + 1;
                                             ops2 = ops3;
-                                            now2 = now;
+                                            now = now2;
                                             sdf2 = sdf;
                                             uidState3 = uidState;
                                             usage = pkgi;
@@ -4676,162 +4608,285 @@ public class AppOpsService extends Stub {
                                             opModes = nowUptime;
                                             nowUptime = nowUptime2;
                                         }
-                                        i6 = i6;
-                                        printWriter = printWriter;
-                                        appOpsService = appOpsService;
-                                        dumpUid2 = usage + 1;
-                                        now2 = now2;
-                                        sdf2 = sdf2;
-                                        uidState3 = uidState3;
-                                        dumpUid3 = dumpUid3;
-                                        dumpPackage = dumpPackage;
-                                        dumpMode = dumpMode;
-                                        pkgOps = pkgOps;
-                                        dumpOp2 = dumpOp2;
-                                        uidState2 = true;
-                                        opModes = opModes;
-                                        nowUptime = nowUptime;
+                                    } else {
+                                        nowUptime3 = nowUptime;
                                     }
-                                } else {
-                                    nowUptime2 = nowUptime;
+                                    if (dumpMode < 0 || dumpMode == op3.mode) {
+                                        if (!printedHeader6) {
+                                            printWriter.print("    Package ");
+                                            printWriter.print(ops2.packageName);
+                                            printWriter.println(":");
+                                            printedHeader6 = true;
+                                        }
+                                        nowUptime = printedHeader6;
+                                        printWriter.print("      ");
+                                        printWriter.print(AppOpsManager.opToName(op3.op));
+                                        printWriter.print(" (");
+                                        printWriter.print(AppOpsManager.modeToName(op3.mode));
+                                        dumpUid = AppOpsManager.opToSwitch(op3.op);
+                                        if (dumpUid != op3.op) {
+                                            printWriter.print(" / switch ");
+                                            printWriter.print(AppOpsManager.opToName(dumpUid));
+                                            Op switchObj = (Op) ops2.get(dumpUid);
+                                            if (switchObj != null) {
+                                                printedPackage = nowUptime;
+                                                nowUptime = switchObj.mode;
+                                            } else {
+                                                printedPackage = nowUptime;
+                                                nowUptime = AppOpsManager.opToDefaultMode(dumpUid);
+                                            }
+                                            printWriter.print("=");
+                                            printWriter.print(AppOpsManager.modeToName(nowUptime));
+                                        } else {
+                                            printedPackage = nowUptime;
+                                        }
+                                        printWriter.println("): ");
+                                        nowUptime2 = nowUptime3;
+                                        int pkgi2 = usage;
+                                        Op op4 = op3;
+                                        i2 = dumpUid3;
+                                        str = dumpPackage;
+                                        i3 = dumpMode;
+                                        nowUptime = opModes;
+                                        pkgOps2 = pkgOps;
+                                        j3 = code;
+                                        now2 = now;
+                                        sdf = sdf2;
+                                        try {
+                                            appOpsService.dumpTimesLocked(printWriter, "          Access: ", "                  ", op3.time, now2, sdf, date);
+                                            dumpPackage2 = "          Reject: ";
+                                            String str2 = "                  ";
+                                            long[] jArr = op4.rejectTime;
+                                            i4 = dumpOp2;
+                                            ops3 = ops2;
+                                            dumpMode2 = uidState;
+                                            PrintWriter printWriter3 = printWriter;
+                                            uidState = uidState3;
+                                            Object obj = null;
+                                            String str3 = dumpPackage2;
+                                            Op op5 = op4;
+                                            i5 = i6;
+                                            pkgi = pkgi2;
+                                            String str4 = str2;
+                                            printWriter2 = printWriter;
+                                            long[] jArr2 = jArr;
+                                            appOpsService2 = appOpsService;
+                                            appOpsService.dumpTimesLocked(printWriter3, str3, str4, jArr2, now2, sdf, date);
+                                            if (op5.duration == -1) {
+                                                printWriter2.print("          Running start at: ");
+                                                TimeUtils.formatDuration(nowElapsed - op5.startRealtime, printWriter2);
+                                                pw.println();
+                                            } else if (op5.duration != 0) {
+                                                printWriter2.print("          duration=");
+                                                TimeUtils.formatDuration((long) op5.duration, printWriter2);
+                                                pw.println();
+                                            }
+                                            if (op5.startNesting != 0) {
+                                                printWriter2.print("          startNesting=");
+                                                printWriter2.println(op5.startNesting);
+                                            }
+                                            i6 = i5;
+                                            printWriter = printWriter2;
+                                            appOpsService = appOpsService2;
+                                            dumpUid2 = j3 + 1;
+                                            ops2 = ops3;
+                                            now = now2;
+                                            sdf2 = sdf;
+                                            uidState3 = uidState;
+                                            usage = pkgi;
+                                            dumpUid3 = i2;
+                                            dumpPackage = str;
+                                            dumpMode = i3;
+                                            pkgOps = pkgOps2;
+                                            printedHeader6 = printedPackage;
+                                            dumpOp2 = i4;
+                                            uidState2 = true;
+                                            opModes = nowUptime;
+                                            nowUptime = nowUptime2;
+                                        } catch (Throwable th6) {
+                                            th = th6;
+                                            throw th;
+                                        }
+                                    }
+                                    printedPackage = printedHeader6;
                                     str = dumpPackage;
                                     i3 = dumpMode;
+                                    nowUptime = opModes;
+                                    pkgOps2 = pkgOps;
+                                    j3 = code;
                                     i4 = dumpOp2;
+                                    ops3 = ops2;
+                                    uidState = uidState3;
+                                    pkgi = usage;
                                     printWriter2 = printWriter;
                                     appOpsService2 = appOpsService;
-                                    now = now2;
+                                    now2 = now;
                                     i2 = dumpUid3;
                                     i5 = i6;
                                     sdf = sdf2;
+                                    nowUptime2 = nowUptime3;
+                                    i6 = i5;
+                                    printWriter = printWriter2;
+                                    appOpsService = appOpsService2;
+                                    dumpUid2 = j3 + 1;
+                                    ops2 = ops3;
+                                    now = now2;
+                                    sdf2 = sdf;
+                                    uidState3 = uidState;
+                                    usage = pkgi;
+                                    dumpUid3 = i2;
+                                    dumpPackage = str;
+                                    dumpMode = i3;
+                                    pkgOps = pkgOps2;
+                                    printedHeader6 = printedPackage;
+                                    dumpOp2 = i4;
+                                    uidState2 = true;
+                                    opModes = nowUptime;
+                                    nowUptime = nowUptime2;
                                 }
-                                needSep2 = true;
-                                printWriter = printWriter2;
-                                appOpsService = appOpsService2;
-                                now2 = now;
-                                dumpUid3 = i2;
-                                dumpPackage = str;
-                                dumpMode = i3;
-                                dumpOp2 = i4;
+                                i6 = i6;
+                                printWriter = printWriter;
+                                appOpsService = appOpsService;
+                                dumpUid2 = usage + 1;
+                                now = now;
+                                sdf2 = sdf2;
+                                uidState3 = uidState3;
+                                dumpUid3 = dumpUid3;
+                                dumpPackage = dumpPackage;
+                                dumpMode = dumpMode;
+                                pkgOps = pkgOps;
+                                dumpOp2 = dumpOp2;
                                 uidState2 = true;
-                                dumpUid2 = i5 + 1;
-                                nowUptime = nowUptime2;
-                            } else {
-                                str = dumpPackage;
-                                i3 = dumpMode;
-                                i4 = dumpOp2;
-                                printWriter2 = printWriter;
-                                appOpsService2 = appOpsService;
-                                now = now2;
-                                i2 = dumpUid3;
-                                if (needSep2) {
-                                    pw.println();
-                                }
-                                dumpOp = appOpsService2.mOpUserRestrictions.size();
-                                i5 = 0;
-                                while (i5 < dumpOp) {
-                                    int userRestrictionCount;
-                                    IBinder token;
-                                    long now3;
-                                    IBinder token2 = (IBinder) appOpsService2.mOpUserRestrictions.keyAt(i5);
-                                    ClientRestrictionState dumpMode3 = (ClientRestrictionState) appOpsService2.mOpUserRestrictions.valueAt(i5);
-                                    StringBuilder stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("  User restrictions for token ");
-                                    stringBuilder2.append(token2);
-                                    stringBuilder2.append(":");
-                                    printWriter2.println(stringBuilder2.toString());
-                                    dumpOp2 = dumpMode3.perUserRestrictions != null ? dumpMode3.perUserRestrictions.size() : 0;
-                                    if (dumpOp2 > 0) {
-                                        printWriter2.println("      Restricted ops:");
-                                        poi = 0;
-                                        while (poi < dumpOp2) {
-                                            j = dumpMode3.perUserRestrictions.keyAt(poi);
-                                            boolean[] restrictedOps = (boolean[]) dumpMode3.perUserRestrictions.valueAt(poi);
-                                            if (restrictedOps == null) {
-                                                userRestrictionCount = dumpOp;
-                                                token = token2;
-                                                now3 = now;
-                                            } else {
-                                                StringBuilder restrictedOpsValue = new StringBuilder();
-                                                restrictedOpsValue.append("[");
-                                                int restrictedOpCount = restrictedOps.length;
-                                                j2 = 0;
-                                                while (true) {
-                                                    userRestrictionCount = dumpOp;
-                                                    dumpOp = j2;
-                                                    if (dumpOp >= restrictedOpCount) {
-                                                        break;
-                                                    }
-                                                    if (restrictedOps[dumpOp]) {
-                                                        token = token2;
-                                                        now3 = now;
-                                                        if (restrictedOpsValue.length() > 1) {
-                                                            restrictedOpsValue.append(", ");
-                                                        }
-                                                        restrictedOpsValue.append(AppOpsManager.opToName(dumpOp));
-                                                    } else {
-                                                        token = token2;
-                                                        now3 = now;
-                                                    }
-                                                    j2 = dumpOp + 1;
-                                                    dumpOp = userRestrictionCount;
-                                                    token2 = token;
-                                                    now = now3;
-                                                }
-                                                token = token2;
-                                                now3 = now;
-                                                restrictedOpsValue.append("]");
-                                                printWriter2.print("        ");
-                                                printWriter2.print("user: ");
-                                                printWriter2.print(j);
-                                                printWriter2.print(" restricted ops: ");
-                                                printWriter2.println(restrictedOpsValue);
-                                            }
-                                            poi++;
-                                            dumpOp = userRestrictionCount;
-                                            token2 = token;
-                                            now = now3;
-                                        }
-                                    }
+                                opModes = opModes;
+                                nowUptime = nowUptime;
+                            }
+                            nowUptime2 = nowUptime;
+                            str = dumpPackage;
+                            i3 = dumpMode;
+                            i4 = dumpOp2;
+                            printWriter2 = printWriter;
+                            appOpsService2 = appOpsService;
+                            now2 = now;
+                            i2 = dumpUid3;
+                            i5 = i6;
+                            sdf = sdf2;
+                        }
+                        needSep = true;
+                        printWriter = printWriter2;
+                        appOpsService = appOpsService2;
+                        now = now2;
+                        dumpUid3 = i2;
+                        dumpPackage = str;
+                        dumpMode = i3;
+                        dumpOp2 = i4;
+                        uidState2 = true;
+                        dumpUid2 = i5 + 1;
+                        nowUptime = nowUptime2;
+                    }
+                    str = dumpPackage;
+                    i3 = dumpMode;
+                    i4 = dumpOp2;
+                    printWriter2 = printWriter;
+                    appOpsService2 = appOpsService;
+                    now2 = now;
+                    i2 = dumpUid3;
+                    if (needSep) {
+                        pw.println();
+                    }
+                    dumpOp = appOpsService2.mOpUserRestrictions.size();
+                    i5 = 0;
+                    while (i5 < dumpOp) {
+                        int userRestrictionCount;
+                        IBinder token;
+                        long now3;
+                        IBinder token2 = (IBinder) appOpsService2.mOpUserRestrictions.keyAt(i5);
+                        ClientRestrictionState dumpMode3 = (ClientRestrictionState) appOpsService2.mOpUserRestrictions.valueAt(i5);
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("  User restrictions for token ");
+                        stringBuilder2.append(token2);
+                        stringBuilder2.append(":");
+                        printWriter2.println(stringBuilder2.toString());
+                        dumpOp2 = dumpMode3.perUserRestrictions != null ? dumpMode3.perUserRestrictions.size() : 0;
+                        if (dumpOp2 > 0) {
+                            printWriter2.println("      Restricted ops:");
+                            poi = 0;
+                            while (poi < dumpOp2) {
+                                j = dumpMode3.perUserRestrictions.keyAt(poi);
+                                boolean[] restrictedOps = (boolean[]) dumpMode3.perUserRestrictions.valueAt(poi);
+                                if (restrictedOps == null) {
                                     userRestrictionCount = dumpOp;
                                     token = token2;
-                                    now3 = now;
-                                    dumpOp = dumpMode3.perUserExcludedPackages != null ? dumpMode3.perUserExcludedPackages.size() : 0;
-                                    if (dumpOp > 0) {
-                                        printWriter2.println("      Excluded packages:");
-                                        for (dumpPackage = null; dumpPackage < dumpOp; dumpPackage++) {
-                                            int userId = dumpMode3.perUserExcludedPackages.keyAt(dumpPackage);
-                                            String[] packageNames = (String[]) dumpMode3.perUserExcludedPackages.valueAt(dumpPackage);
-                                            printWriter2.print("        ");
-                                            printWriter2.print("user: ");
-                                            printWriter2.print(userId);
-                                            printWriter2.print(" packages: ");
-                                            printWriter2.println(Arrays.toString(packageNames));
+                                    now3 = now2;
+                                } else {
+                                    StringBuilder restrictedOpsValue = new StringBuilder();
+                                    restrictedOpsValue.append("[");
+                                    int restrictedOpCount = restrictedOps.length;
+                                    j2 = 0;
+                                    while (true) {
+                                        userRestrictionCount = dumpOp;
+                                        dumpOp = j2;
+                                        if (dumpOp >= restrictedOpCount) {
+                                            break;
                                         }
+                                        if (restrictedOps[dumpOp]) {
+                                            token = token2;
+                                            now3 = now2;
+                                            if (restrictedOpsValue.length() > 1) {
+                                                restrictedOpsValue.append(", ");
+                                            }
+                                            restrictedOpsValue.append(AppOpsManager.opToName(dumpOp));
+                                        } else {
+                                            token = token2;
+                                            now3 = now2;
+                                        }
+                                        j2 = dumpOp + 1;
+                                        dumpOp = userRestrictionCount;
+                                        token2 = token;
+                                        now2 = now3;
                                     }
-                                    i5++;
-                                    dumpOp = userRestrictionCount;
-                                    now = now3;
+                                    token = token2;
+                                    now3 = now2;
+                                    restrictedOpsValue.append("]");
+                                    printWriter2.print("        ");
+                                    printWriter2.print("user: ");
+                                    printWriter2.print(j);
+                                    printWriter2.print(" restricted ops: ");
+                                    printWriter2.println(restrictedOpsValue);
                                 }
-                                return;
+                                poi++;
+                                dumpOp = userRestrictionCount;
+                                token2 = token;
+                                now2 = now3;
                             }
                         }
-                    } catch (Throwable th6) {
-                        th = th6;
-                        str = dumpPackage;
-                        i3 = dumpMode;
-                        i4 = dumpOp2;
-                        printWriter2 = printWriter;
-                        dumpUid = appOpsService;
-                        i2 = dumpUid3;
+                        userRestrictionCount = dumpOp;
+                        token = token2;
+                        now3 = now2;
+                        dumpOp = dumpMode3.perUserExcludedPackages != null ? dumpMode3.perUserExcludedPackages.size() : 0;
+                        if (dumpOp > 0) {
+                            printWriter2.println("      Excluded packages:");
+                            for (dumpPackage = null; dumpPackage < dumpOp; dumpPackage++) {
+                                int userId = dumpMode3.perUserExcludedPackages.keyAt(dumpPackage);
+                                String[] packageNames = (String[]) dumpMode3.perUserExcludedPackages.valueAt(dumpPackage);
+                                printWriter2.print("        ");
+                                printWriter2.print("user: ");
+                                printWriter2.print(userId);
+                                printWriter2.print(" packages: ");
+                                printWriter2.println(Arrays.toString(packageNames));
+                            }
+                        }
+                        i5++;
+                        dumpOp = userRestrictionCount;
+                        now2 = now3;
                     }
                 } catch (Throwable th7) {
                     th = th7;
-                    i2 = dumpUid;
                     str = dumpPackage;
                     i3 = dumpMode;
                     i4 = dumpOp2;
                     printWriter2 = printWriter;
                     dumpUid = appOpsService;
+                    i2 = dumpUid3;
                     throw th;
                 }
             }

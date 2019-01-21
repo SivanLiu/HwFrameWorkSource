@@ -4,6 +4,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.SkippingCipher;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
@@ -88,7 +89,7 @@ public class CipherInputStream extends FilterInputStream {
                 return;
             }
             this.maxBuf = doFinal;
-        } catch (Throwable e) {
+        } catch (InvalidCipherTextException e) {
             throw new InvalidCipherTextIOException("Error finalising cipher", e);
         } catch (Exception e2) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -120,7 +121,7 @@ public class CipherInputStream extends FilterInputStream {
                         this.streamCipher.processBytes(this.inBuf, 0, read, this.buf, 0);
                     }
                     this.maxBuf = read;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     throw new CipherIOException("Error processing stream ", e);
                 }
             }

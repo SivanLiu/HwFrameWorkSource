@@ -1,20 +1,20 @@
 package com.huawei.android.pushagent.utils.threadpool;
 
-import com.huawei.android.pushagent.utils.f.c;
+import com.huawei.android.pushagent.utils.b.a;
 
 public class b implements Runnable {
-    private Runnable af;
+    private Runnable gi;
 
     public b(Runnable runnable) {
-        this.af = runnable;
+        this.gi = runnable;
     }
 
     public void run() {
-        if (this.af != null) {
+        if (this.gi != null) {
             try {
-                this.af.run();
+                this.gi.run();
             } catch (Throwable th) {
-                c.eq("PushLog3413", "exception in task run");
+                a.su("PushLog3414", "exception in task run");
             }
         }
     }

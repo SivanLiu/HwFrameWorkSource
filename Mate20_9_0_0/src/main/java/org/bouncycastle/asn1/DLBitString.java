@@ -69,11 +69,11 @@ public class DLBitString extends ASN1BitString {
     }
 
     void encode(ASN1OutputStream aSN1OutputStream) throws IOException {
-        Object obj = this.data;
-        Object obj2 = new byte[(obj.length + 1)];
-        obj2[0] = (byte) getPadBits();
-        System.arraycopy(obj, 0, obj2, 1, obj2.length - 1);
-        aSN1OutputStream.writeEncoded(3, obj2);
+        byte[] bArr = this.data;
+        byte[] bArr2 = new byte[(bArr.length + 1)];
+        bArr2[0] = (byte) getPadBits();
+        System.arraycopy(bArr, 0, bArr2, 1, bArr2.length - 1);
+        aSN1OutputStream.writeEncoded(3, bArr2);
     }
 
     int encodedLength() {

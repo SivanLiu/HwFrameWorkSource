@@ -52,8 +52,11 @@ public class GpsFreezeProc {
         Log.d(TAG, "removeFreezeProcess enter");
         synchronized (this.mFreezeProcesses) {
             if (uid == 0) {
-                if (BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS.equals(pkg)) {
-                    this.mFreezeProcesses.clear();
+                try {
+                    if (BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS.equals(pkg)) {
+                        this.mFreezeProcesses.clear();
+                    }
+                } finally {
                 }
             }
             this.mFreezeProcesses.remove(pkg);

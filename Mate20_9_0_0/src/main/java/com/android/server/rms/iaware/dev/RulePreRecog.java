@@ -44,11 +44,13 @@ public class RulePreRecog extends RuleBase {
         int i = 0;
         while (i < infoStr.length) {
             try {
-                if (infoStr[i] == null || infoStr[i].trim().isEmpty()) {
-                    return null;
+                if (infoStr[i] != null) {
+                    if (!infoStr[i].trim().isEmpty()) {
+                        valueList.add(Integer.valueOf(Integer.parseInt(infoStr[i].trim())));
+                        i++;
+                    }
                 }
-                valueList.add(Integer.valueOf(Integer.parseInt(infoStr[i].trim())));
-                i++;
+                return null;
             } catch (NumberFormatException e) {
                 AwareLog.e(TAG, "transScenceInfoToInteger occur exception, NumberFormatException !!");
                 return null;

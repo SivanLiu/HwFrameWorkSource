@@ -687,9 +687,12 @@ public class DockedStackDividerController {
                     stringBuilder.append(dockedStackDividerController.mAdjustedForDivider);
                     Slog.w(str, stringBuilder.toString());
                 }
-                if (dockedStackDividerController.mAdjustedForIme || dockedStackDividerController.mAdjustedForDivider) {
-                    z = true;
+                if (!dockedStackDividerController.mAdjustedForIme) {
+                    if (!dockedStackDividerController.mAdjustedForDivider) {
+                        dockedStackDividerController.notifyAdjustedForImeChanged(z, duration);
+                    }
                 }
+                z = true;
                 dockedStackDividerController.notifyAdjustedForImeChanged(z, duration);
             } finally {
                 while (true) {

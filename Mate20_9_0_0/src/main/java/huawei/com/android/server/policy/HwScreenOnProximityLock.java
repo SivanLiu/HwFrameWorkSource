@@ -240,7 +240,7 @@ public class HwScreenOnProximityLock {
             handleSensorChanges();
         }
 
-        /* JADX WARNING: Missing block: B:19:0x006b, code:
+        /* JADX WARNING: Missing block: B:20:0x006b, code skipped:
             r4.this$0.releaseLock(2);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -262,8 +262,13 @@ public class HwScreenOnProximityLock {
             } else {
                 synchronized (HwScreenOnProximityLock.this.mLock) {
                     if (isCoverOpen) {
-                        if (HwScreenOnProximityLock.this.mProximityView == null) {
-                            Log.i(HwScreenOnProximityLock.TAG, "no need to releaseLock");
+                        try {
+                            if (HwScreenOnProximityLock.this.mProximityView == null) {
+                                Log.i(HwScreenOnProximityLock.TAG, "no need to releaseLock");
+                            }
+                        } catch (Throwable th) {
+                            while (true) {
+                            }
                         }
                     }
                 }
@@ -318,7 +323,7 @@ public class HwScreenOnProximityLock {
                 }
             }
         };
-        this.mHasNotchInScreen = true ^ TextUtils.isEmpty(mNotchProp);
+        this.mHasNotchInScreen = 1 ^ TextUtils.isEmpty(mNotchProp);
         init();
         this.mSupportSensorFeature = this.mSensorManager.supportSensorFeature(SENSOR_FEATURE);
         System.putInt(this.mContext.getContentResolver(), "support_sensor_feature", this.mSupportSensorFeature);
@@ -329,7 +334,7 @@ public class HwScreenOnProximityLock {
         registerContentObserver();
     }
 
-    /* JADX WARNING: Missing block: B:22:0x004b, code:
+    /* JADX WARNING: Missing block: B:22:0x004b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -369,7 +374,7 @@ public class HwScreenOnProximityLock {
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0062, code:
+    /* JADX WARNING: Missing block: B:27:0x0062, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -415,7 +420,7 @@ public class HwScreenOnProximityLock {
         stringBuilder.append("isKeyguardLocked:");
         stringBuilder.append(this.mPolicy.isKeyguardLocked());
         Log.i(str, stringBuilder.toString());
-        return this.mPolicy.isKeyguardLocked() ^ true;
+        return this.mPolicy.isKeyguardLocked() ^ 1;
     }
 
     public void acquireLock(WindowManagerPolicy policy) {
@@ -429,7 +434,7 @@ public class HwScreenOnProximityLock {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x005c, code:
+    /* JADX WARNING: Missing block: B:14:0x005c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -487,7 +492,9 @@ public class HwScreenOnProximityLock {
         this.mHandler.sendEmptyMessage(1);
     }
 
-    /* JADX WARNING: Missing block: B:23:0x00ea, code:
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x00eb A:{SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:12:0x0071  */
+    /* JADX WARNING: Missing block: B:25:0x00ea, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -500,50 +507,54 @@ public class HwScreenOnProximityLock {
             stringBuilder.append("inflate View, config : ");
             stringBuilder.append(this.mContext.getResources().getConfiguration());
             Log.i(str, stringBuilder.toString());
-            if (this.mRotation == 0 || this.mRotation == 2) {
-                view = View.inflate(this.mContext, 34013254, null);
-                LinearLayout ll = (LinearLayout) view.findViewById(34603043);
-                DisplayMetrics dm = new DisplayMetrics();
-                this.mWindowManager.getDefaultDisplay().getMetrics(dm);
-                int width = dm.widthPixels;
-                ll.setLayoutParams(new LinearLayout.LayoutParams(width, (width * 5) / 4));
-            } else {
-                view = View.inflate(this.mContext, 34013314, null);
+            if (this.mRotation != 0) {
+                if (this.mRotation != 2) {
+                    view = View.inflate(this.mContext, 34013314, null);
+                    if (view instanceof FrameLayout) {
+                        return;
+                    }
+                    this.mProximityView = (FrameLayout) view;
+                    this.mHintView = this.mProximityView.findViewById(34603159);
+                    if (this.mHasNotchInScreen) {
+                        View notchView = this.mProximityView.findViewById(34603044);
+                        if (notchView != null) {
+                            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) notchView.getLayoutParams();
+                            params.height = HwNotchSizeUtil.getNotchSize()[1];
+                            notchView.setLayoutParams(params);
+                        }
+                    }
+                    this.mProximityView.setOnTouchListener(new OnTouchListener() {
+                        public boolean onTouch(View v, MotionEvent event) {
+                            HwScreenOnProximityLock.this.showHintView();
+                            return false;
+                        }
+                    });
+                    this.mParams = new LayoutParams(-1, -1, 2100, 134223104, -2);
+                    LayoutParams layoutParams = this.mParams;
+                    layoutParams.inputFeatures |= 4;
+                    layoutParams = this.mParams;
+                    layoutParams.privateFlags |= RET_REG_CANCEL.ID;
+                    this.mParams.setTitle(sProximityWndName);
+                    if (this.mHasNotchInScreen) {
+                        this.mParams.layoutInDisplayCutoutMode = 1;
+                    }
+                    if (HWFLOW) {
+                        Log.i(TAG, "preparePoriximityView addView ");
+                    }
+                }
             }
+            view = View.inflate(this.mContext, 34013254, null);
+            LinearLayout ll = (LinearLayout) view.findViewById(34603043);
+            DisplayMetrics dm = new DisplayMetrics();
+            this.mWindowManager.getDefaultDisplay().getMetrics(dm);
+            int width = dm.widthPixels;
+            ll.setLayoutParams(new LinearLayout.LayoutParams(width, (width * 5) / 4));
             if (view instanceof FrameLayout) {
-                this.mProximityView = (FrameLayout) view;
-                this.mHintView = this.mProximityView.findViewById(34603159);
-                if (this.mHasNotchInScreen) {
-                    View notchView = this.mProximityView.findViewById(34603044);
-                    if (notchView != null) {
-                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) notchView.getLayoutParams();
-                        params.height = HwNotchSizeUtil.getNotchSize()[1];
-                        notchView.setLayoutParams(params);
-                    }
-                }
-                this.mProximityView.setOnTouchListener(new OnTouchListener() {
-                    public boolean onTouch(View v, MotionEvent event) {
-                        HwScreenOnProximityLock.this.showHintView();
-                        return false;
-                    }
-                });
-                this.mParams = new LayoutParams(-1, -1, 2100, 134223104, -2);
-                LayoutParams layoutParams = this.mParams;
-                layoutParams.inputFeatures |= 4;
-                layoutParams = this.mParams;
-                layoutParams.privateFlags |= RET_REG_CANCEL.ID;
-                this.mParams.setTitle(sProximityWndName);
-                if (this.mHasNotchInScreen) {
-                    this.mParams.layoutInDisplayCutoutMode = 1;
-                }
-                if (HWFLOW) {
-                    Log.i(TAG, "preparePoriximityView addView ");
-                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x003f, code:
+    /* JADX WARNING: Missing block: B:23:0x003f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -563,7 +574,7 @@ public class HwScreenOnProximityLock {
         }
     }
 
-    /* JADX WARNING: Missing block: B:43:0x00c3, code:
+    /* JADX WARNING: Missing block: B:44:0x00c3, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -573,36 +584,40 @@ public class HwScreenOnProximityLock {
                 preparePoriximityView();
                 this.mLastRotation = this.mRotation;
             }
-            if (this.mProximityView == null || this.mPhoneWindowManager.isKeyguardShortcutApps() || (this.mPhoneWindowManager.isLandscape() && this.mPhoneWindowManager.isLsKeyguardShortcutApps())) {
-                Log.i(TAG, "no need to addProximityView");
-            } else if (this.mProximityView == null || this.mParams == null || this.mViewAttached || !this.mHeld || this.mCoverManager == null || !this.mCoverManager.isCoverOpen() || (this.mAccListener != null && this.mAccListener.isFlat())) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("no need to addView:mProximityView = ");
-                stringBuilder.append(this.mProximityView);
-                stringBuilder.append("mParams=");
-                stringBuilder.append(this.mParams);
-                stringBuilder.append(",mViewAttached:");
-                stringBuilder.append(this.mViewAttached);
-                stringBuilder.append(",mHeld:");
-                stringBuilder.append(this.mHeld);
-                Log.w(str, stringBuilder.toString());
-            } else {
-                if (HWFLOW) {
-                    Log.i(TAG, "addProximityView ");
-                }
-                if (this.mFirstBoot) {
-                    Log.i(TAG, "first boot,prepare again");
-                    preparePoriximityView();
-                    this.mFirstBoot = false;
-                }
-                this.mWindowManager.addView(this.mProximityView, this.mParams);
-                if (this.mHintView == null) {
-                } else {
-                    this.mHintView.setVisibility(8);
-                    this.mViewAttached = true;
+            if (!(this.mProximityView == null || this.mPhoneWindowManager.isKeyguardShortcutApps())) {
+                if (!this.mPhoneWindowManager.isLandscape() || !this.mPhoneWindowManager.isLsKeyguardShortcutApps()) {
+                    if (this.mProximityView == null || this.mParams == null || this.mViewAttached || !this.mHeld || this.mCoverManager == null || !this.mCoverManager.isCoverOpen() || (this.mAccListener != null && this.mAccListener.isFlat())) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("no need to addView:mProximityView = ");
+                        stringBuilder.append(this.mProximityView);
+                        stringBuilder.append("mParams=");
+                        stringBuilder.append(this.mParams);
+                        stringBuilder.append(",mViewAttached:");
+                        stringBuilder.append(this.mViewAttached);
+                        stringBuilder.append(",mHeld:");
+                        stringBuilder.append(this.mHeld);
+                        Log.w(str, stringBuilder.toString());
+                    } else {
+                        if (HWFLOW) {
+                            Log.i(TAG, "addProximityView ");
+                        }
+                        if (this.mFirstBoot) {
+                            Log.i(TAG, "first boot,prepare again");
+                            preparePoriximityView();
+                            this.mFirstBoot = false;
+                        }
+                        this.mWindowManager.addView(this.mProximityView, this.mParams);
+                        if (this.mHintView == null) {
+                            return;
+                        } else {
+                            this.mHintView.setVisibility(8);
+                            this.mViewAttached = true;
+                        }
+                    }
                 }
             }
+            Log.i(TAG, "no need to addProximityView");
         }
     }
 

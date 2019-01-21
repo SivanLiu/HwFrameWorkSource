@@ -218,7 +218,6 @@ public class DataServiceProxy implements IClient {
     }
 
     private List executeQueryDirect(IQuery query) {
-        Exception e;
         List list = null;
         if (this.dataService == null) {
             setAndPrintError(2, "Failed to execute query direct, error: not connected to data service.", new Object[0]);
@@ -231,17 +230,13 @@ public class DataServiceProxy implements IClient {
             }
             setAndPrintError(4, "Failed to execute query direct, error: service operation failed.", new Object[0]);
             return list;
-        } catch (RemoteException e2) {
-            e = e2;
-        } catch (RuntimeException e3) {
-            e = e3;
+        } catch (RemoteException | RuntimeException e) {
+            setAndPrintError(3, "Failed to execute query direct, error: %s.", e.getMessage());
+            return list;
         }
-        setAndPrintError(3, "Failed to execute query direct, error: %s.", e.getMessage());
-        return list;
     }
 
     private BulkCursorDescriptor executeCursorQueryDirect(IQuery query) {
-        Exception e;
         BulkCursorDescriptor bulkCursorDescriptor = null;
         if (this.dataService == null) {
             setAndPrintError(2, "Failed to execute cursor query, error: not connected to data service.", new Object[0]);
@@ -249,13 +244,10 @@ public class DataServiceProxy implements IClient {
         }
         try {
             return this.dataService.executeCursorQueryDirect(new QueryContainer(query, this.pkgName));
-        } catch (RemoteException e2) {
-            e = e2;
-        } catch (RuntimeException e3) {
-            e = e3;
+        } catch (RemoteException | RuntimeException e) {
+            setAndPrintError(3, "Failed to execute cursor query, error: %s.", e.getMessage());
+            return bulkCursorDescriptor;
         }
-        setAndPrintError(3, "Failed to execute cursor query, error: %s.", e.getMessage());
-        return bulkCursorDescriptor;
     }
 
     public long executeCountQuery(Query query) {
@@ -339,7 +331,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public <T extends AManagedObject> List<T> executeInsert(List<T> entities) {
-        Exception e;
         if (entities == null || entities.isEmpty()) {
             setAndPrintError(1, "Failed to execute insert, error: null or empty entity list to insert.", new Object[0]);
             return null;
@@ -355,12 +346,7 @@ public class DataServiceProxy implements IClient {
                 }
                 setAndPrintError(4, "Failed to execute insert, error: service operation failed.", new Object[0]);
                 return null;
-            } catch (RemoteException e2) {
-                e = e2;
-                setAndPrintError(3, "Failed to execute insert, error: %s.", e.getMessage());
-                return null;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
                 setAndPrintError(3, "Failed to execute insert, error: %s.", e.getMessage());
                 return null;
             }
@@ -376,7 +362,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public <T extends AManagedObject> boolean executeInsertEfficiently(List<T> entities) {
-        Exception e;
         if (entities == null || entities.isEmpty()) {
             setAndPrintError(1, "Failed to execute executeInsertEfficiently, error: null or empty entity list to insert.", new Object[0]);
             return false;
@@ -390,12 +375,7 @@ public class DataServiceProxy implements IClient {
                 }
                 setAndPrintError(4, "Failed to execute executeInsertEfficiently, error: service operation failed.", new Object[0]);
                 return false;
-            } catch (RemoteException e2) {
-                e = e2;
-                setAndPrintError(3, "Failed to execute executeInsertEfficiently, error: %s.", e.getMessage());
-                return false;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
                 setAndPrintError(3, "Failed to execute executeInsertEfficiently, error: %s.", e.getMessage());
                 return false;
             }
@@ -410,13 +390,7 @@ public class DataServiceProxy implements IClient {
         return executeUpdate(Arrays.asList(new AManagedObject[]{entity}));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x004c  */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0039  */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public <T extends AManagedObject> boolean executeUpdate(List<T> entities) {
-        int updatedCount;
-        Exception e;
-        boolean z;
         if (entities == null || entities.isEmpty()) {
             setAndPrintError(1, "Failed to execute update, error: null or empty entity list to update.", new Object[0]);
             return false;
@@ -424,25 +398,20 @@ public class DataServiceProxy implements IClient {
             setAndPrintError(2, "Failed to execute update, error: not connected to data service.", new Object[0]);
             return false;
         } else {
-            updatedCount = -1;
+            boolean z;
+            int updatedCount = -1;
             try {
                 updatedCount = this.dataService.executeUpdateDirect(new ObjectContainer(((AManagedObject) entities.get(0)).getClass(), entities, this.pkgName));
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                setAndPrintError(3, "Failed to execute update, error: %s.", e.getMessage());
             }
-            if (updatedCount <= 0) {
+            if (updatedCount > 0) {
                 z = true;
             } else {
                 z = false;
             }
             return z;
         }
-        setAndPrintError(3, "Failed to execute update, error: %s.", e.getMessage());
-        if (updatedCount <= 0) {
-        }
-        return z;
     }
 
     public <T extends AManagedObject> boolean executeDelete(T entity) {
@@ -453,13 +422,7 @@ public class DataServiceProxy implements IClient {
         return executeDelete(Arrays.asList(new AManagedObject[]{entity}));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x004d  */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x003a  */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public <T extends AManagedObject> boolean executeDelete(List<T> entities) {
-        int deletedCount;
-        Exception e;
-        boolean z;
         if (entities == null || entities.isEmpty()) {
             setAndPrintError(1, "Failed to execute delete, error: null or empty entity list to delete.", new Object[0]);
             return false;
@@ -467,32 +430,23 @@ public class DataServiceProxy implements IClient {
             setAndPrintError(2, "Failed to execute delete, error: not connected to data service.", new Object[0]);
             return false;
         } else {
-            deletedCount = -1;
+            boolean z;
+            int deletedCount = -1;
             try {
                 deletedCount = this.dataService.executeDeleteDirect(new ObjectContainer(((AManagedObject) entities.get(0)).getClass(), entities, this.pkgName), false);
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                setAndPrintError(3, "Failed to execute delete, error:%s.", e.getMessage());
             }
-            if (deletedCount <= 0) {
+            if (deletedCount > 0) {
                 z = true;
             } else {
                 z = false;
             }
             return z;
         }
-        setAndPrintError(3, "Failed to execute delete, error:%s.", e.getMessage());
-        if (deletedCount <= 0) {
-        }
-        return z;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x003d  */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public <T extends AManagedObject> boolean executeDeleteAll(Class<T> clazz) {
-        int deletedCount;
-        Exception e;
         boolean z = true;
         if (clazz == null) {
             setAndPrintError(1, "Failed to execute deleteAll, error: null entity class to delete.", new Object[0]);
@@ -501,23 +455,17 @@ public class DataServiceProxy implements IClient {
             setAndPrintError(2, "Failed to execute deleteAll, error: not connected to data service.", new Object[0]);
             return false;
         } else {
-            deletedCount = -1;
+            int deletedCount = -1;
             try {
                 deletedCount = this.dataService.executeDeleteDirect(new ObjectContainer(clazz, null, this.pkgName), true);
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                setAndPrintError(3, "Failed to execute deleteAll, error: %s.", e.getMessage());
             }
             if (deletedCount < 0) {
                 z = false;
             }
             return z;
         }
-        setAndPrintError(3, "Failed to execute deleteAll, error: %s.", e.getMessage());
-        if (deletedCount < 0) {
-        }
-        return z;
     }
 
     public <T extends AManagedObject> boolean subscribe(Class<T> clazz, ObserverType type, ModelObserver observer) {
@@ -545,7 +493,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public <T> List sendEvent(List<T> events) {
-        Exception e;
         if (events == null || events.size() == 0) {
             setAndPrintError(1, "Failed to send event, error: null or empty event list to send.", new Object[0]);
             return null;
@@ -565,14 +512,11 @@ public class DataServiceProxy implements IClient {
                     retList = null;
                 }
                 return retList;
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                setAndPrintError(3, "Failed to send event, error: %s.", e.getMessage());
+                return null;
             }
         }
-        setAndPrintError(3, "Failed to send event, error: %s.", e.getMessage());
-        return null;
     }
 
     public List fetchRecommendations(String businessName, String ruleName) {
@@ -620,7 +564,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public String getDatabaseVersion(String databaseName) {
-        Exception e;
         String str = null;
         if (databaseName == null || databaseName.isEmpty()) {
             setAndPrintError(1, "Failed to get database version, error: invalid database name.", new Object[0]);
@@ -631,18 +574,14 @@ public class DataServiceProxy implements IClient {
         } else {
             try {
                 return this.dataService.getDatabaseVersion(databaseName);
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                setAndPrintError(3, "Failed to get database version, error: %s.", e.getMessage());
+                return str;
             }
         }
-        setAndPrintError(3, "Failed to get database version, error: %s.", e.getMessage());
-        return str;
     }
 
     public boolean clearUserData(String databaseName, int type) {
-        Exception e;
         boolean z = false;
         if (databaseName == null || databaseName.isEmpty()) {
             setAndPrintError(1, "Failed to clear user data, error: invalid database name.", new Object[z]);
@@ -653,18 +592,14 @@ public class DataServiceProxy implements IClient {
         } else {
             try {
                 return this.dataService.clearUserData(databaseName, type);
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                setAndPrintError(3, "Failed to clear user data, error: %s.", e.getMessage());
+                return z;
             }
         }
-        setAndPrintError(3, "Failed to clear user data, error: %s.", e.getMessage());
-        return z;
     }
 
     public ObjectContainer requestAiModel(ObjectContainer requestContainer) {
-        Exception e;
         if (requestContainer == null || requestContainer.get() == null) {
             setAndPrintError(1, "Failed to request Ai model, error: null or empty request container.", new Object[0]);
             return null;
@@ -683,12 +618,7 @@ public class DataServiceProxy implements IClient {
                     }
                 }
                 return responseContainer;
-            } catch (RemoteException e2) {
-                e = e2;
-                setAndPrintError(3, "Failed to request Ai model, error: %s.", e.getMessage());
-                return null;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
                 setAndPrintError(3, "Failed to request Ai model, error: %s.", e.getMessage());
                 return null;
             }
@@ -810,7 +740,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public ObjectContainer insertResInfoAgent(ResourceInformation resourceInformation) {
-        Exception e;
         List<ResourceInformation> resInfoList = new ArrayList();
         resInfoList.add(resourceInformation);
         ObjectContainer oc = new ObjectContainer(ResourceInformation.class, resInfoList, this.pkgName);
@@ -818,21 +747,16 @@ public class DataServiceProxy implements IClient {
         if (this.dataService != null) {
             try {
                 return this.dataService.insertResInfoAgent(oc);
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                DSLog.e("Failed to insert Res Info, error: %s.", e.getMessage());
+                return insertResult;
             }
-        } else {
-            DSLog.e("Failed to insert Res Info, error: date service is null.", new Object[0]);
-            return insertResult;
         }
-        DSLog.e("Failed to insert Res Info, error: %s.", e.getMessage());
+        DSLog.e("Failed to insert Res Info, error: date service is null.", new Object[0]);
         return insertResult;
     }
 
     public boolean updateResInfoAgent(ResourceInformation resourceInformation) {
-        Exception e;
         boolean z = false;
         List<ResourceInformation> resInfoList = new ArrayList();
         resInfoList.add(resourceInformation);
@@ -840,21 +764,15 @@ public class DataServiceProxy implements IClient {
         if (this.dataService != null) {
             try {
                 return this.dataService.updateResInfoAgent(oc);
-            } catch (RemoteException e2) {
-                e = e2;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
+                DSLog.e("Failed to update Res Info, error: %s.", e.getMessage());
             }
         }
-        DSLog.e("Failed to update Res Info, error: date service is null.", new Object[z]);
-        return z;
-        DSLog.e("Failed to update Res Info, error: %s.", e.getMessage());
         DSLog.e("Failed to update Res Info, error: date service is null.", new Object[z]);
         return z;
     }
 
     public List<DataLifeCycle> queryDataLifeCycleConfig(String dbName, String tableName) {
-        Exception e;
         if (dbName == null || dbName.equals("")) {
             DSLog.e("Failed to query dataLifeCycleConfig, error: param dbName is empty.", new Object[0]);
             return null;
@@ -881,12 +799,7 @@ public class DataServiceProxy implements IClient {
                     }
                     DSLog.e("Failed to query dataLifeCycleConfig, error: query result null with db[%s] table[%s] pkgname[%s].", dbName, tableName, this.pkgName);
                     return null;
-                } catch (RemoteException e2) {
-                    e = e2;
-                    DSLog.e("Failed to query dataLifeCycleConfig, error: %s.", e.getMessage());
-                    return null;
-                } catch (RuntimeException e3) {
-                    e = e3;
+                } catch (RemoteException | RuntimeException e) {
                     DSLog.e("Failed to query dataLifeCycleConfig, error: %s.", e.getMessage());
                     return null;
                 }
@@ -897,7 +810,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public int addDataLifeCycleConfig(String dbName, String tableName, String fieldName, int mode, int count) {
-        Exception e;
         DataLifeCycle dlc = new DataLifeCycle();
         dlc.setMDBName(dbName);
         dlc.setMTableName(tableName);
@@ -917,12 +829,7 @@ public class DataServiceProxy implements IClient {
                     DSLog.e("Failed to add dataLifeCycleConfig, error: result is not a integer with db[%s] table[%s] fieldName[%s] mode[%s] count[%s] pkgname[%s].", dbName, tableName, fieldName, Integer.valueOf(mode), Integer.valueOf(count), this.pkgName);
                     return 4;
                 }
-            } catch (RemoteException e2) {
-                e = e2;
-                DSLog.e("Failed to add dataLifeCycleConfig, error: %s.", e.getMessage());
-                return 3;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
                 DSLog.e("Failed to add dataLifeCycleConfig, error: %s.", e.getMessage());
                 return 3;
             }
@@ -932,7 +839,6 @@ public class DataServiceProxy implements IClient {
     }
 
     public int removeDataLifeCycleConfig(String dbName, String tableName, String fieldName, int mode, int count) {
-        Exception e;
         DataLifeCycle dlc = new DataLifeCycle();
         dlc.setMDBName(dbName);
         dlc.setMTableName(tableName);
@@ -952,12 +858,7 @@ public class DataServiceProxy implements IClient {
                     DSLog.e("Failed to remove dataLifeCycleConfig, error: result is not a integer with db[%s] table[%s] fieldName[%s] mode[%s] count[%s] pkgname[%s].", dbName, tableName, fieldName, Integer.valueOf(mode), Integer.valueOf(count), this.pkgName);
                     return 4;
                 }
-            } catch (RemoteException e2) {
-                e = e2;
-                DSLog.e("Failed to remove dataLifeCycleConfig, error: %s.", e.getMessage());
-                return 3;
-            } catch (RuntimeException e3) {
-                e = e3;
+            } catch (RemoteException | RuntimeException e) {
                 DSLog.e("Failed to remove dataLifeCycleConfig, error: %s.", e.getMessage());
                 return 3;
             }

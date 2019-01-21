@@ -142,20 +142,20 @@ public class HwQuickTTFFMonitor {
         Log.e(str, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:39:0x0106, code:
+    /* JADX WARNING: Missing block: B:39:0x0106, code skipped:
             r1.isSatisfiedRequest = true;
      */
-    /* JADX WARNING: Missing block: B:40:0x010a, code:
+    /* JADX WARNING: Missing block: B:40:0x010a, code skipped:
             if (r1.m_running != false) goto L_0x011b;
      */
-    /* JADX WARNING: Missing block: B:42:0x010e, code:
+    /* JADX WARNING: Missing block: B:42:0x010e, code skipped:
             if (r1.isNavigating == false) goto L_0x011b;
      */
-    /* JADX WARNING: Missing block: B:43:0x0110, code:
+    /* JADX WARNING: Missing block: B:43:0x0110, code skipped:
             android.util.Log.i(TAG, "start HwQuickTTFF  when isNavigating");
             sendStartCommand();
      */
-    /* JADX WARNING: Missing block: B:44:0x011b, code:
+    /* JADX WARNING: Missing block: B:44:0x011b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -167,7 +167,7 @@ public class HwQuickTTFFMonitor {
             if (!"gps".equals(request.getProvider())) {
                 String str2 = requestProvider;
             } else if ("gps".equals(requestProvider) && this.isPermission) {
-                String permissionStatus = String.valueOf(this.m_QuickttffDisableList.contains(str) ^ true);
+                String permissionStatus = String.valueOf(this.m_QuickttffDisableList.contains(str) ^ 1);
                 String requestAccuracy = "null";
                 if (this.m_accWhiteList.contains(str)) {
                     requestAccuracy = String.valueOf(ACC_IN_WHITE_LIST);
@@ -241,35 +241,37 @@ public class HwQuickTTFFMonitor {
                 stringBuilder.append("removeHwQuickTTFF:");
                 stringBuilder.append(packageName);
                 Log.i(str, stringBuilder.toString());
-                if (this.mAppMonitorMap.size() > 0 || !this.m_running) {
-                    return;
+                if (this.mAppMonitorMap.size() <= 0) {
+                    if (this.m_running) {
+                        Log.i(TAG, "removeHwQuickTTFF HwQuickTTFF STOP");
+                        sendStopCommand();
+                        return;
+                    }
                 }
-                Log.i(TAG, "removeHwQuickTTFF HwQuickTTFF STOP");
-                sendStopCommand();
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0021, code:
+    /* JADX WARNING: Missing block: B:16:0x0021, code skipped:
             android.util.Log.i(TAG, "removeAllHwQuickTTFF HwQuickTTFF STOP");
      */
-    /* JADX WARNING: Missing block: B:17:0x002f, code:
+    /* JADX WARNING: Missing block: B:17:0x002f, code skipped:
             if (r6.mAppMonitorMap.size() <= 0) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:18:0x0031, code:
+    /* JADX WARNING: Missing block: B:18:0x0031, code skipped:
             r0 = r6.mAppMonitorMap.entrySet().iterator();
      */
-    /* JADX WARNING: Missing block: B:20:0x003f, code:
+    /* JADX WARNING: Missing block: B:20:0x003f, code skipped:
             if (r0.hasNext() == false) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:21:0x0041, code:
+    /* JADX WARNING: Missing block: B:21:0x0041, code skipped:
             r6.mRemoveTimeMap.put((java.lang.String) ((java.util.Map.Entry) r0.next()).getValue(), java.lang.Long.valueOf(java.lang.System.currentTimeMillis()));
      */
-    /* JADX WARNING: Missing block: B:22:0x005b, code:
+    /* JADX WARNING: Missing block: B:22:0x005b, code skipped:
             r6.mAppMonitorMap.clear();
             sendStopCommand();
      */
-    /* JADX WARNING: Missing block: B:23:0x0063, code:
+    /* JADX WARNING: Missing block: B:23:0x0063, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

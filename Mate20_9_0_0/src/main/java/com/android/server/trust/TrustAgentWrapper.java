@@ -378,7 +378,7 @@ public class TrustAgentWrapper {
                             TrustAgentWrapper.this.mTrustAgentService.onEscrowTokenRemoved(handle, z);
                             break;
                         }
-                    } catch (boolean resultDeliverred2) {
+                    } catch (RemoteException resultDeliverred2) {
                         TrustAgentWrapper.this.onError(resultDeliverred2);
                         break;
                     }

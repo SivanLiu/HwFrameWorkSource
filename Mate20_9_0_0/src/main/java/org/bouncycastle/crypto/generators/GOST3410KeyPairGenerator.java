@@ -1,7 +1,7 @@
 package org.bouncycastle.crypto.generators;
 
 import java.math.BigInteger;
-import java.util.Random;
+import java.security.SecureRandom;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPairGenerator;
 import org.bouncycastle.crypto.KeyGenerationParameters;
@@ -16,7 +16,7 @@ public class GOST3410KeyPairGenerator implements AsymmetricCipherKeyPairGenerato
 
     public AsymmetricCipherKeyPair generateKeyPair() {
         GOST3410Parameters parameters = this.param.getParameters();
-        Random random = this.param.getRandom();
+        SecureRandom random = this.param.getRandom();
         BigInteger q = parameters.getQ();
         BigInteger p = parameters.getP();
         BigInteger a = parameters.getA();

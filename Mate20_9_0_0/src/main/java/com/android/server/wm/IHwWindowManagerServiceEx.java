@@ -81,7 +81,7 @@ public interface IHwWindowManagerServiceEx {
 
     void updateDimPositionForPCMode(WindowContainer windowContainer, Rect rect);
 
-    void updateHwStartWindowRecord(String str);
+    void updateHwStartWindowRecord(int i);
 
     void updateSurfacePositionForPCMode(WindowState windowState, Point point);
 

@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +53,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import libcore.util.EmptyArray;
+import org.xmlpull.v1.XmlPullParserException;
 
 public final class OverlayManagerService extends SystemService {
     static final boolean DEBUG = false;
@@ -65,7 +67,7 @@ public final class OverlayManagerService extends SystemService {
     private final AtomicBoolean mPersistSettingsScheduled = new AtomicBoolean(false);
     private final IBinder mService = new Stub() {
         public Map<String, List<OverlayInfo>> getAllOverlays(int userId) throws RemoteException {
-            Map<String, List<OverlayInfo>> overlaysForUser;
+            Map overlaysForUser;
             userId = handleIncomingUser(userId, "getAllOverlays");
             synchronized (OverlayManagerService.this.mLock) {
                 overlaysForUser = OverlayManagerService.this.mImpl.getOverlaysForUser(userId);
@@ -78,7 +80,7 @@ public final class OverlayManagerService extends SystemService {
             if (targetPackageName == null) {
                 return Collections.emptyList();
             }
-            List<OverlayInfo> overlayInfosForTarget;
+            List overlayInfosForTarget;
             synchronized (OverlayManagerService.this.mLock) {
                 overlayInfosForTarget = OverlayManagerService.this.mImpl.getOverlayInfosForTarget(targetPackageName, userId);
             }
@@ -258,7 +260,7 @@ public final class OverlayManagerService extends SystemService {
         /* JADX WARNING: Removed duplicated region for block: B:28:0x0080  */
         /* JADX WARNING: Removed duplicated region for block: B:27:0x007c  */
         /* JADX WARNING: Removed duplicated region for block: B:24:0x0072  */
-        /* JADX WARNING: Missing block: B:15:0x0056, code:
+        /* JADX WARNING: Missing block: B:15:0x0056, code skipped:
             if (r7.equals("android.intent.action.PACKAGE_ADDED") == false) goto L_0x006d;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -407,11 +409,11 @@ public final class OverlayManagerService extends SystemService {
             this();
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:38:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:21:0x0054  */
+        /* JADX WARNING: Removed duplicated region for block: B:40:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:22:0x0054  */
         /* JADX WARNING: Removed duplicated region for block: B:12:0x0034  */
-        /* JADX WARNING: Removed duplicated region for block: B:38:? A:{SYNTHETIC, RETURN} */
-        /* JADX WARNING: Removed duplicated region for block: B:21:0x0054  */
+        /* JADX WARNING: Removed duplicated region for block: B:40:? A:{SYNTHETIC, RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:22:0x0054  */
         /* JADX WARNING: Removed duplicated region for block: B:12:0x0034  */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onReceive(Context context, Intent intent) {
@@ -728,37 +730,71 @@ public final class OverlayManagerService extends SystemService {
     }
 
     private void updateOverlayPaths(int userId, List<String> targetPackageNames) {
+        int i = userId;
+        List<String> targetPackageNames2 = targetPackageNames;
         PackageManagerInternal pm = (PackageManagerInternal) LocalServices.getService(PackageManagerInternal.class);
-        boolean updateFrameworkRes = targetPackageNames.contains(PackageManagerService.PLATFORM_PACKAGE_NAME);
-        boolean updateFrameworkReshwext = targetPackageNames.contains("androidhwext");
+        boolean updateFrameworkRes = targetPackageNames2.contains(PackageManagerService.PLATFORM_PACKAGE_NAME);
+        boolean updateFrameworkReshwext = targetPackageNames2.contains("androidhwext");
         if (updateFrameworkRes || updateFrameworkReshwext) {
-            targetPackageNames = pm.getTargetPackageNames(userId);
+            targetPackageNames2 = pm.getTargetPackageNames(i);
         }
-        Map<String, List<String>> pendingChanges = new ArrayMap(targetPackageNames.size());
+        List<String> targetPackageNames3 = targetPackageNames2;
+        ArrayMap pendingChanges = new ArrayMap(targetPackageNames3.size());
         synchronized (this.mLock) {
-            List<String> frameworkOverlays = this.mImpl.getEnabledOverlayPackageNames(PackageManagerService.PLATFORM_PACKAGE_NAME, userId);
-            List<String> frameworkhwextOverlays = this.mImpl.getEnabledOverlayPackageNames("androidhwext", userId);
-            int N = targetPackageNames.size();
-            for (int i = 0; i < N; i++) {
-                String targetPackageName = (String) targetPackageNames.get(i);
+            targetPackageNames2 = this.mImpl.getEnabledOverlayPackageNames(PackageManagerService.PLATFORM_PACKAGE_NAME, i);
+            List<String> tmpFwkOverlays = new ArrayList(targetPackageNames2.size());
+            tmpFwkOverlays.addAll(targetPackageNames2);
+            tmpFwkOverlays.remove(OverlayManagerSettings.FWK_DARK_OVERLAY_TAG);
+            List<String> frameworkhwextOverlays = this.mImpl.getEnabledOverlayPackageNames("androidhwext", i);
+            int N = targetPackageNames3.size();
+            int i2 = 0;
+            while (i2 < N) {
+                String targetPackageName = (String) targetPackageNames3.get(i2);
+                boolean isInDataSkinDir = isInDataSkinDir(targetPackageName);
                 List<String> list = new ArrayList();
+                List<String> frameworkOverlays = targetPackageNames2;
                 if (!PackageManagerService.PLATFORM_PACKAGE_NAME.equals(targetPackageName)) {
-                    list.addAll(frameworkOverlays);
+                    list.addAll(isInDataSkinDir ? tmpFwkOverlays : frameworkOverlays);
                 }
-                if (!"androidhwext".equals(targetPackageName)) {
+                if (!("androidhwext".equals(targetPackageName) || isInDataSkinDir)) {
                     list.addAll(frameworkhwextOverlays);
                 }
-                list.addAll(this.mImpl.getEnabledOverlayPackageNames(targetPackageName, userId));
+                list.addAll(this.mImpl.getEnabledOverlayPackageNames(targetPackageName, i));
                 pendingChanges.put(targetPackageName, list);
+                i2++;
+                targetPackageNames2 = frameworkOverlays;
             }
         }
-        int N2 = targetPackageNames.size();
-        for (int i2 = 0; i2 < N2; i2++) {
-            String targetPackageName2 = (String) targetPackageNames.get(i2);
-            if (!pm.setEnabledOverlayPackages(userId, targetPackageName2, (List) pendingChanges.get(targetPackageName2))) {
+        int N2 = targetPackageNames3.size();
+        for (int i3 = 0; i3 < N2; i3++) {
+            String targetPackageName2 = (String) targetPackageNames3.get(i3);
+            if (!pm.setEnabledOverlayPackages(i, targetPackageName2, (List) pendingChanges.get(targetPackageName2))) {
                 Slog.e(TAG, String.format("Failed to change enabled overlays for %s user %d", new Object[]{targetPackageName2, Integer.valueOf(userId)}));
             }
         }
+    }
+
+    private boolean isInDataSkinDir(String packageName) {
+        if (TextUtils.isEmpty(packageName)) {
+            return false;
+        }
+        String themePath = new StringBuilder();
+        themePath.append(Environment.getDataDirectory());
+        themePath.append("/themes/");
+        themePath.append(UserHandle.myUserId());
+        File root = new File(themePath.toString());
+        if (!root.exists()) {
+            return false;
+        }
+        File[] files = root.listFiles();
+        int size = files == null ? 0 : files.length;
+        for (int i = 0; i < size; i++) {
+            File file = files[i];
+            if (file.isFile() && packageName.equals(file.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateAssets(int userId, String targetPackageName) {
@@ -779,15 +815,6 @@ public final class OverlayManagerService extends SystemService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x001e A:{PHI: r1 , Splitter: B:3:0x000a, ExcHandler: java.io.IOException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x001e, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:?, code:
-            r5.mSettingsFile.failWrite(r1);
-            android.util.Slog.e(TAG, "failed to persist overlay state", r2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static /* synthetic */ void lambda$schedulePersistSettings$1(OverlayManagerService overlayManagerService) {
         overlayManagerService.mPersistSettingsScheduled.set(false);
         synchronized (overlayManagerService.mLock) {
@@ -796,19 +823,28 @@ public final class OverlayManagerService extends SystemService {
                 stream = overlayManagerService.mSettingsFile.startWrite();
                 overlayManagerService.mSettings.persist(stream);
                 overlayManagerService.mSettingsFile.finishWrite(stream);
-            } catch (Exception e) {
+            } catch (IOException | XmlPullParserException e) {
+                overlayManagerService.mSettingsFile.failWrite(stream);
+                Slog.e(TAG, "failed to persist overlay state", e);
             }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x007c A:{Splitter: B:7:0x0011, ExcHandler: java.io.IOException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:37:0x007c, code:
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x007c A:{ExcHandler: IOException | XmlPullParserException (r1_5 'e' java.lang.Exception), Splitter:B:7:0x0011} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:32:0x0073, code skipped:
+            r4 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:34:?, code skipped:
+            r2.addSuppressed(r4);
+     */
+    /* JADX WARNING: Missing block: B:37:0x007c, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:39:?, code:
+    /* JADX WARNING: Missing block: B:39:?, code skipped:
             android.util.Slog.e(TAG, "failed to restore overlay state", r1);
      */
-    /* JADX WARNING: Missing block: B:41:0x0085, code:
+    /* JADX WARNING: Missing block: B:41:0x0085, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -838,9 +874,15 @@ public final class OverlayManagerService extends SystemService {
                     if (stream != null) {
                         stream.close();
                     }
-                } catch (Exception e) {
+                } catch (IOException | XmlPullParserException e) {
                 } catch (Throwable th) {
-                    r2.addSuppressed(th);
+                    if (stream != null) {
+                        if (r2 != null) {
+                            stream.close();
+                        } else {
+                            stream.close();
+                        }
+                    }
                 }
             }
         }

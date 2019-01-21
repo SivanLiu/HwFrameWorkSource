@@ -1,5 +1,6 @@
 package org.bouncycastle.jcajce;
 
+import java.io.IOException;
 import java.security.cert.CertSelector;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -49,7 +50,7 @@ public class PKIXCertStoreSelector<T extends Certificate> implements Selector<T>
                     setSubject(x509CertSelector.getSubjectAsBytes());
                     setSubjectAlternativeNames(x509CertSelector.getSubjectAlternativeNames());
                     setSubjectPublicKeyAlgID(x509CertSelector.getSubjectPublicKeyAlgID());
-                } catch (Throwable e) {
+                } catch (IOException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("base selector invalid: ");
                     stringBuilder.append(e.getMessage());

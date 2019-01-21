@@ -76,21 +76,21 @@ public class SM2Engine {
     private byte[] encrypt(byte[] bArr, int i, int i2) throws InvalidCipherTextException {
         byte[] encoded;
         ECPoint normalize;
-        Object obj = new byte[i2];
-        System.arraycopy(bArr, i, obj, 0, obj.length);
+        byte[] bArr2 = new byte[i2];
+        System.arraycopy(bArr, i, bArr2, 0, bArr2.length);
         ECMultiplier createBasePointMultiplier = createBasePointMultiplier();
         do {
             BigInteger nextK = nextK();
             encoded = createBasePointMultiplier.multiply(this.ecParams.getG(), nextK).normalize().getEncoded(false);
             normalize = ((ECPublicKeyParameters) this.ecKey).getQ().multiply(nextK).normalize();
-            kdf(this.digest, normalize, obj);
-        } while (notEncrypted(obj, bArr, i));
-        byte[] bArr2 = new byte[this.digest.getDigestSize()];
+            kdf(this.digest, normalize, bArr2);
+        } while (notEncrypted(bArr2, bArr, i));
+        byte[] bArr3 = new byte[this.digest.getDigestSize()];
         addFieldElement(this.digest, normalize.getAffineXCoord());
         this.digest.update(bArr, i, i2);
         addFieldElement(this.digest, normalize.getAffineYCoord());
-        this.digest.doFinal(bArr2, 0);
-        return Arrays.concatenate(encoded, obj, bArr2);
+        this.digest.doFinal(bArr3, 0);
+        return Arrays.concatenate(encoded, bArr2, bArr3);
     }
 
     private void kdf(Digest digest, ECPoint eCPoint, byte[] bArr) {

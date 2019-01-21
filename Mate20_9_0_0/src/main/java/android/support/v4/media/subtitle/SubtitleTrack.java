@@ -324,49 +324,60 @@ public abstract class SubtitleTrack implements OnMediaTimeListener {
         setRunDiscardTimeMs(runID, (data.getStartTimeUs() + data.getDurationUs()) / 1000);
     }
 
-    /* JADX WARNING: Missing block: B:4:0x0007, code:
-            if (r7.mLastUpdateTimeMs > r9) goto L_0x000d;
-     */
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x0022 A:{Catch:{ all -> 0x000a }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected synchronized void updateActiveCues(boolean rebuild, long timeMs) {
+        Iterator<Pair<Long, Cue>> it;
         if (!rebuild) {
-        }
-        clearActiveCues();
-        Iterator<Pair<Long, Cue>> it = this.mCues.entriesBetween(this.mLastUpdateTimeMs, timeMs).iterator();
-        while (it.hasNext()) {
-            Pair<Long, Cue> event = (Pair) it.next();
-            Cue cue = event.second;
-            String str;
-            StringBuilder stringBuilder;
-            if (cue.mEndTimeMs == ((Long) event.first).longValue()) {
-                if (this.DEBUG) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Removing ");
-                    stringBuilder.append(cue);
-                    Log.v(str, stringBuilder.toString());
+            try {
+                if (this.mLastUpdateTimeMs > timeMs) {
                 }
-                this.mActiveCues.remove(cue);
-                if (cue.mRunID == 0) {
-                    it.remove();
+                it = this.mCues.entriesBetween(this.mLastUpdateTimeMs, timeMs).iterator();
+                while (it.hasNext()) {
+                    Pair<Long, Cue> event = (Pair) it.next();
+                    Cue cue = event.second;
+                    String str;
+                    StringBuilder stringBuilder;
+                    if (cue.mEndTimeMs == ((Long) event.first).longValue()) {
+                        if (this.DEBUG) {
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Removing ");
+                            stringBuilder.append(cue);
+                            Log.v(str, stringBuilder.toString());
+                        }
+                        this.mActiveCues.remove(cue);
+                        if (cue.mRunID == 0) {
+                            it.remove();
+                        }
+                    } else if (cue.mStartTimeMs == ((Long) event.first).longValue()) {
+                        if (this.DEBUG) {
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Adding ");
+                            stringBuilder.append(cue);
+                            Log.v(str, stringBuilder.toString());
+                        }
+                        if (cue.mInnerTimesMs != null) {
+                            cue.onTime(timeMs);
+                        }
+                        this.mActiveCues.add(cue);
+                    } else if (cue.mInnerTimesMs != null) {
+                        cue.onTime(timeMs);
+                    }
                 }
-            } else if (cue.mStartTimeMs == ((Long) event.first).longValue()) {
-                if (this.DEBUG) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Adding ");
-                    stringBuilder.append(cue);
-                    Log.v(str, stringBuilder.toString());
+                while (this.mRunsByEndTime.size() > 0 && this.mRunsByEndTime.keyAt(0) <= timeMs) {
+                    removeRunsByEndTimeIndex(0);
                 }
-                if (cue.mInnerTimesMs != null) {
-                    cue.onTime(timeMs);
-                }
-                this.mActiveCues.add(cue);
-            } else if (cue.mInnerTimesMs != null) {
-                cue.onTime(timeMs);
+                this.mLastUpdateTimeMs = timeMs;
+            } finally {
             }
         }
-        while (this.mRunsByEndTime.size() > 0 && this.mRunsByEndTime.keyAt(0) <= timeMs) {
+        clearActiveCues();
+        it = this.mCues.entriesBetween(this.mLastUpdateTimeMs, timeMs).iterator();
+        while (it.hasNext()) {
+        }
+        while (this.mRunsByEndTime.size() > 0) {
             removeRunsByEndTimeIndex(0);
         }
         this.mLastUpdateTimeMs = timeMs;
@@ -504,10 +515,10 @@ public abstract class SubtitleTrack implements OnMediaTimeListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:40:0x00df, code:
+    /* JADX WARNING: Missing block: B:40:0x00df, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:52:0x00fe, code:
+    /* JADX WARNING: Missing block: B:52:0x00fe, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -573,7 +584,7 @@ public abstract class SubtitleTrack implements OnMediaTimeListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x001c, code:
+    /* JADX WARNING: Missing block: B:14:0x001c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

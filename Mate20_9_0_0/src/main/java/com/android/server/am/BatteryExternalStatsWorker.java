@@ -148,25 +148,25 @@ class BatteryExternalStatsWorker implements ExternalStatsSync {
         return scheduleSyncLocked("setting-change", 1);
     }
 
-    /* JADX WARNING: Missing block: B:8:0x000f, code:
+    /* JADX WARNING: Missing block: B:8:0x000f, code skipped:
             monitor-enter(r5);
      */
-    /* JADX WARNING: Missing block: B:11:0x0016, code:
+    /* JADX WARNING: Missing block: B:11:0x0016, code skipped:
             if (r5.mExecutorService.isShutdown() != false) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:12:0x0018, code:
+    /* JADX WARNING: Missing block: B:12:0x0018, code skipped:
             r0 = r5.mExecutorService.schedule(com.android.internal.util.function.pooled.PooledLambda.obtainRunnable(com.android.server.am.-$$Lambda$BatteryExternalStatsWorker$cC4f0pNQX9_D9f8AXLmKk2sArGY.INSTANCE, r5.mStats, java.lang.Boolean.valueOf(r6), java.lang.Boolean.valueOf(r7)).recycleOnUse(), r8, java.util.concurrent.TimeUnit.MILLISECONDS);
      */
-    /* JADX WARNING: Missing block: B:13:0x0034, code:
+    /* JADX WARNING: Missing block: B:13:0x0034, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:14:0x0035, code:
+    /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:15:0x0036, code:
+    /* JADX WARNING: Missing block: B:15:0x0036, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:16:0x0037, code:
+    /* JADX WARNING: Missing block: B:16:0x0037, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -178,25 +178,25 @@ class BatteryExternalStatsWorker implements ExternalStatsSync {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x000f, code:
+    /* JADX WARNING: Missing block: B:8:0x000f, code skipped:
             monitor-enter(r5);
      */
-    /* JADX WARNING: Missing block: B:11:0x0016, code:
+    /* JADX WARNING: Missing block: B:11:0x0016, code skipped:
             if (r5.mExecutorService.isShutdown() != false) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:12:0x0018, code:
+    /* JADX WARNING: Missing block: B:12:0x0018, code skipped:
             r0 = r5.mExecutorService.submit(com.android.internal.util.function.pooled.PooledLambda.obtainRunnable(com.android.server.am.-$$Lambda$BatteryExternalStatsWorker$7toxTvZDSEytL0rCkoEfGilPDWM.INSTANCE, r5.mStats, java.lang.Boolean.valueOf(r6), java.lang.Boolean.valueOf(r7)).recycleOnUse());
      */
-    /* JADX WARNING: Missing block: B:13:0x0032, code:
+    /* JADX WARNING: Missing block: B:13:0x0032, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:14:0x0033, code:
+    /* JADX WARNING: Missing block: B:14:0x0033, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:15:0x0034, code:
+    /* JADX WARNING: Missing block: B:15:0x0034, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:16:0x0035, code:
+    /* JADX WARNING: Missing block: B:16:0x0035, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -209,7 +209,7 @@ class BatteryExternalStatsWorker implements ExternalStatsSync {
     }
 
     public Future<?> scheduleCpuSyncDueToScreenStateChange(boolean onBattery, boolean onBatteryScreenOff) {
-        Future<?> scheduleSyncLocked;
+        Future scheduleSyncLocked;
         synchronized (this) {
             if (this.mCurrentFuture == null || (this.mUpdateFlags & 1) == 0) {
                 this.mOnBattery = onBattery;
@@ -222,7 +222,7 @@ class BatteryExternalStatsWorker implements ExternalStatsSync {
     }
 
     public Future<?> scheduleCpuSyncDueToWakelockChange(long delayMillis) {
-        Future<?> future;
+        Future future;
         synchronized (this) {
             this.mWakelockChangesUpdate = scheduleDelayedSyncLocked(this.mWakelockChangesUpdate, new -$$Lambda$BatteryExternalStatsWorker$PpNEY15dspg9oLlkg1OsyjrPTqw(this), delayMillis);
             future = this.mWakelockChangesUpdate;
@@ -245,7 +245,7 @@ class BatteryExternalStatsWorker implements ExternalStatsSync {
     }
 
     public Future<?> scheduleSyncDueToBatteryLevelChange(long delayMillis) {
-        Future<?> future;
+        Future future;
         synchronized (this) {
             this.mBatteryLevelSync = scheduleDelayedSyncLocked(this.mBatteryLevelSync, new -$$Lambda$BatteryExternalStatsWorker$eNtlYRY6yBjSWzaL4STPjcGEduM(this), delayMillis);
             future = this.mBatteryLevelSync;
@@ -315,45 +315,45 @@ class BatteryExternalStatsWorker implements ExternalStatsSync {
         return j;
     }
 
-    /* JADX WARNING: Missing block: B:51:0x00f2, code:
+    /* JADX WARNING: Missing block: B:51:0x00f2, code skipped:
             if (r5 == null) goto L_0x011b;
      */
-    /* JADX WARNING: Missing block: B:53:0x00f8, code:
+    /* JADX WARNING: Missing block: B:53:0x00f8, code skipped:
             if (r5.isValid() == false) goto L_0x0104;
      */
-    /* JADX WARNING: Missing block: B:54:0x00fa, code:
+    /* JADX WARNING: Missing block: B:54:0x00fa, code skipped:
             r1.mStats.updateWifiState(extractDeltaLocked(r5));
      */
-    /* JADX WARNING: Missing block: B:55:0x0104, code:
+    /* JADX WARNING: Missing block: B:55:0x0104, code skipped:
             r0 = TAG;
             r8 = new java.lang.StringBuilder();
             r8.append("wifi info is invalid: ");
             r8.append(r5);
             android.util.Slog.w(r0, r8.toString());
      */
-    /* JADX WARNING: Missing block: B:56:0x011b, code:
+    /* JADX WARNING: Missing block: B:56:0x011b, code skipped:
             if (r7 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:58:0x0121, code:
+    /* JADX WARNING: Missing block: B:58:0x0121, code skipped:
             if (r7.isValid() == false) goto L_0x0129;
      */
-    /* JADX WARNING: Missing block: B:59:0x0123, code:
+    /* JADX WARNING: Missing block: B:59:0x0123, code skipped:
             r1.mStats.updateMobileRadioState(r7);
      */
-    /* JADX WARNING: Missing block: B:60:0x0129, code:
+    /* JADX WARNING: Missing block: B:60:0x0129, code skipped:
             r0 = TAG;
             r8 = new java.lang.StringBuilder();
             r8.append("modem info is invalid: ");
             r8.append(r7);
             android.util.Slog.w(r0, r8.toString());
      */
-    /* JADX WARNING: Missing block: B:68:?, code:
+    /* JADX WARNING: Missing block: B:68:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:69:?, code:
+    /* JADX WARNING: Missing block: B:69:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:70:?, code:
+    /* JADX WARNING: Missing block: B:70:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -9,13 +9,13 @@ public abstract class Singleton<T> {
         if (this.mInstance != null) {
             return this.mInstance;
         }
-        T t;
+        Object obj;
         synchronized (this) {
             if (this.mInstance == null) {
                 this.mInstance = create();
             }
-            t = this.mInstance;
+            obj = this.mInstance;
         }
-        return t;
+        return obj;
     }
 }

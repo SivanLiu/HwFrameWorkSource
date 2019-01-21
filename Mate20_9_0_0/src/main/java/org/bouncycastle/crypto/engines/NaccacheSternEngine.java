@@ -73,7 +73,7 @@ public class NaccacheSternEngine implements AsymmetricBlockCipher {
     public byte[] encrypt(BigInteger bigInteger) {
         byte[] toByteArray = this.key.getModulus().toByteArray();
         Arrays.fill(toByteArray, (byte) 0);
-        Object toByteArray2 = this.key.getG().modPow(bigInteger, this.key.getModulus()).toByteArray();
+        byte[] toByteArray2 = this.key.getG().modPow(bigInteger, this.key.getModulus()).toByteArray();
         System.arraycopy(toByteArray2, 0, toByteArray, toByteArray.length - toByteArray2.length, toByteArray2.length);
         if (this.debug) {
             PrintStream printStream = System.out;
@@ -136,9 +136,9 @@ public class NaccacheSternEngine implements AsymmetricBlockCipher {
             PrintStream printStream;
             int i3 = 0;
             if (!(i == 0 && i2 == bArr.length)) {
-                Object obj = new byte[i2];
-                System.arraycopy(bArr, i, obj, 0, i2);
-                bArr = obj;
+                byte[] bArr2 = new byte[i2];
+                System.arraycopy(bArr, i, bArr2, 0, i2);
+                bArr = bArr2;
             }
             BigInteger bigInteger = new BigInteger(1, bArr);
             if (this.debug) {
@@ -240,7 +240,7 @@ public class NaccacheSternEngine implements AsymmetricBlockCipher {
                 stringBuilder.append(" bytes");
                 printStream.println(stringBuilder.toString());
             }
-            Object obj = new byte[(((bArr.length / inputBlockSize) + 1) * outputBlockSize)];
+            byte[] bArr2 = new byte[(((bArr.length / inputBlockSize) + 1) * outputBlockSize)];
             int i = 0;
             int i2 = i;
             while (i < bArr.length) {
@@ -262,7 +262,7 @@ public class NaccacheSternEngine implements AsymmetricBlockCipher {
                     printStream2.println(stringBuilder2.toString());
                 }
                 if (processBlock != null) {
-                    System.arraycopy(processBlock, 0, obj, i2, processBlock.length);
+                    System.arraycopy(processBlock, 0, bArr2, i2, processBlock.length);
                     i2 += processBlock.length;
                 } else {
                     if (this.debug) {
@@ -271,17 +271,17 @@ public class NaccacheSternEngine implements AsymmetricBlockCipher {
                     throw new InvalidCipherTextException("cipher returned null");
                 }
             }
-            Object obj2 = new byte[i2];
-            System.arraycopy(obj, 0, obj2, 0, i2);
+            bArr = new byte[i2];
+            System.arraycopy(bArr2, 0, bArr, 0, i2);
             if (this.debug) {
                 PrintStream printStream3 = System.out;
                 StringBuilder stringBuilder3 = new StringBuilder();
                 stringBuilder3.append("returning ");
-                stringBuilder3.append(obj2.length);
+                stringBuilder3.append(bArr.length);
                 stringBuilder3.append(" bytes");
                 printStream3.println(stringBuilder3.toString());
             }
-            return obj2;
+            return bArr;
         }
         if (this.debug) {
             System.out.println("data size is less then input block size, processing directly");

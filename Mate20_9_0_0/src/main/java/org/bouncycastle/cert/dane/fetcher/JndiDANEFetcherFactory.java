@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.dane.fetcher;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -25,7 +26,7 @@ public class JndiDANEFetcherFactory implements DANEEntryFetcherFactory {
             if (DANEEntry.isValidCertificate(bArr)) {
                 try {
                     list.add(new DANEEntry(str, bArr));
-                } catch (Throwable e) {
+                } catch (IOException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("Exception parsing entry: ");
                     stringBuilder.append(e.getMessage());
@@ -54,7 +55,7 @@ public class JndiDANEFetcherFactory implements DANEEntryFetcherFactory {
         }
         return new DANEEntryFetcher() {
             public List getEntries() throws DANEException {
-                List arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 StringBuilder stringBuilder;
                 try {
                     InitialDirContext initialDirContext = new InitialDirContext(hashtable);

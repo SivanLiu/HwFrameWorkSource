@@ -38,6 +38,7 @@ public final class HwApsManagerServiceConfig {
     private static final String GET_FPS_SOURCE_CONFIG = "Aps Config";
     private static final String GET_FPS_SOURCE_SERVICE = "Aps Service";
     private static final String GET_FPS_SOURCE_UNKOWN = "unkown source";
+    public static final int PERFORMANCE_POWER_MODE_VALUE = 3;
     private static final String TAG = "HwApsManagerConfig";
     private static final float VR_APP_RATIO = 0.625f;
     private static final String mHwApsPackagesListPath = "/data/system/hwaps-packages-compat.xml";
@@ -72,7 +73,7 @@ public final class HwApsManagerServiceConfig {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x00ab A:{SYNTHETIC, Splitter: B:14:0x00ab} */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x00ab A:{SYNTHETIC, Splitter:B:14:0x00ab} */
     /* JADX WARNING: Removed duplicated region for block: B:9:0x00a3  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HwApsManagerServiceConfig(HwApsManagerService service, Handler handler) {
@@ -369,25 +370,13 @@ public final class HwApsManagerServiceConfig {
             }
             if (this.newFpsMap.get(pkgName) != null) {
                 data = ((Integer) this.newFpsMap.get(pkgName)).intValue();
-                String str3 = TAG;
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("doCallbackAtFirstRegisterLocked, callback:0, data: ");
-                stringBuilder3.append(data);
-                stringBuilder3.append(" , from new config.");
-                Slog.i(str3, stringBuilder3.toString());
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("doCallbackAtFirstRegisterLocked, callback:0, data: ");
+                stringBuilder.append(data);
+                stringBuilder.append(" , from new config.");
+                Slog.i(str, stringBuilder.toString());
                 callback.doCallback(0, data);
-                return;
-            }
-            ApsAppInfo apsInfo = (ApsAppInfo) this.mPackages.get(pkgName);
-            if (apsInfo != null) {
-                int data2 = apsInfo.getFrameRatio();
-                String str4 = TAG;
-                StringBuilder stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("doCallbackAtFirstRegisterLocked, callback:0, data: ");
-                stringBuilder4.append(data2);
-                stringBuilder4.append(" , from database config.");
-                Slog.i(str4, stringBuilder4.toString());
-                callback.doCallback(0, data2);
             }
         } catch (RemoteException ex) {
             str = TAG;
@@ -641,7 +630,20 @@ public final class HwApsManagerServiceConfig {
         StringBuilder stringBuilder;
         try {
             ApsAppInfo apsInfo = (ApsAppInfo) this.mPackages.get(pkgName);
-            if (apsInfo == null || fps <= apsInfo.getFrameRatio()) {
+            String str2;
+            StringBuilder stringBuilder2;
+            if (apsInfo != null && fps > apsInfo.getFrameRatio() && !isPerformanceMode()) {
+                str2 = TAG;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("APSLog, setDynamicFpsLocked: powermode: pkg:");
+                stringBuilder2.append(pkgName);
+                stringBuilder2.append(",fps:");
+                stringBuilder2.append(fps);
+                stringBuilder2.append(",retCode:-4->APS_ERRNO_RUNAS_CONFIG, config fps:");
+                stringBuilder2.append(apsInfo.getFrameRatio());
+                Slog.i(str2, stringBuilder2.toString());
+                return -4;
+            } else if (fps <= 60 || !isPerformanceMode()) {
                 if (fps == -1) {
                     this.newFpsMap.remove(pkgName);
                 } else {
@@ -656,17 +658,18 @@ public final class HwApsManagerServiceConfig {
                 stringBuilder.append(",retCode:0 ");
                 Slog.i(str, stringBuilder.toString());
                 return 0;
+            } else {
+                str2 = TAG;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("APSLog, setDynamicFpsLocked: perforcemancemode: pkg:");
+                stringBuilder2.append(pkgName);
+                stringBuilder2.append(",fps:");
+                stringBuilder2.append(fps);
+                stringBuilder2.append(",retCode:-4->APS_ERRNO_RUNAS_CONFIG, config fps:");
+                stringBuilder2.append(apsInfo.getFrameRatio());
+                Slog.i(str2, stringBuilder2.toString());
+                return -4;
             }
-            str = TAG;
-            stringBuilder = new StringBuilder();
-            stringBuilder.append("APSLog, setDynamicFpsLocked: pkg:");
-            stringBuilder.append(pkgName);
-            stringBuilder.append(",fps:");
-            stringBuilder.append(fps);
-            stringBuilder.append(",retCode:-4->APS_ERRNO_RUNAS_CONFIG, config fps:");
-            stringBuilder.append(apsInfo.getFrameRatio());
-            Slog.i(str, stringBuilder.toString());
-            return -4;
         } catch (Exception e) {
             str = TAG;
             stringBuilder = new StringBuilder();
@@ -792,15 +795,19 @@ public final class HwApsManagerServiceConfig {
     }
 
     public int getFpsLocked(String pkgName) {
-        if (pkgName == null) {
+        if (isPerformanceMode()) {
+            Slog.e(TAG, "getFpsLocked: performance mode and the limit fps is 60!");
+            return -1;
+        } else if (pkgName == null) {
             Slog.e(TAG, "getFpsLocked input invalid param!");
             return -1;
+        } else {
+            ApsAppInfo info = (ApsAppInfo) this.mPackages.get(pkgName);
+            if (info == null) {
+                return -1;
+            }
+            return info.getFrameRatio();
         }
-        ApsAppInfo info = (ApsAppInfo) this.mPackages.get(pkgName);
-        if (info == null) {
-            return -1;
-        }
-        return info.getFrameRatio();
     }
 
     public int getMaxFpsLocked(String pkgName) {
@@ -870,6 +877,10 @@ public final class HwApsManagerServiceConfig {
             }
         }
         return false;
+    }
+
+    public boolean isPerformanceMode() {
+        return 3 == SystemProperties.getInt("persist.sys.smart_power", 0);
     }
 
     public boolean isSupportApsColorPlusLocked(String pkgName) {

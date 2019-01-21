@@ -73,11 +73,11 @@ public final class Collection {
     }
 
     public int getOpta() {
-        return SystemPropertiesEx.getInt("ro.config.hw_opta", -1);
+        return SystemPropertiesEx.getInt("ro.config.hw_opta", INVALID_SUBSCRIPTION_ID);
     }
 
     public int getOptb() {
-        return SystemPropertiesEx.getInt("ro.config.hw_optb", -1);
+        return SystemPropertiesEx.getInt("ro.config.hw_optb", INVALID_SUBSCRIPTION_ID);
     }
 
     public String getDeviceName() {
@@ -126,11 +126,11 @@ public final class Collection {
     }
 
     public String getDefaultDataSlotIMSI(Context context) {
-        int main_slot = -1;
+        int main_slot = INVALID_SUBSCRIPTION_ID;
         if (VERSION.SDK_INT > 23) {
             main_slot = SubscriptionManager.getDefaultDataSubscriptionId();
         }
-        if (main_slot == -1) {
+        if (main_slot == INVALID_SUBSCRIPTION_ID) {
             main_slot = 0;
         }
         OPCollectLog.r(TAG, "slot: " + main_slot);

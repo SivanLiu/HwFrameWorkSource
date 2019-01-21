@@ -313,7 +313,7 @@ public class HwWifiStateMachine extends WifiStateMachine {
             this.lstScanRet = lstScan;
         }
 
-        /* JADX WARNING: Missing block: B:31:0x00ff, code:
+        /* JADX WARNING: Missing block: B:31:0x00ff, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1474,10 +1474,10 @@ public class HwWifiStateMachine extends WifiStateMachine {
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x00bd, code:
+    /* JADX WARNING: Missing block: B:33:0x00bd, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:39:0x00e2, code:
+    /* JADX WARNING: Missing block: B:41:0x00e2, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1522,7 +1522,7 @@ public class HwWifiStateMachine extends WifiStateMachine {
                         stringBuilder.append(", mSelectedConfig isTempCreated = ");
                         stringBuilder.append(this.mSelectedConfig.isTempCreated);
                         log(stringBuilder.toString());
-                        if (!(WifiProStateMachine.isWifiEvaluating() && this.mSelectedConfig.isTempCreated)) {
+                        if (!WifiProStateMachine.isWifiEvaluating() || !this.mSelectedConfig.isTempCreated) {
                             z = false;
                         }
                     } else {
@@ -1530,8 +1530,10 @@ public class HwWifiStateMachine extends WifiStateMachine {
                         stringBuilder.append("==connectedConfig&mSelectedConfig are null, backgroundReason = ");
                         stringBuilder.append(this.wifiConnectedBackgroundReason);
                         log(stringBuilder.toString());
-                        if (!WifiProStateMachine.isWifiEvaluating() && this.wifiConnectedBackgroundReason < 1) {
-                            z = false;
+                        if (!WifiProStateMachine.isWifiEvaluating()) {
+                            if (this.wifiConnectedBackgroundReason < 1) {
+                                z = false;
+                            }
                         }
                     }
                 }
@@ -1689,7 +1691,12 @@ public class HwWifiStateMachine extends WifiStateMachine {
             WifiConfiguration connectedConfig = wifiConfigManager.getConfiguredNetwork(lastNetworkId);
             synchronized (this.selectConfigLock) {
                 if (connectedConfig == null) {
-                    connectedConfig = this.mSelectedConfig;
+                    try {
+                        connectedConfig = this.mSelectedConfig;
+                    } catch (Throwable th) {
+                        while (true) {
+                        }
+                    }
                 }
             }
             if (connectedConfig != null) {
@@ -2211,7 +2218,7 @@ public class HwWifiStateMachine extends WifiStateMachine {
     /* JADX WARNING: Removed duplicated region for block: B:90:0x01dd  */
     /* JADX WARNING: Removed duplicated region for block: B:80:0x0197  */
     /* JADX WARNING: Removed duplicated region for block: B:65:0x0120  */
-    /* JADX WARNING: Missing block: B:60:0x00e9, code:
+    /* JADX WARNING: Missing block: B:60:0x00e9, code skipped:
             if (r17 == 101) goto L_0x00eb;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2817,43 +2824,45 @@ public class HwWifiStateMachine extends WifiStateMachine {
                 return true;
             }
             RunningAppProcessInfo appProcessInfo = getAppProcessInfoByPid(pid);
-            if (i <= 0 || appProcessInfo == null || appProcessInfo.pkgList == null || this.mIsScanCtrlPluggedin) {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("wifi_scan pid[");
-                stringBuilder.append(i);
-                stringBuilder.append("] is not correct or is charging. mIsScanCtrlPluggedin = ");
-                stringBuilder.append(this.mIsScanCtrlPluggedin);
-                stringBuilder.append(" isInGlobalScanCtrl = ");
-                stringBuilder.append(this.isInGlobalScanCtrl);
-                logd(stringBuilder.toString());
-                return false;
-            } else if (isGlobalScanCtrl(appProcessInfo)) {
-                logd("isGlobalScanCtrl contrl scan ");
-                sendMessageDelayed(CMD_SCREEN_OFF_SCAN, WIFI_SCAN_RESULT_DELAY_TIME_DEFAULT);
-                return true;
-            } else {
-                wifiScanBlackListLearning(appProcessInfo);
-                long scanInterval = getScanInterval();
-                if (isWifiScanBlacklisted(appProcessInfo, scanInterval)) {
-                    long now = System.currentTimeMillis();
-                    long appLastScanRequestTimestamp = 0;
-                    if (this.mPidLastScanSuccTimestamp.containsKey(Integer.valueOf(pid))) {
-                        appLastScanRequestTimestamp = ((Long) this.mPidLastScanSuccTimestamp.get(Integer.valueOf(pid))).longValue();
-                    }
-                    if (this.lastScanResultTimestamp == 0 || (now - this.lastScanResultTimestamp >= scanInterval && now - appLastScanRequestTimestamp >= scanInterval)) {
-                        this.mPidLastScanSuccTimestamp.put(Integer.valueOf(pid), Long.valueOf(now));
-                    } else {
-                        if (now - this.lastScanResultTimestamp < 0) {
-                            logd("wifi_scan the last scan time is jump!!!");
-                            this.lastScanResultTimestamp = now;
-                        }
+            if (!(i <= 0 || appProcessInfo == null || appProcessInfo.pkgList == null)) {
+                if (!this.mIsScanCtrlPluggedin) {
+                    if (isGlobalScanCtrl(appProcessInfo)) {
+                        logd("isGlobalScanCtrl contrl scan ");
                         sendMessageDelayed(CMD_SCREEN_OFF_SCAN, WIFI_SCAN_RESULT_DELAY_TIME_DEFAULT);
                         return true;
                     }
+                    wifiScanBlackListLearning(appProcessInfo);
+                    long scanInterval = getScanInterval();
+                    if (isWifiScanBlacklisted(appProcessInfo, scanInterval)) {
+                        long now = System.currentTimeMillis();
+                        long appLastScanRequestTimestamp = 0;
+                        if (this.mPidLastScanSuccTimestamp.containsKey(Integer.valueOf(pid))) {
+                            appLastScanRequestTimestamp = ((Long) this.mPidLastScanSuccTimestamp.get(Integer.valueOf(pid))).longValue();
+                        }
+                        if (this.lastScanResultTimestamp == 0 || (now - this.lastScanResultTimestamp >= scanInterval && now - appLastScanRequestTimestamp >= scanInterval)) {
+                            this.mPidLastScanSuccTimestamp.put(Integer.valueOf(pid), Long.valueOf(now));
+                        } else {
+                            if (now - this.lastScanResultTimestamp < 0) {
+                                logd("wifi_scan the last scan time is jump!!!");
+                                this.lastScanResultTimestamp = now;
+                            }
+                            sendMessageDelayed(CMD_SCREEN_OFF_SCAN, WIFI_SCAN_RESULT_DELAY_TIME_DEFAULT);
+                            return true;
+                        }
+                    }
+                    updateGlobalScanTimes();
+                    return false;
                 }
-                updateGlobalScanTimes();
-                return false;
             }
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("wifi_scan pid[");
+            stringBuilder.append(i);
+            stringBuilder.append("] is not correct or is charging. mIsScanCtrlPluggedin = ");
+            stringBuilder.append(this.mIsScanCtrlPluggedin);
+            stringBuilder.append(" isInGlobalScanCtrl = ");
+            stringBuilder.append(this.isInGlobalScanCtrl);
+            logd(stringBuilder.toString());
+            return false;
         }
     }
 
@@ -2865,7 +2874,7 @@ public class HwWifiStateMachine extends WifiStateMachine {
         WifiConfigManager wifiConfigManager = wifiStateMachineUtils.getWifiConfigManager(this);
         if (PreconfiguredNetworkManager.IS_R1 && config.enterpriseConfig != null && TelephonyUtil.isSimEapMethod(config.enterpriseConfig.getEapMethod()) && PreconfiguredNetworkManager.getInstance().isPreconfiguredNetwork(config.SSID)) {
             wifiConfigManager.disableNetwork(config.networkId, 1000);
-            this.wifiEapUIManager.showDialog(Resources.getSystem().getString(33686180), Resources.getSystem().getString(33686178));
+            this.wifiEapUIManager.showDialog(Resources.getSystem().getString(33686183), Resources.getSystem().getString(33686181));
         }
     }
 

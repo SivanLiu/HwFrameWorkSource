@@ -1,10 +1,8 @@
 package com.huawei.android.pushagent.model.channel.a;
 
 import android.content.Context;
-import com.huawei.android.pushagent.model.prefs.k;
-import com.huawei.android.pushagent.utils.f.b;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.utils.b.c;
+import com.huawei.android.pushagent.utils.d;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,245 +11,246 @@ import java.net.Socket;
 import java.security.SecureRandom;
 
 public class a implements c {
-    private static byte[] ek;
-    private static byte[] en;
-    private static byte[] eo;
-    private boolean ej = false;
-    private Context el;
-    private Socket em;
+    private static byte[] bp;
+    private static byte[] bs;
+    private static byte[] bt;
+    private boolean bo = false;
+    private Context bq;
+    private Socket br;
 
     public a(Context context) {
-        this.el = context;
+        this.bq = context;
     }
 
-    public synchronized boolean ni(Socket socket) {
-        if (nj(socket)) {
-            this.em = socket;
+    public synchronized boolean dp(Socket socket) {
+        if (dq(socket)) {
+            this.br = socket;
             try {
-                byte[] nd = nd(this.el);
-                OutputStream outputStream = this.em.getOutputStream();
-                if (outputStream == null || nd.length == 0) {
-                    c.eo("PushLog3413", "outputStream or secureKeyExchangeReqData is null");
-                    nb();
+                byte[] dk = dk(this.bq);
+                OutputStream outputStream = this.br.getOutputStream();
+                if (outputStream == null || dk.length == 0) {
+                    com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "outputStream or secureKeyExchangeReqData is null");
+                    di();
                     return false;
                 }
-                c.ep("PushLog3413", "process cmdid to send to pushSrv" + b.em((byte) 22));
-                outputStream.write(nd);
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "process cmdid to send to pushSrv" + c.ts((byte) 22));
+                outputStream.write(dk);
                 outputStream.flush();
-                InputStream inputStream = this.em.getInputStream();
-                if (nj(socket)) {
+                InputStream inputStream = this.br.getInputStream();
+                if (dq(socket)) {
                     int read = inputStream.read();
                     if (-1 == read) {
-                        c.ep("PushLog3413", " read -1 when init secure channel, socket maybe closed");
+                        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", " read -1 when init secure channel, socket maybe closed");
                     } else if (23 == read) {
-                        c.ep("PushLog3413", "process cmdid to receive from pushSrv" + b.em((byte) 23));
-                        nd = ne(inputStream);
-                        if (nd != null) {
-                            nn(nd);
-                            no(com.huawei.android.pushagent.utils.a.c.l(nd, en));
-                            this.ej = true;
-                            c.ep("PushLog3413", "CustSecureChannel isInitialized success!");
+                        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "process cmdid to receive from pushSrv" + c.ts((byte) 23));
+                        dk = dl(inputStream);
+                        if (dk != null) {
+                            du(dk);
+                            dv(com.huawei.android.pushagent.utils.e.a.vw(dk, bs));
+                            this.bo = true;
+                            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "CustSecureChannel isInitialized success!");
                             return true;
                         }
-                        c.ep("PushLog3413", "get server key error");
+                        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "get server key error");
                     } else {
-                        c.ep("PushLog3413", "cmdId is not CMD_SECUREKEYEXCHANGE_RSP");
+                        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "cmdId is not CMD_SECUREKEYEXCHANGE_RSP");
                     }
                 }
-                nb();
+                di();
                 return false;
-            } catch (Throwable e) {
-                c.es("PushLog3413", "call send cause:" + e.toString(), e);
+            } catch (Exception e) {
+                com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "call send cause:" + e.toString(), e);
             }
         } else {
-            nb();
+            di();
             return false;
         }
     }
 
-    public synchronized void nb() {
-        c.er("PushLog3413", "enter pushChannel:close()");
-        this.ej = false;
+    public synchronized void di() {
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "enter pushChannel:close()");
+        this.bo = false;
         try {
-            if (this.em == null || (this.em.isClosed() ^ 1) == 0) {
-                c.eo("PushLog3413", "socket has been closed");
+            if (this.br == null || (this.br.isClosed() ^ 1) == 0) {
+                com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "socket has been closed");
             } else {
-                this.em.close();
+                this.br.close();
             }
-            this.em = null;
-        } catch (Throwable e) {
-            c.es("PushLog3413", "close socket error: " + e.toString(), e);
-            this.em = null;
+            this.br = null;
+        } catch (IOException e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "close socket error: " + e.toString(), e);
+            this.br = null;
         } catch (Throwable th) {
-            this.em = null;
+            this.br = null;
         }
         return;
     }
 
-    public synchronized boolean nl(byte[] bArr) {
-        if (this.em == null) {
-            c.eo("PushLog3413", "socket is null");
+    public synchronized boolean ds(byte[] bArr) {
+        if (this.br == null) {
+            com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "socket is null");
             return false;
-        } else if (this.ej) {
+        } else if (this.bo) {
             try {
-                byte[] na = na(bArr, false);
-                OutputStream outputStream = this.em.getOutputStream();
+                byte[] dh = dh(bArr, false);
+                OutputStream outputStream = this.br.getOutputStream();
                 if (outputStream == null) {
-                    c.eo("PushLog3413", "outputStream is null");
+                    com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "outputStream is null");
                     return false;
-                } else if (na.length == 0) {
-                    c.eo("PushLog3413", "data is null");
+                } else if (dh.length == 0) {
+                    com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "data is null");
                     return false;
                 } else {
-                    outputStream.write(na);
+                    outputStream.write(dh);
                     outputStream.flush();
                     return true;
                 }
-            } catch (Throwable e) {
-                c.es("PushLog3413", "call send cause:" + e.toString(), e);
-                nb();
+            } catch (Exception e) {
+                com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "call send cause:" + e.toString(), e);
+                di();
                 return false;
             }
         } else {
-            c.eo("PushLog3413", "secure socket is not initialized, can not write any data");
-            nb();
+            com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "secure socket is not initialized, can not write any data");
+            di();
             return false;
         }
     }
 
-    public boolean nh() {
-        if (this.em != null) {
-            return this.em.isConnected();
+    /* renamed from: do */
+    public boolean m1do() {
+        if (this.br != null) {
+            return this.br.isConnected();
         }
-        c.eo("PushLog3413", "socket is null");
+        com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "socket is null");
         return false;
     }
 
-    private boolean nj(Socket socket) {
+    private boolean dq(Socket socket) {
         if (socket == null) {
-            c.eo("PushLog3413", "socket is null");
+            com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "socket is null");
             return false;
         } else if (socket.isConnected()) {
             return true;
         } else {
-            c.eo("PushLog3413", "when init Channel, socket is not ready");
+            com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "when init Channel, socket is not ready");
             return false;
         }
     }
 
-    public Socket ng() {
-        return this.em;
+    public Socket dn() {
+        return this.br;
     }
 
-    public InputStream nc() {
+    public InputStream dj() {
         try {
-            if (this.em != null) {
-                return new b(this, this.em.getInputStream());
+            if (this.br != null) {
+                return new b(this, this.br.getInputStream());
             }
-            c.eo("PushLog3413", "socket is null");
+            com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "socket is null");
             return null;
-        } catch (Throwable e) {
-            c.es("PushLog3413", "call socket.getInputStream cause:" + e.toString(), e);
+        } catch (IOException e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "call socket.getInputStream cause:" + e.toString(), e);
         }
     }
 
-    private byte[] nd(Context context) {
-        byte te = (byte) k.rh(context).te();
-        String tf = k.rh(context).tf();
+    private byte[] dk(Context context) {
+        byte gk = (byte) com.huawei.android.pushagent.model.prefs.a.ff(context).gk();
+        String gw = com.huawei.android.pushagent.model.prefs.a.ff(context).gw();
         byte[] bArr = new byte[16];
         new SecureRandom().nextBytes(bArr);
-        c.er("PushLog3413", "ready to send SecureChannelReqMessage, save clientKey for decode serverKey");
-        nm(bArr);
-        byte[] p = com.huawei.android.pushagent.utils.a.c.p(bArr, tf);
-        if (p == null) {
-            c.eo("PushLog3413", "rsa encrypr clientKey error");
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "ready to send SecureChannelReqMessage, save clientKey for decode serverKey");
+        dt(bArr);
+        byte[] vz = com.huawei.android.pushagent.utils.e.a.vz(bArr, gw);
+        if (vz == null) {
+            com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "rsa encrypr clientKey error");
             return new byte[0];
         }
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byteArrayOutputStream.write(22);
-        byteArrayOutputStream.write(g.gd(((p.length + 1) + 1) + 2));
-        byteArrayOutputStream.write(te);
-        byteArrayOutputStream.write(p);
+        byteArrayOutputStream.write(d.zr(((vz.length + 1) + 1) + 2));
+        byteArrayOutputStream.write(gk);
+        byteArrayOutputStream.write(vz);
         return byteArrayOutputStream.toByteArray();
     }
 
-    private byte[] ne(InputStream inputStream) {
-        nk(inputStream, new byte[2]);
+    private byte[] dl(InputStream inputStream) {
+        dr(inputStream, new byte[2]);
         byte[] bArr = new byte[1];
-        nk(inputStream, bArr);
+        dr(inputStream, bArr);
         byte b = bArr[0];
-        c.er("PushLog3413", "login result is " + b);
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "login result is " + b);
         if (b == (byte) 0) {
             bArr = new byte[48];
-            nk(inputStream, bArr);
+            dr(inputStream, bArr);
             return bArr;
         }
-        c.eo("PushLog3413", "secure key exchange error");
+        com.huawei.android.pushagent.utils.b.a.sx("PushLog3414", "secure key exchange error");
         return null;
     }
 
-    private static void nk(InputStream inputStream, byte[] bArr) {
+    private static void dr(InputStream inputStream, byte[] bArr) {
         int i = 0;
         while (i < bArr.length) {
             int read = inputStream.read(bArr, i, bArr.length - i);
             if (-1 == read) {
-                com.huawei.android.pushagent.a.a.hx(89);
+                com.huawei.android.pushagent.b.a.abd(89);
                 throw new IOException("read length return -1, invalid length");
             }
             i += read;
         }
     }
 
-    public static byte[] na(byte[] bArr, boolean z) {
-        byte[] n;
+    public static byte[] dh(byte[] bArr, boolean z) {
+        byte[] vy;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byteArrayOutputStream.write(48);
         if (z) {
-            n = com.huawei.android.pushagent.utils.a.c.n(bArr, eo, ek);
+            vy = com.huawei.android.pushagent.utils.e.a.vy(bArr, bt, bp);
         } else {
-            n = com.huawei.android.pushagent.utils.a.c.m(bArr, eo);
+            vy = com.huawei.android.pushagent.utils.e.a.vx(bArr, bt);
         }
-        if (n == null) {
-            c.er("PushLog3413", "aes encrypt pushMsgData error");
+        if (vy == null) {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "aes encrypt pushMsgData error");
             return new byte[0];
         }
-        byteArrayOutputStream.write(g.gd((n.length + 1) + 2));
-        byteArrayOutputStream.write(n);
+        byteArrayOutputStream.write(d.zr((vy.length + 1) + 2));
+        byteArrayOutputStream.write(vy);
         return byteArrayOutputStream.toByteArray();
     }
 
-    private static byte[] nf(InputStream inputStream) {
+    private static byte[] dm(InputStream inputStream) {
         byte[] bArr = new byte[2];
-        nk(inputStream, bArr);
-        bArr = new byte[(g.gx(bArr) - 3)];
-        nk(inputStream, bArr);
+        dr(inputStream, bArr);
+        bArr = new byte[(d.yg(bArr) - 3)];
+        dr(inputStream, bArr);
         return bArr;
     }
 
-    private static void nm(byte[] bArr) {
+    private static void dt(byte[] bArr) {
         if (bArr == null || bArr.length == 0) {
-            c.er("PushLog3413", "key is null");
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "key is null");
             return;
         }
-        en = new byte[bArr.length];
-        System.arraycopy(bArr, 0, en, 0, bArr.length);
+        bs = new byte[bArr.length];
+        System.arraycopy(bArr, 0, bs, 0, bArr.length);
     }
 
-    private static void no(byte[] bArr) {
+    private static void dv(byte[] bArr) {
         if (bArr == null || bArr.length == 0) {
-            c.er("PushLog3413", "key is null");
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "key is null");
             return;
         }
-        eo = new byte[bArr.length];
-        System.arraycopy(bArr, 0, eo, 0, bArr.length);
+        bt = new byte[bArr.length];
+        System.arraycopy(bArr, 0, bt, 0, bArr.length);
     }
 
-    private static void nn(byte[] bArr) {
+    private static void du(byte[] bArr) {
         if (bArr == null || bArr.length < 16) {
-            c.eq("PushLog3413", "iv is null");
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "iv is null");
             return;
         }
-        ek = new byte[16];
-        System.arraycopy(bArr, 0, ek, 0, 16);
+        bp = new byte[16];
+        System.arraycopy(bArr, 0, bp, 0, 16);
     }
 }

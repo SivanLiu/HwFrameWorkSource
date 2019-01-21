@@ -263,7 +263,10 @@ public class WifiAwareMetrics {
     public void recordDiscoveryStatus(int uid, int status, boolean isPublish) {
         synchronized (this.mLock) {
             if (isPublish) {
-                this.mPublishStatusData.put(status, this.mPublishStatusData.get(status) + 1);
+                try {
+                    this.mPublishStatusData.put(status, this.mPublishStatusData.get(status) + 1);
+                } catch (Throwable th) {
+                }
             } else {
                 this.mSubscribeStatusData.put(status, this.mSubscribeStatusData.get(status) + 1);
             }
@@ -337,7 +340,10 @@ public class WifiAwareMetrics {
     public void recordNdpStatus(int status, boolean isOutOfBand, long startTimestamp) {
         synchronized (this.mLock) {
             if (isOutOfBand) {
-                this.mOutOfBandNdpStatusData.put(status, this.mOutOfBandNdpStatusData.get(status) + 1);
+                try {
+                    this.mOutOfBandNdpStatusData.put(status, this.mOutOfBandNdpStatusData.get(status) + 1);
+                } catch (Throwable th) {
+                }
             } else {
                 this.mInBandNdpStatusData.put(status, this.mOutOfBandNdpStatusData.get(status) + 1);
             }

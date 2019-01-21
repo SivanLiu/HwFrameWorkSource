@@ -331,16 +331,16 @@ public final class DropBoxManagerService extends SystemService {
         return this.mStub;
     }
 
-    /* JADX WARNING: Missing block: B:48:0x0153, code:
+    /* JADX WARNING: Missing block: B:49:0x0153, code skipped:
             if (null != null) goto L_0x0155;
      */
-    /* JADX WARNING: Missing block: B:49:0x0155, code:
+    /* JADX WARNING: Missing block: B:50:0x0155, code skipped:
             r2.delete();
      */
-    /* JADX WARNING: Missing block: B:59:0x018c, code:
+    /* JADX WARNING: Missing block: B:60:0x018c, code skipped:
             if (r2 == null) goto L_0x018f;
      */
-    /* JADX WARNING: Missing block: B:60:0x018f, code:
+    /* JADX WARNING: Missing block: B:61:0x018f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -528,19 +528,29 @@ public final class DropBoxManagerService extends SystemService {
         throw new SecurityException("READ_LOGS permission required");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:184:0x033e A:{Catch:{ IOException -> 0x0379 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:165:0x031c A:{SYNTHETIC, Splitter: B:165:0x031c} */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x0321 A:{SYNTHETIC, Splitter: B:168:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:184:0x033e A:{Catch:{ IOException -> 0x0379 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:165:0x031c A:{SYNTHETIC, Splitter: B:165:0x031c} */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x0321 A:{SYNTHETIC, Splitter: B:168:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:184:0x033e A:{Catch:{ IOException -> 0x0379 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:165:0x031c A:{SYNTHETIC, Splitter: B:165:0x031c} */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x0321 A:{SYNTHETIC, Splitter: B:168:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:184:0x033e A:{Catch:{ IOException -> 0x0379 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:165:0x031c A:{SYNTHETIC, Splitter: B:165:0x031c} */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x0321 A:{SYNTHETIC, Splitter: B:168:0x0321} */
-    /* JADX WARNING: Removed duplicated region for block: B:184:0x033e A:{Catch:{ IOException -> 0x0379 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x033e A:{Catch:{ IOException -> 0x0379 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x031c A:{SYNTHETIC, Splitter:B:170:0x031c} */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x0321 A:{SYNTHETIC, Splitter:B:173:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x033e A:{Catch:{ IOException -> 0x0379 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x032b A:{SYNTHETIC, Splitter:B:179:0x032b} */
+    /* JADX WARNING: Removed duplicated region for block: B:182:0x0330 A:{SYNTHETIC, Splitter:B:182:0x0330} */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x031c A:{SYNTHETIC, Splitter:B:170:0x031c} */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x0321 A:{SYNTHETIC, Splitter:B:173:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x033e A:{Catch:{ IOException -> 0x0379 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x032b A:{SYNTHETIC, Splitter:B:179:0x032b} */
+    /* JADX WARNING: Removed duplicated region for block: B:182:0x0330 A:{SYNTHETIC, Splitter:B:182:0x0330} */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x031c A:{SYNTHETIC, Splitter:B:170:0x031c} */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x0321 A:{SYNTHETIC, Splitter:B:173:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x033e A:{Catch:{ IOException -> 0x0379 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x032b A:{SYNTHETIC, Splitter:B:179:0x032b} */
+    /* JADX WARNING: Removed duplicated region for block: B:182:0x0330 A:{SYNTHETIC, Splitter:B:182:0x0330} */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x031c A:{SYNTHETIC, Splitter:B:170:0x031c} */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x0321 A:{SYNTHETIC, Splitter:B:173:0x0321} */
+    /* JADX WARNING: Removed duplicated region for block: B:189:0x033e A:{Catch:{ IOException -> 0x0379 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x032b A:{SYNTHETIC, Splitter:B:179:0x032b} */
+    /* JADX WARNING: Removed duplicated region for block: B:182:0x0330 A:{SYNTHETIC, Splitter:B:182:0x0330} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x032b A:{SYNTHETIC, Splitter:B:179:0x032b} */
+    /* JADX WARNING: Removed duplicated region for block: B:182:0x0330 A:{SYNTHETIC, Splitter:B:182:0x0330} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         int numArgs;
@@ -563,25 +573,36 @@ public final class DropBoxManagerService extends SystemService {
                     boolean doPrint = false;
                     int i = 0;
                     while (strArr != null && i < strArr.length) {
-                        if (strArr[i].equals("-p") || strArr[i].equals("--print")) {
-                            doPrint = true;
-                        } else if (strArr[i].equals("-f") || strArr[i].equals("--file")) {
-                            doFile2 = true;
-                        } else if (strArr[i].equals("-h") || strArr[i].equals("--help")) {
-                            printWriter.println("Dropbox (dropbox) dump options:");
-                            printWriter.println("  [-h|--help] [-p|--print] [-f|--file] [timestamp]");
-                            printWriter.println("    -h|--help: print this help");
-                            printWriter.println("    -p|--print: print full contents of each entry");
-                            printWriter.println("    -f|--file: print path of each entry's file");
-                            printWriter.println("  [timestamp] optionally filters to only those entries.");
-                            return;
-                        } else if (strArr[i].startsWith("-")) {
-                            out.append("Unknown argument: ");
-                            out.append(strArr[i]);
-                            out.append("\n");
-                        } else {
-                            searchArgs.add(strArr[i]);
+                        if (!strArr[i].equals("-p")) {
+                            if (!strArr[i].equals("--print")) {
+                                if (!strArr[i].equals("-f")) {
+                                    if (!strArr[i].equals("--file")) {
+                                        if (!strArr[i].equals("-h")) {
+                                            if (!strArr[i].equals("--help")) {
+                                                if (strArr[i].startsWith("-")) {
+                                                    out.append("Unknown argument: ");
+                                                    out.append(strArr[i]);
+                                                    out.append("\n");
+                                                } else {
+                                                    searchArgs.add(strArr[i]);
+                                                }
+                                                i++;
+                                            }
+                                        }
+                                        printWriter.println("Dropbox (dropbox) dump options:");
+                                        printWriter.println("  [-h|--help] [-p|--print] [-f|--file] [timestamp]");
+                                        printWriter.println("    -h|--help: print this help");
+                                        printWriter.println("    -p|--print: print full contents of each entry");
+                                        printWriter.println("    -f|--file: print path of each entry's file");
+                                        printWriter.println("  [timestamp] optionally filters to only those entries.");
+                                        return;
+                                    }
+                                }
+                                doFile2 = true;
+                                i++;
+                            }
                         }
+                        doPrint = true;
                         i++;
                     }
                     out.append("Drop box contents: ");
@@ -719,6 +740,11 @@ public final class DropBoxManagerService extends SystemService {
                                                                     i = numFound;
                                                                 } catch (Throwable th) {
                                                                     searchArgs = th;
+                                                                    if (numArgs2 != 0) {
+                                                                    }
+                                                                    if (time2 != null) {
+                                                                    }
+                                                                    throw searchArgs;
                                                                 }
                                                             }
                                                         }
@@ -731,6 +757,11 @@ public final class DropBoxManagerService extends SystemService {
                                                             } catch (Throwable th2) {
                                                                 searchArgs = th2;
                                                                 file2 = file;
+                                                                if (numArgs2 != 0) {
+                                                                }
+                                                                if (time2 != null) {
+                                                                }
+                                                                throw searchArgs;
                                                             }
                                                         }
                                                         file2 = file;
@@ -755,13 +786,8 @@ public final class DropBoxManagerService extends SystemService {
                                                         file2 = file;
                                                         searchArgs = th22;
                                                         if (numArgs2 != 0) {
-                                                            numArgs2.close();
                                                         }
                                                         if (time2 != null) {
-                                                            try {
-                                                                time2.close();
-                                                            } catch (IOException e5) {
-                                                            }
                                                         }
                                                         throw searchArgs;
                                                     }
@@ -786,11 +812,11 @@ public final class DropBoxManagerService extends SystemService {
                                                 if (isr != null) {
                                                     try {
                                                         isr.close();
-                                                    } catch (IOException e6) {
+                                                    } catch (IOException e5) {
                                                     }
                                                 }
-                                            } catch (IOException e7) {
-                                                e = e7;
+                                            } catch (IOException e6) {
+                                                e = e6;
                                                 file2 = file;
                                                 numArgs2 = dbe;
                                                 out.append("*** ");
@@ -811,9 +837,14 @@ public final class DropBoxManagerService extends SystemService {
                                                 file2 = file;
                                                 searchArgs = th222;
                                                 numArgs2 = dbe;
+                                                if (numArgs2 != 0) {
+                                                }
+                                                if (time2 != null) {
+                                                }
+                                                throw searchArgs;
                                             }
-                                        } catch (IOException e8) {
-                                            e = e8;
+                                        } catch (IOException e7) {
+                                            e = e7;
                                             numFound = searchArgs;
                                             file2 = file;
                                             numArgs2 = dbe;
@@ -838,6 +869,16 @@ public final class DropBoxManagerService extends SystemService {
                                             file2 = file;
                                             searchArgs = th2222;
                                             numArgs2 = dbe;
+                                            if (numArgs2 != 0) {
+                                                numArgs2.close();
+                                            }
+                                            if (time2 != null) {
+                                                try {
+                                                    time2.close();
+                                                } catch (IOException e8) {
+                                                }
+                                            }
+                                            throw searchArgs;
                                         }
                                     } catch (IOException e9) {
                                         e = e9;
@@ -865,6 +906,11 @@ public final class DropBoxManagerService extends SystemService {
                                         doFile = doFile2;
                                         obj = 0;
                                         searchArgs = th22222;
+                                        if (numArgs2 != 0) {
+                                        }
+                                        if (time2 != null) {
+                                        }
+                                        throw searchArgs;
                                     }
                                 } else {
                                     numFound = searchArgs;
@@ -927,22 +973,24 @@ public final class DropBoxManagerService extends SystemService {
             this.mAllFiles = null;
         }
         if (this.mStatFs == null) {
-            if (this.mDropBoxDir.isDirectory() || this.mDropBoxDir.mkdirs()) {
-                try {
-                    FileUtils.setPermissions(this.mDropBoxDir, 504, -1, -1);
-                    this.mStatFs = new StatFs(this.mDropBoxDir.getPath());
-                    this.mBlockSize = this.mStatFs.getBlockSize();
-                } catch (IllegalArgumentException e) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Can't statfs: ");
-                    stringBuilder.append(this.mDropBoxDir);
-                    throw new IOException(stringBuilder.toString());
+            if (!this.mDropBoxDir.isDirectory()) {
+                if (!this.mDropBoxDir.mkdirs()) {
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Can't mkdir: ");
+                    stringBuilder2.append(this.mDropBoxDir);
+                    throw new IOException(stringBuilder2.toString());
                 }
             }
-            StringBuilder stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("Can't mkdir: ");
-            stringBuilder2.append(this.mDropBoxDir);
-            throw new IOException(stringBuilder2.toString());
+            try {
+                FileUtils.setPermissions(this.mDropBoxDir, 504, -1, -1);
+                this.mStatFs = new StatFs(this.mDropBoxDir.getPath());
+                this.mBlockSize = this.mStatFs.getBlockSize();
+            } catch (IllegalArgumentException e) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Can't statfs: ");
+                stringBuilder.append(this.mDropBoxDir);
+                throw new IOException(stringBuilder.toString());
+            }
         }
         if (this.mAllFiles == null) {
             File[] files = this.mDropBoxDir.listFiles();

@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.crmf;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.DERBitString;
@@ -21,7 +22,7 @@ class PKMACValueGenerator {
             outputStream.write(subjectPublicKeyInfo.getEncoded(ASN1Encoding.DER));
             outputStream.close();
             return new PKMACValue(build.getAlgorithmIdentifier(), new DERBitString(build.getMac()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception encoding mac input: ");
             stringBuilder.append(e.getMessage());

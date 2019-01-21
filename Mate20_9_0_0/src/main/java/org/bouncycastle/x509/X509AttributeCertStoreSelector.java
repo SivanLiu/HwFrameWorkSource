@@ -32,7 +32,7 @@ public class X509AttributeCertStoreSelector implements Selector {
         if (collection == null || collection.isEmpty()) {
             return new HashSet();
         }
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (Object next : collection) {
             Object next2;
             if (!(next2 instanceof GeneralName)) {

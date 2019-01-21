@@ -7,6 +7,7 @@ import android.view.SurfaceView;
 
 public class GestureNavView extends SurfaceView {
     private IGestureEventProxy mGestureEventProxy;
+    private final Runnable mHideRunnable;
     private int mNavId;
     private WindowConfig mWindowConfig;
 
@@ -99,6 +100,11 @@ public class GestureNavView extends SurfaceView {
         super(context);
         this.mNavId = -1;
         this.mWindowConfig = new WindowConfig();
+        this.mHideRunnable = new Runnable() {
+            public void run() {
+                GestureNavView.this.setVisibility(8);
+            }
+        };
         this.mNavId = navId;
         init();
     }
@@ -111,6 +117,7 @@ public class GestureNavView extends SurfaceView {
         super(context, attrs, defStyleAttr);
         this.mNavId = -1;
         this.mWindowConfig = new WindowConfig();
+        this.mHideRunnable = /* anonymous class already generated */;
         init();
     }
 
@@ -139,8 +146,13 @@ public class GestureNavView extends SurfaceView {
         this.mGestureEventProxy = proxy;
     }
 
-    public void show(boolean enable) {
-        setVisibility(enable ? 0 : 8);
+    public void show(boolean enable, boolean delay) {
+        if (enable || !delay) {
+            removeCallbacks(this.mHideRunnable);
+            setVisibility(enable ? 0 : 8);
+            return;
+        }
+        postDelayed(this.mHideRunnable, 500);
     }
 
     public boolean onTouchEvent(MotionEvent event) {

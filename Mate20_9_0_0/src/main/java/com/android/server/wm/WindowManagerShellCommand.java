@@ -59,9 +59,8 @@ public class WindowManagerShellCommand extends ShellCommand {
                         break;
                     }
                 default:
-                    i = -1;
-                    break;
             }
+            i = -1;
             switch (i) {
                 case 0:
                     return runDisplaySize(pw);

@@ -145,6 +145,8 @@ public class Event {
                                     break;
                                 }
                                 break;
+                            default:
+                                break;
                         }
                         switch (obj) {
                             case null:
@@ -187,18 +189,6 @@ public class Event {
             return e;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:16:0x0050 A:{ExcHandler: java.lang.IllegalStateException (r1_9 'e' java.lang.RuntimeException), Splitter: B:1:0x0005} */
-        /* JADX WARNING: Missing block: B:16:0x0050, code:
-            r1 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:17:0x0051, code:
-            consumeRemainingElements();
-            r6.mReader.endArray();
-     */
-        /* JADX WARNING: Missing block: B:18:0x0060, code:
-            throw new java.lang.IllegalStateException("Encountered malformed data.", r1);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         private byte[] readData() throws IOException {
             ArrayList<Integer> data = new ArrayList();
             try {
@@ -219,7 +209,10 @@ public class Event {
                     }
                 }
                 return rawData;
-            } catch (RuntimeException e) {
+            } catch (IllegalStateException | NumberFormatException e) {
+                consumeRemainingElements();
+                this.mReader.endArray();
+                throw new IllegalStateException("Encountered malformed data.", e);
             }
         }
 

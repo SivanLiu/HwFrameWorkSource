@@ -132,65 +132,66 @@ public class DicsQueryTask extends HttpConnTask {
                 stringBuilder2.append("\nresponseDataStr: ");
                 stringBuilder2.append(responseDataStr);
                 HwLog.d(stringBuilder2.toString());
-                if (!ServiceConfig.WALLET_MERCHANT_ID.equals(merchantID) || StringUtil.isTrimedEmpty(responseDataStr)) {
-                    HwLog.d("unexpected error from server.");
-                    cardServerBaseResponse.returnCode = -99;
-                    return;
+                if (ServiceConfig.WALLET_MERCHANT_ID.equals(merchantID)) {
+                    if (!StringUtil.isTrimedEmpty(responseDataStr)) {
+                        err = null;
+                        if (keyIndex == -1) {
+                            err = responseDataStr;
+                        }
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append("decryptedResponse : ");
+                        stringBuilder3.append(err);
+                        stringBuilder3.append("keyIndex: ");
+                        stringBuilder3.append(keyIndex);
+                        HwLog.d(stringBuilder3.toString());
+                        JSONObject dataObject = new JSONObject();
+                        String returnCodeStr = null;
+                        String returnDesc = null;
+                        if (err != null) {
+                            dataObject = new JSONObject(err);
+                            returnCodeStr = JSONHelper.getStringValue(dataObject, "returnCode");
+                            returnDesc = JSONHelper.getStringValue(dataObject, "returnDesc");
+                        }
+                        if (returnCodeStr == null) {
+                            HwLog.d("returnCode is invalid.");
+                            cardServerBaseResponse.returnCode = -99;
+                            return;
+                        }
+                        cardServerBaseResponse.returnCode = Integer.parseInt(returnCodeStr);
+                        if (cardServerBaseResponse.returnCode != 0) {
+                            String err2 = new StringBuilder();
+                            err2.append(" code:");
+                            err2.append(cardServerBaseResponse.returnCode);
+                            err2.append(" desc:");
+                            err2.append(returnDesc);
+                            err2 = err2.toString();
+                            StringBuilder stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append("returnDesc : ");
+                            stringBuilder4.append(err2);
+                            HwLog.e(stringBuilder4.toString());
+                            return;
+                        }
+                        try {
+                            makeResponseData(cardServerBaseResponse, dataObject);
+                        } catch (NumberFormatException e) {
+                            ex = e;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("NumberFormatException : ");
+                            stringBuilder.append(ex);
+                            HwLog.e(stringBuilder.toString());
+                            cardServerBaseResponse.returnCode = -99;
+                        } catch (JSONException e2) {
+                            ex2 = e2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("JSONException : ");
+                            stringBuilder.append(ex2);
+                            HwLog.e(stringBuilder.toString());
+                            cardServerBaseResponse.returnCode = -99;
+                        }
+                    }
                 }
-                err = null;
-                if (keyIndex == -1) {
-                    err = responseDataStr;
-                }
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("decryptedResponse : ");
-                stringBuilder3.append(err);
-                stringBuilder3.append("keyIndex: ");
-                stringBuilder3.append(keyIndex);
-                HwLog.d(stringBuilder3.toString());
-                JSONObject dataObject = new JSONObject();
-                String returnCodeStr = null;
-                String returnDesc = null;
-                if (err != null) {
-                    dataObject = new JSONObject(err);
-                    returnCodeStr = JSONHelper.getStringValue(dataObject, "returnCode");
-                    returnDesc = JSONHelper.getStringValue(dataObject, "returnDesc");
-                }
-                if (returnCodeStr == null) {
-                    HwLog.d("returnCode is invalid.");
-                    cardServerBaseResponse.returnCode = -99;
-                    return;
-                }
-                cardServerBaseResponse.returnCode = Integer.parseInt(returnCodeStr);
-                if (cardServerBaseResponse.returnCode != 0) {
-                    String err2 = new StringBuilder();
-                    err2.append(" code:");
-                    err2.append(cardServerBaseResponse.returnCode);
-                    err2.append(" desc:");
-                    err2.append(returnDesc);
-                    err2 = err2.toString();
-                    StringBuilder stringBuilder4 = new StringBuilder();
-                    stringBuilder4.append("returnDesc : ");
-                    stringBuilder4.append(err2);
-                    HwLog.e(stringBuilder4.toString());
-                    return;
-                }
-                try {
-                    makeResponseData(cardServerBaseResponse, dataObject);
-                } catch (NumberFormatException e) {
-                    ex = e;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("NumberFormatException : ");
-                    stringBuilder.append(ex);
-                    HwLog.e(stringBuilder.toString());
-                    cardServerBaseResponse.returnCode = -99;
-                } catch (JSONException e2) {
-                    ex2 = e2;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("JSONException : ");
-                    stringBuilder.append(ex2);
-                    HwLog.e(stringBuilder.toString());
-                    cardServerBaseResponse.returnCode = -99;
-                }
+                HwLog.d("unexpected error from server.");
+                cardServerBaseResponse.returnCode = -99;
             } catch (NumberFormatException e3) {
                 ex = e3;
                 stringBuilder = new StringBuilder();

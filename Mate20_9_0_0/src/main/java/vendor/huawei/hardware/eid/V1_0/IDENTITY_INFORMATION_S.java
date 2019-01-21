@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public final class IDENTITY_INFORMATION_S {
-    public final byte[] info = new byte[BUFF_LEN_E.ID_INFO_MAX_LEN];
+    public final byte[] info = new byte[5120];
     public int len;
 
     public final boolean equals(Object otherObject) {
@@ -60,7 +60,7 @@ public final class IDENTITY_INFORMATION_S {
 
     public final void readEmbeddedFromParcel(HwParcel parcel, HwBlob _hidl_blob, long _hidl_offset) {
         this.len = _hidl_blob.getInt32(0 + _hidl_offset);
-        _hidl_blob.copyToInt8Array(4 + _hidl_offset, this.info, BUFF_LEN_E.ID_INFO_MAX_LEN);
+        _hidl_blob.copyToInt8Array(4 + _hidl_offset, this.info, 5120);
     }
 
     public final void writeToParcel(HwParcel parcel) {

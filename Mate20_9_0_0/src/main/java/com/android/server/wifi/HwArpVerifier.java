@@ -140,13 +140,13 @@ public class HwArpVerifier {
     private NetworkInfo mNetworkInfo = new NetworkInfo(1, 0, "WIFI", BCM_ROAMING_FLAG_FILE);
     private INetworkManagementService mNwService;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        /* JADX WARNING: Missing block: B:15:0x005d, code:
+        /* JADX WARNING: Missing block: B:15:0x005d, code skipped:
             if (com.android.server.wifi.HwArpVerifier.access$200(r4.this$0) == null) goto L_0x0068;
      */
-        /* JADX WARNING: Missing block: B:16:0x005f, code:
+        /* JADX WARNING: Missing block: B:16:0x005f, code skipped:
             com.android.server.wifi.HwArpVerifier.access$200(r4.this$0).monitorWifiNetworkState();
      */
-        /* JADX WARNING: Missing block: B:17:0x0068, code:
+        /* JADX WARNING: Missing block: B:17:0x0068, code skipped:
             com.android.server.wifi.HwArpVerifier.access$302(r4.this$0, (android.net.wifi.WifiManager) com.android.server.wifi.HwArpVerifier.access$400(r4.this$0).getSystemService("wifi"));
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -437,16 +437,16 @@ public class HwArpVerifier {
             conn.setRequestProperty("contentType", "utf-8");
         }
 
-        /* JADX WARNING: Missing block: B:42:0x010f, code:
+        /* JADX WARNING: Missing block: B:42:0x010f, code skipped:
             if (r1 == null) goto L_0x0191;
      */
-        /* JADX WARNING: Missing block: B:43:0x0111, code:
+        /* JADX WARNING: Missing block: B:43:0x0111, code skipped:
             r1.disconnect();
      */
-        /* JADX WARNING: Missing block: B:63:0x018e, code:
+        /* JADX WARNING: Missing block: B:63:0x018e, code skipped:
             if (r1 == null) goto L_0x0191;
      */
-        /* JADX WARNING: Missing block: B:64:0x0191, code:
+        /* JADX WARNING: Missing block: B:64:0x0191, code skipped:
             return r3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1099,16 +1099,16 @@ public class HwArpVerifier {
             getGateWayARPResponses(1, 1000);
         }
 
-        /* JADX WARNING: Missing block: B:19:0x009c, code:
+        /* JADX WARNING: Missing block: B:19:0x009c, code skipped:
             if (r0 != null) goto L_0x009e;
      */
-        /* JADX WARNING: Missing block: B:20:0x009e, code:
+        /* JADX WARNING: Missing block: B:20:0x009e, code skipped:
             r0.close();
      */
-        /* JADX WARNING: Missing block: B:26:0x00aa, code:
+        /* JADX WARNING: Missing block: B:26:0x00aa, code skipped:
             if (r0 == null) goto L_0x00ad;
      */
-        /* JADX WARNING: Missing block: B:27:0x00ad, code:
+        /* JADX WARNING: Missing block: B:27:0x00ad, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1393,35 +1393,37 @@ public class HwArpVerifier {
         String roam_flag = "roam_status=";
         BufferedReader in = null;
         try {
-            if (this.mRoamingFlagFile == null || this.mRoamingFlagFile.isEmpty()) {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (this.mRoamingFlagFile != null) {
+                if (!this.mRoamingFlagFile.isEmpty()) {
+                    File file = new File(this.mRoamingFlagFile);
+                    if (file.exists()) {
+                        in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                        String s = in.readLine();
+                        if (s != null) {
+                            int pos = s.indexOf("roam_status=");
+                            if (pos >= 0 && "roam_status=".length() + pos < s.length()) {
+                                String flag = s.substring("roam_status=".length() + pos);
+                                if (flag != null) {
+                                    ret = "1".equals(flag);
+                                }
+                            }
+                        }
+                        try {
+                            in.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return ret;
                     }
-                }
-                return false;
-            }
-            File file = new File(this.mRoamingFlagFile);
-            if (file.exists()) {
-                in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-                String s = in.readLine();
-                if (s != null) {
-                    int pos = s.indexOf("roam_status=");
-                    if (pos >= 0 && "roam_status=".length() + pos < s.length()) {
-                        String flag = s.substring("roam_status=".length() + pos);
-                        if (flag != null) {
-                            ret = "1".equals(flag);
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
                         }
                     }
+                    return false;
                 }
-                try {
-                    in.close();
-                } catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-                return ret;
             }
             if (in != null) {
                 try {
@@ -1431,8 +1433,8 @@ public class HwArpVerifier {
                 }
             }
             return false;
-        } catch (Exception e22) {
-            e22.printStackTrace();
+        } catch (Exception e32) {
+            e32.printStackTrace();
             if (in != null) {
                 in.close();
             }
@@ -1460,30 +1462,18 @@ public class HwArpVerifier {
         return doArp(this.mClientHandler.genDynamicCheckPings(), 1, 1000);
     }
 
-    /* JADX WARNING: Missing block: B:25:0x008d, code:
+    /* JADX WARNING: Missing block: B:26:0x008d, code skipped:
             if (r2 != null) goto L_0x008f;
      */
-    /* JADX WARNING: Missing block: B:26:0x008f, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:30:0x0097, code:
+    /* JADX WARNING: Missing block: B:31:0x0097, code skipped:
             if (r2 == null) goto L_0x00d0;
      */
-    /* JADX WARNING: Missing block: B:34:0x00b2, code:
+    /* JADX WARNING: Missing block: B:40:0x00cd, code skipped:
             if (r2 == null) goto L_0x00d0;
-     */
-    /* JADX WARNING: Missing block: B:38:0x00cd, code:
-            if (r2 == null) goto L_0x00d0;
-     */
-    /* JADX WARNING: Missing block: B:39:0x00d0, code:
-            r10.mHwWifiCHRService.updateArpSummery(r0, r10.mSpendTime, mRSSI);
-            updateArpResult(r0, r10.mSpendTime);
-     */
-    /* JADX WARNING: Missing block: B:40:0x00de, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean doArp(int arpNum, int minResponse, int timeout) {
+        boolean retArp;
         boolean z = false;
         this.mSpendTime = 0;
         HWArpPeer peer = null;
@@ -1495,7 +1485,6 @@ public class HwArpVerifier {
         stringBuilder.append(", timeout:");
         stringBuilder.append(timeout);
         Log.d("HwArpVerifier", stringBuilder.toString());
-        boolean retArp;
         try {
             peer = constructArpPeer();
             if (peer == null) {
@@ -1540,6 +1529,12 @@ public class HwArpVerifier {
             stringBuilder.append(ae);
             Log.e("HwArpVerifier", stringBuilder.toString());
             retArp = true;
+            if (peer != null) {
+                peer.close();
+            }
+            this.mHwWifiCHRService.updateArpSummery(retArp, this.mSpendTime, mRSSI);
+            updateArpResult(retArp, this.mSpendTime);
+            return retArp;
         } catch (Exception e) {
             retArp = false;
         } catch (Throwable th) {
@@ -1549,28 +1544,28 @@ public class HwArpVerifier {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0022, code:
+    /* JADX WARNING: Missing block: B:13:0x0022, code skipped:
             if (r1 != null) goto L_0x0024;
      */
-    /* JADX WARNING: Missing block: B:14:0x0024, code:
+    /* JADX WARNING: Missing block: B:14:0x0024, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:19:0x0041, code:
+    /* JADX WARNING: Missing block: B:19:0x0041, code skipped:
             if (r1 == null) goto L_0x0044;
      */
-    /* JADX WARNING: Missing block: B:20:0x0044, code:
+    /* JADX WARNING: Missing block: B:20:0x0044, code skipped:
             if (r0 == null) goto L_0x009e;
      */
-    /* JADX WARNING: Missing block: B:22:0x0048, code:
+    /* JADX WARNING: Missing block: B:22:0x0048, code skipped:
             if (r0.length != 6) goto L_0x009e;
      */
-    /* JADX WARNING: Missing block: B:23:0x004a, code:
+    /* JADX WARNING: Missing block: B:23:0x004a, code skipped:
             r4 = new java.lang.StringBuilder();
             r4.append(java.lang.String.format("%02x:%02x:%02x:%02x:%02x:%02x", new java.lang.Object[]{java.lang.Byte.valueOf(r0[0]), java.lang.Byte.valueOf(r0[1]), java.lang.Byte.valueOf(r0[2]), java.lang.Byte.valueOf(r0[3]), java.lang.Byte.valueOf(r0[4]), java.lang.Byte.valueOf(r0[5])}));
             r4.append("alse use My IP(IP conflict detected)");
             android.util.Log.w("HwArpVerifier", r4.toString());
      */
-    /* JADX WARNING: Missing block: B:24:0x009e, code:
+    /* JADX WARNING: Missing block: B:24:0x009e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2165,16 +2160,16 @@ public class HwArpVerifier {
         this.mHwWifiCHRService.handleWiFiDnsStats(networkid);
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0025, code:
+    /* JADX WARNING: Missing block: B:16:0x0025, code skipped:
             if (r0 != null) goto L_0x0027;
      */
-    /* JADX WARNING: Missing block: B:17:0x0027, code:
+    /* JADX WARNING: Missing block: B:17:0x0027, code skipped:
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:23:0x0033, code:
+    /* JADX WARNING: Missing block: B:23:0x0033, code skipped:
             if (r0 == null) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:24:0x0036, code:
+    /* JADX WARNING: Missing block: B:24:0x0036, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

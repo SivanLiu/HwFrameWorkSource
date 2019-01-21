@@ -1,7 +1,7 @@
 package com.huawei.android.pushagent.datatype.http.metadata;
 
 import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.c;
+import com.huawei.android.pushagent.utils.b;
 
 public class TokenApplyRspMeta {
     private String pkgName;
@@ -10,7 +10,7 @@ public class TokenApplyRspMeta {
     private String userId;
 
     public boolean isValid() {
-        if (this.ret != 0 || TextUtils.isEmpty(this.userId) || (c.fj(this.userId) ^ 1) != 0 || TextUtils.isEmpty(this.pkgName) || TextUtils.isEmpty(this.token)) {
+        if (this.ret != 0 || TextUtils.isEmpty(this.userId) || (b.yc(this.userId) ^ 1) != 0 || TextUtils.isEmpty(this.pkgName) || TextUtils.isEmpty(this.token)) {
             return false;
         }
         return true;

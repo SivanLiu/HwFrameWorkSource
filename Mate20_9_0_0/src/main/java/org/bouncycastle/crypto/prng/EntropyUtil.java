@@ -2,18 +2,18 @@ package org.bouncycastle.crypto.prng;
 
 public class EntropyUtil {
     public static byte[] generateSeed(EntropySource entropySource, int i) {
-        Object obj = new byte[i];
+        byte[] bArr = new byte[i];
         if (i * 8 <= entropySource.entropySize()) {
-            System.arraycopy(entropySource.getEntropy(), 0, obj, 0, obj.length);
-            return obj;
+            System.arraycopy(entropySource.getEntropy(), 0, bArr, 0, bArr.length);
+            return bArr;
         }
         i = entropySource.entropySize() / 8;
         int i2 = 0;
-        while (i2 < obj.length) {
-            Object entropy = entropySource.getEntropy();
-            System.arraycopy(entropy, 0, obj, i2, entropy.length <= obj.length - i2 ? entropy.length : obj.length - i2);
+        while (i2 < bArr.length) {
+            byte[] entropy = entropySource.getEntropy();
+            System.arraycopy(entropy, 0, bArr, i2, entropy.length <= bArr.length - i2 ? entropy.length : bArr.length - i2);
             i2 += i;
         }
-        return obj;
+        return bArr;
     }
 }

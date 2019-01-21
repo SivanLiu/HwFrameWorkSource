@@ -30,25 +30,27 @@ public class DhcpResultsInfoDBManager {
 
     private boolean deleteHistoryRecord(String dbTableName, String apssid) {
         synchronized (this.mdbLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                Log.e(TAG, "deleteHistoryRecord database error.");
-                return false;
-            } else if (apssid == null) {
-                Log.e(TAG, "deleteHistoryRecord null error.");
-                return false;
-            } else {
-                try {
-                    this.mDatabase.delete(dbTableName, "apSSID like ?", new String[]{apssid});
-                    return true;
-                } catch (SQLException e) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("deleteHistoryRecord error:");
-                    stringBuilder.append(e);
-                    Log.e(str, stringBuilder.toString());
-                    return false;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apssid == null) {
+                        Log.e(TAG, "deleteHistoryRecord null error.");
+                        return false;
+                    }
+                    try {
+                        this.mDatabase.delete(dbTableName, "apSSID like ?", new String[]{apssid});
+                        return true;
+                    } catch (SQLException e) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("deleteHistoryRecord error:");
+                        stringBuilder.append(e);
+                        Log.e(str, stringBuilder.toString());
+                        return false;
+                    }
                 }
             }
+            Log.e(TAG, "deleteHistoryRecord database error.");
+            return false;
         }
     }
 
@@ -152,36 +154,39 @@ public class DhcpResultsInfoDBManager {
 
     public boolean addOrUpdateDhcpResultsInfoRecord(DhcpResultsInfoRecord dbr) {
         synchronized (this.mdbLock) {
-            boolean updateDhcpResultsInfoRecord;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                Log.e(TAG, "addOrUpdateApInfoRecord error.");
-                return false;
-            } else if (dbr.apSSID == null) {
-                Log.e(TAG, "addOrUpdateApInfoRecord null error.");
-                return false;
-            } else if (checkHistoryRecordExist(DhcpResultsInfoDBHelper.DHCP_RESULTS_INFO_DB_NAME, dbr.apSSID)) {
-                updateDhcpResultsInfoRecord = updateDhcpResultsInfoRecord(dbr);
-                return updateDhcpResultsInfoRecord;
-            } else {
-                updateDhcpResultsInfoRecord = insertDhcpResultsInfoRecord(dbr);
-                return updateDhcpResultsInfoRecord;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    boolean updateDhcpResultsInfoRecord;
+                    if (dbr.apSSID == null) {
+                        Log.e(TAG, "addOrUpdateApInfoRecord null error.");
+                        return false;
+                    } else if (checkHistoryRecordExist(DhcpResultsInfoDBHelper.DHCP_RESULTS_INFO_DB_NAME, dbr.apSSID)) {
+                        updateDhcpResultsInfoRecord = updateDhcpResultsInfoRecord(dbr);
+                        return updateDhcpResultsInfoRecord;
+                    } else {
+                        updateDhcpResultsInfoRecord = insertDhcpResultsInfoRecord(dbr);
+                        return updateDhcpResultsInfoRecord;
+                    }
+                }
             }
+            Log.e(TAG, "addOrUpdateApInfoRecord error.");
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0033, code:
+    /* JADX WARNING: Missing block: B:16:0x0034, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:22:0x0063, code:
-            if (r2 != null) goto L_0x0065;
+    /* JADX WARNING: Missing block: B:22:0x0064, code skipped:
+            if (r2 != null) goto L_0x0066;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:29:0x0082, code:
-            if (r2 == null) goto L_0x0085;
+    /* JADX WARNING: Missing block: B:29:0x0084, code skipped:
+            if (r2 == null) goto L_0x0087;
      */
-    /* JADX WARNING: Missing block: B:32:0x0086, code:
+    /* JADX WARNING: Missing block: B:32:0x0088, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

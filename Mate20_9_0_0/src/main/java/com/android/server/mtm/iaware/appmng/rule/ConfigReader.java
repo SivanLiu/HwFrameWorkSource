@@ -47,7 +47,7 @@ public class ConfigReader {
     private static final int INDEX_CORRECT = 1;
     private static final int INDEX_UPDATED = 0;
     private static final boolean IS_ABROAD = AwareDefaultConfigList.isAbroadArea();
-    private static final int MIN_SUPPORTED_VERSION = 83;
+    private static final int MIN_SUPPORTED_VERSION = 84;
     private static final String TAG = "AppMng.ConfigReader";
     private static final int UNINIT_VALUE = -1;
     private static final int XML_ATTR_DEFAULT_NUM = 2;
@@ -141,11 +141,12 @@ public class ConfigReader {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x008a A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x005b A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
-    /* JADX WARNING: Missing block: B:18:0x0053, code:
-            if (r5.equals(XML_TAG_IAWARE) != false) goto L_0x0057;
-     */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x005a A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x008a A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x005b A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x005a A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x008a A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x005b A:{Catch:{ XmlPullParserException -> 0x00cb, IOException -> 0x00bc, NumberFormatException -> 0x00af, all -> 0x00ad }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void parseFileInternal(File file, AppMngFeature targetFeature, Context context) {
         InputStream rawIs = null;
@@ -158,59 +159,76 @@ public class ConfigReader {
             rawIs = new FileInputStream(file);
             is = IAwareDecrypt.decryptInputStream(context, rawIs);
             parser = Xml.newPullParser();
-            if (parser == null || is == null) {
-                closeStream(rawIs, is, parser);
-                return;
-            }
-            parser.setInput(is, StandardCharsets.UTF_8.name());
-            while (true) {
-                next = parser.next();
-                eventType = next;
-                Object obj = 1;
-                if (next != 1) {
-                    if (eventType == 2) {
-                        String name = parser.getName();
-                        int hashCode = name.hashCode();
-                        if (hashCode != -1195682923) {
-                            if (hashCode == -979207434 && name.equals(XML_TAG_FEATURE)) {
-                                obj = null;
-                                switch (obj) {
-                                    case null:
-                                        feature = (AppMngFeature) AppMngFeature.fromString(parser.getAttributeValue(null, "name"));
-                                        if (targetFeature != null) {
-                                            if (targetFeature.equals(feature)) {
+            if (parser != null) {
+                if (is != null) {
+                    parser.setInput(is, StandardCharsets.UTF_8.name());
+                    while (true) {
+                        next = parser.next();
+                        eventType = next;
+                        Object obj = 1;
+                        if (next != 1) {
+                            if (eventType == 2) {
+                                String name = parser.getName();
+                                int hashCode = name.hashCode();
+                                if (hashCode == -1195682923) {
+                                    if (name.equals(XML_TAG_IAWARE)) {
+                                        switch (obj) {
+                                            case null:
+                                                break;
+                                            case 1:
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                } else if (hashCode == -979207434) {
+                                    if (name.equals(XML_TAG_FEATURE)) {
+                                        obj = null;
+                                        switch (obj) {
+                                            case null:
+                                                feature = (AppMngFeature) AppMngFeature.fromString(parser.getAttributeValue(null, "name"));
+                                                if (targetFeature != null) {
+                                                    if (targetFeature.equals(feature)) {
+                                                        parseFeature(parser, feature);
+                                                        break;
+                                                    }
+                                                }
                                                 parseFeature(parser, feature);
                                                 break;
-                                            }
+                                                break;
+                                            case 1:
+                                                next = Integer.parseInt(parser.getAttributeValue(null, XML_ATTR_VERSION));
+                                                if (next >= MIN_SUPPORTED_VERSION) {
+                                                    this.mVersion = next;
+                                                    break;
+                                                }
+                                                setConfigFailed(null);
+                                                String str = TAG;
+                                                StringBuilder stringBuilder = new StringBuilder();
+                                                stringBuilder.append("bad version = ");
+                                                stringBuilder.append(next);
+                                                AwareLog.e(str, stringBuilder.toString());
+                                                closeStream(rawIs, is, parser);
+                                                return;
+                                            default:
+                                                break;
                                         }
-                                        parseFeature(parser, feature);
-                                        break;
+                                    }
+                                }
+                                obj = -1;
+                                switch (obj) {
+                                    case null:
                                         break;
                                     case 1:
-                                        next = Integer.parseInt(parser.getAttributeValue(null, XML_ATTR_VERSION));
-                                        if (next >= MIN_SUPPORTED_VERSION) {
-                                            this.mVersion = next;
-                                            break;
-                                        }
-                                        setConfigFailed(null);
-                                        String str = TAG;
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        stringBuilder.append("bad version = ");
-                                        stringBuilder.append(next);
-                                        AwareLog.e(str, stringBuilder.toString());
-                                        closeStream(rawIs, is, parser);
-                                        return;
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                         }
-                        obj = -1;
-                        switch (obj) {
-                            case null:
-                                break;
-                            case 1:
-                                break;
-                        }
                     }
+                    closeStream(rawIs, is, parser);
+                    return;
                 }
             }
             closeStream(rawIs, is, parser);
@@ -260,7 +278,7 @@ public class ConfigReader {
         }
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0074, code:
+    /* JADX WARNING: Missing block: B:30:0x0074, code skipped:
             if (r9.equals(XML_TAG_LIST) != false) goto L_0x0082;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -480,14 +498,14 @@ public class ConfigReader {
         setConfigFailed(feature);
     }
 
-    /* JADX WARNING: Missing block: B:83:0x01d3, code:
+    /* JADX WARNING: Missing block: B:83:0x01d3, code skipped:
             android.rms.iaware.AwareLog.e(TAG, "bad type or rawValue");
             setConfigFailed(r2);
      */
-    /* JADX WARNING: Missing block: B:84:0x01dd, code:
+    /* JADX WARNING: Missing block: B:84:0x01dd, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:88:0x0200, code:
+    /* JADX WARNING: Missing block: B:88:0x0200, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -721,7 +739,7 @@ public class ConfigReader {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002b, code:
+    /* JADX WARNING: Missing block: B:9:0x002b, code skipped:
             if (r11.equals(ABBR_ALL_E_R) != false) goto L_0x004d;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

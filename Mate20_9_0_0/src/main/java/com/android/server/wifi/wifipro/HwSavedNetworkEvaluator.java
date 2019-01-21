@@ -200,10 +200,10 @@ public class HwSavedNetworkEvaluator extends SavedNetworkEvaluator {
         return lastConfig;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x005c, code:
+    /* JADX WARNING: Missing block: B:17:0x005c, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:36:0x00c6, code:
+    /* JADX WARNING: Missing block: B:36:0x00c6, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -296,7 +296,7 @@ public class HwSavedNetworkEvaluator extends SavedNetworkEvaluator {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0089, code:
+    /* JADX WARNING: Missing block: B:21:0x0089, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -553,8 +553,11 @@ public class HwSavedNetworkEvaluator extends SavedNetworkEvaluator {
 
     public synchronized void portalNotifyChanged(boolean popUp, String configKey, boolean hasInternetAccess) {
         if (popUp) {
-            this.portalNotifiedConfigKey = configKey;
-            this.portalNotifiedHasInternet = hasInternetAccess;
+            try {
+                this.portalNotifiedConfigKey = configKey;
+                this.portalNotifiedHasInternet = hasInternetAccess;
+            } catch (Throwable th) {
+            }
         } else {
             this.portalNotifiedConfigKey = null;
             this.portalNotifiedHasInternet = false;

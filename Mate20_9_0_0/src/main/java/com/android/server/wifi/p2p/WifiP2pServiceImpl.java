@@ -501,11 +501,11 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
             private void notifyFrequencyConflict() {
                 P2pStateMachine.this.logd("Notify frequency conflict");
                 Resources r = Resources.getSystem();
-                AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setMessage(r.getString(17041403, new Object[]{P2pStateMachine.this.getDeviceName(P2pStateMachine.this.mSavedPeerConfig.deviceAddress)})).setPositiveButton(r.getString(17039951), new OnClickListener() {
+                AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setMessage(r.getString(17041404, new Object[]{P2pStateMachine.this.getDeviceName(P2pStateMachine.this.mSavedPeerConfig.deviceAddress)})).setPositiveButton(r.getString(17039952), new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         P2pStateMachine.this.sendMessage(WifiP2pServiceImpl.DROP_WIFI_USER_ACCEPT);
                     }
-                }).setNegativeButton(r.getString(17039911), new OnClickListener() {
+                }).setNegativeButton(r.getString(17039912), new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         P2pStateMachine.this.sendMessage(WifiP2pServiceImpl.DROP_WIFI_USER_REJECT);
                     }
@@ -2636,7 +2636,7 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
 
         private void notifyP2pEnableFailure() {
             Resources r = Resources.getSystem();
-            AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setTitle(r.getString(17041398)).setMessage(r.getString(17041402)).setPositiveButton(r.getString(17039370), null).create();
+            AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setTitle(r.getString(17041399)).setMessage(r.getString(17041403)).setPositiveButton(r.getString(17039370), null).create();
             dialog.setCanceledOnTouchOutside(false);
             dialog.getWindow().setType(2003);
             LayoutParams attrs = dialog.getWindow().getAttributes();
@@ -2657,9 +2657,9 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
             Resources r = Resources.getSystem();
             View textEntryView = LayoutInflater.from(WifiP2pServiceImpl.this.mContext).inflate(17367335, null);
             ViewGroup group = (ViewGroup) textEntryView.findViewById(16908993);
-            addRowToDialog(group, 17041408, getDeviceName(peerAddress));
-            addRowToDialog(group, 17041407, pin);
-            AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setTitle(r.getString(17041405)).setView(textEntryView).setPositiveButton(r.getString(17039370), null).create();
+            addRowToDialog(group, 17041409, getDeviceName(peerAddress));
+            addRowToDialog(group, 17041408, pin);
+            AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setTitle(r.getString(17041406)).setView(textEntryView).setPositiveButton(r.getString(17039370), null).create();
             dialog.setCanceledOnTouchOutside(false);
             dialog.getWindow().setType(2003);
             LayoutParams attrs = dialog.getWindow().getAttributes();
@@ -2674,9 +2674,9 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
             final String tempPin = pin;
             View textEntryView = LayoutInflater.from(WifiP2pServiceImpl.this.mContext).inflate(17367335, null);
             ViewGroup group = (ViewGroup) textEntryView.findViewById(16908993);
-            addRowToDialog(group, 17041408, getDeviceName(peerAddress));
-            addRowToDialog(group, 17041407, pin);
-            AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setTitle(r.getString(17041405)).setView(textEntryView).setPositiveButton(r.getString(17039525), new OnClickListener() {
+            addRowToDialog(group, 17041409, getDeviceName(peerAddress));
+            addRowToDialog(group, 17041408, pin);
+            AlertDialog dialog = new Builder(WifiP2pServiceImpl.this.mContext).setTitle(r.getString(17041406)).setView(textEntryView).setPositiveButton(r.getString(17039525), new OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     P2pStateMachine.this.mSavedPeerConfig = new WifiP2pConfig();
                     P2pStateMachine.this.mSavedPeerConfig.deviceAddress = tempDevAddress;
@@ -2756,7 +2756,7 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
                 switch (wps.setup) {
                     case 1:
                         logd("Shown pin section visible");
-                        addRowToDialog(group, 17041407, wps.pin);
+                        addRowToDialog(group, 17041408, wps.pin);
                         break;
                     case 2:
                         logd("Enter pin section visible");
@@ -3659,7 +3659,7 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
         this.mNetworkInfo = new NetworkInfo(13, 0, NETWORKTYPE, "");
         this.mHwWifiCHRService = HwWifiServiceFactory.getHwWifiCHRService();
         this.mP2pSupported = this.mContext.getPackageManager().hasSystemFeature("android.hardware.wifi.direct");
-        this.mThisDevice.primaryDeviceType = this.mContext.getResources().getString(17039848);
+        this.mThisDevice.primaryDeviceType = this.mContext.getResources().getString(17039849);
         if (WifiP2pServiceHisiExt.hisiWifiEnabled()) {
             this.mWifiP2pServiceHisiExt = new WifiP2pServiceHisiExt(this.mContext, this.mThisDevice, this.mWifiChannel, this.mNetworkInfo);
         }
@@ -3814,10 +3814,10 @@ public class WifiP2pServiceImpl extends AbsWifiP2pService {
         return new Messenger(this.mP2pStateMachine.getHandler());
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0070, code:
+    /* JADX WARNING: Missing block: B:19:0x0070, code skipped:
             r0 = r1;
      */
-    /* JADX WARNING: Missing block: B:20:0x0071, code:
+    /* JADX WARNING: Missing block: B:20:0x0071, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -102,11 +102,14 @@ public final class ColorUtils {
         } else if (calculateContrast(setAlphaComponent(foreground, 255), background) < ((double) minContrastRatio)) {
             return -1;
         } else {
-            for (int numIterations = 0; numIterations <= 10 && maxAlpha - 0 > 1; numIterations++) {
-                int testAlpha = (0 + maxAlpha) / 2;
+            int minAlpha = 0;
+            for (int numIterations = 0; numIterations <= 10 && maxAlpha - minAlpha > 1; numIterations++) {
+                int testAlpha = (minAlpha + maxAlpha) / 2;
                 if (calculateContrast(setAlphaComponent(foreground, testAlpha), background) < ((double) minContrastRatio)) {
+                    minAlpha = testAlpha;
+                } else {
+                    maxAlpha = testAlpha;
                 }
-                maxAlpha = testAlpha;
             }
             return maxAlpha;
         }

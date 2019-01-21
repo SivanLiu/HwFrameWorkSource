@@ -1,28 +1,31 @@
 package com.huawei.android.pushagent;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import com.huawei.android.pushagent.model.a.a;
+import com.huawei.android.pushagent.utils.b.a;
 
-final class c implements Runnable {
-    private Intent jq;
-    private a jr;
-    final /* synthetic */ b js;
+class c extends BroadcastReceiver {
+    final /* synthetic */ PushService js;
 
-    /* synthetic */ c(b bVar, a aVar, Intent intent, c cVar) {
-        this(bVar, aVar, intent);
+    /* synthetic */ c(PushService pushService, c cVar) {
+        this(pushService);
     }
 
-    private c(b bVar, a aVar, Intent intent) {
-        this.js = bVar;
-        this.jr = aVar;
-        this.jq = intent;
+    private c(PushService pushService) {
+        this.js = pushService;
     }
 
-    public void run() {
+    public void onReceive(Context context, Intent intent) {
+        if (context == null || intent == null) {
+            a.su(PushService.TAG, "context== null or intent == null");
+            return;
+        }
         try {
-            this.jr.onReceive(this.js.jn, this.jq);
-        } catch (Throwable e) {
-            com.huawei.android.pushagent.utils.f.c.es("PushLog3413", "ReceiverDispatcher: call Receiver:" + this.jr.getClass().getSimpleName() + ", intent:" + this.jq + " failed:" + e.toString(), e);
+            a.sv(PushService.TAG, "action is " + intent.getAction());
+            PushService.abv(intent);
+        } catch (Exception e) {
+            a.sw(PushService.TAG, "call PushInnerReceiver:onReceive cause " + e.toString(), e);
         }
     }
 }

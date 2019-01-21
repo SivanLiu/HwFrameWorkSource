@@ -100,7 +100,6 @@ import android.hwtheme.HwThemeManager;
 import android.iawareperf.UniPerf;
 import android.installerMgr.InstallerMgr;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -250,10 +249,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.nio.charset.StandardCharsets;
+import java.security.DigestException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -736,80 +735,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     SparseBooleanArray mUserNeedsBadging = new SparseBooleanArray();
     private volatile boolean mWebInstantAppsDisabled;
     int tSdkVersion = -1;
-
-    /* renamed from: com.android.server.pm.PackageManagerService$15 */
-    class AnonymousClass15 implements Runnable {
-        final /* synthetic */ int val$callingUid;
-        final /* synthetic */ boolean val$canViewInstantApps;
-        final /* synthetic */ boolean val$deleteAllUsers;
-        final /* synthetic */ int val$deleteFlags;
-        final /* synthetic */ String val$internalPackageName;
-        final /* synthetic */ IPackageDeleteObserver2 val$observer;
-        final /* synthetic */ String val$packageName;
-        final /* synthetic */ int val$userId;
-        final /* synthetic */ int[] val$users;
-        final /* synthetic */ long val$versionCode;
-
-        AnonymousClass15(String str, int i, boolean z, boolean z2, long j, int i2, int i3, int[] iArr, IPackageDeleteObserver2 iPackageDeleteObserver2, String str2) {
-            this.val$internalPackageName = str;
-            this.val$callingUid = i;
-            this.val$canViewInstantApps = z;
-            this.val$deleteAllUsers = z2;
-            this.val$versionCode = j;
-            this.val$userId = i2;
-            this.val$deleteFlags = i3;
-            this.val$users = iArr;
-            this.val$observer = iPackageDeleteObserver2;
-            this.val$packageName = str2;
-        }
-
-        public void run() {
-            PackageManagerService.this.mHandler.removeCallbacks(this);
-            PackageSetting ps = (PackageSetting) PackageManagerService.this.mSettings.mPackages.get(this.val$internalPackageName);
-            boolean doDeletePackage = true;
-            int i = 0;
-            if (ps != null) {
-                boolean z = !ps.getInstantApp(UserHandle.getUserId(this.val$callingUid)) || this.val$canViewInstantApps;
-                doDeletePackage = z;
-            }
-            if (!doDeletePackage) {
-                i = -1;
-            } else if (this.val$deleteAllUsers) {
-                int[] blockUninstallUserIds = PackageManagerService.this.getBlockUninstallForUsers(this.val$internalPackageName, this.val$users);
-                if (ArrayUtils.isEmpty(blockUninstallUserIds)) {
-                    i = PackageManagerService.this.deletePackageX(this.val$internalPackageName, this.val$versionCode, this.val$userId, this.val$deleteFlags);
-                } else {
-                    int userFlags = this.val$deleteFlags & -3;
-                    int[] iArr = this.val$users;
-                    int length = iArr.length;
-                    while (i < length) {
-                        int userId = iArr[i];
-                        if (!ArrayUtils.contains(blockUninstallUserIds, userId)) {
-                            int returnCode = PackageManagerService.this.deletePackageX(this.val$internalPackageName, this.val$versionCode, userId, userFlags);
-                            if (returnCode != 1) {
-                                String str = PackageManagerService.TAG;
-                                StringBuilder stringBuilder = new StringBuilder();
-                                stringBuilder.append("Package delete failed for user ");
-                                stringBuilder.append(userId);
-                                stringBuilder.append(", returnCode ");
-                                stringBuilder.append(returnCode);
-                                Slog.w(str, stringBuilder.toString());
-                            }
-                        }
-                        i++;
-                    }
-                    i = -4;
-                }
-            } else {
-                i = PackageManagerService.this.deletePackageX(this.val$internalPackageName, this.val$versionCode, this.val$userId, this.val$deleteFlags);
-            }
-            try {
-                this.val$observer.onPackageDeleted(this.val$packageName, i, null);
-            } catch (RemoteException e) {
-                Log.i(PackageManagerService.TAG, "Observer no longer exists.");
-            }
-        }
-    }
 
     private interface BlobXmlRestorer {
         void apply(XmlPullParser xmlPullParser, int i) throws IOException, XmlPullParserException;
@@ -1373,22 +1298,22 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             }
         }
 
-        /* JADX WARNING: Missing block: B:271:0x076e, code:
+        /* JADX WARNING: Missing block: B:273:0x076e, code skipped:
             r4 = r5;
             r5 = r9;
             r28 = 0;
      */
-        /* JADX WARNING: Missing block: B:272:0x0772, code:
+        /* JADX WARNING: Missing block: B:274:0x0772, code skipped:
             r6 = r28;
      */
-        /* JADX WARNING: Missing block: B:273:0x0774, code:
+        /* JADX WARNING: Missing block: B:275:0x0774, code skipped:
             if (r6 >= r3) goto L_0x0784;
      */
-        /* JADX WARNING: Missing block: B:274:0x0776, code:
+        /* JADX WARNING: Missing block: B:276:0x0776, code skipped:
             r1.this$0.sendPackageChangedBroadcast(r0[r6], true, r4[r6], r5[r6]);
             r28 = r6 + 1;
      */
-        /* JADX WARNING: Missing block: B:275:0x0784, code:
+        /* JADX WARNING: Missing block: B:277:0x0784, code skipped:
             android.os.Process.setThreadPriority(10);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1416,37 +1341,44 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 case 1:
                     Process.setThreadPriority(0);
                     synchronized (PackageManagerService.this.mPackages) {
-                        if (PackageManagerService.this.mPendingBroadcasts != null) {
-                            size = PackageManagerService.this.mPendingBroadcasts.size();
-                            if (size > 0) {
-                                String[] packages = new String[size];
-                                ArrayList<String>[] components = new ArrayList[size];
-                                int[] uids = new int[size];
-                                i2 = 0;
-                                for (int n = 0; n < PackageManagerService.this.mPendingBroadcasts.userIdCount(); n++) {
-                                    int packageUserId = PackageManagerService.this.mPendingBroadcasts.userIdAt(n);
-                                    Iterator<Entry<String, ArrayList<String>>> it2 = PackageManagerService.this.mPendingBroadcasts.packagesForUserId(packageUserId).entrySet().iterator();
-                                    while (it2.hasNext() && i2 < size) {
-                                        Entry<String, ArrayList<String>> ent = (Entry) it2.next();
-                                        packages[i2] = (String) ent.getKey();
-                                        components[i2] = (ArrayList) ent.getValue();
-                                        PackageSetting ps = (PackageSetting) PackageManagerService.this.mSettings.mPackages.get(ent.getKey());
-                                        if (ps != null) {
-                                            i = UserHandle.getUid(packageUserId, ps.appId);
-                                        } else {
-                                            i = -1;
+                        try {
+                            if (PackageManagerService.this.mPendingBroadcasts != null) {
+                                size = PackageManagerService.this.mPendingBroadcasts.size();
+                                if (size > 0) {
+                                    String[] packages = new String[size];
+                                    ArrayList<String>[] components = new ArrayList[size];
+                                    int[] uids = new int[size];
+                                    i2 = 0;
+                                    for (int n = 0; n < PackageManagerService.this.mPendingBroadcasts.userIdCount(); n++) {
+                                        int packageUserId = PackageManagerService.this.mPendingBroadcasts.userIdAt(n);
+                                        Iterator<Entry<String, ArrayList<String>>> it2 = PackageManagerService.this.mPendingBroadcasts.packagesForUserId(packageUserId).entrySet().iterator();
+                                        while (it2.hasNext() && i2 < size) {
+                                            Entry<String, ArrayList<String>> ent = (Entry) it2.next();
+                                            packages[i2] = (String) ent.getKey();
+                                            components[i2] = (ArrayList) ent.getValue();
+                                            PackageSetting ps = (PackageSetting) PackageManagerService.this.mSettings.mPackages.get(ent.getKey());
+                                            if (ps != null) {
+                                                i = UserHandle.getUid(packageUserId, ps.appId);
+                                            } else {
+                                                i = -1;
+                                            }
+                                            uids[i2] = i;
+                                            i2++;
                                         }
-                                        uids[i2] = i;
-                                        i2++;
                                     }
+                                    size = i2;
+                                    PackageManagerService.this.mPendingBroadcasts.clear();
+                                    break;
                                 }
-                                size = i2;
-                                PackageManagerService.this.mPendingBroadcasts.clear();
-                                break;
+                                return;
                             }
                             return;
+                        } catch (Throwable th) {
+                            while (true) {
+                                throw th;
+                                break;
+                            }
                         }
-                        return;
                     }
                     break;
                 case 3:
@@ -1556,15 +1488,21 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     }
                     synchronized (PackageManagerService.this.mPackages) {
                         if (userId == -1) {
-                            int[] users = PackageManagerService.sUserManager.getUserIds();
-                            length = users.length;
-                            while (i < length) {
-                                PackageManagerService.this.mSettings.addPackageToCleanLPw(new PackageCleanItem(users[i], packageName, andCode));
-                                i++;
+                            try {
+                                int[] users = PackageManagerService.sUserManager.getUserIds();
+                                length = users.length;
+                                while (i < length) {
+                                    PackageManagerService.this.mSettings.addPackageToCleanLPw(new PackageCleanItem(users[i], packageName, andCode));
+                                    i++;
+                                }
+                            } catch (Throwable th2) {
+                                while (true) {
+                                    throw th2;
+                                    break;
+                                }
                             }
-                        } else {
-                            PackageManagerService.this.mSettings.addPackageToCleanLPw(new PackageCleanItem(userId, packageName, andCode));
                         }
+                        PackageManagerService.this.mSettings.addPackageToCleanLPw(new PackageCleanItem(userId, packageName, andCode));
                     }
                     Process.setThreadPriority(10);
                     PackageManagerService.this.startCleaningPackages();
@@ -1659,22 +1597,36 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 case 13:
                     Process.setThreadPriority(0);
                     synchronized (PackageManagerService.this.mPackages) {
-                        removeMessages(13);
-                        removeMessages(14);
-                        PackageManagerService.this.mSettings.writeLPr();
-                        PackageManagerService.this.mDirtyUsers.clear();
+                        try {
+                            removeMessages(13);
+                            removeMessages(14);
+                            PackageManagerService.this.mSettings.writeLPr();
+                            PackageManagerService.this.mDirtyUsers.clear();
+                        } catch (Throwable th22) {
+                            while (true) {
+                                throw th22;
+                                break;
+                            }
+                        }
                     }
                     Process.setThreadPriority(10);
                     break;
                 case 14:
                     Process.setThreadPriority(0);
                     synchronized (PackageManagerService.this.mPackages) {
-                        removeMessages(14);
-                        it = PackageManagerService.this.mDirtyUsers.iterator();
-                        while (it.hasNext()) {
-                            PackageManagerService.this.mSettings.writePackageRestrictionsLPr(((Integer) it.next()).intValue());
+                        try {
+                            removeMessages(14);
+                            it = PackageManagerService.this.mDirtyUsers.iterator();
+                            while (it.hasNext()) {
+                                PackageManagerService.this.mSettings.writePackageRestrictionsLPr(((Integer) it.next()).intValue());
+                            }
+                            PackageManagerService.this.mDirtyUsers.clear();
+                        } catch (Throwable th222) {
+                            while (true) {
+                                throw th222;
+                                break;
+                            }
                         }
-                        PackageManagerService.this.mDirtyUsers.clear();
                     }
                     Process.setThreadPriority(10);
                     break;
@@ -1813,8 +1765,15 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 case 19:
                     Process.setThreadPriority(0);
                     synchronized (PackageManagerService.this.mPackages) {
-                        removeMessages(19);
-                        PackageManagerService.this.mSettings.writePackageListLPr(message.arg1);
+                        try {
+                            removeMessages(19);
+                            PackageManagerService.this.mSettings.writePackageListLPr(message.arg1);
+                        } catch (Throwable th2222) {
+                            while (true) {
+                                throw th2222;
+                                break;
+                            }
+                        }
                     }
                     Process.setThreadPriority(10);
                     break;
@@ -2095,7 +2054,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             PackageManagerService.this.mDefaultPermissionPolicy.grantDefaultPermissionsToDefaultUseOpenWifiApp(packageName, userId);
         }
 
-        /* JADX WARNING: Missing block: B:27:0x006a, code:
+        /* JADX WARNING: Missing block: B:28:0x006a, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2313,8 +2272,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             synchronized (PackageManagerService.this.mPackages) {
                 Package pkg = (Package) PackageManagerService.this.mPackages.get(packageName);
                 z = false;
-                if (pkg != null && (pkg.applicationInfo.flags & 9) == 9) {
-                    z = true;
+                if (pkg != null) {
+                    if ((pkg.applicationInfo.flags & 9) == 9) {
+                        z = true;
+                    }
                 }
             }
             return z;
@@ -2359,27 +2320,30 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         public boolean setEnabledOverlayPackages(int userId, String targetPackageName, List<String> overlayPackageNames) {
             synchronized (PackageManagerService.this.mPackages) {
                 if (targetPackageName != null) {
-                    if (PackageManagerService.this.mPackages.get(targetPackageName) != null) {
-                        ArrayList<String> overlayPaths = null;
-                        if (overlayPackageNames != null && overlayPackageNames.size() > 0) {
-                            int N = overlayPackageNames.size();
-                            overlayPaths = new ArrayList(N);
-                            for (int i = 0; i < N; i++) {
-                                String packageName = (String) overlayPackageNames.get(i);
-                                Package pkg = (Package) PackageManagerService.this.mPackages.get(packageName);
-                                if (pkg == null) {
-                                    String str = PackageManagerService.TAG;
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    stringBuilder.append("failed to find package ");
-                                    stringBuilder.append(packageName);
-                                    Slog.e(str, stringBuilder.toString());
-                                    return false;
+                    try {
+                        if (PackageManagerService.this.mPackages.get(targetPackageName) != null) {
+                            ArrayList<String> overlayPaths = null;
+                            if (overlayPackageNames != null && overlayPackageNames.size() > 0) {
+                                int N = overlayPackageNames.size();
+                                overlayPaths = new ArrayList(N);
+                                for (int i = 0; i < N; i++) {
+                                    String packageName = (String) overlayPackageNames.get(i);
+                                    Package pkg = (Package) PackageManagerService.this.mPackages.get(packageName);
+                                    if (pkg == null) {
+                                        String str = PackageManagerService.TAG;
+                                        StringBuilder stringBuilder = new StringBuilder();
+                                        stringBuilder.append("failed to find package ");
+                                        stringBuilder.append(packageName);
+                                        Slog.e(str, stringBuilder.toString());
+                                        return false;
+                                    }
+                                    overlayPaths.add(pkg.baseCodePath);
                                 }
-                                overlayPaths.add(pkg.baseCodePath);
                             }
+                            ((PackageSetting) PackageManagerService.this.mSettings.mPackages.get(targetPackageName)).setOverlayPaths(overlayPaths, userId);
+                            return true;
                         }
-                        ((PackageSetting) PackageManagerService.this.mSettings.mPackages.get(targetPackageName)).setOverlayPaths(overlayPaths, userId);
-                        return true;
+                    } finally {
                     }
                 }
                 String str2 = PackageManagerService.TAG;
@@ -2440,7 +2404,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
 
         public boolean canAccessComponent(int callingUid, ComponentName component, int userId) {
-            boolean access$9200;
+            int access$9200;
             synchronized (PackageManagerService.this.mPackages) {
                 access$9200 = PackageManagerService.this.filterAppAccessLPr((PackageSetting) PackageManagerService.this.mSettings.mPackages.get(component.getPackageName()), callingUid, component, 0, userId) ^ 1;
             }
@@ -3018,9 +2982,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
 
         private void adjustPriority(List<Activity> systemActivities, ActivityIntentInfo intent) {
             List<Activity> list = systemActivities;
-            IntentFilter intentFilter = intent;
+            ActivityIntentInfo activityIntentInfo = intent;
             if (intent.getPriority() > 0) {
-                ActivityInfo activityInfo = intentFilter.activity.info;
+                ActivityInfo activityInfo = activityIntentInfo.activity.info;
                 ApplicationInfo applicationInfo = activityInfo.applicationInfo;
                 String str;
                 StringBuilder stringBuilder;
@@ -3031,12 +2995,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         stringBuilder.append("Non-privileged app; cap priority to 0; package: ");
                         stringBuilder.append(applicationInfo.packageName);
                         stringBuilder.append(" activity: ");
-                        stringBuilder.append(intentFilter.activity.className);
+                        stringBuilder.append(activityIntentInfo.activity.className);
                         stringBuilder.append(" origPrio: ");
                         stringBuilder.append(intent.getPriority());
                         Slog.i(str, stringBuilder.toString());
                     }
-                    intentFilter.setPriority(0);
+                    activityIntentInfo.setPriority(0);
                 } else if (list != null) {
                     Activity foundActivity = findMatchingActivity(list, activityInfo);
                     if (foundActivity == null) {
@@ -3046,17 +3010,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             stringBuilder2.append("New activity; cap priority to 0; package: ");
                             stringBuilder2.append(applicationInfo.packageName);
                             stringBuilder2.append(" activity: ");
-                            stringBuilder2.append(intentFilter.activity.className);
+                            stringBuilder2.append(activityIntentInfo.activity.className);
                             stringBuilder2.append(" origPrio: ");
                             stringBuilder2.append(intent.getPriority());
                             Slog.i(str, stringBuilder2.toString());
                         }
-                        intentFilter.setPriority(0);
+                        activityIntentInfo.setPriority(0);
                         return;
                     }
                     StringBuilder stringBuilder3;
                     List<ActivityIntentInfo> intentListCopy = new ArrayList(foundActivity.intents);
-                    List<ActivityIntentInfo> foundFilters = findFilters(intentFilter);
+                    List<ActivityIntentInfo> foundFilters = findFilters(activityIntentInfo);
                     Iterator<String> actionsIterator = intent.actionsIterator();
                     if (actionsIterator != null) {
                         getIntentListSubset(intentListCopy, new ActionIterGenerator(), actionsIterator);
@@ -3067,12 +3031,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 stringBuilder4.append("Mismatched action; cap priority to 0; package: ");
                                 stringBuilder4.append(applicationInfo.packageName);
                                 stringBuilder4.append(" activity: ");
-                                stringBuilder4.append(intentFilter.activity.className);
+                                stringBuilder4.append(activityIntentInfo.activity.className);
                                 stringBuilder4.append(" origPrio: ");
                                 stringBuilder4.append(intent.getPriority());
                                 Slog.i(str, stringBuilder4.toString());
                             }
-                            intentFilter.setPriority(0);
+                            activityIntentInfo.setPriority(0);
                             return;
                         }
                     }
@@ -3086,12 +3050,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 stringBuilder5.append("Mismatched category; cap priority to 0; package: ");
                                 stringBuilder5.append(applicationInfo.packageName);
                                 stringBuilder5.append(" activity: ");
-                                stringBuilder5.append(intentFilter.activity.className);
+                                stringBuilder5.append(activityIntentInfo.activity.className);
                                 stringBuilder5.append(" origPrio: ");
                                 stringBuilder5.append(intent.getPriority());
                                 Slog.i(str, stringBuilder5.toString());
                             }
-                            intentFilter.setPriority(0);
+                            activityIntentInfo.setPriority(0);
                             return;
                         }
                     }
@@ -3105,12 +3069,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 stringBuilder6.append("Mismatched scheme; cap priority to 0; package: ");
                                 stringBuilder6.append(applicationInfo.packageName);
                                 stringBuilder6.append(" activity: ");
-                                stringBuilder6.append(intentFilter.activity.className);
+                                stringBuilder6.append(activityIntentInfo.activity.className);
                                 stringBuilder6.append(" origPrio: ");
                                 stringBuilder6.append(intent.getPriority());
                                 Slog.i(str, stringBuilder6.toString());
                             }
-                            intentFilter.setPriority(0);
+                            activityIntentInfo.setPriority(0);
                             return;
                         }
                     }
@@ -3124,12 +3088,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 stringBuilder3.append("Mismatched authority; cap priority to 0; package: ");
                                 stringBuilder3.append(applicationInfo.packageName);
                                 stringBuilder3.append(" activity: ");
-                                stringBuilder3.append(intentFilter.activity.className);
+                                stringBuilder3.append(activityIntentInfo.activity.className);
                                 stringBuilder3.append(" origPrio: ");
                                 stringBuilder3.append(intent.getPriority());
                                 Slog.i(str, stringBuilder3.toString());
                             }
-                            intentFilter.setPriority(0);
+                            activityIntentInfo.setPriority(0);
                             return;
                         }
                     }
@@ -3152,25 +3116,25 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             stringBuilder3.append("; package: ");
                             stringBuilder3.append(applicationInfo.packageName);
                             stringBuilder3.append(" activity: ");
-                            stringBuilder3.append(intentFilter.activity.className);
+                            stringBuilder3.append(activityIntentInfo.activity.className);
                             stringBuilder3.append(" origPrio: ");
                             stringBuilder3.append(intent.getPriority());
                             Slog.i(str, stringBuilder3.toString());
                         }
-                        intentFilter.setPriority(cappedPriority);
+                        activityIntentInfo.setPriority(cappedPriority);
                     }
-                } else if (!isProtectedAction(intentFilter)) {
+                } else if (!isProtectedAction(activityIntentInfo)) {
                 } else {
                     StringBuilder stringBuilder7;
                     if (PackageManagerService.this.mDeferProtectedFilters) {
-                        PackageManagerService.this.mProtectedFilters.add(intentFilter);
+                        PackageManagerService.this.mProtectedFilters.add(activityIntentInfo);
                         if (PackageManagerService.DEBUG_FILTERS) {
                             str = PackageManagerService.TAG;
                             stringBuilder7 = new StringBuilder();
                             stringBuilder7.append("Protected action; save for later; package: ");
                             stringBuilder7.append(applicationInfo.packageName);
                             stringBuilder7.append(" activity: ");
-                            stringBuilder7.append(intentFilter.activity.className);
+                            stringBuilder7.append(activityIntentInfo.activity.className);
                             stringBuilder7.append(" origPrio: ");
                             stringBuilder7.append(intent.getPriority());
                             Slog.i(str, stringBuilder7.toString());
@@ -3180,16 +3144,16 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     if (PackageManagerService.DEBUG_FILTERS && PackageManagerService.this.mSetupWizardPackage == null) {
                         Slog.i(PackageManagerService.TAG, "No setup wizard; All protected intents capped to priority 0");
                     }
-                    if (intentFilter.activity.info.packageName.equals(PackageManagerService.this.mSetupWizardPackage)) {
+                    if (activityIntentInfo.activity.info.packageName.equals(PackageManagerService.this.mSetupWizardPackage)) {
                         if (PackageManagerService.DEBUG_FILTERS) {
                             str = PackageManagerService.TAG;
                             stringBuilder7 = new StringBuilder();
                             stringBuilder7.append("Found setup wizard; allow priority ");
                             stringBuilder7.append(intent.getPriority());
                             stringBuilder7.append("; package: ");
-                            stringBuilder7.append(intentFilter.activity.info.packageName);
+                            stringBuilder7.append(activityIntentInfo.activity.info.packageName);
                             stringBuilder7.append(" activity: ");
-                            stringBuilder7.append(intentFilter.activity.className);
+                            stringBuilder7.append(activityIntentInfo.activity.className);
                             stringBuilder7.append(" priority: ");
                             stringBuilder7.append(intent.getPriority());
                             Slog.i(str, stringBuilder7.toString());
@@ -3200,14 +3164,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         str = PackageManagerService.TAG;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("Protected action; cap priority to 0; package: ");
-                        stringBuilder.append(intentFilter.activity.info.packageName);
+                        stringBuilder.append(activityIntentInfo.activity.info.packageName);
                         stringBuilder.append(" activity: ");
-                        stringBuilder.append(intentFilter.activity.className);
+                        stringBuilder.append(activityIntentInfo.activity.className);
                         stringBuilder.append(" origPrio: ");
                         stringBuilder.append(intent.getPriority());
                         Slog.i(str, stringBuilder.toString());
                     }
-                    intentFilter.setPriority(0);
+                    activityIntentInfo.setPriority(0);
                 }
             }
         }
@@ -3683,13 +3647,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             return stringBuilder.toString();
         }
 
-        /* JADX WARNING: Missing block: B:63:0x00ab, code:
+        /* JADX WARNING: Missing block: B:64:0x00ab, code skipped:
             if (r2 == false) goto L_0x00ae;
      */
-        /* JADX WARNING: Missing block: B:64:0x00ad, code:
+        /* JADX WARNING: Missing block: B:65:0x00ad, code skipped:
             return 2;
      */
-        /* JADX WARNING: Missing block: B:66:0x00b0, code:
+        /* JADX WARNING: Missing block: B:67:0x00b0, code skipped:
             return r14.recommendedInstallLocation;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4150,7 +4114,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             }
             synchronized (PackageManagerService.this.mPackages) {
                 if (verified) {
-                    ivi.setStatus(2);
+                    try {
+                        ivi.setStatus(2);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     ivi.setStatus(1);
                 }
@@ -4174,6 +4141,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 needUpdate = true;
                                 break;
                             }
+                            break;
+                        default:
                             break;
                     }
                     if (needUpdate) {
@@ -4843,2814 +4812,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private android.content.pm.PackageParser.Package addForInitLI(android.content.pm.PackageParser.Package r37, int r38, int r39, long r40, android.os.UserHandle r42, int r43) throws com.android.server.pm.PackageManagerException {
-        /*
-        r36 = this;
-        r10 = r36;
-        r9 = r37;
-        r8 = r38;
-        r7 = r39;
-        r1 = r43;
-        r0 = r8 & 16;
-        r2 = 0;
-        r6 = 1;
-        if (r0 == 0) goto L_0x0012;
-    L_0x0010:
-        r0 = r6;
-        goto L_0x0013;
-    L_0x0012:
-        r0 = r2;
-    L_0x0013:
-        r23 = r0;
-        r3 = r10.mPackages;
-        monitor-enter(r3);
-        r0 = 1073741824; // 0x40000000 float:2.0 double:5.304989477E-315;
-        r0 = r0 & r1;
-        r5 = 0;
-        if (r0 != 0) goto L_0x00c8;
-    L_0x001e:
-        r0 = r10.mSettings;	 Catch:{ all -> 0x00c3 }
-        r4 = r9.packageName;	 Catch:{ all -> 0x00c3 }
-        r0 = r0.getPackageLPr(r4);	 Catch:{ all -> 0x00c3 }
-        r4 = r10.needInstallRemovablePreApk(r9, r1);	 Catch:{ all -> 0x00c3 }
-        if (r4 != 0) goto L_0x0074;	 Catch:{ all -> 0x00c3 }
-    L_0x002c:
-        r4 = r9.packageName;	 Catch:{ all -> 0x00c3 }
-        r11 = r9.codePath;	 Catch:{ all -> 0x00c3 }
-        r10.addUnisntallDataToCache(r4, r11);	 Catch:{ all -> 0x00c3 }
-        if (r0 == 0) goto L_0x0059;	 Catch:{ all -> 0x00c3 }
-    L_0x0035:
-        r4 = sUserManager;	 Catch:{ all -> 0x00c3 }
-        r4 = r4.getUserIds();	 Catch:{ all -> 0x00c3 }
-        r4 = r0.isAnyInstalled(r4);	 Catch:{ all -> 0x00c3 }
-        if (r4 == 0) goto L_0x0059;	 Catch:{ all -> 0x00c3 }
-    L_0x0041:
-        r4 = r10.mSettings;	 Catch:{ all -> 0x00c3 }
-        r11 = r9.packageName;	 Catch:{ all -> 0x00c3 }
-        r4 = r4.getDisabledSystemPkgLPr(r11);	 Catch:{ all -> 0x00c3 }
-        if (r4 != 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x004b:
-        r4 = r0.codePathString;	 Catch:{ all -> 0x00c3 }
-        if (r4 == 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x004f:
-        r4 = r0.codePathString;	 Catch:{ all -> 0x00c3 }
-        r11 = "/data/app/";	 Catch:{ all -> 0x00c3 }
-        r4 = r4.startsWith(r11);	 Catch:{ all -> 0x00c3 }
-        if (r4 == 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x0059:
-        r2 = "PackageManager";	 Catch:{ all -> 0x00c3 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00c3 }
-        r4.<init>();	 Catch:{ all -> 0x00c3 }
-        r6 = "scan return here for package:";	 Catch:{ all -> 0x00c3 }
-        r4.append(r6);	 Catch:{ all -> 0x00c3 }
-        r6 = r9.packageName;	 Catch:{ all -> 0x00c3 }
-        r4.append(r6);	 Catch:{ all -> 0x00c3 }
-        r4 = r4.toString();	 Catch:{ all -> 0x00c3 }
-        android.util.Slog.d(r2, r4);	 Catch:{ all -> 0x00c3 }
-        monitor-exit(r3);	 Catch:{ all -> 0x00c3 }
-        return r5;	 Catch:{ all -> 0x00c3 }
-    L_0x0074:
-        if (r0 == 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x0076:
-        r4 = r0.codePath;	 Catch:{ all -> 0x00c3 }
-        if (r4 == 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x007a:
-        r4 = r0.codePathString;	 Catch:{ all -> 0x00c3 }
-        r11 = r9.codePath;	 Catch:{ all -> 0x00c3 }
-        r4 = r4.equals(r11);	 Catch:{ all -> 0x00c3 }
-        if (r4 != 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x0084:
-        r4 = r0.codePathString;	 Catch:{ all -> 0x00c3 }
-        if (r4 == 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x0088:
-        r4 = r0.codePathString;	 Catch:{ all -> 0x00c3 }
-        r11 = "/data/app/";	 Catch:{ all -> 0x00c3 }
-        r4 = r4.startsWith(r11);	 Catch:{ all -> 0x00c3 }
-        if (r4 == 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x0092:
-        if (r23 != 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x0094:
-        r4 = r9.mVersionCode;	 Catch:{ all -> 0x00c3 }
-        r11 = (long) r4;	 Catch:{ all -> 0x00c3 }
-        r13 = r0.versionCode;	 Catch:{ all -> 0x00c3 }
-        r4 = (r11 > r13 ? 1 : (r11 == r13 ? 0 : -1));	 Catch:{ all -> 0x00c3 }
-        if (r4 > 0) goto L_0x00c8;	 Catch:{ all -> 0x00c3 }
-    L_0x009d:
-        r2 = "PackageManager";	 Catch:{ all -> 0x00c3 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00c3 }
-        r4.<init>();	 Catch:{ all -> 0x00c3 }
-        r6 = "scan return here for ota nosys package:";	 Catch:{ all -> 0x00c3 }
-        r4.append(r6);	 Catch:{ all -> 0x00c3 }
-        r6 = r9.packageName;	 Catch:{ all -> 0x00c3 }
-        r4.append(r6);	 Catch:{ all -> 0x00c3 }
-        r4 = r4.toString();	 Catch:{ all -> 0x00c3 }
-        android.util.Slog.d(r2, r4);	 Catch:{ all -> 0x00c3 }
-        r2 = r9.packageName;	 Catch:{ all -> 0x00c3 }
-        r4 = r9.codePath;	 Catch:{ all -> 0x00c3 }
-        r4 = r4.toString();	 Catch:{ all -> 0x00c3 }
-        r10.recordUninstalledDelapp(r2, r4);	 Catch:{ all -> 0x00c3 }
-        monitor-exit(r3);	 Catch:{ all -> 0x00c3 }
-        return r5;	 Catch:{ all -> 0x00c3 }
-    L_0x00c3:
-        r0 = move-exception;	 Catch:{ all -> 0x00c3 }
-        r24 = r7;	 Catch:{ all -> 0x00c3 }
-        goto L_0x05fa;	 Catch:{ all -> 0x00c3 }
-    L_0x00c8:
-        monitor-exit(r3);	 Catch:{ all -> 0x00c3 }
-        r0 = r9.volumeUuid;
-        r9.setApplicationVolumeUuid(r0);
-        r0 = r9.codePath;
-        r9.setApplicationInfoCodePath(r0);
-        r0 = r9.baseCodePath;
-        r9.setApplicationInfoBaseCodePath(r0);
-        r0 = r9.splitCodePaths;
-        r9.setApplicationInfoSplitCodePaths(r0);
-        r0 = r9.codePath;
-        r9.setApplicationInfoResourcePath(r0);
-        r0 = r9.baseCodePath;
-        r9.setApplicationInfoBaseResourcePath(r0);
-        r0 = r9.splitCodePaths;
-        r9.setApplicationInfoSplitResourcePaths(r0);
-        r4 = r10.mPackages;
-        monitor-enter(r4);
-        r0 = r10.mSettings;	 Catch:{ all -> 0x05f3 }
-        r3 = r9.mRealPackage;	 Catch:{ all -> 0x05f3 }
-        r0 = r0.getRenamedPackageLPr(r3);	 Catch:{ all -> 0x05f3 }
-        r3 = getRealPackageName(r9, r0);	 Catch:{ all -> 0x05f3 }
-        if (r3 == 0) goto L_0x0100;	 Catch:{ all -> 0x05f3 }
-    L_0x00fd:
-        ensurePackageRenamed(r9, r0);	 Catch:{ all -> 0x05f3 }
-    L_0x0100:
-        r11 = r10.getOriginalPackageLocked(r9, r0);	 Catch:{ all -> 0x05f3 }
-        r24 = r11;	 Catch:{ all -> 0x05f3 }
-        r11 = r10.mSettings;	 Catch:{ all -> 0x05f3 }
-        r12 = r9.packageName;	 Catch:{ all -> 0x05f3 }
-        r11 = r11.getPackageLPr(r12);	 Catch:{ all -> 0x05f3 }
-        r25 = r11;	 Catch:{ all -> 0x05f3 }
-        if (r24 != 0) goto L_0x0115;	 Catch:{ all -> 0x05f3 }
-    L_0x0112:
-        r11 = r25;	 Catch:{ all -> 0x05f3 }
-        goto L_0x0117;	 Catch:{ all -> 0x05f3 }
-    L_0x0115:
-        r11 = r24;	 Catch:{ all -> 0x05f3 }
-    L_0x0117:
-        r15 = r11;	 Catch:{ all -> 0x05f3 }
-        if (r15 == 0) goto L_0x011c;	 Catch:{ all -> 0x05f3 }
-    L_0x011a:
-        r11 = r6;	 Catch:{ all -> 0x05f3 }
-        goto L_0x011d;	 Catch:{ all -> 0x05f3 }
-    L_0x011c:
-        r11 = r2;	 Catch:{ all -> 0x05f3 }
-    L_0x011d:
-        r26 = r11;	 Catch:{ all -> 0x05f3 }
-        if (r26 == 0) goto L_0x0124;	 Catch:{ all -> 0x05f3 }
-    L_0x0121:
-        r11 = r15.name;	 Catch:{ all -> 0x05f3 }
-        goto L_0x0126;	 Catch:{ all -> 0x05f3 }
-    L_0x0124:
-        r11 = r9.packageName;	 Catch:{ all -> 0x05f3 }
-    L_0x0126:
-        r14 = r11;	 Catch:{ all -> 0x05f3 }
-        r11 = r10.mSettings;	 Catch:{ all -> 0x05f3 }
-        r11 = r11.getDisabledSystemPkgLPr(r14);	 Catch:{ all -> 0x05f3 }
-        r13 = r11;	 Catch:{ all -> 0x05f3 }
-        if (r13 == 0) goto L_0x0132;	 Catch:{ all -> 0x05f3 }
-    L_0x0130:
-        r11 = r6;	 Catch:{ all -> 0x05f3 }
-        goto L_0x0133;	 Catch:{ all -> 0x05f3 }
-    L_0x0132:
-        r11 = r2;	 Catch:{ all -> 0x05f3 }
-    L_0x0133:
-        r27 = r11;	 Catch:{ all -> 0x05f3 }
-        r11 = DEBUG_INSTALL;	 Catch:{ all -> 0x05f3 }
-        if (r11 == 0) goto L_0x0152;	 Catch:{ all -> 0x05f3 }
-    L_0x0139:
-        if (r27 == 0) goto L_0x0152;	 Catch:{ all -> 0x05f3 }
-    L_0x013b:
-        r11 = "PackageManager";	 Catch:{ all -> 0x05f3 }
-        r12 = new java.lang.StringBuilder;	 Catch:{ all -> 0x05f3 }
-        r12.<init>();	 Catch:{ all -> 0x05f3 }
-        r5 = "updatedPkg = ";	 Catch:{ all -> 0x05f3 }
-        r12.append(r5);	 Catch:{ all -> 0x05f3 }
-        r12.append(r13);	 Catch:{ all -> 0x05f3 }
-        r5 = r12.toString();	 Catch:{ all -> 0x05f3 }
-        android.util.Slog.d(r11, r5);	 Catch:{ all -> 0x05f3 }
-    L_0x0152:
-        r5 = r9.mSharedUserId;	 Catch:{ all -> 0x05f3 }
-        if (r5 == 0) goto L_0x015f;	 Catch:{ all -> 0x05f3 }
-    L_0x0156:
-        r5 = r10.mSettings;	 Catch:{ all -> 0x05f3 }
-        r11 = r9.mSharedUserId;	 Catch:{ all -> 0x05f3 }
-        r5 = r5.getSharedUserLPw(r11, r2, r2, r6);	 Catch:{ all -> 0x05f3 }
-        goto L_0x0160;	 Catch:{ all -> 0x05f3 }
-    L_0x015f:
-        r5 = 0;	 Catch:{ all -> 0x05f3 }
-    L_0x0160:
-        r11 = DEBUG_PACKAGE_SCANNING;	 Catch:{ all -> 0x05f3 }
-        if (r11 == 0) goto L_0x0197;	 Catch:{ all -> 0x05f3 }
-    L_0x0164:
-        r11 = -2147483648; // 0xffffffff80000000 float:-0.0 double:NaN;	 Catch:{ all -> 0x05f3 }
-        r11 = r11 & r8;	 Catch:{ all -> 0x05f3 }
-        if (r11 == 0) goto L_0x0197;	 Catch:{ all -> 0x05f3 }
-    L_0x0169:
-        if (r5 == 0) goto L_0x0197;	 Catch:{ all -> 0x05f3 }
-    L_0x016b:
-        r11 = "PackageManager";	 Catch:{ all -> 0x05f3 }
-        r12 = new java.lang.StringBuilder;	 Catch:{ all -> 0x05f3 }
-        r12.<init>();	 Catch:{ all -> 0x05f3 }
-        r2 = "Shared UserID ";	 Catch:{ all -> 0x05f3 }
-        r12.append(r2);	 Catch:{ all -> 0x05f3 }
-        r2 = r9.mSharedUserId;	 Catch:{ all -> 0x05f3 }
-        r12.append(r2);	 Catch:{ all -> 0x05f3 }
-        r2 = " (uid=";	 Catch:{ all -> 0x05f3 }
-        r12.append(r2);	 Catch:{ all -> 0x05f3 }
-        r2 = r5.userId;	 Catch:{ all -> 0x05f3 }
-        r12.append(r2);	 Catch:{ all -> 0x05f3 }
-        r2 = "): packages=";	 Catch:{ all -> 0x05f3 }
-        r12.append(r2);	 Catch:{ all -> 0x05f3 }
-        r2 = r5.packages;	 Catch:{ all -> 0x05f3 }
-        r12.append(r2);	 Catch:{ all -> 0x05f3 }
-        r2 = r12.toString();	 Catch:{ all -> 0x05f3 }
-        android.util.Log.d(r11, r2);	 Catch:{ all -> 0x05f3 }
-    L_0x0197:
-        if (r23 == 0) goto L_0x023b;	 Catch:{ all -> 0x05f3 }
-    L_0x0199:
-        if (r27 == 0) goto L_0x023b;	 Catch:{ all -> 0x05f3 }
-    L_0x019b:
-        r2 = r9.childPackages;	 Catch:{ all -> 0x05f3 }
-        if (r2 == 0) goto L_0x01a6;	 Catch:{ all -> 0x05f3 }
-    L_0x019f:
-        r2 = r9.childPackages;	 Catch:{ all -> 0x05f3 }
-        r2 = r2.size();	 Catch:{ all -> 0x05f3 }
-        goto L_0x01a7;	 Catch:{ all -> 0x05f3 }
-    L_0x01a6:
-        r2 = 0;	 Catch:{ all -> 0x05f3 }
-    L_0x01a7:
-        r11 = r13.childPackageNames;	 Catch:{ all -> 0x05f3 }
-        if (r11 == 0) goto L_0x01b2;	 Catch:{ all -> 0x05f3 }
-    L_0x01ab:
-        r11 = r13.childPackageNames;	 Catch:{ all -> 0x05f3 }
-        r11 = r11.size();	 Catch:{ all -> 0x05f3 }
-        goto L_0x01b3;	 Catch:{ all -> 0x05f3 }
-    L_0x01b2:
-        r11 = 0;	 Catch:{ all -> 0x05f3 }
-    L_0x01b3:
-        r12 = r11;	 Catch:{ all -> 0x05f3 }
-        r11 = 0;	 Catch:{ all -> 0x05f3 }
-    L_0x01b5:
-        if (r11 >= r12) goto L_0x0200;	 Catch:{ all -> 0x05f3 }
-    L_0x01b7:
-        r6 = r13.childPackageNames;	 Catch:{ all -> 0x05f3 }
-        r6 = r6.get(r11);	 Catch:{ all -> 0x05f3 }
-        r6 = (java.lang.String) r6;	 Catch:{ all -> 0x05f3 }
-        r16 = 0;	 Catch:{ all -> 0x05f3 }
-        r17 = 0;	 Catch:{ all -> 0x05f3 }
-    L_0x01c3:
-        r30 = r17;	 Catch:{ all -> 0x05f3 }
-        r31 = r3;	 Catch:{ all -> 0x05f3 }
-        r3 = r30;	 Catch:{ all -> 0x05f3 }
-        if (r3 >= r2) goto L_0x01eb;	 Catch:{ all -> 0x05f3 }
-    L_0x01cb:
-        r32 = r2;	 Catch:{ all -> 0x05f3 }
-        r2 = r9.childPackages;	 Catch:{ all -> 0x05f3 }
-        r2 = r2.get(r3);	 Catch:{ all -> 0x05f3 }
-        r2 = (android.content.pm.PackageParser.Package) r2;	 Catch:{ all -> 0x05f3 }
-        r33 = r12;	 Catch:{ all -> 0x05f3 }
-        r12 = r2.packageName;	 Catch:{ all -> 0x05f3 }
-        r12 = r12.equals(r6);	 Catch:{ all -> 0x05f3 }
-        if (r12 == 0) goto L_0x01e2;	 Catch:{ all -> 0x05f3 }
-    L_0x01df:
-        r16 = 1;	 Catch:{ all -> 0x05f3 }
-        goto L_0x01ef;	 Catch:{ all -> 0x05f3 }
-    L_0x01e2:
-        r17 = r3 + 1;	 Catch:{ all -> 0x05f3 }
-        r3 = r31;	 Catch:{ all -> 0x05f3 }
-        r2 = r32;	 Catch:{ all -> 0x05f3 }
-        r12 = r33;	 Catch:{ all -> 0x05f3 }
-        goto L_0x01c3;	 Catch:{ all -> 0x05f3 }
-    L_0x01eb:
-        r32 = r2;	 Catch:{ all -> 0x05f3 }
-        r33 = r12;	 Catch:{ all -> 0x05f3 }
-    L_0x01ef:
-        if (r16 != 0) goto L_0x01f6;	 Catch:{ all -> 0x05f3 }
-    L_0x01f1:
-        r2 = r10.mSettings;	 Catch:{ all -> 0x05f3 }
-        r2.removeDisabledSystemPackageLPw(r6);	 Catch:{ all -> 0x05f3 }
-    L_0x01f6:
-        r11 = r11 + 1;	 Catch:{ all -> 0x05f3 }
-        r3 = r31;	 Catch:{ all -> 0x05f3 }
-        r2 = r32;	 Catch:{ all -> 0x05f3 }
-        r12 = r33;	 Catch:{ all -> 0x05f3 }
-        r6 = 1;	 Catch:{ all -> 0x05f3 }
-        goto L_0x01b5;	 Catch:{ all -> 0x05f3 }
-    L_0x0200:
-        r32 = r2;	 Catch:{ all -> 0x05f3 }
-        r31 = r3;	 Catch:{ all -> 0x05f3 }
-        r33 = r12;	 Catch:{ all -> 0x05f3 }
-        r2 = new com.android.server.pm.PackageManagerService$ScanRequest;	 Catch:{ all -> 0x05f3 }
-        r3 = 0;	 Catch:{ all -> 0x05f3 }
-        r16 = 0;	 Catch:{ all -> 0x05f3 }
-        r17 = 0;	 Catch:{ all -> 0x05f3 }
-        r18 = 0;	 Catch:{ all -> 0x05f3 }
-        r6 = r10.mPlatformPackage;	 Catch:{ all -> 0x05f3 }
-        if (r9 != r6) goto L_0x0216;	 Catch:{ all -> 0x05f3 }
-    L_0x0213:
-        r21 = 1;	 Catch:{ all -> 0x05f3 }
-        goto L_0x0218;	 Catch:{ all -> 0x05f3 }
-    L_0x0216:
-        r21 = 0;	 Catch:{ all -> 0x05f3 }
-    L_0x0218:
-        r11 = r2;	 Catch:{ all -> 0x05f3 }
-        r6 = r33;	 Catch:{ all -> 0x05f3 }
-        r12 = r9;	 Catch:{ all -> 0x05f3 }
-        r30 = r13;	 Catch:{ all -> 0x05f3 }
-        r13 = r5;	 Catch:{ all -> 0x05f3 }
-        r33 = r14;	 Catch:{ all -> 0x05f3 }
-        r14 = r3;	 Catch:{ all -> 0x05f3 }
-        r3 = r15;	 Catch:{ all -> 0x05f3 }
-        r15 = r30;	 Catch:{ all -> 0x05f3 }
-        r19 = r8;	 Catch:{ all -> 0x05f3 }
-        r20 = r7;	 Catch:{ all -> 0x05f3 }
-        r22 = r42;	 Catch:{ all -> 0x05f3 }
-        r11.<init>(r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22);	 Catch:{ all -> 0x05f3 }
-        r11 = r10.mPlatformPackage;	 Catch:{ all -> 0x05f3 }
-        applyPolicy(r9, r8, r7, r11, r1);	 Catch:{ all -> 0x05f3 }
-        r11 = r10.mFactoryTest;	 Catch:{ all -> 0x05f3 }
-        r12 = -1;	 Catch:{ all -> 0x05f3 }
-        scanPackageOnlyLI(r2, r11, r12);	 Catch:{ all -> 0x05f3 }
-        goto L_0x023e;	 Catch:{ all -> 0x05f3 }
-    L_0x023b:
-        r30 = r13;	 Catch:{ all -> 0x05f3 }
-        r3 = r15;	 Catch:{ all -> 0x05f3 }
-    L_0x023e:
-        monitor-exit(r4);	 Catch:{ all -> 0x05f3 }
-        r11 = r0;
-        r12 = r30;
-        r13 = r27;
-        r14 = r26;
-        r15 = r3;
-        if (r14 == 0) goto L_0x0255;
-    L_0x0249:
-        r0 = r15.codePathString;
-        r2 = r9.codePath;
-        r0 = r0.equals(r2);
-        if (r0 != 0) goto L_0x0255;
-    L_0x0253:
-        r0 = 1;
-        goto L_0x0256;
-    L_0x0255:
-        r0 = 0;
-    L_0x0256:
-        r16 = r0;
-        if (r14 == 0) goto L_0x0266;
-    L_0x025a:
-        r2 = r37.getLongVersionCode();
-        r4 = r15.versionCode;
-        r0 = (r2 > r4 ? 1 : (r2 == r4 ? 0 : -1));
-        if (r0 <= 0) goto L_0x0266;
-    L_0x0264:
-        r0 = 1;
-        goto L_0x0267;
-    L_0x0266:
-        r0 = 0;
-    L_0x0267:
-        r17 = r0;
-        if (r23 == 0) goto L_0x0273;
-    L_0x026b:
-        if (r13 == 0) goto L_0x0273;
-    L_0x026d:
-        if (r16 == 0) goto L_0x0273;
-    L_0x026f:
-        if (r17 == 0) goto L_0x0273;
-    L_0x0271:
-        r0 = 1;
-        goto L_0x0274;
-    L_0x0273:
-        r0 = 0;
-    L_0x0274:
-        r18 = r0;
-        r0 = 5;
-        if (r18 == 0) goto L_0x02ef;
-    L_0x0279:
-        r2 = r10.mPackages;
-        monitor-enter(r2);
-        r3 = r10.mPackages;
-        r4 = r15.name;
-        r3.remove(r4);
-        r3 = r15.name;
-        r10.removePackageAbiLPw(r3);
-        monitor-exit(r2);
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "System package updated; name: ";
-        r2.append(r3);
-        r3 = r15.name;
-        r2.append(r3);
-        r3 = "; ";
-        r2.append(r3);
-        r3 = r15.versionCode;
-        r2.append(r3);
-        r3 = " --> ";
-        r2.append(r3);
-        r3 = r37.getLongVersionCode();
-        r2.append(r3);
-        r3 = "; ";
-        r2.append(r3);
-        r3 = r15.codePathString;
-        r2.append(r3);
-        r3 = " --> ";
-        r2.append(r3);
-        r3 = r9.codePath;
-        r2.append(r3);
-        r2 = r2.toString();
-        com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(r0, r2);
-        r2 = r10.packageFlagsToInstallFlags(r15);
-        r3 = r15.codePathString;
-        r4 = r15.resourcePathString;
-        r5 = com.android.server.pm.InstructionSets.getAppDexInstructionSets(r15);
-        r3 = r10.createInstallArgsForExisting(r2, r3, r4, r5);
-        r3.cleanUpResourcesLI();
-        r4 = r10.mPackages;
-        monitor-enter(r4);
-        r2 = r10.mSettings;
-        r5 = r15.name;
-        r2.enableSystemPackageLPw(r5);
-        monitor-exit(r4);
-        goto L_0x02ef;
-    L_0x02e9:
-        r0 = move-exception;
-        monitor-exit(r4);
-        throw r0;
-    L_0x02ec:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x02ef:
-        if (r23 == 0) goto L_0x034d;
-    L_0x02f1:
-        if (r13 == 0) goto L_0x034d;
-    L_0x02f3:
-        if (r18 != 0) goto L_0x034d;
-    L_0x02f5:
-        r2 = r9.codePath;
-        r3 = r9.packageName;
-        r10.addUpdatedRemoveableAppFlag(r2, r3);
-        r2 = r10.mPackages;
-        monitor-enter(r2);
-        r3 = r10.mPackages;
-        r4 = r9.packageName;
-        r3 = r3.containsKey(r4);
-        if (r3 != 0) goto L_0x0310;
-    L_0x0309:
-        r3 = r10.mPackages;
-        r4 = r9.packageName;
-        r3.put(r4, r9);
-    L_0x0310:
-        monitor-exit(r2);
-        r2 = new com.android.server.pm.PackageManagerException;
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "Package ";
-        r3.append(r4);
-        r4 = r9.packageName;
-        r3.append(r4);
-        r4 = " at ";
-        r3.append(r4);
-        r4 = r9.codePath;
-        r3.append(r4);
-        r4 = " ignored: updated version ";
-        r3.append(r4);
-        r4 = r15.versionCode;
-        r3.append(r4);
-        r4 = " better than this ";
-        r3.append(r4);
-        r4 = r37.getLongVersionCode();
-        r3.append(r4);
-        r3 = r3.toString();
-        r2.<init>(r0, r3);
-        throw r2;
-    L_0x034a:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x034d:
-        if (r13 == 0) goto L_0x035e;
-    L_0x034f:
-        r2 = r9.packageName;
-        r2 = r10.needAddUpdatedRemoveableAppFlag(r2);
-        if (r2 == 0) goto L_0x035e;
-    L_0x0357:
-        r2 = -33554433; // 0xfffffffffdffffff float:-4.2535293E37 double:NaN;
-        r1 = r1 & r2;
-        r2 = 67108864; // 0x4000000 float:1.5046328E-36 double:3.31561842E-316;
-        r1 = r1 | r2;
-    L_0x035e:
-        r6 = r1;
-        r1 = r10.mIsUpgrade;
-        if (r1 == 0) goto L_0x03f6;
-    L_0x0363:
-        if (r14 == 0) goto L_0x03f6;
-    L_0x0365:
-        r1 = r10.mCustPms;
-        if (r1 == 0) goto L_0x03f6;
-    L_0x0369:
-        r1 = r10.mCustPms;
-        r2 = r9.packageName;
-        r1 = r1.isListedApp(r2);
-        r2 = -1;
-        if (r1 != r2) goto L_0x0377;
-    L_0x0374:
-        r7 = r6;
-        goto L_0x03f7;
-    L_0x0377:
-        r1 = r10.packageFlagsToInstallFlags(r15);
-        r2 = r15.codePathString;
-        r3 = r15.resourcePathString;
-        r4 = com.android.server.pm.InstructionSets.getAppDexInstructionSets(r15);
-        r5 = r10.createInstallArgsForExisting(r1, r2, r3, r4);
-        r1 = r10.mInstallLock;
-        monitor-enter(r1);
-        r5.cleanUpResourcesLI();	 Catch:{ all -> 0x03ee }
-        monitor-exit(r1);	 Catch:{ all -> 0x03ee }
-        r3 = 0;
-        r4 = new com.android.server.pm.PackageManagerService$PackageRemovedInfo;
-        r4.<init>(r10);
-        r1 = r10.mCustPms;
-        r2 = r9.packageName;
-        r19 = r1.isListedApp(r2);
-        r20 = 1;
-        r1 = r10;
-        r2 = r15;
-        r21 = r5;
-        r5 = r19;
-        r7 = r6;
-        r6 = r20;
-        r1.removePackageDataLIF(r2, r3, r4, r5, r6);
-        r1 = r10.mSettings;
-        r2 = r9.packageName;
-        r1.removeDisabledSystemPackageLPw(r2);
-        r1 = r10.mSettings;
-        r2 = r9.packageName;
-        r1.removePackageLPw(r2);
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "package ";
-        r1.append(r2);
-        r2 = r9.packageName;
-        r1.append(r2);
-        r2 = " no longer needed; Don't install & wipe its data";
-        r1.append(r2);
-        r1 = r1.toString();
-        com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(r0, r1);
-        r0 = new com.android.server.pm.PackageManagerException;
-        r2 = -5;
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "abort installing old version ";
-        r3.append(r4);
-        r4 = r9.packageName;
-        r3.append(r4);
-        r3 = r3.toString();
-        r0.<init>(r2, r3);
-        throw r0;
-    L_0x03ee:
-        r0 = move-exception;
-        r21 = r5;
-        r7 = r6;
-    L_0x03f2:
-        monitor-exit(r1);	 Catch:{ all -> 0x03f4 }
-        throw r0;
-    L_0x03f4:
-        r0 = move-exception;
-        goto L_0x03f2;
-    L_0x03f6:
-        r7 = r6;
-    L_0x03f7:
-        r6 = com.android.server.pm.PackageManagerServiceUtils.isApkVerificationForced(r12);
-        r1 = r8 & 16;
-        if (r1 != 0) goto L_0x0414;
-    L_0x03ff:
-        r1 = 33554432; // 0x2000000 float:9.403955E-38 double:1.6578092E-316;
-        r1 = r1 & r7;
-        if (r1 != 0) goto L_0x0414;
-    L_0x0404:
-        if (r6 == 0) goto L_0x040c;
-    L_0x0406:
-        r1 = r36.canSkipFullPackageVerification(r37);
-        if (r1 != 0) goto L_0x0414;
-    L_0x040c:
-        r1 = r10.mIsPrePUpgrade;
-        if (r1 == 0) goto L_0x0411;
-    L_0x0410:
-        goto L_0x0414;
-    L_0x0411:
-        r29 = 0;
-        goto L_0x0416;
-    L_0x0414:
-        r29 = 1;
-    L_0x0416:
-        r5 = r29;
-        r10.collectCertificatesLI(r15, r9, r6, r5);
-        r1 = r36.checkIllegalGmsCoreApk(r37);
-        if (r1 == 0) goto L_0x0424;
-    L_0x0421:
-        r19 = 0;
-        return r19;
-    L_0x0424:
-        r19 = 0;
-        r10.checkIllegalSysApk(r9, r7);
-        r1 = 0;
-        if (r15 == 0) goto L_0x0449;
-    L_0x042c:
-        r2 = r15.codePathString;
-        r3 = r9.codePath;
-        r2 = r2.equals(r3);
-        if (r2 == 0) goto L_0x0449;
-    L_0x0436:
-        r2 = r15.timeStamp;
-        r4 = new java.io.File;
-        r0 = r9.codePath;
-        r4.<init>(r0);
-        r20 = r4.lastModified();
-        r0 = (r2 > r20 ? 1 : (r2 == r20 ? 0 : -1));
-        if (r0 != 0) goto L_0x0449;
-    L_0x0447:
-        r0 = 0;
-        goto L_0x044a;
-    L_0x0449:
-        r0 = 1;
-    L_0x044a:
-        r4 = r0;
-        r0 = r10.mHwPMSEx;
-        r0.checkHwCertification(r9, r4);
-        r0 = 1;
-        r10.replaceSignatureIfNeeded(r15, r9, r0, r4);
-        r10.maybeClearProfilesForUpgradesLI(r15, r9);
-        r20 = 0;
-        if (r23 == 0) goto L_0x05c3;
-    L_0x045b:
-        if (r13 != 0) goto L_0x05c3;
-    L_0x045d:
-        if (r14 == 0) goto L_0x05c3;
-    L_0x045f:
-        r0 = r15.isSystem();
-        if (r0 != 0) goto L_0x05c3;
-    L_0x0465:
-        r0 = r9.mSigningDetails;
-        r1 = r15.signatures;
-        r1 = r1.mSigningDetails;
-        r3 = 1;
-        r0 = r0.checkCapability(r1, r3);
-        if (r0 != 0) goto L_0x050c;
-    L_0x0472:
-        r0 = r15.signatures;
-        r0 = r0.mSigningDetails;
-        r1 = r9.mSigningDetails;
-        r2 = 8;
-        r0 = r0.checkCapability(r1, r2);
-        if (r0 != 0) goto L_0x050c;
-    L_0x0480:
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r1 = "System package signature mismatch; name: ";
-        r0.append(r1);
-        r1 = r15.name;
-        r0.append(r1);
-        r0 = r0.toString();
-        r1 = 5;
-        com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(r1, r0);
-        r0 = r9.packageName;
-        r1 = "scanPackageInternalLI";
-        r2 = r10.freezePackage(r0, r1);
-        r0 = r9.packageName;	 Catch:{ Throwable -> 0x04f6, all -> 0x04e7 }
-        r21 = 0;
-        r22 = 1;
-        r24 = 0;
-        r25 = 0;
-        r26 = 0;
-        r27 = 0;
-        r28 = 0;
-        r1 = r10;
-        r34 = r2;
-        r2 = r0;
-        r0 = r3;
-        r3 = r21;
-        r21 = r4;
-        r4 = r22;
-        r19 = r5;
-        r5 = r24;
-        r22 = r6;
-        r6 = r25;
-        r25 = r7;
-        r24 = r39;
-        r7 = r26;
-        r8 = r27;
-        r9 = r28;
-        r1.deletePackageLIF(r2, r3, r4, r5, r6, r7, r8, r9);	 Catch:{ Throwable -> 0x04e2, all -> 0x04dd }
-        r1 = r34;
-        if (r1 == 0) goto L_0x04d8;
-    L_0x04d4:
-        r2 = 0;
-        $closeResource(r2, r1);
-    L_0x04d8:
-        r15 = 0;
-        r9 = r37;
-        goto L_0x05ce;
-    L_0x04dd:
-        r0 = move-exception;
-        r1 = r34;
-        r2 = 0;
-        goto L_0x0506;
-    L_0x04e2:
-        r0 = move-exception;
-        r1 = r34;
-        r5 = r0;
-        goto L_0x0503;
-    L_0x04e7:
-        r0 = move-exception;
-        r1 = r2;
-        r21 = r4;
-        r22 = r6;
-        r25 = r7;
-        r2 = r19;
-        r24 = r39;
-        r19 = r5;
-        goto L_0x0506;
-    L_0x04f6:
-        r0 = move-exception;
-        r1 = r2;
-        r21 = r4;
-        r19 = r5;
-        r22 = r6;
-        r25 = r7;
-        r24 = r39;
-        r5 = r0;
-    L_0x0503:
-        throw r5;	 Catch:{ all -> 0x0504 }
-    L_0x0504:
-        r0 = move-exception;
-        r2 = r5;
-    L_0x0506:
-        if (r1 == 0) goto L_0x050b;
-    L_0x0508:
-        $closeResource(r2, r1);
-    L_0x050b:
-        throw r0;
-    L_0x050c:
-        r0 = r3;
-        r21 = r4;
-        r19 = r5;
-        r22 = r6;
-        r25 = r7;
-        r24 = r39;
-        if (r17 == 0) goto L_0x0578;
-    L_0x0519:
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "System package enabled; name: ";
-        r1.append(r2);
-        r2 = r15.name;
-        r1.append(r2);
-        r2 = "; ";
-        r1.append(r2);
-        r2 = r15.versionCode;
-        r1.append(r2);
-        r2 = " --> ";
-        r1.append(r2);
-        r2 = r37.getLongVersionCode();
-        r1.append(r2);
-        r2 = "; ";
-        r1.append(r2);
-        r2 = r15.codePathString;
-        r1.append(r2);
-        r2 = " --> ";
-        r1.append(r2);
-        r9 = r37;
-        r2 = r9.codePath;
-        r1.append(r2);
-        r1 = r1.toString();
-        r2 = 5;
-        com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(r2, r1);
-        r1 = r10.packageFlagsToInstallFlags(r15);
-        r2 = r15.codePathString;
-        r3 = r15.resourcePathString;
-        r4 = com.android.server.pm.InstructionSets.getAppDexInstructionSets(r15);
-        r1 = r10.createInstallArgsForExisting(r1, r2, r3, r4);
-        r2 = r10.mInstallLock;
-        monitor-enter(r2);
-        r1.cleanUpResourcesLI();
-        monitor-exit(r2);
-        goto L_0x05ce;
-    L_0x0575:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x0578:
-        r9 = r37;
-        r20 = 1;
-        r1 = r9.codePath;
-        r2 = r15.name;
-        r10.addUpdatedRemoveableAppFlag(r1, r2);
-        r1 = 4;
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "System package disabled; name: ";
-        r2.append(r3);
-        r3 = r15.name;
-        r2.append(r3);
-        r3 = "; old: ";
-        r2.append(r3);
-        r3 = r15.codePathString;
-        r2.append(r3);
-        r3 = " @ ";
-        r2.append(r3);
-        r3 = r15.versionCode;
-        r2.append(r3);
-        r3 = "; new: ";
-        r2.append(r3);
-        r3 = r9.codePath;
-        r2.append(r3);
-        r3 = " @ ";
-        r2.append(r3);
-        r3 = r9.codePath;
-        r2.append(r3);
-        r2 = r2.toString();
-        com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(r1, r2);
-        goto L_0x05ce;
-    L_0x05c3:
-        r21 = r4;
-        r19 = r5;
-        r22 = r6;
-        r25 = r7;
-        r0 = 1;
-        r24 = r39;
-    L_0x05ce:
-        r4 = r24 | 2;
-        r1 = r10;
-        r2 = r9;
-        r3 = r38;
-        r5 = r40;
-        r7 = r42;
-        r8 = r25;
-        r1 = r1.scanPackageNewLI(r2, r3, r4, r5, r7, r8);
-        if (r20 == 0) goto L_0x05ef;
-    L_0x05e0:
-        r2 = r10.mPackages;
-        monitor-enter(r2);
-        r3 = r10.mSettings;
-        r4 = r9.packageName;
-        r3.disableSystemPackageLPw(r4, r0);
-        monitor-exit(r2);
-        goto L_0x05ef;
-    L_0x05ec:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x05ef:
-        r10.addPreinstalledPkgToList(r1);
-        return r1;
-    L_0x05f3:
-        r0 = move-exception;
-        r24 = r7;
-    L_0x05f6:
-        monitor-exit(r4);	 Catch:{ all -> 0x05f8 }
-        throw r0;
-    L_0x05f8:
-        r0 = move-exception;
-        goto L_0x05f6;
-    L_0x05fa:
-        monitor-exit(r3);	 Catch:{ all -> 0x05fc }
-        throw r0;
-    L_0x05fc:
-        r0 = move-exception;
-        goto L_0x05fa;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.PackageManagerService.addForInitLI(android.content.pm.PackageParser$Package, int, int, long, android.os.UserHandle, int):android.content.pm.PackageParser$Package");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void handlePackagePostInstall(com.android.server.pm.PackageManagerService.PackageInstalledInfo r31, boolean r32, boolean r33, boolean r34, java.lang.String[] r35, boolean r36, java.lang.String r37, android.content.pm.IPackageInstallObserver2 r38) {
-        /*
-        r30 = this;
-        r10 = r30;
-        r11 = r31;
-        r12 = r38;
-        r0 = r11.returnCode;
-        r13 = 1;
-        if (r0 != r13) goto L_0x0330;
-    L_0x000b:
-        r0 = r11.removedInfo;
-        if (r0 == 0) goto L_0x0017;
-    L_0x000f:
-        r0 = r11.removedInfo;
-        r14 = r33;
-        r0.sendPackageRemovedBroadcasts(r14);
-        goto L_0x0019;
-    L_0x0017:
-        r14 = r33;
-    L_0x0019:
-        if (r32 == 0) goto L_0x002d;
-    L_0x001b:
-        r6 = android.os.Binder.getCallingUid();
-        r0 = r10.mPermissionManager;
-        r1 = r11.pkg;
-        r2 = r11.newUsers;
-        r5 = r10.mPermissionCallback;
-        r3 = r35;
-        r4 = r6;
-        r0.grantRequestedRuntimePermissions(r1, r2, r3, r4, r5);
-    L_0x002d:
-        r0 = r11.removedInfo;
-        if (r0 == 0) goto L_0x0039;
-    L_0x0031:
-        r0 = r11.removedInfo;
-        r0 = r0.removedPackage;
-        if (r0 == 0) goto L_0x0039;
-    L_0x0037:
-        r0 = r13;
-        goto L_0x003a;
-    L_0x0039:
-        r0 = 0;
-    L_0x003a:
-        r16 = r0;
-        r0 = r11.installerPackageName;
-        if (r0 == 0) goto L_0x0043;
-    L_0x0040:
-        r0 = r11.installerPackageName;
-        goto L_0x004d;
-    L_0x0043:
-        r0 = r11.removedInfo;
-        if (r0 == 0) goto L_0x004c;
-    L_0x0047:
-        r0 = r11.removedInfo;
-        r0 = r0.installerPackageName;
-        goto L_0x004d;
-    L_0x004c:
-        r0 = 0;
-    L_0x004d:
-        r7 = r0;
-        r0 = r11.pkg;
-        r0 = r0.parentPackage;
-        if (r0 == 0) goto L_0x0061;
-    L_0x0054:
-        r0 = android.os.Binder.getCallingUid();
-        r1 = r10.mPermissionManager;
-        r2 = r11.pkg;
-        r3 = r10.mPermissionCallback;
-        r1.grantRuntimePermissionsGrantedToDisabledPackage(r2, r0, r3);
-    L_0x0061:
-        r1 = r10.mPackages;
-        monitor-enter(r1);
-        r0 = r10.mInstantAppRegistry;	 Catch:{ all -> 0x0328 }
-        r2 = r11.pkg;	 Catch:{ all -> 0x0328 }
-        r3 = r11.newUsers;	 Catch:{ all -> 0x0328 }
-        r0.onPackageInstalledLPw(r2, r3);	 Catch:{ all -> 0x0328 }
-        monitor-exit(r1);	 Catch:{ all -> 0x0328 }
-        r0 = r11.pkg;
-        r0 = r0.applicationInfo;
-        r6 = r0.packageName;
-        r0 = EMPTY_INT_ARRAY;
-        r1 = EMPTY_INT_ARRAY;
-        r2 = EMPTY_INT_ARRAY;
-        r3 = EMPTY_INT_ARRAY;
-        r4 = r11.origUsers;
-        if (r4 == 0) goto L_0x0088;
-    L_0x0080:
-        r4 = r11.origUsers;
-        r4 = r4.length;
-        if (r4 != 0) goto L_0x0086;
-    L_0x0085:
-        goto L_0x0088;
-    L_0x0086:
-        r4 = 0;
-        goto L_0x0089;
-    L_0x0088:
-        r4 = r13;
-    L_0x0089:
-        r17 = r4;
-        r4 = r11.pkg;
-        r4 = r4.mExtras;
-        r5 = r4;
-        r5 = (com.android.server.pm.PackageSetting) r5;
-        r4 = r11.newUsers;
-        r8 = r4.length;
-        r13 = r2;
-        r2 = r0;
-        r0 = 0;
-        r29 = r3;
-        r3 = r1;
-        r1 = r29;
-    L_0x009d:
-        if (r0 >= r8) goto L_0x00f7;
-    L_0x009f:
-        r9 = r4[r0];
-        r20 = r5.getInstantApp(r9);
-        if (r17 == 0) goto L_0x00b9;
-    L_0x00a7:
-        if (r20 == 0) goto L_0x00b4;
-    L_0x00a9:
-        r3 = com.android.internal.util.ArrayUtils.appendInt(r3, r9);
-    L_0x00ad:
-        r22 = r4;
-        r23 = r5;
-        r24 = r7;
-        goto L_0x00ee;
-    L_0x00b4:
-        r2 = com.android.internal.util.ArrayUtils.appendInt(r2, r9);
-        goto L_0x00ad;
-    L_0x00b9:
-        r21 = 1;
-        r22 = r4;
-        r4 = r11.origUsers;
-        r23 = r5;
-        r5 = r4.length;
-        r24 = r7;
-        r7 = 0;
-    L_0x00c5:
-        if (r7 >= r5) goto L_0x00d5;
-    L_0x00c7:
-        r25 = r5;
-        r5 = r4[r7];
-        if (r5 != r9) goto L_0x00d0;
-    L_0x00cd:
-        r21 = 0;
-        goto L_0x00d5;
-    L_0x00d0:
-        r7 = r7 + 1;
-        r5 = r25;
-        goto L_0x00c5;
-    L_0x00d5:
-        if (r21 == 0) goto L_0x00e3;
-    L_0x00d7:
-        if (r20 == 0) goto L_0x00de;
-    L_0x00d9:
-        r3 = com.android.internal.util.ArrayUtils.appendInt(r3, r9);
-        goto L_0x00ee;
-    L_0x00de:
-        r2 = com.android.internal.util.ArrayUtils.appendInt(r2, r9);
-        goto L_0x00ee;
-    L_0x00e3:
-        if (r20 == 0) goto L_0x00ea;
-    L_0x00e5:
-        r1 = com.android.internal.util.ArrayUtils.appendInt(r1, r9);
-        goto L_0x00ee;
-    L_0x00ea:
-        r13 = com.android.internal.util.ArrayUtils.appendInt(r13, r9);
-    L_0x00ee:
-        r0 = r0 + 1;
-        r4 = r22;
-        r5 = r23;
-        r7 = r24;
-        goto L_0x009d;
-    L_0x00f7:
-        r23 = r5;
-        r24 = r7;
-        r4 = 1;
-        r10.setNeedClearDeviceForCTS(r4, r6);
-        r10.updatePackageBlackListInfo(r6);	 Catch:{ Exception -> 0x0103 }
-        goto L_0x010d;
-    L_0x0103:
-        r0 = move-exception;
-        r4 = r0;
-        r4 = "PackageManager";
-        r5 = "update BlackList info failed";
-        android.util.Slog.e(r4, r5);
-    L_0x010d:
-        r0 = r11.pkg;
-        r0 = r0.staticSharedLibName;
-        if (r0 != 0) goto L_0x02a8;
-    L_0x0113:
-        r0 = r10.mProcessLoggingHandler;
-        r4 = r11.pkg;
-        r4 = r4.baseCodePath;
-        r0.invalidateProcessLoggingBaseApkHash(r4);
-        r10.sendIncompatibleNotificationIfNeeded(r6);
-        r0 = r11.uid;
-        r0 = android.os.UserHandle.getAppId(r0);
-        r4 = r11.pkg;
-        r4 = r4.applicationInfo;
-        r20 = r4.isSystemApp();
-        if (r20 != 0) goto L_0x0134;
-    L_0x012f:
-        if (r34 == 0) goto L_0x0132;
-    L_0x0131:
-        goto L_0x0134;
-    L_0x0132:
-        r4 = 0;
-        goto L_0x0135;
-    L_0x0134:
-        r4 = 1;
-    L_0x0135:
-        r22 = r1;
-        r1 = r10;
-        r9 = r2;
-        r2 = r6;
-        r8 = r3;
-        r3 = r4;
-        r4 = r34;
-        r5 = r0;
-        r7 = r6;
-        r6 = r9;
-        r26 = r7;
-        r14 = r24;
-        r7 = r8;
-        r1.sendPackageAddedForNewUsers(r2, r3, r4, r5, r6, r7);
-        r1 = new android.os.Bundle;
-        r2 = 1;
-        r1.<init>(r2);
-        r7 = r1;
-        r1 = "android.intent.extra.UID";
-        r3 = r11.uid;
-        r7.putInt(r1, r3);
-        if (r16 == 0) goto L_0x015e;
-    L_0x0159:
-        r1 = "android.intent.extra.REPLACING";
-        r7.putBoolean(r1, r2);
-    L_0x015e:
-        r2 = "android.intent.action.PACKAGE_ADDED";
-        r5 = 0;
-        r6 = 0;
-        r24 = 0;
-        r1 = r10;
-        r3 = r26;
-        r4 = r7;
-        r25 = r7;
-        r7 = r24;
-        r27 = r8;
-        r8 = r13;
-        r15 = r9;
-        r12 = 0;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-        if (r14 == 0) goto L_0x0188;
-    L_0x0178:
-        r2 = "android.intent.action.PACKAGE_ADDED";
-        r5 = 0;
-        r7 = 0;
-        r1 = r10;
-        r3 = r26;
-        r4 = r25;
-        r6 = r14;
-        r8 = r13;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-    L_0x0188:
-        r1 = r10.mHwPMSEx;
-        r2 = "add";
-        r3 = r11.pkg;
-        r3 = r3.applicationInfo;
-        r3 = r3.versionCode;
-        r9 = r26;
-        r1.updateNochScreenWhite(r9, r2, r3);
-        r1 = r10.mRequiredVerifierPackage;
-        if (r1 == 0) goto L_0x01a5;
-    L_0x019b:
-        r1 = r10.mRequiredVerifierPackage;
-        r1 = r1.equals(r14);
-        if (r1 != 0) goto L_0x01a5;
-    L_0x01a3:
-        r1 = 1;
-        goto L_0x01a6;
-    L_0x01a5:
-        r1 = r12;
-    L_0x01a6:
-        r18 = r1;
-        if (r18 == 0) goto L_0x01bd;
-    L_0x01aa:
-        r2 = "android.intent.action.PACKAGE_ADDED";
-        r5 = 0;
-        r6 = r10.mRequiredVerifierPackage;
-        r7 = 0;
-        r1 = r10;
-        r3 = r9;
-        r4 = r25;
-        r8 = r13;
-        r28 = r9;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-        goto L_0x01bf;
-    L_0x01bd:
-        r28 = r9;
-    L_0x01bf:
-        if (r16 == 0) goto L_0x020c;
-    L_0x01c1:
-        r2 = "android.intent.action.PACKAGE_REPLACED";
-        r5 = 0;
-        r6 = 0;
-        r7 = 0;
-        r1 = r10;
-        r3 = r28;
-        r4 = r25;
-        r8 = r13;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-        if (r14 == 0) goto L_0x01e3;
-    L_0x01d3:
-        r2 = "android.intent.action.PACKAGE_REPLACED";
-        r5 = 0;
-        r7 = 0;
-        r1 = r10;
-        r3 = r28;
-        r4 = r25;
-        r6 = r14;
-        r8 = r13;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-    L_0x01e3:
-        if (r18 == 0) goto L_0x01f6;
-    L_0x01e5:
-        r2 = "android.intent.action.PACKAGE_REPLACED";
-        r5 = 0;
-        r6 = r10.mRequiredVerifierPackage;
-        r7 = 0;
-        r1 = r10;
-        r3 = r28;
-        r4 = r25;
-        r8 = r13;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-    L_0x01f6:
-        r2 = "android.intent.action.MY_PACKAGE_REPLACED";
-        r3 = 0;
-        r4 = 0;
-        r5 = 0;
-        r7 = 0;
-        r1 = r10;
-        r6 = r28;
-        r8 = r13;
-        r9 = r22;
-        r1.sendPackageBroadcast(r2, r3, r4, r5, r6, r7, r8, r9);
-        r9 = r37;
-        r6 = r27;
-        r8 = r28;
-        goto L_0x024f;
-    L_0x020c:
-        if (r36 == 0) goto L_0x0249;
-    L_0x020e:
-        r1 = r11.pkg;
-        r1 = isSystemApp(r1);
-        if (r1 != 0) goto L_0x0249;
-    L_0x0216:
-        r1 = DEBUG_BACKUP;
-        if (r1 == 0) goto L_0x023f;
-    L_0x021a:
-        r1 = "PackageManager";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "Post-restore of ";
-        r2.append(r3);
-        r8 = r28;
-        r2.append(r8);
-        r3 = " sending FIRST_LAUNCH in ";
-        r2.append(r3);
-        r3 = java.util.Arrays.toString(r15);
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Slog.i(r1, r2);
-        goto L_0x0241;
-    L_0x023f:
-        r8 = r28;
-    L_0x0241:
-        r9 = r37;
-        r6 = r27;
-        r10.sendFirstLaunchBroadcast(r8, r9, r15, r6);
-        goto L_0x024f;
-    L_0x0249:
-        r9 = r37;
-        r6 = r27;
-        r8 = r28;
-    L_0x024f:
-        r1 = r11.pkg;
-        r1 = r1.isForwardLocked();
-        if (r1 != 0) goto L_0x0263;
-    L_0x0257:
-        r1 = r11.pkg;
-        r1 = isExternal(r1);
-        if (r1 == 0) goto L_0x0260;
-    L_0x025f:
-        goto L_0x0263;
-    L_0x0260:
-        r26 = r6;
-        goto L_0x02b3;
-    L_0x0263:
-        r1 = DEBUG_INSTALL;
-        if (r1 == 0) goto L_0x0285;
-    L_0x0267:
-        r1 = "PackageManager";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "upgrading pkg ";
-        r2.append(r3);
-        r3 = r11.pkg;
-        r2.append(r3);
-        r3 = " is ASEC-hosted -> AVAILABLE";
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Slog.i(r1, r2);
-    L_0x0285:
-        r1 = 1;
-        r5 = new int[r1];
-        r2 = r11.pkg;
-        r2 = r2.applicationInfo;
-        r2 = r2.uid;
-        r5[r12] = r2;
-        r2 = new java.util.ArrayList;
-        r2.<init>(r1);
-        r4 = r2;
-        r4.add(r8);
-        r2 = 1;
-        r3 = 1;
-        r19 = 0;
-        r1 = r10;
-        r24 = r4;
-        r26 = r6;
-        r6 = r19;
-        r1.sendResourcesChangedBroadcast(r2, r3, r4, r5, r6);
-        goto L_0x02b3;
-    L_0x02a8:
-        r9 = r37;
-        r22 = r1;
-        r15 = r2;
-        r26 = r3;
-        r8 = r6;
-        r14 = r24;
-        r12 = 0;
-    L_0x02b3:
-        if (r15 == 0) goto L_0x02dc;
-    L_0x02b5:
-        r0 = r15.length;
-        if (r0 <= 0) goto L_0x02dc;
-    L_0x02b8:
-        r1 = r10.mPackages;
-        monitor-enter(r1);
-        r0 = r15.length;
-        r2 = r12;
-    L_0x02bd:
-        if (r2 >= r0) goto L_0x02d7;
-    L_0x02bf:
-        r3 = r15[r2];
-        r4 = r10.packageIsBrowser(r8, r3);
-        if (r4 == 0) goto L_0x02ce;
-    L_0x02c7:
-        r4 = r10.mSettings;
-        r5 = 0;
-        r4.setDefaultBrowserPackageNameLPw(r5, r3);
-        goto L_0x02cf;
-    L_0x02ce:
-        r5 = 0;
-    L_0x02cf:
-        r4 = r10.mSettings;
-        r4.applyPendingPermissionGrantsLPw(r8, r3);
-        r2 = r2 + 1;
-        goto L_0x02bd;
-    L_0x02d7:
-        monitor-exit(r1);
-        goto L_0x02dc;
-    L_0x02d9:
-        r0 = move-exception;
-        monitor-exit(r1);
-        throw r0;
-    L_0x02dc:
-        if (r17 == 0) goto L_0x02e3;
-    L_0x02de:
-        if (r16 != 0) goto L_0x02e3;
-    L_0x02e0:
-        r10.notifyPackageAdded(r8);
-    L_0x02e3:
-        r0 = 3110; // 0xc26 float:4.358E-42 double:1.5365E-320;
-        r1 = r30.getUnknownSourcesSettings();
-        android.util.EventLog.writeEvent(r0, r1);
-        r0 = r11.removedInfo;
-        if (r0 == 0) goto L_0x030d;
-    L_0x02f0:
-        r0 = r11.removedInfo;
-        r0 = r0.args;
-        if (r0 == 0) goto L_0x030d;
-    L_0x02f6:
-        r0 = java.lang.Runtime.getRuntime();
-        r0.gc();
-        r1 = r10.mInstallLock;
-        monitor-enter(r1);
-        r0 = r11.removedInfo;
-        r0 = r0.args;
-        r2 = 1;
-        r0.doPostDeleteLI(r2);
-        monitor-exit(r1);
-        goto L_0x0314;
-    L_0x030a:
-        r0 = move-exception;
-        monitor-exit(r1);
-        throw r0;
-    L_0x030d:
-        r0 = dalvik.system.VMRuntime.getRuntime();
-        r0.requestConcurrentGC();
-    L_0x0314:
-        r0 = r15.length;
-        r1 = r12;
-    L_0x0316:
-        if (r1 >= r0) goto L_0x0332;
-    L_0x0318:
-        r2 = r15[r1];
-        r3 = r10.getPackageInfo(r8, r12, r2);
-        if (r3 == 0) goto L_0x0325;
-    L_0x0320:
-        r4 = r10.mDexManager;
-        r4.notifyPackageInstalled(r3, r2);
-    L_0x0325:
-        r1 = r1 + 1;
-        goto L_0x0316;
-    L_0x0328:
-        r0 = move-exception;
-        r9 = r37;
-        r14 = r7;
-    L_0x032c:
-        monitor-exit(r1);	 Catch:{ all -> 0x032e }
-        throw r0;
-    L_0x032e:
-        r0 = move-exception;
-        goto L_0x032c;
-    L_0x0330:
-        r9 = r37;
-    L_0x0332:
-        r1 = r38;
-        if (r1 == 0) goto L_?;
-    L_0x0336:
-        r0 = r30.extrasForInstallResult(r31);	 Catch:{ RemoteException -> 0x0344 }
-        r2 = r11.name;	 Catch:{ RemoteException -> 0x0344 }
-        r3 = r11.returnCode;	 Catch:{ RemoteException -> 0x0344 }
-        r4 = r11.returnMsg;	 Catch:{ RemoteException -> 0x0344 }
-        r1.onPackageInstalled(r2, r3, r4, r0);	 Catch:{ RemoteException -> 0x0344 }
-        goto L_0x034c;
-    L_0x0344:
-        r0 = move-exception;
-        r2 = "PackageManager";
-        r3 = "Observer no longer exists.";
-        android.util.Slog.i(r2, r3);
-    L_0x034c:
-        return;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.PackageManagerService.handlePackagePostInstall(com.android.server.pm.PackageManagerService$PackageInstalledInfo, boolean, boolean, boolean, java.lang.String[], boolean, java.lang.String, android.content.pm.IPackageInstallObserver2):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void setEnabledSetting(java.lang.String r40, java.lang.String r41, int r42, int r43, int r44, java.lang.String r45) {
-        /*
-        r39 = this;
-        r8 = r39;
-        r9 = r40;
-        r10 = r41;
-        r11 = r42;
-        r12 = r43;
-        r13 = r44;
-        r0 = 3;
-        r14 = 1;
-        if (r11 == 0) goto L_0x0032;
-    L_0x0010:
-        if (r11 == r14) goto L_0x0032;
-    L_0x0012:
-        r1 = 2;
-        if (r11 == r1) goto L_0x0032;
-    L_0x0015:
-        if (r11 == r0) goto L_0x0032;
-    L_0x0017:
-        r1 = 4;
-        if (r11 != r1) goto L_0x001b;
-    L_0x001a:
-        goto L_0x0032;
-    L_0x001b:
-        r0 = new java.lang.IllegalArgumentException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Invalid new component state: ";
-        r1.append(r2);
-        r1.append(r11);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-    L_0x0032:
-        r1 = 206; // 0xce float:2.89E-43 double:1.02E-321;
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "setEnabledSetting pkg:";
-        r2.append(r3);
-        r2.append(r9);
-        r3 = ", className:";
-        r2.append(r3);
-        r2.append(r10);
-        r3 = ", newState:";
-        r2.append(r3);
-        r2.append(r11);
-        r3 = ", flags:";
-        r2.append(r3);
-        r2.append(r12);
-        r3 = ", userId:";
-        r2.append(r3);
-        r2.append(r13);
-        r3 = ", CallingPid:";
-        r2.append(r3);
-        r3 = android.os.Binder.getCallingPid();
-        r2.append(r3);
-        r3 = ", CallingUid:";
-        r2.append(r3);
-        r3 = android.os.Binder.getCallingUid();
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Flog.i(r1, r2);
-        r15 = android.os.Binder.getCallingUid();
-        r1 = 1000; // 0x3e8 float:1.401E-42 double:4.94E-321;
-        if (r15 != r1) goto L_0x008b;
-    L_0x0089:
-        r1 = 0;
-        goto L_0x0093;
-    L_0x008b:
-        r1 = r8.mContext;
-        r2 = "android.permission.CHANGE_COMPONENT_ENABLED_STATE";
-        r1 = r1.checkCallingOrSelfPermission(r2);
-    L_0x0093:
-        r16 = r1;
-        r1 = r8.mPermissionManager;
-        r4 = 0;
-        r5 = 1;
-        r6 = "set enabled";
-        r2 = r15;
-        r3 = r13;
-        r1.enforceCrossUserPermission(r2, r3, r4, r5, r6);
-        r17 = 0;
-        if (r16 != 0) goto L_0x00a7;
-    L_0x00a5:
-        r1 = r14;
-        goto L_0x00a9;
-    L_0x00a7:
-        r1 = r17;
-    L_0x00a9:
-        r18 = r1;
-        r19 = 0;
-        if (r10 != 0) goto L_0x00b1;
-    L_0x00af:
-        r1 = r14;
-        goto L_0x00b3;
-    L_0x00b1:
-        r1 = r17;
-    L_0x00b3:
-        r20 = r1;
-        r1 = r8.getInstantAppPackageName(r15);
-        if (r1 == 0) goto L_0x00bd;
-    L_0x00bb:
-        r1 = r14;
-        goto L_0x00bf;
-    L_0x00bd:
-        r1 = r17;
-    L_0x00bf:
-        r21 = r1;
-        if (r20 == 0) goto L_0x00c5;
-    L_0x00c3:
-        r1 = r9;
-        goto L_0x00c6;
-    L_0x00c5:
-        r1 = r10;
-    L_0x00c6:
-        r7 = r1;
-        r22 = -1;
-        r1 = r8.mPackages;
-        monitor-enter(r1);
-        r2 = r8.mSettings;	 Catch:{ all -> 0x06a3 }
-        r2 = r2.mPackages;	 Catch:{ all -> 0x06a3 }
-        r2 = r2.get(r9);	 Catch:{ all -> 0x06a3 }
-        r2 = (com.android.server.pm.PackageSetting) r2;	 Catch:{ all -> 0x06a3 }
-        r5 = r2;
-        if (r5 != 0) goto L_0x016d;
-    L_0x00d9:
-        if (r21 != 0) goto L_0x0113;
-    L_0x00db:
-        if (r10 != 0) goto L_0x00f4;
-    L_0x00dd:
-        r0 = new java.lang.IllegalArgumentException;	 Catch:{ all -> 0x0166 }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0166 }
-        r2.<init>();	 Catch:{ all -> 0x0166 }
-        r3 = "Unknown package: ";	 Catch:{ all -> 0x0166 }
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r2.append(r9);	 Catch:{ all -> 0x0166 }
-        r2 = r2.toString();	 Catch:{ all -> 0x0166 }
-        r0.<init>(r2);	 Catch:{ all -> 0x0166 }
-        throw r0;	 Catch:{ all -> 0x0166 }
-    L_0x00f4:
-        r0 = new java.lang.IllegalArgumentException;	 Catch:{ all -> 0x0166 }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0166 }
-        r2.<init>();	 Catch:{ all -> 0x0166 }
-        r3 = "Unknown component: ";	 Catch:{ all -> 0x0166 }
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r2.append(r9);	 Catch:{ all -> 0x0166 }
-        r3 = "/";	 Catch:{ all -> 0x0166 }
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r2.append(r10);	 Catch:{ all -> 0x0166 }
-        r2 = r2.toString();	 Catch:{ all -> 0x0166 }
-        r0.<init>(r2);	 Catch:{ all -> 0x0166 }
-        throw r0;	 Catch:{ all -> 0x0166 }
-    L_0x0113:
-        r0 = new java.lang.SecurityException;	 Catch:{ all -> 0x0166 }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0166 }
-        r2.<init>();	 Catch:{ all -> 0x0166 }
-        r3 = "Attempt to change component state; pid=";	 Catch:{ all -> 0x0166 }
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r3 = android.os.Binder.getCallingPid();	 Catch:{ all -> 0x0166 }
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r3 = ", uid=";	 Catch:{ all -> 0x0166 }
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r2.append(r15);	 Catch:{ all -> 0x0166 }
-        if (r10 != 0) goto L_0x0142;	 Catch:{ all -> 0x0166 }
-    L_0x0130:
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0166 }
-        r3.<init>();	 Catch:{ all -> 0x0166 }
-        r4 = ", package=";	 Catch:{ all -> 0x0166 }
-        r3.append(r4);	 Catch:{ all -> 0x0166 }
-        r3.append(r9);	 Catch:{ all -> 0x0166 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0166 }
-        goto L_0x015b;	 Catch:{ all -> 0x0166 }
-    L_0x0142:
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0166 }
-        r3.<init>();	 Catch:{ all -> 0x0166 }
-        r4 = ", component=";	 Catch:{ all -> 0x0166 }
-        r3.append(r4);	 Catch:{ all -> 0x0166 }
-        r3.append(r9);	 Catch:{ all -> 0x0166 }
-        r4 = "/";	 Catch:{ all -> 0x0166 }
-        r3.append(r4);	 Catch:{ all -> 0x0166 }
-        r3.append(r10);	 Catch:{ all -> 0x0166 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0166 }
-    L_0x015b:
-        r2.append(r3);	 Catch:{ all -> 0x0166 }
-        r2 = r2.toString();	 Catch:{ all -> 0x0166 }
-        r0.<init>(r2);	 Catch:{ all -> 0x0166 }
-        throw r0;	 Catch:{ all -> 0x0166 }
-    L_0x0166:
-        r0 = move-exception;
-        r6 = r12;
-        r34 = r15;
-        r15 = r7;
-        goto L_0x06a8;
-    L_0x016d:
-        monitor-exit(r1);	 Catch:{ all -> 0x06a3 }
-        r1 = r5.appId;
-        r1 = android.os.UserHandle.isSameApp(r15, r1);
-        if (r1 != 0) goto L_0x01f2;
-    L_0x0176:
-        if (r18 == 0) goto L_0x019f;
-    L_0x0178:
-        r1 = r8.filterAppAccessLPr(r5, r15, r13);
-        if (r1 == 0) goto L_0x017f;
-    L_0x017e:
-        goto L_0x019f;
-    L_0x017f:
-        r1 = r8.mProtectedPackages;
-        r1 = r1.isPackageStateProtected(r13, r9);
-        if (r1 != 0) goto L_0x0188;
-    L_0x0187:
-        goto L_0x01f2;
-    L_0x0188:
-        r0 = new java.lang.SecurityException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Cannot disable a protected package: ";
-        r1.append(r2);
-        r1.append(r9);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-    L_0x019f:
-        r0 = new java.lang.SecurityException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Attempt to change component state; pid=";
-        r1.append(r2);
-        r2 = android.os.Binder.getCallingPid();
-        r1.append(r2);
-        r2 = ", uid=";
-        r1.append(r2);
-        r1.append(r15);
-        if (r10 != 0) goto L_0x01ce;
-    L_0x01bc:
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = ", package=";
-        r2.append(r3);
-        r2.append(r9);
-        r2 = r2.toString();
-        goto L_0x01e7;
-    L_0x01ce:
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = ", component=";
-        r2.append(r3);
-        r2.append(r9);
-        r3 = "/";
-        r2.append(r3);
-        r2.append(r10);
-        r2 = r2.toString();
-    L_0x01e7:
-        r1.append(r2);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-    L_0x01f2:
-        r2 = r8.mPackages;
-        monitor-enter(r2);
-        r1 = 2000; // 0x7d0 float:2.803E-42 double:9.88E-321;
-        if (r15 != r1) goto L_0x0241;
-    L_0x01f9:
-        r1 = r5.pkgFlags;	 Catch:{ all -> 0x0239 }
-        r1 = r1 & 256;	 Catch:{ all -> 0x0239 }
-        if (r1 != 0) goto L_0x0241;	 Catch:{ all -> 0x0239 }
-    L_0x01ff:
-        r1 = r5.getEnabled(r13);	 Catch:{ all -> 0x0239 }
-        if (r10 != 0) goto L_0x0212;	 Catch:{ all -> 0x0239 }
-    L_0x0205:
-        if (r1 == r0) goto L_0x020b;	 Catch:{ all -> 0x0239 }
-    L_0x0207:
-        if (r1 == 0) goto L_0x020b;	 Catch:{ all -> 0x0239 }
-    L_0x0209:
-        if (r1 != r14) goto L_0x0212;	 Catch:{ all -> 0x0239 }
-    L_0x020b:
-        if (r11 == r0) goto L_0x0241;	 Catch:{ all -> 0x0239 }
-    L_0x020d:
-        if (r11 == 0) goto L_0x0241;	 Catch:{ all -> 0x0239 }
-    L_0x020f:
-        if (r11 != r14) goto L_0x0212;	 Catch:{ all -> 0x0239 }
-    L_0x0211:
-        goto L_0x0241;	 Catch:{ all -> 0x0239 }
-    L_0x0212:
-        r0 = new java.lang.SecurityException;	 Catch:{ all -> 0x0239 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0239 }
-        r3.<init>();	 Catch:{ all -> 0x0239 }
-        r4 = "Shell cannot change component state for ";	 Catch:{ all -> 0x0239 }
-        r3.append(r4);	 Catch:{ all -> 0x0239 }
-        r3.append(r9);	 Catch:{ all -> 0x0239 }
-        r4 = "/";	 Catch:{ all -> 0x0239 }
-        r3.append(r4);	 Catch:{ all -> 0x0239 }
-        r3.append(r10);	 Catch:{ all -> 0x0239 }
-        r4 = " to ";	 Catch:{ all -> 0x0239 }
-        r3.append(r4);	 Catch:{ all -> 0x0239 }
-        r3.append(r11);	 Catch:{ all -> 0x0239 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0239 }
-        r0.<init>(r3);	 Catch:{ all -> 0x0239 }
-        throw r0;	 Catch:{ all -> 0x0239 }
-    L_0x0239:
-        r0 = move-exception;
-        r6 = r12;
-        r34 = r15;
-        r15 = r7;
-        r7 = r5;
-        goto L_0x069f;
-    L_0x0241:
-        monitor-exit(r2);	 Catch:{ all -> 0x0699 }
-        r0 = 16;
-        if (r10 != 0) goto L_0x0540;
-    L_0x0246:
-        r1 = r8.mPackages;
-        monitor-enter(r1);
-        r2 = r5.getEnabled(r13);	 Catch:{ all -> 0x0537 }
-        if (r2 != r11) goto L_0x0258;
-    L_0x024f:
-        monitor-exit(r1);	 Catch:{ all -> 0x0251 }
-        return;
-    L_0x0251:
-        r0 = move-exception;
-        r12 = r5;
-        r34 = r15;
-        r15 = r7;
-        goto L_0x053c;
-    L_0x0258:
-        monitor-exit(r1);	 Catch:{ all -> 0x0537 }
-        r6 = r5.pkg;
-        r1 = r6.isStub;
-        if (r1 == 0) goto L_0x0267;
-    L_0x025f:
-        r1 = r6.isSystem();
-        if (r1 == 0) goto L_0x0267;
-    L_0x0265:
-        r1 = r14;
-        goto L_0x0269;
-    L_0x0267:
-        r1 = r17;
-    L_0x0269:
-        r23 = r1;
-        if (r23 == 0) goto L_0x051b;
-    L_0x026d:
-        if (r11 == 0) goto L_0x0279;
-    L_0x026f:
-        if (r11 != r14) goto L_0x0272;
-    L_0x0271:
-        goto L_0x0279;
-    L_0x0272:
-        r12 = r5;
-        r4 = r6;
-        r34 = r15;
-        r15 = r7;
-        goto L_0x0520;
-    L_0x0279:
-        r4 = r8.decompressPackage(r6);
-        if (r4 != 0) goto L_0x0298;
-    L_0x027f:
-        r0 = "PackageManager";
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "couldn't decompress pkg: ";
-        r1.append(r2);
-        r2 = r5.name;
-        r1.append(r2);
-        r1 = r1.toString();
-        android.util.Slog.e(r0, r1);
-        return;
-    L_0x0298:
-        r1 = new android.content.pm.PackageParser;
-        r1.<init>();
-        r3 = r1;
-        r1 = r8.mSeparateProcesses;
-        r3.setSeparateProcesses(r1);
-        r1 = r8.mMetrics;
-        r3.setDisplayMetrics(r1);
-        r1 = r8.mPackageParserCallback;
-        r3.setCallback(r1);
-        r1 = r8.mDefParseFlags;	 Catch:{ PackageParserException -> 0x04f8 }
-        r1 = r1 | r14;	 Catch:{ PackageParserException -> 0x04f8 }
-        r0 = r0 | r1;	 Catch:{ PackageParserException -> 0x04f8 }
-        r1 = r3.parsePackage(r4, r0);	 Catch:{ PackageParserException -> 0x04f8 }
-        r2 = r1;
-        r1 = r8.mInstallLock;
-        monitor-enter(r1);
-        r8.removePackageLI(r6, r14);	 Catch:{ all -> 0x04e6 }
-        r14 = r8.mPackages;	 Catch:{ all -> 0x04e6 }
-        monitor-enter(r14);	 Catch:{ all -> 0x04e6 }
-        r8.disableSystemPackageLPw(r6, r2);	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        monitor-exit(r14);	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r0 = r6.packageName;	 Catch:{ PackageManagerException -> 0x039f, all -> 0x038f }
-        r14 = "setEnabledSetting";	 Catch:{ PackageManagerException -> 0x039f, all -> 0x038f }
-        r0 = r8.freezePackage(r0, r14);	 Catch:{ PackageManagerException -> 0x039f, all -> 0x038f }
-        r14 = r0;
-        r0 = r8.mDefParseFlags;	 Catch:{ Throwable -> 0x036a, all -> 0x0358 }
-        r24 = -2147483648; // 0xffffffff80000000 float:-0.0 double:NaN;
-        r0 = r0 | r24;
-        r24 = r0 | 64;
-        r0 = 0;
-        r25 = 0;
-        r27 = 0;
-        r28 = r1;
-        r1 = r8;
-        r29 = r2;
-        r2 = r4;
-        r30 = r3;
-        r3 = r24;
-        r31 = r4;
-        r4 = r0;
-        r32 = r5;
-        r33 = r6;
-        r5 = r25;
-        r34 = r15;
-        r15 = r7;
-        r7 = r27;
-        r0 = r1.scanPackageTracedLI(r2, r3, r4, r5, r7);	 Catch:{ Throwable -> 0x0355, all -> 0x0352 }
-        r7 = r0;	 Catch:{ Throwable -> 0x0355, all -> 0x0352 }
-        r8.prepareAppDataAfterInstallLIF(r7);	 Catch:{ Throwable -> 0x0355, all -> 0x0352 }
-        r6 = r8.mPackages;	 Catch:{ Throwable -> 0x0355, all -> 0x0352 }
-        monitor-enter(r6);	 Catch:{ Throwable -> 0x0355, all -> 0x0352 }
-        r1 = 0;
-        r8.updateSharedLibrariesLPr(r7, r1);	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        goto L_0x0313;
-    L_0x0305:
-        r0 = move-exception;
-        r25 = r6;
-        goto L_0x034e;
-    L_0x0309:
-        r0 = move-exception;
-        r1 = r0;
-        r1 = "PackageManager";	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r2 = "updateAllSharedLibrariesLPw failed: ";	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        android.util.Slog.e(r1, r2, r0);	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-    L_0x0313:
-        r1 = r8.mPermissionManager;	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r2 = r7.packageName;	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r4 = 1;	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r0 = r8.mPackages;	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r5 = r0.values();	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r0 = r8.mPermissionCallback;	 Catch:{ PackageManagerException -> 0x0309, all -> 0x0305 }
-        r3 = r7;
-        r25 = r6;
-        r6 = r0;
-        r1.updatePermissions(r2, r3, r4, r5, r6);	 Catch:{ all -> 0x0350 }
-        r0 = r8.mSettings;	 Catch:{ all -> 0x0350 }
-        r0.writeLPr();	 Catch:{ all -> 0x0350 }
-        monitor-exit(r25);	 Catch:{ all -> 0x0350 }
-        if (r14 == 0) goto L_0x0333;
-    L_0x032f:
-        r1 = 0;
-        $closeResource(r1, r14);	 Catch:{ PackageManagerException -> 0x038c }
-    L_0x0333:
-        r0 = r7;
-        r1 = -1;
-        r2 = 515; // 0x203 float:7.22E-43 double:2.544E-321;
-        r8.clearAppDataLIF(r0, r1, r2);	 Catch:{ all -> 0x0383 }
-        r1 = r8.mDexManager;	 Catch:{ all -> 0x0383 }
-        r2 = r0.packageName;	 Catch:{ all -> 0x0383 }
-        r3 = r0.baseCodePath;	 Catch:{ all -> 0x0383 }
-        r4 = r0.splitCodePaths;	 Catch:{ all -> 0x0383 }
-        r1.notifyPackageUpdated(r2, r3, r4);	 Catch:{ all -> 0x0383 }
-        monitor-exit(r28);	 Catch:{ all -> 0x0383 }
-        r12 = r32;
-        r4 = r33;
-        goto L_0x0520;
-    L_0x034e:
-        monitor-exit(r25);	 Catch:{ all -> 0x0350 }
-        throw r0;	 Catch:{ Throwable -> 0x0355, all -> 0x0352 }
-    L_0x0350:
-        r0 = move-exception;
-        goto L_0x034e;
-    L_0x0352:
-        r0 = move-exception;
-        r1 = 0;
-        goto L_0x037d;
-    L_0x0355:
-        r0 = move-exception;
-        r1 = r0;
-        goto L_0x037b;
-    L_0x0358:
-        r0 = move-exception;
-        r28 = r1;
-        r29 = r2;
-        r30 = r3;
-        r31 = r4;
-        r32 = r5;
-        r33 = r6;
-        r34 = r15;
-        r15 = r7;
-        r1 = 0;
-        goto L_0x037d;
-    L_0x036a:
-        r0 = move-exception;
-        r28 = r1;
-        r29 = r2;
-        r30 = r3;
-        r31 = r4;
-        r32 = r5;
-        r33 = r6;
-        r34 = r15;
-        r15 = r7;
-        r1 = r0;
-    L_0x037b:
-        throw r1;	 Catch:{ all -> 0x037c }
-    L_0x037c:
-        r0 = move-exception;
-    L_0x037d:
-        if (r14 == 0) goto L_0x038e;
-    L_0x037f:
-        $closeResource(r1, r14);	 Catch:{ PackageManagerException -> 0x038c }
-        goto L_0x038e;	 Catch:{ PackageManagerException -> 0x038c }
-    L_0x0383:
-        r0 = move-exception;	 Catch:{ PackageManagerException -> 0x038c }
-        r17 = r31;	 Catch:{ PackageManagerException -> 0x038c }
-        r12 = r32;	 Catch:{ PackageManagerException -> 0x038c }
-        r4 = r33;	 Catch:{ PackageManagerException -> 0x038c }
-        goto L_0x04f4;	 Catch:{ PackageManagerException -> 0x038c }
-    L_0x038c:
-        r0 = move-exception;	 Catch:{ PackageManagerException -> 0x038c }
-        goto L_0x03af;	 Catch:{ PackageManagerException -> 0x038c }
-    L_0x038e:
-        throw r0;	 Catch:{ PackageManagerException -> 0x038c }
-    L_0x038f:
-        r0 = move-exception;
-        r28 = r1;
-        r29 = r2;
-        r30 = r3;
-        r34 = r15;
-        r15 = r7;
-        r17 = r4;
-        r12 = r5;
-        r4 = r6;
-        goto L_0x04f4;
-    L_0x039f:
-        r0 = move-exception;
-        r28 = r1;
-        r29 = r2;
-        r30 = r3;
-        r31 = r4;
-        r32 = r5;
-        r33 = r6;
-        r34 = r15;
-        r15 = r7;
-    L_0x03af:
-        r14 = r0;
-        r0 = "PackageManager";	 Catch:{ all -> 0x04cc }
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x04cc }
-        r1.<init>();	 Catch:{ all -> 0x04cc }
-        r2 = "Failed to install compressed system package:";	 Catch:{ all -> 0x04cc }
-        r1.append(r2);	 Catch:{ all -> 0x04cc }
-        r7 = r32;
-        r2 = r7.name;	 Catch:{ all -> 0x04c5 }
-        r1.append(r2);	 Catch:{ all -> 0x04c5 }
-        r1 = r1.toString();	 Catch:{ all -> 0x04c5 }
-        android.util.Slog.w(r0, r1, r14);	 Catch:{ all -> 0x04c5 }
-        r6 = r31;
-        r8.removeCodePathLI(r6);	 Catch:{ all -> 0x04be }
-        r5 = r33;
-        r0 = r5.packageName;	 Catch:{ PackageManagerException -> 0x0472, all -> 0x046c }
-        r1 = "setEnabledSetting";	 Catch:{ PackageManagerException -> 0x0472, all -> 0x046c }
-        r0 = r8.freezePackage(r0, r1);	 Catch:{ PackageManagerException -> 0x0472, all -> 0x046c }
-        r4 = r0;
-        r1 = r8.mPackages;	 Catch:{ Throwable -> 0x0459, all -> 0x0451 }
-        monitor-enter(r1);	 Catch:{ Throwable -> 0x0459, all -> 0x0451 }
-        r8.enableSystemPackageLPw(r5);	 Catch:{ all -> 0x0441, Throwable -> 0x044c, all -> 0x044a }
-        monitor-exit(r1);	 Catch:{ all -> 0x0441, Throwable -> 0x044c, all -> 0x044a }
-        r2 = r5.codePath;	 Catch:{ Throwable -> 0x0459, all -> 0x0451 }
-        r3 = 0;
-        r0 = 0;
-        r17 = 0;
-        r24 = 0;
-        r25 = 1;
-        r1 = r8;
-        r35 = r4;
-        r4 = r0;
-        r36 = r5;
-        r5 = r17;
-        r17 = r6;
-        r6 = r24;
-        r12 = r7;
-        r7 = r25;
-        r1.installPackageFromSystemLIF(r2, r3, r4, r5, r6, r7);	 Catch:{ Throwable -> 0x043a, all -> 0x0433 }
-        r2 = r35;
-        if (r2 == 0) goto L_0x0412;
-    L_0x0403:
-        r3 = 0;
-        $closeResource(r3, r2);	 Catch:{ PackageManagerException -> 0x040d, all -> 0x0408 }
-        goto L_0x0412;
-    L_0x0408:
-        r0 = move-exception;
-        r4 = r36;
-        goto L_0x04a7;
-    L_0x040d:
-        r0 = move-exception;
-        r4 = r36;
-        goto L_0x0477;
-    L_0x0412:
-        r1 = r8.mPackages;	 Catch:{ all -> 0x042e }
-        monitor-enter(r1);	 Catch:{ all -> 0x042e }
-        r0 = r8.mSettings;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        r4 = r36;
-        r2 = r4.packageName;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        r3 = 1;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        r0.disableSystemPackageLPw(r2, r3);	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        r0 = r8.mSettings;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        r0.writeLPr();	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        monitor-exit(r1);	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        goto L_0x04a0;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-    L_0x0427:
-        r0 = move-exception;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        goto L_0x042c;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-    L_0x0429:
-        r0 = move-exception;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-        r4 = r36;	 Catch:{ all -> 0x0429, all -> 0x0427 }
-    L_0x042c:
-        monitor-exit(r1);	 Catch:{ all -> 0x0429, all -> 0x0427 }
-    L_0x042d:
-        throw r0;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-    L_0x042e:
-        r0 = move-exception;
-        r4 = r36;
-        goto L_0x04f4;
-    L_0x0433:
-        r0 = move-exception;
-        r2 = r35;
-        r4 = r36;
-        r3 = 0;
-        goto L_0x0463;
-    L_0x043a:
-        r0 = move-exception;
-        r2 = r35;
-        r4 = r36;
-        r1 = r0;
-        goto L_0x0460;
-    L_0x0441:
-        r0 = move-exception;
-        r2 = r4;
-        r4 = r5;
-        r17 = r6;
-        r12 = r7;
-        r3 = 0;
-    L_0x0448:
-        monitor-exit(r1);	 Catch:{ all -> 0x044f }
-        throw r0;	 Catch:{ all -> 0x0441, Throwable -> 0x044c, all -> 0x044a }
-    L_0x044a:
-        r0 = move-exception;
-        goto L_0x0463;
-    L_0x044c:
-        r0 = move-exception;
-        r1 = r0;
-        goto L_0x0460;
-    L_0x044f:
-        r0 = move-exception;
-        goto L_0x0448;
-    L_0x0451:
-        r0 = move-exception;
-        r2 = r4;
-        r4 = r5;
-        r17 = r6;
-        r12 = r7;
-        r3 = 0;
-        goto L_0x0463;
-    L_0x0459:
-        r0 = move-exception;
-        r2 = r4;
-        r4 = r5;
-        r17 = r6;
-        r12 = r7;
-        r1 = r0;
-    L_0x0460:
-        throw r1;	 Catch:{ all -> 0x0461 }
-    L_0x0461:
-        r0 = move-exception;
-        r3 = r1;
-    L_0x0463:
-        if (r2 == 0) goto L_0x046b;
-    L_0x0465:
-        $closeResource(r3, r2);	 Catch:{ PackageManagerException -> 0x0469 }
-        goto L_0x046b;	 Catch:{ PackageManagerException -> 0x0469 }
-    L_0x0469:
-        r0 = move-exception;	 Catch:{ PackageManagerException -> 0x0469 }
-        goto L_0x0477;	 Catch:{ PackageManagerException -> 0x0469 }
-    L_0x046b:
-        throw r0;	 Catch:{ PackageManagerException -> 0x0469 }
-    L_0x046c:
-        r0 = move-exception;
-        r4 = r5;
-        r17 = r6;
-        r12 = r7;
-        goto L_0x04a7;
-    L_0x0472:
-        r0 = move-exception;
-        r4 = r5;
-        r17 = r6;
-        r12 = r7;
-    L_0x0477:
-        r1 = "PackageManager";	 Catch:{ all -> 0x04a6 }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x04a6 }
-        r2.<init>();	 Catch:{ all -> 0x04a6 }
-        r3 = "Failed to restore system package:";	 Catch:{ all -> 0x04a6 }
-        r2.append(r3);	 Catch:{ all -> 0x04a6 }
-        r3 = r4.packageName;	 Catch:{ all -> 0x04a6 }
-        r2.append(r3);	 Catch:{ all -> 0x04a6 }
-        r2 = r2.toString();	 Catch:{ all -> 0x04a6 }
-        android.util.Slog.w(r1, r2, r0);	 Catch:{ all -> 0x04a6 }
-        r1 = r8.mPackages;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        monitor-enter(r1);	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r0 = r8.mSettings;	 Catch:{ all -> 0x04a3 }
-        r2 = r4.packageName;	 Catch:{ all -> 0x04a3 }
-        r3 = 1;	 Catch:{ all -> 0x04a3 }
-        r0.disableSystemPackageLPw(r2, r3);	 Catch:{ all -> 0x04a3 }
-        r0 = r8.mSettings;	 Catch:{ all -> 0x04a3 }
-        r0.writeLPr();	 Catch:{ all -> 0x04a3 }
-        monitor-exit(r1);	 Catch:{ all -> 0x04a3 }
-        monitor-exit(r28);	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        return;
-    L_0x04a3:
-        r0 = move-exception;
-        monitor-exit(r1);	 Catch:{ all -> 0x04a3 }
-        goto L_0x042d;
-    L_0x04a6:
-        r0 = move-exception;
-    L_0x04a7:
-        r1 = r8.mPackages;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        monitor-enter(r1);	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r2 = r8.mSettings;	 Catch:{ all -> 0x04ba }
-        r3 = r4.packageName;	 Catch:{ all -> 0x04ba }
-        r5 = 1;	 Catch:{ all -> 0x04ba }
-        r2.disableSystemPackageLPw(r3, r5);	 Catch:{ all -> 0x04ba }
-        r2 = r8.mSettings;	 Catch:{ all -> 0x04ba }
-        r2.writeLPr();	 Catch:{ all -> 0x04ba }
-        monitor-exit(r1);	 Catch:{ all -> 0x04ba }
-        goto L_0x042d;	 Catch:{ all -> 0x04ba }
-    L_0x04ba:
-        r0 = move-exception;	 Catch:{ all -> 0x04ba }
-        monitor-exit(r1);	 Catch:{ all -> 0x04ba }
-        goto L_0x042d;
-    L_0x04be:
-        r0 = move-exception;
-        r17 = r6;
-        r12 = r7;
-        r4 = r33;
-        goto L_0x04f4;
-    L_0x04c5:
-        r0 = move-exception;
-        r12 = r7;
-        r17 = r31;
-        r4 = r33;
-        goto L_0x04f4;
-    L_0x04cc:
-        r0 = move-exception;
-        r17 = r31;
-        r12 = r32;
-        r4 = r33;
-        goto L_0x04f4;
-    L_0x04d4:
-        r0 = move-exception;
-        r28 = r1;
-        r29 = r2;
-        r30 = r3;
-        r17 = r4;
-        r12 = r5;
-        r4 = r6;
-        r34 = r15;
-        r15 = r7;
-    L_0x04e2:
-        monitor-exit(r14);	 Catch:{ all -> 0x04e4 }
-        throw r0;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-    L_0x04e4:
-        r0 = move-exception;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        goto L_0x04e2;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-    L_0x04e6:
-        r0 = move-exception;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r28 = r1;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r29 = r2;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r30 = r3;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r17 = r4;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r12 = r5;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r4 = r6;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r34 = r15;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        r15 = r7;	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-    L_0x04f4:
-        monitor-exit(r28);	 Catch:{ all -> 0x04d4, all -> 0x04f6 }
-        throw r0;
-    L_0x04f6:
-        r0 = move-exception;
-        goto L_0x04f4;
-    L_0x04f8:
-        r0 = move-exception;
-        r30 = r3;
-        r17 = r4;
-        r12 = r5;
-        r4 = r6;
-        r34 = r15;
-        r15 = r7;
-        r1 = "PackageManager";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "Failed to parse compressed system package:";
-        r2.append(r3);
-        r3 = r12.name;
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Slog.w(r1, r2, r0);
-        return;
-    L_0x051b:
-        r12 = r5;
-        r4 = r6;
-        r34 = r15;
-        r15 = r7;
-    L_0x0520:
-        if (r11 == 0) goto L_0x0529;
-    L_0x0522:
-        r1 = 1;
-        if (r11 != r1) goto L_0x0526;
-    L_0x0525:
-        goto L_0x0529;
-    L_0x0526:
-        r2 = r45;
-        goto L_0x052b;
-    L_0x0529:
-        r0 = 0;
-        r2 = r0;
-    L_0x052b:
-        r3 = r8.mPackages;
-        monitor-enter(r3);
-        r12.setEnabled(r11, r13, r2);
-        monitor-exit(r3);
-        goto L_0x05c3;
-    L_0x0534:
-        r0 = move-exception;
-        monitor-exit(r3);
-        throw r0;
-    L_0x0537:
-        r0 = move-exception;
-        r12 = r5;
-        r34 = r15;
-        r15 = r7;
-    L_0x053c:
-        monitor-exit(r1);	 Catch:{ all -> 0x053e }
-        throw r0;
-    L_0x053e:
-        r0 = move-exception;
-        goto L_0x053c;
-    L_0x0540:
-        r12 = r5;
-        r34 = r15;
-        r15 = r7;
-        r1 = r8.mPackages;
-        monitor-enter(r1);
-        r2 = r12.pkg;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        if (r2 == 0) goto L_0x0558;
-    L_0x054b:
-        r3 = r2.hasComponentClassName(r10);	 Catch:{ all -> 0x0552 }
-        if (r3 != 0) goto L_0x059e;	 Catch:{ all -> 0x0552 }
-    L_0x0551:
-        goto L_0x0558;	 Catch:{ all -> 0x0552 }
-    L_0x0552:
-        r0 = move-exception;	 Catch:{ all -> 0x0552 }
-        r7 = r12;	 Catch:{ all -> 0x0552 }
-        r6 = r43;	 Catch:{ all -> 0x0552 }
-        goto L_0x0695;	 Catch:{ all -> 0x0552 }
-    L_0x0558:
-        if (r2 == 0) goto L_0x0580;	 Catch:{ all -> 0x0552 }
-    L_0x055a:
-        r3 = r2.applicationInfo;	 Catch:{ all -> 0x0552 }
-        r3 = r3.targetSdkVersion;	 Catch:{ all -> 0x0552 }
-        if (r3 >= r0) goto L_0x0561;	 Catch:{ all -> 0x0552 }
-    L_0x0560:
-        goto L_0x0580;	 Catch:{ all -> 0x0552 }
-    L_0x0561:
-        r0 = new java.lang.IllegalArgumentException;	 Catch:{ all -> 0x0552 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0552 }
-        r3.<init>();	 Catch:{ all -> 0x0552 }
-        r4 = "Component class ";	 Catch:{ all -> 0x0552 }
-        r3.append(r4);	 Catch:{ all -> 0x0552 }
-        r3.append(r10);	 Catch:{ all -> 0x0552 }
-        r4 = " does not exist in ";	 Catch:{ all -> 0x0552 }
-        r3.append(r4);	 Catch:{ all -> 0x0552 }
-        r3.append(r9);	 Catch:{ all -> 0x0552 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0552 }
-        r0.<init>(r3);	 Catch:{ all -> 0x0552 }
-        throw r0;	 Catch:{ all -> 0x0552 }
-    L_0x0580:
-        r0 = "PackageManager";	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.<init>();	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r4 = "Failed setComponentEnabledSetting: component class ";	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.append(r4);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.append(r10);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r4 = " does not exist in ";	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.append(r4);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.append(r9);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        android.util.Slog.w(r0, r3);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-    L_0x059e:
-        switch(r11) {
-            case 0: goto L_0x05b8;
-            case 1: goto L_0x05b0;
-            case 2: goto L_0x05a8;
-            default: goto L_0x05a1;
-        };
-    L_0x05a1:
-        r7 = r12;
-        r6 = r43;
-        r0 = "PackageManager";	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        goto L_0x067b;
-    L_0x05a8:
-        r0 = r12.disableComponentLPw(r10, r13);	 Catch:{ all -> 0x0552 }
-        if (r0 != 0) goto L_0x05c0;	 Catch:{ all -> 0x0552 }
-    L_0x05ae:
-        monitor-exit(r1);	 Catch:{ all -> 0x0552 }
-        return;	 Catch:{ all -> 0x0552 }
-    L_0x05b0:
-        r0 = r12.enableComponentLPw(r10, r13);	 Catch:{ all -> 0x0552 }
-        if (r0 != 0) goto L_0x05c0;	 Catch:{ all -> 0x0552 }
-    L_0x05b6:
-        monitor-exit(r1);	 Catch:{ all -> 0x0552 }
-        return;
-    L_0x05b8:
-        r0 = r12.restoreComponentLPw(r10, r13);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        if (r0 != 0) goto L_0x05c0;
-    L_0x05be:
-        monitor-exit(r1);	 Catch:{ all -> 0x0552 }
-        return;
-    L_0x05c0:
-        monitor-exit(r1);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r2 = r45;
-    L_0x05c3:
-        r3 = r8.mPackages;
-        monitor-enter(r3);
-        r8.scheduleWritePackageRestrictionsLocked(r13);	 Catch:{ all -> 0x0671 }
-        r1 = 1;	 Catch:{ all -> 0x0671 }
-        r0 = new int[r1];	 Catch:{ all -> 0x0671 }
-        r0[r17] = r13;	 Catch:{ all -> 0x0671 }
-        r8.updateSequenceNumberLP(r12, r0);	 Catch:{ all -> 0x0671 }
-        r0 = android.os.Binder.clearCallingIdentity();	 Catch:{ all -> 0x0671 }
-        r4 = r0;
-        r39.updateInstantAppInstallerLocked(r40);	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x0671 }
-        r0 = r8.mPendingBroadcasts;	 Catch:{ all -> 0x0671 }
-        r0 = r0.get(r13, r9);	 Catch:{ all -> 0x0671 }
-        if (r0 != 0) goto L_0x05e7;
-    L_0x05e5:
-        r1 = 1;
-        goto L_0x05e9;
-    L_0x05e7:
-        r1 = r17;
-    L_0x05e9:
-        if (r1 == 0) goto L_0x05fa;
-    L_0x05eb:
-        r6 = new java.util.ArrayList;	 Catch:{ all -> 0x05f2 }
-        r6.<init>();	 Catch:{ all -> 0x05f2 }
-        r0 = r6;
-        goto L_0x05fa;
-    L_0x05f2:
-        r0 = move-exception;
-        r37 = r2;
-        r7 = r12;
-        r6 = r43;
-        goto L_0x0677;
-    L_0x05fa:
-        r6 = r0.contains(r15);	 Catch:{ all -> 0x0671 }
-        if (r6 != 0) goto L_0x0603;
-    L_0x0600:
-        r0.add(r15);	 Catch:{ all -> 0x05f2 }
-    L_0x0603:
-        r7 = r12;
-        r6 = r43;
-        r12 = r6 & 1;
-        if (r12 != 0) goto L_0x061a;
-    L_0x060a:
-        r19 = 1;
-        r12 = r8.mPendingBroadcasts;	 Catch:{ all -> 0x0615 }
-        r12.remove(r13, r9);	 Catch:{ all -> 0x0615 }
-        r37 = r2;	 Catch:{ all -> 0x0615 }
-        r14 = 1;	 Catch:{ all -> 0x0615 }
-        goto L_0x0638;	 Catch:{ all -> 0x0615 }
-    L_0x0615:
-        r0 = move-exception;	 Catch:{ all -> 0x0615 }
-        r37 = r2;	 Catch:{ all -> 0x0615 }
-        goto L_0x0677;	 Catch:{ all -> 0x0615 }
-    L_0x061a:
-        if (r1 == 0) goto L_0x0621;	 Catch:{ all -> 0x0615 }
-    L_0x061c:
-        r12 = r8.mPendingBroadcasts;	 Catch:{ all -> 0x0615 }
-        r12.put(r13, r9, r0);	 Catch:{ all -> 0x0615 }
-    L_0x0621:
-        r12 = r8.mHandler;	 Catch:{ all -> 0x0662 }
-        r14 = 1;	 Catch:{ all -> 0x0662 }
-        r12 = r12.hasMessages(r14);	 Catch:{ all -> 0x0662 }
-        if (r12 != 0) goto L_0x0636;	 Catch:{ all -> 0x0662 }
-    L_0x062a:
-        r12 = r8.mHandler;	 Catch:{ all -> 0x0662 }
-        r38 = r1;
-        r37 = r2;
-        r1 = 10000; // 0x2710 float:1.4013E-41 double:4.9407E-320;
-        r12.sendEmptyMessageDelayed(r14, r1);	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        goto L_0x0638;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-    L_0x0636:
-        r37 = r2;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-    L_0x0638:
-        monitor-exit(r3);	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        r1 = r0;
-        r2 = android.os.Binder.clearCallingIdentity();
-        if (r19 == 0) goto L_0x065b;
-    L_0x0640:
-        r0 = r7.appId;	 Catch:{ all -> 0x0656 }
-        r0 = android.os.UserHandle.getUid(r13, r0);	 Catch:{ all -> 0x0656 }
-        r4 = r0;
-        r0 = r6 & 1;
-        if (r0 == 0) goto L_0x064c;
-    L_0x064b:
-        goto L_0x064e;
-    L_0x064c:
-        r14 = r17;
-    L_0x064e:
-        r8.sendPackageChangedBroadcast(r9, r14, r1, r4);	 Catch:{ all -> 0x0652 }
-        goto L_0x065d;
-    L_0x0652:
-        r0 = move-exception;
-        r22 = r4;
-        goto L_0x0657;
-    L_0x0656:
-        r0 = move-exception;
-    L_0x0657:
-        android.os.Binder.restoreCallingIdentity(r2);
-        throw r0;
-    L_0x065b:
-        r4 = r22;
-    L_0x065d:
-        android.os.Binder.restoreCallingIdentity(r2);
-        return;
-    L_0x0662:
-        r0 = move-exception;
-        r37 = r2;
-        goto L_0x0677;
-    L_0x0666:
-        r0 = move-exception;
-        r37 = r2;
-        r7 = r12;
-        r6 = r43;
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        r1 = r0;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        throw r1;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-    L_0x0671:
-        r0 = move-exception;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        r37 = r2;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        r7 = r12;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        r6 = r43;	 Catch:{ all -> 0x0666, all -> 0x0679 }
-    L_0x0677:
-        monitor-exit(r3);	 Catch:{ all -> 0x0666, all -> 0x0679 }
-        throw r0;
-    L_0x0679:
-        r0 = move-exception;
-        goto L_0x0677;
-    L_0x067b:
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.<init>();	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r4 = "Invalid new component state: ";	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.append(r4);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3.append(r11);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        android.util.Slog.e(r0, r3);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        monitor-exit(r1);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        return;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-    L_0x0691:
-        r0 = move-exception;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r7 = r12;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        r6 = r43;	 Catch:{ all -> 0x0691, all -> 0x0697 }
-    L_0x0695:
-        monitor-exit(r1);	 Catch:{ all -> 0x0691, all -> 0x0697 }
-        throw r0;
-    L_0x0697:
-        r0 = move-exception;
-        goto L_0x0695;
-    L_0x0699:
-        r0 = move-exception;
-        r6 = r12;
-        r34 = r15;
-        r15 = r7;
-        r7 = r5;
-    L_0x069f:
-        monitor-exit(r2);	 Catch:{ all -> 0x06a1 }
-        throw r0;
-    L_0x06a1:
-        r0 = move-exception;
-        goto L_0x069f;
-    L_0x06a3:
-        r0 = move-exception;
-        r6 = r12;
-        r34 = r15;
-        r15 = r7;
-    L_0x06a8:
-        monitor-exit(r1);	 Catch:{ all -> 0x06aa }
-        throw r0;
-    L_0x06aa:
-        r0 = move-exception;
-        goto L_0x06a8;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.PackageManagerService.setEnabledSetting(java.lang.String, java.lang.String, int, int, int, java.lang.String):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void deletePackageVersioned(android.content.pm.VersionedPackage r26, android.content.pm.IPackageDeleteObserver2 r27, int r28, int r29) {
-        /*
-        r25 = this;
-        r14 = r25;
-        r15 = r27;
-        r13 = r28;
-        r12 = android.os.Binder.getCallingUid();
-        r0 = r14.mContext;
-        r1 = "android.permission.DELETE_PACKAGES";
-        r2 = 0;
-        r0.enforceCallingOrSelfPermission(r1, r2);
-        r16 = r14.canViewInstantApps(r12, r13);
-        com.android.internal.util.Preconditions.checkNotNull(r26);
-        com.android.internal.util.Preconditions.checkNotNull(r27);
-        r3 = r26.getLongVersionCode();
-        r9 = "versionCode must be >= -1";
-        r5 = -1;
-        r7 = 9223372036854775807; // 0x7fffffffffffffff float:NaN double:NaN;
-        com.android.internal.util.Preconditions.checkArgumentInRange(r3, r5, r7, r9);
-        r11 = r26.getPackageName();
-        r9 = r26.getLongVersionCode();
-        r1 = r14.mPackages;
-        monitor-enter(r1);
-        r0 = r14.resolveInternalPackageNameLPr(r11, r9);	 Catch:{ all -> 0x0142 }
-        r7 = r0;	 Catch:{ all -> 0x0142 }
-        monitor-exit(r1);	 Catch:{ all -> 0x0142 }
-        r8 = android.os.Binder.getCallingUid();
-        r0 = r14.isOrphaned(r7);
-        if (r0 != 0) goto L_0x006e;
-    L_0x0048:
-        r0 = r14.isCallerAllowedToSilentlyUninstall(r8, r7);
-        if (r0 != 0) goto L_0x006e;
-    L_0x004e:
-        r0 = new android.content.Intent;	 Catch:{ RemoteException -> 0x006c }
-        r1 = "android.intent.action.UNINSTALL_PACKAGE";	 Catch:{ RemoteException -> 0x006c }
-        r0.<init>(r1);	 Catch:{ RemoteException -> 0x006c }
-        r1 = "package";	 Catch:{ RemoteException -> 0x006c }
-        r1 = android.net.Uri.fromParts(r1, r11, r2);	 Catch:{ RemoteException -> 0x006c }
-        r0.setData(r1);	 Catch:{ RemoteException -> 0x006c }
-        r1 = "android.content.pm.extra.CALLBACK";	 Catch:{ RemoteException -> 0x006c }
-        r2 = r27.asBinder();	 Catch:{ RemoteException -> 0x006c }
-        r0.putExtra(r1, r2);	 Catch:{ RemoteException -> 0x006c }
-        r15.onUserActionRequired(r0);	 Catch:{ RemoteException -> 0x006c }
-        goto L_0x006d;
-    L_0x006c:
-        r0 = move-exception;
-    L_0x006d:
-        return;
-    L_0x006e:
-        r0 = r29 & 2;
-        r6 = 0;
-        r1 = 1;
-        if (r0 == 0) goto L_0x0076;
-    L_0x0074:
-        r0 = r1;
-        goto L_0x0077;
-    L_0x0076:
-        r0 = r6;
-    L_0x0077:
-        r5 = r0;
-        if (r5 == 0) goto L_0x0081;
-    L_0x007a:
-        r0 = sUserManager;
-        r0 = r0.getUserIds();
-        goto L_0x0085;
-    L_0x0081:
-        r0 = new int[r1];
-        r0[r6] = r13;
-    L_0x0085:
-        r4 = r0;
-        r0 = android.os.UserHandle.getUserId(r8);
-        if (r0 != r13) goto L_0x0091;
-    L_0x008c:
-        if (r5 == 0) goto L_0x00a9;
-    L_0x008e:
-        r0 = r4.length;
-        if (r0 <= r1) goto L_0x00a9;
-    L_0x0091:
-        r0 = r14.mContext;
-        r1 = "android.permission.INTERACT_ACROSS_USERS_FULL";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r6 = "deletePackage for user ";
-        r3.append(r6);
-        r3.append(r13);
-        r3 = r3.toString();
-        r0.enforceCallingOrSelfPermission(r1, r3);
-    L_0x00a9:
-        r0 = "no_uninstall_apps";
-        r0 = r14.isUserRestricted(r13, r0);
-        if (r0 == 0) goto L_0x00b9;
-    L_0x00b2:
-        r0 = -3;
-        r15.onPackageDeleted(r11, r0, r2);	 Catch:{ RemoteException -> 0x00b7 }
-        goto L_0x00b8;
-    L_0x00b7:
-        r0 = move-exception;
-    L_0x00b8:
-        return;
-    L_0x00b9:
-        if (r5 != 0) goto L_0x00c8;
-    L_0x00bb:
-        r0 = r14.getBlockUninstallForUser(r7, r13);
-        if (r0 == 0) goto L_0x00c8;
-    L_0x00c1:
-        r0 = -4;
-        r15.onPackageDeleted(r11, r0, r2);	 Catch:{ RemoteException -> 0x00c6 }
-        goto L_0x00c7;
-    L_0x00c6:
-        r0 = move-exception;
-    L_0x00c7:
-        return;
-    L_0x00c8:
-        r0 = DEBUG_REMOVE;
-        if (r0 == 0) goto L_0x0107;
-    L_0x00cc:
-        r0 = "PackageManager";
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "deletePackageAsUser: pkg=";
-        r1.append(r2);
-        r1.append(r7);
-        r2 = " user=";
-        r1.append(r2);
-        r1.append(r13);
-        r2 = " deleteAllUsers: ";
-        r1.append(r2);
-        r1.append(r5);
-        r2 = " version=";
-        r1.append(r2);
-        r2 = -1;
-        r2 = (r9 > r2 ? 1 : (r9 == r2 ? 0 : -1));
-        if (r2 != 0) goto L_0x00f9;
-    L_0x00f6:
-        r2 = "VERSION_CODE_HIGHEST";
-        goto L_0x00fd;
-    L_0x00f9:
-        r2 = java.lang.Long.valueOf(r9);
-    L_0x00fd:
-        r1.append(r2);
-        r1 = r1.toString();
-        android.util.Slog.d(r0, r1);
-    L_0x0107:
-        r0 = r14.mHandler;
-        r6 = new com.android.server.pm.PackageManagerService$15;
-        r1 = r6;
-        r2 = r14;
-        r3 = r7;
-        r18 = r4;
-        r4 = r12;
-        r19 = r5;
-        r5 = r16;
-        r14 = r6;
-        r6 = r19;
-        r17 = r7;
-        r20 = r8;
-        r7 = r9;
-        r21 = r9;
-        r9 = r13;
-        r10 = r29;
-        r23 = r11;
-        r11 = r18;
-        r24 = r12;
-        r12 = r15;
-        r13 = r23;
-        r1.<init>(r3, r4, r5, r6, r7, r9, r10, r11, r12, r13);
-        r0.post(r14);
-        r3 = r23;
-        r0 = 0;
-        r2 = r25;
-        r2.setNeedClearDeviceForCTS(r0, r3);
-        r0 = "PackageManager";
-        r1 = "setmNeedClearDeviceForCTS:false ";
-        android.util.Log.d(r0, r1);
-        return;
-    L_0x0142:
-        r0 = move-exception;
-        r21 = r9;
-        r3 = r11;
-        r24 = r12;
-        r2 = r14;
-    L_0x0149:
-        monitor-exit(r1);	 Catch:{ all -> 0x014b }
-        throw r0;
-    L_0x014b:
-        r0 = move-exception;
-        goto L_0x0149;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.PackageManagerService.deletePackageVersioned(android.content.pm.VersionedPackage, android.content.pm.IPackageDeleteObserver2, int, int):void");
-    }
-
     static {
         boolean z = Log.HWINFO || (Log.HWModuleLog && Log.isLoggable(TAG, 4));
         HWFLOW = z;
@@ -7666,6 +4827,264 @@ public class PackageManagerService extends AbsPackageManagerService implements P
 
     private static boolean hasValidDomains(ActivityIntentInfo filter) {
         return filter.hasCategory("android.intent.category.BROWSABLE") && (filter.hasDataScheme("http") || filter.hasDataScheme("https"));
+    }
+
+    private void handlePackagePostInstall(PackageInstalledInfo res, boolean grantPermissions, boolean killApp, boolean virtualPreload, String[] grantedPermissions, boolean launchedForRestore, String installerPackage, IPackageInstallObserver2 installObserver) {
+        PackageInstalledInfo packageInstalledInfo = res;
+        IPackageInstallObserver2 iPackageInstallObserver2 = installObserver;
+        String str;
+        if (packageInstalledInfo.returnCode == 1) {
+            String str2;
+            String str3;
+            int[] iArr;
+            String installerPackageName;
+            int[] firstUserIds;
+            int i;
+            String packageName;
+            int i2;
+            if (packageInstalledInfo.removedInfo != null) {
+                packageInstalledInfo.removedInfo.sendPackageRemovedBroadcasts(killApp);
+            } else {
+                boolean z = killApp;
+            }
+            if (grantPermissions) {
+                this.mPermissionManager.grantRequestedRuntimePermissions(packageInstalledInfo.pkg, packageInstalledInfo.newUsers, grantedPermissions, Binder.getCallingUid(), this.mPermissionCallback);
+            }
+            boolean z2 = (packageInstalledInfo.removedInfo == null || packageInstalledInfo.removedInfo.removedPackage == null) ? false : true;
+            boolean update = z2;
+            if (packageInstalledInfo.installerPackageName != null) {
+                str2 = packageInstalledInfo.installerPackageName;
+            } else if (packageInstalledInfo.removedInfo != null) {
+                str2 = packageInstalledInfo.removedInfo.installerPackageName;
+            } else {
+                str2 = null;
+            }
+            String installerPackageName2 = str2;
+            if (packageInstalledInfo.pkg.parentPackage != null) {
+                this.mPermissionManager.grantRuntimePermissionsGrantedToDisabledPackage(packageInstalledInfo.pkg, Binder.getCallingUid(), this.mPermissionCallback);
+            }
+            synchronized (this.mPackages) {
+                try {
+                    this.mInstantAppRegistry.onPackageInstalledLPw(packageInstalledInfo.pkg, packageInstalledInfo.newUsers);
+                } catch (Throwable th) {
+                    str = installerPackage;
+                    str3 = installerPackageName2;
+                    while (true) {
+                    }
+                }
+            }
+            String packageName2 = packageInstalledInfo.pkg.applicationInfo.packageName;
+            int[] firstUserIds2 = EMPTY_INT_ARRAY;
+            int[] firstInstantUserIds = EMPTY_INT_ARRAY;
+            int[] updateUserIds = EMPTY_INT_ARRAY;
+            int[] instantUserIds = EMPTY_INT_ARRAY;
+            boolean z3 = packageInstalledInfo.origUsers == null || packageInstalledInfo.origUsers.length == 0;
+            boolean allNewUsers = z3;
+            PackageSetting ps = packageInstalledInfo.pkg.mExtras;
+            int[] iArr2 = packageInstalledInfo.newUsers;
+            int length = iArr2.length;
+            int[] updateUserIds2 = updateUserIds;
+            updateUserIds = firstUserIds2;
+            int firstUserIds3 = 0;
+            int[] iArr3 = instantUserIds;
+            instantUserIds = firstInstantUserIds;
+            firstInstantUserIds = iArr3;
+            while (firstUserIds3 < length) {
+                PackageSetting ps2;
+                int newUser = iArr2[firstUserIds3];
+                boolean isInstantApp = ps.getInstantApp(newUser);
+                if (allNewUsers) {
+                    if (isInstantApp) {
+                        instantUserIds = ArrayUtils.appendInt(instantUserIds, newUser);
+                    } else {
+                        updateUserIds = ArrayUtils.appendInt(updateUserIds, newUser);
+                    }
+                    iArr = iArr2;
+                    ps2 = ps;
+                    installerPackageName = installerPackageName2;
+                } else {
+                    boolean isNew = true;
+                    iArr = iArr2;
+                    iArr2 = packageInstalledInfo.origUsers;
+                    ps2 = ps;
+                    ps = iArr2.length;
+                    installerPackageName = installerPackageName2;
+                    int installerPackageName3 = 0;
+                    while (installerPackageName3 < ps) {
+                        PackageSetting packageSetting = ps;
+                        if (iArr2[installerPackageName3] == newUser) {
+                            isNew = false;
+                            break;
+                        } else {
+                            installerPackageName3++;
+                            ps = packageSetting;
+                        }
+                    }
+                    if (isNew) {
+                        if (isInstantApp) {
+                            instantUserIds = ArrayUtils.appendInt(instantUserIds, newUser);
+                        } else {
+                            updateUserIds = ArrayUtils.appendInt(updateUserIds, newUser);
+                        }
+                    } else if (isInstantApp) {
+                        firstInstantUserIds = ArrayUtils.appendInt(firstInstantUserIds, newUser);
+                    } else {
+                        updateUserIds2 = ArrayUtils.appendInt(updateUserIds2, newUser);
+                    }
+                }
+                firstUserIds3++;
+                iArr2 = iArr;
+                ps = ps2;
+                installerPackageName2 = installerPackageName;
+            }
+            installerPackageName = installerPackageName2;
+            setNeedClearDeviceForCTS(true, packageName2);
+            try {
+                updatePackageBlackListInfo(packageName2);
+            } catch (Exception e) {
+                Exception exception = e;
+                Slog.e(TAG, "update BlackList info failed");
+            }
+            int[] iArr4;
+            if (packageInstalledInfo.pkg.staticSharedLibName == null) {
+                String packageName3;
+                int[] firstInstantUserIds2;
+                String str4;
+                StringBuilder stringBuilder;
+                this.mProcessLoggingHandler.invalidateProcessLoggingBaseApkHash(packageInstalledInfo.pkg.baseCodePath);
+                sendIncompatibleNotificationIfNeeded(packageName2);
+                firstUserIds3 = UserHandle.getAppId(packageInstalledInfo.uid);
+                z3 = packageInstalledInfo.pkg.applicationInfo.isSystemApp() || virtualPreload;
+                iArr = firstInstantUserIds;
+                int[] firstUserIds4 = updateUserIds;
+                int[] firstInstantUserIds3 = instantUserIds;
+                String packageName4 = packageName2;
+                str3 = installerPackageName;
+                sendPackageAddedForNewUsers(packageName2, z3, virtualPreload, firstUserIds3, firstUserIds4, firstInstantUserIds3);
+                Bundle extras = new Bundle(1);
+                extras.putInt("android.intent.extra.UID", packageInstalledInfo.uid);
+                if (update) {
+                    extras.putBoolean("android.intent.extra.REPLACING", true);
+                }
+                Bundle extras2 = extras;
+                int[] firstInstantUserIds4 = firstInstantUserIds3;
+                firstUserIds = firstUserIds4;
+                i = 0;
+                sendPackageBroadcast("android.intent.action.PACKAGE_ADDED", packageName4, extras, 0, null, null, updateUserIds2, iArr);
+                if (str3 != null) {
+                    sendPackageBroadcast("android.intent.action.PACKAGE_ADDED", packageName4, extras2, 0, str3, null, updateUserIds2, iArr);
+                }
+                str = packageName4;
+                this.mHwPMSEx.updateNochScreenWhite(str, "add", packageInstalledInfo.pkg.applicationInfo.versionCode);
+                boolean z4 = (this.mRequiredVerifierPackage == null || this.mRequiredVerifierPackage.equals(str3)) ? false : true;
+                boolean notifyVerifier = z4;
+                if (notifyVerifier) {
+                    packageName3 = str;
+                    sendPackageBroadcast("android.intent.action.PACKAGE_ADDED", str, extras2, 0, this.mRequiredVerifierPackage, null, updateUserIds2, iArr);
+                } else {
+                    packageName3 = str;
+                }
+                if (update) {
+                    sendPackageBroadcast("android.intent.action.PACKAGE_REPLACED", packageName3, extras2, 0, null, null, updateUserIds2, iArr);
+                    if (str3 != null) {
+                        sendPackageBroadcast("android.intent.action.PACKAGE_REPLACED", packageName3, extras2, 0, str3, null, updateUserIds2, iArr);
+                    }
+                    if (notifyVerifier) {
+                        sendPackageBroadcast("android.intent.action.PACKAGE_REPLACED", packageName3, extras2, 0, this.mRequiredVerifierPackage, null, updateUserIds2, iArr);
+                    }
+                    sendPackageBroadcast("android.intent.action.MY_PACKAGE_REPLACED", null, null, 0, packageName3, null, updateUserIds2, iArr);
+                    str = installerPackage;
+                    firstInstantUserIds2 = firstInstantUserIds4;
+                    packageName = packageName3;
+                } else if (!launchedForRestore || isSystemApp(packageInstalledInfo.pkg)) {
+                    str = installerPackage;
+                    firstInstantUserIds2 = firstInstantUserIds4;
+                    packageName = packageName3;
+                } else {
+                    if (DEBUG_BACKUP) {
+                        str4 = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Post-restore of ");
+                        packageName = packageName3;
+                        stringBuilder.append(packageName);
+                        stringBuilder.append(" sending FIRST_LAUNCH in ");
+                        stringBuilder.append(Arrays.toString(firstUserIds));
+                        Slog.i(str4, stringBuilder.toString());
+                    } else {
+                        packageName = packageName3;
+                    }
+                    firstInstantUserIds2 = firstInstantUserIds4;
+                    sendFirstLaunchBroadcast(packageName, installerPackage, firstUserIds, firstInstantUserIds2);
+                }
+                if (packageInstalledInfo.pkg.isForwardLocked() || isExternal(packageInstalledInfo.pkg)) {
+                    if (DEBUG_INSTALL) {
+                        str4 = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("upgrading pkg ");
+                        stringBuilder.append(packageInstalledInfo.pkg);
+                        stringBuilder.append(" is ASEC-hosted -> AVAILABLE");
+                        Slog.i(str4, stringBuilder.toString());
+                    }
+                    int[] uidArray = new int[]{packageInstalledInfo.pkg.applicationInfo.uid};
+                    ArrayList arrayList = new ArrayList(1);
+                    arrayList.add(packageName);
+                    ArrayList installerPackageName4 = arrayList;
+                    sendResourcesChangedBroadcast(true, true, arrayList, uidArray, null);
+                } else {
+                    iArr4 = firstInstantUserIds2;
+                }
+            } else {
+                str = installerPackage;
+                iArr = firstInstantUserIds;
+                firstUserIds = updateUserIds;
+                iArr4 = instantUserIds;
+                packageName = packageName2;
+                str3 = installerPackageName;
+                i = 0;
+            }
+            if (firstUserIds != null && firstUserIds.length > 0) {
+                synchronized (this.mPackages) {
+                    firstUserIds3 = firstUserIds.length;
+                    for (i2 = i; i2 < firstUserIds3; i2++) {
+                        int userId = firstUserIds[i2];
+                        if (packageIsBrowser(packageName, userId)) {
+                            this.mSettings.setDefaultBrowserPackageNameLPw(null, userId);
+                        }
+                        this.mSettings.applyPendingPermissionGrantsLPw(packageName, userId);
+                    }
+                }
+            }
+            if (allNewUsers && !update) {
+                notifyPackageAdded(packageName);
+            }
+            EventLog.writeEvent(EventLogTags.UNKNOWN_SOURCES_ENABLED, getUnknownSourcesSettings());
+            if (packageInstalledInfo.removedInfo == null || packageInstalledInfo.removedInfo.args == null) {
+                VMRuntime.getRuntime().requestConcurrentGC();
+            } else {
+                Runtime.getRuntime().gc();
+                synchronized (this.mInstallLock) {
+                    packageInstalledInfo.removedInfo.args.doPostDeleteLI(true);
+                }
+            }
+            firstUserIds3 = firstUserIds.length;
+            for (int i3 = i; i3 < firstUserIds3; i3++) {
+                i2 = firstUserIds[i3];
+                PackageInfo info = getPackageInfo(packageName, i, i2);
+                if (info != null) {
+                    this.mDexManager.notifyPackageInstalled(info, i2);
+                }
+            }
+        } else {
+            str = installerPackage;
+        }
+        IPackageInstallObserver2 iPackageInstallObserver22 = installObserver;
+        if (iPackageInstallObserver22 != null) {
+            try {
+                iPackageInstallObserver22.onPackageInstalled(packageInstalledInfo.name, packageInstalledInfo.returnCode, packageInstalledInfo.returnMsg, extrasForInstallResult(res));
+            } catch (RemoteException e2) {
+                Slog.i(TAG, "Observer no longer exists.");
+            }
+        }
     }
 
     public void setNeedClearDeviceForCTS(boolean needvalue, String packageName) {
@@ -7768,6 +5187,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             Set<String> enableApps = new ArraySet();
             enableApps.addAll(queryHelper.queryApps((AppsQueryHelper.GET_NON_LAUNCHABLE_APPS | AppsQueryHelper.GET_APPS_WITH_INTERACT_ACROSS_USERS_PERM) | AppsQueryHelper.GET_IMES, true, UserHandle.SYSTEM));
             enableApps.addAll(SystemConfig.getInstance().getSystemUserWhitelistedApps());
+            int i = false;
             enableApps.addAll(queryHelper.queryApps(AppsQueryHelper.GET_REQUIRED_FOR_SYSTEM_USER, false, UserHandle.SYSTEM));
             enableApps.removeAll(SystemConfig.getInstance().getSystemUserBlacklistedApps());
             String str = TAG;
@@ -7778,23 +5198,30 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             List<String> allAps = queryHelper.queryApps(0, false, UserHandle.SYSTEM);
             int allAppsSize = allAps.size();
             synchronized (this.mPackages) {
-                for (int i = 0; i < allAppsSize; i++) {
-                    String pName = (String) allAps.get(i);
-                    PackageSetting pkgSetting = (PackageSetting) this.mSettings.mPackages.get(pName);
-                    if (pkgSetting != null) {
-                        boolean install = enableApps.contains(pName);
-                        if (pkgSetting.getInstalled(0) != install) {
-                            String str2 = TAG;
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append(install ? "Installing " : "Uninstalling ");
-                            stringBuilder2.append(pName);
-                            stringBuilder2.append(" for system user");
-                            Log.i(str2, stringBuilder2.toString());
-                            pkgSetting.setInstalled(install, 0);
+                int i2 = 0;
+                while (i2 < allAppsSize) {
+                    try {
+                        String pName = (String) allAps.get(i2);
+                        PackageSetting pkgSetting = (PackageSetting) this.mSettings.mPackages.get(pName);
+                        if (pkgSetting == null) {
+                            i2++;
+                        } else {
+                            boolean install = enableApps.contains(pName);
+                            if (pkgSetting.getInstalled(i) != install) {
+                                String str2 = TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append(install ? "Installing " : "Uninstalling ");
+                                stringBuilder2.append(pName);
+                                stringBuilder2.append(" for system user");
+                                Log.i(str2, stringBuilder2.toString());
+                                pkgSetting.setInstalled(install, i);
+                            }
+                            i2++;
                         }
+                    } finally {
                     }
                 }
-                scheduleWritePackageRestrictionsLocked(0);
+                scheduleWritePackageRestrictionsLocked(i);
             }
         }
     }
@@ -7831,6 +5258,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:520:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:515:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:527:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:523:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:530:0x11c1 A:{LOOP_END, LOOP:14: B:529:0x11bf->B:530:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:533:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:287:0x097d A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:321:0x0ae0 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:320:0x0adb A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
@@ -7845,15 +5278,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     /* JADX WARNING: Removed duplicated region for block: B:477:0x0ff6 A:{LOOP_END, LOOP:12: B:475:0x0ff0->B:477:0x0ff6, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:481:0x100b A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:480:0x1009 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:507:0x10a4 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x10f2 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:510:0x10bf A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:519:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:514:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:526:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:529:0x11c1 A:{LOOP_END, LOOP:14: B:528:0x11bf->B:529:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:532:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:502:0x108a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x1089 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:287:0x097d A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:320:0x0adb A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:321:0x0ae0 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
@@ -7871,16 +5297,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     /* JADX WARNING: Removed duplicated region for block: B:480:0x1009 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:481:0x100b A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x102e A:{SKIP, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:497:0x1081 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:507:0x10a4 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:510:0x10bf A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x10f2 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:514:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:519:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:526:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:529:0x11c1 A:{LOOP_END, LOOP:14: B:528:0x11bf->B:529:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:532:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x1089 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:502:0x108a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:242:0x0849 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:246:0x0888 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:245:0x0856 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
@@ -7903,16 +5321,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     /* JADX WARNING: Removed duplicated region for block: B:481:0x100b A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:480:0x1009 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x102e A:{SKIP, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:497:0x1081 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:507:0x10a4 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x10f2 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:510:0x10bf A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:519:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:514:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:526:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:529:0x11c1 A:{LOOP_END, LOOP:14: B:528:0x11bf->B:529:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:532:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:502:0x108a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x1089 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:287:0x097d A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:320:0x0adb A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:321:0x0ae0 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
@@ -7930,16 +5340,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     /* JADX WARNING: Removed duplicated region for block: B:480:0x1009 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:481:0x100b A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x102e A:{SKIP, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:497:0x1081 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:507:0x10a4 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:510:0x10bf A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x10f2 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:514:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:519:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:526:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:529:0x11c1 A:{LOOP_END, LOOP:14: B:528:0x11bf->B:529:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:532:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x1089 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:502:0x108a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:287:0x097d A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:321:0x0ae0 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:320:0x0adb A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
@@ -7957,16 +5359,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     /* JADX WARNING: Removed duplicated region for block: B:481:0x100b A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:480:0x1009 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x102e A:{SKIP, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:497:0x1081 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:507:0x10a4 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x10f2 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:510:0x10bf A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:519:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:514:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:526:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:529:0x11c1 A:{LOOP_END, LOOP:14: B:528:0x11bf->B:529:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:532:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:502:0x108a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x1089 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:242:0x0849 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:245:0x0856 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:246:0x0888 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
@@ -7989,17 +5383,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     /* JADX WARNING: Removed duplicated region for block: B:480:0x1009 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:481:0x100b A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x102e A:{SKIP, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:497:0x1081 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:507:0x10a4 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:510:0x10bf A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:511:0x10f2 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:514:0x110c A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:519:0x114a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:522:0x116a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:526:0x11a1 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:529:0x11c1 A:{LOOP_END, LOOP:14: B:528:0x11bf->B:529:0x11c1, Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:532:0x11fe A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
-    /* JADX WARNING: Missing block: B:25:0x0285, code:
+    /* JADX WARNING: Removed duplicated region for block: B:501:0x1089 A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:502:0x108a A:{Catch:{ PackageManagerException -> 0x0d44, all -> 0x122f }} */
+    /* JADX WARNING: Missing block: B:25:0x0285, code skipped:
             r13.mSettings.addSharedUserLPw("android.uid.system", 1000, 1, 8);
             r13.mSettings.addSharedUserLPw("android.uid.phone", 1001, 1, 8);
             r13.mSettings.addSharedUserLPw("android.uid.log", LOG_UID, 1, 8);
@@ -8012,21 +5398,21 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             com.android.server.HwServiceFactory.getHwPackageServiceManager().addHwSharedUserLP(r13.mSettings);
             r12 = android.os.SystemProperties.get("debug.separate_processes");
      */
-    /* JADX WARNING: Missing block: B:26:0x02e7, code:
+    /* JADX WARNING: Missing block: B:26:0x02e7, code skipped:
             if (r12 == null) goto L_0x0326;
      */
-    /* JADX WARNING: Missing block: B:28:0x02ed, code:
+    /* JADX WARNING: Missing block: B:28:0x02ed, code skipped:
             if (r12.length() <= 0) goto L_0x0326;
      */
-    /* JADX WARNING: Missing block: B:30:0x02f5, code:
+    /* JADX WARNING: Missing block: B:30:0x02f5, code skipped:
             if ("*".equals(r12) == false) goto L_0x0304;
      */
-    /* JADX WARNING: Missing block: B:31:0x02f7, code:
+    /* JADX WARNING: Missing block: B:31:0x02f7, code skipped:
             r13.mDefParseFlags = 2;
             r13.mSeparateProcesses = null;
             android.util.Slog.w(TAG, "Running with debug.separate_processes: * (ALL)");
      */
-    /* JADX WARNING: Missing block: B:32:0x0304, code:
+    /* JADX WARNING: Missing block: B:32:0x0304, code skipped:
             r13.mDefParseFlags = 0;
             r13.mSeparateProcesses = r12.split(",");
             r0 = TAG;
@@ -8035,11 +5421,11 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r1.append(r12);
             android.util.Slog.w(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:33:0x0326, code:
+    /* JADX WARNING: Missing block: B:33:0x0326, code skipped:
             r13.mDefParseFlags = 0;
             r13.mSeparateProcesses = null;
      */
-    /* JADX WARNING: Missing block: B:34:0x032b, code:
+    /* JADX WARNING: Missing block: B:34:0x032b, code skipped:
             r13.mPackageDexOptimizer = new com.android.server.pm.PackageDexOptimizer(r15, r13.mInstallLock, r14, "*dexopt*");
             r24 = null;
             r8 = true;
@@ -8054,10 +5440,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             android.os.Trace.traceEnd(262144);
             r13.mProtectedPackages = new com.android.server.pm.ProtectedPackages(r13.mContext);
      */
-    /* JADX WARNING: Missing block: B:35:0x03a1, code:
+    /* JADX WARNING: Missing block: B:35:0x03a1, code skipped:
             if (HWFLOW == false) goto L_0x03d2;
      */
-    /* JADX WARNING: Missing block: B:36:0x03a3, code:
+    /* JADX WARNING: Missing block: B:36:0x03a3, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("TimerCounter = ");
@@ -8069,19 +5455,19 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r1.append(" ms");
             android.util.Slog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:37:0x03d2, code:
+    /* JADX WARNING: Missing block: B:37:0x03d2, code skipped:
             r5 = r13.mInstallLock;
      */
-    /* JADX WARNING: Missing block: B:38:0x03d4, code:
+    /* JADX WARNING: Missing block: B:38:0x03d4, code skipped:
             monitor-enter(r5);
      */
-    /* JADX WARNING: Missing block: B:40:?, code:
+    /* JADX WARNING: Missing block: B:40:?, code skipped:
             r6 = r13.mPackages;
      */
-    /* JADX WARNING: Missing block: B:41:0x03d7, code:
+    /* JADX WARNING: Missing block: B:41:0x03d7, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:43:?, code:
+    /* JADX WARNING: Missing block: B:43:?, code skipped:
             r13.mHandlerThread = new com.android.server.ServiceThread(TAG, 10, r8);
             r13.mHandlerThread.start();
             r13.mHandler = new com.android.server.pm.PackageManagerService.PackageHandler(r13, r13.mHandlerThread.getLooper());
@@ -8090,14 +5476,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r13.mInstantAppRegistry = new com.android.server.pm.InstantAppRegistry(r13);
             r3 = r7.getSharedLibraries();
      */
-    /* JADX WARNING: Missing block: B:44:0x0417, code:
+    /* JADX WARNING: Missing block: B:44:0x0417, code skipped:
             r1 = r3.size();
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:45:0x0419, code:
+    /* JADX WARNING: Missing block: B:45:0x0419, code skipped:
             if (r0 >= r1) goto L_0x0476;
      */
-    /* JADX WARNING: Missing block: B:48:0x0430, code:
+    /* JADX WARNING: Missing block: B:48:0x0430, code skipped:
             r29 = r1;
             r30 = r3;
             r16 = r5;
@@ -8106,10 +5492,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r32 = r12;
             r12 = r8;
      */
-    /* JADX WARNING: Missing block: B:50:?, code:
+    /* JADX WARNING: Missing block: B:50:?, code skipped:
             addSharedLibraryLPw((java.lang.String) r3.valueAt(r0), null, (java.lang.String) r3.keyAt(r0), -1, 0, PLATFORM_PACKAGE_NAME, 0);
      */
-    /* JADX WARNING: Missing block: B:51:0x044f, code:
+    /* JADX WARNING: Missing block: B:51:0x044f, code skipped:
             r0 = r0 + 1;
             r8 = r12;
             r5 = r16;
@@ -8119,24 +5505,24 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r6 = r31;
             r12 = r32;
      */
-    /* JADX WARNING: Missing block: B:52:0x0462, code:
+    /* JADX WARNING: Missing block: B:52:0x0462, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:53:0x0463, code:
+    /* JADX WARNING: Missing block: B:53:0x0463, code skipped:
             r36 = r32;
             r32 = r11;
      */
-    /* JADX WARNING: Missing block: B:54:0x0469, code:
+    /* JADX WARNING: Missing block: B:54:0x0469, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:55:0x046a, code:
+    /* JADX WARNING: Missing block: B:55:0x046a, code skipped:
             r16 = r5;
             r31 = r6;
             r17 = r7;
             r32 = r11;
             r36 = r12;
      */
-    /* JADX WARNING: Missing block: B:56:0x0476, code:
+    /* JADX WARNING: Missing block: B:56:0x0476, code skipped:
             r29 = r1;
             r30 = r3;
             r16 = r5;
@@ -8145,29 +5531,29 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r32 = r12;
             r12 = r8;
      */
-    /* JADX WARNING: Missing block: B:58:?, code:
+    /* JADX WARNING: Missing block: B:58:?, code skipped:
             com.android.server.pm.SELinuxMMAC.readInstallPolicy();
             r13.mHwPMSEx.initHwCertificationManager();
             android.os.Trace.traceBegin(262144, "loadFallbacks");
             android.content.pm.FallbackCategoryProvider.loadFallbacks();
             android.os.Trace.traceEnd(262144);
      */
-    /* JADX WARNING: Missing block: B:59:0x049e, code:
+    /* JADX WARNING: Missing block: B:59:0x049e, code skipped:
             if (HWFLOW == false) goto L_0x04a6;
      */
-    /* JADX WARNING: Missing block: B:61:?, code:
+    /* JADX WARNING: Missing block: B:61:?, code skipped:
             r13.mStartTimer = android.os.SystemClock.uptimeMillis();
      */
-    /* JADX WARNING: Missing block: B:63:?, code:
+    /* JADX WARNING: Missing block: B:63:?, code skipped:
             android.os.Trace.traceBegin(262144, "read user settings");
             r13.mFirstBoot = r13.mSettings.readLPw(sUserManager.getUsers(false)) ^ r12;
             android.os.Trace.traceEnd(262144);
             r20 = false;
      */
-    /* JADX WARNING: Missing block: B:64:0x04c3, code:
+    /* JADX WARNING: Missing block: B:64:0x04c3, code skipped:
             if (HWFLOW == false) goto L_0x04f4;
      */
-    /* JADX WARNING: Missing block: B:66:?, code:
+    /* JADX WARNING: Missing block: B:66:?, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("TimerCounter = ");
@@ -8179,110 +5565,110 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r1.append(" ms");
             android.util.Slog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:69:0x04fc, code:
+    /* JADX WARNING: Missing block: B:69:0x04fc, code skipped:
             if (r13.mSettings.mDisabledSysPackages.size() <= 0) goto L_0x0541;
      */
-    /* JADX WARNING: Missing block: B:71:?, code:
+    /* JADX WARNING: Missing block: B:71:?, code skipped:
             r1 = r13.mSettings.mPackages.size() - 1;
      */
-    /* JADX WARNING: Missing block: B:72:0x0508, code:
+    /* JADX WARNING: Missing block: B:72:0x0508, code skipped:
             if (r1 < 0) goto L_0x0541;
      */
-    /* JADX WARNING: Missing block: B:73:0x050a, code:
+    /* JADX WARNING: Missing block: B:73:0x050a, code skipped:
             r2 = (com.android.server.pm.PackageSetting) r13.mSettings.mPackages.valueAt(r1);
      */
-    /* JADX WARNING: Missing block: B:74:0x0518, code:
+    /* JADX WARNING: Missing block: B:74:0x0518, code skipped:
             if (isExternal(r2) != false) goto L_0x053e;
      */
-    /* JADX WARNING: Missing block: B:76:0x051c, code:
+    /* JADX WARNING: Missing block: B:76:0x051c, code skipped:
             if (r2.codePath == null) goto L_0x0526;
      */
-    /* JADX WARNING: Missing block: B:78:0x0524, code:
+    /* JADX WARNING: Missing block: B:78:0x0524, code skipped:
             if (r2.codePath.exists() != false) goto L_0x053e;
      */
-    /* JADX WARNING: Missing block: B:80:0x052e, code:
+    /* JADX WARNING: Missing block: B:80:0x052e, code skipped:
             if (r13.mSettings.getDisabledSystemPkgLPr(r2.name) == null) goto L_0x053e;
      */
-    /* JADX WARNING: Missing block: B:81:0x0530, code:
+    /* JADX WARNING: Missing block: B:81:0x0530, code skipped:
             r13.mSettings.mPackages.removeAt(r1);
             r13.mSettings.enableSystemPackageLPw(r2.name);
      */
-    /* JADX WARNING: Missing block: B:82:0x053e, code:
+    /* JADX WARNING: Missing block: B:82:0x053e, code skipped:
             r1 = r1 - 1;
      */
-    /* JADX WARNING: Missing block: B:85:0x0543, code:
+    /* JADX WARNING: Missing block: B:85:0x0543, code skipped:
             if (r13.mFirstBoot == false) goto L_0x0548;
      */
-    /* JADX WARNING: Missing block: B:87:?, code:
+    /* JADX WARNING: Missing block: B:87:?, code skipped:
             requestCopyPreoptedFiles();
      */
-    /* JADX WARNING: Missing block: B:89:?, code:
+    /* JADX WARNING: Missing block: B:89:?, code skipped:
             r0 = android.content.res.Resources.getSystem().getString(17039776);
             r0 = android.common.HwFrameworkFactory.getHuaweiResolverActivity(r13.mContext);
      */
-    /* JADX WARNING: Missing block: B:90:0x055e, code:
+    /* JADX WARNING: Missing block: B:90:0x055e, code skipped:
             if (android.text.TextUtils.isEmpty(r0) == false) goto L_0x0564;
      */
-    /* JADX WARNING: Missing block: B:91:0x0560, code:
+    /* JADX WARNING: Missing block: B:91:0x0560, code skipped:
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:92:0x0561, code:
+    /* JADX WARNING: Missing block: B:92:0x0561, code skipped:
             r21 = r0;
      */
-    /* JADX WARNING: Missing block: B:93:0x0564, code:
+    /* JADX WARNING: Missing block: B:93:0x0564, code skipped:
             r13.mCustomResolverComponentName = android.content.ComponentName.unflattenFromString(r0);
      */
-    /* JADX WARNING: Missing block: B:94:0x056b, code:
+    /* JADX WARNING: Missing block: B:94:0x056b, code skipped:
             r5 = android.os.SystemClock.uptimeMillis();
             android.util.EventLog.writeEvent(com.android.server.EventLogTags.BOOT_PROGRESS_PMS_SYSTEM_SCAN_START, r5);
             r22 = java.lang.System.getenv("BOOTCLASSPATH");
      */
-    /* JADX WARNING: Missing block: B:95:0x0583, code:
+    /* JADX WARNING: Missing block: B:95:0x0583, code skipped:
             r25 = java.lang.System.getenv("SYSTEMSERVERCLASSPATH");
      */
-    /* JADX WARNING: Missing block: B:96:0x0585, code:
+    /* JADX WARNING: Missing block: B:96:0x0585, code skipped:
             if (r22 != null) goto L_0x058e;
      */
-    /* JADX WARNING: Missing block: B:98:?, code:
+    /* JADX WARNING: Missing block: B:98:?, code skipped:
             android.util.Slog.w(TAG, "No BOOTCLASSPATH found!");
      */
-    /* JADX WARNING: Missing block: B:99:0x058e, code:
+    /* JADX WARNING: Missing block: B:99:0x058e, code skipped:
             if (r25 != null) goto L_0x0597;
      */
-    /* JADX WARNING: Missing block: B:100:0x0590, code:
+    /* JADX WARNING: Missing block: B:100:0x0590, code skipped:
             android.util.Slog.w(TAG, "No SYSTEMSERVERCLASSPATH found!");
      */
-    /* JADX WARNING: Missing block: B:102:?, code:
+    /* JADX WARNING: Missing block: B:102:?, code skipped:
             r8 = new java.io.File(android.os.Environment.getRootDirectory(), "framework");
      */
-    /* JADX WARNING: Missing block: B:103:0x05a8, code:
+    /* JADX WARNING: Missing block: B:103:0x05a8, code skipped:
             r4 = r13.mSettings.getInternalVersion();
      */
-    /* JADX WARNING: Missing block: B:104:0x05a9, code:
+    /* JADX WARNING: Missing block: B:104:0x05a9, code skipped:
             if (r4 == null) goto L_0x05c1;
      */
-    /* JADX WARNING: Missing block: B:107:0x05b3, code:
+    /* JADX WARNING: Missing block: B:107:0x05b3, code skipped:
             if (android.os.Build.FINGERPRINT.equals(r4.fingerprint) == false) goto L_0x05bf;
      */
-    /* JADX WARNING: Missing block: B:109:0x05bd, code:
+    /* JADX WARNING: Missing block: B:109:0x05bd, code skipped:
             if (android.os.Build.HWFINGERPRINT.equals(r4.hwFingerprint) != false) goto L_0x05c1;
      */
-    /* JADX WARNING: Missing block: B:110:0x05bf, code:
+    /* JADX WARNING: Missing block: B:110:0x05bf, code skipped:
             r0 = r12;
      */
-    /* JADX WARNING: Missing block: B:111:0x05c1, code:
+    /* JADX WARNING: Missing block: B:111:0x05c1, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:113:?, code:
+    /* JADX WARNING: Missing block: B:113:?, code skipped:
             r13.mIsUpgrade = r0;
      */
-    /* JADX WARNING: Missing block: B:114:0x05c6, code:
+    /* JADX WARNING: Missing block: B:114:0x05c6, code skipped:
             r3 = 4;
      */
-    /* JADX WARNING: Missing block: B:115:0x05c7, code:
+    /* JADX WARNING: Missing block: B:115:0x05c7, code skipped:
             if (r13.mIsUpgrade == false) goto L_0x05fd;
      */
-    /* JADX WARNING: Missing block: B:117:?, code:
+    /* JADX WARNING: Missing block: B:117:?, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append("FINGERPRINT Upgrading from ");
             r0.append(r4.fingerprint);
@@ -8294,22 +5680,22 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r0.append(android.os.Build.HWFINGERPRINT);
             com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(4, r0.toString());
      */
-    /* JADX WARNING: Missing block: B:119:?, code:
+    /* JADX WARNING: Missing block: B:119:?, code skipped:
             loadCorrectUninstallDelapp();
      */
-    /* JADX WARNING: Missing block: B:120:0x0602, code:
+    /* JADX WARNING: Missing block: B:120:0x0602, code skipped:
             if (HWFLOW == false) goto L_0x060a;
      */
-    /* JADX WARNING: Missing block: B:122:?, code:
+    /* JADX WARNING: Missing block: B:122:?, code skipped:
             r13.mStartTimer = android.os.SystemClock.uptimeMillis();
      */
-    /* JADX WARNING: Missing block: B:124:?, code:
+    /* JADX WARNING: Missing block: B:124:?, code skipped:
             loadSysWhitelist();
      */
-    /* JADX WARNING: Missing block: B:125:0x060f, code:
+    /* JADX WARNING: Missing block: B:125:0x060f, code skipped:
             if (HWFLOW == false) goto L_0x0641;
      */
-    /* JADX WARNING: Missing block: B:127:?, code:
+    /* JADX WARNING: Missing block: B:127:?, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("TimerCounter = ");
@@ -8321,162 +5707,162 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r1.append(" ms");
             android.util.Slog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:129:?, code:
+    /* JADX WARNING: Missing block: B:129:?, code skipped:
             r13.mHwPMSEx.readPersistentConfig();
             initCertCompatSettings();
             resetSharedUserSignaturesIfNeeded();
      */
-    /* JADX WARNING: Missing block: B:130:0x064e, code:
+    /* JADX WARNING: Missing block: B:130:0x064e, code skipped:
             if (r13.mIsUpgrade == false) goto L_0x0655;
      */
-    /* JADX WARNING: Missing block: B:131:0x0650, code:
+    /* JADX WARNING: Missing block: B:131:0x0650, code skipped:
             if (r11 != false) goto L_0x0655;
      */
-    /* JADX WARNING: Missing block: B:133:?, code:
+    /* JADX WARNING: Missing block: B:133:?, code skipped:
             deletePackagesAbiFile();
      */
-    /* JADX WARNING: Missing block: B:136:0x0657, code:
+    /* JADX WARNING: Missing block: B:136:0x0657, code skipped:
             if (r13.mIsUpgrade == false) goto L_0x0661;
      */
-    /* JADX WARNING: Missing block: B:140:0x065d, code:
+    /* JADX WARNING: Missing block: B:140:0x065d, code skipped:
             if (r4.sdkVersion > 22) goto L_0x0661;
      */
-    /* JADX WARNING: Missing block: B:141:0x065f, code:
+    /* JADX WARNING: Missing block: B:141:0x065f, code skipped:
             r0 = r12;
      */
-    /* JADX WARNING: Missing block: B:142:0x0661, code:
+    /* JADX WARNING: Missing block: B:142:0x0661, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:144:?, code:
+    /* JADX WARNING: Missing block: B:144:?, code skipped:
             r13.mPromoteSystemApps = r0;
      */
-    /* JADX WARNING: Missing block: B:145:0x0666, code:
+    /* JADX WARNING: Missing block: B:145:0x0666, code skipped:
             if (r13.mIsUpgrade == false) goto L_0x0670;
      */
-    /* JADX WARNING: Missing block: B:149:0x066c, code:
+    /* JADX WARNING: Missing block: B:149:0x066c, code skipped:
             if (r4.sdkVersion >= 24) goto L_0x0670;
      */
-    /* JADX WARNING: Missing block: B:150:0x066e, code:
+    /* JADX WARNING: Missing block: B:150:0x066e, code skipped:
             r0 = r12;
      */
-    /* JADX WARNING: Missing block: B:151:0x0670, code:
+    /* JADX WARNING: Missing block: B:151:0x0670, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:153:?, code:
+    /* JADX WARNING: Missing block: B:153:?, code skipped:
             r13.mIsPreNUpgrade = r0;
      */
-    /* JADX WARNING: Missing block: B:154:0x0675, code:
+    /* JADX WARNING: Missing block: B:154:0x0675, code skipped:
             if (r13.mIsUpgrade == false) goto L_0x067f;
      */
-    /* JADX WARNING: Missing block: B:158:0x067b, code:
+    /* JADX WARNING: Missing block: B:158:0x067b, code skipped:
             if (r4.sdkVersion >= 25) goto L_0x067f;
      */
-    /* JADX WARNING: Missing block: B:159:0x067d, code:
+    /* JADX WARNING: Missing block: B:159:0x067d, code skipped:
             r0 = r12;
      */
-    /* JADX WARNING: Missing block: B:160:0x067f, code:
+    /* JADX WARNING: Missing block: B:160:0x067f, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:162:?, code:
+    /* JADX WARNING: Missing block: B:162:?, code skipped:
             r13.mIsPreNMR1Upgrade = r0;
      */
-    /* JADX WARNING: Missing block: B:163:0x0684, code:
+    /* JADX WARNING: Missing block: B:163:0x0684, code skipped:
             if (r13.mIsUpgrade == false) goto L_0x068e;
      */
-    /* JADX WARNING: Missing block: B:167:0x068a, code:
+    /* JADX WARNING: Missing block: B:167:0x068a, code skipped:
             if (r4.sdkVersion >= 28) goto L_0x068e;
      */
-    /* JADX WARNING: Missing block: B:168:0x068c, code:
+    /* JADX WARNING: Missing block: B:168:0x068c, code skipped:
             r0 = r12;
      */
-    /* JADX WARNING: Missing block: B:169:0x068e, code:
+    /* JADX WARNING: Missing block: B:169:0x068e, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:171:?, code:
+    /* JADX WARNING: Missing block: B:171:?, code skipped:
             r13.mIsPrePUpgrade = r0;
      */
-    /* JADX WARNING: Missing block: B:172:0x0693, code:
+    /* JADX WARNING: Missing block: B:172:0x0693, code skipped:
             if (r13.mPromoteSystemApps == false) goto L_0x06bb;
      */
-    /* JADX WARNING: Missing block: B:174:?, code:
+    /* JADX WARNING: Missing block: B:174:?, code skipped:
             r0 = r13.mSettings.mPackages.values().iterator();
      */
-    /* JADX WARNING: Missing block: B:176:0x06a5, code:
+    /* JADX WARNING: Missing block: B:176:0x06a5, code skipped:
             if (r0.hasNext() == false) goto L_0x06bb;
      */
-    /* JADX WARNING: Missing block: B:177:0x06a7, code:
+    /* JADX WARNING: Missing block: B:177:0x06a7, code skipped:
             r1 = (com.android.server.pm.PackageSetting) r0.next();
      */
-    /* JADX WARNING: Missing block: B:178:0x06b1, code:
+    /* JADX WARNING: Missing block: B:178:0x06b1, code skipped:
             if (isSystemApp(r1) == false) goto L_0x06ba;
      */
-    /* JADX WARNING: Missing block: B:179:0x06b3, code:
+    /* JADX WARNING: Missing block: B:179:0x06b3, code skipped:
             r13.mExistingSystemPackages.add(r1.name);
      */
-    /* JADX WARNING: Missing block: B:182:?, code:
+    /* JADX WARNING: Missing block: B:182:?, code skipped:
             r13.mCacheDir = preparePackageParserCache(r13.mIsUpgrade);
             r0 = 528;
      */
-    /* JADX WARNING: Missing block: B:183:0x06c7, code:
+    /* JADX WARNING: Missing block: B:183:0x06c7, code skipped:
             if (r13.mIsUpgrade != false) goto L_0x06cd;
      */
-    /* JADX WARNING: Missing block: B:186:0x06cb, code:
+    /* JADX WARNING: Missing block: B:186:0x06cb, code skipped:
             if (r13.mFirstBoot == false) goto L_0x06cf;
      */
-    /* JADX WARNING: Missing block: B:187:0x06cd, code:
+    /* JADX WARNING: Missing block: B:187:0x06cd, code skipped:
             r0 = 528 | 8192;
      */
-    /* JADX WARNING: Missing block: B:188:0x06cf, code:
+    /* JADX WARNING: Missing block: B:188:0x06cf, code skipped:
             r10 = r0;
      */
-    /* JADX WARNING: Missing block: B:190:?, code:
+    /* JADX WARNING: Missing block: B:190:?, code skipped:
             readPreInstallApkList();
      */
-    /* JADX WARNING: Missing block: B:191:0x06d3, code:
+    /* JADX WARNING: Missing block: B:191:0x06d3, code skipped:
             r1 = r24;
      */
-    /* JADX WARNING: Missing block: B:194:0x06db, code:
+    /* JADX WARNING: Missing block: B:194:0x06db, code skipped:
             r1 = huawei.cust.HwCfgFilePolicy.getCfgFileList("/overlay", r12);
      */
-    /* JADX WARNING: Missing block: B:196:0x06df, code:
+    /* JADX WARNING: Missing block: B:196:0x06df, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:198:?, code:
+    /* JADX WARNING: Missing block: B:198:?, code skipped:
             android.util.Slog.e(TAG, r0.getMessage());
      */
-    /* JADX WARNING: Missing block: B:538:0x121c, code:
+    /* JADX WARNING: Missing block: B:539:0x121c, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:539:0x121d, code:
+    /* JADX WARNING: Missing block: B:540:0x121d, code skipped:
             r36 = r32;
             r32 = r11;
      */
-    /* JADX WARNING: Missing block: B:540:0x1222, code:
+    /* JADX WARNING: Missing block: B:541:0x1222, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:541:0x1223, code:
+    /* JADX WARNING: Missing block: B:542:0x1223, code skipped:
             r16 = r5;
             r31 = r6;
             r17 = r7;
             r32 = r11;
             r36 = r12;
      */
-    /* JADX WARNING: Missing block: B:547:0x1231, code:
+    /* JADX WARNING: Missing block: B:549:0x1231, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:548:0x1232, code:
+    /* JADX WARNING: Missing block: B:550:0x1232, code skipped:
             r16 = r5;
             r17 = r7;
             r32 = r11;
             r36 = r12;
      */
-    /* JADX WARNING: Missing block: B:549:0x123a, code:
+    /* JADX WARNING: Missing block: B:551:0x123a, code skipped:
             monitor-exit(r16);
      */
-    /* JADX WARNING: Missing block: B:550:0x123b, code:
+    /* JADX WARNING: Missing block: B:552:0x123b, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:551:0x123c, code:
+    /* JADX WARNING: Missing block: B:553:0x123c, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8563,7 +5949,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         List<String> stubSystemApps2;
         File file;
         File file2;
-        boolean settingsDirty;
         String separateProcesses;
         long systemScanTime;
         long startTime;
@@ -8587,25 +5972,26 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         File privilegedVendorAppDir;
         int rescanFlags2;
         int rescanFlags3;
-        String str3;
         VersionInfo ver;
         VersionInfo ver2;
         boolean sdkUpdated;
         int storageFlags;
         List<String> deferPackages;
         int i3;
-        Pair<ComponentName, String> instantAppResolverComponent;
-        Map<Integer, List<PackageInfo>> userPackages;
-        int[] currentUserIds;
-        SystemConfig systemConfig;
-        List<String> deferPackages2;
-        Pair<ComponentName, String> instantAppResolverComponent2;
         boolean z3;
         String deletedAppName;
         try {
             StringBuilder stringBuilder4;
             PackageSetting disabledPs;
+            boolean settingsDirty;
             List<String> possiblyDeletedUpdatedSystemApps3;
+            String str3;
+            Pair<ComponentName, String> instantAppResolverComponent;
+            Map<Integer, List<PackageInfo>> userPackages;
+            int[] currentUserIds;
+            SystemConfig systemConfig;
+            List<String> deferPackages2;
+            Pair<ComponentName, String> instantAppResolverComponent2;
             privilegedOdmAppDir = privilegedOdmAppDir2;
             vendorAppDir = vendorAppDir2;
             scanDirTracedLI(privilegedOdmAppDir2, this.mDefParseFlags | 16, ((scanFlags | 131072) | 1048576) | 262144, 0);
@@ -9111,75 +6497,114 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             this.mExistingSystemPackages.clear();
             this.mPromoteSystemApps = false;
             ver.databaseVersion = 3;
-            if (!settingsDirty || this.mIsUpgrade || this.mFirstBoot) {
-                if (HWFLOW) {
-                    this.mStartTimer = SystemClock.uptimeMillis();
+            if (!(settingsDirty || this.mIsUpgrade)) {
+                if (!this.mFirstBoot) {
+                    if (!this.mHandler.hasMessages(13)) {
+                        this.mHandler.sendEmptyMessageDelayed(13, 5000);
+                    }
+                    VersionInfo versionInfo = ver;
+                    writeCertCompatPackages(true);
+                    EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
+                    Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
+                    if (this.mOnlyCore) {
+                        this.mRequiredVerifierPackage = getRequiredButNotReallyRequiredVerifierLPr();
+                        this.mRequiredInstallerPackage = getRequiredInstallerLPr();
+                        this.mRequiredUninstallerPackage = getRequiredUninstallerLPr();
+                        this.mIntentFilterVerifierComponent = getIntentFilterVerifierComponentNameLPr();
+                        if (this.mIntentFilterVerifierComponent != null) {
+                            this.mIntentFilterVerifier = new IntentVerifierProxy(this.mContext, this.mIntentFilterVerifierComponent);
+                        } else {
+                            this.mIntentFilterVerifier = null;
+                        }
+                        this.mServicesSystemSharedLibraryPackageName = getRequiredSharedLibraryLPr("android.ext.services", -1);
+                        this.mSharedSystemSharedLibraryPackageName = getRequiredSharedLibraryLPr("android.ext.shared", -1);
+                        str3 = null;
+                    } else {
+                        str3 = null;
+                        this.mRequiredVerifierPackage = null;
+                        this.mRequiredInstallerPackage = null;
+                        this.mRequiredUninstallerPackage = null;
+                        this.mIntentFilterVerifierComponent = null;
+                        this.mIntentFilterVerifier = null;
+                        this.mServicesSystemSharedLibraryPackageName = null;
+                        this.mSharedSystemSharedLibraryPackageName = null;
+                    }
+                    str = str3;
+                    this.mInstallerService = new PackageInstallerService(context, this);
+                    instantAppResolverComponent = getInstantAppResolverLPr();
+                    if (instantAppResolverComponent == null) {
+                        if (DEBUG_INSTANT) {
+                            String str4 = TAG;
+                            StringBuilder stringBuilder7 = new StringBuilder();
+                            stringBuilder7.append("Set ephemeral resolver: ");
+                            stringBuilder7.append(instantAppResolverComponent);
+                            Slog.d(str4, stringBuilder7.toString());
+                        }
+                        this.mInstantAppResolverConnection = new InstantAppResolverConnection(this.mContext, (ComponentName) instantAppResolverComponent.first, (String) instantAppResolverComponent.second);
+                        this.mInstantAppResolverSettingsComponent = getInstantAppResolverSettingsLPr((ComponentName) instantAppResolverComponent.first);
+                        str = null;
+                    } else {
+                        str = null;
+                        this.mInstantAppResolverConnection = null;
+                        this.mInstantAppResolverSettingsComponent = null;
+                    }
+                    updateInstantAppInstallerLocked(str);
+                    userPackages = new HashMap();
+                    currentUserIds = UserManagerService.getInstance().getUserIds();
+                    Slog.i(TAG, "begin getInstalledPackages");
+                    systemPackagesCount = currentUserIds.length;
+                    systemConfig = null;
+                    while (systemConfig < systemPackagesCount) {
+                        boolean sdkUpdated2 = sdkUpdated;
+                        deferPackages2 = deferPackages;
+                        sdkUpdated = currentUserIds[systemConfig];
+                        instantAppResolverComponent2 = instantAppResolverComponent;
+                        userPackages.put(Integer.valueOf(sdkUpdated), getInstalledPackages(0, sdkUpdated).getList());
+                        systemConfig++;
+                        sdkUpdated = sdkUpdated2;
+                        deferPackages = deferPackages2;
+                        instantAppResolverComponent = instantAppResolverComponent2;
+                        Context context3 = context;
+                    }
+                    deferPackages2 = deferPackages;
+                    instantAppResolverComponent2 = instantAppResolverComponent;
+                    Slog.i(TAG, "end getInstalledPackages");
+                    this.mDexManager.load(userPackages);
+                    if (this.mIsUpgrade) {
+                        MetricsLogger.histogram(null, "ota_package_manager_init_time", (int) (SystemClock.uptimeMillis() - startTime));
+                    }
+                    this.mInstaller.setWarnIfHeld(this.mPackages);
+                    Trace.traceEnd(262144);
+                    return;
                 }
-                Trace.traceBegin(262144, "write settings");
-                this.mSettings.writeLPr();
-                Trace.traceEnd(262144);
-                if (HWFLOW) {
-                    str3 = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("TimerCounter = ");
-                    rescanFlags = this.mTimerCounter + 1;
-                    this.mTimerCounter = rescanFlags;
-                    stringBuilder.append(rescanFlags);
-                    stringBuilder.append(" **** mSettings.writeLPr  ************ Time to elapsed: ");
-                    stringBuilder.append(SystemClock.uptimeMillis() - this.mStartTimer);
-                    stringBuilder.append(" ms");
-                    Slog.i(str3, stringBuilder.toString());
-                }
-            } else {
-                if (!this.mHandler.hasMessages(13)) {
-                    this.mHandler.sendEmptyMessageDelayed(13, 5000);
-                }
-                VersionInfo versionInfo = ver;
+            }
+            if (HWFLOW) {
+                this.mStartTimer = SystemClock.uptimeMillis();
+            }
+            Trace.traceBegin(262144, "write settings");
+            this.mSettings.writeLPr();
+            Trace.traceEnd(262144);
+            if (HWFLOW) {
+                str3 = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("TimerCounter = ");
+                rescanFlags = this.mTimerCounter + 1;
+                this.mTimerCounter = rescanFlags;
+                stringBuilder.append(rescanFlags);
+                stringBuilder.append(" **** mSettings.writeLPr  ************ Time to elapsed: ");
+                stringBuilder.append(SystemClock.uptimeMillis() - this.mStartTimer);
+                stringBuilder.append(" ms");
+                Slog.i(str3, stringBuilder.toString());
             }
             writeCertCompatPackages(true);
             EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
             Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
             if (this.mOnlyCore) {
-                str3 = null;
-                this.mRequiredVerifierPackage = null;
-                this.mRequiredInstallerPackage = null;
-                this.mRequiredUninstallerPackage = null;
-                this.mIntentFilterVerifierComponent = null;
-                this.mIntentFilterVerifier = null;
-                this.mServicesSystemSharedLibraryPackageName = null;
-                this.mSharedSystemSharedLibraryPackageName = null;
-            } else {
-                this.mRequiredVerifierPackage = getRequiredButNotReallyRequiredVerifierLPr();
-                this.mRequiredInstallerPackage = getRequiredInstallerLPr();
-                this.mRequiredUninstallerPackage = getRequiredUninstallerLPr();
-                this.mIntentFilterVerifierComponent = getIntentFilterVerifierComponentNameLPr();
-                if (this.mIntentFilterVerifierComponent != null) {
-                    this.mIntentFilterVerifier = new IntentVerifierProxy(this.mContext, this.mIntentFilterVerifierComponent);
-                } else {
-                    this.mIntentFilterVerifier = null;
-                }
-                this.mServicesSystemSharedLibraryPackageName = getRequiredSharedLibraryLPr("android.ext.services", -1);
-                this.mSharedSystemSharedLibraryPackageName = getRequiredSharedLibraryLPr("android.ext.shared", -1);
-                str3 = null;
             }
             str = str3;
             this.mInstallerService = new PackageInstallerService(context, this);
             instantAppResolverComponent = getInstantAppResolverLPr();
-            if (instantAppResolverComponent != null) {
-                if (DEBUG_INSTANT) {
-                    String str4 = TAG;
-                    StringBuilder stringBuilder7 = new StringBuilder();
-                    stringBuilder7.append("Set ephemeral resolver: ");
-                    stringBuilder7.append(instantAppResolverComponent);
-                    Slog.d(str4, stringBuilder7.toString());
-                }
-                this.mInstantAppResolverConnection = new InstantAppResolverConnection(this.mContext, (ComponentName) instantAppResolverComponent.first, (String) instantAppResolverComponent.second);
-                this.mInstantAppResolverSettingsComponent = getInstantAppResolverSettingsLPr((ComponentName) instantAppResolverComponent.first);
-                str = null;
-            } else {
-                str = null;
-                this.mInstantAppResolverConnection = null;
-                this.mInstantAppResolverSettingsComponent = null;
+            if (instantAppResolverComponent == null) {
             }
             updateInstantAppInstallerLocked(str);
             userPackages = new HashMap();
@@ -9188,23 +6613,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             systemPackagesCount = currentUserIds.length;
             systemConfig = null;
             while (systemConfig < systemPackagesCount) {
-                boolean sdkUpdated2 = sdkUpdated;
-                deferPackages2 = deferPackages;
-                sdkUpdated = currentUserIds[systemConfig];
-                instantAppResolverComponent2 = instantAppResolverComponent;
-                userPackages.put(Integer.valueOf(sdkUpdated), getInstalledPackages(0, sdkUpdated).getList());
-                systemConfig++;
-                sdkUpdated = sdkUpdated2;
-                deferPackages = deferPackages2;
-                instantAppResolverComponent = instantAppResolverComponent2;
-                Context context3 = context;
             }
             deferPackages2 = deferPackages;
             instantAppResolverComponent2 = instantAppResolverComponent;
             Slog.i(TAG, "end getInstalledPackages");
             this.mDexManager.load(userPackages);
             if (this.mIsUpgrade) {
-                MetricsLogger.histogram(null, "ota_package_manager_init_time", (int) (SystemClock.uptimeMillis() - startTime));
             }
             this.mInstaller.setWarnIfHeld(this.mPackages);
             Trace.traceEnd(262144);
@@ -9352,42 +6766,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mExistingSystemPackages.clear();
         this.mPromoteSystemApps = false;
         ver.databaseVersion = 3;
-        if (settingsDirty) {
+        if (!this.mFirstBoot) {
         }
-        if (HWFLOW) {
-        }
-        Trace.traceBegin(262144, "write settings");
-        this.mSettings.writeLPr();
-        Trace.traceEnd(262144);
-        if (HWFLOW) {
-        }
-        writeCertCompatPackages(true);
-        EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
-        Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
-        if (this.mOnlyCore) {
-        }
-        str = str3;
-        this.mInstallerService = new PackageInstallerService(context, this);
-        instantAppResolverComponent = getInstantAppResolverLPr();
-        if (instantAppResolverComponent != null) {
-        }
-        updateInstantAppInstallerLocked(str);
-        userPackages = new HashMap();
-        currentUserIds = UserManagerService.getInstance().getUserIds();
-        Slog.i(TAG, "begin getInstalledPackages");
-        systemPackagesCount = currentUserIds.length;
-        systemConfig = null;
-        while (systemConfig < systemPackagesCount) {
-        }
-        deferPackages2 = deferPackages;
-        instantAppResolverComponent2 = instantAppResolverComponent;
-        Slog.i(TAG, "end getInstalledPackages");
-        this.mDexManager.load(userPackages);
-        if (this.mIsUpgrade) {
-        }
-        this.mInstaller.setWarnIfHeld(this.mPackages);
-        Trace.traceEnd(262144);
-        return;
         productAppDir = odmAppDir;
         possiblyDeletedUpdatedSystemApps = new ArrayList();
         stubSystemApps = new ArrayList();
@@ -9463,42 +6843,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mExistingSystemPackages.clear();
         this.mPromoteSystemApps = false;
         ver.databaseVersion = 3;
-        if (settingsDirty) {
+        if (!this.mFirstBoot) {
         }
-        if (HWFLOW) {
-        }
-        Trace.traceBegin(262144, "write settings");
-        this.mSettings.writeLPr();
-        Trace.traceEnd(262144);
-        if (HWFLOW) {
-        }
-        writeCertCompatPackages(true);
-        EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
-        Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
-        if (this.mOnlyCore) {
-        }
-        str = str3;
-        this.mInstallerService = new PackageInstallerService(context, this);
-        instantAppResolverComponent = getInstantAppResolverLPr();
-        if (instantAppResolverComponent != null) {
-        }
-        updateInstantAppInstallerLocked(str);
-        userPackages = new HashMap();
-        currentUserIds = UserManagerService.getInstance().getUserIds();
-        Slog.i(TAG, "begin getInstalledPackages");
-        systemPackagesCount = currentUserIds.length;
-        systemConfig = null;
-        while (systemConfig < systemPackagesCount) {
-        }
-        deferPackages2 = deferPackages;
-        instantAppResolverComponent2 = instantAppResolverComponent;
-        Slog.i(TAG, "end getInstalledPackages");
-        this.mDexManager.load(userPackages);
-        if (this.mIsUpgrade) {
-        }
-        this.mInstaller.setWarnIfHeld(this.mPackages);
-        Trace.traceEnd(262144);
-        return;
         privilegedVendorAppDir = odmAppDir;
         odmAppDir = new File(Environment.getVendorDirectory(), "app");
         try {
@@ -9608,42 +6954,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mExistingSystemPackages.clear();
         this.mPromoteSystemApps = false;
         ver.databaseVersion = 3;
-        if (settingsDirty) {
+        if (!this.mFirstBoot) {
         }
-        if (HWFLOW) {
-        }
-        Trace.traceBegin(262144, "write settings");
-        this.mSettings.writeLPr();
-        Trace.traceEnd(262144);
-        if (HWFLOW) {
-        }
-        writeCertCompatPackages(true);
-        EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
-        Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
-        if (this.mOnlyCore) {
-        }
-        str = str3;
-        this.mInstallerService = new PackageInstallerService(context, this);
-        instantAppResolverComponent = getInstantAppResolverLPr();
-        if (instantAppResolverComponent != null) {
-        }
-        updateInstantAppInstallerLocked(str);
-        userPackages = new HashMap();
-        currentUserIds = UserManagerService.getInstance().getUserIds();
-        Slog.i(TAG, "begin getInstalledPackages");
-        systemPackagesCount = currentUserIds.length;
-        systemConfig = null;
-        while (systemConfig < systemPackagesCount) {
-        }
-        deferPackages2 = deferPackages;
-        instantAppResolverComponent2 = instantAppResolverComponent;
-        Slog.i(TAG, "end getInstalledPackages");
-        this.mDexManager.load(userPackages);
-        if (this.mIsUpgrade) {
-        }
-        this.mInstaller.setWarnIfHeld(this.mPackages);
-        Trace.traceEnd(262144);
-        return;
         i2 = i + 1;
         scanFlags = scanFlags2;
         vendorAppDir = file3;
@@ -9735,42 +7047,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mExistingSystemPackages.clear();
         this.mPromoteSystemApps = false;
         ver.databaseVersion = 3;
-        if (settingsDirty) {
+        if (!this.mFirstBoot) {
         }
-        if (HWFLOW) {
-        }
-        Trace.traceBegin(262144, "write settings");
-        this.mSettings.writeLPr();
-        Trace.traceEnd(262144);
-        if (HWFLOW) {
-        }
-        writeCertCompatPackages(true);
-        EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
-        Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
-        if (this.mOnlyCore) {
-        }
-        str = str3;
-        this.mInstallerService = new PackageInstallerService(context, this);
-        instantAppResolverComponent = getInstantAppResolverLPr();
-        if (instantAppResolverComponent != null) {
-        }
-        updateInstantAppInstallerLocked(str);
-        userPackages = new HashMap();
-        currentUserIds = UserManagerService.getInstance().getUserIds();
-        Slog.i(TAG, "begin getInstalledPackages");
-        systemPackagesCount = currentUserIds.length;
-        systemConfig = null;
-        while (systemConfig < systemPackagesCount) {
-        }
-        deferPackages2 = deferPackages;
-        instantAppResolverComponent2 = instantAppResolverComponent;
-        Slog.i(TAG, "end getInstalledPackages");
-        this.mDexManager.load(userPackages);
-        if (this.mIsUpgrade) {
-        }
-        this.mInstaller.setWarnIfHeld(this.mPackages);
-        Trace.traceEnd(262144);
-        return;
         privilegedOdmAppDir2 = odmAppDir;
         odmAppDir = new File(Environment.getProductDirectory(), "app");
         odmAppDir = odmAppDir.getCanonicalFile();
@@ -9849,42 +7127,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mExistingSystemPackages.clear();
         this.mPromoteSystemApps = false;
         ver.databaseVersion = 3;
-        if (settingsDirty) {
+        if (!this.mFirstBoot) {
         }
-        if (HWFLOW) {
-        }
-        Trace.traceBegin(262144, "write settings");
-        this.mSettings.writeLPr();
-        Trace.traceEnd(262144);
-        if (HWFLOW) {
-        }
-        writeCertCompatPackages(true);
-        EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
-        Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
-        if (this.mOnlyCore) {
-        }
-        str = str3;
-        this.mInstallerService = new PackageInstallerService(context, this);
-        instantAppResolverComponent = getInstantAppResolverLPr();
-        if (instantAppResolverComponent != null) {
-        }
-        updateInstantAppInstallerLocked(str);
-        userPackages = new HashMap();
-        currentUserIds = UserManagerService.getInstance().getUserIds();
-        Slog.i(TAG, "begin getInstalledPackages");
-        systemPackagesCount = currentUserIds.length;
-        systemConfig = null;
-        while (systemConfig < systemPackagesCount) {
-        }
-        deferPackages2 = deferPackages;
-        instantAppResolverComponent2 = instantAppResolverComponent;
-        Slog.i(TAG, "end getInstalledPackages");
-        this.mDexManager.load(userPackages);
-        if (this.mIsUpgrade) {
-        }
-        this.mInstaller.setWarnIfHeld(this.mPackages);
-        Trace.traceEnd(262144);
-        return;
         ArrayList<File> fileList = fileList;
         VersionInfo ver3;
         long startTime2;
@@ -10053,42 +7297,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mExistingSystemPackages.clear();
         this.mPromoteSystemApps = false;
         ver.databaseVersion = 3;
-        if (settingsDirty) {
+        if (!this.mFirstBoot) {
         }
-        if (HWFLOW) {
-        }
-        Trace.traceBegin(262144, "write settings");
-        this.mSettings.writeLPr();
-        Trace.traceEnd(262144);
-        if (HWFLOW) {
-        }
-        writeCertCompatPackages(true);
-        EventLog.writeEvent(EventLogTags.BOOT_PROGRESS_PMS_READY, SystemClock.uptimeMillis());
-        Jlog.d(32, "JL_BOOT_PROGRESS_PMS_READY");
-        if (this.mOnlyCore) {
-        }
-        str = str3;
-        this.mInstallerService = new PackageInstallerService(context, this);
-        instantAppResolverComponent = getInstantAppResolverLPr();
-        if (instantAppResolverComponent != null) {
-        }
-        updateInstantAppInstallerLocked(str);
-        userPackages = new HashMap();
-        currentUserIds = UserManagerService.getInstance().getUserIds();
-        Slog.i(TAG, "begin getInstalledPackages");
-        systemPackagesCount = currentUserIds.length;
-        systemConfig = null;
-        while (systemConfig < systemPackagesCount) {
-        }
-        deferPackages2 = deferPackages;
-        instantAppResolverComponent2 = instantAppResolverComponent;
-        Slog.i(TAG, "end getInstalledPackages");
-        this.mDexManager.load(userPackages);
-        if (this.mIsUpgrade) {
-        }
-        this.mInstaller.setWarnIfHeld(this.mPackages);
-        Trace.traceEnd(262144);
-        return;
         i2 = rescanFlags3 - 1;
     }
 
@@ -10677,7 +7887,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     }
 
     private void applyFactoryDefaultBrowserLPw(int userId) {
-        String browserPkg = this.mContext.getResources().getString(17039919);
+        String browserPkg = this.mContext.getResources().getString(17039920);
         if (!TextUtils.isEmpty(browserPkg)) {
             if (((PackageSetting) this.mSettings.mPackages.get(browserPkg)) == null) {
                 String str = TAG;
@@ -10855,32 +8065,39 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     stringBuilder.append(packageName);
                     stringBuilder.append(" was not found!");
                     throw new SecurityException(stringBuilder.toString());
-                } else if (!ps.getInstalled(userId)) {
+                } else if (ps.getInstalled(userId)) {
+                    if (this.mSafeMode) {
+                        if (!ps.isSystem()) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Package ");
+                            stringBuilder.append(packageName);
+                            stringBuilder.append(" not a system app!");
+                            throw new SecurityException(stringBuilder.toString());
+                        }
+                    }
+                    if (this.mFrozenPackages.contains(packageName)) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Package ");
+                        stringBuilder.append(packageName);
+                        stringBuilder.append(" is currently frozen!");
+                        throw new SecurityException(stringBuilder.toString());
+                    }
+                    if (!userKeyUnlocked) {
+                        if (!ps.pkg.applicationInfo.isEncryptionAware()) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Package ");
+                            stringBuilder.append(packageName);
+                            stringBuilder.append(" is not encryption aware!");
+                            throw new SecurityException(stringBuilder.toString());
+                        }
+                    }
+                } else {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("Package ");
                     stringBuilder.append(packageName);
                     stringBuilder.append(" was not installed for user ");
                     stringBuilder.append(userId);
                     stringBuilder.append("!");
-                    throw new SecurityException(stringBuilder.toString());
-                } else if (this.mSafeMode && !ps.isSystem()) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Package ");
-                    stringBuilder.append(packageName);
-                    stringBuilder.append(" not a system app!");
-                    throw new SecurityException(stringBuilder.toString());
-                } else if (this.mFrozenPackages.contains(packageName)) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Package ");
-                    stringBuilder.append(packageName);
-                    stringBuilder.append(" is currently frozen!");
-                    throw new SecurityException(stringBuilder.toString());
-                } else if (userKeyUnlocked || ps.pkg.applicationInfo.isEncryptionAware()) {
-                } else {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Package ");
-                    stringBuilder.append(packageName);
-                    stringBuilder.append(" is not encryption aware!");
                     throw new SecurityException(stringBuilder.toString());
                 }
             }
@@ -10889,7 +8106,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         throw new SecurityException("Instant applications don't have access to this method");
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0041, code:
+    /* JADX WARNING: Missing block: B:19:0x0041, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10927,7 +8144,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return getPackageInfoInternal(versionedPackage.getPackageName(), versionedPackage.getLongVersionCode(), flags, Binder.getCallingUid(), userId);
     }
 
-    /* JADX WARNING: Missing block: B:71:0x00df, code:
+    /* JADX WARNING: Missing block: B:71:0x00df, code skipped:
             return r8.mHwPMSEx.handlePackageNotFound(r9, r12, r13);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11068,11 +8285,11 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     return true;
                 }
                 if (component == null) {
-                    return ps.pkg.visibleToInstantApps ^ true;
+                    return ps.pkg.visibleToInstantApps ^ 1;
                 }
                 Instrumentation instrumentation = (Instrumentation) this.mInstrumentation.get(component);
                 if (instrumentation == null || !isCallerSameApp(instrumentation.info.targetPackage, callingUid)) {
-                    return isComponentVisibleToInstantApp(component, componentType) ^ true;
+                    return isComponentVisibleToInstantApp(component, componentType) ^ 1;
                 }
                 return false;
             } else if (!ps.getInstantApp(userId) || isCallerSameApp(ps.name, callingUid) || canViewInstantApps(callingUid, userId)) {
@@ -11081,7 +8298,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 if (component != null) {
                     return true;
                 }
-                return this.mInstantAppRegistry.isInstantAccessGranted(userId, UserHandle.getAppId(callingUid), ps.appId) ^ true;
+                return this.mInstantAppRegistry.isInstantAccessGranted(userId, UserHandle.getAppId(callingUid), ps.appId) ^ 1;
             }
         }
     }
@@ -11144,7 +8361,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 PackageSetting ps = (PackageSetting) this.mSettings.mPackages.get(names[i]);
                 boolean translateName = false;
                 if (!(ps == null || ps.realName == null)) {
-                    boolean z = !ps.getInstantApp(callingUserId) || canViewInstantApps || this.mInstantAppRegistry.isInstantAccessGranted(callingUserId, UserHandle.getAppId(callingUid), ps.appId);
+                    boolean z;
+                    if (ps.getInstantApp(callingUserId) && !canViewInstantApps) {
+                        if (!this.mInstantAppRegistry.isInstantAccessGranted(callingUserId, UserHandle.getAppId(callingUid), ps.appId)) {
+                            z = false;
+                            translateName = z;
+                        }
+                    }
+                    z = true;
                     translateName = z;
                 }
                 out[i] = translateName ? ps.realName : names[i];
@@ -11173,9 +8397,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     PackageSetting ps = (PackageSetting) this.mSettings.mPackages.get(strArr[i]);
                     boolean z2 = false;
                     boolean targetIsInstantApp = (ps == null || !ps.getInstantApp(callingUserId)) ? false : z;
-                    if (!targetIsInstantApp || canViewInstantApps || this.mInstantAppRegistry.isInstantAccessGranted(callingUserId, UserHandle.getAppId(callingUid), ps.appId)) {
-                        z2 = true;
+                    if (targetIsInstantApp && !canViewInstantApps) {
+                        if (!this.mInstantAppRegistry.isInstantAccessGranted(callingUserId, UserHandle.getAppId(callingUid), ps.appId)) {
+                            translateName = z2;
+                        }
                     }
+                    z2 = true;
                     translateName = z2;
                 }
                 out[i] = translateName ? cur : strArr[i];
@@ -11186,7 +8413,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return out;
     }
 
-    /* JADX WARNING: Missing block: B:29:0x006d, code:
+    /* JADX WARNING: Missing block: B:29:0x006d, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11217,7 +8444,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x006f, code:
+    /* JADX WARNING: Missing block: B:29:0x006f, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11294,7 +8521,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return getApplicationInfoInternal(packageName, flags, Binder.getCallingUid(), userId);
     }
 
-    /* JADX WARNING: Missing block: B:31:0x008a, code:
+    /* JADX WARNING: Missing block: B:31:0x008a, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11334,14 +8561,18 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         ai.packageName = resolveExternalPackageNameLPr(p);
                     }
                 }
-            } else if (PLATFORM_PACKAGE_NAME.equals(packageName) || "system".equals(packageName)) {
+            } else {
+                if (!PLATFORM_PACKAGE_NAME.equals(packageName)) {
+                    if (!"system".equals(packageName)) {
+                        if ((4202496 & flags) != 0) {
+                            ai = generateApplicationInfoFromSettingsLPw(packageName, flags, filterCallingUid, userId);
+                            return ai;
+                        }
+                        return null;
+                    }
+                }
                 ai = this.mAndroidApplication;
                 return ai;
-            } else if ((4202496 & flags) != 0) {
-                ai = generateApplicationInfoFromSettingsLPw(packageName, flags, filterCallingUid, userId);
-                return ai;
-            } else {
-                return null;
             }
         }
     }
@@ -11486,45 +8717,45 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:33:0x00ce, code:
+    /* JADX WARNING: Missing block: B:37:0x00ce, code skipped:
             if (r13 == null) goto L_0x0103;
      */
-    /* JADX WARNING: Missing block: B:34:0x00d0, code:
+    /* JADX WARNING: Missing block: B:38:0x00d0, code skipped:
             r0 = r13.size();
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:35:0x00d5, code:
+    /* JADX WARNING: Missing block: B:39:0x00d5, code skipped:
             r8 = r1;
      */
-    /* JADX WARNING: Missing block: B:36:0x00d6, code:
+    /* JADX WARNING: Missing block: B:40:0x00d6, code skipped:
             if (r8 >= r0) goto L_0x0103;
      */
-    /* JADX WARNING: Missing block: B:37:0x00d8, code:
+    /* JADX WARNING: Missing block: B:41:0x00d8, code skipped:
             r9 = (android.content.pm.VersionedPackage) r13.get(r8);
      */
-    /* JADX WARNING: Missing block: B:38:0x00ef, code:
+    /* JADX WARNING: Missing block: B:42:0x00ef, code skipped:
             if (deletePackageX(r9.getPackageName(), r9.getLongVersionCode(), 0, 2) != 1) goto L_0x00fc;
      */
-    /* JADX WARNING: Missing block: B:39:0x00f1, code:
+    /* JADX WARNING: Missing block: B:43:0x00f1, code skipped:
             r3 = r19;
      */
-    /* JADX WARNING: Missing block: B:40:0x00f9, code:
+    /* JADX WARNING: Missing block: B:44:0x00f9, code skipped:
             if (r3.getUsableSpace() < r23) goto L_0x00fe;
      */
-    /* JADX WARNING: Missing block: B:41:0x00fb, code:
+    /* JADX WARNING: Missing block: B:45:0x00fb, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:42:0x00fc, code:
+    /* JADX WARNING: Missing block: B:46:0x00fc, code skipped:
             r3 = r19;
      */
-    /* JADX WARNING: Missing block: B:43:0x00fe, code:
+    /* JADX WARNING: Missing block: B:47:0x00fe, code skipped:
             r1 = r8 + 1;
             r19 = r3;
      */
-    /* JADX WARNING: Missing block: B:44:0x0103, code:
+    /* JADX WARNING: Missing block: B:48:0x0103, code skipped:
             r3 = r19;
      */
-    /* JADX WARNING: Missing block: B:45:0x0106, code:
+    /* JADX WARNING: Missing block: B:49:0x0106, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11545,63 +8776,73 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 int i = 0;
                 while (i < libCount) {
                     try {
+                        int libCount2;
                         LongSparseArray<SharedLibraryEntry> versionedLib = (LongSparseArray) this.mSharedLibraries.valueAt(i);
                         if (versionedLib != null) {
                             int versionCount = versionedLib.size();
                             int j = 0;
                             while (j < versionCount) {
                                 SharedLibraryInfo libInfo = ((SharedLibraryEntry) versionedLib.valueAt(j)).info;
-                                if (!libInfo.isStatic()) {
-                                    break;
-                                }
-                                int versionCount2;
-                                VersionedPackage declaringPackage = libInfo.getDeclaringPackage();
-                                int libCount2 = libCount;
-                                LongSparseArray<SharedLibraryEntry> versionedLib2 = versionedLib;
-                                String internalPackageName = resolveInternalPackageNameLPr(declaringPackage.getPackageName(), declaringPackage.getLongVersionCode());
-                                PackageSetting ps = this.mSettings.getPackageLPr(internalPackageName);
-                                if (ps != null) {
+                                if (libInfo.isStatic()) {
+                                    int versionCount2;
+                                    VersionedPackage declaringPackage = libInfo.getDeclaringPackage();
+                                    libCount2 = libCount;
+                                    LongSparseArray<SharedLibraryEntry> versionedLib2 = versionedLib;
+                                    libCount = resolveInternalPackageNameLPr(declaringPackage.getPackageName(), declaringPackage.getLongVersionCode());
+                                    PackageSetting ps = this.mSettings.getPackageLPr(libCount);
+                                    if (ps != null) {
+                                        storage2 = storage;
+                                        volume = volume2;
+                                        try {
+                                            if (now - ps.lastUpdateTime < maxCachePeriod) {
+                                                versionCount2 = versionCount;
+                                            } else {
+                                                if (packagesToDelete == null) {
+                                                    packagesToDelete = new ArrayList();
+                                                }
+                                                versionCount2 = versionCount;
+                                                packagesToDelete.add(new VersionedPackage(libCount, declaringPackage.getLongVersionCode()));
+                                            }
+                                        } catch (Throwable th2) {
+                                            th = th2;
+                                            list = packagesToDelete;
+                                            libCount = volume;
+                                            while (true) {
+                                                try {
+                                                    break;
+                                                } catch (Throwable th3) {
+                                                    th = th3;
+                                                }
+                                            }
+                                            throw th;
+                                        }
+                                    }
+                                    versionCount2 = versionCount;
                                     storage2 = storage;
                                     volume = volume2;
-                                    try {
-                                        if (now - ps.lastUpdateTime < maxCachePeriod) {
-                                            versionCount2 = versionCount;
-                                        } else {
-                                            if (packagesToDelete == null) {
-                                                packagesToDelete = new ArrayList();
-                                            }
-                                            versionCount2 = versionCount;
-                                            packagesToDelete.add(new VersionedPackage(internalPackageName, declaringPackage.getLongVersionCode()));
-                                        }
-                                    } catch (Throwable th2) {
-                                        th = th2;
-                                        list = packagesToDelete;
-                                        file = volume;
-                                        while (true) {
-                                            try {
-                                                break;
-                                            } catch (Throwable th3) {
-                                                th = th3;
-                                            }
-                                        }
-                                        throw th;
-                                    }
+                                    j++;
+                                    libCount = libCount2;
+                                    versionedLib = versionedLib2;
+                                    storage = storage2;
+                                    volume2 = volume;
+                                    versionCount = versionCount2;
                                 }
-                                versionCount2 = versionCount;
-                                storage2 = storage;
-                                volume = volume2;
-                                j++;
-                                libCount = libCount2;
-                                versionedLib = versionedLib2;
-                                storage = storage2;
-                                volume2 = volume;
-                                versionCount = versionCount2;
                             }
+                            libCount2 = libCount;
+                            storage2 = storage;
+                            volume = volume2;
+                            i++;
+                            libCount = libCount2;
+                            storage = storage2;
+                            volume2 = volume;
                         }
+                        libCount2 = libCount;
+                        storage2 = storage;
+                        volume = volume2;
                         i++;
-                        libCount = libCount;
-                        storage = storage;
-                        volume2 = volume2;
+                        libCount = libCount2;
+                        storage = storage2;
+                        volume2 = volume;
                     } catch (Throwable th4) {
                         th = th4;
                         storage2 = storage;
@@ -11679,7 +8920,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         if ((flags & DumpState.DUMP_CHANGES) != 0) {
             PermissionManagerInternal permissionManagerInternal = this.mPermissionManager;
             int callingUid = Binder.getCallingUid();
-            boolean isRecentsAccessingChildProfiles = isRecentsAccessingChildProfiles(Binder.getCallingUid(), userId) ^ true;
+            int isRecentsAccessingChildProfiles = isRecentsAccessingChildProfiles(Binder.getCallingUid(), userId) ^ 1;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("MATCH_ANY_USER flag requires INTERACT_ACROSS_USERS permission at ");
             stringBuilder.append(Debug.getCallers(5));
@@ -11812,7 +9053,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         ComponentName componentName = component;
         synchronized (this.mPackages) {
             if (componentName == null) {
-                return false;
+                try {
+                    return false;
+                } catch (Throwable th) {
+                }
             } else if (componentName.equals(this.mResolveComponentName)) {
                 return true;
             } else {
@@ -11839,7 +9083,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0088, code:
+    /* JADX WARNING: Missing block: B:24:0x0088, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11921,7 +9165,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 if (!canSeeStaticLibraries) {
                                     libInfo = libInfo2;
                                     if (libInfo.isStatic()) {
-                                        continue;
                                         break;
                                     }
                                 }
@@ -11996,7 +9239,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return versionedPackages;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0088, code:
+    /* JADX WARNING: Missing block: B:24:0x0088, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12033,7 +9276,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0088, code:
+    /* JADX WARNING: Missing block: B:24:0x0088, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12150,7 +9393,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mChangedPackagesSequenceNumber++;
     }
 
-    /* JADX WARNING: Missing block: B:25:0x004b, code:
+    /* JADX WARNING: Missing block: B:26:0x004b, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12192,7 +9435,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return new ParceledListSlice(res);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0017, code:
+    /* JADX WARNING: Missing block: B:11:0x0017, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12385,10 +9628,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         throw new SecurityException("Instant applications don't have access to this method");
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0031, code:
+    /* JADX WARNING: Missing block: B:17:0x0031, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:20:0x0034, code:
+    /* JADX WARNING: Missing block: B:20:0x0034, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12401,10 +9644,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x004d, code:
+    /* JADX WARNING: Missing block: B:20:0x004d, code skipped:
             return -4;
      */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
+    /* JADX WARNING: Missing block: B:22:0x004f, code skipped:
             return -4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12412,15 +9655,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         synchronized (this.mPackages) {
             Package p1 = (Package) this.mPackages.get(pkg1);
             Package p2 = (Package) this.mPackages.get(pkg2);
-            if (p1 == null || p1.mExtras == null || p2 == null || p2.mExtras == null) {
-            } else {
-                int callingUid = Binder.getCallingUid();
-                int callingUserId = UserHandle.getUserId(callingUid);
-                PackageSetting ps2 = p2.mExtras;
-                if (filterAppAccessLPr(p1.mExtras, callingUid, callingUserId) || filterAppAccessLPr(ps2, callingUid, callingUserId)) {
-                } else {
-                    int compareSignatures = PackageManagerServiceUtils.compareSignatures(p1.mSigningDetails.signatures, p2.mSigningDetails.signatures);
-                    return compareSignatures;
+            if (!(p1 == null || p1.mExtras == null || p2 == null)) {
+                if (p2.mExtras != null) {
+                    int callingUid = Binder.getCallingUid();
+                    int callingUserId = UserHandle.getUserId(callingUid);
+                    PackageSetting ps2 = p2.mExtras;
+                    if (!filterAppAccessLPr(p1.mExtras, callingUid, callingUserId)) {
+                        if (!filterAppAccessLPr(ps2, callingUid, callingUserId)) {
+                            int compareSignatures = PackageManagerServiceUtils.compareSignatures(p1.mSigningDetails.signatures, p2.mSigningDetails.signatures);
+                            return compareSignatures;
+                        }
+                    }
                 }
             }
         }
@@ -12476,29 +9721,30 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x003e, code:
+    /* JADX WARNING: Missing block: B:23:0x003e, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean hasSigningCertificate(String packageName, byte[] certificate, int type) {
         synchronized (this.mPackages) {
             Package p = (Package) this.mPackages.get(packageName);
-            if (p == null || p.mExtras == null) {
-            } else {
-                int callingUid = Binder.getCallingUid();
-                if (filterAppAccessLPr(p.mExtras, callingUid, UserHandle.getUserId(callingUid))) {
-                    return false;
-                }
-                boolean hasCertificate;
-                switch (type) {
-                    case 0:
-                        hasCertificate = p.mSigningDetails.hasCertificate(certificate);
-                        return hasCertificate;
-                    case 1:
-                        hasCertificate = p.mSigningDetails.hasSha256Certificate(certificate);
-                        return hasCertificate;
-                    default:
+            if (p != null) {
+                if (p.mExtras != null) {
+                    int callingUid = Binder.getCallingUid();
+                    if (filterAppAccessLPr(p.mExtras, callingUid, UserHandle.getUserId(callingUid))) {
                         return false;
+                    }
+                    boolean hasCertificate;
+                    switch (type) {
+                        case 0:
+                            hasCertificate = p.mSigningDetails.hasCertificate(certificate);
+                            return hasCertificate;
+                        case 1:
+                            hasCertificate = p.mSigningDetails.hasSha256Certificate(certificate);
+                            return hasCertificate;
+                        default:
+                            return false;
+                    }
                 }
             }
         }
@@ -12566,7 +9812,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return getSettingsVersionForPackage(scannedPkg).databaseVersion < 3;
     }
 
-    /* JADX WARNING: Missing block: B:32:0x0088, code:
+    /* JADX WARNING: Missing block: B:32:0x0088, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12575,7 +9821,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         int callingUserId = UserHandle.getUserId(callingUid);
         synchronized (this.mPackages) {
             if (canViewInstantApps(callingUid, callingUserId)) {
-                List arrayList = new ArrayList(this.mPackages.keySet());
+                ArrayList arrayList = new ArrayList(this.mPackages.keySet());
                 return arrayList;
             }
             String instantAppPkgName = getInstantAppPackageName(callingUid);
@@ -12597,7 +9843,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:40:0x00e8, code:
+    /* JADX WARNING: Missing block: B:40:0x00e8, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12733,6 +9979,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     return i;
                 }
             } catch (PackageManagerException e) {
+            } catch (Throwable th) {
             }
         }
         return -1;
@@ -12784,7 +10031,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x004a, code:
+    /* JADX WARNING: Missing block: B:23:0x004a, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12933,10 +10180,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return this.mWebInstantAppsDisabled;
     }
 
-    /* JADX WARNING: Missing block: B:52:0x00b9, code:
+    /* JADX WARNING: Missing block: B:52:0x00b9, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:60:0x00dc, code:
+    /* JADX WARNING: Missing block: B:60:0x00dc, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -13164,766 +10411,466 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return null;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.pm.PackageManagerService.findPreferredActivity(android.content.Intent, java.lang.String, int, java.util.List, int, boolean, boolean, boolean, int):android.content.pm.ResolveInfo, dom blocks: [B:10:0x003a, B:92:0x0174]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    /* JADX WARNING: Removed duplicated region for block: B:167:0x0322 A:{Catch:{ all -> 0x0410 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x02f6 A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:199:0x0413  */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x0328 A:{Catch:{ all -> 0x0410 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:213:0x0464 A:{SYNTHETIC, Splitter: B:213:0x0464} */
-    /* JADX WARNING: Removed duplicated region for block: B:234:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:234:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:234:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:234:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
-    /* JADX WARNING: Removed duplicated region for block: B:234:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
-    android.content.pm.ResolveInfo findPreferredActivity(android.content.Intent r37, java.lang.String r38, int r39, java.util.List<android.content.pm.ResolveInfo> r40, int r41, boolean r42, boolean r43, boolean r44, int r45) {
-        /*
-        r36 = this;
-        r11 = r36;
-        r12 = r38;
-        r13 = r40;
-        r10 = r45;
-        r0 = sUserManager;
-        r0 = r0.exists(r10);
-        r8 = 0;
-        if (r0 != 0) goto L_0x0012;
-    L_0x0011:
-        return r8;
-    L_0x0012:
-        r14 = android.os.Binder.getCallingUid();
-        r6 = 0;
-        r1 = r11;
-        r2 = r39;
-        r3 = r10;
-        r4 = r37;
-        r5 = r14;
-        r9 = r1.updateFlagsForResolve(r2, r3, r4, r5, r6);
-        r7 = r36.updateIntentForResolve(r37);
-        r6 = r11.mPackages;
-        monitor-enter(r6);
-        r1 = r11;
-        r2 = r7;
-        r3 = r12;
-        r4 = r9;
-        r5 = r13;
-        r15 = r6;
-        r6 = r44;
-        r8 = r7;
-        r7 = r10;
-        r0 = r1.findPersistentPreferredActivityLP(r2, r3, r4, r5, r6, r7);	 Catch:{ all -> 0x04d3 }
-        r1 = r0;
-        if (r1 == 0) goto L_0x0042;
-    L_0x003a:
-        monitor-exit(r15);	 Catch:{ all -> 0x003c }
-        return r1;
-    L_0x003c:
-        r0 = move-exception;
-        r12 = r8;
-        r16 = r9;
-        goto L_0x04d7;
-    L_0x0042:
-        r0 = r11.mSettings;	 Catch:{ all -> 0x04d3 }
-        r0 = r0.mPreferredActivities;	 Catch:{ all -> 0x04d3 }
-        r0 = r0.get(r10);	 Catch:{ all -> 0x04d3 }
-        r0 = (com.android.server.pm.PreferredIntentResolver) r0;	 Catch:{ all -> 0x04d3 }
-        r2 = r0;	 Catch:{ all -> 0x04d3 }
-        r0 = DEBUG_PREFERRED;	 Catch:{ all -> 0x04d3 }
-        if (r0 != 0) goto L_0x0053;	 Catch:{ all -> 0x04d3 }
-    L_0x0051:
-        if (r44 == 0) goto L_0x005a;	 Catch:{ all -> 0x04d3 }
-    L_0x0053:
-        r0 = "PackageManager";	 Catch:{ all -> 0x04d3 }
-        r3 = "Looking for preferred activities...";	 Catch:{ all -> 0x04d3 }
-        android.util.Slog.v(r0, r3);	 Catch:{ all -> 0x04d3 }
-    L_0x005a:
-        r3 = 0;
-        if (r2 == 0) goto L_0x006a;
-    L_0x005d:
-        r4 = 65536; // 0x10000 float:9.18355E-41 double:3.2379E-319;
-        r4 = r4 & r9;
-        if (r4 == 0) goto L_0x0064;
-    L_0x0062:
-        r4 = 1;
-        goto L_0x0065;
-    L_0x0064:
-        r4 = r3;
-    L_0x0065:
-        r4 = r2.queryIntent(r8, r12, r4, r10);	 Catch:{ all -> 0x003c }
-        goto L_0x006b;	 Catch:{ all -> 0x003c }
-    L_0x006a:
-        r4 = 0;	 Catch:{ all -> 0x003c }
-    L_0x006b:
-        if (r4 == 0) goto L_0x04bb;	 Catch:{ all -> 0x003c }
-    L_0x006d:
-        r5 = r4.size();	 Catch:{ all -> 0x003c }
-        if (r5 <= 0) goto L_0x04bb;
-    L_0x0073:
-        r5 = r3;
-        r6 = 0;
-        r7 = DEBUG_PREFERRED;	 Catch:{ all -> 0x04a3 }
-        if (r7 != 0) goto L_0x007b;	 Catch:{ all -> 0x04a3 }
-    L_0x0079:
-        if (r44 == 0) goto L_0x0082;	 Catch:{ all -> 0x04a3 }
-    L_0x007b:
-        r7 = "PackageManager";	 Catch:{ all -> 0x04a3 }
-        r0 = "Figuring out best match...";	 Catch:{ all -> 0x04a3 }
-        android.util.Slog.v(r7, r0);	 Catch:{ all -> 0x04a3 }
-    L_0x0082:
-        r0 = r40.size();	 Catch:{ all -> 0x04a3 }
-        r7 = r6;
-        r6 = r3;
-    L_0x0088:
-        if (r6 >= r0) goto L_0x00f7;
-    L_0x008a:
-        r17 = r13.get(r6);	 Catch:{ all -> 0x00ee }
-        r17 = (android.content.pm.ResolveInfo) r17;	 Catch:{ all -> 0x00ee }
-        r18 = r17;	 Catch:{ all -> 0x00ee }
-        r17 = DEBUG_PREFERRED;	 Catch:{ all -> 0x00ee }
-        if (r17 != 0) goto L_0x00a0;	 Catch:{ all -> 0x00ee }
-    L_0x0096:
-        if (r44 == 0) goto L_0x0099;	 Catch:{ all -> 0x00ee }
-    L_0x0098:
-        goto L_0x00a0;	 Catch:{ all -> 0x00ee }
-    L_0x0099:
-        r19 = r1;	 Catch:{ all -> 0x00ee }
-        r20 = r5;	 Catch:{ all -> 0x00ee }
-        r5 = r18;	 Catch:{ all -> 0x00ee }
-        goto L_0x00ca;	 Catch:{ all -> 0x00ee }
-    L_0x00a0:
-        r3 = "PackageManager";	 Catch:{ all -> 0x00ee }
-        r19 = r1;
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00e7 }
-        r1.<init>();	 Catch:{ all -> 0x00e7 }
-        r20 = r5;
-        r5 = "Match for ";	 Catch:{ all -> 0x00e2 }
-        r1.append(r5);	 Catch:{ all -> 0x00e2 }
-        r5 = r18;
-        r12 = r5.activityInfo;	 Catch:{ all -> 0x00db }
-        r1.append(r12);	 Catch:{ all -> 0x00db }
-        r12 = ": 0x";	 Catch:{ all -> 0x00db }
-        r1.append(r12);	 Catch:{ all -> 0x00db }
-        r12 = java.lang.Integer.toHexString(r7);	 Catch:{ all -> 0x00db }
-        r1.append(r12);	 Catch:{ all -> 0x00db }
-        r1 = r1.toString();	 Catch:{ all -> 0x00db }
-        android.util.Slog.v(r3, r1);	 Catch:{ all -> 0x00db }
-    L_0x00ca:
-        r1 = r5.match;	 Catch:{ all -> 0x00db }
-        if (r1 <= r7) goto L_0x00d1;	 Catch:{ all -> 0x00db }
-    L_0x00ce:
-        r1 = r5.match;	 Catch:{ all -> 0x00db }
-        r7 = r1;
-    L_0x00d1:
-        r6 = r6 + 1;
-        r1 = r19;
-        r5 = r20;
-        r3 = 0;
-        r12 = r38;
-        goto L_0x0088;
-    L_0x00db:
-        r0 = move-exception;
-        r28 = r4;
-    L_0x00de:
-        r12 = r38;
-        goto L_0x04aa;
-    L_0x00e2:
-        r0 = move-exception;
-        r28 = r4;
-        goto L_0x04aa;
-    L_0x00e7:
-        r0 = move-exception;
-        r20 = r5;
-        r28 = r4;
-        goto L_0x04aa;
-    L_0x00ee:
-        r0 = move-exception;
-        r19 = r1;
-        r20 = r5;
-        r28 = r4;
-        goto L_0x04aa;
-    L_0x00f7:
-        r19 = r1;
-        r20 = r5;
-        r1 = DEBUG_PREFERRED;	 Catch:{ all -> 0x049d }
-        if (r1 != 0) goto L_0x0101;	 Catch:{ all -> 0x049d }
-    L_0x00ff:
-        if (r44 == 0) goto L_0x011b;	 Catch:{ all -> 0x049d }
-    L_0x0101:
-        r1 = "PackageManager";	 Catch:{ all -> 0x049d }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x049d }
-        r3.<init>();	 Catch:{ all -> 0x049d }
-        r5 = "Best match: 0x";	 Catch:{ all -> 0x049d }
-        r3.append(r5);	 Catch:{ all -> 0x049d }
-        r5 = java.lang.Integer.toHexString(r7);	 Catch:{ all -> 0x049d }
-        r3.append(r5);	 Catch:{ all -> 0x049d }
-        r3 = r3.toString();	 Catch:{ all -> 0x049d }
-        android.util.Slog.v(r1, r3);	 Catch:{ all -> 0x049d }
-    L_0x011b:
-        r1 = 268369920; // 0xfff0000 float:2.5144941E-29 double:1.32592358E-315;	 Catch:{ all -> 0x049d }
-        r1 = r1 & r7;	 Catch:{ all -> 0x049d }
-        r3 = r4.size();	 Catch:{ all -> 0x049d }
-        r5 = 0;	 Catch:{ all -> 0x049d }
-    L_0x0123:
-        if (r5 >= r3) goto L_0x0488;	 Catch:{ all -> 0x049d }
-    L_0x0125:
-        r6 = r4.get(r5);	 Catch:{ all -> 0x049d }
-        r6 = (com.android.server.pm.PreferredActivity) r6;	 Catch:{ all -> 0x049d }
-        r7 = DEBUG_PREFERRED;	 Catch:{ all -> 0x049d }
-        if (r7 != 0) goto L_0x0137;	 Catch:{ all -> 0x049d }
-    L_0x012f:
-        if (r44 == 0) goto L_0x0132;	 Catch:{ all -> 0x049d }
-    L_0x0131:
-        goto L_0x0137;	 Catch:{ all -> 0x049d }
-    L_0x0132:
-        r27 = r3;	 Catch:{ all -> 0x049d }
-        r28 = r4;	 Catch:{ all -> 0x049d }
-        goto L_0x017c;	 Catch:{ all -> 0x049d }
-    L_0x0137:
-        r7 = "PackageManager";	 Catch:{ all -> 0x049d }
-        r12 = new java.lang.StringBuilder;	 Catch:{ all -> 0x049d }
-        r12.<init>();	 Catch:{ all -> 0x049d }
-        r27 = r3;	 Catch:{ all -> 0x049d }
-        r3 = "Checking PreferredActivity ds=";	 Catch:{ all -> 0x049d }
-        r12.append(r3);	 Catch:{ all -> 0x049d }
-        r3 = r6.countDataSchemes();	 Catch:{ all -> 0x049d }
-        if (r3 <= 0) goto L_0x0151;
-    L_0x014b:
-        r3 = 0;
-        r17 = r6.getDataScheme(r3);	 Catch:{ all -> 0x00db }
-        goto L_0x0154;
-    L_0x0151:
-        r3 = 0;
-        r17 = "<none>";	 Catch:{ all -> 0x049d }
-    L_0x0154:
-        r3 = r17;	 Catch:{ all -> 0x049d }
-        r12.append(r3);	 Catch:{ all -> 0x049d }
-        r3 = "\n  component=";	 Catch:{ all -> 0x049d }
-        r12.append(r3);	 Catch:{ all -> 0x049d }
-        r3 = r6.mPref;	 Catch:{ all -> 0x049d }
-        r3 = r3.mComponent;	 Catch:{ all -> 0x049d }
-        r12.append(r3);	 Catch:{ all -> 0x049d }
-        r3 = r12.toString();	 Catch:{ all -> 0x049d }
-        android.util.Slog.v(r7, r3);	 Catch:{ all -> 0x049d }
-        r3 = new android.util.LogPrinter;	 Catch:{ all -> 0x049d }
-        r7 = "PackageManager";	 Catch:{ all -> 0x049d }
-        r28 = r4;
-        r4 = 3;
-        r12 = 2;
-        r3.<init>(r12, r7, r4);	 Catch:{ all -> 0x0485 }
-        r4 = "  ";	 Catch:{ all -> 0x0485 }
-        r6.dump(r3, r4);	 Catch:{ all -> 0x0485 }
-    L_0x017c:
-        r3 = r6.mPref;	 Catch:{ all -> 0x0485 }
-        r3 = r3.mMatch;	 Catch:{ all -> 0x0485 }
-        if (r3 == r1) goto L_0x01ae;	 Catch:{ all -> 0x0485 }
-    L_0x0182:
-        r3 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0485 }
-        if (r3 != 0) goto L_0x018f;	 Catch:{ all -> 0x0485 }
-    L_0x0186:
-        if (r44 == 0) goto L_0x0189;	 Catch:{ all -> 0x0485 }
-    L_0x0188:
-        goto L_0x018f;	 Catch:{ all -> 0x0485 }
-    L_0x0189:
-        r30 = r0;	 Catch:{ all -> 0x0485 }
-        r29 = r1;	 Catch:{ all -> 0x0485 }
-        goto L_0x0226;	 Catch:{ all -> 0x0485 }
-    L_0x018f:
-        r3 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0485 }
-        r4.<init>();	 Catch:{ all -> 0x0485 }
-        r7 = "Skipping bad match ";	 Catch:{ all -> 0x0485 }
-        r4.append(r7);	 Catch:{ all -> 0x0485 }
-        r7 = r6.mPref;	 Catch:{ all -> 0x0485 }
-        r7 = r7.mMatch;	 Catch:{ all -> 0x0485 }
-        r7 = java.lang.Integer.toHexString(r7);	 Catch:{ all -> 0x0485 }
-        r4.append(r7);	 Catch:{ all -> 0x0485 }
-        r4 = r4.toString();	 Catch:{ all -> 0x0485 }
-        android.util.Slog.v(r3, r4);	 Catch:{ all -> 0x0485 }
-        goto L_0x0189;	 Catch:{ all -> 0x0485 }
-    L_0x01ae:
-        if (r42 == 0) goto L_0x01c4;	 Catch:{ all -> 0x0485 }
-    L_0x01b0:
-        r3 = r6.mPref;	 Catch:{ all -> 0x0485 }
-        r3 = r3.mAlways;	 Catch:{ all -> 0x0485 }
-        if (r3 != 0) goto L_0x01c4;	 Catch:{ all -> 0x0485 }
-    L_0x01b6:
-        r3 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0485 }
-        if (r3 != 0) goto L_0x01bc;	 Catch:{ all -> 0x0485 }
-    L_0x01ba:
-        if (r44 == 0) goto L_0x0189;	 Catch:{ all -> 0x0485 }
-    L_0x01bc:
-        r3 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r4 = "Skipping mAlways=false entry";	 Catch:{ all -> 0x0485 }
-        android.util.Slog.v(r3, r4);	 Catch:{ all -> 0x0485 }
-        goto L_0x0189;	 Catch:{ all -> 0x0485 }
-    L_0x01c4:
-        r3 = r6.mPref;	 Catch:{ all -> 0x0485 }
-        r3 = r3.mComponent;	 Catch:{ all -> 0x0485 }
-        r4 = r9 | 512;	 Catch:{ all -> 0x0485 }
-        r7 = 524288; // 0x80000 float:7.34684E-40 double:2.590327E-318;	 Catch:{ all -> 0x0485 }
-        r4 = r4 | r7;	 Catch:{ all -> 0x0485 }
-        r7 = 262144; // 0x40000 float:3.67342E-40 double:1.295163E-318;	 Catch:{ all -> 0x0485 }
-        r4 = r4 | r7;	 Catch:{ all -> 0x0485 }
-        r3 = r11.getActivityInfo(r3, r4, r10);	 Catch:{ all -> 0x0485 }
-        r4 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0485 }
-        if (r4 != 0) goto L_0x01de;	 Catch:{ all -> 0x0485 }
-    L_0x01d8:
-        if (r44 == 0) goto L_0x01db;	 Catch:{ all -> 0x0485 }
-    L_0x01da:
-        goto L_0x01de;	 Catch:{ all -> 0x0485 }
-    L_0x01db:
-        r29 = r1;	 Catch:{ all -> 0x0485 }
-        goto L_0x0201;	 Catch:{ all -> 0x0485 }
-    L_0x01de:
-        r4 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r7 = "Found preferred activity:";	 Catch:{ all -> 0x0485 }
-        android.util.Slog.v(r4, r7);	 Catch:{ all -> 0x0485 }
-        if (r3 == 0) goto L_0x01f8;	 Catch:{ all -> 0x0485 }
-    L_0x01e7:
-        r4 = new android.util.LogPrinter;	 Catch:{ all -> 0x0485 }
-        r7 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r29 = r1;	 Catch:{ all -> 0x0485 }
-        r1 = 3;	 Catch:{ all -> 0x0485 }
-        r12 = 2;	 Catch:{ all -> 0x0485 }
-        r4.<init>(r12, r7, r1);	 Catch:{ all -> 0x0485 }
-        r1 = "  ";	 Catch:{ all -> 0x0485 }
-        r3.dump(r4, r1);	 Catch:{ all -> 0x0485 }
-        goto L_0x0201;	 Catch:{ all -> 0x0485 }
-    L_0x01f8:
-        r29 = r1;	 Catch:{ all -> 0x0485 }
-        r1 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r4 = "  null";	 Catch:{ all -> 0x0485 }
-        android.util.Slog.v(r1, r4);	 Catch:{ all -> 0x0485 }
-    L_0x0201:
-        if (r3 != 0) goto L_0x022b;	 Catch:{ all -> 0x0485 }
-    L_0x0203:
-        r1 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0485 }
-        r4.<init>();	 Catch:{ all -> 0x0485 }
-        r7 = "Removing dangling preferred activity: ";	 Catch:{ all -> 0x0485 }
-        r4.append(r7);	 Catch:{ all -> 0x0485 }
-        r7 = r6.mPref;	 Catch:{ all -> 0x0485 }
-        r7 = r7.mComponent;	 Catch:{ all -> 0x0485 }
-        r4.append(r7);	 Catch:{ all -> 0x0485 }
-        r4 = r4.toString();	 Catch:{ all -> 0x0485 }
-        android.util.Slog.w(r1, r4);	 Catch:{ all -> 0x0485 }
-        r2.removeFilter(r6);	 Catch:{ all -> 0x0485 }
-        r1 = 1;	 Catch:{ all -> 0x0485 }
-        r30 = r0;	 Catch:{ all -> 0x0485 }
-        r20 = r1;	 Catch:{ all -> 0x0485 }
-    L_0x0226:
-        r3 = 0;	 Catch:{ all -> 0x0485 }
-        r12 = r38;	 Catch:{ all -> 0x0485 }
-        goto L_0x0479;	 Catch:{ all -> 0x0485 }
-    L_0x022b:
-        r1 = 0;	 Catch:{ all -> 0x0485 }
-    L_0x022c:
-        if (r1 >= r0) goto L_0x0474;	 Catch:{ all -> 0x0485 }
-    L_0x022e:
-        r4 = r13.get(r1);	 Catch:{ all -> 0x0485 }
-        r4 = (android.content.pm.ResolveInfo) r4;	 Catch:{ all -> 0x0485 }
-        r7 = r4.activityInfo;	 Catch:{ all -> 0x0485 }
-        r7 = r7.applicationInfo;	 Catch:{ all -> 0x0485 }
-        r7 = r7.packageName;	 Catch:{ all -> 0x0485 }
-        r12 = r3.applicationInfo;	 Catch:{ all -> 0x0485 }
-        r12 = r12.packageName;	 Catch:{ all -> 0x0485 }
-        r7 = r7.equals(r12);	 Catch:{ all -> 0x0485 }
-        if (r7 != 0) goto L_0x0245;	 Catch:{ all -> 0x0485 }
-    L_0x0244:
-        goto L_0x0252;	 Catch:{ all -> 0x0485 }
-    L_0x0245:
-        r7 = r4.activityInfo;	 Catch:{ all -> 0x0485 }
-        r7 = r7.name;	 Catch:{ all -> 0x0485 }
-        r12 = r3.name;	 Catch:{ all -> 0x0485 }
-        r7 = r7.equals(r12);	 Catch:{ all -> 0x0485 }
-        if (r7 != 0) goto L_0x0255;	 Catch:{ all -> 0x0485 }
-    L_0x0252:
-        r1 = r1 + 1;	 Catch:{ all -> 0x0485 }
-        goto L_0x022c;	 Catch:{ all -> 0x0485 }
-    L_0x0255:
-        if (r43 == 0) goto L_0x028a;	 Catch:{ all -> 0x0485 }
-    L_0x0257:
-        r2.removeFilter(r6);	 Catch:{ all -> 0x0485 }
-        r7 = 1;
-        r17 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0285 }
-        if (r17 == 0) goto L_0x0280;	 Catch:{ all -> 0x0285 }
-    L_0x025f:
-        r30 = r0;	 Catch:{ all -> 0x0285 }
-        r0 = "PackageManager";	 Catch:{ all -> 0x0285 }
-        r31 = r1;	 Catch:{ all -> 0x0285 }
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0285 }
-        r1.<init>();	 Catch:{ all -> 0x0285 }
-        r32 = r3;	 Catch:{ all -> 0x0285 }
-        r3 = "Removing match ";	 Catch:{ all -> 0x0285 }
-        r1.append(r3);	 Catch:{ all -> 0x0285 }
-        r3 = r6.mPref;	 Catch:{ all -> 0x0285 }
-        r3 = r3.mComponent;	 Catch:{ all -> 0x0285 }
-        r1.append(r3);	 Catch:{ all -> 0x0285 }
-        r1 = r1.toString();	 Catch:{ all -> 0x0285 }
-        android.util.Slog.v(r0, r1);	 Catch:{ all -> 0x0285 }
-        goto L_0x0282;
-    L_0x0280:
-        r30 = r0;
-    L_0x0282:
-        r20 = r7;
-        goto L_0x0226;
-    L_0x0285:
-        r0 = move-exception;
-        r20 = r7;
-        goto L_0x00de;
-    L_0x028a:
-        r30 = r0;
-        r31 = r1;
-        r32 = r3;
-        if (r42 == 0) goto L_0x029c;
-    L_0x0292:
-        r0 = r6.mPref;	 Catch:{ all -> 0x0485 }
-        r0 = r0.sameSet(r13);	 Catch:{ all -> 0x0485 }
-        if (r0 != 0) goto L_0x029c;	 Catch:{ all -> 0x0485 }
-    L_0x029a:
-        r0 = 1;	 Catch:{ all -> 0x0485 }
-        goto L_0x029d;	 Catch:{ all -> 0x0485 }
-    L_0x029c:
-        r0 = 0;	 Catch:{ all -> 0x0485 }
-    L_0x029d:
-        r1 = r8.getAction();	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02a3:
-        r1 = r8.getAction();	 Catch:{ all -> 0x0485 }
-        r3 = "android.intent.action.VIEW";	 Catch:{ all -> 0x0485 }
-        r1 = r1.equals(r3);	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02af:
-        r1 = r8.getData();	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02b5:
-        r1 = r8.getData();	 Catch:{ all -> 0x0485 }
-        r1 = r1.getScheme();	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02bf:
-        r1 = r8.getData();	 Catch:{ all -> 0x0485 }
-        r1 = r1.getScheme();	 Catch:{ all -> 0x0485 }
-        r3 = "file";	 Catch:{ all -> 0x0485 }
-        r1 = r1.equals(r3);	 Catch:{ all -> 0x0485 }
-        if (r1 != 0) goto L_0x02df;	 Catch:{ all -> 0x0485 }
-    L_0x02cf:
-        r1 = r8.getData();	 Catch:{ all -> 0x0485 }
-        r1 = r1.getScheme();	 Catch:{ all -> 0x0485 }
-        r3 = "content";	 Catch:{ all -> 0x0485 }
-        r1 = r1.equals(r3);	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02df:
-        r1 = r8.getType();	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02e5:
-        r1 = r8.getType();	 Catch:{ all -> 0x0485 }
-        r3 = "audio/";	 Catch:{ all -> 0x0485 }
-        r1 = r1.startsWith(r3);	 Catch:{ all -> 0x0485 }
-        if (r1 == 0) goto L_0x02f3;	 Catch:{ all -> 0x0485 }
-    L_0x02f1:
-        r1 = 1;	 Catch:{ all -> 0x0485 }
-        goto L_0x02f4;	 Catch:{ all -> 0x0485 }
-    L_0x02f3:
-        r1 = 0;	 Catch:{ all -> 0x0485 }
-    L_0x02f4:
-        if (r1 == 0) goto L_0x0322;	 Catch:{ all -> 0x0485 }
-    L_0x02f6:
-        r3 = "PackageManager";	 Catch:{ all -> 0x0485 }
-        r7 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0485 }
-        r7.<init>();	 Catch:{ all -> 0x0485 }
-        r33 = r0;	 Catch:{ all -> 0x0485 }
-        r0 = "preferred activity for ";	 Catch:{ all -> 0x0485 }
-        r7.append(r0);	 Catch:{ all -> 0x0485 }
-        r7.append(r8);	 Catch:{ all -> 0x0485 }
-        r0 = " type ";	 Catch:{ all -> 0x0485 }
-        r7.append(r0);	 Catch:{ all -> 0x0485 }
-        r12 = r38;
-        r7.append(r12);	 Catch:{ all -> 0x0410 }
-        r0 = ", do not dropping preferred activity";	 Catch:{ all -> 0x0410 }
-        r7.append(r0);	 Catch:{ all -> 0x0410 }
-        r0 = r7.toString();	 Catch:{ all -> 0x0410 }
-        android.util.Slog.i(r3, r0);	 Catch:{ all -> 0x0410 }
-        r0 = 0;	 Catch:{ all -> 0x0410 }
-        r33 = r0;	 Catch:{ all -> 0x0410 }
-        goto L_0x0326;	 Catch:{ all -> 0x0410 }
-    L_0x0322:
-        r33 = r0;	 Catch:{ all -> 0x0410 }
-        r12 = r38;	 Catch:{ all -> 0x0410 }
-    L_0x0326:
-        if (r33 == 0) goto L_0x0413;	 Catch:{ all -> 0x0410 }
-    L_0x0328:
-        r0 = "android.intent.category.HOME";	 Catch:{ all -> 0x0410 }
-        r0 = r8.hasCategory(r0);	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x033c;	 Catch:{ all -> 0x0410 }
-    L_0x0330:
-        r0 = r8.getFlags();	 Catch:{ all -> 0x0410 }
-        r0 = r0 & 512;	 Catch:{ all -> 0x0410 }
-        if (r0 != 0) goto L_0x0339;	 Catch:{ all -> 0x0410 }
-    L_0x0338:
-        goto L_0x033c;	 Catch:{ all -> 0x0410 }
-    L_0x0339:
-        r34 = r1;	 Catch:{ all -> 0x0410 }
-        goto L_0x0393;	 Catch:{ all -> 0x0410 }
-    L_0x033c:
-        r0 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r0 = r0.isSuperset(r13);	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x0397;	 Catch:{ all -> 0x0410 }
-    L_0x0344:
-        r0 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x0366;	 Catch:{ all -> 0x0410 }
-    L_0x0348:
-        r0 = "PackageManager";	 Catch:{ all -> 0x0410 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0410 }
-        r3.<init>();	 Catch:{ all -> 0x0410 }
-        r7 = "Result set changed, but PreferredActivity is still valid as only non-preferred components were removed for ";	 Catch:{ all -> 0x0410 }
-        r3.append(r7);	 Catch:{ all -> 0x0410 }
-        r3.append(r8);	 Catch:{ all -> 0x0410 }
-        r7 = " type ";	 Catch:{ all -> 0x0410 }
-        r3.append(r7);	 Catch:{ all -> 0x0410 }
-        r3.append(r12);	 Catch:{ all -> 0x0410 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0410 }
-        android.util.Slog.i(r0, r3);	 Catch:{ all -> 0x0410 }
-    L_0x0366:
-        r0 = new com.android.server.pm.PreferredActivity;	 Catch:{ all -> 0x0410 }
-        r3 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r3 = r3.mMatch;	 Catch:{ all -> 0x0410 }
-        r7 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r24 = r7.discardObsoleteComponents(r13);	 Catch:{ all -> 0x0410 }
-        r7 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r7 = r7.mComponent;	 Catch:{ all -> 0x0410 }
-        r34 = r1;	 Catch:{ all -> 0x0410 }
-        r1 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r1 = r1.mAlways;	 Catch:{ all -> 0x0410 }
-        r21 = r0;	 Catch:{ all -> 0x0410 }
-        r22 = r6;	 Catch:{ all -> 0x0410 }
-        r23 = r3;	 Catch:{ all -> 0x0410 }
-        r25 = r7;	 Catch:{ all -> 0x0410 }
-        r26 = r1;	 Catch:{ all -> 0x0410 }
-        r21.<init>(r22, r23, r24, r25, r26);	 Catch:{ all -> 0x0410 }
-        r2.removeFilter(r6);	 Catch:{ all -> 0x0410 }
-        r2.addFilter(r0);	 Catch:{ all -> 0x0410 }
-        r0 = 1;	 Catch:{ all -> 0x0410 }
-        r20 = r0;	 Catch:{ all -> 0x0410 }
-    L_0x0393:
-        r0 = 1;	 Catch:{ all -> 0x0410 }
-        r3 = 0;	 Catch:{ all -> 0x0410 }
-        goto L_0x0417;	 Catch:{ all -> 0x0410 }
-    L_0x0397:
-        r34 = r1;	 Catch:{ all -> 0x0410 }
-        r0 = "PackageManager";	 Catch:{ all -> 0x0410 }
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0410 }
-        r1.<init>();	 Catch:{ all -> 0x0410 }
-        r3 = "Result set changed, dropping preferred activity for ";	 Catch:{ all -> 0x0410 }
-        r1.append(r3);	 Catch:{ all -> 0x0410 }
-        r1.append(r8);	 Catch:{ all -> 0x0410 }
-        r3 = " type ";	 Catch:{ all -> 0x0410 }
-        r1.append(r3);	 Catch:{ all -> 0x0410 }
-        r1.append(r12);	 Catch:{ all -> 0x0410 }
-        r1 = r1.toString();	 Catch:{ all -> 0x0410 }
-        android.util.Slog.i(r0, r1);	 Catch:{ all -> 0x0410 }
-        r0 = r11.mIsDefaultGoogleCalendar;	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x03be;	 Catch:{ all -> 0x0410 }
-    L_0x03bb:
-        r0 = 1;	 Catch:{ all -> 0x0410 }
-        r11.mIsDefaultPreferredActivityChanged = r0;	 Catch:{ all -> 0x0410 }
-    L_0x03be:
-        r0 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x03dc;	 Catch:{ all -> 0x0410 }
-    L_0x03c2:
-        r0 = "PackageManager";	 Catch:{ all -> 0x0410 }
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0410 }
-        r1.<init>();	 Catch:{ all -> 0x0410 }
-        r3 = "Removing preferred activity since set changed ";	 Catch:{ all -> 0x0410 }
-        r1.append(r3);	 Catch:{ all -> 0x0410 }
-        r3 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r3 = r3.mComponent;	 Catch:{ all -> 0x0410 }
-        r1.append(r3);	 Catch:{ all -> 0x0410 }
-        r1 = r1.toString();	 Catch:{ all -> 0x0410 }
-        android.util.Slog.v(r0, r1);	 Catch:{ all -> 0x0410 }
-    L_0x03dc:
-        r2.removeFilter(r6);	 Catch:{ all -> 0x0410 }
-        r0 = new com.android.server.pm.PreferredActivity;	 Catch:{ all -> 0x0410 }
-        r1 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r1 = r1.mMatch;	 Catch:{ all -> 0x0410 }
-        r24 = 0;	 Catch:{ all -> 0x0410 }
-        r3 = r6.mPref;	 Catch:{ all -> 0x0410 }
-        r3 = r3.mComponent;	 Catch:{ all -> 0x0410 }
-        r26 = 0;	 Catch:{ all -> 0x0410 }
-        r21 = r0;	 Catch:{ all -> 0x0410 }
-        r22 = r6;	 Catch:{ all -> 0x0410 }
-        r23 = r1;	 Catch:{ all -> 0x0410 }
-        r25 = r3;	 Catch:{ all -> 0x0410 }
-        r21.<init>(r22, r23, r24, r25, r26);	 Catch:{ all -> 0x0410 }
-        r2.addFilter(r0);	 Catch:{ all -> 0x0410 }
-        r1 = 1;
-        if (r1 == 0) goto L_0x040d;
-    L_0x03ff:
-        r3 = DEBUG_PREFERRED;	 Catch:{ all -> 0x003c }
-        if (r3 == 0) goto L_0x040a;	 Catch:{ all -> 0x003c }
-    L_0x0403:
-        r3 = "PackageManager";	 Catch:{ all -> 0x003c }
-        r7 = "Preferred activity bookkeeping changed; writing restrictions";	 Catch:{ all -> 0x003c }
-        android.util.Slog.v(r3, r7);	 Catch:{ all -> 0x003c }
-    L_0x040a:
-        r11.scheduleWritePackageRestrictionsLocked(r10);	 Catch:{ all -> 0x003c }
-    L_0x040d:
-        monitor-exit(r15);	 Catch:{ all -> 0x003c }
-        r3 = 0;
-        return r3;
-    L_0x0410:
-        r0 = move-exception;
-        goto L_0x04aa;
-    L_0x0413:
-        r34 = r1;
-        r0 = 1;
-        r3 = 0;
-    L_0x0417:
-        r1 = DEBUG_PREFERRED;	 Catch:{ all -> 0x0410 }
-        if (r1 != 0) goto L_0x041d;	 Catch:{ all -> 0x0410 }
-    L_0x041b:
-        if (r44 == 0) goto L_0x0443;	 Catch:{ all -> 0x0410 }
-    L_0x041d:
-        r1 = "PackageManager";	 Catch:{ all -> 0x0410 }
-        r7 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0410 }
-        r7.<init>();	 Catch:{ all -> 0x0410 }
-        r0 = "Returning preferred activity: ";	 Catch:{ all -> 0x0410 }
-        r7.append(r0);	 Catch:{ all -> 0x0410 }
-        r0 = r4.activityInfo;	 Catch:{ all -> 0x0410 }
-        r0 = r0.packageName;	 Catch:{ all -> 0x0410 }
-        r7.append(r0);	 Catch:{ all -> 0x0410 }
-        r0 = "/";	 Catch:{ all -> 0x0410 }
-        r7.append(r0);	 Catch:{ all -> 0x0410 }
-        r0 = r4.activityInfo;	 Catch:{ all -> 0x0410 }
-        r0 = r0.name;	 Catch:{ all -> 0x0410 }
-        r7.append(r0);	 Catch:{ all -> 0x0410 }
-        r0 = r7.toString();	 Catch:{ all -> 0x0410 }
-        android.util.Slog.v(r1, r0);	 Catch:{ all -> 0x0410 }
-    L_0x0443:
-        r0 = r11.mIsDefaultGoogleCalendar;	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x0461;	 Catch:{ all -> 0x0410 }
-    L_0x0447:
-        r0 = r4.activityInfo;	 Catch:{ all -> 0x0410 }
-        r0 = r0.packageName;	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x0461;	 Catch:{ all -> 0x0410 }
-    L_0x044d:
-        r0 = "com.android.calendar";	 Catch:{ all -> 0x0410 }
-        r1 = r4.activityInfo;	 Catch:{ all -> 0x0410 }
-        r1 = r1.packageName;	 Catch:{ all -> 0x0410 }
-        r0 = r0.equals(r1);	 Catch:{ all -> 0x0410 }
-        if (r0 == 0) goto L_0x0461;	 Catch:{ all -> 0x0410 }
-    L_0x0459:
-        r0 = "PackageManager";	 Catch:{ all -> 0x0410 }
-        r1 = "break huawei calendar, set default calendar is google calendar";	 Catch:{ all -> 0x0410 }
-        android.util.Log.i(r0, r1);	 Catch:{ all -> 0x0410 }
-        goto L_0x0479;
-        if (r20 == 0) goto L_0x0472;
-    L_0x0464:
-        r0 = DEBUG_PREFERRED;	 Catch:{ all -> 0x003c }
-        if (r0 == 0) goto L_0x046f;	 Catch:{ all -> 0x003c }
-    L_0x0468:
-        r0 = "PackageManager";	 Catch:{ all -> 0x003c }
-        r1 = "Preferred activity bookkeeping changed; writing restrictions";	 Catch:{ all -> 0x003c }
-        android.util.Slog.v(r0, r1);	 Catch:{ all -> 0x003c }
-    L_0x046f:
-        r11.scheduleWritePackageRestrictionsLocked(r10);	 Catch:{ all -> 0x003c }
-    L_0x0472:
-        monitor-exit(r15);	 Catch:{ all -> 0x003c }
-        return r4;	 Catch:{ all -> 0x003c }
-    L_0x0474:
-        r30 = r0;	 Catch:{ all -> 0x003c }
-        r3 = 0;	 Catch:{ all -> 0x003c }
-        r12 = r38;	 Catch:{ all -> 0x003c }
-    L_0x0479:
-        r5 = r5 + 1;	 Catch:{ all -> 0x003c }
-        r3 = r27;	 Catch:{ all -> 0x003c }
-        r4 = r28;	 Catch:{ all -> 0x003c }
-        r1 = r29;	 Catch:{ all -> 0x003c }
-        r0 = r30;	 Catch:{ all -> 0x003c }
-        goto L_0x0123;	 Catch:{ all -> 0x003c }
-    L_0x0485:
-        r0 = move-exception;	 Catch:{ all -> 0x003c }
-        goto L_0x00de;	 Catch:{ all -> 0x003c }
-    L_0x0488:
-        r28 = r4;	 Catch:{ all -> 0x003c }
-        r12 = r38;	 Catch:{ all -> 0x003c }
-        if (r20 == 0) goto L_0x04bb;	 Catch:{ all -> 0x003c }
-    L_0x048e:
-        r0 = DEBUG_PREFERRED;	 Catch:{ all -> 0x003c }
-        if (r0 == 0) goto L_0x0499;	 Catch:{ all -> 0x003c }
-    L_0x0492:
-        r0 = "PackageManager";	 Catch:{ all -> 0x003c }
-        r1 = "Preferred activity bookkeeping changed; writing restrictions";	 Catch:{ all -> 0x003c }
-        android.util.Slog.v(r0, r1);	 Catch:{ all -> 0x003c }
-    L_0x0499:
-        r11.scheduleWritePackageRestrictionsLocked(r10);	 Catch:{ all -> 0x003c }
-        goto L_0x04bb;	 Catch:{ all -> 0x003c }
-    L_0x049d:
-        r0 = move-exception;	 Catch:{ all -> 0x003c }
-        r28 = r4;	 Catch:{ all -> 0x003c }
-        r12 = r38;	 Catch:{ all -> 0x003c }
-        goto L_0x04aa;	 Catch:{ all -> 0x003c }
-    L_0x04a3:
-        r0 = move-exception;	 Catch:{ all -> 0x003c }
-        r19 = r1;	 Catch:{ all -> 0x003c }
-        r28 = r4;	 Catch:{ all -> 0x003c }
-        r20 = r5;	 Catch:{ all -> 0x003c }
-    L_0x04aa:
-        if (r20 == 0) goto L_0x04ba;	 Catch:{ all -> 0x003c }
-    L_0x04ac:
-        r1 = DEBUG_PREFERRED;	 Catch:{ all -> 0x003c }
-        if (r1 == 0) goto L_0x04b7;	 Catch:{ all -> 0x003c }
-    L_0x04b0:
-        r1 = "PackageManager";	 Catch:{ all -> 0x003c }
-        r3 = "Preferred activity bookkeeping changed; writing restrictions";	 Catch:{ all -> 0x003c }
-        android.util.Slog.v(r1, r3);	 Catch:{ all -> 0x003c }
-    L_0x04b7:
-        r11.scheduleWritePackageRestrictionsLocked(r10);	 Catch:{ all -> 0x003c }
-    L_0x04ba:
-        throw r0;	 Catch:{ all -> 0x003c }
-    L_0x04bb:
-        monitor-exit(r15);	 Catch:{ all -> 0x04d3 }
-        r1 = r11;
-        r2 = r8;
-        r3 = r12;
-        r4 = r9;
-        r5 = r13;
-        r6 = r41;
-        r7 = r42;
-        r12 = r8;
-        r8 = r43;
-        r16 = r9;
-        r9 = r44;
-        r10 = r45;
-        r0 = r1.hwFindPreferredActivity(r2, r3, r4, r5, r6, r7, r8, r9, r10);
-        return r0;
-    L_0x04d3:
-        r0 = move-exception;
-        r12 = r8;
-        r16 = r9;
-    L_0x04d7:
-        monitor-exit(r15);	 Catch:{ all -> 0x04d9 }
-        throw r0;
-    L_0x04d9:
-        r0 = move-exception;
-        goto L_0x04d7;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.PackageManagerService.findPreferredActivity(android.content.Intent, java.lang.String, int, java.util.List, int, boolean, boolean, boolean, int):android.content.pm.ResolveInfo");
+    /* JADX WARNING: Removed duplicated region for block: B:260:0x00d1 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:59:0x00ce A:{Catch:{ all -> 0x00db }} */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x0322 A:{Catch:{ all -> 0x0410 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:169:0x02f6 A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:206:0x0413  */
+    /* JADX WARNING: Removed duplicated region for block: B:175:0x0328 A:{Catch:{ all -> 0x0410 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:220:0x0464 A:{SYNTHETIC, Splitter:B:220:0x0464} */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x022b A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x0203 A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:104:0x01ae A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:98:0x0182 A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04ac A:{Catch:{ all -> 0x0485, all -> 0x003c }} */
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:10:0x003a, B:94:0x0174] */
+    /* JADX WARNING: Missing block: B:13:0x003c, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:14:0x003d, code skipped:
+            r12 = r8;
+            r16 = r9;
+     */
+    /* JADX WARNING: Missing block: B:229:0x0485, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    ResolveInfo findPreferredActivity(Intent intent, String resolvedType, int flags, List<ResolveInfo> query, int priority, boolean always, boolean removeMatches, boolean debug, int userId) {
+        Throwable N;
+        String str = resolvedType;
+        List list = query;
+        int i = userId;
+        if (!sUserManager.exists(i)) {
+            return null;
+        }
+        int flags2 = updateFlagsForResolve(flags, i, intent, Binder.getCallingUid(), false);
+        Intent intent2 = updateIntentForResolve(intent);
+        ArrayMap arrayMap = this.mPackages;
+        synchronized (arrayMap) {
+            ArrayMap arrayMap2 = arrayMap;
+            Intent intent3 = intent2;
+            try {
+                ResolveInfo pri = findPersistentPreferredActivityLP(intent2, str, flags2, list, debug, i);
+                if (pri != null) {
+                    return pri;
+                }
+                List<PreferredActivity> prefs;
+                PreferredIntentResolver pir = (PreferredIntentResolver) this.mSettings.mPreferredActivities.get(i);
+                if (DEBUG_PREFERRED || debug) {
+                    Slog.v(TAG, "Looking for preferred activities...");
+                }
+                if (pir != null) {
+                    prefs = pir.queryIntent(intent3, str, (65536 & flags2) != 0, i);
+                } else {
+                    prefs = null;
+                }
+                if (prefs != null && prefs.size() > 0) {
+                    boolean changed = false;
+                    ResolveInfo pri2;
+                    boolean changed2;
+                    List<PreferredActivity> list2;
+                    try {
+                        String str2;
+                        StringBuilder stringBuilder;
+                        if (DEBUG_PREFERRED || debug) {
+                            Slog.v(TAG, "Figuring out best match...");
+                        }
+                        int N2 = query.size();
+                        int match = 0;
+                        int j = 0;
+                        while (j < N2) {
+                            ResolveInfo ri;
+                            ResolveInfo ri2;
+                            try {
+                                ri = (ResolveInfo) list.get(j);
+                                if (!DEBUG_PREFERRED) {
+                                    if (!debug) {
+                                        pri2 = pri;
+                                        changed2 = changed;
+                                        ri2 = ri;
+                                        if (ri2.match <= match) {
+                                            match = ri2.match;
+                                        }
+                                        j++;
+                                        pri = pri2;
+                                        changed = changed2;
+                                        str = resolvedType;
+                                    }
+                                }
+                                str2 = TAG;
+                                pri2 = pri;
+                            } catch (Throwable th) {
+                                N = th;
+                                pri2 = pri;
+                                changed2 = changed;
+                                list2 = prefs;
+                                if (changed2) {
+                                }
+                                throw N;
+                            }
+                            try {
+                                stringBuilder = new StringBuilder();
+                                changed2 = changed;
+                                try {
+                                    stringBuilder.append("Match for ");
+                                    ri2 = ri;
+                                } catch (Throwable th2) {
+                                    N = th2;
+                                    list2 = prefs;
+                                    if (changed2) {
+                                    }
+                                    throw N;
+                                }
+                            } catch (Throwable th3) {
+                                N = th3;
+                                changed2 = changed;
+                                list2 = prefs;
+                                if (changed2) {
+                                }
+                                throw N;
+                            }
+                            try {
+                                stringBuilder.append(ri2.activityInfo);
+                                stringBuilder.append(": 0x");
+                                stringBuilder.append(Integer.toHexString(match));
+                                Slog.v(str2, stringBuilder.toString());
+                                if (ri2.match <= match) {
+                                }
+                                j++;
+                                pri = pri2;
+                                changed = changed2;
+                                str = resolvedType;
+                            } catch (Throwable th4) {
+                                N = th4;
+                            }
+                        }
+                        changed2 = changed;
+                        try {
+                            String str3;
+                            StringBuilder stringBuilder2;
+                            if (DEBUG_PREFERRED || debug) {
+                                str3 = TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Best match: 0x");
+                                stringBuilder2.append(Integer.toHexString(match));
+                                Slog.v(str3, stringBuilder2.toString());
+                            }
+                            int match2 = 268369920 & match;
+                            boolean M = prefs.size();
+                            changed = false;
+                            while (changed < M) {
+                                boolean M2;
+                                int match3;
+                                int N3;
+                                IntentFilter pa = (PreferredActivity) prefs.get(changed);
+                                if (!DEBUG_PREFERRED) {
+                                    if (!debug) {
+                                        M2 = M;
+                                        list2 = prefs;
+                                        if (pa.mPref.mMatch == match2) {
+                                            if (!DEBUG_PREFERRED) {
+                                                if (debug) {
+                                                }
+                                            }
+                                            str2 = TAG;
+                                            prefs = new StringBuilder();
+                                            prefs.append("Skipping bad match ");
+                                            prefs.append(Integer.toHexString(pa.mPref.mMatch));
+                                            Slog.v(str2, prefs.toString());
+                                        } else if (!always || pa.mPref.mAlways) {
+                                            ActivityInfo ai = getActivityInfo(pa.mPref.mComponent, ((flags2 | 512) | 524288) | 262144, i);
+                                            if (DEBUG_PREFERRED == null) {
+                                                if (!debug) {
+                                                    match3 = match2;
+                                                    if (ai != null) {
+                                                        str3 = TAG;
+                                                        prefs = new StringBuilder();
+                                                        prefs.append("Removing dangling preferred activity: ");
+                                                        prefs.append(pa.mPref.mComponent);
+                                                        Slog.w(str3, prefs.toString());
+                                                        pir.removeFilter(pa);
+                                                        N3 = N2;
+                                                        changed2 = true;
+                                                    } else {
+                                                        match2 = 0;
+                                                        while (match2 < N2) {
+                                                            ResolveInfo prefs2 = (ResolveInfo) list.get(match2);
+                                                            if (prefs2.activityInfo.applicationInfo.packageName.equals(ai.applicationInfo.packageName)) {
+                                                                if (prefs2.activityInfo.name.equals(ai.name)) {
+                                                                    if (removeMatches) {
+                                                                        pir.removeFilter(pa);
+                                                                        try {
+                                                                            if (DEBUG_PREFERRED) {
+                                                                                N3 = N2;
+                                                                                N2 = TAG;
+                                                                                stringBuilder = new StringBuilder();
+                                                                                stringBuilder.append("Removing match ");
+                                                                                stringBuilder.append(pa.mPref.mComponent);
+                                                                                Slog.v(N2, stringBuilder.toString());
+                                                                            } else {
+                                                                                N3 = N2;
+                                                                            }
+                                                                            changed2 = true;
+                                                                        } catch (Throwable th5) {
+                                                                            N = th5;
+                                                                            changed2 = true;
+                                                                            str = resolvedType;
+                                                                            if (changed2) {
+                                                                            }
+                                                                            throw N;
+                                                                        }
+                                                                    }
+                                                                    boolean N4;
+                                                                    boolean audioType;
+                                                                    boolean notSameSet;
+                                                                    StringBuilder stringBuilder3;
+                                                                    N3 = N2;
+                                                                    int i2 = match2;
+                                                                    ActivityInfo activityInfo = ai;
+                                                                    if (always) {
+                                                                        if (pa.mPref.sameSet(list) == 0) {
+                                                                            N4 = true;
+                                                                            audioType = intent3.getAction() == null && intent3.getAction().equals("android.intent.action.VIEW") && intent3.getData() != null && intent3.getData().getScheme() != null && ((intent3.getData().getScheme().equals("file") || intent3.getData().getScheme().equals("content")) && intent3.getType() != null && intent3.getType().startsWith("audio/"));
+                                                                            if (audioType) {
+                                                                                notSameSet = N4;
+                                                                                str = resolvedType;
+                                                                            } else {
+                                                                                str2 = TAG;
+                                                                                stringBuilder3 = new StringBuilder();
+                                                                                notSameSet = N4;
+                                                                                stringBuilder3.append("preferred activity for ");
+                                                                                stringBuilder3.append(intent3);
+                                                                                stringBuilder3.append(" type ");
+                                                                                str = resolvedType;
+                                                                                try {
+                                                                                    stringBuilder3.append(str);
+                                                                                    stringBuilder3.append(", do not dropping preferred activity");
+                                                                                    Slog.i(str2, stringBuilder3.toString());
+                                                                                    notSameSet = false;
+                                                                                } catch (Throwable th6) {
+                                                                                    N = th6;
+                                                                                    if (changed2) {
+                                                                                        if (DEBUG_PREFERRED) {
+                                                                                            Slog.v(TAG, "Preferred activity bookkeeping changed; writing restrictions");
+                                                                                        }
+                                                                                        scheduleWritePackageRestrictionsLocked(i);
+                                                                                    }
+                                                                                    throw N;
+                                                                                }
+                                                                            }
+                                                                            boolean z;
+                                                                            if (notSameSet) {
+                                                                                z = audioType;
+                                                                            } else {
+                                                                                if (intent3.hasCategory("android.intent.category.HOME") != 0) {
+                                                                                    if ((intent3.getFlags() & 512) != 0) {
+                                                                                        z = audioType;
+                                                                                    }
+                                                                                }
+                                                                                if (pa.mPref.isSuperset(list) != 0) {
+                                                                                    if (DEBUG_PREFERRED != 0) {
+                                                                                        N2 = TAG;
+                                                                                        stringBuilder2 = new StringBuilder();
+                                                                                        stringBuilder2.append("Result set changed, but PreferredActivity is still valid as only non-preferred components were removed for ");
+                                                                                        stringBuilder2.append(intent3);
+                                                                                        stringBuilder2.append(" type ");
+                                                                                        stringBuilder2.append(str);
+                                                                                        Slog.i(N2, stringBuilder2.toString());
+                                                                                    }
+                                                                                    PreferredActivity preferredActivity = new PreferredActivity(pa, pa.mPref.mMatch, pa.mPref.discardObsoleteComponents(list), pa.mPref.mComponent, pa.mPref.mAlways);
+                                                                                    pir.removeFilter(pa);
+                                                                                    pir.addFilter(preferredActivity);
+                                                                                    changed2 = true;
+                                                                                } else {
+                                                                                    N2 = TAG;
+                                                                                    audioType = new StringBuilder();
+                                                                                    audioType.append("Result set changed, dropping preferred activity for ");
+                                                                                    audioType.append(intent3);
+                                                                                    audioType.append(" type ");
+                                                                                    audioType.append(str);
+                                                                                    Slog.i(N2, audioType.toString());
+                                                                                    if (this.mIsDefaultGoogleCalendar != 0) {
+                                                                                        this.mIsDefaultPreferredActivityChanged = true;
+                                                                                    }
+                                                                                    if (DEBUG_PREFERRED != 0) {
+                                                                                        N2 = TAG;
+                                                                                        audioType = new StringBuilder();
+                                                                                        audioType.append("Removing preferred activity since set changed ");
+                                                                                        audioType.append(pa.mPref.mComponent);
+                                                                                        Slog.v(N2, audioType.toString());
+                                                                                    }
+                                                                                    pir.removeFilter(pa);
+                                                                                    pir.addFilter(new PreferredActivity(pa, pa.mPref.mMatch, null, pa.mPref.mComponent, false));
+                                                                                    if (true) {
+                                                                                        if (DEBUG_PREFERRED) {
+                                                                                            Slog.v(TAG, "Preferred activity bookkeeping changed; writing restrictions");
+                                                                                        }
+                                                                                        scheduleWritePackageRestrictionsLocked(i);
+                                                                                    }
+                                                                                    return null;
+                                                                                }
+                                                                            }
+                                                                            if (DEBUG_PREFERRED || debug) {
+                                                                                str3 = TAG;
+                                                                                stringBuilder3 = new StringBuilder();
+                                                                                stringBuilder3.append("Returning preferred activity: ");
+                                                                                stringBuilder3.append(prefs2.activityInfo.packageName);
+                                                                                stringBuilder3.append(SliceAuthority.DELIMITER);
+                                                                                stringBuilder3.append(prefs2.activityInfo.name);
+                                                                                Slog.v(str3, stringBuilder3.toString());
+                                                                            }
+                                                                            if (this.mIsDefaultGoogleCalendar != 0 || prefs2.activityInfo.packageName == 0 || "com.android.calendar".equals(prefs2.activityInfo.packageName) == 0) {
+                                                                                if (changed2) {
+                                                                                    if (DEBUG_PREFERRED != 0) {
+                                                                                        Slog.v(TAG, "Preferred activity bookkeeping changed; writing restrictions");
+                                                                                    }
+                                                                                    scheduleWritePackageRestrictionsLocked(i);
+                                                                                }
+                                                                                return prefs2;
+                                                                            }
+                                                                            Log.i(TAG, "break huawei calendar, set default calendar is google calendar");
+                                                                            changed++;
+                                                                            M = M2;
+                                                                            prefs = list2;
+                                                                            match2 = match3;
+                                                                            N2 = N3;
+                                                                        }
+                                                                    }
+                                                                    N4 = false;
+                                                                    if (intent3.getAction() == null) {
+                                                                    }
+                                                                    if (audioType) {
+                                                                    }
+                                                                    if (notSameSet) {
+                                                                    }
+                                                                    str3 = TAG;
+                                                                    stringBuilder3 = new StringBuilder();
+                                                                    stringBuilder3.append("Returning preferred activity: ");
+                                                                    stringBuilder3.append(prefs2.activityInfo.packageName);
+                                                                    stringBuilder3.append(SliceAuthority.DELIMITER);
+                                                                    stringBuilder3.append(prefs2.activityInfo.name);
+                                                                    Slog.v(str3, stringBuilder3.toString());
+                                                                    if (this.mIsDefaultGoogleCalendar != 0) {
+                                                                    }
+                                                                    if (changed2) {
+                                                                    }
+                                                                    return prefs2;
+                                                                }
+                                                            }
+                                                            match2++;
+                                                        }
+                                                        N3 = N2;
+                                                        str = resolvedType;
+                                                        changed++;
+                                                        M = M2;
+                                                        prefs = list2;
+                                                        match2 = match3;
+                                                        N2 = N3;
+                                                    }
+                                                    str = resolvedType;
+                                                    changed++;
+                                                    M = M2;
+                                                    prefs = list2;
+                                                    match2 = match3;
+                                                    N2 = N3;
+                                                }
+                                            }
+                                            Slog.v(TAG, "Found preferred activity:");
+                                            if (ai != null) {
+                                                match3 = match2;
+                                                ai.dump(new LogPrinter(2, TAG, 3), "  ");
+                                            } else {
+                                                match3 = match2;
+                                                Slog.v(TAG, "  null");
+                                            }
+                                            if (ai != null) {
+                                            }
+                                            str = resolvedType;
+                                            changed++;
+                                            M = M2;
+                                            prefs = list2;
+                                            match2 = match3;
+                                            N2 = N3;
+                                        } else if (DEBUG_PREFERRED || debug) {
+                                            Slog.v(TAG, "Skipping mAlways=false entry");
+                                        }
+                                        N3 = N2;
+                                        match3 = match2;
+                                        str = resolvedType;
+                                        changed++;
+                                        M = M2;
+                                        prefs = list2;
+                                        match2 = match3;
+                                        N2 = N3;
+                                    }
+                                }
+                                String str4 = TAG;
+                                StringBuilder stringBuilder4 = new StringBuilder();
+                                M2 = M;
+                                stringBuilder4.append("Checking PreferredActivity ds=");
+                                stringBuilder4.append(pa.countDataSchemes() > 0 ? pa.getDataScheme(0) : "<none>");
+                                stringBuilder4.append("\n  component=");
+                                stringBuilder4.append(pa.mPref.mComponent);
+                                Slog.v(str4, stringBuilder4.toString());
+                                list2 = prefs;
+                                pa.dump(new LogPrinter(2, TAG, 3), "  ");
+                                if (pa.mPref.mMatch == match2) {
+                                }
+                                N3 = N2;
+                                match3 = match2;
+                                str = resolvedType;
+                                changed++;
+                                M = M2;
+                                prefs = list2;
+                                match2 = match3;
+                                N2 = N3;
+                            }
+                            str = resolvedType;
+                            if (changed2) {
+                                if (DEBUG_PREFERRED) {
+                                    Slog.v(TAG, "Preferred activity bookkeeping changed; writing restrictions");
+                                }
+                                scheduleWritePackageRestrictionsLocked(i);
+                            }
+                        } catch (Throwable th7) {
+                            N = th7;
+                            list2 = prefs;
+                            str = resolvedType;
+                            if (changed2) {
+                            }
+                            throw N;
+                        }
+                    } catch (Throwable th8) {
+                        N = th8;
+                        pri2 = pri;
+                        list2 = prefs;
+                        changed2 = changed;
+                        if (changed2) {
+                        }
+                        throw N;
+                    }
+                }
+                return hwFindPreferredActivity(intent3, str, flags2, list, priority, always, removeMatches, debug, userId);
+            } catch (Throwable th9) {
+                N = th9;
+                Intent intent4 = intent3;
+                int i3 = flags2;
+                while (true) {
+                    try {
+                        break;
+                    } catch (Throwable th10) {
+                        N = th10;
+                    }
+                }
+                throw N;
+            }
+        }
     }
 
     public boolean canForwardTo(Intent intent, String resolvedType, int sourceUserId, int targetUserId) {
@@ -13983,7 +10930,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0032, code:
+    /* JADX WARNING: Missing block: B:12:0x0032, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -14107,7 +11054,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     ri = querySkipCurrentProfileIntents(matchingFilters, intent2, str6, flags3, i3);
                     String xpResult;
                     Intent intent6;
-                    List<ResolveInfo> applyPostResolutionFilter;
+                    List applyPostResolutionFilter;
                     if (ri != null) {
                         try {
                             List<ResolveInfo> xpResult2 = new ArrayList(1);
@@ -14345,11 +11292,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 if (pkg != null) {
                     result5 = intent4.filterIfNotSystemUser(intent4.mActivities.queryIntentForPackage(intent5, resolvedType, i5, pkg.activities, instantAppPkgName), instantAppPkgName);
                 }
-                if (result5 == null || result5.size() == 0) {
-                    addInstant = intent4.isInstantAppResolutionAllowed(intent5, null, instantAppPkgName, true);
-                    if (result5 == null) {
-                        result3 = new ArrayList();
+                if (result5 != null) {
+                    if (result5.size() == 0) {
                     }
+                    result3 = result5;
+                }
+                addInstant = intent4.isInstantAppResolutionAllowed(intent5, null, instantAppPkgName, true);
+                if (result5 == null) {
+                    result3 = new ArrayList();
                 }
                 result3 = result5;
             } catch (Throwable th15) {
@@ -14631,13 +11581,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return resolveInfos.size() > 0 && ((ResolveInfo) resolveInfos.get(0)).priority >= 0;
     }
 
-    /* JADX WARNING: Missing block: B:121:0x0265, code:
+    /* JADX WARNING: Missing block: B:123:0x0265, code skipped:
             if (DEBUG_PREFERRED != false) goto L_0x026b;
      */
-    /* JADX WARNING: Missing block: B:123:0x0269, code:
+    /* JADX WARNING: Missing block: B:125:0x0269, code skipped:
             if (DEBUG_DOMAIN_VERIFICATION == false) goto L_0x02ae;
      */
-    /* JADX WARNING: Missing block: B:124:0x026b, code:
+    /* JADX WARNING: Missing block: B:126:0x026b, code skipped:
             r0 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Filtered results with preferred activities. New candidates count: ");
@@ -14645,10 +11595,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             android.util.Slog.v(r0, r2.toString());
             r0 = r8.iterator();
      */
-    /* JADX WARNING: Missing block: B:126:0x028d, code:
+    /* JADX WARNING: Missing block: B:128:0x028d, code skipped:
             if (r0.hasNext() == false) goto L_0x02ae;
      */
-    /* JADX WARNING: Missing block: B:127:0x028f, code:
+    /* JADX WARNING: Missing block: B:129:0x028f, code skipped:
             r2 = (android.content.pm.ResolveInfo) r0.next();
             r3 = TAG;
             r4 = new java.lang.StringBuilder();
@@ -14656,7 +11606,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r4.append(r2.activityInfo);
             android.util.Slog.v(r3, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:128:0x02ae, code:
+    /* JADX WARNING: Missing block: B:130:0x02ae, code skipped:
             return r8;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -14742,7 +11692,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 alwaysAskList.add(info);
                             } else {
                                 if (count != 0) {
-                                    if (count != 1) {
+                                    if (count == 1) {
                                     }
                                 }
                                 if (DEBUG_DOMAIN_VERIFICATION || debug) {
@@ -14812,7 +11762,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 if (linkGeneration.activityInfo.packageName.equals(defaultBrowserPackageName)) {
                                     if (defaultBrowserMatch != null) {
                                         maxMatchPrio = count;
-                                        if (defaultBrowserMatch.priority >= linkGeneration.priority) {
+                                        if (defaultBrowserMatch.priority < linkGeneration.priority) {
                                         }
                                     } else {
                                         maxMatchPrio = count;
@@ -15236,7 +12186,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
         synchronized (this.mPackages) {
             String pkgName = intent2.getPackage();
-            List<ResolveInfo> applyPostResolutionFilter;
+            List applyPostResolutionFilter;
             if (pkgName == null) {
                 applyPostResolutionFilter = applyPostResolutionFilter(this.mReceivers.queryIntent(intent2, resolvedType, flags2, i), instantAppPkgName, allowDynamicSplits, callingUid, false, i, intent2);
                 return applyPostResolutionFilter;
@@ -15317,7 +12267,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             String str;
             try {
                 String pkgName = intent2.getPackage();
-                List<ResolveInfo> applyPostServiceResolutionFilter;
+                List applyPostServiceResolutionFilter;
                 if (pkgName == null) {
                     applyPostServiceResolutionFilter = applyPostServiceResolutionFilter(this.mServices.queryIntent(intent2, resolvedType, flags2, i), instantAppPkgName);
                     return applyPostServiceResolutionFilter;
@@ -15411,7 +12361,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             String str;
             try {
                 String pkgName = intent2.getPackage();
-                List<ResolveInfo> applyPostContentProviderResolutionFilter;
+                List applyPostContentProviderResolutionFilter;
                 if (pkgName == null) {
                     applyPostContentProviderResolutionFilter = applyPostContentProviderResolutionFilter(this.mProviders.queryIntent(intent2, resolvedType, flags2, i), instantAppPkgName);
                     return applyPostContentProviderResolutionFilter;
@@ -15463,7 +12413,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:66:0x01d8, code:
+    /* JADX WARNING: Missing block: B:66:0x01d8, code skipped:
             r2 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("getInstalledPackages cost ");
@@ -15478,7 +12428,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r5.append(r9);
             android.util.Log.i(r2, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:67:0x0213, code:
+    /* JADX WARNING: Missing block: B:67:0x0213, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -15489,7 +12439,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         int originFlag = flags;
         try {
             HwFrameworkFactory.getHwBehaviorCollectManager().sendBehavior(BehaviorId.PACKAGEMANAGER_GETINSTALLEDPACKAGES);
-            ParceledListSlice<PackageInfo> emptyList;
+            ParceledListSlice emptyList;
             String str;
             StringBuilder stringBuilder;
             if (getInstantAppPackageName(callingUid) != null) {
@@ -15678,7 +12628,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     }
                 }
                 ArrayMap arrayMap2 = arrayMap;
-                ParceledListSlice<PackageInfo> parceledListSlice = new ParceledListSlice(list);
+                ParceledListSlice parceledListSlice = new ParceledListSlice(list);
                 return parceledListSlice;
             } catch (Throwable th2) {
                 th = th2;
@@ -15693,7 +12643,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         int callingPid = Binder.getCallingPid();
         try {
             HwFrameworkFactory.getHwBehaviorCollectManager().sendBehavior(BehaviorId.PACKAGEMANAGER_GETINSTALLEDAPPLICATIONS);
-            ParceledListSlice<ApplicationInfo> emptyList;
+            ParceledListSlice emptyList;
             String str;
             StringBuilder stringBuilder;
             if (getInstantAppPackageName(callingUid) != null) {
@@ -15713,7 +12663,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 Log.i(str, stringBuilder.toString());
                 return emptyList;
             } else if (sUserManager.exists(userId)) {
-                ParceledListSlice<ApplicationInfo> parceledListSlice;
+                ParceledListSlice parceledListSlice;
                 flags = updateFlagsForApplication(flags, userId, null);
                 boolean listUninstalled = (4202496 & flags) != 0;
                 this.mPermissionManager.enforceCrossUserPermission(callingUid, userId, false, false, "get installed application info");
@@ -15815,14 +12765,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         synchronized (this.mPackages) {
             List<InstantAppInfo> instantApps = this.mInstantAppRegistry.getInstantAppsLPr(userId);
             if (instantApps != null) {
-                ParceledListSlice<InstantAppInfo> parceledListSlice = new ParceledListSlice(instantApps);
+                ParceledListSlice parceledListSlice = new ParceledListSlice(instantApps);
                 return parceledListSlice;
             }
             return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0056, code:
+    /* JADX WARNING: Missing block: B:21:0x0056, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -15970,19 +12920,16 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0078, code:
-            if (android.os.UserHandle.isSameApp(r15.info.applicationInfo.uid, r20) != false) goto L_0x0088;
-     */
-    /* JADX WARNING: Missing block: B:57:0x00e7, code:
+    /* JADX WARNING: Missing block: B:60:0x00e7, code skipped:
             if (r14 == null) goto L_0x00f4;
      */
-    /* JADX WARNING: Missing block: B:58:0x00e9, code:
+    /* JADX WARNING: Missing block: B:61:0x00e9, code skipped:
             java.util.Collections.sort(r14, mProviderInitOrderSorter);
      */
-    /* JADX WARNING: Missing block: B:59:0x00f3, code:
+    /* JADX WARNING: Missing block: B:62:0x00f3, code skipped:
             return new android.content.pm.ParceledListSlice(r14);
      */
-    /* JADX WARNING: Missing block: B:61:0x00f8, code:
+    /* JADX WARNING: Missing block: B:64:0x00f8, code skipped:
             return android.content.pm.ParceledListSlice.emptyList();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -16015,6 +12962,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         if (str != null) {
                             if (!p.info.processName.equals(str)) {
                                 i2 = uid;
+                            } else if (UserHandle.isSameApp(p.info.applicationInfo.uid, uid)) {
                             }
                             i3 = i;
                             i = i3;
@@ -16022,31 +12970,37 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             i2 = uid;
                         }
                         if (this.mSettings.isEnabledAndMatchLPr(p.info, flags2, userId2)) {
-                            if (str2 == null || (p.metaData != null && p.metaData.containsKey(str2))) {
-                                i3 = i;
-                                PackageSetting i4 = ps;
-                                if (!filterAppAccessLPr(ps, callingUid, new ComponentName(p.info.packageName, p.info.name), 4, userId2)) {
-                                    ArrayList<ProviderInfo> finalList2;
-                                    if (finalList == null) {
-                                        finalList2 = new ArrayList(3);
-                                    } else {
-                                        finalList2 = finalList;
-                                    }
-                                    try {
-                                        ProviderInfo info = PackageParser.generateProviderInfo(p, flags2, i4.readUserState(userId2), userId2);
-                                        if (info != null) {
-                                            finalList2.add(info);
-                                        }
-                                        finalList = finalList2;
-                                        i = i3;
-                                    } catch (Throwable th2) {
-                                        th = th2;
-                                        throw th;
+                            if (str2 != null) {
+                                if (p.metaData != null) {
+                                    if (!p.metaData.containsKey(str2)) {
                                     }
                                 }
+                                i3 = i;
+                                i = i3;
                             }
                             i3 = i;
-                            i = i3;
+                            PackageSetting i4 = ps;
+                            if (filterAppAccessLPr(ps, callingUid, new ComponentName(p.info.packageName, p.info.name), 4, userId2)) {
+                                i = i3;
+                            } else {
+                                ArrayList<ProviderInfo> finalList2;
+                                if (finalList == null) {
+                                    finalList2 = new ArrayList(3);
+                                } else {
+                                    finalList2 = finalList;
+                                }
+                                try {
+                                    ProviderInfo info = PackageParser.generateProviderInfo(p, flags2, i4.readUserState(userId2), userId2);
+                                    if (info != null) {
+                                        finalList2.add(info);
+                                    }
+                                    finalList = finalList2;
+                                    i = i3;
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                    throw th;
+                                }
+                            }
                         }
                     }
                     i3 = i;
@@ -16149,22 +13103,22 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         scanPackageFilesLI(files, parseFlags, scanFlags, currentTime, hwFlags);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:90:0x01ce A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
-    /* JADX WARNING: Removed duplicated region for block: B:87:0x01ae A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
-    /* JADX WARNING: Removed duplicated region for block: B:87:0x01ae A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
-    /* JADX WARNING: Removed duplicated region for block: B:90:0x01ce A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
-    /* JADX WARNING: Removed duplicated region for block: B:100:0x01fd A:{Splitter: B:1:0x0018, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:93:0x01ce A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
+    /* JADX WARNING: Removed duplicated region for block: B:90:0x01ae A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
+    /* JADX WARNING: Removed duplicated region for block: B:90:0x01ae A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
+    /* JADX WARNING: Removed duplicated region for block: B:93:0x01ce A:{Catch:{ Throwable -> 0x01f0, all -> 0x01ed }} */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x01fd A:{ExcHandler: Throwable (th java.lang.Throwable), Splitter:B:1:0x0018} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:37:0x00b2, code:
+    /* JADX WARNING: Missing block: B:40:0x00b2, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:38:0x00b3, code:
+    /* JADX WARNING: Missing block: B:41:0x00b3, code skipped:
             r15 = r23;
      */
-    /* JADX WARNING: Missing block: B:100:0x01fd, code:
+    /* JADX WARNING: Missing block: B:103:0x01fd, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:101:0x01fe, code:
+    /* JADX WARNING: Missing block: B:104:0x01fe, code skipped:
             r15 = r23;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -16191,7 +13145,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     break;
                 }
                 File file = fileArr[fileCount2];
-                if (!(PackageParser.isApkFile(file) || file.isDirectory()) || PackageInstallerService.isStageName(file.getName())) {
+                if ((!PackageParser.isApkFile(file) && !file.isDirectory()) || PackageInstallerService.isStageName(file.getName())) {
                     z2 = false;
                 }
                 if (z2) {
@@ -16399,7 +13353,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0043, code:
+    /* JADX WARNING: Missing block: B:10:0x0043, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -16556,19 +13510,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return true;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0018 A:{Splitter: B:1:0x0002, ExcHandler: com.android.server.pm.Installer.InstallerException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0018 A:{Splitter: B:1:0x0002, ExcHandler: com.android.server.pm.Installer.InstallerException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0018 A:{Splitter: B:1:0x0002, ExcHandler: com.android.server.pm.Installer.InstallerException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:15:0x0018, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0019, code:
-            android.util.Slog.w(TAG, "Error in fsverity check. Fallback to full apk verification.", r2);
-     */
-    /* JADX WARNING: Missing block: B:17:0x0020, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean canSkipFullApkVerification(String apkPath) {
         try {
             byte[] rootHashObserved = VerityUtils.generateFsverityRootHash(apkPath);
@@ -16579,12 +13520,728 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 this.mInstaller.assertFsverityRootHashMatches(apkPath, rootHashObserved);
             }
             return true;
-        } catch (Exception e) {
+        } catch (InstallerException | IOException | DigestException | NoSuchAlgorithmException e) {
+            Slog.w(TAG, "Error in fsverity check. Fallback to full apk verification.", e);
+            return false;
         }
     }
 
     private Package addForInitLI(Package pkg, int parseFlags, int scanFlags, long currentTime, UserHandle user) throws PackageManagerException {
         return addForInitLI(pkg, parseFlags, scanFlags, currentTime, user, 0);
+    }
+
+    /* JADX WARNING: Removed duplicated region for block: B:245:0x0508  */
+    /* JADX WARNING: Missing block: B:42:0x00c9, code skipped:
+            r9.setApplicationVolumeUuid(r9.volumeUuid);
+            r9.setApplicationInfoCodePath(r9.codePath);
+            r9.setApplicationInfoBaseCodePath(r9.baseCodePath);
+            r9.setApplicationInfoSplitCodePaths(r9.splitCodePaths);
+            r9.setApplicationInfoResourcePath(r9.codePath);
+            r9.setApplicationInfoBaseResourcePath(r9.baseCodePath);
+            r9.setApplicationInfoSplitResourcePaths(r9.splitCodePaths);
+            r4 = r5.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:43:0x00ee, code skipped:
+            monitor-enter(r4);
+     */
+    /* JADX WARNING: Missing block: B:45:?, code skipped:
+            r0 = r5.mSettings.getRenamedPackageLPr(r9.mRealPackage);
+            r3 = getRealPackageName(r9, r0);
+     */
+    /* JADX WARNING: Missing block: B:46:0x00fb, code skipped:
+            if (r3 == null) goto L_0x0100;
+     */
+    /* JADX WARNING: Missing block: B:47:0x00fd, code skipped:
+            ensurePackageRenamed(r9, r0);
+     */
+    /* JADX WARNING: Missing block: B:48:0x0100, code skipped:
+            r24 = getOriginalPackageLocked(r9, r0);
+            r25 = r5.mSettings.getPackageLPr(r9.packageName);
+     */
+    /* JADX WARNING: Missing block: B:49:0x0110, code skipped:
+            if (r24 != null) goto L_0x0115;
+     */
+    /* JADX WARNING: Missing block: B:50:0x0112, code skipped:
+            r11 = r25;
+     */
+    /* JADX WARNING: Missing block: B:51:0x0115, code skipped:
+            r11 = r24;
+     */
+    /* JADX WARNING: Missing block: B:52:0x0117, code skipped:
+            r15 = r11;
+     */
+    /* JADX WARNING: Missing block: B:53:0x0118, code skipped:
+            if (r15 == null) goto L_0x011c;
+     */
+    /* JADX WARNING: Missing block: B:54:0x011a, code skipped:
+            r11 = true;
+     */
+    /* JADX WARNING: Missing block: B:55:0x011c, code skipped:
+            r11 = false;
+     */
+    /* JADX WARNING: Missing block: B:56:0x011d, code skipped:
+            r26 = r11;
+     */
+    /* JADX WARNING: Missing block: B:57:0x011f, code skipped:
+            if (r26 == false) goto L_0x0124;
+     */
+    /* JADX WARNING: Missing block: B:58:0x0121, code skipped:
+            r11 = r15.name;
+     */
+    /* JADX WARNING: Missing block: B:59:0x0124, code skipped:
+            r11 = r9.packageName;
+     */
+    /* JADX WARNING: Missing block: B:60:0x0126, code skipped:
+            r14 = r11;
+            r13 = r5.mSettings.getDisabledSystemPkgLPr(r14);
+     */
+    /* JADX WARNING: Missing block: B:61:0x012e, code skipped:
+            if (r13 == null) goto L_0x0132;
+     */
+    /* JADX WARNING: Missing block: B:62:0x0130, code skipped:
+            r11 = true;
+     */
+    /* JADX WARNING: Missing block: B:63:0x0132, code skipped:
+            r11 = false;
+     */
+    /* JADX WARNING: Missing block: B:64:0x0133, code skipped:
+            r27 = r11;
+     */
+    /* JADX WARNING: Missing block: B:65:0x0137, code skipped:
+            if (DEBUG_INSTALL == false) goto L_0x0152;
+     */
+    /* JADX WARNING: Missing block: B:66:0x0139, code skipped:
+            if (r27 == false) goto L_0x0152;
+     */
+    /* JADX WARNING: Missing block: B:67:0x013b, code skipped:
+            r11 = TAG;
+            r12 = new java.lang.StringBuilder();
+            r12.append("updatedPkg = ");
+            r12.append(r13);
+            android.util.Slog.d(r11, r12.toString());
+     */
+    /* JADX WARNING: Missing block: B:69:0x0154, code skipped:
+            if (r9.mSharedUserId == null) goto L_0x015f;
+     */
+    /* JADX WARNING: Missing block: B:70:0x0156, code skipped:
+            r5 = r5.mSettings.getSharedUserLPw(r9.mSharedUserId, 0, 0, true);
+     */
+    /* JADX WARNING: Missing block: B:71:0x015f, code skipped:
+            r5 = null;
+     */
+    /* JADX WARNING: Missing block: B:73:0x0162, code skipped:
+            if (DEBUG_PACKAGE_SCANNING == false) goto L_0x0197;
+     */
+    /* JADX WARNING: Missing block: B:75:0x0167, code skipped:
+            if ((Integer.MIN_VALUE & r8) == 0) goto L_0x0197;
+     */
+    /* JADX WARNING: Missing block: B:76:0x0169, code skipped:
+            if (r5 == null) goto L_0x0197;
+     */
+    /* JADX WARNING: Missing block: B:77:0x016b, code skipped:
+            r11 = TAG;
+            r12 = new java.lang.StringBuilder();
+            r12.append("Shared UserID ");
+            r12.append(r9.mSharedUserId);
+            r12.append(" (uid=");
+            r12.append(r5.userId);
+            r12.append("): packages=");
+            r12.append(r5.packages);
+            android.util.Log.d(r11, r12.toString());
+     */
+    /* JADX WARNING: Missing block: B:78:0x0197, code skipped:
+            if (r23 == false) goto L_0x023b;
+     */
+    /* JADX WARNING: Missing block: B:79:0x0199, code skipped:
+            if (r27 == false) goto L_0x023b;
+     */
+    /* JADX WARNING: Missing block: B:81:0x019d, code skipped:
+            if (r9.childPackages == null) goto L_0x01a6;
+     */
+    /* JADX WARNING: Missing block: B:82:0x019f, code skipped:
+            r2 = r9.childPackages.size();
+     */
+    /* JADX WARNING: Missing block: B:83:0x01a6, code skipped:
+            r2 = 0;
+     */
+    /* JADX WARNING: Missing block: B:85:0x01a9, code skipped:
+            if (r13.childPackageNames == null) goto L_0x01b2;
+     */
+    /* JADX WARNING: Missing block: B:86:0x01ab, code skipped:
+            r11 = r13.childPackageNames.size();
+     */
+    /* JADX WARNING: Missing block: B:87:0x01b2, code skipped:
+            r11 = 0;
+     */
+    /* JADX WARNING: Missing block: B:88:0x01b3, code skipped:
+            r12 = r11;
+            r11 = 0;
+     */
+    /* JADX WARNING: Missing block: B:89:0x01b5, code skipped:
+            if (r11 >= r12) goto L_0x0200;
+     */
+    /* JADX WARNING: Missing block: B:90:0x01b7, code skipped:
+            r6 = (java.lang.String) r13.childPackageNames.get(r11);
+            r16 = false;
+            r17 = 0;
+     */
+    /* JADX WARNING: Missing block: B:91:0x01c3, code skipped:
+            r31 = r3;
+            r3 = r17;
+     */
+    /* JADX WARNING: Missing block: B:92:0x01c9, code skipped:
+            if (r3 >= r2) goto L_0x01eb;
+     */
+    /* JADX WARNING: Missing block: B:93:0x01cb, code skipped:
+            r32 = r2;
+            r33 = r12;
+     */
+    /* JADX WARNING: Missing block: B:94:0x01dd, code skipped:
+            if (((android.content.pm.PackageParser.Package) r9.childPackages.get(r3)).packageName.equals(r6) == false) goto L_0x01e2;
+     */
+    /* JADX WARNING: Missing block: B:95:0x01df, code skipped:
+            r16 = true;
+     */
+    /* JADX WARNING: Missing block: B:96:0x01e2, code skipped:
+            r17 = r3 + 1;
+            r3 = r31;
+            r2 = r32;
+            r12 = r33;
+     */
+    /* JADX WARNING: Missing block: B:97:0x01eb, code skipped:
+            r32 = r2;
+            r33 = r12;
+     */
+    /* JADX WARNING: Missing block: B:98:0x01ef, code skipped:
+            if (r16 != false) goto L_0x01f6;
+     */
+    /* JADX WARNING: Missing block: B:99:0x01f1, code skipped:
+            r5.mSettings.removeDisabledSystemPackageLPw(r6);
+     */
+    /* JADX WARNING: Missing block: B:100:0x01f6, code skipped:
+            r11 = r11 + 1;
+            r3 = r31;
+            r2 = r32;
+            r12 = r33;
+     */
+    /* JADX WARNING: Missing block: B:101:0x0200, code skipped:
+            r32 = r2;
+            r31 = r3;
+            r33 = r12;
+     */
+    /* JADX WARNING: Missing block: B:102:0x0211, code skipped:
+            if (r9 != r5.mPlatformPackage) goto L_0x0216;
+     */
+    /* JADX WARNING: Missing block: B:103:0x0213, code skipped:
+            r21 = true;
+     */
+    /* JADX WARNING: Missing block: B:104:0x0216, code skipped:
+            r21 = false;
+     */
+    /* JADX WARNING: Missing block: B:105:0x0218, code skipped:
+            r6 = r33;
+            r30 = r13;
+            r33 = r14;
+            r3 = r15;
+            r11 = new com.android.server.pm.PackageManagerService.ScanRequest(r9, r5, null, r30, null, null, null, r8, r7, r21, r42);
+            applyPolicy(r9, r8, r7, r5.mPlatformPackage, r1);
+            scanPackageOnlyLI(r11, r5.mFactoryTest, -1);
+     */
+    /* JADX WARNING: Missing block: B:106:0x023b, code skipped:
+            r30 = r13;
+            r3 = r15;
+     */
+    /* JADX WARNING: Missing block: B:107:0x023e, code skipped:
+            monitor-exit(r4);
+     */
+    /* JADX WARNING: Missing block: B:108:0x023f, code skipped:
+            r11 = r0;
+            r12 = r30;
+            r13 = r27;
+            r14 = r26;
+            r6 = r3;
+     */
+    /* JADX WARNING: Missing block: B:109:0x0247, code skipped:
+            if (r14 == false) goto L_0x0255;
+     */
+    /* JADX WARNING: Missing block: B:111:0x0251, code skipped:
+            if (r6.codePathString.equals(r9.codePath) != false) goto L_0x0255;
+     */
+    /* JADX WARNING: Missing block: B:112:0x0253, code skipped:
+            r0 = true;
+     */
+    /* JADX WARNING: Missing block: B:113:0x0255, code skipped:
+            r0 = false;
+     */
+    /* JADX WARNING: Missing block: B:114:0x0256, code skipped:
+            r16 = r0;
+     */
+    /* JADX WARNING: Missing block: B:115:0x0258, code skipped:
+            if (r14 == false) goto L_0x0266;
+     */
+    /* JADX WARNING: Missing block: B:117:0x0262, code skipped:
+            if (r37.getLongVersionCode() <= r6.versionCode) goto L_0x0266;
+     */
+    /* JADX WARNING: Missing block: B:118:0x0264, code skipped:
+            r0 = true;
+     */
+    /* JADX WARNING: Missing block: B:119:0x0266, code skipped:
+            r0 = false;
+     */
+    /* JADX WARNING: Missing block: B:120:0x0267, code skipped:
+            r17 = r0;
+     */
+    /* JADX WARNING: Missing block: B:121:0x0269, code skipped:
+            if (r23 == false) goto L_0x0273;
+     */
+    /* JADX WARNING: Missing block: B:122:0x026b, code skipped:
+            if (r13 == false) goto L_0x0273;
+     */
+    /* JADX WARNING: Missing block: B:123:0x026d, code skipped:
+            if (r16 == false) goto L_0x0273;
+     */
+    /* JADX WARNING: Missing block: B:124:0x026f, code skipped:
+            if (r17 == false) goto L_0x0273;
+     */
+    /* JADX WARNING: Missing block: B:125:0x0271, code skipped:
+            r0 = true;
+     */
+    /* JADX WARNING: Missing block: B:126:0x0273, code skipped:
+            r0 = false;
+     */
+    /* JADX WARNING: Missing block: B:127:0x0274, code skipped:
+            r18 = r0;
+            r0 = 5;
+     */
+    /* JADX WARNING: Missing block: B:128:0x0277, code skipped:
+            if (r18 == false) goto L_0x02ef;
+     */
+    /* JADX WARNING: Missing block: B:129:0x0279, code skipped:
+            r2 = r5.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:130:0x027b, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:132:?, code skipped:
+            r5.mPackages.remove(r6.name);
+            removePackageAbiLPw(r6.name);
+     */
+    /* JADX WARNING: Missing block: B:133:0x0288, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:134:0x0289, code skipped:
+            r2 = new java.lang.StringBuilder();
+            r2.append("System package updated; name: ");
+            r2.append(r6.name);
+            r2.append("; ");
+            r2.append(r6.versionCode);
+            r2.append(" --> ");
+            r2.append(r37.getLongVersionCode());
+            r2.append("; ");
+            r2.append(r6.codePathString);
+            r2.append(" --> ");
+            r2.append(r9.codePath);
+            com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(5, r2.toString());
+            createInstallArgsForExisting(packageFlagsToInstallFlags(r6), r6.codePathString, r6.resourcePathString, com.android.server.pm.InstructionSets.getAppDexInstructionSets(r6)).cleanUpResourcesLI();
+            r4 = r5.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:135:0x02df, code skipped:
+            monitor-enter(r4);
+     */
+    /* JADX WARNING: Missing block: B:137:?, code skipped:
+            r5.mSettings.enableSystemPackageLPw(r6.name);
+     */
+    /* JADX WARNING: Missing block: B:138:0x02e7, code skipped:
+            monitor-exit(r4);
+     */
+    /* JADX WARNING: Missing block: B:147:0x02ef, code skipped:
+            if (r23 == false) goto L_0x034d;
+     */
+    /* JADX WARNING: Missing block: B:148:0x02f1, code skipped:
+            if (r13 == false) goto L_0x034d;
+     */
+    /* JADX WARNING: Missing block: B:149:0x02f3, code skipped:
+            if (r18 != false) goto L_0x034d;
+     */
+    /* JADX WARNING: Missing block: B:150:0x02f5, code skipped:
+            addUpdatedRemoveableAppFlag(r9.codePath, r9.packageName);
+            r2 = r5.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:151:0x02fe, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:154:0x0307, code skipped:
+            if (r5.mPackages.containsKey(r9.packageName) != false) goto L_0x0310;
+     */
+    /* JADX WARNING: Missing block: B:155:0x0309, code skipped:
+            r5.mPackages.put(r9.packageName, r9);
+     */
+    /* JADX WARNING: Missing block: B:156:0x0310, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:157:0x0311, code skipped:
+            r3 = new java.lang.StringBuilder();
+            r3.append("Package ");
+            r3.append(r9.packageName);
+            r3.append(" at ");
+            r3.append(r9.codePath);
+            r3.append(" ignored: updated version ");
+            r3.append(r6.versionCode);
+            r3.append(" better than this ");
+            r3.append(r37.getLongVersionCode());
+     */
+    /* JADX WARNING: Missing block: B:158:0x0349, code skipped:
+            throw new com.android.server.pm.PackageManagerException(5, r3.toString());
+     */
+    /* JADX WARNING: Missing block: B:163:0x034d, code skipped:
+            if (r13 == false) goto L_0x035e;
+     */
+    /* JADX WARNING: Missing block: B:165:0x0355, code skipped:
+            if (needAddUpdatedRemoveableAppFlag(r9.packageName) == false) goto L_0x035e;
+     */
+    /* JADX WARNING: Missing block: B:166:0x0357, code skipped:
+            r1 = (r1 & -33554433) | 67108864;
+     */
+    /* JADX WARNING: Missing block: B:167:0x035e, code skipped:
+            r6 = r1;
+     */
+    /* JADX WARNING: Missing block: B:168:0x0361, code skipped:
+            if (r5.mIsUpgrade == false) goto L_0x03f6;
+     */
+    /* JADX WARNING: Missing block: B:169:0x0363, code skipped:
+            if (r14 == false) goto L_0x03f6;
+     */
+    /* JADX WARNING: Missing block: B:171:0x0367, code skipped:
+            if (r5.mCustPms == null) goto L_0x03f6;
+     */
+    /* JADX WARNING: Missing block: B:173:0x0372, code skipped:
+            if (r5.mCustPms.isListedApp(r9.packageName) != -1) goto L_0x0377;
+     */
+    /* JADX WARNING: Missing block: B:174:0x0374, code skipped:
+            r7 = r6;
+     */
+    /* JADX WARNING: Missing block: B:175:0x0377, code skipped:
+            r5 = createInstallArgsForExisting(packageFlagsToInstallFlags(r6), r6.codePathString, r6.resourcePathString, com.android.server.pm.InstructionSets.getAppDexInstructionSets(r6));
+            r1 = r5.mInstallLock;
+     */
+    /* JADX WARNING: Missing block: B:176:0x0389, code skipped:
+            monitor-enter(r1);
+     */
+    /* JADX WARNING: Missing block: B:178:?, code skipped:
+            r5.cleanUpResourcesLI();
+     */
+    /* JADX WARNING: Missing block: B:179:0x038d, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:180:0x038e, code skipped:
+            r4 = new com.android.server.pm.PackageManagerService.PackageRemovedInfo(r5);
+            r19 = r5.mCustPms.isListedApp(r9.packageName);
+     */
+    /* JADX WARNING: Missing block: B:181:0x03ed, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:186:0x03f4, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:188:0x03f6, code skipped:
+            r7 = r6;
+     */
+    /* JADX WARNING: Missing block: B:189:0x03f7, code skipped:
+            r6 = com.android.server.pm.PackageManagerServiceUtils.isApkVerificationForced(r12);
+     */
+    /* JADX WARNING: Missing block: B:190:0x03fd, code skipped:
+            if ((r8 & 16) != 0) goto L_0x0414;
+     */
+    /* JADX WARNING: Missing block: B:192:0x0402, code skipped:
+            if ((com.android.server.pm.DumpState.DUMP_HANDLE & r7) != 0) goto L_0x0414;
+     */
+    /* JADX WARNING: Missing block: B:193:0x0404, code skipped:
+            if (r6 == false) goto L_0x040c;
+     */
+    /* JADX WARNING: Missing block: B:195:0x040a, code skipped:
+            if (canSkipFullPackageVerification(r37) != false) goto L_0x0414;
+     */
+    /* JADX WARNING: Missing block: B:197:0x040e, code skipped:
+            if (r5.mIsPrePUpgrade == false) goto L_0x0411;
+     */
+    /* JADX WARNING: Missing block: B:198:0x0411, code skipped:
+            r29 = false;
+     */
+    /* JADX WARNING: Missing block: B:199:0x0414, code skipped:
+            r29 = true;
+     */
+    /* JADX WARNING: Missing block: B:200:0x0416, code skipped:
+            r5 = r29;
+            collectCertificatesLI(r6, r9, r6, r5);
+     */
+    /* JADX WARNING: Missing block: B:201:0x041f, code skipped:
+            if (checkIllegalGmsCoreApk(r37) == false) goto L_0x0424;
+     */
+    /* JADX WARNING: Missing block: B:203:0x0423, code skipped:
+            return null;
+     */
+    /* JADX WARNING: Missing block: B:204:0x0424, code skipped:
+            checkIllegalSysApk(r9, r7);
+     */
+    /* JADX WARNING: Missing block: B:205:0x042a, code skipped:
+            if (r6 == 0) goto L_0x0449;
+     */
+    /* JADX WARNING: Missing block: B:207:0x0434, code skipped:
+            if (r6.codePathString.equals(r9.codePath) == false) goto L_0x0449;
+     */
+    /* JADX WARNING: Missing block: B:209:0x0445, code skipped:
+            if (r6.timeStamp != new java.io.File(r9.codePath).lastModified()) goto L_0x0449;
+     */
+    /* JADX WARNING: Missing block: B:210:0x0447, code skipped:
+            r0 = false;
+     */
+    /* JADX WARNING: Missing block: B:211:0x0449, code skipped:
+            r0 = true;
+     */
+    /* JADX WARNING: Missing block: B:212:0x044a, code skipped:
+            r4 = r0;
+            r5.mHwPMSEx.checkHwCertification(r9, r4);
+            replaceSignatureIfNeeded(r6, r9, true, r4);
+            maybeClearProfilesForUpgradesLI(r6, r9);
+            r20 = false;
+     */
+    /* JADX WARNING: Missing block: B:213:0x0459, code skipped:
+            if (r23 == false) goto L_0x05c3;
+     */
+    /* JADX WARNING: Missing block: B:214:0x045b, code skipped:
+            if (r13 != false) goto L_0x05c3;
+     */
+    /* JADX WARNING: Missing block: B:215:0x045d, code skipped:
+            if (r14 == false) goto L_0x05c3;
+     */
+    /* JADX WARNING: Missing block: B:217:0x0463, code skipped:
+            if (r6.isSystem() != false) goto L_0x05c3;
+     */
+    /* JADX WARNING: Missing block: B:219:0x0470, code skipped:
+            if (r9.mSigningDetails.checkCapability(r6.signatures.mSigningDetails, 1) != false) goto L_0x050c;
+     */
+    /* JADX WARNING: Missing block: B:221:0x047e, code skipped:
+            if (r6.signatures.mSigningDetails.checkCapability(r9.mSigningDetails, 8) != false) goto L_0x050c;
+     */
+    /* JADX WARNING: Missing block: B:222:0x0480, code skipped:
+            r0 = new java.lang.StringBuilder();
+            r0.append("System package signature mismatch; name: ");
+            r0.append(r6.name);
+            com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(5, r0.toString());
+            r2 = freezePackage(r9.packageName, "scanPackageInternalLI");
+     */
+    /* JADX WARNING: Missing block: B:225:0x04a2, code skipped:
+            r34 = r2;
+            r0 = true;
+            r21 = r4;
+            r19 = r5;
+            r22 = r6;
+            r25 = r7;
+            r24 = r39;
+     */
+    /* JADX WARNING: Missing block: B:227:?, code skipped:
+            deletePackageLIF(r9.packageName, null, true, null, 0, null, false, null);
+     */
+    /* JADX WARNING: Missing block: B:228:0x04d0, code skipped:
+            r1 = r34;
+     */
+    /* JADX WARNING: Missing block: B:229:0x04d2, code skipped:
+            if (r1 == null) goto L_0x04d8;
+     */
+    /* JADX WARNING: Missing block: B:230:0x04d4, code skipped:
+            $closeResource(null, r1);
+     */
+    /* JADX WARNING: Missing block: B:231:0x04d8, code skipped:
+            r9 = r37;
+     */
+    /* JADX WARNING: Missing block: B:232:0x04dd, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:233:0x04de, code skipped:
+            r1 = r34;
+            r2 = null;
+     */
+    /* JADX WARNING: Missing block: B:234:0x04e2, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:235:0x04e3, code skipped:
+            r1 = r34;
+            r5 = r0;
+     */
+    /* JADX WARNING: Missing block: B:236:0x04e7, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:237:0x04e8, code skipped:
+            r1 = r2;
+            r21 = r4;
+            r22 = r6;
+            r25 = r7;
+            r2 = null;
+            r24 = r39;
+            r19 = r5;
+     */
+    /* JADX WARNING: Missing block: B:238:0x04f6, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:239:0x04f7, code skipped:
+            r1 = r2;
+            r21 = r4;
+            r19 = r5;
+            r22 = r6;
+            r25 = r7;
+            r24 = r39;
+            r5 = r0;
+     */
+    /* JADX WARNING: Missing block: B:241:?, code skipped:
+            throw r5;
+     */
+    /* JADX WARNING: Missing block: B:242:0x0504, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:243:0x0505, code skipped:
+            r2 = r5;
+     */
+    /* JADX WARNING: Missing block: B:244:0x0506, code skipped:
+            if (r1 != null) goto L_0x0508;
+     */
+    /* JADX WARNING: Missing block: B:245:0x0508, code skipped:
+            $closeResource(r2, r1);
+     */
+    /* JADX WARNING: Missing block: B:246:0x050b, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:247:0x050c, code skipped:
+            r0 = true;
+            r21 = r4;
+            r19 = r5;
+            r22 = r6;
+            r25 = r7;
+            r24 = r39;
+     */
+    /* JADX WARNING: Missing block: B:248:0x0517, code skipped:
+            if (r17 == false) goto L_0x0578;
+     */
+    /* JADX WARNING: Missing block: B:249:0x0519, code skipped:
+            r1 = new java.lang.StringBuilder();
+            r1.append("System package enabled; name: ");
+            r1.append(r6.name);
+            r1.append("; ");
+            r1.append(r6.versionCode);
+            r1.append(" --> ");
+            r1.append(r37.getLongVersionCode());
+            r1.append("; ");
+            r1.append(r6.codePathString);
+            r1.append(" --> ");
+            r9 = r37;
+            r1.append(r9.codePath);
+            com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(5, r1.toString());
+            r1 = createInstallArgsForExisting(packageFlagsToInstallFlags(r6), r6.codePathString, r6.resourcePathString, com.android.server.pm.InstructionSets.getAppDexInstructionSets(r6));
+            r2 = r5.mInstallLock;
+     */
+    /* JADX WARNING: Missing block: B:250:0x056f, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:252:?, code skipped:
+            r1.cleanUpResourcesLI();
+     */
+    /* JADX WARNING: Missing block: B:253:0x0573, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:258:0x0578, code skipped:
+            r9 = r37;
+            r20 = true;
+            addUpdatedRemoveableAppFlag(r9.codePath, r6.name);
+            r2 = new java.lang.StringBuilder();
+            r2.append("System package disabled; name: ");
+            r2.append(r6.name);
+            r2.append("; old: ");
+            r2.append(r6.codePathString);
+            r2.append(" @ ");
+            r2.append(r6.versionCode);
+            r2.append("; new: ");
+            r2.append(r9.codePath);
+            r2.append(" @ ");
+            r2.append(r9.codePath);
+            com.android.server.pm.PackageManagerServiceUtils.logCriticalInfo(4, r2.toString());
+     */
+    /* JADX WARNING: Missing block: B:259:0x05c3, code skipped:
+            r21 = r4;
+            r19 = r5;
+            r22 = r6;
+            r25 = r7;
+            r0 = true;
+            r24 = r39;
+     */
+    /* JADX WARNING: Missing block: B:260:0x05ce, code skipped:
+            r1 = scanPackageNewLI(r9, r38, r24 | 2, r40, r42, r25);
+     */
+    /* JADX WARNING: Missing block: B:261:0x05de, code skipped:
+            if (r20 == false) goto L_0x05ef;
+     */
+    /* JADX WARNING: Missing block: B:262:0x05e0, code skipped:
+            r2 = r5.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:263:0x05e2, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:265:?, code skipped:
+            r5.mSettings.disableSystemPackageLPw(r9.packageName, r0);
+     */
+    /* JADX WARNING: Missing block: B:266:0x05ea, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:271:0x05ef, code skipped:
+            addPreinstalledPkgToList(r1);
+     */
+    /* JADX WARNING: Missing block: B:272:0x05f2, code skipped:
+            return r1;
+     */
+    /* JADX WARNING: Missing block: B:274:0x05f4, code skipped:
+            r24 = r7;
+     */
+    /* JADX WARNING: Missing block: B:299:?, code skipped:
+            r21 = r5;
+            r7 = r6;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private Package addForInitLI(Package pkg, int parseFlags, int scanFlags, long currentTime, UserHandle user, int hwFlags) throws PackageManagerException {
+        Package packageR = pkg;
+        int i = parseFlags;
+        int i2 = scanFlags;
+        int hwFlags2 = hwFlags;
+        boolean scanSystemPartition = (i & 16) != 0;
+        synchronized (this.mPackages) {
+            if ((1073741824 & hwFlags2) == 0) {
+                try {
+                    PackageSetting psTemp = this.mSettings.getPackageLPr(packageR.packageName);
+                    String str;
+                    StringBuilder stringBuilder;
+                    if (!needInstallRemovablePreApk(packageR, hwFlags2)) {
+                        addUnisntallDataToCache(packageR.packageName, packageR.codePath);
+                        if (psTemp == null || !psTemp.isAnyInstalled(sUserManager.getUserIds()) || (this.mSettings.getDisabledSystemPkgLPr(packageR.packageName) == null && psTemp.codePathString != null && psTemp.codePathString.startsWith("/data/app/"))) {
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("scan return here for package:");
+                            stringBuilder.append(packageR.packageName);
+                            Slog.d(str, stringBuilder.toString());
+                            return null;
+                        }
+                    } else if (!(psTemp == null || psTemp.codePath == null || psTemp.codePathString.equals(packageR.codePath) || psTemp.codePathString == null || !psTemp.codePathString.startsWith("/data/app/") || scanSystemPartition || ((long) packageR.mVersionCode) > psTemp.versionCode)) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("scan return here for ota nosys package:");
+                        stringBuilder.append(packageR.packageName);
+                        Slog.d(str, stringBuilder.toString());
+                        recordUninstalledDelapp(packageR.packageName, packageR.codePath.toString());
+                        return null;
+                    }
+                } catch (Throwable th) {
+                    int i3 = i2;
+                    while (true) {
+                    }
+                }
+            }
+        }
     }
 
     private static void renameStaticSharedLibraryPackage(Package pkg) {
@@ -16602,10 +14259,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return processName;
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0066, code:
+    /* JADX WARNING: Missing block: B:25:0x0066, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:26:0x0067, code:
+    /* JADX WARNING: Missing block: B:26:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -16655,12 +14312,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     if (!isFirstBoot() && dexOptDialogShown) {
                         try {
                             ActivityManager.getService().showBootMessage(this.mContext.getResources().getString(17039583), true);
-                            return;
                         } catch (RemoteException e) {
-                            return;
                         }
                     }
-                    return;
                 }
                 return;
             }
@@ -17648,7 +15302,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return scanPackageNewLI(pkg, parseFlags, scanFlags, currentTime, user, 0);
     }
 
-    /* JADX WARNING: Missing block: B:88:0x01e5, code:
+    /* JADX WARNING: Missing block: B:89:0x01e5, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -17743,7 +15397,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 UiThread.getHandler().post(new Runnable() {
                                     public void run() {
                                         if (PackageManagerService.this.mContext != null) {
-                                            Toast toast = Toast.makeText(PackageManagerService.this.mContext, PackageManagerService.this.mContext.getString(33686098), 0);
+                                            Toast toast = Toast.makeText(PackageManagerService.this.mContext, PackageManagerService.this.mContext.getString(33686100), 0);
                                             LayoutParams windowParams = toast.getWindowParams();
                                             windowParams.privateFlags |= 16;
                                             toast.show();
@@ -17890,57 +15544,57 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:40:0x00e1  */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x0152 A:{SYNTHETIC, Splitter: B:54:0x0152} */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0152 A:{SYNTHETIC, Splitter:B:54:0x0152} */
     /* JADX WARNING: Removed duplicated region for block: B:45:0x00fa  */
-    /* JADX WARNING: Removed duplicated region for block: B:108:0x026f  */
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x02cb  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x030a  */
-    /* JADX WARNING: Removed duplicated region for block: B:129:0x02e8  */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x026f  */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:141:0x030a  */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x02e8  */
     /* JADX WARNING: Removed duplicated region for block: B:40:0x00e1  */
     /* JADX WARNING: Removed duplicated region for block: B:45:0x00fa  */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x0152 A:{SYNTHETIC, Splitter: B:54:0x0152} */
-    /* JADX WARNING: Removed duplicated region for block: B:108:0x026f  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x02cb  */
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:129:0x02e8  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x030a  */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0152 A:{SYNTHETIC, Splitter:B:54:0x0152} */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x026f  */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x02e8  */
+    /* JADX WARNING: Removed duplicated region for block: B:141:0x030a  */
     /* JADX WARNING: Removed duplicated region for block: B:40:0x00e1  */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x0152 A:{SYNTHETIC, Splitter: B:54:0x0152} */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0152 A:{SYNTHETIC, Splitter:B:54:0x0152} */
     /* JADX WARNING: Removed duplicated region for block: B:45:0x00fa  */
-    /* JADX WARNING: Removed duplicated region for block: B:108:0x026f  */
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x02cb  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x030a  */
-    /* JADX WARNING: Removed duplicated region for block: B:129:0x02e8  */
-    /* JADX WARNING: Removed duplicated region for block: B:108:0x026f  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x02cb  */
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  , EDGE_INSN: B:153:0x02e4->B:127:0x02e4 ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:129:0x02e8  */
-    /* JADX WARNING: Removed duplicated region for block: B:139:0x030a  */
-    /* JADX WARNING: Removed duplicated region for block: B:148:0x0343  */
-    /* JADX WARNING: Removed duplicated region for block: B:87:0x01c0  */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x01ac A:{Splitter: B:54:0x0152, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x026f  */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:141:0x030a  */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x02e8  */
+    /* JADX WARNING: Removed duplicated region for block: B:109:0x026f  */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x02e4 A:{SYNTHETIC, EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  , EDGE_INSN: B:155:0x02e4->B:128:0x02e4 ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x02e8  */
+    /* JADX WARNING: Removed duplicated region for block: B:141:0x030a  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x0343  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x01c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x01ac A:{ExcHandler: IllegalArgumentException (e java.lang.IllegalArgumentException), Splitter:B:54:0x0152} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:81:0x01ad, code:
+    /* JADX WARNING: Missing block: B:82:0x01ad, code skipped:
             r25 = r4;
      */
-    /* JADX WARNING: Missing block: B:82:0x01b8, code:
+    /* JADX WARNING: Missing block: B:83:0x01b8, code skipped:
             throw new com.android.server.pm.PackageManagerException(-104, "Signing certificates comparison made on incomparable signing details but somehow passed verifySignatures!");
      */
-    /* JADX WARNING: Missing block: B:83:0x01b9, code:
+    /* JADX WARNING: Missing block: B:84:0x01b9, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:84:0x01ba, code:
+    /* JADX WARNING: Missing block: B:85:0x01ba, code skipped:
             r25 = r4;
      */
-    /* JADX WARNING: Missing block: B:87:0x01c0, code:
+    /* JADX WARNING: Missing block: B:88:0x01c0, code skipped:
             r1 = isSystemSignatureUpdated(r3.signatures.mSigningDetails.signatures, r11.mSigningDetails.signatures);
      */
-    /* JADX WARNING: Missing block: B:88:0x01ce, code:
+    /* JADX WARNING: Missing block: B:89:0x01ce, code skipped:
             if (r1 != false) goto L_0x01d0;
      */
-    /* JADX WARNING: Missing block: B:89:0x01d0, code:
+    /* JADX WARNING: Missing block: B:90:0x01d0, code skipped:
             r4 = TAG;
             r9 = new java.lang.StringBuilder();
             r26 = r6;
@@ -17949,38 +15603,38 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r9.append(" system signature update; retaining data.");
             android.util.Slog.i(r4, r9.toString());
      */
-    /* JADX WARNING: Missing block: B:90:0x01f0, code:
+    /* JADX WARNING: Missing block: B:91:0x01f0, code skipped:
             r26 = r6;
      */
-    /* JADX WARNING: Missing block: B:91:0x01f2, code:
+    /* JADX WARNING: Missing block: B:92:0x01f2, code skipped:
             r3.signatures.mSigningDetails = r11.mSigningDetails;
      */
-    /* JADX WARNING: Missing block: B:92:0x01fa, code:
+    /* JADX WARNING: Missing block: B:93:0x01fa, code skipped:
             if (r7.sharedUser != null) goto L_0x01fc;
      */
-    /* JADX WARNING: Missing block: B:93:0x01fc, code:
+    /* JADX WARNING: Missing block: B:94:0x01fc, code skipped:
             if (r1 != false) goto L_0x0232;
      */
-    /* JADX WARNING: Missing block: B:98:0x0217, code:
+    /* JADX WARNING: Missing block: B:99:0x0217, code skipped:
             r6 = new java.lang.StringBuilder();
             r6.append("Signature mismatch for shared user: ");
             r6.append(r3.sharedUser);
      */
-    /* JADX WARNING: Missing block: B:99:0x0231, code:
+    /* JADX WARNING: Missing block: B:100:0x0231, code skipped:
             throw new com.android.server.pm.PackageManagerException(-104, r6.toString());
      */
-    /* JADX WARNING: Missing block: B:100:0x0232, code:
+    /* JADX WARNING: Missing block: B:101:0x0232, code skipped:
             r7.sharedUser.signatures.mSigningDetails = r11.mSigningDetails;
             r7.sharedUser.signaturesChanged = java.lang.Boolean.TRUE;
      */
-    /* JADX WARNING: Missing block: B:101:0x0240, code:
+    /* JADX WARNING: Missing block: B:102:0x0240, code skipped:
             r4 = new java.lang.StringBuilder();
             r4.append("System package ");
             r4.append(r11.packageName);
             r4.append(" signature changed; retaining data.");
             reportSettingsProblem(5, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:148:0x0343, code:
+    /* JADX WARNING: Missing block: B:150:0x0343, code skipped:
             r28 = r2;
             r9 = r3;
             r21 = r5;
@@ -17989,7 +15643,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r17 = r19;
             r19 = r25;
      */
-    /* JADX WARNING: Missing block: B:149:0x0350, code:
+    /* JADX WARNING: Missing block: B:151:0x0350, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -18752,141 +16406,146 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         synchronized (this.mPackages) {
             StringBuilder stringBuilder;
             StringBuilder stringBuilder2;
-            if (packageR.packageName.equals(PLATFORM_PACKAGE_NAME) && this.mAndroidApplication != null) {
-                Slog.w(TAG, "*************************************************");
-                Slog.w(TAG, "Core android package being redefined.  Skipping.");
-                String str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append(" codePath=");
-                stringBuilder.append(packageR.codePath);
-                Slog.w(str, stringBuilder.toString());
-                Slog.w(TAG, "*************************************************");
-                throw new PackageManagerException(-5, "Core android package being redefined.  Skipping.");
-            } else if ((hwFlags & 1073741824) == 0 && this.mPackages.containsKey(packageR.packageName)) {
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Application package ");
-                stringBuilder2.append(packageR.packageName);
-                stringBuilder2.append(" already installed.  Skipping duplicate.");
-                throw new PackageManagerException(-5, stringBuilder2.toString());
-            } else {
-                int childCount;
-                int i2;
-                StringBuilder stringBuilder3;
-                StringBuilder stringBuilder4;
-                PackageSetting known;
-                if (packageR.applicationInfo.isStaticSharedLibrary()) {
-                    if (this.mPackages.containsKey(packageR.manifestPackageName)) {
-                        throw new PackageManagerException("Duplicate static shared lib provider package");
-                    } else if (packageR.applicationInfo.targetSdkVersion < 26) {
-                        throw new PackageManagerException("Packages declaring static-shared libs must target O SDK or higher");
-                    } else if ((i & 16384) != 0) {
-                        throw new PackageManagerException("Packages declaring static-shared libs cannot be instant apps");
-                    } else if (!ArrayUtils.isEmpty(packageR.mOriginalPackages)) {
-                        throw new PackageManagerException("Packages declaring static-shared libs cannot be renamed");
-                    } else if (!ArrayUtils.isEmpty(packageR.childPackages)) {
-                        throw new PackageManagerException("Packages declaring static-shared libs cannot have child packages");
-                    } else if (!ArrayUtils.isEmpty(packageR.libraryNames)) {
-                        throw new PackageManagerException("Packages declaring static-shared libs cannot declare dynamic libs");
-                    } else if (packageR.mSharedUserId != null) {
-                        throw new PackageManagerException("Packages declaring static-shared libs cannot declare shared users");
-                    } else if (!packageR.activities.isEmpty()) {
-                        throw new PackageManagerException("Static shared libs cannot declare activities");
-                    } else if (!packageR.services.isEmpty()) {
-                        throw new PackageManagerException("Static shared libs cannot declare services");
-                    } else if (!packageR.providers.isEmpty()) {
-                        throw new PackageManagerException("Static shared libs cannot declare content providers");
-                    } else if (!packageR.receivers.isEmpty()) {
-                        throw new PackageManagerException("Static shared libs cannot declare broadcast receivers");
-                    } else if (!packageR.permissionGroups.isEmpty()) {
-                        throw new PackageManagerException("Static shared libs cannot declare permission groups");
-                    } else if (!packageR.permissions.isEmpty()) {
-                        throw new PackageManagerException("Static shared libs cannot declare permissions");
-                    } else if (packageR.protectedBroadcasts != null) {
-                        throw new PackageManagerException("Static shared libs cannot declare protected broadcasts");
-                    } else if (packageR.mOverlayTarget == null) {
-                        long minVersionCode = Long.MIN_VALUE;
-                        long maxVersionCode = JobStatus.NO_LATEST_RUNTIME;
-                        LongSparseArray<SharedLibraryEntry> versionedLib = (LongSparseArray) this.mSharedLibraries.get(packageR.staticSharedLibName);
-                        if (versionedLib != null) {
-                            int versionCount = versionedLib.size();
-                            long maxVersionCode2 = JobStatus.NO_LATEST_RUNTIME;
-                            long minVersionCode2 = Long.MIN_VALUE;
-                            for (int i3 = 0; i3 < versionCount; i3++) {
-                                SharedLibraryInfo libInfo = ((SharedLibraryEntry) versionedLib.valueAt(i3)).info;
-                                long libVersionCode = libInfo.getDeclaringPackage().getLongVersionCode();
-                                if (libInfo.getLongVersion() >= packageR.staticSharedLibVersion) {
-                                    long minVersionCode3 = minVersionCode2;
-                                    if (libInfo.getLongVersion() <= packageR.staticSharedLibVersion) {
-                                        minVersionCode = libVersionCode;
-                                        maxVersionCode = libVersionCode;
-                                        break;
-                                    }
-                                    maxVersionCode2 = Math.min(maxVersionCode2, libVersionCode - 1);
-                                    minVersionCode2 = minVersionCode3;
-                                } else {
-                                    minVersionCode2 = Math.max(minVersionCode2, libVersionCode + 1);
+            int childCount;
+            int i2;
+            StringBuilder stringBuilder3;
+            StringBuilder stringBuilder4;
+            PackageSetting known;
+            if (packageR.packageName.equals(PLATFORM_PACKAGE_NAME)) {
+                if (this.mAndroidApplication != null) {
+                    Slog.w(TAG, "*************************************************");
+                    Slog.w(TAG, "Core android package being redefined.  Skipping.");
+                    String str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append(" codePath=");
+                    stringBuilder.append(packageR.codePath);
+                    Slog.w(str, stringBuilder.toString());
+                    Slog.w(TAG, "*************************************************");
+                    throw new PackageManagerException(-5, "Core android package being redefined.  Skipping.");
+                }
+            }
+            if ((hwFlags & 1073741824) == 0) {
+                if (this.mPackages.containsKey(packageR.packageName)) {
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Application package ");
+                    stringBuilder2.append(packageR.packageName);
+                    stringBuilder2.append(" already installed.  Skipping duplicate.");
+                    throw new PackageManagerException(-5, stringBuilder2.toString());
+                }
+            }
+            if (packageR.applicationInfo.isStaticSharedLibrary()) {
+                if (this.mPackages.containsKey(packageR.manifestPackageName)) {
+                    throw new PackageManagerException("Duplicate static shared lib provider package");
+                } else if (packageR.applicationInfo.targetSdkVersion < 26) {
+                    throw new PackageManagerException("Packages declaring static-shared libs must target O SDK or higher");
+                } else if ((i & 16384) != 0) {
+                    throw new PackageManagerException("Packages declaring static-shared libs cannot be instant apps");
+                } else if (!ArrayUtils.isEmpty(packageR.mOriginalPackages)) {
+                    throw new PackageManagerException("Packages declaring static-shared libs cannot be renamed");
+                } else if (!ArrayUtils.isEmpty(packageR.childPackages)) {
+                    throw new PackageManagerException("Packages declaring static-shared libs cannot have child packages");
+                } else if (!ArrayUtils.isEmpty(packageR.libraryNames)) {
+                    throw new PackageManagerException("Packages declaring static-shared libs cannot declare dynamic libs");
+                } else if (packageR.mSharedUserId != null) {
+                    throw new PackageManagerException("Packages declaring static-shared libs cannot declare shared users");
+                } else if (!packageR.activities.isEmpty()) {
+                    throw new PackageManagerException("Static shared libs cannot declare activities");
+                } else if (!packageR.services.isEmpty()) {
+                    throw new PackageManagerException("Static shared libs cannot declare services");
+                } else if (!packageR.providers.isEmpty()) {
+                    throw new PackageManagerException("Static shared libs cannot declare content providers");
+                } else if (!packageR.receivers.isEmpty()) {
+                    throw new PackageManagerException("Static shared libs cannot declare broadcast receivers");
+                } else if (!packageR.permissionGroups.isEmpty()) {
+                    throw new PackageManagerException("Static shared libs cannot declare permission groups");
+                } else if (!packageR.permissions.isEmpty()) {
+                    throw new PackageManagerException("Static shared libs cannot declare permissions");
+                } else if (packageR.protectedBroadcasts != null) {
+                    throw new PackageManagerException("Static shared libs cannot declare protected broadcasts");
+                } else if (packageR.mOverlayTarget == null) {
+                    long minVersionCode = Long.MIN_VALUE;
+                    long maxVersionCode = JobStatus.NO_LATEST_RUNTIME;
+                    LongSparseArray<SharedLibraryEntry> versionedLib = (LongSparseArray) this.mSharedLibraries.get(packageR.staticSharedLibName);
+                    if (versionedLib != null) {
+                        int versionCount = versionedLib.size();
+                        long maxVersionCode2 = JobStatus.NO_LATEST_RUNTIME;
+                        long minVersionCode2 = Long.MIN_VALUE;
+                        for (int i3 = 0; i3 < versionCount; i3++) {
+                            SharedLibraryInfo libInfo = ((SharedLibraryEntry) versionedLib.valueAt(i3)).info;
+                            long libVersionCode = libInfo.getDeclaringPackage().getLongVersionCode();
+                            if (libInfo.getLongVersion() >= packageR.staticSharedLibVersion) {
+                                long minVersionCode3 = minVersionCode2;
+                                if (libInfo.getLongVersion() <= packageR.staticSharedLibVersion) {
+                                    minVersionCode = libVersionCode;
+                                    maxVersionCode = libVersionCode;
+                                    break;
                                 }
+                                maxVersionCode2 = Math.min(maxVersionCode2, libVersionCode - 1);
+                                minVersionCode2 = minVersionCode3;
+                            } else {
+                                minVersionCode2 = Math.max(minVersionCode2, libVersionCode + 1);
                             }
-                            maxVersionCode = maxVersionCode2;
-                            minVersionCode = minVersionCode2;
                         }
-                        if (pkg.getLongVersionCode() < minVersionCode || pkg.getLongVersionCode() > maxVersionCode) {
-                            throw new PackageManagerException("Static shared lib version codes must be ordered as lib versions");
-                        }
-                    } else {
-                        throw new PackageManagerException("Static shared libs cannot be overlay targets");
+                        maxVersionCode = maxVersionCode2;
+                        minVersionCode = minVersionCode2;
                     }
-                }
-                if (!(packageR.childPackages == null || packageR.childPackages.isEmpty())) {
-                    if ((262144 & i) != 0) {
-                        childCount = packageR.childPackages.size();
-                        for (i2 = 0; i2 < childCount; i2++) {
-                            if (this.mSettings.hasOtherDisabledSystemPkgWithChildLPr(packageR.packageName, ((Package) packageR.childPackages.get(i2)).packageName)) {
-                                stringBuilder3 = new StringBuilder();
-                                stringBuilder3.append("Can't override child of another disabled app. Ignoring package ");
-                                stringBuilder3.append(packageR.packageName);
-                                throw new PackageManagerException(stringBuilder3.toString());
-                            }
-                        }
-                    } else {
-                        stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append("Only privileged apps can add child packages. Ignoring package ");
-                        stringBuilder4.append(packageR.packageName);
-                        throw new PackageManagerException(stringBuilder4.toString());
+                    if (pkg.getLongVersionCode() < minVersionCode || pkg.getLongVersionCode() > maxVersionCode) {
+                        throw new PackageManagerException("Static shared lib version codes must be ordered as lib versions");
                     }
+                } else {
+                    throw new PackageManagerException("Static shared libs cannot be overlay targets");
                 }
-                if ((i & 128) != 0) {
-                    if (this.mExpectingBetter.containsKey(packageR.packageName)) {
-                        stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append("Relax SCAN_REQUIRE_KNOWN requirement for package ");
-                        stringBuilder4.append(packageR.packageName);
-                        PackageManagerServiceUtils.logCriticalInfo(5, stringBuilder4.toString());
-                    } else {
-                        known = this.mSettings.getPackageLPr(packageR.packageName);
-                        if (known != null) {
-                            if (DEBUG_PACKAGE_SCANNING) {
-                                String str2 = TAG;
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("Examining ");
-                                stringBuilder.append(packageR.codePath);
-                                stringBuilder.append(" and requiring known paths ");
-                                stringBuilder.append(known.codePathString);
-                                stringBuilder.append(" & ");
-                                stringBuilder.append(known.resourcePathString);
-                                Log.d(str2, stringBuilder.toString());
-                            }
-                            if (!(packageR.applicationInfo.getCodePath().equals(known.codePathString) && packageR.applicationInfo.getResourcePath().equals(known.resourcePathString))) {
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Application package ");
-                                stringBuilder2.append(packageR.packageName);
-                                stringBuilder2.append(" found at ");
-                                stringBuilder2.append(packageR.applicationInfo.getCodePath());
-                                stringBuilder2.append(" but expected at ");
-                                stringBuilder2.append(known.codePathString);
-                                stringBuilder2.append("; ignoring.");
-                                throw new PackageManagerException(-23, stringBuilder2.toString());
-                            }
+            }
+            if (!(packageR.childPackages == null || packageR.childPackages.isEmpty())) {
+                if ((262144 & i) != 0) {
+                    childCount = packageR.childPackages.size();
+                    for (i2 = 0; i2 < childCount; i2++) {
+                        if (this.mSettings.hasOtherDisabledSystemPkgWithChildLPr(packageR.packageName, ((Package) packageR.childPackages.get(i2)).packageName)) {
+                            stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("Can't override child of another disabled app. Ignoring package ");
+                            stringBuilder3.append(packageR.packageName);
+                            throw new PackageManagerException(stringBuilder3.toString());
                         }
+                    }
+                } else {
+                    stringBuilder4 = new StringBuilder();
+                    stringBuilder4.append("Only privileged apps can add child packages. Ignoring package ");
+                    stringBuilder4.append(packageR.packageName);
+                    throw new PackageManagerException(stringBuilder4.toString());
+                }
+            }
+            if ((i & 128) != 0) {
+                if (this.mExpectingBetter.containsKey(packageR.packageName)) {
+                    stringBuilder4 = new StringBuilder();
+                    stringBuilder4.append("Relax SCAN_REQUIRE_KNOWN requirement for package ");
+                    stringBuilder4.append(packageR.packageName);
+                    PackageManagerServiceUtils.logCriticalInfo(5, stringBuilder4.toString());
+                } else {
+                    known = this.mSettings.getPackageLPr(packageR.packageName);
+                    if (known != null) {
+                        if (DEBUG_PACKAGE_SCANNING) {
+                            String str2 = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Examining ");
+                            stringBuilder.append(packageR.codePath);
+                            stringBuilder.append(" and requiring known paths ");
+                            stringBuilder.append(known.codePathString);
+                            stringBuilder.append(" & ");
+                            stringBuilder.append(known.resourcePathString);
+                            Log.d(str2, stringBuilder.toString());
+                        }
+                        if (!packageR.applicationInfo.getCodePath().equals(known.codePathString) || !packageR.applicationInfo.getResourcePath().equals(known.resourcePathString)) {
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Application package ");
+                            stringBuilder2.append(packageR.packageName);
+                            stringBuilder2.append(" found at ");
+                            stringBuilder2.append(packageR.applicationInfo.getCodePath());
+                            stringBuilder2.append(" but expected at ");
+                            stringBuilder2.append(known.codePathString);
+                            stringBuilder2.append("; ignoring.");
+                            throw new PackageManagerException(-23, stringBuilder2.toString());
+                        }
+                    } else {
                         stringBuilder2 = new StringBuilder();
                         stringBuilder2.append("Application package ");
                         stringBuilder2.append(packageR.packageName);
@@ -18894,40 +16553,42 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         throw new PackageManagerException(-19, stringBuilder2.toString());
                     }
                 }
-                if ((i & 4) != 0) {
-                    childCount = packageR.providers.size();
-                    for (i2 = 0; i2 < childCount; i2++) {
-                        Provider p = (Provider) packageR.providers.get(i2);
-                        if (p.info.authority != null) {
-                            String[] names = p.info.authority.split(";");
-                            for (int j = 0; j < names.length; j++) {
-                                if (this.mProvidersByAuthority.containsKey(names[j])) {
-                                    Provider other = (Provider) this.mProvidersByAuthority.get(names[j]);
-                                    String otherPackageName = (other == null || other.getComponentName() == null) ? "?" : other.getComponentName().getPackageName();
-                                    StringBuilder stringBuilder5 = new StringBuilder();
-                                    stringBuilder5.append("Can't install because provider name ");
-                                    stringBuilder5.append(names[j]);
-                                    stringBuilder5.append(" (in package ");
-                                    stringBuilder5.append(packageR.applicationInfo.packageName);
-                                    stringBuilder5.append(") is already used by ");
-                                    stringBuilder5.append(otherPackageName);
-                                    throw new PackageManagerException(-13, stringBuilder5.toString());
-                                }
+            }
+            if ((i & 4) != 0) {
+                childCount = packageR.providers.size();
+                for (i2 = 0; i2 < childCount; i2++) {
+                    Provider p = (Provider) packageR.providers.get(i2);
+                    if (p.info.authority != null) {
+                        String[] names = p.info.authority.split(";");
+                        for (int j = 0; j < names.length; j++) {
+                            if (this.mProvidersByAuthority.containsKey(names[j])) {
+                                Provider other = (Provider) this.mProvidersByAuthority.get(names[j]);
+                                String otherPackageName = (other == null || other.getComponentName() == null) ? "?" : other.getComponentName().getPackageName();
+                                StringBuilder stringBuilder5 = new StringBuilder();
+                                stringBuilder5.append("Can't install because provider name ");
+                                stringBuilder5.append(names[j]);
+                                stringBuilder5.append(" (in package ");
+                                stringBuilder5.append(packageR.applicationInfo.packageName);
+                                stringBuilder5.append(") is already used by ");
+                                stringBuilder5.append(otherPackageName);
+                                throw new PackageManagerException(-13, stringBuilder5.toString());
                             }
-                            continue;
                         }
+                        continue;
                     }
                 }
-                if (!(pkg.isPrivileged() || packageR.mSharedUserId == null)) {
-                    SharedUserSetting sharedUserSetting = null;
-                    try {
-                        sharedUserSetting = this.mSettings.getSharedUserLPw(packageR.mSharedUserId, 0, 0, false);
-                    } catch (PackageManagerException e) {
-                    }
-                    if (sharedUserSetting != null) {
-                        if (sharedUserSetting.isPrivileged()) {
-                            known = (PackageSetting) this.mSettings.mPackages.get(PLATFORM_PACKAGE_NAME);
-                            if (!(known.signatures.mSigningDetails == SigningDetails.UNKNOWN || PackageManagerServiceUtils.compareSignatures(known.signatures.mSigningDetails.signatures, packageR.mSigningDetails.signatures) == 0)) {
+            }
+            if (!(pkg.isPrivileged() || packageR.mSharedUserId == null)) {
+                SharedUserSetting sharedUserSetting = null;
+                try {
+                    sharedUserSetting = this.mSettings.getSharedUserLPw(packageR.mSharedUserId, 0, 0, false);
+                } catch (PackageManagerException e) {
+                }
+                if (sharedUserSetting != null) {
+                    if (sharedUserSetting.isPrivileged()) {
+                        known = (PackageSetting) this.mSettings.mPackages.get(PLATFORM_PACKAGE_NAME);
+                        if (known.signatures.mSigningDetails != SigningDetails.UNKNOWN) {
+                            if (PackageManagerServiceUtils.compareSignatures(known.signatures.mSigningDetails.signatures, packageR.mSigningDetails.signatures) != 0) {
                                 stringBuilder2 = new StringBuilder();
                                 stringBuilder2.append("Apps that share a user with a privileged app must themselves be marked as privileged. ");
                                 stringBuilder2.append(packageR.packageName);
@@ -18939,45 +16600,50 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         }
                     }
                 }
-                if (packageR.mOverlayTarget != null) {
-                    if ((131072 & i) != 0) {
-                        if ((parseFlags & 16) == 0) {
-                            PackageSetting previousPkg = (PackageSetting) assertNotNull(this.mSettings.getPackageLPr(packageR.packageName), "previous package state not present");
-                            Package ppkg = previousPkg.pkg;
-                            if (ppkg == null) {
-                                try {
-                                    ppkg = new PackageParser().parsePackage(previousPkg.codePath, parseFlags | 16);
-                                } catch (PackageParserException e2) {
-                                    String str3 = TAG;
-                                    stringBuilder3 = new StringBuilder();
-                                    stringBuilder3.append("failed to parse ");
-                                    stringBuilder3.append(previousPkg.codePath);
-                                    Slog.w(str3, stringBuilder3.toString(), e2);
-                                }
+            }
+            if (packageR.mOverlayTarget != null) {
+                if ((131072 & i) != 0) {
+                    if ((parseFlags & 16) == 0) {
+                        PackageSetting previousPkg = (PackageSetting) assertNotNull(this.mSettings.getPackageLPr(packageR.packageName), "previous package state not present");
+                        Package ppkg = previousPkg.pkg;
+                        if (ppkg == null) {
+                            try {
+                                ppkg = new PackageParser().parsePackage(previousPkg.codePath, parseFlags | 16);
+                            } catch (PackageParserException e2) {
+                                String str3 = TAG;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("failed to parse ");
+                                stringBuilder3.append(previousPkg.codePath);
+                                Slog.w(str3, stringBuilder3.toString(), e2);
                             }
-                            if (ppkg != null && ppkg.mOverlayIsStatic) {
+                        }
+                        if (ppkg != null) {
+                            if (ppkg.mOverlayIsStatic) {
                                 stringBuilder2 = new StringBuilder();
                                 stringBuilder2.append("Overlay ");
                                 stringBuilder2.append(packageR.packageName);
                                 stringBuilder2.append(" is static and cannot be upgraded.");
                                 throw new PackageManagerException(stringBuilder2.toString());
-                            } else if (packageR.mOverlayIsStatic) {
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Overlay ");
-                                stringBuilder2.append(packageR.packageName);
-                                stringBuilder2.append(" cannot be upgraded into a static overlay.");
-                                throw new PackageManagerException(stringBuilder2.toString());
                             }
                         }
-                    } else if (packageR.mOverlayIsStatic) {
-                        stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append("Overlay ");
-                        stringBuilder4.append(packageR.packageName);
-                        stringBuilder4.append(" is static but not pre-installed.");
-                        throw new PackageManagerException(stringBuilder4.toString());
-                    } else {
-                        known = this.mSettings.getPackageLPr(PLATFORM_PACKAGE_NAME);
-                        if (!(known.signatures.mSigningDetails == SigningDetails.UNKNOWN || PackageManagerServiceUtils.compareSignatures(known.signatures.mSigningDetails.signatures, packageR.mSigningDetails.signatures) == 0)) {
+                        if (packageR.mOverlayIsStatic) {
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Overlay ");
+                            stringBuilder2.append(packageR.packageName);
+                            stringBuilder2.append(" cannot be upgraded into a static overlay.");
+                            throw new PackageManagerException(stringBuilder2.toString());
+                        }
+                    }
+                } else if (packageR.mOverlayIsStatic) {
+                    stringBuilder4 = new StringBuilder();
+                    stringBuilder4.append("Overlay ");
+                    stringBuilder4.append(packageR.packageName);
+                    stringBuilder4.append(" is static but not pre-installed.");
+                    throw new PackageManagerException(stringBuilder4.toString());
+                } else {
+                    known = this.mSettings.getPackageLPr(PLATFORM_PACKAGE_NAME);
+                    if (known.signatures.mSigningDetails != SigningDetails.UNKNOWN) {
+                        if (PackageManagerServiceUtils.compareSignatures(known.signatures.mSigningDetails.signatures, packageR.mSigningDetails.signatures) != 0) {
                             stringBuilder = new StringBuilder();
                             stringBuilder.append("Overlay ");
                             stringBuilder.append(packageR.packageName);
@@ -19037,53 +16703,90 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return true;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x0381 A:{Catch:{ all -> 0x036e, all -> 0x0455 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:295:0x03e7 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x02d9  */
+    /* JADX WARNING: Removed duplicated region for block: B:153:0x0381 A:{Catch:{ all -> 0x06ac, all -> 0x036e, all -> 0x0455 }} */
     /* JADX WARNING: Removed duplicated region for block: B:132:0x02f7 A:{Catch:{ all -> 0x03de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:295:0x03e7 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x02d9  */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x0415 A:{Catch:{ all -> 0x06ac, all -> 0x036e, all -> 0x0455 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:166:0x03fb A:{Catch:{ all -> 0x06ac, all -> 0x036e, all -> 0x0455 }} */
     /* JADX WARNING: Removed duplicated region for block: B:90:0x0226  */
-    /* JADX WARNING: Removed duplicated region for block: B:96:0x0250 A:{SYNTHETIC, Splitter: B:96:0x0250} */
-    /* JADX WARNING: Missing block: B:264:0x06ff, code:
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x0250 A:{SYNTHETIC, Splitter:B:96:0x0250} */
+    /* JADX WARNING: Missing block: B:256:0x06ba, code skipped:
+            if ("com.huawei.remoteassistant".equals(r12.packageName) == false) goto L_0x06e7;
+     */
+    /* JADX WARNING: Missing block: B:258:0x06c4, code skipped:
+            if (checkSignatures(PLATFORM_PACKAGE_NAME, "com.huawei.remoteassistant") != 0) goto L_0x06e7;
+     */
+    /* JADX WARNING: Missing block: B:259:0x06c6, code skipped:
+            r0 = TAG;
+            r7 = new java.lang.StringBuilder();
+            r7.append("ddMarketFlagsForApp when scanning for ");
+            r7.append(r12.packageName);
+            android.util.Slog.i(r0, r7.toString());
+            r0 = r12.applicationInfo;
+            r0.hwFlags |= 536870912;
+     */
+    /* JADX WARNING: Missing block: B:260:0x06e7, code skipped:
+            r1 = r31;
+     */
+    /* JADX WARNING: Missing block: B:261:0x06e9, code skipped:
+            if (r1 == null) goto L_0x06fe;
+     */
+    /* JADX WARNING: Missing block: B:263:?, code skipped:
+            android.os.AsyncTask.execute(new com.android.server.pm.-$$Lambda$PackageManagerService$mOTJOturHO9FjzNA-qffT913E0M(r11, r12, r1, new java.util.ArrayList(r11.mPackages.keySet())));
+     */
+    /* JADX WARNING: Missing block: B:265:0x06ff, code skipped:
             android.os.Trace.traceEnd(262144);
      */
-    /* JADX WARNING: Missing block: B:265:0x0705, code:
+    /* JADX WARNING: Missing block: B:266:0x0705, code skipped:
             return;
+     */
+    /* JADX WARNING: Missing block: B:273:0x070f, code skipped:
+            r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void commitPackageSettings(Package pkg, Package oldPkg, PackageSetting pkgSetting, UserHandle user, int scanFlags, boolean chatty) {
         Throwable th;
-        Package packageR = pkg;
+        Package packageR;
+        Package packageR2 = pkg;
         String pkgName = oldPkg;
         PackageSetting packageSetting = pkgSetting;
         int i = scanFlags;
         boolean z = chatty;
-        String pkgName2 = packageR.packageName;
-        if (this.mCustomResolverComponentName != null && this.mCustomResolverComponentName.getPackageName().equals(packageR.packageName)) {
+        String pkgName2 = packageR2.packageName;
+        if (this.mCustomResolverComponentName != null && this.mCustomResolverComponentName.getPackageName().equals(packageR2.packageName)) {
             setUpCustomResolverActivity(pkg);
         }
-        if (packageR.packageName.equals(PLATFORM_PACKAGE_NAME)) {
+        if (packageR2.packageName.equals(PLATFORM_PACKAGE_NAME)) {
             synchronized (this.mPackages) {
                 if ((i & 1024) == 0) {
-                    this.mPlatformPackage = packageR;
-                    packageR.mVersionCode = this.mSdkVersion;
-                    packageR.mVersionCodeMajor = 0;
-                    this.mAndroidApplication = packageR.applicationInfo;
-                    if (!this.mResolverReplaced) {
-                        this.mResolveActivity.applicationInfo = this.mAndroidApplication;
-                        this.mResolveActivity.name = ResolverActivity.class.getName();
-                        this.mResolveActivity.packageName = this.mAndroidApplication.packageName;
-                        this.mResolveActivity.processName = "system:ui";
-                        this.mResolveActivity.launchMode = 0;
-                        this.mResolveActivity.documentLaunchMode = 3;
-                        this.mResolveActivity.flags = 32;
-                        this.mResolveActivity.theme = 16974374;
-                        this.mResolveActivity.exported = true;
-                        this.mResolveActivity.enabled = true;
-                        this.mResolveActivity.resizeMode = 2;
-                        this.mResolveActivity.configChanges = 3504;
-                        this.mResolveInfo.activityInfo = this.mResolveActivity;
-                        this.mResolveInfo.priority = 0;
-                        this.mResolveInfo.preferredOrder = 0;
-                        this.mResolveInfo.match = 0;
-                        this.mResolveComponentName = new ComponentName(this.mAndroidApplication.packageName, this.mResolveActivity.name);
+                    try {
+                        this.mPlatformPackage = packageR2;
+                        packageR2.mVersionCode = this.mSdkVersion;
+                        packageR2.mVersionCodeMajor = 0;
+                        this.mAndroidApplication = packageR2.applicationInfo;
+                        if (!this.mResolverReplaced) {
+                            this.mResolveActivity.applicationInfo = this.mAndroidApplication;
+                            this.mResolveActivity.name = ResolverActivity.class.getName();
+                            this.mResolveActivity.packageName = this.mAndroidApplication.packageName;
+                            this.mResolveActivity.processName = "system:ui";
+                            this.mResolveActivity.launchMode = 0;
+                            this.mResolveActivity.documentLaunchMode = 3;
+                            this.mResolveActivity.flags = 32;
+                            this.mResolveActivity.theme = 16974374;
+                            this.mResolveActivity.exported = true;
+                            this.mResolveActivity.enabled = true;
+                            this.mResolveActivity.resizeMode = 2;
+                            this.mResolveActivity.configChanges = 3504;
+                            this.mResolveInfo.activityInfo = this.mResolveActivity;
+                            this.mResolveInfo.priority = 0;
+                            this.mResolveInfo.preferredOrder = 0;
+                            this.mResolveInfo.match = 0;
+                            this.mResolveComponentName = new ComponentName(this.mAndroidApplication.packageName, this.mResolveActivity.name);
+                        }
+                    } finally {
                     }
                 }
             }
@@ -19097,31 +16800,31 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             String str2;
             try {
                 StringBuilder stringBuilder;
-                Package packageR2;
                 ArrayList<Package> clientLibPkgs;
+                long j;
                 ArrayList<Package> clientLibPkgs2;
-                if (packageR.staticSharedLibName != null) {
+                if (packageR2.staticSharedLibName != null) {
                     try {
                         ArrayMap arrayMap3 = arrayMap;
                         try {
                             arrayMap2 = arrayMap3;
                             pkgName = pkgName2;
-                            if (addSharedLibraryLPw(null, packageR.packageName, packageR.staticSharedLibName, packageR.staticSharedLibVersion, 2, packageR.manifestPackageName, pkg.getLongVersionCode())) {
+                            if (addSharedLibraryLPw(null, packageR2.packageName, packageR2.staticSharedLibName, packageR2.staticSharedLibVersion, 2, packageR2.manifestPackageName, pkg.getLongVersionCode())) {
                                 hasStaticSharedLibs = true;
                             } else {
                                 str = TAG;
                                 stringBuilder = new StringBuilder();
                                 stringBuilder.append("Package ");
-                                stringBuilder.append(packageR.packageName);
+                                stringBuilder.append(packageR2.packageName);
                                 stringBuilder.append(" library ");
-                                stringBuilder.append(packageR.staticSharedLibName);
+                                stringBuilder.append(packageR2.staticSharedLibName);
                                 stringBuilder.append(" already exists; skipping");
                                 Slog.w(str, stringBuilder.toString());
                             }
                         } catch (Throwable th2) {
                             th = th2;
                             str2 = pkgName;
-                            packageR2 = oldPkg;
+                            packageR = oldPkg;
                             while (true) {
                                 break;
                             }
@@ -19130,7 +16833,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     } catch (Throwable th3) {
                         th = th3;
                         arrayMap2 = arrayMap;
-                        packageR2 = oldPkg;
+                        packageR = oldPkg;
                         while (true) {
                             break;
                         }
@@ -19141,27 +16844,28 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 pkgName = pkgName2;
                 if (!hasStaticSharedLibs) {
                     z = true;
-                    if ((packageR.applicationInfo.flags & 1) == 0 || packageR.libraryNames == null) {
+                    if ((packageR2.applicationInfo.flags & 1) == 0 || packageR2.libraryNames == null) {
                         int i2 = 1;
                     } else {
-                        boolean allowed;
-                        int j;
                         String name;
+                        boolean allowed;
+                        int j2;
+                        String name2;
                         int i3 = 0;
                         while (true) {
                             int i4 = i3;
-                            if (i4 >= packageR.libraryNames.size()) {
+                            if (i4 >= packageR2.libraryNames.size()) {
                                 break;
                             }
                             boolean hasStaticSharedLibs2;
                             int i5;
-                            String name2 = (String) packageR.libraryNames.get(i4);
+                            name = (String) packageR2.libraryNames.get(i4);
                             allowed = false;
                             if (pkg.isUpdatedSystemApp()) {
-                                PackageSetting sysPs = this.mSettings.getDisabledSystemPkgLPr(packageR.packageName);
+                                PackageSetting sysPs = this.mSettings.getDisabledSystemPkgLPr(packageR2.packageName);
                                 if (sysPs.pkg != null && sysPs.pkg.libraryNames != null) {
-                                    for (j = 0; j < sysPs.pkg.libraryNames.size(); j++) {
-                                        if (name2.equals(sysPs.pkg.libraryNames.get(j))) {
+                                    for (j2 = 0; j2 < sysPs.pkg.libraryNames.size(); j2++) {
+                                        if (name.equals(sysPs.pkg.libraryNames.get(j2))) {
                                             allowed = true;
                                             break;
                                         }
@@ -19171,15 +16875,15 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 allowed = true;
                             }
                             if (allowed) {
-                                String name3 = name2;
+                                String name3 = name;
                                 hasStaticSharedLibs2 = hasStaticSharedLibs;
                                 hasStaticSharedLibs = z;
                                 i5 = i4;
-                                if (!addSharedLibraryLPw(null, packageR.packageName, name2, -1, 1, packageR.packageName, pkg.getLongVersionCode())) {
+                                if (!addSharedLibraryLPw(null, packageR2.packageName, name, -1, 1, packageR2.packageName, pkg.getLongVersionCode())) {
                                     str = TAG;
                                     stringBuilder = new StringBuilder();
                                     stringBuilder.append("Package ");
-                                    stringBuilder.append(packageR.packageName);
+                                    stringBuilder.append(packageR2.packageName);
                                     stringBuilder.append(" library ");
                                     stringBuilder.append(name3);
                                     stringBuilder.append(" already exists; skipping");
@@ -19187,15 +16891,15 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 }
                             } else {
                                 hasStaticSharedLibs2 = hasStaticSharedLibs;
-                                name = name2;
+                                name2 = name;
                                 hasStaticSharedLibs = z;
                                 i5 = i4;
                                 str = TAG;
                                 stringBuilder = new StringBuilder();
                                 stringBuilder.append("Package ");
-                                stringBuilder.append(packageR.packageName);
+                                stringBuilder.append(packageR2.packageName);
                                 stringBuilder.append(" declares lib ");
-                                stringBuilder.append(name);
+                                stringBuilder.append(name2);
                                 stringBuilder.append(" that is not declared on system image; skipping");
                                 Slog.w(str, stringBuilder.toString());
                             }
@@ -19215,337 +16919,374 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                     killApplication(clientPkg.applicationInfo.packageName, clientPkg.applicationInfo.uid, "update lib");
                                 }
                             }
+                            j = 262144;
                             Trace.traceBegin(262144, "updateSettings");
                             synchronized (this.mPackages) {
                                 try {
-                                    Iterator<PackageCleanItem> iter;
-                                    StringBuilder stringBuilder2;
-                                    int i7;
-                                    String str3;
-                                    StringBuilder stringBuilder3;
-                                    Activity a;
-                                    String str4;
-                                    StringBuilder stringBuilder4;
-                                    this.mSettings.insertPackageSettingLPw(packageSetting, packageR);
-                                    updateCertCompatPackage(packageR, packageSetting);
-                                    this.mPackages.put(packageR.applicationInfo.packageName, packageR);
-                                    Iterator<PackageCleanItem> iter2 = this.mSettings.mPackagesToBeCleaned.iterator();
-                                    while (iter2.hasNext()) {
+                                    this.mSettings.insertPackageSettingLPw(packageSetting, packageR2);
+                                    updateCertCompatPackage(packageR2, packageSetting);
+                                    this.mPackages.put(packageR2.applicationInfo.packageName, packageR2);
+                                    Iterator<PackageCleanItem> iter = this.mSettings.mPackagesToBeCleaned.iterator();
+                                    while (iter.hasNext()) {
                                         try {
-                                            if (pkgName.equals(((PackageCleanItem) iter2.next()).packageName)) {
-                                                iter2.remove();
+                                            if (pkgName.equals(((PackageCleanItem) iter.next()).packageName)) {
+                                                iter.remove();
                                             }
                                         } catch (Throwable th4) {
                                             th = th4;
-                                            packageR2 = oldPkg;
+                                            packageR = oldPkg;
                                             throw th;
                                         }
                                     }
-                                    this.mSettings.mKeySetManagerService.addScannedPackageLPw(packageR);
-                                    int N = packageR.providers.size();
+                                    this.mSettings.mKeySetManagerService.addScannedPackageLPw(packageR2);
+                                    int N = packageR2.providers.size();
                                     StringBuilder r = null;
-                                    int i8 = 0;
-                                    while (i8 < N) {
+                                    int i7 = 0;
+                                    loop16:
+                                    while (true) {
+                                        Iterator<PackageCleanItem> iter2;
+                                        Provider p;
+                                        String[] names;
+                                        Provider p2;
+                                        if (i7 >= N) {
+                                            StringBuilder stringBuilder2;
+                                            int i8;
+                                            String str3;
+                                            StringBuilder stringBuilder3;
+                                            Activity a;
+                                            clientLibPkgs2 = clientLibPkgs;
+                                            iter2 = iter;
+                                            str2 = pkgName;
+                                            allowed = chatty;
+                                            if (r != null && DEBUG_PACKAGE_SCANNING) {
+                                                name2 = TAG;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("  Providers: ");
+                                                stringBuilder2.append(r);
+                                                Log.d(name2, stringBuilder2.toString());
+                                            }
+                                            j2 = packageR2.services.size();
+                                            stringBuilder2 = null;
+                                            for (i8 = 0; i8 < j2; i8++) {
+                                                Service s = (Service) packageR2.services.get(i8);
+                                                ServiceInfo serviceInfo = s.info;
+                                                r = fixProcessName(packageR2.applicationInfo.processName, s.info.processName);
+                                                serviceInfo.processName = r;
+                                                i7 = this.mServices;
+                                                i7.addService(s);
+                                                if (allowed) {
+                                                    if (stringBuilder2 == null) {
+                                                        r = 256;
+                                                        stringBuilder2 = new StringBuilder(256);
+                                                    } else {
+                                                        stringBuilder2.append(' ');
+                                                    }
+                                                    i7 = s.info.name;
+                                                    stringBuilder2.append(i7);
+                                                }
+                                            }
+                                            if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
+                                                str3 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                r = "  Services: ";
+                                                stringBuilder3.append(r);
+                                                stringBuilder3.append(stringBuilder2);
+                                                i7 = stringBuilder3.toString();
+                                                Log.d(str3, i7);
+                                            }
+                                            j2 = packageR2.receivers.size();
+                                            stringBuilder2 = null;
+                                            for (i8 = 0; i8 < j2; i8++) {
+                                                a = (Activity) packageR2.receivers.get(i8);
+                                                a.info.processName = fixProcessName(packageR2.applicationInfo.processName, a.info.processName);
+                                                i7 = this.mReceivers;
+                                                r = HwBroadcastRadarUtil.KEY_RECEIVER;
+                                                i7.addActivity(a, r);
+                                                if (allowed) {
+                                                    if (stringBuilder2 == null) {
+                                                        r = 256;
+                                                        stringBuilder2 = new StringBuilder(256);
+                                                    } else {
+                                                        stringBuilder2.append(' ');
+                                                    }
+                                                    i7 = a.info.name;
+                                                    stringBuilder2.append(i7);
+                                                }
+                                            }
+                                            if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
+                                                str3 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                r = "  Receivers: ";
+                                                stringBuilder3.append(r);
+                                                stringBuilder3.append(stringBuilder2);
+                                                i7 = stringBuilder3.toString();
+                                                Log.d(str3, i7);
+                                            }
+                                            j2 = packageR2.activities.size();
+                                            stringBuilder2 = null;
+                                            for (i8 = 0; i8 < j2; i8++) {
+                                                a = (Activity) packageR2.activities.get(i8);
+                                                a.info.processName = fixProcessName(packageR2.applicationInfo.processName, a.info.processName);
+                                                i7 = this.mActivities;
+                                                r = "activity";
+                                                i7.addActivity(a, r);
+                                                if (allowed) {
+                                                    if (stringBuilder2 == null) {
+                                                        r = 256;
+                                                        stringBuilder2 = new StringBuilder(256);
+                                                    } else {
+                                                        stringBuilder2.append(' ');
+                                                    }
+                                                    i7 = a.info.name;
+                                                    stringBuilder2.append(i7);
+                                                }
+                                            }
+                                            if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
+                                                str3 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                r = "  Activities: ";
+                                                stringBuilder3.append(r);
+                                                stringBuilder3.append(stringBuilder2);
+                                                i7 = stringBuilder3.toString();
+                                                Log.d(str3, i7);
+                                            }
+                                            if ((i & 16384) != 0) {
+                                                str3 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("Permission groups from package ");
+                                                stringBuilder3.append(packageR2.packageName);
+                                                r = " ignored: instant apps cannot define new permission groups.";
+                                                stringBuilder3.append(r);
+                                                i7 = stringBuilder3.toString();
+                                                Slog.w(str3, i7);
+                                            } else {
+                                                this.mPermissionManager.addAllPermissionGroups(packageR2, allowed);
+                                            }
+                                            if ((i & 16384) != 0) {
+                                                str3 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("Permissions from package ");
+                                                stringBuilder3.append(packageR2.packageName);
+                                                r = " ignored: instant apps cannot define new permissions.";
+                                                stringBuilder3.append(r);
+                                                i7 = stringBuilder3.toString();
+                                                Slog.w(str3, i7);
+                                            } else {
+                                                this.mPermissionManager.addAllPermissions(packageR2, allowed);
+                                            }
+                                            j2 = packageR2.instrumentation.size();
+                                            stringBuilder2 = null;
+                                            for (i8 = 0; i8 < j2; i8++) {
+                                                Instrumentation a2 = (Instrumentation) packageR2.instrumentation.get(i8);
+                                                a2.info.packageName = packageR2.applicationInfo.packageName;
+                                                a2.info.sourceDir = packageR2.applicationInfo.sourceDir;
+                                                a2.info.publicSourceDir = packageR2.applicationInfo.publicSourceDir;
+                                                a2.info.splitNames = packageR2.splitNames;
+                                                a2.info.splitSourceDirs = packageR2.applicationInfo.splitSourceDirs;
+                                                a2.info.splitPublicSourceDirs = packageR2.applicationInfo.splitPublicSourceDirs;
+                                                a2.info.splitDependencies = packageR2.applicationInfo.splitDependencies;
+                                                a2.info.dataDir = packageR2.applicationInfo.dataDir;
+                                                a2.info.deviceProtectedDataDir = packageR2.applicationInfo.deviceProtectedDataDir;
+                                                a2.info.credentialProtectedDataDir = packageR2.applicationInfo.credentialProtectedDataDir;
+                                                a2.info.primaryCpuAbi = packageR2.applicationInfo.primaryCpuAbi;
+                                                a2.info.secondaryCpuAbi = packageR2.applicationInfo.secondaryCpuAbi;
+                                                a2.info.nativeLibraryDir = packageR2.applicationInfo.nativeLibraryDir;
+                                                a2.info.secondaryNativeLibraryDir = packageR2.applicationInfo.secondaryNativeLibraryDir;
+                                                i7 = this.mInstrumentation;
+                                                i7.put(a2.getComponentName(), a2);
+                                                if (allowed) {
+                                                    if (stringBuilder2 == null) {
+                                                        r = 256;
+                                                        stringBuilder2 = new StringBuilder(256);
+                                                    } else {
+                                                        r = 256;
+                                                        stringBuilder2.append(' ');
+                                                    }
+                                                    i7 = a2.info.name;
+                                                    stringBuilder2.append(i7);
+                                                } else {
+                                                    r = 256;
+                                                }
+                                            }
+                                            if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
+                                                String str4 = TAG;
+                                                StringBuilder stringBuilder4 = new StringBuilder();
+                                                i7 = "  Instrumentation: ";
+                                                stringBuilder4.append(i7);
+                                                stringBuilder4.append(stringBuilder2);
+                                                Log.d(str4, stringBuilder4.toString());
+                                            }
+                                            if (packageR2.protectedBroadcasts == null) {
+                                                break;
+                                            }
+                                            j = packageR2.protectedBroadcasts.size();
+                                            N = this.mProtectedBroadcasts;
+                                            synchronized (N) {
+                                                for (i8 = 0; i8 < j; i8++) {
+                                                    name = (String) packageR2.protectedBroadcasts.get(i8);
+                                                    this.mProtectedBroadcasts.add(name);
+                                                }
+                                            }
+                                            break loop16;
+                                        }
                                         try {
-                                            Provider p = (Provider) packageR.providers.get(i8);
-                                            p.info.processName = fixProcessName(packageR.applicationInfo.processName, p.info.processName);
+                                            p = (Provider) packageR2.providers.get(i7);
+                                            p.info.processName = fixProcessName(packageR2.applicationInfo.processName, p.info.processName);
                                             this.mProviders.addProvider(p);
                                             p.syncable = p.info.isSyncable;
                                             if (p.info.authority != null) {
-                                                String[] names = p.info.authority.split(";");
+                                                names = p.info.authority.split(";");
                                                 p.info.authority = null;
-                                                Provider p2 = p;
-                                                j = 0;
-                                                while (j < names.length) {
-                                                    Provider p3;
-                                                    if (j == 1) {
-                                                        if (p2.syncable) {
-                                                            p2 = new Provider(p2);
-                                                            p2.syncable = false;
-                                                            clientLibPkgs2 = clientLibPkgs;
-                                                            StringBuilder stringBuilder5;
-                                                            if (this.mProvidersByAuthority.containsKey(names[j])) {
-                                                                this.mProvidersByAuthority.put(names[j], p2);
-                                                                if (p2.info.authority == null) {
-                                                                    try {
-                                                                        p2.info.authority = names[j];
-                                                                        iter = iter2;
-                                                                    } catch (Throwable th5) {
-                                                                        th = th5;
-                                                                    }
-                                                                } else {
-                                                                    ProviderInfo providerInfo = p2.info;
-                                                                    StringBuilder stringBuilder6 = new StringBuilder();
-                                                                    iter = iter2;
-                                                                    stringBuilder6.append(p2.info.authority);
-                                                                    stringBuilder6.append(";");
-                                                                    stringBuilder6.append(names[j]);
-                                                                    providerInfo.authority = stringBuilder6.toString();
-                                                                }
-                                                                if (DEBUG_PACKAGE_SCANNING) {
-                                                                    String iter3 = pkgName;
-                                                                    if (chatty) {
-                                                                        try {
-                                                                            pkgName2 = TAG;
-                                                                            stringBuilder5 = new StringBuilder();
-                                                                            str2 = iter3;
-                                                                            stringBuilder5.append("Registered content provider: ");
-                                                                            stringBuilder5.append(names[j]);
-                                                                            stringBuilder5.append(", className = ");
-                                                                            stringBuilder5.append(p2.info.name);
-                                                                            stringBuilder5.append(", isSyncable = ");
-                                                                            stringBuilder5.append(p2.info.isSyncable);
-                                                                            Log.d(pkgName2, stringBuilder5.toString());
-                                                                            p3 = p2;
-                                                                        } catch (Throwable th6) {
-                                                                            th = th6;
-                                                                            packageR2 = oldPkg;
-                                                                        }
-                                                                    } else {
-                                                                        str2 = iter3;
-                                                                        p3 = p2;
-                                                                    }
-                                                                } else {
-                                                                    str2 = pkgName;
-                                                                    allowed = chatty;
-                                                                    p3 = p2;
-                                                                }
-                                                            } else {
-                                                                iter = iter2;
-                                                                str2 = pkgName;
-                                                                allowed = chatty;
-                                                                Provider other = (Provider) this.mProvidersByAuthority.get(names[j]);
-                                                                pkgName2 = TAG;
-                                                                stringBuilder5 = new StringBuilder();
-                                                                p3 = p2;
-                                                                stringBuilder5.append("Skipping provider name ");
-                                                                stringBuilder5.append(names[j]);
-                                                                stringBuilder5.append(" (in package ");
-                                                                stringBuilder5.append(packageR.applicationInfo.packageName);
-                                                                stringBuilder5.append("): name already used by ");
-                                                                String packageName = (other == null || other.getComponentName() == null) ? "?" : other.getComponentName().getPackageName();
-                                                                stringBuilder5.append(packageName);
-                                                                Slog.w(pkgName2, stringBuilder5.toString());
-                                                            }
-                                                            j++;
-                                                            clientLibPkgs = clientLibPkgs2;
-                                                            iter2 = iter;
-                                                            pkgName = str2;
-                                                            p2 = p3;
-                                                        }
-                                                    }
-                                                    clientLibPkgs2 = clientLibPkgs;
-                                                    try {
-                                                        if (this.mProvidersByAuthority.containsKey(names[j])) {
-                                                        }
-                                                        j++;
-                                                        clientLibPkgs = clientLibPkgs2;
-                                                        iter2 = iter;
-                                                        pkgName = str2;
-                                                        p2 = p3;
-                                                    } catch (Throwable th7) {
-                                                        th = th7;
-                                                        str2 = pkgName;
-                                                        allowed = chatty;
-                                                        packageR2 = oldPkg;
-                                                        throw th;
-                                                    }
-                                                }
-                                                clientLibPkgs2 = clientLibPkgs;
-                                                iter = iter2;
-                                                str2 = pkgName;
-                                                clientLibPkgs = chatty;
-                                                p = p2;
+                                                p2 = p;
+                                                j2 = 0;
                                             } else {
                                                 clientLibPkgs2 = clientLibPkgs;
-                                                iter = iter2;
+                                                iter2 = iter;
                                                 str2 = pkgName;
                                                 clientLibPkgs = chatty;
-                                            }
-                                            if (clientLibPkgs != null) {
-                                                if (r == null) {
-                                                    r = new StringBuilder(256);
-                                                } else {
-                                                    r.append(' ');
+                                                if (clientLibPkgs == null) {
+                                                    if (r == null) {
+                                                        r = new StringBuilder(256);
+                                                    } else {
+                                                        r.append(' ');
+                                                    }
+                                                    r.append(p.info.name);
                                                 }
-                                                r.append(p.info.name);
+                                                i7++;
+                                                clientLibPkgs = clientLibPkgs2;
+                                                iter = iter2;
+                                                pkgName = str2;
+                                                j = 262144;
                                             }
-                                            i8++;
-                                            clientLibPkgs = clientLibPkgs2;
-                                            iter2 = iter;
-                                            pkgName = str2;
-                                        } catch (Throwable th8) {
-                                            th = th8;
+                                        } catch (Throwable th5) {
+                                            th = th5;
                                             clientLibPkgs2 = clientLibPkgs;
                                             str2 = pkgName;
                                             clientLibPkgs = chatty;
-                                        }
-                                    }
-                                    clientLibPkgs2 = clientLibPkgs;
-                                    iter = iter2;
-                                    str2 = pkgName;
-                                    allowed = chatty;
-                                    if (r != null && DEBUG_PACKAGE_SCANNING) {
-                                        name = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  Providers: ");
-                                        stringBuilder2.append(r);
-                                        Log.d(name, stringBuilder2.toString());
-                                    }
-                                    j = packageR.services.size();
-                                    stringBuilder2 = null;
-                                    for (i7 = 0; i7 < j; i7++) {
-                                        Service s = (Service) packageR.services.get(i7);
-                                        s.info.processName = fixProcessName(packageR.applicationInfo.processName, s.info.processName);
-                                        this.mServices.addService(s);
-                                        if (allowed) {
-                                            if (stringBuilder2 == null) {
-                                                stringBuilder2 = new StringBuilder(256);
-                                            } else {
-                                                stringBuilder2.append(' ');
-                                            }
-                                            stringBuilder2.append(s.info.name);
-                                        }
-                                    }
-                                    if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
-                                        str3 = TAG;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("  Services: ");
-                                        stringBuilder3.append(stringBuilder2);
-                                        Log.d(str3, stringBuilder3.toString());
-                                    }
-                                    j = packageR.receivers.size();
-                                    stringBuilder2 = null;
-                                    for (i7 = 0; i7 < j; i7++) {
-                                        a = (Activity) packageR.receivers.get(i7);
-                                        a.info.processName = fixProcessName(packageR.applicationInfo.processName, a.info.processName);
-                                        this.mReceivers.addActivity(a, HwBroadcastRadarUtil.KEY_RECEIVER);
-                                        if (allowed) {
-                                            if (stringBuilder2 == null) {
-                                                stringBuilder2 = new StringBuilder(256);
-                                            } else {
-                                                stringBuilder2.append(' ');
-                                            }
-                                            stringBuilder2.append(a.info.name);
-                                        }
-                                    }
-                                    if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
-                                        str3 = TAG;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("  Receivers: ");
-                                        stringBuilder3.append(stringBuilder2);
-                                        Log.d(str3, stringBuilder3.toString());
-                                    }
-                                    j = packageR.activities.size();
-                                    stringBuilder2 = null;
-                                    for (i7 = 0; i7 < j; i7++) {
-                                        a = (Activity) packageR.activities.get(i7);
-                                        a.info.processName = fixProcessName(packageR.applicationInfo.processName, a.info.processName);
-                                        this.mActivities.addActivity(a, "activity");
-                                        if (allowed) {
-                                            if (stringBuilder2 == null) {
-                                                stringBuilder2 = new StringBuilder(256);
-                                            } else {
-                                                stringBuilder2.append(' ');
-                                            }
-                                            stringBuilder2.append(a.info.name);
-                                        }
-                                    }
-                                    if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
-                                        str3 = TAG;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("  Activities: ");
-                                        stringBuilder3.append(stringBuilder2);
-                                        Log.d(str3, stringBuilder3.toString());
-                                    }
-                                    if ((i & 16384) != 0) {
-                                        str3 = TAG;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("Permission groups from package ");
-                                        stringBuilder3.append(packageR.packageName);
-                                        stringBuilder3.append(" ignored: instant apps cannot define new permission groups.");
-                                        Slog.w(str3, stringBuilder3.toString());
-                                    } else {
-                                        this.mPermissionManager.addAllPermissionGroups(packageR, allowed);
-                                    }
-                                    if ((i & 16384) != 0) {
-                                        str3 = TAG;
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append("Permissions from package ");
-                                        stringBuilder3.append(packageR.packageName);
-                                        stringBuilder3.append(" ignored: instant apps cannot define new permissions.");
-                                        Slog.w(str3, stringBuilder3.toString());
-                                    } else {
-                                        this.mPermissionManager.addAllPermissions(packageR, allowed);
-                                    }
-                                    j = packageR.instrumentation.size();
-                                    stringBuilder2 = null;
-                                    for (i7 = 0; i7 < j; i7++) {
-                                        Instrumentation a2 = (Instrumentation) packageR.instrumentation.get(i7);
-                                        a2.info.packageName = packageR.applicationInfo.packageName;
-                                        a2.info.sourceDir = packageR.applicationInfo.sourceDir;
-                                        a2.info.publicSourceDir = packageR.applicationInfo.publicSourceDir;
-                                        a2.info.splitNames = packageR.splitNames;
-                                        a2.info.splitSourceDirs = packageR.applicationInfo.splitSourceDirs;
-                                        a2.info.splitPublicSourceDirs = packageR.applicationInfo.splitPublicSourceDirs;
-                                        a2.info.splitDependencies = packageR.applicationInfo.splitDependencies;
-                                        a2.info.dataDir = packageR.applicationInfo.dataDir;
-                                        a2.info.deviceProtectedDataDir = packageR.applicationInfo.deviceProtectedDataDir;
-                                        a2.info.credentialProtectedDataDir = packageR.applicationInfo.credentialProtectedDataDir;
-                                        a2.info.primaryCpuAbi = packageR.applicationInfo.primaryCpuAbi;
-                                        a2.info.secondaryCpuAbi = packageR.applicationInfo.secondaryCpuAbi;
-                                        a2.info.nativeLibraryDir = packageR.applicationInfo.nativeLibraryDir;
-                                        a2.info.secondaryNativeLibraryDir = packageR.applicationInfo.secondaryNativeLibraryDir;
-                                        this.mInstrumentation.put(a2.getComponentName(), a2);
-                                        if (allowed) {
-                                            if (stringBuilder2 == null) {
-                                                stringBuilder2 = new StringBuilder(256);
-                                            } else {
-                                                stringBuilder2.append(' ');
-                                            }
-                                            stringBuilder2.append(a2.info.name);
-                                        }
-                                    }
-                                    if (stringBuilder2 != null && DEBUG_PACKAGE_SCANNING) {
-                                        str4 = TAG;
-                                        stringBuilder4 = new StringBuilder();
-                                        stringBuilder4.append("  Instrumentation: ");
-                                        stringBuilder4.append(stringBuilder2);
-                                        Log.d(str4, stringBuilder4.toString());
-                                    }
-                                    if (packageR.protectedBroadcasts != null) {
-                                        j = packageR.protectedBroadcasts.size();
-                                        synchronized (this.mProtectedBroadcasts) {
-                                            for (i7 = 0; i7 < j; i7++) {
-                                                this.mProtectedBroadcasts.add((String) packageR.protectedBroadcasts.get(i7));
-                                            }
-                                        }
-                                    }
-                                    if ("com.huawei.remoteassistant".equals(packageR.packageName) && checkSignatures(PLATFORM_PACKAGE_NAME, "com.huawei.remoteassistant") == 0) {
-                                        str4 = TAG;
-                                        stringBuilder4 = new StringBuilder();
-                                        stringBuilder4.append("ddMarketFlagsForApp when scanning for ");
-                                        stringBuilder4.append(packageR.packageName);
-                                        Slog.i(str4, stringBuilder4.toString());
-                                        ApplicationInfo applicationInfo = packageR.applicationInfo;
-                                        applicationInfo.hwFlags |= 536870912;
-                                    }
-                                    packageR2 = oldPkg;
-                                    if (packageR2 != null) {
-                                        try {
-                                            AsyncTask.execute(new -$$Lambda$PackageManagerService$mOTJOturHO9FjzNA-qffT913E0M(this, packageR, packageR2, new ArrayList(this.mPackages.keySet())));
-                                        } catch (Throwable th9) {
-                                            th = th9;
+                                            packageR = oldPkg;
                                             throw th;
                                         }
+                                        if (j2 < names.length) {
+                                            Provider p3;
+                                            try {
+                                                if (this.mProvidersByAuthority.containsKey(names[j2])) {
+                                                }
+                                                j2++;
+                                                clientLibPkgs = clientLibPkgs2;
+                                                iter = iter2;
+                                                pkgName = str2;
+                                                p2 = p3;
+                                                if (j2 < names.length) {
+                                                }
+                                            } catch (Throwable th6) {
+                                                th = th6;
+                                                str2 = pkgName;
+                                                allowed = chatty;
+                                                packageR = oldPkg;
+                                            }
+                                            if (j2 == 1) {
+                                                if (p2.syncable) {
+                                                    p2 = new Provider(p2);
+                                                    p2.syncable = false;
+                                                    clientLibPkgs2 = clientLibPkgs;
+                                                    StringBuilder stringBuilder5;
+                                                    if (this.mProvidersByAuthority.containsKey(names[j2])) {
+                                                        this.mProvidersByAuthority.put(names[j2], p2);
+                                                        if (p2.info.authority == null) {
+                                                            try {
+                                                                p2.info.authority = names[j2];
+                                                                iter2 = iter;
+                                                            } catch (Throwable th7) {
+                                                                th = th7;
+                                                                packageR = oldPkg;
+                                                                throw th;
+                                                            }
+                                                        }
+                                                        ProviderInfo providerInfo = p2.info;
+                                                        StringBuilder stringBuilder6 = new StringBuilder();
+                                                        iter2 = iter;
+                                                        stringBuilder6.append(p2.info.authority);
+                                                        stringBuilder6.append(";");
+                                                        stringBuilder6.append(names[j2]);
+                                                        providerInfo.authority = stringBuilder6.toString();
+                                                        if (DEBUG_PACKAGE_SCANNING) {
+                                                            String iter3 = pkgName;
+                                                            if (chatty) {
+                                                                try {
+                                                                    pkgName2 = TAG;
+                                                                    stringBuilder5 = new StringBuilder();
+                                                                    str2 = iter3;
+                                                                    stringBuilder5.append("Registered content provider: ");
+                                                                    stringBuilder5.append(names[j2]);
+                                                                    stringBuilder5.append(", className = ");
+                                                                    stringBuilder5.append(p2.info.name);
+                                                                    stringBuilder5.append(", isSyncable = ");
+                                                                    stringBuilder5.append(p2.info.isSyncable);
+                                                                    Log.d(pkgName2, stringBuilder5.toString());
+                                                                    p3 = p2;
+                                                                } catch (Throwable th8) {
+                                                                    th = th8;
+                                                                } finally {
+                                                                }
+                                                            }
+                                                            str2 = iter3;
+                                                            p3 = p2;
+                                                        } else {
+                                                            str2 = pkgName;
+                                                            allowed = chatty;
+                                                            p3 = p2;
+                                                        }
+                                                    } else {
+                                                        iter2 = iter;
+                                                        str2 = pkgName;
+                                                        allowed = chatty;
+                                                        Provider other = (Provider) this.mProvidersByAuthority.get(names[j2]);
+                                                        pkgName2 = TAG;
+                                                        stringBuilder5 = new StringBuilder();
+                                                        p3 = p2;
+                                                        stringBuilder5.append("Skipping provider name ");
+                                                        stringBuilder5.append(names[j2]);
+                                                        stringBuilder5.append(" (in package ");
+                                                        stringBuilder5.append(packageR2.applicationInfo.packageName);
+                                                        stringBuilder5.append("): name already used by ");
+                                                        String packageName = (other == null || other.getComponentName() == null) ? "?" : other.getComponentName().getPackageName();
+                                                        stringBuilder5.append(packageName);
+                                                        Slog.w(pkgName2, stringBuilder5.toString());
+                                                    }
+                                                    j2++;
+                                                    clientLibPkgs = clientLibPkgs2;
+                                                    iter = iter2;
+                                                    pkgName = str2;
+                                                    p2 = p3;
+                                                    if (j2 < names.length) {
+                                                    }
+                                                }
+                                            }
+                                            clientLibPkgs2 = clientLibPkgs;
+                                        }
+                                        clientLibPkgs2 = clientLibPkgs;
+                                        iter2 = iter;
+                                        str2 = pkgName;
+                                        clientLibPkgs = chatty;
+                                        p = p2;
+                                        if (clientLibPkgs == null) {
+                                        }
+                                        i7++;
+                                        clientLibPkgs = clientLibPkgs2;
+                                        iter = iter2;
+                                        pkgName = str2;
+                                        j = 262144;
                                     }
-                                } catch (Throwable th10) {
-                                    th = th10;
+                                    packageR = oldPkg;
+                                    break;
+                                } catch (Throwable th9) {
+                                    th = th9;
                                     clientLibPkgs2 = clientLibPkgs;
                                     str2 = pkgName;
-                                    packageR2 = oldPkg;
+                                    packageR = oldPkg;
                                     throw th;
                                 }
+                                throw th;
                             }
                         }
                     }
@@ -19555,22 +17296,23 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     checkPackageFrozen(pkgName);
                     if (clientLibPkgs != null) {
                     }
+                    j = 262144;
                     Trace.traceBegin(262144, "updateSettings");
                     synchronized (this.mPackages) {
                     }
-                } catch (Throwable th11) {
-                    th = th11;
+                } catch (Throwable th10) {
+                    th = th10;
                     clientLibPkgs2 = clientLibPkgs;
                     str2 = pkgName;
-                    packageR2 = oldPkg;
+                    packageR = oldPkg;
                     ArrayList<Package> arrayList = clientLibPkgs2;
                     while (true) {
                         break;
                     }
                     throw th;
                 }
-            } catch (Throwable th12) {
-                th = th12;
+            } catch (Throwable th11) {
+                th = th11;
                 arrayMap2 = arrayMap;
                 str2 = pkgName2;
                 str = pkgName;
@@ -19612,8 +17354,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     }
                     Trace.traceEnd(262144);
                 }
-                if (abi32 >= 0 && pkg.isLibrary() && extractLibs) {
-                    throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, "Shared library native lib extraction not supported");
+                if (abi32 >= 0 && pkg.isLibrary()) {
+                    if (extractLibs) {
+                        throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, "Shared library native lib extraction not supported");
+                    }
                 }
                 maybeThrowExceptionForMultiArchCopy("Error unpackaging 32 bit native libs for multiarch app.", abi32);
                 if (Build.SUPPORTED_64_BIT_ABIS.length > 0) {
@@ -19628,8 +17372,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 }
                 maybeThrowExceptionForMultiArchCopy("Error unpackaging 64 bit native libs for multiarch app.", abi64);
                 if (abi64 >= 0) {
-                    if (extractLibs && pkg.isLibrary()) {
-                        throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, "Shared library native lib extraction not supported");
+                    if (extractLibs) {
+                        if (pkg.isLibrary()) {
+                            throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, "Shared library native lib extraction not supported");
+                        }
                     }
                     pkg.applicationInfo.primaryCpuAbi = Build.SUPPORTED_64_BIT_ABIS[abi64];
                 }
@@ -19672,12 +17418,15 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     copyRet = NativeLibraryHelper.findSupportedAbi(handle, abiList);
                 }
                 Trace.traceEnd(262144);
-                if (copyRet < 0 && copyRet != -114) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Error unpackaging native libs for app, errorCode=");
-                    stringBuilder.append(copyRet);
-                    throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, stringBuilder.toString());
-                } else if (copyRet >= 0) {
+                if (copyRet < 0) {
+                    if (copyRet != -114) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Error unpackaging native libs for app, errorCode=");
+                        stringBuilder.append(copyRet);
+                        throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, stringBuilder.toString());
+                    }
+                }
+                if (copyRet >= 0) {
                     if (pkg.isLibrary()) {
                         throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, "Shared library with native libs must be multiarch");
                     }
@@ -20230,17 +17979,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         });
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0016, code:
+    /* JADX WARNING: Missing block: B:9:0x0016, code skipped:
             r0 = r1.length - 1;
      */
-    /* JADX WARNING: Missing block: B:10:0x0019, code:
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
             if (r0 < 0) goto L_0x0023;
      */
-    /* JADX WARNING: Missing block: B:11:0x001b, code:
+    /* JADX WARNING: Missing block: B:11:0x001b, code skipped:
             r1[r0].onPackageAdded(r4);
             r0 = r0 - 1;
      */
-    /* JADX WARNING: Missing block: B:12:0x0023, code:
+    /* JADX WARNING: Missing block: B:12:0x0023, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -20253,17 +18002,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0016, code:
+    /* JADX WARNING: Missing block: B:9:0x0016, code skipped:
             r0 = r1.length - 1;
      */
-    /* JADX WARNING: Missing block: B:10:0x0019, code:
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
             if (r0 < 0) goto L_0x0023;
      */
-    /* JADX WARNING: Missing block: B:11:0x001b, code:
+    /* JADX WARNING: Missing block: B:11:0x001b, code skipped:
             r1[r0].onPackageRemoved(r4);
             r0 = r0 - 1;
      */
-    /* JADX WARNING: Missing block: B:12:0x0023, code:
+    /* JADX WARNING: Missing block: B:12:0x0023, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -20346,61 +18095,61 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mPostSystemReadyMessages.add(msg);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0017, code:
+    /* JADX WARNING: Missing block: B:11:0x0017, code skipped:
             r0 = new android.content.Intent("android.content.pm.CLEAN_EXTERNAL_STORAGE");
             r0.setComponent(DEFAULT_CONTAINER_COMPONENT);
             r1 = android.app.ActivityManager.getService();
      */
-    /* JADX WARNING: Missing block: B:12:0x0027, code:
+    /* JADX WARNING: Missing block: B:12:0x0027, code skipped:
             if (r1 == null) goto L_0x006a;
      */
-    /* JADX WARNING: Missing block: B:13:0x0029, code:
+    /* JADX WARNING: Missing block: B:13:0x0029, code skipped:
             r2 = -1;
             r3 = r10.mPackages;
      */
-    /* JADX WARNING: Missing block: B:14:0x002c, code:
+    /* JADX WARNING: Missing block: B:14:0x002c, code skipped:
             monitor-enter(r3);
      */
-    /* JADX WARNING: Missing block: B:17:0x002f, code:
+    /* JADX WARNING: Missing block: B:17:0x002f, code skipped:
             if (r10.mDefaultContainerWhitelisted != false) goto L_0x0048;
      */
-    /* JADX WARNING: Missing block: B:18:0x0031, code:
+    /* JADX WARNING: Missing block: B:18:0x0031, code skipped:
             r10.mDefaultContainerWhitelisted = true;
      */
-    /* JADX WARNING: Missing block: B:19:0x0047, code:
+    /* JADX WARNING: Missing block: B:19:0x0047, code skipped:
             r2 = android.os.UserHandle.getUid(0, ((com.android.server.pm.PackageSetting) r10.mSettings.mPackages.get(DEFAULT_CONTAINER_PACKAGE)).appId);
      */
-    /* JADX WARNING: Missing block: B:20:0x0048, code:
+    /* JADX WARNING: Missing block: B:20:0x0048, code skipped:
             r9 = r2;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:23:0x004a, code:
+    /* JADX WARNING: Missing block: B:23:0x004a, code skipped:
             if (r9 <= 0) goto L_0x0052;
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             r1.backgroundWhitelistUid(r9);
      */
-    /* JADX WARNING: Missing block: B:27:0x0052, code:
+    /* JADX WARNING: Missing block: B:28:0x0052, code skipped:
             r1.startService(null, r0, null, false, r10.mContext.getOpPackageName(), 0);
      */
-    /* JADX WARNING: Missing block: B:28:0x0064, code:
+    /* JADX WARNING: Missing block: B:29:0x0064, code skipped:
             r4 = th;
      */
-    /* JADX WARNING: Missing block: B:29:0x0065, code:
+    /* JADX WARNING: Missing block: B:30:0x0065, code skipped:
             r2 = r9;
      */
-    /* JADX WARNING: Missing block: B:30:0x0067, code:
+    /* JADX WARNING: Missing block: B:31:0x0067, code skipped:
             r4 = th;
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:33:?, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:33:0x0069, code:
+    /* JADX WARNING: Missing block: B:34:0x0069, code skipped:
             throw r4;
      */
-    /* JADX WARNING: Missing block: B:34:0x006a, code:
+    /* JADX WARNING: Missing block: B:35:0x006a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -20534,38 +18283,38 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:56:0x00f9, code:
+    /* JADX WARNING: Missing block: B:56:0x00f9, code skipped:
             r6 = r7;
      */
-    /* JADX WARNING: Missing block: B:57:0x00fb, code:
+    /* JADX WARNING: Missing block: B:57:0x00fb, code skipped:
             if (r4 == false) goto L_0x0105;
      */
-    /* JADX WARNING: Missing block: B:59:?, code:
+    /* JADX WARNING: Missing block: B:59:?, code skipped:
             sendPackageAddedForUser(r13, r6, r15);
      */
-    /* JADX WARNING: Missing block: B:60:0x0100, code:
+    /* JADX WARNING: Missing block: B:60:0x0100, code skipped:
             android.os.Binder.restoreCallingIdentity(r2);
      */
-    /* JADX WARNING: Missing block: B:61:0x0104, code:
+    /* JADX WARNING: Missing block: B:61:0x0104, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:62:0x0105, code:
+    /* JADX WARNING: Missing block: B:62:0x0105, code skipped:
             if (r5 == false) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:64:?, code:
+    /* JADX WARNING: Missing block: B:64:?, code skipped:
             killApplication(r13, android.os.UserHandle.getUid(r15, r6.appId), "hiding pkg");
             sendApplicationHiddenForUser(r13, r6, r15);
      */
-    /* JADX WARNING: Missing block: B:65:0x0115, code:
+    /* JADX WARNING: Missing block: B:65:0x0115, code skipped:
             android.os.Binder.restoreCallingIdentity(r2);
      */
-    /* JADX WARNING: Missing block: B:66:0x0119, code:
+    /* JADX WARNING: Missing block: B:66:0x0119, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:67:0x011a, code:
+    /* JADX WARNING: Missing block: B:67:0x011a, code skipped:
             android.os.Binder.restoreCallingIdentity(r2);
      */
-    /* JADX WARNING: Missing block: B:68:0x011f, code:
+    /* JADX WARNING: Missing block: B:68:0x011f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -20706,48 +18455,48 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return installExistingPackageAsUserInternal(packageName, userId, installFlags, installReason);
     }
 
-    /* JADX WARNING: Missing block: B:48:0x00bf, code:
+    /* JADX WARNING: Missing block: B:49:0x00bf, code skipped:
             r7 = r0;
      */
-    /* JADX WARNING: Missing block: B:49:0x00c0, code:
+    /* JADX WARNING: Missing block: B:50:0x00c0, code skipped:
             if (r5 == false) goto L_0x00e7;
      */
-    /* JADX WARNING: Missing block: B:52:0x00c4, code:
+    /* JADX WARNING: Missing block: B:53:0x00c4, code skipped:
             if (r7.pkg == null) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:53:0x00c6, code:
+    /* JADX WARNING: Missing block: B:54:0x00c6, code skipped:
             r13 = r1.mInstallLock;
      */
-    /* JADX WARNING: Missing block: B:54:0x00c8, code:
+    /* JADX WARNING: Missing block: B:55:0x00c8, code skipped:
             monitor-enter(r13);
      */
-    /* JADX WARNING: Missing block: B:56:?, code:
+    /* JADX WARNING: Missing block: B:57:?, code skipped:
             prepareAppDataAfterInstallLIF(r7.pkg);
      */
-    /* JADX WARNING: Missing block: B:57:0x00ce, code:
+    /* JADX WARNING: Missing block: B:58:0x00ce, code skipped:
             monitor-exit(r13);
      */
-    /* JADX WARNING: Missing block: B:62:0x00d3, code:
+    /* JADX WARNING: Missing block: B:64:0x00d3, code skipped:
             sendPackageAddedForUser(r2, r7, r9);
             r13 = r1.mPackages;
      */
-    /* JADX WARNING: Missing block: B:63:0x00d8, code:
+    /* JADX WARNING: Missing block: B:65:0x00d8, code skipped:
             monitor-enter(r13);
      */
-    /* JADX WARNING: Missing block: B:66:?, code:
+    /* JADX WARNING: Missing block: B:68:?, code skipped:
             updateSequenceNumberLP(r7, new int[]{r9});
      */
-    /* JADX WARNING: Missing block: B:67:0x00e2, code:
+    /* JADX WARNING: Missing block: B:69:0x00e2, code skipped:
             monitor-exit(r13);
      */
-    /* JADX WARNING: Missing block: B:72:0x00e7, code:
+    /* JADX WARNING: Missing block: B:75:0x00e7, code skipped:
             android.os.Binder.restoreCallingIdentity(r3);
             r0 = r7;
      */
-    /* JADX WARNING: Missing block: B:73:0x00ed, code:
+    /* JADX WARNING: Missing block: B:76:0x00ed, code skipped:
             return 1;
      */
-    /* JADX WARNING: Missing block: B:80:0x00f3, code:
+    /* JADX WARNING: Missing block: B:83:0x00f3, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -20854,7 +18603,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:84:0x01c5, code:
+    /* JADX WARNING: Missing block: B:85:0x01c5, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -21014,6 +18763,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 persistableBundle = launcherExtras;
                                 callingId = callingId3;
                                 z = suspended;
+                                while (true) {
+                                    break;
+                                }
+                                throw th;
                             }
                         } catch (Throwable th6) {
                             th = th6;
@@ -21022,6 +18775,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             callingId = callingId3;
                             obj = callingId2;
                             persistableBundle2 = appExtras;
+                            while (true) {
+                                break;
+                            }
+                            throw th;
                         }
                     }
                     arrayMap2 = arrayMap;
@@ -21472,7 +19229,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mHandler.sendMessage(msg);
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004d, code:
+    /* JADX WARNING: Missing block: B:18:0x004d, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -21489,21 +19246,22 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
         synchronized (this.mPackages) {
             PackageSetting ps = (PackageSetting) this.mSettings.mPackages.get(packageName);
-            if (ps == null || filterAppAccessLPr(ps, callingUid, UserHandle.getUserId(callingUid))) {
-            } else {
-                int intentFilterVerificationStatusLPr = this.mSettings.getIntentFilterVerificationStatusLPr(packageName, userId);
-                return intentFilterVerificationStatusLPr;
+            if (ps != null) {
+                if (!filterAppAccessLPr(ps, callingUid, UserHandle.getUserId(callingUid))) {
+                    int intentFilterVerificationStatusLPr = this.mSettings.getIntentFilterVerificationStatusLPr(packageName, userId);
+                    return intentFilterVerificationStatusLPr;
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002f, code:
+    /* JADX WARNING: Missing block: B:10:0x002f, code skipped:
             if (r0 == false) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:11:0x0031, code:
+    /* JADX WARNING: Missing block: B:11:0x0031, code skipped:
             scheduleWritePackageRestrictionsLocked(r8);
      */
-    /* JADX WARNING: Missing block: B:12:0x0034, code:
+    /* JADX WARNING: Missing block: B:12:0x0034, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -21523,7 +19281,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             return ParceledListSlice.emptyList();
         }
         synchronized (this.mPackages) {
-            ParceledListSlice<IntentFilterVerificationInfo> emptyList;
+            ParceledListSlice emptyList;
             if (filterAppAccessLPr((PackageSetting) this.mSettings.mPackages.get(packageName), callingUid, UserHandle.getUserId(callingUid))) {
                 emptyList = ParceledListSlice.emptyList();
                 return emptyList;
@@ -21540,29 +19298,32 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         int callingUid = Binder.getCallingUid();
         int callingUserId = UserHandle.getUserId(callingUid);
         synchronized (this.mPackages) {
+            ParceledListSlice emptyList;
             Package pkg = (Package) this.mPackages.get(packageName);
-            ParceledListSlice<IntentFilter> emptyList;
-            if (pkg == null || pkg.activities == null) {
-                emptyList = ParceledListSlice.emptyList();
-                return emptyList;
-            } else if (pkg.mExtras == null) {
-                emptyList = ParceledListSlice.emptyList();
-                return emptyList;
-            } else if (filterAppAccessLPr(pkg.mExtras, callingUid, callingUserId)) {
-                ParceledListSlice<IntentFilter> emptyList2 = ParceledListSlice.emptyList();
-                return emptyList2;
-            } else {
-                int count = pkg.activities.size();
-                ArrayList<IntentFilter> result = new ArrayList();
-                for (int n = 0; n < count; n++) {
-                    Activity activity = (Activity) pkg.activities.get(n);
-                    if (activity.intents != null && activity.intents.size() > 0) {
-                        result.addAll(activity.intents);
+            if (pkg != null) {
+                if (pkg.activities != null) {
+                    if (pkg.mExtras == null) {
+                        emptyList = ParceledListSlice.emptyList();
+                        return emptyList;
+                    } else if (filterAppAccessLPr(pkg.mExtras, callingUid, callingUserId)) {
+                        ParceledListSlice emptyList2 = ParceledListSlice.emptyList();
+                        return emptyList2;
+                    } else {
+                        int count = pkg.activities.size();
+                        ArrayList<IntentFilter> result = new ArrayList();
+                        for (int n = 0; n < count; n++) {
+                            Activity activity = (Activity) pkg.activities.get(n);
+                            if (activity.intents != null && activity.intents.size() > 0) {
+                                result.addAll(activity.intents);
+                            }
+                        }
+                        ParceledListSlice parceledListSlice = new ParceledListSlice(result);
+                        return parceledListSlice;
                     }
                 }
-                ParceledListSlice<IntentFilter> parceledListSlice = new ParceledListSlice(result);
-                return parceledListSlice;
             }
+            emptyList = ParceledListSlice.emptyList();
+            return emptyList;
         }
     }
 
@@ -21619,8 +19380,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         stringBuilder2.append(installerPackageName);
                         throw new IllegalArgumentException(stringBuilder2.toString());
                     }
+                } else {
+                    installerPackageSetting = null;
                 }
-                installerPackageSetting = null;
                 Object obj = this.mSettings.getUserIdLPr(callingUid);
                 StringBuilder stringBuilder3;
                 if (obj != null) {
@@ -21637,32 +19399,36 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         stringBuilder3.append(callingUid);
                         throw new SecurityException(stringBuilder3.toString());
                     }
-                    if (installerPackageSetting == null || PackageManagerServiceUtils.compareSignatures(callerSignature, installerPackageSetting.signatures.mSigningDetails.signatures) == 0) {
-                        if (targetPackageSetting.installerPackageName != null) {
-                            PackageSetting setting = (PackageSetting) this.mSettings.mPackages.get(targetPackageSetting.installerPackageName);
-                            if (!(setting == null || PackageManagerServiceUtils.compareSignatures(callerSignature, setting.signatures.mSigningDetails.signatures) == 0)) {
-                                StringBuilder stringBuilder4 = new StringBuilder();
-                                stringBuilder4.append("Caller does not have same cert as old installer package ");
-                                stringBuilder4.append(targetPackageSetting.installerPackageName);
-                                throw new SecurityException(stringBuilder4.toString());
+                    if (installerPackageSetting != null) {
+                        if (PackageManagerServiceUtils.compareSignatures(callerSignature, installerPackageSetting.signatures.mSigningDetails.signatures) != 0) {
+                            StringBuilder stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append("Caller does not have same cert as new installer package ");
+                            stringBuilder4.append(installerPackageName);
+                            throw new SecurityException(stringBuilder4.toString());
+                        }
+                    }
+                    if (targetPackageSetting.installerPackageName != null) {
+                        PackageSetting setting = (PackageSetting) this.mSettings.mPackages.get(targetPackageSetting.installerPackageName);
+                        if (setting != null) {
+                            if (PackageManagerServiceUtils.compareSignatures(callerSignature, setting.signatures.mSigningDetails.signatures) != 0) {
+                                StringBuilder stringBuilder5 = new StringBuilder();
+                                stringBuilder5.append("Caller does not have same cert as old installer package ");
+                                stringBuilder5.append(targetPackageSetting.installerPackageName);
+                                throw new SecurityException(stringBuilder5.toString());
                             }
                         }
-                        targetPackageSetting.installerPackageName = installerPackageName;
-                        if (installerPackageName != null) {
-                            this.mSettings.mInstallerPackages.add(installerPackageName);
-                        }
-                        scheduleWriteSettingsLocked();
-                    } else {
-                        StringBuilder stringBuilder5 = new StringBuilder();
-                        stringBuilder5.append("Caller does not have same cert as new installer package ");
-                        stringBuilder5.append(installerPackageName);
-                        throw new SecurityException(stringBuilder5.toString());
                     }
+                    targetPackageSetting.installerPackageName = installerPackageName;
+                    if (installerPackageName != null) {
+                        this.mSettings.mInstallerPackages.add(installerPackageName);
+                    }
+                    scheduleWriteSettingsLocked();
+                } else {
+                    stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("Unknown calling UID: ");
+                    stringBuilder3.append(callingUid);
+                    throw new SecurityException(stringBuilder3.toString());
                 }
-                stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("Unknown calling UID: ");
-                stringBuilder3.append(callingUid);
-                throw new SecurityException(stringBuilder3.toString());
             }
         }
     }
@@ -21955,17 +19721,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return null;
     }
 
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             r0 = scanPackageTracedLI(r11, r18, r19, java.lang.System.currentTimeMillis(), r20);
             updateSettingsLI(r0, r21, null, r12, r20, r24);
      */
-    /* JADX WARNING: Missing block: B:16:0x0095, code:
+    /* JADX WARNING: Missing block: B:16:0x0095, code skipped:
             if (r12.returnCode != 1) goto L_0x009b;
      */
-    /* JADX WARNING: Missing block: B:17:0x0097, code:
+    /* JADX WARNING: Missing block: B:17:0x0097, code skipped:
             prepareAppDataAfterInstallLIF(r0);
      */
-    /* JADX WARNING: Missing block: B:18:0x009b, code:
+    /* JADX WARNING: Missing block: B:18:0x009b, code skipped:
             r1 = new java.lang.StringBuilder();
             r1.append("updateSettingsLI failed: ");
             r1.append(r12.returnCode);
@@ -21974,10 +19740,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             android.util.Flog.i(207, r1.toString());
             deletePackageLIF(r15, android.os.UserHandle.ALL, false, null, 1, r12.removedInfo, true, null);
      */
-    /* JADX WARNING: Missing block: B:19:0x00c9, code:
+    /* JADX WARNING: Missing block: B:19:0x00c9, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:20:0x00ca, code:
+    /* JADX WARNING: Missing block: B:20:0x00ca, code skipped:
             r1 = new java.lang.StringBuilder();
             r1.append("Package couldn't be installed in ");
             r1.append(r11.codePath);
@@ -22016,7 +19782,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         Trace.traceEnd(262144);
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001b, code:
+    /* JADX WARNING: Missing block: B:13:0x001b, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -22027,712 +19793,470 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         $closeResource(null, digestStream);
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.pm.PackageManagerService.replacePackageLIF(android.content.pm.PackageParser$Package, int, int, android.os.UserHandle, java.lang.String, com.android.server.pm.PackageManagerService$PackageInstalledInfo, int):void, dom blocks: [B:20:0x005f, B:64:0x0129]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    /* JADX WARNING: Removed duplicated region for block: B:93:0x01b9 A:{SYNTHETIC, Splitter: B:93:0x01b9} */
-    /* JADX WARNING: Removed duplicated region for block: B:88:0x0198  */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x016e A:{Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e, all -> 0x006b }, Splitter: B:64:0x0129, ExcHandler: java.security.NoSuchAlgorithmException (e java.security.NoSuchAlgorithmException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:79:0x0174 A:{Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e, all -> 0x006b }, Splitter: B:55:0x0107, ExcHandler: java.security.NoSuchAlgorithmException (e java.security.NoSuchAlgorithmException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:77:0x0170 A:{Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e, all -> 0x006b }, Splitter: B:58:0x0111, ExcHandler: java.security.NoSuchAlgorithmException (e java.security.NoSuchAlgorithmException)} */
-    private void replacePackageLIF(android.content.pm.PackageParser.Package r37, int r38, int r39, android.os.UserHandle r40, java.lang.String r41, com.android.server.pm.PackageManagerService.PackageInstalledInfo r42, int r43) {
-        /*
-        r36 = this;
-        r11 = r36;
-        r12 = r37;
-        r13 = r39;
-        r14 = r42;
-        r0 = r13 & 16384;
-        r2 = 1;
-        if (r0 == 0) goto L_0x000f;
-    L_0x000d:
-        r0 = r2;
-        goto L_0x0010;
-    L_0x000f:
-        r0 = 0;
-    L_0x0010:
-        r15 = r0;
-        r10 = r12.packageName;
-        r3 = r11.mPackages;
-        monitor-enter(r3);
-        r0 = r11.mPackages;	 Catch:{ all -> 0x0440 }
-        r0 = r0.get(r10);	 Catch:{ all -> 0x0440 }
-        r0 = (android.content.pm.PackageParser.Package) r0;	 Catch:{ all -> 0x0440 }
-        r4 = r0;	 Catch:{ all -> 0x0440 }
-        r0 = 207; // 0xcf float:2.9E-43 double:1.023E-321;	 Catch:{ all -> 0x0440 }
-        r5 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0440 }
-        r5.<init>();	 Catch:{ all -> 0x0440 }
-        r6 = "replacePackageLI: new=";	 Catch:{ all -> 0x0440 }
-        r5.append(r6);	 Catch:{ all -> 0x0440 }
-        r5.append(r12);	 Catch:{ all -> 0x0440 }
-        r6 = ", old=";	 Catch:{ all -> 0x0440 }
-        r5.append(r6);	 Catch:{ all -> 0x0440 }
-        r5.append(r4);	 Catch:{ all -> 0x0440 }
-        r5 = r5.toString();	 Catch:{ all -> 0x0440 }
-        android.util.Flog.i(r0, r5);	 Catch:{ all -> 0x0440 }
-        r0 = r4.applicationInfo;	 Catch:{ all -> 0x0440 }
-        r0 = r0.targetSdkVersion;	 Catch:{ all -> 0x0440 }
-        r5 = 10000; // 0x2710 float:1.4013E-41 double:4.9407E-320;	 Catch:{ all -> 0x0440 }
-        if (r0 != r5) goto L_0x0048;	 Catch:{ all -> 0x0440 }
-    L_0x0046:
-        r0 = r2;	 Catch:{ all -> 0x0440 }
-        goto L_0x0049;	 Catch:{ all -> 0x0440 }
-    L_0x0048:
-        r0 = 0;	 Catch:{ all -> 0x0440 }
-    L_0x0049:
-        r6 = r0;	 Catch:{ all -> 0x0440 }
-        r0 = r12.applicationInfo;	 Catch:{ all -> 0x0440 }
-        r0 = r0.targetSdkVersion;	 Catch:{ all -> 0x0440 }
-        if (r0 != r5) goto L_0x0052;
-    L_0x0050:
-        r0 = r2;
-        goto L_0x0053;
-    L_0x0052:
-        r0 = 0;
-    L_0x0053:
-        r5 = r0;
-        r0 = -7;
-        if (r6 == 0) goto L_0x0070;
-    L_0x0057:
-        if (r5 != 0) goto L_0x0070;
-    L_0x0059:
-        r9 = r38;
-        r7 = r9 & 128;
-        if (r7 != 0) goto L_0x0072;
-    L_0x005f:
-        r1 = "PackageManager";	 Catch:{ all -> 0x006b }
-        r2 = "Can't install package targeting released sdk";	 Catch:{ all -> 0x006b }
-        android.util.Slog.w(r1, r2);	 Catch:{ all -> 0x006b }
-        r14.setReturnCode(r0);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x006b:
-        r0 = move-exception;
-        r27 = r10;
-        goto L_0x0443;
-    L_0x0070:
-        r9 = r38;
-    L_0x0072:
-        r7 = r11.mSettings;	 Catch:{ all -> 0x0440 }
-        r7 = r7.mPackages;	 Catch:{ all -> 0x0440 }
-        r7 = r7.get(r10);	 Catch:{ all -> 0x0440 }
-        r7 = (com.android.server.pm.PackageSetting) r7;	 Catch:{ all -> 0x0440 }
-        r8 = r11.mSettings;	 Catch:{ all -> 0x0440 }
-        r8 = r8.mKeySetManagerService;	 Catch:{ all -> 0x0440 }
-        r16 = r8.shouldCheckUpgradeKeySetLocked(r7, r13);	 Catch:{ all -> 0x0440 }
-        if (r16 == 0) goto L_0x00a2;
-    L_0x0086:
-        r16 = r8.checkUpgradeKeySetLocked(r7, r12);	 Catch:{ all -> 0x006b }
-        if (r16 != 0) goto L_0x00fb;	 Catch:{ all -> 0x006b }
-    L_0x008c:
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r1.<init>();	 Catch:{ all -> 0x006b }
-        r2 = "New package not signed by keys specified by upgrade-keysets: ";	 Catch:{ all -> 0x006b }
-        r1.append(r2);	 Catch:{ all -> 0x006b }
-        r1.append(r10);	 Catch:{ all -> 0x006b }
-        r1 = r1.toString();	 Catch:{ all -> 0x006b }
-        r14.setError(r0, r1);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x00a2:
-        r0 = r12.mSigningDetails;	 Catch:{ all -> 0x0440 }
-        r1 = r4.mSigningDetails;	 Catch:{ all -> 0x0440 }
-        r0 = r0.checkCapability(r1, r2);	 Catch:{ all -> 0x0440 }
-        if (r0 != 0) goto L_0x00fb;
-    L_0x00ac:
-        r0 = r4.mSigningDetails;	 Catch:{ all -> 0x006b }
-        r1 = r12.mSigningDetails;	 Catch:{ all -> 0x006b }
-        r2 = 8;	 Catch:{ all -> 0x006b }
-        r0 = r0.checkCapability(r1, r2);	 Catch:{ all -> 0x006b }
-        if (r0 != 0) goto L_0x00fb;	 Catch:{ all -> 0x006b }
-    L_0x00b8:
-        r0 = r4.mSigningDetails;	 Catch:{ all -> 0x006b }
-        r0 = r0.signatures;	 Catch:{ all -> 0x006b }
-        r1 = r12.mSigningDetails;	 Catch:{ all -> 0x006b }
-        r1 = r1.signatures;	 Catch:{ all -> 0x006b }
-        r0 = r11.isSystemSignatureUpdated(r0, r1);	 Catch:{ all -> 0x006b }
-        if (r0 == 0) goto L_0x00e4;	 Catch:{ all -> 0x006b }
-    L_0x00c6:
-        r0 = "PackageManager";	 Catch:{ all -> 0x006b }
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r1.<init>();	 Catch:{ all -> 0x006b }
-        r2 = "CertCompat: ";	 Catch:{ all -> 0x006b }
-        r1.append(r2);	 Catch:{ all -> 0x006b }
-        r2 = r12.packageName;	 Catch:{ all -> 0x006b }
-        r1.append(r2);	 Catch:{ all -> 0x006b }
-        r2 = " system signature updated. Ignore signature matching.";	 Catch:{ all -> 0x006b }
-        r1.append(r2);	 Catch:{ all -> 0x006b }
-        r1 = r1.toString();	 Catch:{ all -> 0x006b }
-        android.util.Slog.i(r0, r1);	 Catch:{ all -> 0x006b }
-        goto L_0x00fb;	 Catch:{ all -> 0x006b }
-    L_0x00e4:
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r0.<init>();	 Catch:{ all -> 0x006b }
-        r1 = "New package has a different signature: ";	 Catch:{ all -> 0x006b }
-        r0.append(r1);	 Catch:{ all -> 0x006b }
-        r0.append(r10);	 Catch:{ all -> 0x006b }
-        r0 = r0.toString();	 Catch:{ all -> 0x006b }
-        r1 = -7;	 Catch:{ all -> 0x006b }
-        r14.setError(r1, r0);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x00fb:
-        r0 = r4.restrictUpdateHash;	 Catch:{ all -> 0x0440 }
-        if (r0 == 0) goto L_0x0190;
-    L_0x00ff:
-        r0 = r4.isSystem();	 Catch:{ all -> 0x006b }
-        if (r0 == 0) goto L_0x0190;
-    L_0x0105:
-        r0 = 0;
-        r1 = r0;
-        r0 = "SHA-512";	 Catch:{ NoSuchAlgorithmException -> 0x0174, NoSuchAlgorithmException -> 0x0174 }
-        r0 = java.security.MessageDigest.getInstance(r0);	 Catch:{ NoSuchAlgorithmException -> 0x0174, NoSuchAlgorithmException -> 0x0174 }
-        r2 = new java.io.File;	 Catch:{ NoSuchAlgorithmException -> 0x0174, NoSuchAlgorithmException -> 0x0174 }
-        r22 = r1;
-        r1 = r12.baseCodePath;	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        r2.<init>(r1);	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        updateDigest(r0, r2);	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        r1 = r12.splitCodePaths;	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        r1 = com.android.internal.util.ArrayUtils.isEmpty(r1);	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        if (r1 != 0) goto L_0x0142;	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-    L_0x0121:
-        r1 = r12.splitCodePaths;	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        r2 = r1.length;	 Catch:{ NoSuchAlgorithmException -> 0x0170, NoSuchAlgorithmException -> 0x0170 }
-        r23 = r5;
-        r5 = 0;
-    L_0x0127:
-        if (r5 >= r2) goto L_0x0144;
-    L_0x0129:
-        r16 = r1[r5];	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r24 = r16;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r25 = r1;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r1 = new java.io.File;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r26 = r2;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r2 = r24;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r1.<init>(r2);	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        updateDigest(r0, r1);	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r5 = r5 + 1;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r1 = r25;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r2 = r26;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        goto L_0x0127;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-    L_0x0142:
-        r23 = r5;	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-    L_0x0144:
-        r1 = r0.digest();	 Catch:{ NoSuchAlgorithmException -> 0x016e, NoSuchAlgorithmException -> 0x016e }
-        r0 = r1;
-        r1 = r4.restrictUpdateHash;	 Catch:{ all -> 0x006b }
-        r1 = java.util.Arrays.equals(r1, r0);	 Catch:{ all -> 0x006b }
-        if (r1 != 0) goto L_0x0169;	 Catch:{ all -> 0x006b }
-    L_0x0152:
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r1.<init>();	 Catch:{ all -> 0x006b }
-        r2 = "New package fails restrict-update check: ";	 Catch:{ all -> 0x006b }
-        r1.append(r2);	 Catch:{ all -> 0x006b }
-        r1.append(r10);	 Catch:{ all -> 0x006b }
-        r1 = r1.toString();	 Catch:{ all -> 0x006b }
-        r2 = -2;	 Catch:{ all -> 0x006b }
-        r14.setError(r2, r1);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;	 Catch:{ all -> 0x006b }
-    L_0x0169:
-        r1 = r4.restrictUpdateHash;	 Catch:{ all -> 0x006b }
-        r12.restrictUpdateHash = r1;	 Catch:{ all -> 0x006b }
-        goto L_0x0192;	 Catch:{ all -> 0x006b }
-    L_0x016e:
-        r0 = move-exception;	 Catch:{ all -> 0x006b }
-        goto L_0x0179;	 Catch:{ all -> 0x006b }
-    L_0x0170:
-        r0 = move-exception;	 Catch:{ all -> 0x006b }
-        r23 = r5;	 Catch:{ all -> 0x006b }
-        goto L_0x0179;	 Catch:{ all -> 0x006b }
-    L_0x0174:
-        r0 = move-exception;	 Catch:{ all -> 0x006b }
-        r22 = r1;	 Catch:{ all -> 0x006b }
-        r23 = r5;	 Catch:{ all -> 0x006b }
-    L_0x0179:
-        r1 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r1.<init>();	 Catch:{ all -> 0x006b }
-        r2 = "Could not compute hash: ";	 Catch:{ all -> 0x006b }
-        r1.append(r2);	 Catch:{ all -> 0x006b }
-        r1.append(r10);	 Catch:{ all -> 0x006b }
-        r1 = r1.toString();	 Catch:{ all -> 0x006b }
-        r2 = -2;	 Catch:{ all -> 0x006b }
-        r14.setError(r2, r1);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x0190:
-        r23 = r5;
-    L_0x0192:
-        r0 = r11.getParentOrChildPackageChangedSharedUser(r4, r12);	 Catch:{ all -> 0x0440 }
-        if (r0 == 0) goto L_0x01b9;
-    L_0x0198:
-        r1 = -8;
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r2.<init>();	 Catch:{ all -> 0x006b }
-        r5 = "Package ";	 Catch:{ all -> 0x006b }
-        r2.append(r5);	 Catch:{ all -> 0x006b }
-        r2.append(r0);	 Catch:{ all -> 0x006b }
-        r5 = " tried to change user ";	 Catch:{ all -> 0x006b }
-        r2.append(r5);	 Catch:{ all -> 0x006b }
-        r5 = r4.mSharedUserId;	 Catch:{ all -> 0x006b }
-        r2.append(r5);	 Catch:{ all -> 0x006b }
-        r2 = r2.toString();	 Catch:{ all -> 0x006b }
-        r14.setError(r1, r2);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x01b9:
-        r1 = r4.applicationInfo;	 Catch:{ all -> 0x0440 }
-        r1 = r1.secondaryCpuAbi;	 Catch:{ all -> 0x0440 }
-        if (r1 == 0) goto L_0x01c1;	 Catch:{ all -> 0x0440 }
-    L_0x01bf:
-        r1 = 1;	 Catch:{ all -> 0x0440 }
-        goto L_0x01c2;	 Catch:{ all -> 0x0440 }
-    L_0x01c1:
-        r1 = 0;	 Catch:{ all -> 0x0440 }
-    L_0x01c2:
-        r2 = r12.applicationInfo;	 Catch:{ all -> 0x0440 }
-        r2 = r2.secondaryCpuAbi;	 Catch:{ all -> 0x0440 }
-        if (r2 == 0) goto L_0x01ca;	 Catch:{ all -> 0x0440 }
-    L_0x01c8:
-        r2 = 1;	 Catch:{ all -> 0x0440 }
-        goto L_0x01cb;	 Catch:{ all -> 0x0440 }
-    L_0x01ca:
-        r2 = 0;	 Catch:{ all -> 0x0440 }
-    L_0x01cb:
-        r5 = isSystemApp(r4);	 Catch:{ all -> 0x0440 }
-        if (r5 == 0) goto L_0x01f3;
-    L_0x01d1:
-        if (r1 == 0) goto L_0x01f3;
-    L_0x01d3:
-        if (r2 != 0) goto L_0x01f3;
-    L_0x01d5:
-        r5 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r5.<init>();	 Catch:{ all -> 0x006b }
-        r27 = r0;	 Catch:{ all -> 0x006b }
-        r0 = "Update to package ";	 Catch:{ all -> 0x006b }
-        r5.append(r0);	 Catch:{ all -> 0x006b }
-        r5.append(r10);	 Catch:{ all -> 0x006b }
-        r0 = " doesn't support multi arch";	 Catch:{ all -> 0x006b }
-        r5.append(r0);	 Catch:{ all -> 0x006b }
-        r0 = r5.toString();	 Catch:{ all -> 0x006b }
-        r5 = -7;	 Catch:{ all -> 0x006b }
-        r14.setError(r5, r0);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x01f3:
-        r27 = r0;
-        r0 = sUserManager;	 Catch:{ all -> 0x0440 }
-        r0 = r0.getUserIds();	 Catch:{ all -> 0x0440 }
-        r5 = 1;	 Catch:{ all -> 0x0440 }
-        r16 = r7.queryInstalledUsers(r0, r5);	 Catch:{ all -> 0x0440 }
-        r5 = r16;
-        if (r15 == 0) goto L_0x028b;
-    L_0x0204:
-        r28 = r1;
-        if (r40 == 0) goto L_0x0249;
-    L_0x0208:
-        r1 = r40.getIdentifier();	 Catch:{ all -> 0x006b }
-        r29 = r2;	 Catch:{ all -> 0x006b }
-        r2 = -1;	 Catch:{ all -> 0x006b }
-        if (r1 != r2) goto L_0x0214;	 Catch:{ all -> 0x006b }
-    L_0x0211:
-        r30 = r6;	 Catch:{ all -> 0x006b }
-        goto L_0x024d;	 Catch:{ all -> 0x006b }
-    L_0x0214:
-        r1 = r40.getIdentifier();	 Catch:{ all -> 0x006b }
-        r1 = r7.getInstantApp(r1);	 Catch:{ all -> 0x006b }
-        if (r1 != 0) goto L_0x028b;	 Catch:{ all -> 0x006b }
-    L_0x021e:
-        r1 = "PackageManager";	 Catch:{ all -> 0x006b }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r2.<init>();	 Catch:{ all -> 0x006b }
-        r30 = r6;	 Catch:{ all -> 0x006b }
-        r6 = "Can't replace full app with instant app: ";	 Catch:{ all -> 0x006b }
-        r2.append(r6);	 Catch:{ all -> 0x006b }
-        r2.append(r10);	 Catch:{ all -> 0x006b }
-        r6 = " for user: ";	 Catch:{ all -> 0x006b }
-        r2.append(r6);	 Catch:{ all -> 0x006b }
-        r6 = r40.getIdentifier();	 Catch:{ all -> 0x006b }
-        r2.append(r6);	 Catch:{ all -> 0x006b }
-        r2 = r2.toString();	 Catch:{ all -> 0x006b }
-        android.util.Slog.w(r1, r2);	 Catch:{ all -> 0x006b }
-        r1 = -116; // 0xffffffffffffff8c float:NaN double:NaN;	 Catch:{ all -> 0x006b }
-        r14.setReturnCode(r1);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;	 Catch:{ all -> 0x006b }
-    L_0x0249:
-        r29 = r2;	 Catch:{ all -> 0x006b }
-        r30 = r6;	 Catch:{ all -> 0x006b }
-    L_0x024d:
-        r1 = r0.length;	 Catch:{ all -> 0x006b }
-        r2 = 0;	 Catch:{ all -> 0x006b }
-    L_0x024f:
-        if (r2 >= r1) goto L_0x0289;	 Catch:{ all -> 0x006b }
-    L_0x0251:
-        r6 = r0[r2];	 Catch:{ all -> 0x006b }
-        r18 = r7.getInstantApp(r6);	 Catch:{ all -> 0x006b }
-        if (r18 != 0) goto L_0x0280;	 Catch:{ all -> 0x006b }
-    L_0x0259:
-        r1 = "PackageManager";	 Catch:{ all -> 0x006b }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x006b }
-        r2.<init>();	 Catch:{ all -> 0x006b }
-        r31 = r8;	 Catch:{ all -> 0x006b }
-        r8 = "Can't replace full app with instant app: ";	 Catch:{ all -> 0x006b }
-        r2.append(r8);	 Catch:{ all -> 0x006b }
-        r2.append(r10);	 Catch:{ all -> 0x006b }
-        r8 = " for user: ";	 Catch:{ all -> 0x006b }
-        r2.append(r8);	 Catch:{ all -> 0x006b }
-        r2.append(r6);	 Catch:{ all -> 0x006b }
-        r2 = r2.toString();	 Catch:{ all -> 0x006b }
-        android.util.Slog.w(r1, r2);	 Catch:{ all -> 0x006b }
-        r8 = -116; // 0xffffffffffffff8c float:NaN double:NaN;	 Catch:{ all -> 0x006b }
-        r14.setReturnCode(r8);	 Catch:{ all -> 0x006b }
-        monitor-exit(r3);	 Catch:{ all -> 0x006b }
-        return;
-    L_0x0280:
-        r31 = r8;
-        r8 = -116; // 0xffffffffffffff8c float:NaN double:NaN;
-        r2 = r2 + 1;
-        r8 = r31;
-        goto L_0x024f;
-    L_0x0289:
-        r31 = r8;
-    L_0x028b:
-        monitor-exit(r3);	 Catch:{ all -> 0x0440 }
-        r8 = r4;
-        r6 = r0;
-        r0 = new com.android.server.pm.PackageManagerService$PackageRemovedInfo;
-        r0.<init>(r11);
-        r14.removedInfo = r0;
-        r0 = r14.removedInfo;
-        r1 = r8.applicationInfo;
-        r1 = r1.uid;
-        r0.uid = r1;
-        r0 = r14.removedInfo;
-        r1 = r8.packageName;
-        r0.removedPackage = r1;
-        r0 = r14.removedInfo;
-        r1 = r7.installerPackageName;
-        r0.installerPackageName = r1;
-        r0 = r14.removedInfo;
-        r1 = r12.staticSharedLibName;
-        if (r1 == 0) goto L_0x02b1;
-    L_0x02af:
-        r1 = 1;
-        goto L_0x02b2;
-    L_0x02b1:
-        r1 = 0;
-    L_0x02b2:
-        r0.isStaticSharedLib = r1;
-        r0 = r14.removedInfo;
-        r1 = 1;
-        r0.isUpdate = r1;
-        r0 = r14.removedInfo;
-        r0.origUsers = r5;
-        r0 = r14.removedInfo;
-        r1 = new android.util.SparseArray;
-        r2 = r5.length;
-        r1.<init>(r2);
-        r0.installReasons = r1;
-        r0 = 0;
-    L_0x02c8:
-        r1 = r5.length;
-        if (r0 >= r1) goto L_0x02df;
-    L_0x02cb:
-        r1 = r5[r0];
-        r2 = r14.removedInfo;
-        r2 = r2.installReasons;
-        r3 = r7.getInstallReason(r1);
-        r3 = java.lang.Integer.valueOf(r3);
-        r2.put(r1, r3);
-        r0 = r0 + 1;
-        goto L_0x02c8;
-    L_0x02df:
-        r0 = r8.childPackages;
-        if (r0 == 0) goto L_0x02ea;
-    L_0x02e3:
-        r0 = r8.childPackages;
-        r1 = r0.size();
-        goto L_0x02eb;
-    L_0x02ea:
-        r1 = 0;
-    L_0x02eb:
-        r3 = r1;
-        r0 = 0;
-    L_0x02ed:
-        r1 = r0;
-        if (r1 >= r3) goto L_0x039b;
-    L_0x02f0:
-        r0 = 0;
-        r2 = r8.childPackages;
-        r2 = r2.get(r1);
-        r2 = (android.content.pm.PackageParser.Package) r2;
-        r4 = r11.mSettings;
-        r32 = r0;
-        r0 = r2.packageName;
-        r4 = r4.getPackageLPr(r0);
-        r0 = r14.addedChildPackages;
-        if (r0 == 0) goto L_0x0341;
-    L_0x0307:
-        r0 = r14.addedChildPackages;
-        r33 = r3;
-        r3 = r2.packageName;
-        r0 = r0.get(r3);
-        r0 = (com.android.server.pm.PackageManagerService.PackageInstalledInfo) r0;
-        if (r0 == 0) goto L_0x033e;
-    L_0x0315:
-        r3 = r0.removedInfo;
-        r34 = r5;
-        r5 = r2.applicationInfo;
-        r5 = r5.uid;
-        r3.uid = r5;
-        r3 = r0.removedInfo;
-        r5 = r2.packageName;
-        r3.removedPackage = r5;
-        if (r4 == 0) goto L_0x032d;
-    L_0x0327:
-        r3 = r0.removedInfo;
-        r5 = r4.installerPackageName;
-        r3.installerPackageName = r5;
-    L_0x032d:
-        r3 = r0.removedInfo;
-        r5 = 1;
-        r3.isUpdate = r5;
-        r3 = r0.removedInfo;
-        r5 = r14.removedInfo;
-        r5 = r5.installReasons;
-        r3.installReasons = r5;
-        r0 = 1;
-        r32 = r0;
-        goto L_0x0345;
-    L_0x033e:
-        r34 = r5;
-        goto L_0x0345;
-    L_0x0341:
-        r33 = r3;
-        r34 = r5;
-    L_0x0345:
-        if (r32 != 0) goto L_0x038d;
-    L_0x0347:
-        r0 = new com.android.server.pm.PackageManagerService$PackageRemovedInfo;
-        r0.<init>(r11);
-        r3 = r0;
-        r0 = r2.packageName;
-        r3.removedPackage = r0;
-        if (r4 == 0) goto L_0x0357;
-    L_0x0353:
-        r0 = r4.installerPackageName;
-        r3.installerPackageName = r0;
-    L_0x0357:
-        r0 = 0;
-        r3.isUpdate = r0;
-        r5 = 1;
-        r3.dataRemoved = r5;
-        r5 = r11.mPackages;
-        monitor-enter(r5);
-        if (r4 == 0) goto L_0x036e;
-    L_0x0362:
-        r35 = r7;
-        r0 = 1;
-        r7 = r4.queryInstalledUsers(r6, r0);	 Catch:{ all -> 0x036c }
-        r3.origUsers = r7;	 Catch:{ all -> 0x036c }
-        goto L_0x0371;	 Catch:{ all -> 0x036c }
-    L_0x036c:
-        r0 = move-exception;	 Catch:{ all -> 0x036c }
-        goto L_0x038b;	 Catch:{ all -> 0x036c }
-    L_0x036e:
-        r35 = r7;	 Catch:{ all -> 0x036c }
-        r0 = 1;	 Catch:{ all -> 0x036c }
-    L_0x0371:
-        monitor-exit(r5);	 Catch:{ all -> 0x036c }
-        r5 = r14.removedInfo;
-        r5 = r5.removedChildPackages;
-        if (r5 != 0) goto L_0x0381;
-    L_0x0378:
-        r5 = r14.removedInfo;
-        r7 = new android.util.ArrayMap;
-        r7.<init>();
-        r5.removedChildPackages = r7;
-    L_0x0381:
-        r5 = r14.removedInfo;
-        r5 = r5.removedChildPackages;
-        r7 = r2.packageName;
-        r5.put(r7, r3);
-        goto L_0x0390;
-    L_0x038b:
-        monitor-exit(r5);	 Catch:{ all -> 0x036c }
-        throw r0;
-    L_0x038d:
-        r35 = r7;
-        r0 = 1;
-    L_0x0390:
-        r1 = r1 + 1;
-        r0 = r1;
-        r3 = r33;
-        r5 = r34;
-        r7 = r35;
-        goto L_0x02ed;
-    L_0x039b:
-        r33 = r3;
-        r34 = r5;
-        r35 = r7;
-        r0 = 1;
-        r17 = isSystemApp(r8);
-        if (r17 == 0) goto L_0x0420;
-    L_0x03a8:
-        r1 = r8.applicationInfo;
-        r1 = r1.privateFlags;
-        r2 = 8;
-        r1 = r1 & r2;
-        if (r1 == 0) goto L_0x03b3;
-    L_0x03b1:
-        r1 = r0;
-        goto L_0x03b4;
-    L_0x03b3:
-        r1 = 0;
-    L_0x03b4:
-        r18 = r1;
-        r1 = r8.applicationInfo;
-        r1 = r1.privateFlags;
-        r2 = 131072; // 0x20000 float:1.83671E-40 double:6.47582E-319;
-        r1 = r1 & r2;
-        if (r1 == 0) goto L_0x03c1;
-    L_0x03bf:
-        r1 = r0;
-        goto L_0x03c2;
-    L_0x03c1:
-        r1 = 0;
-    L_0x03c2:
-        r19 = r1;
-        r1 = r8.applicationInfo;
-        r1 = r1.privateFlags;
-        r3 = 262144; // 0x40000 float:3.67342E-40 double:1.295163E-318;
-        r1 = r1 & r3;
-        if (r1 == 0) goto L_0x03cf;
-    L_0x03cd:
-        r1 = r0;
-        goto L_0x03d0;
-    L_0x03cf:
-        r1 = 0;
-    L_0x03d0:
-        r20 = r1;
-        r1 = r8.applicationInfo;
-        r1 = r1.privateFlags;
-        r5 = 524288; // 0x80000 float:7.34684E-40 double:2.590327E-318;
-        r1 = r1 & r5;
-        if (r1 == 0) goto L_0x03dc;
-    L_0x03db:
-        goto L_0x03dd;
-    L_0x03dc:
-        r0 = 0;
-    L_0x03dd:
-        r4 = r9;
-        r1 = r13 | r2;
-        if (r18 == 0) goto L_0x03e3;
-    L_0x03e2:
-        goto L_0x03e4;
-    L_0x03e3:
-        r3 = 0;
-    L_0x03e4:
-        r1 = r1 | r3;
-        if (r19 == 0) goto L_0x03e8;
-    L_0x03e7:
-        goto L_0x03e9;
-    L_0x03e8:
-        r5 = 0;
-    L_0x03e9:
-        r1 = r1 | r5;
-        if (r20 == 0) goto L_0x03ef;
-    L_0x03ec:
-        r2 = 1048576; // 0x100000 float:1.469368E-39 double:5.180654E-318;
-        goto L_0x03f0;
-    L_0x03ef:
-        r2 = 0;
-    L_0x03f0:
-        r1 = r1 | r2;
-        if (r0 == 0) goto L_0x03f6;
-    L_0x03f3:
-        r2 = 2097152; // 0x200000 float:2.938736E-39 double:1.0361308E-317;
-        goto L_0x03f7;
-    L_0x03f6:
-        r2 = 0;
-    L_0x03f7:
-        r21 = r1 | r2;
-        r1 = r11.mHwPMSEx;
-        r2 = r8.applicationInfo;
-        r2 = r2.flags;
-        r1.resolvePersistentFlagForPackage(r2, r12);
-        r1 = r11;
-        r2 = r8;
-        r22 = r33;
-        r3 = r12;
-        r23 = r34;
-        r5 = r21;
-        r24 = r6;
-        r6 = r40;
-        r25 = r35;
-        r7 = r24;
-        r26 = r8;
-        r8 = r41;
-        r9 = r14;
-        r27 = r10;
-        r10 = r43;
-        r1.replaceSystemPackageLIF(r2, r3, r4, r5, r6, r7, r8, r9, r10);
-        goto L_0x043f;
-    L_0x0420:
-        r24 = r6;
-        r26 = r8;
-        r27 = r10;
-        r22 = r33;
-        r23 = r34;
-        r25 = r35;
-        r1 = r11;
-        r2 = r26;
-        r3 = r12;
-        r4 = r38;
-        r5 = r13;
-        r6 = r40;
-        r7 = r24;
-        r8 = r41;
-        r9 = r14;
-        r10 = r43;
-        r1.replaceNonSystemPackageLIF(r2, r3, r4, r5, r6, r7, r8, r9, r10);
-    L_0x043f:
-        return;
-    L_0x0440:
-        r0 = move-exception;
-        r27 = r10;
-    L_0x0443:
-        monitor-exit(r3);	 Catch:{ all -> 0x0445 }
-        throw r0;
-    L_0x0445:
-        r0 = move-exception;
-        goto L_0x0443;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.PackageManagerService.replacePackageLIF(android.content.pm.PackageParser$Package, int, int, android.os.UserHandle, java.lang.String, com.android.server.pm.PackageManagerService$PackageInstalledInfo, int):void");
+    /* JADX WARNING: Removed duplicated region for block: B:94:0x01b9 A:{SYNTHETIC, Splitter:B:94:0x01b9} */
+    /* JADX WARNING: Removed duplicated region for block: B:89:0x0198  */
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:20:0x005f, B:64:0x0129] */
+    /* JADX WARNING: Missing block: B:24:0x006b, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:25:0x006c, code skipped:
+            r27 = r10;
+     */
+    /* JADX WARNING: Missing block: B:139:0x028c, code skipped:
+            r8 = r4;
+            r6 = r0;
+            r14.removedInfo = new com.android.server.pm.PackageManagerService.PackageRemovedInfo(r11);
+            r14.removedInfo.uid = r8.applicationInfo.uid;
+            r14.removedInfo.removedPackage = r8.packageName;
+            r14.removedInfo.installerPackageName = r7.installerPackageName;
+            r0 = r14.removedInfo;
+     */
+    /* JADX WARNING: Missing block: B:140:0x02ad, code skipped:
+            if (r12.staticSharedLibName == null) goto L_0x02b1;
+     */
+    /* JADX WARNING: Missing block: B:141:0x02af, code skipped:
+            r1 = true;
+     */
+    /* JADX WARNING: Missing block: B:142:0x02b1, code skipped:
+            r1 = false;
+     */
+    /* JADX WARNING: Missing block: B:143:0x02b2, code skipped:
+            r0.isStaticSharedLib = r1;
+            r14.removedInfo.isUpdate = true;
+            r14.removedInfo.origUsers = r5;
+            r14.removedInfo.installReasons = new android.util.SparseArray(r5.length);
+            r0 = 0;
+     */
+    /* JADX WARNING: Missing block: B:145:0x02c9, code skipped:
+            if (r0 >= r5.length) goto L_0x02df;
+     */
+    /* JADX WARNING: Missing block: B:146:0x02cb, code skipped:
+            r1 = r5[r0];
+            r14.removedInfo.installReasons.put(r1, java.lang.Integer.valueOf(r7.getInstallReason(r1)));
+            r0 = r0 + 1;
+     */
+    /* JADX WARNING: Missing block: B:148:0x02e1, code skipped:
+            if (r8.childPackages == null) goto L_0x02ea;
+     */
+    /* JADX WARNING: Missing block: B:149:0x02e3, code skipped:
+            r1 = r8.childPackages.size();
+     */
+    /* JADX WARNING: Missing block: B:150:0x02ea, code skipped:
+            r1 = 0;
+     */
+    /* JADX WARNING: Missing block: B:151:0x02eb, code skipped:
+            r3 = r1;
+            r0 = 0;
+     */
+    /* JADX WARNING: Missing block: B:152:0x02ed, code skipped:
+            r1 = r0;
+     */
+    /* JADX WARNING: Missing block: B:153:0x02ee, code skipped:
+            if (r1 >= r3) goto L_0x039b;
+     */
+    /* JADX WARNING: Missing block: B:154:0x02f0, code skipped:
+            r2 = (android.content.pm.PackageParser.Package) r8.childPackages.get(r1);
+            r32 = false;
+            r4 = r11.mSettings.getPackageLPr(r2.packageName);
+     */
+    /* JADX WARNING: Missing block: B:155:0x0305, code skipped:
+            if (r14.addedChildPackages == null) goto L_0x0341;
+     */
+    /* JADX WARNING: Missing block: B:156:0x0307, code skipped:
+            r33 = r3;
+            r0 = (com.android.server.pm.PackageManagerService.PackageInstalledInfo) r14.addedChildPackages.get(r2.packageName);
+     */
+    /* JADX WARNING: Missing block: B:157:0x0313, code skipped:
+            if (r0 == null) goto L_0x033e;
+     */
+    /* JADX WARNING: Missing block: B:158:0x0315, code skipped:
+            r34 = r5;
+            r0.removedInfo.uid = r2.applicationInfo.uid;
+            r0.removedInfo.removedPackage = r2.packageName;
+     */
+    /* JADX WARNING: Missing block: B:159:0x0325, code skipped:
+            if (r4 == null) goto L_0x032d;
+     */
+    /* JADX WARNING: Missing block: B:160:0x0327, code skipped:
+            r0.removedInfo.installerPackageName = r4.installerPackageName;
+     */
+    /* JADX WARNING: Missing block: B:161:0x032d, code skipped:
+            r0.removedInfo.isUpdate = true;
+            r0.removedInfo.installReasons = r14.removedInfo.installReasons;
+            r32 = true;
+     */
+    /* JADX WARNING: Missing block: B:162:0x033e, code skipped:
+            r34 = r5;
+     */
+    /* JADX WARNING: Missing block: B:163:0x0341, code skipped:
+            r33 = r3;
+            r34 = r5;
+     */
+    /* JADX WARNING: Missing block: B:164:0x0345, code skipped:
+            if (r32 != false) goto L_0x038d;
+     */
+    /* JADX WARNING: Missing block: B:165:0x0347, code skipped:
+            r3 = new com.android.server.pm.PackageManagerService.PackageRemovedInfo(r11);
+            r3.removedPackage = r2.packageName;
+     */
+    /* JADX WARNING: Missing block: B:166:0x0351, code skipped:
+            if (r4 == null) goto L_0x0357;
+     */
+    /* JADX WARNING: Missing block: B:167:0x0353, code skipped:
+            r3.installerPackageName = r4.installerPackageName;
+     */
+    /* JADX WARNING: Missing block: B:168:0x0357, code skipped:
+            r3.isUpdate = false;
+            r3.dataRemoved = true;
+            r5 = r11.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:169:0x035f, code skipped:
+            monitor-enter(r5);
+     */
+    /* JADX WARNING: Missing block: B:170:0x0360, code skipped:
+            if (r4 == null) goto L_0x036e;
+     */
+    /* JADX WARNING: Missing block: B:171:0x0362, code skipped:
+            r35 = r7;
+     */
+    /* JADX WARNING: Missing block: B:173:?, code skipped:
+            r3.origUsers = r4.queryInstalledUsers(r6, true);
+     */
+    /* JADX WARNING: Missing block: B:176:0x036e, code skipped:
+            r35 = r7;
+     */
+    /* JADX WARNING: Missing block: B:177:0x0371, code skipped:
+            monitor-exit(r5);
+     */
+    /* JADX WARNING: Missing block: B:179:0x0376, code skipped:
+            if (r14.removedInfo.removedChildPackages != null) goto L_0x0381;
+     */
+    /* JADX WARNING: Missing block: B:180:0x0378, code skipped:
+            r14.removedInfo.removedChildPackages = new android.util.ArrayMap();
+     */
+    /* JADX WARNING: Missing block: B:181:0x0381, code skipped:
+            r14.removedInfo.removedChildPackages.put(r2.packageName, r3);
+     */
+    /* JADX WARNING: Missing block: B:185:0x038d, code skipped:
+            r35 = r7;
+     */
+    /* JADX WARNING: Missing block: B:186:0x0390, code skipped:
+            r0 = r1 + 1;
+            r3 = r33;
+            r5 = r34;
+            r7 = r35;
+     */
+    /* JADX WARNING: Missing block: B:187:0x039b, code skipped:
+            r33 = r3;
+            r34 = r5;
+            r35 = r7;
+            r0 = true;
+     */
+    /* JADX WARNING: Missing block: B:188:0x03a6, code skipped:
+            if (isSystemApp(r8) == false) goto L_0x0420;
+     */
+    /* JADX WARNING: Missing block: B:190:0x03af, code skipped:
+            if ((r8.applicationInfo.privateFlags & 8) == 0) goto L_0x03b3;
+     */
+    /* JADX WARNING: Missing block: B:191:0x03b1, code skipped:
+            r1 = true;
+     */
+    /* JADX WARNING: Missing block: B:192:0x03b3, code skipped:
+            r1 = false;
+     */
+    /* JADX WARNING: Missing block: B:193:0x03b4, code skipped:
+            r18 = r1;
+     */
+    /* JADX WARNING: Missing block: B:194:0x03bd, code skipped:
+            if ((r8.applicationInfo.privateFlags & 131072) == 0) goto L_0x03c1;
+     */
+    /* JADX WARNING: Missing block: B:195:0x03bf, code skipped:
+            r1 = true;
+     */
+    /* JADX WARNING: Missing block: B:196:0x03c1, code skipped:
+            r1 = false;
+     */
+    /* JADX WARNING: Missing block: B:197:0x03c2, code skipped:
+            r19 = r1;
+            r3 = 262144;
+     */
+    /* JADX WARNING: Missing block: B:198:0x03cb, code skipped:
+            if ((r8.applicationInfo.privateFlags & 262144) == 0) goto L_0x03cf;
+     */
+    /* JADX WARNING: Missing block: B:199:0x03cd, code skipped:
+            r1 = true;
+     */
+    /* JADX WARNING: Missing block: B:200:0x03cf, code skipped:
+            r1 = false;
+     */
+    /* JADX WARNING: Missing block: B:201:0x03d0, code skipped:
+            r20 = r1;
+            r5 = 524288;
+     */
+    /* JADX WARNING: Missing block: B:202:0x03d9, code skipped:
+            if ((r8.applicationInfo.privateFlags & 524288) == 0) goto L_0x03dc;
+     */
+    /* JADX WARNING: Missing block: B:203:0x03dc, code skipped:
+            r0 = false;
+     */
+    /* JADX WARNING: Missing block: B:204:0x03dd, code skipped:
+            r4 = r9;
+            r1 = r13 | 131072;
+     */
+    /* JADX WARNING: Missing block: B:205:0x03e0, code skipped:
+            if (r18 == false) goto L_0x03e3;
+     */
+    /* JADX WARNING: Missing block: B:206:0x03e3, code skipped:
+            r3 = 0;
+     */
+    /* JADX WARNING: Missing block: B:207:0x03e4, code skipped:
+            r1 = r1 | r3;
+     */
+    /* JADX WARNING: Missing block: B:208:0x03e5, code skipped:
+            if (r19 == false) goto L_0x03e8;
+     */
+    /* JADX WARNING: Missing block: B:209:0x03e8, code skipped:
+            r5 = 0;
+     */
+    /* JADX WARNING: Missing block: B:210:0x03e9, code skipped:
+            r1 = r1 | r5;
+     */
+    /* JADX WARNING: Missing block: B:211:0x03ea, code skipped:
+            if (r20 == false) goto L_0x03ef;
+     */
+    /* JADX WARNING: Missing block: B:212:0x03ec, code skipped:
+            r2 = 1048576;
+     */
+    /* JADX WARNING: Missing block: B:213:0x03ef, code skipped:
+            r2 = 0;
+     */
+    /* JADX WARNING: Missing block: B:214:0x03f0, code skipped:
+            r1 = r1 | r2;
+     */
+    /* JADX WARNING: Missing block: B:215:0x03f1, code skipped:
+            if (r0 == false) goto L_0x03f6;
+     */
+    /* JADX WARNING: Missing block: B:216:0x03f3, code skipped:
+            r2 = 2097152;
+     */
+    /* JADX WARNING: Missing block: B:217:0x03f6, code skipped:
+            r2 = 0;
+     */
+    /* JADX WARNING: Missing block: B:218:0x03f7, code skipped:
+            r21 = r1 | r2;
+            r11.mHwPMSEx.resolvePersistentFlagForPackage(r8.applicationInfo.flags, r12);
+            r22 = r33;
+            r23 = r34;
+            r25 = r35;
+            r26 = r8;
+            r27 = r10;
+            replaceSystemPackageLIF(r8, r12, r4, r21, r40, r6, r41, r14, r43);
+     */
+    /* JADX WARNING: Missing block: B:219:0x0420, code skipped:
+            r27 = r10;
+            r22 = r33;
+            r23 = r34;
+            r25 = r35;
+            replaceNonSystemPackageLIF(r8, r12, r38, r13, r40, r6, r41, r14, r43);
+     */
+    /* JADX WARNING: Missing block: B:220:0x043f, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void replacePackageLIF(Package pkg, int parseFlags, int scanFlags, UserHandle user, String installerPackageName, PackageInstalledInfo res, int installReason) {
+        boolean z;
+        Package packageR = pkg;
+        int i = scanFlags;
+        PackageInstalledInfo packageInstalledInfo = res;
+        boolean isInstantApp = (i & 16384) != 0;
+        String pkgName = packageR.packageName;
+        synchronized (this.mPackages) {
+            Package oldPackage = (Package) this.mPackages.get(pkgName);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("replacePackageLI: new=");
+            stringBuilder.append(packageR);
+            stringBuilder.append(", old=");
+            stringBuilder.append(oldPackage);
+            Flog.i(207, stringBuilder.toString());
+            boolean oldTargetsPreRelease = oldPackage.applicationInfo.targetSdkVersion == 10000;
+            boolean newTargetsPreRelease = packageR.applicationInfo.targetSdkVersion == 10000;
+            int i2;
+            if (!oldTargetsPreRelease || newTargetsPreRelease) {
+                i2 = parseFlags;
+            } else {
+                i2 = parseFlags;
+                if ((i2 & 128) == 0) {
+                    Slog.w(TAG, "Can't install package targeting released sdk");
+                    packageInstalledInfo.setReturnCode(-7);
+                    return;
+                }
+            }
+            try {
+                StringBuilder stringBuilder2;
+                String str;
+                PackageSetting ps = (PackageSetting) this.mSettings.mPackages.get(pkgName);
+                KeySetManagerService ksms = this.mSettings.mKeySetManagerService;
+                if (ksms.shouldCheckUpgradeKeySetLocked(ps, i)) {
+                    if (!ksms.checkUpgradeKeySetLocked(ps, packageR)) {
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("New package not signed by keys specified by upgrade-keysets: ");
+                        stringBuilder2.append(pkgName);
+                        packageInstalledInfo.setError(-7, stringBuilder2.toString());
+                        return;
+                    }
+                } else if (!packageR.mSigningDetails.checkCapability(oldPackage.mSigningDetails, 1)) {
+                    if (!oldPackage.mSigningDetails.checkCapability(packageR.mSigningDetails, 8)) {
+                        if (isSystemSignatureUpdated(oldPackage.mSigningDetails.signatures, packageR.mSigningDetails.signatures)) {
+                            str = TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("CertCompat: ");
+                            stringBuilder2.append(packageR.packageName);
+                            stringBuilder2.append(" system signature updated. Ignore signature matching.");
+                            Slog.i(str, stringBuilder2.toString());
+                        } else {
+                            StringBuilder stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("New package has a different signature: ");
+                            stringBuilder3.append(pkgName);
+                            packageInstalledInfo.setError(-7, stringBuilder3.toString());
+                            return;
+                        }
+                    }
+                }
+                if (oldPackage.restrictUpdateHash != null) {
+                    if (oldPackage.isSystem()) {
+                        byte[] digestBytes = null;
+                        try {
+                            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+                            try {
+                                int length;
+                                updateDigest(digest, new File(packageR.baseCodePath));
+                                if (ArrayUtils.isEmpty(packageR.splitCodePaths)) {
+                                } else {
+                                    String[] strArr = packageR.splitCodePaths;
+                                    length = strArr.length;
+                                    int newTargetsPreRelease2 = 0;
+                                    while (newTargetsPreRelease2 < length) {
+                                        String[] strArr2 = strArr;
+                                        int i3 = length;
+                                        updateDigest(digest, new File(strArr[newTargetsPreRelease2]));
+                                        newTargetsPreRelease2++;
+                                        strArr = strArr2;
+                                        length = i3;
+                                    }
+                                }
+                                if (Arrays.equals(oldPackage.restrictUpdateHash, digest.digest())) {
+                                    packageR.restrictUpdateHash = oldPackage.restrictUpdateHash;
+                                    str = getParentOrChildPackageChangedSharedUser(oldPackage, packageR);
+                                    StringBuilder stringBuilder4;
+                                    if (str == null) {
+                                        stringBuilder4 = new StringBuilder();
+                                        stringBuilder4.append("Package ");
+                                        stringBuilder4.append(str);
+                                        stringBuilder4.append(" tried to change user ");
+                                        stringBuilder4.append(oldPackage.mSharedUserId);
+                                        packageInstalledInfo.setError(-8, stringBuilder4.toString());
+                                        return;
+                                    }
+                                    boolean oldPkgSupportMultiArch = oldPackage.applicationInfo.secondaryCpuAbi != null;
+                                    boolean newPkgSupportMultiArch = packageR.applicationInfo.secondaryCpuAbi != null;
+                                    if (isSystemApp(oldPackage) && oldPkgSupportMultiArch && !newPkgSupportMultiArch) {
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Update to package ");
+                                        stringBuilder.append(pkgName);
+                                        stringBuilder.append(" doesn't support multi arch");
+                                        packageInstalledInfo.setError(-7, stringBuilder.toString());
+                                        return;
+                                    }
+                                    int[] allUsers = sUserManager.getUserIds();
+                                    int[] installedUsers = ps.queryInstalledUsers(allUsers, true);
+                                    if (isInstantApp) {
+                                        String str2;
+                                        boolean z2;
+                                        if (user != null) {
+                                            if (user.getIdentifier()) {
+                                                z2 = oldTargetsPreRelease;
+                                            } else if (!ps.getInstantApp(user.getIdentifier())) {
+                                                str2 = TAG;
+                                                stringBuilder4 = new StringBuilder();
+                                                stringBuilder4.append("Can't replace full app with instant app: ");
+                                                stringBuilder4.append(pkgName);
+                                                stringBuilder4.append(" for user: ");
+                                                stringBuilder4.append(user.getIdentifier());
+                                                Slog.w(str2, stringBuilder4.toString());
+                                                packageInstalledInfo.setReturnCode(-116);
+                                                return;
+                                            }
+                                        }
+                                        z2 = oldTargetsPreRelease;
+                                        int length2 = allUsers.length;
+                                        length = 0;
+                                        while (length < length2) {
+                                            int currentUser = allUsers[length];
+                                            if (ps.getInstantApp(currentUser)) {
+                                                length++;
+                                                ksms = ksms;
+                                            } else {
+                                                str2 = TAG;
+                                                stringBuilder4 = new StringBuilder();
+                                                stringBuilder4.append("Can't replace full app with instant app: ");
+                                                stringBuilder4.append(pkgName);
+                                                stringBuilder4.append(" for user: ");
+                                                stringBuilder4.append(currentUser);
+                                                Slog.w(str2, stringBuilder4.toString());
+                                                packageInstalledInfo.setReturnCode(-116);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("New package fails restrict-update check: ");
+                                    stringBuilder2.append(pkgName);
+                                    packageInstalledInfo.setError(-2, stringBuilder2.toString());
+                                    return;
+                                }
+                            } catch (IOException | NoSuchAlgorithmException e) {
+                                z = newTargetsPreRelease;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Could not compute hash: ");
+                                stringBuilder2.append(pkgName);
+                                packageInstalledInfo.setError(-2, stringBuilder2.toString());
+                                return;
+                            }
+                        } catch (IOException | NoSuchAlgorithmException e2) {
+                            byte[] bArr = digestBytes;
+                            z = newTargetsPreRelease;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Could not compute hash: ");
+                            stringBuilder2.append(pkgName);
+                            packageInstalledInfo.setError(-2, stringBuilder2.toString());
+                            return;
+                        }
+                    }
+                }
+                str = getParentOrChildPackageChangedSharedUser(oldPackage, packageR);
+                if (str == null) {
+                }
+            } catch (Throwable th) {
+                Throwable th2 = th;
+                String str3 = pkgName;
+                while (true) {
+                    try {
+                        break;
+                    } catch (Throwable th3) {
+                        th2 = th3;
+                    }
+                }
+                throw th2;
+            }
+        }
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:106:0x02a3  */
     /* JADX WARNING: Removed duplicated region for block: B:58:0x018b  */
     /* JADX WARNING: Removed duplicated region for block: B:58:0x018b  */
     /* JADX WARNING: Removed duplicated region for block: B:106:0x02a3  */
-    /* JADX WARNING: Missing block: B:91:0x0234, code:
+    /* JADX WARNING: Missing block: B:91:0x0234, code skipped:
             r0 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Successfully restored package : ");
@@ -22806,10 +20330,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             if (ps.oldCodePaths == null) {
                                 ps.oldCodePaths = new ArraySet();
                             }
-                            Collection collection = ps.oldCodePaths;
+                            Set set = ps.oldCodePaths;
                             String[] strArr = new String[z2];
                             strArr[0] = packageR.baseCodePath;
-                            Collections.addAll(collection, strArr);
+                            Collections.addAll(set, strArr);
                             if (packageR.splitCodePaths != null) {
                                 Collections.addAll(ps.oldCodePaths, packageR.splitCodePaths);
                             }
@@ -22969,10 +20493,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:138:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:139:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
     /* JADX WARNING: Removed duplicated region for block: B:97:0x01f6  */
     /* JADX WARNING: Removed duplicated region for block: B:97:0x01f6  */
-    /* JADX WARNING: Removed duplicated region for block: B:138:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:139:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void replaceSystemPackageLIF(Package deletedPackage, Package pkg, int parseFlags, int scanFlags, UserHandle user, int[] allUsers, String installerPackageName, PackageInstalledInfo res, int installReason) {
         String str;
@@ -23152,7 +20676,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             }
             synchronized (this.mPackages) {
                 if (disabledSystem) {
-                    enableSystemPackageLPw(deletedPackage);
+                    try {
+                        enableSystemPackageLPw(deletedPackage);
+                    } catch (Throwable th) {
+                        while (true) {
+                        }
+                    }
                 }
                 setInstallerPackageNameLPw(packageR, installerPackageName);
                 this.mPermissionManager.updatePermissions(packageR.packageName, packageR, false, this.mPackages.values(), this.mPermissionCallback);
@@ -23386,48 +20915,36 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:241:0x04f9  */
-    /* JADX WARNING: Removed duplicated region for block: B:236:0x04ce  */
-    /* JADX WARNING: Removed duplicated region for block: B:379:0x0825  */
-    /* JADX WARNING: Removed duplicated region for block: B:365:0x07d8 A:{SYNTHETIC, Splitter: B:365:0x07d8} */
-    /* JADX WARNING: Removed duplicated region for block: B:414:0x08c0 A:{SYNTHETIC, Splitter: B:414:0x08c0} */
-    /* JADX WARNING: Removed duplicated region for block: B:430:0x08fd A:{Catch:{ all -> 0x090f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:429:0x08fb A:{Catch:{ all -> 0x090f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:490:0x0ae3 A:{Catch:{ all -> 0x0b32 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:481:0x0a1a A:{Catch:{ all -> 0x0b32 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:414:0x08c0 A:{SYNTHETIC, Splitter: B:414:0x08c0} */
-    /* JADX WARNING: Removed duplicated region for block: B:429:0x08fb A:{Catch:{ all -> 0x090f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:430:0x08fd A:{Catch:{ all -> 0x090f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:450:0x0961 A:{SYNTHETIC, Splitter: B:450:0x0961} */
-    /* JADX WARNING: Removed duplicated region for block: B:568:0x0c92  */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c8b  */
-    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cf8 A:{Splitter: B:586:0x0cdf, ExcHandler: com.android.server.pm.Installer.InstallerException (r0_286 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cf8 A:{Splitter: B:586:0x0cdf, ExcHandler: com.android.server.pm.Installer.InstallerException (r0_286 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cf8 A:{Splitter: B:586:0x0cdf, ExcHandler: com.android.server.pm.Installer.InstallerException (r0_286 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:726:0x0f9e  */
-    /* JADX WARNING: Removed duplicated region for block: B:726:0x0f9e  */
-    /* JADX WARNING: Removed duplicated region for block: B:726:0x0f9e  */
-    /* JADX WARNING: Removed duplicated region for block: B:726:0x0f9e  */
-    /* JADX WARNING: Missing block: B:589:0x0cf8, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:591:?, code:
-            r4 = new java.lang.StringBuilder();
-            r4.append("Failed to set up verity: ");
-            r4.append(r0);
-            r12.setError((int) android.hardware.biometrics.fingerprint.V2_1.RequestStatus.SYS_ETIMEDOUT, r4.toString());
-     */
-    /* JADX WARNING: Missing block: B:703:0x0f59, code:
+    /* JADX WARNING: Removed duplicated region for block: B:242:0x04f9  */
+    /* JADX WARNING: Removed duplicated region for block: B:237:0x04ce  */
+    /* JADX WARNING: Removed duplicated region for block: B:380:0x0825  */
+    /* JADX WARNING: Removed duplicated region for block: B:366:0x07d8 A:{SYNTHETIC, Splitter:B:366:0x07d8} */
+    /* JADX WARNING: Removed duplicated region for block: B:416:0x08c0 A:{SYNTHETIC, Splitter:B:416:0x08c0} */
+    /* JADX WARNING: Removed duplicated region for block: B:432:0x08fd A:{Catch:{ all -> 0x090f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:431:0x08fb A:{Catch:{ all -> 0x090f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:492:0x0ae3 A:{Catch:{ all -> 0x0b32 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:483:0x0a1a A:{Catch:{ all -> 0x0b32 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:729:0x0f9e  */
+    /* JADX WARNING: Removed duplicated region for block: B:729:0x0f9e  */
+    /* JADX WARNING: Removed duplicated region for block: B:729:0x0f9e  */
+    /* JADX WARNING: Removed duplicated region for block: B:729:0x0f9e  */
+    /* JADX WARNING: Removed duplicated region for block: B:416:0x08c0 A:{SYNTHETIC, Splitter:B:416:0x08c0} */
+    /* JADX WARNING: Removed duplicated region for block: B:431:0x08fb A:{Catch:{ all -> 0x090f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:432:0x08fd A:{Catch:{ all -> 0x090f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:452:0x0961 A:{SYNTHETIC, Splitter:B:452:0x0961} */
+    /* JADX WARNING: Removed duplicated region for block: B:571:0x0c92  */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c8b  */
+    /* JADX WARNING: Missing block: B:706:0x0f59, code skipped:
             if (r12.returnCode != 1) goto L_0x0f65;
      */
-    /* JADX WARNING: Missing block: B:704:0x0f5b, code:
+    /* JADX WARNING: Missing block: B:707:0x0f5b, code skipped:
             recordInstallAppInfo(r14.packageName, r71, r74);
      */
-    /* JADX WARNING: Missing block: B:705:0x0f65, code:
+    /* JADX WARNING: Missing block: B:708:0x0f65, code skipped:
             r7 = r71;
             r6 = r74;
      */
-    /* JADX WARNING: Missing block: B:706:0x0f69, code:
+    /* JADX WARNING: Missing block: B:709:0x0f69, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -23663,6 +21180,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                     th = th6;
                                     z4 = replace4;
                                     tmpPackageFile2 = tmpPackageFile;
+                                    throw th;
                                 }
                             }
                             installBeginTime3 = installBeginTime2;
@@ -24215,15 +21733,355 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                     e2 = e7;
                                                                     packageSetting = childPs;
                                                                     try {
-                                                                        if (installBeginTime2.sharedUser == null) {
+                                                                        if (installBeginTime2.sharedUser == null || !isSystemSignatureUpdated(installBeginTime2.signatures.mSigningDetails.signatures, pp2.mSigningDetails.signatures)) {
+                                                                            packageInstalledInfo.setError(e2.error, e2.getMessage());
+                                                                            return;
                                                                         }
-                                                                        packageInstalledInfo.setError(e2.error, e2.getMessage());
+                                                                        str3 = TAG;
+                                                                        stringBuilder5 = new StringBuilder();
+                                                                        stringBuilder5.append("CertCompat: ");
+                                                                        stringBuilder5.append(pp2.packageName);
+                                                                        stringBuilder5.append(" system signature updated. Update signatures.");
+                                                                        Slog.i(str3, stringBuilder5.toString());
+                                                                        installBeginTime2.signatures.mSigningDetails = pp2.mSigningDetails;
+                                                                        if (SystemProperties.get("ro.config.hw_optb", "0").equals("156") != null) {
+                                                                        }
+                                                                        oldCodePath2 = ((PackageSetting) this.mSettings.mPackages.get(volumeUuid2)).codePathString;
+                                                                        if ((installBeginTime2.pkg.applicationInfo.flags & 1) != null) {
+                                                                        }
+                                                                        systemApp = (installBeginTime2.pkg.applicationInfo.flags & 1) != null ? true : null;
+                                                                        packageInstalledInfo.origUsers = installBeginTime2.queryInstalledUsers(sUserManager.getUserIds(), 1);
+                                                                        parseFlags = oldCodePath2;
+                                                                        childCount = pp2.permissions.size();
+                                                                        installFlags3 = childCount - 1;
+                                                                        while (installFlags3 >= 0) {
+                                                                        }
+                                                                        installerPackageName = installerPackageName2;
+                                                                        try {
+                                                                            if (systemApp) {
+                                                                                if (onExternal2) {
+                                                                                    packageInstalledInfo.setError(-19, "Cannot install updates to system apps on sdcard");
+                                                                                    return;
+                                                                                } else if (instantApp) {
+                                                                                    packageInstalledInfo.setError((int) -116, "Cannot update a system app with an instant app");
+                                                                                    return;
+                                                                                }
+                                                                            }
+                                                                            InstallerMgr.getInstance().installPackage(0, installArgs.installerPackageName, volumeUuid2);
+                                                                            String str5;
+                                                                            StringBuilder stringBuilder8;
+                                                                            if (installArgs.move != null) {
+                                                                                installBeginTime2 = (scanFlags2 | 1) | 256;
+                                                                                synchronized (this.mPackages) {
+                                                                                    signatureCheckPs = (PackageSetting) this.mSettings.mPackages.get(volumeUuid2);
+                                                                                    if (signatureCheckPs == null) {
+                                                                                        stringBuilder4 = new StringBuilder();
+                                                                                        stringBuilder4.append("Missing settings for moved package ");
+                                                                                        stringBuilder4.append(volumeUuid2);
+                                                                                        packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, stringBuilder4.toString());
+                                                                                    }
+                                                                                    pp2.applicationInfo.primaryCpuAbi = signatureCheckPs.primaryCpuAbiString;
+                                                                                    pp2.applicationInfo.secondaryCpuAbi = signatureCheckPs.secondaryCpuAbiString;
+                                                                                    str5 = TAG;
+                                                                                    stringBuilder8 = new StringBuilder();
+                                                                                    stringBuilder8.append("installPackageLI-> install move case, pkg=");
+                                                                                    stringBuilder8.append(pp2);
+                                                                                    stringBuilder8.append(", primaryCpuAbi=");
+                                                                                    stringBuilder8.append(pp2.applicationInfo.primaryCpuAbi);
+                                                                                    Slog.d(str5, stringBuilder8.toString());
+                                                                                }
+                                                                            } else if (forwardLocked || pp2.applicationInfo.isExternalAsec()) {
+                                                                                scanFlags = scanFlags2;
+                                                                                if (this.mCustPms != null && this.mCustPms.needDerivePkgAbi(pp2)) {
+                                                                                    derivePackageAbi(pp2, installArgs.abiOverride, 1);
+                                                                                }
+                                                                                if (installArgs.doRename(packageInstalledInfo.returnCode, pp2, parseFlags)) {
+                                                                                    packageInstalledInfo.setError(-4, "Failed rename");
+                                                                                    return;
+                                                                                }
+                                                                                if (PackageManagerServiceUtils.isApkVerityEnabled()) {
+                                                                                    installBeginTime2 = null;
+                                                                                    synchronized (this.mPackages) {
+                                                                                        signatureCheckPs = (PackageSetting) this.mSettings.mPackages.get(volumeUuid2);
+                                                                                        if (signatureCheckPs != null && signatureCheckPs.isPrivileged()) {
+                                                                                            installBeginTime2 = pp2.baseCodePath;
+                                                                                        }
+                                                                                    }
+                                                                                    if (installBeginTime2 != null) {
+                                                                                        SetupResult result = VerityUtils.generateApkVeritySetupData(installBeginTime2);
+                                                                                        if (result.isOk()) {
+                                                                                            if (Build.IS_DEBUGGABLE) {
+                                                                                                str2 = TAG;
+                                                                                                stringBuilder4 = new StringBuilder();
+                                                                                                stringBuilder4.append("Enabling apk verity to ");
+                                                                                                stringBuilder4.append(installBeginTime2);
+                                                                                                Slog.i(str2, stringBuilder4.toString());
+                                                                                            }
+                                                                                            FileDescriptor fd = result.getUnownedFileDescriptor();
+                                                                                            try {
+                                                                                                byte[] signedRootHash = VerityUtils.generateFsverityRootHash(installBeginTime2);
+                                                                                                this.mInstaller.installApkVerity(installBeginTime2, fd, result.getContentSize());
+                                                                                                this.mInstaller.assertFsverityRootHashMatches(installBeginTime2, signedRootHash);
+                                                                                            } catch (InstallerException | IOException | DigestException | NoSuchAlgorithmException e8) {
+                                                                                                stringBuilder8 = new StringBuilder();
+                                                                                                stringBuilder8.append("Failed to set up verity: ");
+                                                                                                stringBuilder8.append(e8);
+                                                                                                packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, stringBuilder8.toString());
+                                                                                                return;
+                                                                                            } finally {
+                                                                                                IoUtils.closeQuietly(fd);
+                                                                                            }
+                                                                                        } else if (result.isFailed()) {
+                                                                                            packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, "Failed to generate verity");
+                                                                                            return;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                if (instantApp) {
+                                                                                    onExternal = replace3;
+                                                                                    if (DEBUG_DOMAIN_VERIFICATION) {
+                                                                                        str2 = TAG;
+                                                                                        installBeginTime2 = new StringBuilder();
+                                                                                        installBeginTime2.append("Not verifying instant app install for app links: ");
+                                                                                        installBeginTime2.append(volumeUuid2);
+                                                                                        Slog.d(str2, installBeginTime2.toString());
+                                                                                    }
+                                                                                } else {
+                                                                                    onExternal = replace3;
+                                                                                    startIntentFilterVerifications(installArgs.user.getIdentifier(), onExternal, pp2);
+                                                                                }
+                                                                                tmpPackageFile = installFlags;
+                                                                                PackageFreezer freezer = freezePackageForInstall(volumeUuid2, tmpPackageFile, "installPackageLI");
+                                                                                if (onExternal) {
+                                                                                    try {
+                                                                                        if (pp2.applicationInfo.isStaticSharedLibrary()) {
+                                                                                            try {
+                                                                                                pkg = (Package) this.mPackages.get(pp2.packageName);
+                                                                                                if (!(pkg == null || pkg.getLongVersionCode() == pp2.getLongVersionCode())) {
+                                                                                                    packageInstalledInfo.setError((int) -5, "Packages declaring static-shared libs cannot be updated");
+                                                                                                    if (freezer != null) {
+                                                                                                        $closeResource(null, freezer);
+                                                                                                    }
+                                                                                                    return;
+                                                                                                }
+                                                                                            } catch (Throwable th23) {
+                                                                                                th = th23;
+                                                                                                th2 = null;
+                                                                                                z4 = onExternal;
+                                                                                                z = forwardLocked;
+                                                                                                onExternal = tmpPackageFile;
+                                                                                                String oldCodePath3 = parseFlags;
+                                                                                                z2 = onExternal2;
+                                                                                                forwardLocked = installBeginTime3;
+                                                                                                file = tmpPackageFile2;
+                                                                                                str = volumeUuid;
+                                                                                                parseFlags = freezer;
+                                                                                                scanFlags = volumeUuid2;
+                                                                                                if (parseFlags != 0) {
+                                                                                                }
+                                                                                                throw th;
+                                                                                            }
+                                                                                        }
+                                                                                        installBeginTime = installBeginTime3;
+                                                                                        obj2 = parseFlags;
+                                                                                        parseFlags = null;
+                                                                                        parseFlags = freezer;
+                                                                                        z4 = onExternal;
+                                                                                        z2 = onExternal2;
+                                                                                        z = forwardLocked;
+                                                                                        installFlags2 = tmpPackageFile;
+                                                                                        file = tmpPackageFile2;
+                                                                                    } catch (Throwable th24) {
+                                                                                        th = th24;
+                                                                                        z4 = onExternal;
+                                                                                        z = forwardLocked;
+                                                                                        obj2 = parseFlags;
+                                                                                        z2 = onExternal2;
+                                                                                        file = tmpPackageFile2;
+                                                                                        parseFlags = freezer;
+                                                                                        onExternal = tmpPackageFile;
+                                                                                        i2 = scanFlags;
+                                                                                        forwardLocked = installBeginTime3;
+                                                                                        str = volumeUuid;
+                                                                                        th2 = null;
+                                                                                        scanFlags = volumeUuid2;
+                                                                                        if (parseFlags != 0) {
+                                                                                            $closeResource(th2, parseFlags);
+                                                                                        }
+                                                                                        throw th;
+                                                                                    }
+                                                                                    try {
+                                                                                        replacePackageLIF(pp2, i, scanFlags, installArgs.user, installerPackageName, packageInstalledInfo, installArgs.installReason);
+                                                                                        i2 = scanFlags;
+                                                                                        str = volumeUuid;
+                                                                                        scanFlags = volumeUuid2;
+                                                                                    } catch (Throwable th25) {
+                                                                                        th = th25;
+                                                                                        i2 = scanFlags;
+                                                                                        str = volumeUuid;
+                                                                                        forwardLocked = installBeginTime;
+                                                                                        i3 = installFlags2;
+                                                                                        th2 = null;
+                                                                                        scanFlags = volumeUuid2;
+                                                                                        if (parseFlags != 0) {
+                                                                                        }
+                                                                                        throw th;
+                                                                                    }
+                                                                                }
+                                                                                z = forwardLocked;
+                                                                                installFlags2 = tmpPackageFile;
+                                                                                obj2 = parseFlags;
+                                                                                z2 = onExternal2;
+                                                                                installBeginTime = installBeginTime3;
+                                                                                file = tmpPackageFile2;
+                                                                                parseFlags = freezer;
+                                                                                scanFlags2 = scanFlags | 64;
+                                                                                try {
+                                                                                    i2 = scanFlags;
+                                                                                    str = volumeUuid;
+                                                                                    scanFlags = volumeUuid2;
+                                                                                    try {
+                                                                                        installNewPackageLIF(pp2, i, scanFlags2, installArgs.user, installerPackageName, volumeUuid, packageInstalledInfo, installArgs.installReason);
+                                                                                    } catch (Throwable th26) {
+                                                                                        th = th26;
+                                                                                        forwardLocked = installBeginTime;
+                                                                                        i3 = installFlags2;
+                                                                                        th2 = 0;
+                                                                                        if (parseFlags != 0) {
+                                                                                        }
+                                                                                        throw th;
+                                                                                    }
+                                                                                } catch (Throwable th27) {
+                                                                                    th = th27;
+                                                                                    i2 = scanFlags;
+                                                                                    str = volumeUuid;
+                                                                                    forwardLocked = installBeginTime;
+                                                                                    i3 = installFlags2;
+                                                                                    scanFlags = volumeUuid2;
+                                                                                    th2 = 0;
+                                                                                    if (parseFlags != 0) {
+                                                                                    }
+                                                                                    throw th;
+                                                                                }
+                                                                                if (parseFlags != 0) {
+                                                                                    $closeResource(0, parseFlags);
+                                                                                }
+                                                                                HwFrameworkFactory.getHwBehaviorCollectManager().sendEvent(1, pp2.applicationInfo.uid, 0, pp2.packageName, installArgs.installerPackageName);
+                                                                                this.mArtManagerService.prepareAppProfiles(pp2, resolveUserIds(installArgs.user.getIdentifier()));
+                                                                                z3 = packageInstalledInfo.returnCode == 1 && !z && !pp2.applicationInfo.isExternalAsec() && (!(instantApp && Global.getInt(this.mContext.getContentResolver(), "instant_app_dexopt_enabled", 0) == 0) && (pp2.applicationInfo.flags & 2) == 0);
+                                                                                if (z3) {
+                                                                                    Trace.traceBegin(262144, "dexopt");
+                                                                                    this.mPackageDexOptimizer.performDexOpt(pp2, pp2.usesLibraryFiles, null, getOrCreateCompilerPackageStats(pp2), this.mDexManager.getPackageUseInfoOrDefault(pp2.packageName), new DexoptOptions(pp2.packageName, 2, (int) UsbTerminalTypes.TERMINAL_BIDIR_SKRPHONE_SUPRESS));
+                                                                                    Trace.traceEnd(262144);
+                                                                                }
+                                                                                BackgroundDexOptService.notifyPackageChanged(pp2.packageName);
+                                                                                synchronized (this.mPackages) {
+                                                                                    signatureCheckPs = (PackageSetting) this.mSettings.mPackages.get(scanFlags);
+                                                                                    if (signatureCheckPs != null) {
+                                                                                        try {
+                                                                                            packageInstalledInfo.newUsers = signatureCheckPs.queryInstalledUsers(sUserManager.getUserIds(), true);
+                                                                                            signatureCheckPs.setUpdateAvailable(0);
+                                                                                        } catch (Throwable th28) {
+                                                                                            th = th28;
+                                                                                            forwardLocked = installBeginTime;
+                                                                                            i3 = installFlags2;
+                                                                                        }
+                                                                                    }
+                                                                                    try {
+                                                                                        if (packageInstalledInfo.returnCode == 1) {
+                                                                                            installBeginTime2 = null;
+                                                                                            writeCertCompatPackages(false);
+                                                                                        } else {
+                                                                                            installBeginTime2 = null;
+                                                                                        }
+                                                                                        scanFlags2 = pp2.childPackages != null ? pp2.childPackages.size() : installBeginTime2;
+                                                                                        while (installBeginTime2 < scanFlags2) {
+                                                                                            Package childPkg = (Package) pp2.childPackages.get(installBeginTime2);
+                                                                                            PackageInstalledInfo childRes = (PackageInstalledInfo) packageInstalledInfo.addedChildPackages.get(childPkg.packageName);
+                                                                                            forwardLocked = this.mSettings.getPackageLPr(childPkg.packageName);
+                                                                                            if (forwardLocked) {
+                                                                                                childRes.newUsers = forwardLocked.queryInstalledUsers(sUserManager.getUserIds(), true);
+                                                                                            }
+                                                                                            installBeginTime2++;
+                                                                                        }
+                                                                                        if (packageInstalledInfo.returnCode == 1) {
+                                                                                            updateSequenceNumberLP(signatureCheckPs, packageInstalledInfo.newUsers);
+                                                                                            updateInstantAppInstallerLocked(scanFlags);
+                                                                                        }
+                                                                                    } catch (Throwable th29) {
+                                                                                        th = th29;
+                                                                                        forwardLocked = installBeginTime;
+                                                                                        i3 = installFlags2;
+                                                                                        while (true) {
+                                                                                            try {
+                                                                                                break;
+                                                                                            } catch (Throwable th30) {
+                                                                                                th = th30;
+                                                                                            }
+                                                                                        }
+                                                                                        throw th;
+                                                                                    }
+                                                                                }
+                                                                            } else {
+                                                                                installBeginTime2 = scanFlags2 | 1;
+                                                                                try {
+                                                                                    derivePackageAbi(pp2, TextUtils.isEmpty(pp2.cpuAbiOverride) ? installArgs.abiOverride : pp2.cpuAbiOverride, pp2.isLibrary() ^ true);
+                                                                                    str5 = TAG;
+                                                                                    stringBuilder8 = new StringBuilder();
+                                                                                    stringBuilder8.append("installPackageLI-> install derivePackageAbi case, pkg=");
+                                                                                    stringBuilder8.append(pp2);
+                                                                                    stringBuilder8.append(", primaryCpuAbi=");
+                                                                                    stringBuilder8.append(pp2.applicationInfo.primaryCpuAbi);
+                                                                                    Slog.d(str5, stringBuilder8.toString());
+                                                                                    synchronized (this.mPackages) {
+                                                                                        try {
+                                                                                            updateSharedLibrariesLPr(pp2, null);
+                                                                                        } catch (PackageManagerException e22) {
+                                                                                            PackageManagerException packageManagerException = e22;
+                                                                                            str5 = TAG;
+                                                                                            stringBuilder8 = new StringBuilder();
+                                                                                            stringBuilder8.append("updateAllSharedLibrariesLPw failed: ");
+                                                                                            stringBuilder8.append(e22.getMessage());
+                                                                                            Slog.e(str5, stringBuilder8.toString());
+                                                                                        }
+                                                                                    }
+                                                                                } catch (PackageManagerException e222) {
+                                                                                    Slog.e(TAG, "Error deriving application ABI", e222);
+                                                                                    packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, "Error deriving application ABI");
+                                                                                    return;
+                                                                                }
+                                                                            }
+                                                                            scanFlags = installBeginTime2;
+                                                                            try {
+                                                                                derivePackageAbi(pp2, installArgs.abiOverride, 1);
+                                                                                if (installArgs.doRename(packageInstalledInfo.returnCode, pp2, parseFlags)) {
+                                                                                }
+                                                                            } catch (PackageManagerException e2222) {
+                                                                                Slog.e(TAG, "Error deriving application ABI install app to sdcard", e2222);
+                                                                                packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, "Error deriving application ABI");
+                                                                                return;
+                                                                            }
+                                                                        } catch (Throwable th31) {
+                                                                            th = th31;
+                                                                            z = forwardLocked;
+                                                                            z2 = onExternal2;
+                                                                            forwardLocked = installBeginTime3;
+                                                                            file = tmpPackageFile2;
+                                                                            str = volumeUuid;
+                                                                            i3 = installFlags;
+                                                                            installBeginTime2 = volumeUuid2;
+                                                                            replace4 = replace3;
+                                                                            obj3 = parseFlags;
+                                                                            while (true) {
+                                                                                break;
+                                                                            }
+                                                                            throw th;
+                                                                        }
+                                                                    } catch (PackageManagerException e22222) {
+                                                                        packageInstalledInfo.setError(e22222.error, e22222.getMessage());
                                                                         return;
-                                                                    } catch (PackageManagerException e22) {
-                                                                        packageInstalledInfo.setError(e22.error, e22.getMessage());
-                                                                        return;
-                                                                    } catch (Throwable th23) {
-                                                                        th = th23;
+                                                                    } catch (Throwable th32) {
+                                                                        th = th32;
                                                                         z = forwardLocked;
                                                                         installBeginTime2 = volumeUuid2;
                                                                         installerPackageName = installerPackageName2;
@@ -24238,350 +22096,15 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                         throw th;
                                                                     }
                                                                 }
-                                                            } catch (PackageManagerException e8) {
-                                                                e22 = e8;
+                                                            } catch (PackageManagerException e9) {
+                                                                e22222 = e9;
                                                                 packageSetting = childPs;
                                                                 replace3 = onExternal;
                                                                 installFlags5 = tmpPackageFile;
-                                                                if (installBeginTime2.sharedUser == null || !isSystemSignatureUpdated(installBeginTime2.signatures.mSigningDetails.signatures, pp2.mSigningDetails.signatures)) {
-                                                                    packageInstalledInfo.setError(e22.error, e22.getMessage());
-                                                                    return;
+                                                                if (installBeginTime2.sharedUser == null) {
                                                                 }
-                                                                str3 = TAG;
-                                                                stringBuilder5 = new StringBuilder();
-                                                                stringBuilder5.append("CertCompat: ");
-                                                                stringBuilder5.append(pp2.packageName);
-                                                                stringBuilder5.append(" system signature updated. Update signatures.");
-                                                                Slog.i(str3, stringBuilder5.toString());
-                                                                installBeginTime2.signatures.mSigningDetails = pp2.mSigningDetails;
-                                                                if (SystemProperties.get("ro.config.hw_optb", "0").equals("156") != null) {
-                                                                }
-                                                                oldCodePath2 = ((PackageSetting) this.mSettings.mPackages.get(volumeUuid2)).codePathString;
-                                                                if ((installBeginTime2.pkg.applicationInfo.flags & 1) != null) {
-                                                                }
-                                                                systemApp = (installBeginTime2.pkg.applicationInfo.flags & 1) != null ? true : null;
-                                                                packageInstalledInfo.origUsers = installBeginTime2.queryInstalledUsers(sUserManager.getUserIds(), 1);
-                                                                parseFlags = oldCodePath2;
-                                                                childCount = pp2.permissions.size();
-                                                                installFlags3 = childCount - 1;
-                                                                while (installFlags3 >= 0) {
-                                                                }
-                                                                installerPackageName = installerPackageName2;
-                                                                try {
-                                                                    if (systemApp) {
-                                                                        if (onExternal2) {
-                                                                            packageInstalledInfo.setError(-19, "Cannot install updates to system apps on sdcard");
-                                                                            return;
-                                                                        } else if (instantApp) {
-                                                                            packageInstalledInfo.setError((int) -116, "Cannot update a system app with an instant app");
-                                                                            return;
-                                                                        }
-                                                                    }
-                                                                    InstallerMgr.getInstance().installPackage(0, installArgs.installerPackageName, volumeUuid2);
-                                                                    String str5;
-                                                                    StringBuilder stringBuilder8;
-                                                                    if (installArgs.move != null) {
-                                                                        installBeginTime2 = (scanFlags2 | 1) | 256;
-                                                                        synchronized (this.mPackages) {
-                                                                            signatureCheckPs = (PackageSetting) this.mSettings.mPackages.get(volumeUuid2);
-                                                                            if (signatureCheckPs == null) {
-                                                                                stringBuilder4 = new StringBuilder();
-                                                                                stringBuilder4.append("Missing settings for moved package ");
-                                                                                stringBuilder4.append(volumeUuid2);
-                                                                                packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, stringBuilder4.toString());
-                                                                            }
-                                                                            pp2.applicationInfo.primaryCpuAbi = signatureCheckPs.primaryCpuAbiString;
-                                                                            pp2.applicationInfo.secondaryCpuAbi = signatureCheckPs.secondaryCpuAbiString;
-                                                                            str5 = TAG;
-                                                                            stringBuilder8 = new StringBuilder();
-                                                                            stringBuilder8.append("installPackageLI-> install move case, pkg=");
-                                                                            stringBuilder8.append(pp2);
-                                                                            stringBuilder8.append(", primaryCpuAbi=");
-                                                                            stringBuilder8.append(pp2.applicationInfo.primaryCpuAbi);
-                                                                            Slog.d(str5, stringBuilder8.toString());
-                                                                        }
-                                                                    } else if (forwardLocked || pp2.applicationInfo.isExternalAsec()) {
-                                                                        scanFlags = scanFlags2;
-                                                                        if (this.mCustPms != null && this.mCustPms.needDerivePkgAbi(pp2)) {
-                                                                            derivePackageAbi(pp2, installArgs.abiOverride, 1);
-                                                                        }
-                                                                        if (installArgs.doRename(packageInstalledInfo.returnCode, pp2, parseFlags)) {
-                                                                            packageInstalledInfo.setError(-4, "Failed rename");
-                                                                            return;
-                                                                        }
-                                                                        if (PackageManagerServiceUtils.isApkVerityEnabled()) {
-                                                                            installBeginTime2 = null;
-                                                                            synchronized (this.mPackages) {
-                                                                                signatureCheckPs = (PackageSetting) this.mSettings.mPackages.get(volumeUuid2);
-                                                                                if (signatureCheckPs != null && signatureCheckPs.isPrivileged()) {
-                                                                                    installBeginTime2 = pp2.baseCodePath;
-                                                                                }
-                                                                            }
-                                                                            if (installBeginTime2 != null) {
-                                                                                SetupResult result = VerityUtils.generateApkVeritySetupData(installBeginTime2);
-                                                                                if (result.isOk()) {
-                                                                                    if (Build.IS_DEBUGGABLE) {
-                                                                                        str2 = TAG;
-                                                                                        stringBuilder4 = new StringBuilder();
-                                                                                        stringBuilder4.append("Enabling apk verity to ");
-                                                                                        stringBuilder4.append(installBeginTime2);
-                                                                                        Slog.i(str2, stringBuilder4.toString());
-                                                                                    }
-                                                                                    FileDescriptor fd = result.getUnownedFileDescriptor();
-                                                                                    try {
-                                                                                        byte[] signedRootHash = VerityUtils.generateFsverityRootHash(installBeginTime2);
-                                                                                        this.mInstaller.installApkVerity(installBeginTime2, fd, result.getContentSize());
-                                                                                        this.mInstaller.assertFsverityRootHashMatches(installBeginTime2, signedRootHash);
-                                                                                    } catch (Exception e9) {
-                                                                                    } finally {
-                                                                                        IoUtils.closeQuietly(fd);
-                                                                                    }
-                                                                                } else if (result.isFailed()) {
-                                                                                    packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, "Failed to generate verity");
-                                                                                    return;
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                        if (instantApp) {
-                                                                            onExternal = replace3;
-                                                                            if (DEBUG_DOMAIN_VERIFICATION) {
-                                                                                str2 = TAG;
-                                                                                installBeginTime2 = new StringBuilder();
-                                                                                installBeginTime2.append("Not verifying instant app install for app links: ");
-                                                                                installBeginTime2.append(volumeUuid2);
-                                                                                Slog.d(str2, installBeginTime2.toString());
-                                                                            }
-                                                                        } else {
-                                                                            onExternal = replace3;
-                                                                            startIntentFilterVerifications(installArgs.user.getIdentifier(), onExternal, pp2);
-                                                                        }
-                                                                        tmpPackageFile = installFlags;
-                                                                        PackageFreezer freezer = freezePackageForInstall(volumeUuid2, tmpPackageFile, "installPackageLI");
-                                                                        if (onExternal) {
-                                                                            try {
-                                                                                if (pp2.applicationInfo.isStaticSharedLibrary()) {
-                                                                                    try {
-                                                                                        pkg = (Package) this.mPackages.get(pp2.packageName);
-                                                                                        if (!(pkg == null || pkg.getLongVersionCode() == pp2.getLongVersionCode())) {
-                                                                                            packageInstalledInfo.setError((int) -5, "Packages declaring static-shared libs cannot be updated");
-                                                                                            if (freezer != null) {
-                                                                                                $closeResource(null, freezer);
-                                                                                            }
-                                                                                            return;
-                                                                                        }
-                                                                                    } catch (Throwable th24) {
-                                                                                        th = th24;
-                                                                                        th2 = null;
-                                                                                        z4 = onExternal;
-                                                                                        z = forwardLocked;
-                                                                                        onExternal = tmpPackageFile;
-                                                                                        String oldCodePath3 = parseFlags;
-                                                                                        z2 = onExternal2;
-                                                                                        forwardLocked = installBeginTime3;
-                                                                                        file = tmpPackageFile2;
-                                                                                        str = volumeUuid;
-                                                                                        parseFlags = freezer;
-                                                                                        scanFlags = volumeUuid2;
-                                                                                        if (parseFlags != 0) {
-                                                                                        }
-                                                                                        throw th;
-                                                                                    }
-                                                                                }
-                                                                                installBeginTime = installBeginTime3;
-                                                                                obj2 = parseFlags;
-                                                                                parseFlags = null;
-                                                                                parseFlags = freezer;
-                                                                                z4 = onExternal;
-                                                                                z2 = onExternal2;
-                                                                                z = forwardLocked;
-                                                                                installFlags2 = tmpPackageFile;
-                                                                                file = tmpPackageFile2;
-                                                                            } catch (Throwable th25) {
-                                                                                th = th25;
-                                                                                z4 = onExternal;
-                                                                                z = forwardLocked;
-                                                                                obj2 = parseFlags;
-                                                                                z2 = onExternal2;
-                                                                                file = tmpPackageFile2;
-                                                                                parseFlags = freezer;
-                                                                                onExternal = tmpPackageFile;
-                                                                                i2 = scanFlags;
-                                                                                forwardLocked = installBeginTime3;
-                                                                                str = volumeUuid;
-                                                                                th2 = null;
-                                                                                scanFlags = volumeUuid2;
-                                                                                if (parseFlags != 0) {
-                                                                                    $closeResource(th2, parseFlags);
-                                                                                }
-                                                                                throw th;
-                                                                            }
-                                                                            try {
-                                                                                replacePackageLIF(pp2, i, scanFlags, installArgs.user, installerPackageName, packageInstalledInfo, installArgs.installReason);
-                                                                                i2 = scanFlags;
-                                                                                str = volumeUuid;
-                                                                                scanFlags = volumeUuid2;
-                                                                            } catch (Throwable th26) {
-                                                                                th = th26;
-                                                                                i2 = scanFlags;
-                                                                                str = volumeUuid;
-                                                                                forwardLocked = installBeginTime;
-                                                                                i3 = installFlags2;
-                                                                                th2 = null;
-                                                                                scanFlags = volumeUuid2;
-                                                                                if (parseFlags != 0) {
-                                                                                }
-                                                                                throw th;
-                                                                            }
-                                                                        }
-                                                                        z = forwardLocked;
-                                                                        installFlags2 = tmpPackageFile;
-                                                                        obj2 = parseFlags;
-                                                                        z2 = onExternal2;
-                                                                        installBeginTime = installBeginTime3;
-                                                                        file = tmpPackageFile2;
-                                                                        parseFlags = freezer;
-                                                                        scanFlags2 = scanFlags | 64;
-                                                                        try {
-                                                                            i2 = scanFlags;
-                                                                            str = volumeUuid;
-                                                                            scanFlags = volumeUuid2;
-                                                                            try {
-                                                                                installNewPackageLIF(pp2, i, scanFlags2, installArgs.user, installerPackageName, volumeUuid, packageInstalledInfo, installArgs.installReason);
-                                                                            } catch (Throwable th27) {
-                                                                                th = th27;
-                                                                                forwardLocked = installBeginTime;
-                                                                                i3 = installFlags2;
-                                                                                th2 = 0;
-                                                                                if (parseFlags != 0) {
-                                                                                }
-                                                                                throw th;
-                                                                            }
-                                                                        } catch (Throwable th28) {
-                                                                            th = th28;
-                                                                            i2 = scanFlags;
-                                                                            str = volumeUuid;
-                                                                            forwardLocked = installBeginTime;
-                                                                            i3 = installFlags2;
-                                                                            scanFlags = volumeUuid2;
-                                                                            th2 = 0;
-                                                                            if (parseFlags != 0) {
-                                                                            }
-                                                                            throw th;
-                                                                        }
-                                                                        if (parseFlags != 0) {
-                                                                            $closeResource(0, parseFlags);
-                                                                        }
-                                                                        HwFrameworkFactory.getHwBehaviorCollectManager().sendEvent(1, pp2.applicationInfo.uid, 0, pp2.packageName, installArgs.installerPackageName);
-                                                                        this.mArtManagerService.prepareAppProfiles(pp2, resolveUserIds(installArgs.user.getIdentifier()));
-                                                                        z3 = packageInstalledInfo.returnCode == 1 && !z && !pp2.applicationInfo.isExternalAsec() && (!(instantApp && Global.getInt(this.mContext.getContentResolver(), "instant_app_dexopt_enabled", 0) == 0) && (pp2.applicationInfo.flags & 2) == 0);
-                                                                        if (z3) {
-                                                                            Trace.traceBegin(262144, "dexopt");
-                                                                            this.mPackageDexOptimizer.performDexOpt(pp2, pp2.usesLibraryFiles, null, getOrCreateCompilerPackageStats(pp2), this.mDexManager.getPackageUseInfoOrDefault(pp2.packageName), new DexoptOptions(pp2.packageName, 2, (int) UsbTerminalTypes.TERMINAL_BIDIR_SKRPHONE_SUPRESS));
-                                                                            Trace.traceEnd(262144);
-                                                                        }
-                                                                        BackgroundDexOptService.notifyPackageChanged(pp2.packageName);
-                                                                        synchronized (this.mPackages) {
-                                                                            signatureCheckPs = (PackageSetting) this.mSettings.mPackages.get(scanFlags);
-                                                                            if (signatureCheckPs != null) {
-                                                                                try {
-                                                                                    packageInstalledInfo.newUsers = signatureCheckPs.queryInstalledUsers(sUserManager.getUserIds(), true);
-                                                                                    signatureCheckPs.setUpdateAvailable(0);
-                                                                                } catch (Throwable th29) {
-                                                                                    th = th29;
-                                                                                    forwardLocked = installBeginTime;
-                                                                                    i3 = installFlags2;
-                                                                                }
-                                                                            }
-                                                                            try {
-                                                                                if (packageInstalledInfo.returnCode == 1) {
-                                                                                    installBeginTime2 = null;
-                                                                                    writeCertCompatPackages(false);
-                                                                                } else {
-                                                                                    installBeginTime2 = null;
-                                                                                }
-                                                                                scanFlags2 = pp2.childPackages != null ? pp2.childPackages.size() : installBeginTime2;
-                                                                                while (installBeginTime2 < scanFlags2) {
-                                                                                    Package childPkg = (Package) pp2.childPackages.get(installBeginTime2);
-                                                                                    PackageInstalledInfo childRes = (PackageInstalledInfo) packageInstalledInfo.addedChildPackages.get(childPkg.packageName);
-                                                                                    forwardLocked = this.mSettings.getPackageLPr(childPkg.packageName);
-                                                                                    if (forwardLocked) {
-                                                                                        childRes.newUsers = forwardLocked.queryInstalledUsers(sUserManager.getUserIds(), true);
-                                                                                    }
-                                                                                    installBeginTime2++;
-                                                                                }
-                                                                                if (packageInstalledInfo.returnCode == 1) {
-                                                                                    updateSequenceNumberLP(signatureCheckPs, packageInstalledInfo.newUsers);
-                                                                                    updateInstantAppInstallerLocked(scanFlags);
-                                                                                }
-                                                                            } catch (Throwable th30) {
-                                                                                th = th30;
-                                                                                forwardLocked = installBeginTime;
-                                                                                i3 = installFlags2;
-                                                                                while (true) {
-                                                                                    try {
-                                                                                        break;
-                                                                                    } catch (Throwable th31) {
-                                                                                        th = th31;
-                                                                                    }
-                                                                                }
-                                                                                throw th;
-                                                                            }
-                                                                        }
-                                                                    } else {
-                                                                        installBeginTime2 = scanFlags2 | 1;
-                                                                        try {
-                                                                            derivePackageAbi(pp2, TextUtils.isEmpty(pp2.cpuAbiOverride) ? installArgs.abiOverride : pp2.cpuAbiOverride, pp2.isLibrary() ^ true);
-                                                                            str5 = TAG;
-                                                                            stringBuilder8 = new StringBuilder();
-                                                                            stringBuilder8.append("installPackageLI-> install derivePackageAbi case, pkg=");
-                                                                            stringBuilder8.append(pp2);
-                                                                            stringBuilder8.append(", primaryCpuAbi=");
-                                                                            stringBuilder8.append(pp2.applicationInfo.primaryCpuAbi);
-                                                                            Slog.d(str5, stringBuilder8.toString());
-                                                                            synchronized (this.mPackages) {
-                                                                                try {
-                                                                                    updateSharedLibrariesLPr(pp2, null);
-                                                                                } catch (PackageManagerException e222) {
-                                                                                    PackageManagerException packageManagerException = e222;
-                                                                                    str5 = TAG;
-                                                                                    stringBuilder8 = new StringBuilder();
-                                                                                    stringBuilder8.append("updateAllSharedLibrariesLPw failed: ");
-                                                                                    stringBuilder8.append(e222.getMessage());
-                                                                                    Slog.e(str5, stringBuilder8.toString());
-                                                                                }
-                                                                            }
-                                                                        } catch (PackageManagerException e2222) {
-                                                                            Slog.e(TAG, "Error deriving application ABI", e2222);
-                                                                            packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, "Error deriving application ABI");
-                                                                            return;
-                                                                        }
-                                                                    }
-                                                                    scanFlags = installBeginTime2;
-                                                                    try {
-                                                                        derivePackageAbi(pp2, installArgs.abiOverride, 1);
-                                                                        if (installArgs.doRename(packageInstalledInfo.returnCode, pp2, parseFlags)) {
-                                                                        }
-                                                                    } catch (PackageManagerException e22222) {
-                                                                        Slog.e(TAG, "Error deriving application ABI install app to sdcard", e22222);
-                                                                        packageInstalledInfo.setError((int) RequestStatus.SYS_ETIMEDOUT, "Error deriving application ABI");
-                                                                        return;
-                                                                    }
-                                                                } catch (Throwable th32) {
-                                                                    th = th32;
-                                                                    z = forwardLocked;
-                                                                    z2 = onExternal2;
-                                                                    forwardLocked = installBeginTime3;
-                                                                    file = tmpPackageFile2;
-                                                                    str = volumeUuid;
-                                                                    i3 = installFlags;
-                                                                    installBeginTime2 = volumeUuid2;
-                                                                    replace4 = replace3;
-                                                                    obj3 = parseFlags;
-                                                                    while (true) {
-                                                                        break;
-                                                                    }
-                                                                    throw th;
-                                                                }
+                                                                packageInstalledInfo.setError(e22222.error, e22222.getMessage());
+                                                                return;
                                                             } catch (Throwable th33) {
                                                                 th = th33;
                                                                 replace3 = onExternal;
@@ -24860,6 +22383,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 str = volumeUuid;
                                                 i3 = installFlags;
                                                 replace4 = replace3;
+                                                while (true) {
+                                                    break;
+                                                }
+                                                throw th;
                                             }
                                         }
                                         installerPackageName = installerPackageName2;
@@ -24945,7 +22472,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         packageInstalledInfo.setReturnCode(RequestStatus.SYS_ETIMEDOUT);
         Log.w(TAG, "can not install packages before FRP unlock");
         return;
-        return;
         packageInstalledInfo.setError("Failed collect during installPackageLI", e);
     }
 
@@ -24969,51 +22495,51 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x008a, code:
+    /* JADX WARNING: Missing block: B:25:0x008a, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:70:0x015b, code:
+    /* JADX WARNING: Missing block: B:71:0x015b, code skipped:
             if (r2 <= 0) goto L_0x0196;
      */
-    /* JADX WARNING: Missing block: B:72:0x015f, code:
+    /* JADX WARNING: Missing block: B:73:0x015f, code skipped:
             if (DEBUG_DOMAIN_VERIFICATION == false) goto L_0x0190;
      */
-    /* JADX WARNING: Missing block: B:73:0x0161, code:
+    /* JADX WARNING: Missing block: B:74:0x0161, code skipped:
             r0 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Starting ");
             r3.append(r2);
             r3.append(" IntentFilter verification");
      */
-    /* JADX WARNING: Missing block: B:74:0x0176, code:
+    /* JADX WARNING: Missing block: B:75:0x0176, code skipped:
             if (r2 <= 1) goto L_0x017c;
      */
-    /* JADX WARNING: Missing block: B:75:0x0178, code:
+    /* JADX WARNING: Missing block: B:76:0x0178, code skipped:
             r4 = "s";
      */
-    /* JADX WARNING: Missing block: B:76:0x017c, code:
+    /* JADX WARNING: Missing block: B:77:0x017c, code skipped:
             r4 = com.android.server.backup.BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
      */
-    /* JADX WARNING: Missing block: B:77:0x017e, code:
+    /* JADX WARNING: Missing block: B:78:0x017e, code skipped:
             r3.append(r4);
             r3.append(" for userId:");
             r3.append(r8);
             android.util.Slog.d(r0, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:78:0x0190, code:
+    /* JADX WARNING: Missing block: B:79:0x0190, code skipped:
             r1.mIntentFilterVerifier.startVerifications(r8);
      */
-    /* JADX WARNING: Missing block: B:80:0x0198, code:
+    /* JADX WARNING: Missing block: B:81:0x0198, code skipped:
             if (DEBUG_DOMAIN_VERIFICATION == false) goto L_0x01b0;
      */
-    /* JADX WARNING: Missing block: B:81:0x019a, code:
+    /* JADX WARNING: Missing block: B:82:0x019a, code skipped:
             r0 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("No filters or not all autoVerify for ");
             r3.append(r12);
             android.util.Slog.d(r0, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:82:0x01b0, code:
+    /* JADX WARNING: Missing block: B:83:0x01b0, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -25228,6 +22754,144 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         deletePackageVersioned(new VersionedPackage(packageName, versionCode), new LegacyPackageDeleteObserver(observer).getBinder(), userId, flags);
     }
 
+    public void deletePackageVersioned(VersionedPackage versionedPackage, IPackageDeleteObserver2 observer, int userId, int deleteFlags) {
+        String internalPackageName;
+        String str;
+        IPackageDeleteObserver2 iPackageDeleteObserver2 = observer;
+        int i = userId;
+        int callingUid = Binder.getCallingUid();
+        this.mContext.enforceCallingOrSelfPermission("android.permission.DELETE_PACKAGES", null);
+        boolean canViewInstantApps = canViewInstantApps(callingUid, i);
+        Preconditions.checkNotNull(versionedPackage);
+        Preconditions.checkNotNull(observer);
+        Preconditions.checkArgumentInRange(versionedPackage.getLongVersionCode(), -1, JobStatus.NO_LATEST_RUNTIME, "versionCode must be >= -1");
+        String packageName = versionedPackage.getPackageName();
+        long versionCode = versionedPackage.getLongVersionCode();
+        synchronized (this.mPackages) {
+            try {
+                internalPackageName = resolveInternalPackageNameLPr(packageName, versionCode);
+            } catch (Throwable th) {
+                long j = versionCode;
+                str = packageName;
+                int i2 = callingUid;
+                while (true) {
+                }
+            }
+        }
+        int uid = Binder.getCallingUid();
+        if (isOrphaned(internalPackageName) || isCallerAllowedToSilentlyUninstall(uid, internalPackageName)) {
+            boolean deleteAllUsers = (deleteFlags & 2) != 0;
+            int[] users = deleteAllUsers ? sUserManager.getUserIds() : new int[]{i};
+            if (UserHandle.getUserId(uid) != i || (deleteAllUsers && users.length > 1)) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("deletePackage for user ");
+                stringBuilder.append(i);
+                this.mContext.enforceCallingOrSelfPermission("android.permission.INTERACT_ACROSS_USERS_FULL", stringBuilder.toString());
+            }
+            if (isUserRestricted(i, "no_uninstall_apps")) {
+                try {
+                    iPackageDeleteObserver2.onPackageDeleted(packageName, -3, null);
+                } catch (RemoteException e) {
+                }
+                return;
+            } else if (deleteAllUsers || !getBlockUninstallForUser(internalPackageName, i)) {
+                if (DEBUG_REMOVE) {
+                    String str2 = TAG;
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("deletePackageAsUser: pkg=");
+                    stringBuilder2.append(internalPackageName);
+                    stringBuilder2.append(" user=");
+                    stringBuilder2.append(i);
+                    stringBuilder2.append(" deleteAllUsers: ");
+                    stringBuilder2.append(deleteAllUsers);
+                    stringBuilder2.append(" version=");
+                    stringBuilder2.append(versionCode == -1 ? "VERSION_CODE_HIGHEST" : Long.valueOf(versionCode));
+                    Slog.d(str2, stringBuilder2.toString());
+                }
+                PackageHandler packageHandler = this.mHandler;
+                str = internalPackageName;
+                int[] users2 = users;
+                final int i3 = callingUid;
+                boolean deleteAllUsers2 = deleteAllUsers;
+                deleteAllUsers = canViewInstantApps;
+                AnonymousClass15 anonymousClass15 = r1;
+                final boolean z = deleteAllUsers2;
+                final long j2 = versionCode;
+                final int i4 = i;
+                final int i5 = deleteFlags;
+                String packageName2 = packageName;
+                final int[] iArr = users2;
+                final IPackageDeleteObserver2 iPackageDeleteObserver22 = iPackageDeleteObserver2;
+                final String str3 = packageName2;
+                AnonymousClass15 anonymousClass152 = new Runnable() {
+                    public void run() {
+                        PackageManagerService.this.mHandler.removeCallbacks(this);
+                        PackageSetting ps = (PackageSetting) PackageManagerService.this.mSettings.mPackages.get(str);
+                        boolean doDeletePackage = true;
+                        int i = 0;
+                        if (ps != null) {
+                            boolean z = !ps.getInstantApp(UserHandle.getUserId(i3)) || deleteAllUsers;
+                            doDeletePackage = z;
+                        }
+                        if (!doDeletePackage) {
+                            i = -1;
+                        } else if (z) {
+                            int[] blockUninstallUserIds = PackageManagerService.this.getBlockUninstallForUsers(str, iArr);
+                            if (ArrayUtils.isEmpty(blockUninstallUserIds)) {
+                                i = PackageManagerService.this.deletePackageX(str, j2, i4, i5);
+                            } else {
+                                int userFlags = i5 & -3;
+                                int[] iArr = iArr;
+                                int length = iArr.length;
+                                while (i < length) {
+                                    int userId = iArr[i];
+                                    if (!ArrayUtils.contains(blockUninstallUserIds, userId)) {
+                                        int returnCode = PackageManagerService.this.deletePackageX(str, j2, userId, userFlags);
+                                        if (returnCode != 1) {
+                                            String str = PackageManagerService.TAG;
+                                            StringBuilder stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Package delete failed for user ");
+                                            stringBuilder.append(userId);
+                                            stringBuilder.append(", returnCode ");
+                                            stringBuilder.append(returnCode);
+                                            Slog.w(str, stringBuilder.toString());
+                                        }
+                                    }
+                                    i++;
+                                }
+                                i = -4;
+                            }
+                        } else {
+                            i = PackageManagerService.this.deletePackageX(str, j2, i4, i5);
+                        }
+                        try {
+                            iPackageDeleteObserver22.onPackageDeleted(str3, i, null);
+                        } catch (RemoteException e) {
+                            Log.i(PackageManagerService.TAG, "Observer no longer exists.");
+                        }
+                    }
+                };
+                packageHandler.post(anonymousClass15);
+                setNeedClearDeviceForCTS(false, packageName2);
+                Log.d(TAG, "setmNeedClearDeviceForCTS:false ");
+                return;
+            } else {
+                try {
+                    iPackageDeleteObserver2.onPackageDeleted(packageName, -4, null);
+                } catch (RemoteException e2) {
+                }
+                return;
+            }
+        }
+        try {
+            Intent intent = new Intent("android.intent.action.UNINSTALL_PACKAGE");
+            intent.setData(Uri.fromParts("package", packageName, null));
+            intent.putExtra("android.content.pm.extra.CALLBACK", observer.asBinder());
+            iPackageDeleteObserver2.onUserActionRequired(intent);
+        } catch (RemoteException e3) {
+        }
+    }
+
     private String resolveExternalPackageNameLPr(Package pkg) {
         if (pkg.staticSharedLibName != null) {
             return pkg.manifestPackageName;
@@ -25379,64 +23043,64 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return this.mKeepUninstalledPackages != null && this.mKeepUninstalledPackages.contains(packageName);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:195:0x02f7 A:{SYNTHETIC, Splitter: B:195:0x02f7} */
-    /* JADX WARNING: Removed duplicated region for block: B:173:0x02c0  */
-    /* JADX WARNING: Removed duplicated region for block: B:172:0x02bd  */
-    /* JADX WARNING: Missing block: B:71:0x0188, code:
+    /* JADX WARNING: Removed duplicated region for block: B:196:0x02f7 A:{SYNTHETIC, Splitter:B:196:0x02f7} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x02c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x02bd  */
+    /* JADX WARNING: Missing block: B:71:0x0188, code skipped:
             if (isUpdatedSystemApp(r7) == false) goto L_0x0190;
      */
-    /* JADX WARNING: Missing block: B:73:0x018c, code:
+    /* JADX WARNING: Missing block: B:73:0x018c, code skipped:
             if ((r14 & 4) != 0) goto L_0x0190;
      */
-    /* JADX WARNING: Missing block: B:74:0x018e, code:
+    /* JADX WARNING: Missing block: B:74:0x018e, code skipped:
             r0 = -1;
      */
-    /* JADX WARNING: Missing block: B:75:0x0190, code:
+    /* JADX WARNING: Missing block: B:75:0x0190, code skipped:
             r0 = r8;
      */
-    /* JADX WARNING: Missing block: B:76:0x0191, code:
+    /* JADX WARNING: Missing block: B:76:0x0191, code skipped:
             r13 = r0;
             r4 = r10.mInstallLock;
      */
-    /* JADX WARNING: Missing block: B:77:0x0194, code:
+    /* JADX WARNING: Missing block: B:77:0x0194, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:80:0x0197, code:
+    /* JADX WARNING: Missing block: B:80:0x0197, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x01c7;
      */
-    /* JADX WARNING: Missing block: B:82:?, code:
+    /* JADX WARNING: Missing block: B:82:?, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("deletePackageX: pkg=");
             r1.append(r11);
             r1.append(" user=");
      */
-    /* JADX WARNING: Missing block: B:85:?, code:
+    /* JADX WARNING: Missing block: B:85:?, code skipped:
             r1.append(r30);
             android.util.Slog.d(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:86:0x01ba, code:
+    /* JADX WARNING: Missing block: B:86:0x01ba, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:87:0x01bc, code:
+    /* JADX WARNING: Missing block: B:87:0x01bc, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:88:0x01bd, code:
+    /* JADX WARNING: Missing block: B:88:0x01bd, code skipped:
             r3 = r30;
      */
-    /* JADX WARNING: Missing block: B:89:0x01bf, code:
+    /* JADX WARNING: Missing block: B:89:0x01bf, code skipped:
             r21 = r4;
             r4 = r6;
             r16 = r8;
             r6 = r9;
      */
-    /* JADX WARNING: Missing block: B:90:0x01c7, code:
+    /* JADX WARNING: Missing block: B:90:0x01c7, code skipped:
             r3 = r30;
      */
-    /* JADX WARNING: Missing block: B:93:0x01cf, code:
+    /* JADX WARNING: Missing block: B:93:0x01cf, code skipped:
             r2 = freezePackageForDelete(r11, r13, r14, "deletePackageX");
      */
-    /* JADX WARNING: Missing block: B:96:0x01d5, code:
+    /* JADX WARNING: Missing block: B:96:0x01d5, code skipped:
             r12 = null;
             r15 = r2;
             r21 = r4;
@@ -25446,161 +23110,161 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r16 = r8;
             r25 = r9;
      */
-    /* JADX WARNING: Missing block: B:98:?, code:
+    /* JADX WARNING: Missing block: B:98:?, code skipped:
             r0 = deletePackageLIF(r11, android.os.UserHandle.of(r8), true, r5, r14 | Integer.MIN_VALUE, r9, true, null);
      */
-    /* JADX WARNING: Missing block: B:99:0x01fd, code:
+    /* JADX WARNING: Missing block: B:99:0x01fd, code skipped:
             if (r15 == null) goto L_0x020c;
      */
-    /* JADX WARNING: Missing block: B:101:?, code:
+    /* JADX WARNING: Missing block: B:101:?, code skipped:
             $closeResource(r12, r15);
      */
-    /* JADX WARNING: Missing block: B:102:0x0203, code:
+    /* JADX WARNING: Missing block: B:102:0x0203, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:103:0x0204, code:
+    /* JADX WARNING: Missing block: B:103:0x0204, code skipped:
             r4 = r23;
             r7 = r24;
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:104:0x020c, code:
+    /* JADX WARNING: Missing block: B:104:0x020c, code skipped:
             r1 = r0;
      */
-    /* JADX WARNING: Missing block: B:106:?, code:
+    /* JADX WARNING: Missing block: B:106:?, code skipped:
             r2 = r10.mPackages;
      */
-    /* JADX WARNING: Missing block: B:107:0x020f, code:
+    /* JADX WARNING: Missing block: B:107:0x020f, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:108:0x0210, code:
+    /* JADX WARNING: Missing block: B:108:0x0210, code skipped:
             if (r1 == false) goto L_0x023e;
      */
-    /* JADX WARNING: Missing block: B:109:0x0212, code:
+    /* JADX WARNING: Missing block: B:109:0x0212, code skipped:
             r4 = r23;
      */
-    /* JADX WARNING: Missing block: B:110:0x0214, code:
+    /* JADX WARNING: Missing block: B:110:0x0214, code skipped:
             if (r4 == null) goto L_0x022c;
      */
-    /* JADX WARNING: Missing block: B:113:0x0218, code:
+    /* JADX WARNING: Missing block: B:113:0x0218, code skipped:
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:115:?, code:
+    /* JADX WARNING: Missing block: B:115:?, code skipped:
             r10.mInstantAppRegistry.onPackageUninstalledLPw(r4, r6.removedUsers);
      */
-    /* JADX WARNING: Missing block: B:116:0x0220, code:
+    /* JADX WARNING: Missing block: B:116:0x0220, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:117:0x0221, code:
+    /* JADX WARNING: Missing block: B:117:0x0221, code skipped:
             r7 = r24;
      */
-    /* JADX WARNING: Missing block: B:118:0x0225, code:
+    /* JADX WARNING: Missing block: B:118:0x0225, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:119:0x0226, code:
+    /* JADX WARNING: Missing block: B:119:0x0226, code skipped:
             r6 = r25;
             r7 = r24;
      */
-    /* JADX WARNING: Missing block: B:120:0x022c, code:
+    /* JADX WARNING: Missing block: B:120:0x022c, code skipped:
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:125:?, code:
+    /* JADX WARNING: Missing block: B:125:?, code skipped:
             updateSequenceNumberLP(r24, r6.removedUsers);
             updateInstantAppInstallerLocked(r27);
      */
-    /* JADX WARNING: Missing block: B:126:0x0239, code:
+    /* JADX WARNING: Missing block: B:126:0x0239, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:127:0x023a, code:
+    /* JADX WARNING: Missing block: B:127:0x023a, code skipped:
             r7 = r24;
      */
-    /* JADX WARNING: Missing block: B:128:0x023e, code:
+    /* JADX WARNING: Missing block: B:128:0x023e, code skipped:
             r4 = r23;
             r7 = r24;
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:129:0x0244, code:
+    /* JADX WARNING: Missing block: B:129:0x0244, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:131:?, code:
+    /* JADX WARNING: Missing block: B:131:?, code skipped:
             monitor-exit(r21);
      */
-    /* JADX WARNING: Missing block: B:132:0x0246, code:
+    /* JADX WARNING: Missing block: B:132:0x0246, code skipped:
             if (r1 == false) goto L_0x0288;
      */
-    /* JADX WARNING: Missing block: B:133:0x0248, code:
+    /* JADX WARNING: Missing block: B:133:0x0248, code skipped:
             r2 = null;
             r3 = r6.isRemovedPackageSystemUpdate;
             r8 = r10.mPackages;
      */
-    /* JADX WARNING: Missing block: B:134:0x024d, code:
+    /* JADX WARNING: Missing block: B:134:0x024d, code skipped:
             monitor-enter(r8);
      */
-    /* JADX WARNING: Missing block: B:135:0x024e, code:
+    /* JADX WARNING: Missing block: B:135:0x024e, code skipped:
             if (r3 != false) goto L_0x025d;
      */
-    /* JADX WARNING: Missing block: B:138:0x0256, code:
+    /* JADX WARNING: Missing block: B:138:0x0256, code skipped:
             if (r10.mPackages.get(r11) != null) goto L_0x025d;
      */
-    /* JADX WARNING: Missing block: B:139:0x0258, code:
+    /* JADX WARNING: Missing block: B:139:0x0258, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:141:0x025d, code:
+    /* JADX WARNING: Missing block: B:142:0x025d, code skipped:
             monitor-exit(r8);
      */
-    /* JADX WARNING: Missing block: B:142:0x025e, code:
+    /* JADX WARNING: Missing block: B:143:0x025e, code skipped:
             if (r2 != null) goto L_0x0262;
      */
-    /* JADX WARNING: Missing block: B:143:0x0260, code:
+    /* JADX WARNING: Missing block: B:144:0x0260, code skipped:
             if (r3 == false) goto L_0x0270;
      */
-    /* JADX WARNING: Missing block: B:145:?, code:
+    /* JADX WARNING: Missing block: B:146:?, code skipped:
             updatePackageBlackListInfo(r27);
      */
-    /* JADX WARNING: Missing block: B:146:0x0266, code:
+    /* JADX WARNING: Missing block: B:147:0x0266, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:147:0x0267, code:
+    /* JADX WARNING: Missing block: B:148:0x0267, code skipped:
             r8 = r0;
             android.util.Slog.e(TAG, "update BlackListApp info failed");
      */
-    /* JADX WARNING: Missing block: B:175:0x02c3, code:
+    /* JADX WARNING: Missing block: B:176:0x02c3, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:177:?, code:
+    /* JADX WARNING: Missing block: B:178:?, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:179:?, code:
+    /* JADX WARNING: Missing block: B:180:?, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:180:0x02c6, code:
+    /* JADX WARNING: Missing block: B:181:0x02c6, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:181:0x02c7, code:
+    /* JADX WARNING: Missing block: B:182:0x02c7, code skipped:
             r4 = r23;
             r7 = r24;
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:182:0x02ce, code:
+    /* JADX WARNING: Missing block: B:183:0x02ce, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:183:0x02cf, code:
+    /* JADX WARNING: Missing block: B:184:0x02cf, code skipped:
             r4 = r23;
             r7 = r24;
             r6 = r25;
      */
-    /* JADX WARNING: Missing block: B:184:0x02d6, code:
+    /* JADX WARNING: Missing block: B:185:0x02d6, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:185:0x02d7, code:
+    /* JADX WARNING: Missing block: B:186:0x02d7, code skipped:
             r4 = r23;
             r7 = r24;
             r6 = r25;
             r1 = r0;
      */
-    /* JADX WARNING: Missing block: B:186:0x02df, code:
+    /* JADX WARNING: Missing block: B:187:0x02df, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:187:0x02e0, code:
+    /* JADX WARNING: Missing block: B:188:0x02e0, code skipped:
             r12 = null;
             r15 = r2;
             r21 = r4;
@@ -25608,10 +23272,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r16 = r8;
             r6 = r9;
      */
-    /* JADX WARNING: Missing block: B:188:0x02e9, code:
+    /* JADX WARNING: Missing block: B:189:0x02e9, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:189:0x02ea, code:
+    /* JADX WARNING: Missing block: B:190:0x02ea, code skipped:
             r15 = r2;
             r21 = r4;
             r4 = r6;
@@ -25619,40 +23283,40 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r6 = r9;
             r1 = r0;
      */
-    /* JADX WARNING: Missing block: B:191:?, code:
+    /* JADX WARNING: Missing block: B:192:?, code skipped:
             throw r1;
      */
-    /* JADX WARNING: Missing block: B:192:0x02f3, code:
+    /* JADX WARNING: Missing block: B:193:0x02f3, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:193:0x02f4, code:
+    /* JADX WARNING: Missing block: B:194:0x02f4, code skipped:
             r12 = r1;
      */
-    /* JADX WARNING: Missing block: B:194:0x02f5, code:
+    /* JADX WARNING: Missing block: B:195:0x02f5, code skipped:
             if (r15 != null) goto L_0x02f7;
      */
-    /* JADX WARNING: Missing block: B:196:?, code:
+    /* JADX WARNING: Missing block: B:197:?, code skipped:
             $closeResource(r12, r15);
      */
-    /* JADX WARNING: Missing block: B:197:0x02fa, code:
+    /* JADX WARNING: Missing block: B:198:0x02fa, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:198:0x02fb, code:
+    /* JADX WARNING: Missing block: B:199:0x02fb, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:199:0x02fc, code:
+    /* JADX WARNING: Missing block: B:200:0x02fc, code skipped:
             r21 = r4;
             r4 = r6;
             r16 = r8;
             r6 = r9;
      */
-    /* JADX WARNING: Missing block: B:200:0x0302, code:
+    /* JADX WARNING: Missing block: B:201:0x0302, code skipped:
             monitor-exit(r21);
      */
-    /* JADX WARNING: Missing block: B:201:0x0303, code:
+    /* JADX WARNING: Missing block: B:202:0x0303, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:202:0x0304, code:
+    /* JADX WARNING: Missing block: B:203:0x0304, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -25867,20 +23531,26 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             Slog.d(str, stringBuilder.toString());
         }
         synchronized (this.mPackages) {
-            deletedPkg = (Package) this.mPackages.get(packageName);
-            deletedPs = (PackageSetting) this.mSettings.mPackages.get(packageName);
-            if (packageRemovedInfo != null) {
-                int[] iArr2;
-                packageRemovedInfo.removedPackage = packageName;
-                packageRemovedInfo.installerPackageName = packageSetting.installerPackageName;
-                boolean z = (deletedPkg == null || deletedPkg.staticSharedLibName == null) ? false : true;
-                packageRemovedInfo.isStaticSharedLib = z;
-                if (deletedPs == null) {
-                    iArr2 = null;
-                } else {
-                    iArr2 = deletedPs.queryInstalledUsers(sUserManager.getUserIds(), true);
+            try {
+                deletedPkg = (Package) this.mPackages.get(packageName);
+                deletedPs = (PackageSetting) this.mSettings.mPackages.get(packageName);
+                if (packageRemovedInfo != null) {
+                    int[] iArr2;
+                    packageRemovedInfo.removedPackage = packageName;
+                    packageRemovedInfo.installerPackageName = packageSetting.installerPackageName;
+                    boolean z = (deletedPkg == null || deletedPkg.staticSharedLibName == null) ? false : true;
+                    packageRemovedInfo.isStaticSharedLib = z;
+                    if (deletedPs == null) {
+                        iArr2 = null;
+                    } else {
+                        iArr2 = deletedPs.queryInstalledUsers(sUserManager.getUserIds(), true);
+                    }
+                    packageRemovedInfo.populateUsers(iArr2, deletedPs);
                 }
-                packageRemovedInfo.populateUsers(iArr2, deletedPs);
+            } catch (Throwable th) {
+                while (true) {
+                    throw th;
+                }
             }
         }
         Package deletedPkg2 = deletedPkg;
@@ -25911,39 +23581,45 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             boolean installedStateChanged2 = false;
             if (deletedPs != null) {
                 if ((flags & 1) == 0) {
-                    clearIntentFilterVerificationsLPw(deletedPs.name, -1);
-                    clearDefaultBrowserIfNeeded(packageName);
-                    this.mSettings.mKeySetManagerService.removeAppKeySetDataLPw(packageName);
-                    removedAppId = this.mSettings.removePackageLPw(packageName);
-                    if (packageRemovedInfo != null) {
-                        packageRemovedInfo.removedAppId = removedAppId;
-                    }
-                    this.mPermissionManager.updatePermissions(deletedPs.name, null, false, this.mPackages.values(), this.mPermissionCallback);
-                    if (deletedPs.sharedUser != null) {
-                        int[] userIds = UserManagerService.getInstance().getUserIds();
-                        int length = userIds.length;
-                        int i = 0;
-                        while (i < length) {
-                            boolean userIdToKill = this.mSettings.updateSharedUserPermsLPw(deletedPs, userIds[i]);
-                            installedStateChanged = installedStateChanged2;
-                            if (userIdToKill || userIdToKill < false) {
+                    try {
+                        clearIntentFilterVerificationsLPw(deletedPs.name, -1);
+                        clearDefaultBrowserIfNeeded(packageName);
+                        this.mSettings.mKeySetManagerService.removeAppKeySetDataLPw(packageName);
+                        removedAppId = this.mSettings.removePackageLPw(packageName);
+                        if (packageRemovedInfo != null) {
+                            packageRemovedInfo.removedAppId = removedAppId;
+                        }
+                        this.mPermissionManager.updatePermissions(deletedPs.name, null, false, this.mPackages.values(), this.mPermissionCallback);
+                        if (deletedPs.sharedUser != null) {
+                            int[] userIds = UserManagerService.getInstance().getUserIds();
+                            int length = userIds.length;
+                            int i = 0;
+                            while (i < length) {
+                                boolean userIdToKill = this.mSettings.updateSharedUserPermsLPw(deletedPs, userIds[i]);
+                                installedStateChanged = installedStateChanged2;
+                                if (!userIdToKill) {
+                                    if (userIdToKill >= false) {
+                                        i++;
+                                        installedStateChanged2 = installedStateChanged;
+                                    }
+                                }
                                 this.mHandler.post(new Runnable() {
                                     public void run() {
                                         PackageManagerService.this.killApplication(deletedPs.name, deletedPs.appId, PackageManagerService.KILL_APP_REASON_GIDS_CHANGED);
                                     }
                                 });
                                 break;
-                            } else {
-                                i++;
-                                installedStateChanged2 = installedStateChanged;
                             }
                         }
+                        installedStateChanged = installedStateChanged2;
+                        clearPackagePreferredActivitiesLPw(deletedPs.name, -1);
+                    } catch (Throwable th2) {
+                        while (true) {
+                            throw th2;
+                        }
                     }
-                    installedStateChanged = installedStateChanged2;
-                    clearPackagePreferredActivitiesLPw(deletedPs.name, -1);
-                } else {
-                    installedStateChanged = false;
                 }
+                installedStateChanged = false;
                 if (!(iArr == null || packageRemovedInfo == null || packageRemovedInfo.origUsers == null)) {
                     if (DEBUG_REMOVE) {
                         Slog.d(TAG, "Propagating install state across downgrade");
@@ -25988,22 +23664,33 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x001a A:{Catch:{ IOException -> 0x0076 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:10:0x0019 A:{RETURN, Catch:{ IOException -> 0x0076 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     static boolean locationIsPrivileged(String path) {
         boolean z = false;
         try {
+            boolean isPrivilegedAppHw;
             File file = new File(path);
-            boolean isPrivilegedAppHw = HwServiceFactory.isPrivAppNonSystemPartitionDir(file) || HwServiceFactory.isPrivAppInCust(file);
-            if (isPrivilegedAppHw) {
-                return isPrivilegedAppHw;
+            if (!HwServiceFactory.isPrivAppNonSystemPartitionDir(file)) {
+                if (!HwServiceFactory.isPrivAppInCust(file)) {
+                    isPrivilegedAppHw = false;
+                    if (!isPrivilegedAppHw) {
+                        return isPrivilegedAppHw;
+                    }
+                    File privilegedAppDir = new File(Environment.getRootDirectory(), "priv-app");
+                    File privilegedVendorAppDir = new File(Environment.getVendorDirectory(), "priv-app");
+                    File privilegedOdmAppDir = new File(Environment.getOdmDirectory(), "priv-app");
+                    File privilegedProductAppDir = new File(Environment.getProductDirectory(), "priv-app");
+                    if (path.startsWith(privilegedAppDir.getCanonicalPath()) || path.startsWith(privilegedVendorAppDir.getCanonicalPath()) || path.startsWith(privilegedOdmAppDir.getCanonicalPath()) || path.startsWith(privilegedProductAppDir.getCanonicalPath())) {
+                        z = true;
+                    }
+                    return z;
+                }
             }
-            File privilegedAppDir = new File(Environment.getRootDirectory(), "priv-app");
-            File privilegedVendorAppDir = new File(Environment.getVendorDirectory(), "priv-app");
-            File privilegedOdmAppDir = new File(Environment.getOdmDirectory(), "priv-app");
-            File privilegedProductAppDir = new File(Environment.getProductDirectory(), "priv-app");
-            if (path.startsWith(privilegedAppDir.getCanonicalPath()) || path.startsWith(privilegedVendorAppDir.getCanonicalPath()) || path.startsWith(privilegedOdmAppDir.getCanonicalPath()) || path.startsWith(privilegedProductAppDir.getCanonicalPath())) {
-                z = true;
+            isPrivilegedAppHw = true;
+            if (!isPrivilegedAppHw) {
             }
-            return z;
         } catch (IOException e) {
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();
@@ -26061,24 +23748,24 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:36:0x0098, code:
+    /* JADX WARNING: Missing block: B:36:0x0098, code skipped:
             if (isPreRemovableApp(r8.codePath.toString()) == false) goto L_0x00a6;
      */
-    /* JADX WARNING: Missing block: B:43:0x00a9, code:
+    /* JADX WARNING: Missing block: B:43:0x00a9, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:44:0x00ab, code:
+    /* JADX WARNING: Missing block: B:44:0x00ab, code skipped:
             if (r16 == false) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:45:0x00ad, code:
+    /* JADX WARNING: Missing block: B:45:0x00ad, code skipped:
             android.util.Slog.d(TAG, "Remembering install states:");
             r0 = r12.length;
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:46:0x00b6, code:
+    /* JADX WARNING: Missing block: B:46:0x00b6, code skipped:
             if (r2 >= r0) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:47:0x00b8, code:
+    /* JADX WARNING: Missing block: B:47:0x00b8, code skipped:
             r3 = r12[r2];
             r4 = com.android.internal.util.ArrayUtils.contains(r13.origUsers, r3);
             r5 = TAG;
@@ -26090,203 +23777,203 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             android.util.Slog.d(r5, r6.toString());
             r2 = r2 + 1;
      */
-    /* JADX WARNING: Missing block: B:48:0x00e1, code:
+    /* JADX WARNING: Missing block: B:48:0x00e1, code skipped:
             if (r13 == null) goto L_0x00e5;
      */
-    /* JADX WARNING: Missing block: B:49:0x00e3, code:
+    /* JADX WARNING: Missing block: B:49:0x00e3, code skipped:
             r13.isRemovedPackageSystemUpdate = true;
      */
-    /* JADX WARNING: Missing block: B:50:0x00e5, code:
+    /* JADX WARNING: Missing block: B:50:0x00e5, code skipped:
             if (r13 == null) goto L_0x011d;
      */
-    /* JADX WARNING: Missing block: B:52:0x00e9, code:
+    /* JADX WARNING: Missing block: B:52:0x00e9, code skipped:
             if (r13.removedChildPackages == null) goto L_0x011d;
      */
-    /* JADX WARNING: Missing block: B:54:0x00ed, code:
+    /* JADX WARNING: Missing block: B:54:0x00ed, code skipped:
             if (r11.childPackageNames == null) goto L_0x00f6;
      */
-    /* JADX WARNING: Missing block: B:55:0x00ef, code:
+    /* JADX WARNING: Missing block: B:55:0x00ef, code skipped:
             r0 = r11.childPackageNames.size();
      */
-    /* JADX WARNING: Missing block: B:56:0x00f6, code:
+    /* JADX WARNING: Missing block: B:56:0x00f6, code skipped:
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:57:0x00f7, code:
+    /* JADX WARNING: Missing block: B:57:0x00f7, code skipped:
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:58:0x00f8, code:
+    /* JADX WARNING: Missing block: B:58:0x00f8, code skipped:
             if (r2 >= r0) goto L_0x011d;
      */
-    /* JADX WARNING: Missing block: B:59:0x00fa, code:
+    /* JADX WARNING: Missing block: B:59:0x00fa, code skipped:
             r3 = (java.lang.String) r11.childPackageNames.get(r2);
      */
-    /* JADX WARNING: Missing block: B:60:0x0104, code:
+    /* JADX WARNING: Missing block: B:60:0x0104, code skipped:
             if (r8.childPackageNames == null) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:62:0x010c, code:
+    /* JADX WARNING: Missing block: B:62:0x010c, code skipped:
             if (r8.childPackageNames.contains(r3) == false) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:63:0x010e, code:
+    /* JADX WARNING: Missing block: B:63:0x010e, code skipped:
             r4 = (com.android.server.pm.PackageManagerService.PackageRemovedInfo) r13.removedChildPackages.get(r3);
      */
-    /* JADX WARNING: Missing block: B:64:0x0116, code:
+    /* JADX WARNING: Missing block: B:64:0x0116, code skipped:
             if (r4 == null) goto L_0x011a;
      */
-    /* JADX WARNING: Missing block: B:65:0x0118, code:
+    /* JADX WARNING: Missing block: B:65:0x0118, code skipped:
             r4.isRemovedPackageSystemUpdate = true;
      */
-    /* JADX WARNING: Missing block: B:66:0x011a, code:
+    /* JADX WARNING: Missing block: B:66:0x011a, code skipped:
             r2 = r2 + 1;
      */
-    /* JADX WARNING: Missing block: B:68:0x0123, code:
+    /* JADX WARNING: Missing block: B:68:0x0123, code skipped:
             if (r8.versionCode >= r11.versionCode) goto L_0x012a;
      */
-    /* JADX WARNING: Missing block: B:69:0x0125, code:
+    /* JADX WARNING: Missing block: B:69:0x0125, code skipped:
             r0 = r24 & -2;
      */
-    /* JADX WARNING: Missing block: B:72:0x012e, code:
+    /* JADX WARNING: Missing block: B:72:0x012e, code skipped:
             if (isDelapp(r8) != false) goto L_0x0148;
      */
-    /* JADX WARNING: Missing block: B:74:0x0134, code:
+    /* JADX WARNING: Missing block: B:74:0x0134, code skipped:
             if (isDelappInData(r8) != false) goto L_0x0148;
      */
-    /* JADX WARNING: Missing block: B:76:0x013a, code:
+    /* JADX WARNING: Missing block: B:76:0x013a, code skipped:
             if (isDelappInCust(r8) != false) goto L_0x0148;
      */
-    /* JADX WARNING: Missing block: B:78:0x0146, code:
+    /* JADX WARNING: Missing block: B:78:0x0146, code skipped:
             if (isPreRemovableApp(r8.codePath.toString()) == false) goto L_0x0153;
      */
-    /* JADX WARNING: Missing block: B:80:0x014e, code:
+    /* JADX WARNING: Missing block: B:80:0x014e, code skipped:
             if (r8.versionCode != r11.versionCode) goto L_0x0153;
      */
-    /* JADX WARNING: Missing block: B:81:0x0150, code:
+    /* JADX WARNING: Missing block: B:81:0x0150, code skipped:
             r0 = r24 & -2;
      */
-    /* JADX WARNING: Missing block: B:82:0x0153, code:
+    /* JADX WARNING: Missing block: B:82:0x0153, code skipped:
             r0 = r24 | 1;
      */
-    /* JADX WARNING: Missing block: B:83:0x0156, code:
+    /* JADX WARNING: Missing block: B:83:0x0156, code skipped:
             r15 = r8;
      */
-    /* JADX WARNING: Missing block: B:84:0x0167, code:
+    /* JADX WARNING: Missing block: B:84:0x0167, code skipped:
             if (deleteInstalledPackageLIF(r11, true, r0, r12, r13, r26, r8.pkg) != null) goto L_0x016a;
      */
-    /* JADX WARNING: Missing block: B:85:0x0169, code:
+    /* JADX WARNING: Missing block: B:85:0x0169, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:86:0x016a, code:
+    /* JADX WARNING: Missing block: B:86:0x016a, code skipped:
             r3 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:87:0x016c, code:
+    /* JADX WARNING: Missing block: B:87:0x016c, code skipped:
             monitor-enter(r3);
      */
-    /* JADX WARNING: Missing block: B:89:?, code:
+    /* JADX WARNING: Missing block: B:89:?, code skipped:
             enableSystemPackageLPw(r15.pkg);
             removeNativeBinariesLI(r11);
      */
-    /* JADX WARNING: Missing block: B:90:0x0175, code:
+    /* JADX WARNING: Missing block: B:90:0x0175, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:92:0x0178, code:
+    /* JADX WARNING: Missing block: B:92:0x0178, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x0190;
      */
-    /* JADX WARNING: Missing block: B:93:0x017a, code:
+    /* JADX WARNING: Missing block: B:93:0x017a, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("Re-installing system package: ");
             r1.append(r15);
             android.util.Slog.d(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:94:0x0190, code:
+    /* JADX WARNING: Missing block: B:94:0x0190, code skipped:
             r0 = null;
             r18 = false;
      */
-    /* JADX WARNING: Missing block: B:96:?, code:
+    /* JADX WARNING: Missing block: B:96:?, code skipped:
             r7 = new com.android.server.pm.PackageManagerService.PackageRemovedInfo(r9);
      */
-    /* JADX WARNING: Missing block: B:97:0x019d, code:
+    /* JADX WARNING: Missing block: B:97:0x019d, code skipped:
             if (isDelapp(r15) != false) goto L_0x01cd;
      */
-    /* JADX WARNING: Missing block: B:99:0x01a3, code:
+    /* JADX WARNING: Missing block: B:99:0x01a3, code skipped:
             if (isDelappInData(r15) != false) goto L_0x01cd;
      */
-    /* JADX WARNING: Missing block: B:101:0x01a9, code:
+    /* JADX WARNING: Missing block: B:101:0x01a9, code skipped:
             if (isDelappInCust(r15) != false) goto L_0x01cd;
      */
-    /* JADX WARNING: Missing block: B:103:0x01b5, code:
+    /* JADX WARNING: Missing block: B:103:0x01b5, code skipped:
             if (isPreRemovableApp(r15.codePath.toString()) == false) goto L_0x01b9;
      */
-    /* JADX WARNING: Missing block: B:104:0x01b7, code:
+    /* JADX WARNING: Missing block: B:104:0x01b7, code skipped:
             r14 = r7;
      */
-    /* JADX WARNING: Missing block: B:105:0x01b9, code:
+    /* JADX WARNING: Missing block: B:105:0x01b9, code skipped:
             r14 = r7;
             r0 = installPackageFromSystemLIF(r15.codePathString, false, r12, r13.origUsers, r22.getPermissionsState(), r26);
      */
-    /* JADX WARNING: Missing block: B:106:0x01cd, code:
+    /* JADX WARNING: Missing block: B:106:0x01cd, code skipped:
             r14 = r7;
      */
-    /* JADX WARNING: Missing block: B:107:0x01ce, code:
+    /* JADX WARNING: Missing block: B:107:0x01ce, code skipped:
             recordUninstalledDelapp(r10.packageName, r15.codePathString);
             r14.removedPackage = r10.packageName;
      */
-    /* JADX WARNING: Missing block: B:108:0x01d9, code:
+    /* JADX WARNING: Missing block: B:108:0x01d9, code skipped:
             if (r13 == null) goto L_0x01de;
      */
-    /* JADX WARNING: Missing block: B:109:0x01db, code:
+    /* JADX WARNING: Missing block: B:109:0x01db, code skipped:
             r13.isRemovedPackageSystemUpdate = false;
      */
-    /* JADX WARNING: Missing block: B:110:0x01de, code:
+    /* JADX WARNING: Missing block: B:110:0x01de, code skipped:
             r14.sendPackageRemovedBroadcasts(true);
      */
-    /* JADX WARNING: Missing block: B:111:0x01e2, code:
+    /* JADX WARNING: Missing block: B:111:0x01e2, code skipped:
             r18 = true;
      */
-    /* JADX WARNING: Missing block: B:112:0x01e4, code:
+    /* JADX WARNING: Missing block: B:112:0x01e4, code skipped:
             if (r0 != null) goto L_0x020b;
      */
-    /* JADX WARNING: Missing block: B:113:0x01e6, code:
+    /* JADX WARNING: Missing block: B:113:0x01e6, code skipped:
             if (r18 == false) goto L_0x01fb;
      */
-    /* JADX WARNING: Missing block: B:115:0x01ee, code:
+    /* JADX WARNING: Missing block: B:115:0x01ee, code skipped:
             if (r15.pkg.isStub == false) goto L_0x01f9;
      */
-    /* JADX WARNING: Missing block: B:116:0x01f0, code:
+    /* JADX WARNING: Missing block: B:116:0x01f0, code skipped:
             r4 = true;
             r9.mSettings.disableSystemPackageLPw(r15.name, true);
      */
-    /* JADX WARNING: Missing block: B:117:0x01f9, code:
+    /* JADX WARNING: Missing block: B:117:0x01f9, code skipped:
             r4 = true;
      */
-    /* JADX WARNING: Missing block: B:118:0x01fa, code:
+    /* JADX WARNING: Missing block: B:118:0x01fa, code skipped:
             return r4;
      */
-    /* JADX WARNING: Missing block: B:120:0x0200, code:
+    /* JADX WARNING: Missing block: B:120:0x0200, code skipped:
             if (r15.pkg.isStub == false) goto L_0x0209;
      */
-    /* JADX WARNING: Missing block: B:121:0x0202, code:
+    /* JADX WARNING: Missing block: B:121:0x0202, code skipped:
             r9.mSettings.disableSystemPackageLPw(r15.name, true);
      */
-    /* JADX WARNING: Missing block: B:123:0x020a, code:
+    /* JADX WARNING: Missing block: B:123:0x020a, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:125:0x020f, code:
+    /* JADX WARNING: Missing block: B:125:0x020f, code skipped:
             if (r15.pkg.isStub == false) goto L_0x021a;
      */
-    /* JADX WARNING: Missing block: B:126:0x0211, code:
+    /* JADX WARNING: Missing block: B:126:0x0211, code skipped:
             r2 = true;
             r9.mSettings.disableSystemPackageLPw(r15.name, true);
      */
-    /* JADX WARNING: Missing block: B:127:0x021a, code:
+    /* JADX WARNING: Missing block: B:127:0x021a, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:128:0x021b, code:
+    /* JADX WARNING: Missing block: B:128:0x021b, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:130:0x021e, code:
+    /* JADX WARNING: Missing block: B:130:0x021e, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:132:?, code:
+    /* JADX WARNING: Missing block: B:132:?, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Failed to restore system package:");
@@ -26295,13 +23982,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r2.append(r0.getMessage());
             android.util.Slog.w(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:134:0x0253, code:
+    /* JADX WARNING: Missing block: B:134:0x0253, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:136:0x0258, code:
+    /* JADX WARNING: Missing block: B:136:0x0258, code skipped:
             if (r15.pkg.isStub != false) goto L_0x025a;
      */
-    /* JADX WARNING: Missing block: B:137:0x025a, code:
+    /* JADX WARNING: Missing block: B:137:0x025a, code skipped:
             r9.mSettings.disableSystemPackageLPw(r15.name, true);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -26384,7 +24071,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:59:0x0136, code:
+    /* JADX WARNING: Missing block: B:60:0x0136, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -26497,91 +24184,91 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0051, code:
+    /* JADX WARNING: Missing block: B:26:0x0051, code skipped:
             removePackageDataLIF(r8, r17, r9, r16, r19);
      */
-    /* JADX WARNING: Missing block: B:26:0x005f, code:
+    /* JADX WARNING: Missing block: B:27:0x005f, code skipped:
             if (r8.childPackageNames == null) goto L_0x0068;
      */
-    /* JADX WARNING: Missing block: B:27:0x0061, code:
+    /* JADX WARNING: Missing block: B:28:0x0061, code skipped:
             r1 = r8.childPackageNames.size();
      */
-    /* JADX WARNING: Missing block: B:28:0x0068, code:
+    /* JADX WARNING: Missing block: B:29:0x0068, code skipped:
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:29:0x0069, code:
+    /* JADX WARNING: Missing block: B:30:0x0069, code skipped:
             r11 = r1;
      */
-    /* JADX WARNING: Missing block: B:30:0x006b, code:
+    /* JADX WARNING: Missing block: B:31:0x006b, code skipped:
             r12 = r0;
      */
-    /* JADX WARNING: Missing block: B:31:0x006c, code:
+    /* JADX WARNING: Missing block: B:32:0x006c, code skipped:
             if (r12 >= r11) goto L_0x00b8;
      */
-    /* JADX WARNING: Missing block: B:32:0x006e, code:
+    /* JADX WARNING: Missing block: B:33:0x006e, code skipped:
             r1 = r7.mPackages;
      */
-    /* JADX WARNING: Missing block: B:33:0x0070, code:
+    /* JADX WARNING: Missing block: B:34:0x0070, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Missing block: B:36:?, code skipped:
             r0 = r7.mSettings.getPackageLPr((java.lang.String) r8.childPackageNames.get(r12));
      */
-    /* JADX WARNING: Missing block: B:36:0x007f, code:
+    /* JADX WARNING: Missing block: B:37:0x007f, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:37:0x0080, code:
+    /* JADX WARNING: Missing block: B:38:0x0080, code skipped:
             if (r0 == null) goto L_0x00b2;
      */
-    /* JADX WARNING: Missing block: B:38:0x0082, code:
+    /* JADX WARNING: Missing block: B:39:0x0082, code skipped:
             if (r9 == null) goto L_0x0093;
      */
-    /* JADX WARNING: Missing block: B:40:0x0086, code:
+    /* JADX WARNING: Missing block: B:41:0x0086, code skipped:
             if (r9.removedChildPackages == null) goto L_0x0093;
      */
-    /* JADX WARNING: Missing block: B:41:0x0088, code:
+    /* JADX WARNING: Missing block: B:42:0x0088, code skipped:
             r1 = (com.android.server.pm.PackageManagerService.PackageRemovedInfo) r9.removedChildPackages.get(r0.name);
      */
-    /* JADX WARNING: Missing block: B:42:0x0093, code:
+    /* JADX WARNING: Missing block: B:43:0x0093, code skipped:
             r1 = null;
      */
-    /* JADX WARNING: Missing block: B:43:0x0094, code:
+    /* JADX WARNING: Missing block: B:44:0x0094, code skipped:
             r4 = r1;
      */
-    /* JADX WARNING: Missing block: B:44:0x0097, code:
+    /* JADX WARNING: Missing block: B:45:0x0097, code skipped:
             if ((r16 & 1) == 0) goto L_0x00a7;
      */
-    /* JADX WARNING: Missing block: B:45:0x0099, code:
+    /* JADX WARNING: Missing block: B:46:0x0099, code skipped:
             if (r10 == null) goto L_0x00a7;
      */
-    /* JADX WARNING: Missing block: B:47:0x00a1, code:
+    /* JADX WARNING: Missing block: B:48:0x00a1, code skipped:
             if (r10.hasChildPackage(r0.name) != false) goto L_0x00a7;
      */
-    /* JADX WARNING: Missing block: B:48:0x00a3, code:
+    /* JADX WARNING: Missing block: B:49:0x00a3, code skipped:
             r5 = r16 & -2;
      */
-    /* JADX WARNING: Missing block: B:49:0x00a7, code:
+    /* JADX WARNING: Missing block: B:50:0x00a7, code skipped:
             r5 = r16;
      */
-    /* JADX WARNING: Missing block: B:50:0x00a9, code:
+    /* JADX WARNING: Missing block: B:51:0x00a9, code skipped:
             removePackageDataLIF(r0, r17, r4, r5, r19);
      */
-    /* JADX WARNING: Missing block: B:51:0x00b2, code:
+    /* JADX WARNING: Missing block: B:52:0x00b2, code skipped:
             r0 = r12 + 1;
      */
-    /* JADX WARNING: Missing block: B:57:0x00ba, code:
+    /* JADX WARNING: Missing block: B:58:0x00ba, code skipped:
             if (r8.parentPackageName != null) goto L_0x00d2;
      */
-    /* JADX WARNING: Missing block: B:58:0x00bc, code:
+    /* JADX WARNING: Missing block: B:59:0x00bc, code skipped:
             if (r15 == false) goto L_0x00d2;
      */
-    /* JADX WARNING: Missing block: B:59:0x00be, code:
+    /* JADX WARNING: Missing block: B:60:0x00be, code skipped:
             if (r9 == null) goto L_0x00d2;
      */
-    /* JADX WARNING: Missing block: B:60:0x00c0, code:
+    /* JADX WARNING: Missing block: B:61:0x00c0, code skipped:
             r9.args = createInstallArgsForExisting(packageFlagsToInstallFlags(r8), r8.codePathString, r8.resourcePathString, com.android.server.pm.InstructionSets.getAppDexInstructionSets(r8));
      */
-    /* JADX WARNING: Missing block: B:62:0x00d3, code:
+    /* JADX WARNING: Missing block: B:63:0x00d3, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -26591,7 +24278,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         Package packageR = replacingPackage;
         synchronized (this.mPackages) {
             if (packageRemovedInfo != null) {
-                packageRemovedInfo.uid = packageSetting.appId;
+                try {
+                    packageRemovedInfo.uid = packageSetting.appId;
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             int i = 0;
             if (!(packageRemovedInfo == null || packageRemovedInfo.removedChildPackages == null)) {
@@ -26634,11 +24326,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     public boolean getBlockUninstallForUser(String packageName, int userId) {
         synchronized (this.mPackages) {
             PackageSetting ps = (PackageSetting) this.mSettings.mPackages.get(packageName);
-            if (ps == null || filterAppAccessLPr(ps, Binder.getCallingUid(), userId)) {
-                return false;
+            if (ps != null) {
+                if (!filterAppAccessLPr(ps, Binder.getCallingUid(), userId)) {
+                    boolean blockUninstallLPr = this.mSettings.getBlockUninstallLPr(userId, packageName);
+                    return blockUninstallLPr;
+                }
             }
-            boolean blockUninstallLPr = this.mSettings.getBlockUninstallLPr(userId, packageName);
-            return blockUninstallLPr;
+            return false;
         }
     }
 
@@ -26664,10 +24358,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x00c3, code:
+    /* JADX WARNING: Missing block: B:39:0x00c3, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x00f5;
      */
-    /* JADX WARNING: Missing block: B:40:0x00c5, code:
+    /* JADX WARNING: Missing block: B:40:0x00c5, code skipped:
             r3 = new java.lang.StringBuilder();
             r3.append("deletePackageLI: pkg ");
             r3.append(r10);
@@ -26677,214 +24371,214 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r3.append(r14.pkg.applicationInfo.hwFlags);
             android.util.Flog.i(209, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:42:0x00fd, code:
+    /* JADX WARNING: Missing block: B:42:0x00fd, code skipped:
             if (isSystemApp(r14) == false) goto L_0x0113;
      */
-    /* JADX WARNING: Missing block: B:44:0x0106, code:
+    /* JADX WARNING: Missing block: B:44:0x0106, code skipped:
             if ((r14.pkg.applicationInfo.hwFlags & com.android.server.pm.DumpState.DUMP_HANDLE) != 0) goto L_0x0111;
      */
-    /* JADX WARNING: Missing block: B:46:0x010f, code:
+    /* JADX WARNING: Missing block: B:46:0x010f, code skipped:
             if ((r14.pkg.applicationInfo.hwFlags & 67108864) == 0) goto L_0x0113;
      */
-    /* JADX WARNING: Missing block: B:47:0x0111, code:
+    /* JADX WARNING: Missing block: B:47:0x0111, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:48:0x0113, code:
+    /* JADX WARNING: Missing block: B:48:0x0113, code skipped:
             r2 = false;
      */
-    /* JADX WARNING: Missing block: B:50:0x0116, code:
+    /* JADX WARNING: Missing block: B:50:0x0116, code skipped:
             if (r2 == false) goto L_0x0149;
      */
-    /* JADX WARNING: Missing block: B:51:0x0118, code:
+    /* JADX WARNING: Missing block: B:51:0x0118, code skipped:
             if (r11 == null) goto L_0x0149;
      */
-    /* JADX WARNING: Missing block: B:53:0x011e, code:
+    /* JADX WARNING: Missing block: B:53:0x011e, code skipped:
             if (r23.getIdentifier() == -1) goto L_0x0149;
      */
-    /* JADX WARNING: Missing block: B:55:0x0127, code:
+    /* JADX WARNING: Missing block: B:55:0x0127, code skipped:
             if (sUserManager.getUserIds().length <= 1) goto L_0x0149;
      */
-    /* JADX WARNING: Missing block: B:56:0x0129, code:
+    /* JADX WARNING: Missing block: B:56:0x0129, code skipped:
             r2 = r14.queryInstalledUsers(sUserManager.getUserIds(), true);
      */
-    /* JADX WARNING: Missing block: B:57:0x0134, code:
+    /* JADX WARNING: Missing block: B:57:0x0134, code skipped:
             if (r2.length == 0) goto L_0x0144;
      */
-    /* JADX WARNING: Missing block: B:59:0x0137, code:
+    /* JADX WARNING: Missing block: B:59:0x0137, code skipped:
             if (r2.length != 1) goto L_0x0142;
      */
-    /* JADX WARNING: Missing block: B:61:0x013f, code:
+    /* JADX WARNING: Missing block: B:61:0x013f, code skipped:
             if (r2[0] != r23.getIdentifier()) goto L_0x0142;
      */
-    /* JADX WARNING: Missing block: B:62:0x0142, code:
+    /* JADX WARNING: Missing block: B:62:0x0142, code skipped:
             r6 = false;
      */
-    /* JADX WARNING: Missing block: B:63:0x0144, code:
+    /* JADX WARNING: Missing block: B:63:0x0144, code skipped:
             r6 = true;
      */
-    /* JADX WARNING: Missing block: B:64:0x0145, code:
+    /* JADX WARNING: Missing block: B:64:0x0145, code skipped:
             if (r6 != false) goto L_0x0149;
      */
-    /* JADX WARNING: Missing block: B:65:0x0147, code:
+    /* JADX WARNING: Missing block: B:65:0x0147, code skipped:
             r1 = r1 | 4;
      */
-    /* JADX WARNING: Missing block: B:66:0x0149, code:
+    /* JADX WARNING: Missing block: B:66:0x0149, code skipped:
             r17 = r1;
      */
-    /* JADX WARNING: Missing block: B:67:0x014b, code:
+    /* JADX WARNING: Missing block: B:67:0x014b, code skipped:
             if (r11 != null) goto L_0x014f;
      */
-    /* JADX WARNING: Missing block: B:68:0x014d, code:
+    /* JADX WARNING: Missing block: B:68:0x014d, code skipped:
             r1 = -1;
      */
-    /* JADX WARNING: Missing block: B:69:0x014f, code:
+    /* JADX WARNING: Missing block: B:69:0x014f, code skipped:
             r1 = r23.getIdentifier();
      */
-    /* JADX WARNING: Missing block: B:70:0x0153, code:
+    /* JADX WARNING: Missing block: B:70:0x0153, code skipped:
             r8 = r1;
      */
-    /* JADX WARNING: Missing block: B:71:0x015e, code:
+    /* JADX WARNING: Missing block: B:71:0x015e, code skipped:
             if (r14.getPermissionsState().hasPermission("android.permission.SUSPEND_APPS", r8) == false) goto L_0x0163;
      */
-    /* JADX WARNING: Missing block: B:72:0x0160, code:
+    /* JADX WARNING: Missing block: B:72:0x0160, code skipped:
             unsuspendForSuspendingPackage(r10, r8);
      */
-    /* JADX WARNING: Missing block: B:74:0x0167, code:
+    /* JADX WARNING: Missing block: B:74:0x0167, code skipped:
             if (isSystemApp(r14) == false) goto L_0x016d;
      */
-    /* JADX WARNING: Missing block: B:76:0x016b, code:
+    /* JADX WARNING: Missing block: B:76:0x016b, code skipped:
             if ((r17 & 4) == 0) goto L_0x0221;
      */
-    /* JADX WARNING: Missing block: B:77:0x016d, code:
+    /* JADX WARNING: Missing block: B:77:0x016d, code skipped:
             if (r11 == null) goto L_0x0221;
      */
-    /* JADX WARNING: Missing block: B:79:0x0173, code:
+    /* JADX WARNING: Missing block: B:79:0x0173, code skipped:
             if (r23.getIdentifier() == -1) goto L_0x0221;
      */
-    /* JADX WARNING: Missing block: B:80:0x0175, code:
+    /* JADX WARNING: Missing block: B:80:0x0175, code skipped:
             markPackageUninstalledForUserLPw(r14, r11);
      */
-    /* JADX WARNING: Missing block: B:81:0x017c, code:
+    /* JADX WARNING: Missing block: B:81:0x017c, code skipped:
             if (isSystemApp(r14) != false) goto L_0x01c4;
      */
-    /* JADX WARNING: Missing block: B:82:0x017e, code:
+    /* JADX WARNING: Missing block: B:82:0x017e, code skipped:
             r1 = shouldKeepUninstalledPackageLPr(r22);
      */
-    /* JADX WARNING: Missing block: B:83:0x018c, code:
+    /* JADX WARNING: Missing block: B:83:0x018c, code skipped:
             if (r14.isAnyInstalled(sUserManager.getUserIds()) != false) goto L_0x01aa;
      */
-    /* JADX WARNING: Missing block: B:84:0x018e, code:
+    /* JADX WARNING: Missing block: B:84:0x018e, code skipped:
             if (r1 == false) goto L_0x0191;
      */
-    /* JADX WARNING: Missing block: B:86:0x0193, code:
+    /* JADX WARNING: Missing block: B:86:0x0193, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x019c;
      */
-    /* JADX WARNING: Missing block: B:87:0x0195, code:
+    /* JADX WARNING: Missing block: B:87:0x0195, code skipped:
             android.util.Slog.d(TAG, "Not installed by other users, full delete");
      */
-    /* JADX WARNING: Missing block: B:88:0x019c, code:
+    /* JADX WARNING: Missing block: B:88:0x019c, code skipped:
             r14.setInstalled(true, r23.getIdentifier());
             r9.mSettings.writeKernelMappingLPr(r14);
      */
-    /* JADX WARNING: Missing block: B:90:0x01ac, code:
+    /* JADX WARNING: Missing block: B:90:0x01ac, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x01b5;
      */
-    /* JADX WARNING: Missing block: B:91:0x01ae, code:
+    /* JADX WARNING: Missing block: B:91:0x01ae, code skipped:
             android.util.Slog.d(TAG, "Still installed by other users");
      */
-    /* JADX WARNING: Missing block: B:93:0x01bd, code:
+    /* JADX WARNING: Missing block: B:93:0x01bd, code skipped:
             if (clearPackageStateForUserLIF(r14, r23.getIdentifier(), r13) != false) goto L_0x01c0;
      */
-    /* JADX WARNING: Missing block: B:94:0x01bf, code:
+    /* JADX WARNING: Missing block: B:94:0x01bf, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:95:0x01c0, code:
+    /* JADX WARNING: Missing block: B:95:0x01c0, code skipped:
             scheduleWritePackageRestrictionsLocked(r11);
      */
-    /* JADX WARNING: Missing block: B:96:0x01c3, code:
+    /* JADX WARNING: Missing block: B:96:0x01c3, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:98:0x01c6, code:
+    /* JADX WARNING: Missing block: B:98:0x01c6, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x01cf;
      */
-    /* JADX WARNING: Missing block: B:99:0x01c8, code:
+    /* JADX WARNING: Missing block: B:99:0x01c8, code skipped:
             android.util.Slog.d(TAG, "Deleting system app");
      */
-    /* JADX WARNING: Missing block: B:101:0x01d7, code:
+    /* JADX WARNING: Missing block: B:101:0x01d7, code skipped:
             if (clearPackageStateForUserLIF(r14, r23.getIdentifier(), r13) != false) goto L_0x01da;
      */
-    /* JADX WARNING: Missing block: B:102:0x01d9, code:
+    /* JADX WARNING: Missing block: B:102:0x01d9, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:104:0x01e1, code:
+    /* JADX WARNING: Missing block: B:104:0x01e1, code skipped:
             if ((r14.pkg.applicationInfo.hwFlags & com.android.server.pm.DumpState.DUMP_HANDLE) == 0) goto L_0x01e5;
      */
-    /* JADX WARNING: Missing block: B:105:0x01e3, code:
+    /* JADX WARNING: Missing block: B:105:0x01e3, code skipped:
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:106:0x01e5, code:
+    /* JADX WARNING: Missing block: B:106:0x01e5, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:108:0x01ed, code:
+    /* JADX WARNING: Missing block: B:108:0x01ed, code skipped:
             if ((r14.pkg.applicationInfo.hwFlags & 67108864) == 0) goto L_0x01f1;
      */
-    /* JADX WARNING: Missing block: B:109:0x01ef, code:
+    /* JADX WARNING: Missing block: B:109:0x01ef, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:110:0x01f1, code:
+    /* JADX WARNING: Missing block: B:110:0x01f1, code skipped:
             r2 = r0;
      */
-    /* JADX WARNING: Missing block: B:111:0x01f2, code:
+    /* JADX WARNING: Missing block: B:111:0x01f2, code skipped:
             if (r1 == false) goto L_0x0200;
      */
-    /* JADX WARNING: Missing block: B:112:0x01f4, code:
+    /* JADX WARNING: Missing block: B:112:0x01f4, code skipped:
             recordUninstalledDelapp(r14.pkg.packageName, r14.pkg.codePath);
      */
-    /* JADX WARNING: Missing block: B:113:0x0200, code:
+    /* JADX WARNING: Missing block: B:113:0x0200, code skipped:
             if (r2 == false) goto L_0x021d;
      */
-    /* JADX WARNING: Missing block: B:114:0x0202, code:
+    /* JADX WARNING: Missing block: B:114:0x0202, code skipped:
             r3 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:115:0x0204, code:
+    /* JADX WARNING: Missing block: B:115:0x0204, code skipped:
             monitor-enter(r3);
      */
-    /* JADX WARNING: Missing block: B:117:?, code:
+    /* JADX WARNING: Missing block: B:117:?, code skipped:
             r0 = r9.mSettings.getDisabledSystemPkgLPr(r14.pkg.packageName);
      */
-    /* JADX WARNING: Missing block: B:118:0x020f, code:
+    /* JADX WARNING: Missing block: B:118:0x020f, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:119:0x0210, code:
+    /* JADX WARNING: Missing block: B:119:0x0210, code skipped:
             recordUninstalledDelapp(r14.pkg.packageName, r0.codePathString);
      */
-    /* JADX WARNING: Missing block: B:124:0x021d, code:
+    /* JADX WARNING: Missing block: B:124:0x021d, code skipped:
             scheduleWritePackageRestrictionsLocked(r11);
      */
-    /* JADX WARNING: Missing block: B:125:0x0220, code:
+    /* JADX WARNING: Missing block: B:125:0x0220, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:127:0x0223, code:
+    /* JADX WARNING: Missing block: B:127:0x0223, code skipped:
             if (r14.childPackageNames == null) goto L_0x0269;
      */
-    /* JADX WARNING: Missing block: B:128:0x0225, code:
+    /* JADX WARNING: Missing block: B:128:0x0225, code skipped:
             if (r13 == null) goto L_0x0269;
      */
-    /* JADX WARNING: Missing block: B:129:0x0227, code:
+    /* JADX WARNING: Missing block: B:129:0x0227, code skipped:
             r1 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:130:0x0229, code:
+    /* JADX WARNING: Missing block: B:130:0x0229, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:132:?, code:
+    /* JADX WARNING: Missing block: B:132:?, code skipped:
             r2 = r14.childPackageNames.size();
             r13.removedChildPackages = new android.util.ArrayMap(r2);
             r3 = 0;
      */
-    /* JADX WARNING: Missing block: B:133:0x0238, code:
+    /* JADX WARNING: Missing block: B:133:0x0238, code skipped:
             if (r3 >= r2) goto L_0x0264;
      */
-    /* JADX WARNING: Missing block: B:134:0x023a, code:
+    /* JADX WARNING: Missing block: B:134:0x023a, code skipped:
             r4 = (java.lang.String) r14.childPackageNames.get(r3);
             r6 = new com.android.server.pm.PackageManagerService.PackageRemovedInfo(r9);
             r6.removedPackage = r4;
@@ -26892,262 +24586,262 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r13.removedChildPackages.put(r4, r6);
             r7 = r9.mSettings.getPackageLPr(r4);
      */
-    /* JADX WARNING: Missing block: B:135:0x0258, code:
+    /* JADX WARNING: Missing block: B:135:0x0258, code skipped:
             if (r7 == null) goto L_0x0260;
      */
-    /* JADX WARNING: Missing block: B:136:0x025a, code:
+    /* JADX WARNING: Missing block: B:136:0x025a, code skipped:
             r6.origUsers = r7.queryInstalledUsers(r12, true);
      */
-    /* JADX WARNING: Missing block: B:137:0x0260, code:
+    /* JADX WARNING: Missing block: B:137:0x0260, code skipped:
             r3 = r3 + 1;
      */
-    /* JADX WARNING: Missing block: B:138:0x0264, code:
+    /* JADX WARNING: Missing block: B:138:0x0264, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:143:0x026c, code:
+    /* JADX WARNING: Missing block: B:144:0x026c, code skipped:
             if (r14.pkg != null) goto L_0x0277;
      */
-    /* JADX WARNING: Missing block: B:144:0x026e, code:
+    /* JADX WARNING: Missing block: B:145:0x026e, code skipped:
             android.util.Slog.w(TAG, "ps.pkg is null!");
      */
-    /* JADX WARNING: Missing block: B:145:0x0276, code:
+    /* JADX WARNING: Missing block: B:146:0x0276, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:147:0x027b, code:
+    /* JADX WARNING: Missing block: B:148:0x027b, code skipped:
             if (r14.pkg.applicationInfo != null) goto L_0x0286;
      */
-    /* JADX WARNING: Missing block: B:148:0x027d, code:
+    /* JADX WARNING: Missing block: B:149:0x027d, code skipped:
             android.util.Slog.w(TAG, "ps.pkg.applicationInfo is null!");
      */
-    /* JADX WARNING: Missing block: B:149:0x0285, code:
+    /* JADX WARNING: Missing block: B:150:0x0285, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:151:0x028a, code:
+    /* JADX WARNING: Missing block: B:152:0x028a, code skipped:
             if (isSystemApp(r14) == false) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:153:0x0293, code:
+    /* JADX WARNING: Missing block: B:154:0x0293, code skipped:
             if ((r14.pkg.applicationInfo.hwFlags & com.android.server.pm.DumpState.DUMP_HANDLE) != 0) goto L_0x02c4;
      */
-    /* JADX WARNING: Missing block: B:155:0x0297, code:
+    /* JADX WARNING: Missing block: B:156:0x0297, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x02b1;
      */
-    /* JADX WARNING: Missing block: B:156:0x0299, code:
+    /* JADX WARNING: Missing block: B:157:0x0299, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Removing system package: ");
             r2.append(r14.name);
             android.util.Slog.d(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:157:0x02b1, code:
+    /* JADX WARNING: Missing block: B:158:0x02b1, code skipped:
             r1 = deleteSystemPackageLIF(r14.pkg, r14, r12, r17, r13, r28);
             r20 = r8;
      */
-    /* JADX WARNING: Missing block: B:159:0x02c6, code:
+    /* JADX WARNING: Missing block: B:160:0x02c6, code skipped:
             if (DEBUG_REMOVE == false) goto L_0x02e0;
      */
-    /* JADX WARNING: Missing block: B:160:0x02c8, code:
+    /* JADX WARNING: Missing block: B:161:0x02c8, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Removing non-system package: ");
             r2.append(r14.name);
             android.util.Slog.d(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:161:0x02e0, code:
+    /* JADX WARNING: Missing block: B:162:0x02e0, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:162:0x02e8, code:
+    /* JADX WARNING: Missing block: B:163:0x02e8, code skipped:
             if ((r14.pkg.applicationInfo.hwFlags & com.android.server.pm.DumpState.DUMP_HANDLE) == 0) goto L_0x02eb;
      */
-    /* JADX WARNING: Missing block: B:163:0x02ea, code:
+    /* JADX WARNING: Missing block: B:164:0x02ea, code skipped:
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:164:0x02eb, code:
+    /* JADX WARNING: Missing block: B:165:0x02eb, code skipped:
             r18 = r1;
      */
-    /* JADX WARNING: Missing block: B:165:0x02ef, code:
+    /* JADX WARNING: Missing block: B:166:0x02ef, code skipped:
             if ((r17 & 8) != 0) goto L_0x02f3;
      */
-    /* JADX WARNING: Missing block: B:166:0x02f1, code:
+    /* JADX WARNING: Missing block: B:167:0x02f1, code skipped:
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:167:0x02f3, code:
+    /* JADX WARNING: Missing block: B:168:0x02f3, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:169:0x02f6, code:
+    /* JADX WARNING: Missing block: B:170:0x02f6, code skipped:
             if (r1 == false) goto L_0x0300;
      */
-    /* JADX WARNING: Missing block: B:170:0x02f8, code:
+    /* JADX WARNING: Missing block: B:171:0x02f8, code skipped:
             killApplication(r10, r14.appId, "uninstall pkg");
      */
-    /* JADX WARNING: Missing block: B:171:0x0300, code:
+    /* JADX WARNING: Missing block: B:172:0x0300, code skipped:
             r20 = r8;
             r1 = deleteInstalledPackageLIF(r14, r24, r17, r12, r13, r28, r29);
      */
-    /* JADX WARNING: Missing block: B:172:0x0312, code:
+    /* JADX WARNING: Missing block: B:173:0x0312, code skipped:
             if (r18 == false) goto L_0x0321;
      */
-    /* JADX WARNING: Missing block: B:173:0x0314, code:
+    /* JADX WARNING: Missing block: B:174:0x0314, code skipped:
             if (r1 == false) goto L_0x0321;
      */
-    /* JADX WARNING: Missing block: B:174:0x0316, code:
+    /* JADX WARNING: Missing block: B:175:0x0316, code skipped:
             recordUninstalledDelapp(r14.pkg.packageName, r14.pkg.codePath);
      */
-    /* JADX WARNING: Missing block: B:175:0x0321, code:
+    /* JADX WARNING: Missing block: B:176:0x0321, code skipped:
             if (r1 == false) goto L_0x0331;
      */
-    /* JADX WARNING: Missing block: B:176:0x0323, code:
+    /* JADX WARNING: Missing block: B:177:0x0323, code skipped:
             r2 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:177:0x0325, code:
+    /* JADX WARNING: Missing block: B:178:0x0325, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:179:?, code:
+    /* JADX WARNING: Missing block: B:180:?, code skipped:
             updateCertCompatPackage(r14.pkg, null);
      */
-    /* JADX WARNING: Missing block: B:180:0x032c, code:
+    /* JADX WARNING: Missing block: B:181:0x032c, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:184:0x0331, code:
+    /* JADX WARNING: Missing block: B:186:0x0331, code skipped:
             if (r1 == false) goto L_0x033f;
      */
-    /* JADX WARNING: Missing block: B:185:0x0333, code:
+    /* JADX WARNING: Missing block: B:187:0x0333, code skipped:
             r2 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:186:0x0335, code:
+    /* JADX WARNING: Missing block: B:188:0x0335, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:187:0x0336, code:
+    /* JADX WARNING: Missing block: B:189:0x0336, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:189:?, code:
+    /* JADX WARNING: Missing block: B:191:?, code skipped:
             writeCertCompatPackages(false);
      */
-    /* JADX WARNING: Missing block: B:190:0x033a, code:
+    /* JADX WARNING: Missing block: B:192:0x033a, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:194:0x033f, code:
+    /* JADX WARNING: Missing block: B:197:0x033f, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:195:0x0340, code:
+    /* JADX WARNING: Missing block: B:198:0x0340, code skipped:
             if (r13 == null) goto L_0x03f8;
      */
-    /* JADX WARNING: Missing block: B:197:0x034a, code:
+    /* JADX WARNING: Missing block: B:200:0x034a, code skipped:
             if (r9.mPackages.get(r14.name) != null) goto L_0x034e;
      */
-    /* JADX WARNING: Missing block: B:198:0x034c, code:
+    /* JADX WARNING: Missing block: B:201:0x034c, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:199:0x034e, code:
+    /* JADX WARNING: Missing block: B:202:0x034e, code skipped:
             r2 = r0;
      */
-    /* JADX WARNING: Missing block: B:200:0x034f, code:
+    /* JADX WARNING: Missing block: B:203:0x034f, code skipped:
             r13.removedForAllUsers = r2;
      */
-    /* JADX WARNING: Missing block: B:201:0x0353, code:
+    /* JADX WARNING: Missing block: B:204:0x0353, code skipped:
             if (r13.removedChildPackages == null) goto L_0x0382;
      */
-    /* JADX WARNING: Missing block: B:202:0x0355, code:
+    /* JADX WARNING: Missing block: B:205:0x0355, code skipped:
             r2 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:203:0x0357, code:
+    /* JADX WARNING: Missing block: B:206:0x0357, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:205:?, code:
+    /* JADX WARNING: Missing block: B:208:?, code skipped:
             r3 = r13.removedChildPackages.size();
             r4 = r0;
      */
-    /* JADX WARNING: Missing block: B:206:0x035f, code:
+    /* JADX WARNING: Missing block: B:209:0x035f, code skipped:
             if (r4 >= r3) goto L_0x037d;
      */
-    /* JADX WARNING: Missing block: B:207:0x0361, code:
+    /* JADX WARNING: Missing block: B:210:0x0361, code skipped:
             r5 = (com.android.server.pm.PackageManagerService.PackageRemovedInfo) r13.removedChildPackages.valueAt(r4);
      */
-    /* JADX WARNING: Missing block: B:208:0x0369, code:
+    /* JADX WARNING: Missing block: B:211:0x0369, code skipped:
             if (r5 == null) goto L_0x037a;
      */
-    /* JADX WARNING: Missing block: B:210:0x0373, code:
+    /* JADX WARNING: Missing block: B:213:0x0373, code skipped:
             if (r9.mPackages.get(r5.removedPackage) != null) goto L_0x0377;
      */
-    /* JADX WARNING: Missing block: B:211:0x0375, code:
+    /* JADX WARNING: Missing block: B:214:0x0375, code skipped:
             r6 = true;
      */
-    /* JADX WARNING: Missing block: B:212:0x0377, code:
+    /* JADX WARNING: Missing block: B:215:0x0377, code skipped:
             r6 = r0;
      */
-    /* JADX WARNING: Missing block: B:213:0x0378, code:
+    /* JADX WARNING: Missing block: B:216:0x0378, code skipped:
             r5.removedForAllUsers = r6;
      */
-    /* JADX WARNING: Missing block: B:214:0x037a, code:
+    /* JADX WARNING: Missing block: B:217:0x037a, code skipped:
             r4 = r4 + 1;
      */
-    /* JADX WARNING: Missing block: B:215:0x037d, code:
+    /* JADX WARNING: Missing block: B:218:0x037d, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:220:0x0386, code:
+    /* JADX WARNING: Missing block: B:224:0x0386, code skipped:
             if (isSystemApp(r14) == false) goto L_0x03f8;
      */
-    /* JADX WARNING: Missing block: B:221:0x0388, code:
+    /* JADX WARNING: Missing block: B:225:0x0388, code skipped:
             r2 = r9.mPackages;
      */
-    /* JADX WARNING: Missing block: B:222:0x038a, code:
+    /* JADX WARNING: Missing block: B:226:0x038a, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:224:?, code:
+    /* JADX WARNING: Missing block: B:228:?, code skipped:
             r3 = r9.mSettings.getPackageLPr(r14.name);
      */
-    /* JADX WARNING: Missing block: B:225:0x0393, code:
+    /* JADX WARNING: Missing block: B:229:0x0393, code skipped:
             if (r3 == null) goto L_0x03a0;
      */
-    /* JADX WARNING: Missing block: B:227:0x0397, code:
+    /* JADX WARNING: Missing block: B:231:0x0397, code skipped:
             if (r3.childPackageNames == null) goto L_0x03a0;
      */
-    /* JADX WARNING: Missing block: B:228:0x0399, code:
+    /* JADX WARNING: Missing block: B:232:0x0399, code skipped:
             r4 = r3.childPackageNames.size();
      */
-    /* JADX WARNING: Missing block: B:229:0x03a0, code:
+    /* JADX WARNING: Missing block: B:233:0x03a0, code skipped:
             r4 = r0;
      */
-    /* JADX WARNING: Missing block: B:230:0x03a2, code:
+    /* JADX WARNING: Missing block: B:235:0x03a2, code skipped:
             if (r0 >= r4) goto L_0x03f3;
      */
-    /* JADX WARNING: Missing block: B:231:0x03a4, code:
+    /* JADX WARNING: Missing block: B:236:0x03a4, code skipped:
             r5 = (java.lang.String) r3.childPackageNames.get(r0);
      */
-    /* JADX WARNING: Missing block: B:232:0x03ae, code:
+    /* JADX WARNING: Missing block: B:237:0x03ae, code skipped:
             if (r13.removedChildPackages == null) goto L_0x03b8;
      */
-    /* JADX WARNING: Missing block: B:234:0x03b6, code:
+    /* JADX WARNING: Missing block: B:239:0x03b6, code skipped:
             if (r13.removedChildPackages.indexOfKey(r5) >= 0) goto L_0x03f0;
      */
-    /* JADX WARNING: Missing block: B:235:0x03b8, code:
+    /* JADX WARNING: Missing block: B:240:0x03b8, code skipped:
             r6 = r9.mSettings.getPackageLPr(r5);
      */
-    /* JADX WARNING: Missing block: B:236:0x03be, code:
+    /* JADX WARNING: Missing block: B:241:0x03be, code skipped:
             if (r6 != null) goto L_0x03c1;
      */
-    /* JADX WARNING: Missing block: B:237:0x03c1, code:
+    /* JADX WARNING: Missing block: B:243:0x03c1, code skipped:
             r7 = new com.android.server.pm.PackageManagerService.PackageInstalledInfo();
             r7.name = r5;
             r7.newUsers = r6.queryInstalledUsers(r12, true);
             r7.pkg = (android.content.pm.PackageParser.Package) r9.mPackages.get(r5);
             r7.uid = r6.pkg.applicationInfo.uid;
      */
-    /* JADX WARNING: Missing block: B:238:0x03e2, code:
+    /* JADX WARNING: Missing block: B:244:0x03e2, code skipped:
             if (r13.appearedChildPackages != null) goto L_0x03eb;
      */
-    /* JADX WARNING: Missing block: B:239:0x03e4, code:
+    /* JADX WARNING: Missing block: B:245:0x03e4, code skipped:
             r13.appearedChildPackages = new android.util.ArrayMap();
      */
-    /* JADX WARNING: Missing block: B:240:0x03eb, code:
+    /* JADX WARNING: Missing block: B:246:0x03eb, code skipped:
             r13.appearedChildPackages.put(r5, r7);
      */
-    /* JADX WARNING: Missing block: B:241:0x03f0, code:
+    /* JADX WARNING: Missing block: B:247:0x03f0, code skipped:
             r0 = r0 + 1;
      */
-    /* JADX WARNING: Missing block: B:242:0x03f3, code:
+    /* JADX WARNING: Missing block: B:248:0x03f3, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:246:0x03f8, code:
+    /* JADX WARNING: Missing block: B:253:0x03f8, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27343,10 +25037,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x002d, code:
+    /* JADX WARNING: Missing block: B:24:0x002d, code skipped:
             if (r0 != null) goto L_0x002f;
      */
-    /* JADX WARNING: Missing block: B:25:0x002f, code:
+    /* JADX WARNING: Missing block: B:25:0x002f, code skipped:
             $closeResource(r2, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27377,22 +25071,22 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             final int i = userId;
             final IPackageDataObserver iPackageDataObserver = observer;
             this.mHandler.post(new Runnable() {
-                /* JADX WARNING: Missing block: B:44:0x00c4, code:
+                /* JADX WARNING: Missing block: B:44:0x00c4, code skipped:
             if (r0 != null) goto L_0x00c6;
      */
-                /* JADX WARNING: Missing block: B:45:0x00c6, code:
+                /* JADX WARNING: Missing block: B:45:0x00c6, code skipped:
             if (r1 != null) goto L_0x00c8;
      */
-                /* JADX WARNING: Missing block: B:47:?, code:
+                /* JADX WARNING: Missing block: B:47:?, code skipped:
             r0.close();
      */
-                /* JADX WARNING: Missing block: B:48:0x00cc, code:
+                /* JADX WARNING: Missing block: B:48:0x00cc, code skipped:
             r3 = move-exception;
      */
-                /* JADX WARNING: Missing block: B:49:0x00cd, code:
+                /* JADX WARNING: Missing block: B:49:0x00cd, code skipped:
             r1.addSuppressed(r3);
      */
-                /* JADX WARNING: Missing block: B:50:0x00d1, code:
+                /* JADX WARNING: Missing block: B:50:0x00d1, code skipped:
             r0.close();
      */
                 /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27455,28 +25149,28 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         throw new SecurityException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:18:0x004e, code:
+    /* JADX WARNING: Missing block: B:18:0x004e, code skipped:
             r1 = r2;
             clearAppDataLIF(r1, r8, 3);
             removeKeystoreDataIfNeeded(r8, android.os.UserHandle.getAppId(r1.applicationInfo.uid));
             r3 = getUserManagerInternal();
      */
-    /* JADX WARNING: Missing block: B:19:0x0066, code:
+    /* JADX WARNING: Missing block: B:19:0x0066, code skipped:
             if (r3.isUserUnlockingOrUnlocked(r8) == false) goto L_0x006a;
      */
-    /* JADX WARNING: Missing block: B:20:0x0068, code:
+    /* JADX WARNING: Missing block: B:20:0x0068, code skipped:
             r0 = 3;
      */
-    /* JADX WARNING: Missing block: B:22:0x006e, code:
+    /* JADX WARNING: Missing block: B:22:0x006e, code skipped:
             if (r3.isUserRunning(r8) == false) goto L_0x0073;
      */
-    /* JADX WARNING: Missing block: B:23:0x0070, code:
+    /* JADX WARNING: Missing block: B:23:0x0070, code skipped:
             r0 = 1;
      */
-    /* JADX WARNING: Missing block: B:24:0x0073, code:
+    /* JADX WARNING: Missing block: B:24:0x0073, code skipped:
             prepareAppDataContentsLIF(r1, r8, r0);
      */
-    /* JADX WARNING: Missing block: B:25:0x0077, code:
+    /* JADX WARNING: Missing block: B:25:0x0077, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27697,34 +25391,34 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         throw new UnsupportedOperationException("Shame on you for calling the hidden API getPackageSizeInfo(). Shame!");
     }
 
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r12.mInstaller.getAppSize(r1.volumeUuid, new java.lang.String[]{r13}, r14, 0, r1.appId, new long[]{r1.getCeDataInode(r14)}, new java.lang.String[]{r1.codePathString}, r15);
      */
-    /* JADX WARNING: Missing block: B:12:0x004c, code:
+    /* JADX WARNING: Missing block: B:12:0x004c, code skipped:
             if (isSystemApp(r1) == false) goto L_0x0063;
      */
-    /* JADX WARNING: Missing block: B:14:0x0052, code:
+    /* JADX WARNING: Missing block: B:14:0x0052, code skipped:
             if (isUpdatedSystemApp(r1) != false) goto L_0x0063;
      */
-    /* JADX WARNING: Missing block: B:16:0x005d, code:
+    /* JADX WARNING: Missing block: B:16:0x005d, code skipped:
             if ((r1.pkg.applicationInfo.hwFlags & com.android.server.pm.DumpState.DUMP_HANDLE) != 0) goto L_0x0063;
      */
-    /* JADX WARNING: Missing block: B:17:0x005f, code:
+    /* JADX WARNING: Missing block: B:17:0x005f, code skipped:
             r15.codeSize = 0;
      */
-    /* JADX WARNING: Missing block: B:18:0x0063, code:
+    /* JADX WARNING: Missing block: B:18:0x0063, code skipped:
             r15.dataSize -= r15.cacheSize;
      */
-    /* JADX WARNING: Missing block: B:19:0x006b, code:
+    /* JADX WARNING: Missing block: B:19:0x006b, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:20:0x006c, code:
+    /* JADX WARNING: Missing block: B:20:0x006c, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:21:0x006d, code:
+    /* JADX WARNING: Missing block: B:21:0x006d, code skipped:
             android.util.Slog.w(TAG, java.lang.String.valueOf(r0));
      */
-    /* JADX WARNING: Missing block: B:22:0x0076, code:
+    /* JADX WARNING: Missing block: B:22:0x0076, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27800,40 +25494,46 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mPermissionManager.enforceCrossUserPermission(callingUid, i, true, false, "add preferred activity");
         if (intentFilter.countActions() == 0) {
             Slog.w(TAG, "Cannot set a preferred activity with no filter actions");
-        } else if (!intentFilter.hasCategory("android.intent.category.HOME") || activity == null || this.mHwPMSEx.isAllowedSetHomeActivityForAntiMal(getPackageInfo(activity.getPackageName(), 0, i), i)) {
-            synchronized (this.mPackages) {
-                if (this.mContext.checkCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS") != 0) {
-                    if (getUidTargetSdkVersionLockedLPr(callingUid) < 8) {
-                        str = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Ignoring addPreferredActivity() from uid ");
-                        stringBuilder.append(callingUid);
-                        Slog.w(str, stringBuilder.toString());
-                        return;
-                    }
-                    this.mContext.enforceCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS", null);
-                }
-                PreferredIntentResolver pir = this.mSettings.editPreferredActivitiesLPw(i);
-                if (activity == null) {
-                    Slog.w(TAG, "Cannot set a preferred activity with activity is null");
+            return;
+        }
+        if (intentFilter.hasCategory("android.intent.category.HOME") && activity != null) {
+            if (intentFilter.hasAction("android.intent.action.MDM_SET_DEFAULT_LAUNCHER_FOR_ANTIMAL")) {
+                Global.putInt(this.mContext.getContentResolver(), "hwMdmActionForAntimalFlag", 1);
+            } else if (!this.mHwPMSEx.isAllowedSetHomeActivityForAntiMal(getPackageInfo(activity.getPackageName(), 0, i), i)) {
+                Slog.i(TAG, "NOT ALLOWED TO add preferred activity current time!");
+                return;
+            }
+        }
+        synchronized (this.mPackages) {
+            if (this.mContext.checkCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS") != 0) {
+                if (getUidTargetSdkVersionLockedLPr(callingUid) < 8) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Ignoring addPreferredActivity() from uid ");
+                    stringBuilder.append(callingUid);
+                    Slog.w(str, stringBuilder.toString());
                     return;
                 }
-                String str3 = TAG;
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(str2);
-                stringBuilder2.append(" activity ");
-                stringBuilder2.append(activity.flattenToShortString());
-                stringBuilder2.append(" for user ");
-                stringBuilder2.append(i);
-                stringBuilder2.append(":");
-                Slog.i(str3, stringBuilder2.toString());
-                intentFilter.dump(new LogPrinter(4, TAG), "  ");
-                pir.addFilter(new PreferredActivity(intentFilter, match, set, activity, always));
-                scheduleWritePackageRestrictionsLocked(i);
-                postPreferredActivityChangedBroadcast(i);
+                this.mContext.enforceCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS", null);
             }
-        } else {
-            Slog.i(TAG, "NOT ALLOWED TO add preferred activity current time!");
+            PreferredIntentResolver pir = this.mSettings.editPreferredActivitiesLPw(i);
+            if (activity == null) {
+                Slog.w(TAG, "Cannot set a preferred activity with activity is null");
+                return;
+            }
+            String str3 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append(str2);
+            stringBuilder2.append(" activity ");
+            stringBuilder2.append(activity.flattenToShortString());
+            stringBuilder2.append(" for user ");
+            stringBuilder2.append(i);
+            stringBuilder2.append(":");
+            Slog.i(str3, stringBuilder2.toString());
+            intentFilter.dump(new LogPrinter(4, TAG), "  ");
+            pir.addFilter(new PreferredActivity(intentFilter, match, set, activity, always));
+            scheduleWritePackageRestrictionsLocked(i);
+            postPreferredActivityChangedBroadcast(i);
         }
     }
 
@@ -27853,14 +25553,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:58:0x01f5 A:{Catch:{ all -> 0x0278 }} */
-    /* JADX WARNING: Missing block: B:55:0x01f0, code:
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x0209 A:{Catch:{ all -> 0x028c }} */
+    /* JADX WARNING: Missing block: B:58:0x0204, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:69:0x0265, code:
+    /* JADX WARNING: Missing block: B:73:0x0279, code skipped:
             addPreferredActivityInternal(r10, r17, r14, r11, true, r12, "Replacing preferred");
      */
-    /* JADX WARNING: Missing block: B:70:0x0272, code:
+    /* JADX WARNING: Missing block: B:74:0x0286, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27875,144 +25575,148 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             throw new IllegalArgumentException("replacePreferredActivity expects filter to have only 1 action.");
         } else if (filter.countDataAuthorities() == 0 && filter.countDataPaths() == 0 && filter.countDataSchemes() <= 1 && filter.countDataTypes() == 0) {
             int i2 = 0;
-            if (!intentFilter.hasCategory("android.intent.category.HOME") || componentName == null || this.mHwPMSEx.isAllowedSetHomeActivityForAntiMal(getPackageInfo(activity.getPackageName(), 0, i), i)) {
-                int callingUid = Binder.getCallingUid();
-                this.mPermissionManager.enforceCrossUserPermission(callingUid, i, true, false, "replace preferred activity");
-                synchronized (this.mPackages) {
-                    try {
-                        if (this.mContext.checkCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS") != 0) {
-                            if (getUidTargetSdkVersionLockedLPr(callingUid) < 8) {
-                                String str = TAG;
-                                StringBuilder stringBuilder = new StringBuilder();
-                                stringBuilder.append("Ignoring replacePreferredActivity() from uid ");
-                                stringBuilder.append(Binder.getCallingUid());
-                                Slog.w(str, stringBuilder.toString());
-                                return;
-                            }
-                            this.mContext.enforceCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS", null);
-                        }
-                        PreferredIntentResolver pir = (PreferredIntentResolver) this.mSettings.mPreferredActivities.get(i);
-                        if (pir != null) {
-                            ArrayList<PreferredActivity> existing = pir.findFilters(intentFilter);
-                            if (existing != null && existing.size() == 1) {
-                                String str2;
-                                StringBuilder stringBuilder2;
-                                PreferredActivity cur = (PreferredActivity) existing.get(0);
-                                if (DEBUG_PREFERRED) {
-                                    Slog.i(TAG, "Checking replace of preferred:");
-                                    intentFilter.dump(new LogPrinter(4, TAG), "  ");
-                                    if (cur.mPref.mAlways) {
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  -- CUR: mMatch=");
-                                        stringBuilder2.append(cur.mPref.mMatch);
-                                        Slog.i(str2, stringBuilder2.toString());
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  -- CUR: mSet=");
-                                        stringBuilder2.append(Arrays.toString(cur.mPref.mSetComponents));
-                                        Slog.i(str2, stringBuilder2.toString());
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  -- CUR: mComponent=");
-                                        stringBuilder2.append(cur.mPref.mShortComponent);
-                                        Slog.i(str2, stringBuilder2.toString());
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  -- NEW: mMatch=");
-                                        stringBuilder2.append(match & 268369920);
-                                        Slog.i(str2, stringBuilder2.toString());
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  -- CUR: mSet=");
-                                        stringBuilder2.append(Arrays.toString(set));
-                                        Slog.i(str2, stringBuilder2.toString());
-                                        str2 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("  -- CUR: mComponent=");
-                                        stringBuilder2.append(activity.flattenToShortString());
-                                        Slog.i(str2, stringBuilder2.toString());
-                                    } else {
-                                        Slog.i(TAG, "  -- CUR; not mAlways!");
-                                    }
-                                }
-                                if (cur.mPref.mAlways && cur.mPref.mComponent.equals(componentName) && cur.mPref.mMatch == (match & 268369920)) {
-                                    componentNameArr = set;
-                                    try {
-                                        if (cur.mPref.sameSet(componentNameArr)) {
-                                            if (DEBUG_PREFERRED) {
-                                                str2 = TAG;
-                                                StringBuilder stringBuilder3 = new StringBuilder();
-                                                stringBuilder3.append("Replacing with same preferred activity ");
-                                                stringBuilder3.append(cur.mPref.mShortComponent);
-                                                stringBuilder3.append(" for user ");
-                                                stringBuilder3.append(i);
-                                                stringBuilder3.append(":");
-                                                Slog.i(str2, stringBuilder3.toString());
-                                                intentFilter.dump(new LogPrinter(4, TAG), "  ");
-                                            }
-                                        }
-                                        if (existing != null) {
-                                            if (DEBUG_PREFERRED) {
-                                                String str3 = TAG;
-                                                StringBuilder stringBuilder4 = new StringBuilder();
-                                                stringBuilder4.append(existing.size());
-                                                stringBuilder4.append(" existing preferred matches for:");
-                                                Slog.i(str3, stringBuilder4.toString());
-                                                intentFilter.dump(new LogPrinter(4, TAG), "  ");
-                                            }
-                                            while (true) {
-                                                int i3 = i2;
-                                                if (i3 >= existing.size()) {
-                                                    break;
-                                                }
-                                                PreferredActivity pa = (PreferredActivity) existing.get(i3);
-                                                if (DEBUG_PREFERRED) {
-                                                    String str4 = TAG;
-                                                    stringBuilder2 = new StringBuilder();
-                                                    stringBuilder2.append("Removing existing preferred activity ");
-                                                    stringBuilder2.append(pa.mPref.mComponent);
-                                                    stringBuilder2.append(":");
-                                                    Slog.i(str4, stringBuilder2.toString());
-                                                    pa.dump(new LogPrinter(4, TAG), "  ");
-                                                }
-                                                pir.removeFilter(pa);
-                                                i2 = i3 + 1;
-                                            }
-                                        }
-                                    } catch (Throwable th2) {
-                                        th = th2;
-                                        throw th;
-                                    }
-                                }
-                            }
-                            componentNameArr = set;
-                            if (existing != null) {
-                            }
-                        } else {
-                            componentNameArr = set;
-                        }
-                    } catch (Throwable th3) {
-                        th = th3;
-                        componentNameArr = set;
-                        throw th;
-                    }
+            if (intentFilter.hasCategory("android.intent.category.HOME") && componentName != null) {
+                if (intentFilter.hasAction("android.intent.action.MDM_SET_DEFAULT_LAUNCHER_FOR_ANTIMAL")) {
+                    Global.putInt(this.mContext.getContentResolver(), "hwMdmActionForAntimalFlag", 1);
+                } else if (!this.mHwPMSEx.isAllowedSetHomeActivityForAntiMal(getPackageInfo(activity.getPackageName(), 0, i), i)) {
+                    Slog.i(TAG, "NOT ALLOWED TO replace preferred activity current time!");
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Component ");
+                    stringBuilder.append(componentName);
+                    stringBuilder.append(" not allowed to be home on user ");
+                    stringBuilder.append(i);
+                    throw new IllegalArgumentException(stringBuilder.toString());
                 }
             }
-            Slog.i(TAG, "NOT ALLOWED TO replace preferred activity current time!");
-            StringBuilder stringBuilder5 = new StringBuilder();
-            stringBuilder5.append("Component ");
-            stringBuilder5.append(componentName);
-            stringBuilder5.append(" not allowed to be home on user ");
-            stringBuilder5.append(i);
-            throw new IllegalArgumentException(stringBuilder5.toString());
+            int callingUid = Binder.getCallingUid();
+            this.mPermissionManager.enforceCrossUserPermission(callingUid, i, true, false, "replace preferred activity");
+            synchronized (this.mPackages) {
+                try {
+                    if (this.mContext.checkCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS") != 0) {
+                        if (getUidTargetSdkVersionLockedLPr(callingUid) < 8) {
+                            String str = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Ignoring replacePreferredActivity() from uid ");
+                            stringBuilder2.append(Binder.getCallingUid());
+                            Slog.w(str, stringBuilder2.toString());
+                            return;
+                        }
+                        this.mContext.enforceCallingOrSelfPermission("android.permission.SET_PREFERRED_APPLICATIONS", null);
+                    }
+                    PreferredIntentResolver pir = (PreferredIntentResolver) this.mSettings.mPreferredActivities.get(i);
+                    if (pir != null) {
+                        ArrayList<PreferredActivity> existing = pir.findFilters(intentFilter);
+                        if (existing != null && existing.size() == 1) {
+                            String str2;
+                            StringBuilder stringBuilder3;
+                            PreferredActivity cur = (PreferredActivity) existing.get(0);
+                            if (DEBUG_PREFERRED) {
+                                Slog.i(TAG, "Checking replace of preferred:");
+                                intentFilter.dump(new LogPrinter(4, TAG), "  ");
+                                if (cur.mPref.mAlways) {
+                                    str2 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("  -- CUR: mMatch=");
+                                    stringBuilder3.append(cur.mPref.mMatch);
+                                    Slog.i(str2, stringBuilder3.toString());
+                                    str2 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("  -- CUR: mSet=");
+                                    stringBuilder3.append(Arrays.toString(cur.mPref.mSetComponents));
+                                    Slog.i(str2, stringBuilder3.toString());
+                                    str2 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("  -- CUR: mComponent=");
+                                    stringBuilder3.append(cur.mPref.mShortComponent);
+                                    Slog.i(str2, stringBuilder3.toString());
+                                    str2 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("  -- NEW: mMatch=");
+                                    stringBuilder3.append(match & 268369920);
+                                    Slog.i(str2, stringBuilder3.toString());
+                                    str2 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("  -- CUR: mSet=");
+                                    stringBuilder3.append(Arrays.toString(set));
+                                    Slog.i(str2, stringBuilder3.toString());
+                                    str2 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("  -- CUR: mComponent=");
+                                    stringBuilder3.append(activity.flattenToShortString());
+                                    Slog.i(str2, stringBuilder3.toString());
+                                } else {
+                                    Slog.i(TAG, "  -- CUR; not mAlways!");
+                                }
+                            }
+                            if (cur.mPref.mAlways && cur.mPref.mComponent.equals(componentName) && cur.mPref.mMatch == (match & 268369920)) {
+                                componentNameArr = set;
+                                try {
+                                    if (cur.mPref.sameSet(componentNameArr)) {
+                                        if (DEBUG_PREFERRED) {
+                                            str2 = TAG;
+                                            StringBuilder stringBuilder4 = new StringBuilder();
+                                            stringBuilder4.append("Replacing with same preferred activity ");
+                                            stringBuilder4.append(cur.mPref.mShortComponent);
+                                            stringBuilder4.append(" for user ");
+                                            stringBuilder4.append(i);
+                                            stringBuilder4.append(":");
+                                            Slog.i(str2, stringBuilder4.toString());
+                                            intentFilter.dump(new LogPrinter(4, TAG), "  ");
+                                        }
+                                    }
+                                    if (existing != null) {
+                                        if (DEBUG_PREFERRED) {
+                                            String str3 = TAG;
+                                            StringBuilder stringBuilder5 = new StringBuilder();
+                                            stringBuilder5.append(existing.size());
+                                            stringBuilder5.append(" existing preferred matches for:");
+                                            Slog.i(str3, stringBuilder5.toString());
+                                            intentFilter.dump(new LogPrinter(4, TAG), "  ");
+                                        }
+                                        while (true) {
+                                            int i3 = i2;
+                                            if (i3 >= existing.size()) {
+                                                break;
+                                            }
+                                            PreferredActivity pa = (PreferredActivity) existing.get(i3);
+                                            if (DEBUG_PREFERRED) {
+                                                String str4 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("Removing existing preferred activity ");
+                                                stringBuilder3.append(pa.mPref.mComponent);
+                                                stringBuilder3.append(":");
+                                                Slog.i(str4, stringBuilder3.toString());
+                                                pa.dump(new LogPrinter(4, TAG), "  ");
+                                            }
+                                            pir.removeFilter(pa);
+                                            i2 = i3 + 1;
+                                        }
+                                    }
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                    throw th;
+                                }
+                            }
+                        }
+                        componentNameArr = set;
+                        if (existing != null) {
+                        }
+                    } else {
+                        componentNameArr = set;
+                    }
+                } catch (Throwable th3) {
+                    th = th3;
+                    componentNameArr = set;
+                    throw th;
+                }
+            }
         } else {
             componentNameArr = set;
             throw new IllegalArgumentException("replacePreferredActivity expects filter to have no data authorities, paths, or types; and at most one scheme.");
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x007b, code:
+    /* JADX WARNING: Missing block: B:28:0x007b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -28166,7 +25870,15 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             throw new SecurityException("addPersistentPreferredActivity can only be run by the system");
         } else if (filter.countActions() == 0) {
             Slog.w(TAG, "Cannot set a preferred activity with no filter actions");
-        } else if (!filter.hasCategory("android.intent.category.HOME") || activity == null || this.mHwPMSEx.isAllowedSetHomeActivityForAntiMal(getPackageInfo(activity.getPackageName(), 0, userId), userId)) {
+        } else {
+            if (filter.hasCategory("android.intent.category.HOME") && activity != null) {
+                if (filter.hasAction("android.intent.action.MDM_SET_DEFAULT_LAUNCHER_FOR_ANTIMAL")) {
+                    Global.putInt(this.mContext.getContentResolver(), "hwMdmActionForAntimalFlag", 1);
+                } else if (!this.mHwPMSEx.isAllowedSetHomeActivityForAntiMal(getPackageInfo(activity.getPackageName(), 0, userId), userId)) {
+                    Slog.i(TAG, "NOT ALLOWED TO add persistent preferred activity current time!");
+                    return;
+                }
+            }
             synchronized (this.mPackages) {
                 String str = TAG;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -28181,8 +25893,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 scheduleWritePackageRestrictionsLocked(userId);
                 postPreferredActivityChangedBroadcast(userId);
             }
-        } else {
-            Slog.i(TAG, "NOT ALLOWED TO add persistent preferred activity current time!");
         }
     }
 
@@ -28826,7 +26536,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     }
 
     public String getSystemTextClassifierPackageName() {
-        return this.mContext.getString(17039790);
+        return this.mContext.getString(17039791);
     }
 
     public void setApplicationEnabledSetting(String appPackageName, int newState, int flags, int userId, String callingPackage) {
@@ -28853,6 +26563,1011 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         HwFrameworkFactory.getHwBehaviorCollectManager().sendBehavior(BehaviorId.PACKAGEMANAGER_SETCOMPONENTENABLEDSETTING, new Object[]{Integer.valueOf(newState)});
         if (sUserManager.exists(userId) && componentName != null) {
             setEnabledSetting(componentName.getPackageName(), componentName.getClassName(), newState, flags, userId, null);
+        }
+    }
+
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:283:0x04a1=Splitter:B:283:0x04a1, B:307:0x04e2=Splitter:B:307:0x04e2, B:290:0x04a7=Splitter:B:290:0x04a7, B:238:0x042d=Splitter:B:238:0x042d} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x037f A:{SYNTHETIC, Splitter:B:179:0x037f} */
+    /* JADX WARNING: Removed duplicated region for block: B:280:0x0492 A:{SYNTHETIC, Splitter:B:280:0x0492} */
+    /* JADX WARNING: Removed duplicated region for block: B:293:0x04aa A:{SYNTHETIC, Splitter:B:293:0x04aa} */
+    /* JADX WARNING: Removed duplicated region for block: B:206:0x03df A:{SYNTHETIC, Splitter:B:206:0x03df} */
+    /* JADX WARNING: Removed duplicated region for block: B:216:0x0403  */
+    /* JADX WARNING: Removed duplicated region for block: B:226:0x0415 A:{SYNTHETIC, Splitter:B:226:0x0415} */
+    /* JADX WARNING: Removed duplicated region for block: B:266:0x0465 A:{SYNTHETIC, Splitter:B:266:0x0465} */
+    /* JADX WARNING: Removed duplicated region for block: B:293:0x04aa A:{SYNTHETIC, Splitter:B:293:0x04aa} */
+    /* JADX WARNING: Removed duplicated region for block: B:266:0x0465 A:{SYNTHETIC, Splitter:B:266:0x0465} */
+    /* JADX WARNING: Missing block: B:54:0x0174, code skipped:
+            if (android.os.UserHandle.isSameApp(r15, r5.appId) != false) goto L_0x01f2;
+     */
+    /* JADX WARNING: Missing block: B:55:0x0176, code skipped:
+            if (r18 == false) goto L_0x019f;
+     */
+    /* JADX WARNING: Missing block: B:57:0x017c, code skipped:
+            if (filterAppAccessLPr(r5, r15, r13) == false) goto L_0x017f;
+     */
+    /* JADX WARNING: Missing block: B:59:0x0185, code skipped:
+            if (r8.mProtectedPackages.isPackageStateProtected(r13, r9) != false) goto L_0x0188;
+     */
+    /* JADX WARNING: Missing block: B:60:0x0188, code skipped:
+            r1 = new java.lang.StringBuilder();
+            r1.append("Cannot disable a protected package: ");
+            r1.append(r9);
+     */
+    /* JADX WARNING: Missing block: B:61:0x019e, code skipped:
+            throw new java.lang.SecurityException(r1.toString());
+     */
+    /* JADX WARNING: Missing block: B:62:0x019f, code skipped:
+            r1 = new java.lang.StringBuilder();
+            r1.append("Attempt to change component state; pid=");
+            r1.append(android.os.Binder.getCallingPid());
+            r1.append(", uid=");
+            r1.append(r15);
+     */
+    /* JADX WARNING: Missing block: B:63:0x01ba, code skipped:
+            if (r10 != null) goto L_0x01ce;
+     */
+    /* JADX WARNING: Missing block: B:64:0x01bc, code skipped:
+            r2 = new java.lang.StringBuilder();
+            r2.append(", package=");
+            r2.append(r9);
+            r2 = r2.toString();
+     */
+    /* JADX WARNING: Missing block: B:65:0x01ce, code skipped:
+            r2 = new java.lang.StringBuilder();
+            r2.append(", component=");
+            r2.append(r9);
+            r2.append(com.android.server.slice.SliceClientPermissions.SliceAuthority.DELIMITER);
+            r2.append(r10);
+            r2 = r2.toString();
+     */
+    /* JADX WARNING: Missing block: B:66:0x01e7, code skipped:
+            r1.append(r2);
+     */
+    /* JADX WARNING: Missing block: B:67:0x01f1, code skipped:
+            throw new java.lang.SecurityException(r1.toString());
+     */
+    /* JADX WARNING: Missing block: B:68:0x01f2, code skipped:
+            r2 = r8.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:69:0x01f4, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:71:0x01f7, code skipped:
+            if (r15 != 2000) goto L_0x0241;
+     */
+    /* JADX WARNING: Missing block: B:74:0x01fd, code skipped:
+            if ((r5.pkgFlags & 256) != 0) goto L_0x0241;
+     */
+    /* JADX WARNING: Missing block: B:75:0x01ff, code skipped:
+            r1 = r5.getEnabled(r13);
+     */
+    /* JADX WARNING: Missing block: B:76:0x0203, code skipped:
+            if (r10 != null) goto L_0x0212;
+     */
+    /* JADX WARNING: Missing block: B:77:0x0205, code skipped:
+            if (r1 == 3) goto L_0x020b;
+     */
+    /* JADX WARNING: Missing block: B:78:0x0207, code skipped:
+            if (r1 == 0) goto L_0x020b;
+     */
+    /* JADX WARNING: Missing block: B:79:0x0209, code skipped:
+            if (r1 != 1) goto L_0x0212;
+     */
+    /* JADX WARNING: Missing block: B:80:0x020b, code skipped:
+            if (r11 == 3) goto L_0x0241;
+     */
+    /* JADX WARNING: Missing block: B:81:0x020d, code skipped:
+            if (r11 == 0) goto L_0x0241;
+     */
+    /* JADX WARNING: Missing block: B:82:0x020f, code skipped:
+            if (r11 != 1) goto L_0x0212;
+     */
+    /* JADX WARNING: Missing block: B:84:0x0212, code skipped:
+            r3 = new java.lang.StringBuilder();
+            r3.append("Shell cannot change component state for ");
+            r3.append(r9);
+            r3.append(com.android.server.slice.SliceClientPermissions.SliceAuthority.DELIMITER);
+            r3.append(r10);
+            r3.append(" to ");
+            r3.append(r11);
+     */
+    /* JADX WARNING: Missing block: B:85:0x0238, code skipped:
+            throw new java.lang.SecurityException(r3.toString());
+     */
+    /* JADX WARNING: Missing block: B:86:0x0239, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:87:0x023a, code skipped:
+            r6 = r12;
+            r34 = r15;
+            r15 = r7;
+            r7 = r5;
+     */
+    /* JADX WARNING: Missing block: B:89:?, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:91:0x0244, code skipped:
+            if (r10 != null) goto L_0x0540;
+     */
+    /* JADX WARNING: Missing block: B:92:0x0246, code skipped:
+            r1 = r8.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:93:0x0248, code skipped:
+            monitor-enter(r1);
+     */
+    /* JADX WARNING: Missing block: B:96:0x024d, code skipped:
+            if (r5.getEnabled(r13) != r11) goto L_0x0258;
+     */
+    /* JADX WARNING: Missing block: B:98:?, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:99:0x0250, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:100:0x0251, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:101:0x0252, code skipped:
+            r12 = r5;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:103:?, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:104:0x0259, code skipped:
+            r6 = r5.pkg;
+     */
+    /* JADX WARNING: Missing block: B:105:0x025d, code skipped:
+            if (r6.isStub == false) goto L_0x0267;
+     */
+    /* JADX WARNING: Missing block: B:107:0x0263, code skipped:
+            if (r6.isSystem() == false) goto L_0x0267;
+     */
+    /* JADX WARNING: Missing block: B:108:0x0265, code skipped:
+            r1 = true;
+     */
+    /* JADX WARNING: Missing block: B:109:0x0267, code skipped:
+            r1 = false;
+     */
+    /* JADX WARNING: Missing block: B:111:0x026b, code skipped:
+            if (r1 == false) goto L_0x051b;
+     */
+    /* JADX WARNING: Missing block: B:112:0x026d, code skipped:
+            if (r11 == 0) goto L_0x0279;
+     */
+    /* JADX WARNING: Missing block: B:113:0x026f, code skipped:
+            if (r11 != 1) goto L_0x0272;
+     */
+    /* JADX WARNING: Missing block: B:114:0x0272, code skipped:
+            r12 = r5;
+            r4 = r6;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:115:0x0279, code skipped:
+            r4 = decompressPackage(r6);
+     */
+    /* JADX WARNING: Missing block: B:116:0x027d, code skipped:
+            if (r4 != null) goto L_0x0298;
+     */
+    /* JADX WARNING: Missing block: B:117:0x027f, code skipped:
+            r0 = TAG;
+            r1 = new java.lang.StringBuilder();
+            r1.append("couldn't decompress pkg: ");
+            r1.append(r5.name);
+            android.util.Slog.e(r0, r1.toString());
+     */
+    /* JADX WARNING: Missing block: B:118:0x0297, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:119:0x0298, code skipped:
+            r3 = new android.content.pm.PackageParser();
+            r3.setSeparateProcesses(r8.mSeparateProcesses);
+            r3.setDisplayMetrics(r8.mMetrics);
+            r3.setCallback(r8.mPackageParserCallback);
+     */
+    /* JADX WARNING: Missing block: B:122:0x02b5, code skipped:
+            r2 = r3.parsePackage(r4, 16 | (r8.mDefParseFlags | 1));
+            r1 = r8.mInstallLock;
+     */
+    /* JADX WARNING: Missing block: B:123:0x02ba, code skipped:
+            monitor-enter(r1);
+     */
+    /* JADX WARNING: Missing block: B:125:?, code skipped:
+            removePackageLI(r6, true);
+            r14 = r8.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:126:0x02c0, code skipped:
+            monitor-enter(r14);
+     */
+    /* JADX WARNING: Missing block: B:128:?, code skipped:
+            disableSystemPackageLPw(r6, r2);
+     */
+    /* JADX WARNING: Missing block: B:129:0x02c4, code skipped:
+            monitor-exit(r14);
+     */
+    /* JADX WARNING: Missing block: B:132:0x02ce, code skipped:
+            r14 = freezePackage(r6.packageName, "setEnabledSetting");
+     */
+    /* JADX WARNING: Missing block: B:135:0x02d2, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r31 = r4;
+            r32 = r5;
+            r33 = r6;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:137:?, code skipped:
+            r7 = scanPackageTracedLI(r4, (r8.mDefParseFlags | Integer.MIN_VALUE) | 64, 0, 0, (android.os.UserHandle) null);
+            prepareAppDataAfterInstallLIF(r7);
+            r6 = r8.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:138:0x02ff, code skipped:
+            monitor-enter(r6);
+     */
+    /* JADX WARNING: Missing block: B:141:?, code skipped:
+            updateSharedLibrariesLPr(r7, null);
+     */
+    /* JADX WARNING: Missing block: B:142:0x0305, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:143:0x0306, code skipped:
+            r25 = r6;
+     */
+    /* JADX WARNING: Missing block: B:144:0x0309, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:145:0x030a, code skipped:
+            r1 = r0;
+     */
+    /* JADX WARNING: Missing block: B:147:?, code skipped:
+            android.util.Slog.e(TAG, "updateAllSharedLibrariesLPw failed: ", r0);
+     */
+    /* JADX WARNING: Missing block: B:167:0x0352, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:168:0x0353, code skipped:
+            r1 = null;
+     */
+    /* JADX WARNING: Missing block: B:169:0x0355, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:170:0x0356, code skipped:
+            r1 = r0;
+     */
+    /* JADX WARNING: Missing block: B:171:0x0358, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:172:0x0359, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r31 = r4;
+            r32 = r5;
+            r33 = r6;
+            r34 = r15;
+            r15 = r7;
+            r1 = null;
+     */
+    /* JADX WARNING: Missing block: B:173:0x036a, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:174:0x036b, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r31 = r4;
+            r32 = r5;
+            r33 = r6;
+            r34 = r15;
+            r15 = r7;
+            r1 = r0;
+     */
+    /* JADX WARNING: Missing block: B:176:?, code skipped:
+            throw r1;
+     */
+    /* JADX WARNING: Missing block: B:177:0x037c, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:178:0x037d, code skipped:
+            if (r14 != null) goto L_0x037f;
+     */
+    /* JADX WARNING: Missing block: B:180:?, code skipped:
+            $closeResource(r1, r14);
+     */
+    /* JADX WARNING: Missing block: B:185:0x038e, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:186:0x038f, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:187:0x0390, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r34 = r15;
+            r15 = r7;
+            r17 = r4;
+            r12 = r5;
+            r4 = r6;
+     */
+    /* JADX WARNING: Missing block: B:188:0x039f, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:189:0x03a0, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r31 = r4;
+            r32 = r5;
+            r33 = r6;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:207:?, code skipped:
+            enableSystemPackageLPw(r5);
+     */
+    /* JADX WARNING: Missing block: B:218:?, code skipped:
+            $closeResource(null, r2);
+     */
+    /* JADX WARNING: Missing block: B:219:0x0408, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:220:0x0409, code skipped:
+            r4 = r36;
+     */
+    /* JADX WARNING: Missing block: B:221:0x040d, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:222:0x040e, code skipped:
+            r4 = r36;
+     */
+    /* JADX WARNING: Missing block: B:230:?, code skipped:
+            r8.mSettings.disableSystemPackageLPw(r36.packageName, true);
+            r8.mSettings.writeLPr();
+     */
+    /* JADX WARNING: Missing block: B:233:0x0427, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:235:0x0429, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:236:0x042a, code skipped:
+            r4 = r36;
+     */
+    /* JADX WARNING: Missing block: B:247:0x0442, code skipped:
+            r2 = r4;
+            r4 = r5;
+            r17 = r6;
+            r12 = r7;
+            r3 = null;
+     */
+    /* JADX WARNING: Missing block: B:252:0x044a, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:253:0x044c, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:254:0x044d, code skipped:
+            r1 = r0;
+     */
+    /* JADX WARNING: Missing block: B:306:0x04d5, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r17 = r4;
+            r12 = r5;
+            r4 = r6;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:313:0x04e6, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:314:0x04e7, code skipped:
+            r28 = r1;
+            r29 = r2;
+            r30 = r3;
+            r17 = r4;
+            r12 = r5;
+            r4 = r6;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:317:0x04f6, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:318:0x04f8, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:319:0x04f9, code skipped:
+            r30 = r3;
+            r17 = r4;
+            r12 = r5;
+            r4 = r6;
+            r34 = r15;
+            r15 = r7;
+            r1 = TAG;
+            r2 = new java.lang.StringBuilder();
+            r2.append("Failed to parse compressed system package:");
+            r2.append(r12.name);
+            android.util.Slog.w(r1, r2.toString(), r0);
+     */
+    /* JADX WARNING: Missing block: B:320:0x051a, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:321:0x051b, code skipped:
+            r12 = r5;
+            r4 = r6;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:336:0x0537, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:337:0x0538, code skipped:
+            r12 = r5;
+            r34 = r15;
+            r15 = r7;
+     */
+    /* JADX WARNING: Missing block: B:339:?, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:340:0x053d, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:341:0x053e, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:343:0x0540, code skipped:
+            r12 = r5;
+            r34 = r15;
+            r15 = r7;
+            r1 = r8.mPackages;
+     */
+    /* JADX WARNING: Missing block: B:344:0x0546, code skipped:
+            monitor-enter(r1);
+     */
+    /* JADX WARNING: Missing block: B:346:?, code skipped:
+            r2 = r12.pkg;
+     */
+    /* JADX WARNING: Missing block: B:347:0x0549, code skipped:
+            if (r2 == null) goto L_0x0558;
+     */
+    /* JADX WARNING: Missing block: B:350:0x054f, code skipped:
+            if (r2.hasComponentClassName(r10) != false) goto L_0x059e;
+     */
+    /* JADX WARNING: Missing block: B:352:0x0552, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:353:0x0553, code skipped:
+            r7 = r12;
+            r6 = r43;
+     */
+    /* JADX WARNING: Missing block: B:354:0x0558, code skipped:
+            if (r2 == null) goto L_0x0580;
+     */
+    /* JADX WARNING: Missing block: B:356:0x055e, code skipped:
+            if (r2.applicationInfo.targetSdkVersion >= 16) goto L_0x0561;
+     */
+    /* JADX WARNING: Missing block: B:358:0x0561, code skipped:
+            r3 = new java.lang.StringBuilder();
+            r3.append("Component class ");
+            r3.append(r10);
+            r3.append(" does not exist in ");
+            r3.append(r9);
+     */
+    /* JADX WARNING: Missing block: B:359:0x057f, code skipped:
+            throw new java.lang.IllegalArgumentException(r3.toString());
+     */
+    /* JADX WARNING: Missing block: B:361:?, code skipped:
+            r0 = TAG;
+            r3 = new java.lang.StringBuilder();
+            r3.append("Failed setComponentEnabledSetting: component class ");
+            r3.append(r10);
+            r3.append(" does not exist in ");
+            r3.append(r9);
+            android.util.Slog.w(r0, r3.toString());
+     */
+    /* JADX WARNING: Missing block: B:362:0x059e, code skipped:
+            switch(r11) {
+                case 0: goto L_0x05b8;
+                case 1: goto L_0x05b0;
+                case 2: goto L_0x05a8;
+                default: goto L_0x05a1;
+            };
+     */
+    /* JADX WARNING: Missing block: B:363:0x05a1, code skipped:
+            r7 = r12;
+            r6 = r43;
+     */
+    /* JADX WARNING: Missing block: B:365:?, code skipped:
+            r0 = TAG;
+     */
+    /* JADX WARNING: Missing block: B:368:0x05ac, code skipped:
+            if (r12.disableComponentLPw(r10, r13) != false) goto L_0x05c0;
+     */
+    /* JADX WARNING: Missing block: B:369:0x05ae, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:370:0x05af, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:372:0x05b4, code skipped:
+            if (r12.enableComponentLPw(r10, r13) != false) goto L_0x05c0;
+     */
+    /* JADX WARNING: Missing block: B:373:0x05b6, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:374:0x05b7, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:377:0x05bc, code skipped:
+            if (r12.restoreComponentLPw(r10, r13) != false) goto L_0x05c0;
+     */
+    /* JADX WARNING: Missing block: B:379:?, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:380:0x05bf, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:382:?, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:383:0x05c1, code skipped:
+            r2 = r45;
+     */
+    /* JADX WARNING: Missing block: B:425:0x0639, code skipped:
+            r1 = r0;
+            r2 = android.os.Binder.clearCallingIdentity();
+     */
+    /* JADX WARNING: Missing block: B:426:0x063e, code skipped:
+            if (r19 == false) goto L_0x065b;
+     */
+    /* JADX WARNING: Missing block: B:429:0x0646, code skipped:
+            r4 = android.os.UserHandle.getUid(r13, r7.appId);
+     */
+    /* JADX WARNING: Missing block: B:430:0x0649, code skipped:
+            if ((r6 & 1) == 0) goto L_0x064c;
+     */
+    /* JADX WARNING: Missing block: B:431:0x064c, code skipped:
+            r14 = false;
+     */
+    /* JADX WARNING: Missing block: B:433:?, code skipped:
+            sendPackageChangedBroadcast(r9, r14, r1, r4);
+     */
+    /* JADX WARNING: Missing block: B:434:0x0652, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:435:0x0653, code skipped:
+            r22 = r4;
+     */
+    /* JADX WARNING: Missing block: B:436:0x0656, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:437:0x0657, code skipped:
+            android.os.Binder.restoreCallingIdentity(r2);
+     */
+    /* JADX WARNING: Missing block: B:438:0x065a, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:439:0x065b, code skipped:
+            r4 = -1;
+     */
+    /* JADX WARNING: Missing block: B:440:0x065d, code skipped:
+            android.os.Binder.restoreCallingIdentity(r2);
+     */
+    /* JADX WARNING: Missing block: B:441:0x0661, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:455:?, code skipped:
+            r3 = new java.lang.StringBuilder();
+            r3.append("Invalid new component state: ");
+            r3.append(r11);
+            android.util.Slog.e(r0, r3.toString());
+     */
+    /* JADX WARNING: Missing block: B:456:0x068f, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:457:0x0690, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:458:0x0691, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:459:0x0692, code skipped:
+            r7 = r12;
+            r6 = r43;
+     */
+    /* JADX WARNING: Missing block: B:460:0x0695, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:461:0x0696, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:462:0x0697, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:463:0x0699, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:464:0x069a, code skipped:
+            r6 = r12;
+            r34 = r15;
+            r15 = r7;
+            r7 = r5;
+     */
+    /* JADX WARNING: Missing block: B:466:?, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:467:0x06a0, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:468:0x06a1, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void setEnabledSetting(String packageName, String className, int newState, int flags, int userId, String callingPackage) {
+        StringBuilder stringBuilder;
+        int callingUid;
+        boolean sendNow;
+        Throwable th;
+        int i;
+        int i2;
+        StringBuilder stringBuilder2;
+        PackageSetting componentName;
+        File deletedPkg;
+        File file;
+        Package packageR;
+        Package deletedPkg2;
+        Throwable th2;
+        Throwable th3;
+        String str;
+        Package packageR2;
+        String str2 = packageName;
+        String str3 = className;
+        int i3 = newState;
+        int i4 = flags;
+        int i5 = userId;
+        if (i3 == 0 || i3 == 1 || i3 == 2 || i3 == 3 || i3 == 4) {
+            int permission;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("setEnabledSetting pkg:");
+            stringBuilder.append(str2);
+            stringBuilder.append(", className:");
+            stringBuilder.append(str3);
+            stringBuilder.append(", newState:");
+            stringBuilder.append(i3);
+            stringBuilder.append(", flags:");
+            stringBuilder.append(i4);
+            stringBuilder.append(", userId:");
+            stringBuilder.append(i5);
+            stringBuilder.append(", CallingPid:");
+            stringBuilder.append(Binder.getCallingPid());
+            stringBuilder.append(", CallingUid:");
+            stringBuilder.append(Binder.getCallingUid());
+            Flog.i(206, stringBuilder.toString());
+            callingUid = Binder.getCallingUid();
+            if (callingUid == 1000) {
+                permission = 0;
+            } else {
+                permission = this.mContext.checkCallingOrSelfPermission("android.permission.CHANGE_COMPONENT_ENABLED_STATE");
+            }
+            int permission2 = permission;
+            this.mPermissionManager.enforceCrossUserPermission(callingUid, i5, false, true, "set enabled");
+            boolean allowedByPermission = permission2 == 0;
+            sendNow = false;
+            boolean isApp = str3 == null;
+            boolean isCallerInstantApp = getInstantAppPackageName(callingUid) != null;
+            String componentName2 = isApp ? str2 : str3;
+            synchronized (this.mPackages) {
+                try {
+                    PackageSetting pkgSetting = (PackageSetting) this.mSettings.mPackages.get(str2);
+                    if (pkgSetting == null) {
+                        if (isCallerInstantApp) {
+                            String stringBuilder3;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Attempt to change component state; pid=");
+                            stringBuilder.append(Binder.getCallingPid());
+                            stringBuilder.append(", uid=");
+                            stringBuilder.append(callingUid);
+                            StringBuilder stringBuilder4;
+                            if (str3 == null) {
+                                stringBuilder4 = new StringBuilder();
+                                stringBuilder4.append(", package=");
+                                stringBuilder4.append(str2);
+                                stringBuilder3 = stringBuilder4.toString();
+                            } else {
+                                stringBuilder4 = new StringBuilder();
+                                stringBuilder4.append(", component=");
+                                stringBuilder4.append(str2);
+                                stringBuilder4.append(SliceAuthority.DELIMITER);
+                                stringBuilder4.append(str3);
+                                stringBuilder3 = stringBuilder4.toString();
+                            }
+                            stringBuilder.append(stringBuilder3);
+                            throw new SecurityException(stringBuilder.toString());
+                        } else if (str3 == null) {
+                            try {
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("Unknown package: ");
+                                stringBuilder.append(str2);
+                                throw new IllegalArgumentException(stringBuilder.toString());
+                            } catch (Throwable th4) {
+                                th = th4;
+                                i = i4;
+                                i2 = callingUid;
+                                callingUid = componentName2;
+                                while (true) {
+                                    try {
+                                        break;
+                                    } catch (Throwable th5) {
+                                        th = th5;
+                                    }
+                                }
+                                throw th;
+                            }
+                        } else {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Unknown component: ");
+                            stringBuilder.append(str2);
+                            stringBuilder.append(SliceAuthority.DELIMITER);
+                            stringBuilder.append(str3);
+                            throw new IllegalArgumentException(stringBuilder.toString());
+                        }
+                    }
+                } catch (Throwable th6) {
+                    th = th6;
+                    i = i4;
+                    i2 = callingUid;
+                    while (true) {
+                        break;
+                    }
+                    throw th;
+                }
+            }
+        }
+        stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("Invalid new component state: ");
+        stringBuilder2.append(i3);
+        throw new IllegalArgumentException(stringBuilder2.toString());
+        return;
+        ArrayMap arrayMap = r6;
+        try {
+            PackageSetting packageSetting;
+            this.mPermissionManager.updatePermissions(componentName.packageName, componentName, true, this.mPackages.values(), this.mPermissionCallback);
+            this.mSettings.writeLPr();
+            if (freezer != null) {
+                try {
+                    $closeResource(null, freezer);
+                } catch (PackageManagerException e) {
+                    PackageManagerException e2 = e;
+                    PackageManagerException e3 = e2;
+                    try {
+                        String str4 = TAG;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Failed to install compressed system package:");
+                        componentName = pkgSetting;
+                        try {
+                            stringBuilder2.append(componentName.name);
+                            Slog.w(str4, stringBuilder2.toString(), e3);
+                            deletedPkg = codePath;
+                        } catch (Throwable th7) {
+                            th = th7;
+                            packageSetting = componentName;
+                            file = codePath;
+                            packageR = deletedPkg;
+                            throw th;
+                        }
+                    } catch (Throwable th8) {
+                        th = th8;
+                        file = codePath;
+                        packageSetting = pkgSetting;
+                        packageR = deletedPkg;
+                        throw th;
+                    }
+                    try {
+                        removeCodePathLI(deletedPkg);
+                        Package deletedPkg3 = deletedPkg;
+                        try {
+                            PackageFreezer freezer = freezePackage(deletedPkg3.packageName, "setEnabledSetting");
+                            PackageFreezer freezer2;
+                            try {
+                                synchronized (this.mPackages) {
+                                }
+                                PackageFreezer freezer3 = freezer;
+                                deletedPkg2 = deletedPkg3;
+                                file = deletedPkg;
+                                packageSetting = componentName;
+                                try {
+                                    installPackageFromSystemLIF(deletedPkg3.codePath, false, null, null, null, 1);
+                                    freezer2 = freezer3;
+                                    if (freezer2 != null) {
+                                    }
+                                } catch (Throwable th9) {
+                                    th = th9;
+                                    freezer2 = freezer3;
+                                    packageR = deletedPkg2;
+                                    th3 = null;
+                                    if (freezer2 != null) {
+                                    }
+                                    throw th;
+                                }
+                            } catch (Throwable th10) {
+                                th = th10;
+                                freezer2 = freezer;
+                                packageR = deletedPkg3;
+                                file = deletedPkg;
+                                packageSetting = componentName;
+                                th3 = null;
+                                if (freezer2 != null) {
+                                    try {
+                                        $closeResource(th3, freezer2);
+                                    } catch (PackageManagerException e4) {
+                                        e2 = e4;
+                                        try {
+                                            str = TAG;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Failed to restore system package:");
+                                            stringBuilder.append(packageR.packageName);
+                                            Slog.w(str, stringBuilder.toString(), e2);
+                                            synchronized (this.mPackages) {
+                                                try {
+                                                    this.mSettings.disableSystemPackageLPw(packageR.packageName, true);
+                                                    this.mSettings.writeLPr();
+                                                } catch (Throwable th11) {
+                                                    while (true) {
+                                                        th = th11;
+                                                    }
+                                                    throw th;
+                                                }
+                                            }
+                                            return;
+                                        } catch (Throwable th12) {
+                                            th = th12;
+                                            synchronized (this.mPackages) {
+                                                try {
+                                                    this.mSettings.disableSystemPackageLPw(packageR.packageName, true);
+                                                    this.mSettings.writeLPr();
+                                                } catch (Throwable th13) {
+                                                    th = th13;
+                                                }
+                                            }
+                                            throw th;
+                                        }
+                                    }
+                                }
+                                throw th;
+                            }
+                            try {
+                                synchronized (this.mPackages) {
+                                }
+                            } catch (Throwable th14) {
+                                th = th14;
+                                packageR = deletedPkg2;
+                                throw th;
+                            }
+                        } catch (PackageManagerException e5) {
+                            e2 = e5;
+                            packageR = deletedPkg3;
+                            file = deletedPkg;
+                            packageSetting = componentName;
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed to restore system package:");
+                            stringBuilder.append(packageR.packageName);
+                            Slog.w(str, stringBuilder.toString(), e2);
+                            synchronized (this.mPackages) {
+                            }
+                            return;
+                        } catch (Throwable th15) {
+                            th = th15;
+                            packageR = deletedPkg3;
+                            file = deletedPkg;
+                            packageSetting = componentName;
+                            synchronized (this.mPackages) {
+                            }
+                            throw th;
+                        }
+                    } catch (Throwable th16) {
+                        th = th16;
+                        file = deletedPkg;
+                        packageSetting = componentName;
+                        packageR = deletedPkg;
+                        throw th;
+                    }
+                }
+            }
+            Package pkg = componentName;
+            try {
+                clearAppDataLIF(pkg, -1, UsbTerminalTypes.TERMINAL_IN_PERSONAL_MIC);
+                this.mDexManager.notifyPackageUpdated(pkg.packageName, pkg.baseCodePath, pkg.splitCodePaths);
+                packageSetting = pkgSetting;
+                packageR = deletedPkg;
+                Package pkg2 = (i3 == 0 || i3 == 1) ? null : callingPackage;
+                synchronized (this.mPackages) {
+                    packageSetting.setEnabled(i3, i5, pkg2);
+                }
+                synchronized (this.mPackages) {
+                    try {
+                        scheduleWritePackageRestrictionsLocked(i5);
+                        updateSequenceNumberLP(packageSetting, new int[]{i5});
+                        long callingId = Binder.clearCallingIdentity();
+                        try {
+                            updateInstantAppInstallerLocked(packageName);
+                            Binder.restoreCallingIdentity(callingId);
+                            ArrayList<String> components = this.mPendingBroadcasts.get(i5, str2);
+                            boolean newPackage = components == null;
+                            if (newPackage) {
+                                try {
+                                    components = new ArrayList();
+                                } catch (Throwable th17) {
+                                    th = th17;
+                                    packageR2 = pkg2;
+                                    componentName = packageSetting;
+                                    i = flags;
+                                    throw th;
+                                }
+                            }
+                            if (!components.contains(callingUid)) {
+                                components.add(callingUid);
+                            }
+                            componentName = packageSetting;
+                            i = flags;
+                            boolean z;
+                            if ((i & 1) == null) {
+                                sendNow = true;
+                                try {
+                                    this.mPendingBroadcasts.remove(i5, str2);
+                                    packageR2 = pkg2;
+                                    z = true;
+                                } catch (Throwable th18) {
+                                    th = th18;
+                                    packageR2 = pkg2;
+                                    throw th;
+                                }
+                            }
+                            if (newPackage) {
+                                this.mPendingBroadcasts.put(i5, str2, components);
+                            }
+                            try {
+                                z = true;
+                                if (this.mHandler.hasMessages(1)) {
+                                    packageR2 = pkg2;
+                                } else {
+                                    packageR2 = pkg2;
+                                    this.mHandler.sendEmptyMessageDelayed(1, true);
+                                }
+                            } catch (Throwable th19) {
+                                th = th19;
+                                packageR2 = pkg2;
+                                throw th;
+                            }
+                        } catch (Throwable th20) {
+                            th = th20;
+                            throw th;
+                        }
+                    } catch (Throwable th21) {
+                        th = th21;
+                        packageR2 = pkg2;
+                        componentName = packageSetting;
+                        i = flags;
+                        throw th;
+                    }
+                }
+            } catch (Throwable th22) {
+                th = th22;
+                file = codePath;
+                packageSetting = pkgSetting;
+                packageR = deletedPkg;
+                throw th;
+            }
+        } catch (Throwable th23) {
+            th = th23;
+            throw th;
         }
     }
 
@@ -28893,7 +27608,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         sendPackageBroadcast("android.intent.action.PACKAGE_CHANGED", str, extras, flags, null, null, isInstantApp ? EMPTY_INT_ARRAY : new int[]{UserHandle.getUserId(packageUid)}, isInstantApp ? new int[]{UserHandle.getUserId(packageUid)} : EMPTY_INT_ARRAY);
     }
 
-    /* JADX WARNING: Missing block: B:27:0x005d, code:
+    /* JADX WARNING: Missing block: B:27:0x005d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -28974,13 +27689,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         this.mPermissionManager.enforceCrossUserPermission(callingUid, userId, false, false, "getComponentEnabled");
         synchronized (this.mPackages) {
             if (component == null) {
-                return 2;
+                try {
+                    return 2;
+                } catch (Throwable th) {
+                }
+            } else {
+                if (filterAppAccessLPr(this.mSettings.getPackageLPr(component.getPackageName()), callingUid, component, 0, userId)) {
+                    return 2;
+                }
+                int componentEnabledSettingLPr = this.mSettings.getComponentEnabledSettingLPr(component, userId);
+                return componentEnabledSettingLPr;
             }
-            if (filterAppAccessLPr(this.mSettings.getPackageLPr(component.getPackageName()), callingUid, component, 0, userId)) {
-                return 2;
-            }
-            int componentEnabledSettingLPr = this.mSettings.getComponentEnabledSettingLPr(component, userId);
-            return componentEnabledSettingLPr;
         }
     }
 
@@ -28991,65 +27710,65 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x0152, code:
+    /* JADX WARNING: Missing block: B:39:0x0152, code skipped:
             sUserManager.systemReady();
             android.hwtheme.HwThemeManager.applyDefaultHwTheme(true, r15.mContext, 0);
             r0 = r10.length;
             r4 = 0;
      */
-    /* JADX WARNING: Missing block: B:40:0x015e, code:
+    /* JADX WARNING: Missing block: B:40:0x015e, code skipped:
             if (r4 >= r0) goto L_0x016a;
      */
-    /* JADX WARNING: Missing block: B:41:0x0160, code:
+    /* JADX WARNING: Missing block: B:41:0x0160, code skipped:
             r15.mDefaultPermissionPolicy.grantDefaultPermissions(r10[r4]);
             r4 = r4 + 1;
      */
-    /* JADX WARNING: Missing block: B:43:0x016c, code:
+    /* JADX WARNING: Missing block: B:43:0x016c, code skipped:
             if (r10 != EMPTY_INT_ARRAY) goto L_0x0173;
      */
-    /* JADX WARNING: Missing block: B:44:0x016e, code:
+    /* JADX WARNING: Missing block: B:44:0x016e, code skipped:
             r15.mDefaultPermissionPolicy.scheduleReadDefaultPermissionExceptions();
      */
-    /* JADX WARNING: Missing block: B:45:0x0173, code:
+    /* JADX WARNING: Missing block: B:45:0x0173, code skipped:
             r0 = com.android.server.pm.UserManagerService.getInstance().getUserIds();
             r4 = r0.length;
             r6 = 0;
      */
-    /* JADX WARNING: Missing block: B:46:0x017d, code:
+    /* JADX WARNING: Missing block: B:46:0x017d, code skipped:
             if (r6 >= r4) goto L_0x0189;
      */
-    /* JADX WARNING: Missing block: B:47:0x017f, code:
+    /* JADX WARNING: Missing block: B:47:0x017f, code skipped:
             r15.mDefaultPermissionPolicy.grantCustDefaultPermissions(r0[r6]);
             r6 = r6 + 1;
      */
-    /* JADX WARNING: Missing block: B:48:0x0189, code:
+    /* JADX WARNING: Missing block: B:48:0x0189, code skipped:
             r0 = r15.mPackages;
      */
-    /* JADX WARNING: Missing block: B:49:0x018b, code:
+    /* JADX WARNING: Missing block: B:49:0x018b, code skipped:
             monitor-enter(r0);
      */
-    /* JADX WARNING: Missing block: B:51:?, code:
+    /* JADX WARNING: Missing block: B:51:?, code skipped:
             r15.mPermissionManager.updateAllPermissions(android.os.storage.StorageManager.UUID_PRIVATE_INTERNAL, false, r15.mPackages.values(), r15.mPermissionCallback);
      */
-    /* JADX WARNING: Missing block: B:52:0x019b, code:
+    /* JADX WARNING: Missing block: B:52:0x019b, code skipped:
             monitor-exit(r0);
      */
-    /* JADX WARNING: Missing block: B:54:0x019e, code:
+    /* JADX WARNING: Missing block: B:54:0x019e, code skipped:
             if (r15.mPostSystemReadyMessages == null) goto L_0x01b9;
      */
-    /* JADX WARNING: Missing block: B:55:0x01a0, code:
+    /* JADX WARNING: Missing block: B:55:0x01a0, code skipped:
             r0 = r15.mPostSystemReadyMessages.iterator();
      */
-    /* JADX WARNING: Missing block: B:57:0x01aa, code:
+    /* JADX WARNING: Missing block: B:57:0x01aa, code skipped:
             if (r0.hasNext() == false) goto L_0x01b6;
      */
-    /* JADX WARNING: Missing block: B:58:0x01ac, code:
+    /* JADX WARNING: Missing block: B:58:0x01ac, code skipped:
             ((android.os.Message) r0.next()).sendToTarget();
      */
-    /* JADX WARNING: Missing block: B:59:0x01b6, code:
+    /* JADX WARNING: Missing block: B:59:0x01b6, code skipped:
             r15.mPostSystemReadyMessages = null;
      */
-    /* JADX WARNING: Missing block: B:60:0x01b9, code:
+    /* JADX WARNING: Missing block: B:60:0x01b9, code skipped:
             ((android.os.storage.StorageManager) r15.mContext.getSystemService(android.os.storage.StorageManager.class)).registerListener(r15.mStorageListener);
             r15.mInstallerService.systemReady();
             r15.mDexManager.systemReady();
@@ -29060,16 +27779,16 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             reconcileApps(android.os.storage.StorageManager.UUID_PRIVATE_INTERNAL);
             r15.mPermissionManager.systemReady();
      */
-    /* JADX WARNING: Missing block: B:61:0x01ff, code:
+    /* JADX WARNING: Missing block: B:61:0x01ff, code skipped:
             if (r15.mInstantAppResolverConnection == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:62:0x0201, code:
+    /* JADX WARNING: Missing block: B:62:0x0201, code skipped:
             r15.mContext.registerReceiver(new com.android.server.pm.PackageManagerService.AnonymousClass27(r15), new android.content.IntentFilter("android.intent.action.BOOT_COMPLETED"));
      */
-    /* JADX WARNING: Missing block: B:87:?, code:
+    /* JADX WARNING: Missing block: B:87:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:88:?, code:
+    /* JADX WARNING: Missing block: B:88:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -29197,203 +27916,203 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         new PackageManagerShellCommand(this).exec(this, in, out, err, args, callback, resultReceiver);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
-    /* JADX WARNING: Removed duplicated region for block: B:357:0x0770 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:356:0x076d A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:360:0x0784 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:370:0x07a7 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:369:0x07a4 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:373:0x07bb A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:384:0x07ed A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:375:0x07c1 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:699:0x086b A:{SYNTHETIC, EDGE_INSN: B:699:0x086b->B:399:0x086b ?: BREAK  , EDGE_INSN: B:699:0x086b->B:399:0x086b ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:391:0x0805 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:428:0x0901  */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:359:0x0770 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x076d A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:362:0x0784 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:372:0x07a7 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:371:0x07a4 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:375:0x07bb A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:386:0x07ed A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:377:0x07c1 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:703:0x086b A:{SYNTHETIC, EDGE_INSN: B:703:0x086b->B:401:0x086b ?: BREAK  , EDGE_INSN: B:703:0x086b->B:401:0x086b ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:393:0x0805 A:{Catch:{ all -> 0x0748, all -> 0x0789 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:430:0x0901  */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
     /* JADX WARNING: Removed duplicated region for block: B:217:0x04e3  */
-    /* JADX WARNING: Removed duplicated region for block: B:220:0x04ec A:{SYNTHETIC, Splitter: B:220:0x04ec} */
+    /* JADX WARNING: Removed duplicated region for block: B:220:0x04ec A:{SYNTHETIC, Splitter:B:220:0x04ec} */
     /* JADX WARNING: Removed duplicated region for block: B:217:0x04e3  */
-    /* JADX WARNING: Removed duplicated region for block: B:220:0x04ec A:{SYNTHETIC, Splitter: B:220:0x04ec} */
+    /* JADX WARNING: Removed duplicated region for block: B:220:0x04ec A:{SYNTHETIC, Splitter:B:220:0x04ec} */
     /* JADX WARNING: Removed duplicated region for block: B:217:0x04e3  */
-    /* JADX WARNING: Removed duplicated region for block: B:220:0x04ec A:{SYNTHETIC, Splitter: B:220:0x04ec} */
-    /* JADX WARNING: Removed duplicated region for block: B:428:0x0901  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
-    /* JADX WARNING: Removed duplicated region for block: B:428:0x0901  */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
-    /* JADX WARNING: Removed duplicated region for block: B:428:0x0901  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
-    /* JADX WARNING: Removed duplicated region for block: B:428:0x0901  */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
-    /* JADX WARNING: Removed duplicated region for block: B:428:0x0901  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:473:0x0ab1  */
-    /* JADX WARNING: Removed duplicated region for block: B:491:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:505:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:540:0x0bd6  */
-    /* JADX WARNING: Removed duplicated region for block: B:531:0x0bbd A:{SYNTHETIC, Splitter: B:531:0x0bbd} */
-    /* JADX WARNING: Removed duplicated region for block: B:545:0x0be2 A:{SYNTHETIC, Splitter: B:545:0x0be2} */
-    /* JADX WARNING: Removed duplicated region for block: B:551:0x0bf5 A:{SYNTHETIC, Splitter: B:551:0x0bf5} */
-    /* JADX WARNING: Removed duplicated region for block: B:566:0x0c73  */
-    /* JADX WARNING: Removed duplicated region for block: B:582:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:585:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:586:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:597:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:600:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:601:0x0d0f A:{LOOP_START, LOOP:15: B:601:0x0d0f->B:603:0x0d19, Catch:{ all -> 0x0e2e }, PHI: r16 } */
-    /* JADX WARNING: Removed duplicated region for block: B:611:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:624:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:631:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:634:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:641:0x0dca A:{Catch:{ all -> 0x0e2e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:653:0x0ded  */
-    /* JADX WARNING: Removed duplicated region for block: B:661:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:220:0x04ec A:{SYNTHETIC, Splitter:B:220:0x04ec} */
+    /* JADX WARNING: Removed duplicated region for block: B:430:0x0901  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:430:0x0901  */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:430:0x0901  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:430:0x0901  */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
+    /* JADX WARNING: Removed duplicated region for block: B:430:0x0901  */
+    /* JADX WARNING: Removed duplicated region for block: B:487:0x0aca A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:476:0x0ab1  */
+    /* JADX WARNING: Removed duplicated region for block: B:494:0x0aed A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:508:0x0b3c A:{Catch:{ all -> 0x0ac4, all -> 0x0ba0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:543:0x0bd6  */
+    /* JADX WARNING: Removed duplicated region for block: B:534:0x0bbd A:{SYNTHETIC, Splitter:B:534:0x0bbd} */
+    /* JADX WARNING: Removed duplicated region for block: B:548:0x0be2 A:{SYNTHETIC, Splitter:B:548:0x0be2} */
+    /* JADX WARNING: Removed duplicated region for block: B:554:0x0bf5 A:{SYNTHETIC, Splitter:B:554:0x0bf5} */
+    /* JADX WARNING: Removed duplicated region for block: B:569:0x0c73  */
+    /* JADX WARNING: Removed duplicated region for block: B:585:0x0c9b A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:588:0x0cb8 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:589:0x0cbe A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:600:0x0ceb A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:603:0x0d08 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:604:0x0d0e A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:615:0x0d3c A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:619:0x0d50 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:628:0x0d87 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:635:0x0d9d A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:638:0x0da5 A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:645:0x0dca A:{Catch:{ all -> 0x0e2e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:657:0x0ded  */
+    /* JADX WARNING: Removed duplicated region for block: B:665:0x0e0e  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         String packageName;
@@ -29410,9 +28129,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         Iterator<ServiceIntentInfo> filterIterator;
         IOException e3;
         Object obj;
-        Writer writer = pw;
+        PrintWriter printWriter = pw;
         String[] strArr = args;
-        if (DumpUtils.checkDumpAndUsageStatsPermission(this.mContext, TAG, writer)) {
+        if (DumpUtils.checkDumpAndUsageStatsPermission(this.mContext, TAG, printWriter)) {
             String opt;
             boolean fullPreferred;
             String str = TAG;
@@ -29433,36 +28152,36 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 opti++;
                 if (!"-a".equals(opt)) {
                     if ("-h".equals(opt)) {
-                        writer.println("Package manager dump options:");
-                        writer.println("  [-h] [-f] [--checkin] [cmd] ...");
-                        writer.println("    --checkin: dump for a checkin");
-                        writer.println("    -f: print details of intent filters");
-                        writer.println("    -h: print this help");
-                        writer.println("  cmd may be one of:");
-                        writer.println("    l[ibraries]: list known shared libraries");
-                        writer.println("    f[eatures]: list device features");
-                        writer.println("    k[eysets]: print known keysets");
-                        writer.println("    r[esolvers] [activity|service|receiver|content]: dump intent resolvers");
-                        writer.println("    perm[issions]: dump permissions");
-                        writer.println("    permission [name ...]: dump declaration and use of given permission");
-                        writer.println("    pref[erred]: print preferred package settings");
-                        writer.println("    preferred-xml [--full]: print preferred package settings as xml");
-                        writer.println("    prov[iders]: dump content providers");
-                        writer.println("    p[ackages]: dump installed packages");
-                        writer.println("    s[hared-users]: dump shared user IDs");
-                        writer.println("    m[essages]: print collected runtime messages");
-                        writer.println("    h[andle]: dump message list");
-                        writer.println("    v[erifiers]: print package verifier info");
-                        writer.println("    d[omain-preferred-apps]: print domains preferred apps");
-                        writer.println("    i[ntent-filter-verifiers]|ifv: print intent filter verifier info");
-                        writer.println("    version: print database version info");
-                        writer.println("    write: write current settings now");
-                        writer.println("    installs: details about install sessions");
-                        writer.println("    check-permission <permission> <package> [<user>]: does pkg hold perm?");
-                        writer.println("    dexopt: dump dexopt state");
-                        writer.println("    compiler-stats: dump compiler statistics");
-                        writer.println("    service-permissions: dump permissions required by services");
-                        writer.println("    <package.name>: info about given package");
+                        printWriter.println("Package manager dump options:");
+                        printWriter.println("  [-h] [-f] [--checkin] [cmd] ...");
+                        printWriter.println("    --checkin: dump for a checkin");
+                        printWriter.println("    -f: print details of intent filters");
+                        printWriter.println("    -h: print this help");
+                        printWriter.println("  cmd may be one of:");
+                        printWriter.println("    l[ibraries]: list known shared libraries");
+                        printWriter.println("    f[eatures]: list device features");
+                        printWriter.println("    k[eysets]: print known keysets");
+                        printWriter.println("    r[esolvers] [activity|service|receiver|content]: dump intent resolvers");
+                        printWriter.println("    perm[issions]: dump permissions");
+                        printWriter.println("    permission [name ...]: dump declaration and use of given permission");
+                        printWriter.println("    pref[erred]: print preferred package settings");
+                        printWriter.println("    preferred-xml [--full]: print preferred package settings as xml");
+                        printWriter.println("    prov[iders]: dump content providers");
+                        printWriter.println("    p[ackages]: dump installed packages");
+                        printWriter.println("    s[hared-users]: dump shared user IDs");
+                        printWriter.println("    m[essages]: print collected runtime messages");
+                        printWriter.println("    h[andle]: dump message list");
+                        printWriter.println("    v[erifiers]: print package verifier info");
+                        printWriter.println("    d[omain-preferred-apps]: print domains preferred apps");
+                        printWriter.println("    i[ntent-filter-verifiers]|ifv: print intent filter verifier info");
+                        printWriter.println("    version: print database version info");
+                        printWriter.println("    write: write current settings now");
+                        printWriter.println("    installs: details about install sessions");
+                        printWriter.println("    check-permission <permission> <package> [<user>]: does pkg hold perm?");
+                        printWriter.println("    dexopt: dump dexopt state");
+                        printWriter.println("    compiler-stats: dump compiler statistics");
+                        printWriter.println("    service-permissions: dump permissions required by services");
+                        printWriter.println("    <package.name>: info about given package");
                         return;
                     } else if ("--checkin".equals(opt)) {
                         checkin = true;
@@ -29476,7 +28195,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         stringBuilder3.append("Unknown argument: ");
                         stringBuilder3.append(opt);
                         stringBuilder3.append("; use -h for help");
-                        writer.println(stringBuilder3.toString());
+                        printWriter.println(stringBuilder3.toString());
                     }
                 }
             }
@@ -29519,7 +28238,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                     stringBuilder5 = new StringBuilder();
                                     stringBuilder5.append("Error: unknown resolver table type: ");
                                     stringBuilder5.append(fullPreferred);
-                                    writer.println(stringBuilder5.toString());
+                                    printWriter.println(stringBuilder5.toString());
                                     return;
                                 }
                                 opti++;
@@ -29530,7 +28249,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         dumpState.setDump(64);
                     } else if ("permission".equals(opt)) {
                         if (opti2 >= strArr.length) {
-                            writer.println("Error: permission requires permission name");
+                            printWriter.println("Error: permission requires permission name");
                             return;
                         }
                         ArraySet<String> permissionNames3 = new ArraySet();
@@ -29545,7 +28264,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                         i = 2097152;
                         fullPreferred = false;
                         if (checkin) {
-                            writer.println("vers,1");
+                            printWriter.println("vers,1");
                         }
                         arrayMap = this.mPackages;
                         synchronized (arrayMap) {
@@ -29565,8 +28284,8 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                         if (dumpState.onTitlePrinted()) {
                                             pw.println();
                                         }
-                                        writer.println("Database versions:");
-                                        this.mSettings.dumpVersionLPr(new IndentingPrintWriter(writer, "  "));
+                                        printWriter.println("Database versions:");
+                                        this.mSettings.dumpVersionLPr(new IndentingPrintWriter(printWriter, "  "));
                                     } catch (Throwable th2) {
                                         th = th2;
                                         fileDescriptor = fd;
@@ -29581,17 +28300,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                         if (dumpState.onTitlePrinted()) {
                                             pw.println();
                                         }
-                                        writer.println("Verifiers:");
-                                        writer.print("  Required: ");
-                                        writer.print(this.mRequiredVerifierPackage);
-                                        writer.print(" (uid=");
-                                        writer.print(getPackageUid(this.mRequiredVerifierPackage, 268435456, 0));
-                                        writer.println(")");
+                                        printWriter.println("Verifiers:");
+                                        printWriter.print("  Required: ");
+                                        printWriter.print(this.mRequiredVerifierPackage);
+                                        printWriter.print(" (uid=");
+                                        printWriter.print(getPackageUid(this.mRequiredVerifierPackage, 268435456, 0));
+                                        printWriter.println(")");
                                     } else if (this.mRequiredVerifierPackage != null) {
-                                        writer.print("vrfy,");
-                                        writer.print(this.mRequiredVerifierPackage);
-                                        writer.print(",");
-                                        writer.println(getPackageUid(this.mRequiredVerifierPackage, 268435456, 0));
+                                        printWriter.print("vrfy,");
+                                        printWriter.print(this.mRequiredVerifierPackage);
+                                        printWriter.print(",");
+                                        printWriter.println(getPackageUid(this.mRequiredVerifierPackage, 268435456, 0));
                                     }
                                 }
                                 if (dumpState.isDumping(131072) && packageName == null) {
@@ -29601,21 +28320,21 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                             if (dumpState.onTitlePrinted()) {
                                                 pw.println();
                                             }
-                                            writer.println("Intent Filter Verifier:");
-                                            writer.print("  Using: ");
-                                            writer.print(str);
-                                            writer.print(" (uid=");
-                                            writer.print(getPackageUid(str, 268435456, 0));
-                                            writer.println(")");
+                                            printWriter.println("Intent Filter Verifier:");
+                                            printWriter.print("  Using: ");
+                                            printWriter.print(str);
+                                            printWriter.print(" (uid=");
+                                            printWriter.print(getPackageUid(str, 268435456, 0));
+                                            printWriter.println(")");
                                         } else if (str != null) {
-                                            writer.print("ifv,");
-                                            writer.print(str);
-                                            writer.print(",");
-                                            writer.println(getPackageUid(str, 268435456, 0));
+                                            printWriter.print("ifv,");
+                                            printWriter.print(str);
+                                            printWriter.print(",");
+                                            printWriter.println(getPackageUid(str, 268435456, 0));
                                         }
                                     } else {
                                         pw.println();
-                                        writer.println("No Intent Filter Verifier available!");
+                                        printWriter.println("No Intent Filter Verifier available!");
                                     }
                                 }
                                 if (dumpState.isDumping(1) && packageName == null) {
@@ -29637,39 +28356,39 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 String libName;
                                                 SharedLibraryEntry libEntry = (SharedLibraryEntry) versionedLib.valueAt(opti);
                                                 if (checkin) {
-                                                    writer.print("lib,");
+                                                    printWriter.print("lib,");
                                                 } else {
                                                     if (!printedHeader2) {
                                                         if (dumpState.onTitlePrinted()) {
                                                             pw.println();
                                                         }
-                                                        writer.println("Libraries:");
+                                                        printWriter.println("Libraries:");
                                                         printedHeader2 = true;
                                                     }
-                                                    writer.print("  ");
+                                                    printWriter.print("  ");
                                                 }
                                                 SharedLibraryEntry libEntry2 = libEntry;
-                                                writer.print(libEntry2.info.getName());
+                                                printWriter.print(libEntry2.info.getName());
                                                 if (libEntry2.info.isStatic()) {
                                                     stringBuilder4 = new StringBuilder();
                                                     it2 = it;
                                                     stringBuilder4.append(" version=");
                                                     libName = str2;
                                                     stringBuilder4.append(libEntry2.info.getLongVersion());
-                                                    writer.print(stringBuilder4.toString());
+                                                    printWriter.print(stringBuilder4.toString());
                                                 } else {
                                                     it2 = it;
                                                     libName = str2;
                                                 }
                                                 if (!checkin) {
-                                                    writer.print(" -> ");
+                                                    printWriter.print(" -> ");
                                                 }
                                                 if (libEntry2.path != null) {
-                                                    writer.print(" (jar) ");
-                                                    writer.print(libEntry2.path);
+                                                    printWriter.print(" (jar) ");
+                                                    printWriter.print(libEntry2.path);
                                                 } else {
-                                                    writer.print(" (apk) ");
-                                                    writer.print(libEntry2.apk);
+                                                    printWriter.print(" (apk) ");
+                                                    printWriter.print(libEntry2.apk);
                                                 }
                                                 pw.println();
                                                 opti++;
@@ -29687,21 +28406,21 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                         pw.println();
                                     }
                                     if (!checkin) {
-                                        writer.println("Features:");
+                                        printWriter.println("Features:");
                                     }
                                     synchronized (this.mAvailableFeatures) {
                                         for (FeatureInfo feat : this.mAvailableFeatures.values()) {
                                             if (checkin) {
-                                                writer.print("feat,");
-                                                writer.print(feat.name);
-                                                writer.print(",");
-                                                writer.println(feat.version);
+                                                printWriter.print("feat,");
+                                                printWriter.print(feat.name);
+                                                printWriter.print(",");
+                                                printWriter.println(feat.version);
                                             } else {
-                                                writer.print("  ");
-                                                writer.print(feat.name);
+                                                printWriter.print("  ");
+                                                printWriter.print(feat.name);
                                                 if (feat.version > 0) {
-                                                    writer.print(" version=");
-                                                    writer.print(feat.version);
+                                                    printWriter.print(" version=");
+                                                    printWriter.print(feat.version);
                                                 }
                                                 pw.println();
                                             }
@@ -29724,7 +28443,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                             packageName3 = packageName;
                                             opti = 8192;
                                             z = fullPreferred;
-                                            if (activityIntentResolver.dump(writer, str3, "  ", packageName, dumpState.isOptionEnabled(1), true)) {
+                                            if (activityIntentResolver.dump(printWriter, str3, "  ", packageName, dumpState.isOptionEnabled(1), true)) {
                                                 dumpState.setTitlePrinted(true);
                                             }
                                             if (!checkin && dumpState.isDumping(16)) {
@@ -29734,7 +28453,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 } else {
                                                     str2 = "\nReceiver Resolver Table:";
                                                 }
-                                                if (activityIntentResolver.dump(writer, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
+                                                if (activityIntentResolver.dump(printWriter, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
                                                     dumpState.setTitlePrinted(true);
                                                 }
                                             }
@@ -29745,7 +28464,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 } else {
                                                     str2 = "\nService Resolver Table:";
                                                 }
-                                                if (serviceIntentResolver.dump(writer, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
+                                                if (serviceIntentResolver.dump(printWriter, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
                                                     dumpState.setTitlePrinted(true);
                                                 }
                                             }
@@ -29757,7 +28476,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     } else {
                                                         str2 = "Provider Resolver Table:";
                                                     }
-                                                    if (providerIntentResolver.dump(writer, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
+                                                    if (providerIntentResolver.dump(printWriter, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
                                                         dumpState.setTitlePrinted(true);
                                                     }
                                                 }
@@ -29786,7 +28505,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         str2 = stringBuilder6.toString();
                                                     }
                                                     i5 = i4;
-                                                    if (pir.dump(writer, str2, "  ", packageName3, true, 0)) {
+                                                    if (pir.dump(printWriter, str2, "  ", packageName3, true, 0)) {
                                                         dumpState.setTitlePrinted(true);
                                                     }
                                                     i3 = i5 + 1;
@@ -29811,7 +28530,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         stringBuilder = new StringBuilder();
                                                         stringBuilder.append("Failed writing: ");
                                                         stringBuilder.append(e2);
-                                                        writer.println(stringBuilder.toString());
+                                                        printWriter.println(stringBuilder.toString());
                                                         if (!checkin) {
                                                         }
                                                         fullPreferred = packageName3;
@@ -29823,7 +28542,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         printedHeader = false;
                                                         for (Entry<String, Provider> entry : this.mProvidersByAuthority.entrySet()) {
                                                         }
-                                                        this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                                        this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                                         if (dumpState.isDumping(128)) {
                                                         }
                                                         if (dumpState.isDumping(256)) {
@@ -29835,7 +28554,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         str2 = packageName2;
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                        ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                         ipw.println();
                                                         ipw.println("Frozen packages:");
                                                         ipw.increaseIndent();
@@ -29844,7 +28563,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         ipw.decreaseIndent();
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                        ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                         ipw.println();
                                                         ipw.println("Loaded volumes:");
                                                         ipw.increaseIndent();
@@ -29853,32 +28572,32 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         ipw.decreaseIndent();
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        writer.println("Service permissions:");
+                                                        printWriter.println("Service permissions:");
                                                         filterIterator = this.mServices.filterIterator();
                                                         while (filterIterator.hasNext()) {
                                                         }
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        dumpDexoptStateLPr(writer, str2);
+                                                        dumpDexoptStateLPr(printWriter, str2);
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        dumpCompilerStatsLPr(writer, str2);
+                                                        dumpCompilerStatsLPr(printWriter, str2);
                                                         if (checkin) {
                                                         }
-                                                        PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                        PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                        this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                        this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                         return;
                                                     } catch (IOException e6) {
                                                         e3 = e6;
                                                         stringBuilder = new StringBuilder();
                                                         stringBuilder.append("Failed writing: ");
                                                         stringBuilder.append(e3);
-                                                        writer.println(stringBuilder.toString());
+                                                        printWriter.println(stringBuilder.toString());
                                                         if (checkin) {
                                                         }
                                                         fullPreferred = packageName3;
@@ -29890,7 +28609,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         printedHeader = false;
                                                         for (Entry<String, Provider> entry2 : this.mProvidersByAuthority.entrySet()) {
                                                         }
-                                                        this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                                        this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                                         if (dumpState.isDumping(128)) {
                                                         }
                                                         if (dumpState.isDumping(256)) {
@@ -29902,7 +28621,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         str2 = packageName2;
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                        ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                         ipw.println();
                                                         ipw.println("Frozen packages:");
                                                         ipw.increaseIndent();
@@ -29911,7 +28630,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         ipw.decreaseIndent();
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                        ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                         ipw.println();
                                                         ipw.println("Loaded volumes:");
                                                         ipw.increaseIndent();
@@ -29920,25 +28639,25 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         ipw.decreaseIndent();
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        writer.println("Service permissions:");
+                                                        printWriter.println("Service permissions:");
                                                         filterIterator = this.mServices.filterIterator();
                                                         while (filterIterator.hasNext()) {
                                                         }
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        dumpDexoptStateLPr(writer, str2);
+                                                        dumpDexoptStateLPr(printWriter, str2);
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        dumpCompilerStatsLPr(writer, str2);
+                                                        dumpCompilerStatsLPr(printWriter, str2);
                                                         if (checkin) {
                                                         }
-                                                        PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                        PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                        this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                        this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                         return;
                                                     }
                                                 } catch (IllegalArgumentException e7) {
@@ -29946,7 +28665,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     stringBuilder = new StringBuilder();
                                                     stringBuilder.append("Failed writing: ");
                                                     stringBuilder.append(e);
-                                                    writer.println(stringBuilder.toString());
+                                                    printWriter.println(stringBuilder.toString());
                                                     if (checkin) {
                                                     }
                                                     fullPreferred = packageName3;
@@ -29958,7 +28677,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     printedHeader = false;
                                                     for (Entry<String, Provider> entry22 : this.mProvidersByAuthority.entrySet()) {
                                                     }
-                                                    this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                                    this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                                     if (dumpState.isDumping(128)) {
                                                     }
                                                     if (dumpState.isDumping(256)) {
@@ -29970,7 +28689,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     str2 = packageName2;
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                     ipw.println();
                                                     ipw.println("Frozen packages:");
                                                     ipw.increaseIndent();
@@ -29979,7 +28698,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     ipw.decreaseIndent();
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                     ipw.println();
                                                     ipw.println("Loaded volumes:");
                                                     ipw.increaseIndent();
@@ -29988,32 +28707,32 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     ipw.decreaseIndent();
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    writer.println("Service permissions:");
+                                                    printWriter.println("Service permissions:");
                                                     filterIterator = this.mServices.filterIterator();
                                                     while (filterIterator.hasNext()) {
                                                     }
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    dumpDexoptStateLPr(writer, str2);
+                                                    dumpDexoptStateLPr(printWriter, str2);
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    dumpCompilerStatsLPr(writer, str2);
+                                                    dumpCompilerStatsLPr(printWriter, str2);
                                                     if (checkin) {
                                                     }
-                                                    PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                    PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                    this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                    this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                     return;
                                                 } catch (IllegalStateException e8) {
                                                     e2 = e8;
                                                     stringBuilder = new StringBuilder();
                                                     stringBuilder.append("Failed writing: ");
                                                     stringBuilder.append(e2);
-                                                    writer.println(stringBuilder.toString());
+                                                    printWriter.println(stringBuilder.toString());
                                                     if (checkin) {
                                                     }
                                                     fullPreferred = packageName3;
@@ -30025,7 +28744,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     printedHeader = false;
                                                     for (Entry<String, Provider> entry222 : this.mProvidersByAuthority.entrySet()) {
                                                     }
-                                                    this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                                    this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                                     if (dumpState.isDumping(128)) {
                                                     }
                                                     if (dumpState.isDumping(256)) {
@@ -30037,7 +28756,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     str2 = packageName2;
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                     ipw.println();
                                                     ipw.println("Frozen packages:");
                                                     ipw.increaseIndent();
@@ -30046,7 +28765,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     ipw.decreaseIndent();
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                     ipw.println();
                                                     ipw.println("Loaded volumes:");
                                                     ipw.increaseIndent();
@@ -30055,32 +28774,32 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     ipw.decreaseIndent();
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    writer.println("Service permissions:");
+                                                    printWriter.println("Service permissions:");
                                                     filterIterator = this.mServices.filterIterator();
                                                     while (filterIterator.hasNext()) {
                                                     }
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    dumpDexoptStateLPr(writer, str2);
+                                                    dumpDexoptStateLPr(printWriter, str2);
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    dumpCompilerStatsLPr(writer, str2);
+                                                    dumpCompilerStatsLPr(printWriter, str2);
                                                     if (checkin) {
                                                     }
-                                                    PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                    PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                    this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                    this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                     return;
                                                 } catch (IOException e9) {
                                                     e3 = e9;
                                                     stringBuilder = new StringBuilder();
                                                     stringBuilder.append("Failed writing: ");
                                                     stringBuilder.append(e3);
-                                                    writer.println(stringBuilder.toString());
+                                                    printWriter.println(stringBuilder.toString());
                                                     if (checkin) {
                                                     }
                                                     fullPreferred = packageName3;
@@ -30092,7 +28811,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     printedHeader = false;
                                                     for (Entry<String, Provider> entry2222 : this.mProvidersByAuthority.entrySet()) {
                                                     }
-                                                    this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                                    this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                                     if (dumpState.isDumping(128)) {
                                                     }
                                                     if (dumpState.isDumping(256)) {
@@ -30104,7 +28823,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     str2 = packageName2;
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                     ipw.println();
                                                     ipw.println("Frozen packages:");
                                                     ipw.increaseIndent();
@@ -30113,7 +28832,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     ipw.decreaseIndent();
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                     ipw.println();
                                                     ipw.println("Loaded volumes:");
                                                     ipw.increaseIndent();
@@ -30122,25 +28841,25 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                     ipw.decreaseIndent();
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    writer.println("Service permissions:");
+                                                    printWriter.println("Service permissions:");
                                                     filterIterator = this.mServices.filterIterator();
                                                     while (filterIterator.hasNext()) {
                                                     }
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    dumpDexoptStateLPr(writer, str2);
+                                                    dumpDexoptStateLPr(printWriter, str2);
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    dumpCompilerStatsLPr(writer, str2);
+                                                    dumpCompilerStatsLPr(printWriter, str2);
                                                     if (checkin) {
                                                     }
-                                                    PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                    PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                    this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                     if (dumpState.onTitlePrinted()) {
                                                     }
-                                                    this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                    this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                     return;
                                                 } catch (Throwable th3) {
                                                     th = th3;
@@ -30159,39 +28878,41 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                             try {
                                                                 pw.println();
                                                                 if (this.mSettings.mPackages.size() == 0) {
-                                                                    writer.println("No applications!");
+                                                                    printWriter.println("No applications!");
                                                                     pw.println();
                                                                 } else {
                                                                     String prefix = "  ";
                                                                     Collection<PackageSetting> allPackageSettings = this.mSettings.mPackages.values();
                                                                     if (allPackageSettings.size() == 0) {
-                                                                        writer.println("No domain preferred apps!");
+                                                                        printWriter.println("No domain preferred apps!");
                                                                         pw.println();
                                                                     } else {
-                                                                        writer.println("App verification status:");
+                                                                        printWriter.println("App verification status:");
                                                                         pw.println();
                                                                         opti = 0;
                                                                         for (PackageSetting ps : allPackageSettings) {
                                                                             IntentFilterVerificationInfo ivi = ps.getIntentFilterVerificationInfo();
-                                                                            if (!(ivi == null || ivi.getPackageName() == null)) {
-                                                                                StringBuilder stringBuilder7 = new StringBuilder();
-                                                                                stringBuilder7.append("  Package: ");
-                                                                                stringBuilder7.append(ivi.getPackageName());
-                                                                                writer.println(stringBuilder7.toString());
-                                                                                stringBuilder7 = new StringBuilder();
-                                                                                stringBuilder7.append("  Domains: ");
-                                                                                stringBuilder7.append(ivi.getDomainsString());
-                                                                                writer.println(stringBuilder7.toString());
-                                                                                stringBuilder7 = new StringBuilder();
-                                                                                stringBuilder7.append("  Status:  ");
-                                                                                stringBuilder7.append(ivi.getStatusString());
-                                                                                writer.println(stringBuilder7.toString());
-                                                                                pw.println();
-                                                                                opti++;
+                                                                            if (ivi != null) {
+                                                                                if (ivi.getPackageName() != null) {
+                                                                                    StringBuilder stringBuilder7 = new StringBuilder();
+                                                                                    stringBuilder7.append("  Package: ");
+                                                                                    stringBuilder7.append(ivi.getPackageName());
+                                                                                    printWriter.println(stringBuilder7.toString());
+                                                                                    stringBuilder7 = new StringBuilder();
+                                                                                    stringBuilder7.append("  Domains: ");
+                                                                                    stringBuilder7.append(ivi.getDomainsString());
+                                                                                    printWriter.println(stringBuilder7.toString());
+                                                                                    stringBuilder7 = new StringBuilder();
+                                                                                    stringBuilder7.append("  Status:  ");
+                                                                                    stringBuilder7.append(ivi.getStatusString());
+                                                                                    printWriter.println(stringBuilder7.toString());
+                                                                                    pw.println();
+                                                                                    opti++;
+                                                                                }
                                                                             }
                                                                         }
                                                                         if (opti == 0) {
-                                                                            writer.println("  No app verification established.");
+                                                                            printWriter.println("  No app verification established.");
                                                                             pw.println();
                                                                         }
                                                                         int[] userIds = sUserManager.getUserIds();
@@ -30207,7 +28928,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                             stringBuilder4.append("App linkages for user ");
                                                                             stringBuilder4.append(userId);
                                                                             stringBuilder4.append(":");
-                                                                            writer.println(stringBuilder4.toString());
+                                                                            printWriter.println(stringBuilder4.toString());
                                                                             pw.println();
                                                                             i3 = 0;
                                                                             Iterator it3 = allPackageSettings.iterator();
@@ -30222,17 +28943,17 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                                     Iterator it4 = it3;
                                                                                     stringBuilder.append("  Package: ");
                                                                                     stringBuilder.append(ps2.name);
-                                                                                    writer.println(stringBuilder.toString());
+                                                                                    printWriter.println(stringBuilder.toString());
                                                                                     stringBuilder = new StringBuilder();
                                                                                     stringBuilder.append("  Domains: ");
                                                                                     stringBuilder.append(dumpDomainString(ps2.name));
-                                                                                    writer.println(stringBuilder.toString());
+                                                                                    printWriter.println(stringBuilder.toString());
                                                                                     opt = IntentFilterVerificationInfo.getStatusStringFromValue(allPackageSettings);
                                                                                     stringBuilder5 = new StringBuilder();
                                                                                     long status = allPackageSettings;
                                                                                     stringBuilder5.append("  Status:  ");
                                                                                     stringBuilder5.append(opt);
-                                                                                    writer.println(stringBuilder5.toString());
+                                                                                    printWriter.println(stringBuilder5.toString());
                                                                                     pw.println();
                                                                                     i3++;
                                                                                     allPackageSettings = allPackageSettings2;
@@ -30248,7 +28969,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                             iArr = userIds;
                                                                             i7 = length;
                                                                             if (i3 == 0) {
-                                                                                writer.println("  No configured app linkages.");
+                                                                                printWriter.println("  No configured app linkages.");
                                                                                 pw.println();
                                                                             }
                                                                             opti++;
@@ -30271,7 +28992,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                             try {
                                                                 if (dumpState.isDumping(64)) {
                                                                     arraySet = permissionNames2;
-                                                                    this.mSettings.dumpPermissionsLPr(writer, fullPreferred, arraySet, dumpState);
+                                                                    this.mSettings.dumpPermissionsLPr(printWriter, fullPreferred, arraySet, dumpState);
                                                                 } else {
                                                                     arraySet = permissionNames2;
                                                                 }
@@ -30290,14 +29011,14 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                         if (dumpState.onTitlePrinted()) {
                                                                             pw.println();
                                                                         }
-                                                                        writer.println("Registered ContentProviders:");
+                                                                        printWriter.println("Registered ContentProviders:");
                                                                         printedHeader = true;
                                                                     }
-                                                                    writer.print("  ");
-                                                                    p22222.printComponentShortName(writer);
-                                                                    writer.println(":");
-                                                                    writer.print("    ");
-                                                                    writer.println(p22222.toString());
+                                                                    printWriter.print("  ");
+                                                                    p22222.printComponentShortName(printWriter);
+                                                                    printWriter.println(":");
+                                                                    printWriter.print("    ");
+                                                                    printWriter.println(p22222.toString());
                                                                 }
                                                             }
                                                             printedHeader = false;
@@ -30308,24 +29029,24 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                         if (dumpState.onTitlePrinted()) {
                                                                             pw.println();
                                                                         }
-                                                                        writer.println("ContentProvider Authorities:");
+                                                                        printWriter.println("ContentProvider Authorities:");
                                                                         printedHeader = true;
                                                                     }
-                                                                    writer.print("  [");
-                                                                    writer.print((String) entry22222.getKey());
-                                                                    writer.println("]:");
-                                                                    writer.print("    ");
-                                                                    writer.println(p3.toString());
+                                                                    printWriter.print("  [");
+                                                                    printWriter.print((String) entry22222.getKey());
+                                                                    printWriter.println("]:");
+                                                                    printWriter.print("    ");
+                                                                    printWriter.println(p3.toString());
                                                                     if (!(p3.info == null || p3.info.applicationInfo == null)) {
                                                                         opt = p3.info.applicationInfo.toString();
-                                                                        writer.print("      applicationInfo=");
-                                                                        writer.println(opt);
+                                                                        printWriter.print("      applicationInfo=");
+                                                                        printWriter.println(opt);
                                                                     }
                                                                 }
                                                             }
                                                         }
                                                         if (!checkin && dumpState.isDumping(16384)) {
-                                                            this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                                            this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                                         }
                                                         if (dumpState.isDumping(128)) {
                                                             try {
@@ -30337,7 +29058,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                 throw th;
                                                             }
                                                             try {
-                                                                this.mSettings.dumpPackagesLPr(writer, fullPreferred, arraySet, dumpState, checkin);
+                                                                this.mSettings.dumpPackagesLPr(printWriter, fullPreferred, arraySet, dumpState, checkin);
                                                             } catch (Throwable th7) {
                                                                 th = th7;
                                                                 str2 = packageName2;
@@ -30347,34 +29068,34 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                             i6 = 0;
                                                         }
                                                         if (dumpState.isDumping(256)) {
-                                                            this.mSettings.dumpSharedUsersLPr(writer, packageName2, arraySet, dumpState, checkin);
+                                                            this.mSettings.dumpSharedUsersLPr(printWriter, packageName2, arraySet, dumpState, checkin);
                                                         }
                                                         if (dumpState.isDumping(DumpState.DUMP_CHANGES)) {
                                                             if (dumpState.onTitlePrinted()) {
                                                                 pw.println();
                                                             }
-                                                            writer.println("Package Changes:");
-                                                            writer.print("  Sequence number=");
-                                                            writer.println(this.mChangedPackagesSequenceNumber);
+                                                            printWriter.println("Package Changes:");
+                                                            printWriter.print("  Sequence number=");
+                                                            printWriter.println(this.mChangedPackagesSequenceNumber);
                                                             opti = this.mChangedPackages.size();
                                                             for (i3 = i6; i3 < opti; i3++) {
                                                                 SparseArray<String> changes = (SparseArray) this.mChangedPackages.valueAt(i3);
-                                                                writer.print("  User ");
-                                                                writer.print(this.mChangedPackages.keyAt(i3));
-                                                                writer.println(":");
+                                                                printWriter.print("  User ");
+                                                                printWriter.print(this.mChangedPackages.keyAt(i3));
+                                                                printWriter.println(":");
                                                                 N = changes.size();
                                                                 if (N == 0) {
-                                                                    writer.print("    ");
-                                                                    writer.println("No packages changed");
+                                                                    printWriter.print("    ");
+                                                                    printWriter.println("No packages changed");
                                                                 } else {
                                                                     for (length = i6; length < N; length++) {
                                                                         String fullPreferred2 = (String) changes.valueAt(length);
                                                                         user = changes.keyAt(length);
-                                                                        writer.print("    ");
-                                                                        writer.print("seq=");
-                                                                        writer.print(user);
-                                                                        writer.print(", package=");
-                                                                        writer.println(fullPreferred2);
+                                                                        printWriter.print("    ");
+                                                                        printWriter.print("seq=");
+                                                                        printWriter.print(user);
+                                                                        printWriter.print(", package=");
+                                                                        printWriter.println(fullPreferred2);
                                                                     }
                                                                 }
                                                             }
@@ -30384,7 +29105,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                 str2 = packageName2;
                                                                 if (str2 == null) {
                                                                     try {
-                                                                        this.mSettings.dumpRestoredPermissionGrantsLPr(writer, dumpState);
+                                                                        this.mSettings.dumpRestoredPermissionGrantsLPr(printWriter, dumpState);
                                                                     } catch (Throwable th8) {
                                                                         th = th8;
                                                                         throw th;
@@ -30394,7 +29115,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                                     ipw.println();
                                                                     ipw.println("Frozen packages:");
                                                                     ipw.increaseIndent();
@@ -30411,7 +29132,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                                     ipw.println();
                                                                     ipw.println("Loaded volumes:");
                                                                     ipw.increaseIndent();
@@ -30433,16 +29154,16 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    writer.println("Service permissions:");
+                                                                    printWriter.println("Service permissions:");
                                                                     filterIterator = this.mServices.filterIterator();
                                                                     while (filterIterator.hasNext()) {
                                                                         ServiceInfo serviceInfo = ((ServiceIntentInfo) filterIterator.next()).service.info;
                                                                         fullPreferred = serviceInfo.permission;
                                                                         if (fullPreferred) {
-                                                                            writer.print("    ");
-                                                                            writer.print(serviceInfo.getComponentName().flattenToShortString());
-                                                                            writer.print(": ");
-                                                                            writer.println(fullPreferred);
+                                                                            printWriter.print("    ");
+                                                                            printWriter.print(serviceInfo.getComponentName().flattenToShortString());
+                                                                            printWriter.print(": ");
+                                                                            printWriter.println(fullPreferred);
                                                                         }
                                                                     }
                                                                 }
@@ -30450,13 +29171,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    dumpDexoptStateLPr(writer, str2);
+                                                                    dumpDexoptStateLPr(printWriter, str2);
                                                                 }
                                                                 if (!checkin && dumpState.isDumping(2097152)) {
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    dumpCompilerStatsLPr(writer, str2);
+                                                                    dumpCompilerStatsLPr(printWriter, str2);
                                                                 }
                                                                 if (checkin) {
                                                                     i3 = 512;
@@ -30464,28 +29185,28 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                                         if (dumpState.onTitlePrinted()) {
                                                                             pw.println();
                                                                         }
-                                                                        this.mSettings.dumpReadMessagesLPr(writer, dumpState);
+                                                                        this.mSettings.dumpReadMessagesLPr(printWriter, dumpState);
                                                                         pw.println();
-                                                                        writer.println("Package warning messages:");
-                                                                        PackageManagerServiceUtils.dumpCriticalInfo(writer, null);
+                                                                        printWriter.println("Package warning messages:");
+                                                                        PackageManagerServiceUtils.dumpCriticalInfo(printWriter, null);
                                                                     }
                                                                 } else {
                                                                     i3 = 512;
                                                                 }
                                                                 if (checkin && dumpState.isDumping(r2)) {
-                                                                    PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                                    PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                                 }
                                                                 if (!checkin && dumpState.isDumping(65536) && str2 == null) {
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                                    this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                                 }
                                                                 if (!checkin && dumpState.isDumping(DumpState.DUMP_HANDLE) && str2 == null) {
                                                                     if (dumpState.onTitlePrinted()) {
                                                                         pw.println();
                                                                     }
-                                                                    this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                                    this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                                 }
                                                                 return;
                                                             }
@@ -30493,7 +29214,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         str2 = packageName2;
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                        ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                         ipw.println();
                                                         ipw.println("Frozen packages:");
                                                         ipw.increaseIndent();
@@ -30502,7 +29223,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         ipw.decreaseIndent();
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                        ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                         ipw.println();
                                                         ipw.println("Loaded volumes:");
                                                         ipw.increaseIndent();
@@ -30511,25 +29232,25 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                         ipw.decreaseIndent();
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        writer.println("Service permissions:");
+                                                        printWriter.println("Service permissions:");
                                                         filterIterator = this.mServices.filterIterator();
                                                         while (filterIterator.hasNext()) {
                                                         }
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        dumpDexoptStateLPr(writer, str2);
+                                                        dumpDexoptStateLPr(printWriter, str2);
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        dumpCompilerStatsLPr(writer, str2);
+                                                        dumpCompilerStatsLPr(printWriter, str2);
                                                         if (checkin) {
                                                         }
-                                                        PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                        PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                        this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                         if (dumpState.onTitlePrinted()) {
                                                         }
-                                                        this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                        this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                         return;
                                                     }
                                                 } catch (Throwable th9) {
@@ -30548,7 +29269,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                             printedHeader = false;
                                             for (Entry<String, Provider> entry222222 : this.mProvidersByAuthority.entrySet()) {
                                             }
-                                            this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                            this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                             if (dumpState.isDumping(128)) {
                                             }
                                             try {
@@ -30561,7 +29282,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 str2 = packageName2;
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                 ipw.println();
                                                 ipw.println("Frozen packages:");
                                                 ipw.increaseIndent();
@@ -30570,7 +29291,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 ipw.decreaseIndent();
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                                ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                                 ipw.println();
                                                 ipw.println("Loaded volumes:");
                                                 ipw.increaseIndent();
@@ -30579,25 +29300,25 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                                 ipw.decreaseIndent();
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                writer.println("Service permissions:");
+                                                printWriter.println("Service permissions:");
                                                 filterIterator = this.mServices.filterIterator();
                                                 while (filterIterator.hasNext()) {
                                                 }
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                dumpDexoptStateLPr(writer, str2);
+                                                dumpDexoptStateLPr(printWriter, str2);
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                dumpCompilerStatsLPr(writer, str2);
+                                                dumpCompilerStatsLPr(printWriter, str2);
                                                 if (checkin) {
                                                 }
-                                                PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                                PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                                this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                                 if (dumpState.onTitlePrinted()) {
                                                 }
-                                                this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                                this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                                 return;
                                             } catch (Throwable th10) {
                                                 th = th10;
@@ -30619,12 +29340,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 activityIntentResolver = this.mReceivers;
                                 if (dumpState.getTitlePrinted()) {
                                 }
-                                if (activityIntentResolver.dump(writer, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
+                                if (activityIntentResolver.dump(printWriter, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
                                 }
                                 serviceIntentResolver = this.mServices;
                                 if (dumpState.getTitlePrinted()) {
                                 }
-                                if (serviceIntentResolver.dump(writer, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
+                                if (serviceIntentResolver.dump(printWriter, str2, "  ", packageName3, dumpState.isOptionEnabled(1), true)) {
                                 }
                                 if (checkin) {
                                 }
@@ -30649,7 +29370,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 printedHeader = false;
                                 for (Entry<String, Provider> entry2222222 : this.mProvidersByAuthority.entrySet()) {
                                 }
-                                this.mSettings.mKeySetManagerService.dumpLPr(writer, fullPreferred, dumpState);
+                                this.mSettings.mKeySetManagerService.dumpLPr(printWriter, fullPreferred, dumpState);
                                 try {
                                     if (dumpState.isDumping(128)) {
                                     }
@@ -30662,7 +29383,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                     str2 = packageName2;
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                     ipw.println();
                                     ipw.println("Frozen packages:");
                                     ipw.increaseIndent();
@@ -30671,7 +29392,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                     ipw.decreaseIndent();
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    ipw = new IndentingPrintWriter(writer, "  ", 120);
+                                    ipw = new IndentingPrintWriter(printWriter, "  ", 120);
                                     ipw.println();
                                     ipw.println("Loaded volumes:");
                                     ipw.increaseIndent();
@@ -30680,25 +29401,25 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                     ipw.decreaseIndent();
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    writer.println("Service permissions:");
+                                    printWriter.println("Service permissions:");
                                     filterIterator = this.mServices.filterIterator();
                                     while (filterIterator.hasNext()) {
                                     }
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    dumpDexoptStateLPr(writer, str2);
+                                    dumpDexoptStateLPr(printWriter, str2);
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    dumpCompilerStatsLPr(writer, str2);
+                                    dumpCompilerStatsLPr(printWriter, str2);
                                     if (checkin) {
                                     }
-                                    PackageManagerServiceUtils.dumpCriticalInfo(writer, "msg,");
+                                    PackageManagerServiceUtils.dumpCriticalInfo(printWriter, "msg,");
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    this.mInstallerService.dump(new IndentingPrintWriter(writer, "  ", 120));
+                                    this.mInstallerService.dump(new IndentingPrintWriter(printWriter, "  ", 120));
                                     if (dumpState.onTitlePrinted()) {
                                     }
-                                    this.mHandler.dump(new PrintWriterPrinter(writer), " ");
+                                    this.mHandler.dump(new PrintWriterPrinter(printWriter), " ");
                                     return;
                                 } catch (Throwable th12) {
                                     th = th12;
@@ -30781,7 +29502,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             } else if ("write".equals(opt)) {
                                 synchronized (this.mPackages) {
                                     this.mSettings.writeLPr();
-                                    writer.println("Settings written.");
+                                    printWriter.println("Settings written.");
                                 }
                                 return;
                             }
@@ -30790,13 +29511,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     }
                     packageName = null;
                 } else if (opti2 >= strArr.length) {
-                    writer.println("Error: check-permission missing permission argument");
+                    printWriter.println("Error: check-permission missing permission argument");
                     return;
                 } else {
                     packageName = strArr[opti2];
                     opti2++;
                     if (opti2 >= strArr.length) {
-                        writer.println("Error: check-permission missing package argument");
+                        printWriter.println("Error: check-permission missing package argument");
                         return;
                     }
                     String pkg = strArr[opti2];
@@ -30809,11 +29530,11 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             stringBuilder4 = new StringBuilder();
                             stringBuilder4.append("Error: check-permission user argument is not a number: ");
                             stringBuilder4.append(strArr[opti2]);
-                            writer.println(stringBuilder4.toString());
+                            printWriter.println(stringBuilder4.toString());
                             return;
                         }
                     }
-                    writer.println(checkPermission(packageName, resolveInternalPackageNameLPr(pkg, -1), user2));
+                    printWriter.println(checkPermission(packageName, resolveInternalPackageNameLPr(pkg, -1), user2));
                     return;
                 }
                 permissionNames = null;
@@ -31068,7 +29789,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
 
     /* JADX WARNING: Removed duplicated region for block: B:34:0x00b7 A:{Catch:{ all -> 0x00c5, all -> 0x00ca }} */
     /* JADX WARNING: Removed duplicated region for block: B:34:0x00b7 A:{Catch:{ all -> 0x00c5, all -> 0x00ca }} */
-    /* JADX WARNING: Missing block: B:61:0x0122, code:
+    /* JADX WARNING: Missing block: B:61:0x0122, code skipped:
             r21 = r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -31124,10 +29845,12 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             }
                         } catch (Throwable th2) {
                             th = th2;
+                            throw th;
                         }
                     } catch (Throwable th3) {
                         th = th3;
                         ps = ps3;
+                        throw th;
                     }
                 } catch (PackageManagerException e4) {
                     e = e4;
@@ -31148,6 +29871,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                     th = th4;
                     obj2 = obj;
                     ps = ps2;
+                    throw th;
                 }
                 if (Build.FINGERPRINT.equals(ver.fingerprint)) {
                     clearAppDataLIF(ps.pkg, -1, UsbTerminalTypes.TERMINAL_IN_PERSONAL_MIC);
@@ -31220,8 +29944,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         }
         sendResourcesChangedBroadcast(true, false, loaded, null);
         this.mLoadedVolumes.add(vol.getId());
-        return;
-        throw th;
     }
 
     private void unloadPrivatePackages(final VolumeInfo vol) {
@@ -31232,6 +29954,11 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         });
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0103 A:{SYNTHETIC, Splitter:B:66:0x0103} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0103 A:{SYNTHETIC, Splitter:B:66:0x0103} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0103 A:{SYNTHETIC, Splitter:B:66:0x0103} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0103 A:{SYNTHETIC, Splitter:B:66:0x0103} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void unloadPrivatePackagesInner(VolumeInfo vol) {
         Throwable th;
         Throwable th2;
@@ -31270,27 +29997,38 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                         freezer = freezer3;
                                         ps2 = ps3;
                                         th3 = null;
-                                    }
-                                } else {
-                                    try {
-                                        String str = TAG;
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        stringBuilder.append("Failed to unload ");
-                                        ps2 = ps3;
-                                        try {
-                                            stringBuilder.append(ps2.codePath);
-                                            Slog.w(str, stringBuilder.toString());
-                                        } catch (Throwable th5) {
-                                            th2 = th5;
-                                            freezer = freezer3;
-                                            th3 = null;
+                                        if (freezer != null) {
                                         }
-                                    } catch (Throwable th6) {
-                                        th2 = th6;
-                                        freezer = freezer3;
-                                        ps2 = ps3;
-                                        th3 = null;
+                                        throw th2;
                                     }
+                                }
+                                String str;
+                                StringBuilder stringBuilder;
+                                try {
+                                    str = TAG;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("Failed to unload ");
+                                    ps2 = ps3;
+                                } catch (Throwable th5) {
+                                    th2 = th5;
+                                    freezer = freezer3;
+                                    ps2 = ps3;
+                                    th3 = null;
+                                    if (freezer != null) {
+                                    }
+                                    throw th2;
+                                }
+                                try {
+                                    stringBuilder.append(ps2.codePath);
+                                    Slog.w(str, stringBuilder.toString());
+                                } catch (Throwable th6) {
+                                    th2 = th6;
+                                    freezer = freezer3;
+                                    th3 = null;
+                                    if (freezer != null) {
+                                        $closeResource(th3, freezer);
+                                    }
+                                    throw th2;
                                 }
                                 freezer = freezer3;
                                 if (freezer != null) {
@@ -31304,6 +30042,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                                 applicationInfo = info2;
                                 ps2 = ps3;
                                 th3 = null;
+                                if (freezer != null) {
+                                }
+                                throw th2;
                             }
                         } catch (Throwable th8) {
                             th2 = th8;
@@ -31312,6 +30053,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                             ps2 = ps;
                             th3 = null;
                             packages = packages2;
+                            if (freezer != null) {
+                            }
+                            throw th2;
                         }
                     }
                 }
@@ -31335,17 +30079,6 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             System.gc();
             System.runFinalization();
             i++;
-        }
-        return;
-        if (freezer != null) {
-            $closeResource(th3, freezer);
-        }
-        throw th2;
-        try {
-            throw th;
-        } catch (Throwable th9) {
-            th2 = th9;
-            th3 = th;
         }
     }
 
@@ -31789,7 +30522,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         if (!((flags & 2) == 0 || ceDataInode == -1)) {
             synchronized (this.mPackages) {
                 if (ps != null) {
-                    ps.setCeDataInode(ceDataInode, i);
+                    try {
+                        ps.setCeDataInode(ceDataInode, i);
+                    } catch (Throwable th) {
+                    }
                 }
             }
         }
@@ -31915,9 +30651,9 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         return moveId;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x03a5 A:{Catch:{ all -> 0x03f8, all -> 0x0400 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:144:0x03a5 A:{Catch:{ all -> 0x03f8, all -> 0x0400 }} */
     /* JADX WARNING: Removed duplicated region for block: B:39:0x00b4 A:{Catch:{ all -> 0x03f8, all -> 0x0400 }} */
-    /* JADX WARNING: Missing block: B:51:0x011a, code:
+    /* JADX WARNING: Missing block: B:52:0x011a, code skipped:
             r33 = r5;
             r26 = r8;
             r8 = new android.os.Bundle();
@@ -31925,157 +30661,157 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r8.putString("android.intent.extra.TITLE", r3);
             com.android.server.pm.PackageManagerService.MoveCallbacks.access$6900(r15.mMoveCallbacks, r10, r8);
      */
-    /* JADX WARNING: Missing block: B:52:0x0139, code:
+    /* JADX WARNING: Missing block: B:53:0x0139, code skipped:
             if (java.util.Objects.equals(android.os.storage.StorageManager.UUID_PRIVATE_INTERNAL, r11) == null) goto L_0x0147;
      */
-    /* JADX WARNING: Missing block: B:53:0x013b, code:
+    /* JADX WARNING: Missing block: B:54:0x013b, code skipped:
             r0 = 16;
      */
-    /* JADX WARNING: Missing block: B:54:0x013d, code:
+    /* JADX WARNING: Missing block: B:55:0x013d, code skipped:
             if (r33 != false) goto L_0x0141;
      */
-    /* JADX WARNING: Missing block: B:55:0x013f, code:
+    /* JADX WARNING: Missing block: B:56:0x013f, code skipped:
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:56:0x0141, code:
+    /* JADX WARNING: Missing block: B:57:0x0141, code skipped:
             r5 = false;
      */
-    /* JADX WARNING: Missing block: B:57:0x0142, code:
+    /* JADX WARNING: Missing block: B:58:0x0142, code skipped:
             r17 = android.os.Environment.getDataAppDirectory(r50);
      */
-    /* JADX WARNING: Missing block: B:59:0x014e, code:
+    /* JADX WARNING: Missing block: B:60:0x014e, code skipped:
             if (java.util.Objects.equals("primary_physical", r11) == null) goto L_0x0160;
      */
-    /* JADX WARNING: Missing block: B:60:0x0150, code:
+    /* JADX WARNING: Missing block: B:61:0x0150, code skipped:
             r0 = 8;
             r5 = false;
             r17 = r13.getPrimaryPhysicalVolume().getPath();
      */
-    /* JADX WARNING: Missing block: B:61:0x015b, code:
+    /* JADX WARNING: Missing block: B:62:0x015b, code skipped:
             r18 = r0;
      */
-    /* JADX WARNING: Missing block: B:62:0x015d, code:
+    /* JADX WARNING: Missing block: B:63:0x015d, code skipped:
             r34 = r5;
      */
-    /* JADX WARNING: Missing block: B:63:0x0160, code:
+    /* JADX WARNING: Missing block: B:64:0x0160, code skipped:
             r0 = r13.findVolumeByUuid(r11);
      */
-    /* JADX WARNING: Missing block: B:64:0x0166, code:
+    /* JADX WARNING: Missing block: B:65:0x0166, code skipped:
             if (r15.mCustPms == null) goto L_0x017a;
      */
-    /* JADX WARNING: Missing block: B:66:0x016e, code:
+    /* JADX WARNING: Missing block: B:67:0x016e, code skipped:
             if (r15.mCustPms.canAppMoveToPublicSd(r0) == false) goto L_0x017a;
      */
-    /* JADX WARNING: Missing block: B:67:0x0170, code:
+    /* JADX WARNING: Missing block: B:68:0x0170, code skipped:
             r1 = 8;
             r5 = false;
             r17 = r0.getPath();
      */
-    /* JADX WARNING: Missing block: B:68:0x0177, code:
+    /* JADX WARNING: Missing block: B:69:0x0177, code skipped:
             r18 = r1;
      */
-    /* JADX WARNING: Missing block: B:69:0x017a, code:
+    /* JADX WARNING: Missing block: B:70:0x017a, code skipped:
             if (r0 == null) goto L_0x037b;
      */
-    /* JADX WARNING: Missing block: B:71:0x0180, code:
+    /* JADX WARNING: Missing block: B:72:0x0180, code skipped:
             if (r0.getType() != 1) goto L_0x037b;
      */
-    /* JADX WARNING: Missing block: B:73:0x0186, code:
+    /* JADX WARNING: Missing block: B:74:0x0186, code skipped:
             if (r0.isMountedWritable() == false) goto L_0x037b;
      */
-    /* JADX WARNING: Missing block: B:74:0x0188, code:
+    /* JADX WARNING: Missing block: B:75:0x0188, code skipped:
             if (r33 != false) goto L_0x018c;
      */
-    /* JADX WARNING: Missing block: B:75:0x018a, code:
+    /* JADX WARNING: Missing block: B:76:0x018a, code skipped:
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:76:0x018c, code:
+    /* JADX WARNING: Missing block: B:77:0x018c, code skipped:
             r1 = false;
      */
-    /* JADX WARNING: Missing block: B:77:0x018d, code:
+    /* JADX WARNING: Missing block: B:78:0x018d, code skipped:
             com.android.internal.util.Preconditions.checkState(r1);
             r1 = 16;
             r5 = true;
             r17 = android.os.Environment.getDataAppDirectory(r50);
      */
-    /* JADX WARNING: Missing block: B:78:0x0198, code:
+    /* JADX WARNING: Missing block: B:79:0x0198, code skipped:
             r5 = r17;
      */
-    /* JADX WARNING: Missing block: B:79:0x019a, code:
+    /* JADX WARNING: Missing block: B:80:0x019a, code skipped:
             if (r34 == false) goto L_0x01d9;
      */
-    /* JADX WARNING: Missing block: B:80:0x019c, code:
+    /* JADX WARNING: Missing block: B:81:0x019c, code skipped:
             r0 = r2.length;
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:81:0x019e, code:
+    /* JADX WARNING: Missing block: B:82:0x019e, code skipped:
             if (r1 >= r0) goto L_0x01d9;
      */
-    /* JADX WARNING: Missing block: B:82:0x01a0, code:
+    /* JADX WARNING: Missing block: B:83:0x01a0, code skipped:
             r4 = r2[r1];
      */
-    /* JADX WARNING: Missing block: B:83:0x01a6, code:
+    /* JADX WARNING: Missing block: B:84:0x01a6, code skipped:
             if (android.os.storage.StorageManager.isFileEncryptedNativeOrEmulated() == false) goto L_0x01d3;
      */
-    /* JADX WARNING: Missing block: B:85:0x01ac, code:
+    /* JADX WARNING: Missing block: B:86:0x01ac, code skipped:
             if (android.os.storage.StorageManager.isUserKeyUnlocked(r4) == false) goto L_0x01b1;
      */
-    /* JADX WARNING: Missing block: B:86:0x01b1, code:
+    /* JADX WARNING: Missing block: B:87:0x01b1, code skipped:
             r1 = new java.lang.StringBuilder();
             r39 = r3;
             r1.append("User ");
             r1.append(r4);
             r1.append(" must be unlocked");
      */
-    /* JADX WARNING: Missing block: B:87:0x01d0, code:
+    /* JADX WARNING: Missing block: B:88:0x01d0, code skipped:
             throw new com.android.server.pm.PackageManagerException(-10, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:88:0x01d3, code:
+    /* JADX WARNING: Missing block: B:89:0x01d3, code skipped:
             r1 = r1 + 1;
             r3 = r3;
      */
-    /* JADX WARNING: Missing block: B:89:0x01d9, code:
+    /* JADX WARNING: Missing block: B:90:0x01d9, code skipped:
             r39 = r3;
             r4 = new android.content.pm.PackageStats(null, -1);
             r1 = r15.mInstaller;
      */
-    /* JADX WARNING: Missing block: B:90:0x01e5, code:
+    /* JADX WARNING: Missing block: B:91:0x01e5, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:92:?, code:
+    /* JADX WARNING: Missing block: B:93:?, code skipped:
             r0 = r2.length;
      */
-    /* JADX WARNING: Missing block: B:93:0x01e7, code:
+    /* JADX WARNING: Missing block: B:94:0x01e7, code skipped:
             r3 = 0;
      */
-    /* JADX WARNING: Missing block: B:94:0x01e8, code:
+    /* JADX WARNING: Missing block: B:95:0x01e8, code skipped:
             if (r3 >= r0) goto L_0x0233;
      */
-    /* JADX WARNING: Missing block: B:96:?, code:
+    /* JADX WARNING: Missing block: B:97:?, code skipped:
             r41 = r0;
             r0 = r2[r3];
      */
-    /* JADX WARNING: Missing block: B:97:0x01f6, code:
+    /* JADX WARNING: Missing block: B:98:0x01f6, code skipped:
             if (getPackageSizeInfoLI(r12, r0, r4) == false) goto L_0x01fd;
      */
-    /* JADX WARNING: Missing block: B:98:0x01f8, code:
+    /* JADX WARNING: Missing block: B:99:0x01f8, code skipped:
             r3 = r3 + 1;
             r0 = r41;
      */
-    /* JADX WARNING: Missing block: B:99:0x01fd, code:
+    /* JADX WARNING: Missing block: B:100:0x01fd, code skipped:
             r14.close();
             r42 = r0;
      */
-    /* JADX WARNING: Missing block: B:100:0x0206, code:
+    /* JADX WARNING: Missing block: B:101:0x0206, code skipped:
             r43 = r2;
      */
-    /* JADX WARNING: Missing block: B:103:0x020c, code:
+    /* JADX WARNING: Missing block: B:104:0x020c, code skipped:
             throw new com.android.server.pm.PackageManagerException(-6, "Failed to measure package size");
      */
-    /* JADX WARNING: Missing block: B:104:0x020d, code:
+    /* JADX WARNING: Missing block: B:105:0x020d, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:105:0x020e, code:
+    /* JADX WARNING: Missing block: B:106:0x020e, code skipped:
             r42 = r4;
             r47 = r9;
             r7 = r11;
@@ -32087,10 +30823,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r39 = r5;
             r43 = r8;
      */
-    /* JADX WARNING: Missing block: B:106:0x0220, code:
+    /* JADX WARNING: Missing block: B:107:0x0220, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:107:0x0221, code:
+    /* JADX WARNING: Missing block: B:108:0x0221, code skipped:
             r37 = r2;
             r42 = r4;
             r43 = r8;
@@ -32102,16 +30838,16 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r38 = r39;
             r39 = r5;
      */
-    /* JADX WARNING: Missing block: B:108:0x0233, code:
+    /* JADX WARNING: Missing block: B:109:0x0233, code skipped:
             r43 = r2;
      */
-    /* JADX WARNING: Missing block: B:110:?, code:
+    /* JADX WARNING: Missing block: B:111:?, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:112:0x0238, code:
+    /* JADX WARNING: Missing block: B:113:0x0238, code skipped:
             if (DEBUG_INSTALL == null) goto L_0x025c;
      */
-    /* JADX WARNING: Missing block: B:113:0x023a, code:
+    /* JADX WARNING: Missing block: B:114:0x023a, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("Measured code size ");
@@ -32120,34 +30856,34 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r1.append(r4.dataSize);
             android.util.Slog.d(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:114:0x025c, code:
+    /* JADX WARNING: Missing block: B:115:0x025c, code skipped:
             r35 = r5.getUsableSpace();
      */
-    /* JADX WARNING: Missing block: B:115:0x0260, code:
+    /* JADX WARNING: Missing block: B:116:0x0260, code skipped:
             if (r34 == false) goto L_0x0268;
      */
-    /* JADX WARNING: Missing block: B:116:0x0262, code:
+    /* JADX WARNING: Missing block: B:117:0x0262, code skipped:
             r0 = r4.codeSize + r4.dataSize;
      */
-    /* JADX WARNING: Missing block: B:117:0x0268, code:
+    /* JADX WARNING: Missing block: B:118:0x0268, code skipped:
             r0 = r4.codeSize;
      */
-    /* JADX WARNING: Missing block: B:118:0x026a, code:
+    /* JADX WARNING: Missing block: B:119:0x026a, code skipped:
             r40 = r0;
      */
-    /* JADX WARNING: Missing block: B:119:0x0272, code:
+    /* JADX WARNING: Missing block: B:120:0x0272, code skipped:
             if (r40 > r13.getStorageBytesUntilLow(r5)) goto L_0x0335;
      */
-    /* JADX WARNING: Missing block: B:120:0x0274, code:
+    /* JADX WARNING: Missing block: B:121:0x0274, code skipped:
             com.android.server.pm.PackageManagerService.MoveCallbacks.access$6800(r15.mMoveCallbacks, r10, 10);
             r0 = new java.util.concurrent.CountDownLatch(1);
             r3 = r14;
             r14 = new com.android.server.pm.PackageManagerService.AnonymousClass31(r15);
      */
-    /* JADX WARNING: Missing block: B:121:0x0288, code:
+    /* JADX WARNING: Missing block: B:122:0x0288, code skipped:
             if (r34 == false) goto L_0x02c7;
      */
-    /* JADX WARNING: Missing block: B:122:0x028a, code:
+    /* JADX WARNING: Missing block: B:123:0x028a, code skipped:
             r44 = r13;
             r37 = r43;
             r13 = r1;
@@ -32167,7 +30903,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r13.start();
             r13 = new com.android.server.pm.PackageManagerService.MoveInfo(r10, r26, r11, r12, r14.getName(), r30, r31, r32);
      */
-    /* JADX WARNING: Missing block: B:123:0x02c7, code:
+    /* JADX WARNING: Missing block: B:124:0x02c7, code skipped:
             r45 = r3;
             r42 = r4;
             r47 = r9;
@@ -32180,7 +30916,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r43 = r8;
             r13 = null;
      */
-    /* JADX WARNING: Missing block: B:124:0x02db, code:
+    /* JADX WARNING: Missing block: B:125:0x02db, code skipped:
             r4 = r44;
             r1 = r18 | 2;
             r2 = r15.mHandler.obtainMessage(5);
@@ -32195,10 +30931,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             android.os.Trace.asyncTraceBegin(262144, "queueInstall", java.lang.System.identityHashCode(r2.obj));
             r9.mHandler.sendMessage(r2);
      */
-    /* JADX WARNING: Missing block: B:125:0x0334, code:
+    /* JADX WARNING: Missing block: B:126:0x0334, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:126:0x0335, code:
+    /* JADX WARNING: Missing block: B:127:0x0335, code skipped:
             r42 = r4;
             r47 = r9;
             r7 = r11;
@@ -32210,13 +30946,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r43 = r8;
             r14.close();
      */
-    /* JADX WARNING: Missing block: B:127:0x0353, code:
+    /* JADX WARNING: Missing block: B:128:0x0353, code skipped:
             throw new com.android.server.pm.PackageManagerException(-6, "Not enough free space to move");
      */
-    /* JADX WARNING: Missing block: B:128:0x0354, code:
+    /* JADX WARNING: Missing block: B:129:0x0354, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:129:0x0355, code:
+    /* JADX WARNING: Missing block: B:130:0x0355, code skipped:
             r42 = r4;
             r47 = r9;
             r7 = r11;
@@ -32228,10 +30964,10 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r39 = r5;
             r43 = r8;
      */
-    /* JADX WARNING: Missing block: B:130:0x0366, code:
+    /* JADX WARNING: Missing block: B:131:0x0366, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:131:0x0367, code:
+    /* JADX WARNING: Missing block: B:132:0x0367, code skipped:
             r37 = r2;
             r42 = r4;
             r43 = r8;
@@ -32243,16 +30979,16 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r38 = r39;
             r39 = r5;
      */
-    /* JADX WARNING: Missing block: B:133:?, code:
+    /* JADX WARNING: Missing block: B:134:?, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:134:0x0378, code:
+    /* JADX WARNING: Missing block: B:135:0x0378, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:135:0x0379, code:
+    /* JADX WARNING: Missing block: B:136:0x0379, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:137:0x037b, code:
+    /* JADX WARNING: Missing block: B:138:0x037b, code skipped:
             r37 = r2;
             r38 = r3;
             r43 = r8;
@@ -32262,7 +30998,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
             r9 = r15;
             r14.close();
      */
-    /* JADX WARNING: Missing block: B:138:0x0392, code:
+    /* JADX WARNING: Missing block: B:139:0x0392, code skipped:
             throw new com.android.server.pm.PackageManagerException(true, "Move location not mounted private volume");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -32644,10 +31380,13 @@ public class PackageManagerService extends AbsPackageManagerService implements P
                 stringBuilder2.append("Unknown package: ");
                 stringBuilder2.append(packageName);
                 throw new IllegalArgumentException(stringBuilder2.toString());
-            } else if (pkg.applicationInfo.uid == callingUid || 1000 == callingUid) {
-                keySet = new KeySet(this.mSettings.mKeySetManagerService.getSigningKeySetByPackageNameLPr(packageName));
             } else {
-                throw new SecurityException("May not access signing KeySet of other apps.");
+                if (pkg.applicationInfo.uid != callingUid) {
+                    if (1000 != callingUid) {
+                        throw new SecurityException("May not access signing KeySet of other apps.");
+                    }
+                }
+                keySet = new KeySet(this.mSettings.mKeySetManagerService.getSigningKeySetByPackageNameLPr(packageName));
             }
         }
         return keySet;
@@ -32891,7 +31630,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
     }
 
     Collection<Package> getPackages() {
-        Collection arrayList;
+        ArrayList arrayList;
         synchronized (this.mPackages) {
             arrayList = new ArrayList(this.mPackages.values());
         }
@@ -33233,7 +31972,7 @@ public class PackageManagerService extends AbsPackageManagerService implements P
         int callingAppId = UserHandle.getAppId(callingUid);
         this.mPermissionManager.enforceCrossUserPermission(callingUid, userId, true, true, "getHarmfulAppInfo");
         if (callingAppId == 1000 || callingAppId == 0 || checkUidPermission("android.permission.SET_HARMFUL_APP_WARNINGS", callingUid) == 0) {
-            CharSequence harmfulAppWarningLPr;
+            String harmfulAppWarningLPr;
             synchronized (this.mPackages) {
                 harmfulAppWarningLPr = this.mSettings.getHarmfulAppWarningLPr(packageName, userId);
             }

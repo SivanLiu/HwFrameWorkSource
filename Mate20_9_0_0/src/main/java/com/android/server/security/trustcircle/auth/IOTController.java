@@ -247,7 +247,7 @@ public class IOTController {
                 stringBuilder.append("notifyAuthExited failed, ");
                 stringBuilder.append(e.toString());
                 LogHelper.e(str, stringBuilder.toString());
-            } catch (RemoteException e2) {
+            } catch (Exception e2) {
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("notifyAuthExited failed, ");

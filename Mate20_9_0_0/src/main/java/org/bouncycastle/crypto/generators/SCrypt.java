@@ -1,7 +1,6 @@
 package org.bouncycastle.crypto.generators;
 
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
-import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -109,7 +108,7 @@ public class SCrypt {
     }
 
     private static byte[] SingleIterationPBKDF2(byte[] bArr, byte[] bArr2, int i) {
-        PBEParametersGenerator pKCS5S2ParametersGenerator = new PKCS5S2ParametersGenerator(new SHA256Digest());
+        PKCS5S2ParametersGenerator pKCS5S2ParametersGenerator = new PKCS5S2ParametersGenerator(new SHA256Digest());
         pKCS5S2ParametersGenerator.init(bArr, bArr2, 1);
         return ((KeyParameter) pKCS5S2ParametersGenerator.generateDerivedMacParameters(i * 8)).getKey();
     }

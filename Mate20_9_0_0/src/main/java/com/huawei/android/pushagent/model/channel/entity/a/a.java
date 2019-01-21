@@ -5,45 +5,44 @@ import android.content.Intent;
 import android.text.TextUtils;
 import com.huawei.android.pushagent.PushService;
 import com.huawei.android.pushagent.datatype.tcp.HeartBeatReqMessage;
-import com.huawei.android.pushagent.datatype.tcp.base.IPushMessage;
-import com.huawei.android.pushagent.model.channel.entity.c;
 import com.huawei.android.pushagent.model.prefs.f;
-import com.huawei.android.pushagent.model.prefs.k;
-import com.huawei.android.pushagent.utils.g;
-import com.huawei.android.pushagent.utils.tools.d;
+import com.huawei.android.pushagent.model.prefs.m;
+import com.huawei.android.pushagent.utils.d;
+import com.huawei.android.pushagent.utils.e.c;
+import java.util.Set;
 
-public class a extends c {
-    private String ct = "";
-    private int cu = 0;
-    private int cv = 0;
-    private String cw = "";
-    private boolean cx = false;
-    private long cy = 7200000;
-    private long cz = this.cy;
-    private long da = 180000;
-    private int db = -1;
-    private String dc = "";
+public class a extends com.huawei.android.pushagent.model.channel.entity.a {
+    private int aa = 0;
+    private String ab = "";
+    private boolean ac = false;
+    private long ad = 7200000;
+    private long ae = this.ad;
+    private long af = 180000;
+    private int ag = -1;
+    private String ah = "";
+    private String y = "";
+    private int z = 0;
 
     public a(Context context) {
         super(context);
     }
 
-    public boolean lg() {
+    public boolean bn() {
         boolean z = true;
-        int fw = g.fw(this.ef);
-        String fx = g.fx(this.ef);
-        String fy = g.fy(this.ef);
-        switch (fw) {
+        int yh = d.yh(this.ak);
+        String yi = d.yi(this.ak);
+        String yj = d.yj(this.ak);
+        switch (yh) {
             case 0:
-                String fz = g.fz(this.ef);
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "push apn is " + fz);
-                if (fw == this.db && (fy.equals(this.cw) ^ 1) == 0) {
-                    z = fz.equals(this.ct) ^ 1;
+                String yk = d.yk(this.ak);
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "push apn is " + yk);
+                if (yh == this.ag && (yj.equals(this.ab) ^ 1) == 0) {
+                    z = yk.equals(this.y) ^ 1;
                     break;
                 }
             case 1:
-                if (fw == this.db) {
-                    z = this.dc.equals(fx) ^ 1;
+                if (yh == this.ag) {
+                    z = this.ah.equals(yi) ^ 1;
                     break;
                 }
                 break;
@@ -51,199 +50,199 @@ public class a extends c {
                 z = false;
                 break;
         }
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "is network env changed: " + z + ",from netType " + this.db + " to " + fw + ", [-1:NONE, 0:MOBILE, 1:WIFI]");
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "is network env changed: " + z + ",from netType " + this.ag + " to " + yh + ", [-1:NONE, 0:MOBILE, 1:WIFI]");
         return z;
     }
 
-    public long ld(boolean z) {
-        if (-1 == g.fw(this.ef)) {
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "no network, use no network heartbeat");
-            return k.rh(this.ef).ro() * 1000;
+    public long bk(boolean z) {
+        if (-1 == d.yh(this.ak)) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "no network, use no network heartbeat");
+            return com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fg() * 1000;
         }
-        long j = this.cy;
-        if (!this.cx) {
+        long j = this.ad;
+        if (!this.ac) {
             if (z) {
-                j = this.cy;
+                j = this.ad;
             } else {
-                if (this.cy > 300000) {
-                    j = k.rh(this.ef).rp();
+                if (this.ad > 300000) {
+                    j = com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fh();
                 } else {
-                    j = k.rh(this.ef).rq();
+                    j = com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fi();
                 }
-                j += this.cy;
+                j += this.ad;
             }
-            if (j <= this.da) {
-                j = this.da;
-            } else if (j >= this.cz) {
-                j = this.cz;
+            if (j <= this.af) {
+                j = this.af;
+            } else if (j >= this.ae) {
+                j = this.ae;
             }
         }
         return j;
     }
 
-    private void le(boolean z) {
-        if (this.eg) {
-            mv(false);
+    private void bl(boolean z) {
+        if (this.al) {
+            cj(false);
             if (z) {
-                com.huawei.android.pushagent.model.prefs.a.of(this.ef).og();
+                f.ke(this.ak).kf();
             } else {
-                com.huawei.android.pushagent.model.prefs.a.of(this.ef).oh();
+                f.ke(this.ak).kg();
             }
         }
     }
 
-    public void ky(boolean z, boolean z2) {
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "enter adjustHeartBeat:(findHeartBeat:" + this.cx + ",isHearBeatTimeReq:" + this.eh + ",RspTimeOut:" + z + ",beatInterval:" + this.cy + ",bestHBSuccessCount:" + this.cv + ",range:[" + this.da + "," + this.cz + "]" + ")");
-        le(z);
-        if (this.cx) {
+    public void bf(boolean z, boolean z2) {
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "enter adjustHeartBeat:(findHeartBeat:" + this.ac + ",isHearBeatTimeReq:" + this.am + ",RspTimeOut:" + z + ",beatInterval:" + this.ad + ",bestHBSuccessCount:" + this.aa + ",range:[" + this.af + "," + this.ae + "]" + ")");
+        bl(z);
+        if (this.ac) {
             if (z) {
-                li(z, z2);
+                bp(z, z2);
             } else {
-                li(false, z2);
+                bp(false, z2);
             }
-        } else if (this.eh) {
-            mw(false);
-            this.cy = ld(z);
-            if (z || this.cy <= this.da || this.cy >= this.cz) {
-                this.cx = true;
-                this.cv = 0;
-                int fw = g.fw(this.ef);
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "Find the best heartBeat Interval:" + this.cy + "ms");
-                ln(this.ef, this.cy, fw);
-                f.py(this.ef).pz(this.ef, fw);
-                com.huawei.android.pushagent.a.a.hq(75, com.huawei.android.pushagent.a.a.hr(String.valueOf(fw), String.valueOf(this.cy)));
+        } else if (this.am) {
+            ck(false);
+            this.ad = bk(z);
+            if (z || this.ad <= this.af || this.ad >= this.ae) {
+                this.ac = true;
+                this.aa = 0;
+                int yh = d.yh(this.ak);
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "Find the best heartBeat Interval:" + this.ad + "ms");
+                bu(this.ak, this.ad, yh);
+                m.mc(this.ak).md(this.ak, yh);
+                com.huawei.android.pushagent.b.a.abc(75, com.huawei.android.pushagent.b.a.abb(String.valueOf(yh), String.valueOf(this.ad)));
             } else {
-                com.huawei.android.pushagent.utils.f.c.er("PushLog3413", "set current heartBeatInterval " + this.cy + "ms");
+                com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "set current heartBeatInterval " + this.ad + "ms");
             }
-            ll();
+            bs();
         } else {
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "It is not hearBeatTimeReq");
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "It is not hearBeatTimeReq");
         }
     }
 
-    private void li(boolean z, boolean z2) {
-        if (this.eh) {
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "judgeFindBestHB and isBestHBTimeOut: " + z + "isOffset: " + z2);
-            mw(false);
-            if (f.py(this.ef).qa(this.ef, this.db) > -1) {
+    private void bp(boolean z, boolean z2) {
+        if (this.am) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "judgeFindBestHB and isBestHBTimeOut: " + z + "isOffset: " + z2);
+            ck(false);
+            if (m.mc(this.ak).me(this.ak, this.ag) > -1) {
                 if (!z) {
-                    this.cu = 0;
+                    this.z = 0;
                 } else if (!z2) {
-                    this.cu++;
-                    lk();
+                    this.z++;
+                    br();
                 }
             } else if (z) {
-                this.cv--;
-                this.cu++;
-                lk();
+                this.aa--;
+                this.z++;
+                br();
             } else {
-                this.cv++;
-                this.cu = 0;
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "bestHBSuccessCount:" + this.cv);
-                if (k.rh(this.ef).rr() == this.cv) {
-                    com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "bestHBSuccessCount: " + this.cv + "and make sure the indeed BestHBTime: " + this.cy + "ms,reset bestHBSuccessCount");
-                    f.py(this.ef).qb(this.ef, this.db, this.cy);
-                    ln(this.ef, this.cy, this.db);
+                this.aa++;
+                this.z = 0;
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "bestHBSuccessCount:" + this.aa);
+                if (com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fj() == this.aa) {
+                    com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "bestHBSuccessCount: " + this.aa + "and make sure the indeed BestHBTime: " + this.ad + "ms,reset bestHBSuccessCount");
+                    m.mc(this.ak).mf(this.ak, this.ag, this.ad);
+                    bu(this.ak, this.ad, this.ag);
                 }
             }
         }
     }
 
-    private void lk() {
-        if (f.py(this.ef).qc(this.ef, this.db)) {
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "has already back, no need back.");
+    private void br() {
+        if (m.mc(this.ak).mg(this.ak, this.ag)) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "has already back, no need back.");
             return;
         }
-        if ((this.cy >= 300000 && this.cu >= 2) || (this.cy < 300000 && this.cu >= 3)) {
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "CurrentBestHBFailureCount:" + this.cu + ",BestHBTime need go back one step and reset two counts");
-            this.cu = 0;
-            this.cv = 0;
-            this.cy -= 30000;
-            this.cy = la(this.cy, this.da, this.cz);
-            f.py(this.ef).qb(this.ef, this.db, this.cy);
-            f.py(this.ef).pz(this.ef, this.db);
-            f.py(this.ef).qd(this.ef, this.db, true);
-            ln(this.ef, this.cy, this.db);
-            ll();
+        if ((this.ad >= 300000 && this.z >= 2) || (this.ad < 300000 && this.z >= 3)) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "CurrentBestHBFailureCount:" + this.z + ",BestHBTime need go back one step and reset two counts");
+            this.z = 0;
+            this.aa = 0;
+            this.ad -= 30000;
+            this.ad = bh(this.ad, this.af, this.ae);
+            m.mc(this.ak).mf(this.ak, this.ag, this.ad);
+            m.mc(this.ak).md(this.ak, this.ag);
+            m.mc(this.ak).mh(this.ak, this.ag, true);
+            bu(this.ak, this.ad, this.ag);
+            bs();
         }
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "CurrentBestHBFailureCount:" + this.cu + ",heartBeatInterval: " + this.cy);
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "CurrentBestHBFailureCount:" + this.z + ",heartBeatInterval: " + this.ad);
     }
 
-    private boolean lh(long j, int i) {
-        long rs;
+    private boolean bo(long j, int i) {
+        long fk;
         if (i == 0) {
-            rs = k.rh(this.ef).rs();
+            fk = com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fk();
         } else {
-            rs = k.rh(this.ef).rt();
+            fk = com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fl();
         }
-        if (j > -1 && System.currentTimeMillis() - j < rs) {
+        if (j > -1 && System.currentTimeMillis() - j < fk) {
             return true;
         }
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "local best heartBeat time is:" + j + "exceed " + rs + ", netType:" + i);
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "local best heartBeat time is:" + j + "exceed " + fk + ", netType:" + i);
         return false;
     }
 
-    private void lf() {
-        k rh = k.rh(this.ef);
-        switch (this.db) {
+    private void bm() {
+        com.huawei.android.pushagent.model.prefs.a ff = com.huawei.android.pushagent.model.prefs.a.ff(this.ak);
+        switch (this.ag) {
             case 0:
-                this.ct = g.fz(this.ef);
-                com.huawei.android.pushagent.utils.f.c.er("PushLog3413", "in loadHeartBeat apnName:" + this.ct);
-                lc(rh, this.ct);
+                this.y = d.yk(this.ak);
+                com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "in loadHeartBeat apnName:" + this.y);
+                bj(ff, this.y);
                 break;
             case 1:
-                this.da = rh.getWifiMinHeartbeat() * 1000;
-                this.cz = rh.getWifiMaxHeartbeat() * 1000;
+                this.af = ff.getWifiMinHeartbeat() * 1000;
+                this.ae = ff.getWifiMaxHeartbeat() * 1000;
                 break;
             default:
-                com.huawei.android.pushagent.utils.f.c.eq("PushLog3413", "unKnow net type");
+                com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "unKnow net type");
                 break;
         }
-        if (this.da < 180000) {
-            this.da = 180000;
+        if (this.af < 180000) {
+            this.af = 180000;
         }
     }
 
-    public synchronized void lj() {
-        if (com.huawei.android.pushagent.model.channel.a.ns() == null) {
-            com.huawei.android.pushagent.utils.f.c.er("PushLog3413", "system is in start, wait net for heartBeat");
+    public synchronized void bq() {
+        if (com.huawei.android.pushagent.model.channel.a.dz() == null) {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "system is in start, wait net for heartBeat");
             return;
         }
-        k rh = k.rh(this.ef);
-        this.db = g.fw(this.ef);
-        if (-1 == this.db) {
-            this.cy = rh.ro() * 1000;
+        com.huawei.android.pushagent.model.prefs.a ff = com.huawei.android.pushagent.model.prefs.a.ff(this.ak);
+        this.ag = d.yh(this.ak);
+        if (-1 == this.ag) {
+            this.ad = ff.fg() * 1000;
             return;
         }
-        this.cv = 0;
-        this.cu = 0;
-        this.dc = g.fx(this.ef);
-        this.cw = g.fy(this.ef);
-        lf();
-        long qa = f.py(this.ef).qa(this.ef, this.db);
-        long qe = f.py(this.ef).qe(this.ef, this.db);
-        this.cx = f.py(this.ef).qf(this.ef, this.db);
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "reload heartbeat info, [lastBestHBTime: " + qe + ",hasFindHeartBeat: " + this.cx + ",localBestHB: " + qa + ",minHeartBeat: " + this.da + ",maxHeartBeat: " + this.cz + "wifi:" + com.huawei.android.pushagent.utils.a.f.t(this.dc) + "]");
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "reload network info:" + com.huawei.android.pushagent.utils.a.f.t(f.py(this.ef).qg(this.ef, this.db)));
-        if (this.cx && lh(qe, this.db) && qa > -1) {
-            this.cy = la(qa, this.da, this.cz);
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "use local best heartBeat: " + this.cy);
+        this.aa = 0;
+        this.z = 0;
+        this.ah = d.yi(this.ak);
+        this.ab = d.yj(this.ak);
+        bm();
+        long me = m.mc(this.ak).me(this.ak, this.ag);
+        long mi = m.mc(this.ak).mi(this.ak, this.ag);
+        this.ac = m.mc(this.ak).mj(this.ak, this.ag);
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "reload heartbeat info, [lastBestHBTime: " + mi + ",hasFindHeartBeat: " + this.ac + ",localBestHB: " + me + ",minHeartBeat: " + this.af + ",maxHeartBeat: " + this.ae + "wifi:" + c.wh(this.ah) + "]");
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "reload network info:" + c.wh(m.mc(this.ak).mk(this.ak, this.ag)));
+        if (this.ac && bo(mi, this.ag) && me > -1) {
+            this.ad = bh(me, this.af, this.ae);
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "use local best heartBeat: " + this.ad);
         } else {
-            this.cy = la(f.py(this.ef).qh(this.ef, this.db), this.da, this.cz);
-            if (this.cx) {
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "BestHB is invalid because of time exceed,re-find BestHB begin from " + this.cy);
-                f.py(this.ef).qi(this.ef, this.db, false);
-                f.py(this.ef).qb(this.ef, this.db, -1);
-                f.py(this.ef).qd(this.ef, this.db, false);
-                this.cv = 0;
-                this.cu = 0;
-                this.cx = false;
+            this.ad = bh(m.mc(this.ak).ml(this.ak, this.ag), this.af, this.ae);
+            if (this.ac) {
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "BestHB is invalid because of time exceed,re-find BestHB begin from " + this.ad);
+                m.mc(this.ak).mm(this.ak, this.ag, false);
+                m.mc(this.ak).mf(this.ak, this.ag, -1);
+                m.mc(this.ak).mh(this.ak, this.ag, false);
+                this.aa = 0;
+                this.z = 0;
+                this.ac = false;
             }
         }
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "after load heartBeat, next heartBeatInterval:" + this.cy);
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "after load heartBeat, next heartBeatInterval:" + this.ad);
     }
 
-    private long la(long j, long j2, long j3) {
+    private long bh(long j, long j2, long j3) {
         long j4;
         if (j < j2) {
             j4 = j2;
@@ -256,55 +255,55 @@ public class a extends c {
         return j4;
     }
 
-    private void ll() {
-        int fw = g.fw(this.ef);
-        f.py(this.ef).qi(this.ef, fw, this.cx);
-        f.py(this.ef).qj(this.ef, fw, this.cy);
+    private void bs() {
+        int yh = d.yh(this.ak);
+        m.mc(this.ak).mm(this.ak, yh, this.ac);
+        m.mc(this.ak).mn(this.ak, yh, this.ad);
     }
 
-    public void lm() {
+    public void bt() {
         long j = 300000;
         try {
-            ld(false);
-            if (this.ei.dg()) {
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "bastet started, do not need to check heartbeat timeout");
-                j = this.ei.dh();
+            bk(false);
+            if (this.an.wz()) {
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "bastet started, do not need to check heartbeat timeout");
+                j = this.an.xa();
             } else {
-                long ld = ld(false);
-                if (g.ga() || ld >= 300000) {
-                    j = ld;
+                long bk = bk(false);
+                if (d.yl() || bk >= 300000) {
+                    j = bk;
                 }
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "set HEARTBEAT_RSP_TIMEOUT Alarm");
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "set HEARTBEAT_RSP_TIMEOUT Alarm");
                 Intent intent = new Intent("com.huawei.android.push.intent.HEARTBEAT_RSP_TIMEOUT");
-                intent.setPackage(this.ef.getPackageName());
-                d.cw(PushService.abp().abq(), intent, k.rh(this.ef).ru());
+                intent.setPackage(this.ak.getPackageName());
+                com.huawei.android.pushagent.utils.tools.a.sa(PushService.abt().abu(), intent, com.huawei.android.pushagent.model.prefs.a.ff(this.ak).fm());
             }
-            IPushMessage heartBeatReqMessage = new HeartBeatReqMessage();
+            HeartBeatReqMessage heartBeatReqMessage = new HeartBeatReqMessage();
             double ceil = Math.ceil((((double) j) * 1.0d) / 60000.0d);
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "next Heartbeat timeout for push server is:" + ceil);
-            heartBeatReqMessage.jj((byte) ((int) ceil));
-            com.huawei.android.pushagent.model.channel.a.ns().mc(heartBeatReqMessage);
-        } catch (Throwable e) {
-            com.huawei.android.pushagent.utils.f.c.es("PushLog3413", "call pushChannel.send cause Exception:" + e.toString(), e);
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "next Heartbeat timeout for push server is:" + ceil);
+            heartBeatReqMessage.u((byte) ((int) ceil));
+            com.huawei.android.pushagent.model.channel.a.dz().co(heartBeatReqMessage);
+        } catch (Exception e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "call pushChannel.send cause Exception:" + e.toString(), e);
         }
     }
 
-    private void lc(k kVar, String str) {
+    private void bj(com.huawei.android.pushagent.model.prefs.a aVar, String str) {
         Object obj = null;
         if (!TextUtils.isEmpty(str)) {
             try {
                 Object obj2;
-                Iterable<String> keySet = kVar.rv().keySet();
+                Set<String> keySet = aVar.fn().keySet();
                 if (keySet == null || keySet.size() <= 0) {
                     obj2 = null;
                 } else {
                     for (String str2 : keySet) {
                         if (str2.contains(str)) {
-                            String str3 = (String) kVar.rv().get(str2);
-                            com.huawei.android.pushagent.utils.f.c.er("PushLog3413", "apnName is:" + str2 + ",apnHeartBeat is:" + str3);
+                            String str3 = (String) aVar.fn().get(str2);
+                            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "apnName is:" + str2 + ",apnHeartBeat is:" + str3);
                             String[] split = str3.split("_");
-                            this.da = Long.parseLong(split[0]) * 1000;
-                            this.cz = Long.parseLong(split[1]) * 1000;
+                            this.af = Long.parseLong(split[0]) * 1000;
+                            this.ae = Long.parseLong(split[1]) * 1000;
                             obj2 = 1;
                             break;
                         }
@@ -312,71 +311,71 @@ public class a extends c {
                     obj2 = null;
                 }
                 obj = obj2;
-            } catch (Throwable e) {
-                com.huawei.android.pushagent.utils.f.c.es("PushLog3413", e.toString(), e);
+            } catch (Exception e) {
+                com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", e.toString(), e);
             }
         }
         if (obj == null) {
-            this.da = kVar.get3GMinHeartbeat() * 1000;
-            this.cz = kVar.get3GMaxHeartbeat() * 1000;
+            this.af = aVar.get3GMinHeartbeat() * 1000;
+            this.ae = aVar.get3GMaxHeartbeat() * 1000;
         }
-        com.huawei.android.pushagent.utils.f.c.er("PushLog3413", "Data network Heartbeat range, minHeartBeat is :" + this.da + ",maxHeartBeat is:" + this.cz);
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "Data network Heartbeat range, minHeartBeat is :" + this.af + ",maxHeartBeat is:" + this.ae);
     }
 
-    public void kz(boolean z) {
-        if (this.ei.di()) {
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "support bastet, do not handle control.");
+    public void bg(boolean z) {
+        if (this.an.xb()) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "support bastet, do not handle control.");
             return;
         }
         if (z) {
-            int fw = g.fw(this.ef);
-            if (this.ei.dj()) {
-                fw = 999;
+            int yh = d.yh(this.ak);
+            if (this.an.xc()) {
+                yh = 999;
             }
-            long qa = f.py(this.ef).qa(this.ef, fw);
-            if (qa > -1) {
-                com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "send best heartBeat to powergenie at first heartbeat,netType:" + fw);
-                ln(this.ef, qa, fw);
+            long me = m.mc(this.ak).me(this.ak, yh);
+            if (me > -1) {
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "send best heartBeat to powergenie at first heartbeat,netType:" + yh);
+                bu(this.ak, me, yh);
             } else {
-                lo(this.ef, true);
+                bv(this.ak, true);
             }
-        } else if (!this.cx) {
-            lo(this.ef, true);
+        } else if (!this.ac) {
+            bv(this.ak, true);
         }
     }
 
-    public static void lo(Context context, boolean z) {
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "send command to powergenie release control push: " + z);
+    public static void bv(Context context, boolean z) {
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "send command to powergenie release control push: " + z);
         Intent intent = new Intent("com.huawei.android.push.controlheartbeat");
         intent.putExtra("releaseControl", z);
         intent.setPackage("com.huawei.powergenie");
         context.sendBroadcast(intent);
     }
 
-    private void ln(Context context, long j, int i) {
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "send current push bestHeartBeat to powergenie:" + j);
+    private void bu(Context context, long j, int i) {
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "send current push bestHeartBeat to powergenie:" + j);
         Intent intent = new Intent("com.huawei.android.push.bestHB");
-        intent.putExtra("networkType", f.py(context).qg(context, i));
+        intent.putExtra("networkType", m.mc(context).mk(context, i));
         intent.putExtra("heartbeat", j);
         intent.setPackage("com.huawei.powergenie");
         context.sendBroadcast(intent);
     }
 
-    public void lb() {
+    public void bi() {
         long j = 300000;
         long j2 = 0;
-        if (!this.cx || f.py(this.ef).qa(this.ef, this.db) <= -1) {
-            j2 = ld(false);
-            com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "after delayHeartBeatReq, nextHeartBeatTime, will be " + j2 + "ms later");
-            my(j2, true);
+        if (!this.ac || m.mc(this.ak).me(this.ak, this.ag) <= -1) {
+            j2 = bk(false);
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "after delayHeartBeatReq, nextHeartBeatTime, will be " + j2 + "ms later");
+            cm(j2, true);
             return;
         }
-        if (this.cy < 300000) {
-            j = this.cy;
+        if (this.ad < 300000) {
+            j = this.ad;
         } else {
-            j2 = this.cy - 300000;
+            j2 = this.ad - 300000;
         }
-        com.huawei.android.pushagent.utils.f.c.ep("PushLog3413", "after delayHeartBeatReq, nextHeartBeatTime, will be [" + j + "," + (j + j2) + "] ms later");
-        mx(j, j2);
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "after delayHeartBeatReq, nextHeartBeatTime, will be [" + j + "," + (j + j2) + "] ms later");
+        cl(j, j2);
     }
 }

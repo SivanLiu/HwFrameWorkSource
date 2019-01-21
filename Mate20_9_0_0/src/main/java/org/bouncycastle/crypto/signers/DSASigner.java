@@ -28,9 +28,9 @@ public class DSASigner implements DSA {
         if (bigInteger.bitLength() >= bArr.length * 8) {
             return new BigInteger(1, bArr);
         }
-        Object obj = new byte[(bigInteger.bitLength() / 8)];
-        System.arraycopy(bArr, 0, obj, 0, obj.length);
-        return new BigInteger(1, obj);
+        byte[] bArr2 = new byte[(bigInteger.bitLength() / 8)];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr2.length);
+        return new BigInteger(1, bArr2);
     }
 
     private BigInteger getRandomizer(BigInteger bigInteger, SecureRandom secureRandom) {
@@ -81,7 +81,7 @@ public class DSASigner implements DSA {
         return !z ? null : secureRandom != null ? secureRandom : new SecureRandom();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x006c, code:
+    /* JADX WARNING: Missing block: B:12:0x006c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

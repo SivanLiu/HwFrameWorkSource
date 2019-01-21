@@ -148,18 +148,21 @@ public class XmlParser {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:22:0x007c A:{SYNTHETIC, Splitter: B:22:0x007c} */
-    /* JADX WARNING: Missing block: B:6:0x0038, code:
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x007c A:{SYNTHETIC, Splitter:B:22:0x007c} */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0142 A:{SYNTHETIC, Splitter:B:60:0x0142} */
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x007c A:{SYNTHETIC, Splitter:B:22:0x007c} */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0142 A:{SYNTHETIC, Splitter:B:60:0x0142} */
+    /* JADX WARNING: Missing block: B:6:0x0038, code skipped:
             r17 = r18;
             r15 = r16;
      */
-    /* JADX WARNING: Missing block: B:7:0x003c, code:
+    /* JADX WARNING: Missing block: B:7:0x003c, code skipped:
             r25 = r42.next();
      */
-    /* JADX WARNING: Missing block: B:85:0x01c9, code:
+    /* JADX WARNING: Missing block: B:85:0x01c9, code skipped:
             throw new com.huawei.odmf.exception.ODMFXmlParserException("The xml form is wrong, the generator tag may not belong to any class or id.");
      */
-    /* JADX WARNING: Missing block: B:114:0x02bd, code:
+    /* JADX WARNING: Missing block: B:114:0x02bd, code skipped:
             throw new com.huawei.odmf.exception.ODMFXmlParserException("The xml form is wrong, the index-property tag may not belong to any class or composite-index.");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -283,14 +286,27 @@ public class XmlParser {
                                         break;
                                     } catch (IOException e) {
                                         aIndex = currentIndex;
-                                        break;
-                                    } catch (XmlPullParserException e2) {
+                                        model = null;
+                                        if (is != null) {
+                                            try {
+                                                is.close();
+                                            } catch (IOException e2) {
+                                                LOG.logE("xml parser stream closed error.");
+                                            }
+                                        }
+                                        return model;
+                                    } catch (XmlPullParserException e3) {
                                         aIndex = currentIndex;
-                                        break;
+                                        model = null;
+                                        if (is != null) {
+                                        }
+                                        return model;
                                     } catch (Throwable th2) {
                                         th = th2;
                                         aIndex = currentIndex;
-                                        break;
+                                        if (is != null) {
+                                        }
+                                        throw th;
                                     }
                                 }
                                 String currentVersion = xmlPullParser.getAttributeValue(null, XML_VERSION);
@@ -313,22 +329,27 @@ public class XmlParser {
                                 aIndex = currentIndex;
                                 currentId = currentId2;
                                 break;
-                            } catch (NumberFormatException e3) {
+                            } catch (NumberFormatException e4) {
                                 LOG.logE("The database version code form is wrong.");
-                                throw new ODMFXmlParserException("The database version code form is wrong : " + e3.getMessage());
-                            } catch (IOException e4) {
+                                throw new ODMFXmlParserException("The database version code form is wrong : " + e4.getMessage());
+                            } catch (IOException e5) {
                                 aIndex = currentIndex;
                                 currentId = currentId2;
-                                break;
-                            } catch (XmlPullParserException e5) {
+                            } catch (XmlPullParserException e6) {
                                 aIndex = currentIndex;
                                 currentId = currentId2;
-                                break;
                             } catch (Throwable th3) {
                                 th = th3;
                                 aIndex = currentIndex;
                                 currentId = currentId2;
-                                break;
+                                if (is != null) {
+                                    try {
+                                        is.close();
+                                    } catch (IOException e7) {
+                                        LOG.logE("xml parser stream closed error.");
+                                    }
+                                }
+                                throw th;
                             }
                             break;
                         case 3:
@@ -375,7 +396,7 @@ public class XmlParser {
                 if (is != null) {
                     try {
                         is.close();
-                    } catch (IOException e6) {
+                    } catch (IOException e8) {
                         LOG.logE("xml parser stream closed error.");
                     }
                 }
@@ -383,17 +404,7 @@ public class XmlParser {
                 currentId = currentId2;
             }
             throw new ODMFXmlParserException("The xml form is wrong, the key-property tag may not belong to any class or id.");
-        } catch (IOException e7) {
-            model = null;
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e8) {
-                    LOG.logE("xml parser stream closed error.");
-                }
-            }
-            return model;
-        } catch (XmlPullParserException e9) {
+        } catch (IOException | XmlPullParserException e9) {
             model = null;
             if (is != null) {
             }
@@ -401,11 +412,6 @@ public class XmlParser {
         } catch (Throwable th4) {
             th = th4;
             if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e10) {
-                    LOG.logE("xml parser stream closed error.");
-                }
             }
             throw th;
         }

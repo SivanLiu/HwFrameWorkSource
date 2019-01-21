@@ -27,7 +27,7 @@ public class ServerNameList {
     public static ServerNameList parse(InputStream inputStream) throws IOException {
         int readUint16 = TlsUtils.readUint16(inputStream);
         if (readUint16 >= 1) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint16, inputStream));
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint16, inputStream));
             short[] sArr = new short[0];
             Vector vector = new Vector();
             while (byteArrayInputStream.available() > 0) {
@@ -45,7 +45,7 @@ public class ServerNameList {
     }
 
     public void encode(OutputStream outputStream) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         int i = 0;
         short[] sArr = new short[0];
         while (i < this.serverNameList.size()) {

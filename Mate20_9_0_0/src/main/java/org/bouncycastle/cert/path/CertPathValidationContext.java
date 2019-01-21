@@ -24,7 +24,7 @@ public class CertPathValidationContext implements Memoable {
     }
 
     public Set getUnhandledCriticalExtensionOIDs() {
-        Set hashSet = new HashSet(this.criticalExtensions);
+        HashSet hashSet = new HashSet(this.criticalExtensions);
         hashSet.removeAll(this.handledExtensions);
         return hashSet;
     }

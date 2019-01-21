@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -32,7 +31,7 @@ public class a extends SSLSocketFactory {
     private static void acn(SSLSocket sSLSocket) {
         if (sSLSocket != null) {
             String[] enabledCipherSuites = sSLSocket.getEnabledCipherSuites();
-            List arrayList = new ArrayList();
+            ArrayList arrayList = new ArrayList();
             String str = "";
             for (String str2 : enabledCipherSuites) {
                 Object obj;

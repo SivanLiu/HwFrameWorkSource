@@ -71,7 +71,7 @@ public class DTLSServerProtocol extends DTLSProtocol {
             } catch (IOException e2) {
                 abortServerHandshake(serverHandshakeState, dTLSRecordLayer, (short) 80);
                 throw e2;
-            } catch (Throwable e3) {
+            } catch (RuntimeException e3) {
                 abortServerHandshake(serverHandshakeState, dTLSRecordLayer, (short) 80);
                 throw new TlsFatalAlert((short) 80, e3);
             } catch (Throwable th) {
@@ -87,19 +87,19 @@ public class DTLSServerProtocol extends DTLSProtocol {
     }
 
     protected byte[] generateCertificateRequest(ServerHandshakeState serverHandshakeState, CertificateRequest certificateRequest) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         certificateRequest.encode(byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
     protected byte[] generateCertificateStatus(ServerHandshakeState serverHandshakeState, CertificateStatus certificateStatus) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         certificateStatus.encode(byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
     protected byte[] generateNewSessionTicket(ServerHandshakeState serverHandshakeState, NewSessionTicket newSessionTicket) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         newSessionTicket.encode(byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
@@ -191,7 +191,7 @@ public class DTLSServerProtocol extends DTLSProtocol {
 
     protected void processCertificateVerify(ServerHandshakeState serverHandshakeState, byte[] bArr, TlsHandshakeHash tlsHandshakeHash) throws IOException {
         if (serverHandshakeState.certificateRequest != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             TlsContext tlsContext = serverHandshakeState.serverContext;
             DigitallySigned parse = DigitallySigned.parse(tlsContext, byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
@@ -213,7 +213,7 @@ public class DTLSServerProtocol extends DTLSProtocol {
                 return;
             } catch (TlsFatalAlert e) {
                 throw e;
-            } catch (Throwable e2) {
+            } catch (Exception e2) {
                 throw new TlsFatalAlert((short) 51, e2);
             }
         }
@@ -221,7 +221,7 @@ public class DTLSServerProtocol extends DTLSProtocol {
     }
 
     protected void processClientCertificate(ServerHandshakeState serverHandshakeState, byte[] bArr) throws IOException {
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
         Certificate parse = Certificate.parse(byteArrayInputStream);
         TlsProtocol.assertEmpty(byteArrayInputStream);
         notifyClientCertificate(serverHandshakeState, parse);
@@ -278,7 +278,7 @@ public class DTLSServerProtocol extends DTLSProtocol {
     }
 
     protected void processClientKeyExchange(ServerHandshakeState serverHandshakeState, byte[] bArr) throws IOException {
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
         serverHandshakeState.keyExchange.processClientKeyExchange(byteArrayInputStream);
         TlsProtocol.assertEmpty(byteArrayInputStream);
     }

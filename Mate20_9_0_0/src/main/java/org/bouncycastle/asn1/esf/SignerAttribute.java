@@ -54,9 +54,9 @@ public class SignerAttribute extends ASN1Object {
     }
 
     public Object[] getValues() {
-        Object obj = new Object[this.values.length];
-        System.arraycopy(this.values, 0, obj, 0, obj.length);
-        return obj;
+        Object[] objArr = new Object[this.values.length];
+        System.arraycopy(this.values, 0, objArr, 0, objArr.length);
+        return objArr;
     }
 
     public ASN1Primitive toASN1Primitive() {

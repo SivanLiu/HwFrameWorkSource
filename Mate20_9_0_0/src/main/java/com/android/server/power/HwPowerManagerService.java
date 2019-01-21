@@ -754,7 +754,10 @@ public class HwPowerManagerService extends PowerManagerService {
     private void proxyWakeLockByPidUid(int pid, int uid, boolean proxy, boolean proxyWS) {
         synchronized (this.mLock) {
             if (true == proxy) {
-                this.mProxyWLProcessList.add(new ProxyWLProcessInfo(pid, uid, proxyWS));
+                try {
+                    this.mProxyWLProcessList.add(new ProxyWLProcessInfo(pid, uid, proxyWS));
+                } catch (Throwable th) {
+                }
             } else {
                 restoreProxyWakeLockLocked(pid, uid);
                 removeProxyWakeLockProcessLocked(pid, uid);
@@ -762,18 +765,18 @@ public class HwPowerManagerService extends PowerManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x006b, code:
+    /* JADX WARNING: Missing block: B:25:0x006b, code skipped:
             if (DEBUG_SPEW == false) goto L_0x00ba;
      */
-    /* JADX WARNING: Missing block: B:28:0x0071, code:
+    /* JADX WARNING: Missing block: B:28:0x0071, code skipped:
             if (dropLogs(r13, r15) != false) goto L_0x00ba;
      */
-    /* JADX WARNING: Missing block: B:29:0x0073, code:
+    /* JADX WARNING: Missing block: B:29:0x0073, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("acquire pxy wl : lock=");
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r1.append(r31);
             r1.append(", uid: ");
             r1.append(r15);
@@ -781,24 +784,24 @@ public class HwPowerManagerService extends PowerManagerService {
             r1.append(r14);
             r1.append(", packageName: ");
      */
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
             r1.append(r27);
             r1.append(", tag: ");
             r1.append(r13);
             android.util.Log.d(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:38:0x00b3, code:
+    /* JADX WARNING: Missing block: B:38:0x00b3, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:39:0x00b4, code:
+    /* JADX WARNING: Missing block: B:39:0x00b4, code skipped:
             r2 = r27;
             r3 = r31;
      */
-    /* JADX WARNING: Missing block: B:40:0x00ba, code:
+    /* JADX WARNING: Missing block: B:40:0x00ba, code skipped:
             r2 = r27;
             r3 = r31;
      */
-    /* JADX WARNING: Missing block: B:42:0x00c5, code:
+    /* JADX WARNING: Missing block: B:42:0x00c5, code skipped:
             r1 = r1;
             r16 = r4;
             r17 = r5;
@@ -809,37 +812,37 @@ public class HwPowerManagerService extends PowerManagerService {
             r21 = r9;
             r13 = 0;
      */
-    /* JADX WARNING: Missing block: B:45:0x00e4, code:
+    /* JADX WARNING: Missing block: B:45:0x00e4, code skipped:
             r1 = new com.android.server.power.PowerManagerService.WakeLock(r12, r24, r25, r5, r27, r14, r29, r15, r31, new com.android.server.power.PowerManagerService.UidState(r15));
      */
-    /* JADX WARNING: Missing block: B:47:?, code:
+    /* JADX WARNING: Missing block: B:47:?, code skipped:
             r24.linkToDeath(r1, r13);
      */
-    /* JADX WARNING: Missing block: B:49:?, code:
+    /* JADX WARNING: Missing block: B:49:?, code skipped:
             r12.mProxyedWakeLocks.add(r1);
      */
-    /* JADX WARNING: Missing block: B:50:0x00f0, code:
+    /* JADX WARNING: Missing block: B:50:0x00f0, code skipped:
             monitor-exit(r21);
      */
-    /* JADX WARNING: Missing block: B:52:0x00f2, code:
+    /* JADX WARNING: Missing block: B:52:0x00f2, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:53:0x00f3, code:
+    /* JADX WARNING: Missing block: B:53:0x00f3, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:54:0x00f4, code:
+    /* JADX WARNING: Missing block: B:54:0x00f4, code skipped:
             r3 = r0;
      */
-    /* JADX WARNING: Missing block: B:55:0x00fc, code:
+    /* JADX WARNING: Missing block: B:55:0x00fc, code skipped:
             throw new java.lang.IllegalArgumentException("HW Wake lock is already dead.");
      */
-    /* JADX WARNING: Missing block: B:56:0x00fd, code:
+    /* JADX WARNING: Missing block: B:56:0x00fd, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:57:0x00fe, code:
+    /* JADX WARNING: Missing block: B:57:0x00fe, code skipped:
             r2 = r24;
      */
-    /* JADX WARNING: Missing block: B:66:0x011e, code:
+    /* JADX WARNING: Missing block: B:66:0x011e, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1187,11 +1190,11 @@ public class HwPowerManagerService extends PowerManagerService {
     }
 
     private void forceReleaseWakeLockByPidUid(int pid, int uid, boolean releaseWS) {
-        int i;
         Throwable th;
         int length = pid;
-        int i2 = uid;
+        int i = uid;
         synchronized (this.mLock) {
+            int i2;
             int i3;
             try {
                 int size = this.mWakeLocks.size();
@@ -1208,18 +1211,18 @@ public class HwPowerManagerService extends PowerManagerService {
                             WakeLock wakelock2 = wakelock;
                             i6 = i5;
                             if (wakelock2.mWorkSource == null) {
-                                i3 = pid;
-                                if (wakelock2.mOwnerPid == i3) {
+                                i2 = pid;
+                                if (wakelock2.mOwnerPid == i2) {
                                     try {
-                                        i = uid;
-                                        if (wakelock2.mOwnerUid == i) {
+                                        i3 = uid;
+                                        if (wakelock2.mOwnerUid == i3) {
                                             if (DEBUG_SPEW) {
                                                 str = TAG;
                                                 StringBuilder stringBuilder = new StringBuilder();
                                                 stringBuilder.append("forceReleaseWakeLockByPidUid, ws null, pid: ");
-                                                stringBuilder.append(i3);
+                                                stringBuilder.append(i2);
                                                 stringBuilder.append(", uid: ");
-                                                stringBuilder.append(i);
+                                                stringBuilder.append(i3);
                                                 stringBuilder.append(", wakelock: ");
                                                 stringBuilder.append(wakelock2);
                                                 Log.d(str, stringBuilder.toString());
@@ -1228,18 +1231,18 @@ public class HwPowerManagerService extends PowerManagerService {
                                             releaseWakeLockInternalLocked(wakelock2.mLock, wakelock2.mFlags);
                                         }
                                         i4 = i6 - 1;
-                                        length = i3;
-                                        i2 = i;
+                                        length = i2;
+                                        i = i3;
                                         size = size2;
                                     } catch (Throwable th2) {
                                         th = th2;
                                         throw th;
                                     }
                                 }
-                                i = uid;
+                                i3 = uid;
                                 i4 = i6 - 1;
-                                length = i3;
-                                i2 = i;
+                                length = i2;
+                                i = i3;
                                 size = size2;
                             }
                         } else {
@@ -1247,7 +1250,7 @@ public class HwPowerManagerService extends PowerManagerService {
                             i4 = 0;
                             StringBuilder stringBuilder2;
                             if (1 == length2) {
-                                if (wakelock.mWorkSource.get(0) == i2) {
+                                if (wakelock.mWorkSource.get(0) == i) {
                                     if (DEBUG_SPEW) {
                                         str = TAG;
                                         stringBuilder2 = new StringBuilder();
@@ -1265,14 +1268,10 @@ public class HwPowerManagerService extends PowerManagerService {
                                 while (true) {
                                     int j = i4;
                                     if (j >= length2) {
-                                        size2 = size;
-                                        length = length2;
-                                        size = wakelock;
-                                        i6 = i5;
                                         break;
                                     }
                                     int j2;
-                                    if (wakelock.mWorkSource.get(j) == i2) {
+                                    if (wakelock.mWorkSource.get(j) == i) {
                                         WorkSource workSource;
                                         if (DEBUG_SPEW) {
                                             str = TAG;
@@ -1283,12 +1282,12 @@ public class HwPowerManagerService extends PowerManagerService {
                                         }
                                         String name = wakelock.mWorkSource.getName(j);
                                         if (name == null) {
-                                            workSource = new WorkSource(i2);
+                                            workSource = new WorkSource(i);
                                         } else {
-                                            workSource = new WorkSource(i2, name);
+                                            workSource = new WorkSource(i, name);
                                         }
                                         WorkSource workSource2 = workSource;
-                                        UidState state = new UidState(i2);
+                                        UidState state = new UidState(i);
                                         IBinder iBinder = wakelock.mLock;
                                         int i7 = wakelock.mFlags;
                                         String str2 = wakelock.mTag;
@@ -1315,23 +1314,28 @@ public class HwPowerManagerService extends PowerManagerService {
                                             size.mWorkSource.remove(i5);
                                         } catch (Throwable th3) {
                                             th = th3;
-                                            i3 = pid;
+                                            i2 = pid;
+                                            i3 = uid;
+                                            throw th;
                                         }
-                                    } else {
-                                        size2 = size;
-                                        j2 = j;
-                                        length = length2;
-                                        size = wakelock;
-                                        i6 = i5;
                                     }
+                                    size2 = size;
+                                    j2 = j;
+                                    length = length2;
+                                    size = wakelock;
+                                    i6 = i5;
                                     i4 = j2 + 1;
                                     wakelock = size;
                                     length2 = length;
                                     size = size2;
                                     i5 = i6;
                                     length = pid;
-                                    i2 = uid;
+                                    i = uid;
                                 }
+                                size2 = size;
+                                length = length2;
+                                size = wakelock;
+                                i6 = i5;
                             } else {
                                 size2 = size;
                                 length = length2;
@@ -1344,27 +1348,25 @@ public class HwPowerManagerService extends PowerManagerService {
                                 Log.e(str, stringBuilder2.toString());
                             }
                         }
-                        i3 = pid;
-                        i = uid;
+                        i2 = pid;
+                        i3 = uid;
                         i4 = i6 - 1;
-                        length = i3;
-                        i2 = i;
+                        length = i2;
+                        i = i3;
                         size = size2;
                     } else {
-                        i3 = length;
-                        i = i2;
+                        i2 = length;
+                        i3 = i;
                         return;
                     }
                 }
             } catch (Throwable th4) {
                 th = th4;
-                i3 = length;
-                i = i2;
+                i2 = length;
+                i3 = i;
                 throw th;
             }
         }
-        i = uid;
-        throw th;
     }
 
     public void forceRestoreWakeLockByPidUid(int pid, int uid) {
@@ -1381,7 +1383,11 @@ public class HwPowerManagerService extends PowerManagerService {
                     String str;
                     StringBuilder stringBuilder;
                     if (wakelock.mWorkSource == null) {
-                        if ((wakelock.mOwnerPid == i || -1 == i) && (wakelock.mOwnerUid == i2 || -1 == i2)) {
+                        if (wakelock.mOwnerPid != i) {
+                            if (-1 == i) {
+                            }
+                        }
+                        if (wakelock.mOwnerUid == i2 || -1 == i2) {
                             if (DEBUG_SPEW) {
                                 str = TAG;
                                 stringBuilder = new StringBuilder();
@@ -1432,7 +1438,7 @@ public class HwPowerManagerService extends PowerManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0031, code:
+    /* JADX WARNING: Missing block: B:16:0x0031, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1714,7 +1720,7 @@ public class HwPowerManagerService extends PowerManagerService {
                     this.mLastWakeTime = eventTime;
                     setWakefulnessLocked(1, 0);
                     userActivityNoUpdateLocked(eventTime, 0, 0, uid);
-                    disableBrightnessWaitLocked(true, FingerViewController.PKGNAME_OF_KEYGUARD.equals(opPackageName) ^ true);
+                    disableBrightnessWaitLocked(true, FingerViewController.PKGNAME_OF_KEYGUARD.equals(opPackageName) ^ 1);
                     updatePowerStateLocked();
                 } else {
                     goToSleepNoUpdateLocked(eventTime, 0, 0, uid);
@@ -1773,6 +1779,8 @@ public class HwPowerManagerService extends PowerManagerService {
                         Slog.i(str, stringBuilder2.toString());
                         Jlog.d(7, "JL_PMS_WAKEFULNESS_NAPPING");
                         break;
+                    default:
+                        break;
                 }
             }
             str = TAG;
@@ -1826,7 +1834,10 @@ public class HwPowerManagerService extends PowerManagerService {
     public boolean isSkipWakeLockUsing(int uid, String tag) {
         synchronized (this.mLock) {
             if (tag == null) {
-                return false;
+                try {
+                    return false;
+                } catch (Throwable th) {
+                }
             } else if (this.mWakeLocks.size() <= 0) {
                 return false;
             } else {

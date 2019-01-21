@@ -8,8 +8,7 @@ import android.os.IHwBinder;
 import android.os.IHwBinder.DeathRecipient;
 import android.os.IHwInterface;
 import android.os.RemoteException;
-import com.android.server.display.HwUibcReceiver.CurrentPacket;
-import com.android.server.rms.iaware.memory.utils.MemoryConstant;
+import com.android.server.wifi.HalDeviceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -184,7 +183,7 @@ public interface IBase extends IHwInterface {
         }
 
         public final ArrayList<byte[]> getHashChain() {
-            return new ArrayList(Arrays.asList(new byte[][]{new byte[]{(byte) -67, (byte) -38, (byte) -74, (byte) 24, (byte) 77, (byte) 122, (byte) 52, (byte) 109, (byte) -90, (byte) -96, (byte) 125, (byte) -64, (byte) -126, (byte) -116, (byte) -15, (byte) -102, (byte) 105, (byte) 111, (byte) 76, (byte) -86, (byte) 54, (byte) 17, (byte) -59, (byte) 31, (byte) 46, (byte) 20, (byte) 86, (byte) 90, (byte) 20, (byte) -76, CurrentPacket.INPUT_MASK, (byte) -39}}));
+            return new ArrayList(Arrays.asList(new byte[][]{new byte[]{(byte) -67, (byte) -38, (byte) -74, (byte) 24, (byte) 77, (byte) 122, (byte) 52, (byte) 109, (byte) -90, (byte) -96, (byte) 125, (byte) -64, (byte) -126, (byte) -116, (byte) -15, (byte) -102, (byte) 105, (byte) 111, (byte) 76, (byte) -86, (byte) 54, (byte) 17, (byte) -59, (byte) 31, (byte) 46, (byte) 20, (byte) 86, (byte) 90, (byte) 20, (byte) -76, (byte) 15, (byte) -39}}));
         }
 
         public final void setHALInstrumentation() {
@@ -433,7 +432,7 @@ public interface IBase extends IHwInterface {
     }
 
     static IBase getService(boolean retry) throws RemoteException {
-        return getService(MemoryConstant.MEM_SCENE_DEFAULT, retry);
+        return getService(HalDeviceManager.HAL_INSTANCE_NAME, retry);
     }
 
     static IBase getService(String serviceName) throws RemoteException {
@@ -441,6 +440,6 @@ public interface IBase extends IHwInterface {
     }
 
     static IBase getService() throws RemoteException {
-        return getService(MemoryConstant.MEM_SCENE_DEFAULT);
+        return getService(HalDeviceManager.HAL_INSTANCE_NAME);
     }
 }

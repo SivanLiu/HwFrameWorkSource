@@ -85,7 +85,7 @@ public class DisplayEffectMonitor implements IDisplayEffectMonitor {
         private final String mTAG;
         private final SimpleDateFormat mTimeFormater = new SimpleDateFormat("HH:mm:ss.SSS");
         private final Handler mTimeHandler = new Handler(DisplayEffectMonitor.this.mHandlerThread.getLooper()) {
-            /* JADX WARNING: Missing block: B:17:0x0070, code:
+            /* JADX WARNING: Missing block: B:17:0x0070, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -491,10 +491,12 @@ public class DisplayEffectMonitor implements IDisplayEffectMonitor {
     public String getCurrentTopAppName() {
         try {
             List<RunningTaskInfo> runningTasks = ((ActivityManager) this.mContext.getSystemService("activity")).getRunningTasks(1);
-            if (runningTasks == null || runningTasks.isEmpty()) {
-                return null;
+            if (runningTasks != null) {
+                if (!runningTasks.isEmpty()) {
+                    return ((RunningTaskInfo) runningTasks.get(0)).topActivity.getPackageName();
+                }
             }
-            return ((RunningTaskInfo) runningTasks.get(0)).topActivity.getPackageName();
+            return null;
         } catch (SecurityException e) {
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();

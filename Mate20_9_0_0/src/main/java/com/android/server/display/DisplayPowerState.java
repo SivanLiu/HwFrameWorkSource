@@ -28,7 +28,7 @@ public final class DisplayPowerState {
     private static String COUNTER_COLOR_FADE = "ColorFadeLevel";
     private static boolean DEBUG = false;
     private static boolean DEBUG_Controller = false;
-    private static boolean DEBUG_FPLOG = false;
+    private static boolean DEBUG_FPLOG = true;
     private static final int DEFAULT_MAX_BRIGHTNESS = 255;
     private static final int HIGH_PRECISION_MAX_BRIGHTNESS = 10000;
     public static final IntProperty<DisplayPowerState> SCREEN_BRIGHTNESS = new IntProperty<DisplayPowerState>("screenBrightness") {
@@ -102,13 +102,22 @@ public final class DisplayPowerState {
             super("PhotonicModulator");
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:38:0x0068  */
+        /* JADX WARNING: Removed duplicated region for block: B:31:0x005d  */
+        /* JADX WARNING: Removed duplicated region for block: B:38:0x0068  */
+        /* JADX WARNING: Removed duplicated region for block: B:24:0x0051  */
+        /* JADX WARNING: Removed duplicated region for block: B:31:0x005d  */
+        /* JADX WARNING: Removed duplicated region for block: B:38:0x0068  */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public boolean setState(int state, int backlight) {
-            boolean z;
+            int i;
             synchronized (this.mLock) {
-                z = false;
+                boolean z = false;
                 boolean stateChanged = state != this.mPendingState;
                 boolean backlightChanged = backlight != this.mPendingBacklight;
                 if (stateChanged || backlightChanged) {
+                    boolean changeInProgress;
+                    boolean z2;
                     if (DisplayPowerState.DEBUG_Controller) {
                         String str = DisplayPowerState.TAG;
                         StringBuilder stringBuilder = new StringBuilder();
@@ -120,20 +129,52 @@ public final class DisplayPowerState {
                     }
                     this.mPendingState = state;
                     this.mPendingBacklight = backlight;
-                    boolean changeInProgress = this.mStateChangeInProgress || this.mBacklightChangeInProgress;
-                    boolean z2 = stateChanged || this.mStateChangeInProgress;
-                    this.mStateChangeInProgress = z2;
-                    if (backlightChanged || this.mBacklightChangeInProgress) {
-                        z = true;
+                    if (!this.mStateChangeInProgress) {
+                        if (!this.mBacklightChangeInProgress) {
+                            changeInProgress = false;
+                            if (!stateChanged) {
+                                if (!this.mStateChangeInProgress) {
+                                    z2 = false;
+                                    this.mStateChangeInProgress = z2;
+                                    if (!backlightChanged) {
+                                        if (!this.mBacklightChangeInProgress) {
+                                            this.mBacklightChangeInProgress = z;
+                                            if (!changeInProgress) {
+                                                this.mLock.notifyAll();
+                                            }
+                                        }
+                                    }
+                                    z = true;
+                                    this.mBacklightChangeInProgress = z;
+                                    if (changeInProgress) {
+                                    }
+                                }
+                            }
+                            z2 = true;
+                            this.mStateChangeInProgress = z2;
+                            if (backlightChanged) {
+                            }
+                            z = true;
+                            this.mBacklightChangeInProgress = z;
+                            if (changeInProgress) {
+                            }
+                        }
                     }
+                    changeInProgress = true;
+                    if (stateChanged) {
+                    }
+                    z2 = true;
+                    this.mStateChangeInProgress = z2;
+                    if (backlightChanged) {
+                    }
+                    z = true;
                     this.mBacklightChangeInProgress = z;
-                    if (!changeInProgress) {
-                        this.mLock.notifyAll();
+                    if (changeInProgress) {
                     }
                 }
-                z = this.mStateChangeInProgress ^ true;
+                i = this.mStateChangeInProgress ^ 1;
             }
-            return z;
+            return i;
         }
 
         public void dump(PrintWriter pw) {
@@ -184,8 +225,10 @@ public final class DisplayPowerState {
                     }
                     if (stateChanged || backlightChanged) {
                         this.mActualState = state;
-                        if (!(backlight == 0 || this.mActualBacklight == 0)) {
-                            screenOnorOff = false;
+                        if (backlight != 0) {
+                            if (this.mActualBacklight != 0) {
+                                screenOnorOff = false;
+                            }
                         }
                         this.mActualBacklight = backlight;
                         if (screenOnorOff) {
@@ -218,15 +261,13 @@ public final class DisplayPowerState {
     }
 
     static {
-        boolean z = true;
+        boolean z = false;
         boolean z2 = Log.HWINFO || (Log.HWModuleLog && Log.isLoggable(TAG, 4));
         DEBUG = z2;
-        z2 = Log.HWLog || (Log.HWModuleLog && Log.isLoggable(TAG, 3));
-        DEBUG_Controller = z2;
-        if (!DEBUG) {
-            z = false;
+        if (Log.HWLog || (Log.HWModuleLog && Log.isLoggable(TAG, 3))) {
+            z = true;
         }
-        DEBUG_FPLOG = z;
+        DEBUG_Controller = z;
     }
 
     public DisplayPowerState(DisplayBlanker blanker, ColorFade colorFade) {

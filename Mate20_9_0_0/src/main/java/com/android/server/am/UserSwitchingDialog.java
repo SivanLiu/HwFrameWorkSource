@@ -63,7 +63,7 @@ class UserSwitchingDialog extends AlertDialog implements OnWindowShownListener {
         View view = LayoutInflater.from(getContext()).inflate(17367327, null);
         String viewMessage2 = null;
         if (UserManager.isSplitSystemUser() && this.mNewUser.id == 0) {
-            viewMessage = res.getString(17041309, new Object[]{this.mOldUser.name});
+            viewMessage = res.getString(17041310, new Object[]{this.mOldUser.name});
         } else if (!UserManager.isDeviceInDemoMode(this.mContext)) {
             if (this.mOldUser.id == 0) {
                 viewMessage2 = this.mSwitchingFromSystemUserMessage;
@@ -71,14 +71,14 @@ class UserSwitchingDialog extends AlertDialog implements OnWindowShownListener {
                 viewMessage2 = this.mSwitchingToSystemUserMessage;
             }
             if (viewMessage2 == null) {
-                viewMessage = res.getString(17041312, new Object[]{this.mNewUser.name});
+                viewMessage = res.getString(17041313, new Object[]{this.mNewUser.name});
             } else {
                 viewMessage = viewMessage2;
             }
         } else if (this.mOldUser.isDemo()) {
-            viewMessage = res.getString(17039927);
-        } else {
             viewMessage = res.getString(17039928);
+        } else {
+            viewMessage = res.getString(17039929);
         }
         ((TextView) view.findViewById(16908299)).setText(viewMessage);
         setView(view);

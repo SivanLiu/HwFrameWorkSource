@@ -295,6 +295,7 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
     private boolean mEnabledBackGround = false;
     private int mEngineCapabilities;
     private boolean mEngineOn;
+    private InetAddress mEsuplIpAddress = null;
     private int mFixInterval = 1000;
     private long mFixRequestTime = 0;
     private final LocationChangeListener mFusedLocationListener = new FusedLocationListener(this, null);
@@ -345,6 +346,7 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
     private boolean mLowPowerMode = false;
     private final GpsNetInitiatedHandler mNIHandler;
     private boolean mNavigating;
+    boolean mNeedEmergencyApn = false;
     private final INetInitiatedListener mNetInitiatedListener = new INetInitiatedListener.Stub() {
         public boolean sendNiResponse(int notificationId, int userResponse) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -418,13 +420,22 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
                 if (isConnected) {
                     StringBuilder stringBuilder2;
                     try {
+                        boolean result;
                         StringBuilder stringBuilder3;
                         InetAddress agpsDataConnectionIpAddr = network.getAllByName(GnssLocationProvider.this.mSuplServerHostES)[0];
                         stringBuilder2 = new StringBuilder();
                         stringBuilder2.append("DNS query(use network.getAllByName) success: ");
                         stringBuilder2.append(agpsDataConnectionIpAddr);
                         Log.v("GnssLocationProvider", stringBuilder2.toString());
-                        if (GnssLocationProvider.this.mConnMgr.requestRouteToHostAddress(15, agpsDataConnectionIpAddr)) {
+                        if (GnssLocationProvider.this.mNeedEmergencyApn) {
+                            result = GnssLocationProvider.this.mConnMgr.requestRouteToHostAddress(15, agpsDataConnectionIpAddr);
+                            Log.e("GnssLocationProvider", "mSuplConnectivityCallbackEs-EMERGENCY");
+                            GnssLocationProvider.this.mEsuplIpAddress = agpsDataConnectionIpAddr;
+                        } else {
+                            result = GnssLocationProvider.this.mConnMgr.requestRouteToHostAddress(3, agpsDataConnectionIpAddr);
+                            Log.e("GnssLocationProvider", "mSuplConnectivityCallbackEs-SUPL");
+                        }
+                        if (result) {
                             stringBuilder3 = new StringBuilder();
                             stringBuilder3.append("Successfully requested route to host: ");
                             stringBuilder3.append(agpsDataConnectionIpAddr);
@@ -1040,9 +1051,12 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
             }
             synchronized (this.mLock) {
                 if (configManager != null) {
-                    PersistableBundle b = configManager.getConfig();
-                    if (b != null) {
-                        isKeepLppProfile = b.getBoolean("persist_lpp_mode_bool");
+                    try {
+                        PersistableBundle b = configManager.getConfig();
+                        if (b != null) {
+                            isKeepLppProfile = b.getBoolean("persist_lpp_mode_bool");
+                        }
+                    } finally {
                     }
                 }
                 if (!isKeepLppProfile || SystemProperties.getBoolean("ro.config.hw_agps_adpt_sim", true)) {
@@ -1054,6 +1068,7 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
                         SystemProperties.set(LPP_PROFILE, lpp_profile);
                     }
                 }
+                hwLoadPropertiesFromResource(context, this.mProperties);
                 this.mNIHandler.setSuplEsEnabled(this.mSuplEsEnabled);
             }
         } else if (DEBUG) {
@@ -1065,27 +1080,29 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
         boolean disableGps = this.mPowerManager.isDeviceIdleMode();
         int i = 1;
         PowerSaveState result = this.mPowerManager.getPowerSaveState(1);
-        if (result.gpsMode == 1) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("updateLowPowerMode,batterySaverEnabled:");
-            stringBuilder.append(result.batterySaverEnabled);
-            stringBuilder.append("isInteractive:");
-            stringBuilder.append(this.mPowerManager.isInteractive());
-            Log.i("GnssLocationProvider", stringBuilder.toString());
-            if (!result.batterySaverEnabled || this.mPowerManager.isInteractive()) {
-                i = 0;
+        if (hwCheckLowPowerMode(disableGps)) {
+            if (result.gpsMode == 1) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("updateLowPowerMode,batterySaverEnabled:");
+                stringBuilder.append(result.batterySaverEnabled);
+                stringBuilder.append("isInteractive:");
+                stringBuilder.append(this.mPowerManager.isInteractive());
+                Log.i("GnssLocationProvider", stringBuilder.toString());
+                if (!result.batterySaverEnabled || this.mPowerManager.isInteractive()) {
+                    i = 0;
+                }
+                disableGps |= i;
             }
-            disableGps |= i;
-        }
-        StringBuilder stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("disableGps:");
-        stringBuilder2.append(disableGps);
-        stringBuilder2.append("  isEnabled()=");
-        stringBuilder2.append(isEnabled());
-        Log.i("GnssLocationProvider", stringBuilder2.toString());
-        if (disableGps != this.mDisableGps) {
-            this.mDisableGps = disableGps;
-            updateRequirements();
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("disableGps:");
+            stringBuilder2.append(disableGps);
+            stringBuilder2.append("  isEnabled()=");
+            stringBuilder2.append(isEnabled());
+            Log.i("GnssLocationProvider", stringBuilder2.toString());
+            if (disableGps != this.mDisableGps) {
+                this.mDisableGps = disableGps;
+                updateRequirements();
+            }
         }
     }
 
@@ -1359,26 +1376,39 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
         if (DEBUG) {
             Log.d("GnssLocationProvider", String.format("requestSuplConnection, state=%s, address=%s, mSuplEsConnected = %s", new Object[]{agpsDataConnStateAsString(), address, Boolean.valueOf(this.mSuplEsConnected)}));
         }
+        if (this.mAGpsDataConnectionState != 0) {
+            if (SUPL_ES_PDN_SWITCH && address != null && address.equals(this.mEsuplIpAddress)) {
+                Log.d("GnssLocationProvider", "handle for Emergency SUPL");
+            } else {
+                return;
+            }
+        }
+        this.mAGpsDataConnectionState = 1;
         if (SUPL_ES_PDN_SWITCH && this.mSuplEsConnected) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("During SUPL ES Session, only return network:");
             stringBuilder.append(this.mNetworkEs);
             Log.d("GnssLocationProvider", stringBuilder.toString());
             sendMessage(4, 0, this.mNetworkEs);
-        } else if (this.mAGpsDataConnectionState == 0) {
-            this.mAGpsDataConnectionIpAddr = address;
-            this.mAGpsDataConnectionState = 1;
-            Builder requestBuilder = new Builder();
-            requestBuilder.addTransportType(0);
-            requestBuilder.addCapability(1);
-            this.mConnMgr.requestNetwork(requestBuilder.build(), this.mSuplConnectivityCallback);
+            return;
         }
+        this.mAGpsDataConnectionIpAddr = address;
+        Builder requestBuilder = new Builder();
+        requestBuilder.addTransportType(0);
+        requestBuilder.addCapability(1);
+        this.mConnMgr.requestNetwork(requestBuilder.build(), this.mSuplConnectivityCallback);
     }
 
     private void handleRequestSuplConnectionES() {
         Builder requestBuilder = new Builder();
         requestBuilder.addTransportType(0);
-        requestBuilder.addCapability(10);
+        if (this.mNeedEmergencyApn) {
+            requestBuilder.addCapability(10);
+            Log.e("GnssLocationProvider", "handleRequestSuplConnectionES-EIMS");
+        } else {
+            requestBuilder.addCapability(1);
+            Log.e("GnssLocationProvider", "handleRequestSuplConnectionES-SUPL");
+        }
         NetworkRequest request = requestBuilder.build();
         Log.v("GnssLocationProvider", "handleRequestSuplConnectionES requestNetwork");
         this.mConnMgr.requestNetwork(request, this.mSuplConnectivityCallbackEs);
@@ -1675,7 +1705,10 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
             boolean enable = native_init();
             synchronized (this.mLock) {
                 if (enable) {
-                    this.mEnabledBackGround = true;
+                    try {
+                        this.mEnabledBackGround = true;
+                    } catch (Throwable th) {
+                    }
                 } else {
                     this.mEnabledBackGround = false;
                     Log.w("GnssLocationProvider", "Failed to enable location provider for NI failed");
@@ -1942,7 +1975,7 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
     public void startNavigatingPreparedHook() {
     }
 
-    /* JADX WARNING: Missing block: B:50:0x0161, code:
+    /* JADX WARNING: Missing block: B:50:0x0161, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2406,9 +2439,25 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
         this.mHardwareYear = yearOfHardware;
     }
 
+    private void checkIfNeedEmergencyApn(String serverName) {
+        Log.d("GnssLocationProvider", "checkIfNeedEmergencyApn");
+        for (String s : new String[]{"e-slp.supl20.iot.softbank.ne.jp"}) {
+            if (s.equals(serverName)) {
+                Log.d("GnssLocationProvider", "eslp match, need to open emergency apn.");
+                this.mNeedEmergencyApn = true;
+                return;
+            }
+        }
+        Log.d("GnssLocationProvider", "eslp  not match, don't need to open emergency apn.");
+        this.mNeedEmergencyApn = false;
+    }
+
     private void requestSuplDns(String fqdn) {
+        Log.d("GnssLocationProvider", "JNI Call requestSuplDns");
         if (SUPL_ES_PDN_SWITCH) {
+            Log.d("GnssLocationProvider", "JNI Call requestSuplDns(SUPL_ES_PDN_SWITCH is Enable)");
             this.mSuplServerHostES = fqdn;
+            checkIfNeedEmergencyApn(fqdn);
             sendMessage(55, 0, fqdn);
         }
     }
@@ -2685,16 +2734,16 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
         this.mHandler.obtainMessage(message, arg, 1, obj).sendToTarget();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0039, code:
+    /* JADX WARNING: Missing block: B:12:0x0039, code skipped:
             if (r8 != null) goto L_0x003b;
      */
-    /* JADX WARNING: Missing block: B:13:0x003b, code:
+    /* JADX WARNING: Missing block: B:13:0x003b, code skipped:
             r8.close();
      */
-    /* JADX WARNING: Missing block: B:18:0x0049, code:
+    /* JADX WARNING: Missing block: B:18:0x0049, code skipped:
             if (r8 == null) goto L_0x004c;
      */
-    /* JADX WARNING: Missing block: B:19:0x004c, code:
+    /* JADX WARNING: Missing block: B:19:0x004c, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2720,16 +2769,16 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0058, code:
+    /* JADX WARNING: Missing block: B:15:0x0058, code skipped:
             if (r2 != null) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:16:0x005a, code:
+    /* JADX WARNING: Missing block: B:16:0x005a, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:21:0x0077, code:
+    /* JADX WARNING: Missing block: B:21:0x0077, code skipped:
             if (r2 == null) goto L_0x007a;
      */
-    /* JADX WARNING: Missing block: B:22:0x007a, code:
+    /* JADX WARNING: Missing block: B:22:0x007a, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2958,5 +3007,12 @@ public class GnssLocationProvider implements LocationProviderInterface, InjectNt
 
     protected String getSvType(int svidWithFlag) {
         return Shell.NIGHT_MODE_STR_UNKNOWN;
+    }
+
+    protected void hwLoadPropertiesFromResource(Context context, Properties properties) {
+    }
+
+    protected boolean hwCheckLowPowerMode(boolean isGnssStarted) {
+        return true;
     }
 }

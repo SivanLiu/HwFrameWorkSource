@@ -49,7 +49,7 @@ class X509CRLEntryObject extends X509CRLEntry {
         if (extensions == null) {
             return null;
         }
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         Enumeration oids = extensions.oids();
         while (oids.hasMoreElements()) {
             ASN1ObjectIdentifier aSN1ObjectIdentifier = (ASN1ObjectIdentifier) oids.nextElement();

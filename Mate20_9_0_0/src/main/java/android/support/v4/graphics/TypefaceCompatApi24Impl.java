@@ -17,6 +17,7 @@ import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -36,37 +37,13 @@ class TypefaceCompatApi24Impl extends TypefaceCompatBaseImpl {
     TypefaceCompatApi24Impl() {
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x004a A:{Splitter: B:1:0x0001, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:9:0x0047 A:{Splitter: B:4:0x0008, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0045 A:{Splitter: B:6:0x000e, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Missing block: B:8:0x0045, code:
-            r2 = e;
-     */
-    /* JADX WARNING: Missing block: B:9:0x0047, code:
-            r2 = e;
-     */
-    /* JADX WARNING: Missing block: B:10:0x0048, code:
-            r3 = null;
-     */
-    /* JADX WARNING: Missing block: B:11:0x004a, code:
-            r2 = e;
-     */
-    /* JADX WARNING: Missing block: B:12:0x004b, code:
-            r3 = null;
-     */
-    /* JADX WARNING: Missing block: B:13:0x004d, code:
-            android.util.Log.e(TAG, r2.getClass().getName(), r2);
-            r1 = null;
-            r3 = null;
-            r0 = null;
-            r2 = null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     static {
         Class fontFamilyClass;
         Constructor fontFamilyCtor;
         Method addFontMethod;
         Method createFromFamiliesWithDefaultMethod;
+        ReflectiveOperationException e;
+        Object obj;
         try {
             fontFamilyClass = Class.forName(FONT_FAMILY_CLASS);
             try {
@@ -75,11 +52,34 @@ class TypefaceCompatApi24Impl extends TypefaceCompatBaseImpl {
                     addFontMethod = fontFamilyClass.getMethod(ADD_FONT_WEIGHT_STYLE_METHOD, new Class[]{ByteBuffer.class, Integer.TYPE, List.class, Integer.TYPE, Boolean.TYPE});
                     Object familyArray = Array.newInstance(fontFamilyClass, 1);
                     createFromFamiliesWithDefaultMethod = Typeface.class.getMethod(CREATE_FROM_FAMILIES_WITH_DEFAULT_METHOD, new Class[]{familyArray.getClass()});
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | NoSuchMethodException e2) {
+                    e = e2;
                 }
-            } catch (ClassNotFoundException e2) {
+            } catch (ClassNotFoundException | NoSuchMethodException e3) {
+                e = e3;
+                obj = null;
+                Log.e(TAG, e.getClass().getName(), e);
+                fontFamilyClass = null;
+                fontFamilyCtor = null;
+                addFontMethod = null;
+                createFromFamiliesWithDefaultMethod = null;
+                sFontFamilyCtor = fontFamilyCtor;
+                sFontFamily = fontFamilyClass;
+                sAddFontWeightStyle = addFontMethod;
+                sCreateFromFamiliesWithDefault = createFromFamiliesWithDefaultMethod;
             }
-        } catch (ClassNotFoundException e3) {
+        } catch (ClassNotFoundException | NoSuchMethodException e4) {
+            e = e4;
+            obj = null;
+            Log.e(TAG, e.getClass().getName(), e);
+            fontFamilyClass = null;
+            fontFamilyCtor = null;
+            addFontMethod = null;
+            createFromFamiliesWithDefaultMethod = null;
+            sFontFamilyCtor = fontFamilyCtor;
+            sFontFamily = fontFamilyClass;
+            sAddFontWeightStyle = addFontMethod;
+            sCreateFromFamiliesWithDefault = createFromFamiliesWithDefaultMethod;
         }
         sFontFamilyCtor = fontFamilyCtor;
         sFontFamily = fontFamilyClass;
@@ -94,50 +94,28 @@ class TypefaceCompatApi24Impl extends TypefaceCompatBaseImpl {
         return sAddFontWeightStyle != null;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000a A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000a A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x000a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0010, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static Object newFamily() {
         try {
             return sFontFamilyCtor.newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x002c A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_3 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x002c, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0032, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static boolean addFontWeightStyle(Object family, ByteBuffer buffer, int ttcIndex, int weight, boolean style) {
         try {
             return ((Boolean) sAddFontWeightStyle.invoke(family, new Object[]{buffer, Integer.valueOf(ttcIndex), null, Integer.valueOf(weight), Boolean.valueOf(style)})).booleanValue();
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0019 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0019, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001f, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static Typeface createFromFamiliesWithDefault(Object family) {
         try {
             Array.set(Array.newInstance(sFontFamily, 1), 0, family);
             return (Typeface) sCreateFromFamiliesWithDefault.invoke(null, new Object[]{familyArray});
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 

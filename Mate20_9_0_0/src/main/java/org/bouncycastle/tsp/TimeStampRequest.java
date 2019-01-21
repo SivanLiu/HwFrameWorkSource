@@ -38,7 +38,7 @@ public class TimeStampRequest {
         if (set == null) {
             return set;
         }
-        Set hashSet = new HashSet(set.size());
+        HashSet hashSet = new HashSet(set.size());
         for (Object next : set) {
             if (next instanceof String) {
                 hashSet.add(new ASN1ObjectIdentifier((String) next));

@@ -54,9 +54,9 @@ public class SemanticsInformation extends ASN1Object {
         if (generalNameArr == null) {
             return null;
         }
-        Object obj = new GeneralName[generalNameArr.length];
-        System.arraycopy(generalNameArr, 0, obj, 0, generalNameArr.length);
-        return obj;
+        GeneralName[] generalNameArr2 = new GeneralName[generalNameArr.length];
+        System.arraycopy(generalNameArr, 0, generalNameArr2, 0, generalNameArr.length);
+        return generalNameArr2;
     }
 
     public static SemanticsInformation getInstance(Object obj) {

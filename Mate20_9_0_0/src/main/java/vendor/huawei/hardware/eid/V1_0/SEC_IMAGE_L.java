@@ -10,7 +10,7 @@ import java.util.Objects;
 public final class SEC_IMAGE_L {
     public final byte[] deSkey = new byte[2048];
     public int deSkeyLen;
-    public final byte[] image = new byte[BUFF_LEN_E.SEC_IMAGE_MAX_LEN];
+    public final byte[] image = new byte[491520];
     public int len;
 
     public final boolean equals(Object otherObject) {
@@ -67,7 +67,7 @@ public final class SEC_IMAGE_L {
     public final void readEmbeddedFromParcel(HwParcel parcel, HwBlob _hidl_blob, long _hidl_offset) {
         this.len = _hidl_blob.getInt32(0 + _hidl_offset);
         this.deSkeyLen = _hidl_blob.getInt32(4 + _hidl_offset);
-        _hidl_blob.copyToInt8Array(8 + _hidl_offset, this.image, BUFF_LEN_E.SEC_IMAGE_MAX_LEN);
+        _hidl_blob.copyToInt8Array(8 + _hidl_offset, this.image, 491520);
         _hidl_blob.copyToInt8Array(491528 + _hidl_offset, this.deSkey, 2048);
     }
 

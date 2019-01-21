@@ -293,15 +293,15 @@ public class LocationRecordAction extends Action {
                 return;
             }
             rawLocationRecord.setMWifiBSSID(null);
-            rawLocationRecord.setMWifiLevel(Integer.valueOf(-1));
+            rawLocationRecord.setMWifiLevel(Integer.valueOf(INVALID_SUBSCRIPTION_ID));
         }
     }
 
     private void getCellInfo(RawLocationRecord rawLocationRecord) {
-        int cell_mcc = -1;
-        int cell_mnc = -1;
-        int cell_id = -1;
-        int cell_lac = -1;
+        int cell_mcc = INVALID_SUBSCRIPTION_ID;
+        int cell_mnc = INVALID_SUBSCRIPTION_ID;
+        int cell_id = INVALID_SUBSCRIPTION_ID;
+        int cell_lac = INVALID_SUBSCRIPTION_ID;
         if (this.mTelephonyManager == null) {
             OPCollectLog.e(TAG, "TelephonyManager is null");
             return;
@@ -323,12 +323,12 @@ public class LocationRecordAction extends Action {
             return;
         }
         CellInfo info;
-        int main_slot = -1;
+        int main_slot = INVALID_SUBSCRIPTION_ID;
         if (VERSION.SDK_INT > 23) {
             main_slot = SubscriptionManager.getDefaultDataSubscriptionId();
         }
         OPCollectLog.r(TAG, "slot: " + main_slot + " size: " + size + " : " + list.size());
-        if (1 == size || main_slot <= -1 || main_slot >= size) {
+        if (1 == size || main_slot <= INVALID_SUBSCRIPTION_ID || main_slot >= size) {
             info = (CellInfo) registeredList.get(0);
         } else {
             info = (CellInfo) registeredList.get(main_slot);
@@ -391,7 +391,7 @@ public class LocationRecordAction extends Action {
 
     private int checkCellMnc(int cell_mnc) {
         if (cell_mnc == Integer.MAX_VALUE) {
-            return -1;
+            return INVALID_SUBSCRIPTION_ID;
         }
         return cell_mnc;
     }

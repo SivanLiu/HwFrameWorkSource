@@ -26,7 +26,7 @@ public class JcaX509CertificateHolderSelector extends X509CertificateHolderSelec
     }
 
     private static byte[] getSubjectKeyId(X509Certificate x509Certificate) {
-        Object extensionValue = x509Certificate.getExtensionValue(Extension.subjectKeyIdentifier.getId());
+        byte[] extensionValue = x509Certificate.getExtensionValue(Extension.subjectKeyIdentifier.getId());
         return extensionValue != null ? ASN1OctetString.getInstance(ASN1OctetString.getInstance(extensionValue).getOctets()).getOctets() : null;
     }
 }

@@ -39,9 +39,9 @@ public class HashSP800DRBG implements SP80090DRBG {
             this._securityStrength = i;
             this._seedLength = ((Integer) seedlens.get(digest.getAlgorithmName())).intValue();
             this._V = Utils.hash_df(this._digest, Arrays.concatenate(getEntropy(), bArr2, bArr), this._seedLength);
-            Object obj = new byte[(this._V.length + 1)];
-            System.arraycopy(this._V, 0, obj, 1, this._V.length);
-            this._C = Utils.hash_df(this._digest, obj, this._seedLength);
+            byte[] bArr3 = new byte[(this._V.length + 1)];
+            System.arraycopy(this._V, 0, bArr3, 1, this._V.length);
+            this._C = Utils.hash_df(this._digest, bArr3, this._seedLength);
             this._reseedCounter = 1;
         } else {
             throw new IllegalArgumentException("Not enough entropy for security strength required");
@@ -85,16 +85,16 @@ public class HashSP800DRBG implements SP80090DRBG {
     private byte[] hashgen(byte[] bArr, int i) {
         i /= 8;
         int digestSize = i / this._digest.getDigestSize();
-        Object obj = new byte[bArr.length];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        Object obj2 = new byte[i];
-        Object obj3 = new byte[this._digest.getDigestSize()];
+        byte[] bArr2 = new byte[bArr.length];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+        bArr = new byte[i];
+        byte[] bArr3 = new byte[this._digest.getDigestSize()];
         for (int i2 = 0; i2 <= digestSize; i2++) {
-            doHash(obj, obj3);
-            System.arraycopy(obj3, 0, obj2, obj3.length * i2, obj2.length - (obj3.length * i2) > obj3.length ? obj3.length : obj2.length - (obj3.length * i2));
-            addTo(obj, ONE);
+            doHash(bArr2, bArr3);
+            System.arraycopy(bArr3, 0, bArr, bArr3.length * i2, bArr.length - (bArr3.length * i2) > bArr3.length ? bArr3.length : bArr.length - (bArr3.length * i2));
+            addTo(bArr2, ONE);
         }
-        return obj2;
+        return bArr;
     }
 
     public int generate(byte[] bArr, byte[] bArr2, boolean z) {
@@ -105,23 +105,23 @@ public class HashSP800DRBG implements SP80090DRBG {
             return -1;
         } else {
             Object bArr22;
-            Object obj;
+            byte[] bArr3;
             if (z) {
                 reseed(bArr22);
                 bArr22 = null;
             }
             if (bArr22 != null) {
-                obj = new byte[((this._V.length + 1) + bArr22.length)];
-                obj[0] = 2;
-                System.arraycopy(this._V, 0, obj, 1, this._V.length);
-                System.arraycopy(bArr22, 0, obj, this._V.length + 1, bArr22.length);
-                addTo(this._V, hash(obj));
+                bArr3 = new byte[((this._V.length + 1) + bArr22.length)];
+                bArr3[0] = (byte) 2;
+                System.arraycopy(this._V, 0, bArr3, 1, this._V.length);
+                System.arraycopy(bArr22, 0, bArr3, this._V.length + 1, bArr22.length);
+                addTo(this._V, hash(bArr3));
             }
             bArr22 = hashgen(this._V, length);
-            obj = new byte[(this._V.length + 1)];
-            System.arraycopy(this._V, 0, obj, 1, this._V.length);
-            obj[0] = 3;
-            addTo(this._V, hash(obj));
+            bArr3 = new byte[(this._V.length + 1)];
+            System.arraycopy(this._V, 0, bArr3, 1, this._V.length);
+            bArr3[0] = (byte) 3;
+            addTo(this._V, hash(bArr3));
             addTo(this._V, this._C);
             addTo(this._V, new byte[]{(byte) ((int) (this._reseedCounter >> 24)), (byte) ((int) (this._reseedCounter >> 16)), (byte) ((int) (this._reseedCounter >> 8)), (byte) ((int) this._reseedCounter)});
             this._reseedCounter++;
@@ -136,10 +136,10 @@ public class HashSP800DRBG implements SP80090DRBG {
 
     public void reseed(byte[] bArr) {
         this._V = Utils.hash_df(this._digest, Arrays.concatenate(ONE, this._V, getEntropy(), bArr), this._seedLength);
-        Object obj = new byte[(this._V.length + 1)];
-        obj[0] = null;
-        System.arraycopy(this._V, 0, obj, 1, this._V.length);
-        this._C = Utils.hash_df(this._digest, obj, this._seedLength);
+        bArr = new byte[(this._V.length + 1)];
+        bArr[0] = (byte) 0;
+        System.arraycopy(this._V, 0, bArr, 1, this._V.length);
+        this._C = Utils.hash_df(this._digest, bArr, this._seedLength);
         this._reseedCounter = 1;
     }
 }

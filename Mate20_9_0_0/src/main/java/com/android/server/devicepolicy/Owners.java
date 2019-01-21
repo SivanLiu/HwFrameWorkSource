@@ -118,14 +118,6 @@ class Owners {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:25:0x006d A:{PHI: r1 , Splitter: B:4:0x0011, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:25:0x006d, code:
-            r2 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:27:?, code:
-            android.util.Slog.e(com.android.server.devicepolicy.Owners.TAG, "Error parsing owners information file", r2);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         void readFromFileLocked() {
             if (this.mFile.exists()) {
                 InputStream input = null;
@@ -162,10 +154,13 @@ class Owners {
                                 case 3:
                                     depth--;
                                     break;
+                                default:
+                                    break;
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (IOException | XmlPullParserException e) {
+                    Slog.e(Owners.TAG, "Error parsing owners information file", e);
                 } catch (Throwable th) {
                     IoUtils.closeQuietly(input);
                 }
@@ -306,7 +301,7 @@ class Owners {
             }
         }
 
-        /* JADX WARNING: Missing block: B:18:0x003e, code:
+        /* JADX WARNING: Missing block: B:18:0x003e, code skipped:
             if (r9.equals(com.android.server.devicepolicy.Owners.TAG_DEVICE_INITIALIZER) != false) goto L_0x004d;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -515,7 +510,7 @@ class Owners {
             if (this.mDeviceOwner == null) {
                 return null;
             }
-            Pair<Integer, ComponentName> create = Pair.create(Integer.valueOf(this.mDeviceOwnerUserId), this.mDeviceOwner.admin);
+            Pair create = Pair.create(Integer.valueOf(this.mDeviceOwnerUserId), this.mDeviceOwner.admin);
             return create;
         }
     }
@@ -649,7 +644,7 @@ class Owners {
     }
 
     Set<Integer> getProfileOwnerKeys() {
-        Set<Integer> keySet;
+        Set keySet;
         synchronized (this.mLock) {
             keySet = this.mProfileOwners.keySet();
         }
@@ -677,7 +672,7 @@ class Owners {
     }
 
     Pair<LocalDate, LocalDate> getSystemUpdateFreezePeriodRecord() {
-        Pair<LocalDate, LocalDate> pair;
+        Pair pair;
         synchronized (this.mLock) {
             pair = new Pair(this.mSystemUpdateFreezeStart, this.mSystemUpdateFreezeEnd);
         }
@@ -786,22 +781,8 @@ class Owners {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:39:0x0106 A:{Splitter: B:4:0x000b, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:38:0x0104 A:{Splitter: B:7:0x000f, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Missing block: B:38:0x0104, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:39:0x0106, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:40:0x0107, code:
-            r4 = r23;
-     */
-    /* JADX WARNING: Missing block: B:41:0x0109, code:
-            android.util.Slog.e(TAG, "Error parsing device-owner file", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean readLegacyOwnerFileLocked(File file) {
+        Exception e;
         if (!file.exists()) {
             return false;
         }
@@ -856,9 +837,16 @@ class Owners {
                         }
                     }
                 }
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e2) {
+                e = e2;
+                Slog.e(TAG, "Error parsing device-owner file", e);
+                return true;
             }
-        } catch (XmlPullParserException e2) {
+        } catch (IOException | XmlPullParserException e3) {
+            e = e3;
+            File file2 = file;
+            Slog.e(TAG, "Error parsing device-owner file", e);
+            return true;
         }
         return true;
     }

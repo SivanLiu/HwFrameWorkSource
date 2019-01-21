@@ -98,12 +98,12 @@ public class DVCSRequestInformationBuilder {
             if (this.initialInfo.getNonce() == null) {
                 this.nonce = bigInteger;
             } else {
-                Object toByteArray = this.initialInfo.getNonce().toByteArray();
-                Object asUnsignedByteArray = BigIntegers.asUnsignedByteArray(bigInteger);
-                Object obj = new byte[(toByteArray.length + asUnsignedByteArray.length)];
-                System.arraycopy(toByteArray, 0, obj, 0, toByteArray.length);
-                System.arraycopy(asUnsignedByteArray, 0, obj, toByteArray.length, asUnsignedByteArray.length);
-                this.nonce = new BigInteger(obj);
+                byte[] toByteArray = this.initialInfo.getNonce().toByteArray();
+                byte[] asUnsignedByteArray = BigIntegers.asUnsignedByteArray(bigInteger);
+                byte[] bArr = new byte[(toByteArray.length + asUnsignedByteArray.length)];
+                System.arraycopy(toByteArray, 0, bArr, 0, toByteArray.length);
+                System.arraycopy(asUnsignedByteArray, 0, bArr, toByteArray.length, asUnsignedByteArray.length);
+                this.nonce = new BigInteger(bArr);
             }
         }
         this.nonce = bigInteger;

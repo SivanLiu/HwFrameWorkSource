@@ -5,8 +5,8 @@ class Utils {
     }
 
     static AttrOrOID[] clone(AttrOrOID[] attrOrOIDArr) {
-        Object obj = new AttrOrOID[attrOrOIDArr.length];
-        System.arraycopy(attrOrOIDArr, 0, obj, 0, attrOrOIDArr.length);
-        return obj;
+        AttrOrOID[] attrOrOIDArr2 = new AttrOrOID[attrOrOIDArr.length];
+        System.arraycopy(attrOrOIDArr, 0, attrOrOIDArr2, 0, attrOrOIDArr.length);
+        return attrOrOIDArr2;
     }
 }

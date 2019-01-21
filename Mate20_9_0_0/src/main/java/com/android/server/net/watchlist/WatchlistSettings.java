@@ -50,15 +50,22 @@ class WatchlistSettings {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{Splitter: B:3:0x0009, ExcHandler: java.lang.IllegalStateException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:30:0x0063, code:
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_4 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_4 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_4 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_4 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063 A:{ExcHandler: IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (r0_4 'e' java.lang.Exception), Splitter:B:3:0x0009} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:25:0x005a, code skipped:
+            r3 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
+            r1.addSuppressed(r3);
+     */
+    /* JADX WARNING: Missing block: B:30:0x0063, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:0x0064, code:
+    /* JADX WARNING: Missing block: B:31:0x0064, code skipped:
             android.util.Slog.e(TAG, "Failed parsing xml", r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -80,9 +87,15 @@ class WatchlistSettings {
                 if (stream != null) {
                     stream.close();
                 }
-            } catch (Exception e) {
+            } catch (IOException | IllegalStateException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e) {
             } catch (Throwable th) {
-                r1.addSuppressed(th);
+                if (stream != null) {
+                    if (r1 != null) {
+                        stream.close();
+                    } else {
+                        stream.close();
+                    }
+                }
             }
         }
     }

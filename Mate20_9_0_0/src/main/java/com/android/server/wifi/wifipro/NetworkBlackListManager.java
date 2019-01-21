@@ -66,7 +66,7 @@ public class NetworkBlackListManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0051, code:
+    /* JADX WARNING: Missing block: B:18:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -168,7 +168,7 @@ public class NetworkBlackListManager {
         return this.mAbnormalWifiBlacklist.contains(bssid);
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0023, code:
+    /* JADX WARNING: Missing block: B:14:0x0023, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

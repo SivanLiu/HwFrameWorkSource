@@ -2,6 +2,7 @@ package org.bouncycastle.pkcs.jcajce;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.Certificate;
@@ -25,7 +26,7 @@ public class JcaPKCS12SafeBagBuilder extends PKCS12SafeBagBuilder {
     private static Certificate convertCert(X509Certificate x509Certificate) throws IOException {
         try {
             return Certificate.getInstance(x509Certificate.getEncoded());
-        } catch (Throwable e) {
+        } catch (CertificateEncodingException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode certificate: ");
             stringBuilder.append(e.getMessage());

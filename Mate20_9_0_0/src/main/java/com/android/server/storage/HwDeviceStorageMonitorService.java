@@ -54,7 +54,7 @@ public class HwDeviceStorageMonitorService extends DeviceStorageMonitorService {
         if (isBootImageOnDisk) {
             i = 33685831;
         } else {
-            i = 17040399;
+            i = 17040400;
         }
         CharSequence details = context.getText(i);
         Notification notification = new Builder(context, SystemNotificationChannels.ALERTS).setSmallIcon(33751439).setLargeIcon(BitmapFactory.decodeResource(context.getResources(), 33751439)).setTicker(title).setColor(context.getColor(17170784)).setContentTitle(title).setContentText(details).setContentIntent(PendingIntent.getActivityAsUser(context, 0, lowMemIntent, 0, null, UserHandle.CURRENT)).setStyle(new BigTextStyle().bigText(details)).setVisibility(1).setCategory("sys").setExtras(HwNotificationResource.getNotificationThemeData(33751440, -1, 2, 15)).build();

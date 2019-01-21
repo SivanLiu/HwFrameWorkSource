@@ -51,15 +51,15 @@ public class DSAParametersGenerator {
 
     private static BigInteger calculateGenerator_FIPS186_3_Verifiable(Digest digest, BigInteger bigInteger, BigInteger bigInteger2, byte[] bArr, int i) {
         bigInteger2 = bigInteger.subtract(ONE).divide(bigInteger2);
-        Object decode = Hex.decode("6767656E");
-        Object obj = new byte[(((bArr.length + decode.length) + 1) + 2)];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        System.arraycopy(decode, 0, obj, bArr.length, decode.length);
-        obj[obj.length - 3] = (byte) i;
+        byte[] decode = Hex.decode("6767656E");
+        byte[] bArr2 = new byte[(((bArr.length + decode.length) + 1) + 2)];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+        System.arraycopy(decode, 0, bArr2, bArr.length, decode.length);
+        bArr2[bArr2.length - 3] = (byte) i;
         bArr = new byte[digest.getDigestSize()];
         for (i = 1; i < PKIFailureInfo.notAuthorized; i++) {
-            inc(obj);
-            hash(digest, obj, bArr, 0);
+            inc(bArr2);
+            hash(digest, bArr2, bArr, 0);
             BigInteger modPow = new BigInteger(1, bArr).modPow(bigInteger2, bigInteger);
             if (modPow.compareTo(TWO) >= 0) {
                 return modPow;
@@ -70,24 +70,24 @@ public class DSAParametersGenerator {
 
     private DSAParameters generateParameters_FIPS186_2() {
         byte[] bArr = new byte[20];
-        Object obj = new byte[20];
-        Object obj2 = new byte[20];
         byte[] bArr2 = new byte[20];
+        byte[] bArr3 = new byte[20];
+        byte[] bArr4 = new byte[20];
         int i = (this.L - 1) / CipherSuite.TLS_DH_RSA_WITH_AES_128_GCM_SHA256;
-        Object obj3 = new byte[(this.L / 8)];
+        byte[] bArr5 = new byte[(this.L / 8)];
         if (this.digest instanceof SHA1Digest) {
             while (true) {
                 this.random.nextBytes(bArr);
-                hash(this.digest, bArr, obj, 0);
-                System.arraycopy(bArr, 0, obj2, 0, bArr.length);
-                inc(obj2);
-                hash(this.digest, obj2, obj2, 0);
-                for (int i2 = 0; i2 != bArr2.length; i2++) {
-                    bArr2[i2] = (byte) (obj[i2] ^ obj2[i2]);
+                hash(this.digest, bArr, bArr2, 0);
+                System.arraycopy(bArr, 0, bArr3, 0, bArr.length);
+                inc(bArr3);
+                hash(this.digest, bArr3, bArr3, 0);
+                for (int i2 = 0; i2 != bArr4.length; i2++) {
+                    bArr4[i2] = (byte) (bArr2[i2] ^ bArr3[i2]);
                 }
-                bArr2[0] = (byte) (bArr2[0] | -128);
-                bArr2[19] = (byte) (bArr2[19] | 1);
-                BigInteger bigInteger = new BigInteger(1, bArr2);
+                bArr4[0] = (byte) (bArr4[0] | -128);
+                bArr4[19] = (byte) (bArr4[19] | 1);
+                BigInteger bigInteger = new BigInteger(1, bArr4);
                 if (isProbablePrime(bigInteger)) {
                     byte[] clone = Arrays.clone(bArr);
                     inc(clone);
@@ -95,14 +95,14 @@ public class DSAParametersGenerator {
                         int i4;
                         for (i4 = 1; i4 <= i; i4++) {
                             inc(clone);
-                            hash(this.digest, clone, obj3, obj3.length - (obj.length * i4));
+                            hash(this.digest, clone, bArr5, bArr5.length - (bArr2.length * i4));
                         }
-                        i4 = obj3.length - (obj.length * i);
+                        i4 = bArr5.length - (bArr2.length * i);
                         inc(clone);
-                        hash(this.digest, clone, obj, 0);
-                        System.arraycopy(obj, obj.length - i4, obj3, 0, i4);
-                        obj3[0] = (byte) (obj3[0] | -128);
-                        BigInteger bigInteger2 = new BigInteger(1, obj3);
+                        hash(this.digest, clone, bArr2, 0);
+                        System.arraycopy(bArr2, bArr2.length - i4, bArr5, 0, i4);
+                        bArr5[0] = (byte) (bArr5[0] | -128);
+                        BigInteger bigInteger2 = new BigInteger(1, bArr5);
                         bigInteger2 = bigInteger2.subtract(bigInteger2.mod(bigInteger.shiftLeft(1)).subtract(ONE));
                         if (bigInteger2.bitLength() == this.L && isProbablePrime(bigInteger2)) {
                             return new DSAParameters(bigInteger2, bigInteger, calculateGenerator_FIPS186_2(bigInteger2, bigInteger, this.random), new DSAValidationParameters(bArr, i3));
@@ -125,13 +125,13 @@ public class DSAParametersGenerator {
         byte[] bArr = new byte[(this.N / 8)];
         int i2 = (this.L - 1) / digestSize;
         int i3 = (this.L - 1) % digestSize;
-        Object obj = new byte[(this.L / 8)];
-        Object obj2 = new byte[digest.getDigestSize()];
+        byte[] bArr2 = new byte[(this.L / 8)];
+        byte[] bArr3 = new byte[digest.getDigestSize()];
         loop0:
         while (true) {
             this.random.nextBytes(bArr);
-            hash(digest, bArr, obj2, 0);
-            bit = new BigInteger(1, obj2).mod(ONE.shiftLeft(this.N - 1)).setBit(0).setBit(this.N - 1);
+            hash(digest, bArr, bArr3, 0);
+            bit = new BigInteger(1, bArr3).mod(ONE.shiftLeft(this.N - 1)).setBit(0).setBit(this.N - 1);
             if (isProbablePrime(bit)) {
                 byte[] clone = Arrays.clone(bArr);
                 int i4 = 4 * this.L;
@@ -140,14 +140,14 @@ public class DSAParametersGenerator {
                     int i5;
                     for (i5 = 1; i5 <= i2; i5++) {
                         inc(clone);
-                        hash(digest, clone, obj, obj.length - (obj2.length * i5));
+                        hash(digest, clone, bArr2, bArr2.length - (bArr3.length * i5));
                     }
-                    i5 = obj.length - (obj2.length * i2);
+                    i5 = bArr2.length - (bArr3.length * i2);
                     inc(clone);
-                    hash(digest, clone, obj2, 0);
-                    System.arraycopy(obj2, obj2.length - i5, obj, 0, i5);
-                    obj[0] = (byte) (obj[0] | -128);
-                    bigInteger = new BigInteger(1, obj);
+                    hash(digest, clone, bArr3, 0);
+                    System.arraycopy(bArr3, bArr3.length - i5, bArr2, 0, i5);
+                    bArr2[0] = (byte) (bArr2[0] | -128);
+                    bigInteger = new BigInteger(1, bArr2);
                     bigInteger = bigInteger.subtract(bigInteger.mod(bit.shiftLeft(1)).subtract(ONE));
                     if (bigInteger.bitLength() == this.L && isProbablePrime(bigInteger)) {
                         break loop0;

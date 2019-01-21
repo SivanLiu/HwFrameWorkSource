@@ -42,9 +42,9 @@ public class NameConstraints extends ASN1Object {
         if (generalSubtreeArr == null) {
             return null;
         }
-        Object obj = new GeneralSubtree[generalSubtreeArr.length];
-        System.arraycopy(generalSubtreeArr, 0, obj, 0, obj.length);
-        return obj;
+        GeneralSubtree[] generalSubtreeArr2 = new GeneralSubtree[generalSubtreeArr.length];
+        System.arraycopy(generalSubtreeArr, 0, generalSubtreeArr2, 0, generalSubtreeArr2.length);
+        return generalSubtreeArr2;
     }
 
     private GeneralSubtree[] createArray(ASN1Sequence aSN1Sequence) {

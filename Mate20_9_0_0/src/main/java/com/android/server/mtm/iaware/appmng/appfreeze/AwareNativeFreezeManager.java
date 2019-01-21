@@ -345,7 +345,7 @@ public class AwareNativeFreezeManager {
         sendFrozenMsg(frozen ^ 1, pid, ppid);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001c, code:
+    /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -545,7 +545,7 @@ public class AwareNativeFreezeManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0025, code:
+    /* JADX WARNING: Missing block: B:10:0x0025, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

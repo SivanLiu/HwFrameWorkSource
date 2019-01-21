@@ -1,34 +1,37 @@
 package com.huawei.appgallery.assistant.service;
 
-import android.app.ActivityManagerNative;
-import android.app.AppGlobals;
-import android.app.IActivityManager;
-import android.app.IProcessObserver.Stub;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.pm.IPackageManager;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.text.TextUtils;
 import android.util.Log;
 import com.huawei.android.app.ActivityManagerEx;
-import com.huawei.android.app.IGameObserver;
+import com.huawei.android.app.IGameObserver.Stub;
+import com.huawei.android.app.IHwActivityNotifierEx;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AppGalleryAssistantService {
     private static final String ACTION_HMS_SERVICE = "com.huawei.hwid.NOTIFY_APP_STATE_SERVICE";
+    private static final float CRITICAL_DOWN_ANGLE = -9.8f;
+    private static final float CRITICAL_UP_ANGLE = 9.8f;
     private static final int GAME_TO_BACKGROUND = 0;
     private static final int GAME_TO_FOREGROUND = 1;
+    private static final int GAME_TO_GAME = 3;
+    private static final String HMS_BUOY_NOTIFY_URI = "content://com.huawei.hwid.peripheralprovider";
     private static final String MAP_KEY_TIME = "time";
     private static final String MAP_KEY_VALUE = "value";
     private static final int MAP_VALUE_SHOW = 1;
@@ -38,71 +41,59 @@ public class AppGalleryAssistantService {
     private static final int SDK_TYPE_GAMESDK = 1;
     private static final int SDK_TYPE_HMSSDK = 2;
     private static final int SDK_TYPE_NOSDK = 0;
-    private static final String TAG = "AssistantService";
+    private static final String TAG = "AssistantService-901301";
+    private static final long TIME_REVERSE_MAX = 3000;
     private static final String URI_HMS_SHOWBUOY = "content://com.huawei.hwid.gameservice.inshowbuoylist/showbuoy";
     private static AppGalleryAssistantService mAppGalleryAssistantService;
+    private boolean isRegisterSensor = false;
     private String launcherPackageName;
-    private IActivityManager mActivityManager;
     private String mAppPackageName;
-    private int mAppStatus = 0;
-    private HwBoosterProcessObserver mBoosterProcessObserver;
     private final Context mContext;
     private String mGamePackageName;
     private int mGameStatus = 0;
-    private Map<String, Map<String, Object>> mJointAppMap = new HashMap();
-    private Map<String, Map<String, Object>> mSdkInfoMap = new HashMap();
-    private Map<String, Integer> mSystemAppMap = new HashMap();
-
-    private class HwBoosterProcessObserver extends Stub {
-        private HwBoosterProcessObserver() {
-        }
-
-        public void onForegroundActivitiesChanged(int pid, int uid, boolean foregroundActivities) {
-            String appPackageName = AppGalleryAssistantService.this.getPackageName(uid);
-            Log.d(AppGalleryAssistantService.TAG, "onForegroundActivitiesChanged packageName = " + appPackageName + ", foregroundActivities = " + foregroundActivities + ", mAppPackageName:" + AppGalleryAssistantService.this.mAppPackageName);
-            if (appPackageName.equals(AppGalleryAssistantService.this.launcherPackageName) && foregroundActivities) {
-                if (!TextUtils.isEmpty(AppGalleryAssistantService.this.mAppPackageName)) {
-                    AppGalleryAssistantService.this.backgroundEvent(AppGalleryAssistantService.this.mAppPackageName);
+    private Sensor mGsensor;
+    private SensorEventListener mGsensorListener = new SensorEventListener() {
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            if (sensorEvent.values[2] <= AppGalleryAssistantService.CRITICAL_DOWN_ANGLE && AppGalleryAssistantService.this.mReverseDownFlg < 0) {
+                AppGalleryAssistantService.this.mReverseDownFlg = 0;
+                AppGalleryAssistantService.this.timeStartReverse = System.currentTimeMillis();
+            } else if (sensorEvent.values[2] >= AppGalleryAssistantService.CRITICAL_UP_ANGLE && AppGalleryAssistantService.this.mReverseDownFlg == 0) {
+                AppGalleryAssistantService.this.mReverseDownFlg = -1;
+                if (System.currentTimeMillis() - AppGalleryAssistantService.this.timeStartReverse > AppGalleryAssistantService.TIME_REVERSE_MAX) {
+                    Log.d(AppGalleryAssistantService.TAG, "Reverse time more than 3s.");
+                    return;
                 }
-            } else if (AppGalleryAssistantService.this.isSystemApp(appPackageName)) {
-                Log.d(AppGalleryAssistantService.TAG, "issystemapp:" + appPackageName);
-            } else if (foregroundActivities) {
-                AppGalleryAssistantService.this.mAppStatus = 1;
-                AppGalleryAssistantService.this.foregroundEvent(appPackageName);
-            } else {
-                AppGalleryAssistantService.this.mAppStatus = 0;
-                AppGalleryAssistantService.this.backgroundEvent(appPackageName);
+                Log.d(AppGalleryAssistantService.TAG, "onReverseUp");
+                AppGalleryAssistantService.this.onReverseUp();
             }
         }
 
-        public void onProcessDied(int pid, int uid) {
-            String appPackageName = AppGalleryAssistantService.this.getPackageName(uid);
-            Log.d(AppGalleryAssistantService.TAG, "onProcessDied appPackageName:" + appPackageName + "pid:" + pid + ", uid:" + uid);
-            if (!TextUtils.isEmpty(AppGalleryAssistantService.this.mAppPackageName) && AppGalleryAssistantService.this.mAppPackageName.equals(appPackageName)) {
-                AppGalleryAssistantService.this.notifyHMSBackgroundEvent(AppGalleryAssistantService.this.mAppPackageName);
-            }
+        public void onAccuracyChanged(Sensor sensor, int i) {
         }
-    }
+    };
+    private Map<String, Map<String, Object>> mJointAppMap = new HashMap();
+    private int mReverseDownFlg = -1;
+    private Map<String, Map<String, Object>> mSdkInfoMap = new HashMap();
+    private SensorManager mSensorManager;
+    private Map<String, Integer> mSystemAppMap = new HashMap();
+    private long timeStartReverse = 0;
 
-    private class HwGameObserver extends IGameObserver.Stub {
+    private class HwGameObserver extends Stub {
         private HwGameObserver() {
+        }
+
+        /* synthetic */ HwGameObserver(AppGalleryAssistantService x0, AnonymousClass1 x1) {
+            this();
         }
 
         public void onGameListChanged() {
         }
 
         public void onGameStatusChanged(String packageName, int event) {
-            int i = 1;
-            Log.d(AppGalleryAssistantService.TAG, "onGameStatusChanged packageName = " + packageName + ", event = " + event);
-            if (event == 1 || event == 2) {
-                AppGalleryAssistantService.this.mGamePackageName = packageName;
-                AppGalleryAssistantService appGalleryAssistantService = AppGalleryAssistantService.this;
-                if (event != 1) {
-                    i = 0;
-                }
-                appGalleryAssistantService.mGameStatus = i;
-                AppGalleryAssistantService.this.startService();
+            if (AppGalleryAssistantService.this.isAppAssistantAttention()) {
+                AppGalleryAssistantService.this.handleGameStatusByAppAssistant(packageName, event);
             }
+            AssistantCallDndHelper.notifyGameBackground(AppGalleryAssistantService.this.mContext, event);
         }
     }
 
@@ -110,11 +101,28 @@ public class AppGalleryAssistantService {
         private ScreenOnReceiver() {
         }
 
+        /* synthetic */ ScreenOnReceiver(AppGalleryAssistantService x0, AnonymousClass1 x1) {
+            this();
+        }
+
         public void onReceive(Context context, Intent intent) {
-            Log.d(AppGalleryAssistantService.TAG, "ScreenOnReceiver");
-            if (intent != null && "android.intent.action.SCREEN_ON".equals(intent.getAction()) && AppGalleryAssistantService.this.mGameStatus != 0) {
-                AppGalleryAssistantService.this.mGameStatus = 2;
-                AppGalleryAssistantService.this.startService();
+            if (intent == null) {
+                return;
+            }
+            if ("android.intent.action.SCREEN_ON".equals(intent.getAction())) {
+                Log.d(AppGalleryAssistantService.TAG, "ScreenOnReceiver on");
+                if (AppGalleryAssistantService.this.mGameStatus != 0) {
+                    AppGalleryAssistantService.this.mGameStatus = 2;
+                    AppGalleryAssistantService.this.startService();
+                }
+                if (!TextUtils.isEmpty(AppGalleryAssistantService.this.mAppPackageName)) {
+                    AppGalleryAssistantService.this.registerSensor(AppGalleryAssistantService.this.mContext);
+                }
+            } else if ("android.intent.action.SCREEN_OFF".equals(intent.getAction())) {
+                Log.d(AppGalleryAssistantService.TAG, "ScreenOnReceiver off");
+                if (!TextUtils.isEmpty(AppGalleryAssistantService.this.mAppPackageName)) {
+                    AppGalleryAssistantService.this.unRegisterSensor();
+                }
             }
         }
     }
@@ -135,32 +143,121 @@ public class AppGalleryAssistantService {
         this.mContext = context;
         registerGameObserver(context);
         registerAppObserver(context);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.SCREEN_ON");
+        filter.addAction("android.intent.action.SCREEN_OFF");
+        context.registerReceiver(new ScreenOnReceiver(this, null), filter);
+    }
+
+    private void unRegisterSensor() {
+        Log.d(TAG, "unRegisterSensor");
+        if (!(this.mSensorManager == null || this.mGsensor == null)) {
+            this.mSensorManager.unregisterListener(this.mGsensorListener, this.mGsensor);
+        }
+        this.isRegisterSensor = false;
+    }
+
+    private void onReverseUp() {
+        Log.d(TAG, "onReverseUp mAppPackageName:" + this.mAppPackageName + ", isRegisterSensor:" + this.isRegisterSensor);
+        if (!TextUtils.isEmpty(this.mAppPackageName) && this.isRegisterSensor) {
+            notifyHMSSensorEvent(this.mAppPackageName);
+        }
+    }
+
+    private void notifyHMSSensorEvent(String packageName) {
+        Log.d(TAG, "notifyHMSSensorEvent");
+        try {
+            this.mContext.getContentResolver().call(Uri.parse(HMS_BUOY_NOTIFY_URI), "gyroEventNotify", packageName, null);
+        } catch (Throwable e) {
+            Log.e(TAG, "notifyHMSSensorEvent e:", e);
+        }
+    }
+
+    private void registerSensor(Context context) {
+        Log.d(TAG, "start registerSensor");
+        try {
+            if (this.mSensorManager == null) {
+                this.mSensorManager = (SensorManager) context.getSystemService("sensor");
+            }
+            if (this.mSensorManager != null) {
+                if (this.mGsensor == null) {
+                    this.mGsensor = this.mSensorManager.getDefaultSensor(1);
+                }
+                if (this.mGsensor != null) {
+                    this.mSensorManager.registerListener(this.mGsensorListener, this.mGsensor, 1);
+                    Log.d(TAG, "registerSensor complete.");
+                    this.isRegisterSensor = true;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "registerSensor exception:", e);
+        }
     }
 
     private void registerAppObserver(Context context) {
-        this.mBoosterProcessObserver = new HwBoosterProcessObserver();
-        this.mActivityManager = ActivityManagerNative.getDefault();
         try {
             Intent intent = new Intent("android.intent.action.MAIN");
             intent.addCategory("android.intent.category.HOME");
             ResolveInfo res = context.getPackageManager().resolveActivity(intent, 0);
             if (res.activityInfo != null) {
-                this.launcherPackageName = TextUtils.isEmpty(res.activityInfo.packageName) ? BuildConfig.FLAVOR : res.activityInfo.packageName;
+                String str;
+                if (TextUtils.isEmpty(res.activityInfo.packageName)) {
+                    str = BuildConfig.FLAVOR;
+                } else {
+                    str = res.activityInfo.packageName;
+                }
+                this.launcherPackageName = str;
             }
             Log.d(TAG, "launcherPackageName:" + this.launcherPackageName);
-            this.mActivityManager.registerProcessObserver(this.mBoosterProcessObserver);
-        } catch (RemoteException e) {
-            Log.w(TAG, "registerProcessStatusObserver failed!");
-        } catch (Throwable e2) {
-            Log.w(TAG, "registerProcessStatusObserver error:" + e2.getMessage());
+            ActivityManagerEx.registerHwActivityNotifier(new IHwActivityNotifierEx() {
+                public void call(Bundle extras) {
+                    if (extras != null) {
+                        String fromPackage = extras.getString("fromPackage");
+                        String toPackage = extras.getString("toPackage");
+                        Log.d(AppGalleryAssistantService.TAG, "registerHwActivityNotifier call fromPackage:" + fromPackage + ", toPackage:" + toPackage);
+                        if (AppGalleryAssistantService.this.isSystemApp(fromPackage)) {
+                            Log.d(AppGalleryAssistantService.TAG, "issystemapp:" + fromPackage);
+                        } else {
+                            AppGalleryAssistantService.this.backgroundEvent(fromPackage);
+                        }
+                        if (AppGalleryAssistantService.this.isSystemApp(toPackage)) {
+                            Log.d(AppGalleryAssistantService.TAG, "issystemapp:" + toPackage);
+                        } else {
+                            AppGalleryAssistantService.this.foregroundEvent(toPackage);
+                        }
+                    }
+                }
+            }, "appSwitch");
+        } catch (Throwable e) {
+            Log.w(TAG, "registerProcessStatusObserver error:" + e.getMessage());
         }
     }
 
     private void registerGameObserver(Context context) {
-        if (SystemProperties.getInt("ro.config.gameassist_booster", 0) == 1 || SystemProperties.getInt("ro.config.gameassist.peripherals", 0) == 1) {
-            Log.d(TAG, "registerGameObserver.");
-            ActivityManagerEx.registerGameObserver(new HwGameObserver());
-            context.registerReceiver(new ScreenOnReceiver(), new IntentFilter("android.intent.action.SCREEN_ON"));
+        Log.d(TAG, "registerGameObserver.");
+        ActivityManagerEx.registerGameObserver(new HwGameObserver(this, null));
+    }
+
+    private boolean isAppAssistantAttention() {
+        return SystemProperties.getInt("ro.config.gameassist_booster", 0) == 1 || SystemProperties.getInt("ro.config.gameassist.peripherals", 0) == 1;
+    }
+
+    private void handleGameStatusByAppAssistant(String packageName, int event) {
+        Log.d(TAG, "onGameStatusChanged packageName = " + packageName + ", event = " + event);
+        if (event == 1 || event == 2 || event == GAME_TO_GAME) {
+            this.mGamePackageName = packageName;
+            switch (event) {
+                case 1:
+                    this.mGameStatus = 1;
+                    break;
+                case GAME_TO_GAME /*3*/:
+                    this.mGameStatus = GAME_TO_GAME;
+                    break;
+                default:
+                    this.mGameStatus = 0;
+                    break;
+            }
+            startService();
         }
     }
 
@@ -187,24 +284,28 @@ public class AppGalleryAssistantService {
         }
     }
 
-    public void backgroundEvent(String packageName) {
-        if (getAppSDKType(packageName) == 0) {
-            if (appInJoint(packageName, false)) {
-                notifyHMSBackgroundEvent(packageName);
-            }
-        } else if (getAppSDKType(packageName) == 2) {
-            notifyHMSBackgroundEvent(packageName);
-        }
-    }
-
     public void foregroundEvent(String packageName) {
         long sdkType = getAppSDKType(packageName);
         if (sdkType == 0) {
             if (appInJoint(packageName, true)) {
                 notifyHMSForegroundEvent(packageName);
+                registerSensor(this.mContext);
             }
         } else if (sdkType == 2) {
             this.mAppPackageName = packageName;
+            registerSensor(this.mContext);
+        }
+    }
+
+    public void backgroundEvent(String packageName) {
+        if (getAppSDKType(packageName) == 0) {
+            if (appInJoint(packageName, false)) {
+                notifyHMSBackgroundEvent(packageName);
+                unRegisterSensor();
+            }
+        } else if (getAppSDKType(packageName) == 2) {
+            notifyHMSBackgroundEvent(packageName);
+            unRegisterSensor();
         }
     }
 
@@ -212,27 +313,6 @@ public class AppGalleryAssistantService {
         Log.d(TAG, "notifyHMSForegroundEvent, packageName = " + packageName);
         this.mAppPackageName = packageName;
         startHMSService(packageName, 1);
-    }
-
-    private String getPackageName(int uid) {
-        String packageName = null;
-        String[] packageNameList = null;
-        IPackageManager pm = AppGlobals.getPackageManager();
-        if (pm != null) {
-            try {
-                packageNameList = pm.getPackagesForUid(uid);
-            } catch (RemoteException e) {
-                Log.e(TAG, "getPackagesForUid exception:" + e.getMessage());
-                return null;
-            }
-        }
-        if (packageNameList != null && packageNameList.length > 0) {
-            packageName = packageNameList[0];
-        }
-        if (packageName == null) {
-            packageName = BuildConfig.FLAVOR;
-        }
-        return packageName;
     }
 
     private void notifyHMSBackgroundEvent(String packageName) {
@@ -250,8 +330,8 @@ public class AppGalleryAssistantService {
         intent.putExtra("appState", appState);
         try {
             this.mContext.startService(intent);
-        } catch (Throwable th) {
-            Log.e(TAG, "Failure startHMSService.");
+        } catch (Throwable e) {
+            Log.e(TAG, "Failure startHMSService.", e);
         }
     }
 
@@ -289,7 +369,7 @@ public class AppGalleryAssistantService {
                         }
                     default:
                         switch (obj) {
-                            case null:
+                            case AssistantCallDndHelper.MODE_UNSUPPORT_VAL /*0*/:
                                 String pkn = cursor.getString(cursor.getColumnIndex("packages"));
                                 Log.d(TAG, "packageName = " + pkn);
                                 Map<String, Object> info = new HashMap();

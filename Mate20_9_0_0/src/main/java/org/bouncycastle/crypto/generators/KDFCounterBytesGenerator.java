@@ -25,20 +25,20 @@ public class KDFCounterBytesGenerator implements MacDerivationFunction {
         this.h = mac.getMacSize();
     }
 
-    /* JADX WARNING: Missing block: B:5:0x001d, code:
+    /* JADX WARNING: Missing block: B:5:0x001d, code skipped:
             r5.ios[r5.ios.length - 3] = (byte) (r0 >>> 16);
      */
-    /* JADX WARNING: Missing block: B:6:0x0029, code:
+    /* JADX WARNING: Missing block: B:6:0x0029, code skipped:
             r5.ios[r5.ios.length - 2] = (byte) (r0 >>> 8);
      */
-    /* JADX WARNING: Missing block: B:7:0x0035, code:
+    /* JADX WARNING: Missing block: B:7:0x0035, code skipped:
             r5.ios[r5.ios.length - 1] = (byte) r0;
             r5.prf.update(r5.fixedInputDataCtrPrefix, 0, r5.fixedInputDataCtrPrefix.length);
             r5.prf.update(r5.ios, 0, r5.ios.length);
             r5.prf.update(r5.fixedInputData_afterCtr, 0, r5.fixedInputData_afterCtr.length);
             r5.prf.doFinal(r5.k, 0);
      */
-    /* JADX WARNING: Missing block: B:8:0x0064, code:
+    /* JADX WARNING: Missing block: B:8:0x0064, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

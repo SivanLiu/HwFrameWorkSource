@@ -57,7 +57,7 @@ public class Chacha20Poly1305 implements TlsCipher {
     }
 
     protected byte[] calculateRecordMAC(KeyParameter keyParameter, byte[] bArr, byte[] bArr2, int i, int i2) {
-        Mac poly1305 = new Poly1305();
+        Poly1305 poly1305 = new Poly1305();
         poly1305.init(keyParameter);
         updateRecordMACText(poly1305, bArr, 0, bArr.length);
         updateRecordMACText(poly1305, bArr2, i, i2);
@@ -85,11 +85,11 @@ public class Chacha20Poly1305 implements TlsCipher {
 
     public byte[] encodePlaintext(long j, short s, byte[] bArr, int i, int i2) throws IOException {
         KeyParameter initRecord = initRecord(this.encryptCipher, true, j, this.encryptIV);
-        Object obj = new byte[(i2 + 16)];
-        this.encryptCipher.processBytes(bArr, i, i2, obj, 0);
-        Object calculateRecordMAC = calculateRecordMAC(initRecord, getAdditionalData(j, s, i2), obj, 0, i2);
-        System.arraycopy(calculateRecordMAC, 0, obj, i2, calculateRecordMAC.length);
-        return obj;
+        byte[] bArr2 = new byte[(i2 + 16)];
+        this.encryptCipher.processBytes(bArr, i, i2, bArr2, 0);
+        byte[] calculateRecordMAC = calculateRecordMAC(initRecord, getAdditionalData(j, s, i2), bArr2, 0, i2);
+        System.arraycopy(calculateRecordMAC, 0, bArr2, i2, calculateRecordMAC.length);
+        return bArr2;
     }
 
     protected KeyParameter generateRecordMACKey(StreamCipher streamCipher) {

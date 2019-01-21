@@ -1,14 +1,11 @@
 package com.android.server.wifi;
 
 import android.content.Context;
-import android.hardware.wifi.supplicant.V1_0.ISupplicantStaIfaceCallback.ReasonCode;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
 import android.net.wifi.WifiConfiguration.NetworkSelectionStatus;
-import android.net.wifi.WifiSsid;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import com.android.server.net.DelayedDiskWrite;
 import com.android.server.net.DelayedDiskWrite.Writer;
@@ -21,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -393,24 +389,458 @@ public class WifiNetworkHistory {
         });
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:247:0x05c1 A:{Catch:{ EOFException -> 0x05b9, FileNotFoundException -> 0x05b7, NumberFormatException -> 0x05b5, IOException -> 0x05b3 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:237:0x05af A:{SYNTHETIC, Splitter: B:237:0x05af} */
-    /* JADX WARNING: Missing block: B:159:0x02d9, code:
+    /* JADX WARNING: Removed duplicated region for block: B:250:0x05c1 A:{Catch:{ EOFException -> 0x05b9, FileNotFoundException -> 0x05b7, NumberFormatException -> 0x05b5, IOException -> 0x05b3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:240:0x05af A:{SYNTHETIC, Splitter:B:240:0x05af} */
+    /* JADX WARNING: Missing block: B:148:0x02ab, code skipped:
+            r9 = -1;
+     */
+    /* JADX WARNING: Missing block: B:149:0x02ac, code skipped:
+            switch(r9) {
+                case 0: goto L_0x0564;
+                case 1: goto L_0x054b;
+                case 2: goto L_0x0532;
+                case 3: goto L_0x0523;
+                case 4: goto L_0x0510;
+                case 5: goto L_0x04fd;
+                case 6: goto L_0x04ea;
+                case 7: goto L_0x04d7;
+                case 8: goto L_0x04c4;
+                case 9: goto L_0x04b5;
+                case 10: goto L_0x04a6;
+                case 11: goto L_0x0493;
+                case 12: goto L_0x0480;
+                case 13: goto L_0x046d;
+                case 14: goto L_0x045a;
+                case 15: goto L_0x0447;
+                case 16: goto L_0x0434;
+                case 17: goto L_0x0421;
+                case 18: goto L_0x040e;
+                case 19: goto L_0x03fb;
+                case 20: goto L_0x03e8;
+                case android.hardware.wifi.supplicant.V1_0.ISupplicantStaIfaceCallback.ReasonCode.UNSUPPORTED_RSN_IE_VERSION :int: goto L_0x03d9;
+                case 22: goto L_0x03c2;
+                case 23: goto L_0x03ae;
+                case 24: goto L_0x039e;
+                case 25: goto L_0x038a;
+                case android.hardware.wifi.supplicant.V1_0.ISupplicantStaIfaceCallback.ReasonCode.TDLS_TEARDOWN_UNSPECIFIED :int: goto L_0x0366;
+                case 27: goto L_0x0347;
+                case 28: goto L_0x0333;
+                case 29: goto L_0x0321;
+                case 30: goto L_0x0314;
+                case 31: goto L_0x02df;
+                case 32: goto L_0x02cd;
+                case 33: goto L_0x02ca;
+                case 34: goto L_0x02c7;
+                case 35: goto L_0x02c0;
+                case android.hardware.wifi.supplicant.V1_0.ISupplicantStaIfaceCallback.ReasonCode.STA_LEAVING :int: goto L_0x02b9;
+                case 37: goto L_0x02b1;
+                default: goto L_0x02af;
+            };
+     */
+    /* JADX WARNING: Missing block: B:151:0x02b1, code skipped:
+            r8.setHasEverConnected(java.lang.Boolean.parseBoolean(r12));
+     */
+    /* JADX WARNING: Missing block: B:152:0x02b9, code skipped:
+            r0.shared = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:153:0x02c0, code skipped:
+            r0.userApproved = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:154:0x02c7, code skipped:
+            r0.lastUpdateName = r12;
+     */
+    /* JADX WARNING: Missing block: B:155:0x02ca, code skipped:
+            r0.creatorName = r12;
+     */
+    /* JADX WARNING: Missing block: B:157:0x02d1, code skipped:
+            if (android.text.TextUtils.isEmpty(r12) != false) goto L_0x02d9;
+     */
+    /* JADX WARNING: Missing block: B:160:?, code skipped:
+            r32.add(r12);
+     */
+    /* JADX WARNING: Missing block: B:161:0x02d9, code skipped:
             r9 = r32;
      */
-    /* JADX WARNING: Missing block: B:160:0x02db, code:
+    /* JADX WARNING: Missing block: B:162:0x02db, code skipped:
             r25 = r5;
+     */
+    /* JADX WARNING: Missing block: B:163:0x02df, code skipped:
+            r9 = r32;
+     */
+    /* JADX WARNING: Missing block: B:164:0x02e1, code skipped:
+            if (r4 == null) goto L_0x0597;
+     */
+    /* JADX WARNING: Missing block: B:165:0x02e3, code skipped:
+            if (r5 == null) goto L_0x0597;
+     */
+    /* JADX WARNING: Missing block: B:167:0x02e9, code skipped:
+            if (getScanDetailCache(r0, r2) == null) goto L_0x0597;
+     */
+    /* JADX WARNING: Missing block: B:168:0x02eb, code skipped:
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            getScanDetailCache(r0, r2).put(new com.android.server.wifi.ScanDetail(android.net.wifi.WifiSsid.createFromAsciiEncoded(r5), r4, r6, r20, r7, 0, r21));
+     */
+    /* JADX WARNING: Missing block: B:169:0x0314, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+     */
+    /* JADX WARNING: Missing block: B:170:0x0321, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r7 = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:171:0x0333, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r20 = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:172:0x0347, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r4 = null;
+            r7 = 0;
+            r6 = "";
+            r8 = 0;
+            r5 = null;
+            r21 = null;
+            r20 = android.net.wifi.WifiConfiguration.INVALID_RSSI;
+     */
+    /* JADX WARNING: Missing block: B:173:0x0366, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+     */
+    /* JADX WARNING: Missing block: B:174:0x0373, code skipped:
+            if (r0.linkedConfigurations != null) goto L_0x037e;
+     */
+    /* JADX WARNING: Missing block: B:175:0x0375, code skipped:
+            r0.linkedConfigurations = new java.util.HashMap();
+     */
+    /* JADX WARNING: Missing block: B:176:0x037e, code skipped:
+            r0.linkedConfigurations.put(r5, java.lang.Integer.valueOf(-1));
+     */
+    /* JADX WARNING: Missing block: B:177:0x038a, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r8.setConnectChoiceTimestamp(java.lang.Long.parseLong(r12));
+     */
+    /* JADX WARNING: Missing block: B:178:0x039e, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r8.setConnectChoice(r12);
+     */
+    /* JADX WARNING: Missing block: B:179:0x03ae, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r8.setNetworkSelectionDisableReason(java.lang.Integer.parseInt(r12));
+     */
+    /* JADX WARNING: Missing block: B:180:0x03c2, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r11 = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:181:0x03d1, code skipped:
+            if (r11 != 1) goto L_0x03d4;
+     */
+    /* JADX WARNING: Missing block: B:182:0x03d3, code skipped:
+            r11 = 0;
+     */
+    /* JADX WARNING: Missing block: B:183:0x03d4, code skipped:
+            r8.setNetworkSelectionStatus(r11);
+     */
+    /* JADX WARNING: Missing block: B:184:0x03d9, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.peerWifiConfiguration = r12;
+     */
+    /* JADX WARNING: Missing block: B:185:0x03e8, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.lastUpdateUid = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:186:0x03fb, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.lastConnectUid = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:187:0x040e, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.numAssociation = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:188:0x0421, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.numScorerOverrideAndSwitchedNetwork = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:189:0x0434, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.numScorerOverride = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:190:0x0447, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.creatorUid = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:191:0x045a, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.useExternalScores = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:192:0x046d, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.meteredOverride = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:193:0x0480, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.meteredHint = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:194:0x0493, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.ephemeral = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:195:0x04a6, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.updateTime = r12;
+     */
+    /* JADX WARNING: Missing block: B:196:0x04b5, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.creationTime = r12;
+     */
+    /* JADX WARNING: Missing block: B:197:0x04c4, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.noInternetAccessExpected = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:198:0x04d7, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.validatedInternetAccess = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:199:0x04ea, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.numNoInternetAccessReports = java.lang.Integer.parseInt(r12);
+     */
+    /* JADX WARNING: Missing block: B:200:0x04fd, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.didSelfAdd = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:201:0x0510, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.selfAdded = java.lang.Boolean.parseBoolean(r12);
+     */
+    /* JADX WARNING: Missing block: B:202:0x0523, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+            r0.defaultGwMacAddress = r12;
+     */
+    /* JADX WARNING: Missing block: B:203:0x0532, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+     */
+    /* JADX WARNING: Missing block: B:204:0x0543, code skipped:
+            if (r5.equals("null") == false) goto L_0x0547;
+     */
+    /* JADX WARNING: Missing block: B:205:0x0545, code skipped:
+            r10 = null;
+     */
+    /* JADX WARNING: Missing block: B:206:0x0547, code skipped:
+            r10 = r5;
+     */
+    /* JADX WARNING: Missing block: B:207:0x0548, code skipped:
+            r0.FQDN = r10;
+     */
+    /* JADX WARNING: Missing block: B:208:0x054b, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+     */
+    /* JADX WARNING: Missing block: B:209:0x055c, code skipped:
+            if (r5.equals("null") == false) goto L_0x0560;
+     */
+    /* JADX WARNING: Missing block: B:210:0x055e, code skipped:
+            r10 = null;
+     */
+    /* JADX WARNING: Missing block: B:211:0x0560, code skipped:
+            r10 = r5;
+     */
+    /* JADX WARNING: Missing block: B:212:0x0561, code skipped:
+            r0.BSSID = r10;
+     */
+    /* JADX WARNING: Missing block: B:213:0x0564, code skipped:
+            r9 = r32;
+            r25 = r5;
+            r5 = r12;
+            r26 = r13;
+            r27 = r14;
+            r28 = r15;
+     */
+    /* JADX WARNING: Missing block: B:214:0x0573, code skipped:
+            if (r0.isPasspoint() == false) goto L_0x0576;
+     */
+    /* JADX WARNING: Missing block: B:216:0x0576, code skipped:
+            r10 = r5;
+     */
+    /* JADX WARNING: Missing block: B:217:0x0579, code skipped:
+            if (r0.SSID == null) goto L_0x058b;
+     */
+    /* JADX WARNING: Missing block: B:219:0x0581, code skipped:
+            if (r0.SSID.equals(r10) != false) goto L_0x058b;
+     */
+    /* JADX WARNING: Missing block: B:220:0x0583, code skipped:
+            loge("Error parsing network history file, mismatched SSIDs");
+            r0 = null;
+            r10 = null;
+     */
+    /* JADX WARNING: Missing block: B:221:0x058b, code skipped:
+            r0.SSID = r10;
+     */
+    /* JADX WARNING: Missing block: B:222:0x058e, code skipped:
+            r5 = r10;
+     */
+    /* JADX WARNING: Missing block: B:223:0x0591, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:224:0x0593, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:241:?, code skipped:
+            r3.close();
+     */
+    /* JADX WARNING: Missing block: B:242:0x05b3, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:243:0x05b5, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:244:0x05b7, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:246:0x05bb, code skipped:
+            r0 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:249:?, code skipped:
+            r5.addSuppressed(r0);
+     */
+    /* JADX WARNING: Missing block: B:250:0x05c1, code skipped:
+            r3.close();
+     */
+    /* JADX WARNING: Missing block: B:272:?, code skipped:
+            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void readNetworkHistory(Map<String, WifiConfiguration> configs, Map<Integer, ScanDetailCache> scanDetailCaches, Set<String> deletedEphemeralSSIDs) {
         Throwable th;
         Throwable th2;
         Throwable th3;
-        FileNotFoundException e;
         String str;
         StringBuilder stringBuilder;
-        NumberFormatException e2;
-        IOException e3;
         Map<Integer, ScanDetailCache> map = scanDetailCaches;
         Set<String> set;
         try {
@@ -436,12 +866,11 @@ public class WifiNetworkHistory {
                         int status2;
                         String key = line.substring(0, colon).trim();
                         String value = line.substring(colon + 1).trim();
-                        String str2;
                         if (key.equals(CONFIG_KEY)) {
                             config = (WifiConfiguration) configs.get(value);
                             StringBuilder stringBuilder2;
                             if (config == null) {
-                                str2 = TAG;
+                                String str2 = TAG;
                                 stringBuilder2 = new StringBuilder();
                                 status2 = status;
                                 stringBuilder2.append("readNetworkHistory didnt find netid for hash=");
@@ -467,12 +896,11 @@ public class WifiNetworkHistory {
                                 set = deletedEphemeralSSIDs;
                             }
                         } else {
-                            String str4;
                             Map<String, WifiConfiguration> map2 = configs;
                             status2 = status;
                             if (config != null) {
-                                Object obj;
                                 status = config.getNetworkSelectionStatus();
+                                Object obj;
                                 switch (key.hashCode()) {
                                     case -1946896213:
                                         if (key.equals(USER_APPROVED_KEY)) {
@@ -665,405 +1093,51 @@ public class WifiNetworkHistory {
                                             break;
                                         }
                                     default:
-                                        obj = -1;
-                                        break;
-                                }
-                                String str5;
-                                int i;
-                                String str6;
-                                switch (obj) {
-                                    case null:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        ssid = value;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        if (!config.isPasspoint()) {
-                                            str2 = ssid;
-                                            if (config.SSID == null || config.SSID.equals(str2)) {
-                                                config.SSID = str2;
-                                            } else {
-                                                loge("Error parsing network history file, mismatched SSIDs");
-                                                config = null;
-                                                str2 = null;
-                                            }
-                                            ssid = str2;
-                                            break;
-                                        }
-                                        break;
-                                    case 1:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        ssid = value;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.BSSID = ssid.equals("null") ? null : ssid;
-                                        break;
-                                    case 2:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        ssid = value;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.FQDN = ssid.equals("null") ? null : ssid;
-                                        break;
-                                    case 3:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.defaultGwMacAddress = value;
-                                        break;
-                                    case 4:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.selfAdded = Boolean.parseBoolean(value);
-                                        break;
-                                    case 5:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.didSelfAdd = Boolean.parseBoolean(value);
-                                        break;
-                                    case 6:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.numNoInternetAccessReports = Integer.parseInt(value);
-                                        break;
-                                    case 7:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.validatedInternetAccess = Boolean.parseBoolean(value);
-                                        break;
-                                    case 8:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.noInternetAccessExpected = Boolean.parseBoolean(value);
-                                        break;
-                                    case 9:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.creationTime = value;
-                                        break;
-                                    case 10:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.updateTime = value;
-                                        break;
-                                    case 11:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.ephemeral = Boolean.parseBoolean(value);
-                                        break;
-                                    case 12:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.meteredHint = Boolean.parseBoolean(value);
-                                        break;
-                                    case 13:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.meteredOverride = Integer.parseInt(value);
-                                        break;
-                                    case 14:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.useExternalScores = Boolean.parseBoolean(value);
-                                        break;
-                                    case 15:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.creatorUid = Integer.parseInt(value);
-                                        break;
-                                    case 16:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.numScorerOverride = Integer.parseInt(value);
-                                        break;
-                                    case 17:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.numScorerOverrideAndSwitchedNetwork = Integer.parseInt(value);
-                                        break;
-                                    case 18:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.numAssociation = Integer.parseInt(value);
-                                        break;
-                                    case 19:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.lastConnectUid = Integer.parseInt(value);
-                                        break;
-                                    case 20:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.lastUpdateUid = Integer.parseInt(value);
-                                        break;
-                                    case ReasonCode.UNSUPPORTED_RSN_IE_VERSION /*21*/:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        config.peerWifiConfiguration = value;
-                                        break;
-                                    case 22:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        int networkStatusValue = Integer.parseInt(value);
-                                        if (networkStatusValue == 1) {
-                                            networkStatusValue = 0;
-                                        }
-                                        status.setNetworkSelectionStatus(networkStatusValue);
-                                        break;
-                                    case 23:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        status.setNetworkSelectionDisableReason(Integer.parseInt(value));
-                                        break;
-                                    case 24:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        status.setConnectChoice(value);
-                                        break;
-                                    case 25:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        status.setConnectChoiceTimestamp(Long.parseLong(value));
-                                        break;
-                                    case ReasonCode.TDLS_TEARDOWN_UNSPECIFIED /*26*/:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        ssid = value;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        if (config.linkedConfigurations != null) {
-                                            config.linkedConfigurations.put(ssid, Integer.valueOf(-1));
-                                            break;
-                                        } else {
-                                            config.linkedConfigurations = new HashMap();
-                                            break;
-                                        }
-                                    case 27:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        bssid = null;
-                                        freq = 0;
-                                        caps = "";
-                                        status = 0;
-                                        ssid = null;
-                                        seen = null;
-                                        rssi = WifiConfiguration.INVALID_RSSI;
-                                        break;
-                                    case 28:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        rssi = Integer.parseInt(value);
-                                        break;
-                                    case 29:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        freq = Integer.parseInt(value);
-                                        break;
-                                    case 30:
-                                        set = deletedEphemeralSSIDs;
-                                        str4 = ssid;
-                                        ssid = value;
-                                        str5 = key;
-                                        i = colon;
-                                        str6 = line;
-                                        break;
-                                    case 31:
-                                        set = deletedEphemeralSSIDs;
-                                        if (!(bssid == null || ssid == null || getScanDetailCache(config, map) == null)) {
-                                            str4 = ssid;
-                                            ssid = value;
-                                            getScanDetailCache(config, map).put(new ScanDetail(WifiSsid.createFromAsciiEncoded(ssid), bssid, caps, rssi, freq, 0, seen));
-                                            break;
-                                        }
-                                    case 32:
-                                        if (!TextUtils.isEmpty(value)) {
-                                            try {
-                                                deletedEphemeralSSIDs.add(value);
-                                                break;
-                                            } catch (Throwable th4) {
-                                                th = th4;
-                                                th2 = th;
-                                                th3 = null;
-                                                if (th3 == null) {
-                                                    try {
-                                                        in.close();
-                                                    } catch (Throwable th5) {
-                                                        try {
-                                                            th3.addSuppressed(th5);
-                                                        } catch (EOFException e4) {
-                                                            return;
-                                                        } catch (FileNotFoundException e5) {
-                                                            e = e5;
-                                                            str = TAG;
-                                                            stringBuilder = new StringBuilder();
-                                                            stringBuilder.append("readNetworkHistory: no config file, ");
-                                                            stringBuilder.append(e);
-                                                            Log.i(str, stringBuilder.toString());
-                                                        } catch (NumberFormatException e6) {
-                                                            e2 = e6;
-                                                            str = TAG;
-                                                            stringBuilder = new StringBuilder();
-                                                            stringBuilder.append("readNetworkHistory: failed to parse, ");
-                                                            stringBuilder.append(e2);
-                                                            Log.e(str, stringBuilder.toString(), e2);
-                                                        } catch (IOException e7) {
-                                                            e3 = e7;
-                                                            str = TAG;
-                                                            stringBuilder = new StringBuilder();
-                                                            stringBuilder.append("readNetworkHistory: failed to read, ");
-                                                            stringBuilder.append(e3);
-                                                            Log.e(str, stringBuilder.toString(), e3);
-                                                        }
-                                                    }
-                                                }
-                                                in.close();
-                                                throw th2;
-                                            }
-                                        }
-                                        break;
-                                    case 33:
-                                        config.creatorName = value;
-                                        break;
-                                    case 34:
-                                        config.lastUpdateName = value;
-                                        break;
-                                    case 35:
-                                        config.userApproved = Integer.parseInt(value);
-                                        break;
-                                    case ReasonCode.STA_LEAVING /*36*/:
-                                        config.shared = Boolean.parseBoolean(value);
-                                        break;
-                                    case 37:
-                                        status.setHasEverConnected(Boolean.parseBoolean(value));
-                                        break;
                                 }
                             }
                             set = deletedEphemeralSSIDs;
-                            str4 = ssid;
+                            String str4 = ssid;
                             status = status2;
                             ssid = str4;
                         }
                         status = status2;
                     }
                 }
-            } catch (Throwable th6) {
-                th5 = th6;
+            } catch (Throwable th4) {
+                th = th4;
                 set = deletedEphemeralSSIDs;
-                th2 = th5;
+                th2 = th;
                 th3 = null;
                 if (th3 == null) {
                 }
                 throw th2;
             }
-        } catch (EOFException e8) {
+        } catch (EOFException e) {
             set = deletedEphemeralSSIDs;
-        } catch (FileNotFoundException e9) {
-            e = e9;
+        } catch (FileNotFoundException e2) {
+            FileNotFoundException e3 = e2;
             set = deletedEphemeralSSIDs;
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append("readNetworkHistory: no config file, ");
-            stringBuilder.append(e);
+            stringBuilder.append(e3);
             Log.i(str, stringBuilder.toString());
-        } catch (NumberFormatException e10) {
-            e2 = e10;
+        } catch (NumberFormatException e4) {
+            NumberFormatException e5 = e4;
             set = deletedEphemeralSSIDs;
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append("readNetworkHistory: failed to parse, ");
-            stringBuilder.append(e2);
-            Log.e(str, stringBuilder.toString(), e2);
-        } catch (IOException e11) {
-            e3 = e11;
+            stringBuilder.append(e5);
+            Log.e(str, stringBuilder.toString(), e5);
+        } catch (IOException e6) {
+            IOException e7 = e6;
             set = deletedEphemeralSSIDs;
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append("readNetworkHistory: failed to read, ");
-            stringBuilder.append(e3);
-            Log.e(str, stringBuilder.toString(), e3);
+            stringBuilder.append(e7);
+            Log.e(str, stringBuilder.toString(), e7);
         }
     }
 

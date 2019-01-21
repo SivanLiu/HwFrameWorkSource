@@ -1,11 +1,13 @@
 package com.android.server.pm;
 
+import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.ContentProviderHolder;
 import android.app.IActivityManager;
 import android.content.Context;
 import android.content.IContentProvider;
 import android.content.Intent;
+import android.content.pm.UserInfo;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -92,10 +94,34 @@ public final class HwAdbManager {
         }
     }
 
+    private static boolean isRepairMode() {
+        IActivityManager am = ActivityManager.getService();
+        boolean z = false;
+        if (am != null) {
+            try {
+                UserInfo userInfo = am.getCurrentUser();
+                if (userInfo != null && userInfo.isRepairMode()) {
+                    z = true;
+                }
+                return z;
+            } catch (RemoteException e) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("check isRepairMode error:");
+                stringBuilder.append(e.getMessage());
+                Log.e(str, stringBuilder.toString());
+            }
+        }
+        return false;
+    }
+
     public static boolean autoPermitInstall() {
         String deviceRootValue = SystemProperties.get("ro.adb.secure");
         if (BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS.equals(deviceRootValue) || "0".equals(deviceRootValue)) {
             Log.v(TAG, "autoPermitInstall root device!");
+            return true;
+        } else if (isRepairMode()) {
+            Log.v(TAG, "autoPermitInstall in repair mode!");
             return true;
         } else if (checkSwitchIsOpen()) {
             return false;

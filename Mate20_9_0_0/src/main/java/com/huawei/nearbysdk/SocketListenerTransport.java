@@ -275,28 +275,28 @@ public class SocketListenerTransport extends Stub {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter: B:107:0x01b1} */
-        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter: B:96:0x0186} */
-        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter: B:85:0x014c} */
-        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter: B:114:0x01d3} */
-        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter: B:107:0x01b1} */
-        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter: B:96:0x0186} */
-        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter: B:85:0x014c} */
-        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter: B:114:0x01d3} */
-        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter: B:107:0x01b1} */
-        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter: B:96:0x0186} */
-        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter: B:85:0x014c} */
-        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter: B:114:0x01d3} */
-        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter: B:107:0x01b1} */
-        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter: B:96:0x0186} */
-        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter: B:85:0x014c} */
-        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter: B:114:0x01d3} */
-        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter: B:96:0x0186} */
-        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter: B:85:0x014c} */
-        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter: B:114:0x01d3} */
-        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter: B:107:0x01b1} */
-        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter: B:96:0x0186} */
-        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter: B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter:B:107:0x01b1} */
+        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter:B:96:0x0186} */
+        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter:B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter:B:107:0x01b1} */
+        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter:B:96:0x0186} */
+        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter:B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter:B:114:0x01d3} */
+        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter:B:107:0x01b1} */
+        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter:B:96:0x0186} */
+        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter:B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter:B:114:0x01d3} */
+        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter:B:107:0x01b1} */
+        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter:B:96:0x0186} */
+        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter:B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter:B:114:0x01d3} */
+        /* JADX WARNING: Removed duplicated region for block: B:107:0x01b1 A:{SYNTHETIC, Splitter:B:107:0x01b1} */
+        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter:B:96:0x0186} */
+        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter:B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter:B:114:0x01d3} */
+        /* JADX WARNING: Removed duplicated region for block: B:96:0x0186 A:{SYNTHETIC, Splitter:B:96:0x0186} */
+        /* JADX WARNING: Removed duplicated region for block: B:85:0x014c A:{SYNTHETIC, Splitter:B:85:0x014c} */
+        /* JADX WARNING: Removed duplicated region for block: B:114:0x01d3 A:{SYNTHETIC, Splitter:B:114:0x01d3} */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private NearbySocket createTCPNearbySocket(int timeOut) {
             NearbyDevice nearbyDevice;
@@ -314,11 +314,11 @@ public class SocketListenerTransport extends Stub {
             int i2;
             Object obj;
             Throwable th2;
-            int i3;
-            int i4;
             IOException iOException;
             String str2;
             StringBuilder stringBuilder2;
+            int i3;
+            int i4;
             int i5 = -1;
             ServerSocket serverSocket = null;
             int localPort = 0;
@@ -426,6 +426,16 @@ public class SocketListenerTransport extends Stub {
                         i = businessId;
                         HwLog.e(SocketListenerTransport.TAG, "createTCPNearbySocket socket(1.0) connect timeout!");
                         if (serverSocket != null) {
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e42) {
+                                iOException = e42;
+                                str2 = SocketListenerTransport.TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("serverSocket close fail: ");
+                                stringBuilder2.append(e42);
+                                HwLog.e(str2, stringBuilder2.toString());
+                            }
                         }
                         return null;
                     } catch (RemoteException e13) {
@@ -439,19 +449,39 @@ public class SocketListenerTransport extends Stub {
                         stringBuilder.append(e3);
                         HwLog.e(str, stringBuilder.toString());
                         if (serverSocket != null) {
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e422) {
+                                iOException = e422;
+                                str2 = SocketListenerTransport.TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("serverSocket close fail: ");
+                                stringBuilder2.append(e422);
+                                HwLog.e(str2, stringBuilder2.toString());
+                            }
                         }
                         return null;
                     } catch (IOException e14) {
-                        e4 = e14;
+                        e422 = e14;
                         socket = nearbyDevice;
                         i = businessId;
-                        e5 = e4;
+                        e5 = e422;
                         str = SocketListenerTransport.TAG;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("createTCPNearbySocket IOException ");
                         stringBuilder.append(e5);
                         HwLog.e(str, stringBuilder.toString());
                         if (serverSocket != null) {
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e4222) {
+                                iOException = e4222;
+                                str2 = SocketListenerTransport.TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("serverSocket close fail: ");
+                                stringBuilder2.append(e4222);
+                                HwLog.e(str2, stringBuilder2.toString());
+                            }
                         }
                         return null;
                     } catch (Throwable th5) {
@@ -461,6 +491,15 @@ public class SocketListenerTransport extends Stub {
                         localPort = i5;
                         th2 = th;
                         if (serverSocket != null) {
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e42222) {
+                                IOException iOException2 = e42222;
+                                StringBuilder stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("serverSocket close fail: ");
+                                stringBuilder3.append(e42222);
+                                HwLog.e(SocketListenerTransport.TAG, stringBuilder3.toString());
+                            }
                         }
                         throw th2;
                     }
@@ -484,9 +523,9 @@ public class SocketListenerTransport extends Stub {
                     }
                     return null;
                 } catch (IOException e17) {
-                    e4 = e17;
+                    e42222 = e17;
                     socket = nearbyDevice;
-                    e5 = e4;
+                    e5 = e42222;
                     str = SocketListenerTransport.TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("createTCPNearbySocket IOException ");
@@ -512,13 +551,13 @@ public class SocketListenerTransport extends Stub {
                         HwLog.e(SocketListenerTransport.TAG, "accept after..");
                         try {
                             serverSocket.close();
-                        } catch (IOException e42) {
-                            IOException iOException2 = e42;
+                        } catch (IOException e422222) {
+                            IOException iOException3 = e422222;
                             String str3 = SocketListenerTransport.TAG;
-                            StringBuilder stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("serverSocket close fail: ");
-                            stringBuilder3.append(e42);
-                            HwLog.e(str3, stringBuilder3.toString());
+                            StringBuilder stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append("serverSocket close fail: ");
+                            stringBuilder4.append(e422222);
+                            HwLog.e(str3, stringBuilder4.toString());
                         }
                         TCPNearbySocket result = null;
                         try {
@@ -526,10 +565,10 @@ public class SocketListenerTransport extends Stub {
                             result.setSecurityType(this.mInnerRequest.getSecurityType());
                         } catch (RemoteException e22) {
                             String str4 = SocketListenerTransport.TAG;
-                            StringBuilder stringBuilder4 = new StringBuilder();
-                            stringBuilder4.append("RemoteException: ");
-                            stringBuilder4.append(e22);
-                            HwLog.e(str4, stringBuilder4.toString());
+                            StringBuilder stringBuilder5 = new StringBuilder();
+                            stringBuilder5.append("RemoteException: ");
+                            stringBuilder5.append(e22);
+                            HwLog.e(str4, stringBuilder5.toString());
                         }
                         if (result != null) {
                             result.setSocket(localPort);
@@ -557,12 +596,12 @@ public class SocketListenerTransport extends Stub {
                         }
                         return null;
                     } catch (IOException e20) {
-                        e42 = e20;
+                        e422222 = e20;
                         socket = nearbyDevice;
                         i = businessId;
                         i2 = businessType;
                         i3 = channelId;
-                        e5 = e42;
+                        e5 = e422222;
                         str = SocketListenerTransport.TAG;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("createTCPNearbySocket IOException ");
@@ -607,11 +646,11 @@ public class SocketListenerTransport extends Stub {
                     }
                     return null;
                 } catch (IOException e24) {
-                    e42 = e24;
+                    e422222 = e24;
                     socket = nearbyDevice;
                     i = businessId;
                     i2 = businessType;
-                    e5 = e42;
+                    e5 = e422222;
                     str = SocketListenerTransport.TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("createTCPNearbySocket IOException ");
@@ -636,16 +675,6 @@ public class SocketListenerTransport extends Stub {
                 i4 = timeOut;
                 HwLog.e(SocketListenerTransport.TAG, "createTCPNearbySocket socket(1.0) connect timeout!");
                 if (serverSocket != null) {
-                    try {
-                        serverSocket.close();
-                    } catch (IOException e422) {
-                        iOException = e422;
-                        str2 = SocketListenerTransport.TAG;
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("serverSocket close fail: ");
-                        stringBuilder2.append(e422);
-                        HwLog.e(str2, stringBuilder2.toString());
-                    }
                 }
                 return null;
             } catch (RemoteException e26) {
@@ -658,38 +687,18 @@ public class SocketListenerTransport extends Stub {
                 stringBuilder.append(e3);
                 HwLog.e(str, stringBuilder.toString());
                 if (serverSocket != null) {
-                    try {
-                        serverSocket.close();
-                    } catch (IOException e4222) {
-                        iOException = e4222;
-                        str2 = SocketListenerTransport.TAG;
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("serverSocket close fail: ");
-                        stringBuilder2.append(e4222);
-                        HwLog.e(str2, stringBuilder2.toString());
-                    }
                 }
                 return null;
             } catch (IOException e27) {
-                e4222 = e27;
+                e422222 = e27;
                 i4 = timeOut;
-                e5 = e4222;
+                e5 = e422222;
                 str = SocketListenerTransport.TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("createTCPNearbySocket IOException ");
                 stringBuilder.append(e5);
                 HwLog.e(str, stringBuilder.toString());
                 if (serverSocket != null) {
-                    try {
-                        serverSocket.close();
-                    } catch (IOException e42222) {
-                        iOException = e42222;
-                        str2 = SocketListenerTransport.TAG;
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("serverSocket close fail: ");
-                        stringBuilder2.append(e42222);
-                        HwLog.e(str2, stringBuilder2.toString());
-                    }
                 }
                 return null;
             } catch (Throwable th9) {
@@ -700,15 +709,6 @@ public class SocketListenerTransport extends Stub {
                 localPort = i5;
                 th2 = th;
                 if (serverSocket != null) {
-                    try {
-                        serverSocket.close();
-                    } catch (IOException e422222) {
-                        IOException iOException3 = e422222;
-                        StringBuilder stringBuilder5 = new StringBuilder();
-                        stringBuilder5.append("serverSocket close fail: ");
-                        stringBuilder5.append(e422222);
-                        HwLog.e(SocketListenerTransport.TAG, stringBuilder5.toString());
-                    }
                 }
                 throw th2;
             }

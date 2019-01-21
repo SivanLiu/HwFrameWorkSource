@@ -89,7 +89,7 @@ public class ProtectedPKIMessage {
                 outputStream.write(new DERSequence(aSN1EncodableVector).getEncoded(ASN1Encoding.DER));
                 outputStream.close();
                 return Arrays.areEqual(build.getMac(), this.pkiMessage.getProtection().getBytes());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to verify MAC: ");
                 stringBuilder.append(e.getMessage());
@@ -102,7 +102,7 @@ public class ProtectedPKIMessage {
     public boolean verify(ContentVerifierProvider contentVerifierProvider) throws CMPException {
         try {
             return verifySignature(this.pkiMessage.getProtection().getBytes(), contentVerifierProvider.get(this.pkiMessage.getHeader().getProtectionAlg()));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to verify signature: ");
             stringBuilder.append(e.getMessage());

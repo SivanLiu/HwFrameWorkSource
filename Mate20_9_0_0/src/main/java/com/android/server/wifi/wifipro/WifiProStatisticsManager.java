@@ -1,6 +1,7 @@
 package com.android.server.wifi.wifipro;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -9,6 +10,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import com.android.server.wifi.HwQoE.HidataWechatTraffic;
 import com.android.server.wifi.HwQoE.HwWifiGameNetChrInfo;
+import com.android.server.wifi.HwWifiCHRService;
+import com.android.server.wifi.HwWifiServiceFactory;
 import com.android.server.wifipro.WifiProCHRManager;
 import com.android.server.wifipro.WifiProCommonUtils;
 import java.text.SimpleDateFormat;
@@ -200,7 +203,7 @@ public class WifiProStatisticsManager {
         }
 
         public void handleMessage(Message msg) {
-            boolean z = false;
+            int i = 0;
             short wifiproState;
             WifiProStatisticsRecord access$400;
             WifiProStatisticsRecord access$4002;
@@ -441,13 +444,13 @@ public class WifiProStatisticsManager {
                         access$4002 = WifiProStatisticsManager.this.mNewestStatRcd;
                         access$4002.mNotInetUserManualRI = (short) (access$4002.mNotInetUserManualRI + 1);
                         if (WifiProStatisticsManager.this.mGetMobileInfoCallBack != null) {
-                            z = WifiProStatisticsManager.this.mGetMobileInfoCallBack.getTotalRoMobileData();
+                            i = WifiProStatisticsManager.this.mGetMobileInfoCallBack.getTotalRoMobileData();
                         }
-                        boolean notInetRoDataKB = z;
+                        roReason = i;
                         access$400 = WifiProStatisticsManager.this.mNewestStatRcd;
                         access$400.mTotBtnRICount = (short) (access$400.mTotBtnRICount + 1);
                         access$400 = WifiProStatisticsManager.this.mNewestStatRcd;
-                        access$400.mRO_TotMobileData += notInetRoDataKB;
+                        access$400.mRO_TotMobileData += roReason;
                         WifiProStatisticsManager.this.mDataBaseManager.addOrUpdateChrStatRcd(WifiProStatisticsManager.this.mNewestStatRcd);
                         return;
                     }
@@ -786,28 +789,27 @@ public class WifiProStatisticsManager {
     }
 
     private boolean uploadStatisticsCHREvent(WifiProStatisticsRecord statRecord) {
-        WifiProStatisticsRecord wifiProStatisticsRecord = statRecord;
         logd("uploadStatisticsCHREvent enter.");
-        if (wifiProStatisticsRecord == null || this.mDataBaseManager == null || this.mSimpleDateFmt == null || this.mWiFiCHRMgr == null) {
+        if (statRecord == null || this.mDataBaseManager == null || this.mSimpleDateFmt == null || this.mWiFiCHRMgr == null) {
             loge("uploadStatisticsCHREvent null error.");
             return false;
         } else if (this.mNewestStatRcd.mLastStatUploadTime == null || this.mNewestStatRcd.mLastWifiproStateUpdateTime == null) {
             loge("last upload time error, give up upload.");
-            resetStatRecord(wifiProStatisticsRecord, "time record null");
+            resetStatRecord(statRecord, "time record null");
             return false;
         } else {
             Date currDate = new Date();
             String currDateStr = this.mSimpleDateFmt.format(currDate);
             long statIntervalMinutes = calcTimeInterval(this.mNewestStatRcd.mLastStatUploadTime, currDate);
             if (statIntervalMinutes <= -1) {
-                resetStatRecord(wifiProStatisticsRecord, "LastStatUploadTime time record invalid");
+                resetStatRecord(statRecord, "LastStatUploadTime time record invalid");
                 return false;
             }
             statIntervalMinutes /= HidataWechatTraffic.MIN_VALID_TIME;
-            if (wifiProStatisticsRecord.mLastWifiproState == (short) 1) {
+            if (statRecord.mLastWifiproState == (short) 1) {
                 long enableTotTime = calcTimeInterval(this.mNewestStatRcd.mLastWifiproStateUpdateTime, currDate);
                 if (enableTotTime <= -1) {
-                    resetStatRecord(wifiProStatisticsRecord, "LastWifiproStateUpdateTime time record invalid");
+                    resetStatRecord(statRecord, "LastWifiproStateUpdateTime time record invalid");
                     return false;
                 }
                 enableTotTime /= 1000;
@@ -817,81 +819,71 @@ public class WifiProStatisticsManager {
                 stringBuilder.append(", last en minutes:");
                 stringBuilder.append(enableTotTime / 60);
                 logd(stringBuilder.toString());
-                wifiProStatisticsRecord.mEnableTotTime = (int) (((long) wifiProStatisticsRecord.mEnableTotTime) + enableTotTime);
+                statRecord.mEnableTotTime = (int) (((long) statRecord.mEnableTotTime) + enableTotTime);
             }
-            long enableTotTime2 = (long) (wifiProStatisticsRecord.mEnableTotTime / SECONDS_OF_ONE_MINUTE);
-            Date date;
-            long j;
-            String currDate2;
-            if (statIntervalMinutes == 0 || statIntervalMinutes > 2147483632) {
-                date = null;
-                j = enableTotTime2;
-            } else if (enableTotTime2 > 2147483632) {
-                Date date2 = currDate;
-                currDate2 = currDateStr;
-                date = null;
-                j = enableTotTime2;
+            long enableTotTime2 = (long) (statRecord.mEnableTotTime / SECONDS_OF_ONE_MINUTE);
+            if (statIntervalMinutes == 0 || statIntervalMinutes > 2147483632 || enableTotTime2 > 2147483632) {
+                resetStatRecord(statRecord, "interval time abnormal data record invalid");
+                return false;
+            }
+            int historyTotWifiHours;
+            if (statIntervalMinutes < enableTotTime2) {
+                statIntervalMinutes = enableTotTime2;
+            }
+            if (enableTotTime2 != 0) {
+                statRecord.mHistoryTotWifiConnHour += statRecord.mTotWifiConnectTime;
+                historyTotWifiHours = statRecord.mHistoryTotWifiConnHour / 3600;
+                if (this.mGetApRecordCountCallBack != null) {
+                    this.mGetApRecordCountCallBack.statisticApInfoRecord();
+                    statRecord.mTotAPRecordCnt = (short) this.mGetApRecordCountCallBack.getTotRecordCount();
+                    statRecord.mTotHomeAPCnt = (short) this.mGetApRecordCountCallBack.getHomeApRecordCount();
+                }
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("upload stat CHR, curr date:");
+                stringBuilder2.append(currDateStr);
+                stringBuilder2.append(", interval mins:");
+                stringBuilder2.append(statIntervalMinutes);
+                stringBuilder2.append(", tot ap record:");
+                stringBuilder2.append(statRecord.mTotAPRecordCnt);
+                stringBuilder2.append(", tot home ap record:");
+                stringBuilder2.append(statRecord.mTotHomeAPCnt);
+                logi(stringBuilder2.toString());
+                statRecord.mWifiproStateAtReportTime = getWifiproState();
+                Bundle wifiproStatPara = new Bundle();
+                wifiproStatPara.putInt("mWifiOobInitState", statRecord.mWifiOobInitState);
+                wifiproStatPara.putInt("mWifiproOpenCount", statRecord.mWifiproOpenCount);
+                wifiproStatPara.putInt("mCellAutoOpenCount", statRecord.mCellAutoOpenCount);
+                wifiproStatPara.putInt("mWifiToWifiSuccCount", statRecord.mWifiToWifiSuccCount);
+                wifiproStatPara.putInt("mTotalBQE_BadROC", statRecord.mTotalBQE_BadROC);
+                wifiproStatPara.putInt("mManualBackROC", statRecord.mManualBackROC);
+                wifiproStatPara.putInt("mSelectNotInetAPCount", statRecord.mSelectNotInetAPCount);
+                wifiproStatPara.putInt("mNotInetWifiToWifiCount", statRecord.mNotInetWifiToWifiCount);
+                wifiproStatPara.putInt("mReopenWifiRICount", statRecord.mReopenWifiRICount);
+                wifiproStatPara.putInt("mBG_FreeInetOkApCnt", statRecord.mBG_FreeInetOkApCnt);
+                wifiproStatPara.putInt("mBG_FishingApCnt", statRecord.mBG_FishingApCnt);
+                wifiproStatPara.putInt("mBG_FreeNotInetApCnt", statRecord.mBG_FreeNotInetApCnt);
+                wifiproStatPara.putInt("mBG_PortalApCnt", statRecord.mBG_PortalApCnt);
+                wifiproStatPara.putInt("mBG_FailedCnt", statRecord.mBG_FailedCnt);
+                wifiproStatPara.putInt("mBG_UserSelApFishingCnt", statRecord.mBG_UserSelApFishingCnt);
+                wifiproStatPara.putInt("mBG_UserSelNoInetCnt", statRecord.mBG_UserSelNoInetCnt);
+                wifiproStatPara.putInt("mBG_UserSelPortalCnt", statRecord.mBG_UserSelPortalCnt);
+                wifiproStatPara.putInt("mManualConnBlockPortalCount", statRecord.mManualConnBlockPortalCount);
+                HwWifiCHRService chrInstance = HwWifiServiceFactory.getHwWifiCHRService();
+                if (chrInstance != null) {
+                    chrInstance.uploadDFTEvent(909002032, wifiproStatPara);
+                }
             } else {
-                int historyTotWifiHours;
-                if (statIntervalMinutes < enableTotTime2) {
-                    statIntervalMinutes = enableTotTime2;
-                }
-                String currDateStr2;
-                if (enableTotTime2 != 0) {
-                    wifiProStatisticsRecord.mHistoryTotWifiConnHour += wifiProStatisticsRecord.mTotWifiConnectTime;
-                    historyTotWifiHours = wifiProStatisticsRecord.mHistoryTotWifiConnHour / 3600;
-                    if (this.mGetApRecordCountCallBack != null) {
-                        this.mGetApRecordCountCallBack.statisticApInfoRecord();
-                        wifiProStatisticsRecord.mTotAPRecordCnt = (short) this.mGetApRecordCountCallBack.getTotRecordCount();
-                        wifiProStatisticsRecord.mTotHomeAPCnt = (short) this.mGetApRecordCountCallBack.getHomeApRecordCount();
-                    }
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("upload stat CHR, curr date:");
-                    stringBuilder2.append(currDateStr);
-                    stringBuilder2.append(", interval mins:");
-                    stringBuilder2.append(statIntervalMinutes);
-                    stringBuilder2.append(", tot ap record:");
-                    stringBuilder2.append(wifiProStatisticsRecord.mTotAPRecordCnt);
-                    stringBuilder2.append(", tot home ap record:");
-                    stringBuilder2.append(wifiProStatisticsRecord.mTotHomeAPCnt);
-                    logi(stringBuilder2.toString());
-                    wifiProStatisticsRecord.mWifiproStateAtReportTime = getWifiproState();
-                    date = null;
-                    this.mWiFiCHRMgr.updateStatParaPart1((int) statIntervalMinutes, (int) enableTotTime2, wifiProStatisticsRecord.mNoInetHandoverCount, wifiProStatisticsRecord.mPortalUnauthCount, wifiProStatisticsRecord.mWifiScoCount, wifiProStatisticsRecord.mPortalCodeParseCount, wifiProStatisticsRecord.mRcvSMS_Count, wifiProStatisticsRecord.mPortalAutoLoginCount);
-                    this.mWiFiCHRMgr.updateStatParaPart2(wifiProStatisticsRecord.mCellAutoOpenCount, wifiProStatisticsRecord.mCellAutoCloseCount, wifiProStatisticsRecord.mTotalBQE_BadROC, wifiProStatisticsRecord.mManualBackROC, wifiProStatisticsRecord.mRSSI_RO_Tot, wifiProStatisticsRecord.mRSSI_ErrRO_Tot, wifiProStatisticsRecord.mOTA_RO_Tot, wifiProStatisticsRecord.mOTA_ErrRO_Tot, wifiProStatisticsRecord.mTCP_RO_Tot);
-                    this.mWiFiCHRMgr.updateStatParaPart3(wifiProStatisticsRecord.mTCP_ErrRO_Tot, wifiProStatisticsRecord.mManualRI_TotTime, wifiProStatisticsRecord.mAutoRI_TotTime, wifiProStatisticsRecord.mAutoRI_TotCount, wifiProStatisticsRecord.mRSSI_RestoreRI_Count, wifiProStatisticsRecord.mRSSI_BetterRI_Count, wifiProStatisticsRecord.mTimerRI_Count, wifiProStatisticsRecord.mHisScoRI_Count, wifiProStatisticsRecord.mUserCancelROC);
-                    this.mWiFiCHRMgr.updateStatParaPart4(wifiProStatisticsRecord.mWifiToWifiSuccCount, wifiProStatisticsRecord.mNoInetAlarmCount, wifiProStatisticsRecord.mWifiOobInitState, wifiProStatisticsRecord.mNotAutoConnPortalCnt, wifiProStatisticsRecord.mHighDataRateStopROC, wifiProStatisticsRecord.mSelectNotInetAPCount, wifiProStatisticsRecord.mUserUseBgScanAPCount, wifiProStatisticsRecord.mPingPongCount);
-                    currDateStr2 = currDateStr;
-                    this.mWiFiCHRMgr.updateStatParaPart5(wifiProStatisticsRecord.mBQE_BadSettingCancel, wifiProStatisticsRecord.mNotInetSettingCancel, wifiProStatisticsRecord.mNotInetUserCancel, wifiProStatisticsRecord.mNotInetRestoreRI, wifiProStatisticsRecord.mNotInetUserManualRI, wifiProStatisticsRecord.mNotInetWifiToWifiCount, wifiProStatisticsRecord.mReopenWifiRICount, wifiProStatisticsRecord.mSelCSPShowDiglogCount, wifiProStatisticsRecord.mSelCSPAutoSwCount, wifiProStatisticsRecord.mSelCSPNotSwCount, wifiProStatisticsRecord.mTotBtnRICount, wifiProStatisticsRecord.mBMD_TenMNotifyCount);
-                    this.mWiFiCHRMgr.updateStatParaPart6(wifiProStatisticsRecord.mBMD_TenM_RI_Count, wifiProStatisticsRecord.mBMD_FiftyMNotifyCount, wifiProStatisticsRecord.mBMD_FiftyM_RI_Count, wifiProStatisticsRecord.mBMD_UserDelNotifyCount, wifiProStatisticsRecord.mRO_TotMobileData, wifiProStatisticsRecord.mAF_PhoneNumSuccCnt, wifiProStatisticsRecord.mAF_PhoneNumFailCnt, wifiProStatisticsRecord.mAF_PasswordSuccCnt, wifiProStatisticsRecord.mAF_PasswordFailCnt, wifiProStatisticsRecord.mAF_AutoLoginSuccCnt, wifiProStatisticsRecord.mAF_AutoLoginFailCnt);
-                    this.mWiFiCHRMgr.updateStatParaPart7(wifiProStatisticsRecord.mBG_BgRunCnt, wifiProStatisticsRecord.mBG_SettingRunCnt, wifiProStatisticsRecord.mBG_FreeInetOkApCnt, wifiProStatisticsRecord.mBG_FishingApCnt, wifiProStatisticsRecord.mBG_FreeNotInetApCnt, wifiProStatisticsRecord.mBG_PortalApCnt, wifiProStatisticsRecord.mBG_FailedCnt, wifiProStatisticsRecord.mBG_InetNotOkActiveOk, wifiProStatisticsRecord.mBG_InetOkActiveNotOk);
-                    this.mWiFiCHRMgr.updateStatParaPart8(wifiProStatisticsRecord.mBG_UserSelApFishingCnt, wifiProStatisticsRecord.mBG_ConntTimeoutCnt, wifiProStatisticsRecord.mBG_DNSFailCnt, wifiProStatisticsRecord.mBG_DHCPFailCnt, wifiProStatisticsRecord.mBG_AUTH_FailCnt, wifiProStatisticsRecord.mBG_AssocRejectCnt, wifiProStatisticsRecord.mBG_UserSelFreeInetOkCnt, wifiProStatisticsRecord.mBG_UserSelNoInetCnt, wifiProStatisticsRecord.mBG_UserSelPortalCnt);
-                    this.mWiFiCHRMgr.updateStatParaPart9(wifiProStatisticsRecord.mBG_FoundTwoMoreApCnt, wifiProStatisticsRecord.mAF_FPNSuccNotMsmCnt, wifiProStatisticsRecord.mBSG_RsGoodCnt, wifiProStatisticsRecord.mBSG_RsMidCnt, wifiProStatisticsRecord.mBSG_RsBadCnt, wifiProStatisticsRecord.mBSG_EndIn4sCnt, wifiProStatisticsRecord.mBSG_EndIn4s7sCnt, wifiProStatisticsRecord.mBSG_NotEndIn7sCnt);
-                    this.mWiFiCHRMgr.updateStatParaPart10(wifiProStatisticsRecord.mBG_NCByConnectFail, wifiProStatisticsRecord.mBG_NCByCheckFail, wifiProStatisticsRecord.mBG_NCByStateErr, wifiProStatisticsRecord.mBG_NCByUnknown, wifiProStatisticsRecord.mBQE_CNUrl1FailCount, wifiProStatisticsRecord.mBQE_CNUrl2FailCount, wifiProStatisticsRecord.mBQE_CNUrl3FailCount, wifiProStatisticsRecord.mBQE_NCNUrl1FailCount, wifiProStatisticsRecord.mBQE_NCNUrl2FailCount, wifiProStatisticsRecord.mBQE_NCNUrl3FailCount);
-                    this.mWiFiCHRMgr.updateStatParaPart11(wifiProStatisticsRecord.mBQE_ScoreUnknownCount, wifiProStatisticsRecord.mBQE_BindWlanFailCount, wifiProStatisticsRecord.mBQE_StopBqeFailCount, wifiProStatisticsRecord.mQOE_AutoRI_TotData, wifiProStatisticsRecord.mNotInet_AutoRI_TotData, wifiProStatisticsRecord.mQOE_RO_DISCONNECT_Cnt, wifiProStatisticsRecord.mQOE_RO_DISCONNECT_TotData, wifiProStatisticsRecord.mNotInetRO_DISCONNECT_Cnt, wifiProStatisticsRecord.mNotInetRO_DISCONNECT_TotData, wifiProStatisticsRecord.mTotWifiConnectTime);
-                    this.mWiFiCHRMgr.updateStatParaPart12(wifiProStatisticsRecord.mActiveCheckRS_Diff, wifiProStatisticsRecord.mNoInetAlarmOnConnCnt, wifiProStatisticsRecord.mPortalNoAutoConnCnt, wifiProStatisticsRecord.mHomeAPAddRoPeriodCnt, wifiProStatisticsRecord.mHomeAPQoeBadCnt, historyTotWifiHours, wifiProStatisticsRecord.mTotAPRecordCnt, wifiProStatisticsRecord.mTotHomeAPCnt, wifiProStatisticsRecord.mBigRTT_RO_Tot, wifiProStatisticsRecord.mBigRTT_ErrRO_Tot);
-                    this.mWiFiCHRMgr.updateStatParaPart13(wifiProStatisticsRecord.mTotalPortalConnCount, wifiProStatisticsRecord.mTotalPortalAuthSuccCount, wifiProStatisticsRecord.mManualConnBlockPortalCount, wifiProStatisticsRecord.mWifiproStateAtReportTime, wifiProStatisticsRecord.mWifiproOpenCount, wifiProStatisticsRecord.mWifiproCloseCount, wifiProStatisticsRecord.mActiveCheckRS_Same);
-                    this.mWiFiCHRMgr.updateWifiException(909002032, "NO_SUB_EVENT");
-                    currDate2 = currDateStr2;
-                } else {
-                    currDateStr2 = currDateStr;
-                    date = null;
-                    long j2 = statIntervalMinutes;
-                    j = enableTotTime2;
-                    StringBuilder stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("wifipro not enable at all, not upload stat CHR. curr Date:");
-                    stringBuilder3.append(currDateStr2);
-                    stringBuilder3.append(", last upload Date");
-                    stringBuilder3.append(this.mNewestStatRcd.mLastStatUploadTime);
-                    logd(stringBuilder3.toString());
-                }
-                historyTotWifiHours = wifiProStatisticsRecord.mHistoryTotWifiConnHour;
-                resetStatRecord(wifiProStatisticsRecord, "statistics CHR event upload success, new period start.");
-                wifiProStatisticsRecord.mHistoryTotWifiConnHour = historyTotWifiHours;
-                return true;
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("wifipro not enable at all, not upload stat CHR. curr Date:");
+                stringBuilder3.append(currDateStr);
+                stringBuilder3.append(", last upload Date");
+                stringBuilder3.append(this.mNewestStatRcd.mLastStatUploadTime);
+                logd(stringBuilder3.toString());
             }
-            resetStatRecord(wifiProStatisticsRecord, "interval time abnormal data record invalid");
-            return false;
+            historyTotWifiHours = statRecord.mHistoryTotWifiConnHour;
+            resetStatRecord(statRecord, "statistics CHR event upload success, new period start.");
+            statRecord.mHistoryTotWifiConnHour = historyTotWifiHours;
+            return true;
         }
     }
 

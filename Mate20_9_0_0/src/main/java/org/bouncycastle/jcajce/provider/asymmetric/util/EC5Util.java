@@ -102,12 +102,12 @@ public class EC5Util {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:19:0x0093 in {6, 8, 12, 15, 17, 18} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -122,20 +122,16 @@ public class EC5Util {
         /*
         r0 = r8.isNamedCurve();
         if (r0 == 0) goto L_0x0047;
-    L_0x0006:
         r8 = r8.getParameters();
         r8 = (org.bouncycastle.asn1.ASN1ObjectIdentifier) r8;
         r0 = org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil.getNamedCurveByOid(r8);
         if (r0 != 0) goto L_0x0024;
-    L_0x0012:
         r1 = org.bouncycastle.jce.provider.BouncyCastleProvider.CONFIGURATION;
         r1 = r1.getAdditionalECParameters();
         r2 = r1.isEmpty();
         if (r2 != 0) goto L_0x0024;
-    L_0x001e:
         r0 = r1.get(r8);
         r0 = (org.bouncycastle.asn1.x9.X9ECParameters) r0;
-    L_0x0024:
         r1 = r0.getSeed();
         r4 = convertCurve(r9, r1);
         r9 = new org.bouncycastle.jce.spec.ECNamedCurveSpec;
@@ -147,20 +143,16 @@ public class EC5Util {
         r2 = r9;
         r2.<init>(r3, r4, r5, r6, r7);
         return r9;
-    L_0x0047:
         r0 = r8.isImplicitlyCA();
         if (r0 == 0) goto L_0x004f;
-    L_0x004d:
         r9 = 0;
         return r9;
-    L_0x004f:
         r8 = r8.getParameters();
         r8 = org.bouncycastle.asn1.x9.X9ECParameters.getInstance(r8);
         r0 = r8.getSeed();
         r9 = convertCurve(r9, r0);
         r0 = r8.getH();
         if (r0 == 0) goto L_0x0080;
-    L_0x0065:
         r0 = new java.security.spec.ECParameterSpec;
         r1 = r8.getG();
         r1 = convertPoint(r1);
@@ -168,10 +160,8 @@ public class EC5Util {
         r8 = r8.getH();
         r8 = r8.intValue();
         r0.<init>(r9, r1, r2, r8);
-    L_0x007e:
         r9 = r0;
         return r9;
-    L_0x0080:
         r0 = new java.security.spec.ECParameterSpec;
         r1 = r8.getG();
         r1 = convertPoint(r1);

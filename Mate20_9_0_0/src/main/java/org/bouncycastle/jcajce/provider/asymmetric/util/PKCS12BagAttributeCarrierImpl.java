@@ -72,12 +72,12 @@ public class PKCS12BagAttributeCarrierImpl implements PKCS12BagAttributeCarrier 
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:10:0x0047 in {2, 4, 8, 9} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -94,25 +94,20 @@ public class PKCS12BagAttributeCarrierImpl implements PKCS12BagAttributeCarrier 
         r0 = r5.pkcs12Ordering;
         r0 = r0.size();
         if (r0 != 0) goto L_0x0019;
-    L_0x0008:
         r0 = new java.util.Hashtable;
         r0.<init>();
         r6.writeObject(r0);
         r0 = new java.util.Vector;
         r0.<init>();
-    L_0x0015:
         r6.writeObject(r0);
         return;
-    L_0x0019:
         r0 = new java.io.ByteArrayOutputStream;
         r0.<init>();
         r1 = new org.bouncycastle.asn1.ASN1OutputStream;
         r1.<init>(r0);
         r2 = r5.getBagAttributeKeys();
-    L_0x0027:
         r3 = r2.hasMoreElements();
         if (r3 == 0) goto L_0x0042;
-    L_0x002d:
         r3 = r2.nextElement();
         r3 = (org.bouncycastle.asn1.ASN1ObjectIdentifier) r3;
         r1.writeObject(r3);
@@ -121,7 +116,6 @@ public class PKCS12BagAttributeCarrierImpl implements PKCS12BagAttributeCarrier 
         r3 = (org.bouncycastle.asn1.ASN1Encodable) r3;
         r1.writeObject(r3);
         goto L_0x0027;
-    L_0x0042:
         r0 = r0.toByteArray();
         goto L_0x0015;
         return;

@@ -105,17 +105,18 @@ public class ApInfoManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001a, code:
+    /* JADX WARNING: Missing block: B:12:0x001a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void stop() {
         synchronized (this.mLock) {
-            if (!this.mIsRunning || this.mDbManager == null) {
-            } else {
-                stopScanAp();
-                this.mDbManager.closeDB();
-                this.mIsRunning = false;
+            if (this.mIsRunning) {
+                if (this.mDbManager != null) {
+                    stopScanAp();
+                    this.mDbManager.closeDB();
+                    this.mIsRunning = false;
+                }
             }
         }
     }
@@ -123,9 +124,12 @@ public class ApInfoManager {
     public void addCurrentApInfo(String cellid) {
         synchronized (this.mLock) {
             if (cellid == null) {
-                return;
+                try {
+                } catch (Throwable th) {
+                }
+            } else {
+                inlineAddCurrentApInfo(cellid);
             }
-            inlineAddCurrentApInfo(cellid);
         }
     }
 
@@ -224,7 +228,7 @@ public class ApInfoManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0026, code:
+    /* JADX WARNING: Missing block: B:11:0x0026, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -235,9 +239,10 @@ public class ApInfoManager {
             stringBuilder.append("updataApInfo cellid =");
             stringBuilder.append(cellid);
             Log.e(str, stringBuilder.toString());
-            if (!this.mIsRunning || cellid == null) {
-            } else {
-                inlineAddCurrentApInfo(cellid);
+            if (this.mIsRunning) {
+                if (cellid != null) {
+                    inlineAddCurrentApInfo(cellid);
+                }
             }
         }
     }
@@ -349,23 +354,26 @@ public class ApInfoManager {
         boolean checkResult = false;
         synchronized (this.mLock) {
             if (mLists != null) {
-                if (mLists.size() > 0) {
-                    for (ScanResult result : mLists) {
-                        APInfoData data = getApInfo(result.BSSID);
-                        if (data != null) {
-                            if (isCellIdExit(data, cellid)) {
-                                Log.e(MessageUtil.TAG, "addCurrentApInfo info is already there");
-                            } else {
-                                Log.e(MessageUtil.TAG, "addCurrentApInfo addCellIdInfo");
-                                this.mDbManager.addCellInfo(data.getBssid(), cellid);
-                                checkResult = true;
-                                List<CellInfoData> cellInfos = this.mDbManager.queryCellInfoByBssid(data.getBssid());
-                                if (cellInfos.size() != 0) {
-                                    data.setCellInfo(cellInfos);
+                try {
+                    if (mLists.size() > 0) {
+                        for (ScanResult result : mLists) {
+                            APInfoData data = getApInfo(result.BSSID);
+                            if (data != null) {
+                                if (isCellIdExit(data, cellid)) {
+                                    Log.e(MessageUtil.TAG, "addCurrentApInfo info is already there");
+                                } else {
+                                    Log.e(MessageUtil.TAG, "addCurrentApInfo addCellIdInfo");
+                                    this.mDbManager.addCellInfo(data.getBssid(), cellid);
+                                    checkResult = true;
+                                    List<CellInfoData> cellInfos = this.mDbManager.queryCellInfoByBssid(data.getBssid());
+                                    if (cellInfos.size() != 0) {
+                                        data.setCellInfo(cellInfos);
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (Throwable th) {
                 }
             }
         }
@@ -375,10 +383,14 @@ public class ApInfoManager {
     public APInfoData getApInfoByBssid(String bssid) {
         synchronized (this.mLock) {
             if (bssid == null) {
-                return null;
+                try {
+                    return null;
+                } catch (Throwable th) {
+                }
+            } else {
+                APInfoData apInfo = getApInfo(bssid);
+                return apInfo;
             }
-            APInfoData apInfo = getApInfo(bssid);
-            return apInfo;
         }
     }
 
@@ -429,7 +441,7 @@ public class ApInfoManager {
         this.mWifiHandler.sendEmptyMessageDelayed(3, (long) scanInterval);
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0064, code:
+    /* JADX WARNING: Missing block: B:12:0x0064, code skipped:
             if (r6.equals(r7.toString()) != false) goto L_0x0066;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -519,7 +531,7 @@ public class ApInfoManager {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0046, code:
+    /* JADX WARNING: Missing block: B:19:0x0046, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -530,14 +542,15 @@ public class ApInfoManager {
         stringBuilder.append(this.mInfos.size());
         Log.e(str, stringBuilder.toString());
         synchronized (this.mLock) {
-            if (!this.mIsRunning || cellid == null) {
-            } else {
-                for (APInfoData info : this.mInfos) {
-                    if (isCellIdExit(info, cellid)) {
-                        return true;
+            if (this.mIsRunning) {
+                if (cellid != null) {
+                    for (APInfoData info : this.mInfos) {
+                        if (isCellIdExit(info, cellid)) {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                return false;
             }
         }
     }
@@ -560,18 +573,22 @@ public class ApInfoManager {
     public boolean isInBlackList(String bssid) {
         synchronized (this.mLock) {
             if (bssid == null) {
+                try {
+                    return false;
+                } catch (Throwable th) {
+                }
+            } else {
+                APInfoData data = getApInfo(bssid);
+                if (data != null) {
+                    boolean isInBlackList = data.isInBlackList();
+                    return isInBlackList;
+                }
                 return false;
             }
-            APInfoData data = getApInfo(bssid);
-            if (data != null) {
-                boolean isInBlackList = data.isInBlackList();
-                return isInBlackList;
-            }
-            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0052, code:
+    /* JADX WARNING: Missing block: B:11:0x0052, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -634,7 +651,7 @@ public class ApInfoManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x00d0, code:
+    /* JADX WARNING: Missing block: B:30:0x00d0, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -646,32 +663,33 @@ public class ApInfoManager {
             stringBuilder.append(this.mInfos.size());
             Log.e(str, stringBuilder.toString());
             if (!this.mIsRunning) {
-            } else if (mConnectionInfo == null || mConnectionInfo.getBSSID() == null) {
-            } else {
-                List<APInfoData> delList = new ArrayList();
-                for (APInfoData info : this.mInfos) {
-                    if (info.getSsid().equals(mConnectionInfo.getSSID()) && info.getAuthType() == getAuthType(mConnectionInfo.getNetworkId())) {
-                        String str2 = MessageUtil.TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("delectApInfoBySsid\tssid = ");
-                        stringBuilder2.append(info.getSsid());
-                        stringBuilder2.append("  info.getAuthType() = ");
-                        stringBuilder2.append(info.getAuthType());
-                        Log.e(str2, stringBuilder2.toString());
-                        this.mDbManager.delAPInfos(info.getBssid());
-                        delList.add(info);
+            } else if (mConnectionInfo != null) {
+                if (mConnectionInfo.getBSSID() != null) {
+                    List<APInfoData> delList = new ArrayList();
+                    for (APInfoData info : this.mInfos) {
+                        if (info.getSsid().equals(mConnectionInfo.getSSID()) && info.getAuthType() == getAuthType(mConnectionInfo.getNetworkId())) {
+                            String str2 = MessageUtil.TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("delectApInfoBySsid\tssid = ");
+                            stringBuilder2.append(info.getSsid());
+                            stringBuilder2.append("  info.getAuthType() = ");
+                            stringBuilder2.append(info.getAuthType());
+                            Log.e(str2, stringBuilder2.toString());
+                            this.mDbManager.delAPInfos(info.getBssid());
+                            delList.add(info);
+                        }
                     }
-                }
-                if (delList.size() > 0) {
-                    for (APInfoData info2 : delList) {
-                        this.mInfos.remove(info2);
+                    if (delList.size() > 0) {
+                        for (APInfoData info2 : delList) {
+                            this.mInfos.remove(info2);
+                        }
                     }
+                    String str3 = MessageUtil.TAG;
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("delectApInfoBySsidForPortal mInfos.size()=");
+                    stringBuilder3.append(this.mInfos.size());
+                    Log.e(str3, stringBuilder3.toString());
                 }
-                String str3 = MessageUtil.TAG;
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("delectApInfoBySsidForPortal mInfos.size()=");
-                stringBuilder3.append(this.mInfos.size());
-                Log.e(str3, stringBuilder3.toString());
             }
         }
     }
@@ -780,18 +798,21 @@ public class ApInfoManager {
     public void resetBlackList(List<ScanResult> mLists, boolean isAddtoBlack) {
         synchronized (this.mLock) {
             if (mLists != null) {
-                if (mLists.size() > 0) {
-                    String str = MessageUtil.TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("processManualClose mLists.size() = ");
-                    stringBuilder.append(mLists.size());
-                    Log.e(str, stringBuilder.toString());
-                    for (ScanResult result : mLists) {
-                        APInfoData data = getApInfo(result.BSSID);
-                        if (!(data == null || data.isInBlackList() == isAddtoBlack)) {
-                            setBlackListBySsid(data.getSsid(), data.getAuthType(), isAddtoBlack);
+                try {
+                    if (mLists.size() > 0) {
+                        String str = MessageUtil.TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("processManualClose mLists.size() = ");
+                        stringBuilder.append(mLists.size());
+                        Log.e(str, stringBuilder.toString());
+                        for (ScanResult result : mLists) {
+                            APInfoData data = getApInfo(result.BSSID);
+                            if (!(data == null || data.isInBlackList() == isAddtoBlack)) {
+                                setBlackListBySsid(data.getSsid(), data.getAuthType(), isAddtoBlack);
+                            }
                         }
                     }
+                } catch (Throwable th) {
                 }
             }
             Log.e(MessageUtil.TAG, "processManualClose mLists = null");
@@ -817,29 +838,32 @@ public class ApInfoManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x004f, code:
+    /* JADX WARNING: Missing block: B:12:0x004f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void resetBlackListByBssid(String bssid, boolean isAddtoBlack) {
         synchronized (this.mLock) {
             if (bssid == null) {
-                return;
-            }
-            boolean value = isAddtoBlack;
-            APInfoData data = getApInfo(bssid);
-            if (data != null) {
-                String str = MessageUtil.TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("resetBlackListByBssid data.getBssid() = ");
-                stringBuilder.append(partDisplayBssid(data.getBssid()));
-                stringBuilder.append(" data.getSsid() = ");
-                stringBuilder.append(data.getSsid());
-                stringBuilder.append("isAddtoBlack = ");
-                stringBuilder.append(isAddtoBlack);
-                Log.e(str, stringBuilder.toString());
-                this.mDbManager.updateBssidIsInBlackList(data.getBssid(), value);
-                data.setBlackListFlag(isAddtoBlack);
+                try {
+                } catch (Throwable th) {
+                }
+            } else {
+                boolean value = isAddtoBlack;
+                APInfoData data = getApInfo(bssid);
+                if (data != null) {
+                    String str = MessageUtil.TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("resetBlackListByBssid data.getBssid() = ");
+                    stringBuilder.append(partDisplayBssid(data.getBssid()));
+                    stringBuilder.append(" data.getSsid() = ");
+                    stringBuilder.append(data.getSsid());
+                    stringBuilder.append("isAddtoBlack = ");
+                    stringBuilder.append(isAddtoBlack);
+                    Log.e(str, stringBuilder.toString());
+                    this.mDbManager.updateBssidIsInBlackList(data.getBssid(), value);
+                    data.setBlackListFlag(isAddtoBlack);
+                }
             }
         }
     }

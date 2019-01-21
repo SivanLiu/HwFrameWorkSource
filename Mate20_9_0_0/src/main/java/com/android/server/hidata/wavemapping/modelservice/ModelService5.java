@@ -231,94 +231,98 @@ public class ModelService5 extends ModelBaseService {
                         stringBuilder3.append(coreTrainData.getResult());
                         LogUtil.wtLogFile(stringBuilder3.toString());
                         handleByCoreTrainDataResult(coreTrainData, placeInfo, str, parameterInfo);
-                        if (coreTrainData.getDatas() == null || coreTrainData.getDatas().length == 0 || coreTrainData.getResult() <= 0) {
-                            LogUtil.d("trainModelRe coreTrainData == null");
-                            buildModelChrService.buildModelChrInfo(parameterInfo, coreTrainData.getResult(), placeInfo, buildModelChrInfo, 0);
-                            return -19;
-                        }
-                        int maxLoop = 9;
-                        trainRet = this.trainModelService.wmpCoreTrainData(coreTrainData, str, parameterInfo, placeInfo, buildModelChrInfo);
-                        int disCriminateRet = discriminateModel(placeInfo, parameterInfo, trainRet);
-                        buildModelChrService.buildModelChrInfo(parameterInfo, trainRet, placeInfo, buildModelChrInfo, disCriminateRet);
-                        stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append(TimeUtil.getTime());
-                        stringBuilder3.append(",place:");
-                        stringBuilder3.append(str);
-                        stringBuilder3.append(",model name:");
-                        stringBuilder3.append(placeInfo.getModelName());
-                        stringBuilder3.append(",isMainAp:");
-                        stringBuilder3.append(String.valueOf(param.isMainAp()));
-                        stringBuilder3.append(",trainRet :");
-                        stringBuilder3.append(trainRet);
-                        stringBuilder3.append(",disCriminateRet:");
-                        stringBuilder3.append(disCriminateRet);
-                        stringBuilder3.append(Constant.lineSeperate);
-                        LogUtil.wtLogFile(stringBuilder3.toString());
-                        parameterInfo.setMaxDistBak(param.getMaxDist());
-                        while (disCriminateRet < 0 && maxLoop > 0 && param.getMaxDist() > param.getMaxDistMinLimit()) {
-                            maxLoop--;
-                            parameterInfo.setMaxDist(param.getMaxDist() * param.getMaxDistDecayRatio());
-                            if (param.getMaxDist() < param.getMaxDistMinLimit()) {
-                                parameterInfo.setMaxDist(param.getMaxDistMinLimit());
+                        if (!(coreTrainData.getDatas() == null || coreTrainData.getDatas().length == 0)) {
+                            if (coreTrainData.getResult() > 0) {
+                                int maxLoop = 9;
+                                trainRet = this.trainModelService.wmpCoreTrainData(coreTrainData, str, parameterInfo, placeInfo, buildModelChrInfo);
+                                int disCriminateRet = discriminateModel(placeInfo, parameterInfo, trainRet);
+                                buildModelChrService.buildModelChrInfo(parameterInfo, trainRet, placeInfo, buildModelChrInfo, disCriminateRet);
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append(TimeUtil.getTime());
+                                stringBuilder3.append(",place:");
+                                stringBuilder3.append(str);
+                                stringBuilder3.append(",model name:");
+                                stringBuilder3.append(placeInfo.getModelName());
+                                stringBuilder3.append(",isMainAp:");
+                                stringBuilder3.append(String.valueOf(param.isMainAp()));
+                                stringBuilder3.append(",trainRet :");
+                                stringBuilder3.append(trainRet);
+                                stringBuilder3.append(",disCriminateRet:");
+                                stringBuilder3.append(disCriminateRet);
+                                stringBuilder3.append(Constant.lineSeperate);
+                                LogUtil.wtLogFile(stringBuilder3.toString());
+                                parameterInfo.setMaxDistBak(param.getMaxDist());
+                                while (disCriminateRet < 0 && maxLoop > 0 && param.getMaxDist() > param.getMaxDistMinLimit()) {
+                                    maxLoop--;
+                                    parameterInfo.setMaxDist(param.getMaxDist() * param.getMaxDistDecayRatio());
+                                    if (param.getMaxDist() < param.getMaxDistMinLimit()) {
+                                        parameterInfo.setMaxDist(param.getMaxDistMinLimit());
+                                    }
+                                    trainRet = this.trainModelService.wmpCoreTrainData(coreTrainData, str, parameterInfo, placeInfo, buildModelChrInfo);
+                                    disCriminateRet = discriminateModel(placeInfo, parameterInfo, trainRet);
+                                    buildModelChrService.buildModelChrInfo(parameterInfo, trainRet, placeInfo, buildModelChrInfo, disCriminateRet);
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append(TimeUtil.getTime());
+                                    stringBuilder3.append(",place:");
+                                    stringBuilder3.append(str);
+                                    stringBuilder3.append(",model name:");
+                                    stringBuilder3.append(placeInfo.getModelName());
+                                    stringBuilder3.append(",isMainAp:");
+                                    stringBuilder3.append(String.valueOf(param.isMainAp()));
+                                    stringBuilder3.append(",trainRet :");
+                                    stringBuilder3.append(trainRet);
+                                    stringBuilder3.append(",disCriminateRet:");
+                                    stringBuilder3.append(disCriminateRet);
+                                    stringBuilder3.append(Constant.lineSeperate);
+                                    LogUtil.wtLogFile(stringBuilder3.toString());
+                                }
+                                parameterInfo.setMaxDist(param.getMaxDistBak());
+                                if (maxLoop <= 0) {
+                                    afterFailTrainModel(placeInfo);
+                                    LogUtil.i("the last trainModel failure,maxLoop more than 9.");
+                                    return -4;
+                                } else if (trainRet < param.getMinModelTypes()) {
+                                    afterFailTrainModel(placeInfo);
+                                    LogUtil.i("the last trainModel failure,train model ret smaller than min model types.");
+                                    return -5;
+                                } else if (disCriminateRet < 0) {
+                                    afterFailTrainModel(placeInfo);
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("the last trainModel failure,disCriminate failure:");
+                                    stringBuilder2.append(disCriminateRet);
+                                    LogUtil.i(stringBuilder2.toString());
+                                    return -6;
+                                } else {
+                                    if (param.isMainAp()) {
+                                        loadMainApModel(placeInfo);
+                                    } else {
+                                        loadCommModels(placeInfo);
+                                    }
+                                    ModelInfo model = param.isMainAp() ? this.mainApModelInfo : this.modelInfo;
+                                    if (!(model == null || model.getSetBssids() == null)) {
+                                        if (model.getSetBssids().size() != 0) {
+                                            placeInfo.setDisNum(0);
+                                            placeInfo.setTestDataNum(0);
+                                            placeInfo.setIdentifyNum(0);
+                                            placeInfo.setState(4);
+                                            model.getSetBssids().remove("prelabel");
+                                            placeInfo.setNoOcurBssids(model.getSetBssids().toString().replace("[", "").replace(" ", "").replace("]", "").trim());
+                                            this.rgLocationDAO.update(placeInfo);
+                                            StringBuilder stringBuilder4 = new StringBuilder();
+                                            stringBuilder4.append("trainModelRe,rgLocationDAO.update placeInfo:");
+                                            stringBuilder4.append(placeInfo.toString());
+                                            LogUtil.i(stringBuilder4.toString());
+                                            return trainRet;
+                                        }
+                                    }
+                                    LogUtil.d("trainModelRe,null == model...");
+                                    return 0;
+                                }
                             }
-                            trainRet = this.trainModelService.wmpCoreTrainData(coreTrainData, str, parameterInfo, placeInfo, buildModelChrInfo);
-                            disCriminateRet = discriminateModel(placeInfo, parameterInfo, trainRet);
-                            buildModelChrService.buildModelChrInfo(parameterInfo, trainRet, placeInfo, buildModelChrInfo, disCriminateRet);
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append(TimeUtil.getTime());
-                            stringBuilder3.append(",place:");
-                            stringBuilder3.append(str);
-                            stringBuilder3.append(",model name:");
-                            stringBuilder3.append(placeInfo.getModelName());
-                            stringBuilder3.append(",isMainAp:");
-                            stringBuilder3.append(String.valueOf(param.isMainAp()));
-                            stringBuilder3.append(",trainRet :");
-                            stringBuilder3.append(trainRet);
-                            stringBuilder3.append(",disCriminateRet:");
-                            stringBuilder3.append(disCriminateRet);
-                            stringBuilder3.append(Constant.lineSeperate);
-                            LogUtil.wtLogFile(stringBuilder3.toString());
                         }
-                        parameterInfo.setMaxDist(param.getMaxDistBak());
-                        if (maxLoop <= 0) {
-                            afterFailTrainModel(placeInfo);
-                            LogUtil.i("the last trainModel failure,maxLoop more than 9.");
-                            return -4;
-                        } else if (trainRet < param.getMinModelTypes()) {
-                            afterFailTrainModel(placeInfo);
-                            LogUtil.i("the last trainModel failure,train model ret smaller than min model types.");
-                            return -5;
-                        } else if (disCriminateRet < 0) {
-                            afterFailTrainModel(placeInfo);
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("the last trainModel failure,disCriminate failure:");
-                            stringBuilder2.append(disCriminateRet);
-                            LogUtil.i(stringBuilder2.toString());
-                            return -6;
-                        } else {
-                            if (param.isMainAp()) {
-                                loadMainApModel(placeInfo);
-                            } else {
-                                loadCommModels(placeInfo);
-                            }
-                            ModelInfo model = param.isMainAp() ? this.mainApModelInfo : this.modelInfo;
-                            if (model == null || model.getSetBssids() == null || model.getSetBssids().size() == 0) {
-                                LogUtil.d("trainModelRe,null == model...");
-                                return 0;
-                            }
-                            placeInfo.setDisNum(0);
-                            placeInfo.setTestDataNum(0);
-                            placeInfo.setIdentifyNum(0);
-                            placeInfo.setState(4);
-                            model.getSetBssids().remove("prelabel");
-                            placeInfo.setNoOcurBssids(model.getSetBssids().toString().replace("[", "").replace(" ", "").replace("]", "").trim());
-                            this.rgLocationDAO.update(placeInfo);
-                            StringBuilder stringBuilder4 = new StringBuilder();
-                            stringBuilder4.append("trainModelRe,rgLocationDAO.update placeInfo:");
-                            stringBuilder4.append(placeInfo.toString());
-                            LogUtil.i(stringBuilder4.toString());
-                            return trainRet;
-                        }
+                        LogUtil.d("trainModelRe coreTrainData == null");
+                        buildModelChrService.buildModelChrInfo(parameterInfo, coreTrainData.getResult(), placeInfo, buildModelChrInfo, 0);
+                        return -19;
                     }
                 }
             } catch (RuntimeException e) {
@@ -326,7 +330,7 @@ public class ModelService5 extends ModelBaseService {
                 stringBuilder.append("trainModelRe,e");
                 stringBuilder.append(e.getMessage());
                 LogUtil.e(stringBuilder.toString());
-            } catch (RuntimeException e2) {
+            } catch (Exception e2) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("trainModelRe,e");
                 stringBuilder.append(e2.getMessage());
@@ -353,18 +357,18 @@ public class ModelService5 extends ModelBaseService {
         this.rgLocationDAO.update(placeInfo);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x01bf A:{ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException), Splitter: B:38:0x00a6, Catch:{ RuntimeException -> 0x0313, Exception -> 0x0311 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01bf A:{Splitter:B:38:0x00a6, Catch:{ RuntimeException -> 0x0313, Exception -> 0x0311 }, ExcHandler: RuntimeException (e java.lang.RuntimeException)} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:68:0x01ba, code:
+    /* JADX WARNING: Missing block: B:72:0x01ba, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:69:0x01bb, code:
+    /* JADX WARNING: Missing block: B:73:0x01bb, code skipped:
             r18 = r6;
      */
-    /* JADX WARNING: Missing block: B:70:0x01bf, code:
+    /* JADX WARNING: Missing block: B:74:0x01bf, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:71:0x01c0, code:
+    /* JADX WARNING: Missing block: B:75:0x01c0, code skipped:
             r18 = r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -425,193 +429,195 @@ public class ModelService5 extends ModelBaseService {
                     return 1;
                 }
             }
+            int size2;
             TMapList<Integer, IdentifyResult> resultTMapList = new TMapList();
             int count = 0;
             int i2 = 0;
             while (true) {
                 int i3 = i2;
-                int size2;
-                if (i3 < size) {
-                    String[] wds = fileLines[i3].split(",");
-                    str = testDataFilePath;
-                    String[] wds2;
-                    try {
-                        if (wds.length >= param.getScanWifiStart()) {
-                            if (wds[0] == null) {
+                if (i3 >= size) {
+                    break;
+                }
+                String[] wds = fileLines[i3].split(",");
+                str = testDataFilePath;
+                String[] wds2;
+                try {
+                    if (wds.length >= param.getScanWifiStart()) {
+                        if (wds[0] == null) {
+                            str2 = fileContent;
+                            size2 = size;
+                            size = 0;
+                        } else if (!wds[0].equals("")) {
+                            i2 = Integer.parseInt(wds[param.getBatchID()]);
+                            ssidDatas.clear();
+                            testDataFilePath = wds.length;
+                            int k = param.getScanWifiStart();
+                            while (true) {
                                 str2 = fileContent;
-                                size2 = size;
-                                size = 0;
-                            } else if (!wds[0].equals("")) {
-                                i2 = Integer.parseInt(wds[param.getBatchID()]);
-                                ssidDatas.clear();
-                                testDataFilePath = wds.length;
-                                int k = param.getScanWifiStart();
-                                while (true) {
-                                    str2 = fileContent;
-                                    int k2 = k;
-                                    if (k2 >= testDataFilePath) {
-                                        break;
-                                    }
-                                    int tempSize = testDataFilePath;
-                                    try {
-                                        String[] strArr;
-                                        wds2 = wds;
-                                        wds = wds[k2].split(param.getWifiSeperate());
-                                        size2 = size;
-                                        if (wds.length >= 4) {
-                                            testDataFilePath = wds[param.getScanMAC()];
-                                            if (checkMacFormat(testDataFilePath)) {
-                                                String tempMac = testDataFilePath;
-                                                testDataFilePath = Integer.parseInt(wds[param.getScanRSSI()].split("\\.")[0]);
-                                                if (testDataFilePath != null) {
-                                                    strArr = wds;
-                                                    ssidDatas.put(wds[param.getScanMAC()], Integer.valueOf(testDataFilePath));
-                                                    k = k2 + 1;
-                                                    fileContent = str2;
-                                                    testDataFilePath = tempSize;
-                                                    wds = wds2;
-                                                    size = size2;
-                                                }
+                                int k2 = k;
+                                if (k2 >= testDataFilePath) {
+                                    break;
+                                }
+                                int tempSize = testDataFilePath;
+                                try {
+                                    String[] strArr;
+                                    wds2 = wds;
+                                    wds = wds[k2].split(param.getWifiSeperate());
+                                    size2 = size;
+                                    if (wds.length >= 4) {
+                                        testDataFilePath = wds[param.getScanMAC()];
+                                        if (checkMacFormat(testDataFilePath)) {
+                                            String tempMac = testDataFilePath;
+                                            testDataFilePath = Integer.parseInt(wds[param.getScanRSSI()].split("\\.")[0]);
+                                            if (testDataFilePath != null) {
+                                                strArr = wds;
+                                                ssidDatas.put(wds[param.getScanMAC()], Integer.valueOf(testDataFilePath));
+                                                k = k2 + 1;
+                                                fileContent = str2;
+                                                testDataFilePath = tempSize;
+                                                wds = wds2;
+                                                size = size2;
                                             }
                                         }
-                                        strArr = wds;
-                                        k = k2 + 1;
-                                        fileContent = str2;
-                                        testDataFilePath = tempSize;
-                                        wds = wds2;
-                                        size = size2;
-                                    } catch (RuntimeException e5) {
-                                        e = e5;
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append("discriminateModel,e");
-                                        stringBuilder.append(e.getMessage());
-                                        LogUtil.e(stringBuilder.toString());
-                                        return 1;
-                                    } catch (Exception e6) {
-                                        e2 = e6;
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append("discriminateModel,e");
-                                        stringBuilder.append(e2.getMessage());
-                                        LogUtil.e(stringBuilder.toString());
-                                        return 1;
                                     }
+                                    strArr = wds;
+                                    k = k2 + 1;
+                                    fileContent = str2;
+                                    testDataFilePath = tempSize;
+                                    wds = wds2;
+                                    size = size2;
+                                } catch (RuntimeException e5) {
+                                    e = e5;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("discriminateModel,e");
+                                    stringBuilder.append(e.getMessage());
+                                    LogUtil.e(stringBuilder.toString());
+                                    return 1;
+                                } catch (Exception e6) {
+                                    e2 = e6;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("discriminateModel,e");
+                                    stringBuilder.append(e2.getMessage());
+                                    LogUtil.e(stringBuilder.toString());
+                                    return 1;
                                 }
-                                String str3 = testDataFilePath;
-                                size2 = size;
-                                fingerInfo.setBissiddatas(ssidDatas);
-                                wds = this.identifyService.indentifyLocation(placeInfo.getPlace(), fingerInfo, parameterInfo, model);
-                                resultFileBd.append(TimeUtil.getTime());
-                                resultFileBd.append(",");
-                                resultFileBd.append(placeInfo.getModelName());
-                                resultFileBd.append(",");
-                                resultFileBd.append(wds);
-                                resultFileBd.append(",");
-                                resultFileBd.append(fileLines[i3]);
-                                resultFileBd.append(Constant.lineSeperate);
-                                count++;
-                                resultTMapList.add(Integer.valueOf(i2), new IdentifyResult(i2, wds, 0));
                             }
-                            i2 = i3 + 1;
-                            testDataFilePath = str;
-                            fileContent = str2;
-                            size = size2;
-                            i = trainRet;
+                            String str3 = testDataFilePath;
+                            size2 = size;
+                            fingerInfo.setBissiddatas(ssidDatas);
+                            wds = this.identifyService.indentifyLocation(placeInfo.getPlace(), fingerInfo, parameterInfo, model);
+                            resultFileBd.append(TimeUtil.getTime());
+                            resultFileBd.append(",");
+                            resultFileBd.append(placeInfo.getModelName());
+                            resultFileBd.append(",");
+                            resultFileBd.append(wds);
+                            resultFileBd.append(",");
+                            resultFileBd.append(fileLines[i3]);
+                            resultFileBd.append(Constant.lineSeperate);
+                            count++;
+                            resultTMapList.add(Integer.valueOf(i2), new IdentifyResult(i2, wds, 0));
                         }
-                        str2 = fileContent;
-                        size2 = size;
-                    } catch (Exception e22) {
-                        wds2 = wds;
-                        str2 = fileContent;
-                        size2 = size;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("discriminateModel,e");
-                        stringBuilder.append(e22.getMessage());
-                        LogUtil.e(stringBuilder.toString());
-                    } catch (RuntimeException e7) {
+                        i2 = i3 + 1;
+                        testDataFilePath = str;
+                        fileContent = str2;
+                        size = size2;
+                        i = trainRet;
                     }
-                    i2 = i3 + 1;
-                    testDataFilePath = str;
-                    fileContent = str2;
-                    size = size2;
-                    i = trainRet;
-                } else {
                     str2 = fileContent;
                     size2 = size;
-                    if (count == 0) {
-                        return -24;
-                    }
-                    FingerInfo fingerInfo2;
-                    i2 = 0;
-                    i = 0;
-                    testDataFilePath = null;
-                    fileContent = new HashSet();
-                    for (Entry<Integer, List<IdentifyResult>> entry2 : resultTMapList.entrySet()) {
-                        int unknownCnt;
-                        String[] fileLines2 = fileLines;
-                        fingerInfo2 = fingerInfo;
-                        fileLines = (List) entry2.getValue();
-                        Iterator fingerInfo3 = fileLines.iterator();
-                        while (fingerInfo3.hasNext()) {
-                            Iterator it = fingerInfo3;
-                            IdentifyResult tempIdentifyResult = (IdentifyResult) fingerInfo3.next();
-                            if (tempIdentifyResult.getPreLabel() < 0) {
-                                i2++;
-                            } else {
-                                unknownCnt = i2;
-                                fileContent.add(Integer.valueOf(tempIdentifyResult.getPreLabel()));
-                                i2 = unknownCnt;
-                            }
-                            fingerInfo3 = it;
-                        }
+                } catch (Exception e22) {
+                    wds2 = wds;
+                    str2 = fileContent;
+                    size2 = size;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("discriminateModel,e");
+                    stringBuilder.append(e22.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (RuntimeException e7) {
+                }
+                i2 = i3 + 1;
+                testDataFilePath = str;
+                fileContent = str2;
+                size = size2;
+                i = trainRet;
+            }
+            str2 = fileContent;
+            size2 = size;
+            if (count == 0) {
+                return -24;
+            }
+            FingerInfo fingerInfo2;
+            i2 = 0;
+            i = 0;
+            testDataFilePath = null;
+            fileContent = new HashSet();
+            for (Entry<Integer, List<IdentifyResult>> entry2 : resultTMapList.entrySet()) {
+                int unknownCnt;
+                String[] fileLines2 = fileLines;
+                fingerInfo2 = fingerInfo;
+                fileLines = (List) entry2.getValue();
+                Iterator fingerInfo3 = fileLines.iterator();
+                while (fingerInfo3.hasNext()) {
+                    Iterator it = fingerInfo3;
+                    IdentifyResult tempIdentifyResult = (IdentifyResult) fingerInfo3.next();
+                    if (tempIdentifyResult.getPreLabel() < 0) {
+                        i2++;
+                    } else {
                         unknownCnt = i2;
-                        i++;
-                        if (checkShatterRatio(fileLines, parameterInfo)) {
-                            testDataFilePath++;
-                        }
-                        fileLines = fileLines2;
-                        fingerInfo = fingerInfo2;
+                        fileContent.add(Integer.valueOf(tempIdentifyResult.getPreLabel()));
                         i2 = unknownCnt;
                     }
-                    fingerInfo2 = fingerInfo;
-                    String testPath = new StringBuilder();
-                    testPath.append(Constant.getTestResultPath());
-                    testPath.append(placeInfo.getModelName());
-                    testPath.append(".");
-                    testPath.append(String.valueOf(System.currentTimeMillis()));
-                    testPath.append(Constant.DISCRI_LOG_FILE_EXTENSION);
-                    FileUtils.saveFile(testPath.toString(), resultFileBd.toString());
-                    if (fileContent.size() <= 1) {
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("discriminateModel failure,prelabel size:");
-                        stringBuilder2.append(fileContent.size());
-                        stringBuilder2.append(",prelabel:");
-                        stringBuilder2.append(fileContent.toString());
-                        LogUtil.d(stringBuilder2.toString());
-                        return -25;
-                    } else if (((float) i2) / ((float) count) > param.getMinUnkwnRatio()) {
-                        StringBuilder stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append("discriminateModel failure, unknownCnt:");
-                        stringBuilder3.append(i2);
-                        stringBuilder3.append(",count:");
-                        stringBuilder3.append(count);
-                        stringBuilder3.append(",tMinUnkwnRatio:");
-                        stringBuilder3.append(param.getMinUnkwnRatio());
-                        LogUtil.d(stringBuilder3.toString());
-                        return -26;
-                    } else if (((float) testDataFilePath) / ((float) i) < param.getTotalShatterRatio()) {
-                        StringBuilder stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append("discriminateModel failure, checkShatterRatioCount:");
-                        stringBuilder4.append(testDataFilePath);
-                        stringBuilder4.append(",batchCount:");
-                        stringBuilder4.append(i);
-                        stringBuilder4.append(",TotalShatterRatio:");
-                        stringBuilder4.append(param.getTotalShatterRatio());
-                        LogUtil.d(stringBuilder4.toString());
-                        return -27;
-                    }
+                    fingerInfo3 = it;
                 }
+                unknownCnt = i2;
+                i++;
+                if (checkShatterRatio(fileLines, parameterInfo)) {
+                    testDataFilePath++;
+                }
+                fileLines = fileLines2;
+                fingerInfo = fingerInfo2;
+                i2 = unknownCnt;
             }
-            return 1;
+            fingerInfo2 = fingerInfo;
+            String testPath = new StringBuilder();
+            testPath.append(Constant.getTestResultPath());
+            testPath.append(placeInfo.getModelName());
+            testPath.append(".");
+            testPath.append(String.valueOf(System.currentTimeMillis()));
+            testPath.append(Constant.DISCRI_LOG_FILE_EXTENSION);
+            FileUtils.saveFile(testPath.toString(), resultFileBd.toString());
+            if (fileContent.size() <= 1) {
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("discriminateModel failure,prelabel size:");
+                stringBuilder2.append(fileContent.size());
+                stringBuilder2.append(",prelabel:");
+                stringBuilder2.append(fileContent.toString());
+                LogUtil.d(stringBuilder2.toString());
+                return -25;
+            } else if (((float) i2) / ((float) count) > param.getMinUnkwnRatio()) {
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("discriminateModel failure, unknownCnt:");
+                stringBuilder3.append(i2);
+                stringBuilder3.append(",count:");
+                stringBuilder3.append(count);
+                stringBuilder3.append(",tMinUnkwnRatio:");
+                stringBuilder3.append(param.getMinUnkwnRatio());
+                LogUtil.d(stringBuilder3.toString());
+                return -26;
+            } else {
+                if (((float) testDataFilePath) / ((float) i) < param.getTotalShatterRatio()) {
+                    StringBuilder stringBuilder4 = new StringBuilder();
+                    stringBuilder4.append("discriminateModel failure, checkShatterRatioCount:");
+                    stringBuilder4.append(testDataFilePath);
+                    stringBuilder4.append(",batchCount:");
+                    stringBuilder4.append(i);
+                    stringBuilder4.append(",TotalShatterRatio:");
+                    stringBuilder4.append(param.getTotalShatterRatio());
+                    LogUtil.d(stringBuilder4.toString());
+                    return -27;
+                }
+                return 1;
+            }
         } catch (RuntimeException e8) {
             e = e8;
             str = testDataFilePath;
@@ -738,25 +744,32 @@ public class ModelService5 extends ModelBaseService {
         return clusterResult;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x008e, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean setNoCurBssids(FingerInfo fingerInfo, RegularPlaceInfo placeInfo, ParameterInfo param, ModelInfo model) {
         Set<String> curBssids = new HashSet();
         if (!(placeInfo == null || fingerInfo == null)) {
             try {
-                if (fingerInfo.getBissiddatas() == null || fingerInfo.getBissiddatas().size() == 0 || param == null || param.isMainAp() || model == null || model.getBssidLst() == null || model.getBssidLst().length == 0) {
-                    return false;
-                }
-                curBssids.addAll(Arrays.asList(placeInfo.getNoOcurBssids().split(",")));
-                for (String key : fingerInfo.getBissiddatas().keySet()) {
-                    if (curBssids.contains(key)) {
-                        curBssids.remove(key);
+                if (fingerInfo.getBissiddatas() != null) {
+                    if (fingerInfo.getBissiddatas().size() != 0) {
+                        if (param != null) {
+                            if (!param.isMainAp()) {
+                                if (!(model == null || model.getBssidLst() == null)) {
+                                    if (model.getBssidLst().length != 0) {
+                                        curBssids.addAll(Arrays.asList(placeInfo.getNoOcurBssids().split(",")));
+                                        for (String key : fingerInfo.getBissiddatas().keySet()) {
+                                            if (curBssids.contains(key)) {
+                                                curBssids.remove(key);
+                                            }
+                                        }
+                                        placeInfo.setNoOcurBssids(curBssids.toString().replace("[", "").replace(" ", "").replace("]", "").trim());
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                        }
+                        return false;
                     }
                 }
-                placeInfo.setNoOcurBssids(curBssids.toString().replace("[", "").replace(" ", "").replace("]", "").trim());
-                return true;
             } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("LocatingState,e");

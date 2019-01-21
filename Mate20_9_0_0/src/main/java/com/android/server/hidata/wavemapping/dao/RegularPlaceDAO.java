@@ -110,20 +110,11 @@ public class RegularPlaceDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x00bb, code:
+    /* JADX WARNING: Missing block: B:15:0x00bb, code skipped:
             if (r5 != null) goto L_0x00bd;
      */
-    /* JADX WARNING: Missing block: B:16:0x00bd, code:
-            r5.close();
-     */
-    /* JADX WARNING: Missing block: B:21:0x00dc, code:
+    /* JADX WARNING: Missing block: B:25:0x00f8, code skipped:
             if (r5 == null) goto L_0x00fb;
-     */
-    /* JADX WARNING: Missing block: B:24:0x00f8, code:
-            if (r5 == null) goto L_0x00fb;
-     */
-    /* JADX WARNING: Missing block: B:25:0x00fb, code:
-            return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public RegularPlaceInfo findAllBySsid(String place, boolean isMainAp) {
@@ -158,6 +149,10 @@ public class RegularPlaceDAO {
             stringBuilder.append("findBySsid Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return placeInfo;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -165,20 +160,11 @@ public class RegularPlaceDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x00ae, code:
+    /* JADX WARNING: Missing block: B:15:0x00ae, code skipped:
             if (r5 != null) goto L_0x00b0;
      */
-    /* JADX WARNING: Missing block: B:16:0x00b0, code:
-            r5.close();
-     */
-    /* JADX WARNING: Missing block: B:21:0x00cf, code:
+    /* JADX WARNING: Missing block: B:25:0x00eb, code skipped:
             if (r5 == null) goto L_0x00ee;
-     */
-    /* JADX WARNING: Missing block: B:24:0x00eb, code:
-            if (r5 == null) goto L_0x00ee;
-     */
-    /* JADX WARNING: Missing block: B:25:0x00ee, code:
-            return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public RegularPlaceInfo findBySsid(String place, boolean isMainAp) {
@@ -212,6 +198,10 @@ public class RegularPlaceDAO {
             stringBuilder.append("findBySsid Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return placeInfo;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -219,20 +209,11 @@ public class RegularPlaceDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x00cd, code:
+    /* JADX WARNING: Missing block: B:7:0x00cd, code skipped:
             if (r3 != null) goto L_0x00cf;
      */
-    /* JADX WARNING: Missing block: B:8:0x00cf, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x00ee, code:
+    /* JADX WARNING: Missing block: B:17:0x010a, code skipped:
             if (r3 == null) goto L_0x010d;
-     */
-    /* JADX WARNING: Missing block: B:16:0x010a, code:
-            if (r3 == null) goto L_0x010d;
-     */
-    /* JADX WARNING: Missing block: B:17:0x010d, code:
-            return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<String, RegularPlaceInfo> findAllLocations() {
@@ -265,6 +246,10 @@ public class RegularPlaceDAO {
             stringBuilder.append("findAllLocations Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return placeInfoHashMap;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();

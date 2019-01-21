@@ -767,11 +767,12 @@ public class NotificationUsageStats {
                         } catch (Throwable th3) {
                             th = th3;
                             printWriter = pw;
+                            cursor.close();
+                            throw th;
                         }
-                    } else {
-                        printWriter = pw;
-                        str2 = indent;
                     }
+                    printWriter = pw;
+                    str2 = indent;
                     cursor.moveToNext();
                     dumpFilter = filter;
                     i = 2;

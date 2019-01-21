@@ -242,15 +242,20 @@ public abstract class LogFactory {
             logDiagnostic(stringBuilder.toString());
         }
         synchronized (factories) {
-            if (classLoader != null) {
+            if (classLoader == null) {
+                try {
+                    if (nullClassLoaderFactory != null) {
+                        nullClassLoaderFactory.release();
+                        nullClassLoaderFactory = null;
+                    }
+                } finally {
+                }
+            } else {
                 LogFactory factory = (LogFactory) factories.get(classLoader);
                 if (factory != null) {
                     factory.release();
                     factories.remove(classLoader);
                 }
-            } else if (nullClassLoaderFactory != null) {
-                nullClassLoaderFactory.release();
-                nullClassLoaderFactory = null;
             }
         }
     }
@@ -299,17 +304,17 @@ public abstract class LogFactory {
     protected static ClassLoader directGetContextClassLoader() throws LogConfigurationException {
         ClassLoader classLoader = null;
         try {
-            return (ClassLoader) Thread.class.getMethod("getContextClassLoader", (Class[]) null).invoke(Thread.currentThread(), (Object[]) null);
+            classLoader = (ClassLoader) Thread.class.getMethod("getContextClassLoader", (Class[]) null).invoke(Thread.currentThread(), (Object[]) null);
         } catch (IllegalAccessException e) {
             throw new LogConfigurationException("Unexpected IllegalAccessException", e);
         } catch (InvocationTargetException e2) {
-            if (e2.getTargetException() instanceof SecurityException) {
-                return classLoader;
+            if (!(e2.getTargetException() instanceof SecurityException)) {
+                throw new LogConfigurationException("Unexpected InvocationTargetException", e2.getTargetException());
             }
-            throw new LogConfigurationException("Unexpected InvocationTargetException", e2.getTargetException());
         } catch (NoSuchMethodException e3) {
             return getClassLoader(LogFactory.class);
         }
+        return classLoader;
     }
 
     private static LogFactory getCachedFactory(ClassLoader contextClassLoader) {
@@ -445,7 +450,7 @@ public abstract class LogFactory {
                     }
                     throw new ClassCastException(msg);
                 }
-            } catch (Throwable e3) {
+            } catch (Exception e3) {
                 if (isDiagnosticsEnabled()) {
                     logDiagnostic("Unable to create LogFactory instance.");
                 }

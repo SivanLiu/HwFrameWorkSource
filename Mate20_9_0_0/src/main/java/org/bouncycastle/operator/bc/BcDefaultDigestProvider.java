@@ -36,7 +36,7 @@ public class BcDefaultDigestProvider implements BcDigestProvider {
     }
 
     private static Map createTable() {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put(OIWObjectIdentifiers.idSHA1, new BcDigestProvider() {
             public ExtendedDigest get(AlgorithmIdentifier algorithmIdentifier) {
                 return new SHA1Digest();

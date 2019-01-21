@@ -51,8 +51,10 @@ public class RuleAllow extends RuleBase {
         int i = 0;
         while (i < infoStr.length) {
             try {
-                if (!(infoStr[i] == null || infoStr[i].trim().isEmpty())) {
-                    this.mTypeList.add(Integer.valueOf(Integer.parseInt(infoStr[i].trim())));
+                if (infoStr[i] != null) {
+                    if (!infoStr[i].trim().isEmpty()) {
+                        this.mTypeList.add(Integer.valueOf(Integer.parseInt(infoStr[i].trim())));
+                    }
                 }
                 i++;
             } catch (NumberFormatException e) {

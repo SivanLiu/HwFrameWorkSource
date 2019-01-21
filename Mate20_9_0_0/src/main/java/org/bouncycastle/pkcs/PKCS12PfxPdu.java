@@ -26,12 +26,12 @@ public class PKCS12PfxPdu {
         StringBuilder stringBuilder;
         try {
             return Pfx.getInstance(ASN1Primitive.fromByteArray(bArr));
-        } catch (Throwable e) {
+        } catch (ClassCastException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());
             throw new PKCSIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e2.getMessage());

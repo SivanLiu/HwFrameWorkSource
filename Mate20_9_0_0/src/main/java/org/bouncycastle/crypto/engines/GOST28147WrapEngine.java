@@ -37,9 +37,9 @@ public class GOST28147WrapEngine implements Wrapper {
         byte[] bArr3 = new byte[this.mac.getMacSize()];
         this.mac.update(bArr2, 0, bArr2.length);
         this.mac.doFinal(bArr3, 0);
-        Object obj = new byte[this.mac.getMacSize()];
-        System.arraycopy(bArr, (i + i2) - 4, obj, 0, this.mac.getMacSize());
-        if (Arrays.constantTimeAreEqual(bArr3, obj)) {
+        byte[] bArr4 = new byte[this.mac.getMacSize()];
+        System.arraycopy(bArr, (i + i2) - 4, bArr4, 0, this.mac.getMacSize());
+        if (Arrays.constantTimeAreEqual(bArr3, bArr4)) {
             return bArr2;
         }
         throw new IllegalStateException("mac mismatch");

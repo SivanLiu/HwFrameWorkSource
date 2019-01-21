@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -18,6 +17,7 @@ import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.operator.ContentVerifier;
 import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.util.Encodable;
@@ -44,12 +44,12 @@ public class X509CertificateHolder implements Encodable, Serializable {
         StringBuilder stringBuilder;
         try {
             return Certificate.getInstance(CertUtils.parseNonEmptyASN1(bArr));
-        } catch (Throwable e) {
+        } catch (ClassCastException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());
             throw new CertIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e2.getMessage());
@@ -150,7 +150,7 @@ public class X509CertificateHolder implements Encodable, Serializable {
     }
 
     public boolean isSignatureValid(ContentVerifierProvider contentVerifierProvider) throws CertException {
-        ASN1Encodable tBSCertificate = this.x509Certificate.getTBSCertificate();
+        TBSCertificate tBSCertificate = this.x509Certificate.getTBSCertificate();
         if (CertUtils.isAlgIdEqual(tBSCertificate.getSignature(), this.x509Certificate.getSignatureAlgorithm())) {
             try {
                 ContentVerifier contentVerifier = contentVerifierProvider.get(tBSCertificate.getSignature());
@@ -158,7 +158,7 @@ public class X509CertificateHolder implements Encodable, Serializable {
                 new DEROutputStream(outputStream).writeObject(tBSCertificate);
                 outputStream.close();
                 return contentVerifier.verify(getSignature());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to process signature: ");
                 stringBuilder.append(e.getMessage());

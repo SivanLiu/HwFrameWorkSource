@@ -121,7 +121,7 @@ public class WifiInjector {
         } else if (sWifiInjector == null) {
             sWifiInjector = this;
             this.mContext = context2;
-            this.mUseRealLogger = this.mContext.getResources().getBoolean(17957076);
+            this.mUseRealLogger = this.mContext.getResources().getBoolean(17957077);
             this.mSettingsStore = new WifiSettingsStore(this.mContext);
             this.mWifiPermissionsWrapper = new WifiPermissionsWrapper(this.mContext);
             this.mNetworkScoreManager = (NetworkScoreManager) this.mContext.getSystemService(NetworkScoreManager.class);
@@ -157,7 +157,7 @@ public class WifiInjector {
             this.mSupplicantP2pIfaceHal = new SupplicantP2pIfaceHal(this.mWifiP2pMonitor);
             this.mWifiP2pNative = new WifiP2pNative(this.mSupplicantP2pIfaceHal, this.mHalDeviceManager);
             this.mTrafficPoller = new WifiTrafficPoller(this.mContext, this.mWifiServiceHandlerThread.getLooper(), this.mWifiNative);
-            this.mCountryCode = HwWifiServiceFactory.getHwWifiServiceManager().createHwWifiCountryCode(this.mContext, this.mWifiNative, SystemProperties.get(BOOT_DEFAULT_WIFI_COUNTRY_CODE), this.mContext.getResources().getBoolean(17957084));
+            this.mCountryCode = HwWifiServiceFactory.getHwWifiServiceManager().createHwWifiCountryCode(this.mContext, this.mWifiNative, SystemProperties.get(BOOT_DEFAULT_WIFI_COUNTRY_CODE), this.mContext.getResources().getBoolean(17957085));
             this.mWifiApConfigStore = new WifiApConfigStore(this.mContext, this.mBackupManagerProxy);
             this.mWifiKeyStore = new WifiKeyStore(this.mKeyStore);
             this.mWifiConfigStore = new WifiConfigStore(this.mContext, wifiStateMachineLooper, this.mClock, WifiConfigStore.createSharedFile());

@@ -99,7 +99,7 @@ public class FreezeScreenWindowMonitor implements IFreezeScreenWindowMonitor {
             }
         }
 
-        /* JADX WARNING: Missing block: B:11:0x004d, code:
+        /* JADX WARNING: Missing block: B:11:0x004d, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -149,7 +149,7 @@ public class FreezeScreenWindowMonitor implements IFreezeScreenWindowMonitor {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x002b, code:
+        /* JADX WARNING: Missing block: B:13:0x002b, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -193,8 +193,7 @@ public class FreezeScreenWindowMonitor implements IFreezeScreenWindowMonitor {
                         paramsRadar.put("focusedActivityName", focusedActivity);
                         getFreezeScreenRadar().upload(paramsRadar);
                     }
-                } catch (IllegalAccessException e) {
-                } catch (InvocationTargetException e2) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                 }
             }
         }

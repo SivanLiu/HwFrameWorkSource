@@ -45,7 +45,10 @@ public class WifiAwareNativeManager {
             }
             synchronized (WifiAwareNativeManager.this.mLock) {
                 if (isAvailable) {
-                    WifiAwareNativeManager.this.mWifiAwareStateManager.enableUsage();
+                    try {
+                        WifiAwareNativeManager.this.mWifiAwareStateManager.enableUsage();
+                    } catch (Throwable th) {
+                    }
                 } else if (WifiAwareNativeManager.this.mWifiNanIface == null) {
                     WifiAwareNativeManager.this.mWifiAwareStateManager.disableUsage();
                 }
@@ -116,7 +119,7 @@ public class WifiAwareNativeManager {
         return iWifiNanIface;
     }
 
-    /* JADX WARNING: Missing block: B:35:0x00b9, code:
+    /* JADX WARNING: Missing block: B:35:0x00b9, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

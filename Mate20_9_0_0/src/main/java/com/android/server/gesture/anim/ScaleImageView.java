@@ -487,7 +487,7 @@ public class ScaleImageView extends ImageView {
         return sourceCrop;
     }
 
-    /* JADX WARNING: Incorrect type for fill-array insn 0x0076, element type: float, insn element type: null */
+    /* JADX WARNING: Incorrect type for fill-array insn 0x0078, element type: float, insn element type: null */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void playTranslateAnimation(int topDistance) {
         int finalWidth;

@@ -165,12 +165,21 @@ public class BatterySaverStateMachine {
     public void setBatterySaverEnabledManually(boolean enabled) {
         synchronized (this.mLock) {
             int i;
+            String str;
             if (enabled) {
                 i = 2;
             } else {
                 i = 3;
             }
-            enableBatterySaverLocked(enabled, true, i, enabled ? "Manual ON" : "Manual OFF");
+            if (enabled) {
+                try {
+                    str = "Manual ON";
+                } catch (Throwable th) {
+                }
+            } else {
+                str = "Manual OFF";
+            }
+            enableBatterySaverLocked(enabled, true, i, str);
         }
     }
 

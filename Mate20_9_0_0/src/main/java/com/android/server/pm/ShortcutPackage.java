@@ -450,13 +450,6 @@ class ShortcutPackage extends ShortcutPackageItem {
 
     /* JADX WARNING: Removed duplicated region for block: B:75:0x015f A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:54:0x0146  */
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x006a A:{Splitter: B:18:0x0058, ExcHandler: java.io.IOException (r0_8 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:21:0x006a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:22:0x006b, code:
-            android.util.Slog.e(TAG, "Failed to load shortcuts from AndroidManifest.xml.", r0);
-     */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean rescanPackageIfNeeded(boolean isNewApp, boolean forceRescan) {
         ShortcutService s = this.mShortcutUser.mService;
@@ -480,7 +473,8 @@ class ShortcutPackage extends ShortcutPackageItem {
             List<ShortcutInfo> newManifestShortcutList = null;
             try {
                 newManifestShortcutList = ShortcutParser.parseShortcuts(this.mShortcutUser.mService, getPackageName(), getPackageUserId());
-            } catch (Exception e) {
+            } catch (IOException | XmlPullParserException e) {
+                Slog.e(TAG, "Failed to load shortcuts from AndroidManifest.xml.", e);
             }
             int manifestShortcutSize = newManifestShortcutList == null ? 0 : newManifestShortcutList.size();
             if (isNewApp && manifestShortcutSize == 0) {
@@ -974,7 +968,7 @@ class ShortcutPackage extends ShortcutPackageItem {
 
     /* JADX WARNING: Removed duplicated region for block: B:24:0x0083  */
     /* JADX WARNING: Removed duplicated region for block: B:23:0x0070  */
-    /* JADX WARNING: Missing block: B:17:0x005d, code:
+    /* JADX WARNING: Missing block: B:17:0x005d, code skipped:
             if (r6.equals(TAG_SHORTCUT) == false) goto L_0x006b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1027,7 +1021,7 @@ class ShortcutPackage extends ShortcutPackageItem {
         return ret;
     }
 
-    /* JADX WARNING: Missing block: B:44:0x015d, code:
+    /* JADX WARNING: Missing block: B:44:0x015d, code skipped:
             r8 = r49;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

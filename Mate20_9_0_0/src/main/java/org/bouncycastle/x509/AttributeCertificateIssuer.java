@@ -6,7 +6,6 @@ import java.security.cert.CertSelector;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.List;
 import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
@@ -35,7 +34,7 @@ public class AttributeCertificateIssuer implements CertSelector, Selector {
 
     private Object[] getNames() {
         GeneralName[] names = (this.form instanceof V2Form ? ((V2Form) this.form).getIssuerName() : (GeneralNames) this.form).getNames();
-        List arrayList = new ArrayList(names.length);
+        ArrayList arrayList = new ArrayList(names.length);
         for (int i = 0; i != names.length; i++) {
             if (names[i].getTagNo() == 4) {
                 try {
@@ -80,7 +79,7 @@ public class AttributeCertificateIssuer implements CertSelector, Selector {
 
     public Principal[] getPrincipals() {
         Object[] names = getNames();
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (int i = 0; i != names.length; i++) {
             if (names[i] instanceof Principal) {
                 arrayList.add(names[i]);

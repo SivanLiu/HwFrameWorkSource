@@ -42,14 +42,11 @@ public final class LocationBlacklist extends ContentObserver {
 
     public boolean isBlacklisted(String packageName) {
         synchronized (this.mLock) {
-            String[] strArr = this.mBlacklist;
-            int length = strArr.length;
-            int i = 0;
-            while (i < length) {
-                if (!packageName.startsWith(strArr[i]) || inWhitelist(packageName)) {
-                    i++;
-                } else {
-                    return true;
+            for (String black : this.mBlacklist) {
+                if (packageName.startsWith(black)) {
+                    if (!inWhitelist(packageName)) {
+                        return true;
+                    }
                 }
             }
             return false;

@@ -51,28 +51,28 @@ public class WifiProConfigurationManager {
             XmlPullParser parser = Xml.newPullParser();
             inputStream = context.getAssets().open(CONF_FILE_NAME);
             parser.setInput(inputStream, "UTF-8");
-            int eventType = parser.getEventType();
-            while (eventType != 1) {
-                if (eventType != 0 && eventType == 2) {
-                    if (XML_TAG_WHITE_LIST.equals(parser.getName())) {
-                        this.mAppWhitelists = new ArrayList();
-                    } else if (XML_TAG_APP_NAME.equals(parser.getName())) {
-                        this.mAppName = parser.nextText();
-                        this.mAppName = this.mAppName.replaceAll(" ", "");
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("whitelist app name = ");
-                        stringBuilder.append(this.mAppName);
-                        Logd(stringBuilder.toString());
-                        if (this.mAppWhitelists != null) {
-                            this.mAppWhitelists.add(this.mAppName);
+            for (int eventType = parser.getEventType(); eventType != 1; eventType = parser.next()) {
+                if (eventType != 0) {
+                    if (eventType == 2) {
+                        if (XML_TAG_WHITE_LIST.equals(parser.getName())) {
+                            this.mAppWhitelists = new ArrayList();
+                        } else if (XML_TAG_APP_NAME.equals(parser.getName())) {
+                            this.mAppName = parser.nextText();
+                            this.mAppName = this.mAppName.replaceAll(" ", "");
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("whitelist app name = ");
+                            stringBuilder.append(this.mAppName);
+                            Logd(stringBuilder.toString());
+                            if (this.mAppWhitelists != null) {
+                                this.mAppWhitelists.add(this.mAppName);
+                            }
+                        } else if (XML_TAG_PARSER_REGEX.equals(parser.getName())) {
+                            this.mParserRegexMapLists = new HashMap();
+                        } else if ("sms_body_opt".equals(parser.getName()) || "sms_num_begin".equals(parser.getName()) || "sms_num_min_len".equals(parser.getName()) || "code_exclusive".equals(parser.getName()) || "code_necessary".equals(parser.getName()) || "code_exclusive_date_1".equals(parser.getName()) || "code_exclusive_date_2".equals(parser.getName()) || "code_exclusive_date_3".equals(parser.getName())) {
+                            putRegexMapList(parser.getName(), parser.nextText());
                         }
-                    } else if (XML_TAG_PARSER_REGEX.equals(parser.getName())) {
-                        this.mParserRegexMapLists = new HashMap();
-                    } else if ("sms_body_opt".equals(parser.getName()) || "sms_num_begin".equals(parser.getName()) || "sms_num_min_len".equals(parser.getName()) || "code_exclusive".equals(parser.getName()) || "code_necessary".equals(parser.getName()) || "code_exclusive_date_1".equals(parser.getName()) || "code_exclusive_date_2".equals(parser.getName()) || "code_exclusive_date_3".equals(parser.getName())) {
-                        putRegexMapList(parser.getName(), parser.nextText());
                     }
                 }
-                eventType = parser.next();
             }
             if (inputStream != null) {
                 try {

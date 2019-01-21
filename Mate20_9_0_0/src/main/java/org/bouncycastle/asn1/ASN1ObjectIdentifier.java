@@ -211,7 +211,7 @@ public class ASN1ObjectIdentifier extends ASN1Primitive {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0025, code:
+    /* JADX WARNING: Missing block: B:12:0x0025, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

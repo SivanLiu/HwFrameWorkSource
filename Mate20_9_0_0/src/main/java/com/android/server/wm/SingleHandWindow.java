@@ -237,14 +237,14 @@ final class SingleHandWindow {
             this.overlay_display_window.setText(this.mContext.getResources().getString(33685745));
         }
         if (this.overlay_guide_window != null) {
-            this.overlay_guide_window.setText(this.mContext.getResources().getString(33686171));
+            this.overlay_guide_window.setText(this.mContext.getResources().getString(33686174));
             this.overlay_guide_window.setBackgroundDrawable(this.mContext.getResources().getDrawable(33751974));
         }
         if (this.singlehandmode_slide_hint_text_1 != null) {
-            this.singlehandmode_slide_hint_text_1.setText(this.mContext.getResources().getString(33686172, new Object[]{Integer.valueOf(1)}));
+            this.singlehandmode_slide_hint_text_1.setText(this.mContext.getResources().getString(33686175, new Object[]{Integer.valueOf(1)}));
         }
         if (this.singlehandmode_slide_hint_text_2 != null) {
-            this.singlehandmode_slide_hint_text_2.setText(this.mContext.getResources().getString(33686173, new Object[]{Integer.valueOf(2)}));
+            this.singlehandmode_slide_hint_text_2.setText(this.mContext.getResources().getString(33686176, new Object[]{Integer.valueOf(2)}));
         }
     }
 

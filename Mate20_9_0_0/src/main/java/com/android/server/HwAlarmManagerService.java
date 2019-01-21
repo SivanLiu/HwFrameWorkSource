@@ -671,7 +671,7 @@ public class HwAlarmManagerService extends AlarmManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0040, code:
+    /* JADX WARNING: Missing block: B:13:0x0040, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -711,8 +711,11 @@ public class HwAlarmManagerService extends AlarmManagerService {
         long time = -1;
         synchronized (this.mLock) {
             if (packageName != null) {
-                if (mHwWakeupBoot.containsKey(packageName)) {
-                    rtcAlarm = (Alarm) mHwWakeupBoot.get(packageName);
+                try {
+                    if (mHwWakeupBoot.containsKey(packageName)) {
+                        rtcAlarm = (Alarm) mHwWakeupBoot.get(packageName);
+                    }
+                } finally {
                 }
             }
             if (rtcAlarm != null && (decideRtcPriorityEnable(rtcAlarm) || isDeskClock(rtcAlarm))) {
@@ -722,7 +725,7 @@ public class HwAlarmManagerService extends AlarmManagerService {
         return time;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x009d, code:
+    /* JADX WARNING: Missing block: B:27:0x009d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -779,6 +782,8 @@ public class HwAlarmManagerService extends AlarmManagerService {
                         hwRemoveRtcLocked();
                         break;
                     }
+                    break;
+                default:
                     break;
             }
         }

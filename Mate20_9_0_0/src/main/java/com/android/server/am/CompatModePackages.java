@@ -374,8 +374,10 @@ public final class CompatModePackages {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:50:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00e5  */
+    /* JADX WARNING: Removed duplicated region for block: B:51:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00e5  */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00e5  */
+    /* JADX WARNING: Removed duplicated region for block: B:51:? A:{SYNTHETIC, RETURN} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void saveCompatModes() {
         HashMap<String, Integer> pkgs;
@@ -419,23 +421,28 @@ public final class CompatModePackages {
                         } catch (IOException e2) {
                             e1 = e2;
                             hashMap = pkgs;
+                            Slog.w("ActivityManager", "Error writing compat packages", e1);
+                            if (fos != null) {
+                            }
                         }
                         if (ai != null) {
                             CompatibilityInfo info = new CompatibilityInfo(ai, screenLayout, smallestScreenWidthDp, false);
-                            if (!(info.alwaysSupportsScreen() || info.neverSupportsScreen())) {
-                                out.startTag(str, AbsLocationManagerService.DEL_PKG);
-                                out.attribute(str, Settings.ATTR_NAME, pkg);
-                                hashMap = pkgs;
-                                try {
-                                    out.attribute(null, "mode", Integer.toString(mode));
-                                    out.endTag(null, AbsLocationManagerService.DEL_PKG);
-                                    it = it2;
-                                    pkgs = hashMap;
-                                    str = null;
-                                } catch (IOException e3) {
-                                    e1 = e3;
-                                    Slog.w("ActivityManager", "Error writing compat packages", e1);
-                                    if (fos == null) {
+                            if (!info.alwaysSupportsScreen()) {
+                                if (!info.neverSupportsScreen()) {
+                                    out.startTag(str, AbsLocationManagerService.DEL_PKG);
+                                    out.attribute(str, Settings.ATTR_NAME, pkg);
+                                    hashMap = pkgs;
+                                    try {
+                                        out.attribute(null, "mode", Integer.toString(mode));
+                                        out.endTag(null, AbsLocationManagerService.DEL_PKG);
+                                        it = it2;
+                                        pkgs = hashMap;
+                                        str = null;
+                                    } catch (IOException e3) {
+                                        e1 = e3;
+                                        Slog.w("ActivityManager", "Error writing compat packages", e1);
+                                        if (fos != null) {
+                                        }
                                     }
                                 }
                             }
@@ -456,7 +463,7 @@ public final class CompatModePackages {
             e1 = e4;
             hashMap = pkgs;
             Slog.w("ActivityManager", "Error writing compat packages", e1);
-            if (fos == null) {
+            if (fos != null) {
                 this.mFile.failWrite(fos);
             }
         }

@@ -1146,18 +1146,18 @@ public interface INetd extends IInterface {
                         parcel2.writeInt(_arg0);
                         return z;
                     case 16:
-                        z = true;
+                        int i2 = 1;
                         descriptor2 = descriptor;
                         parcel.enforceInterface(descriptor2);
                         PersistableBundle _result4 = tetherGetStats();
                         reply.writeNoException();
                         if (_result4 != null) {
-                            parcel2.writeInt(z);
-                            _result4.writeToParcel(parcel2, z);
+                            parcel2.writeInt(i2);
+                            _result4.writeToParcel(parcel2, i2);
                         } else {
                             parcel2.writeInt(0);
                         }
-                        return z;
+                        return i2;
                     case 17:
                         z = true;
                         descriptor2 = descriptor;

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class DefaultXmlFileAppStrategy implements AppStrategy {
     private static final boolean COUNTRY_DEMO = "demo".equalsIgnoreCase(SystemProperties.get("ro.hw.country", ""));
@@ -57,7 +58,7 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
         return this.mWhiteAppList;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0013, code:
+    /* JADX WARNING: Missing block: B:9:0x0013, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -88,7 +89,7 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x007e A:{SYNTHETIC, Splitter: B:31:0x007e} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x007e A:{SYNTHETIC, Splitter:B:31:0x007e} */
     /* JADX WARNING: Removed duplicated region for block: B:25:0x006f  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadDefaultWhiteListFromXml(Context context) {
@@ -113,7 +114,7 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
                         if (in != null) {
                             try {
                                 in.close();
-                            } catch (FileNotFoundException e) {
+                            } catch (IOException e) {
                                 Log.e(TAG, "loadDefaultWhiteListFromXml:- IOE while closing stream", e);
                             }
                         }
@@ -151,7 +152,7 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
                     if (in != null) {
                         try {
                             in.close();
-                        } catch (FileNotFoundException e2) {
+                        } catch (IOException e2) {
                             Log.e(TAG, "loadDefaultWhiteListFromXml:- IOE while closing stream", e2);
                         }
                     }
@@ -162,7 +163,7 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
                 if (in != null) {
                     in.close();
                 }
-            } catch (FileNotFoundException e22) {
+            } catch (XmlPullParserException e22) {
                 Log.e(TAG, "loadDefaultXml", e22);
                 if (in != null) {
                     in.close();
@@ -202,8 +203,8 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
                                         String pkgName2 = parser.getAttributeValue(null, "packageName");
                                         if (pkgName2 != null) {
                                             this.mMutiResumeAppList.add(pkgName2.toLowerCase(Locale.getDefault()));
-                                            break;
                                         }
+                                        break;
                                     }
                                 }
                                 pkgName = parser.getAttributeValue(null, "packageName");
@@ -215,14 +216,18 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
                                 }
                                 if (pkgName != null) {
                                     this.mSpecailWindowPolicyAppList.add(new Pair(pkgName.toLowerCase(Locale.getDefault()), type));
-                                    break;
                                 }
+                                break;
                             }
                             pkgName = parser.getAttributeValue(null, "packageName");
                             if (pkgName != null) {
                                 this.mWhiteAppList.put(pkgName.toLowerCase(Locale.getDefault()), Integer.valueOf(1));
-                                break;
                             }
+                            break;
+                            break;
+                        case 3:
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -251,36 +256,44 @@ public class DefaultXmlFileAppStrategy implements AppStrategy {
                 if (eventType != 0) {
                     switch (eventType) {
                         case 2:
-                            if (!PAD_XML_ELEMENT_APP_GROUP_NORMAL.equals(parser.getName()) && !PAD_XML_ELEMENT_APP_GROUP_WIFI.equals(parser.getName())) {
-                                String pkgName;
-                                if (!XML_ELEMENT_APP_ITEM.equals(parser.getName())) {
-                                    if (XML_ELEMENT_SPECIAL_WINDOW_POLICY_APP_ITEM.equals(parser.getName())) {
-                                        pkgName = parser.getAttributeValue(null, "packageName");
-                                        Integer type = Integer.valueOf(1);
-                                        try {
-                                            type = Integer.valueOf(parser.getAttributeValue(null, "type"));
-                                        } catch (NumberFormatException e) {
-                                            String str = TAG;
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            stringBuilder.append("parserXML ");
-                                            stringBuilder.append(e);
-                                            HwPCUtils.log(str, stringBuilder.toString());
-                                        }
-                                        if (pkgName != null) {
-                                            this.mSpecailWindowPolicyAppList.add(new Pair(pkgName.toLowerCase(Locale.getDefault()), type));
+                            if (!PAD_XML_ELEMENT_APP_GROUP_NORMAL.equals(parser.getName())) {
+                                if (!PAD_XML_ELEMENT_APP_GROUP_WIFI.equals(parser.getName())) {
+                                    String pkgName;
+                                    if (!XML_ELEMENT_APP_ITEM.equals(parser.getName())) {
+                                        if (XML_ELEMENT_SPECIAL_WINDOW_POLICY_APP_ITEM.equals(parser.getName())) {
+                                            pkgName = parser.getAttributeValue(null, "packageName");
+                                            Integer type = Integer.valueOf(1);
+                                            try {
+                                                type = Integer.valueOf(parser.getAttributeValue(null, "type"));
+                                            } catch (NumberFormatException e) {
+                                                String str = TAG;
+                                                StringBuilder stringBuilder = new StringBuilder();
+                                                stringBuilder.append("parserXML ");
+                                                stringBuilder.append(e);
+                                                HwPCUtils.log(str, stringBuilder.toString());
+                                            }
+                                            if (pkgName != null) {
+                                                this.mSpecailWindowPolicyAppList.add(new Pair(pkgName.toLowerCase(Locale.getDefault()), type));
+                                            }
                                             break;
                                         }
-                                    }
-                                } else if ((!PAD_XML_ELEMENT_APP_GROUP_WIFI.equals(currentAppGroup) || this.mPadWifiVersion) && !(PAD_XML_ELEMENT_APP_GROUP_NORMAL.equals(currentAppGroup) && this.mPadWifiVersion)) {
-                                    pkgName = parser.getAttributeValue(null, "packageName");
-                                    if (pkgName != null) {
-                                        this.mWhiteAppList.put(pkgName.toLowerCase(Locale.getDefault()), Integer.valueOf(1));
+                                    } else if (!PAD_XML_ELEMENT_APP_GROUP_WIFI.equals(currentAppGroup) || this.mPadWifiVersion) {
+                                        if (!PAD_XML_ELEMENT_APP_GROUP_NORMAL.equals(currentAppGroup) || !this.mPadWifiVersion) {
+                                            pkgName = parser.getAttributeValue(null, "packageName");
+                                            if (pkgName != null) {
+                                                this.mWhiteAppList.put(pkgName.toLowerCase(Locale.getDefault()), Integer.valueOf(1));
+                                            }
+                                            break;
+                                        }
                                         break;
                                     }
                                 }
                             }
                             currentAppGroup = parser.getName();
                             break;
+                        case 3:
+                            break;
+                        default:
                             break;
                     }
                 }

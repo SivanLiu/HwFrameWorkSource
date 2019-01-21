@@ -234,9 +234,9 @@ public class GCMBlockCipher implements AEADBlockCipher {
             System.arraycopy(this.macBlock, 0, bArr, i + this.bufOff, this.macSize);
             i2 += this.macSize;
         } else {
-            Object obj = new byte[this.macSize];
-            System.arraycopy(this.bufBlock, i2, obj, 0, this.macSize);
-            if (!Arrays.constantTimeAreEqual(this.macBlock, obj)) {
+            bArr = new byte[this.macSize];
+            System.arraycopy(this.bufBlock, i2, bArr, 0, this.macSize);
+            if (!Arrays.constantTimeAreEqual(this.macBlock, bArr)) {
                 throw new InvalidCipherTextException("mac check in GCM failed");
             }
         }
@@ -277,6 +277,7 @@ public class GCMBlockCipher implements AEADBlockCipher {
 
     public void init(boolean z, CipherParameters cipherParameters) throws IllegalArgumentException {
         byte[] nonce;
+        KeyParameter key;
         this.forEncryption = z;
         this.macBlock = null;
         this.initialised = true;
@@ -292,13 +293,13 @@ public class GCMBlockCipher implements AEADBlockCipher {
                 throw new IllegalArgumentException(stringBuilder.toString());
             }
             this.macSize = macSize / 8;
-            cipherParameters = aEADParameters.getKey();
+            key = aEADParameters.getKey();
         } else if (cipherParameters instanceof ParametersWithIV) {
             ParametersWithIV parametersWithIV = (ParametersWithIV) cipherParameters;
             nonce = parametersWithIV.getIV();
             this.initialAssociatedText = null;
             this.macSize = 16;
-            cipherParameters = (KeyParameter) parametersWithIV.getParameters();
+            key = (KeyParameter) parametersWithIV.getParameters();
         } else {
             throw new IllegalArgumentException("invalid parameters passed to GCM");
         }
@@ -307,18 +308,18 @@ public class GCMBlockCipher implements AEADBlockCipher {
             throw new IllegalArgumentException("IV must be at least 1 byte");
         }
         if (z && this.nonce != null && Arrays.areEqual(this.nonce, nonce)) {
-            if (cipherParameters == null) {
+            if (key == null) {
                 throw new IllegalArgumentException("cannot reuse nonce for GCM encryption");
-            } else if (this.lastKey != null && Arrays.areEqual(this.lastKey, cipherParameters.getKey())) {
+            } else if (this.lastKey != null && Arrays.areEqual(this.lastKey, key.getKey())) {
                 throw new IllegalArgumentException("cannot reuse nonce for GCM encryption");
             }
         }
         this.nonce = nonce;
-        if (cipherParameters != null) {
-            this.lastKey = cipherParameters.getKey();
+        if (key != null) {
+            this.lastKey = key.getKey();
         }
-        if (cipherParameters != null) {
-            this.cipher.init(true, cipherParameters);
+        if (key != null) {
+            this.cipher.init(true, key);
             this.H = new byte[16];
             this.cipher.processBlock(this.H, 0, this.H, 0);
             this.multiplier.init(this.H);

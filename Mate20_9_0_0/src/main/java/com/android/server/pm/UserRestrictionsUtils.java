@@ -211,73 +211,75 @@ public class UserRestrictionsUtils {
     private static void applyUserRestriction(Context context, int userId, String key, boolean newValue) {
         ContentResolver cr = context.getContentResolver();
         long id = Binder.clearCallingIdentity();
-        boolean z = true;
+        int i = -1;
         try {
-            boolean z2 = true;
+            boolean z = true;
             switch (key.hashCode()) {
                 case -1475388515:
                     if (key.equals("no_ambient_display")) {
-                        z = true;
+                        i = 8;
                         break;
                     }
                     break;
                 case -1315771401:
                     if (key.equals("ensure_verify_apps")) {
-                        z = true;
+                        i = 3;
                         break;
                     }
                     break;
                 case -1082175374:
                     if (key.equals("no_airplane_mode")) {
-                        z = true;
+                        i = 7;
                         break;
                     }
                     break;
                 case 387189153:
                     if (key.equals("no_install_unknown_sources")) {
-                        z = true;
+                        i = 4;
                         break;
                     }
                     break;
                 case 721128150:
                     if (key.equals("no_run_in_background")) {
-                        z = true;
+                        i = 5;
                         break;
                     }
                     break;
                 case 866097556:
                     if (key.equals("no_config_location")) {
-                        z = true;
+                        i = 9;
                         break;
                     }
                     break;
                 case 928851522:
                     if (key.equals("no_data_roaming")) {
-                        z = false;
+                        i = 0;
                         break;
                     }
                     break;
                 case 995816019:
                     if (key.equals("no_share_location")) {
-                        z = true;
+                        i = 1;
                         break;
                     }
                     break;
                 case 1095593830:
                     if (key.equals("no_safe_boot")) {
-                        z = true;
+                        i = 6;
                         break;
                     }
                     break;
                 case 1760762284:
                     if (key.equals("no_debugging_features")) {
-                        z = true;
+                        i = 2;
                         break;
                     }
                     break;
+                default:
+                    break;
             }
-            switch (z) {
-                case false:
+            switch (i) {
+                case 0:
                     if (newValue) {
                         List<SubscriptionInfo> subscriptionInfoList = ((SubscriptionManager) context.getSystemService(SubscriptionManager.class)).getActiveSubscriptionInfoList();
                         if (subscriptionInfoList != null) {
@@ -292,50 +294,53 @@ public class UserRestrictionsUtils {
                         break;
                     }
                     break;
-                case true:
+                case 1:
                     if (newValue) {
                         Secure.putIntForUser(cr, "location_mode", 0, userId);
                         break;
                     }
                     break;
-                case true:
+                case 2:
                     if (newValue && userId == 0) {
                         Global.putStringForUser(cr, "adb_enabled", "0", userId);
                         break;
                     }
-                case true:
+                case 3:
                     if (newValue) {
                         Global.putStringForUser(context.getContentResolver(), "package_verifier_enable", "1", userId);
                         Global.putStringForUser(context.getContentResolver(), "verifier_verify_adb_installs", "1", userId);
                         break;
                     }
                     break;
-                case true:
+                case 4:
                     Secure.putIntForUser(cr, "install_non_market_apps", newValue ^ 1, userId);
                     break;
-                case true:
-                    if (!(!newValue || ActivityManager.getCurrentUser() == userId || userId == 0)) {
-                        ActivityManager.getService().stopUser(userId, false, null);
+                case 5:
+                    if (newValue) {
+                        if (!(ActivityManager.getCurrentUser() == userId || userId == 0)) {
+                            ActivityManager.getService().stopUser(userId, false, null);
+                        }
                         break;
                     }
-                case true:
+                    break;
+                case 6:
                     Global.putInt(context.getContentResolver(), "safe_boot_disallowed", newValue);
                     break;
-                case true:
+                case 7:
                     if (newValue) {
                         if (Global.getInt(context.getContentResolver(), "airplane_mode_on", 0) != 1) {
-                            z2 = false;
+                            z = false;
                         }
-                        if (z2) {
+                        if (z) {
                             Global.putInt(context.getContentResolver(), "airplane_mode_on", 0);
                             Intent intent = new Intent("android.intent.action.AIRPLANE_MODE");
                             intent.putExtra(AudioService.CONNECT_INTENT_KEY_STATE, false);
                             context.sendBroadcastAsUser(intent, UserHandle.ALL);
-                            break;
                         }
+                        break;
                     }
                     break;
-                case true:
+                case 8:
                     if (newValue) {
                         Secure.putIntForUser(context.getContentResolver(), "doze_enabled", 0, userId);
                         Secure.putIntForUser(context.getContentResolver(), "doze_always_on", 0, userId);
@@ -345,11 +350,13 @@ public class UserRestrictionsUtils {
                         break;
                     }
                     break;
-                case true:
+                case 9:
                     if (newValue) {
                         Global.putString(context.getContentResolver(), "location_global_kill_switch", "0");
                         break;
                     }
+                    break;
+                default:
                     break;
             }
             Binder.restoreCallingIdentity(id);

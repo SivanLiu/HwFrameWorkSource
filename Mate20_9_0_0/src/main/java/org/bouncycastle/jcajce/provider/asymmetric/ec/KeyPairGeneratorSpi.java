@@ -5,7 +5,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
@@ -116,17 +115,17 @@ public abstract class KeyPairGeneratorSpi extends KeyPairGenerator {
             AsymmetricCipherKeyPair generateKeyPair = this.engine.generateKeyPair();
             ECPublicKeyParameters eCPublicKeyParameters = (ECPublicKeyParameters) generateKeyPair.getPublic();
             ECPrivateKeyParameters eCPrivateKeyParameters = (ECPrivateKeyParameters) generateKeyPair.getPrivate();
-            PublicKey bCECPublicKey;
+            BCECPublicKey bCECPublicKey;
             if (this.ecParams instanceof ECParameterSpec) {
                 ECParameterSpec eCParameterSpec = (ECParameterSpec) this.ecParams;
                 bCECPublicKey = new BCECPublicKey(this.algorithm, eCPublicKeyParameters, eCParameterSpec, this.configuration);
-                return new KeyPair(bCECPublicKey, new BCECPrivateKey(this.algorithm, eCPrivateKeyParameters, (BCECPublicKey) bCECPublicKey, eCParameterSpec, this.configuration));
+                return new KeyPair(bCECPublicKey, new BCECPrivateKey(this.algorithm, eCPrivateKeyParameters, bCECPublicKey, eCParameterSpec, this.configuration));
             } else if (this.ecParams == null) {
                 return new KeyPair(new BCECPublicKey(this.algorithm, eCPublicKeyParameters, this.configuration), new BCECPrivateKey(this.algorithm, eCPrivateKeyParameters, this.configuration));
             } else {
                 java.security.spec.ECParameterSpec eCParameterSpec2 = (java.security.spec.ECParameterSpec) this.ecParams;
                 bCECPublicKey = new BCECPublicKey(this.algorithm, eCPublicKeyParameters, eCParameterSpec2, this.configuration);
-                return new KeyPair(bCECPublicKey, new BCECPrivateKey(this.algorithm, eCPrivateKeyParameters, (BCECPublicKey) bCECPublicKey, eCParameterSpec2, this.configuration));
+                return new KeyPair(bCECPublicKey, new BCECPrivateKey(this.algorithm, eCPrivateKeyParameters, bCECPublicKey, eCParameterSpec2, this.configuration));
             }
         }
 
@@ -184,7 +183,7 @@ public abstract class KeyPairGeneratorSpi extends KeyPairGenerator {
         }
 
         protected void initializeNamedCurve(String str, SecureRandom secureRandom) throws InvalidAlgorithmParameterException {
-            java.security.spec.ECParameterSpec createNamedCurveSpec = createNamedCurveSpec(str);
+            ECNamedCurveSpec createNamedCurveSpec = createNamedCurveSpec(str);
             this.ecParams = createNamedCurveSpec;
             this.param = createKeyGenParamsJCE(createNamedCurveSpec, secureRandom);
         }

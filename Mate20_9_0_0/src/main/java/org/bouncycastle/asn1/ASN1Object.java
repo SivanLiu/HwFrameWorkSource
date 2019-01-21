@@ -2,7 +2,6 @@ package org.bouncycastle.asn1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import org.bouncycastle.util.Encodable;
 
 public abstract class ASN1Object implements ASN1Encodable, Encodable {
@@ -21,7 +20,7 @@ public abstract class ASN1Object implements ASN1Encodable, Encodable {
     }
 
     public byte[] getEncoded() throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         new ASN1OutputStream(byteArrayOutputStream).writeObject(this);
         return byteArrayOutputStream.toByteArray();
     }

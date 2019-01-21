@@ -92,7 +92,7 @@ public class EthernetNetworkFactory extends NetworkFactory {
             this.mNetworkInfo.setDetailedState(DetailedState.OBTAINING_IPADDR, null, this.mHwAddress);
             this.mIpClient = new IpClient(this.mContext, this.name, this.mIpClientCallback);
             if (sTcpBufferSizes == null) {
-                sTcpBufferSizes = this.mContext.getResources().getString(17039803);
+                sTcpBufferSizes = this.mContext.getResources().getString(17039804);
             }
             provisionIpClient(this.mIpClient, this.mIpConfig, sTcpBufferSizes);
         }

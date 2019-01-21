@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.pm.UserInfo;
 import android.content.res.Resources;
@@ -46,10 +47,12 @@ import com.android.server.SystemService;
 import com.android.server.job.controllers.JobStatus;
 import huawei.cust.HwCustUtils;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class TrustManagerService extends SystemService {
     static final boolean DEBUG;
@@ -1009,51 +1012,51 @@ public class TrustManagerService extends SystemService {
         refreshAgentList(userId);
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0074, code:
+    /* JADX WARNING: Missing block: B:28:0x0074, code skipped:
             if (r3 != null) goto L_0x0076;
      */
-    /* JADX WARNING: Missing block: B:29:0x0076, code:
+    /* JADX WARNING: Missing block: B:29:0x0076, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:36:0x0083, code:
+    /* JADX WARNING: Missing block: B:36:0x0083, code skipped:
             if (r3 == null) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:39:0x0088, code:
+    /* JADX WARNING: Missing block: B:39:0x0088, code skipped:
             if (r3 == null) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:42:0x008d, code:
+    /* JADX WARNING: Missing block: B:42:0x008d, code skipped:
             if (r3 == null) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:43:0x0090, code:
+    /* JADX WARNING: Missing block: B:43:0x0090, code skipped:
             if (r4 == null) goto L_0x00ad;
      */
-    /* JADX WARNING: Missing block: B:44:0x0092, code:
+    /* JADX WARNING: Missing block: B:44:0x0092, code skipped:
             r5 = TAG;
             r6 = new java.lang.StringBuilder();
             r6.append("Error parsing : ");
             r6.append(r14.serviceInfo.packageName);
             android.util.Slog.w(r5, r6.toString(), r4);
      */
-    /* JADX WARNING: Missing block: B:45:0x00ac, code:
+    /* JADX WARNING: Missing block: B:45:0x00ac, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:46:0x00ad, code:
+    /* JADX WARNING: Missing block: B:46:0x00ad, code skipped:
             if (r1 != null) goto L_0x00b0;
      */
-    /* JADX WARNING: Missing block: B:47:0x00af, code:
+    /* JADX WARNING: Missing block: B:47:0x00af, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:49:0x00b6, code:
+    /* JADX WARNING: Missing block: B:49:0x00b6, code skipped:
             if (r1.indexOf(47) >= 0) goto L_0x00d0;
      */
-    /* JADX WARNING: Missing block: B:50:0x00b8, code:
+    /* JADX WARNING: Missing block: B:50:0x00b8, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append(r14.serviceInfo.packageName);
             r0.append(com.android.server.slice.SliceClientPermissions.SliceAuthority.DELIMITER);
             r0.append(r1);
             r1 = r0.toString();
      */
-    /* JADX WARNING: Missing block: B:52:0x00d9, code:
+    /* JADX WARNING: Missing block: B:52:0x00d9, code skipped:
             return new com.android.server.trust.TrustManagerService.SettingsAttrs(android.content.ComponentName.unflattenFromString(r1), r2);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1094,11 +1097,11 @@ public class TrustManagerService extends SystemService {
                 }
                 return null;
             }
-        } catch (Exception e) {
+        } catch (NameNotFoundException e) {
             caughtException = e;
-        } catch (Exception e2) {
+        } catch (IOException e2) {
             caughtException = e2;
-        } catch (Exception e22) {
+        } catch (XmlPullParserException e22) {
             caughtException = e22;
         } catch (Throwable th) {
             if (parser != null) {
@@ -1161,7 +1164,7 @@ public class TrustManagerService extends SystemService {
     }
 
     private static ComponentName getDefaultFactoryTrustAgent(Context context) {
-        String defaultTrustAgent = context.getResources().getString(17039791);
+        String defaultTrustAgent = context.getResources().getString(17039792);
         if (TextUtils.isEmpty(defaultTrustAgent)) {
             return null;
         }
@@ -1371,35 +1374,35 @@ public class TrustManagerService extends SystemService {
         this.mHandler.obtainMessage(12, userId, 0, null).sendToTarget();
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0014, code:
+    /* JADX WARNING: Missing block: B:9:0x0014, code skipped:
             r1 = r4.mLockPatternUtils.isTrustUsuallyManaged(r5);
             r2 = r4.mTrustUsuallyManagedForUser;
      */
-    /* JADX WARNING: Missing block: B:10:0x001c, code:
+    /* JADX WARNING: Missing block: B:10:0x001c, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r0 = r4.mTrustUsuallyManagedForUser.indexOfKey(r5);
      */
-    /* JADX WARNING: Missing block: B:13:0x0023, code:
+    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
             if (r0 < 0) goto L_0x002d;
      */
-    /* JADX WARNING: Missing block: B:14:0x0025, code:
+    /* JADX WARNING: Missing block: B:14:0x0025, code skipped:
             r3 = r4.mTrustUsuallyManagedForUser.valueAt(r0);
      */
-    /* JADX WARNING: Missing block: B:15:0x002b, code:
+    /* JADX WARNING: Missing block: B:15:0x002b, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:16:0x002c, code:
+    /* JADX WARNING: Missing block: B:16:0x002c, code skipped:
             return r3;
      */
-    /* JADX WARNING: Missing block: B:17:0x002d, code:
+    /* JADX WARNING: Missing block: B:17:0x002d, code skipped:
             r4.mTrustUsuallyManagedForUser.put(r5, r1);
      */
-    /* JADX WARNING: Missing block: B:18:0x0032, code:
+    /* JADX WARNING: Missing block: B:18:0x0032, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:19:0x0033, code:
+    /* JADX WARNING: Missing block: B:19:0x0033, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

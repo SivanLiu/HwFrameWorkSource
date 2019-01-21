@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.AppGlobals;
 import android.app.IHwActivityNotifier;
 import android.app.KeyguardManager;
+import android.app.admin.DevicePolicyManager;
 import android.app.usage.UsageStatsManagerInternal;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -55,6 +56,7 @@ import android.view.WindowManager.LayoutParams;
 import android.view.WindowManagerPolicyConstants.PointerEventListener;
 import android.widget.Toast;
 import android.zrhung.ZrHungData;
+import com.android.internal.widget.LockPatternUtils;
 import com.android.server.HwServiceFactory;
 import com.android.server.PPPOEStateMachine;
 import com.android.server.ServiceThread;
@@ -155,7 +157,6 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
     private static final String SPLIT_SCREEN_APP_NAME = "splitscreen.SplitScreenAppActivity";
     private static final String SYSTEMUI_NAME = "com.android.systemui";
     static final String TAG = "HwActivityManagerServiceEx";
-    static final int TASK_SNAPSHOT = 25;
     private static final boolean enableRms = SystemProperties.getBoolean("ro.config.enable_rms", false);
     private static Set<String> mPIPWhitelists = new HashSet();
     private static Set<String> mTranslucentWhitelists = new HashSet();
@@ -391,18 +392,6 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
                             } catch (Exception e4) {
                                 Flog.e(100, "HwActivityNotifier call error");
                             }
-                        }
-                        return;
-                    case 25:
-                        ActivityRecord from = msg.obj;
-                        if (from.getConfiguration().orientation == 2 && from.appToken != null) {
-                            String str2 = HwActivityManagerServiceEx.TAG;
-                            StringBuilder stringBuilder5 = new StringBuilder();
-                            stringBuilder5.append("takeTaskSnapShot package ");
-                            stringBuilder5.append(from.packageName);
-                            Slog.v(str2, stringBuilder5.toString());
-                            HwActivityManagerServiceEx.this.mIAmsInner.getAMSForLock().mWindowManager.getWindowManagerServiceEx().takeTaskSnapshot(from.appToken);
-                            return;
                         }
                         return;
                     default:
@@ -648,6 +637,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
                         } catch (Throwable th2) {
                             th = th2;
                             userId2 = userId;
+                            throw th;
                         }
                     }
                     packageName = packageName3;
@@ -686,7 +676,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:40:0x00af, code:
+    /* JADX WARNING: Missing block: B:43:0x00af, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -704,16 +694,18 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
             int foundNum = 0;
             for (int i = 0; i < size && foundNum < maxFoundNum; i++) {
                 TaskRecord tr = (TaskRecord) recentTasks.get(i);
-                if (!(tr == null || tr.mActivities == null)) {
-                    if (!(tr.mActivities.size() <= 0 || tr.getBaseIntent() == null || tr.getBaseIntent().getComponent() == null)) {
-                        if (packageName.equals(tr.getBaseIntent().getComponent().getPackageName())) {
-                            return false;
-                        } else if (!this.mIAmsInner.getDAMonitor().getRecentTask().equals(tr.getBaseIntent().getComponent().flattenToShortString())) {
-                            if ((tr.getBaseIntent().getFlags() & 8388608) != 0) {
+                if (tr != null) {
+                    if (tr.mActivities != null) {
+                        if (!(tr.mActivities.size() <= 0 || tr.getBaseIntent() == null || tr.getBaseIntent().getComponent() == null)) {
+                            if (packageName.equals(tr.getBaseIntent().getComponent().getPackageName())) {
+                                return false;
+                            } else if (!this.mIAmsInner.getDAMonitor().getRecentTask().equals(tr.getBaseIntent().getComponent().flattenToShortString())) {
+                                if ((tr.getBaseIntent().getFlags() & 8388608) != 0) {
+                                }
                             }
                         }
+                        foundNum++;
                     }
-                    foundNum++;
                 }
             }
             if ((this.mIAmsInner.getStackSupervisor() instanceof HwActivityStackSupervisor) && ((HwActivityStackSupervisor) this.mIAmsInner.getStackSupervisor()).isInVisibleStack(packageName)) {
@@ -736,7 +728,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         if (isStorageLow) {
             UiThread.getHandler().post(new Runnable() {
                 public void run() {
-                    Toast toast = Toast.makeText(HwActivityManagerServiceEx.this.mContext, HwActivityManagerServiceEx.this.mContext.getResources().getString(17040400), 1);
+                    Toast toast = Toast.makeText(HwActivityManagerServiceEx.this.mContext, HwActivityManagerServiceEx.this.mContext.getResources().getString(33686099), 1);
                     toast.getWindowParams().type = HwArbitrationDEFS.MSG_MPLINK_BIND_CHECK_FAIL_NOTIFY;
                     LayoutParams windowParams = toast.getWindowParams();
                     windowParams.privateFlags |= 16;
@@ -1074,18 +1066,23 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
             Message msg = this.mHwHandler.obtainMessage(24);
             msg.obj = bundle;
             this.mHwHandler.sendMessageAtFrontOfQueue(msg);
-            Message msg2 = this.mHwHandler.obtainMessage(25);
-            msg2.obj = from;
-            this.mHwHandler.sendMessage(msg2);
+            if (from.getConfiguration().orientation == 2 && from.appToken != null) {
+                String str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("takeTaskSnapShot package ");
+                stringBuilder2.append(from.packageName);
+                Slog.v(str2, stringBuilder2.toString());
+                this.mIAmsInner.getAMSForLock().mWindowManager.getWindowManagerServiceEx().takeTaskSnapshot(from.appToken);
+            }
         }
         if (from != null && to != null && !from.packageName.equals(to.packageName)) {
             packageName = TAG;
-            StringBuilder stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("appSwitch from: ");
-            stringBuilder2.append(from.packageName);
-            stringBuilder2.append(" to: ");
-            stringBuilder2.append(to.packageName);
-            Slog.w(packageName, stringBuilder2.toString());
+            StringBuilder stringBuilder3 = new StringBuilder();
+            stringBuilder3.append("appSwitch from: ");
+            stringBuilder3.append(from.packageName);
+            stringBuilder3.append(" to: ");
+            stringBuilder3.append(to.packageName);
+            Slog.w(packageName, stringBuilder3.toString());
             Bundle bundle2 = new Bundle();
             bundle2.putString("fromPackage", from.packageName);
             bundle2.putInt("fromUid", from.getUid());
@@ -1093,9 +1090,9 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
             bundle2.putInt("toUid", to.getUid());
             bundle2.putString("android.intent.extra.REASON", "appSwitch");
             bundle2.putInt("android.intent.extra.user_handle", this.mIAmsInner.getUserController().getCurrentUserIdLU());
-            Message msg3 = this.mHwHandler.obtainMessage(24);
-            msg3.obj = bundle2;
-            this.mHwHandler.sendMessage(msg3);
+            Message msg2 = this.mHwHandler.obtainMessage(24);
+            msg2.obj = bundle2;
+            this.mHwHandler.sendMessage(msg2);
         }
     }
 
@@ -1143,101 +1140,136 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
 
     private Intent slideGetDefaultIntent() {
         Intent intent = new Intent();
-        if (SystemProperties.get("ro.config.hw_optb", "0").equals("156")) {
-            intent.setPackage("com.huawei.vassistant");
-            intent.setAction("com.huawei.action.VOICE_ASSISTANT");
-            intent.putExtra("from_slide_open", true);
-        } else {
-            intent.setPackage("no_set");
-        }
+        intent.setPackage("com.android.settings");
+        intent.setAction("android.intent.action.MAIN");
+        intent.setClassName("com.android.settings", "com.android.settings.accessibility.FirstSlideCoverDialogActivity");
         return intent;
     }
 
-    private Intent slideGetIntentFromSetting() {
-        String keyStr;
-        if (this.mIAmsInner.isSleeping()) {
-            keyStr = "quick_slide_app_db_secure";
-        } else {
-            keyStr = "quick_slide_app_db";
-        }
-        String intentStr = Secure.getStringForUser(this.mContext.getContentResolver(), keyStr, this.mIAmsInner.getUserController().getCurrentUserId());
-        if (intentStr == null) {
-            return null;
-        }
+    private boolean isSupportKeyguardQuickCamera(ContentResolver resolver, int uid) {
+        String SUPPORT_SLIDE_OPEN_SECURE_CAMERA = "keyguard_slide_open_camera_state";
+        return Secure.getIntForUser(resolver, "keyguard_slide_open_camera_state", -1, uid) == 1;
+    }
+
+    private static boolean getCameraDisabled(Context context, int userId) {
+        boolean z = false;
         try {
-            return Intent.parseUri(intentStr, 0);
-        } catch (Exception e) {
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("startActivity get intent err : ");
-            stringBuilder.append(intentStr);
-            Slog.e(str, stringBuilder.toString());
-            return null;
+            DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService("device_policy");
+            if (dpm == null) {
+                return false;
+            }
+            if (dpm.getCameraDisabled(null, userId)) {
+                return true;
+            }
+            if ((dpm.getKeyguardDisabledFeatures(null, userId) & 2) != 0 && isSecureKeyguard(context, userId)) {
+                z = true;
+            }
+            return z;
+        } catch (SecurityException e) {
+            Slog.e(TAG, "getCameraDisabled got SecurityException.", e);
+            return false;
+        } catch (Exception e2) {
+            Slog.e(TAG, "getCameraDisabled got Exception.", e2);
+            return false;
         }
     }
 
-    public void slideOpenStartActivity() {
-        Intent intent = slideGetIntentFromSetting();
-        if (intent == null) {
-            intent = slideGetDefaultIntent();
+    private static boolean isSecureKeyguard(Context context, int userId) {
+        return new LockPatternUtils(context).isSecure(userId);
+    }
+
+    private Intent slideGetIntentFromSetting(boolean isSecure) {
+        String keyStr = isSecure ? "quick_slide_app_db_secure" : "quick_slide_app_db";
+        Intent intent = null;
+        ContentResolver resolver = this.mContext.getContentResolver();
+        int uid = this.mIAmsInner.getUserController().getCurrentUserId();
+        if (!isSecure || (isSupportKeyguardQuickCamera(resolver, uid) && !getCameraDisabled(this.mContext, uid))) {
+            String intentStr = Secure.getStringForUser(resolver, keyStr, uid);
+            if (intentStr == null) {
+                return null;
+            }
+            if (intentStr.equals("first_slide")) {
+                return slideGetDefaultIntent();
+            }
+            try {
+                intent = Intent.parseUri(intentStr, 0);
+            } catch (Exception e) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("startActivity get intent err : ");
+                stringBuilder.append(intentStr);
+                Slog.e(str, stringBuilder.toString());
+            }
+            return intent;
         }
-        this.mQuickSlideIntent = intent;
-        this.mQuickSlideStartTime = SystemClock.uptimeMillis();
+        Slog.v(TAG, "slideGetIntentFromSetting skipped as not support");
+        return null;
+    }
+
+    private void slideOpenStartActivity() {
+        boolean keyguardOn = this.mIAmsInner.getAMSForLock().mWindowManager.isKeyguardLocked();
+        if (keyguardOn && this.mIAmsInner.getAMSForLock().mWindowManager.isKeyguardOccluded()) {
+            Slog.i(TAG, "slideOpenStartActivity skip as occluded, return!");
+            return;
+        }
         ActivityRecord lastResumedActivity = this.mIAmsInner.getLastResumedActivityRecord();
         String lastResumedPkg = lastResumedActivity != null ? lastResumedActivity.packageName : null;
-        Context context = this.mContext;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{curPkgName:");
-        stringBuilder.append(lastResumedPkg);
-        stringBuilder.append(",startPkgName:");
-        stringBuilder.append(intent.getPackage());
-        stringBuilder.append("}");
-        Flog.bdReport(context, PPPOEStateMachine.PPPOE_EVENT_CODE, stringBuilder.toString());
-        String str = TAG;
-        StringBuilder stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("slideOpenStartActivity lastResumedPkg:");
-        stringBuilder2.append(lastResumedPkg);
-        stringBuilder2.append(", startPkgName:");
-        stringBuilder2.append(intent.getPackage());
-        Slog.i(str, stringBuilder2.toString());
-        if (intent == null || intent.getPackage() == null || intent.getPackage().equals("no_set") || (lastResumedActivity != null && lastResumedActivity.visible && lastResumedActivity.packageName.equals(intent.getPackage()))) {
-            Slog.i(TAG, "no_set or has been started, need not start activity!");
-        } else {
+        if (!"com.android.incallui".equals(lastResumedPkg) || keyguardOn) {
+            Intent intent = slideGetIntentFromSetting(keyguardOn);
+            if (intent == null) {
+                Slog.i(TAG, "slideOpenStartActivity get intent is null, return!");
+                return;
+            }
+            this.mQuickSlideIntent = intent;
+            this.mQuickSlideStartTime = SystemClock.uptimeMillis();
+            Context context = this.mContext;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("{curPkgName:");
+            stringBuilder.append(lastResumedPkg);
+            stringBuilder.append(",startPkgName:");
+            stringBuilder.append(intent.getPackage());
+            stringBuilder.append("}");
+            Flog.bdReport(context, PPPOEStateMachine.PPPOE_EVENT_CODE, stringBuilder.toString());
+            String str = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("slideOpenStartActivity lastResumedPkg:");
+            stringBuilder2.append(lastResumedPkg);
+            stringBuilder2.append(", startPkgName:");
+            stringBuilder2.append(intent.getPackage());
+            Slog.i(str, stringBuilder2.toString());
+            if (intent.getPackage() == null || intent.getPackage().equals("no_set") || !(lastResumedActivity == null || !lastResumedActivity.visible || keyguardOn || intent.getPackage().equals("com.android.settings") || !lastResumedActivity.packageName.equals(intent.getPackage()))) {
+                str = TAG;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("no_set or has been started, need not start activity! sleep ");
+                stringBuilder2.append(keyguardOn);
+                Slog.i(str, stringBuilder2.toString());
+                return;
+            }
             this.mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+            return;
         }
+        Slog.i(TAG, "slideOpenStartActivity skip as incallui");
     }
 
     public void slideCloseMoveActivityToBack() {
-        String str;
-        ActivityRecord lastResumedActivity = this.mIAmsInner.getLastResumedActivityRecord();
-        if (!(lastResumedActivity == null || lastResumedActivity.task == null || lastResumedActivity.task.getStack() == null || this.mQuickSlideIntent == null || !lastResumedActivity.packageName.equals(this.mQuickSlideIntent.getPackage()))) {
-            str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("moveActivityToBack task:");
-            stringBuilder.append(lastResumedActivity.task);
-            Slog.i(str, stringBuilder.toString());
-            synchronized (this.mIAmsInner.getAMSForLock()) {
-                lastResumedActivity.task.getStack().moveTaskToBackLocked(lastResumedActivity.task.taskId);
-            }
-        }
-        str = this.mQuickSlideIntent != null ? this.mQuickSlideIntent.getPackage() : null;
+        String pkgName = this.mQuickSlideIntent != null ? this.mQuickSlideIntent.getPackage() : null;
         long curTime = SystemClock.uptimeMillis();
         long durTime = (this.mQuickSlideStartTime == 0 || curTime < this.mQuickSlideStartTime) ? 0 : curTime - this.mQuickSlideStartTime;
         Context context = this.mContext;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{durTime:");
+        stringBuilder.append(durTime);
+        stringBuilder.append(",pkgName:");
+        stringBuilder.append(pkgName);
+        stringBuilder.append("}");
+        Flog.bdReport(context, 653, stringBuilder.toString());
+        String str = TAG;
         StringBuilder stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("{durTime:");
+        stringBuilder2.append("slideCloseMoveActivityToBack durTime:");
         stringBuilder2.append(durTime);
-        stringBuilder2.append(",pkgName:");
-        stringBuilder2.append(str);
-        stringBuilder2.append("}");
-        Flog.bdReport(context, 653, stringBuilder2.toString());
-        String str2 = TAG;
-        StringBuilder stringBuilder3 = new StringBuilder();
-        stringBuilder3.append("slideCloseMoveActivityToBack durTime:");
-        stringBuilder3.append(durTime);
-        stringBuilder3.append(", pkgName:");
-        stringBuilder3.append(str);
-        Slog.i(str2, stringBuilder3.toString());
+        stringBuilder2.append(", pkgName:");
+        stringBuilder2.append(pkgName);
+        Slog.i(str, stringBuilder2.toString());
         this.mQuickSlideIntent = null;
         this.mQuickSlideStartTime = 0;
     }
@@ -1328,7 +1360,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x008c, code:
+    /* JADX WARNING: Missing block: B:29:0x008c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1336,10 +1368,13 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         boolean showBackground = Secure.getInt(this.mContext.getContentResolver(), "anr_show_background", 0) != 0;
         synchronized (this.mIAmsInner.getAMSForLock()) {
             if (!showBackground) {
-                if (!(app.isInterestingToUserLocked() || app.pid == this.mIAmsInner.getAmsPid())) {
-                    app.kill("BG ANR", true);
-                    zrHungSendEvent("recoverresult", 0, 0, app.info.packageName, null, "BG Kill");
-                    return;
+                try {
+                    if (!(app.isInterestingToUserLocked() || app.pid == this.mIAmsInner.getAmsPid())) {
+                        app.kill("BG ANR", true);
+                        zrHungSendEvent("recoverresult", 0, 0, app.info.packageName, null, "BG Kill");
+                        return;
+                    }
+                } catch (Throwable th) {
                 }
             }
             AppErrors mAppErrors = this.mIAmsInner.getAppErrors();
@@ -1595,7 +1630,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:51:0x0104, code:
+    /* JADX WARNING: Missing block: B:51:0x0104, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1701,7 +1736,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0021, code:
+    /* JADX WARNING: Missing block: B:10:0x0021, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1721,23 +1756,23 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x009f, code:
+    /* JADX WARNING: Missing block: B:22:0x009f, code skipped:
             r4 = r10.mIAmsInner.getAMSForLock();
      */
-    /* JADX WARNING: Missing block: B:23:0x00a5, code:
+    /* JADX WARNING: Missing block: B:23:0x00a5, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             r10.mIAmsInner.cleanupAppInLaunchingProvidersLockedEx(r0, true);
      */
-    /* JADX WARNING: Missing block: B:26:0x00ac, code:
+    /* JADX WARNING: Missing block: B:26:0x00ac, code skipped:
             if (r13 == false) goto L_0x00b2;
      */
-    /* JADX WARNING: Missing block: B:27:0x00ae, code:
+    /* JADX WARNING: Missing block: B:27:0x00ae, code skipped:
             r0.killedByAm = true;
             r0.killed = true;
      */
-    /* JADX WARNING: Missing block: B:28:0x00b2, code:
+    /* JADX WARNING: Missing block: B:28:0x00b2, code skipped:
             r0.unlinkDeathRecipient();
             r3 = new java.lang.StringBuilder();
             r3.append(r14);
@@ -1747,10 +1782,10 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
             r3 = r3.toString();
             r10.mIAmsInner.removeProcessLockedEx(r0, false, r12, r3);
      */
-    /* JADX WARNING: Missing block: B:29:0x00d5, code:
+    /* JADX WARNING: Missing block: B:29:0x00d5, code skipped:
             if (r13 == false) goto L_0x0133;
      */
-    /* JADX WARNING: Missing block: B:30:0x00d7, code:
+    /* JADX WARNING: Missing block: B:30:0x00d7, code skipped:
             r10.mIAmsInner.getDAMonitor().killProcessGroupForQuickKill(r0.info.uid, r11.mPid);
             r7 = TAG;
             r8 = new java.lang.StringBuilder();
@@ -1763,17 +1798,17 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
             android.util.Slog.i(r7, r8.toString());
             android.util.EventLog.writeEvent(30023, new java.lang.Object[]{java.lang.Integer.valueOf(r2), java.lang.Integer.valueOf(r11.mPid), r1, java.lang.Integer.valueOf(r0.curAdj), r3});
      */
-    /* JADX WARNING: Missing block: B:31:0x0133, code:
+    /* JADX WARNING: Missing block: B:31:0x0133, code skipped:
             r10.mIAmsInner.cleanupBroadcastLockedEx(r0);
             r10.mIAmsInner.cleanupAlarmLockedEx(r0);
      */
-    /* JADX WARNING: Missing block: B:32:0x013d, code:
+    /* JADX WARNING: Missing block: B:32:0x013d, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:33:0x013e, code:
+    /* JADX WARNING: Missing block: B:33:0x013e, code skipped:
             r10.mIAmsInner.getDAMonitor().reportAppDiedMsg(r2, r1, r14);
      */
-    /* JADX WARNING: Missing block: B:34:0x0147, code:
+    /* JADX WARNING: Missing block: B:34:0x0147, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1865,10 +1900,10 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:?, code:
+    /* JADX WARNING: Missing block: B:40:?, code skipped:
             r9.mLru = r8.mIAmsInner.getLruProcesses().lastIndexOf(r0);
      */
-    /* JADX WARNING: Missing block: B:41:0x00c6, code:
+    /* JADX WARNING: Missing block: B:42:0x00c6, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2002,7 +2037,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0074, code:
+    /* JADX WARNING: Missing block: B:14:0x0074, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2026,10 +2061,10 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:33:0x00eb, code:
+    /* JADX WARNING: Missing block: B:35:0x00eb, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:34:0x00ec, code:
+    /* JADX WARNING: Missing block: B:36:0x00ec, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2128,7 +2163,7 @@ public final class HwActivityManagerServiceEx implements IHwActivityManagerServi
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x003a, code:
+    /* JADX WARNING: Missing block: B:11:0x003a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

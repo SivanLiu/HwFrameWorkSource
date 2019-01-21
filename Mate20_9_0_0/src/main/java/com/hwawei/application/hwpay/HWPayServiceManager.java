@@ -100,20 +100,6 @@ public class HWPayServiceManager {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x015a A:{Splitter: B:7:0x006f, ExcHandler: java.lang.NullPointerException (r6_18 'e' java.lang.RuntimeException)} */
-    /* JADX WARNING: Missing block: B:24:0x015a, code:
-            r6 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:25:0x015b, code:
-            r7 = new java.lang.StringBuilder();
-            r7.append("invalid params encountered \n");
-            r7.append(r6.getMessage());
-            r14.mErrMsg = r7.toString();
-     */
-    /* JADX WARNING: Missing block: B:26:0x0179, code:
-            throw new com.huawei.security.hccm.EnrollmentException(r14.mErrMsg, -1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void enrollCertInternal() throws Exception {
         StringBuilder stringBuilder;
         if (checkCertEnrollParams()) {
@@ -139,6 +125,7 @@ public class HWPayServiceManager {
                         enrollmentContext.setClientCertificateChain(chain);
                         this.mHccm.store(enrollmentContext);
                         Log.d(TAG, "application certificate was stored successfully!");
+                        return;
                     } catch (EnrollmentException e) {
                         StringBuilder stringBuilder2 = new StringBuilder();
                         stringBuilder2.append("encounter EnrollmentException during store ");
@@ -171,12 +158,16 @@ public class HWPayServiceManager {
                     Log.e(TAG, stringBuilder.toString());
                     throw e3;
                 }
-            } catch (RuntimeException e4) {
+            } catch (IllegalArgumentException | NullPointerException e4) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("invalid params encountered \n");
+                stringBuilder.append(e4.getMessage());
+                this.mErrMsg = stringBuilder.toString();
+                throw new EnrollmentException(this.mErrMsg, -1);
             }
-        } else {
-            Log.e(TAG, "invalid parameter for certificate enrollment.");
-            throw new EnrollmentException("invalid parameters", -1);
         }
+        Log.e(TAG, "invalid parameter for certificate enrollment.");
+        throw new EnrollmentException("invalid parameters", -1);
     }
 
     public void initializeCertParams(@NonNull X500Name subject, @NonNull String alias, @NonNull TokenInfo token, @NonNull JSONObject connectSetting, @NonNull String url, X509Certificate raCertificate, @NonNull X509Certificate rootCertificate, String padding, @NonNull EnrollCertificateCallback callback) {

@@ -8,6 +8,7 @@ import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.view.IWindowLayoutObserver;
 import android.view.IWindowManager.Stub;
+import java.util.ArrayList;
 
 public abstract class AbsWindowManagerService extends Stub {
     public static final int TOP_LAYER = 400000;
@@ -114,5 +115,12 @@ public abstract class AbsWindowManagerService extends Stub {
     }
 
     public void startIntelliServiceFR(int orientation) {
+    }
+
+    public ArrayList<WindowState> getSecureScreenWindow() {
+        return new ArrayList();
+    }
+
+    public void removeSecureScreenWindow(WindowState win) {
     }
 }

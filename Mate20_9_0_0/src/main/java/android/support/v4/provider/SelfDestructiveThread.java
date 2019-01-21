@@ -141,16 +141,16 @@ public class SelfDestructiveThread {
                     } catch (InterruptedException e) {
                     }
                     if (!running.get()) {
-                        T t = holder.get();
+                        Object obj = holder.get();
                         lock.unlock();
-                        return t;
+                        return obj;
                     } else if (remaining <= 0) {
                         throw new InterruptedException("timeout");
                     }
                 }
             } else {
-                T t2 = holder.get();
-                return t2;
+                T t = holder.get();
+                return t;
             }
         } finally {
             lock.unlock();

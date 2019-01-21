@@ -40,6 +40,7 @@ import com.android.internal.content.PackageMonitor;
 import com.android.internal.os.TransferPipe;
 import com.android.internal.util.DumpUtils;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -707,8 +708,10 @@ public class NetworkScoreService extends Stub {
                         Entry<Integer, List<ScoredNetwork>> entry = (Entry) it.next();
                         synchronized (this.mScoreCaches) {
                             callbackList = (RemoteCallbackList) this.mScoreCaches.get(entry.getKey());
-                            if (!(callbackList == null || callbackList.getRegisteredCallbackCount() == 0)) {
-                                isEmpty = false;
+                            if (callbackList != null) {
+                                if (callbackList.getRegisteredCallbackCount() != 0) {
+                                    isEmpty = false;
+                                }
                             }
                         }
                         if (!isEmpty) {
@@ -860,16 +863,19 @@ public class NetworkScoreService extends Stub {
         try {
             synchronized (this.mScoreCaches) {
                 RemoteCallbackList<INetworkScoreCache> callbackList = (RemoteCallbackList) this.mScoreCaches.get(Integer.valueOf(networkType));
-                if (callbackList == null || !callbackList.unregister(scoreCache)) {
-                    if (Log.isLoggable(TAG, 2)) {
-                        String str = TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Unable to unregister NetworkScoreCache for type ");
-                        stringBuilder.append(networkType);
-                        Log.v(str, stringBuilder.toString());
+                if (callbackList != null) {
+                    if (callbackList.unregister(scoreCache)) {
+                        if (callbackList.getRegisteredCallbackCount() == 0) {
+                            this.mScoreCaches.remove(Integer.valueOf(networkType));
+                        }
                     }
-                } else if (callbackList.getRegisteredCallbackCount() == 0) {
-                    this.mScoreCaches.remove(Integer.valueOf(networkType));
+                }
+                if (Log.isLoggable(TAG, 2)) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Unable to unregister NetworkScoreCache for type ");
+                    stringBuilder.append(networkType);
+                    Log.v(str, stringBuilder.toString());
                 }
             }
             Binder.restoreCallingIdentity(token);
@@ -912,25 +918,15 @@ public class NetworkScoreService extends Stub {
                 stringBuilder.append(currentScorer);
                 writer.println(stringBuilder.toString());
                 sendCacheUpdateCallback(new BiConsumer<INetworkScoreCache, Object>() {
-                    /* JADX WARNING: Removed duplicated region for block: B:2:0x000c A:{Splitter: B:0:0x0000, ExcHandler: java.io.IOException (r0_1 'e' java.lang.Exception)} */
-                    /* JADX WARNING: Missing block: B:2:0x000c, code:
-            r0 = move-exception;
-     */
-                    /* JADX WARNING: Missing block: B:3:0x000d, code:
-            r1 = r7;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to dump score cache: ");
-            r2.append(r0);
-            r1.println(r2.toString());
-     */
-                    /* JADX WARNING: Missing block: B:4:?, code:
-            return;
-     */
-                    /* Code decompiled incorrectly, please refer to instructions dump. */
                     public void accept(INetworkScoreCache networkScoreCache, Object cookie) {
                         try {
                             TransferPipe.dumpAsync(networkScoreCache.asBinder(), fd, args);
-                        } catch (Exception e) {
+                        } catch (RemoteException | IOException e) {
+                            PrintWriter printWriter = writer;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed to dump score cache: ");
+                            stringBuilder.append(e);
+                            printWriter.println(stringBuilder.toString());
                         }
                     }
                 }, getScoreCacheLists());
@@ -950,7 +946,7 @@ public class NetworkScoreService extends Stub {
     }
 
     private Collection<RemoteCallbackList<INetworkScoreCache>> getScoreCacheLists() {
-        Collection arrayList;
+        ArrayList arrayList;
         synchronized (this.mScoreCaches) {
             arrayList = new ArrayList(this.mScoreCaches.values());
         }

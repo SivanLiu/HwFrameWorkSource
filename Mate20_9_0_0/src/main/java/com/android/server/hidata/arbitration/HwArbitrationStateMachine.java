@@ -1505,7 +1505,9 @@ public class HwArbitrationStateMachine extends StateMachine {
                 }
                 HwArbitrationCommonUtils.logD(HwArbitrationStateMachine.TAG, "defer BAD MSG");
                 this.appStateInfo = (HwAPPStateInfo) message.obj;
-                HwArbitrationStateMachine.this.deferMessage(message);
+                if (!HwArbitrationStateMachine.this.hasDeferredMessages(message.what)) {
+                    HwArbitrationStateMachine.this.deferMessage(message);
+                }
             }
             return true;
         }

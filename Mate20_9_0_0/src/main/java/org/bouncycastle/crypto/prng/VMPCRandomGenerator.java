@@ -30,13 +30,16 @@ public class VMPCRandomGenerator implements RandomGenerator {
         synchronized (this.P) {
             i2 += i;
             while (i != i2) {
-                this.s = this.P[(this.s + this.P[this.n & 255]) & 255];
-                bArr[i] = this.P[(this.P[this.P[this.s & 255] & 255] + 1) & 255];
-                byte b = this.P[this.n & 255];
-                this.P[this.n & 255] = this.P[this.s & 255];
-                this.P[this.s & 255] = b;
-                this.n = (byte) ((this.n + 1) & 255);
-                i++;
+                try {
+                    this.s = this.P[(this.s + this.P[this.n & 255]) & 255];
+                    bArr[i] = this.P[(this.P[this.P[this.s & 255] & 255] + 1) & 255];
+                    byte b = this.P[this.n & 255];
+                    this.P[this.n & 255] = this.P[this.s & 255];
+                    this.P[this.s & 255] = b;
+                    this.n = (byte) ((this.n + 1) & 255);
+                    i++;
+                } catch (Throwable th) {
+                }
             }
         }
     }

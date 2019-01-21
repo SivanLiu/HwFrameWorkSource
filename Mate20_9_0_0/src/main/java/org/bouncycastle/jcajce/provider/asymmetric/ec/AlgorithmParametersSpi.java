@@ -65,12 +65,12 @@ public class AlgorithmParametersSpi extends java.security.AlgorithmParametersSpi
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:17:0x004b in {4, 6, 8, 13, 15, 16, 19} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -82,18 +82,14 @@ public class AlgorithmParametersSpi extends java.security.AlgorithmParametersSpi
         r3 = this;
         r0 = r4 instanceof java.security.spec.ECGenParameterSpec;
         if (r0 == 0) goto L_0x0034;
-    L_0x0004:
         r4 = (java.security.spec.ECGenParameterSpec) r4;
         r0 = org.bouncycastle.jcajce.provider.asymmetric.ec.ECUtils.getDomainParametersFromGenSpec(r4);
         if (r0 == 0) goto L_0x0019;
-    L_0x000c:
         r4 = r4.getName();
         r3.curveName = r4;
         r4 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertToSpec(r0);
-    L_0x0016:
         r3.ecParameterSpec = r4;
         return;
-    L_0x0019:
         r0 = new java.security.spec.InvalidParameterSpecException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -104,27 +100,20 @@ public class AlgorithmParametersSpi extends java.security.AlgorithmParametersSpi
         r4 = r1.toString();
         r0.<init>(r4);
         throw r0;
-    L_0x0034:
         r0 = r4 instanceof java.security.spec.ECParameterSpec;
         if (r0 == 0) goto L_0x004c;
-    L_0x0038:
         r0 = r4 instanceof org.bouncycastle.jce.spec.ECNamedCurveSpec;
         if (r0 == 0) goto L_0x0046;
-    L_0x003c:
         r0 = r4;
         r0 = (org.bouncycastle.jce.spec.ECNamedCurveSpec) r0;
         r0 = r0.getName();
-    L_0x0043:
         r3.curveName = r0;
         goto L_0x0048;
-    L_0x0046:
         r0 = 0;
         goto L_0x0043;
-    L_0x0048:
         r4 = (java.security.spec.ECParameterSpec) r4;
         goto L_0x0016;
         return;
-    L_0x004c:
         r0 = new java.security.spec.InvalidParameterSpecException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();

@@ -86,8 +86,11 @@ public class LayerTile {
 
     public synchronized void setImage(byte[] imageData) {
         if (imageData != null) {
-            if (imageData.length != 0) {
-                this.image = Config.getInstance().getImageFactory().createImage(imageData, 0, imageData.length);
+            try {
+                if (imageData.length != 0) {
+                    this.image = Config.getInstance().getImageFactory().createImage(imageData, 0, imageData.length);
+                }
+            } finally {
             }
         }
         this.image = null;

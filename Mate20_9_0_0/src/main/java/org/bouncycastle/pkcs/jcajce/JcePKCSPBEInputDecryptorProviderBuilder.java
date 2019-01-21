@@ -83,16 +83,19 @@ public class JcePKCSPBEInputDecryptorProviderBuilder {
                             ivParameterSpec = new GOST28147ParameterSpec(instance6.getEncryptionParamSet(), instance6.getIV());
                         }
                         cipher.init(2, generateSecret, ivParameterSpec);
-                    } else if (algorithm.equals(PKCSObjectIdentifiers.pbeWithMD5AndDES_CBC) || algorithm.equals(PKCSObjectIdentifiers.pbeWithSHA1AndDES_CBC)) {
+                    } else {
+                        if (!algorithm.equals(PKCSObjectIdentifiers.pbeWithMD5AndDES_CBC)) {
+                            if (!algorithm.equals(PKCSObjectIdentifiers.pbeWithSHA1AndDES_CBC)) {
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("unable to create InputDecryptor: algorithm ");
+                                stringBuilder.append(algorithm);
+                                stringBuilder.append(" unknown.");
+                                throw new OperatorCreationException(stringBuilder.toString());
+                            }
+                        }
                         PBEParameter instance7 = PBEParameter.getInstance(algorithmIdentifier.getParameters());
                         this.cipher = JcePKCSPBEInputDecryptorProviderBuilder.this.helper.createCipher(algorithm.getId());
                         this.cipher.init(2, new PBKDF1Key(cArr, PasswordConverter.ASCII), new PBEParameterSpec(instance7.getSalt(), instance7.getIterationCount().intValue()));
-                    } else {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("unable to create InputDecryptor: algorithm ");
-                        stringBuilder.append(algorithm);
-                        stringBuilder.append(" unknown.");
-                        throw new OperatorCreationException(stringBuilder.toString());
                     }
                     return new InputDecryptor() {
                         public AlgorithmIdentifier getAlgorithmIdentifier() {
@@ -103,7 +106,7 @@ public class JcePKCSPBEInputDecryptorProviderBuilder {
                             return new CipherInputStream(inputStream, AnonymousClass1.this.cipher);
                         }
                     };
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("unable to create InputDecryptor: ");
                     stringBuilder.append(e.getMessage());

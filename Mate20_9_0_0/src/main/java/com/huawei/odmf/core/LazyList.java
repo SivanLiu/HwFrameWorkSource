@@ -310,8 +310,7 @@ public class LazyList<E> implements List<E> {
                     }
                     insertRemove(o);
                 }
-            } catch (ODMFIllegalArgumentException e) {
-            } catch (ODMFNullPointerException e2) {
+            } catch (ODMFIllegalArgumentException | ODMFNullPointerException e) {
             }
         }
         if (flag) {

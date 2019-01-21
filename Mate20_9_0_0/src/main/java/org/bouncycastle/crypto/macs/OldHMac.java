@@ -48,7 +48,7 @@ public class OldHMac implements Mac {
         int i;
         byte[] bArr;
         this.digest.reset();
-        Object key = ((KeyParameter) cipherParameters).getKey();
+        byte[] key = ((KeyParameter) cipherParameters).getKey();
         if (key.length > 64) {
             this.digest.update(key, 0, key.length);
             this.digest.doFinal(this.inputPad, 0);

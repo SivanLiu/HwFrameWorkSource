@@ -575,7 +575,7 @@ public final class HwSysResManagerService extends SystemService {
             return false;
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0038, code:
+        /* JADX WARNING: Missing block: B:13:0x0038, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

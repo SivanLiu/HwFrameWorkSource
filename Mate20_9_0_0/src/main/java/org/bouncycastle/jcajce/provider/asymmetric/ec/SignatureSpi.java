@@ -11,11 +11,11 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.NullDigest;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECNRSigner;
@@ -33,33 +33,33 @@ public class SignatureSpi extends DSABase {
         }
 
         private byte[] makeUnsigned(BigInteger bigInteger) {
-            Object toByteArray = bigInteger.toByteArray();
+            byte[] toByteArray = bigInteger.toByteArray();
             if (toByteArray[0] != (byte) 0) {
                 return toByteArray;
             }
-            Object obj = new byte[(toByteArray.length - 1)];
-            System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-            return obj;
+            byte[] bArr = new byte[(toByteArray.length - 1)];
+            System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+            return bArr;
         }
 
         public BigInteger[] decode(byte[] bArr) throws IOException {
             BigInteger[] bigIntegerArr = new BigInteger[2];
-            Object obj = new byte[(bArr.length / 2)];
-            Object obj2 = new byte[(bArr.length / 2)];
-            System.arraycopy(bArr, 0, obj, 0, obj.length);
-            System.arraycopy(bArr, obj.length, obj2, 0, obj2.length);
-            bigIntegerArr[0] = new BigInteger(1, obj);
-            bigIntegerArr[1] = new BigInteger(1, obj2);
+            byte[] bArr2 = new byte[(bArr.length / 2)];
+            byte[] bArr3 = new byte[(bArr.length / 2)];
+            System.arraycopy(bArr, 0, bArr2, 0, bArr2.length);
+            System.arraycopy(bArr, bArr2.length, bArr3, 0, bArr3.length);
+            bigIntegerArr[0] = new BigInteger(1, bArr2);
+            bigIntegerArr[1] = new BigInteger(1, bArr3);
             return bigIntegerArr;
         }
 
         public byte[] encode(BigInteger bigInteger, BigInteger bigInteger2) throws IOException {
-            Object makeUnsigned = makeUnsigned(bigInteger);
-            Object makeUnsigned2 = makeUnsigned(bigInteger2);
-            Object obj = new byte[((makeUnsigned.length > makeUnsigned2.length ? makeUnsigned.length : makeUnsigned2.length) * 2)];
-            System.arraycopy(makeUnsigned, 0, obj, (obj.length / 2) - makeUnsigned.length, makeUnsigned.length);
-            System.arraycopy(makeUnsigned2, 0, obj, obj.length - makeUnsigned2.length, makeUnsigned2.length);
-            return obj;
+            byte[] makeUnsigned = makeUnsigned(bigInteger);
+            byte[] makeUnsigned2 = makeUnsigned(bigInteger2);
+            byte[] bArr = new byte[((makeUnsigned.length > makeUnsigned2.length ? makeUnsigned.length : makeUnsigned2.length) * 2)];
+            System.arraycopy(makeUnsigned, 0, bArr, (bArr.length / 2) - makeUnsigned.length, makeUnsigned.length);
+            System.arraycopy(makeUnsigned2, 0, bArr, bArr.length - makeUnsigned2.length, makeUnsigned2.length);
+            return bArr;
         }
     }
 
@@ -277,7 +277,7 @@ public class SignatureSpi extends DSABase {
     }
 
     protected void engineInitSign(PrivateKey privateKey) throws InvalidKeyException {
-        CipherParameters generatePrivateKeyParameter = ECUtil.generatePrivateKeyParameter(privateKey);
+        AsymmetricKeyParameter generatePrivateKeyParameter = ECUtil.generatePrivateKeyParameter(privateKey);
         this.digest.reset();
         if (this.appRandom != null) {
             this.signer.init(true, new ParametersWithRandom(generatePrivateKeyParameter, this.appRandom));
@@ -287,7 +287,7 @@ public class SignatureSpi extends DSABase {
     }
 
     protected void engineInitVerify(PublicKey publicKey) throws InvalidKeyException {
-        CipherParameters generatePublicKeyParameter = ECUtils.generatePublicKeyParameter(publicKey);
+        AsymmetricKeyParameter generatePublicKeyParameter = ECUtils.generatePublicKeyParameter(publicKey);
         this.digest.reset();
         this.signer.init(false, generatePublicKeyParameter);
     }

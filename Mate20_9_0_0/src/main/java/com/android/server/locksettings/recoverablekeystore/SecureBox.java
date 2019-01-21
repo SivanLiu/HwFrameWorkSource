@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -25,7 +24,9 @@ import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import javax.crypto.AEADBadTagException;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
@@ -185,14 +186,6 @@ public class SecureBox {
         return aesGcmInternal(AesGcmOperation.DECRYPT, key, nonce, ciphertext, aad);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0025 A:{Splitter: B:8:0x001d, ExcHandler: javax.crypto.IllegalBlockSizeException (r2_5 'ex' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Missing block: B:11:0x0025, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:0x002b, code:
-            throw new java.lang.RuntimeException(r2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static byte[] aesGcmInternal(AesGcmOperation operation, SecretKey key, byte[] nonce, byte[] text, byte[] aad) throws NoSuchAlgorithmException, InvalidKeyException, AEADBadTagException {
         try {
             Cipher cipher = Cipher.getInstance(ENC_ALG);
@@ -208,7 +201,8 @@ public class SecureBox {
                     return cipher.doFinal(text);
                 } catch (AEADBadTagException ex) {
                     throw ex;
-                } catch (GeneralSecurityException ex2) {
+                } catch (BadPaddingException | IllegalBlockSizeException ex2) {
+                    throw new RuntimeException(ex2);
                 }
             } catch (InvalidAlgorithmParameterException ex3) {
                 throw new RuntimeException(ex3);

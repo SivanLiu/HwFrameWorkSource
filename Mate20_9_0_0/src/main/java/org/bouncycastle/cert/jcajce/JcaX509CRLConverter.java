@@ -1,8 +1,11 @@
 package org.bouncycastle.cert.jcajce;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import org.bouncycastle.cert.X509CRLHolder;
 
@@ -31,21 +34,21 @@ public class JcaX509CRLConverter {
         StringBuilder stringBuilder;
         try {
             return (X509CRL) this.helper.getCertificateFactory("X.509").generateCRL(new ByteArrayInputStream(x509CRLHolder.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception parsing certificate: ");
             stringBuilder.append(e.getMessage());
             throw new ExCRLException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchProviderException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find required provider:");
             stringBuilder.append(e2.getMessage());
             throw new ExCRLException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (CertificateException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create factory: ");
-            stringBuilder.append(e22.getMessage());
-            throw new ExCRLException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new ExCRLException(stringBuilder.toString(), e3);
         }
     }
 

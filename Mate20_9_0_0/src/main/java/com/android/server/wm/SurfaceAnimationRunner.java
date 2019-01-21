@@ -114,7 +114,7 @@ class SurfaceAnimationRunner {
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x003a, code:
+    /* JADX WARNING: Missing block: B:24:0x003a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

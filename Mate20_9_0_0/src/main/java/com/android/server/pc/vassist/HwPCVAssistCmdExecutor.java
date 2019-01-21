@@ -328,28 +328,28 @@ public final class HwPCVAssistCmdExecutor {
     }
 
     private void loadStringsForExecResults() {
-        this.mAppStartSuccStrs.add(this.mContext.getString(33686158));
-        this.mAppStartSuccStrs.add(this.mContext.getString(33686157));
+        this.mAppStartSuccStrs.add(this.mContext.getString(33686160));
+        this.mAppStartSuccStrs.add(this.mContext.getString(33686159));
+        this.mCloseSuccResultStrs.add(this.mContext.getString(33686139));
         this.mCloseSuccResultStrs.add(this.mContext.getString(33686137));
-        this.mCloseSuccResultStrs.add(this.mContext.getString(33686135));
-        this.mStartPlayResultStrs.add(this.mContext.getString(33686147));
-        this.mStartPlayResultStrs.add(this.mContext.getString(33686146));
+        this.mStartPlayResultStrs.add(this.mContext.getString(33686149));
+        this.mStartPlayResultStrs.add(this.mContext.getString(33686148));
         this.mOpenDocResultStrs.addAll(this.mAppStartSuccStrs);
-        this.mNotConnDisplayResultStrs.add(this.mContext.getString(33686138));
-        this.mNotConnDisplayResultStrs.add(this.mContext.getString(33686139));
+        this.mNotConnDisplayResultStrs.add(this.mContext.getString(33686140));
+        this.mNotConnDisplayResultStrs.add(this.mContext.getString(33686141));
     }
 
     private void loadStringsForUnWaked() {
-        this.mUnWakedStrs.put(this.mContext.getString(33686151), Integer.valueOf(0));
-        this.mUnWakedStrs.put(this.mContext.getString(33686152), Integer.valueOf(1));
-        this.mUnWakedStrs.put(this.mContext.getString(33686153), Integer.valueOf(2));
-        this.mUnWakedStrs.put(this.mContext.getString(33686154), Integer.valueOf(3));
-        this.mUnWakedStrs.put(this.mContext.getString(33686142), Integer.valueOf(4));
-        this.mUnWakedStrs.put(this.mContext.getString(33686143), Integer.valueOf(5));
-        this.mUnWakedStrs.put(this.mContext.getString(33686144), Integer.valueOf(6));
-        this.mUnWakedStrs.put(this.mContext.getString(33686145), Integer.valueOf(7));
-        this.mUnWakedStrs.put(this.mContext.getString(33686149), Integer.valueOf(8));
-        this.mUnWakedStrs.put(this.mContext.getString(33686150), Integer.valueOf(9));
+        this.mUnWakedStrs.put(this.mContext.getString(33686153), Integer.valueOf(0));
+        this.mUnWakedStrs.put(this.mContext.getString(33686154), Integer.valueOf(1));
+        this.mUnWakedStrs.put(this.mContext.getString(33686155), Integer.valueOf(2));
+        this.mUnWakedStrs.put(this.mContext.getString(33686156), Integer.valueOf(3));
+        this.mUnWakedStrs.put(this.mContext.getString(33686144), Integer.valueOf(4));
+        this.mUnWakedStrs.put(this.mContext.getString(33686145), Integer.valueOf(5));
+        this.mUnWakedStrs.put(this.mContext.getString(33686146), Integer.valueOf(6));
+        this.mUnWakedStrs.put(this.mContext.getString(33686147), Integer.valueOf(7));
+        this.mUnWakedStrs.put(this.mContext.getString(33686151), Integer.valueOf(8));
+        this.mUnWakedStrs.put(this.mContext.getString(33686152), Integer.valueOf(9));
     }
 
     public void execVoiceCmd(Message message) {
@@ -361,11 +361,6 @@ public final class HwPCVAssistCmdExecutor {
         return voiceCmd.cmd == 2 || voiceCmd.cmd == 3 || voiceCmd.cmd == 4 || voiceCmd.cmd == 1;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x0118 A:{ExcHandler: org.json.JSONException (e org.json.JSONException), Splitter: B:1:0x0007} */
-    /* JADX WARNING: Missing block: B:33:0x0119, code:
-            android.util.HwPCUtils.log(TAG, "resolveSlotsOfCloud ParseException occurred");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void resolveSlotsOfCloud(VoiceCmd voiceCmd, String name, JSONObject jsonObjSlots) {
         HwPCUtils.log(TAG, "resolveSlotsOfCloud");
         try {
@@ -423,7 +418,8 @@ public final class HwPCVAssistCmdExecutor {
                 stringBuilder.append(voiceCmd.extra);
                 HwPCUtils.log(appName, stringBuilder.toString());
             }
-        } catch (JSONException e) {
+        } catch (ClassCastException | JSONException e) {
+            HwPCUtils.log(TAG, "resolveSlotsOfCloud ParseException occurred");
         }
     }
 
@@ -1195,7 +1191,7 @@ public final class HwPCVAssistCmdExecutor {
                 return getRandomResponseStr(this.mStartPlayResultStrs);
             case -4:
             case -3:
-                return this.mContext.getString(33686148);
+                return this.mContext.getString(33686150);
             case -2:
                 return getRandomResponseStr(this.mCloseSuccResultStrs);
             case -1:
@@ -1203,17 +1199,17 @@ public final class HwPCVAssistCmdExecutor {
             case 2:
                 return getRandomResponseStr(this.mNotConnDisplayResultStrs);
             case 3:
-                return this.mContext.getString(33686131);
-            case 4:
-                return this.mContext.getString(33686129);
-            case 5:
-                return this.mContext.getString(33686130);
-            case 6:
                 return this.mContext.getString(33686133);
+            case 4:
+                return this.mContext.getString(33686131);
+            case 5:
+                return this.mContext.getString(33686132);
+            case 6:
+                return this.mContext.getString(33686135);
             case 7:
-                return this.mContext.getString(33686140);
+                return this.mContext.getString(33686142);
             default:
-                return this.mContext.getString(33686158);
+                return this.mContext.getString(33686160);
         }
     }
 

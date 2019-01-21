@@ -36,16 +36,17 @@ public class WifiProChrDataBaseManager {
         return mChrDataBaseManager;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
+    /* JADX WARNING: Missing block: B:12:0x001d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeDB() {
         synchronized (this.mChrLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                logd("closeDB()");
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    logd("closeDB()");
+                    this.mDatabase.close();
+                }
             }
         }
     }
@@ -227,51 +228,55 @@ public class WifiProChrDataBaseManager {
     private boolean insertChrStatRcd(WifiProStatisticsRecord dbr) {
         logd("insertChrStatRcd enter.");
         synchronized (this.mChrLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("insertChrStatRcd database error.");
-                return false;
-            } else if (dbr == null) {
-                loge("insertChrStatRcd null error.");
-                return false;
-            } else {
-                SQLiteDatabase sQLiteDatabase;
-                this.mDatabase.beginTransaction();
-                short idValue = (short) 1;
-                try {
-                    this.mDatabase.execSQL("INSERT INTO CHRStatTable VALUES(?,   ?, ?, ?, ?, ?,   ?, ?, ?, ?, ?, ?,   ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,    ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?,   ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?,    ?,?,?,?,?,?)", new Object[]{Short.valueOf(idValue), dbr.mLastStatUploadTime, Short.valueOf(dbr.mLastWifiproState), dbr.mLastWifiproStateUpdateTime, Integer.valueOf(dbr.mEnableTotTime), Short.valueOf(dbr.mNoInetHandoverCount), Short.valueOf(dbr.mPortalUnauthCount), Short.valueOf(dbr.mWifiScoCount), Short.valueOf(dbr.mPortalCodeParseCount), Short.valueOf(dbr.mRcvSMS_Count), Short.valueOf(dbr.mPortalAutoLoginCount), Short.valueOf(dbr.mCellAutoOpenCount), Short.valueOf(dbr.mCellAutoCloseCount), Short.valueOf(dbr.mTotalBQE_BadROC), Short.valueOf(dbr.mManualBackROC), Short.valueOf(dbr.mRSSI_RO_Tot), Short.valueOf(dbr.mRSSI_ErrRO_Tot), Short.valueOf(dbr.mOTA_RO_Tot), Short.valueOf(dbr.mOTA_ErrRO_Tot), Short.valueOf(dbr.mTCP_RO_Tot), Short.valueOf(dbr.mTCP_ErrRO_Tot), Integer.valueOf(dbr.mManualRI_TotTime), Integer.valueOf(dbr.mAutoRI_TotTime), Short.valueOf(dbr.mAutoRI_TotCount), Short.valueOf(dbr.mRSSI_RestoreRI_Count), Short.valueOf(dbr.mRSSI_BetterRI_Count), Short.valueOf(dbr.mTimerRI_Count), Short.valueOf(dbr.mHisScoRI_Count), Short.valueOf(dbr.mUserCancelROC), Short.valueOf(dbr.mWifiToWifiSuccCount), Short.valueOf(dbr.mNoInetAlarmCount), Short.valueOf(dbr.mWifiOobInitState), Short.valueOf(dbr.mNotAutoConnPortalCnt), Short.valueOf(dbr.mHighDataRateStopROC), Short.valueOf(dbr.mSelectNotInetAPCount), Short.valueOf(dbr.mUserUseBgScanAPCount), Short.valueOf(dbr.mPingPongCount), Short.valueOf(dbr.mBQE_BadSettingCancel), Short.valueOf(dbr.mNotInetSettingCancel), Short.valueOf(dbr.mNotInetUserCancel), Short.valueOf(dbr.mNotInetRestoreRI), Short.valueOf(dbr.mNotInetUserManualRI), Short.valueOf(dbr.mNotInetWifiToWifiCount), Short.valueOf(dbr.mReopenWifiRICount), Short.valueOf(dbr.mSelCSPShowDiglogCount), Short.valueOf(dbr.mSelCSPAutoSwCount), Short.valueOf(dbr.mSelCSPNotSwCount), Short.valueOf(dbr.mTotBtnRICount), Short.valueOf(dbr.mBMD_TenMNotifyCount), Short.valueOf(dbr.mBMD_TenM_RI_Count), Short.valueOf(dbr.mBMD_FiftyMNotifyCount), Short.valueOf(dbr.mBMD_FiftyM_RI_Count), Short.valueOf(dbr.mBMD_UserDelNotifyCount), Integer.valueOf(dbr.mRO_TotMobileData), Short.valueOf(dbr.mAF_PhoneNumSuccCnt), Short.valueOf(dbr.mAF_PhoneNumFailCnt), Short.valueOf(dbr.mAF_PasswordSuccCnt), Short.valueOf(dbr.mAF_PasswordFailCnt), Short.valueOf(dbr.mAF_AutoLoginSuccCnt), Short.valueOf(dbr.mAF_AutoLoginFailCnt), Short.valueOf(dbr.mBG_BgRunCnt), Short.valueOf(dbr.mBG_SettingRunCnt), Short.valueOf(dbr.mBG_FreeInetOkApCnt), Short.valueOf(dbr.mBG_FishingApCnt), Short.valueOf(dbr.mBG_FreeNotInetApCnt), Short.valueOf(dbr.mBG_PortalApCnt), Short.valueOf(dbr.mBG_FailedCnt), Short.valueOf(dbr.mBG_InetNotOkActiveOk), Short.valueOf(dbr.mBG_InetOkActiveNotOk), Short.valueOf(dbr.mBG_UserSelApFishingCnt), Short.valueOf(dbr.mBG_ConntTimeoutCnt), Short.valueOf(dbr.mBG_DNSFailCnt), Short.valueOf(dbr.mBG_DHCPFailCnt), Short.valueOf(dbr.mBG_AUTH_FailCnt), Short.valueOf(dbr.mBG_AssocRejectCnt), Short.valueOf(dbr.mBG_UserSelFreeInetOkCnt), Short.valueOf(dbr.mBG_UserSelNoInetCnt), Short.valueOf(dbr.mBG_UserSelPortalCnt), Short.valueOf(dbr.mBG_FoundTwoMoreApCnt), Short.valueOf(dbr.mAF_FPNSuccNotMsmCnt), Short.valueOf(dbr.mBSG_RsGoodCnt), Short.valueOf(dbr.mBSG_RsMidCnt), Short.valueOf(dbr.mBSG_RsBadCnt), Short.valueOf(dbr.mBSG_EndIn4sCnt), Short.valueOf(dbr.mBSG_EndIn4s7sCnt), Short.valueOf(dbr.mBSG_NotEndIn7sCnt), Short.valueOf(dbr.mBG_NCByConnectFail), Short.valueOf(dbr.mBG_NCByCheckFail), Short.valueOf(dbr.mBG_NCByStateErr), Short.valueOf(dbr.mBG_NCByUnknown), Short.valueOf(dbr.mBQE_CNUrl1FailCount), Short.valueOf(dbr.mBQE_CNUrl2FailCount), Short.valueOf(dbr.mBQE_CNUrl3FailCount), Short.valueOf(dbr.mBQE_NCNUrl1FailCount), Short.valueOf(dbr.mBQE_NCNUrl2FailCount), Short.valueOf(dbr.mBQE_NCNUrl3FailCount), Short.valueOf(dbr.mBQE_ScoreUnknownCount), Short.valueOf(dbr.mBQE_BindWlanFailCount), Short.valueOf(dbr.mBQE_StopBqeFailCount), Integer.valueOf(dbr.mQOE_AutoRI_TotData), Integer.valueOf(dbr.mNotInet_AutoRI_TotData), Short.valueOf(dbr.mQOE_RO_DISCONNECT_Cnt), Integer.valueOf(dbr.mQOE_RO_DISCONNECT_TotData), Short.valueOf(dbr.mNotInetRO_DISCONNECT_Cnt), Integer.valueOf(dbr.mNotInetRO_DISCONNECT_TotData), Integer.valueOf(dbr.mTotWifiConnectTime), Short.valueOf(dbr.mActiveCheckRS_Diff), Short.valueOf(dbr.mNoInetAlarmOnConnCnt), Short.valueOf(dbr.mPortalNoAutoConnCnt), Short.valueOf(dbr.mHomeAPAddRoPeriodCnt), Short.valueOf(dbr.mHomeAPQoeBadCnt), Integer.valueOf(dbr.mHistoryTotWifiConnHour), Short.valueOf(dbr.mBigRTT_RO_Tot), Short.valueOf(dbr.mBigRTT_ErrRO_Tot), Short.valueOf(dbr.mTotalPortalConnCount), Short.valueOf(dbr.mTotalPortalAuthSuccCount), Short.valueOf(dbr.mManualConnBlockPortalCount), Short.valueOf(dbr.mWifiproOpenCount), Short.valueOf(dbr.mWifiproCloseCount), Short.valueOf(dbr.mActiveCheckRS_Same)});
-                    this.mDatabase.setTransactionSuccessful();
-                    logi("insertChrStatRcd update or add a record succ");
-                    sQLiteDatabase = this.mDatabase;
-                } catch (SQLException e) {
-                    try {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("insertChrStatRcd error:");
-                        stringBuilder.append(e);
-                        loge(stringBuilder.toString());
-                        sQLiteDatabase = this.mDatabase;
-                    } catch (Throwable th) {
-                        this.mDatabase.endTransaction();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (dbr == null) {
+                        loge("insertChrStatRcd null error.");
+                        return false;
                     }
+                    SQLiteDatabase sQLiteDatabase;
+                    this.mDatabase.beginTransaction();
+                    short idValue = (short) 1;
+                    try {
+                        this.mDatabase.execSQL("INSERT INTO CHRStatTable VALUES(?,   ?, ?, ?, ?, ?,   ?, ?, ?, ?, ?, ?,   ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,    ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?,   ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?,    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,    ?, ?, ?,    ?,?,?,?,?,?)", new Object[]{Short.valueOf(idValue), dbr.mLastStatUploadTime, Short.valueOf(dbr.mLastWifiproState), dbr.mLastWifiproStateUpdateTime, Integer.valueOf(dbr.mEnableTotTime), Short.valueOf(dbr.mNoInetHandoverCount), Short.valueOf(dbr.mPortalUnauthCount), Short.valueOf(dbr.mWifiScoCount), Short.valueOf(dbr.mPortalCodeParseCount), Short.valueOf(dbr.mRcvSMS_Count), Short.valueOf(dbr.mPortalAutoLoginCount), Short.valueOf(dbr.mCellAutoOpenCount), Short.valueOf(dbr.mCellAutoCloseCount), Short.valueOf(dbr.mTotalBQE_BadROC), Short.valueOf(dbr.mManualBackROC), Short.valueOf(dbr.mRSSI_RO_Tot), Short.valueOf(dbr.mRSSI_ErrRO_Tot), Short.valueOf(dbr.mOTA_RO_Tot), Short.valueOf(dbr.mOTA_ErrRO_Tot), Short.valueOf(dbr.mTCP_RO_Tot), Short.valueOf(dbr.mTCP_ErrRO_Tot), Integer.valueOf(dbr.mManualRI_TotTime), Integer.valueOf(dbr.mAutoRI_TotTime), Short.valueOf(dbr.mAutoRI_TotCount), Short.valueOf(dbr.mRSSI_RestoreRI_Count), Short.valueOf(dbr.mRSSI_BetterRI_Count), Short.valueOf(dbr.mTimerRI_Count), Short.valueOf(dbr.mHisScoRI_Count), Short.valueOf(dbr.mUserCancelROC), Short.valueOf(dbr.mWifiToWifiSuccCount), Short.valueOf(dbr.mNoInetAlarmCount), Short.valueOf(dbr.mWifiOobInitState), Short.valueOf(dbr.mNotAutoConnPortalCnt), Short.valueOf(dbr.mHighDataRateStopROC), Short.valueOf(dbr.mSelectNotInetAPCount), Short.valueOf(dbr.mUserUseBgScanAPCount), Short.valueOf(dbr.mPingPongCount), Short.valueOf(dbr.mBQE_BadSettingCancel), Short.valueOf(dbr.mNotInetSettingCancel), Short.valueOf(dbr.mNotInetUserCancel), Short.valueOf(dbr.mNotInetRestoreRI), Short.valueOf(dbr.mNotInetUserManualRI), Short.valueOf(dbr.mNotInetWifiToWifiCount), Short.valueOf(dbr.mReopenWifiRICount), Short.valueOf(dbr.mSelCSPShowDiglogCount), Short.valueOf(dbr.mSelCSPAutoSwCount), Short.valueOf(dbr.mSelCSPNotSwCount), Short.valueOf(dbr.mTotBtnRICount), Short.valueOf(dbr.mBMD_TenMNotifyCount), Short.valueOf(dbr.mBMD_TenM_RI_Count), Short.valueOf(dbr.mBMD_FiftyMNotifyCount), Short.valueOf(dbr.mBMD_FiftyM_RI_Count), Short.valueOf(dbr.mBMD_UserDelNotifyCount), Integer.valueOf(dbr.mRO_TotMobileData), Short.valueOf(dbr.mAF_PhoneNumSuccCnt), Short.valueOf(dbr.mAF_PhoneNumFailCnt), Short.valueOf(dbr.mAF_PasswordSuccCnt), Short.valueOf(dbr.mAF_PasswordFailCnt), Short.valueOf(dbr.mAF_AutoLoginSuccCnt), Short.valueOf(dbr.mAF_AutoLoginFailCnt), Short.valueOf(dbr.mBG_BgRunCnt), Short.valueOf(dbr.mBG_SettingRunCnt), Short.valueOf(dbr.mBG_FreeInetOkApCnt), Short.valueOf(dbr.mBG_FishingApCnt), Short.valueOf(dbr.mBG_FreeNotInetApCnt), Short.valueOf(dbr.mBG_PortalApCnt), Short.valueOf(dbr.mBG_FailedCnt), Short.valueOf(dbr.mBG_InetNotOkActiveOk), Short.valueOf(dbr.mBG_InetOkActiveNotOk), Short.valueOf(dbr.mBG_UserSelApFishingCnt), Short.valueOf(dbr.mBG_ConntTimeoutCnt), Short.valueOf(dbr.mBG_DNSFailCnt), Short.valueOf(dbr.mBG_DHCPFailCnt), Short.valueOf(dbr.mBG_AUTH_FailCnt), Short.valueOf(dbr.mBG_AssocRejectCnt), Short.valueOf(dbr.mBG_UserSelFreeInetOkCnt), Short.valueOf(dbr.mBG_UserSelNoInetCnt), Short.valueOf(dbr.mBG_UserSelPortalCnt), Short.valueOf(dbr.mBG_FoundTwoMoreApCnt), Short.valueOf(dbr.mAF_FPNSuccNotMsmCnt), Short.valueOf(dbr.mBSG_RsGoodCnt), Short.valueOf(dbr.mBSG_RsMidCnt), Short.valueOf(dbr.mBSG_RsBadCnt), Short.valueOf(dbr.mBSG_EndIn4sCnt), Short.valueOf(dbr.mBSG_EndIn4s7sCnt), Short.valueOf(dbr.mBSG_NotEndIn7sCnt), Short.valueOf(dbr.mBG_NCByConnectFail), Short.valueOf(dbr.mBG_NCByCheckFail), Short.valueOf(dbr.mBG_NCByStateErr), Short.valueOf(dbr.mBG_NCByUnknown), Short.valueOf(dbr.mBQE_CNUrl1FailCount), Short.valueOf(dbr.mBQE_CNUrl2FailCount), Short.valueOf(dbr.mBQE_CNUrl3FailCount), Short.valueOf(dbr.mBQE_NCNUrl1FailCount), Short.valueOf(dbr.mBQE_NCNUrl2FailCount), Short.valueOf(dbr.mBQE_NCNUrl3FailCount), Short.valueOf(dbr.mBQE_ScoreUnknownCount), Short.valueOf(dbr.mBQE_BindWlanFailCount), Short.valueOf(dbr.mBQE_StopBqeFailCount), Integer.valueOf(dbr.mQOE_AutoRI_TotData), Integer.valueOf(dbr.mNotInet_AutoRI_TotData), Short.valueOf(dbr.mQOE_RO_DISCONNECT_Cnt), Integer.valueOf(dbr.mQOE_RO_DISCONNECT_TotData), Short.valueOf(dbr.mNotInetRO_DISCONNECT_Cnt), Integer.valueOf(dbr.mNotInetRO_DISCONNECT_TotData), Integer.valueOf(dbr.mTotWifiConnectTime), Short.valueOf(dbr.mActiveCheckRS_Diff), Short.valueOf(dbr.mNoInetAlarmOnConnCnt), Short.valueOf(dbr.mPortalNoAutoConnCnt), Short.valueOf(dbr.mHomeAPAddRoPeriodCnt), Short.valueOf(dbr.mHomeAPQoeBadCnt), Integer.valueOf(dbr.mHistoryTotWifiConnHour), Short.valueOf(dbr.mBigRTT_RO_Tot), Short.valueOf(dbr.mBigRTT_ErrRO_Tot), Short.valueOf(dbr.mTotalPortalConnCount), Short.valueOf(dbr.mTotalPortalAuthSuccCount), Short.valueOf(dbr.mManualConnBlockPortalCount), Short.valueOf(dbr.mWifiproOpenCount), Short.valueOf(dbr.mWifiproCloseCount), Short.valueOf(dbr.mActiveCheckRS_Same)});
+                        this.mDatabase.setTransactionSuccessful();
+                        logi("insertChrStatRcd update or add a record succ");
+                        sQLiteDatabase = this.mDatabase;
+                    } catch (SQLException e) {
+                        try {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("insertChrStatRcd error:");
+                            stringBuilder.append(e);
+                            loge(stringBuilder.toString());
+                            sQLiteDatabase = this.mDatabase;
+                        } catch (Throwable th) {
+                            this.mDatabase.endTransaction();
+                        }
+                    }
+                    sQLiteDatabase.endTransaction();
+                    return true;
                 }
-                sQLiteDatabase.endTransaction();
-                return true;
             }
+            loge("insertChrStatRcd database error.");
+            return false;
         }
     }
 
     public boolean addOrUpdateChrStatRcd(WifiProStatisticsRecord dbr) {
         synchronized (this.mChrLock) {
-            boolean updateChrStatRcd;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                loge("insertChrStatRcd error.");
-                return false;
-            } else if (checkIfRcdExist()) {
-                updateChrStatRcd = updateChrStatRcd(dbr);
-                return updateChrStatRcd;
-            } else {
-                updateChrStatRcd = insertChrStatRcd(dbr);
-                return updateChrStatRcd;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    boolean updateChrStatRcd;
+                    if (checkIfRcdExist()) {
+                        updateChrStatRcd = updateChrStatRcd(dbr);
+                        return updateChrStatRcd;
+                    }
+                    updateChrStatRcd = insertChrStatRcd(dbr);
+                    return updateChrStatRcd;
+                }
             }
+            loge("insertChrStatRcd error.");
+            return false;
         }
     }
 
@@ -279,160 +284,162 @@ public class WifiProChrDataBaseManager {
         int recCnt = 0;
         logd("queryChrStatRcd enter.");
         synchronized (this.mChrLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("queryChrStatRcd database error.");
-                return false;
-            } else if (dbr == null) {
-                loge("queryChrStatRcd null error.");
-                return false;
-            } else {
-                StringBuilder stringBuilder;
-                try {
-                    Cursor c = this.mDatabase.rawQuery("SELECT * FROM CHRStatTable where _id like ?", new String[]{"1"});
-                    while (c.moveToNext()) {
-                        recCnt++;
-                        if (recCnt > 1) {
-                            break;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (dbr == null) {
+                        loge("queryChrStatRcd null error.");
+                        return false;
+                    }
+                    StringBuilder stringBuilder;
+                    try {
+                        Cursor c = this.mDatabase.rawQuery("SELECT * FROM CHRStatTable where _id like ?", new String[]{"1"});
+                        while (c.moveToNext()) {
+                            recCnt++;
+                            if (recCnt > 1) {
+                                break;
+                            }
+                            dbr.mLastStatUploadTime = c.getString(c.getColumnIndex("mLastStatUploadTime"));
+                            dbr.mLastWifiproState = c.getShort(c.getColumnIndex("mLastWifiproState"));
+                            dbr.mLastWifiproStateUpdateTime = c.getString(c.getColumnIndex("mLastWifiproStateUpdateTime"));
+                            dbr.mEnableTotTime = c.getInt(c.getColumnIndex("mEnableTotTime"));
+                            dbr.mNoInetHandoverCount = c.getShort(c.getColumnIndex("mNoInetHandoverCount"));
+                            dbr.mPortalUnauthCount = c.getShort(c.getColumnIndex("mPortalUnauthCount"));
+                            dbr.mWifiScoCount = c.getShort(c.getColumnIndex("mWifiScoCount"));
+                            dbr.mPortalCodeParseCount = c.getShort(c.getColumnIndex("mPortalCodeParseCount"));
+                            dbr.mRcvSMS_Count = c.getShort(c.getColumnIndex("mRcvSMS_Count"));
+                            dbr.mPortalAutoLoginCount = c.getShort(c.getColumnIndex("mPortalAutoLoginCount"));
+                            dbr.mCellAutoOpenCount = c.getShort(c.getColumnIndex("mCellAutoOpenCount"));
+                            dbr.mCellAutoCloseCount = c.getShort(c.getColumnIndex("mCellAutoCloseCount"));
+                            dbr.mTotalBQE_BadROC = c.getShort(c.getColumnIndex("mTotalBQE_BadROC"));
+                            dbr.mManualBackROC = c.getShort(c.getColumnIndex("mManualBackROC"));
+                            dbr.mRSSI_RO_Tot = c.getShort(c.getColumnIndex("mRSSI_RO_Tot"));
+                            dbr.mRSSI_ErrRO_Tot = c.getShort(c.getColumnIndex("mRSSI_ErrRO_Tot"));
+                            dbr.mOTA_RO_Tot = c.getShort(c.getColumnIndex("mOTA_RO_Tot"));
+                            dbr.mOTA_ErrRO_Tot = c.getShort(c.getColumnIndex("mOTA_ErrRO_Tot"));
+                            dbr.mTCP_RO_Tot = c.getShort(c.getColumnIndex("mTCP_RO_Tot"));
+                            dbr.mTCP_ErrRO_Tot = c.getShort(c.getColumnIndex("mTCP_ErrRO_Tot"));
+                            dbr.mManualRI_TotTime = c.getInt(c.getColumnIndex("mManualRI_TotTime"));
+                            dbr.mAutoRI_TotTime = c.getInt(c.getColumnIndex("mAutoRI_TotTime"));
+                            dbr.mAutoRI_TotCount = c.getShort(c.getColumnIndex("mAutoRI_TotCount"));
+                            dbr.mRSSI_RestoreRI_Count = c.getShort(c.getColumnIndex("mRSSI_RestoreRI_Count"));
+                            dbr.mRSSI_BetterRI_Count = c.getShort(c.getColumnIndex("mRSSI_BetterRI_Count"));
+                            dbr.mTimerRI_Count = c.getShort(c.getColumnIndex("mTimerRI_Count"));
+                            dbr.mHisScoRI_Count = c.getShort(c.getColumnIndex("mHisScoRI_Count"));
+                            dbr.mUserCancelROC = c.getShort(c.getColumnIndex("mUserCancelROC"));
+                            dbr.mWifiToWifiSuccCount = c.getShort(c.getColumnIndex("mWifiToWifiSuccCount"));
+                            dbr.mNoInetAlarmCount = c.getShort(c.getColumnIndex("mNoInetAlarmCount"));
+                            dbr.mWifiOobInitState = c.getShort(c.getColumnIndex("mWifiOobInitState"));
+                            dbr.mNotAutoConnPortalCnt = c.getShort(c.getColumnIndex("mNotAutoConnPortalCnt"));
+                            dbr.mHighDataRateStopROC = c.getShort(c.getColumnIndex("mHighDataRateStopROC"));
+                            dbr.mSelectNotInetAPCount = c.getShort(c.getColumnIndex("mSelectNotInetAPCount"));
+                            dbr.mUserUseBgScanAPCount = c.getShort(c.getColumnIndex("mUserUseBgScanAPCount"));
+                            dbr.mPingPongCount = c.getShort(c.getColumnIndex("mPingPongCount"));
+                            dbr.mBQE_BadSettingCancel = c.getShort(c.getColumnIndex("mBQE_BadSettingCancel"));
+                            dbr.mNotInetSettingCancel = c.getShort(c.getColumnIndex("mNotInetSettingCancel"));
+                            dbr.mNotInetUserCancel = c.getShort(c.getColumnIndex("mNotInetUserCancel"));
+                            dbr.mNotInetRestoreRI = c.getShort(c.getColumnIndex("mNotInetRestoreRI"));
+                            dbr.mNotInetUserManualRI = c.getShort(c.getColumnIndex("mNotInetUserManualRI"));
+                            dbr.mNotInetWifiToWifiCount = c.getShort(c.getColumnIndex("mNotInetWifiToWifiCount"));
+                            dbr.mReopenWifiRICount = c.getShort(c.getColumnIndex("mReopenWifiRICount"));
+                            dbr.mSelCSPShowDiglogCount = c.getShort(c.getColumnIndex("mSelCSPShowDiglogCount"));
+                            dbr.mSelCSPAutoSwCount = c.getShort(c.getColumnIndex("mSelCSPAutoSwCount"));
+                            dbr.mSelCSPNotSwCount = c.getShort(c.getColumnIndex("mSelCSPNotSwCount"));
+                            dbr.mTotBtnRICount = c.getShort(c.getColumnIndex("mTotBtnRICount"));
+                            dbr.mBMD_TenMNotifyCount = c.getShort(c.getColumnIndex("mBMD_TenMNotifyCount"));
+                            dbr.mBMD_TenM_RI_Count = c.getShort(c.getColumnIndex("mBMD_TenM_RI_Count"));
+                            dbr.mBMD_FiftyMNotifyCount = c.getShort(c.getColumnIndex("mBMD_FiftyMNotifyCount"));
+                            dbr.mBMD_FiftyM_RI_Count = c.getShort(c.getColumnIndex("mBMD_FiftyM_RI_Count"));
+                            dbr.mBMD_UserDelNotifyCount = c.getShort(c.getColumnIndex("mBMD_UserDelNotifyCount"));
+                            dbr.mRO_TotMobileData = c.getInt(c.getColumnIndex("mRO_TotMobileData"));
+                            dbr.mAF_PhoneNumSuccCnt = c.getShort(c.getColumnIndex("mAF_PhoneNumSuccCnt"));
+                            dbr.mAF_PhoneNumFailCnt = c.getShort(c.getColumnIndex("mAF_PhoneNumFailCnt"));
+                            dbr.mAF_PasswordSuccCnt = c.getShort(c.getColumnIndex("mAF_PasswordSuccCnt"));
+                            dbr.mAF_PasswordFailCnt = c.getShort(c.getColumnIndex("mAF_PasswordFailCnt"));
+                            dbr.mAF_AutoLoginSuccCnt = c.getShort(c.getColumnIndex("mAF_AutoLoginSuccCnt"));
+                            dbr.mAF_AutoLoginFailCnt = c.getShort(c.getColumnIndex("mAF_AutoLoginFailCnt"));
+                            dbr.mBG_BgRunCnt = c.getShort(c.getColumnIndex("mBG_BgRunCnt"));
+                            dbr.mBG_SettingRunCnt = c.getShort(c.getColumnIndex("mBG_SettingRunCnt"));
+                            dbr.mBG_FreeInetOkApCnt = c.getShort(c.getColumnIndex("mBG_FreeInetOkApCnt"));
+                            dbr.mBG_FishingApCnt = c.getShort(c.getColumnIndex("mBG_FishingApCnt"));
+                            dbr.mBG_FreeNotInetApCnt = c.getShort(c.getColumnIndex("mBG_FreeNotInetApCnt"));
+                            dbr.mBG_PortalApCnt = c.getShort(c.getColumnIndex("mBG_PortalApCnt"));
+                            dbr.mBG_FailedCnt = c.getShort(c.getColumnIndex("mBG_FailedCnt"));
+                            dbr.mBG_InetNotOkActiveOk = c.getShort(c.getColumnIndex("mBG_InetNotOkActiveOk"));
+                            dbr.mBG_InetOkActiveNotOk = c.getShort(c.getColumnIndex("mBG_InetOkActiveNotOk"));
+                            dbr.mBG_UserSelApFishingCnt = c.getShort(c.getColumnIndex("mBG_UserSelApFishingCnt"));
+                            dbr.mBG_ConntTimeoutCnt = c.getShort(c.getColumnIndex("mBG_ConntTimeoutCnt"));
+                            dbr.mBG_DNSFailCnt = c.getShort(c.getColumnIndex("mBG_DNSFailCnt"));
+                            dbr.mBG_DHCPFailCnt = c.getShort(c.getColumnIndex("mBG_DHCPFailCnt"));
+                            dbr.mBG_AUTH_FailCnt = c.getShort(c.getColumnIndex("mBG_AUTH_FailCnt"));
+                            dbr.mBG_AssocRejectCnt = c.getShort(c.getColumnIndex("mBG_AssocRejectCnt"));
+                            dbr.mBG_UserSelFreeInetOkCnt = c.getShort(c.getColumnIndex("mBG_UserSelFreeInetOkCnt"));
+                            dbr.mBG_UserSelNoInetCnt = c.getShort(c.getColumnIndex("mBG_UserSelNoInetCnt"));
+                            dbr.mBG_UserSelPortalCnt = c.getShort(c.getColumnIndex("mBG_UserSelPortalCnt"));
+                            dbr.mBG_FoundTwoMoreApCnt = c.getShort(c.getColumnIndex("mBG_FoundTwoMoreApCnt"));
+                            dbr.mAF_FPNSuccNotMsmCnt = c.getShort(c.getColumnIndex("mAF_FPNSuccNotMsmCnt"));
+                            dbr.mBSG_RsGoodCnt = c.getShort(c.getColumnIndex("mBSG_RsGoodCnt"));
+                            dbr.mBSG_RsMidCnt = c.getShort(c.getColumnIndex("mBSG_RsMidCnt"));
+                            dbr.mBSG_RsBadCnt = c.getShort(c.getColumnIndex("mBSG_RsBadCnt"));
+                            dbr.mBSG_EndIn4sCnt = c.getShort(c.getColumnIndex("mBSG_EndIn4sCnt"));
+                            dbr.mBSG_EndIn4s7sCnt = c.getShort(c.getColumnIndex("mBSG_EndIn4s7sCnt"));
+                            dbr.mBSG_NotEndIn7sCnt = c.getShort(c.getColumnIndex("mBSG_NotEndIn7sCnt"));
+                            dbr.mBG_NCByConnectFail = c.getShort(c.getColumnIndex("mBG_NCByConnectFail"));
+                            dbr.mBG_NCByCheckFail = c.getShort(c.getColumnIndex("mBG_NCByCheckFail"));
+                            dbr.mBG_NCByStateErr = c.getShort(c.getColumnIndex("mBG_NCByStateErr"));
+                            dbr.mBG_NCByUnknown = c.getShort(c.getColumnIndex("mBG_NCByUnknown"));
+                            dbr.mBQE_CNUrl1FailCount = c.getShort(c.getColumnIndex("mBQE_CNUrl1FailCount"));
+                            dbr.mBQE_CNUrl2FailCount = c.getShort(c.getColumnIndex("mBQE_CNUrl2FailCount"));
+                            dbr.mBQE_CNUrl3FailCount = c.getShort(c.getColumnIndex("mBQE_CNUrl3FailCount"));
+                            dbr.mBQE_NCNUrl1FailCount = c.getShort(c.getColumnIndex("mBQE_NCNUrl1FailCount"));
+                            dbr.mBQE_NCNUrl2FailCount = c.getShort(c.getColumnIndex("mBQE_NCNUrl2FailCount"));
+                            dbr.mBQE_NCNUrl3FailCount = c.getShort(c.getColumnIndex("mBQE_NCNUrl3FailCount"));
+                            dbr.mBQE_ScoreUnknownCount = c.getShort(c.getColumnIndex("mBQE_ScoreUnknownCount"));
+                            dbr.mBQE_BindWlanFailCount = c.getShort(c.getColumnIndex("mBQE_BindWlanFailCount"));
+                            dbr.mBQE_StopBqeFailCount = c.getShort(c.getColumnIndex("mBQE_StopBqeFailCount"));
+                            dbr.mQOE_AutoRI_TotData = c.getInt(c.getColumnIndex("mQOE_AutoRI_TotData"));
+                            dbr.mNotInet_AutoRI_TotData = c.getInt(c.getColumnIndex("mNotInet_AutoRI_TotData"));
+                            dbr.mQOE_RO_DISCONNECT_Cnt = c.getShort(c.getColumnIndex("mQOE_RO_DISCONNECT_Cnt"));
+                            dbr.mQOE_RO_DISCONNECT_TotData = c.getInt(c.getColumnIndex("mQOE_RO_DISCONNECT_TotData"));
+                            dbr.mNotInetRO_DISCONNECT_Cnt = c.getShort(c.getColumnIndex("mNotInetRO_DISCONNECT_Cnt"));
+                            dbr.mNotInetRO_DISCONNECT_TotData = c.getInt(c.getColumnIndex("mNotInetRO_DISCONNECT_TotData"));
+                            dbr.mTotWifiConnectTime = c.getInt(c.getColumnIndex("mTotWifiConnectTime"));
+                            dbr.mActiveCheckRS_Diff = c.getShort(c.getColumnIndex("mActiveCheckRS_Diff"));
+                            dbr.mNoInetAlarmOnConnCnt = c.getShort(c.getColumnIndex("mNoInetAlarmOnConnCnt"));
+                            dbr.mPortalNoAutoConnCnt = c.getShort(c.getColumnIndex("mPortalNoAutoConnCnt"));
+                            dbr.mHomeAPAddRoPeriodCnt = c.getShort(c.getColumnIndex("mHomeAPAddRoPeriodCnt"));
+                            dbr.mHomeAPQoeBadCnt = c.getShort(c.getColumnIndex("mHomeAPQoeBadCnt"));
+                            dbr.mHistoryTotWifiConnHour = c.getInt(c.getColumnIndex("mHistoryTotWifiConnHour"));
+                            dbr.mBigRTT_RO_Tot = c.getShort(c.getColumnIndex("mBigRTT_RO_Tot"));
+                            dbr.mBigRTT_ErrRO_Tot = c.getShort(c.getColumnIndex("mBigRTT_ErrRO_Tot"));
+                            dbr.mTotalPortalConnCount = c.getShort(c.getColumnIndex("mTotalPortalConnCount"));
+                            dbr.mTotalPortalAuthSuccCount = c.getShort(c.getColumnIndex("mTotalPortalAuthSuccCount"));
+                            dbr.mManualConnBlockPortalCount = c.getShort(c.getColumnIndex("mManualConnBlockPortalCount"));
+                            dbr.mWifiproOpenCount = c.getShort(c.getColumnIndex("mWifiproOpenCount"));
+                            dbr.mWifiproCloseCount = c.getShort(c.getColumnIndex("mWifiproCloseCount"));
+                            dbr.mActiveCheckRS_Same = c.getShort(c.getColumnIndex("mActiveCheckRS_Same"));
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("read record succ, LastStatUploadTime:");
+                            stringBuilder.append(dbr.mLastStatUploadTime);
+                            logi(stringBuilder.toString());
                         }
-                        dbr.mLastStatUploadTime = c.getString(c.getColumnIndex("mLastStatUploadTime"));
-                        dbr.mLastWifiproState = c.getShort(c.getColumnIndex("mLastWifiproState"));
-                        dbr.mLastWifiproStateUpdateTime = c.getString(c.getColumnIndex("mLastWifiproStateUpdateTime"));
-                        dbr.mEnableTotTime = c.getInt(c.getColumnIndex("mEnableTotTime"));
-                        dbr.mNoInetHandoverCount = c.getShort(c.getColumnIndex("mNoInetHandoverCount"));
-                        dbr.mPortalUnauthCount = c.getShort(c.getColumnIndex("mPortalUnauthCount"));
-                        dbr.mWifiScoCount = c.getShort(c.getColumnIndex("mWifiScoCount"));
-                        dbr.mPortalCodeParseCount = c.getShort(c.getColumnIndex("mPortalCodeParseCount"));
-                        dbr.mRcvSMS_Count = c.getShort(c.getColumnIndex("mRcvSMS_Count"));
-                        dbr.mPortalAutoLoginCount = c.getShort(c.getColumnIndex("mPortalAutoLoginCount"));
-                        dbr.mCellAutoOpenCount = c.getShort(c.getColumnIndex("mCellAutoOpenCount"));
-                        dbr.mCellAutoCloseCount = c.getShort(c.getColumnIndex("mCellAutoCloseCount"));
-                        dbr.mTotalBQE_BadROC = c.getShort(c.getColumnIndex("mTotalBQE_BadROC"));
-                        dbr.mManualBackROC = c.getShort(c.getColumnIndex("mManualBackROC"));
-                        dbr.mRSSI_RO_Tot = c.getShort(c.getColumnIndex("mRSSI_RO_Tot"));
-                        dbr.mRSSI_ErrRO_Tot = c.getShort(c.getColumnIndex("mRSSI_ErrRO_Tot"));
-                        dbr.mOTA_RO_Tot = c.getShort(c.getColumnIndex("mOTA_RO_Tot"));
-                        dbr.mOTA_ErrRO_Tot = c.getShort(c.getColumnIndex("mOTA_ErrRO_Tot"));
-                        dbr.mTCP_RO_Tot = c.getShort(c.getColumnIndex("mTCP_RO_Tot"));
-                        dbr.mTCP_ErrRO_Tot = c.getShort(c.getColumnIndex("mTCP_ErrRO_Tot"));
-                        dbr.mManualRI_TotTime = c.getInt(c.getColumnIndex("mManualRI_TotTime"));
-                        dbr.mAutoRI_TotTime = c.getInt(c.getColumnIndex("mAutoRI_TotTime"));
-                        dbr.mAutoRI_TotCount = c.getShort(c.getColumnIndex("mAutoRI_TotCount"));
-                        dbr.mRSSI_RestoreRI_Count = c.getShort(c.getColumnIndex("mRSSI_RestoreRI_Count"));
-                        dbr.mRSSI_BetterRI_Count = c.getShort(c.getColumnIndex("mRSSI_BetterRI_Count"));
-                        dbr.mTimerRI_Count = c.getShort(c.getColumnIndex("mTimerRI_Count"));
-                        dbr.mHisScoRI_Count = c.getShort(c.getColumnIndex("mHisScoRI_Count"));
-                        dbr.mUserCancelROC = c.getShort(c.getColumnIndex("mUserCancelROC"));
-                        dbr.mWifiToWifiSuccCount = c.getShort(c.getColumnIndex("mWifiToWifiSuccCount"));
-                        dbr.mNoInetAlarmCount = c.getShort(c.getColumnIndex("mNoInetAlarmCount"));
-                        dbr.mWifiOobInitState = c.getShort(c.getColumnIndex("mWifiOobInitState"));
-                        dbr.mNotAutoConnPortalCnt = c.getShort(c.getColumnIndex("mNotAutoConnPortalCnt"));
-                        dbr.mHighDataRateStopROC = c.getShort(c.getColumnIndex("mHighDataRateStopROC"));
-                        dbr.mSelectNotInetAPCount = c.getShort(c.getColumnIndex("mSelectNotInetAPCount"));
-                        dbr.mUserUseBgScanAPCount = c.getShort(c.getColumnIndex("mUserUseBgScanAPCount"));
-                        dbr.mPingPongCount = c.getShort(c.getColumnIndex("mPingPongCount"));
-                        dbr.mBQE_BadSettingCancel = c.getShort(c.getColumnIndex("mBQE_BadSettingCancel"));
-                        dbr.mNotInetSettingCancel = c.getShort(c.getColumnIndex("mNotInetSettingCancel"));
-                        dbr.mNotInetUserCancel = c.getShort(c.getColumnIndex("mNotInetUserCancel"));
-                        dbr.mNotInetRestoreRI = c.getShort(c.getColumnIndex("mNotInetRestoreRI"));
-                        dbr.mNotInetUserManualRI = c.getShort(c.getColumnIndex("mNotInetUserManualRI"));
-                        dbr.mNotInetWifiToWifiCount = c.getShort(c.getColumnIndex("mNotInetWifiToWifiCount"));
-                        dbr.mReopenWifiRICount = c.getShort(c.getColumnIndex("mReopenWifiRICount"));
-                        dbr.mSelCSPShowDiglogCount = c.getShort(c.getColumnIndex("mSelCSPShowDiglogCount"));
-                        dbr.mSelCSPAutoSwCount = c.getShort(c.getColumnIndex("mSelCSPAutoSwCount"));
-                        dbr.mSelCSPNotSwCount = c.getShort(c.getColumnIndex("mSelCSPNotSwCount"));
-                        dbr.mTotBtnRICount = c.getShort(c.getColumnIndex("mTotBtnRICount"));
-                        dbr.mBMD_TenMNotifyCount = c.getShort(c.getColumnIndex("mBMD_TenMNotifyCount"));
-                        dbr.mBMD_TenM_RI_Count = c.getShort(c.getColumnIndex("mBMD_TenM_RI_Count"));
-                        dbr.mBMD_FiftyMNotifyCount = c.getShort(c.getColumnIndex("mBMD_FiftyMNotifyCount"));
-                        dbr.mBMD_FiftyM_RI_Count = c.getShort(c.getColumnIndex("mBMD_FiftyM_RI_Count"));
-                        dbr.mBMD_UserDelNotifyCount = c.getShort(c.getColumnIndex("mBMD_UserDelNotifyCount"));
-                        dbr.mRO_TotMobileData = c.getInt(c.getColumnIndex("mRO_TotMobileData"));
-                        dbr.mAF_PhoneNumSuccCnt = c.getShort(c.getColumnIndex("mAF_PhoneNumSuccCnt"));
-                        dbr.mAF_PhoneNumFailCnt = c.getShort(c.getColumnIndex("mAF_PhoneNumFailCnt"));
-                        dbr.mAF_PasswordSuccCnt = c.getShort(c.getColumnIndex("mAF_PasswordSuccCnt"));
-                        dbr.mAF_PasswordFailCnt = c.getShort(c.getColumnIndex("mAF_PasswordFailCnt"));
-                        dbr.mAF_AutoLoginSuccCnt = c.getShort(c.getColumnIndex("mAF_AutoLoginSuccCnt"));
-                        dbr.mAF_AutoLoginFailCnt = c.getShort(c.getColumnIndex("mAF_AutoLoginFailCnt"));
-                        dbr.mBG_BgRunCnt = c.getShort(c.getColumnIndex("mBG_BgRunCnt"));
-                        dbr.mBG_SettingRunCnt = c.getShort(c.getColumnIndex("mBG_SettingRunCnt"));
-                        dbr.mBG_FreeInetOkApCnt = c.getShort(c.getColumnIndex("mBG_FreeInetOkApCnt"));
-                        dbr.mBG_FishingApCnt = c.getShort(c.getColumnIndex("mBG_FishingApCnt"));
-                        dbr.mBG_FreeNotInetApCnt = c.getShort(c.getColumnIndex("mBG_FreeNotInetApCnt"));
-                        dbr.mBG_PortalApCnt = c.getShort(c.getColumnIndex("mBG_PortalApCnt"));
-                        dbr.mBG_FailedCnt = c.getShort(c.getColumnIndex("mBG_FailedCnt"));
-                        dbr.mBG_InetNotOkActiveOk = c.getShort(c.getColumnIndex("mBG_InetNotOkActiveOk"));
-                        dbr.mBG_InetOkActiveNotOk = c.getShort(c.getColumnIndex("mBG_InetOkActiveNotOk"));
-                        dbr.mBG_UserSelApFishingCnt = c.getShort(c.getColumnIndex("mBG_UserSelApFishingCnt"));
-                        dbr.mBG_ConntTimeoutCnt = c.getShort(c.getColumnIndex("mBG_ConntTimeoutCnt"));
-                        dbr.mBG_DNSFailCnt = c.getShort(c.getColumnIndex("mBG_DNSFailCnt"));
-                        dbr.mBG_DHCPFailCnt = c.getShort(c.getColumnIndex("mBG_DHCPFailCnt"));
-                        dbr.mBG_AUTH_FailCnt = c.getShort(c.getColumnIndex("mBG_AUTH_FailCnt"));
-                        dbr.mBG_AssocRejectCnt = c.getShort(c.getColumnIndex("mBG_AssocRejectCnt"));
-                        dbr.mBG_UserSelFreeInetOkCnt = c.getShort(c.getColumnIndex("mBG_UserSelFreeInetOkCnt"));
-                        dbr.mBG_UserSelNoInetCnt = c.getShort(c.getColumnIndex("mBG_UserSelNoInetCnt"));
-                        dbr.mBG_UserSelPortalCnt = c.getShort(c.getColumnIndex("mBG_UserSelPortalCnt"));
-                        dbr.mBG_FoundTwoMoreApCnt = c.getShort(c.getColumnIndex("mBG_FoundTwoMoreApCnt"));
-                        dbr.mAF_FPNSuccNotMsmCnt = c.getShort(c.getColumnIndex("mAF_FPNSuccNotMsmCnt"));
-                        dbr.mBSG_RsGoodCnt = c.getShort(c.getColumnIndex("mBSG_RsGoodCnt"));
-                        dbr.mBSG_RsMidCnt = c.getShort(c.getColumnIndex("mBSG_RsMidCnt"));
-                        dbr.mBSG_RsBadCnt = c.getShort(c.getColumnIndex("mBSG_RsBadCnt"));
-                        dbr.mBSG_EndIn4sCnt = c.getShort(c.getColumnIndex("mBSG_EndIn4sCnt"));
-                        dbr.mBSG_EndIn4s7sCnt = c.getShort(c.getColumnIndex("mBSG_EndIn4s7sCnt"));
-                        dbr.mBSG_NotEndIn7sCnt = c.getShort(c.getColumnIndex("mBSG_NotEndIn7sCnt"));
-                        dbr.mBG_NCByConnectFail = c.getShort(c.getColumnIndex("mBG_NCByConnectFail"));
-                        dbr.mBG_NCByCheckFail = c.getShort(c.getColumnIndex("mBG_NCByCheckFail"));
-                        dbr.mBG_NCByStateErr = c.getShort(c.getColumnIndex("mBG_NCByStateErr"));
-                        dbr.mBG_NCByUnknown = c.getShort(c.getColumnIndex("mBG_NCByUnknown"));
-                        dbr.mBQE_CNUrl1FailCount = c.getShort(c.getColumnIndex("mBQE_CNUrl1FailCount"));
-                        dbr.mBQE_CNUrl2FailCount = c.getShort(c.getColumnIndex("mBQE_CNUrl2FailCount"));
-                        dbr.mBQE_CNUrl3FailCount = c.getShort(c.getColumnIndex("mBQE_CNUrl3FailCount"));
-                        dbr.mBQE_NCNUrl1FailCount = c.getShort(c.getColumnIndex("mBQE_NCNUrl1FailCount"));
-                        dbr.mBQE_NCNUrl2FailCount = c.getShort(c.getColumnIndex("mBQE_NCNUrl2FailCount"));
-                        dbr.mBQE_NCNUrl3FailCount = c.getShort(c.getColumnIndex("mBQE_NCNUrl3FailCount"));
-                        dbr.mBQE_ScoreUnknownCount = c.getShort(c.getColumnIndex("mBQE_ScoreUnknownCount"));
-                        dbr.mBQE_BindWlanFailCount = c.getShort(c.getColumnIndex("mBQE_BindWlanFailCount"));
-                        dbr.mBQE_StopBqeFailCount = c.getShort(c.getColumnIndex("mBQE_StopBqeFailCount"));
-                        dbr.mQOE_AutoRI_TotData = c.getInt(c.getColumnIndex("mQOE_AutoRI_TotData"));
-                        dbr.mNotInet_AutoRI_TotData = c.getInt(c.getColumnIndex("mNotInet_AutoRI_TotData"));
-                        dbr.mQOE_RO_DISCONNECT_Cnt = c.getShort(c.getColumnIndex("mQOE_RO_DISCONNECT_Cnt"));
-                        dbr.mQOE_RO_DISCONNECT_TotData = c.getInt(c.getColumnIndex("mQOE_RO_DISCONNECT_TotData"));
-                        dbr.mNotInetRO_DISCONNECT_Cnt = c.getShort(c.getColumnIndex("mNotInetRO_DISCONNECT_Cnt"));
-                        dbr.mNotInetRO_DISCONNECT_TotData = c.getInt(c.getColumnIndex("mNotInetRO_DISCONNECT_TotData"));
-                        dbr.mTotWifiConnectTime = c.getInt(c.getColumnIndex("mTotWifiConnectTime"));
-                        dbr.mActiveCheckRS_Diff = c.getShort(c.getColumnIndex("mActiveCheckRS_Diff"));
-                        dbr.mNoInetAlarmOnConnCnt = c.getShort(c.getColumnIndex("mNoInetAlarmOnConnCnt"));
-                        dbr.mPortalNoAutoConnCnt = c.getShort(c.getColumnIndex("mPortalNoAutoConnCnt"));
-                        dbr.mHomeAPAddRoPeriodCnt = c.getShort(c.getColumnIndex("mHomeAPAddRoPeriodCnt"));
-                        dbr.mHomeAPQoeBadCnt = c.getShort(c.getColumnIndex("mHomeAPQoeBadCnt"));
-                        dbr.mHistoryTotWifiConnHour = c.getInt(c.getColumnIndex("mHistoryTotWifiConnHour"));
-                        dbr.mBigRTT_RO_Tot = c.getShort(c.getColumnIndex("mBigRTT_RO_Tot"));
-                        dbr.mBigRTT_ErrRO_Tot = c.getShort(c.getColumnIndex("mBigRTT_ErrRO_Tot"));
-                        dbr.mTotalPortalConnCount = c.getShort(c.getColumnIndex("mTotalPortalConnCount"));
-                        dbr.mTotalPortalAuthSuccCount = c.getShort(c.getColumnIndex("mTotalPortalAuthSuccCount"));
-                        dbr.mManualConnBlockPortalCount = c.getShort(c.getColumnIndex("mManualConnBlockPortalCount"));
-                        dbr.mWifiproOpenCount = c.getShort(c.getColumnIndex("mWifiproOpenCount"));
-                        dbr.mWifiproCloseCount = c.getShort(c.getColumnIndex("mWifiproCloseCount"));
-                        dbr.mActiveCheckRS_Same = c.getShort(c.getColumnIndex("mActiveCheckRS_Same"));
+                        c.close();
+                        if (recCnt > 1) {
+                            loge("more than one record error. use first record.");
+                        } else if (recCnt == 0) {
+                            logi("queryChrStatRcd not CHR statistics record.");
+                        }
+                        return true;
+                    } catch (SQLException e) {
                         stringBuilder = new StringBuilder();
-                        stringBuilder.append("read record succ, LastStatUploadTime:");
-                        stringBuilder.append(dbr.mLastStatUploadTime);
-                        logi(stringBuilder.toString());
+                        stringBuilder.append("queryChrStatRcd error:");
+                        stringBuilder.append(e);
+                        loge(stringBuilder.toString());
+                        return false;
                     }
-                    c.close();
-                    if (recCnt > 1) {
-                        loge("more than one record error. use first record.");
-                    } else if (recCnt == 0) {
-                        logi("queryChrStatRcd not CHR statistics record.");
-                    }
-                    return true;
-                } catch (SQLException e) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("queryChrStatRcd error:");
-                    stringBuilder.append(e);
-                    loge(stringBuilder.toString());
-                    return false;
                 }
             }
+            loge("queryChrStatRcd database error.");
+            return false;
         }
     }
 

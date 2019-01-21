@@ -3,6 +3,8 @@ package com.google.gson;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.MalformedJsonException;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -15,15 +17,17 @@ public final class JsonParser {
         try {
             JsonReader jsonReader = new JsonReader(json);
             JsonElement element = parse(jsonReader);
-            if (element.isJsonNull() || jsonReader.peek() == JsonToken.END_DOCUMENT) {
-                return element;
+            if (!element.isJsonNull()) {
+                if (jsonReader.peek() != JsonToken.END_DOCUMENT) {
+                    throw new JsonSyntaxException("Did not consume the entire document.");
+                }
             }
-            throw new JsonSyntaxException("Did not consume the entire document.");
-        } catch (Throwable e) {
+            return element;
+        } catch (MalformedJsonException e) {
             throw new JsonSyntaxException(e);
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             throw new JsonIOException(e2);
-        } catch (Throwable e22) {
+        } catch (NumberFormatException e22) {
             throw new JsonSyntaxException(e22);
         }
     }

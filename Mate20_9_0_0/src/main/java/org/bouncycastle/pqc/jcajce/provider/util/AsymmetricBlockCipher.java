@@ -43,9 +43,9 @@ public abstract class AsymmetricBlockCipher extends CipherSpiExt {
 
     public final int doFinal(byte[] bArr, int i, int i2, byte[] bArr2, int i3) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
         if (bArr2.length >= getOutputSize(i2)) {
-            Object doFinal = doFinal(bArr, i, i2);
-            System.arraycopy(doFinal, 0, bArr2, i3, doFinal.length);
-            return doFinal.length;
+            bArr = doFinal(bArr, i, i2);
+            System.arraycopy(bArr, 0, bArr2, i3, bArr.length);
+            return bArr.length;
         }
         throw new ShortBufferException("Output buffer too short.");
     }

@@ -223,26 +223,26 @@ public class HwArbitrationFunction {
         try {
             inStream = new FileInputStream(new File(HwArbitrationDEFS.UID_POLICY_FILE_PATH));
             parser.setInput(inStream, "UTF-8");
-            int eventType = parser.getEventType();
-            while (eventType != 1) {
-                if (eventType != 0 && eventType == 2) {
-                    String name = parser.getName();
-                    if (name != null && name.equalsIgnoreCase("uid-policy")) {
-                        int xmlUid = Integer.parseInt(parser.getAttributeValue(null, "uid"));
-                        int xmlPolicy = Integer.parseInt(parser.getAttributeValue(null, "policy"));
-                        if (xmlUid == uid && (xmlPolicy == 1 || xmlPolicy == 2 || xmlPolicy == 3)) {
-                            String str2 = TAG;
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("uid: ");
-                            stringBuilder2.append(xmlUid);
-                            stringBuilder2.append(", policy: ");
-                            stringBuilder2.append(xmlPolicy);
-                            HwArbitrationCommonUtils.logD(str2, stringBuilder2.toString());
-                            out = true;
+            for (int eventType = parser.getEventType(); eventType != 1; eventType = parser.next()) {
+                if (eventType != 0) {
+                    if (eventType == 2) {
+                        String name = parser.getName();
+                        if (name != null && name.equalsIgnoreCase("uid-policy")) {
+                            int xmlUid = Integer.parseInt(parser.getAttributeValue(null, "uid"));
+                            int xmlPolicy = Integer.parseInt(parser.getAttributeValue(null, "policy"));
+                            if (xmlUid == uid && (xmlPolicy == 1 || xmlPolicy == 2 || xmlPolicy == 3)) {
+                                String str2 = TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("uid: ");
+                                stringBuilder2.append(xmlUid);
+                                stringBuilder2.append(", policy: ");
+                                stringBuilder2.append(xmlPolicy);
+                                HwArbitrationCommonUtils.logD(str2, stringBuilder2.toString());
+                                out = true;
+                            }
                         }
                     }
                 }
-                eventType = parser.next();
             }
             try {
                 inStream.close();

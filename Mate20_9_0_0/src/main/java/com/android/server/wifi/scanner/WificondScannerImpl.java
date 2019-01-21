@@ -101,7 +101,7 @@ public class WificondScannerImpl extends WifiScannerImpl implements Callback {
         this.mAlarmManager = (AlarmManager) this.mContext.getSystemService("alarm");
         this.mEventHandler = new Handler(looper, this);
         this.mClock = clock;
-        this.mHwPnoScanSupported = this.mContext.getResources().getBoolean(17957070);
+        this.mHwPnoScanSupported = this.mContext.getResources().getBoolean(17957071);
         wifiMonitor.registerHandler(this.mIfaceName, WifiMonitor.SCAN_FAILED_EVENT, this.mEventHandler);
         wifiMonitor.registerHandler(this.mIfaceName, 147474, this.mEventHandler);
         wifiMonitor.registerHandler(this.mIfaceName, WifiMonitor.SCAN_RESULTS_EVENT, this.mEventHandler);
@@ -131,7 +131,7 @@ public class WificondScannerImpl extends WifiScannerImpl implements Callback {
         return this.mChannelHelper;
     }
 
-    /* JADX WARNING: Missing block: B:36:0x00e4, code:
+    /* JADX WARNING: Missing block: B:36:0x00e4, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -301,7 +301,7 @@ public class WificondScannerImpl extends WifiScannerImpl implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x008d, code:
+    /* JADX WARNING: Missing block: B:23:0x008d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -378,6 +378,7 @@ public class WificondScannerImpl extends WifiScannerImpl implements Callback {
             for (int i = 0; i < list_size; i++) {
                 boolean isTimeFiltered;
                 boolean isTimeFiltered2;
+                boolean isFrequencyFiltered;
                 result = ((ScanDetail) this.mNativeScanResults.get(i)).getScanResult();
                 long timestamp_ms = result.timestamp / 1000;
                 if (timestamp_ms > this.mLastScanSettings.startTime) {
@@ -395,58 +396,58 @@ public class WificondScannerImpl extends WifiScannerImpl implements Callback {
                         singleScanResultsForApp.add(result);
                     }
                 }
-                boolean isFrequencyFiltered = isTimeFiltered2;
+                boolean isFrequencyFiltered2 = isTimeFiltered2;
                 isTimeFiltered2 = isTimeFiltered;
-                boolean isFrequencyFiltered2;
-                if (isTimeFiltered2 || isFrequencyFiltered) {
-                    if (numFilteredScanResults == 0) {
-                        filteredResultsString.append(this.mLastScanSettings.startTime);
-                        filteredResultsString.append("/");
+                if (!isTimeFiltered2) {
+                    if (!isFrequencyFiltered2) {
+                        isFrequencyFiltered = isFrequencyFiltered2;
                     }
-                    if (isFrequencyFiltered) {
-                        filteredResultsString.append(result.SSID);
-                        filteredResultsString.append("|");
-                        filteredResultsString.append(result.frequency);
-                        filteredResultsString.append("|");
-                        filteredResultsString.append(ScanResultUtil.getConfusedBssid(result.BSSID));
-                        filteredResultsString.append("|");
-                    }
-                    if (isTimeFiltered2) {
-                        StringBuffer stringBuffer = new StringBuffer("\"");
-                        stringBuffer.append(result.SSID);
-                        stringBuffer.append("\"");
-                        String filterSsid = stringBuffer.toString();
-                        if (filterResults.containsKey(filterSsid)) {
-                            StringBuffer filterSsidValue;
-                            stringBuffer = (StringBuffer) filterResults.get(filterSsid);
-                            if (stringBuffer == null) {
-                                filterSsidValue = new StringBuffer();
-                            } else {
-                                filterSsidValue = stringBuffer;
-                            }
+                }
+                if (numFilteredScanResults == 0) {
+                    filteredResultsString.append(this.mLastScanSettings.startTime);
+                    filteredResultsString.append("/");
+                }
+                if (isFrequencyFiltered2) {
+                    filteredResultsString.append(result.SSID);
+                    filteredResultsString.append("|");
+                    filteredResultsString.append(result.frequency);
+                    filteredResultsString.append("|");
+                    filteredResultsString.append(ScanResultUtil.getConfusedBssid(result.BSSID));
+                    filteredResultsString.append("|");
+                }
+                if (isTimeFiltered2) {
+                    StringBuffer stringBuffer = new StringBuffer("\"");
+                    stringBuffer.append(result.SSID);
+                    stringBuffer.append("\"");
+                    String filterSsid = stringBuffer.toString();
+                    if (filterResults.containsKey(filterSsid)) {
+                        StringBuffer filterSsidValue;
+                        stringBuffer = (StringBuffer) filterResults.get(filterSsid);
+                        if (stringBuffer == null) {
+                            filterSsidValue = new StringBuffer();
+                        } else {
+                            filterSsidValue = stringBuffer;
+                        }
+                        try {
+                            filterSsidValue.append(result.BSSID.substring(result.BSSID.length() - 5));
+                            filterSsidValue.append("|");
+                            isFrequencyFiltered = isFrequencyFiltered2;
                             try {
-                                filterSsidValue.append(result.BSSID.substring(result.BSSID.length() - 5));
+                                filterSsidValue.append(result.timestamp / 1000);
                                 filterSsidValue.append("|");
-                                isFrequencyFiltered2 = isFrequencyFiltered;
-                                try {
-                                    filterSsidValue.append(result.timestamp / 1000);
-                                    filterSsidValue.append("|");
-                                    filterResults.put(filterSsid, filterSsidValue);
-                                } catch (StringIndexOutOfBoundsException e) {
-                                }
-                            } catch (StringIndexOutOfBoundsException e2) {
-                                isFrequencyFiltered2 = isFrequencyFiltered;
-                                Log.d(TAG, "substring: StringIndexOutOfBoundsException");
-                                numFilteredScanResults++;
+                                filterResults.put(filterSsid, filterSsidValue);
+                            } catch (StringIndexOutOfBoundsException e) {
                             }
+                        } catch (StringIndexOutOfBoundsException e2) {
+                            isFrequencyFiltered = isFrequencyFiltered2;
+                            Log.d(TAG, "substring: StringIndexOutOfBoundsException");
                             numFilteredScanResults++;
                         }
+                        numFilteredScanResults++;
                     }
-                    isFrequencyFiltered2 = isFrequencyFiltered;
-                    numFilteredScanResults++;
-                } else {
-                    isFrequencyFiltered2 = isFrequencyFiltered;
                 }
+                isFrequencyFiltered = isFrequencyFiltered2;
+                numFilteredScanResults++;
             }
             for (Entry<String, StringBuffer> entry : filterResults.entrySet()) {
                 StringBuffer arrayMap = (StringBuffer) entry.getValue();

@@ -22,15 +22,15 @@ final class PackageTrackerHelperImpl implements ConfigHelper, PackageManagerHelp
     }
 
     public boolean isTrackingEnabled() {
-        return this.mContext.getResources().getBoolean(17957051);
+        return this.mContext.getResources().getBoolean(17957052);
     }
 
     public String getUpdateAppPackageName() {
-        return this.mContext.getResources().getString(17039841);
+        return this.mContext.getResources().getString(17039842);
     }
 
     public String getDataAppPackageName() {
-        return this.mContext.getResources().getString(17039840);
+        return this.mContext.getResources().getString(17039841);
     }
 
     public int getCheckTimeAllowedMillis() {

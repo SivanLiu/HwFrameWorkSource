@@ -1,7 +1,9 @@
 package org.bouncycastle.openssl.jcajce;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.Provider;
 import javax.crypto.Cipher;
@@ -92,13 +94,13 @@ public class JceOpenSSLPKCS8DecryptorProviderBuilder {
                             return new CipherInputStream(inputStream, createCipher);
                         }
                     };
-                } catch (Throwable e) {
+                } catch (IOException e) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append(algorithmIdentifier.getAlgorithm());
                     stringBuilder.append(" not available: ");
                     stringBuilder.append(e.getMessage());
                     throw new OperatorCreationException(stringBuilder.toString(), e);
-                } catch (Throwable e2) {
+                } catch (GeneralSecurityException e2) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append(algorithmIdentifier.getAlgorithm());
                     stringBuilder.append(" not available: ");

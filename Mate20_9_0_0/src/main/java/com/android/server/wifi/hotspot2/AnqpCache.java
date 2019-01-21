@@ -32,7 +32,7 @@ public class AnqpCache {
 
     public void sweep() {
         long now = this.mClock.getElapsedSinceBootMillis();
-        if (now >= this.mLastSweep + CACHE_SWEEP_INTERVAL_MILLISECONDS) {
+        if (now >= this.mLastSweep + 60000) {
             List<ANQPNetworkKey> expiredKeys = new ArrayList();
             for (Entry<ANQPNetworkKey, ANQPData> entry : this.mANQPCache.entrySet()) {
                 if (((ANQPData) entry.getValue()).expired(now)) {

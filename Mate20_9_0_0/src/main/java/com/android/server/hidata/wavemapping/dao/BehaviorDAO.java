@@ -91,20 +91,11 @@ public class BehaviorDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0022, code:
+    /* JADX WARNING: Missing block: B:8:0x0022, code skipped:
             if (r1 != null) goto L_0x0024;
      */
-    /* JADX WARNING: Missing block: B:9:0x0024, code:
-            r1.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0043, code:
+    /* JADX WARNING: Missing block: B:18:0x005f, code skipped:
             if (r1 == null) goto L_0x0062;
-     */
-    /* JADX WARNING: Missing block: B:17:0x005f, code:
-            if (r1 == null) goto L_0x0062;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0062, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int getBatch() {
@@ -129,6 +120,10 @@ public class BehaviorDAO {
             stringBuilder.append("getBatch Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return batch;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();

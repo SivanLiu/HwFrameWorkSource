@@ -71,6 +71,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.HwPCUtils;
 import android.util.HwPCUtils.ProjectionMode;
+import android.util.HwVRUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.DisplayInfo;
@@ -80,6 +81,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.PointerIcon;
+import android.view.SurfaceControl;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManagerPolicyConstants.PointerEventListener;
@@ -112,6 +114,10 @@ import com.android.server.wm.WindowManagerInternal;
 import com.android.server.wm.WindowState;
 import com.huawei.android.view.HwWindowManager;
 import com.huawei.displayengine.IDisplayEngineService;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
@@ -306,8 +312,8 @@ public final class HwPCManagerService extends Stub {
             if (event != null) {
                 String state = event.get("DP_LINK_EVENT");
                 if (!TextUtils.isEmpty(state)) {
-                    String tip1 = HwPCManagerService.this.mContext.getResources().getString(33686122);
-                    String tip2 = HwPCManagerService.this.mContext.getResources().getString(33686123);
+                    String tip1 = HwPCManagerService.this.mContext.getResources().getString(33686124);
+                    String tip2 = HwPCManagerService.this.mContext.getResources().getString(33686125);
                     String tip = null;
                     boolean z = true;
                     switch (state.hashCode()) {
@@ -549,7 +555,7 @@ public final class HwPCManagerService extends Stub {
                 WifiDisplayStatus status = intent.getParcelableExtra("android.hardware.display.extra.WIFI_DISPLAY_STATUS") != null ? (WifiDisplayStatus) intent.getParcelableExtra("android.hardware.display.extra.WIFI_DISPLAY_STATUS") : null;
                 if (status != null) {
                     if (status.getActiveDisplay() != null) {
-                        HwPCManagerService.this.mWireLessDeviceName = String.format(context.getResources().getString(33686113), new Object[]{status.getActiveDisplay().getDeviceName()});
+                        HwPCManagerService.this.mWireLessDeviceName = String.format(context.getResources().getString(33686115), new Object[]{status.getActiveDisplay().getDeviceName()});
                     } else {
                         HwPCUtils.log(HwPCManagerService.TAG, "wifiDisplay is null");
                     }
@@ -1490,16 +1496,18 @@ public final class HwPCManagerService extends Stub {
     }
 
     public void scheduleDisplayAdded(int displayId) {
-        if (checkCallingPermission(PERMISSION_PC_MANAGER_API)) {
+        if (!checkCallingPermission(PERMISSION_PC_MANAGER_API)) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("scheduleDisplayAdded checkCallingPermission failed");
+            stringBuilder.append(Binder.getCallingPid());
+            HwPCUtils.log(str, stringBuilder.toString());
+        } else if (HwVRUtils.isVRMode()) {
+            HwPCUtils.log(TAG, "vr mode should not add vr display");
+        } else {
             this.mHandler.removeMessages(6);
             this.mHandler.sendMessage(this.mHandler.obtainMessage(6, displayId, -1));
-            return;
         }
-        String str = TAG;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("scheduleDisplayAdded checkCallingPermission failed");
-        stringBuilder.append(Binder.getCallingPid());
-        HwPCUtils.log(str, stringBuilder.toString());
     }
 
     public void scheduleDisplayChanged(int displayId) {
@@ -1923,28 +1931,28 @@ public final class HwPCManagerService extends Stub {
             builder.setAppName(this.mContext.getString(33685941));
             boolean isConnectFromWelink = isConnectFromThirdApp(get1stDisplay().mDisplayId) == 2;
             if (isDesktopMode(projMode)) {
-                mode = this.mContext.getString(33686114);
+                mode = this.mContext.getString(33686116);
             } else {
-                mode = this.mContext.getString(33686115);
+                mode = this.mContext.getString(33686117);
             }
             builder.setContentTitle(mode);
             if (HwPCUtils.getIsWifiMode()) {
                 if (!(this.mDisplayManager == null || this.mDisplayManager.getDisplay(get1stDisplay().mDisplayId) == null)) {
                     Display display = this.mDisplayManager.getDisplay(get1stDisplay().mDisplayId);
-                    this.mWireLessDeviceName = String.format(this.mContext.getResources().getString(33686113), new Object[]{display.getName()});
+                    this.mWireLessDeviceName = String.format(this.mContext.getResources().getString(33686115), new Object[]{display.getName()});
                 }
                 builder.setContentText(this.mWireLessDeviceName);
             } else if (isConnectFromWelink) {
-                this.mWireLessDeviceName = String.format(this.mContext.getResources().getString(33686113), new Object[]{this.mContext.getResources().getString(33686194)});
+                this.mWireLessDeviceName = String.format(this.mContext.getResources().getString(33686115), new Object[]{this.mContext.getResources().getString(33686197)});
                 builder.setContentText(this.mWireLessDeviceName);
             }
             builder.setContentIntent(PendingIntent.getBroadcastAsUser(this.mContext, 0, new Intent(ACTION_NOTIFY_OPEN_EASY_PROJECTION), 134217728, UserHandle.OWNER));
             builder.addAction(new Action.Builder(getResDrawableId(isDesktopMode(this.mProjMode)), getActionText(isDesktopMode(this.mProjMode)), PendingIntent.getBroadcastAsUser(this.mContext, 1, new Intent(ACTION_NOTIFY_SWITCH_MODE), 268435456, UserHandle.OWNER)).build());
             if (isNeedShowMKAction()) {
-                builder.addAction(new Action.Builder(33751959, this.mContext.getString(33686112), PendingIntent.getBroadcastAsUser(this.mContext, 1, new Intent(ACTION_NOTIFY_SHOW_MK), 134217728, UserHandle.OWNER)).build());
+                builder.addAction(new Action.Builder(33751959, this.mContext.getString(33686114), PendingIntent.getBroadcastAsUser(this.mContext, 1, new Intent(ACTION_NOTIFY_SHOW_MK), 134217728, UserHandle.OWNER)).build());
             }
             if (HwPCUtils.getIsWifiMode() || isConnectFromWelink) {
-                builder.addAction(new Action.Builder(33751957, this.mContext.getString(33686110), PendingIntent.getBroadcastAsUser(this.mContext, 1, new Intent(ACTION_NOTIFY_DISCONNECT), 134217728, UserHandle.OWNER)).build());
+                builder.addAction(new Action.Builder(33751957, this.mContext.getString(33686112), PendingIntent.getBroadcastAsUser(this.mContext, 1, new Intent(ACTION_NOTIFY_DISCONNECT), 134217728, UserHandle.OWNER)).build());
             }
             builder.setShowActionIcon(true);
             Notification notification = builder.getNotification();
@@ -1957,9 +1965,9 @@ public final class HwPCManagerService extends Stub {
 
     private CharSequence getActionText(boolean isDesktopMode) {
         if (isDesktopMode) {
-            return this.mContext.getString(33686111);
+            return this.mContext.getString(33686113);
         }
-        return this.mContext.getString(33686109);
+        return this.mContext.getString(33686111);
     }
 
     private int getResDrawableId(boolean isDesktopMode) {
@@ -3243,154 +3251,76 @@ public final class HwPCManagerService extends Stub {
         setScreenPowerInner(true, false);
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.pc.HwPCManagerService.setScreenPowerInner(boolean, boolean):void, dom blocks: [B:17:0x0056, B:24:0x0064]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void setScreenPowerInner(boolean r9, boolean r10) {
-        /*
-        r8 = this;
-        r0 = r8.mScreenAccessLock;
-        monitor-enter(r0);
-        r1 = "HwPCManagerService";	 Catch:{ all -> 0x00c6 }
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00c6 }
-        r2.<init>();	 Catch:{ all -> 0x00c6 }
-        r3 = "setScreenPower old=";	 Catch:{ all -> 0x00c6 }
-        r2.append(r3);	 Catch:{ all -> 0x00c6 }
-        r3 = r8.mScreenPowerOn;	 Catch:{ all -> 0x00c6 }
-        r2.append(r3);	 Catch:{ all -> 0x00c6 }
-        r3 = " new=";	 Catch:{ all -> 0x00c6 }
-        r2.append(r3);	 Catch:{ all -> 0x00c6 }
-        r2.append(r9);	 Catch:{ all -> 0x00c6 }
-        r2 = r2.toString();	 Catch:{ all -> 0x00c6 }
-        android.util.HwPCUtils.log(r1, r2);	 Catch:{ all -> 0x00c6 }
-        r1 = r8.mScreenPowerOn;	 Catch:{ all -> 0x00c6 }
-        if (r9 != r1) goto L_0x002c;	 Catch:{ all -> 0x00c6 }
-    L_0x0028:
-        if (r10 == 0) goto L_0x002c;	 Catch:{ all -> 0x00c6 }
-    L_0x002a:
-        monitor-exit(r0);	 Catch:{ all -> 0x00c6 }
-        return;	 Catch:{ all -> 0x00c6 }
-    L_0x002c:
-        r1 = android.util.HwPCUtils.getIsWifiMode();	 Catch:{ all -> 0x00c6 }
-        if (r1 != 0) goto L_0x00b6;	 Catch:{ all -> 0x00c6 }
-    L_0x0032:
-        r1 = 0;	 Catch:{ all -> 0x00c6 }
-        if (r9 == 0) goto L_0x0038;	 Catch:{ all -> 0x00c6 }
-    L_0x0035:
-        r2 = "1";	 Catch:{ all -> 0x00c6 }
-        goto L_0x003a;	 Catch:{ all -> 0x00c6 }
-    L_0x0038:
-        r2 = "0";	 Catch:{ all -> 0x00c6 }
-    L_0x003a:
-        r3 = -1;
-        r4 = 3;
-        r5 = new java.io.FileOutputStream;	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r6 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r7 = "/sys/devices/virtual/dp/power/lcd_power";	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r6.<init>(r7);	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r5.<init>(r6);	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r1 = r5;	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r5 = "utf-8";	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r5 = r2.getBytes(r5);	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r1.write(r5);	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r8.mScreenPowerOn = r9;	 Catch:{ FileNotFoundException -> 0x0085, IOException -> 0x0063 }
-        r1.close();	 Catch:{ IOException -> 0x005a }
-        goto L_0x009c;
-    L_0x005a:
-        r3 = move-exception;
-        r4 = "HwPCManagerService";	 Catch:{ all -> 0x00c6 }
-        r5 = "setScreenPower IOException2";	 Catch:{ all -> 0x00c6 }
-        goto L_0x0081;
-    L_0x0061:
-        r3 = move-exception;
-        goto L_0x00a6;
-    L_0x0063:
-        r5 = move-exception;
-        r6 = "HwPCManagerService";	 Catch:{ all -> 0x0061 }
-        r7 = "setScreenPower IOException1";	 Catch:{ all -> 0x0061 }
-        android.util.HwPCUtils.log(r6, r7);	 Catch:{ all -> 0x0061 }
-        r6 = com.android.server.pc.HwPCDataReporter.getInstance();	 Catch:{ all -> 0x0061 }
-        r7 = "";	 Catch:{ all -> 0x0061 }
-        r6.reportFailLightScreen(r4, r3, r7);	 Catch:{ all -> 0x0061 }
-        if (r1 == 0) goto L_0x00a5;
-    L_0x0077:
-        r1.close();	 Catch:{ IOException -> 0x007b }
-        goto L_0x009c;
-    L_0x007b:
-        r3 = move-exception;
-        r4 = "HwPCManagerService";	 Catch:{ all -> 0x00c6 }
-        r5 = "setScreenPower IOException2";	 Catch:{ all -> 0x00c6 }
-    L_0x0081:
-        android.util.HwPCUtils.log(r4, r5);	 Catch:{ all -> 0x00c6 }
-        goto L_0x00a4;
-    L_0x0085:
-        r5 = move-exception;
-        r6 = "HwPCManagerService";	 Catch:{ all -> 0x0061 }
-        r7 = "setScreenPower FileNotFoundException";	 Catch:{ all -> 0x0061 }
-        android.util.HwPCUtils.log(r6, r7);	 Catch:{ all -> 0x0061 }
-        r6 = com.android.server.pc.HwPCDataReporter.getInstance();	 Catch:{ all -> 0x0061 }
-        r7 = "";	 Catch:{ all -> 0x0061 }
-        r6.reportFailLightScreen(r4, r3, r7);	 Catch:{ all -> 0x0061 }
-        if (r1 == 0) goto L_0x00a5;
-    L_0x0099:
-        r1.close();	 Catch:{ IOException -> 0x009d }
-    L_0x009c:
-        goto L_0x00a5;
-    L_0x009d:
-        r3 = move-exception;
-        r4 = "HwPCManagerService";	 Catch:{ all -> 0x00c6 }
-        r5 = "setScreenPower IOException2";	 Catch:{ all -> 0x00c6 }
-        goto L_0x0081;
-    L_0x00a4:
-        goto L_0x009c;
-    L_0x00a5:
-        goto L_0x00c4;
-    L_0x00a6:
-        if (r1 == 0) goto L_0x00b5;
-    L_0x00a8:
-        r1.close();	 Catch:{ IOException -> 0x00ac }
-        goto L_0x00b5;
-    L_0x00ac:
-        r4 = move-exception;
-        r5 = "HwPCManagerService";	 Catch:{ all -> 0x00c6 }
-        r6 = "setScreenPower IOException2";	 Catch:{ all -> 0x00c6 }
-        android.util.HwPCUtils.log(r5, r6);	 Catch:{ all -> 0x00c6 }
-    L_0x00b5:
-        throw r3;	 Catch:{ all -> 0x00c6 }
-    L_0x00b6:
-        r1 = 0;	 Catch:{ all -> 0x00c6 }
-        r2 = android.view.SurfaceControl.getBuiltInDisplay(r1);	 Catch:{ all -> 0x00c6 }
-        if (r9 == 0) goto L_0x00bf;	 Catch:{ all -> 0x00c6 }
-    L_0x00bd:
-        r1 = 2;	 Catch:{ all -> 0x00c6 }
-    L_0x00bf:
-        android.view.SurfaceControl.setDisplayPowerMode(r2, r1);	 Catch:{ all -> 0x00c6 }
-        r8.mScreenPowerOn = r9;	 Catch:{ all -> 0x00c6 }
-    L_0x00c4:
-        monitor-exit(r0);	 Catch:{ all -> 0x00c6 }
-        return;	 Catch:{ all -> 0x00c6 }
-    L_0x00c6:
-        r1 = move-exception;	 Catch:{ all -> 0x00c6 }
-        monitor-exit(r0);	 Catch:{ all -> 0x00c6 }
-        throw r1;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pc.HwPCManagerService.setScreenPowerInner(boolean, boolean):void");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:17:0x0056, B:24:0x0064] */
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
+            r4 = TAG;
+            r5 = "setScreenPower IOException2";
+     */
+    /* JADX WARNING: Missing block: B:42:0x00a6, code skipped:
+            if (r1 != null) goto L_0x00a8;
+     */
+    /* JADX WARNING: Missing block: B:44:?, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:47:?, code skipped:
+            android.util.HwPCUtils.log(TAG, "setScreenPower IOException2");
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void setScreenPowerInner(boolean powerOn, boolean checking) {
+        String str;
+        String str2;
+        synchronized (this.mScreenAccessLock) {
+            String str3 = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("setScreenPower old=");
+            stringBuilder.append(this.mScreenPowerOn);
+            stringBuilder.append(" new=");
+            stringBuilder.append(powerOn);
+            HwPCUtils.log(str3, stringBuilder.toString());
+            if (powerOn == this.mScreenPowerOn && checking) {
+            } else if (HwPCUtils.getIsWifiMode()) {
+                int val = 0;
+                IBinder displayToken = SurfaceControl.getBuiltInDisplay(0);
+                if (powerOn) {
+                    val = 2;
+                }
+                SurfaceControl.setDisplayPowerMode(displayToken, val);
+                this.mScreenPowerOn = powerOn;
+            } else {
+                FileOutputStream fileDevice = null;
+                String val2 = powerOn ? "1" : "0";
+                try {
+                    fileDevice = new FileOutputStream(new File(SCREEN_POWER_DEVICE));
+                    fileDevice.write(val2.getBytes("utf-8"));
+                    this.mScreenPowerOn = powerOn;
+                    fileDevice.close();
+                } catch (FileNotFoundException e) {
+                    HwPCUtils.log(TAG, "setScreenPower FileNotFoundException");
+                    HwPCDataReporter.getInstance().reportFailLightScreen(3, -1, "");
+                    if (fileDevice != null) {
+                        try {
+                            fileDevice.close();
+                        } catch (IOException e2) {
+                            str = TAG;
+                            str2 = "setScreenPower IOException2";
+                            HwPCUtils.log(str, str2);
+                        }
+                    }
+                } catch (IOException e3) {
+                    HwPCUtils.log(TAG, "setScreenPower IOException1");
+                    HwPCDataReporter.getInstance().reportFailLightScreen(3, -1, "");
+                    if (fileDevice != null) {
+                        try {
+                            fileDevice.close();
+                        } catch (IOException e4) {
+                            str = TAG;
+                            str2 = "setScreenPower IOException2";
+                            HwPCUtils.log(str, str2);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void dispatchKeyEventForExclusiveKeyboard(KeyEvent ke) {
@@ -3415,6 +3345,8 @@ public final class HwPCManagerService extends Stub {
                                     break;
                                 case 4:
                                     this.mMessenger.send(getMessage(11));
+                                    break;
+                                default:
                                     break;
                             }
                         } else {
@@ -3509,10 +3441,10 @@ public final class HwPCManagerService extends Stub {
                 HwPCUtils.log(str, stringBuilder.toString());
                 if (HwPCUtils.enabledInPad()) {
                     Secure.putInt(this.mContext.getContentResolver(), "show_ime_with_hard_keyboard", 0);
-                } else {
-                    Secure.putInt(this.mContext.getContentResolver(), "show_ime_with_hard_keyboard", 1);
+                    return;
                 }
-            } catch (Throwable th) {
+                Secure.putInt(this.mContext.getContentResolver(), "show_ime_with_hard_keyboard", 1);
+            } finally {
                 Binder.restoreCallingIdentity(ident);
             }
         } else {
@@ -3523,7 +3455,6 @@ public final class HwPCManagerService extends Stub {
             HwPCUtils.log(str, stringBuilder.toString());
             Secure.putInt(this.mContext.getContentResolver(), "show_ime_with_hard_keyboard", this.mIMEWithHardKeyboardState);
         }
-        Binder.restoreCallingIdentity(ident);
     }
 
     private boolean isCalling() {

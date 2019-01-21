@@ -156,25 +156,12 @@ public class HwNotificationManagerService extends NotificationManagerService {
             }.start();
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:70:0x0178  */
-        /* JADX WARNING: Removed duplicated region for block: B:70:0x0178  */
-        /* JADX WARNING: Missing block: B:47:0x0142, code:
+        /* JADX WARNING: Removed duplicated region for block: B:62:0x015c A:{Catch:{ RuntimeException -> 0x015d, Exception -> 0x0150, all -> 0x014c, all -> 0x0175 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:62:0x015c A:{Catch:{ RuntimeException -> 0x015d, Exception -> 0x0150, all -> 0x014c, all -> 0x0175 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:72:0x0178  */
+        /* JADX WARNING: Removed duplicated region for block: B:72:0x0178  */
+        /* JADX WARNING: Missing block: B:66:0x0167, code skipped:
             if (r2 != null) goto L_0x0169;
-     */
-        /* JADX WARNING: Missing block: B:60:0x015a, code:
-            if (r2 == null) goto L_0x016c;
-     */
-        /* JADX WARNING: Missing block: B:64:0x0167, code:
-            if (r2 != null) goto L_0x0169;
-     */
-        /* JADX WARNING: Missing block: B:65:0x0169, code:
-            r2.close();
-     */
-        /* JADX WARNING: Missing block: B:66:0x016c, code:
-            android.util.Slog.v(com.android.server.notification.HwNotificationManagerService.TAG, "HwCfgLoadingRunnable: Ends. ");
-     */
-        /* JADX WARNING: Missing block: B:67:0x0174, code:
-            return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private void load() {
@@ -212,6 +199,9 @@ public class HwNotificationManagerService extends NotificationManagerService {
                             e = e5;
                             obj = context;
                             Slog.e(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable : Exception ", e);
+                            if (cursor != null) {
+                            }
+                            Slog.v(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable: Ends. ");
                         } catch (Throwable th2) {
                             th = th2;
                             obj = context;
@@ -259,10 +249,13 @@ public class HwNotificationManagerService extends NotificationManagerService {
                                     } catch (Exception e7) {
                                         e = e7;
                                         Slog.e(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable : Exception ", e);
+                                        if (cursor != null) {
+                                            cursor.close();
+                                        }
+                                        Slog.v(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable: Ends. ");
                                     }
-                                } else {
-                                    context2 = context;
                                 }
+                                context2 = context;
                                 tempMap.put(key, Integer.valueOf(cfg));
                             }
                             nPkgColIndex = nPkgColIndex2;
@@ -279,6 +272,10 @@ public class HwNotificationManagerService extends NotificationManagerService {
                         stringBuilder.append(HwNotificationManagerService.this.mCfgMap.size());
                         Slog.v(str, stringBuilder.toString());
                     }
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    Slog.v(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable: Ends. ");
                 } catch (RuntimeException e8) {
                     e2 = e8;
                     context2 = context;
@@ -287,6 +284,9 @@ public class HwNotificationManagerService extends NotificationManagerService {
                     e = e9;
                     context2 = context;
                     Slog.e(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable : Exception ", e);
+                    if (cursor != null) {
+                    }
+                    Slog.v(HwNotificationManagerService.TAG, "HwCfgLoadingRunnable: Ends. ");
                 } catch (Throwable th3) {
                     th = th3;
                     if (cursor != null) {
@@ -590,16 +590,16 @@ public class HwNotificationManagerService extends NotificationManagerService {
             int len = list.size();
             for (int i = 0; i < len; i++) {
                 NotificationContentViewRecord r = (NotificationContentViewRecord) list.get(i);
-                if ((userId == -1 || r.userId == -1 || r.userId == userId) && r.id == id) {
-                    if (tag == null) {
-                        if (r.tag != null) {
-                            continue;
+                if (userId == -1 || r.userId == -1 || r.userId == userId) {
+                    if (r.id == id) {
+                        if (tag == null) {
+                            if (r.tag != null) {
+                            }
+                        } else if (!tag.equals(r.tag)) {
                         }
-                    } else if (!tag.equals(r.tag)) {
-                        continue;
-                    }
-                    if (r.pkg.equals(pkg)) {
-                        return i;
+                        if (r.pkg.equals(pkg)) {
+                            return i;
+                        }
                     }
                 }
             }
@@ -1020,94 +1020,94 @@ public class HwNotificationManagerService extends NotificationManagerService {
         this.mHwRecSysAidlInterface = null;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x00aa, code:
+    /* JADX WARNING: Missing block: B:22:0x00aa, code skipped:
             if (isSystemApp(r15, r12) == false) goto L_0x00c2;
      */
-    /* JADX WARNING: Missing block: B:23:0x00ac, code:
+    /* JADX WARNING: Missing block: B:23:0x00ac, code skipped:
             android.util.Log.i(TAG, "recognize: system app");
             r2 = r1.mRecognizeMap;
      */
-    /* JADX WARNING: Missing block: B:24:0x00b5, code:
+    /* JADX WARNING: Missing block: B:24:0x00b5, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             r1.mRecognizeMap.put(r8, "0");
      */
-    /* JADX WARNING: Missing block: B:27:0x00bd, code:
+    /* JADX WARNING: Missing block: B:27:0x00bd, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:28:0x00be, code:
+    /* JADX WARNING: Missing block: B:28:0x00be, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:33:0x00c4, code:
+    /* JADX WARNING: Missing block: B:33:0x00c4, code skipped:
             if (r1.mHwRecSysAidlInterface == null) goto L_0x0194;
      */
-    /* JADX WARNING: Missing block: B:36:0x00ce, code:
+    /* JADX WARNING: Missing block: B:36:0x00ce, code skipped:
             r2 = r2;
             r19 = r8;
      */
-    /* JADX WARNING: Missing block: B:38:?, code:
+    /* JADX WARNING: Missing block: B:38:?, code skipped:
             r3 = r1.mHwRecSysAidlInterface.doNotificationCollect(new android.service.notification.StatusBarNotification(r15, r15, r10, r11, r12, r13, r14, r25, null, java.lang.System.currentTimeMillis()));
      */
-    /* JADX WARNING: Missing block: B:39:0x00e9, code:
+    /* JADX WARNING: Missing block: B:39:0x00e9, code skipped:
             if (r3 != null) goto L_0x00ec;
      */
-    /* JADX WARNING: Missing block: B:40:0x00eb, code:
+    /* JADX WARNING: Missing block: B:40:0x00eb, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:42:0x00f2, code:
+    /* JADX WARNING: Missing block: B:42:0x00f2, code skipped:
             if (r3.equals("0") == false) goto L_0x011d;
      */
-    /* JADX WARNING: Missing block: B:43:0x00f4, code:
+    /* JADX WARNING: Missing block: B:43:0x00f4, code skipped:
             r4 = r1.mRecognizeMap;
      */
-    /* JADX WARNING: Missing block: B:44:0x00f6, code:
+    /* JADX WARNING: Missing block: B:44:0x00f6, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:49:?, code:
+    /* JADX WARNING: Missing block: B:49:?, code skipped:
             r1.mRecognizeMap.put(r19, r3);
      */
-    /* JADX WARNING: Missing block: B:50:0x00fe, code:
+    /* JADX WARNING: Missing block: B:50:0x00fe, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:52:?, code:
+    /* JADX WARNING: Missing block: B:52:?, code skipped:
             r0 = TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("recognize: just ignore type : ");
             r4.append(r3);
             android.util.Log.d(r0, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:53:0x0115, code:
+    /* JADX WARNING: Missing block: B:53:0x0115, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:54:0x0116, code:
+    /* JADX WARNING: Missing block: B:54:0x0116, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:55:0x0118, code:
+    /* JADX WARNING: Missing block: B:55:0x0118, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:56:0x0119, code:
+    /* JADX WARNING: Missing block: B:56:0x0119, code skipped:
             r5 = r19;
      */
-    /* JADX WARNING: Missing block: B:58:?, code:
+    /* JADX WARNING: Missing block: B:58:?, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:60:?, code:
+    /* JADX WARNING: Missing block: B:60:?, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:61:0x011d, code:
+    /* JADX WARNING: Missing block: B:61:0x011d, code skipped:
             r5 = r19;
      */
-    /* JADX WARNING: Missing block: B:62:0x0125, code:
+    /* JADX WARNING: Missing block: B:62:0x0125, code skipped:
             if (r3.equals("103") == false) goto L_0x0132;
      */
-    /* JADX WARNING: Missing block: B:63:0x0127, code:
+    /* JADX WARNING: Missing block: B:63:0x0127, code skipped:
             r14.extras.putString("hw_type", "type_music");
      */
-    /* JADX WARNING: Missing block: B:64:0x0132, code:
+    /* JADX WARNING: Missing block: B:64:0x0132, code skipped:
             r14.extras.putString("hw_type", r3);
      */
-    /* JADX WARNING: Missing block: B:65:0x0139, code:
+    /* JADX WARNING: Missing block: B:65:0x0139, code skipped:
             r14.extras.putBoolean("hw_btw", r1.mBtwList.contains(r3));
             r0 = TAG;
             r4 = new java.lang.StringBuilder();
@@ -1115,7 +1115,7 @@ public class HwNotificationManagerService extends NotificationManagerService {
             r4.append(r15);
             r4.append(", uid=");
      */
-    /* JADX WARNING: Missing block: B:68:?, code:
+    /* JADX WARNING: Missing block: B:68:?, code skipped:
             r4.append(r27);
             r4.append(", hw_type=");
             r4.append(r3);
@@ -1123,37 +1123,37 @@ public class HwNotificationManagerService extends NotificationManagerService {
             r4.append(r1.mBtwList.contains(r3));
             android.util.Log.i(r0, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:69:0x017d, code:
+    /* JADX WARNING: Missing block: B:69:0x017d, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:70:0x017f, code:
+    /* JADX WARNING: Missing block: B:70:0x017f, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:71:0x0180, code:
+    /* JADX WARNING: Missing block: B:71:0x0180, code skipped:
             r6 = r27;
      */
-    /* JADX WARNING: Missing block: B:72:0x0183, code:
+    /* JADX WARNING: Missing block: B:72:0x0183, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:73:0x0184, code:
+    /* JADX WARNING: Missing block: B:73:0x0184, code skipped:
             r5 = r19;
             r6 = r27;
      */
-    /* JADX WARNING: Missing block: B:74:0x0189, code:
+    /* JADX WARNING: Missing block: B:74:0x0189, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:75:0x018a, code:
+    /* JADX WARNING: Missing block: B:75:0x018a, code skipped:
             r5 = r8;
             r6 = r12;
      */
-    /* JADX WARNING: Missing block: B:76:0x018c, code:
+    /* JADX WARNING: Missing block: B:76:0x018c, code skipped:
             android.util.Log.e(TAG, "doNotificationCollect failed", r0);
      */
-    /* JADX WARNING: Missing block: B:77:0x0194, code:
+    /* JADX WARNING: Missing block: B:77:0x0194, code skipped:
             r5 = r8;
             r6 = r12;
      */
-    /* JADX WARNING: Missing block: B:78:0x0196, code:
+    /* JADX WARNING: Missing block: B:78:0x0196, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

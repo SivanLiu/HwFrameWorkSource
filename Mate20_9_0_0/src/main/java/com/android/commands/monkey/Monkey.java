@@ -221,7 +221,7 @@ public class Monkey {
                     Monkey.this.mReportProcessName = processName;
                 }
             }
-            return Monkey.this.mKillProcessAfterError ^ true;
+            return Monkey.this.mKillProcessAfterError ^ 1;
         }
 
         public int appEarlyNotResponding(String processName, int pid, String annotation) {
@@ -885,57 +885,58 @@ public class Monkey {
         try {
             int N = this.mMainCategories.size();
             for (int i = 0; i < N; i++) {
+                Logger logger;
                 Intent intent = new Intent("android.intent.action.MAIN");
                 String category = (String) this.mMainCategories.get(i);
                 if (category.length() > 0) {
                     intent.addCategory(category);
                 }
                 List<ResolveInfo> mainApps = this.mPm.queryIntentActivities(intent, null, 0, UserHandle.myUserId()).getList();
-                Logger logger;
-                if (mainApps == null || mainApps.size() == 0) {
-                    logger = Logger.err;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("// Warning: no activities found for category ");
-                    stringBuilder.append(category);
-                    logger.println(stringBuilder.toString());
-                } else {
-                    if (this.mVerbose >= 2) {
-                        logger = Logger.out;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("// Selecting main activities from category ");
-                        stringBuilder2.append(category);
-                        logger.println(stringBuilder2.toString());
-                    }
-                    int NA = mainApps.size();
-                    for (int a = 0; a < NA; a++) {
-                        ResolveInfo r = (ResolveInfo) mainApps.get(a);
-                        String packageName = r.activityInfo.applicationInfo.packageName;
-                        Logger logger2;
-                        StringBuilder stringBuilder3;
-                        if (MonkeyUtils.getPackageFilter().checkEnteringPackage(packageName)) {
-                            if (this.mVerbose >= 2) {
+                if (mainApps != null) {
+                    if (mainApps.size() != 0) {
+                        if (this.mVerbose >= 2) {
+                            logger = Logger.out;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("// Selecting main activities from category ");
+                            stringBuilder.append(category);
+                            logger.println(stringBuilder.toString());
+                        }
+                        int NA = mainApps.size();
+                        for (int a = 0; a < NA; a++) {
+                            ResolveInfo r = (ResolveInfo) mainApps.get(a);
+                            String packageName = r.activityInfo.applicationInfo.packageName;
+                            Logger logger2;
+                            StringBuilder stringBuilder2;
+                            if (MonkeyUtils.getPackageFilter().checkEnteringPackage(packageName)) {
+                                if (this.mVerbose >= 2) {
+                                    logger2 = Logger.out;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("//   + Using main activity ");
+                                    stringBuilder2.append(r.activityInfo.name);
+                                    stringBuilder2.append(" (from package ");
+                                    stringBuilder2.append(packageName);
+                                    stringBuilder2.append(")");
+                                    logger2.println(stringBuilder2.toString());
+                                }
+                                this.mMainApps.add(new ComponentName(packageName, r.activityInfo.name));
+                            } else if (this.mVerbose >= 3) {
                                 logger2 = Logger.out;
-                                stringBuilder3 = new StringBuilder();
-                                stringBuilder3.append("//   + Using main activity ");
-                                stringBuilder3.append(r.activityInfo.name);
-                                stringBuilder3.append(" (from package ");
-                                stringBuilder3.append(packageName);
-                                stringBuilder3.append(")");
-                                logger2.println(stringBuilder3.toString());
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("//   - NOT USING main activity ");
+                                stringBuilder2.append(r.activityInfo.name);
+                                stringBuilder2.append(" (from package ");
+                                stringBuilder2.append(packageName);
+                                stringBuilder2.append(")");
+                                logger2.println(stringBuilder2.toString());
                             }
-                            this.mMainApps.add(new ComponentName(packageName, r.activityInfo.name));
-                        } else if (this.mVerbose >= 3) {
-                            logger2 = Logger.out;
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("//   - NOT USING main activity ");
-                            stringBuilder3.append(r.activityInfo.name);
-                            stringBuilder3.append(" (from package ");
-                            stringBuilder3.append(packageName);
-                            stringBuilder3.append(")");
-                            logger2.println(stringBuilder3.toString());
                         }
                     }
                 }
+                logger = Logger.err;
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("// Warning: no activities found for category ");
+                stringBuilder3.append(category);
+                logger.println(stringBuilder3.toString());
             }
             if (this.mMainApps.size() != 0) {
                 return true;
@@ -1001,11 +1002,18 @@ public class Monkey {
                         shouldReportDumpsysMemInfo = true;
                     }
                     if (this.mMonitorNativeCrashes && checkNativeCrashes() && eventCounter > 0) {
+                        boolean z;
                         Logger.out.println("** New native crash detected.");
                         if (this.mRequestBugreport) {
                             getBugreport("native_crash_");
                         }
-                        boolean z = this.mAbort || !this.mIgnoreNativeCrashes || this.mKillProcessAfterError;
+                        if (!this.mAbort && this.mIgnoreNativeCrashes) {
+                            if (!this.mKillProcessAfterError) {
+                                z = false;
+                                this.mAbort = z;
+                            }
+                        }
+                        z = true;
                         this.mAbort = z;
                     }
                     if (this.mAbort) {

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import java.lang.reflect.InvocationTargetException;
 
 @RequiresApi(28)
 public class AppComponentFactory extends android.app.AppComponentFactory {
@@ -32,83 +33,48 @@ public class AppComponentFactory extends android.app.AppComponentFactory {
         return (Service) CoreComponentFactory.checkCompatWrapper(instantiateServiceCompat(cl, className, intent));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.reflect.InvocationTargetException (r0_4 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001c, code:
-            throw new java.lang.RuntimeException("Couldn't call constructor", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @NonNull
     public Application instantiateApplicationCompat(@NonNull ClassLoader cl, @NonNull String className) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try {
             return (Application) cl.loadClass(className).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException("Couldn't call constructor", e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.reflect.InvocationTargetException (r0_4 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001c, code:
-            throw new java.lang.RuntimeException("Couldn't call constructor", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @NonNull
     public Activity instantiateActivityCompat(@NonNull ClassLoader cl, @NonNull String className, @Nullable Intent intent) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try {
             return (Activity) cl.loadClass(className).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException("Couldn't call constructor", e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.reflect.InvocationTargetException (r0_4 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001c, code:
-            throw new java.lang.RuntimeException("Couldn't call constructor", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @NonNull
     public BroadcastReceiver instantiateReceiverCompat(@NonNull ClassLoader cl, @NonNull String className, @Nullable Intent intent) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try {
             return (BroadcastReceiver) cl.loadClass(className).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException("Couldn't call constructor", e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.reflect.InvocationTargetException (r0_4 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001c, code:
-            throw new java.lang.RuntimeException("Couldn't call constructor", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @NonNull
     public Service instantiateServiceCompat(@NonNull ClassLoader cl, @NonNull String className, @Nullable Intent intent) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try {
             return (Service) cl.loadClass(className).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException("Couldn't call constructor", e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0014 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.reflect.InvocationTargetException (r0_4 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001c, code:
-            throw new java.lang.RuntimeException("Couldn't call constructor", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @NonNull
     public ContentProvider instantiateProviderCompat(@NonNull ClassLoader cl, @NonNull String className) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try {
             return (ContentProvider) cl.loadClass(className).getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException("Couldn't call constructor", e);
         }
     }
 }

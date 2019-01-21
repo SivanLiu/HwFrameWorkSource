@@ -502,13 +502,13 @@ public abstract class ECCurve {
 
     public ECLookupTable createCacheSafeLookupTable(ECPoint[] eCPointArr, int i, final int i2) {
         final int fieldSize = (getFieldSize() + 7) >>> 3;
-        final Object obj = new byte[((i2 * fieldSize) * 2)];
+        final byte[] bArr = new byte[((i2 * fieldSize) * 2)];
         int i3 = 0;
         int i4 = i3;
         while (i3 < i2) {
             ECPoint eCPoint = eCPointArr[i + i3];
-            Object toByteArray = eCPoint.getRawXCoord().toBigInteger().toByteArray();
-            Object toByteArray2 = eCPoint.getRawYCoord().toBigInteger().toByteArray();
+            byte[] toByteArray = eCPoint.getRawXCoord().toBigInteger().toByteArray();
+            byte[] toByteArray2 = eCPoint.getRawYCoord().toBigInteger().toByteArray();
             int i5 = 1;
             int i6 = toByteArray.length > fieldSize ? 1 : 0;
             int length = toByteArray.length - i6;
@@ -517,9 +517,9 @@ public abstract class ECCurve {
             }
             int length2 = toByteArray2.length - i5;
             i4 += fieldSize;
-            System.arraycopy(toByteArray, i6, obj, i4 - length, length);
+            System.arraycopy(toByteArray, i6, bArr, i4 - length, length);
             i4 += fieldSize;
-            System.arraycopy(toByteArray2, i5, obj, i4 - length2, length2);
+            System.arraycopy(toByteArray2, i5, bArr, i4 - length2, length2);
             i3++;
         }
         return new ECLookupTable() {
@@ -535,8 +535,8 @@ public abstract class ECCurve {
                 while (i2 < i2) {
                     int i4 = ((i2 ^ i) - 1) >> 31;
                     for (int i5 = 0; i5 < fieldSize; i5++) {
-                        bArr[i5] = (byte) (bArr[i5] ^ (obj[i3 + i5] & i4));
-                        bArr2[i5] = (byte) (bArr2[i5] ^ (obj[(fieldSize + i3) + i5] & i4));
+                        bArr[i5] = (byte) (bArr[i5] ^ (bArr[i3 + i5] & i4));
+                        bArr2[i5] = (byte) (bArr2[i5] ^ (bArr[(fieldSize + i3) + i5] & i4));
                     }
                     i3 += fieldSize * 2;
                     i2++;

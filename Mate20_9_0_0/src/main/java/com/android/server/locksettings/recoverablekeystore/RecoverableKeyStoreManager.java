@@ -26,11 +26,13 @@ import com.android.server.locksettings.recoverablekeystore.storage.RecoverableKe
 import com.android.server.locksettings.recoverablekeystore.storage.RecoverySessionStorage;
 import com.android.server.locksettings.recoverablekeystore.storage.RecoverySessionStorage.Entry;
 import com.android.server.locksettings.recoverablekeystore.storage.RecoverySnapshotStorage;
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertPath;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -391,7 +393,7 @@ public class RecoverableKeyStoreManager {
         Entry sessionEntry = this.mRecoverySessionStorage.get(uid, sessionId);
         if (sessionEntry != null) {
             try {
-                Map<String, String> importKeyMaterials = importKeyMaterials(userId, uid, recoverApplicationKeys(decryptRecoveryKey(sessionEntry, encryptedRecoveryKey), applicationKeys));
+                Map importKeyMaterials = importKeyMaterials(userId, uid, recoverApplicationKeys(decryptRecoveryKey(sessionEntry, encryptedRecoveryKey), applicationKeys));
                 sessionEntry.destroy();
                 this.mRecoverySessionStorage.remove(uid);
                 return importKeyMaterials;
@@ -438,23 +440,6 @@ public class RecoverableKeyStoreManager {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x002a A:{Splitter: B:3:0x001a, ExcHandler: java.security.KeyStoreException (r4_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x002a A:{Splitter: B:3:0x001a, ExcHandler: java.security.KeyStoreException (r4_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0042 A:{Splitter: B:1:0x0012, ExcHandler: java.security.KeyStoreException (r3_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0042 A:{Splitter: B:1:0x0012, ExcHandler: java.security.KeyStoreException (r3_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x002a, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x0034, code:
-            throw new android.os.ServiceSpecificException(22, r4.getMessage());
-     */
-    /* JADX WARNING: Missing block: B:12:0x0042, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:14:0x004c, code:
-            throw new android.os.ServiceSpecificException(22, r3.getMessage());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public String generateKey(String alias) throws RemoteException {
         checkRecoverKeyStorePermission();
         Preconditions.checkNotNull(alias, "alias is null");
@@ -464,33 +449,18 @@ public class RecoverableKeyStoreManager {
             try {
                 this.mApplicationKeyStorage.setSymmetricKeyEntry(userId, uid, alias, this.mRecoverableKeyGenerator.generateAndStoreKey(this.mPlatformKeyManager.getEncryptKey(userId), userId, uid, alias));
                 return getAlias(userId, uid, alias);
-            } catch (Exception e) {
+            } catch (RecoverableKeyStorageException | InvalidKeyException | KeyStoreException e) {
+                throw new ServiceSpecificException(22, e.getMessage());
             }
         } catch (NoSuchAlgorithmException e2) {
             throw new RuntimeException(e2);
-        } catch (Exception e3) {
+        } catch (IOException | KeyStoreException | UnrecoverableKeyException e3) {
+            throw new ServiceSpecificException(22, e3.getMessage());
         } catch (InsecureUserException e4) {
             throw new ServiceSpecificException(23, e4.getMessage());
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0050 A:{Splitter: B:3:0x001d, ExcHandler: java.security.KeyStoreException (r2_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0050 A:{Splitter: B:3:0x001d, ExcHandler: java.security.KeyStoreException (r2_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0038 A:{Splitter: B:5:0x0025, ExcHandler: java.security.KeyStoreException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0038 A:{Splitter: B:5:0x0025, ExcHandler: java.security.KeyStoreException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:8:0x0038, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:10:0x0042, code:
-            throw new android.os.ServiceSpecificException(22, r2.getMessage());
-     */
-    /* JADX WARNING: Missing block: B:14:0x0050, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x005a, code:
-            throw new android.os.ServiceSpecificException(22, r2.getMessage());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public String importKey(String alias, byte[] keyBytes) throws RemoteException {
         checkRecoverKeyStorePermission();
         Preconditions.checkNotNull(alias, "alias is null");
@@ -503,11 +473,13 @@ public class RecoverableKeyStoreManager {
                     this.mRecoverableKeyGenerator.importKey(this.mPlatformKeyManager.getEncryptKey(userId), userId, uid, alias, keyBytes);
                     this.mApplicationKeyStorage.setSymmetricKeyEntry(userId, uid, alias, keyBytes);
                     return getAlias(userId, uid, alias);
-                } catch (Exception e) {
+                } catch (RecoverableKeyStorageException | InvalidKeyException | KeyStoreException e) {
+                    throw new ServiceSpecificException(22, e.getMessage());
                 }
             } catch (NoSuchAlgorithmException e2) {
                 throw new RuntimeException(e2);
-            } catch (Exception e3) {
+            } catch (IOException | KeyStoreException | UnrecoverableKeyException e3) {
+                throw new ServiceSpecificException(22, e3.getMessage());
             } catch (InsecureUserException e4) {
                 throw new ServiceSpecificException(23, e4.getMessage());
             }

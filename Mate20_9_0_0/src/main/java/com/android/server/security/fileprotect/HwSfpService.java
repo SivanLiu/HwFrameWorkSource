@@ -257,21 +257,6 @@ public class HwSfpService extends Stub implements IHwSecurityPlugin {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x001f A:{ExcHandler: android.os.RemoteException (r2_2 'e' java.lang.Exception), Splitter: B:4:0x000f} */
-    /* JADX WARNING: Missing block: B:11:0x001f, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0020, code:
-            r3 = TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("Failed to getKeyDesc: ");
-            r4.append(r2.getMessage());
-            android.util.Slog.e(r3, r4.toString());
-     */
-    /* JADX WARNING: Missing block: B:13:0x003a, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private String getKeyDesc(int userId, int serialNumber, int storageType) {
         IStorageManager storageManager = getStorageManager();
         if (storageManager == null) {
@@ -284,7 +269,13 @@ public class HwSfpService extends Stub implements IHwSecurityPlugin {
                 return origin;
             }
             return null;
-        } catch (Exception e) {
+        } catch (RemoteException | RuntimeException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed to getKeyDesc: ");
+            stringBuilder.append(e.getMessage());
+            Slog.e(str, stringBuilder.toString());
+            return null;
         }
     }
 

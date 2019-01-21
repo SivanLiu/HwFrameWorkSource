@@ -44,18 +44,18 @@ public class DERGeneralizedTime extends ASN1GeneralizedTime {
             while (length2 > 0 && this.time[length2] == (byte) 48) {
                 length2--;
             }
-            Object obj2;
+            byte[] bArr;
             if (this.time[length2] == (byte) 46) {
-                obj2 = new byte[(length2 + 1)];
-                System.arraycopy(this.time, 0, obj2, 0, length2);
-                obj2[length2] = 90;
-                return obj2;
+                bArr = new byte[(length2 + 1)];
+                System.arraycopy(this.time, 0, bArr, 0, length2);
+                bArr[length2] = (byte) 90;
+                return bArr;
             }
-            obj2 = new byte[(length2 + 2)];
+            bArr = new byte[(length2 + 2)];
             length2++;
-            System.arraycopy(this.time, 0, obj2, 0, length2);
-            obj2[length2] = 90;
-            return obj2;
+            System.arraycopy(this.time, 0, bArr, 0, length2);
+            bArr[length2] = (byte) 90;
+            return bArr;
         }
         System.arraycopy(toByteArray, 0, obj, length, i);
         return obj;

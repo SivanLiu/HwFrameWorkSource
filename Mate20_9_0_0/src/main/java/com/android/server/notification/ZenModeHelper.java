@@ -510,19 +510,19 @@ public class ZenModeHelper {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0015, code:
+    /* JADX WARNING: Missing block: B:9:0x0015, code skipped:
             if (r1 != null) goto L_0x0018;
      */
-    /* JADX WARNING: Missing block: B:10:0x0017, code:
+    /* JADX WARNING: Missing block: B:10:0x0017, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:12:0x001c, code:
+    /* JADX WARNING: Missing block: B:12:0x001c, code skipped:
             if (canManageAutomaticZenRule(r1) == false) goto L_0x0023;
      */
-    /* JADX WARNING: Missing block: B:14:0x0022, code:
+    /* JADX WARNING: Missing block: B:14:0x0022, code skipped:
             return createAutomaticZenRule(r1);
      */
-    /* JADX WARNING: Missing block: B:15:0x0023, code:
+    /* JADX WARNING: Missing block: B:15:0x0023, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -662,7 +662,7 @@ public class ZenModeHelper {
         return count;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x003b, code:
+    /* JADX WARNING: Missing block: B:16:0x003b, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -772,10 +772,10 @@ public class ZenModeHelper {
         Global.putInt(this.mContext.getContentResolver(), "show_zen_settings_suggestion", 0);
     }
 
-    /* JADX WARNING: Missing block: B:29:0x0096, code:
+    /* JADX WARNING: Missing block: B:29:0x0096, code skipped:
             r0 = r1;
      */
-    /* JADX WARNING: Missing block: B:30:0x0097, code:
+    /* JADX WARNING: Missing block: B:30:0x0097, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1224,8 +1224,8 @@ public class ZenModeHelper {
     }
 
     private void getDefaultRuleNames() {
-        this.mDefaultRuleEveryNightName = this.mContext.getResources().getString(17041434);
-        this.mDefaultRuleEventsName = this.mContext.getResources().getString(17041433);
+        this.mDefaultRuleEveryNightName = this.mContext.getResources().getString(17041435);
+        this.mDefaultRuleEventsName = this.mContext.getResources().getString(17041434);
     }
 
     @VisibleForTesting
@@ -1463,13 +1463,13 @@ public class ZenModeHelper {
     @VisibleForTesting
     protected Notification createZenUpgradeNotification() {
         Bundle extras = new Bundle();
-        extras.putString("android.substName", this.mContext.getResources().getString(17040131));
-        int title = 17041444;
-        int content = 17041443;
+        extras.putString("android.substName", this.mContext.getResources().getString(17040132));
+        int title = 17041445;
+        int content = 17041444;
         int drawable = 17302797;
         if (Policy.areAllVisualEffectsSuppressed(getNotificationPolicy().suppressedVisualEffects)) {
-            title = 17041446;
-            content = 17041445;
+            title = 17041447;
+            content = 17041446;
             drawable = 17302356;
         }
         Intent onboardingIntent = new Intent("android.settings.ZEN_MODE_ONBOARDING");

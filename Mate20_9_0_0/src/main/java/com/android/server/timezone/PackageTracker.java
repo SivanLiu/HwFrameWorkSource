@@ -136,71 +136,73 @@ public class PackageTracker {
         if (this.mTrackingEnabled) {
             boolean updaterAppManifestValid = validateUpdaterAppManifest();
             boolean dataAppManifestValid = validateDataAppManifest();
-            if (updaterAppManifestValid && dataAppManifestValid) {
-                if (!packageChanged) {
-                    if (!this.mCheckTriggered) {
-                        Slog.d(TAG, "triggerUpdateIfNeeded: First reliability trigger.");
-                    } else if (isCheckInProgress()) {
-                        if (!isCheckResponseOverdue()) {
-                            Slog.d(TAG, "triggerUpdateIfNeeded: checkComplete call is not yet overdue. Not triggering.");
-                            this.mIntentHelper.scheduleReliabilityTrigger((long) this.mDelayBeforeReliabilityCheckMillis);
+            if (updaterAppManifestValid) {
+                if (dataAppManifestValid) {
+                    if (!packageChanged) {
+                        if (!this.mCheckTriggered) {
+                            Slog.d(TAG, "triggerUpdateIfNeeded: First reliability trigger.");
+                        } else if (isCheckInProgress()) {
+                            if (!isCheckResponseOverdue()) {
+                                Slog.d(TAG, "triggerUpdateIfNeeded: checkComplete call is not yet overdue. Not triggering.");
+                                this.mIntentHelper.scheduleReliabilityTrigger((long) this.mDelayBeforeReliabilityCheckMillis);
+                                return;
+                            }
+                        } else if (((long) this.mCheckFailureCount) > this.mFailedCheckRetryCount) {
+                            Slog.i(TAG, "triggerUpdateIfNeeded: number of allowed consecutive check failures exceeded. Stopping reliability triggers until next reboot or package update.");
+                            this.mIntentHelper.unscheduleReliabilityTrigger();
+                            return;
+                        } else if (this.mCheckFailureCount == 0) {
+                            Slog.i(TAG, "triggerUpdateIfNeeded: No reliability check required. Last check was successful.");
+                            this.mIntentHelper.unscheduleReliabilityTrigger();
                             return;
                         }
-                    } else if (((long) this.mCheckFailureCount) > this.mFailedCheckRetryCount) {
-                        Slog.i(TAG, "triggerUpdateIfNeeded: number of allowed consecutive check failures exceeded. Stopping reliability triggers until next reboot or package update.");
-                        this.mIntentHelper.unscheduleReliabilityTrigger();
-                        return;
-                    } else if (this.mCheckFailureCount == 0) {
-                        Slog.i(TAG, "triggerUpdateIfNeeded: No reliability check required. Last check was successful.");
+                    }
+                    PackageVersions currentInstalledVersions = lookupInstalledPackageVersions();
+                    if (currentInstalledVersions == null) {
+                        Slog.e(TAG, "triggerUpdateIfNeeded: currentInstalledVersions was null");
                         this.mIntentHelper.unscheduleReliabilityTrigger();
                         return;
                     }
-                }
-                PackageVersions currentInstalledVersions = lookupInstalledPackageVersions();
-                if (currentInstalledVersions == null) {
-                    Slog.e(TAG, "triggerUpdateIfNeeded: currentInstalledVersions was null");
-                    this.mIntentHelper.unscheduleReliabilityTrigger();
-                    return;
-                }
-                PackageStatus packageStatus = this.mPackageStatusStorage.getPackageStatus();
-                String str;
-                StringBuilder stringBuilder;
-                if (packageStatus == null) {
-                    Slog.i(TAG, "triggerUpdateIfNeeded: No package status data found. Data check needed.");
-                } else if (packageStatus.mVersions.equals(currentInstalledVersions)) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("triggerUpdateIfNeeded: Stored package versions match currently installed versions, currentInstalledVersions=");
-                    stringBuilder.append(currentInstalledVersions);
-                    stringBuilder.append(", packageStatus.mCheckStatus=");
-                    stringBuilder.append(packageStatus.mCheckStatus);
-                    Slog.i(str, stringBuilder.toString());
-                    if (packageStatus.mCheckStatus == 2) {
-                        Slog.i(TAG, "triggerUpdateIfNeeded: Prior check succeeded. No need to trigger.");
-                        this.mIntentHelper.unscheduleReliabilityTrigger();
+                    PackageStatus packageStatus = this.mPackageStatusStorage.getPackageStatus();
+                    String str;
+                    StringBuilder stringBuilder;
+                    if (packageStatus == null) {
+                        Slog.i(TAG, "triggerUpdateIfNeeded: No package status data found. Data check needed.");
+                    } else if (packageStatus.mVersions.equals(currentInstalledVersions)) {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("triggerUpdateIfNeeded: Stored package versions match currently installed versions, currentInstalledVersions=");
+                        stringBuilder.append(currentInstalledVersions);
+                        stringBuilder.append(", packageStatus.mCheckStatus=");
+                        stringBuilder.append(packageStatus.mCheckStatus);
+                        Slog.i(str, stringBuilder.toString());
+                        if (packageStatus.mCheckStatus == 2) {
+                            Slog.i(TAG, "triggerUpdateIfNeeded: Prior check succeeded. No need to trigger.");
+                            this.mIntentHelper.unscheduleReliabilityTrigger();
+                            return;
+                        }
+                    } else {
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("triggerUpdateIfNeeded: Stored package versions=");
+                        stringBuilder.append(packageStatus.mVersions);
+                        stringBuilder.append(", do not match current package versions=");
+                        stringBuilder.append(currentInstalledVersions);
+                        stringBuilder.append(". Triggering check.");
+                        Slog.i(str, stringBuilder.toString());
+                    }
+                    CheckToken checkToken = this.mPackageStatusStorage.generateCheckToken(currentInstalledVersions);
+                    if (checkToken == null) {
+                        Slog.w(TAG, "triggerUpdateIfNeeded: Unable to generate check token. Not sending check request.");
+                        this.mIntentHelper.scheduleReliabilityTrigger((long) this.mDelayBeforeReliabilityCheckMillis);
                         return;
                     }
-                } else {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("triggerUpdateIfNeeded: Stored package versions=");
-                    stringBuilder.append(packageStatus.mVersions);
-                    stringBuilder.append(", do not match current package versions=");
-                    stringBuilder.append(currentInstalledVersions);
-                    stringBuilder.append(". Triggering check.");
-                    Slog.i(str, stringBuilder.toString());
-                }
-                CheckToken checkToken = this.mPackageStatusStorage.generateCheckToken(currentInstalledVersions);
-                if (checkToken == null) {
-                    Slog.w(TAG, "triggerUpdateIfNeeded: Unable to generate check token. Not sending check request.");
+                    this.mIntentHelper.sendTriggerUpdateCheck(checkToken);
+                    this.mCheckTriggered = true;
+                    setCheckInProgress();
                     this.mIntentHelper.scheduleReliabilityTrigger((long) this.mDelayBeforeReliabilityCheckMillis);
                     return;
                 }
-                this.mIntentHelper.sendTriggerUpdateCheck(checkToken);
-                this.mCheckTriggered = true;
-                setCheckInProgress();
-                this.mIntentHelper.scheduleReliabilityTrigger((long) this.mDelayBeforeReliabilityCheckMillis);
-                return;
             }
             String str2 = TAG;
             StringBuilder stringBuilder2 = new StringBuilder();
@@ -215,7 +217,7 @@ public class PackageTracker {
         throw new IllegalStateException("Unexpected call. Tracking is disabled.");
     }
 
-    /* JADX WARNING: Missing block: B:22:0x00c9, code:
+    /* JADX WARNING: Missing block: B:22:0x00c9, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

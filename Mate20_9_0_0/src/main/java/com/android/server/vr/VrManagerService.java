@@ -1055,7 +1055,7 @@ public class VrManagerService extends SystemService implements EnabledComponentC
         } else {
             i = 2;
         }
-        return ManagedApplicationService.build(this.mContext, component, userId, 17041345, "android.settings.VR_LISTENER_SETTINGS", sBinderChecker, true, i, this.mHandler, this.mEventCallback);
+        return ManagedApplicationService.build(this.mContext, component, userId, 17041346, "android.settings.VR_LISTENER_SETTINGS", sBinderChecker, true, i, this.mHandler, this.mEventCallback);
     }
 
     private ManagedApplicationService createVrCompositorService(ComponentName component, int userId) {
@@ -1118,10 +1118,10 @@ public class VrManagerService extends SystemService implements EnabledComponentC
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0023  */
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x0020  */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0041  */
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x003d  */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0023 A:{Catch:{ all -> 0x0010 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0020 A:{Catch:{ all -> 0x0010 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x0041 A:{Catch:{ all -> 0x0010 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:21:0x003d A:{Catch:{ all -> 0x0010 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void setVrMode(boolean enabled, ComponentName targetPackageName, int userId, int processId, ComponentName callingPackage) {
         synchronized (this.mLock) {
@@ -1132,37 +1132,40 @@ public class VrManagerService extends SystemService implements EnabledComponentC
             VrState pending;
             boolean running2dInVr = false;
             if (!enabled) {
-                if (!this.mPersistentVrModeEnabled) {
-                    z = false;
-                    targetEnabledState = z;
-                    if (!enabled && this.mPersistentVrModeEnabled) {
-                        running2dInVr = true;
-                    }
-                    if (running2dInVr) {
-                        targetListener = targetPackageName;
-                    } else {
-                        targetListener = this.mDefaultVrService;
-                    }
-                    targetListener2 = targetListener;
-                    pending = new VrState(targetEnabledState, running2dInVr, targetListener2, userId, processId, callingPackage);
-                    if (this.mVrModeAllowed) {
-                        this.mPendingState = pending;
-                        return;
-                    } else if (targetEnabledState || this.mCurrentVrService == null) {
-                        this.mHandler.removeMessages(1);
-                        this.mPendingState = null;
-                        if (targetListener2 == null) {
+                try {
+                    if (!this.mPersistentVrModeEnabled) {
+                        z = false;
+                        targetEnabledState = z;
+                        if (!enabled && this.mPersistentVrModeEnabled) {
+                            running2dInVr = true;
+                        }
+                        if (running2dInVr) {
+                            targetListener = targetPackageName;
+                        } else {
+                            targetListener = this.mDefaultVrService;
+                        }
+                        targetListener2 = targetListener;
+                        pending = new VrState(targetEnabledState, running2dInVr, targetListener2, userId, processId, callingPackage);
+                        if (this.mVrModeAllowed) {
+                            this.mPendingState = pending;
+                            return;
+                        } else if (targetEnabledState || this.mCurrentVrService == null) {
+                            this.mHandler.removeMessages(1);
+                            this.mPendingState = null;
+                            if (targetListener2 == null) {
+                                return;
+                            }
+                            updateCurrentVrServiceLocked(targetEnabledState, running2dInVr, targetListener2, userId, processId, callingPackage);
+                            return;
+                        } else {
+                            if (this.mPendingState == null) {
+                                this.mHandler.sendEmptyMessageDelayed(1, 300);
+                            }
+                            this.mPendingState = pending;
                             return;
                         }
-                        updateCurrentVrServiceLocked(targetEnabledState, running2dInVr, targetListener2, userId, processId, callingPackage);
-                        return;
-                    } else {
-                        if (this.mPendingState == null) {
-                            this.mHandler.sendEmptyMessageDelayed(1, 300);
-                        }
-                        this.mPendingState = pending;
-                        return;
                     }
+                } finally {
                 }
             }
             z = true;
@@ -1264,7 +1267,7 @@ public class VrManagerService extends SystemService implements EnabledComponentC
         return isValid;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0025, code:
+    /* JADX WARNING: Missing block: B:13:0x0025, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

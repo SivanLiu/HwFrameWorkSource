@@ -23,7 +23,7 @@ public class Properties {
     }
 
     public static Set<String> asKeySet(String str) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         str = fetchProperty(str);
         if (str != null) {
             StringTokenizer stringTokenizer = new StringTokenizer(str, ",");

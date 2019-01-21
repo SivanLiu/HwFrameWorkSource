@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,34 +93,15 @@ public class AmbientBrightnessStatsTracker {
             stream.flush();
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:50:0x011f A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:50:0x011f A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:50:0x011f A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:50:0x011f A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:49:0x011d A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:49:0x011d A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:49:0x011d A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:49:0x011d A:{Splitter: B:4:0x0013, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Missing block: B:45:0x0100, code:
+        /* JADX WARNING: Missing block: B:47:0x0100, code skipped:
             r1.mStats = r0;
      */
-        /* JADX WARNING: Missing block: B:46:0x0103, code:
+        /* JADX WARNING: Missing block: B:48:0x0103, code skipped:
             return;
-     */
-        /* JADX WARNING: Missing block: B:49:0x011d, code:
-            r0 = e;
-     */
-        /* JADX WARNING: Missing block: B:50:0x011f, code:
-            r0 = e;
-     */
-        /* JADX WARNING: Missing block: B:51:0x0120, code:
-            r4 = r18;
-     */
-        /* JADX WARNING: Missing block: B:53:0x0129, code:
-            throw new java.io.IOException("Failed to parse brightness stats file.", r0);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void readFromXML(InputStream stream) throws IOException {
+            Exception e;
             try {
                 Map<Integer, Deque<AmbientBrightnessDayStats>> parsedStats = new HashMap();
                 XmlPullParser parser = Xml.newPullParser();
@@ -145,45 +127,46 @@ public class AmbientBrightnessStatsTracker {
                         while (true) {
                             int next2 = parser.next();
                             type = next2;
-                            if (next2 != i) {
-                                if (type == 3 && parser.getDepth() <= outerDepth) {
+                            if (next2 == i) {
+                                break;
+                            }
+                            if (type == 3) {
+                                if (parser.getDepth() <= outerDepth) {
                                     xmlPullParser = parser;
                                     break;
                                 }
-                                if (type != 3) {
-                                    if (type == 4) {
-                                        xmlPullParser = parser;
-                                    } else {
-                                        if (TAG_AMBIENT_BRIGHTNESS_DAY_STATS.equals(parser.getName())) {
-                                            String userSerialNumber = parser.getAttributeValue(null, ATTR_USER);
-                                            LocalDate localDate = LocalDate.parse(parser.getAttributeValue(null, ATTR_LOCAL_DATE));
-                                            String[] bucketBoundaries = parser.getAttributeValue(null, ATTR_BUCKET_BOUNDARIES).split(",");
-                                            String[] bucketStats = parser.getAttributeValue(null, ATTR_BUCKET_STATS).split(",");
-                                            if (bucketBoundaries.length != bucketStats.length || bucketBoundaries.length < i) {
-                                            } else {
-                                                float[] parsedBucketBoundaries = new float[bucketBoundaries.length];
-                                                float[] parsedBucketStats = new float[bucketStats.length];
-                                                for (int i2 = 0; i2 < bucketBoundaries.length; i2++) {
-                                                    parsedBucketBoundaries[i2] = Float.parseFloat(bucketBoundaries[i2]);
-                                                    parsedBucketStats[i2] = Float.parseFloat(bucketStats[i2]);
-                                                }
-                                                xmlPullParser = parser;
-                                                parser = AmbientBrightnessStatsTracker.this.mInjector.getUserId(AmbientBrightnessStatsTracker.this.mUserManager, Integer.parseInt(userSerialNumber));
-                                                if (parser != -1 && localDate.isAfter(cutOffDate)) {
-                                                    getOrCreateUserStats(parsedStats, parser).offer(new AmbientBrightnessDayStats(localDate, parsedBucketBoundaries, parsedBucketStats));
-                                                }
+                            }
+                            if (type != 3) {
+                                if (type == 4) {
+                                    xmlPullParser = parser;
+                                } else {
+                                    if (TAG_AMBIENT_BRIGHTNESS_DAY_STATS.equals(parser.getName())) {
+                                        String userSerialNumber = parser.getAttributeValue(null, ATTR_USER);
+                                        LocalDate localDate = LocalDate.parse(parser.getAttributeValue(null, ATTR_LOCAL_DATE));
+                                        String[] bucketBoundaries = parser.getAttributeValue(null, ATTR_BUCKET_BOUNDARIES).split(",");
+                                        String[] bucketStats = parser.getAttributeValue(null, ATTR_BUCKET_STATS).split(",");
+                                        if (bucketBoundaries.length != bucketStats.length || bucketBoundaries.length < i) {
+                                        } else {
+                                            float[] parsedBucketBoundaries = new float[bucketBoundaries.length];
+                                            float[] parsedBucketStats = new float[bucketStats.length];
+                                            for (int i2 = 0; i2 < bucketBoundaries.length; i2++) {
+                                                parsedBucketBoundaries[i2] = Float.parseFloat(bucketBoundaries[i2]);
+                                                parsedBucketStats[i2] = Float.parseFloat(bucketStats[i2]);
+                                            }
+                                            xmlPullParser = parser;
+                                            parser = AmbientBrightnessStatsTracker.this.mInjector.getUserId(AmbientBrightnessStatsTracker.this.mUserManager, Integer.parseInt(userSerialNumber));
+                                            if (parser != -1 && localDate.isAfter(cutOffDate)) {
+                                                getOrCreateUserStats(parsedStats, parser).offer(new AmbientBrightnessDayStats(localDate, parsedBucketBoundaries, parsedBucketStats));
                                             }
                                         }
                                     }
-                                    parser = xmlPullParser;
-                                    i = 1;
                                 }
-                                xmlPullParser = parser;
                                 parser = xmlPullParser;
                                 i = 1;
-                            } else {
-                                break;
                             }
+                            xmlPullParser = parser;
+                            parser = xmlPullParser;
+                            i = 1;
                         }
                         throw new IOException("Invalid brightness stats string.");
                     }
@@ -192,9 +175,14 @@ public class AmbientBrightnessStatsTracker {
                     stringBuilder.append("Ambient brightness stats not found in tracker file ");
                     stringBuilder.append(tag);
                     throw new XmlPullParserException(stringBuilder.toString());
-                } catch (NullPointerException e) {
+                } catch (IOException | NullPointerException | NumberFormatException | DateTimeParseException | XmlPullParserException e2) {
+                    e = e2;
+                    throw new IOException("Failed to parse brightness stats file.", e);
                 }
-            } catch (NullPointerException e2) {
+            } catch (IOException | NullPointerException | NumberFormatException | DateTimeParseException | XmlPullParserException e3) {
+                e = e3;
+                InputStream inputStream = stream;
+                throw new IOException("Failed to parse brightness stats file.", e);
             }
         }
 

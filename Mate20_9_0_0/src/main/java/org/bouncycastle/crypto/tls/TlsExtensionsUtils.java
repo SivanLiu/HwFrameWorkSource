@@ -3,8 +3,6 @@ package org.bouncycastle.crypto.tls;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Hashtable;
 import org.bouncycastle.util.Integers;
 
@@ -64,7 +62,7 @@ public class TlsExtensionsUtils {
 
     public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension) throws IOException {
         if (heartbeatExtension != null) {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             heartbeatExtension.encode(byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         }
@@ -85,7 +83,7 @@ public class TlsExtensionsUtils {
 
     public static byte[] createServerNameExtension(ServerNameList serverNameList) throws IOException {
         if (serverNameList != null) {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             serverNameList.encode(byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         }
@@ -94,7 +92,7 @@ public class TlsExtensionsUtils {
 
     public static byte[] createStatusRequestExtension(CertificateStatusRequest certificateStatusRequest) throws IOException {
         if (certificateStatusRequest != null) {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             certificateStatusRequest.encode(byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         }
@@ -169,7 +167,7 @@ public class TlsExtensionsUtils {
 
     public static HeartbeatExtension readHeartbeatExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             HeartbeatExtension parse = HeartbeatExtension.parse(byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             return parse;
@@ -204,7 +202,7 @@ public class TlsExtensionsUtils {
 
     public static ServerNameList readServerNameExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             ServerNameList parse = ServerNameList.parse(byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             return parse;
@@ -214,7 +212,7 @@ public class TlsExtensionsUtils {
 
     public static CertificateStatusRequest readStatusRequestExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             CertificateStatusRequest parse = CertificateStatusRequest.parse(byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             return parse;

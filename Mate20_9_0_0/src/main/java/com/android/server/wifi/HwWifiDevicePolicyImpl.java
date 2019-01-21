@@ -686,7 +686,7 @@ public class HwWifiDevicePolicyImpl implements HwWifiDevicePolicy {
         }, intentFilter);
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0089, code:
+    /* JADX WARNING: Missing block: B:28:0x0089, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -710,6 +710,8 @@ public class HwWifiDevicePolicyImpl implements HwWifiDevicePolicy {
                         case 2:
                             list.clear();
                             break;
+                        default:
+                            break;
                     }
                     mGlobalSsidBlacklist.put(component, removeRepetitiveItem(list));
                     return;
@@ -725,6 +727,8 @@ public class HwWifiDevicePolicyImpl implements HwWifiDevicePolicy {
                     case 1:
                     case 2:
                         mGlobalSsidBlacklist.put(newComponent, new ArrayList());
+                        break;
+                    default:
                         break;
                 }
             }

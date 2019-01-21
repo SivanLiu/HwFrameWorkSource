@@ -1,5 +1,6 @@
 package org.bouncycastle.cert;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -25,7 +26,7 @@ public class X509ExtensionUtils {
             outputStream.write(bytes);
             outputStream.close();
             return this.calculator.getDigest();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to calculate identifier: ");
             stringBuilder.append(e.getMessage());
@@ -58,7 +59,7 @@ public class X509ExtensionUtils {
     }
 
     public SubjectKeyIdentifier createTruncatedSubjectKeyIdentifier(SubjectPublicKeyInfo subjectPublicKeyInfo) {
-        Object calculateIdentifier = calculateIdentifier(subjectPublicKeyInfo);
+        byte[] calculateIdentifier = calculateIdentifier(subjectPublicKeyInfo);
         byte[] bArr = new byte[8];
         System.arraycopy(calculateIdentifier, calculateIdentifier.length - 8, bArr, 0, bArr.length);
         bArr[0] = (byte) (bArr[0] & 15);

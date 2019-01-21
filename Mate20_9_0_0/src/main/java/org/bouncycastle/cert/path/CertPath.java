@@ -10,9 +10,9 @@ public class CertPath {
     }
 
     private X509CertificateHolder[] copyArray(X509CertificateHolder[] x509CertificateHolderArr) {
-        Object obj = new X509CertificateHolder[x509CertificateHolderArr.length];
-        System.arraycopy(x509CertificateHolderArr, 0, obj, 0, obj.length);
-        return obj;
+        X509CertificateHolder[] x509CertificateHolderArr2 = new X509CertificateHolder[x509CertificateHolderArr.length];
+        System.arraycopy(x509CertificateHolderArr, 0, x509CertificateHolderArr2, 0, x509CertificateHolderArr2.length);
+        return x509CertificateHolderArr2;
     }
 
     public CertPathValidationResult evaluate(CertPathValidation[] certPathValidationArr) {

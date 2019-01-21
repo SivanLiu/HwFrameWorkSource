@@ -224,7 +224,7 @@ public class HwDualBandRelationManager {
         return result;
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0021, code:
+    /* JADX WARNING: Missing block: B:7:0x0021, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

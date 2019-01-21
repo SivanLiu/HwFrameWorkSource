@@ -191,7 +191,7 @@ final class SaveUi {
         }
         TextView noButton = (TextView) view.findViewById(16908754);
         if (info.getNegativeActionStyle() == 1) {
-            noButton.setText(17041040);
+            noButton.setText(17041041);
         } else {
             noButton.setText(17039666);
         }
@@ -329,11 +329,12 @@ final class SaveUi {
                                         e = e4;
                                         type2 = type;
                                         View view = saveUiView;
+                                        Slog.e(TAG, "Error applying custom description. ", e);
+                                        return false;
                                     }
-                                } else {
-                                    customDescription2 = customDescription;
-                                    type2 = type;
                                 }
+                                customDescription2 = customDescription;
+                                type2 = type;
                                 templateUpdates.reapply(context2, customSubtitleView);
                             } else {
                                 customDescription2 = customDescription;

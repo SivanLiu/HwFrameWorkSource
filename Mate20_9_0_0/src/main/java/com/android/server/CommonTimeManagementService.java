@@ -195,10 +195,10 @@ class CommonTimeManagementService extends Binder {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x0051  */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x0051  */
-    /* JADX WARNING: Removed duplicated region for block: B:78:? A:{SYNTHETIC, RETURN, SKIP} */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00a8  */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0051  */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0051  */
+    /* JADX WARNING: Removed duplicated region for block: B:80:? A:{SYNTHETIC, RETURN, SKIP} */
+    /* JADX WARNING: Removed duplicated region for block: B:51:0x00a8  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void reevaluateServiceState() {
         boolean doRebind;
@@ -225,9 +225,11 @@ class CommonTimeManagementService extends Binder {
                         }
                         if (thisScore > bestScore2) {
                             InterfaceConfiguration config = this.mNetMgr.getInterfaceConfig(iface);
-                            if (config != null && config.isActive()) {
-                                bindIface2 = iface;
-                                bestScore2 = thisScore;
+                            if (config != null) {
+                                if (config.isActive()) {
+                                    bindIface2 = iface;
+                                    bestScore2 = thisScore;
+                                }
                             }
                         }
                         bindIface3++;
@@ -260,9 +262,12 @@ class CommonTimeManagementService extends Binder {
         doRebind = true;
         synchronized (this.mLock) {
             if (bindIface != null) {
-                if (this.mCurIface == null) {
-                    Log.e(TAG, String.format("Binding common time service to %s.", new Object[]{bindIface}));
-                    this.mCurIface = bindIface;
+                try {
+                    if (this.mCurIface == null) {
+                        Log.e(TAG, String.format("Binding common time service to %s.", new Object[]{bindIface}));
+                        this.mCurIface = bindIface;
+                    }
+                } finally {
                 }
             }
             if (bindIface != null || this.mCurIface == null) {

@@ -219,7 +219,7 @@ public class SnsFloatNotification extends FrameLayout {
                             z = true;
                         }
                         this.mIsScrolling = z;
-                        this.mIsSwiping = true ^ this.mIsScrolling;
+                        this.mIsSwiping = 1 ^ this.mIsScrolling;
                     }
                 }
                 if (this.mIsScrolling) {

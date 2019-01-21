@@ -364,151 +364,6 @@ public final class AwareAppAssociate {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void removeWindow(int r15, int r16) {
-        /*
-        r14 = this;
-        r9 = r14;
-        r10 = r15;
-        if (r10 > 0) goto L_0x0005;
-    L_0x0004:
-        return;
-    L_0x0005:
-        r11 = 0;
-        r12 = 0;
-        r13 = r9.mVisibleWindows;
-        monitor-enter(r13);
-        r0 = r9.mVisibleWindows;	 Catch:{ all -> 0x00c7 }
-        r1 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x00c7 }
-        r0 = r0.get(r1);	 Catch:{ all -> 0x00c7 }
-        r0 = (com.android.server.mtm.iaware.appmng.AwareProcessWindowInfo) r0;	 Catch:{ all -> 0x00c7 }
-        if (r0 != 0) goto L_0x0035;	 Catch:{ all -> 0x00c7 }
-    L_0x0018:
-        r1 = r9.mVisibleWindows;	 Catch:{ all -> 0x00c7 }
-        r2 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x00c7 }
-        r1.remove(r2);	 Catch:{ all -> 0x00c7 }
-        r2 = 1;	 Catch:{ all -> 0x00c7 }
-        r1 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x00c7 }
-        r3 = r1.intValue();	 Catch:{ all -> 0x00c7 }
-        r4 = -1;	 Catch:{ all -> 0x00c7 }
-        r5 = 0;	 Catch:{ all -> 0x00c7 }
-        r6 = -1;	 Catch:{ all -> 0x00c7 }
-        r7 = -1;	 Catch:{ all -> 0x00c7 }
-        r8 = 0;	 Catch:{ all -> 0x00c7 }
-        r1 = r9;	 Catch:{ all -> 0x00c7 }
-        r1.updateVisibleWindowsCache(r2, r3, r4, r5, r6, r7, r8);	 Catch:{ all -> 0x00c7 }
-        monitor-exit(r13);	 Catch:{ all -> 0x00c7 }
-        return;	 Catch:{ all -> 0x00c7 }
-    L_0x0035:
-        r1 = r0.isEvil();	 Catch:{ all -> 0x00c7 }
-        r12 = r1;	 Catch:{ all -> 0x00c7 }
-        r1 = java.lang.Integer.valueOf(r16);	 Catch:{ all -> 0x00c7 }
-        r0.removeWindow(r1);	 Catch:{ all -> 0x00c7 }
-        r2 = 5;	 Catch:{ all -> 0x00c7 }
-        r1 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x00c7 }
-        r3 = r1.intValue();	 Catch:{ all -> 0x00c7 }
-        r4 = -1;	 Catch:{ all -> 0x00c7 }
-        r5 = 0;	 Catch:{ all -> 0x00c7 }
-        r6 = -1;	 Catch:{ all -> 0x00c7 }
-        r1 = java.lang.Integer.valueOf(r16);	 Catch:{ all -> 0x00c7 }
-        r7 = r1.intValue();	 Catch:{ all -> 0x00c7 }
-        r8 = 0;	 Catch:{ all -> 0x00c7 }
-        r1 = r9;	 Catch:{ all -> 0x00c7 }
-        r1.updateVisibleWindowsCache(r2, r3, r4, r5, r6, r7, r8);	 Catch:{ all -> 0x00c7 }
-        r1 = r0.mWindows;	 Catch:{ all -> 0x00c7 }
-        r1 = r1.size();	 Catch:{ all -> 0x00c7 }
-        if (r1 != 0) goto L_0x0085;	 Catch:{ all -> 0x00c7 }
-    L_0x0062:
-        r1 = r9.mVisibleWindows;	 Catch:{ all -> 0x00c7 }
-        r2 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x00c7 }
-        r1.remove(r2);	 Catch:{ all -> 0x00c7 }
-        r2 = 1;	 Catch:{ all -> 0x00c7 }
-        r1 = java.lang.Integer.valueOf(r10);	 Catch:{ all -> 0x00c7 }
-        r3 = r1.intValue();	 Catch:{ all -> 0x00c7 }
-        r4 = -1;	 Catch:{ all -> 0x00c7 }
-        r5 = 0;	 Catch:{ all -> 0x00c7 }
-        r6 = -1;	 Catch:{ all -> 0x00c7 }
-        r7 = -1;	 Catch:{ all -> 0x00c7 }
-        r8 = 0;	 Catch:{ all -> 0x00c7 }
-        r1 = r9;	 Catch:{ all -> 0x00c7 }
-        r1.updateVisibleWindowsCache(r2, r3, r4, r5, r6, r7, r8);	 Catch:{ all -> 0x00c7 }
-        if (r12 != 0) goto L_0x0084;	 Catch:{ all -> 0x00c7 }
-    L_0x007f:
-        r1 = 1;	 Catch:{ all -> 0x00c7 }
-        r2 = -1;	 Catch:{ all -> 0x00c7 }
-        r9.notifyVisibleWindowsChange(r1, r10, r2);	 Catch:{ all -> 0x00c7 }
-    L_0x0084:
-        r11 = 1;	 Catch:{ all -> 0x00c7 }
-    L_0x0085:
-        monitor-exit(r13);	 Catch:{ all -> 0x00c7 }
-        if (r11 == 0) goto L_0x009f;
-    L_0x0088:
-        r0 = r9.mScreenOff;
-        if (r0 == 0) goto L_0x009f;
-    L_0x008c:
-        if (r12 != 0) goto L_0x009f;
-    L_0x008e:
-        r1 = r9.mVisWinDurScreenOff;
-        monitor-enter(r1);
-        r0 = r9.mVisWinDurScreenOff;
-        r2 = java.lang.Integer.valueOf(r10);
-        r0.add(r2);
-        monitor-exit(r1);
-        goto L_0x009f;
-    L_0x009c:
-        r0 = move-exception;
-        monitor-exit(r1);
-        throw r0;
-    L_0x009f:
-        r0 = DEBUG;
-        if (r0 == 0) goto L_0x00c4;
-    L_0x00a3:
-        r0 = "RMS.AwareAppAssociate";
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "[removeVisibleWindows]:";
-        r1.append(r2);
-        r1.append(r10);
-        r2 = " [code]:";
-        r1.append(r2);
-        r2 = r16;
-        r1.append(r2);
-        r1 = r1.toString();
-        android.rms.iaware.AwareLog.d(r0, r1);
-        goto L_0x00c6;
-    L_0x00c4:
-        r2 = r16;
-    L_0x00c6:
-        return;
-    L_0x00c7:
-        r0 = move-exception;
-        r2 = r16;
-    L_0x00ca:
-        monitor-exit(r13);	 Catch:{ all -> 0x00cc }
-        throw r0;
-    L_0x00cc:
-        r0 = move-exception;
-        goto L_0x00ca;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.rms.iaware.appmng.AwareAppAssociate.removeWindow(int, int):void");
-    }
-
     private void checkRecentForce() {
         int removeCount = 0;
         long curTime = SystemClock.elapsedRealtime();
@@ -635,7 +490,7 @@ public final class AwareAppAssociate {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0038, code:
+    /* JADX WARNING: Missing block: B:21:0x0038, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -645,13 +500,16 @@ public final class AwareAppAssociate {
         }
         synchronized (this) {
             AssocBaseRecord br = (AssocBaseRecord) this.mProcPidMap.get(Integer.valueOf(pid));
-            if (br == null || br.pkgList == null) {
-            } else if (br.pkgList.size() != 1) {
-                return false;
-            } else if (br.pkgList.contains(INTERNALAPP_PKGNAME)) {
-                return true;
-            } else {
-                return false;
+            if (br != null) {
+                if (br.pkgList != null) {
+                    if (br.pkgList.size() != 1) {
+                        return false;
+                    } else if (br.pkgList.contains(INTERNALAPP_PKGNAME)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             }
         }
     }
@@ -711,8 +569,13 @@ public final class AwareAppAssociate {
                 ArrayMap<Integer, Integer> forePidsBak = new ArrayMap();
                 synchronized (AwareAppAssociate.this.mForePids) {
                     if (foregroundActivities) {
-                        AwareAppAssociate.this.mForePids.put(Integer.valueOf(pid), Integer.valueOf(uid));
-                        forePidsBak.putAll(AwareAppAssociate.this.mForePids);
+                        try {
+                            AwareAppAssociate.this.mForePids.put(Integer.valueOf(pid), Integer.valueOf(uid));
+                            forePidsBak.putAll(AwareAppAssociate.this.mForePids);
+                        } catch (Throwable th) {
+                            while (true) {
+                            }
+                        }
                     } else {
                         AwareAppAssociate.this.mForePids.remove(Integer.valueOf(pid));
                         forePidsBak.putAll(AwareAppAssociate.this.mForePids);
@@ -720,7 +583,12 @@ public final class AwareAppAssociate {
                 }
                 synchronized (AwareAppAssociate.this.mBgRecentForcePids) {
                     if (foregroundActivities) {
-                        AwareAppAssociate.this.mBgRecentForcePids.remove(Integer.valueOf(pid));
+                        try {
+                            AwareAppAssociate.this.mBgRecentForcePids.remove(Integer.valueOf(pid));
+                        } catch (Throwable th2) {
+                            while (true) {
+                            }
+                        }
                     } else {
                         AwareAppAssociate.this.mBgRecentForcePids.put(Integer.valueOf(pid), new ProcessData(uid, SystemClock.elapsedRealtime(), null));
                         if (AwareAppAssociate.this.mHandler != null) {
@@ -820,14 +688,39 @@ public final class AwareAppAssociate {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:52:0x007f A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x0076  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void getVisibleWindows(Set<Integer> windowPids, Set<Integer> evilPids) {
         if (mEnabled && windowPids != null) {
             synchronized (this.mVisibleWindows) {
                 for (Entry<Integer, AwareProcessWindowInfo> window : this.mVisibleWindows.entrySet()) {
+                    boolean allowedWindow;
+                    String str;
+                    StringBuilder stringBuilder;
                     AwareProcessWindowInfo winInfo = (AwareProcessWindowInfo) window.getValue();
-                    boolean allowedWindow = winInfo.mMode == 0 || winInfo.mMode == 3;
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
+                    if (winInfo.mMode != 0) {
+                        if (winInfo.mMode != 3) {
+                            allowedWindow = false;
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("[getVisibleWindows]:");
+                            stringBuilder.append(window.getKey());
+                            stringBuilder.append(" [allowedWindow]:");
+                            stringBuilder.append(allowedWindow);
+                            stringBuilder.append(" isEvil:");
+                            stringBuilder.append(winInfo.isEvil());
+                            AwareLog.i(str, stringBuilder.toString());
+                            if (!allowedWindow && !winInfo.isEvil()) {
+                                windowPids.add((Integer) window.getKey());
+                            } else if (evilPids == null) {
+                                evilPids.add((Integer) window.getKey());
+                            }
+                        }
+                    }
+                    allowedWindow = true;
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
                     stringBuilder.append("[getVisibleWindows]:");
                     stringBuilder.append(window.getKey());
                     stringBuilder.append(" [allowedWindow]:");
@@ -835,10 +728,9 @@ public final class AwareAppAssociate {
                     stringBuilder.append(" isEvil:");
                     stringBuilder.append(winInfo.isEvil());
                     AwareLog.i(str, stringBuilder.toString());
-                    if (allowedWindow && !winInfo.isEvil()) {
-                        windowPids.add((Integer) window.getKey());
-                    } else if (evilPids != null) {
-                        evilPids.add((Integer) window.getKey());
+                    if (!allowedWindow) {
+                    }
+                    if (evilPids == null) {
                     }
                 }
             }
@@ -1450,6 +1342,9 @@ public final class AwareAppAssociate {
         AwareIntelligentRecg.getInstance().updateWidget(getWidgetsPkg(0), null);
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0116  */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x00de  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void initVisibleWindows() {
         List<Bundle> windowsList = HwWindowManager.getVisibleWindows(24);
         if (windowsList == null) {
@@ -1460,9 +1355,12 @@ public final class AwareAppAssociate {
             this.mVisibleWindows.clear();
             updateVisibleWindowsCache(2, -1, -1, null, -1, -1, false);
             for (Bundle windowState : windowsList) {
-                AwareProcessWindowInfo winInfo;
+                boolean z;
                 boolean isEvil;
+                AwareProcessWindowInfo winInfo;
                 AwareProcessWindowInfo winInfo2;
+                boolean isEvil2;
+                AwareProcessWindowInfo winInfo3;
                 int window = windowState.getInt("window_pid");
                 int mode = windowState.getInt("window_value");
                 int code = windowState.getInt("window_state");
@@ -1487,30 +1385,44 @@ public final class AwareAppAssociate {
                     stringBuilder.append(height);
                     AwareLog.i(str, stringBuilder.toString());
                 }
-                boolean z = width == AwareProcessWindowInfo.getMinWindowWidth() || height == AwareProcessWindowInfo.getMinWindowHeight() || alpha == GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
-                boolean isEvil2 = z;
-                AwareProcessWindowInfo winInfo3 = (AwareProcessWindowInfo) this.mVisibleWindows.get(Integer.valueOf(window));
-                if (winInfo3 == null) {
-                    AwareProcessWindowInfo winInfo4 = new AwareProcessWindowInfo(mode, pkg, uid);
-                    this.mVisibleWindows.put(Integer.valueOf(window), winInfo4);
-                    winInfo = winInfo4;
-                    boolean isEvil3 = isEvil2;
-                    updateVisibleWindowsCache(0, window, mode, pkg, uid, -1, 0);
-                    isEvil = isEvil3;
-                    if (!isEvil) {
-                        notifyVisibleWindowsChange(2, window, mode);
+                if (!(width == AwareProcessWindowInfo.getMinWindowWidth() || height == AwareProcessWindowInfo.getMinWindowHeight())) {
+                    if (alpha != GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO) {
+                        z = false;
+                        isEvil = z;
+                        winInfo = (AwareProcessWindowInfo) this.mVisibleWindows.get(Integer.valueOf(window));
+                        if (winInfo != null) {
+                            AwareProcessWindowInfo winInfo4 = new AwareProcessWindowInfo(mode, pkg, uid);
+                            this.mVisibleWindows.put(Integer.valueOf(window), winInfo4);
+                            winInfo2 = winInfo4;
+                            boolean isEvil3 = isEvil;
+                            updateVisibleWindowsCache(0, window, mode, pkg, uid, -1, 0);
+                            isEvil2 = isEvil3;
+                            if (!isEvil2) {
+                                notifyVisibleWindowsChange(2, window, mode);
+                            }
+                            winInfo3 = winInfo2;
+                        } else {
+                            String str2 = pkg;
+                            int i = height;
+                            int i2 = width;
+                            isEvil2 = isEvil;
+                            winInfo3 = winInfo;
+                        }
+                        winInfo3.addWindow(Integer.valueOf(code), isEvil2);
+                        winInfo2 = winInfo3;
+                        height = Integer.valueOf(code).intValue();
+                        updateVisibleWindowsCache(4, window, -1, null, -1, height, isEvil2);
                     }
-                    winInfo2 = winInfo;
-                } else {
-                    String str2 = pkg;
-                    int i = height;
-                    int i2 = width;
-                    isEvil = isEvil2;
-                    winInfo2 = winInfo3;
                 }
-                winInfo2.addWindow(Integer.valueOf(code), isEvil);
-                winInfo = winInfo2;
-                updateVisibleWindowsCache(4, window, -1, null, -1, Integer.valueOf(code).intValue(), isEvil);
+                z = true;
+                isEvil = z;
+                winInfo = (AwareProcessWindowInfo) this.mVisibleWindows.get(Integer.valueOf(window));
+                if (winInfo != null) {
+                }
+                winInfo3.addWindow(Integer.valueOf(code), isEvil2);
+                winInfo2 = winInfo3;
+                height = Integer.valueOf(code).intValue();
+                updateVisibleWindowsCache(4, window, -1, null, -1, height, isEvil2);
             }
         }
     }
@@ -1608,6 +1520,81 @@ public final class AwareAppAssociate {
         }
     }
 
+    /* JADX WARNING: Missing block: B:10:0x0034, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:18:0x0086, code skipped:
+            if (r11 == false) goto L_0x009f;
+     */
+    /* JADX WARNING: Missing block: B:20:0x008a, code skipped:
+            if (r16.mScreenOff == false) goto L_0x009f;
+     */
+    /* JADX WARNING: Missing block: B:21:0x008c, code skipped:
+            if (r12 != false) goto L_0x009f;
+     */
+    /* JADX WARNING: Missing block: B:22:0x008e, code skipped:
+            r1 = r16.mVisWinDurScreenOff;
+     */
+    /* JADX WARNING: Missing block: B:23:0x0090, code skipped:
+            monitor-enter(r1);
+     */
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
+            r16.mVisWinDurScreenOff.add(java.lang.Integer.valueOf(r10));
+     */
+    /* JADX WARNING: Missing block: B:26:0x009a, code skipped:
+            monitor-exit(r1);
+     */
+    /* JADX WARNING: Missing block: B:32:0x00a1, code skipped:
+            if (DEBUG == false) goto L_0x00c4;
+     */
+    /* JADX WARNING: Missing block: B:33:0x00a3, code skipped:
+            r0 = TAG;
+            r1 = new java.lang.StringBuilder();
+            r1.append("[removeVisibleWindows]:");
+            r1.append(r10);
+            r1.append(" [code]:");
+            r1.append(r16);
+            android.rms.iaware.AwareLog.d(r0, r1.toString());
+     */
+    /* JADX WARNING: Missing block: B:34:0x00c4, code skipped:
+            r2 = r16;
+     */
+    /* JADX WARNING: Missing block: B:35:0x00c6, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void removeWindow(int window, int code) {
+        int i = window;
+        if (i > 0) {
+            boolean removed = false;
+            synchronized (this.mVisibleWindows) {
+                try {
+                    AwareProcessWindowInfo winInfo = (AwareProcessWindowInfo) this.mVisibleWindows.get(Integer.valueOf(i));
+                    if (winInfo == null) {
+                        this.mVisibleWindows.remove(Integer.valueOf(i));
+                        int intValue = Integer.valueOf(i).intValue();
+                    } else {
+                        boolean isEvil = winInfo.isEvil();
+                        winInfo.removeWindow(Integer.valueOf(code));
+                        updateVisibleWindowsCache(5, Integer.valueOf(i).intValue(), -1, null, -1, Integer.valueOf(code).intValue(), false);
+                        if (winInfo.mWindows.size() == 0) {
+                            this.mVisibleWindows.remove(Integer.valueOf(i));
+                            updateVisibleWindowsCache(1, Integer.valueOf(i).intValue(), -1, null, -1, -1, false);
+                            if (!isEvil) {
+                                notifyVisibleWindowsChange(1, i, -1);
+                            }
+                            removed = true;
+                        }
+                    }
+                } finally {
+                    int i2 = code;
+                    while (true) {
+                    }
+                }
+            }
+        }
+    }
+
     private void updateWindowOpsList() {
         synchronized (this.mVisibleWindows) {
             for (Entry<Integer, AwareProcessWindowInfo> window : this.mVisibleWindows.entrySet()) {
@@ -1665,6 +1652,8 @@ public final class AwareAppAssociate {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x00d6  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void updateWindow(int window, int mode, int code, int width, int height, float alpha) {
         Throwable th;
         int i = window;
@@ -1693,26 +1682,61 @@ public final class AwareAppAssociate {
             synchronized (arrayMap) {
                 ArrayMap arrayMap2;
                 try {
+                    boolean z;
                     boolean isEvil;
+                    boolean isEvil2;
+                    String str2;
+                    StringBuilder stringBuilder2;
                     AwareProcessWindowInfo winInfo = (AwareProcessWindowInfo) this.mVisibleWindows.get(Integer.valueOf(window));
-                    boolean z = i4 <= AwareProcessWindowInfo.getMinWindowWidth() || i5 <= AwareProcessWindowInfo.getMinWindowHeight() || f == GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
-                    boolean isEvil2 = z;
-                    if (winInfo == null || !winInfo.containsWindow(i3)) {
-                        isEvil = isEvil2;
-                        arrayMap2 = arrayMap;
-                    } else {
-                        winInfo.addWindow(Integer.valueOf(code), isEvil2);
-                        isEvil = isEvil2;
-                        arrayMap2 = arrayMap;
-                        try {
-                            updateVisibleWindowsCache(4, i, -1, null, -1, Integer.valueOf(code).intValue(), isEvil);
-                        } catch (Throwable th2) {
-                            th = th2;
-                            throw th;
+                    if (i4 > AwareProcessWindowInfo.getMinWindowWidth() && i5 > AwareProcessWindowInfo.getMinWindowHeight()) {
+                        if (f != GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO) {
+                            z = false;
+                            isEvil = z;
+                            if (winInfo == null && winInfo.containsWindow(i3)) {
+                                winInfo.addWindow(Integer.valueOf(code), isEvil);
+                                isEvil2 = isEvil;
+                                arrayMap2 = arrayMap;
+                                try {
+                                    updateVisibleWindowsCache(4, i, -1, null, -1, Integer.valueOf(code).intValue(), isEvil2);
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                    throw th;
+                                }
+                            }
+                            isEvil2 = isEvil;
+                            arrayMap2 = arrayMap;
+                            str2 = TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("[updateWindow]:");
+                            stringBuilder2.append(i);
+                            stringBuilder2.append(" [mode]:");
+                            stringBuilder2.append(i2);
+                            stringBuilder2.append(" [code]:");
+                            stringBuilder2.append(i3);
+                            stringBuilder2.append(" isEvil:");
+                            stringBuilder2.append(isEvil2);
+                            AwareLog.i(str2, stringBuilder2.toString());
+                            if (DEBUG) {
+                                str = TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("[updateWindow]:");
+                                stringBuilder.append(i);
+                                stringBuilder.append(" [mode]:");
+                                stringBuilder.append(i2);
+                                stringBuilder.append(" [code]:");
+                                stringBuilder.append(i3);
+                                AwareLog.i(str, stringBuilder.toString());
+                            }
                         }
                     }
-                    String str2 = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
+                    z = true;
+                    isEvil = z;
+                    if (winInfo == null) {
+                    }
+                    isEvil2 = isEvil;
+                    arrayMap2 = arrayMap;
+                    str2 = TAG;
+                    stringBuilder2 = new StringBuilder();
                     stringBuilder2.append("[updateWindow]:");
                     stringBuilder2.append(i);
                     stringBuilder2.append(" [mode]:");
@@ -1720,18 +1744,9 @@ public final class AwareAppAssociate {
                     stringBuilder2.append(" [code]:");
                     stringBuilder2.append(i3);
                     stringBuilder2.append(" isEvil:");
-                    stringBuilder2.append(isEvil);
+                    stringBuilder2.append(isEvil2);
                     AwareLog.i(str2, stringBuilder2.toString());
                     if (DEBUG) {
-                        str = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("[updateWindow]:");
-                        stringBuilder.append(i);
-                        stringBuilder.append(" [mode]:");
-                        stringBuilder.append(i2);
-                        stringBuilder.append(" [code]:");
-                        stringBuilder.append(i3);
-                        AwareLog.i(str, stringBuilder.toString());
                     }
                 } catch (Throwable th3) {
                     th = th3;
@@ -1816,10 +1831,10 @@ public final class AwareAppAssociate {
         }
     }
 
-    /* JADX WARNING: Missing block: B:36:0x00e9, code:
+    /* JADX WARNING: Missing block: B:36:0x00e9, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:46:0x011a, code:
+    /* JADX WARNING: Missing block: B:46:0x011a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1930,10 +1945,10 @@ public final class AwareAppAssociate {
         }
     }
 
-    /* JADX WARNING: Missing block: B:34:0x00c8, code:
+    /* JADX WARNING: Missing block: B:34:0x00c8, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:45:0x00fb, code:
+    /* JADX WARNING: Missing block: B:45:0x00fb, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2424,10 +2439,10 @@ public final class AwareAppAssociate {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0020, code:
+    /* JADX WARNING: Missing block: B:10:0x0020, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:28:0x005f, code:
+    /* JADX WARNING: Missing block: B:30:0x005f, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2435,22 +2450,26 @@ public final class AwareAppAssociate {
         ArraySet<String> pkgList = new ArraySet();
         synchronized (this) {
             if (pidForUid != 0) {
-                AssocBaseRecord br = (AssocBaseRecord) this.mProcPidMap.get(Integer.valueOf(pidForUid));
-                if (!(br == null || br.pkgList == null)) {
-                    pkgList.addAll(br.pkgList);
+                try {
+                    AssocBaseRecord br = (AssocBaseRecord) this.mProcPidMap.get(Integer.valueOf(pidForUid));
+                    if (!(br == null || br.pkgList == null)) {
+                        pkgList.addAll(br.pkgList);
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 ArraySet<Integer> pids = (ArraySet) this.mProcUidMap.get(Integer.valueOf(uid));
-                if (pids == null || pids.isEmpty()) {
-                } else {
-                    Iterator it = pids.iterator();
-                    while (it.hasNext()) {
-                        AssocBaseRecord br2 = (AssocBaseRecord) this.mProcPidMap.get((Integer) it.next());
-                        if (!(br2 == null || br2.pkgList == null)) {
-                            pkgList.addAll(br2.pkgList);
+                if (pids != null) {
+                    if (!pids.isEmpty()) {
+                        Iterator it = pids.iterator();
+                        while (it.hasNext()) {
+                            AssocBaseRecord br2 = (AssocBaseRecord) this.mProcPidMap.get((Integer) it.next());
+                            if (!(br2 == null || br2.pkgList == null)) {
+                                pkgList.addAll(br2.pkgList);
+                            }
                         }
+                        return pkgList;
                     }
-                    return pkgList;
                 }
             }
         }
@@ -2803,16 +2822,21 @@ public final class AwareAppAssociate {
                             int providerSizeAll = 0;
                             int sameuid = 0;
                             try {
+                                int bindSizeAll;
+                                int bindSize;
+                                int i;
+                                int NB;
+                                int curpiduidsize;
+                                int pidsize2;
                                 AssocPidRecord record = (AssocPidRecord) this.mAssocRecordMap.valueAt(s);
                                 widgets2 = widgets;
                                 try {
                                     int NP;
-                                    int NB;
                                     int NP2 = record.mAssocBindService.getMap().size();
                                     windows2 = windows;
-                                    int bindSizeAll = 0;
-                                    int bindSize = 0;
-                                    int i = 0;
+                                    bindSizeAll = 0;
+                                    bindSize = 0;
+                                    i = 0;
                                     while (i < NP2) {
                                         NP = NP2;
                                         try {
@@ -2834,6 +2858,10 @@ public final class AwareAppAssociate {
                                             windowsEvil = windowsEvil2;
                                         } catch (Throwable th2) {
                                             th = th2;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
                                         }
                                     }
                                     NP = NP2;
@@ -2863,49 +2891,57 @@ public final class AwareAppAssociate {
                                     }
                                     NB = bindSize + providerSize;
                                     i = bindSizeAll + providerSizeAll;
-                                    int curpiduidsize = NB + sameuid;
+                                    curpiduidsize = NB + sameuid;
                                     compSize += i;
-                                    int pidsize2 = pidsize + NB;
-                                    try {
-                                        StringBuilder stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("[");
-                                        stringBuilder2.append(record.uid);
-                                        stringBuilder2.append("][");
-                                        stringBuilder2.append(record.processName);
-                                        stringBuilder2.append("]: bind[");
-                                        stringBuilder2.append(bindSize);
-                                        stringBuilder2.append("-");
-                                        stringBuilder2.append(bindSizeAll);
-                                        stringBuilder2.append("]provider[");
-                                        stringBuilder2.append(providerSize);
-                                        stringBuilder2.append("-");
-                                        stringBuilder2.append(providerSizeAll);
-                                        stringBuilder2.append("]SameUID[");
-                                        stringBuilder2.append(sameuid);
-                                        stringBuilder2.append("]pids:[");
-                                        stringBuilder2.append(NB);
-                                        stringBuilder2.append("]comps:[");
-                                        stringBuilder2.append(i);
-                                        stringBuilder2.append("]piduids:[");
-                                        stringBuilder2.append(curpiduidsize);
-                                        stringBuilder2.append("]");
-                                        printWriter.println(stringBuilder2.toString());
-                                        s++;
-                                        widgets = widgets2;
-                                        windows = windows2;
-                                        windowsEvil = windowsEvil2;
-                                        pidsize = pidsize2;
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        pidsize = compSize;
-                                        s = pidsize2;
-                                    }
-                                } catch (Throwable th4) {
-                                    th = th4;
+                                    pidsize2 = pidsize + NB;
+                                } catch (Throwable th3) {
+                                    th = th3;
                                     windows2 = windows;
                                     windowsEvil2 = windowsEvil;
                                     s = pidsize;
                                     pidsize = compSize;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
+                                }
+                                try {
+                                    StringBuilder stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("[");
+                                    stringBuilder2.append(record.uid);
+                                    stringBuilder2.append("][");
+                                    stringBuilder2.append(record.processName);
+                                    stringBuilder2.append("]: bind[");
+                                    stringBuilder2.append(bindSize);
+                                    stringBuilder2.append("-");
+                                    stringBuilder2.append(bindSizeAll);
+                                    stringBuilder2.append("]provider[");
+                                    stringBuilder2.append(providerSize);
+                                    stringBuilder2.append("-");
+                                    stringBuilder2.append(providerSizeAll);
+                                    stringBuilder2.append("]SameUID[");
+                                    stringBuilder2.append(sameuid);
+                                    stringBuilder2.append("]pids:[");
+                                    stringBuilder2.append(NB);
+                                    stringBuilder2.append("]comps:[");
+                                    stringBuilder2.append(i);
+                                    stringBuilder2.append("]piduids:[");
+                                    stringBuilder2.append(curpiduidsize);
+                                    stringBuilder2.append("]");
+                                    printWriter.println(stringBuilder2.toString());
+                                    s++;
+                                    widgets = widgets2;
+                                    windows = windows2;
+                                    windowsEvil = windowsEvil2;
+                                    pidsize = pidsize2;
+                                } catch (Throwable th4) {
+                                    th = th4;
+                                    pidsize = compSize;
+                                    s = pidsize2;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
                                 }
                             } catch (Throwable th5) {
                                 th = th5;
@@ -2914,6 +2950,10 @@ public final class AwareAppAssociate {
                                 windowsEvil2 = windowsEvil;
                                 s = pidsize;
                                 pidsize = compSize;
+                                while (true) {
+                                    break;
+                                }
+                                throw th;
                             }
                         }
                         widgets2 = widgets;
@@ -2934,11 +2974,7 @@ public final class AwareAppAssociate {
                         windows2 = windows;
                         windowsEvil2 = windowsEvil;
                         while (true) {
-                            try {
-                                break;
-                            } catch (Throwable th7) {
-                                th = th7;
-                            }
+                            break;
                         }
                         throw th;
                     }
@@ -3147,7 +3183,7 @@ public final class AwareAppAssociate {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0030, code:
+    /* JADX WARNING: Missing block: B:21:0x0030, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3158,10 +3194,17 @@ public final class AwareAppAssociate {
         synchronized (this.mVisibleWindowsCache) {
             AwareProcessWindowInfo winInfo = (AwareProcessWindowInfo) this.mVisibleWindowsCache.get(Integer.valueOf(pid));
             if (winInfo != null) {
-                boolean allowedWindow = winInfo.mMode == 0 || winInfo.mMode == 3;
-                if (allowedWindow && !winInfo.isEvil()) {
-                    return true;
+                boolean allowedWindow;
+                if (winInfo.mMode != 0) {
+                    if (winInfo.mMode != 3) {
+                        allowedWindow = false;
+                        if (allowedWindow && !winInfo.isEvil()) {
+                            return true;
+                        }
+                    }
                 }
+                allowedWindow = true;
+                return true;
             }
         }
     }

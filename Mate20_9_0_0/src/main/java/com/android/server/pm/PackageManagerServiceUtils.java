@@ -383,14 +383,16 @@ public class PackageManagerServiceUtils {
     private static boolean matchSignatureInSystem(PackageSetting pkgSetting, PackageSetting disabledPkgSetting) {
         try {
             PackageParser.collectCertificates(disabledPkgSetting.pkg, true);
-            if (pkgSetting.signatures.mSigningDetails.checkCapability(disabledPkgSetting.signatures.mSigningDetails, 1) || disabledPkgSetting.signatures.mSigningDetails.checkCapability(pkgSetting.signatures.mSigningDetails, 8)) {
-                return true;
+            if (!pkgSetting.signatures.mSigningDetails.checkCapability(disabledPkgSetting.signatures.mSigningDetails, 1)) {
+                if (!disabledPkgSetting.signatures.mSigningDetails.checkCapability(pkgSetting.signatures.mSigningDetails, 8)) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Updated system app mismatches cert on /system: ");
+                    stringBuilder.append(pkgSetting.name);
+                    logCriticalInfo(6, stringBuilder.toString());
+                    return false;
+                }
             }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Updated system app mismatches cert on /system: ");
-            stringBuilder.append(pkgSetting.name);
-            logCriticalInfo(6, stringBuilder.toString());
-            return false;
+            return true;
         } catch (PackageParserException e) {
             StringBuilder stringBuilder2 = new StringBuilder();
             stringBuilder2.append("Failed to collect cert for ");

@@ -2,6 +2,7 @@ package org.bouncycastle.operator.bc;
 
 import java.security.SecureRandom;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Wrapper;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.operator.GenericKey;
@@ -23,7 +24,7 @@ public class BcSymmetricKeyUnwrapper extends SymmetricKeyUnwrapper {
         this.wrapper.init(false, this.wrappingKey);
         try {
             return new GenericKey(algorithmIdentifier, this.wrapper.unwrap(bArr, 0, bArr.length));
-        } catch (Throwable e) {
+        } catch (InvalidCipherTextException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to unwrap key: ");
             stringBuilder.append(e.getMessage());

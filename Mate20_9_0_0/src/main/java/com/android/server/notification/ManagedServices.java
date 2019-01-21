@@ -1179,13 +1179,13 @@ public abstract class ManagedServices {
             if (!this.mContext.bindServiceAsUser(intent, new ServiceConnection() {
                 IInterface mService;
 
-                /* JADX WARNING: Missing block: B:12:0x0061, code:
+                /* JADX WARNING: Missing block: B:12:0x0061, code skipped:
             if (r0 == false) goto L_0x0068;
      */
-                /* JADX WARNING: Missing block: B:13:0x0063, code:
+                /* JADX WARNING: Missing block: B:13:0x0063, code skipped:
             r11.this$0.onServiceAdded(r1);
      */
-                /* JADX WARNING: Missing block: B:14:0x0068, code:
+                /* JADX WARNING: Missing block: B:14:0x0068, code skipped:
             return;
      */
                 /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1373,6 +1373,7 @@ public abstract class ManagedServices {
                 this.mServices.add(info);
             } catch (RemoteException e) {
                 return null;
+            } catch (Throwable th) {
             }
         }
         return info;

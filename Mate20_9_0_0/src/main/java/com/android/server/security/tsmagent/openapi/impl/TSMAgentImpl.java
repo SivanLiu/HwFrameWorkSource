@@ -17,6 +17,8 @@ import com.android.server.security.tsmagent.utils.PackageSignatureUtil;
 import com.android.server.security.tsmagent.utils.StringUtil;
 import com.android.server.wifipro.WifiProCommonUtils;
 import java.security.AccessControlException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONException;
@@ -159,18 +161,6 @@ public class TSMAgentImpl implements ITSMOperator {
         return NetworkUtil.isNetworkConnected(this.mContext);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x00b7 A:{ExcHandler: java.security.AccessControlException (e java.security.AccessControlException), Splitter: B:13:0x0042} */
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x00b7 A:{ExcHandler: java.security.AccessControlException (e java.security.AccessControlException), Splitter: B:13:0x0042} */
-    /* JADX WARNING: Missing block: B:35:0x00b8, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("HwNFCOpenApiImpl checkCaller failed. pkg : ");
-            r5.append(r12);
-            com.android.server.security.tsmagent.utils.HwLog.w(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:36:0x00cc, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean checkCallerSignature(String callerPkgName) {
         HwLog.d("checkCallerSignature");
         if (this.mAuthorizedCallers.contains(callerPkgName)) {
@@ -192,10 +182,11 @@ public class TSMAgentImpl implements ITSMOperator {
             HwLog.w("operateSSD checkCaller failed. dicItems size <= 0.");
             return false;
         } else {
+            StringBuilder sBuilder;
             try {
                 List<String> signs = PackageSignatureUtil.getInstalledAppHashList(this.mContext, callerPkgName);
                 if (signs != null && signs.size() > 0) {
-                    StringBuilder sBuilder = new StringBuilder();
+                    sBuilder = new StringBuilder();
                     for (String sign : signs) {
                         sBuilder.append(sign);
                     }
@@ -215,7 +206,12 @@ public class TSMAgentImpl implements ITSMOperator {
                 stringBuilder.append(callerPkgName);
                 HwLog.w(stringBuilder.toString());
                 return false;
-            } catch (AccessControlException e) {
+            } catch (AccessControlException | NoSuchAlgorithmException | CertificateException e) {
+                sBuilder = new StringBuilder();
+                sBuilder.append("HwNFCOpenApiImpl checkCaller failed. pkg : ");
+                sBuilder.append(callerPkgName);
+                HwLog.w(sBuilder.toString());
+                return false;
             }
         }
     }

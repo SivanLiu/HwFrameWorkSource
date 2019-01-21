@@ -11,7 +11,7 @@ class LazyEncodedSequence extends ASN1Sequence {
     }
 
     private void parse() {
-        Enumeration lazyConstructionEnumeration = new LazyConstructionEnumeration(this.encoded);
+        LazyConstructionEnumeration lazyConstructionEnumeration = new LazyConstructionEnumeration(this.encoded);
         while (lazyConstructionEnumeration.hasMoreElements()) {
             this.seq.addElement(lazyConstructionEnumeration.nextElement());
         }

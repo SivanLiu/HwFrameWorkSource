@@ -1,7 +1,6 @@
 package org.bouncycastle.operator.jcajce;
 
 import java.io.InputStream;
-import java.security.Key;
 import java.security.Provider;
 import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.Cipher;
@@ -39,7 +38,7 @@ public class JceInputDecryptorProviderBuilder {
                     Cipher cipher;
                     AlgorithmParameterSpec ivParameterSpec;
                     this.cipher = JceInputDecryptorProviderBuilder.this.helper.createCipher(algorithm.getId());
-                    Key secretKeySpec = new SecretKeySpec(bArr, algorithm.getId());
+                    SecretKeySpec secretKeySpec = new SecretKeySpec(bArr, algorithm.getId());
                     ASN1Encodable parameters = algorithmIdentifier.getParameters();
                     if (parameters instanceof ASN1OctetString) {
                         cipher = this.cipher;
@@ -59,7 +58,7 @@ public class JceInputDecryptorProviderBuilder {
                             return new CipherInputStream(inputStream, AnonymousClass1.this.cipher);
                         }
                     };
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("unable to create InputDecryptor: ");
                     stringBuilder.append(e.getMessage());

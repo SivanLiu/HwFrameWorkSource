@@ -102,7 +102,7 @@ public class SM2KeyExchange {
         Memoable copy;
         int digestSize = this.digest.getDigestSize();
         byte[] bArr3 = new byte[Math.max(4, digestSize)];
-        Object obj = new byte[((i + 7) / 8)];
+        byte[] bArr4 = new byte[((i + 7) / 8)];
         Memoable memoable = null;
         if (this.digest instanceof Memoable) {
             addFieldElement(this.digest, eCPoint.getAffineXCoord());
@@ -116,7 +116,7 @@ public class SM2KeyExchange {
         }
         int i2 = 0;
         int i3 = i2;
-        while (i2 < obj.length) {
+        while (i2 < bArr4.length) {
             if (memoable != null) {
                 memoable.reset(copy);
             } else {
@@ -129,11 +129,11 @@ public class SM2KeyExchange {
             Pack.intToBigEndian(i3, bArr3, 0);
             this.digest.update(bArr3, 0, 4);
             this.digest.doFinal(bArr3, 0);
-            int min = Math.min(digestSize, obj.length - i2);
-            System.arraycopy(bArr3, 0, obj, i2, min);
+            int min = Math.min(digestSize, bArr4.length - i2);
+            System.arraycopy(bArr3, 0, bArr4, i2, min);
             i2 += min;
         }
-        return obj;
+        return bArr4;
     }
 
     private BigInteger reduce(BigInteger bigInteger) {

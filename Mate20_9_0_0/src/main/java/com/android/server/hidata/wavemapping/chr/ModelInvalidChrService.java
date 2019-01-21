@@ -14,7 +14,7 @@ import com.android.server.hidata.wavemapping.util.TimeUtil;
 import java.util.List;
 
 public class ModelInvalidChrService {
-    /* JADX WARNING: Missing block: B:21:0x0124, code:
+    /* JADX WARNING: Missing block: B:21:0x0124, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -85,16 +85,16 @@ public class ModelInvalidChrService {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:7:0x009b, code:
+    /* JADX WARNING: Missing block: B:7:0x009b, code skipped:
             if (r0 != null) goto L_0x009d;
      */
-    /* JADX WARNING: Missing block: B:8:0x009d, code:
+    /* JADX WARNING: Missing block: B:8:0x009d, code skipped:
             android.util.IMonitor.closeEventStream(r0);
      */
-    /* JADX WARNING: Missing block: B:14:0x00c0, code:
+    /* JADX WARNING: Missing block: B:14:0x00c0, code skipped:
             if (r0 == null) goto L_0x00c3;
      */
-    /* JADX WARNING: Missing block: B:15:0x00c3, code:
+    /* JADX WARNING: Missing block: B:15:0x00c3, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

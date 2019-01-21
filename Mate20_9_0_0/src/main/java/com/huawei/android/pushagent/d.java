@@ -1,35 +1,16 @@
 package com.huawei.android.pushagent;
 
-import android.net.ConnectivityManager.NetworkCallback;
-import android.net.Network;
-import com.huawei.android.pushagent.a.a;
-import com.huawei.android.pushagent.utils.f.c;
+import android.os.MessageQueue.IdleHandler;
 
-final class d extends NetworkCallback {
-    final /* synthetic */ PushService jt;
+final class d implements IdleHandler {
+    final /* synthetic */ a jt;
 
-    d(PushService pushService) {
-        this.jt = pushService;
+    d(a aVar) {
+        this.jt = aVar;
     }
 
-    public void onAvailable(Network network) {
-        super.onAvailable(network);
-        c.ep(PushService.TAG, "onAvailable");
-        a.hx(10);
-        this.jt.abu(this.jt.jb, network, true);
-    }
-
-    public void onLost(Network network) {
-        super.onLost(network);
-        c.ep(PushService.TAG, "onLost");
-        a.hx(11);
-        this.jt.abu(this.jt.jb, network, false);
-    }
-
-    public void onNetworkResumed(Network network) {
-        super.onNetworkResumed(network);
-        c.ep(PushService.TAG, "onNetworkResumed");
-        a.hx(12);
-        this.jt.abu(this.jt.jb, network, true);
+    public boolean queueIdle() {
+        this.jt.abq();
+        return true;
     }
 }

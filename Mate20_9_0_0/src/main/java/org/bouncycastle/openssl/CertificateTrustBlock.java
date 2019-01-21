@@ -61,7 +61,7 @@ public class CertificateTrustBlock {
         if (aSN1Sequence == null) {
             return Collections.EMPTY_SET;
         }
-        Set<ASN1ObjectIdentifier> hashSet = new HashSet(aSN1Sequence.size());
+        HashSet hashSet = new HashSet(aSN1Sequence.size());
         Enumeration objects = aSN1Sequence.getObjects();
         while (objects.hasMoreElements()) {
             hashSet.add(ASN1ObjectIdentifier.getInstance(objects.nextElement()));

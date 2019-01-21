@@ -55,11 +55,11 @@ class ShortcutRequestPinProcessor {
             if (!isCallerValid()) {
                 return false;
             }
-            boolean z;
+            int i;
             synchronized (this) {
-                z = this.mAccepted ^ 1;
+                i = this.mAccepted ^ 1;
             }
-            return z;
+            return i;
         }
 
         public boolean accept(Bundle options) {
@@ -294,41 +294,43 @@ class ShortcutRequestPinProcessor {
         String launcherPackage = pinShortcutRequestInner.launcherPackage;
         String shortcutId = original.getId();
         synchronized (this.mLock) {
-            if (this.mService.isUserUnlockedL(appUserId) && this.mService.isUserUnlockedL(pinShortcutRequestInner.launcherUserId)) {
-                ShortcutLauncher launcher = this.mService.getLauncherShortcutsLocked(launcherPackage, appUserId, launcherUserId);
-                launcher.attemptToRestoreIfNeededAndSave();
-                if (launcher.hasPinned(original)) {
+            if (this.mService.isUserUnlockedL(appUserId)) {
+                if (this.mService.isUserUnlockedL(pinShortcutRequestInner.launcherUserId)) {
+                    ShortcutLauncher launcher = this.mService.getLauncherShortcutsLocked(launcherPackage, appUserId, launcherUserId);
+                    launcher.attemptToRestoreIfNeededAndSave();
+                    if (launcher.hasPinned(original)) {
+                        return true;
+                    }
+                    ShortcutPackage ps = this.mService.getPackageShortcutsForPublisherLocked(appPackageName, appUserId);
+                    ShortcutInfo current = ps.findShortcutById(shortcutId);
+                    if (current == null) {
+                        try {
+                            this.mService.validateShortcutForPinRequest(original);
+                        } catch (RuntimeException e) {
+                            String str = TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Unable to pin shortcut: ");
+                            stringBuilder.append(e.getMessage());
+                            Log.w(str, stringBuilder.toString());
+                            return false;
+                        }
+                    }
+                    validateExistingShortcut(current);
+                    if (current == null) {
+                        if (original.getActivity() == null) {
+                            original.setActivity(this.mService.getDummyMainActivity(appPackageName));
+                        }
+                        ps.addOrReplaceDynamicShortcut(original);
+                    }
+                    launcher.addPinnedShortcut(appPackageName, appUserId, shortcutId, true);
+                    if (current == null) {
+                        ps.deleteDynamicWithId(shortcutId, false);
+                    }
+                    ps.adjustRanks();
+                    this.mService.verifyStates();
+                    this.mService.packageShortcutsChanged(appPackageName, appUserId);
                     return true;
                 }
-                ShortcutPackage ps = this.mService.getPackageShortcutsForPublisherLocked(appPackageName, appUserId);
-                ShortcutInfo current = ps.findShortcutById(shortcutId);
-                if (current == null) {
-                    try {
-                        this.mService.validateShortcutForPinRequest(original);
-                    } catch (RuntimeException e) {
-                        String str = TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Unable to pin shortcut: ");
-                        stringBuilder.append(e.getMessage());
-                        Log.w(str, stringBuilder.toString());
-                        return false;
-                    }
-                }
-                validateExistingShortcut(current);
-                if (current == null) {
-                    if (original.getActivity() == null) {
-                        original.setActivity(this.mService.getDummyMainActivity(appPackageName));
-                    }
-                    ps.addOrReplaceDynamicShortcut(original);
-                }
-                launcher.addPinnedShortcut(appPackageName, appUserId, shortcutId, true);
-                if (current == null) {
-                    ps.deleteDynamicWithId(shortcutId, false);
-                }
-                ps.adjustRanks();
-                this.mService.verifyStates();
-                this.mService.packageShortcutsChanged(appPackageName, appUserId);
-                return true;
             }
             Log.w(TAG, "User is locked now.");
             return false;

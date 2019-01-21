@@ -755,13 +755,14 @@ final class FillUi {
             }
             return;
         }
+        Object obj;
         if (filterText == null) {
-            filterText = null;
+            obj = null;
         } else {
-            filterText = filterText.toLowerCase();
+            obj = filterText.toLowerCase();
         }
-        if (!Objects.equals(this.mFilterText, filterText)) {
-            this.mFilterText = filterText;
+        if (!Objects.equals(this.mFilterText, obj)) {
+            this.mFilterText = obj;
             applyNewFilterText();
         }
     }

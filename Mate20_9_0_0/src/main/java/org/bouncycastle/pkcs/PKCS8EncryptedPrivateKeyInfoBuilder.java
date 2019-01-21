@@ -20,7 +20,7 @@ public class PKCS8EncryptedPrivateKeyInfoBuilder {
 
     public PKCS8EncryptedPrivateKeyInfo build(OutputEncryptor outputEncryptor) {
         try {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             OutputStream outputStream = outputEncryptor.getOutputStream(byteArrayOutputStream);
             outputStream.write(this.privateKeyInfo.getEncoded());
             outputStream.close();

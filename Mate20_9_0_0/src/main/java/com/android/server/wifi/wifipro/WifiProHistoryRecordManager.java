@@ -655,86 +655,94 @@ public class WifiProHistoryRecordManager implements IGetApRecordCount {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0029, code:
+    /* JADX WARNING: Missing block: B:16:0x0029, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:17:0x002b, code:
+    /* JADX WARNING: Missing block: B:18:0x002b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getIsHomeAP(String bssid) {
         synchronized (this.mApInfoCache) {
             boolean z = false;
-            if (this.mCurrentApInfo == null || bssid == null) {
-            } else if (!bssid.equals(this.mCurrentApInfo.apBSSID)) {
-                logd("getIsHomeAP false for different BSSID AP.");
-                return false;
-            } else if (this.mCurrentApInfo.judgeHomeAPTime > 0) {
-                z = true;
+            if (this.mCurrentApInfo != null) {
+                if (bssid != null) {
+                    if (!bssid.equals(this.mCurrentApInfo.apBSSID)) {
+                        logd("getIsHomeAP false for different BSSID AP.");
+                        return false;
+                    } else if (this.mCurrentApInfo.judgeHomeAPTime > 0) {
+                        z = true;
+                    }
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:44:0x010d, code:
+    /* JADX WARNING: Missing block: B:46:0x010d, code skipped:
             return 1.0f;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public float getHomeApSwitchRate(String bssid) {
         synchronized (this.mApInfoCache) {
-            if (this.mCurrentApInfo == null || bssid == null) {
-            } else if (this.mCurrentApInfo.isEnterpriseAP || this.mCurrentApInfo.judgeHomeAPTime == 0) {
-                logd("HomeApSwitchRate return default rate for not Home AP.");
-                return 1.0f;
-            } else if (bssid.equals(this.mCurrentApInfo.apBSSID)) {
-                StringBuilder stringBuilder;
-                int index = HOME_AP_SWITCH_RATE_TABLE.length - 1;
-                int totalConnectHours = this.mCurrentApInfo.totalUseTime / SECOND_OF_ONE_HOUR;
-                float restTimeRate = 0.0f;
-                if (this.mCurrentApInfo.totalUseTime != 0) {
-                    restTimeRate = ((float) (this.mCurrentApInfo.totalUseTimeAtNight + this.mCurrentApInfo.totalUseTimeAtWeekend)) / ((float) this.mCurrentApInfo.totalUseTime);
-                }
-                long totPassTime = (this.mCurrentApInfo.lastConnectTime - this.mCurrentApInfo.firstConnectTime) / 1000;
-                if (totPassTime > 0) {
-                    long dayAvgRestTime = 0;
-                    long pass_days = totPassTime / ONE_DAY_S_VALUE;
-                    if (pass_days != 0) {
-                        dayAvgRestTime = ((long) (this.mCurrentApInfo.totalUseTimeAtNight + this.mCurrentApInfo.totalUseTimeAtWeekend)) / pass_days;
+            if (this.mCurrentApInfo != null) {
+                if (bssid != null) {
+                    if (!this.mCurrentApInfo.isEnterpriseAP) {
+                        if (this.mCurrentApInfo.judgeHomeAPTime != 0) {
+                            if (bssid.equals(this.mCurrentApInfo.apBSSID)) {
+                                StringBuilder stringBuilder;
+                                int index = HOME_AP_SWITCH_RATE_TABLE.length - 1;
+                                int totalConnectHours = this.mCurrentApInfo.totalUseTime / SECOND_OF_ONE_HOUR;
+                                float restTimeRate = 0.0f;
+                                if (this.mCurrentApInfo.totalUseTime != 0) {
+                                    restTimeRate = ((float) (this.mCurrentApInfo.totalUseTimeAtNight + this.mCurrentApInfo.totalUseTimeAtWeekend)) / ((float) this.mCurrentApInfo.totalUseTime);
+                                }
+                                long totPassTime = (this.mCurrentApInfo.lastConnectTime - this.mCurrentApInfo.firstConnectTime) / 1000;
+                                if (totPassTime > 0) {
+                                    long dayAvgRestTime = 0;
+                                    long pass_days = totPassTime / ONE_DAY_S_VALUE;
+                                    if (pass_days != 0) {
+                                        dayAvgRestTime = ((long) (this.mCurrentApInfo.totalUseTimeAtNight + this.mCurrentApInfo.totalUseTimeAtWeekend)) / pass_days;
+                                    }
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("HomeApSwitchRate, pass time (s) =");
+                                    stringBuilder.append(totPassTime);
+                                    stringBuilder.append(", pass day=");
+                                    stringBuilder.append(pass_days);
+                                    stringBuilder.append(", tot rest time:");
+                                    stringBuilder.append(this.mCurrentApInfo.totalUseTimeAtNight + this.mCurrentApInfo.totalUseTimeAtWeekend);
+                                    logi(stringBuilder.toString());
+                                    if (dayAvgRestTime < 1800) {
+                                        logi("HomeApSwitchRate dayAvgRestTime not enough return default rate");
+                                        return 1.0f;
+                                    }
+                                }
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("HomeApSwitchRate totalConnectHours:");
+                                stringBuilder.append(totalConnectHours);
+                                stringBuilder.append(", restTimeRate=");
+                                stringBuilder.append(restTimeRate);
+                                logi(stringBuilder.toString());
+                                while (index >= 0) {
+                                    if (totalConnectHours <= HOME_AP_SWITCH_RATE_TABLE[index].TOTAL_CONNECT_TIME || restTimeRate <= HOME_AP_SWITCH_RATE_TABLE[index].REST_TIME_RATE) {
+                                        index--;
+                                    } else {
+                                        float rate = HOME_AP_SWITCH_RATE_TABLE[index].SWITCH_RATE;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("HomeApSwitchRate, rate=");
+                                        stringBuilder.append(rate);
+                                        logi(stringBuilder.toString());
+                                        return rate;
+                                    }
+                                }
+                                return 1.0f;
+                            }
+                            logd("HomeApSwitchRate return default rate for different BSSID AP.");
+                            return 1.0f;
+                        }
                     }
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("HomeApSwitchRate, pass time (s) =");
-                    stringBuilder.append(totPassTime);
-                    stringBuilder.append(", pass day=");
-                    stringBuilder.append(pass_days);
-                    stringBuilder.append(", tot rest time:");
-                    stringBuilder.append(this.mCurrentApInfo.totalUseTimeAtNight + this.mCurrentApInfo.totalUseTimeAtWeekend);
-                    logi(stringBuilder.toString());
-                    if (dayAvgRestTime < 1800) {
-                        logi("HomeApSwitchRate dayAvgRestTime not enough return default rate");
-                        return 1.0f;
-                    }
+                    logd("HomeApSwitchRate return default rate for not Home AP.");
+                    return 1.0f;
                 }
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("HomeApSwitchRate totalConnectHours:");
-                stringBuilder.append(totalConnectHours);
-                stringBuilder.append(", restTimeRate=");
-                stringBuilder.append(restTimeRate);
-                logi(stringBuilder.toString());
-                while (index >= 0) {
-                    if (totalConnectHours <= HOME_AP_SWITCH_RATE_TABLE[index].TOTAL_CONNECT_TIME || restTimeRate <= HOME_AP_SWITCH_RATE_TABLE[index].REST_TIME_RATE) {
-                        index--;
-                    } else {
-                        float rate = HOME_AP_SWITCH_RATE_TABLE[index].SWITCH_RATE;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("HomeApSwitchRate, rate=");
-                        stringBuilder.append(rate);
-                        logi(stringBuilder.toString());
-                        return rate;
-                    }
-                }
-                return 1.0f;
-            } else {
-                logd("HomeApSwitchRate return default rate for different BSSID AP.");
-                return 1.0f;
             }
         }
     }
@@ -824,23 +832,31 @@ public class WifiProHistoryRecordManager implements IGetApRecordCount {
     public WifiProDualBandApInfoRcd getDualBandApRecord(String apBssid) {
         synchronized (this.mLock) {
             if (apBssid == null) {
+                try {
+                    return null;
+                } catch (Throwable th) {
+                }
+            } else {
+                WifiProDualBandApInfoRcd record = new WifiProDualBandApInfoRcd(apBssid);
+                if (this.mDBMgr.queryDualBandApInfoRcd(apBssid, record)) {
+                    return record;
+                }
                 return null;
             }
-            WifiProDualBandApInfoRcd record = new WifiProDualBandApInfoRcd(apBssid);
-            if (this.mDBMgr.queryDualBandApInfoRcd(apBssid, record)) {
-                return record;
-            }
-            return null;
         }
     }
 
     public List<WifiProDualBandApInfoRcd> getDualBandApInfoBySsid(String ssid) {
         synchronized (this.mLock) {
             if (ssid == null) {
-                return null;
+                try {
+                    return null;
+                } catch (Throwable th) {
+                }
+            } else {
+                List queryDualBandApInfoRcdBySsid = this.mDBMgr.queryDualBandApInfoRcdBySsid(ssid);
+                return queryDualBandApInfoRcdBySsid;
             }
-            List<WifiProDualBandApInfoRcd> queryDualBandApInfoRcdBySsid = this.mDBMgr.queryDualBandApInfoRcdBySsid(ssid);
-            return queryDualBandApInfoRcdBySsid;
         }
     }
 

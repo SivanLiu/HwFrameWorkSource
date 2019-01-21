@@ -61,9 +61,12 @@ public class DefaultNetworkMetrics {
 
     public synchronized void logDefaultNetworkValidity(long timeMs, boolean isValid) {
         if (!isValid) {
-            if (this.mIsCurrentlyValid) {
-                this.mIsCurrentlyValid = false;
-                updateValidationTime(timeMs);
+            try {
+                if (this.mIsCurrentlyValid) {
+                    this.mIsCurrentlyValid = false;
+                    updateValidationTime(timeMs);
+                }
+            } finally {
             }
         }
         if (isValid && !this.mIsCurrentlyValid) {

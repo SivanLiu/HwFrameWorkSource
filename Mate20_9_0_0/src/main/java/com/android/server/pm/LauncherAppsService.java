@@ -218,17 +218,16 @@ public class LauncherAppsService extends SystemService {
 
             private void onShortcutChangedInner(String packageName, int userId) {
                 RemoteException re;
+                String str;
                 RuntimeException e;
                 Throwable th;
                 int n = LauncherAppsImpl.this.mListeners.beginBroadcast();
-                String str;
                 try {
                     UserHandle user = UserHandle.of(userId);
                     int i = 0;
                     while (true) {
                         int i2 = i;
                         if (i2 >= n) {
-                            str = packageName;
                             break;
                         }
                         IOnAppsChangedListener listener = (IOnAppsChangedListener) LauncherAppsImpl.this.mListeners.getBroadcastItem(i2);
@@ -261,6 +260,7 @@ public class LauncherAppsService extends SystemService {
                         str = packageName;
                         i = i2 + 1;
                     }
+                    str = packageName;
                 } catch (RuntimeException e5) {
                     e = e5;
                     str = packageName;

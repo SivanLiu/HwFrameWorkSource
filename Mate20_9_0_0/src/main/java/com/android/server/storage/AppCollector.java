@@ -5,6 +5,7 @@ import android.app.usage.StorageStatsManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageStats;
 import android.content.pm.UserInfo;
 import android.os.Handler;
@@ -15,10 +16,12 @@ import android.os.storage.VolumeInfo;
 import android.util.Log;
 import com.android.internal.os.BackgroundThread;
 import com.android.internal.util.Preconditions;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -42,14 +45,6 @@ public class AppCollector {
             this.mStorageStatsManager = storageStatsManager;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:10:0x0071 A:{Splitter: B:8:0x0044, ExcHandler: android.content.pm.PackageManager.NameNotFoundException (r9_4 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:10:0x0071, code:
-            r9 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:11:0x0072, code:
-            android.util.Log.e(com.android.server.storage.AppCollector.access$000(), "An exception occurred while fetching app size", r9);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
                 List<PackageStats> stats = new ArrayList();
@@ -69,7 +64,8 @@ public class AppCollector {
                                 packageStats.codeSize = storageStats.getAppBytes();
                                 packageStats.dataSize = storageStats.getDataBytes();
                                 stats.add(packageStats);
-                            } catch (Exception e) {
+                            } catch (NameNotFoundException | IOException e) {
+                                Log.e(AppCollector.TAG, "An exception occurred while fetching app size", e);
                             }
                         }
                     }
@@ -84,17 +80,6 @@ public class AppCollector {
         this.mBackgroundHandler = new BackgroundHandler(BackgroundThread.get().getLooper(), volume, context.getPackageManager(), (UserManager) context.getSystemService("user"), (StorageStatsManager) context.getSystemService("storagestats"));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0029 A:{Splitter: B:7:0x0014, ExcHandler: java.lang.InterruptedException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:12:0x0029, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:0x002a, code:
-            android.util.Log.e(TAG, "An exception occurred while getting app storage", r1);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<PackageStats> getPackageStats(long timeoutMillis) {
         synchronized (this) {
             if (this.mStats == null) {
@@ -104,7 +89,9 @@ public class AppCollector {
         }
         try {
             return (List) this.mStats.get(timeoutMillis, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException e) {
+            Log.e(TAG, "An exception occurred while getting app storage", e);
+            return null;
         } catch (TimeoutException e2) {
             Log.e(TAG, "AppCollector timed out");
             return null;

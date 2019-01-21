@@ -153,317 +153,22 @@ public class HwUidTcpMonitor {
         this.mLastDnsFailedCnt = currDnsFailedCnt;
     }
 
-    /* JADX WARNING: Missing block: B:43:0x00e6, code:
-            r21 = -1;
-     */
-    /* JADX WARNING: Missing block: B:46:0x00f2, code:
-            if (r13.length <= 0) goto L_0x0106;
-     */
-    /* JADX WARNING: Missing block: B:47:0x00f4, code:
-            r22 = 0;
-     */
-    /* JADX WARNING: Missing block: B:50:0x00fd, code:
-            if (r13[0].intValue() <= 0) goto L_0x0108;
-     */
-    /* JADX WARNING: Missing block: B:51:0x00ff, code:
-            r0 = r13[0].intValue();
-     */
-    /* JADX WARNING: Missing block: B:52:0x0106, code:
-            r22 = 0;
-     */
-    /* JADX WARNING: Missing block: B:53:0x0108, code:
-            r0 = r21;
-     */
-    /* JADX WARNING: Missing block: B:56:0x010b, code:
-            r35 = 0;
-     */
-    /* JADX WARNING: Missing block: B:57:0x010e, code:
-            if (r13.length <= 1) goto L_0x0117;
-     */
-    /* JADX WARNING: Missing block: B:59:?, code:
-            r2 = r13[1].intValue();
-     */
-    /* JADX WARNING: Missing block: B:60:0x0117, code:
-            r2 = r22;
-     */
-    /* JADX WARNING: Missing block: B:63:0x011a, code:
-            r36 = r9;
-     */
-    /* JADX WARNING: Missing block: B:64:0x011d, code:
-            if (r13.length <= 2) goto L_0x0127;
-     */
-    /* JADX WARNING: Missing block: B:67:0x0125, code:
-            r9 = r13[2].intValue();
-     */
-    /* JADX WARNING: Missing block: B:68:0x0127, code:
-            r9 = r35;
-     */
-    /* JADX WARNING: Missing block: B:71:0x012a, code:
-            r37 = r10;
-     */
-    /* JADX WARNING: Missing block: B:72:0x012d, code:
-            if (r13.length <= 3) goto L_0x0137;
-     */
-    /* JADX WARNING: Missing block: B:75:0x0135, code:
-            r10 = r13[3].intValue();
-     */
-    /* JADX WARNING: Missing block: B:76:0x0137, code:
-            r10 = 0;
-     */
-    /* JADX WARNING: Missing block: B:79:0x013a, code:
-            r38 = r11;
-     */
-    /* JADX WARNING: Missing block: B:80:0x013d, code:
-            if (r13.length <= 4) goto L_0x0152;
-     */
-    /* JADX WARNING: Missing block: B:83:0x0145, code:
-            r11 = r13[4].intValue();
-     */
-    /* JADX WARNING: Missing block: B:84:0x0147, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:85:0x0148, code:
-            r2 = r4;
-            r39 = r12;
-     */
-    /* JADX WARNING: Missing block: B:87:0x0152, code:
-            r11 = 0;
-     */
-    /* JADX WARNING: Missing block: B:90:0x0155, code:
-            r39 = r12;
-     */
-    /* JADX WARNING: Missing block: B:91:0x0158, code:
-            if (r13.length <= 5) goto L_0x0165;
-     */
-    /* JADX WARNING: Missing block: B:94:0x0160, code:
-            r12 = r13[5].intValue();
-     */
-    /* JADX WARNING: Missing block: B:95:0x0162, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:96:0x0163, code:
-            r2 = r4;
-     */
-    /* JADX WARNING: Missing block: B:97:0x0165, code:
-            r12 = 0;
-     */
-    /* JADX WARNING: Missing block: B:98:0x0167, code:
-            r16 = r5 + r2;
-            r17 = r6 + r10;
-            r18 = r7 + r9;
-     */
-    /* JADX WARNING: Missing block: B:99:0x016e, code:
-            if (r0 == -1) goto L_0x01b1;
-     */
-    /* JADX WARNING: Missing block: B:100:0x0170, code:
-            if (r3 != r0) goto L_0x01b1;
-     */
-    /* JADX WARNING: Missing block: B:103:0x0176, code:
-            r19 = com.android.server.wifi.HwWifiConnectivityMonitor.getInstance();
-     */
-    /* JADX WARNING: Missing block: B:104:0x0178, code:
-            if (r19 == null) goto L_0x01b1;
-     */
-    /* JADX WARNING: Missing block: B:105:0x017a, code:
-            r6 = r3;
-            r40 = r9;
-            r20 = r36;
-            r41 = r13;
-            r21 = r37;
-            r13 = r10;
-            r43 = r3;
-            r3 = r11;
-            r42 = r14;
-     */
-    /* JADX WARNING: Missing block: B:108:0x0195, code:
-            r11 = r19.notifyTopUidTcpInfo(r6, r2, r10, r9, r11, r12);
-     */
-    /* JADX WARNING: Missing block: B:109:0x0197, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:110:0x0198, code:
-            r3 = r1;
-            r2 = r4;
-            r11 = r38;
-     */
-    /* JADX WARNING: Missing block: B:113:0x01a1, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:114:0x01a2, code:
-            r42 = r14;
-            r2 = r4;
-            r11 = r38;
-            r45 = r15;
-            r49 = r3;
-            r3 = r1;
-            r1 = r49;
-     */
-    /* JADX WARNING: Missing block: B:115:0x01b1, code:
-            r43 = r3;
-            r40 = r9;
-            r3 = r11;
-            r41 = r13;
-            r42 = r14;
-            r20 = r36;
-            r21 = r37;
-            r13 = r10;
-            r11 = r38;
-     */
-    /* JADX WARNING: Missing block: B:117:?, code:
-            r5 = (com.android.server.wifi.HwUidTcpMonitor.UidTcpStatInfo) r1.mUidTcpStatInfo.get(java.lang.Integer.valueOf(r0));
-     */
-    /* JADX WARNING: Missing block: B:118:0x01ce, code:
-            if (r5 == null) goto L_0x0214;
-     */
-    /* JADX WARNING: Missing block: B:120:?, code:
-            r5.mSendSegs += (long) r2;
-            r5.mResendSegs += (long) r40;
-            r5.mRcvSegs += (long) r13;
-            r5.mRttDuration += (long) r3;
-            r5.mRttSegs += (long) r12;
-            r5.mLastUpdateTime = java.lang.System.currentTimeMillis();
-            r6 = new java.lang.StringBuilder();
-            r6.append("parseWlanUidTcpStatistics lastUidTcpStatInfo = ");
-            r6.append(r5);
-            r1.LOGD(r6.toString());
-     */
-    /* JADX WARNING: Missing block: B:121:0x020a, code:
-            r3 = r1;
-            r2 = r4;
-            r45 = r15;
-     */
-    /* JADX WARNING: Missing block: B:122:0x0210, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:123:0x0211, code:
-            r3 = r1;
-            r2 = r4;
-     */
-    /* JADX WARNING: Missing block: B:124:0x0214, code:
-            r8 = r40;
-     */
-    /* JADX WARNING: Missing block: B:128:0x021e, code:
-            if (r1.mUidTcpStatInfo.size() != 20) goto L_0x0251;
-     */
-    /* JADX WARNING: Missing block: B:130:?, code:
-            r6 = r1.getOldestUidUpdated(r1.mUidTcpStatInfo);
-            r1.mUidTcpStatInfo.remove(java.lang.Integer.valueOf(r6));
-            r9 = new java.lang.StringBuilder();
-            r9.append("parseWlanUidTcpStatistics rm oldestUid = ");
-            r9.append(r6);
-            r9.append(", current size = ");
-            r9.append(r1.mUidTcpStatInfo.size());
-            r1.LOGD(r9.toString());
-     */
-    /* JADX WARNING: Missing block: B:132:0x0252, code:
-            if (r0 == -1) goto L_0x02cb;
-     */
-    /* JADX WARNING: Missing block: B:135:0x025a, code:
-            if (r1.mUidTcpStatInfo.size() >= 20) goto L_0x02cb;
-     */
-    /* JADX WARNING: Missing block: B:137:0x025e, code:
-            r45 = r15;
-            r46 = r2;
-            r48 = r3;
-            r47 = r4;
-            r23 = r23;
-     */
-    /* JADX WARNING: Missing block: B:139:?, code:
-            r23 = new com.android.server.wifi.HwUidTcpMonitor.UidTcpStatInfo(r0, (long) r2, (long) r8, (long) r13, (long) r3, (long) r12);
-     */
-    /* JADX WARNING: Missing block: B:140:0x027e, code:
-            r1 = r44;
-     */
-    /* JADX WARNING: Missing block: B:141:0x0280, code:
-            if (r47 == null) goto L_0x0292;
-     */
-    /* JADX WARNING: Missing block: B:142:0x0282, code:
-            r2 = r47;
-     */
-    /* JADX WARNING: Missing block: B:144:?, code:
-            r1.mPacketName = r2.getCurrentPackageName();
-     */
-    /* JADX WARNING: Missing block: B:145:0x028b, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:146:0x028c, code:
-            r1 = r43;
-            r3 = r50;
-     */
-    /* JADX WARNING: Missing block: B:147:0x0292, code:
-            r2 = r47;
-     */
-    /* JADX WARNING: Missing block: B:149:?, code:
-            r1.mLastUpdateTime = java.lang.System.currentTimeMillis();
-     */
-    /* JADX WARNING: Missing block: B:150:0x029a, code:
-            r3 = r50;
-     */
-    /* JADX WARNING: Missing block: B:152:?, code:
-            r3.mUidTcpStatInfo.put(java.lang.Integer.valueOf(r0), r1);
-            r4 = new java.lang.StringBuilder();
-            r4.append("parseWlanUidTcpStatistics newUidTcpStatInfo = ");
-            r4.append(r1);
-            r3.LOGD(r4.toString());
-     */
-    /* JADX WARNING: Missing block: B:153:0x02ba, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:154:0x02bd, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:155:0x02be, code:
-            r3 = r50;
-     */
-    /* JADX WARNING: Missing block: B:156:0x02c2, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:157:0x02c3, code:
-            r2 = r47;
-            r3 = r50;
-            r1 = r43;
-     */
-    /* JADX WARNING: Missing block: B:158:0x02cb, code:
-            r3 = r1;
-            r2 = r4;
-            r45 = r15;
-     */
-    /* JADX WARNING: Missing block: B:160:0x02e6, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:161:0x02e7, code:
-            r3 = r1;
-            r2 = r4;
-            r45 = r15;
-            r1 = r43;
-     */
-    /* JADX WARNING: Missing block: B:162:0x02ee, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:163:0x02ef, code:
-            r43 = r3;
-            r2 = r4;
-            r39 = r12;
-            r42 = r14;
-            r45 = r15;
-            r3 = r1;
-            r11 = r38;
-            r1 = r43;
-     */
-    /* JADX WARNING: Missing block: B:164:0x02ff, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:165:0x0300, code:
-            r43 = r3;
-            r2 = r4;
-            r39 = r12;
-            r42 = r14;
-            r45 = r15;
-            r3 = r1;
-            r14 = r11;
-            r1 = r43;
-     */
-    /* JADX WARNING: Missing block: B:166:0x030e, code:
+    /* JADX WARNING: Removed duplicated region for block: B:126:0x0214  */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x01d0 A:{SYNTHETIC, Splitter:B:121:0x01d0} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x0117  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0110 A:{SYNTHETIC, Splitter:B:60:0x0110} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x0127  */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x011f A:{SYNTHETIC, Splitter:B:67:0x011f} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0137  */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x012f A:{SYNTHETIC, Splitter:B:75:0x012f} */
+    /* JADX WARNING: Removed duplicated region for block: B:89:0x0152  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x013f A:{SYNTHETIC, Splitter:B:83:0x013f} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x0165  */
+    /* JADX WARNING: Removed duplicated region for block: B:94:0x015a A:{SYNTHETIC, Splitter:B:94:0x015a} */
+    /* JADX WARNING: Removed duplicated region for block: B:107:0x017a  */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x01d0 A:{SYNTHETIC, Splitter:B:121:0x01d0} */
+    /* JADX WARNING: Removed duplicated region for block: B:126:0x0214  */
+    /* JADX WARNING: Missing block: B:168:0x030e, code skipped:
             r43 = r3;
             r2 = r4;
             r39 = r12;
@@ -474,36 +179,37 @@ public class HwUidTcpMonitor {
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void parseWlanUidTcpStatistics(List<String> tcpStatLines) {
-        int i;
-        int i2;
-        Object obj;
         Throwable uid;
-        Object obj2;
-        HwUidTcpMonitor hwUidTcpMonitor;
-        HwUidTcpMonitor hwUidTcpMonitor2 = this;
+        int topUid;
+        Integer[] numArr;
+        HwUidTcpMonitor hwUidTcpMonitor = this;
         List autoConnectManager = tcpStatLines;
-        int topUid = -1;
+        int topUid2 = -1;
         HwAutoConnectManager autoConnectManager2 = HwAutoConnectManager.getInstance();
         if (autoConnectManager2 != null) {
-            topUid = autoConnectManager2.getCurrentTopUid();
+            topUid2 = autoConnectManager2.getCurrentTopUid();
         }
         int wlanUidIdx = getWlanUidStatLineNumber(tcpStatLines);
+        int i;
+        int i2;
         int i3;
         HwAutoConnectManager hwAutoConnectManager;
         if (wlanUidIdx == -1) {
-            i3 = wlanUidIdx;
-            i = topUid;
-            topUid = hwUidTcpMonitor2;
-            i2 = i;
+            i = wlanUidIdx;
+            i2 = topUid2;
+            topUid2 = hwUidTcpMonitor;
+            i3 = i2;
         } else if (tcpStatLines.size() <= wlanUidIdx + 2) {
             hwAutoConnectManager = autoConnectManager2;
-            i = topUid;
-            topUid = hwUidTcpMonitor2;
-            i2 = i;
+            i2 = topUid2;
+            topUid2 = hwUidTcpMonitor;
+            i3 = i2;
         } else {
-            Integer[] selectedColumnIdx = hwUidTcpMonitor2.getSelectedColumnIdx((String) autoConnectManager.get(wlanUidIdx + 1));
-            obj = hwUidTcpMonitor2.mTcpStatisticsLock;
+            Integer[] selectedColumnIdx = hwUidTcpMonitor.getSelectedColumnIdx((String) autoConnectManager.get(wlanUidIdx + 1));
+            Object obj = hwUidTcpMonitor.mTcpStatisticsLock;
             synchronized (obj) {
+                Object obj2;
+                HwUidTcpMonitor hwUidTcpMonitor2;
                 int deltaTxCnt = 0;
                 int deltaRxCnt = 0;
                 int deltaReTxCnt = 0;
@@ -511,122 +217,423 @@ public class HwUidTcpMonitor {
                 boolean isNotifyByTcp = false;
                 while (true) {
                     int i5 = i4;
-                    Integer[] numArr;
+                    Integer[] numArr2;
                     try {
-                        int j;
-                        List<String> list;
                         if (i5 < tcpStatLines.size()) {
                             if (!((String) autoConnectManager.get(i5)).startsWith("custom ip")) {
-                                if (((String) autoConnectManager.get(i5)).length() != 0) {
-                                    if (!((String) autoConnectManager.get(i5)).startsWith(hwUidTcpMonitor2.MOBILE_UID_TAG)) {
-                                        String[] tcpStatValues = ((String) autoConnectManager.get(i5)).split(hwUidTcpMonitor2.TCP_SEPORATOR);
-                                        Integer[] selectedTcpStatsValues = new Integer[selectedColumnIdx.length];
-                                        int i6 = 0;
-                                        j = 0;
-                                        while (true) {
-                                            Integer[] selectedTcpStatsValues2 = selectedTcpStatsValues;
-                                            int j2 = j;
-                                            if (j2 >= selectedTcpStatsValues2.length) {
-                                                break;
+                                if (((String) autoConnectManager.get(i5)).length() == 0) {
+                                    break;
+                                } else if (((String) autoConnectManager.get(i5)).startsWith(hwUidTcpMonitor.MOBILE_UID_TAG)) {
+                                    break;
+                                } else {
+                                    Integer[] selectedTcpStatsValues;
+                                    int j;
+                                    List<String> list;
+                                    int resndSeg;
+                                    String[] tcpStatValues;
+                                    int resndSeg2;
+                                    int i6;
+                                    boolean isNotifyByTcp2;
+                                    int rttDur;
+                                    int deltaTxCnt2;
+                                    int deltaReTxCnt2;
+                                    HwWifiConnectivityMonitor monitor;
+                                    int resndSeg3;
+                                    int rcvSeg;
+                                    UidTcpStatInfo lastUidTcpStatInfo;
+                                    Integer[] numArr3;
+                                    String[] strArr;
+                                    String[] tcpStatValues2 = ((String) autoConnectManager.get(i5)).split(hwUidTcpMonitor.TCP_SEPORATOR);
+                                    Integer[] selectedTcpStatsValues2 = new Integer[selectedColumnIdx.length];
+                                    int i7 = 0;
+                                    int j2 = 0;
+                                    while (true) {
+                                        selectedTcpStatsValues = selectedTcpStatsValues2;
+                                        j = j2;
+                                        if (j >= selectedTcpStatsValues.length) {
+                                            break;
+                                        }
+                                        try {
+                                            selectedTcpStatsValues[j] = Integer.valueOf(i7);
+                                            if (selectedColumnIdx[j].intValue() >= 0 && selectedColumnIdx[j].intValue() < tcpStatValues2.length) {
+                                                selectedTcpStatsValues[j] = Integer.valueOf(Integer.parseInt(tcpStatValues2[selectedColumnIdx[j].intValue()]));
                                             }
-                                            try {
-                                                selectedTcpStatsValues2[j2] = Integer.valueOf(i6);
-                                                if (selectedColumnIdx[j2].intValue() >= 0 && selectedColumnIdx[j2].intValue() < tcpStatValues.length) {
-                                                    selectedTcpStatsValues2[j2] = Integer.valueOf(Integer.parseInt(tcpStatValues[selectedColumnIdx[j2].intValue()]));
+                                            j2 = j + 1;
+                                            selectedTcpStatsValues2 = selectedTcpStatsValues;
+                                            i7 = 0;
+                                            list = tcpStatLines;
+                                        } catch (NumberFormatException e) {
+                                            hwUidTcpMonitor.LOGD("parseWlanUidTcpStatistics NumberFormatException rcv!");
+                                            return;
+                                        } catch (Throwable th) {
+                                            uid = th;
+                                            i = wlanUidIdx;
+                                            numArr2 = selectedColumnIdx;
+                                            obj2 = obj;
+                                        }
+                                    }
+                                    int uid2 = -1;
+                                    int sndSeg;
+                                    if (selectedTcpStatsValues.length > 0) {
+                                        sndSeg = 0;
+                                        if (selectedTcpStatsValues[0].intValue() > 0) {
+                                            i7 = selectedTcpStatsValues[0].intValue();
+                                            resndSeg = 0;
+                                            if (selectedTcpStatsValues.length <= 1) {
+                                                j = selectedTcpStatsValues[1].intValue();
+                                            } else {
+                                                j = sndSeg;
+                                            }
+                                            tcpStatValues = tcpStatValues2;
+                                            if (selectedTcpStatsValues.length <= 2) {
+                                                resndSeg2 = selectedTcpStatsValues[2].intValue();
+                                            } else {
+                                                resndSeg2 = resndSeg;
+                                            }
+                                            i6 = i5;
+                                            if (selectedTcpStatsValues.length <= 3) {
+                                                i5 = selectedTcpStatsValues[3].intValue();
+                                            } else {
+                                                i5 = 0;
+                                            }
+                                            isNotifyByTcp2 = isNotifyByTcp;
+                                            if (selectedTcpStatsValues.length <= 4) {
+                                                try {
+                                                    rttDur = selectedTcpStatsValues[4].intValue();
+                                                } catch (Throwable th2) {
+                                                    uid = th2;
+                                                    j = autoConnectManager2;
+                                                    i = wlanUidIdx;
+                                                    obj2 = obj;
+                                                    i2 = topUid2;
+                                                    hwUidTcpMonitor2 = hwUidTcpMonitor;
+                                                    i3 = i2;
+                                                    while (true) {
+                                                        try {
+                                                            break;
+                                                        } catch (Throwable th3) {
+                                                            uid = th3;
+                                                        }
+                                                    }
+                                                    throw uid;
                                                 }
-                                                j = j2 + 1;
-                                                selectedTcpStatsValues = selectedTcpStatsValues2;
-                                                i6 = 0;
-                                                list = tcpStatLines;
-                                            } catch (NumberFormatException e) {
-                                                hwUidTcpMonitor2.LOGD("parseWlanUidTcpStatistics NumberFormatException rcv!");
-                                                return;
-                                            } catch (Throwable th) {
-                                                uid = th;
-                                                i3 = wlanUidIdx;
-                                                numArr = selectedColumnIdx;
-                                                obj2 = obj;
                                             }
+                                            rttDur = 0;
+                                            i = wlanUidIdx;
+                                            if (selectedTcpStatsValues.length <= 5) {
+                                                try {
+                                                    wlanUidIdx = selectedTcpStatsValues[5].intValue();
+                                                } catch (Throwable th4) {
+                                                    uid = th4;
+                                                    hwAutoConnectManager = autoConnectManager2;
+                                                    obj2 = obj;
+                                                    i2 = topUid2;
+                                                    hwUidTcpMonitor2 = hwUidTcpMonitor;
+                                                    i3 = i2;
+                                                    while (true) {
+                                                        break;
+                                                    }
+                                                    throw uid;
+                                                }
+                                            }
+                                            wlanUidIdx = 0;
+                                            deltaTxCnt2 = deltaTxCnt + j;
+                                            j2 = deltaRxCnt + i5;
+                                            deltaReTxCnt2 = deltaReTxCnt + resndSeg2;
+                                            if (i7 != -1 && topUid2 == i7) {
+                                                monitor = HwWifiConnectivityMonitor.getInstance();
+                                                if (monitor != null) {
+                                                    deltaRxCnt = topUid2;
+                                                    resndSeg3 = resndSeg2;
+                                                    uid2 = i6;
+                                                    rcvSeg = i5;
+                                                    topUid = topUid2;
+                                                    topUid2 = rttDur;
+                                                    numArr2 = selectedColumnIdx;
+                                                    try {
+                                                        isNotifyByTcp = monitor.notifyTopUidTcpInfo(deltaRxCnt, j, i5, resndSeg2, rttDur, wlanUidIdx);
+                                                        lastUidTcpStatInfo = (UidTcpStatInfo) hwUidTcpMonitor.mUidTcpStatInfo.get(Integer.valueOf(i7));
+                                                        if (lastUidTcpStatInfo != null) {
+                                                            try {
+                                                                lastUidTcpStatInfo.mSendSegs += (long) j;
+                                                                lastUidTcpStatInfo.mResendSegs += (long) resndSeg3;
+                                                                lastUidTcpStatInfo.mRcvSegs += (long) rcvSeg;
+                                                                lastUidTcpStatInfo.mRttDuration += (long) topUid2;
+                                                                lastUidTcpStatInfo.mRttSegs += (long) wlanUidIdx;
+                                                                lastUidTcpStatInfo.mLastUpdateTime = System.currentTimeMillis();
+                                                                StringBuilder stringBuilder = new StringBuilder();
+                                                                stringBuilder.append("parseWlanUidTcpStatistics lastUidTcpStatInfo = ");
+                                                                stringBuilder.append(lastUidTcpStatInfo);
+                                                                hwUidTcpMonitor.LOGD(stringBuilder.toString());
+                                                                hwUidTcpMonitor2 = hwUidTcpMonitor;
+                                                                hwAutoConnectManager = autoConnectManager2;
+                                                                obj2 = obj;
+                                                            } catch (Throwable th5) {
+                                                                uid = th5;
+                                                                hwUidTcpMonitor2 = hwUidTcpMonitor;
+                                                                hwAutoConnectManager = autoConnectManager2;
+                                                                obj2 = obj;
+                                                                while (true) {
+                                                                    break;
+                                                                }
+                                                                throw uid;
+                                                            }
+                                                        }
+                                                        i4 = resndSeg3;
+                                                        if (hwUidTcpMonitor.mUidTcpStatInfo.size() == 20) {
+                                                            deltaRxCnt = hwUidTcpMonitor.getOldestUidUpdated(hwUidTcpMonitor.mUidTcpStatInfo);
+                                                            hwUidTcpMonitor.mUidTcpStatInfo.remove(Integer.valueOf(deltaRxCnt));
+                                                            StringBuilder stringBuilder2 = new StringBuilder();
+                                                            stringBuilder2.append("parseWlanUidTcpStatistics rm oldestUid = ");
+                                                            stringBuilder2.append(deltaRxCnt);
+                                                            stringBuilder2.append(", current size = ");
+                                                            stringBuilder2.append(hwUidTcpMonitor.mUidTcpStatInfo.size());
+                                                            hwUidTcpMonitor.LOGD(stringBuilder2.toString());
+                                                        }
+                                                        if (i7 != -1) {
+                                                            if (hwUidTcpMonitor.mUidTcpStatInfo.size() < 20) {
+                                                                UidTcpStatInfo newUidTcpStatInfo;
+                                                                obj2 = obj;
+                                                                HwAutoConnectManager autoConnectManager3 = autoConnectManager2;
+                                                                UidTcpStatInfo uidTcpStatInfo = uidTcpStatInfo;
+                                                                try {
+                                                                    uidTcpStatInfo = new UidTcpStatInfo(i7, (long) j, (long) i4, (long) rcvSeg, (long) topUid2, (long) wlanUidIdx);
+                                                                    newUidTcpStatInfo = r44;
+                                                                    if (autoConnectManager3 != null) {
+                                                                        hwAutoConnectManager = autoConnectManager3;
+                                                                        try {
+                                                                            newUidTcpStatInfo.mPacketName = hwAutoConnectManager.getCurrentPackageName();
+                                                                        } catch (Throwable th6) {
+                                                                            uid = th6;
+                                                                            i3 = topUid;
+                                                                        }
+                                                                    } else {
+                                                                        hwAutoConnectManager = autoConnectManager3;
+                                                                    }
+                                                                } catch (Throwable th7) {
+                                                                    uid = th7;
+                                                                    hwAutoConnectManager = autoConnectManager3;
+                                                                    i3 = topUid;
+                                                                    while (true) {
+                                                                        break;
+                                                                    }
+                                                                    throw uid;
+                                                                }
+                                                                try {
+                                                                    newUidTcpStatInfo.mLastUpdateTime = System.currentTimeMillis();
+                                                                    hwUidTcpMonitor2 = this;
+                                                                    try {
+                                                                        hwUidTcpMonitor2.mUidTcpStatInfo.put(Integer.valueOf(i7), newUidTcpStatInfo);
+                                                                        StringBuilder stringBuilder3 = new StringBuilder();
+                                                                        stringBuilder3.append("parseWlanUidTcpStatistics newUidTcpStatInfo = ");
+                                                                        stringBuilder3.append(newUidTcpStatInfo);
+                                                                        hwUidTcpMonitor2.LOGD(stringBuilder3.toString());
+                                                                    } catch (Throwable th8) {
+                                                                        uid = th8;
+                                                                    }
+                                                                } catch (Throwable th9) {
+                                                                    uid = th9;
+                                                                    while (true) {
+                                                                        break;
+                                                                    }
+                                                                    throw uid;
+                                                                }
+                                                            }
+                                                        }
+                                                        hwUidTcpMonitor2 = hwUidTcpMonitor;
+                                                        hwAutoConnectManager = autoConnectManager2;
+                                                        obj2 = obj;
+                                                        i4 = uid2 + 1;
+                                                        autoConnectManager2 = hwAutoConnectManager;
+                                                        hwUidTcpMonitor = hwUidTcpMonitor2;
+                                                        deltaTxCnt = deltaTxCnt2;
+                                                        deltaRxCnt = j2;
+                                                        deltaReTxCnt = deltaReTxCnt2;
+                                                        wlanUidIdx = i;
+                                                        selectedColumnIdx = numArr2;
+                                                        topUid2 = topUid;
+                                                        obj = obj2;
+                                                        list = tcpStatLines;
+                                                    } catch (Throwable th10) {
+                                                        uid = th10;
+                                                        topUid2 = hwUidTcpMonitor;
+                                                        obj2 = obj;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw uid;
+                                                    }
+                                                }
+                                            }
+                                            topUid = topUid2;
+                                            resndSeg3 = resndSeg2;
+                                            topUid2 = rttDur;
+                                            numArr3 = selectedTcpStatsValues;
+                                            numArr2 = selectedColumnIdx;
+                                            strArr = tcpStatValues;
+                                            uid2 = i6;
+                                            rcvSeg = i5;
+                                            isNotifyByTcp = isNotifyByTcp2;
+                                            lastUidTcpStatInfo = (UidTcpStatInfo) hwUidTcpMonitor.mUidTcpStatInfo.get(Integer.valueOf(i7));
+                                            if (lastUidTcpStatInfo != null) {
+                                            }
+                                            i4 = uid2 + 1;
+                                            autoConnectManager2 = hwAutoConnectManager;
+                                            hwUidTcpMonitor = hwUidTcpMonitor2;
+                                            deltaTxCnt = deltaTxCnt2;
+                                            deltaRxCnt = j2;
+                                            deltaReTxCnt = deltaReTxCnt2;
+                                            wlanUidIdx = i;
+                                            selectedColumnIdx = numArr2;
+                                            topUid2 = topUid;
+                                            obj = obj2;
+                                            list = tcpStatLines;
                                         }
                                     } else {
-                                        break;
+                                        sndSeg = 0;
+                                    }
+                                    i7 = uid2;
+                                    resndSeg = 0;
+                                    if (selectedTcpStatsValues.length <= 1) {
+                                    }
+                                    try {
+                                        tcpStatValues = tcpStatValues2;
+                                        if (selectedTcpStatsValues.length <= 2) {
+                                        }
+                                        i6 = i5;
+                                        if (selectedTcpStatsValues.length <= 3) {
+                                        }
+                                        isNotifyByTcp2 = isNotifyByTcp;
+                                        if (selectedTcpStatsValues.length <= 4) {
+                                        }
+                                    } catch (Throwable th11) {
+                                        uid = th11;
+                                        topUid = topUid2;
+                                        hwAutoConnectManager = autoConnectManager2;
+                                        i = wlanUidIdx;
+                                        numArr2 = selectedColumnIdx;
+                                        obj2 = obj;
+                                        topUid2 = hwUidTcpMonitor;
+                                        selectedColumnIdx = isNotifyByTcp;
+                                        i3 = topUid;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw uid;
+                                    }
+                                    try {
+                                        i = wlanUidIdx;
+                                        if (selectedTcpStatsValues.length <= 5) {
+                                        }
+                                        deltaTxCnt2 = deltaTxCnt + j;
+                                        j2 = deltaRxCnt + i5;
+                                        deltaReTxCnt2 = deltaReTxCnt + resndSeg2;
+                                    } catch (Throwable th12) {
+                                        uid = th12;
+                                        topUid = topUid2;
+                                        hwAutoConnectManager = autoConnectManager2;
+                                        i = wlanUidIdx;
+                                        numArr2 = selectedColumnIdx;
+                                        obj2 = obj;
+                                        topUid2 = hwUidTcpMonitor;
+                                        numArr = isNotifyByTcp2;
+                                        i3 = topUid;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw uid;
+                                    }
+                                    try {
+                                        monitor = HwWifiConnectivityMonitor.getInstance();
+                                        if (monitor != null) {
+                                        }
+                                        topUid = topUid2;
+                                        resndSeg3 = resndSeg2;
+                                        topUid2 = rttDur;
+                                        numArr3 = selectedTcpStatsValues;
+                                        numArr2 = selectedColumnIdx;
+                                        strArr = tcpStatValues;
+                                        uid2 = i6;
+                                        rcvSeg = i5;
+                                        isNotifyByTcp = isNotifyByTcp2;
+                                    } catch (Throwable th13) {
+                                        uid = th13;
+                                        numArr2 = selectedColumnIdx;
+                                        j = autoConnectManager2;
+                                        rttDur = isNotifyByTcp2;
+                                        obj2 = obj;
+                                        i2 = topUid2;
+                                        topUid2 = hwUidTcpMonitor;
+                                        i3 = i2;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw uid;
+                                    }
+                                    try {
+                                        lastUidTcpStatInfo = (UidTcpStatInfo) hwUidTcpMonitor.mUidTcpStatInfo.get(Integer.valueOf(i7));
+                                        if (lastUidTcpStatInfo != null) {
+                                        }
+                                        i4 = uid2 + 1;
+                                        autoConnectManager2 = hwAutoConnectManager;
+                                        hwUidTcpMonitor = hwUidTcpMonitor2;
+                                        deltaTxCnt = deltaTxCnt2;
+                                        deltaRxCnt = j2;
+                                        deltaReTxCnt = deltaReTxCnt2;
+                                        wlanUidIdx = i;
+                                        selectedColumnIdx = numArr2;
+                                        topUid2 = topUid;
+                                        obj = obj2;
+                                        list = tcpStatLines;
+                                    } catch (Throwable th14) {
+                                        uid = th14;
+                                        topUid2 = hwUidTcpMonitor;
+                                        hwAutoConnectManager = autoConnectManager2;
+                                        obj2 = obj;
+                                        i3 = topUid;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw uid;
                                     }
                                 }
-                                break;
                             }
                             break;
                         }
                         break;
-                        i4 = i + 1;
-                        autoConnectManager2 = hwAutoConnectManager;
-                        hwUidTcpMonitor2 = hwUidTcpMonitor;
-                        deltaTxCnt = deltaTxCnt;
-                        deltaRxCnt = j;
-                        deltaReTxCnt = deltaReTxCnt;
-                        wlanUidIdx = i3;
-                        selectedColumnIdx = numArr;
-                        topUid = topUid;
-                        obj = obj2;
-                        list = tcpStatLines;
-                    } catch (Throwable th2) {
-                        uid = th2;
+                    } catch (Throwable th15) {
+                        uid = th15;
                         hwAutoConnectManager = autoConnectManager2;
-                        i3 = wlanUidIdx;
-                        numArr = selectedColumnIdx;
+                        i = wlanUidIdx;
+                        numArr2 = selectedColumnIdx;
                         obj2 = obj;
                         selectedColumnIdx = isNotifyByTcp;
-                        i = topUid;
-                        topUid = hwUidTcpMonitor2;
-                        i2 = i;
+                        i2 = topUid2;
+                        topUid2 = hwUidTcpMonitor;
+                        i3 = i2;
+                        while (true) {
+                            break;
+                        }
+                        throw uid;
                     }
                 }
-                int topUid2 = topUid;
+                topUid = topUid2;
                 obj2 = obj;
-                hwUidTcpMonitor = hwUidTcpMonitor2;
+                hwUidTcpMonitor2 = hwUidTcpMonitor;
                 selectedColumnIdx = isNotifyByTcp;
                 try {
-                    hwUidTcpMonitor.parseWlanUidDnsStatistics(topUid2, selectedColumnIdx);
-                    return;
-                } catch (Throwable th3) {
-                    uid = th3;
-                    i2 = topUid2;
-                    Integer[] numArr2 = selectedColumnIdx;
+                    hwUidTcpMonitor2.parseWlanUidDnsStatistics(topUid, selectedColumnIdx);
+                } catch (Throwable th16) {
+                    uid = th16;
+                    i3 = topUid;
+                    numArr = selectedColumnIdx;
                     while (true) {
-                        try {
-                            break;
-                        } catch (Throwable th4) {
-                            uid = th4;
-                        }
+                        break;
                     }
                     throw uid;
                 }
             }
         }
-        return;
-        obj2 = obj;
-        i = topUid;
-        hwUidTcpMonitor = hwUidTcpMonitor2;
-        i2 = i;
-        while (true) {
-            break;
-        }
-        throw uid;
-        obj2 = obj;
-        while (true) {
-            break;
-        }
-        throw uid;
-        while (true) {
-            break;
-        }
-        throw uid;
-        i = topUid;
-        hwUidTcpMonitor = hwUidTcpMonitor2;
-        i2 = i;
-        while (true) {
-            break;
-        }
-        throw uid;
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:30:0x0066  */
@@ -774,7 +781,12 @@ public class HwUidTcpMonitor {
         synchronized (this.mTcpStatisticsLock) {
             UidTcpStatInfo matchedUid = null;
             if (appUid != -1) {
-                matchedUid = (UidTcpStatInfo) this.mUidTcpStatInfo.get(Integer.valueOf(appUid));
+                try {
+                    matchedUid = (UidTcpStatInfo) this.mUidTcpStatInfo.get(Integer.valueOf(appUid));
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             z = matchedUid != null;
         }
@@ -785,7 +797,12 @@ public class HwUidTcpMonitor {
         synchronized (this.mTcpStatisticsLock) {
             UidTcpStatInfo matchedUid = null;
             if (appUid != -1) {
-                matchedUid = (UidTcpStatInfo) this.mUidTcpStatInfo.get(Integer.valueOf(appUid));
+                try {
+                    matchedUid = (UidTcpStatInfo) this.mUidTcpStatInfo.get(Integer.valueOf(appUid));
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             if (matchedUid != null) {
                 long j = matchedUid.mRttDuration;
@@ -799,7 +816,12 @@ public class HwUidTcpMonitor {
         synchronized (this.mTcpStatisticsLock) {
             UidTcpStatInfo matchedUid = null;
             if (appUid != -1) {
-                matchedUid = (UidTcpStatInfo) this.mUidTcpStatInfo.get(Integer.valueOf(appUid));
+                try {
+                    matchedUid = (UidTcpStatInfo) this.mUidTcpStatInfo.get(Integer.valueOf(appUid));
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             if (matchedUid != null) {
                 long j = matchedUid.mRttSegs;

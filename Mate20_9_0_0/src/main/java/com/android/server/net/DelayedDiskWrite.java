@@ -73,7 +73,6 @@ public class DelayedDiskWrite {
                             this.mDiskWriteHandler = null;
                             this.mDiskWriteHandlerThread = null;
                         }
-                        return;
                     }
                 } catch (Throwable th) {
                     if (out != null) {

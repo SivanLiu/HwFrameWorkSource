@@ -34,9 +34,9 @@ public class GMSSStateAwareSigner implements StateAwareMessageSigner {
     }
 
     public AsymmetricKeyParameter getUpdatedPrivateKey() {
-        AsymmetricKeyParameter asymmetricKeyParameter = this.key;
+        GMSSPrivateKeyParameters gMSSPrivateKeyParameters = this.key;
         this.key = null;
-        return asymmetricKeyParameter;
+        return gMSSPrivateKeyParameters;
     }
 
     public void init(boolean z, CipherParameters cipherParameters) {

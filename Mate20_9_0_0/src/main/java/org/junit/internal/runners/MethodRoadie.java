@@ -127,11 +127,11 @@ public class MethodRoadie {
             for (Method before : this.testMethod.getBefores()) {
                 before.invoke(this.test, new Object[0]);
             }
-        } catch (AssumptionViolatedException e) {
+        } catch (InvocationTargetException e) {
             throw e.getTargetException();
         } catch (AssumptionViolatedException e2) {
             throw new FailedBefore();
-        } catch (AssumptionViolatedException e3) {
+        } catch (Throwable e3) {
             addFailure(e3);
             FailedBefore failedBefore = new FailedBefore();
         }

@@ -313,11 +313,11 @@ public final class Settings {
             }
         }
 
-        /* JADX WARNING: Missing block: B:26:0x00aa, code:
+        /* JADX WARNING: Missing block: B:26:0x00aa, code skipped:
             r0 = null;
             r6 = null;
      */
-        /* JADX WARNING: Missing block: B:28:?, code:
+        /* JADX WARNING: Missing block: B:28:?, code skipped:
             r6 = r3.startWrite();
             r8 = android.util.Xml.newSerializer();
             r8.setOutput(r6, java.nio.charset.StandardCharsets.UTF_8.name());
@@ -326,36 +326,36 @@ public final class Settings {
             r8.startTag(null, com.android.server.pm.Settings.TAG_RUNTIME_PERMISSIONS);
             r9 = (java.lang.String) r1.mFingerprints.get(r2);
      */
-        /* JADX WARNING: Missing block: B:29:0x00d9, code:
+        /* JADX WARNING: Missing block: B:29:0x00d9, code skipped:
             if (r9 == null) goto L_0x00ef;
      */
-        /* JADX WARNING: Missing block: B:31:?, code:
+        /* JADX WARNING: Missing block: B:31:?, code skipped:
             r8.attribute(null, com.android.server.pm.Settings.ATTR_FINGERPRINT, r9);
      */
-        /* JADX WARNING: Missing block: B:32:0x00e1, code:
+        /* JADX WARNING: Missing block: B:32:0x00e1, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:33:0x00e2, code:
+        /* JADX WARNING: Missing block: B:33:0x00e2, code skipped:
             r18 = r4;
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:34:0x00e8, code:
+        /* JADX WARNING: Missing block: B:34:0x00e8, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:35:0x00e9, code:
+        /* JADX WARNING: Missing block: B:35:0x00e9, code skipped:
             r18 = r4;
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:37:?, code:
+        /* JADX WARNING: Missing block: B:37:?, code skipped:
             r11 = r4.size();
      */
-        /* JADX WARNING: Missing block: B:38:0x00f3, code:
+        /* JADX WARNING: Missing block: B:38:0x00f3, code skipped:
             r12 = 0;
      */
-        /* JADX WARNING: Missing block: B:39:0x00f4, code:
+        /* JADX WARNING: Missing block: B:39:0x00f4, code skipped:
             if (r12 >= r11) goto L_0x011a;
      */
-        /* JADX WARNING: Missing block: B:41:?, code:
+        /* JADX WARNING: Missing block: B:41:?, code skipped:
             r13 = (java.lang.String) r4.keyAt(r12);
             r14 = (java.util.List) r4.valueAt(r12);
             r8.startTag(null, "pkg");
@@ -363,19 +363,19 @@ public final class Settings {
             writePermissions(r8, r14);
             r8.endTag(null, "pkg");
      */
-        /* JADX WARNING: Missing block: B:42:0x0117, code:
+        /* JADX WARNING: Missing block: B:42:0x0117, code skipped:
             r12 = r12 + 1;
      */
-        /* JADX WARNING: Missing block: B:44:?, code:
+        /* JADX WARNING: Missing block: B:44:?, code skipped:
             r12 = r5.size();
      */
-        /* JADX WARNING: Missing block: B:45:0x011e, code:
+        /* JADX WARNING: Missing block: B:45:0x011e, code skipped:
             r13 = 0;
      */
-        /* JADX WARNING: Missing block: B:46:0x011f, code:
+        /* JADX WARNING: Missing block: B:46:0x011f, code skipped:
             if (r13 >= r12) goto L_0x0145;
      */
-        /* JADX WARNING: Missing block: B:48:?, code:
+        /* JADX WARNING: Missing block: B:48:?, code skipped:
             r14 = (java.lang.String) r5.keyAt(r13);
             r15 = (java.util.List) r5.valueAt(r13);
             r8.startTag(null, com.android.server.pm.Settings.TAG_SHARED_USER);
@@ -383,94 +383,95 @@ public final class Settings {
             writePermissions(r8, r15);
             r8.endTag(null, com.android.server.pm.Settings.TAG_SHARED_USER);
      */
-        /* JADX WARNING: Missing block: B:49:0x0142, code:
+        /* JADX WARNING: Missing block: B:49:0x0142, code skipped:
             r13 = r13 + 1;
      */
-        /* JADX WARNING: Missing block: B:51:?, code:
+        /* JADX WARNING: Missing block: B:51:?, code skipped:
             r8.endTag(null, com.android.server.pm.Settings.TAG_RUNTIME_PERMISSIONS);
      */
-        /* JADX WARNING: Missing block: B:52:0x0155, code:
+        /* JADX WARNING: Missing block: B:52:0x0155, code skipped:
             if (com.android.server.pm.Settings.access$300(r1.this$0).get(r2) == null) goto L_0x023c;
      */
-        /* JADX WARNING: Missing block: B:53:0x0157, code:
+        /* JADX WARNING: Missing block: B:53:0x0157, code skipped:
             r7 = (android.util.ArrayMap) com.android.server.pm.Settings.access$300(r1.this$0).get(r2);
      */
-        /* JADX WARNING: Missing block: B:54:0x0163, code:
+        /* JADX WARNING: Missing block: B:54:0x0163, code skipped:
             if (r7 == null) goto L_0x023c;
      */
-        /* JADX WARNING: Missing block: B:55:0x0165, code:
+        /* JADX WARNING: Missing block: B:55:0x0165, code skipped:
             r13 = r7.size();
             r14 = 0;
      */
-        /* JADX WARNING: Missing block: B:56:0x016a, code:
+        /* JADX WARNING: Missing block: B:56:0x016a, code skipped:
             if (r14 >= r13) goto L_0x023c;
      */
-        /* JADX WARNING: Missing block: B:57:0x016c, code:
+        /* JADX WARNING: Missing block: B:57:0x016c, code skipped:
             r15 = (android.util.ArraySet) r7.valueAt(r14);
      */
-        /* JADX WARNING: Missing block: B:58:0x0173, code:
+        /* JADX WARNING: Missing block: B:58:0x0173, code skipped:
             if (r15 == null) goto L_0x0229;
      */
-        /* JADX WARNING: Missing block: B:60:0x0179, code:
+        /* JADX WARNING: Missing block: B:60:0x0179, code skipped:
             if (r15.size() <= 0) goto L_0x0229;
      */
-        /* JADX WARNING: Missing block: B:61:0x017b, code:
+        /* JADX WARNING: Missing block: B:61:0x017b, code skipped:
             r17 = (java.lang.String) r7.keyAt(r14);
             r8.startTag(r0, com.android.server.pm.Settings.TAG_RESTORED_RUNTIME_PERMISSIONS);
      */
-        /* JADX WARNING: Missing block: B:62:0x018c, code:
+        /* JADX WARNING: Missing block: B:62:0x018c, code skipped:
             r18 = r4;
             r4 = r17;
      */
-        /* JADX WARNING: Missing block: B:64:?, code:
+        /* JADX WARNING: Missing block: B:64:?, code skipped:
             r8.attribute(r0, "packageName", r4);
             r10 = r15.size();
+            r16 = 0;
      */
-        /* JADX WARNING: Missing block: B:65:0x0199, code:
-            r0 = 0;
+        /* JADX WARNING: Missing block: B:65:0x0199, code skipped:
+            r0 = r16;
      */
-        /* JADX WARNING: Missing block: B:66:0x019d, code:
+        /* JADX WARNING: Missing block: B:66:0x019d, code skipped:
             if (r0 >= r10) goto L_0x0210;
      */
-        /* JADX WARNING: Missing block: B:67:0x019f, code:
+        /* JADX WARNING: Missing block: B:67:0x019f, code skipped:
             r20 = (com.android.server.pm.Settings.RestoredPermissionGrant) r15.valueAt(r0);
             r21 = r4;
      */
-        /* JADX WARNING: Missing block: B:68:0x01ac, code:
+        /* JADX WARNING: Missing block: B:68:0x01ac, code skipped:
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:70:?, code:
+        /* JADX WARNING: Missing block: B:70:?, code skipped:
             r8.startTag(null, com.android.server.pm.Settings.TAG_PERMISSION_ENTRY);
             r23 = r7;
             r5 = r20;
             r24 = r10;
             r8.attribute(0, com.android.server.pm.Settings.ATTR_NAME, r5.permissionName);
      */
-        /* JADX WARNING: Missing block: B:71:0x01c3, code:
+        /* JADX WARNING: Missing block: B:71:0x01c3, code skipped:
             if (r5.granted == null) goto L_0x01ce;
      */
-        /* JADX WARNING: Missing block: B:72:0x01c5, code:
+        /* JADX WARNING: Missing block: B:72:0x01c5, code skipped:
             r8.attribute(null, com.android.server.pm.Settings.ATTR_GRANTED, "true");
      */
-        /* JADX WARNING: Missing block: B:74:0x01d2, code:
+        /* JADX WARNING: Missing block: B:74:0x01d2, code skipped:
             if ((r5.grantBits & 1) == null) goto L_0x01de;
      */
-        /* JADX WARNING: Missing block: B:75:0x01d4, code:
+        /* JADX WARNING: Missing block: B:75:0x01d4, code skipped:
             r8.attribute(null, com.android.server.pm.Settings.ATTR_USER_SET, "true");
      */
-        /* JADX WARNING: Missing block: B:77:0x01e2, code:
+        /* JADX WARNING: Missing block: B:77:0x01e2, code skipped:
             if ((r5.grantBits & 2) == null) goto L_0x01ed;
      */
-        /* JADX WARNING: Missing block: B:78:0x01e4, code:
+        /* JADX WARNING: Missing block: B:78:0x01e4, code skipped:
             r8.attribute(null, com.android.server.pm.Settings.ATTR_USER_FIXED, "true");
      */
-        /* JADX WARNING: Missing block: B:80:0x01f1, code:
+        /* JADX WARNING: Missing block: B:80:0x01f1, code skipped:
             if ((r5.grantBits & 8) == null) goto L_0x01fd;
      */
-        /* JADX WARNING: Missing block: B:81:0x01f3, code:
+        /* JADX WARNING: Missing block: B:81:0x01f3, code skipped:
             r8.attribute(null, com.android.server.pm.Settings.ATTR_REVOKE_ON_UPGRADE, "true");
      */
-        /* JADX WARNING: Missing block: B:82:0x01fd, code:
+        /* JADX WARNING: Missing block: B:82:0x01fd, code skipped:
             r8.endTag(null, com.android.server.pm.Settings.TAG_PERMISSION_ENTRY);
             r16 = r0 + 1;
             r4 = r21;
@@ -478,7 +479,7 @@ public final class Settings {
             r7 = r23;
             r10 = r24;
      */
-        /* JADX WARNING: Missing block: B:83:0x0210, code:
+        /* JADX WARNING: Missing block: B:83:0x0210, code skipped:
             r21 = r4;
             r22 = r5;
             r23 = r7;
@@ -486,41 +487,41 @@ public final class Settings {
             r4 = null;
             r8.endTag(null, com.android.server.pm.Settings.TAG_RESTORED_RUNTIME_PERMISSIONS);
      */
-        /* JADX WARNING: Missing block: B:84:0x0220, code:
+        /* JADX WARNING: Missing block: B:84:0x0220, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:85:0x0221, code:
+        /* JADX WARNING: Missing block: B:85:0x0221, code skipped:
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:86:0x0225, code:
+        /* JADX WARNING: Missing block: B:86:0x0225, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:87:0x0226, code:
+        /* JADX WARNING: Missing block: B:87:0x0226, code skipped:
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:88:0x0229, code:
+        /* JADX WARNING: Missing block: B:88:0x0229, code skipped:
             r18 = r4;
             r22 = r5;
             r23 = r7;
             r4 = r0;
      */
-        /* JADX WARNING: Missing block: B:89:0x0230, code:
+        /* JADX WARNING: Missing block: B:89:0x0230, code skipped:
             r14 = r14 + 1;
             r0 = r4;
             r4 = r18;
             r5 = r22;
             r7 = r23;
      */
-        /* JADX WARNING: Missing block: B:90:0x023c, code:
+        /* JADX WARNING: Missing block: B:90:0x023c, code skipped:
             r18 = r4;
             r22 = r5;
             r8.endDocument();
             r3.finishWrite(r6);
      */
-        /* JADX WARNING: Missing block: B:91:0x024c, code:
+        /* JADX WARNING: Missing block: B:91:0x024c, code skipped:
             if (android.os.Build.FINGERPRINT.equals(r9) == false) goto L_0x0295;
      */
-        /* JADX WARNING: Missing block: B:92:0x024e, code:
+        /* JADX WARNING: Missing block: B:92:0x024e, code skipped:
             r4 = new java.lang.StringBuilder();
             r4.append("writePermissionsSync -> user:");
             r4.append(r2);
@@ -531,40 +532,40 @@ public final class Settings {
             android.util.Slog.i("PackageManager", r4.toString());
             r1.mDefaultPermissionsGranted.put(r2, true);
      */
-        /* JADX WARNING: Missing block: B:93:0x027e, code:
+        /* JADX WARNING: Missing block: B:93:0x027e, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:94:0x0280, code:
+        /* JADX WARNING: Missing block: B:94:0x0280, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:95:0x0281, code:
+        /* JADX WARNING: Missing block: B:95:0x0281, code skipped:
             r18 = r4;
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:96:0x0286, code:
+        /* JADX WARNING: Missing block: B:96:0x0286, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:97:0x0287, code:
+        /* JADX WARNING: Missing block: B:97:0x0287, code skipped:
             r18 = r4;
             r22 = r5;
      */
-        /* JADX WARNING: Missing block: B:99:?, code:
+        /* JADX WARNING: Missing block: B:99:?, code skipped:
             android.util.Slog.wtf("PackageManager", "Failed to write settings, restoring backup", r0);
             r3.failWrite(r6);
      */
-        /* JADX WARNING: Missing block: B:100:0x0295, code:
+        /* JADX WARNING: Missing block: B:100:0x0295, code skipped:
             libcore.io.IoUtils.closeQuietly(r6);
      */
-        /* JADX WARNING: Missing block: B:101:0x0299, code:
+        /* JADX WARNING: Missing block: B:101:0x0299, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:102:0x029a, code:
+        /* JADX WARNING: Missing block: B:102:0x029a, code skipped:
             r0 = th;
      */
-        /* JADX WARNING: Missing block: B:103:0x029b, code:
+        /* JADX WARNING: Missing block: B:103:0x029b, code skipped:
             libcore.io.IoUtils.closeQuietly(r6);
      */
-        /* JADX WARNING: Missing block: B:104:0x029e, code:
+        /* JADX WARNING: Missing block: B:104:0x029e, code skipped:
             throw r0;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -657,19 +658,6 @@ public final class Settings {
             Settings.this.getUserRuntimePermissionsFile(userId).delete();
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:10:0x002a A:{Splitter: B:5:0x0018, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_1 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:10:0x002a, code:
-            r2 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:12:?, code:
-            r4 = new java.lang.StringBuilder();
-            r4.append("Failed parsing permissions file: ");
-            r4.append(r0);
-     */
-        /* JADX WARNING: Missing block: B:13:0x0041, code:
-            throw new java.lang.IllegalStateException(r4.toString(), r2);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void readStateForUserSyncLPr(int userId) {
             File permissionsFile = Settings.this.getUserRuntimePermissionsFile(userId);
             if (permissionsFile.exists()) {
@@ -680,7 +668,11 @@ public final class Settings {
                         parser.setInput(in, null);
                         parseRuntimePermissionsLPr(parser, userId);
                         IoUtils.closeQuietly(in);
-                    } catch (Exception e) {
+                    } catch (IOException | XmlPullParserException e) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Failed parsing permissions file: ");
+                        stringBuilder.append(permissionsFile);
+                        throw new IllegalStateException(stringBuilder.toString(), e);
                     } catch (Throwable th) {
                         IoUtils.closeQuietly(in);
                     }
@@ -716,7 +708,7 @@ public final class Settings {
         /* JADX WARNING: Removed duplicated region for block: B:38:0x00ae  */
         /* JADX WARNING: Removed duplicated region for block: B:34:0x0077  */
         /* JADX WARNING: Removed duplicated region for block: B:33:0x006b  */
-        /* JADX WARNING: Missing block: B:26:0x0056, code:
+        /* JADX WARNING: Missing block: B:26:0x0056, code skipped:
             if (r4.equals("pkg") != false) goto L_0x0065;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1273,10 +1265,10 @@ public final class Settings {
 
     /* JADX WARNING: Removed duplicated region for block: B:41:0x0131  */
     /* JADX WARNING: Removed duplicated region for block: B:40:0x012e  */
-    /* JADX WARNING: Missing block: B:13:0x00db, code:
+    /* JADX WARNING: Missing block: B:13:0x00db, code skipped:
             if (com.android.server.HwServiceFactory.isCustedCouldStopped(r43, false, false) != false) goto L_0x00e5;
      */
-    /* JADX WARNING: Missing block: B:31:0x0113, code:
+    /* JADX WARNING: Missing block: B:31:0x0113, code skipped:
             if (isAdbInstallDisallowed(r63, r8.id) != false) goto L_0x0118;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2221,7 +2213,7 @@ public final class Settings {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:69:0x016b  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x0155 A:{SYNTHETIC, Splitter: B:62:0x0155} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x0155 A:{SYNTHETIC, Splitter:B:62:0x0155} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void readPackageRestrictionsLPr(int userId) {
         File userPackagesStateFile;
@@ -2344,10 +2336,33 @@ public final class Settings {
                             e = e8;
                             str = str3;
                             file = userPackagesStateFile3;
+                            i = userId;
+                            i2 = 6;
+                            stringBuilder = settings.mReadMessages;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Error reading: ");
+                            stringBuilder2.append(e.toString());
+                            stringBuilder.append(stringBuilder2.toString());
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Error reading stopped packages: ");
+                            stringBuilder.append(e);
+                            PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
                         } catch (IOException e9) {
                             e2 = e9;
                             str = str3;
                             file = userPackagesStateFile3;
+                            i = userId;
+                            stringBuilder = settings.mReadMessages;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Error reading: ");
+                            stringBuilder2.append(e2.toString());
+                            stringBuilder.append(stringBuilder2.toString());
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Error reading settings: ");
+                            stringBuilder.append(e2);
+                            PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                         }
                     }
                     userPackagesStateFile3 = userPackagesStateFile2;
@@ -2441,291 +2456,231 @@ public final class Settings {
                         } catch (XmlPullParserException e14) {
                             e = e14;
                             file = userPackagesStateFile;
+                            i = userId;
+                            i2 = 6;
+                            stringBuilder = settings.mReadMessages;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Error reading: ");
+                            stringBuilder2.append(e.toString());
+                            stringBuilder.append(stringBuilder2.toString());
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Error reading stopped packages: ");
+                            stringBuilder.append(e);
+                            PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
                         } catch (IOException e15) {
                             e2 = e15;
                             file = userPackagesStateFile;
+                            i = userId;
+                            stringBuilder = settings.mReadMessages;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Error reading: ");
+                            stringBuilder2.append(e2.toString());
+                            stringBuilder.append(stringBuilder2.toString());
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Error reading settings: ");
+                            stringBuilder.append(e2);
+                            PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                         }
-                    } else {
-                        FileInputStream str5;
-                        int outerDepth = parser.getDepth();
-                        String str6 = null;
-                        int maxAppLinkGeneration = 0;
-                        pkg2 = null;
-                        while (true) {
-                            boolean next2 = parser.next();
-                            boolean type = next2;
-                            boolean z2;
-                            int i5;
-                            if (next2 != z) {
-                                boolean z3;
-                                String str7;
-                                Object obj2;
-                                int i6;
-                                if (type) {
-                                    if (parser.getDepth() <= outerDepth) {
-                                        z2 = type;
-                                        i4 = maxAppLinkGeneration;
-                                        i5 = outerDepth;
-                                        str5 = str;
-                                        file = userPackagesStateFile;
-                                        i = userId;
-                                    }
+                    }
+                    FileInputStream str5;
+                    int outerDepth = parser.getDepth();
+                    String str6 = null;
+                    int maxAppLinkGeneration = 0;
+                    pkg2 = null;
+                    while (true) {
+                        boolean next2 = parser.next();
+                        boolean type = next2;
+                        boolean z2;
+                        int i5;
+                        if (next2 != z) {
+                            boolean z3;
+                            String str7;
+                            Object obj2;
+                            int i6;
+                            if (type) {
+                                if (parser.getDepth() <= outerDepth) {
+                                    z2 = type;
+                                    i4 = maxAppLinkGeneration;
+                                    i5 = outerDepth;
+                                    str5 = str;
+                                    file = userPackagesStateFile;
+                                    i = userId;
                                 }
-                                int type2;
-                                if (type) {
-                                    type2 = type;
-                                    z3 = z;
-                                    str7 = str6;
-                                    obj2 = obj;
-                                    i6 = i4;
-                                    i5 = outerDepth;
-                                    str5 = str;
-                                    file = userPackagesStateFile;
-                                    i = userId;
-                                    i4 = maxAppLinkGeneration;
-                                } else if (type == i4) {
-                                    type2 = type;
-                                    z3 = z;
-                                    str7 = str6;
-                                    obj2 = obj;
-                                    i6 = i4;
-                                    i5 = outerDepth;
-                                    str5 = str;
-                                    file = userPackagesStateFile;
-                                    i = userId;
-                                    i4 = maxAppLinkGeneration;
-                                } else {
-                                    try {
-                                        String tagName = parser.getName();
-                                        String name;
-                                        int i7;
-                                        if (tagName.equals("pkg")) {
-                                            try {
-                                                name = parser.getAttributeValue(str6, ATTR_NAME);
-                                                PackageSetting ps = (PackageSetting) settings.mPackages.get(name);
-                                                if (ps == null) {
-                                                    StringBuilder stringBuilder4 = new StringBuilder();
-                                                    stringBuilder4.append("No package known for stopped package ");
-                                                    stringBuilder4.append(name);
-                                                    Slog.w("PackageManager", stringBuilder4.toString());
-                                                    XmlUtils.skipCurrentTag(parser);
-                                                    pkg2 = ps;
+                            }
+                            int type2;
+                            if (type) {
+                                type2 = type;
+                                z3 = z;
+                                str7 = str6;
+                                obj2 = obj;
+                                i6 = i4;
+                                i5 = outerDepth;
+                                str5 = str;
+                                file = userPackagesStateFile;
+                                i = userId;
+                                i4 = maxAppLinkGeneration;
+                            } else if (type == i4) {
+                                type2 = type;
+                                z3 = z;
+                                str7 = str6;
+                                obj2 = obj;
+                                i6 = i4;
+                                i5 = outerDepth;
+                                str5 = str;
+                                file = userPackagesStateFile;
+                                i = userId;
+                                i4 = maxAppLinkGeneration;
+                            } else {
+                                try {
+                                    String tagName = parser.getName();
+                                    String name;
+                                    int i7;
+                                    if (tagName.equals("pkg")) {
+                                        try {
+                                            name = parser.getAttributeValue(str6, ATTR_NAME);
+                                            PackageSetting ps = (PackageSetting) settings.mPackages.get(name);
+                                            if (ps == null) {
+                                                StringBuilder stringBuilder4 = new StringBuilder();
+                                                stringBuilder4.append("No package known for stopped package ");
+                                                stringBuilder4.append(name);
+                                                Slog.w("PackageManager", stringBuilder4.toString());
+                                                XmlUtils.skipCurrentTag(parser);
+                                                pkg2 = ps;
+                                            } else {
+                                                String suspendingPackage;
+                                                int packageDepth;
+                                                boolean z4;
+                                                int maxAppLinkGeneration2 = maxAppLinkGeneration;
+                                                String name2 = name;
+                                                long ceDataInode = XmlUtils.readLongAttribute(parser, ATTR_CE_DATA_INODE, 0);
+                                                String tagName2 = tagName;
+                                                tagName = XmlUtils.readBooleanAttribute(parser, ATTR_INSTALLED, z);
+                                                boolean stopped = XmlUtils.readBooleanAttribute(parser, ATTR_STOPPED, false);
+                                                i4 = maxAppLinkGeneration2;
+                                                boolean notLaunched = XmlUtils.readBooleanAttribute(parser, ATTR_NOT_LAUNCHED, false);
+                                                String blockedStr = parser.getAttributeValue(str6, ATTR_BLOCKED);
+                                                boolean hidden = blockedStr == null ? false : Boolean.parseBoolean(blockedStr);
+                                                String hiddenStr = parser.getAttributeValue(str6, ATTR_HIDDEN);
+                                                long ceDataInode2 = ceDataInode;
+                                                ceDataInode = str6;
+                                                boolean hidden2 = hiddenStr == null ? hidden : Boolean.parseBoolean(hiddenStr);
+                                                boolean suspended = XmlUtils.readBooleanAttribute(parser, ATTR_SUSPENDED, false);
+                                                name = parser.getAttributeValue(null, ATTR_SUSPENDING_PACKAGE);
+                                                i5 = outerDepth;
+                                                outerDepth = parser.getAttributeValue(0, ATTR_SUSPEND_DIALOG_MESSAGE);
+                                                if (suspended && name == null) {
+                                                    suspendingPackage = PackageManagerService.PLATFORM_PACKAGE_NAME;
                                                 } else {
-                                                    String suspendingPackage;
-                                                    int packageDepth;
-                                                    boolean z4;
-                                                    int maxAppLinkGeneration2 = maxAppLinkGeneration;
-                                                    String name2 = name;
-                                                    long ceDataInode = XmlUtils.readLongAttribute(parser, ATTR_CE_DATA_INODE, 0);
-                                                    String tagName2 = tagName;
-                                                    tagName = XmlUtils.readBooleanAttribute(parser, ATTR_INSTALLED, z);
-                                                    boolean stopped = XmlUtils.readBooleanAttribute(parser, ATTR_STOPPED, false);
-                                                    i4 = maxAppLinkGeneration2;
-                                                    boolean notLaunched = XmlUtils.readBooleanAttribute(parser, ATTR_NOT_LAUNCHED, false);
-                                                    String blockedStr = parser.getAttributeValue(str6, ATTR_BLOCKED);
-                                                    boolean hidden = blockedStr == null ? false : Boolean.parseBoolean(blockedStr);
-                                                    String hiddenStr = parser.getAttributeValue(str6, ATTR_HIDDEN);
-                                                    long ceDataInode2 = ceDataInode;
-                                                    ceDataInode = str6;
-                                                    boolean hidden2 = hiddenStr == null ? hidden : Boolean.parseBoolean(hiddenStr);
-                                                    boolean suspended = XmlUtils.readBooleanAttribute(parser, ATTR_SUSPENDED, false);
-                                                    name = parser.getAttributeValue(null, ATTR_SUSPENDING_PACKAGE);
-                                                    i5 = outerDepth;
-                                                    outerDepth = parser.getAttributeValue(0, ATTR_SUSPEND_DIALOG_MESSAGE);
-                                                    if (suspended && name == null) {
-                                                        suspendingPackage = PackageManagerService.PLATFORM_PACKAGE_NAME;
-                                                    } else {
-                                                        suspendingPackage = name;
-                                                    }
-                                                    boolean blockUninstall = XmlUtils.readBooleanAttribute(parser, ATTR_BLOCK_UNINSTALL, false);
-                                                    hidden = XmlUtils.readBooleanAttribute(parser, ATTR_INSTANT_APP, false);
-                                                    boolean virtualPreload = XmlUtils.readBooleanAttribute(parser, ATTR_VIRTUAL_PRELOAD, false);
-                                                    int i8 = 1;
-                                                    int enabled = XmlUtils.readIntAttribute(parser, ATTR_ENABLED, 0);
-                                                    String enabledCaller = parser.getAttributeValue(null, ATTR_ENABLED_CALLER);
-                                                    String harmfulAppWarning = parser.getAttributeValue(null, ATTR_HARMFUL_APP_WARNING);
-                                                    int verifState = XmlUtils.readIntAttribute(parser, ATTR_DOMAIN_VERIFICATON_STATE, 0);
-                                                    i2 = XmlUtils.readIntAttribute(parser, ATTR_APP_LINK_GENERATION, 0);
-                                                    maxAppLinkGeneration2 = i2 > i4 ? i2 : i4;
-                                                    int installReason = XmlUtils.readIntAttribute(parser, ATTR_INSTALL_REASON, 0);
-                                                    int packageDepth2 = parser.getDepth();
-                                                    ArraySet<String> enabledComponents = 0;
-                                                    ArraySet<String> disabledComponents = null;
-                                                    PersistableBundle suspendedAppExtras = null;
-                                                    PersistableBundle suspendedLauncherExtras = null;
-                                                    while (true) {
-                                                        i = packageDepth2;
-                                                        i4 = parser.next();
-                                                        int type3 = i4;
-                                                        String hiddenStr2;
-                                                        if (i4 != i8) {
-                                                            i4 = type3;
-                                                            if (i4 == 3) {
-                                                                if (parser.getDepth() <= i) {
-                                                                    packageDepth = i;
-                                                                    hiddenStr2 = hiddenStr;
-                                                                }
+                                                    suspendingPackage = name;
+                                                }
+                                                boolean blockUninstall = XmlUtils.readBooleanAttribute(parser, ATTR_BLOCK_UNINSTALL, false);
+                                                hidden = XmlUtils.readBooleanAttribute(parser, ATTR_INSTANT_APP, false);
+                                                boolean virtualPreload = XmlUtils.readBooleanAttribute(parser, ATTR_VIRTUAL_PRELOAD, false);
+                                                int i8 = 1;
+                                                int enabled = XmlUtils.readIntAttribute(parser, ATTR_ENABLED, 0);
+                                                String enabledCaller = parser.getAttributeValue(null, ATTR_ENABLED_CALLER);
+                                                String harmfulAppWarning = parser.getAttributeValue(null, ATTR_HARMFUL_APP_WARNING);
+                                                int verifState = XmlUtils.readIntAttribute(parser, ATTR_DOMAIN_VERIFICATON_STATE, 0);
+                                                i2 = XmlUtils.readIntAttribute(parser, ATTR_APP_LINK_GENERATION, 0);
+                                                maxAppLinkGeneration2 = i2 > i4 ? i2 : i4;
+                                                int installReason = XmlUtils.readIntAttribute(parser, ATTR_INSTALL_REASON, 0);
+                                                int packageDepth2 = parser.getDepth();
+                                                ArraySet<String> enabledComponents = 0;
+                                                ArraySet<String> disabledComponents = null;
+                                                PersistableBundle suspendedAppExtras = null;
+                                                PersistableBundle suspendedLauncherExtras = null;
+                                                while (true) {
+                                                    i = packageDepth2;
+                                                    i4 = parser.next();
+                                                    int type3 = i4;
+                                                    String hiddenStr2;
+                                                    if (i4 != i8) {
+                                                        i4 = type3;
+                                                        if (i4 == 3) {
+                                                            if (parser.getDepth() <= i) {
+                                                                packageDepth = i;
+                                                                hiddenStr2 = hiddenStr;
                                                             }
-                                                            if (i4 != 3) {
-                                                                if (i4 != 4) {
-                                                                    name = parser.getName();
-                                                                    Object obj3 = -1;
-                                                                    packageDepth = i;
-                                                                    i = name.hashCode();
-                                                                    hiddenStr2 = hiddenStr;
-                                                                    if (i != -2027581689) {
-                                                                        if (i != -1963032286) {
-                                                                            if (i != -1592287551) {
-                                                                                if (i == -1422791362 && name.equals(TAG_SUSPENDED_LAUNCHER_EXTRAS) != 0) {
+                                                        }
+                                                        if (i4 != 3) {
+                                                            if (i4 != 4) {
+                                                                name = parser.getName();
+                                                                Object obj3 = -1;
+                                                                packageDepth = i;
+                                                                i = name.hashCode();
+                                                                hiddenStr2 = hiddenStr;
+                                                                if (i != -2027581689) {
+                                                                    if (i != -1963032286) {
+                                                                        if (i != -1592287551) {
+                                                                            if (i == -1422791362) {
+                                                                                if (name.equals(TAG_SUSPENDED_LAUNCHER_EXTRAS) != 0) {
                                                                                     obj3 = 3;
                                                                                 }
-                                                                            } else if (name.equals(TAG_SUSPENDED_APP_EXTRAS) != 0) {
-                                                                                obj3 = 2;
                                                                             }
-                                                                        } else if (name.equals(TAG_ENABLED_COMPONENTS) != 0) {
-                                                                            obj3 = null;
+                                                                        } else if (name.equals(TAG_SUSPENDED_APP_EXTRAS) != 0) {
+                                                                            obj3 = 2;
                                                                         }
-                                                                    } else if (name.equals(TAG_DISABLED_COMPONENTS) != 0) {
-                                                                        obj3 = 1;
+                                                                    } else if (name.equals(TAG_ENABLED_COMPONENTS) != 0) {
+                                                                        obj3 = null;
                                                                     }
-                                                                    switch (obj3) {
-                                                                        case null:
-                                                                            enabledComponents = settings.readComponentsLPr(parser);
-                                                                            break;
-                                                                        case 1:
-                                                                            disabledComponents = settings.readComponentsLPr(parser);
-                                                                            break;
-                                                                        case 2:
-                                                                            suspendedAppExtras = PersistableBundle.restoreFromXml(parser);
-                                                                            break;
-                                                                        case 3:
-                                                                            suspendedLauncherExtras = PersistableBundle.restoreFromXml(parser);
-                                                                            break;
-                                                                        default:
-                                                                            i = TAG;
-                                                                            stringBuilder2 = new StringBuilder();
-                                                                            stringBuilder2.append("Unknown tag ");
-                                                                            stringBuilder2.append(parser.getName());
-                                                                            stringBuilder2.append(" under tag ");
-                                                                            stringBuilder2.append("pkg");
-                                                                            Slog.wtf(i, stringBuilder2.toString());
-                                                                            break;
-                                                                    }
+                                                                } else if (name.equals(TAG_DISABLED_COMPONENTS) != 0) {
+                                                                    obj3 = 1;
                                                                 }
-                                                                packageDepth = i;
-                                                                hiddenStr2 = hiddenStr;
-                                                            } else {
-                                                                packageDepth = i;
-                                                                hiddenStr2 = hiddenStr;
+                                                                switch (obj3) {
+                                                                    case null:
+                                                                        enabledComponents = settings.readComponentsLPr(parser);
+                                                                        break;
+                                                                    case 1:
+                                                                        disabledComponents = settings.readComponentsLPr(parser);
+                                                                        break;
+                                                                    case 2:
+                                                                        suspendedAppExtras = PersistableBundle.restoreFromXml(parser);
+                                                                        break;
+                                                                    case 3:
+                                                                        suspendedLauncherExtras = PersistableBundle.restoreFromXml(parser);
+                                                                        break;
+                                                                    default:
+                                                                        i = TAG;
+                                                                        stringBuilder2 = new StringBuilder();
+                                                                        stringBuilder2.append("Unknown tag ");
+                                                                        stringBuilder2.append(parser.getName());
+                                                                        stringBuilder2.append(" under tag ");
+                                                                        stringBuilder2.append("pkg");
+                                                                        Slog.wtf(i, stringBuilder2.toString());
+                                                                        break;
+                                                                }
                                                             }
-                                                            type2 = i4;
-                                                            packageDepth2 = packageDepth;
-                                                            hiddenStr = hiddenStr2;
-                                                            i8 = 1;
+                                                            packageDepth = i;
+                                                            hiddenStr2 = hiddenStr;
                                                         } else {
                                                             packageDepth = i;
                                                             hiddenStr2 = hiddenStr;
-                                                            i4 = type3;
                                                         }
-                                                    }
-                                                    if (blockUninstall) {
-                                                        i8 = userId;
-                                                        z4 = true;
-                                                        try {
-                                                            settings.setBlockUninstallLPw(i8, name2, true);
-                                                        } catch (XmlPullParserException e16) {
-                                                            e = e16;
-                                                            i = i8;
-                                                            file = userPackagesStateFile;
-                                                        } catch (IOException e17) {
-                                                            e2 = e17;
-                                                            i = i8;
-                                                            file = userPackagesStateFile;
-                                                        }
+                                                        type2 = i4;
+                                                        packageDepth2 = packageDepth;
+                                                        hiddenStr = hiddenStr2;
+                                                        i8 = 1;
                                                     } else {
-                                                        i8 = userId;
-                                                        z4 = true;
-                                                    }
-                                                    packageDepth2 = packageDepth;
-                                                    i = i8;
-                                                    obj2 = 2;
-                                                    type2 = i4;
-                                                    i6 = 4;
-                                                    str5 = str;
-                                                    file = userPackagesStateFile;
-                                                    i7 = i8;
-                                                    int i9 = i2;
-                                                    ceDataInode = ceDataInode2;
-                                                    str7 = null;
-                                                    z3 = z4;
-                                                    try {
-                                                        ps.setUserState(i, ceDataInode, enabled, tagName, stopped, notLaunched, hidden2, suspended, suspendingPackage, outerDepth, suspendedAppExtras, suspendedLauncherExtras, hidden, virtualPreload, enabledCaller, enabledComponents, disabledComponents, verifState, i2, installReason, harmfulAppWarning);
-                                                        i = i7;
-                                                        maxAppLinkGeneration = maxAppLinkGeneration2;
-                                                        settings = this;
-                                                        outerDepth = i5;
-                                                        obj = obj2;
-                                                        str6 = str7;
-                                                        z = z3;
-                                                        i4 = i6;
-                                                        userPackagesStateFile = file;
-                                                        str = str5;
-                                                    } catch (XmlPullParserException e18) {
-                                                        e = e18;
-                                                        i = i7;
-                                                        str = str5;
-                                                        settings = this;
-                                                    } catch (IOException e19) {
-                                                        e2 = e19;
-                                                        i = i7;
-                                                        str = str5;
-                                                        settings = this;
+                                                        packageDepth = i;
+                                                        hiddenStr2 = hiddenStr;
+                                                        i4 = type3;
                                                     }
                                                 }
-                                            } catch (XmlPullParserException e20) {
-                                                e = e20;
-                                                str5 = str;
-                                                file = userPackagesStateFile;
-                                                settings = this;
-                                            } catch (IOException e21) {
-                                                e2 = e21;
-                                                str5 = str;
-                                                file = userPackagesStateFile;
-                                                settings = this;
-                                            }
-                                        } else {
-                                            type2 = type;
-                                            z3 = z;
-                                            str7 = str6;
-                                            obj2 = obj;
-                                            i6 = i4;
-                                            i5 = outerDepth;
-                                            str5 = str;
-                                            file = userPackagesStateFile;
-                                            i7 = userId;
-                                            i4 = maxAppLinkGeneration;
-                                            try {
-                                                name = tagName;
-                                                if (name.equals("preferred-activities")) {
-                                                    i = i7;
-                                                    settings = this;
+                                                if (blockUninstall) {
+                                                    i8 = userId;
+                                                    z4 = true;
                                                     try {
-                                                        settings.readPreferredActivitiesLPw(parser, i);
-                                                    } catch (XmlPullParserException e22) {
-                                                        e = e22;
-                                                        i2 = 6;
-                                                        stringBuilder = settings.mReadMessages;
-                                                        stringBuilder2 = new StringBuilder();
-                                                        stringBuilder2.append("Error reading: ");
-                                                        stringBuilder2.append(e.toString());
-                                                        stringBuilder.append(stringBuilder2.toString());
-                                                        stringBuilder = new StringBuilder();
-                                                        stringBuilder.append("Error reading stopped packages: ");
-                                                        stringBuilder.append(e);
-                                                        PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
-                                                        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
-                                                    } catch (IOException e23) {
-                                                        e2 = e23;
+                                                        settings.setBlockUninstallLPw(i8, name2, true);
+                                                    } catch (XmlPullParserException e16) {
+                                                        e = e16;
+                                                        i = i8;
+                                                        file = userPackagesStateFile;
+                                                    } catch (IOException e17) {
+                                                        e2 = e17;
+                                                        i = i8;
+                                                        file = userPackagesStateFile;
                                                         stringBuilder = settings.mReadMessages;
                                                         stringBuilder2 = new StringBuilder();
                                                         stringBuilder2.append("Error reading: ");
@@ -2738,101 +2693,281 @@ public final class Settings {
                                                         Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                                                     }
                                                 }
-                                                i = i7;
-                                                settings = this;
-                                                if (name.equals(TAG_PERSISTENT_PREFERRED_ACTIVITIES)) {
-                                                    settings.readPersistentPreferredActivitiesLPw(parser, i);
-                                                } else if (name.equals(TAG_CROSS_PROFILE_INTENT_FILTERS)) {
-                                                    settings.readCrossProfileIntentFiltersLPw(parser, i);
-                                                } else if (name.equals(TAG_DEFAULT_APPS)) {
-                                                    settings.readDefaultAppsLPw(parser, i);
-                                                } else if (name.equals(TAG_BLOCK_UNINSTALL_PACKAGES)) {
-                                                    settings.readBlockUninstallPackagesLPw(parser, i);
-                                                } else {
-                                                    StringBuilder stringBuilder5 = new StringBuilder();
-                                                    stringBuilder5.append("Unknown element under <stopped-packages>: ");
-                                                    stringBuilder5.append(parser.getName());
-                                                    Slog.w("PackageManager", stringBuilder5.toString());
-                                                    XmlUtils.skipCurrentTag(parser);
+                                                i8 = userId;
+                                                z4 = true;
+                                                packageDepth2 = packageDepth;
+                                                i = i8;
+                                                obj2 = 2;
+                                                type2 = i4;
+                                                i6 = 4;
+                                                str5 = str;
+                                                file = userPackagesStateFile;
+                                                i7 = i8;
+                                                int i9 = i2;
+                                                ceDataInode = ceDataInode2;
+                                                str7 = null;
+                                                z3 = z4;
+                                                try {
+                                                    ps.setUserState(i, ceDataInode, enabled, tagName, stopped, notLaunched, hidden2, suspended, suspendingPackage, outerDepth, suspendedAppExtras, suspendedLauncherExtras, hidden, virtualPreload, enabledCaller, enabledComponents, disabledComponents, verifState, i2, installReason, harmfulAppWarning);
+                                                    i = i7;
+                                                    maxAppLinkGeneration = maxAppLinkGeneration2;
+                                                    settings = this;
+                                                    outerDepth = i5;
+                                                    obj = obj2;
+                                                    str6 = str7;
+                                                    z = z3;
+                                                    i4 = i6;
+                                                    userPackagesStateFile = file;
+                                                    str = str5;
+                                                } catch (XmlPullParserException e18) {
+                                                    e = e18;
+                                                    i = i7;
+                                                    str = str5;
+                                                    settings = this;
+                                                    i2 = 6;
+                                                    stringBuilder = settings.mReadMessages;
+                                                    stringBuilder2 = new StringBuilder();
+                                                    stringBuilder2.append("Error reading: ");
+                                                    stringBuilder2.append(e.toString());
+                                                    stringBuilder.append(stringBuilder2.toString());
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("Error reading stopped packages: ");
+                                                    stringBuilder.append(e);
+                                                    PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                                                    Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
+                                                } catch (IOException e19) {
+                                                    e2 = e19;
+                                                    i = i7;
+                                                    str = str5;
+                                                    settings = this;
+                                                    stringBuilder = settings.mReadMessages;
+                                                    stringBuilder2 = new StringBuilder();
+                                                    stringBuilder2.append("Error reading: ");
+                                                    stringBuilder2.append(e2.toString());
+                                                    stringBuilder.append(stringBuilder2.toString());
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("Error reading settings: ");
+                                                    stringBuilder.append(e2);
+                                                    PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                                                    Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                                                 }
-                                                maxAppLinkGeneration = i4;
-                                                outerDepth = i5;
-                                                obj = obj2;
-                                                str6 = str7;
-                                                z = z3;
-                                                i4 = i6;
-                                                userPackagesStateFile = file;
-                                                str = str5;
-                                            } catch (XmlPullParserException e24) {
-                                                e = e24;
-                                                i = i7;
-                                                settings = this;
-                                            } catch (IOException e25) {
-                                                e2 = e25;
-                                                i = i7;
-                                                settings = this;
+                                            }
+                                        } catch (XmlPullParserException e20) {
+                                            e = e20;
+                                            str5 = str;
+                                            file = userPackagesStateFile;
+                                            settings = this;
+                                            i = userId;
+                                            i2 = 6;
+                                            stringBuilder = settings.mReadMessages;
+                                            stringBuilder2 = new StringBuilder();
+                                            stringBuilder2.append("Error reading: ");
+                                            stringBuilder2.append(e.toString());
+                                            stringBuilder.append(stringBuilder2.toString());
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Error reading stopped packages: ");
+                                            stringBuilder.append(e);
+                                            PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
+                                        } catch (IOException e21) {
+                                            e2 = e21;
+                                            str5 = str;
+                                            file = userPackagesStateFile;
+                                            settings = this;
+                                            i = userId;
+                                            stringBuilder = settings.mReadMessages;
+                                            stringBuilder2 = new StringBuilder();
+                                            stringBuilder2.append("Error reading: ");
+                                            stringBuilder2.append(e2.toString());
+                                            stringBuilder.append(stringBuilder2.toString());
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Error reading settings: ");
+                                            stringBuilder.append(e2);
+                                            PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
+                                        }
+                                    }
+                                    type2 = type;
+                                    z3 = z;
+                                    str7 = str6;
+                                    obj2 = obj;
+                                    i6 = i4;
+                                    i5 = outerDepth;
+                                    str5 = str;
+                                    file = userPackagesStateFile;
+                                    i7 = userId;
+                                    i4 = maxAppLinkGeneration;
+                                    try {
+                                        name = tagName;
+                                        if (name.equals("preferred-activities")) {
+                                            i = i7;
+                                            settings = this;
+                                            try {
+                                                settings.readPreferredActivitiesLPw(parser, i);
+                                            } catch (XmlPullParserException e22) {
+                                                e = e22;
+                                                i2 = 6;
+                                                stringBuilder = settings.mReadMessages;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("Error reading: ");
+                                                stringBuilder2.append(e.toString());
+                                                stringBuilder.append(stringBuilder2.toString());
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Error reading stopped packages: ");
+                                                stringBuilder.append(e);
+                                                PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                                                Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
+                                            } catch (IOException e23) {
+                                                e2 = e23;
+                                                stringBuilder = settings.mReadMessages;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("Error reading: ");
+                                                stringBuilder2.append(e2.toString());
+                                                stringBuilder.append(stringBuilder2.toString());
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Error reading settings: ");
+                                                stringBuilder.append(e2);
+                                                PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                                                Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                                             }
                                         }
-                                    } catch (XmlPullParserException e26) {
-                                        e = e26;
-                                        str5 = str;
-                                        file = userPackagesStateFile;
-                                    } catch (IOException e27) {
-                                        e2 = e27;
-                                        str5 = str;
-                                        file = userPackagesStateFile;
+                                        i = i7;
+                                        settings = this;
+                                        if (name.equals(TAG_PERSISTENT_PREFERRED_ACTIVITIES)) {
+                                            settings.readPersistentPreferredActivitiesLPw(parser, i);
+                                        } else if (name.equals(TAG_CROSS_PROFILE_INTENT_FILTERS)) {
+                                            settings.readCrossProfileIntentFiltersLPw(parser, i);
+                                        } else if (name.equals(TAG_DEFAULT_APPS)) {
+                                            settings.readDefaultAppsLPw(parser, i);
+                                        } else if (name.equals(TAG_BLOCK_UNINSTALL_PACKAGES)) {
+                                            settings.readBlockUninstallPackagesLPw(parser, i);
+                                        } else {
+                                            StringBuilder stringBuilder5 = new StringBuilder();
+                                            stringBuilder5.append("Unknown element under <stopped-packages>: ");
+                                            stringBuilder5.append(parser.getName());
+                                            Slog.w("PackageManager", stringBuilder5.toString());
+                                            XmlUtils.skipCurrentTag(parser);
+                                        }
+                                        maxAppLinkGeneration = i4;
+                                        outerDepth = i5;
+                                        obj = obj2;
+                                        str6 = str7;
+                                        z = z3;
+                                        i4 = i6;
+                                        userPackagesStateFile = file;
+                                        str = str5;
+                                    } catch (XmlPullParserException e24) {
+                                        e = e24;
+                                        i = i7;
+                                        settings = this;
+                                        i2 = 6;
+                                        stringBuilder = settings.mReadMessages;
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Error reading: ");
+                                        stringBuilder2.append(e.toString());
+                                        stringBuilder.append(stringBuilder2.toString());
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Error reading stopped packages: ");
+                                        stringBuilder.append(e);
+                                        PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                                        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
+                                    } catch (IOException e25) {
+                                        e2 = e25;
+                                        i = i7;
+                                        settings = this;
+                                        stringBuilder = settings.mReadMessages;
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Error reading: ");
+                                        stringBuilder2.append(e2.toString());
+                                        stringBuilder.append(stringBuilder2.toString());
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Error reading settings: ");
+                                        stringBuilder.append(e2);
+                                        PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                                        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                                     }
+                                } catch (XmlPullParserException e26) {
+                                    e = e26;
+                                    str5 = str;
+                                    file = userPackagesStateFile;
+                                    i = userId;
+                                    i2 = 6;
+                                    stringBuilder = settings.mReadMessages;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("Error reading: ");
+                                    stringBuilder2.append(e.toString());
+                                    stringBuilder.append(stringBuilder2.toString());
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("Error reading stopped packages: ");
+                                    stringBuilder.append(e);
+                                    PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                                    Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
+                                } catch (IOException e27) {
+                                    e2 = e27;
+                                    str5 = str;
+                                    file = userPackagesStateFile;
+                                    i = userId;
+                                    stringBuilder = settings.mReadMessages;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("Error reading: ");
+                                    stringBuilder2.append(e2.toString());
+                                    stringBuilder.append(stringBuilder2.toString());
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("Error reading settings: ");
+                                    stringBuilder.append(e2);
+                                    PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                                    Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                                 }
-                                maxAppLinkGeneration = i4;
-                                outerDepth = i5;
-                                obj = obj2;
-                                str6 = str7;
-                                z = z3;
-                                i4 = i6;
-                                userPackagesStateFile = file;
-                                str = str5;
-                            } else {
-                                z2 = type;
-                                i4 = maxAppLinkGeneration;
-                                i5 = outerDepth;
-                                str5 = str;
-                                file = userPackagesStateFile;
-                                i = userId;
                             }
+                            maxAppLinkGeneration = i4;
+                            outerDepth = i5;
+                            obj = obj2;
+                            str6 = str7;
+                            z = z3;
+                            i4 = i6;
+                            userPackagesStateFile = file;
+                            str = str5;
+                        } else {
+                            z2 = type;
+                            i4 = maxAppLinkGeneration;
+                            i5 = outerDepth;
+                            str5 = str;
+                            file = userPackagesStateFile;
+                            i = userId;
                         }
-                        str4 = str5;
-                        try {
-                            str4.close();
-                            settings.mNextAppLinkGeneration.put(i, i4 + 1);
-                            str = str4;
-                        } catch (XmlPullParserException e28) {
-                            e = e28;
-                            str = str4;
-                            i2 = 6;
-                            stringBuilder = settings.mReadMessages;
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("Error reading: ");
-                            stringBuilder2.append(e.toString());
-                            stringBuilder.append(stringBuilder2.toString());
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append("Error reading stopped packages: ");
-                            stringBuilder.append(e);
-                            PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
-                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
-                        } catch (IOException e29) {
-                            e2 = e29;
-                            str = str4;
-                            stringBuilder = settings.mReadMessages;
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("Error reading: ");
-                            stringBuilder2.append(e2.toString());
-                            stringBuilder.append(stringBuilder2.toString());
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append("Error reading settings: ");
-                            stringBuilder.append(e2);
-                            PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
-                            Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
-                        }
+                    }
+                    str4 = str5;
+                    try {
+                        str4.close();
+                        settings.mNextAppLinkGeneration.put(i, i4 + 1);
+                        str = str4;
+                    } catch (XmlPullParserException e28) {
+                        e = e28;
+                        str = str4;
+                        i2 = 6;
+                        stringBuilder = settings.mReadMessages;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Error reading: ");
+                        stringBuilder2.append(e.toString());
+                        stringBuilder.append(stringBuilder2.toString());
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Error reading stopped packages: ");
+                        stringBuilder.append(e);
+                        PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
+                        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
+                    } catch (IOException e29) {
+                        e2 = e29;
+                        str = str4;
+                        stringBuilder = settings.mReadMessages;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Error reading: ");
+                        stringBuilder2.append(e2.toString());
+                        stringBuilder.append(stringBuilder2.toString());
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Error reading settings: ");
+                        stringBuilder.append(e2);
+                        PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
+                        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
                     }
                 }
             }
@@ -2870,29 +3005,6 @@ public final class Settings {
             PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
             Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
         }
-        i = userId;
-        i2 = 6;
-        stringBuilder = settings.mReadMessages;
-        stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("Error reading: ");
-        stringBuilder2.append(e.toString());
-        stringBuilder.append(stringBuilder2.toString());
-        stringBuilder = new StringBuilder();
-        stringBuilder.append("Error reading stopped packages: ");
-        stringBuilder.append(e);
-        PackageManagerService.reportSettingsProblem(i2, stringBuilder.toString());
-        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e);
-        i = userId;
-        stringBuilder = settings.mReadMessages;
-        stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("Error reading: ");
-        stringBuilder2.append(e2.toString());
-        stringBuilder.append(stringBuilder2.toString());
-        stringBuilder = new StringBuilder();
-        stringBuilder.append("Error reading settings: ");
-        stringBuilder.append(e2);
-        PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
-        Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
     }
 
     void setBlockUninstallLPw(int userId, String packageName, boolean blockUninstall) {
@@ -3394,8 +3506,8 @@ public final class Settings {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x00ae A:{Catch:{ XmlPullParserException -> 0x0087, IOException -> 0x0084 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x00a0 A:{Catch:{ XmlPullParserException -> 0x0087, IOException -> 0x0084 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x00ae A:{Catch:{ XmlPullParserException -> 0x0087, IOException -> 0x0084 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x00a0 A:{Catch:{ XmlPullParserException -> 0x0087, IOException -> 0x0084 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void readStoppedLPw() {
         StringBuilder stringBuilder;
@@ -3441,7 +3553,7 @@ public final class Settings {
                 stringBuilder.append(e2);
                 PackageManagerService.reportSettingsProblem(6, stringBuilder.toString());
                 Slog.wtf("PackageManager", "Error reading package manager stopped packages", e2);
-            } catch (XmlPullParserException e22) {
+            } catch (IOException e22) {
                 stringBuilder = this.mReadMessages;
                 stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("Error reading: ");
@@ -3741,35 +3853,39 @@ public final class Settings {
             FileUtils.setPermissions(fstr.getFD(), 416, 1000, 1032);
             StringBuilder sb = new StringBuilder();
             for (PackageSetting pkg : this.mPackages.values()) {
-                if (pkg.pkg != null && pkg.pkg.applicationInfo != null && pkg.pkg.applicationInfo.dataDir != null) {
-                    ApplicationInfo ai = pkg.pkg.applicationInfo;
-                    String dataPath = ai.dataDir;
-                    boolean isDebug = (ai.flags & 2) != 0;
-                    int[] gids = pkg.getPermissionsState().computeGids(userIds2);
-                    if (dataPath.indexOf(32) >= 0) {
-                    } else {
-                        sb.setLength(0);
-                        sb.append(ai.packageName);
-                        sb.append(" ");
-                        sb.append(ai.uid);
-                        sb.append(isDebug ? " 1 " : " 0 ");
-                        sb.append(dataPath);
-                        sb.append(" ");
-                        sb.append(ai.seInfo);
-                        sb.append(" ");
-                        if (gids == null || gids.length <= 0) {
-                            sb.append("none");
+                if (!(pkg.pkg == null || pkg.pkg.applicationInfo == null)) {
+                    if (pkg.pkg.applicationInfo.dataDir != null) {
+                        ApplicationInfo ai = pkg.pkg.applicationInfo;
+                        String dataPath = ai.dataDir;
+                        boolean isDebug = (ai.flags & 2) != 0;
+                        int[] gids = pkg.getPermissionsState().computeGids(userIds2);
+                        if (dataPath.indexOf(32) >= 0) {
                         } else {
-                            sb.append(gids[0]);
-                            for (i = 1; i < gids.length; i++) {
-                                sb.append(",");
-                                sb.append(gids[i]);
+                            sb.setLength(0);
+                            sb.append(ai.packageName);
+                            sb.append(" ");
+                            sb.append(ai.uid);
+                            sb.append(isDebug ? " 1 " : " 0 ");
+                            sb.append(dataPath);
+                            sb.append(" ");
+                            sb.append(ai.seInfo);
+                            sb.append(" ");
+                            if (gids == null || gids.length <= 0) {
+                                sb.append("none");
+                            } else {
+                                sb.append(gids[0]);
+                                for (i = 1; i < gids.length; i++) {
+                                    sb.append(",");
+                                    sb.append(gids[i]);
+                                }
                             }
+                            sb.append("\n");
+                            writer.append(sb);
+                            i = creatingUserId;
                         }
-                        sb.append("\n");
-                        writer.append(sb);
                     }
-                } else if (!PackageManagerService.PLATFORM_PACKAGE_NAME.equals(pkg.name)) {
+                }
+                if (!PackageManagerService.PLATFORM_PACKAGE_NAME.equals(pkg.name)) {
                     String str = TAG;
                     StringBuilder stringBuilder2 = new StringBuilder();
                     stringBuilder2.append("Skipping ");
@@ -3952,8 +4068,8 @@ public final class Settings {
         SystemProperties.set(KEY_PACKAGE_SETTINS_ERROR, "0");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x00d6 A:{Catch:{ XmlPullParserException -> 0x00a3, IOException -> 0x00a0, Exception -> 0x009d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x00c1 A:{Catch:{ XmlPullParserException -> 0x00a3, IOException -> 0x00a0, Exception -> 0x009d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x00d6 A:{Catch:{ XmlPullParserException -> 0x00a3, IOException -> 0x00a0, Exception -> 0x009d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:27:0x00c1 A:{Catch:{ XmlPullParserException -> 0x00a3, IOException -> 0x00a0, Exception -> 0x009d }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     boolean readLPw(List<UserInfo> users) {
         StringBuilder stringBuilder;
@@ -4034,7 +4150,7 @@ public final class Settings {
                 stringBuilder2.append(e4);
                 PackageManagerService.reportSettingsProblem(6, stringBuilder2.toString());
                 Slog.wtf("PackageManager", "Error reading package manager settings", e4);
-            } catch (IOException e42) {
+            } catch (Exception e42) {
                 this.mIsPackageSettingsError = true;
                 stringBuilder2 = this.mReadMessages;
                 stringBuilder3 = new StringBuilder();
@@ -4068,98 +4184,100 @@ public final class Settings {
                     if (e42 == 1 || (type == 3 && parser.getDepth() <= outerDepth)) {
                         str.close();
                     } else {
-                        if (!(type == 3 || type == i)) {
-                            IOException tagName = parser.getName();
-                            if (tagName.equals("package") != null) {
-                                readPackageLPw(parser);
-                            } else if (tagName.equals("permissions") != null) {
-                                this.mPermissions.readPermissions(parser);
-                            } else if (tagName.equals("permission-trees") != null) {
-                                this.mPermissions.readPermissionTrees(parser);
-                            } else if (tagName.equals(TAG_SHARED_USER) != null) {
-                                readSharedUserLPw(parser);
-                            } else if (tagName.equals("preferred-packages") == null) {
-                                VersionInfo external;
-                                if (tagName.equals("preferred-activities") != null) {
-                                    readPreferredActivitiesLPw(parser, 0);
-                                } else if (tagName.equals(TAG_PERSISTENT_PREFERRED_ACTIVITIES) != null) {
-                                    readPersistentPreferredActivitiesLPw(parser, 0);
-                                } else if (tagName.equals(TAG_CROSS_PROFILE_INTENT_FILTERS) != null) {
-                                    readCrossProfileIntentFiltersLPw(parser, 0);
-                                } else if (tagName.equals(TAG_DEFAULT_BROWSER) != null) {
-                                    readDefaultAppsLPw(parser, 0);
-                                } else if (tagName.equals("updated-package") != null) {
-                                    readDisabledSysPackageLPw(parser);
-                                } else if (tagName.equals("cleaning-package") != null) {
-                                    IOException name = parser.getAttributeValue(null, ATTR_NAME);
-                                    IOException userStr = parser.getAttributeValue(null, ATTR_USER);
-                                    IOException codeStr = parser.getAttributeValue(null, ATTR_CODE);
-                                    if (name != null) {
-                                        int userId = 0;
-                                        boolean andCode = true;
-                                        if (userStr != null) {
-                                            try {
-                                                userId = Integer.parseInt(userStr);
-                                            } catch (NumberFormatException e5) {
+                        if (type != 3) {
+                            if (type != i) {
+                                IOException tagName = parser.getName();
+                                if (tagName.equals("package") != null) {
+                                    readPackageLPw(parser);
+                                } else if (tagName.equals("permissions") != null) {
+                                    this.mPermissions.readPermissions(parser);
+                                } else if (tagName.equals("permission-trees") != null) {
+                                    this.mPermissions.readPermissionTrees(parser);
+                                } else if (tagName.equals(TAG_SHARED_USER) != null) {
+                                    readSharedUserLPw(parser);
+                                } else if (tagName.equals("preferred-packages") == null) {
+                                    VersionInfo external;
+                                    if (tagName.equals("preferred-activities") != null) {
+                                        readPreferredActivitiesLPw(parser, 0);
+                                    } else if (tagName.equals(TAG_PERSISTENT_PREFERRED_ACTIVITIES) != null) {
+                                        readPersistentPreferredActivitiesLPw(parser, 0);
+                                    } else if (tagName.equals(TAG_CROSS_PROFILE_INTENT_FILTERS) != null) {
+                                        readCrossProfileIntentFiltersLPw(parser, 0);
+                                    } else if (tagName.equals(TAG_DEFAULT_BROWSER) != null) {
+                                        readDefaultAppsLPw(parser, 0);
+                                    } else if (tagName.equals("updated-package") != null) {
+                                        readDisabledSysPackageLPw(parser);
+                                    } else if (tagName.equals("cleaning-package") != null) {
+                                        IOException name = parser.getAttributeValue(null, ATTR_NAME);
+                                        IOException userStr = parser.getAttributeValue(null, ATTR_USER);
+                                        IOException codeStr = parser.getAttributeValue(null, ATTR_CODE);
+                                        if (name != null) {
+                                            int userId = 0;
+                                            boolean andCode = true;
+                                            if (userStr != null) {
+                                                try {
+                                                    userId = Integer.parseInt(userStr);
+                                                } catch (NumberFormatException e5) {
+                                                }
                                             }
+                                            if (codeStr != null) {
+                                                e42 = Boolean.parseBoolean(codeStr);
+                                                andCode = e42;
+                                            } else {
+                                                e42 = andCode;
+                                            }
+                                            addPackageToCleanLPw(new PackageCleanItem(userId, name, e42));
                                         }
-                                        if (codeStr != null) {
-                                            e42 = Boolean.parseBoolean(codeStr);
-                                            andCode = e42;
-                                        } else {
-                                            e42 = andCode;
+                                    } else if (tagName.equals("renamed-package") != null) {
+                                        e42 = parser.getAttributeValue(null, "new");
+                                        String oname = parser.getAttributeValue(null, "old");
+                                        if (!(e42 == null || oname == null)) {
+                                            this.mRenamedPackages.put(e42, oname);
                                         }
-                                        addPackageToCleanLPw(new PackageCleanItem(userId, name, e42));
+                                    } else if (tagName.equals("restored-ivi") != null) {
+                                        readRestoredIntentFilterVerifications(parser);
+                                    } else if (tagName.equals("last-platform-version") != null) {
+                                        e42 = findOrCreateVersion(StorageManager.UUID_PRIVATE_INTERNAL);
+                                        external = findOrCreateVersion("primary_physical");
+                                        e42.sdkVersion = XmlUtils.readIntAttribute(parser, "internal", 0);
+                                        external.sdkVersion = XmlUtils.readIntAttribute(parser, "external", 0);
+                                        String readStringAttribute = XmlUtils.readStringAttribute(parser, ATTR_FINGERPRINT);
+                                        external.fingerprint = readStringAttribute;
+                                        e42.fingerprint = readStringAttribute;
+                                        readStringAttribute = XmlUtils.readStringAttribute(parser, ATTR_HWFINGERPRINT);
+                                        external.hwFingerprint = readStringAttribute;
+                                        e42.hwFingerprint = readStringAttribute;
+                                    } else if (tagName.equals("database-version") != null) {
+                                        e42 = findOrCreateVersion(StorageManager.UUID_PRIVATE_INTERNAL);
+                                        external = findOrCreateVersion("primary_physical");
+                                        e42.databaseVersion = XmlUtils.readIntAttribute(parser, "internal", 0);
+                                        external.databaseVersion = XmlUtils.readIntAttribute(parser, "external", 0);
+                                    } else if (tagName.equals("verifier") != null) {
+                                        try {
+                                            this.mVerifierDeviceIdentity = VerifierDeviceIdentity.parse(parser.getAttributeValue(null, "device"));
+                                        } catch (IllegalArgumentException e422) {
+                                            StringBuilder stringBuilder4 = new StringBuilder();
+                                            stringBuilder4.append("Discard invalid verifier device id: ");
+                                            stringBuilder4.append(e422.getMessage());
+                                            Slog.w("PackageManager", stringBuilder4.toString());
+                                        }
+                                    } else if (TAG_READ_EXTERNAL_STORAGE.equals(tagName) != null) {
+                                        this.mReadExternalStorageEnforced = "1".equals(parser.getAttributeValue(null, ATTR_ENFORCEMENT)) ? Boolean.TRUE : Boolean.FALSE;
+                                    } else if (tagName.equals("keyset-settings") != null) {
+                                        this.mKeySetManagerService.readKeySetsLPw(parser, this.mKeySetRefs);
+                                    } else if ("version".equals(tagName) != null) {
+                                        external = findOrCreateVersion(XmlUtils.readStringAttribute(parser, ATTR_VOLUME_UUID));
+                                        external.sdkVersion = XmlUtils.readIntAttribute(parser, ATTR_SDK_VERSION);
+                                        external.databaseVersion = XmlUtils.readIntAttribute(parser, ATTR_DATABASE_VERSION);
+                                        external.fingerprint = XmlUtils.readStringAttribute(parser, ATTR_FINGERPRINT);
+                                        external.hwFingerprint = XmlUtils.readStringAttribute(parser, ATTR_HWFINGERPRINT);
+                                    } else {
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Unknown element under <packages>: ");
+                                        stringBuilder2.append(parser.getName());
+                                        Slog.w("PackageManager", stringBuilder2.toString());
+                                        XmlUtils.skipCurrentTag(parser);
                                     }
-                                } else if (tagName.equals("renamed-package") != null) {
-                                    e42 = parser.getAttributeValue(null, "new");
-                                    String oname = parser.getAttributeValue(null, "old");
-                                    if (!(e42 == null || oname == null)) {
-                                        this.mRenamedPackages.put(e42, oname);
-                                    }
-                                } else if (tagName.equals("restored-ivi") != null) {
-                                    readRestoredIntentFilterVerifications(parser);
-                                } else if (tagName.equals("last-platform-version") != null) {
-                                    e42 = findOrCreateVersion(StorageManager.UUID_PRIVATE_INTERNAL);
-                                    external = findOrCreateVersion("primary_physical");
-                                    e42.sdkVersion = XmlUtils.readIntAttribute(parser, "internal", 0);
-                                    external.sdkVersion = XmlUtils.readIntAttribute(parser, "external", 0);
-                                    String readStringAttribute = XmlUtils.readStringAttribute(parser, ATTR_FINGERPRINT);
-                                    external.fingerprint = readStringAttribute;
-                                    e42.fingerprint = readStringAttribute;
-                                    readStringAttribute = XmlUtils.readStringAttribute(parser, ATTR_HWFINGERPRINT);
-                                    external.hwFingerprint = readStringAttribute;
-                                    e42.hwFingerprint = readStringAttribute;
-                                } else if (tagName.equals("database-version") != null) {
-                                    e42 = findOrCreateVersion(StorageManager.UUID_PRIVATE_INTERNAL);
-                                    external = findOrCreateVersion("primary_physical");
-                                    e42.databaseVersion = XmlUtils.readIntAttribute(parser, "internal", 0);
-                                    external.databaseVersion = XmlUtils.readIntAttribute(parser, "external", 0);
-                                } else if (tagName.equals("verifier") != null) {
-                                    try {
-                                        this.mVerifierDeviceIdentity = VerifierDeviceIdentity.parse(parser.getAttributeValue(null, "device"));
-                                    } catch (IOException e422) {
-                                        StringBuilder stringBuilder4 = new StringBuilder();
-                                        stringBuilder4.append("Discard invalid verifier device id: ");
-                                        stringBuilder4.append(e422.getMessage());
-                                        Slog.w("PackageManager", stringBuilder4.toString());
-                                    }
-                                } else if (TAG_READ_EXTERNAL_STORAGE.equals(tagName) != null) {
-                                    this.mReadExternalStorageEnforced = "1".equals(parser.getAttributeValue(null, ATTR_ENFORCEMENT)) ? Boolean.TRUE : Boolean.FALSE;
-                                } else if (tagName.equals("keyset-settings") != null) {
-                                    this.mKeySetManagerService.readKeySetsLPw(parser, this.mKeySetRefs);
-                                } else if ("version".equals(tagName) != null) {
-                                    external = findOrCreateVersion(XmlUtils.readStringAttribute(parser, ATTR_VOLUME_UUID));
-                                    external.sdkVersion = XmlUtils.readIntAttribute(parser, ATTR_SDK_VERSION);
-                                    external.databaseVersion = XmlUtils.readIntAttribute(parser, ATTR_DATABASE_VERSION);
-                                    external.fingerprint = XmlUtils.readStringAttribute(parser, ATTR_FINGERPRINT);
-                                    external.hwFingerprint = XmlUtils.readStringAttribute(parser, ATTR_HWFINGERPRINT);
-                                } else {
-                                    stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("Unknown element under <packages>: ");
-                                    stringBuilder2.append(parser.getName());
-                                    Slog.w("PackageManager", stringBuilder2.toString());
-                                    XmlUtils.skipCurrentTag(parser);
                                 }
                             }
                         }
@@ -4242,7 +4360,7 @@ public final class Settings {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x013d A:{SYNTHETIC, Splitter: B:44:0x013d} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x013d A:{SYNTHETIC, Splitter:B:44:0x013d} */
     /* JADX WARNING: Removed duplicated region for block: B:41:0x011d A:{Catch:{ XmlPullParserException -> 0x0191, IOException -> 0x0174, all -> 0x0172 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void applyDefaultPreferredAppsLPw(PackageManagerService service, int userId) {
@@ -4872,6 +4990,7 @@ public final class Settings {
         this.mDisabledSysPackages.put(name2, ps);
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:91:0x0137=Splitter:B:91:0x0137, B:72:0x00fb=Splitter:B:72:0x00fb} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
@@ -4880,76 +4999,24 @@ public final class Settings {
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x00e0 A:{SYNTHETIC, Splitter: B:60:0x00e0} */
-    /* JADX WARNING: Removed duplicated region for block: B:83:0x0126 A:{SYNTHETIC, Splitter: B:83:0x0126} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f3 A:{SYNTHETIC, Splitter: B:68:0x00f3} */
-    /* JADX WARNING: Removed duplicated region for block: B:127:0x01a4 A:{SYNTHETIC, Splitter: B:127:0x01a4} */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0198 A:{SYNTHETIC, Splitter: B:122:0x0198} */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x00e0 A:{SYNTHETIC, Splitter:B:60:0x00e0} */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0126 A:{SYNTHETIC, Splitter:B:83:0x0126} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f3 A:{SYNTHETIC, Splitter:B:68:0x00f3} */
+    /* JADX WARNING: Removed duplicated region for block: B:127:0x01a4 A:{SYNTHETIC, Splitter:B:127:0x01a4} */
+    /* JADX WARNING: Removed duplicated region for block: B:122:0x0198 A:{SYNTHETIC, Splitter:B:122:0x0198} */
     /* JADX WARNING: Removed duplicated region for block: B:139:0x01c3  */
     /* JADX WARNING: Removed duplicated region for block: B:149:0x01da  */
     /* JADX WARNING: Removed duplicated region for block: B:165:0x0220 A:{Catch:{ NumberFormatException -> 0x0229 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:158:0x01ea A:{SYNTHETIC, Splitter: B:158:0x01ea} */
+    /* JADX WARNING: Removed duplicated region for block: B:158:0x01ea A:{SYNTHETIC, Splitter:B:158:0x01ea} */
     /* JADX WARNING: Removed duplicated region for block: B:172:0x0234 A:{Catch:{ NumberFormatException -> 0x0229 }} */
     /* JADX WARNING: Removed duplicated region for block: B:167:0x0224 A:{Catch:{ NumberFormatException -> 0x0229 }} */
     /* JADX WARNING: Removed duplicated region for block: B:175:0x023c  */
     /* JADX WARNING: Removed duplicated region for block: B:174:0x0237 A:{Catch:{ NumberFormatException -> 0x0229 }} */
     /* JADX WARNING: Removed duplicated region for block: B:179:0x0242  */
     /* JADX WARNING: Removed duplicated region for block: B:178:0x0240  */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0246 A:{SYNTHETIC, Splitter: B:181:0x0246} */
+    /* JADX WARNING: Removed duplicated region for block: B:181:0x0246 A:{SYNTHETIC, Splitter:B:181:0x0246} */
     /* JADX WARNING: Removed duplicated region for block: B:202:0x0298  */
-    /* JADX WARNING: Removed duplicated region for block: B:188:0x0256 A:{SYNTHETIC, Splitter: B:188:0x0256} */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:188:0x0256 A:{SYNTHETIC, Splitter:B:188:0x0256} */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
@@ -4987,8 +5054,6 @@ public final class Settings {
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
-    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:404:0x0959  */
     /* JADX WARNING: Removed duplicated region for block: B:403:0x0951  */
     /* JADX WARNING: Removed duplicated region for block: B:414:0x09ad  */
@@ -4996,6 +5061,60 @@ public final class Settings {
     /* JADX WARNING: Removed duplicated region for block: B:422:0x09cf  */
     /* JADX WARNING: Removed duplicated region for block: B:426:0x09e4  */
     /* JADX WARNING: Removed duplicated region for block: B:485:0x0bc5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
+    /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:390:0x08fe  */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
     /* JADX WARNING: Removed duplicated region for block: B:484:0x0bcc  */
@@ -7992,7 +8111,6 @@ public final class Settings {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:36:0x00c8 A:{Catch:{ all -> 0x006a, all -> 0x0144 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x0147 A:{LOOP_START, SYNTHETIC, LOOP:2: B:69:0x0147->B:73:0x014a, PHI: r0 , Splitter: B:69:0x0147} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void createNewUserLI(PackageManagerService service, Installer installer, int userHandle, String[] disallowedPackages) {
         int packagesCount;
@@ -8003,6 +8121,7 @@ public final class Settings {
         int[] targetSdkVersions;
         int i;
         Throwable th;
+        PackageManagerService packageManagerService;
         int i2;
         int packagesCount2;
         InstallerException e;
@@ -8022,73 +8141,57 @@ public final class Settings {
                 int i4 = 0;
                 while (true) {
                     int i5 = i4;
-                    if (i5 < packagesCount) {
-                        Collection<PackageSetting> packages2;
-                        int i6;
-                        Iterator<PackageSetting> packagesIterator2;
-                        PackageSetting ps = (PackageSetting) packagesIterator.next();
-                        if (ps.pkg == null) {
-                            packages2 = packages;
-                            i6 = i5;
-                            packagesIterator2 = packagesIterator;
-                        } else if (ps.pkg.applicationInfo == null) {
-                            packages2 = packages;
-                            i6 = i5;
-                            packagesIterator2 = packagesIterator;
-                        } else {
-                            boolean shouldInstall;
-                            boolean shouldInstall2;
-                            boolean isSystemApp = ps.isSystem();
-                            if (this.mCustSettings != null && this.mCustSettings.isInNosysAppList(ps.name)) {
-                                isSystemApp = true;
-                            }
-                            if (!isSystemApp) {
-                                strArr = disallowedPackages;
-                            } else if (!ArrayUtils.contains(disallowedPackages, ps.name)) {
-                                isSystemApp = true;
-                                shouldInstall = isSystemApp;
-                                ps.setInstalled(shouldInstall, i3);
-                                if (shouldInstall || !isInDelAppList(ps.name)) {
-                                    packages2 = packages;
-                                    shouldInstall2 = shouldInstall;
-                                    packages = ps;
-                                    i6 = i5;
-                                    packagesIterator2 = packagesIterator;
-                                } else {
-                                    String str = TAG;
-                                    packages2 = packages;
-                                    packages = new StringBuilder();
-                                    shouldInstall2 = shouldInstall;
-                                    packages.append("disable application: ");
-                                    packages.append(ps.name);
-                                    packages.append(" for user ");
-                                    packages.append(i3);
-                                    Slog.w(str, packages.toString());
-                                    packages = ps;
-                                    i6 = i5;
-                                    packagesIterator2 = packagesIterator;
-                                    service.setApplicationEnabledSetting(ps.name, 2, 0, i3, null);
-                                }
-                                if (!shouldInstall2) {
-                                    writeKernelMappingLPr(packages);
-                                }
-                                volumeUuids[i6] = packages.volumeUuid;
-                                names[i6] = packages.name;
-                                appIds[i6] = packages.appId;
-                                seinfos[i6] = packages.pkg.applicationInfo.seInfo;
-                                targetSdkVersions[i6] = packages.pkg.applicationInfo.targetSdkVersion;
-                            }
-                            isSystemApp = false;
+                    if (i5 >= packagesCount) {
+                        break;
+                    }
+                    Collection<PackageSetting> packages2;
+                    int i6;
+                    Iterator<PackageSetting> packagesIterator2;
+                    PackageSetting ps = (PackageSetting) packagesIterator.next();
+                    if (ps.pkg == null) {
+                        packages2 = packages;
+                        i6 = i5;
+                        packagesIterator2 = packagesIterator;
+                    } else if (ps.pkg.applicationInfo == null) {
+                        packages2 = packages;
+                        i6 = i5;
+                        packagesIterator2 = packagesIterator;
+                    } else {
+                        boolean shouldInstall;
+                        boolean shouldInstall2;
+                        boolean isSystemApp = ps.isSystem();
+                        if (this.mCustSettings != null && this.mCustSettings.isInNosysAppList(ps.name)) {
+                            isSystemApp = true;
+                        }
+                        if (!isSystemApp) {
+                            strArr = disallowedPackages;
+                        } else if (!ArrayUtils.contains(disallowedPackages, ps.name)) {
+                            isSystemApp = true;
                             shouldInstall = isSystemApp;
                             ps.setInstalled(shouldInstall, i3);
-                            if (shouldInstall) {
+                            if (shouldInstall || !isInDelAppList(ps.name)) {
+                                packages2 = packages;
+                                shouldInstall2 = shouldInstall;
+                                packages = ps;
+                                i6 = i5;
+                                packagesIterator2 = packagesIterator;
+                            } else {
+                                String str = TAG;
+                                packages2 = packages;
+                                packages = new StringBuilder();
+                                shouldInstall2 = shouldInstall;
+                                packages.append("disable application: ");
+                                packages.append(ps.name);
+                                packages.append(" for user ");
+                                packages.append(i3);
+                                Slog.w(str, packages.toString());
+                                packages = ps;
+                                i6 = i5;
+                                packagesIterator2 = packagesIterator;
+                                service.setApplicationEnabledSetting(ps.name, 2, 0, i3, null);
                             }
-                            packages2 = packages;
-                            shouldInstall2 = shouldInstall;
-                            packages = ps;
-                            i6 = i5;
-                            packagesIterator2 = packagesIterator;
-                            if (shouldInstall2) {
+                            if (!shouldInstall2) {
+                                writeKernelMappingLPr(packages);
                             }
                             volumeUuids[i6] = packages.volumeUuid;
                             names[i6] = packages.name;
@@ -8096,24 +8199,37 @@ public final class Settings {
                             seinfos[i6] = packages.pkg.applicationInfo.seInfo;
                             targetSdkVersions[i6] = packages.pkg.applicationInfo.targetSdkVersion;
                         }
-                        i4 = i6 + 1;
-                        packages = packages2;
-                        packagesIterator = packagesIterator2;
+                        isSystemApp = false;
+                        shouldInstall = isSystemApp;
+                        ps.setInstalled(shouldInstall, i3);
+                        if (shouldInstall) {
+                        }
+                        packages2 = packages;
+                        shouldInstall2 = shouldInstall;
+                        packages = ps;
+                        i6 = i5;
+                        packagesIterator2 = packagesIterator;
+                        if (shouldInstall2) {
+                        }
+                        volumeUuids[i6] = packages.volumeUuid;
+                        names[i6] = packages.name;
+                        appIds[i6] = packages.appId;
+                        seinfos[i6] = packages.pkg.applicationInfo.seInfo;
+                        targetSdkVersions[i6] = packages.pkg.applicationInfo.targetSdkVersion;
                     }
+                    i4 = i6 + 1;
+                    packages = packages2;
+                    packagesIterator = packagesIterator2;
                 }
             } catch (Throwable th2) {
                 th = th2;
+                packageManagerService = service;
+                while (true) {
+                    break;
+                }
+                throw th;
             }
         }
-        PackageManagerService packageManagerService = service;
-        while (true) {
-            try {
-                break;
-            } catch (Throwable th3) {
-                th = th3;
-            }
-        }
-        throw th;
         while (true) {
             int i7 = i;
             if (i7 < packagesCount) {
@@ -9277,7 +9393,7 @@ public final class Settings {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             r1.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

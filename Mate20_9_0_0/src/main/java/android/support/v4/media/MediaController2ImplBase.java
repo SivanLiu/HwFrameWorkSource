@@ -70,19 +70,6 @@ class MediaController2ImplBase implements SupportLibraryImpl {
     private int mShuffleMode;
     private final SessionToken2 mToken;
 
-    /* renamed from: android.support.v4.media.MediaController2ImplBase$15 */
-    class AnonymousClass15 implements Runnable {
-        final /* synthetic */ SessionCommandGroup2 val$allowedCommands;
-
-        AnonymousClass15(SessionCommandGroup2 sessionCommandGroup2) {
-            this.val$allowedCommands = sessionCommandGroup2;
-        }
-
-        public void run() {
-            MediaController2ImplBase.this.mCallback.onConnected(MediaController2ImplBase.this.mInstance, this.val$allowedCommands);
-        }
-    }
-
     private class SessionServiceConnection implements ServiceConnection {
         private SessionServiceConnection() {
         }
@@ -133,206 +120,6 @@ class MediaController2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    void onConnectedNotLocked(android.support.v4.media.IMediaSession2 r18, android.support.v4.media.SessionCommandGroup2 r19, int r20, android.support.v4.media.MediaItem2 r21, long r22, long r24, float r26, long r27, android.support.v4.media.MediaController2.PlaybackInfo r29, int r30, int r31, java.util.List<android.support.v4.media.MediaItem2> r32, android.app.PendingIntent r33) {
-        /*
-        r17 = this;
-        r1 = r17;
-        r2 = r18;
-        r3 = r19;
-        r0 = DEBUG;
-        if (r0 == 0) goto L_0x0028;
-    L_0x000a:
-        r0 = "MC2ImplBase";
-        r4 = new java.lang.StringBuilder;
-        r4.<init>();
-        r5 = "onConnectedNotLocked sessionBinder=";
-        r4.append(r5);
-        r4.append(r2);
-        r5 = ", allowedCommands=";
-        r4.append(r5);
-        r4.append(r3);
-        r4 = r4.toString();
-        android.util.Log.d(r0, r4);
-    L_0x0028:
-        r4 = 0;
-        if (r2 == 0) goto L_0x00ef;
-    L_0x002b:
-        if (r3 != 0) goto L_0x002f;
-    L_0x002d:
-        goto L_0x00ef;
-    L_0x002f:
-        r5 = r1.mLock;	 Catch:{ all -> 0x00da }
-        monitor-enter(r5);	 Catch:{ all -> 0x00da }
-        r0 = r1.mIsReleased;	 Catch:{ all -> 0x00c7 }
-        if (r0 == 0) goto L_0x003f;	 Catch:{ all -> 0x00c7 }
-    L_0x0036:
-        monitor-exit(r5);	 Catch:{ all -> 0x00c7 }
-        if (r4 == 0) goto L_0x003e;
-    L_0x0039:
-        r0 = r1.mInstance;
-        r0.close();
-    L_0x003e:
-        return;
-    L_0x003f:
-        r0 = r1.mISession2;	 Catch:{ all -> 0x00c7 }
-        if (r0 == 0) goto L_0x0054;	 Catch:{ all -> 0x00c7 }
-    L_0x0043:
-        r0 = "MC2ImplBase";	 Catch:{ all -> 0x00c7 }
-        r6 = "Cannot be notified about the connection result many times. Probably a bug or malicious app.";	 Catch:{ all -> 0x00c7 }
-        android.util.Log.e(r0, r6);	 Catch:{ all -> 0x00c7 }
-        r4 = 1;	 Catch:{ all -> 0x00c7 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00c7 }
-        if (r4 == 0) goto L_0x0053;
-    L_0x004e:
-        r0 = r1.mInstance;
-        r0.close();
-    L_0x0053:
-        return;
-    L_0x0054:
-        r1.mAllowedCommands = r3;	 Catch:{ all -> 0x00c7 }
-        r6 = r20;	 Catch:{ all -> 0x00c7 }
-        r1.mPlayerState = r6;	 Catch:{ all -> 0x00c7 }
-        r7 = r21;
-        r1.mCurrentMediaItem = r7;	 Catch:{ all -> 0x00c5 }
-        r8 = r22;
-        r1.mPositionEventTimeMs = r8;	 Catch:{ all -> 0x00c3 }
-        r10 = r24;
-        r1.mPositionMs = r10;	 Catch:{ all -> 0x00c1 }
-        r12 = r26;
-        r1.mPlaybackSpeed = r12;	 Catch:{ all -> 0x00bf }
-        r13 = r27;
-        r1.mBufferedPositionMs = r13;	 Catch:{ all -> 0x00bd }
-        r15 = r29;
-        r1.mPlaybackInfo = r15;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r6 = r30;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r1.mRepeatMode = r6;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r6 = r31;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r1.mShuffleMode = r6;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r6 = r32;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r1.mPlaylist = r6;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r6 = r33;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r1.mSessionActivity = r6;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r1.mISession2 = r2;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r0 = r1.mISession2;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r0 = r0.asBinder();	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r2 = r1.mDeathRecipient;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r6 = 0;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r0.linkToDeath(r2, r6);	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        monitor-exit(r5);	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r0 = r1.mCallbackExecutor;	 Catch:{ all -> 0x00d6 }
-        r2 = new android.support.v4.media.MediaController2ImplBase$15;	 Catch:{ all -> 0x00d6 }
-        r2.<init>(r3);	 Catch:{ all -> 0x00d6 }
-        r0.execute(r2);	 Catch:{ all -> 0x00d6 }
-        if (r4 == 0) goto L_0x00a3;
-    L_0x009e:
-        r0 = r1.mInstance;
-        r0.close();
-    L_0x00a3:
-        return;
-    L_0x00a4:
-        r0 = move-exception;
-        r2 = DEBUG;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        if (r2 == 0) goto L_0x00b0;	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-    L_0x00a9:
-        r2 = "MC2ImplBase";	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        r6 = "Session died too early.";	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        android.util.Log.d(r2, r6, r0);	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-    L_0x00b0:
-        r2 = 1;
-        monitor-exit(r5);	 Catch:{ all -> 0x00ba }
-        if (r2 == 0) goto L_0x00b9;
-    L_0x00b4:
-        r4 = r1.mInstance;
-        r4.close();
-    L_0x00b9:
-        return;
-    L_0x00ba:
-        r0 = move-exception;
-        r4 = r2;
-        goto L_0x00d4;
-    L_0x00bd:
-        r0 = move-exception;
-        goto L_0x00d2;
-    L_0x00bf:
-        r0 = move-exception;
-        goto L_0x00d0;
-    L_0x00c1:
-        r0 = move-exception;
-        goto L_0x00ce;
-    L_0x00c3:
-        r0 = move-exception;
-        goto L_0x00cc;
-    L_0x00c5:
-        r0 = move-exception;
-        goto L_0x00ca;
-    L_0x00c7:
-        r0 = move-exception;
-        r7 = r21;
-    L_0x00ca:
-        r8 = r22;
-    L_0x00cc:
-        r10 = r24;
-    L_0x00ce:
-        r12 = r26;
-    L_0x00d0:
-        r13 = r27;
-    L_0x00d2:
-        r15 = r29;
-    L_0x00d4:
-        monitor-exit(r5);	 Catch:{ RemoteException -> 0x00a4, all -> 0x00d8 }
-        throw r0;	 Catch:{ all -> 0x00d6 }
-    L_0x00d6:
-        r0 = move-exception;
-        goto L_0x00e7;
-    L_0x00d8:
-        r0 = move-exception;
-        goto L_0x00d4;
-    L_0x00da:
-        r0 = move-exception;
-        r7 = r21;
-        r8 = r22;
-        r10 = r24;
-        r12 = r26;
-        r13 = r27;
-        r15 = r29;
-    L_0x00e7:
-        if (r4 == 0) goto L_0x00ee;
-    L_0x00e9:
-        r2 = r1.mInstance;
-        r2.close();
-    L_0x00ee:
-        throw r0;
-    L_0x00ef:
-        r7 = r21;
-        r8 = r22;
-        r10 = r24;
-        r12 = r26;
-        r13 = r27;
-        r15 = r29;
-        r0 = 1;
-        if (r0 == 0) goto L_0x0103;
-    L_0x00fe:
-        r2 = r1.mInstance;
-        r2.close();
-    L_0x0103:
-        return;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: android.support.v4.media.MediaController2ImplBase.onConnectedNotLocked(android.support.v4.media.IMediaSession2, android.support.v4.media.SessionCommandGroup2, int, android.support.v4.media.MediaItem2, long, long, float, long, android.support.v4.media.MediaController2$PlaybackInfo, int, int, java.util.List, android.app.PendingIntent):void");
-    }
-
     MediaController2ImplBase(Context context, MediaController2 instance, SessionToken2 token, Executor executor, ControllerCallback callback) {
         this.mInstance = instance;
         if (context == null) {
@@ -365,10 +152,10 @@ class MediaController2ImplBase implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0040, code:
+    /* JADX WARNING: Missing block: B:18:0x0040, code skipped:
             if (r2 == null) goto L_0x0053;
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             r2.asBinder().unlinkToDeath(r6.mDeathRecipient, 0);
             r2.release(r6.mControllerStub);
      */
@@ -402,7 +189,7 @@ class MediaController2ImplBase implements SupportLibraryImpl {
                 }
             } catch (Throwable th3) {
                 Throwable th4 = th3;
-                Object obj = null;
+                SessionServiceConnection sessionServiceConnection = null;
                 th = th4;
                 throw th;
             }
@@ -619,7 +406,7 @@ class MediaController2ImplBase implements SupportLibraryImpl {
         return i;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x001e, code:
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -705,25 +492,25 @@ class MediaController2ImplBase implements SupportLibraryImpl {
         return playbackInfo;
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:8:?, code:
+    /* JADX WARNING: Missing block: B:8:?, code skipped:
             r1.setRating(r4.mControllerStub, r5, r6.toBundle());
      */
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:10:0x0013, code:
+    /* JADX WARNING: Missing block: B:10:0x0013, code skipped:
             android.util.Log.w(TAG, "Cannot connect to the service or the session is gone", r0);
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -756,7 +543,7 @@ class MediaController2ImplBase implements SupportLibraryImpl {
     }
 
     public List<MediaItem2> getPlaylist() {
-        List<MediaItem2> list;
+        List list;
         synchronized (this.mLock) {
             list = this.mPlaylist;
         }
@@ -768,14 +555,14 @@ class MediaController2ImplBase implements SupportLibraryImpl {
         if (iSession2 != null) {
             try {
                 Bundle bundle;
-                IMediaController2 iMediaController2 = this.mControllerStub;
+                MediaController2Stub mediaController2Stub = this.mControllerStub;
                 List convertMediaItem2ListToBundleList = MediaUtils2.convertMediaItem2ListToBundleList(list);
                 if (metadata == null) {
                     bundle = null;
                 } else {
                     bundle = metadata.toBundle();
                 }
-                iSession2.setPlaylist(iMediaController2, convertMediaItem2ListToBundleList, bundle);
+                iSession2.setPlaylist(mediaController2Stub, convertMediaItem2ListToBundleList, bundle);
             } catch (RemoteException e) {
                 Log.w(TAG, "Cannot connect to the service or the session is gone", e);
             }
@@ -787,13 +574,13 @@ class MediaController2ImplBase implements SupportLibraryImpl {
         if (iSession2 != null) {
             try {
                 Bundle bundle;
-                IMediaController2 iMediaController2 = this.mControllerStub;
+                MediaController2Stub mediaController2Stub = this.mControllerStub;
                 if (metadata == null) {
                     bundle = null;
                 } else {
                     bundle = metadata.toBundle();
                 }
-                iSession2.updatePlaylistMetadata(iMediaController2, bundle);
+                iSession2.updatePlaylistMetadata(mediaController2Stub, bundle);
             } catch (RemoteException e) {
                 Log.w(TAG, "Cannot connect to the service or the session is gone", e);
             }
@@ -1201,6 +988,178 @@ class MediaController2ImplBase implements SupportLibraryImpl {
                 }
             }
         });
+    }
+
+    /* JADX WARNING: Missing block: B:13:0x0037, code skipped:
+            if (null == null) goto L_0x003e;
+     */
+    /* JADX WARNING: Missing block: B:14:0x0039, code skipped:
+            r1.mInstance.close();
+     */
+    /* JADX WARNING: Missing block: B:15:0x003e, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:21:0x004c, code skipped:
+            if (true == false) goto L_0x0053;
+     */
+    /* JADX WARNING: Missing block: B:22:0x004e, code skipped:
+            r1.mInstance.close();
+     */
+    /* JADX WARNING: Missing block: B:23:0x0053, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:49:?, code skipped:
+            r1.mCallbackExecutor.execute(new android.support.v4.media.MediaController2ImplBase.AnonymousClass15(r1));
+     */
+    /* JADX WARNING: Missing block: B:50:0x009c, code skipped:
+            if (null == null) goto L_0x00a3;
+     */
+    /* JADX WARNING: Missing block: B:51:0x009e, code skipped:
+            r1.mInstance.close();
+     */
+    /* JADX WARNING: Missing block: B:52:0x00a3, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:64:0x00ba, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:65:0x00bb, code skipped:
+            r4 = true;
+     */
+    /* JADX WARNING: Missing block: B:82:0x00d6, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    void onConnectedNotLocked(IMediaSession2 sessionBinder, SessionCommandGroup2 allowedCommands, int playerState, MediaItem2 currentMediaItem, long positionEventTimeMs, long positionMs, float playbackSpeed, long bufferedPositionMs, PlaybackInfo info, int repeatMode, int shuffleMode, List<MediaItem2> playlist, PendingIntent sessionActivity) {
+        Throwable th;
+        IMediaSession2 iMediaSession2 = sessionBinder;
+        final SessionCommandGroup2 sessionCommandGroup2 = allowedCommands;
+        if (DEBUG) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("onConnectedNotLocked sessionBinder=");
+            stringBuilder.append(iMediaSession2);
+            stringBuilder.append(", allowedCommands=");
+            stringBuilder.append(sessionCommandGroup2);
+            Log.d(str, stringBuilder.toString());
+        }
+        boolean close = DEBUG;
+        MediaItem2 mediaItem2;
+        long j;
+        long j2;
+        float f;
+        long j3;
+        PlaybackInfo playbackInfo;
+        if (iMediaSession2 == null || sessionCommandGroup2 == null) {
+            mediaItem2 = currentMediaItem;
+            j = positionEventTimeMs;
+            j2 = positionMs;
+            f = playbackSpeed;
+            j3 = bufferedPositionMs;
+            playbackInfo = info;
+            if (true) {
+                this.mInstance.close();
+            }
+            return;
+        }
+        try {
+            synchronized (this.mLock) {
+                try {
+                    if (this.mIsReleased) {
+                    } else if (this.mISession2 != null) {
+                        Log.e(TAG, "Cannot be notified about the connection result many times. Probably a bug or malicious app.");
+                    } else {
+                        this.mAllowedCommands = sessionCommandGroup2;
+                        this.mPlayerState = playerState;
+                        try {
+                            this.mCurrentMediaItem = currentMediaItem;
+                        } catch (Throwable th2) {
+                            th = th2;
+                            j = positionEventTimeMs;
+                            j2 = positionMs;
+                            f = playbackSpeed;
+                            j3 = bufferedPositionMs;
+                            playbackInfo = info;
+                            throw th;
+                        }
+                        try {
+                            this.mPositionEventTimeMs = positionEventTimeMs;
+                            try {
+                                this.mPositionMs = positionMs;
+                                try {
+                                    this.mPlaybackSpeed = playbackSpeed;
+                                    try {
+                                        this.mBufferedPositionMs = bufferedPositionMs;
+                                    } catch (Throwable th3) {
+                                        th = th3;
+                                        playbackInfo = info;
+                                        throw th;
+                                    }
+                                } catch (Throwable th4) {
+                                    th = th4;
+                                    j3 = bufferedPositionMs;
+                                    playbackInfo = info;
+                                    throw th;
+                                }
+                            } catch (Throwable th5) {
+                                th = th5;
+                                f = playbackSpeed;
+                                j3 = bufferedPositionMs;
+                                playbackInfo = info;
+                                throw th;
+                            }
+                        } catch (Throwable th6) {
+                            th = th6;
+                            j2 = positionMs;
+                            f = playbackSpeed;
+                            j3 = bufferedPositionMs;
+                            playbackInfo = info;
+                            throw th;
+                        }
+                        try {
+                            this.mPlaybackInfo = info;
+                            this.mRepeatMode = repeatMode;
+                            this.mShuffleMode = shuffleMode;
+                            this.mPlaylist = playlist;
+                            this.mSessionActivity = sessionActivity;
+                            this.mISession2 = iMediaSession2;
+                            this.mISession2.asBinder().linkToDeath(this.mDeathRecipient, 0);
+                        } catch (RemoteException e) {
+                            if (DEBUG) {
+                                Log.d(TAG, "Session died too early.", e);
+                            }
+                            if (1 != null) {
+                                this.mInstance.close();
+                            }
+                        } catch (Throwable th7) {
+                            th = th7;
+                            throw th;
+                        }
+                    }
+                } catch (Throwable th8) {
+                    th = th8;
+                    mediaItem2 = currentMediaItem;
+                    j = positionEventTimeMs;
+                    j2 = positionMs;
+                    f = playbackSpeed;
+                    j3 = bufferedPositionMs;
+                    playbackInfo = info;
+                    throw th;
+                }
+            }
+        } catch (Throwable th9) {
+            th = th9;
+            mediaItem2 = currentMediaItem;
+            j = positionEventTimeMs;
+            j2 = positionMs;
+            f = playbackSpeed;
+            j3 = bufferedPositionMs;
+            playbackInfo = info;
+            if (close) {
+                this.mInstance.close();
+            }
+            throw th;
+        }
     }
 
     void onCustomCommand(final SessionCommand2 command, final Bundle args, final ResultReceiver receiver) {

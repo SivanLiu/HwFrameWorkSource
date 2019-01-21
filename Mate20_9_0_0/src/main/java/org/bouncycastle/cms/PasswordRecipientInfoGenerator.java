@@ -3,7 +3,6 @@ package org.bouncycastle.cms;
 import java.security.SecureRandom;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.cms.PasswordRecipientInfo;
@@ -65,7 +64,7 @@ public abstract class PasswordRecipientInfoGenerator implements RecipientInfoGen
             this.random.nextBytes(this.salt);
         }
         this.keyDerivationAlgorithm = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_PBKDF2, new PBKDF2Params(this.salt, this.iterationCount, this.prf.prfAlgID));
-        ASN1OctetString dEROctetString = new DEROctetString(generateEncryptedBytes(new AlgorithmIdentifier(this.kekAlgorithm, new DEROctetString(bArr)), calculateDerivedKey(this.schemeID, this.keyDerivationAlgorithm, this.keySize), genericKey));
+        DEROctetString dEROctetString = new DEROctetString(generateEncryptedBytes(new AlgorithmIdentifier(this.kekAlgorithm, new DEROctetString(bArr)), calculateDerivedKey(this.schemeID, this.keyDerivationAlgorithm, this.keySize), genericKey));
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
         aSN1EncodableVector.add(this.kekAlgorithm);
         aSN1EncodableVector.add(new DEROctetString(bArr));

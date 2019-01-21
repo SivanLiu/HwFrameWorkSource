@@ -304,6 +304,14 @@ public class VirtualDisplayAdapter extends DisplayAdapter {
         }
     }
 
+    public /* bridge */ /* synthetic */ void dumpLocked(PrintWriter printWriter) {
+        super.dumpLocked(printWriter);
+    }
+
+    public /* bridge */ /* synthetic */ void registerLocked() {
+        super.registerLocked();
+    }
+
     public VirtualDisplayAdapter(SyncRoot syncRoot, Context context, Handler handler, Listener listener) {
         this(syncRoot, context, handler, listener, -$$Lambda$VirtualDisplayAdapter$PFyqe-aYIEBicSVtuy5lL_bT8B0.INSTANCE);
     }

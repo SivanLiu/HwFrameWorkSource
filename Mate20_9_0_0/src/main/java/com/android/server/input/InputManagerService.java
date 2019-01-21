@@ -557,14 +557,14 @@ public class InputManagerService extends AbsInputManagerService implements Monit
         this.mHwIMSEx = HwServiceExFactory.getHwInputManagerServiceEx(this, context);
         this.mContext = context;
         this.mHandler = new InputManagerHandler(DisplayThread.get().getLooper());
-        this.mUseDevInputEventForAudioJack = context.getResources().getBoolean(17957058);
+        this.mUseDevInputEventForAudioJack = context.getResources().getBoolean(17957059);
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Initializing input manager, mUseDevInputEventForAudioJack=");
         stringBuilder.append(this.mUseDevInputEventForAudioJack);
         Slog.i(str, stringBuilder.toString());
         this.mPtr = nativeInit(this, this.mContext, this.mHandler.getLooper().getQueue());
-        str = context.getResources().getString(17039796);
+        str = context.getResources().getString(17039797);
         this.mDoubleTouchGestureEnableFile = TextUtils.isEmpty(str) ? null : new File(str);
         LocalServices.addService(InputManagerInternal.class, new LocalService(this, null));
     }
@@ -896,93 +896,93 @@ public class InputManagerService extends AbsInputManagerService implements Monit
     public void inputdevicechanged() {
     }
 
-    /* JADX WARNING: Missing block: B:34:0x0082, code:
+    /* JADX WARNING: Missing block: B:34:0x0082, code skipped:
             r0 = r3;
             r3 = r5;
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:35:0x0085, code:
+    /* JADX WARNING: Missing block: B:35:0x0085, code skipped:
             if (r1 >= r0) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:36:0x0087, code:
+    /* JADX WARNING: Missing block: B:36:0x0087, code skipped:
             ((com.android.server.input.InputManagerService.InputDevicesChangedListenerRecord) r12.mTempInputDevicesChangedListenersToNotify.get(r1)).notifyInputDevicesChanged(r3);
             r1 = r1 + 1;
      */
-    /* JADX WARNING: Missing block: B:37:0x0095, code:
+    /* JADX WARNING: Missing block: B:37:0x0095, code skipped:
             r12.mTempInputDevicesChangedListenersToNotify.clear();
             r4 = new java.util.ArrayList();
             r5 = r12.mTempFullKeyboards.size();
             r8 = r12.mDataStore;
      */
-    /* JADX WARNING: Missing block: B:38:0x00a8, code:
+    /* JADX WARNING: Missing block: B:38:0x00a8, code skipped:
             monitor-enter(r8);
      */
-    /* JADX WARNING: Missing block: B:39:0x00a9, code:
+    /* JADX WARNING: Missing block: B:39:0x00a9, code skipped:
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:40:0x00aa, code:
+    /* JADX WARNING: Missing block: B:40:0x00aa, code skipped:
             if (r1 >= r5) goto L_0x00d8;
      */
-    /* JADX WARNING: Missing block: B:42:?, code:
+    /* JADX WARNING: Missing block: B:42:?, code skipped:
             r9 = (android.view.InputDevice) r12.mTempFullKeyboards.get(r1);
             r10 = getCurrentKeyboardLayoutForInputDevice(r9.getIdentifier());
      */
-    /* JADX WARNING: Missing block: B:43:0x00bd, code:
+    /* JADX WARNING: Missing block: B:43:0x00bd, code skipped:
             if (r10 != null) goto L_0x00ce;
      */
-    /* JADX WARNING: Missing block: B:44:0x00bf, code:
+    /* JADX WARNING: Missing block: B:44:0x00bf, code skipped:
             r10 = getDefaultKeyboardLayout(r9);
      */
-    /* JADX WARNING: Missing block: B:45:0x00c4, code:
+    /* JADX WARNING: Missing block: B:45:0x00c4, code skipped:
             if (r10 == null) goto L_0x00ce;
      */
-    /* JADX WARNING: Missing block: B:46:0x00c6, code:
+    /* JADX WARNING: Missing block: B:46:0x00c6, code skipped:
             setCurrentKeyboardLayoutForInputDevice(r9.getIdentifier(), r10);
      */
-    /* JADX WARNING: Missing block: B:47:0x00ce, code:
+    /* JADX WARNING: Missing block: B:47:0x00ce, code skipped:
             if (r10 != null) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:48:0x00d0, code:
+    /* JADX WARNING: Missing block: B:48:0x00d0, code skipped:
             r4.add(r9);
      */
-    /* JADX WARNING: Missing block: B:49:0x00d3, code:
+    /* JADX WARNING: Missing block: B:49:0x00d3, code skipped:
             r1 = r1 + 1;
      */
-    /* JADX WARNING: Missing block: B:51:0x00d8, code:
+    /* JADX WARNING: Missing block: B:52:0x00d8, code skipped:
             monitor-exit(r8);
      */
-    /* JADX WARNING: Missing block: B:53:0x00db, code:
+    /* JADX WARNING: Missing block: B:54:0x00db, code skipped:
             if (r12.mHwIMSEx == null) goto L_0x00e6;
      */
-    /* JADX WARNING: Missing block: B:54:0x00dd, code:
+    /* JADX WARNING: Missing block: B:55:0x00dd, code skipped:
             r12.mHwIMSEx.checkHasShowDismissSoftInputAlertDialog(r4.isEmpty());
      */
-    /* JADX WARNING: Missing block: B:56:0x00e8, code:
+    /* JADX WARNING: Missing block: B:57:0x00e8, code skipped:
             if (r12.mNotificationManager == null) goto L_0x010c;
      */
-    /* JADX WARNING: Missing block: B:58:0x00ee, code:
+    /* JADX WARNING: Missing block: B:59:0x00ee, code skipped:
             if (r4.isEmpty() != false) goto L_0x0105;
      */
-    /* JADX WARNING: Missing block: B:60:0x00f4, code:
+    /* JADX WARNING: Missing block: B:61:0x00f4, code skipped:
             if (r4.size() <= 1) goto L_0x00fb;
      */
-    /* JADX WARNING: Missing block: B:61:0x00f6, code:
+    /* JADX WARNING: Missing block: B:62:0x00f6, code skipped:
             showMissingKeyboardLayoutNotification(null);
      */
-    /* JADX WARNING: Missing block: B:62:0x00fb, code:
+    /* JADX WARNING: Missing block: B:63:0x00fb, code skipped:
             showMissingKeyboardLayoutNotification((android.view.InputDevice) r4.get(0));
      */
-    /* JADX WARNING: Missing block: B:64:0x0107, code:
+    /* JADX WARNING: Missing block: B:65:0x0107, code skipped:
             if (r12.mKeyboardLayoutNotificationShown == false) goto L_0x010c;
      */
-    /* JADX WARNING: Missing block: B:65:0x0109, code:
+    /* JADX WARNING: Missing block: B:66:0x0109, code skipped:
             hideMissingKeyboardLayoutNotification();
      */
-    /* JADX WARNING: Missing block: B:66:0x010c, code:
+    /* JADX WARNING: Missing block: B:67:0x010c, code skipped:
             r12.mTempFullKeyboards.clear();
             inputdevicechanged();
      */
-    /* JADX WARNING: Missing block: B:67:0x0114, code:
+    /* JADX WARNING: Missing block: B:68:0x0114, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1019,6 +1019,7 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                     } catch (Throwable th2) {
                                         th = th2;
                                         i2 = numFullKeyboardsAdded2;
+                                        throw th;
                                     }
                                 }
                             }
@@ -1202,7 +1203,7 @@ public class InputManagerService extends AbsInputManagerService implements Monit
             intent.setFlags(337641472);
             PendingIntent keyboardLayoutIntent = PendingIntent.getActivityAsUser(this.mContext, 0, intent, 0, null, UserHandle.CURRENT);
             Resources r = this.mContext.getResources();
-            this.mNotificationManager.notifyAsUser(null, 19, new Builder(this.mContext, SystemNotificationChannels.PHYSICAL_KEYBOARD).setContentTitle(r.getString(17041061)).setContentText(r.getString(17041060)).setContentIntent(keyboardLayoutIntent).setSmallIcon(17302751).setColor(this.mContext.getColor(17170784)).build(), UserHandle.ALL);
+            this.mNotificationManager.notifyAsUser(null, 19, new Builder(this.mContext, SystemNotificationChannels.PHYSICAL_KEYBOARD).setContentTitle(r.getString(17041062)).setContentText(r.getString(17041061)).setContentIntent(keyboardLayoutIntent).setSmallIcon(17302751).setColor(this.mContext.getColor(17170784)).build(), UserHandle.ALL);
             this.mKeyboardLayoutNotificationShown = true;
         }
     }
@@ -1335,16 +1336,6 @@ public class InputManagerService extends AbsInputManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:?, code:
-            r8.close();
-     */
-    /* JADX WARNING: Missing block: B:26:0x0073, code:
-            r7 = r28;
-            r19 = r4;
-            r20 = r5;
-            r21 = r6;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void visitKeyboardLayoutsInPackage(PackageManager pm, ActivityInfo receiver, String keyboardName, int requestedPriority, KeyboardLayoutVisitor visitor) {
         Exception ex;
         KeyboardLayoutVisitor keyboardLayoutVisitor;
@@ -1401,7 +1392,6 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                 stringBuilder.append(SliceAuthority.DELIMITER);
                                 stringBuilder.append(activityInfo.name);
                                 Slog.w(str, stringBuilder.toString(), ex);
-                                return;
                             }
                         }
                         XmlResourceParser receiverLabel2;
@@ -1432,6 +1422,8 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                     metaData = a;
                                     configResId = element;
                                     keyboardLayoutVisitor = visitor;
+                                    metaData.recycle();
+                                    throw th;
                                 }
                             } catch (Throwable th3) {
                                 th = th3;
@@ -1443,6 +1435,8 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                 metaData = a;
                                 configResId = element;
                                 keyboardLayoutVisitor = visitor;
+                                metaData.recycle();
+                                throw th;
                             }
                             try {
                                 element = metaData.getInt(4, -1);
@@ -1478,22 +1472,29 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                                     }
                                                 } catch (Throwable th4) {
                                                     th = th4;
+                                                    keyboardLayoutVisitor = visitor;
+                                                    metaData.recycle();
+                                                    throw th;
                                                 }
                                             }
-                                            try {
-                                                resources3 = resources2;
-                                                KeyboardLayout keyboardLayout = keyboardLayout;
-                                                i4 = 0;
-                                            } catch (Throwable th5) {
-                                                th = th5;
-                                                resources3 = resources2;
-                                                keyboardLayoutVisitor = visitor;
-                                            }
-                                        } catch (Throwable th6) {
-                                            th = th6;
+                                        } catch (Throwable th5) {
+                                            th = th5;
                                             resources3 = resources2;
                                             receiverLabel2 = parser;
                                             keyboardLayoutVisitor = visitor;
+                                            metaData.recycle();
+                                            throw th;
+                                        }
+                                        try {
+                                            resources3 = resources2;
+                                            KeyboardLayout keyboardLayout = keyboardLayout;
+                                            i4 = 0;
+                                        } catch (Throwable th6) {
+                                            th = th6;
+                                            resources3 = resources2;
+                                            keyboardLayoutVisitor = visitor;
+                                            metaData.recycle();
+                                            throw th;
                                         }
                                     } catch (Throwable th7) {
                                         th = th7;
@@ -1501,6 +1502,8 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                         resources3 = resources2;
                                         receiverLabel2 = parser;
                                         keyboardLayoutVisitor = visitor;
+                                        metaData.recycle();
+                                        throw th;
                                     }
                                     try {
                                         visitor.visitKeyboardLayout(resources3, i, new KeyboardLayout(parser2, label, collection, priority, locales, a, element));
@@ -1533,7 +1536,6 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                                     stringBuilder.append(SliceAuthority.DELIMITER);
                                     stringBuilder.append(activityInfo.name);
                                     Slog.w(str, stringBuilder.toString(), ex);
-                                    return;
                                 }
                             }
                         }
@@ -1564,6 +1566,11 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                         String resources4 = keyboardName;
                         i = 1;
                     }
+                    parser.close();
+                    keyboardLayoutVisitor = visitor;
+                    bundle = metaData;
+                    i3 = configResId;
+                    charSequence = receiverLabel;
                 } catch (Throwable th10) {
                     th = th10;
                     bundle = metaData;
@@ -1588,14 +1595,8 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                 stringBuilder.append(SliceAuthority.DELIMITER);
                 stringBuilder.append(activityInfo.name);
                 Slog.w(str, stringBuilder.toString(), ex);
-                return;
             }
-            return;
         }
-        return;
-        keyboardLayoutVisitor = visitor;
-        metaData.recycle();
-        throw th;
     }
 
     private static LocaleList getLocalesFromLanguageTags(String languageTags) {
@@ -1940,10 +1941,12 @@ public class InputManagerService extends AbsInputManagerService implements Monit
     public void cancelVibrate(int deviceId, IBinder token) {
         synchronized (this.mVibratorLock) {
             VibratorToken v = (VibratorToken) this.mVibratorTokens.get(token);
-            if (v == null || v.mDeviceId != deviceId) {
-                return;
+            if (v != null) {
+                if (v.mDeviceId == deviceId) {
+                    cancelVibrateIfNeeded(v);
+                    return;
+                }
             }
-            cancelVibrateIfNeeded(v);
         }
     }
 
@@ -2207,8 +2210,7 @@ public class InputManagerService extends AbsInputManagerService implements Monit
                 try {
                     result[0] = layout.getDescriptor();
                     result[1] = Streams.readFully(new InputStreamReader(resources.openRawResource(keyboardLayoutResId)));
-                } catch (IOException e) {
-                } catch (NotFoundException e2) {
+                } catch (NotFoundException | IOException e) {
                 }
             }
         });

@@ -5,6 +5,10 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 public class AnyOf<T> extends ShortcutCombination<T> {
+    public /* bridge */ /* synthetic */ void describeTo(Description description, String str) {
+        super.describeTo(description, str);
+    }
+
     public AnyOf(Iterable<Matcher<? super T>> matchers) {
         super(matchers);
     }

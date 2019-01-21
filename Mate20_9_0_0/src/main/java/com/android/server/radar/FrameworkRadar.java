@@ -19,7 +19,7 @@ public class FrameworkRadar {
     private static LogException mLogException = HwFrameworkFactory.getLogException();
     private static HashMap<Integer, Long> mLogTime = new HashMap();
 
-    /* JADX WARNING: Missing block: B:16:0x003f, code:
+    /* JADX WARNING: Missing block: B:16:0x003f, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -62,7 +62,7 @@ public class FrameworkRadar {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0068, code:
+    /* JADX WARNING: Missing block: B:11:0x0068, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

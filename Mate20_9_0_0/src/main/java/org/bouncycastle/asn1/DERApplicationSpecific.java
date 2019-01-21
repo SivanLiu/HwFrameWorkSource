@@ -33,7 +33,7 @@ public class DERApplicationSpecific extends ASN1ApplicationSpecific {
             try {
                 byteArrayOutputStream.write(((ASN1Object) aSN1EncodableVector.get(i)).getEncoded(ASN1Encoding.DER));
                 i++;
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("malformed object: ");
                 stringBuilder.append(e);
@@ -44,14 +44,14 @@ public class DERApplicationSpecific extends ASN1ApplicationSpecific {
     }
 
     private static byte[] getEncoding(boolean z, ASN1Encodable aSN1Encodable) throws IOException {
-        Object encoded = aSN1Encodable.toASN1Primitive().getEncoded(ASN1Encoding.DER);
+        byte[] encoded = aSN1Encodable.toASN1Primitive().getEncoded(ASN1Encoding.DER);
         if (z) {
             return encoded;
         }
         int lengthOfHeader = ASN1ApplicationSpecific.getLengthOfHeader(encoded);
-        Object obj = new byte[(encoded.length - lengthOfHeader)];
-        System.arraycopy(encoded, lengthOfHeader, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[(encoded.length - lengthOfHeader)];
+        System.arraycopy(encoded, lengthOfHeader, bArr, 0, bArr.length);
+        return bArr;
     }
 
     void encode(ASN1OutputStream aSN1OutputStream) throws IOException {

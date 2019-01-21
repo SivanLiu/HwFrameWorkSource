@@ -14,7 +14,7 @@ public class JcaCertStore extends CollectionStore {
     }
 
     private static Collection convertCerts(Collection collection) throws CertificateEncodingException {
-        Collection arrayList = new ArrayList(collection.size());
+        ArrayList arrayList = new ArrayList(collection.size());
         for (Object next : collection) {
             if (next instanceof X509Certificate) {
                 try {

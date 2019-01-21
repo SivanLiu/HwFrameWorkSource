@@ -1,6 +1,7 @@
 package org.bouncycastle.openssl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
@@ -50,12 +51,12 @@ public class PKCS8Generator implements PemObjectGenerator {
             if (outputEncryptor == null) {
                 return new PemObject("PRIVATE KEY", encoded);
             }
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             OutputStream outputStream = outputEncryptor.getOutputStream(byteArrayOutputStream);
             outputStream.write(privateKeyInfo.getEncoded());
             outputStream.close();
             return new PemObject("ENCRYPTED PRIVATE KEY", new EncryptedPrivateKeyInfo(outputEncryptor.getAlgorithmIdentifier(), byteArrayOutputStream.toByteArray()).getEncoded());
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to process encoded key data: ");
             stringBuilder.append(e.getMessage());

@@ -21,39 +21,41 @@ class DragInputEventReceiver extends InputEventReceiver {
     public void onInputEvent(InputEvent event, int displayId) {
         boolean handled = false;
         try {
-            if (!(event instanceof MotionEvent) || (event.getSource() & 2) == 0 || this.mMuteInput) {
-                finishInputEvent(event, handled);
-                return;
-            }
-            MotionEvent motionEvent = (MotionEvent) event;
-            float newX = motionEvent.getRawX();
-            float newY = motionEvent.getRawY();
-            boolean isStylusButtonDown = (motionEvent.getButtonState() & 32) != 0;
-            if (this.mIsStartEvent) {
-                this.mStylusButtonDownAtStart = isStylusButtonDown;
-                this.mIsStartEvent = false;
-            }
-            switch (motionEvent.getAction()) {
-                case 0:
-                    finishInputEvent(event, handled);
-                    return;
-                case 1:
-                    this.mMuteInput = true;
-                    break;
-                case 2:
-                    if (this.mStylusButtonDownAtStart && !isStylusButtonDown) {
-                        this.mMuteInput = true;
-                        break;
+            if ((event instanceof MotionEvent) && (event.getSource() & 2) != 0) {
+                if (!this.mMuteInput) {
+                    MotionEvent motionEvent = (MotionEvent) event;
+                    float newX = motionEvent.getRawX();
+                    float newY = motionEvent.getRawY();
+                    boolean isStylusButtonDown = (motionEvent.getButtonState() & 32) != 0;
+                    if (this.mIsStartEvent) {
+                        this.mStylusButtonDownAtStart = isStylusButtonDown;
+                        this.mIsStartEvent = false;
                     }
-                case 3:
-                    this.mMuteInput = true;
-                    break;
-                default:
+                    switch (motionEvent.getAction()) {
+                        case 0:
+                            finishInputEvent(event, handled);
+                            return;
+                        case 1:
+                            this.mMuteInput = true;
+                            break;
+                        case 2:
+                            if (this.mStylusButtonDownAtStart && !isStylusButtonDown) {
+                                this.mMuteInput = true;
+                                break;
+                            }
+                        case 3:
+                            this.mMuteInput = true;
+                            break;
+                        default:
+                            finishInputEvent(event, handled);
+                            return;
+                    }
+                    this.mDragDropController.handleMotionEvent(1 ^ this.mMuteInput, newX, newY);
+                    handled = true;
                     finishInputEvent(event, handled);
                     return;
+                }
             }
-            this.mDragDropController.handleMotionEvent(true ^ this.mMuteInput, newX, newY);
-            handled = true;
             finishInputEvent(event, handled);
         } catch (Exception e) {
             Slog.e("WindowManager", "Exception caught by drag handleMotion", e);

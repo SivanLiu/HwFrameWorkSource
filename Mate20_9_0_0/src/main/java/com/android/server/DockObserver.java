@@ -85,35 +85,41 @@ final class DockObserver extends SystemService {
                 try {
                     synchronized (DockObserver.this.mLock) {
                         if (args != null) {
-                            if (!(args.length == 0 || "-a".equals(args[0]))) {
-                                if (args.length == 3 && "set".equals(args[0])) {
-                                    String key = args[1];
-                                    String value = args[2];
-                                    try {
-                                        if (AudioService.CONNECT_INTENT_KEY_STATE.equals(key)) {
-                                            DockObserver.this.mUpdatesStopped = true;
-                                            DockObserver.this.setDockStateLocked(Integer.parseInt(value));
+                            String value;
+                            try {
+                                if (args.length != 0) {
+                                    if (!"-a".equals(args[0])) {
+                                        if (args.length == 3 && "set".equals(args[0])) {
+                                            String key = args[1];
+                                            value = args[2];
+                                            if (AudioService.CONNECT_INTENT_KEY_STATE.equals(key)) {
+                                                DockObserver.this.mUpdatesStopped = true;
+                                                DockObserver.this.setDockStateLocked(Integer.parseInt(value));
+                                            } else {
+                                                StringBuilder stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Unknown set option: ");
+                                                stringBuilder.append(key);
+                                                pw.println(stringBuilder.toString());
+                                            }
                                         } else {
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            stringBuilder.append("Unknown set option: ");
-                                            stringBuilder.append(key);
-                                            pw.println(stringBuilder.toString());
+                                            if (args.length == 1 && "reset".equals(args[0])) {
+                                                DockObserver.this.mUpdatesStopped = false;
+                                                DockObserver.this.setDockStateLocked(DockObserver.this.mActualDockState);
+                                            } else {
+                                                pw.println("Dump current dock state, or:");
+                                                pw.println("  set state <value>");
+                                                pw.println("  reset");
+                                            }
                                         }
-                                    } catch (NumberFormatException e) {
-                                        StringBuilder stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("Bad value: ");
-                                        stringBuilder2.append(value);
-                                        pw.println(stringBuilder2.toString());
                                     }
-                                } else {
-                                    if (args.length == 1 && "reset".equals(args[0])) {
-                                        DockObserver.this.mUpdatesStopped = false;
-                                        DockObserver.this.setDockStateLocked(DockObserver.this.mActualDockState);
-                                    } else {
-                                        pw.println("Dump current dock state, or:");
-                                        pw.println("  set state <value>");
-                                        pw.println("  reset");
-                                    }
+                                }
+                            } catch (NumberFormatException e) {
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Bad value: ");
+                                stringBuilder2.append(value);
+                                pw.println(stringBuilder2.toString());
+                            } catch (Throwable th) {
+                                while (true) {
                                 }
                             }
                         }
@@ -236,15 +242,23 @@ final class DockObserver extends SystemService {
             if (dockSoundsEnabled || (accessibilityEnabled && dockSoundsEnabledWhenAccessibility)) {
                 String whichSound = null;
                 if (this.mReportedDockState == 0) {
-                    if (previousDockState == 1 || previousDockState == 3 || previousDockState == 4) {
-                        whichSound = "desk_undock_sound";
-                    } else if (previousDockState == 2) {
-                        whichSound = "car_undock_sound";
+                    if (!(previousDockState == 1 || previousDockState == 3)) {
+                        if (previousDockState != 4) {
+                            if (previousDockState == 2) {
+                                whichSound = "car_undock_sound";
+                            }
+                        }
                     }
-                } else if (this.mReportedDockState == 1 || this.mReportedDockState == 3 || this.mReportedDockState == 4) {
+                    whichSound = "desk_undock_sound";
+                } else {
+                    if (!(this.mReportedDockState == 1 || this.mReportedDockState == 3)) {
+                        if (this.mReportedDockState != 4) {
+                            if (this.mReportedDockState == 2) {
+                                whichSound = "car_dock_sound";
+                            }
+                        }
+                    }
                     whichSound = "desk_dock_sound";
-                } else if (this.mReportedDockState == 2) {
-                    whichSound = "car_dock_sound";
                 }
                 if (whichSound != null) {
                     String soundPath = Global.getString(cr, whichSound);

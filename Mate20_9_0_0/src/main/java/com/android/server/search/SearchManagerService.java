@@ -213,11 +213,13 @@ public class SearchManagerService extends Stub {
     private ComponentName getLegacyAssistComponent(int userHandle) {
         try {
             List<ResolveInfo> infoListVis = this.mContext.getPackageManager().queryIntentServicesAsUser(new Intent("android.service.voice.VoiceInteractionService"), DumpState.DUMP_DEXOPT, ActivityManager.handleIncomingUser(Binder.getCallingPid(), Binder.getCallingUid(), userHandle, true, false, "getLegacyAssistComponent", null));
-            if (infoListVis == null || infoListVis.isEmpty()) {
-                return null;
+            if (infoListVis != null) {
+                if (!infoListVis.isEmpty()) {
+                    ResolveInfo rInfo = (ResolveInfo) infoListVis.get(0);
+                    return new ComponentName(rInfo.serviceInfo.applicationInfo.packageName, rInfo.serviceInfo.name);
+                }
             }
-            ResolveInfo rInfo = (ResolveInfo) infoListVis.get(0);
-            return new ComponentName(rInfo.serviceInfo.applicationInfo.packageName, rInfo.serviceInfo.name);
+            return null;
         } catch (Exception e) {
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();

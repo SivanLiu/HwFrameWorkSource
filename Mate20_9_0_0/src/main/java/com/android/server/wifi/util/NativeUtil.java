@@ -114,18 +114,14 @@ public class NativeUtil {
         throw new IllegalArgumentException("null mac string");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0017 A:{Splitter: B:3:0x0007, ExcHandler: java.nio.BufferUnderflowException (e java.nio.BufferUnderflowException)} */
-    /* JADX WARNING: Missing block: B:8:0x001f, code:
-            throw new java.lang.IllegalArgumentException("invalid macArray");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static Long macAddressToLong(byte[] macArray) {
         if (macArray == null) {
             throw new IllegalArgumentException("null mac bytes");
         } else if (macArray.length == 6) {
             try {
                 return Long.valueOf(ByteBufferReader.readInteger(ByteBuffer.wrap(macArray), ByteOrder.BIG_ENDIAN, macArray.length));
-            } catch (BufferUnderflowException e) {
+            } catch (IllegalArgumentException | BufferUnderflowException e) {
+                throw new IllegalArgumentException("invalid macArray");
             }
         } else {
             StringBuilder stringBuilder = new StringBuilder();

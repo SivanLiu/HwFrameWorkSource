@@ -759,35 +759,41 @@ final class HwSmartBackLightXmlLoader {
         HWFLOW = z;
     }
 
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:10:0x0014, B:15:0x0021] */
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
+            r2 = th;
+     */
+    /* JADX WARNING: Missing block: B:22:0x0041, code skipped:
+            if (null == null) goto L_0x0043;
+     */
+    /* JADX WARNING: Missing block: B:23:0x0043, code skipped:
+            new com.android.server.display.HwSmartBackLightXmlLoader.Data().loadDefaultConfig();
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static Data getData() {
         Data retData;
         synchronized (mLoaderLock) {
             retData = null;
-            Data data;
+            Data th;
             try {
                 if (mLoader == null) {
                     mLoader = new HwSmartBackLightXmlLoader();
                 }
                 retData = mData;
                 if (retData == null) {
-                    data = new Data();
-                    retData = data;
+                    th = new Data();
+                    retData = th;
                     retData.loadDefaultConfig();
                 }
             } catch (RuntimeException e) {
-                try {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("getData() failed! ");
-                    stringBuilder.append(e);
-                    Slog.e(str, stringBuilder.toString());
-                    if (null == null) {
-                        data = new Data();
-                    }
-                } catch (Throwable th) {
-                    if (null == null) {
-                        new Data().loadDefaultConfig();
-                    }
+                th = e;
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("getData() failed! ");
+                stringBuilder.append(th);
+                Slog.e(str, stringBuilder.toString());
+                if (null == null) {
+                    th = new Data();
                 }
             }
         }

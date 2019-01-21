@@ -46,7 +46,7 @@ public final class PaintCompat {
         Pair<Rect, Rect> rects = obtainEmptyRects();
         paint.getTextBounds(TOFU_STRING, 0, TOFU_STRING.length(), (Rect) rects.first);
         paint.getTextBounds(string, 0, length, (Rect) rects.second);
-        return true ^ ((Rect) rects.first).equals(rects.second);
+        return 1 ^ ((Rect) rects.first).equals(rects.second);
     }
 
     private static Pair<Rect, Rect> obtainEmptyRects() {

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -28,12 +27,12 @@ public class X509ExtensionUtil {
             return Collections.EMPTY_LIST;
         }
         try {
-            Collection arrayList = new ArrayList();
+            ArrayList arrayList = new ArrayList();
             Enumeration objects = ASN1Sequence.getInstance(fromExtensionValue(bArr)).getObjects();
             while (objects.hasMoreElements()) {
                 Object toASN1Primitive;
                 GeneralName instance = GeneralName.getInstance(objects.nextElement());
-                List arrayList2 = new ArrayList();
+                ArrayList arrayList2 = new ArrayList();
                 arrayList2.add(Integers.valueOf(instance.getTagNo()));
                 switch (instance.getTagNo()) {
                     case 0:

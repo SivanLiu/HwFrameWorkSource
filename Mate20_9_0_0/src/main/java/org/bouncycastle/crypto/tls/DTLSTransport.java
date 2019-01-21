@@ -30,7 +30,7 @@ public class DTLSTransport implements DatagramTransport {
         } catch (IOException e2) {
             this.recordLayer.fail((short) 80);
             throw e2;
-        } catch (Throwable e3) {
+        } catch (RuntimeException e3) {
             this.recordLayer.fail((short) 80);
             throw new TlsFatalAlert((short) 80, e3);
         }
@@ -45,7 +45,7 @@ public class DTLSTransport implements DatagramTransport {
         } catch (IOException e2) {
             this.recordLayer.fail((short) 80);
             throw e2;
-        } catch (Throwable e3) {
+        } catch (RuntimeException e3) {
             this.recordLayer.fail((short) 80);
             throw new TlsFatalAlert((short) 80, e3);
         }

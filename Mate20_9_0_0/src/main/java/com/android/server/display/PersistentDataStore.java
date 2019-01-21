@@ -176,21 +176,12 @@ final class PersistentDataStore {
             return Pair.create(lux, nits);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:3:0x0005 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.NullPointerException (r0_1 'e' java.lang.RuntimeException)} */
-        /* JADX WARNING: Missing block: B:3:0x0005, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:4:0x0006, code:
-            android.util.Slog.e(com.android.server.display.PersistentDataStore.TAG, "Failed to parse float loading brightness config", r0);
-     */
-        /* JADX WARNING: Missing block: B:5:0x000f, code:
-            return Float.NEGATIVE_INFINITY;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         private static float loadFloat(String val) {
             try {
                 return Float.parseFloat(val);
-            } catch (RuntimeException e) {
+            } catch (NullPointerException | NumberFormatException e) {
+                Slog.e(PersistentDataStore.TAG, "Failed to parse float loading brightness config", e);
+                return Float.NEGATIVE_INFINITY;
             }
         }
 
@@ -778,7 +769,7 @@ final class PersistentDataStore {
         return display;
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0017, code:
+    /* JADX WARNING: Missing block: B:7:0x0017, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -105,7 +105,7 @@ public class PinnedSliceState {
         setSlicePinned(false);
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002b, code:
+    /* JADX WARNING: Missing block: B:12:0x002b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -144,7 +144,7 @@ public class PinnedSliceState {
     }
 
     public boolean isListening() {
-        boolean isEmpty;
+        int isEmpty;
         synchronized (this.mLock) {
             isEmpty = this.mListeners.isEmpty() ^ 1;
         }
@@ -155,7 +155,12 @@ public class PinnedSliceState {
     public boolean hasPinOrListener() {
         boolean z;
         synchronized (this.mLock) {
-            z = (this.mPinnedPkgs.isEmpty() && this.mListeners.isEmpty()) ? false : true;
+            if (this.mPinnedPkgs.isEmpty()) {
+                if (this.mListeners.isEmpty()) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
@@ -188,10 +193,10 @@ public class PinnedSliceState {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0044, code:
+    /* JADX WARNING: Missing block: B:19:0x0044, code skipped:
             if (r0 != null) goto L_0x0046;
      */
-    /* JADX WARNING: Missing block: B:20:0x0046, code:
+    /* JADX WARNING: Missing block: B:20:0x0046, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -233,10 +238,10 @@ public class PinnedSliceState {
         x1.close();
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0044, code:
+    /* JADX WARNING: Missing block: B:19:0x0044, code skipped:
             if (r0 != null) goto L_0x0046;
      */
-    /* JADX WARNING: Missing block: B:20:0x0046, code:
+    /* JADX WARNING: Missing block: B:20:0x0046, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -839,7 +839,7 @@ public class CollectUserFingersHandler {
         }
     }
 
-    public void updateMobileDurationForCell(boolean checkChanges) {
+    public boolean updateMobileDurationForCell(boolean checkChanges) {
         LogUtil.i(" updateMobileDurationForCell ");
         StringBuilder stringBuilder;
         try {
@@ -862,7 +862,7 @@ public class CollectUserFingersHandler {
                 LogUtil.i(" check cell ID change ");
                 if (newId2.equals(oldId) && newRat.equals(oldRat)) {
                     LogUtil.d(" cell id not changed ");
-                    return;
+                    return false;
                 }
             }
             backupCellInfo();
@@ -884,7 +884,6 @@ public class CollectUserFingersHandler {
                     HwWmpAppInfo info = (HwWmpAppInfo) entry.getValue();
                     int nwType = info.getConMgrNetworkType();
                     stringBuilder = new StringBuilder();
-                    Bundle cellInfo2 = cellInfo;
                     stringBuilder.append(" saveAppInfo, app: ");
                     stringBuilder.append(info.getAppName());
                     stringBuilder.append(", network=");
@@ -896,7 +895,6 @@ public class CollectUserFingersHandler {
                     if (1 != nwType) {
                         updateDurationbyNwId(app, oldId, oldRat, oldFreq, nwType, signalVal2);
                     }
-                    cellInfo = cellInfo2;
                     it = it2;
                 }
             }
@@ -906,6 +904,7 @@ public class CollectUserFingersHandler {
             stringBuilder.append(e.getMessage());
             LogUtil.e(stringBuilder.toString());
         }
+        return true;
     }
 
     private void updateMobileDurationEnd() {
@@ -1129,6 +1128,8 @@ public class CollectUserFingersHandler {
         return resultMap;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x004a A:{Catch:{ Exception -> 0x000d }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void assignSpaceExp2Space(RecognizeResult result) {
         StringBuilder stringBuilder;
         Exception e;
@@ -1145,24 +1146,77 @@ public class CollectUserFingersHandler {
         } else {
             String spaceId_mainAp;
             StringBuilder stringBuilder2;
-            if (result.getRgResult() == null || result.getRgResult().contains(Constant.RESULT_UNKNOWN)) {
-                e2 = "0";
-                stringBuilder = new StringBuilder();
-                stringBuilder.append(" assignSpaceExp2Space: All AP result=");
-                stringBuilder.append(result.getRgResult());
-                LogUtil.i(stringBuilder.toString());
-            } else {
-                e2 = result.getRgResult();
+            if (result.getRgResult() != null) {
+                if (!result.getRgResult().contains(Constant.RESULT_UNKNOWN)) {
+                    e2 = result.getRgResult();
+                    if (result.getMainApRgResult() != null) {
+                        if (!result.getMainApRgResult().contains(Constant.RESULT_UNKNOWN)) {
+                            spaceId_mainAp = result.getMainApRgResult();
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append(" assignSpaceExp2Space: spaceId_allAp=");
+                            stringBuilder2.append(e2);
+                            stringBuilder2.append(", spaceId_mainAp=");
+                            stringBuilder2.append(spaceId_mainAp);
+                            stringBuilder2.append(", model ver=");
+                            stringBuilder2.append(result.getAllApModelName());
+                            stringBuilder2.append(Constant.RESULT_SEPERATE);
+                            stringBuilder2.append(result.getMainApModelName());
+                            LogUtil.d(stringBuilder2.toString());
+                            updateWifiDurationForAp(false);
+                            updateMobileDurationForCell(false);
+                            updateUserPreference();
+                            this.mSpaceid.setLength(0);
+                            this.mSpaceid.trimToSize();
+                            this.mSpaceid.append(e2);
+                            this.mSpaceid_mainAp.setLength(0);
+                            this.mSpaceid_mainAp.trimToSize();
+                            this.mSpaceid_mainAp.append(spaceId_mainAp);
+                            saveSpaceExptoDatabaseNew(result);
+                            this.mSpaceExperience.clear();
+                            clearUserPreference();
+                        }
+                    }
+                    spaceId_mainAp = "0";
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(" assignSpaceExp2Space: Main AP result=");
+                    stringBuilder2.append(result.getMainApRgResult());
+                    LogUtil.i(stringBuilder2.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(" assignSpaceExp2Space: spaceId_allAp=");
+                    stringBuilder2.append(e2);
+                    stringBuilder2.append(", spaceId_mainAp=");
+                    stringBuilder2.append(spaceId_mainAp);
+                    stringBuilder2.append(", model ver=");
+                    stringBuilder2.append(result.getAllApModelName());
+                    stringBuilder2.append(Constant.RESULT_SEPERATE);
+                    stringBuilder2.append(result.getMainApModelName());
+                    LogUtil.d(stringBuilder2.toString());
+                    updateWifiDurationForAp(false);
+                    updateMobileDurationForCell(false);
+                    updateUserPreference();
+                    this.mSpaceid.setLength(0);
+                    this.mSpaceid.trimToSize();
+                    this.mSpaceid.append(e2);
+                    this.mSpaceid_mainAp.setLength(0);
+                    this.mSpaceid_mainAp.trimToSize();
+                    this.mSpaceid_mainAp.append(spaceId_mainAp);
+                    saveSpaceExptoDatabaseNew(result);
+                    this.mSpaceExperience.clear();
+                    clearUserPreference();
+                }
             }
-            if (result.getMainApRgResult() == null || result.getMainApRgResult().contains(Constant.RESULT_UNKNOWN)) {
-                spaceId_mainAp = "0";
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(" assignSpaceExp2Space: Main AP result=");
-                stringBuilder2.append(result.getMainApRgResult());
-                LogUtil.i(stringBuilder2.toString());
-            } else {
-                spaceId_mainAp = result.getMainApRgResult();
+            e2 = "0";
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" assignSpaceExp2Space: All AP result=");
+            stringBuilder.append(result.getRgResult());
+            LogUtil.i(stringBuilder.toString());
+            if (result.getMainApRgResult() != null) {
             }
+            spaceId_mainAp = "0";
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append(" assignSpaceExp2Space: Main AP result=");
+            stringBuilder2.append(result.getMainApRgResult());
+            LogUtil.i(stringBuilder2.toString());
             stringBuilder2 = new StringBuilder();
             stringBuilder2.append(" assignSpaceExp2Space: spaceId_allAp=");
             stringBuilder2.append(e2);
@@ -1274,11 +1328,15 @@ public class CollectUserFingersHandler {
     /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
     /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
     /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x02e0  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private Bundle calculateUserPreference(HashMap<String, Bundle> currentSpaceExp, boolean needRecord) {
         RuntimeException e;
-        Exception e2;
         StringBuilder stringBuilder;
+        Exception e2;
         int inoutCount;
         int stayCount;
         Bundle result = new Bundle();
@@ -1328,9 +1386,23 @@ public class CollectUserFingersHandler {
                     } catch (RuntimeException e3) {
                         e = e3;
                         totalDuration2 = totalDuration;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("calculateUserPreference RuntimeException,e:");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                        if (!result.getBoolean("isUserHasPref", false)) {
+                        }
+                        return result;
                     } catch (Exception e4) {
                         e2 = e4;
                         totalDuration2 = totalDuration;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append(" calculateUserPreference, e:");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                        if (result.getBoolean("isUserHasPref", false)) {
+                        }
+                        return result;
                     }
                     try {
                         stringBuilder2.append(value.getLong("duration_connected"));
@@ -1347,7 +1419,7 @@ public class CollectUserFingersHandler {
                         stringBuilder.append("calculateUserPreference RuntimeException,e:");
                         stringBuilder.append(e.getMessage());
                         LogUtil.e(stringBuilder.toString());
-                        if (!result.getBoolean("isUserHasPref", false)) {
+                        if (result.getBoolean("isUserHasPref", false)) {
                         }
                         return result;
                     } catch (Exception e6) {
@@ -1468,8 +1540,22 @@ public class CollectUserFingersHandler {
             }
         } catch (RuntimeException e11) {
             e = e11;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("calculateUserPreference RuntimeException,e:");
+            stringBuilder.append(e.getMessage());
+            LogUtil.e(stringBuilder.toString());
+            if (result.getBoolean("isUserHasPref", false)) {
+            }
+            return result;
         } catch (Exception e12) {
             e2 = e12;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" calculateUserPreference, e:");
+            stringBuilder.append(e2.getMessage());
+            LogUtil.e(stringBuilder.toString());
+            if (result.getBoolean("isUserHasPref", false)) {
+            }
+            return result;
         }
         if (result.getBoolean("isUserHasPref", false)) {
             LogUtil.i(" NO user prefer");
@@ -1477,6 +1563,8 @@ public class CollectUserFingersHandler {
         return result;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x004a A:{Catch:{ Exception -> 0x000d }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void recognizeActions(RecognizeResult result) {
         StringBuilder stringBuilder;
         Exception e;
@@ -1493,24 +1581,47 @@ public class CollectUserFingersHandler {
         } else {
             String spaceId_mainAp;
             StringBuilder stringBuilder2;
-            if (result.getRgResult() == null || result.getRgResult().contains(Constant.RESULT_UNKNOWN)) {
-                e2 = "0";
-                stringBuilder = new StringBuilder();
-                stringBuilder.append(" recognizeActions: All AP result=");
-                stringBuilder.append(result.getRgResult());
-                LogUtil.i(stringBuilder.toString());
-            } else {
-                e2 = result.getRgResult();
+            if (result.getRgResult() != null) {
+                if (!result.getRgResult().contains(Constant.RESULT_UNKNOWN)) {
+                    e2 = result.getRgResult();
+                    if (result.getMainApRgResult() != null) {
+                        if (!result.getMainApRgResult().contains(Constant.RESULT_UNKNOWN)) {
+                            spaceId_mainAp = result.getMainApRgResult();
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append(" recognizeActions: spaceId_allAp=");
+                            stringBuilder2.append(e2);
+                            stringBuilder2.append(", spaceId_mainAp=");
+                            stringBuilder2.append(spaceId_mainAp);
+                            LogUtil.d(stringBuilder2.toString());
+                            determineUserPreference(e2, spaceId_mainAp);
+                        }
+                    }
+                    spaceId_mainAp = "0";
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(" recognizeActions: Main AP result=");
+                    stringBuilder2.append(result.getMainApRgResult());
+                    LogUtil.i(stringBuilder2.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(" recognizeActions: spaceId_allAp=");
+                    stringBuilder2.append(e2);
+                    stringBuilder2.append(", spaceId_mainAp=");
+                    stringBuilder2.append(spaceId_mainAp);
+                    LogUtil.d(stringBuilder2.toString());
+                    determineUserPreference(e2, spaceId_mainAp);
+                }
             }
-            if (result.getMainApRgResult() == null || result.getMainApRgResult().contains(Constant.RESULT_UNKNOWN)) {
-                spaceId_mainAp = "0";
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(" recognizeActions: Main AP result=");
-                stringBuilder2.append(result.getMainApRgResult());
-                LogUtil.i(stringBuilder2.toString());
-            } else {
-                spaceId_mainAp = result.getMainApRgResult();
+            e2 = "0";
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" recognizeActions: All AP result=");
+            stringBuilder.append(result.getRgResult());
+            LogUtil.i(stringBuilder.toString());
+            if (result.getMainApRgResult() != null) {
             }
+            spaceId_mainAp = "0";
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append(" recognizeActions: Main AP result=");
+            stringBuilder2.append(result.getMainApRgResult());
+            LogUtil.i(stringBuilder2.toString());
             stringBuilder2 = new StringBuilder();
             stringBuilder2.append(" recognizeActions: spaceId_allAp=");
             stringBuilder2.append(e2);
@@ -1831,26 +1942,26 @@ public class CollectUserFingersHandler {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x012c A:{SYNTHETIC, Splitter: B:44:0x012c} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0172 A:{SYNTHETIC, Splitter: B:53:0x0172} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x018d  */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x0189 A:{SYNTHETIC, Splitter: B:59:0x0189} */
-    /* JADX WARNING: Removed duplicated region for block: B:106:0x03b8 A:{Catch:{ Exception -> 0x0402 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x0194 A:{Catch:{ Exception -> 0x0404 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x03f2 A:{Catch:{ Exception -> 0x0402 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:109:0x03e4 A:{Catch:{ Exception -> 0x0402 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x00d7 A:{SYNTHETIC, Splitter: B:36:0x00d7} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x012c A:{SYNTHETIC, Splitter: B:44:0x012c} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0172 A:{SYNTHETIC, Splitter: B:53:0x0172} */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x0189 A:{SYNTHETIC, Splitter: B:59:0x0189} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x018d  */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x0194 A:{Catch:{ Exception -> 0x0404 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:106:0x03b8 A:{Catch:{ Exception -> 0x0402 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:109:0x03e4 A:{Catch:{ Exception -> 0x0402 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x03f2 A:{Catch:{ Exception -> 0x0402 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:119:0x0421  */
-    /* JADX WARNING: Removed duplicated region for block: B:119:0x0421  */
-    /* JADX WARNING: Removed duplicated region for block: B:119:0x0421  */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x012c A:{SYNTHETIC, Splitter:B:46:0x012c} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0172 A:{SYNTHETIC, Splitter:B:55:0x0172} */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x018d  */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x0189 A:{SYNTHETIC, Splitter:B:61:0x0189} */
+    /* JADX WARNING: Removed duplicated region for block: B:108:0x03b8 A:{Catch:{ Exception -> 0x0402 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x0194 A:{Catch:{ Exception -> 0x0404 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:114:0x03f2 A:{Catch:{ Exception -> 0x0402 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:111:0x03e4 A:{Catch:{ Exception -> 0x0402 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00d7 A:{SYNTHETIC, Splitter:B:37:0x00d7} */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x012c A:{SYNTHETIC, Splitter:B:46:0x012c} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0172 A:{SYNTHETIC, Splitter:B:55:0x0172} */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x0189 A:{SYNTHETIC, Splitter:B:61:0x0189} */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x018d  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x0194 A:{Catch:{ Exception -> 0x0404 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:108:0x03b8 A:{Catch:{ Exception -> 0x0402 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:111:0x03e4 A:{Catch:{ Exception -> 0x0402 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:114:0x03f2 A:{Catch:{ Exception -> 0x0402 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x0421  */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x0421  */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x0421  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void queryAppQoebyTargetNw(RecognizeResult result, int fullId, int UID, int Network, IWaveMappingCallback callback) {
         Exception e;

@@ -66,13 +66,13 @@ public class CramerShoupCiphertext {
     }
 
     public byte[] toByteArray() {
-        Object toByteArray = this.u1.toByteArray();
+        byte[] toByteArray = this.u1.toByteArray();
         int length = toByteArray.length;
-        Object toByteArray2 = this.u2.toByteArray();
+        byte[] toByteArray2 = this.u2.toByteArray();
         int length2 = toByteArray2.length;
-        Object toByteArray3 = this.e.toByteArray();
+        byte[] toByteArray3 = this.e.toByteArray();
         int length3 = toByteArray3.length;
-        Object toByteArray4 = this.v.toByteArray();
+        byte[] toByteArray4 = this.v.toByteArray();
         int length4 = toByteArray4.length;
         byte[] bArr = new byte[((((length + length2) + length3) + length4) + 16)];
         Pack.intToBigEndian(length, bArr, 0);

@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 public class WifiProHistoryDBManager {
     private static long AGING_MS_OF_EACH_DAY = 1800000;
@@ -45,16 +47,17 @@ public class WifiProHistoryDBManager {
         return mBQEDataBaseManager;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001f, code:
+    /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeDB() {
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                Log.w(TAG, "closeDB()");
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    Log.w(TAG, "closeDB()");
+                    this.mDatabase.close();
+                }
             }
         }
     }
@@ -62,24 +65,26 @@ public class WifiProHistoryDBManager {
     private boolean deleteHistoryRecord(String dbTableName, String apBssid) {
         logi("deleteHistoryRecord enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("deleteHistoryRecord database error.");
-                return false;
-            } else if (apBssid == null) {
-                loge("deleteHistoryRecord null error.");
-                return false;
-            } else {
-                try {
-                    this.mDatabase.delete(dbTableName, "apBSSID like ?", new String[]{apBssid});
-                    return true;
-                } catch (SQLException e) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("deleteHistoryRecord error:");
-                    stringBuilder.append(e);
-                    loge(stringBuilder.toString());
-                    return false;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apBssid == null) {
+                        loge("deleteHistoryRecord null error.");
+                        return false;
+                    }
+                    try {
+                        this.mDatabase.delete(dbTableName, "apBSSID like ?", new String[]{apBssid});
+                        return true;
+                    } catch (SQLException e) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("deleteHistoryRecord error:");
+                        stringBuilder.append(e);
+                        loge(stringBuilder.toString());
+                        return false;
+                    }
                 }
             }
+            loge("deleteHistoryRecord database error.");
+            return false;
         }
     }
 
@@ -178,24 +183,27 @@ public class WifiProHistoryDBManager {
     public boolean addOrUpdateApInfoRecord(WifiProApInfoRecord dbr) {
         logd("addOrUpdateApInfoRecord enter.");
         synchronized (this.mBqeLock) {
-            boolean updateApInfoRecord;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                loge("addOrUpdateApInfoRecord error.");
-                return false;
-            } else if (dbr.apBSSID == null) {
-                loge("addOrUpdateApInfoRecord null error.");
-                return false;
-            } else if (checkHistoryRecordExist(WifiProHistoryDBHelper.WP_AP_INFO_TB_NAME, dbr.apBSSID)) {
-                updateApInfoRecord = updateApInfoRecord(dbr);
-                return updateApInfoRecord;
-            } else {
-                updateApInfoRecord = insertApInfoRecord(dbr);
-                return updateApInfoRecord;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    boolean updateApInfoRecord;
+                    if (dbr.apBSSID == null) {
+                        loge("addOrUpdateApInfoRecord null error.");
+                        return false;
+                    } else if (checkHistoryRecordExist(WifiProHistoryDBHelper.WP_AP_INFO_TB_NAME, dbr.apBSSID)) {
+                        updateApInfoRecord = updateApInfoRecord(dbr);
+                        return updateApInfoRecord;
+                    } else {
+                        updateApInfoRecord = insertApInfoRecord(dbr);
+                        return updateApInfoRecord;
+                    }
+                }
             }
+            loge("addOrUpdateApInfoRecord error.");
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0100, code:
+    /* JADX WARNING: Missing block: B:29:0x0100, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -268,7 +276,7 @@ public class WifiProHistoryDBManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0060, code:
+    /* JADX WARNING: Missing block: B:16:0x0060, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -317,325 +325,275 @@ public class WifiProHistoryDBManager {
         }
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.wifi.wifipro.WifiProHistoryDBManager.removeTooOldApInfoRecord():boolean, dom blocks: [B:58:0x0165, B:68:0x0178]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x018f A:{SYNTHETIC, Splitter: B:71:0x018f} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x018f A:{SYNTHETIC, Splitter: B:71:0x018f} */
-    /* JADX WARNING: Removed duplicated region for block: B:78:0x0198 A:{Catch:{ all -> 0x0195, all -> 0x01af }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x018f A:{SYNTHETIC, Splitter:B:72:0x018f} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x018f A:{SYNTHETIC, Splitter:B:72:0x018f} */
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x0198 A:{Catch:{ all -> 0x0195, all -> 0x01af }} */
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x0198 A:{Catch:{ all -> 0x0195, all -> 0x01af }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x018f A:{SYNTHETIC, Splitter:B:72:0x018f} */
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x0198 A:{Catch:{ all -> 0x0195, all -> 0x01af }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x018f A:{SYNTHETIC, Splitter:B:72:0x018f} */
+    /* JADX WARNING: Removed duplicated region for block: B:79:0x0198 A:{Catch:{ all -> 0x0195, all -> 0x01af }} */
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:59:0x0165, B:69:0x0178] */
+    /* JADX WARNING: Missing block: B:63:0x016a, code skipped:
+            return true;
+     */
+    /* JADX WARNING: Missing block: B:77:0x0195, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:90:0x01af, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean removeTooOldApInfoRecord() {
-        /*
-        r25 = this;
-        r1 = r25;
-        r2 = 0;
-        r0 = new java.util.Vector;
-        r0.<init>();
-        r3 = r0;
-        r0 = new java.util.Date;
-        r0.<init>();
-        r4 = r0;
-        r5 = r4.getTime();
-        r7 = 0;
-        r9 = 0;
-        r0 = "removeTooOldApInfoRecord enter.";
-        r1.logd(r0);
-        r11 = r1.mBqeLock;
-        monitor-enter(r11);
-        r0 = r1.mDatabase;	 Catch:{ all -> 0x01a8 }
-        if (r0 == 0) goto L_0x019c;	 Catch:{ all -> 0x01a8 }
-    L_0x0023:
-        r0 = r1.mDatabase;	 Catch:{ all -> 0x01a8 }
-        r0 = r0.isOpen();	 Catch:{ all -> 0x01a8 }
-        if (r0 != 0) goto L_0x0031;	 Catch:{ all -> 0x01a8 }
-    L_0x002b:
-        r20 = r2;	 Catch:{ all -> 0x01a8 }
-        r21 = r4;	 Catch:{ all -> 0x01a8 }
-        goto L_0x01a0;	 Catch:{ all -> 0x01a8 }
-    L_0x0031:
-        r3.clear();	 Catch:{ all -> 0x01a8 }
-        r0 = 0;
-        r13 = r0;
-        r14 = r1.mDatabase;	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r15 = "SELECT * FROM WifiProApInfoRecodTable";	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = r14.rawQuery(r15, r0);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r13 = r0;	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = new java.lang.StringBuilder;	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0.<init>();	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r14 = "all record count=";	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0.append(r14);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r14 = r13.getCount();	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0.append(r14);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = r0.toString();	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r1.logd(r0);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-    L_0x0057:
-        r0 = r13.moveToNext();	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        if (r0 == 0) goto L_0x011f;	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-    L_0x005d:
-        r0 = "lastConnectTime";	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = r13.getColumnIndex(r0);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r14 = r13.getLong(r0);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r7 = r14;	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = "totalUseTime";	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = r13.getColumnIndex(r0);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r0 = r13.getInt(r0);	 Catch:{ SQLException -> 0x0173, all -> 0x016d }
-        r9 = (long) r0;
-        r14 = r5 - r7;
-        r16 = MS_OF_ONE_DAY;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r14 = r14 / r16;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r16 = TOO_OLD_VALID_DAY;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r0 = (r14 > r16 ? 1 : (r14 == r16 ? 0 : -1));	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        if (r0 <= 0) goto L_0x0100;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-    L_0x007f:
-        r16 = AGING_MS_OF_EACH_DAY;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r16 = r16 * r14;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r16 = r9 - r16;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r18 = 0;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r0 = (r16 > r18 ? 1 : (r16 == r18 ? 0 : -1));	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        if (r0 >= 0) goto L_0x0100;	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-    L_0x008b:
-        r0 = "check result: need delete.";	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r1.logi(r0);	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r0 = "_id";	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r0 = r13.getColumnIndex(r0);	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r0 = r13.getInt(r0);	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r12 = "apSSID";	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r12 = r13.getColumnIndex(r12);	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r12 = r13.getString(r12);	 Catch:{ SQLException -> 0x0117, all -> 0x010e }
-        r20 = r2;
-        r2 = "apBSSID";	 Catch:{ SQLException -> 0x00f9, all -> 0x00f2 }
-        r2 = r13.getColumnIndex(r2);	 Catch:{ SQLException -> 0x00f9, all -> 0x00f2 }
-        r2 = r13.getString(r2);	 Catch:{ SQLException -> 0x00f9, all -> 0x00f2 }
-        r21 = r4;
-        r4 = new java.lang.StringBuilder;	 Catch:{ SQLException -> 0x00ed, all -> 0x00e8 }
-        r4.<init>();	 Catch:{ SQLException -> 0x00ed, all -> 0x00e8 }
-        r22 = r9;
-        r9 = "check record: ssid:";	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4.append(r9);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4.append(r12);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r9 = ", id:";	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4.append(r9);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4.append(r0);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r9 = ", pass time:";	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4.append(r9);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r9 = r5 - r7;	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4.append(r9);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r4 = r4.toString();	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r1.logi(r4);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        r3.add(r2);	 Catch:{ SQLException -> 0x00e3, all -> 0x00de }
-        goto L_0x0106;
-    L_0x00de:
-        r0 = move-exception;
-        r9 = r22;
-        goto L_0x0196;
-    L_0x00e3:
-        r0 = move-exception;
-        r9 = r22;
-        goto L_0x0178;
-    L_0x00e8:
-        r0 = move-exception;
-        r22 = r9;
-        goto L_0x0196;
-    L_0x00ed:
-        r0 = move-exception;
-        r22 = r9;
-        goto L_0x0178;
-    L_0x00f2:
-        r0 = move-exception;
-        r21 = r4;
-        r22 = r9;
-        goto L_0x0196;
-    L_0x00f9:
-        r0 = move-exception;
-        r21 = r4;
-        r22 = r9;
-        goto L_0x0178;
-    L_0x0100:
-        r20 = r2;
-        r21 = r4;
-        r22 = r9;
-    L_0x0106:
-        r2 = r20;
-        r4 = r21;
-        r9 = r22;
-        goto L_0x0057;
-    L_0x010e:
-        r0 = move-exception;
-        r20 = r2;
-        r21 = r4;
-        r22 = r9;
-        goto L_0x0196;
-    L_0x0117:
-        r0 = move-exception;
-        r20 = r2;
-        r21 = r4;
-        r22 = r9;
-        goto L_0x0178;
-    L_0x011f:
-        r20 = r2;
-        r21 = r4;
-        r0 = r3.size();	 Catch:{ SQLException -> 0x016b }
-        r2 = new java.lang.StringBuilder;	 Catch:{ SQLException -> 0x016b }
-        r2.<init>();	 Catch:{ SQLException -> 0x016b }
-        r4 = "start delete ";	 Catch:{ SQLException -> 0x016b }
-        r2.append(r4);	 Catch:{ SQLException -> 0x016b }
-        r2.append(r0);	 Catch:{ SQLException -> 0x016b }
-        r4 = " records.";	 Catch:{ SQLException -> 0x016b }
-        r2.append(r4);	 Catch:{ SQLException -> 0x016b }
-        r2 = r2.toString();	 Catch:{ SQLException -> 0x016b }
-        r1.logi(r2);	 Catch:{ SQLException -> 0x016b }
-        r2 = 0;	 Catch:{ SQLException -> 0x016b }
-    L_0x0141:
-        if (r2 >= r0) goto L_0x0163;	 Catch:{ SQLException -> 0x016b }
-    L_0x0143:
-        r12 = r3.get(r2);	 Catch:{ SQLException -> 0x016b }
-        r12 = (java.lang.String) r12;	 Catch:{ SQLException -> 0x016b }
-        if (r12 != 0) goto L_0x014c;	 Catch:{ SQLException -> 0x016b }
-    L_0x014b:
-        goto L_0x0163;	 Catch:{ SQLException -> 0x016b }
-    L_0x014c:
-        r14 = r1.mDatabase;	 Catch:{ SQLException -> 0x016b }
-        r15 = "WifiProApInfoRecodTable";	 Catch:{ SQLException -> 0x016b }
-        r4 = "apBSSID like ?";	 Catch:{ SQLException -> 0x016b }
-        r24 = r0;	 Catch:{ SQLException -> 0x016b }
-        r0 = 1;	 Catch:{ SQLException -> 0x016b }
-        r0 = new java.lang.String[r0];	 Catch:{ SQLException -> 0x016b }
-        r16 = 0;	 Catch:{ SQLException -> 0x016b }
-        r0[r16] = r12;	 Catch:{ SQLException -> 0x016b }
-        r14.delete(r15, r4, r0);	 Catch:{ SQLException -> 0x016b }
-        r2 = r2 + 1;
-        r0 = r24;
-        goto L_0x0141;
-    L_0x0163:
-        if (r13 == 0) goto L_0x0168;
-    L_0x0165:
-        r13.close();	 Catch:{ all -> 0x01af }
-    L_0x0168:
-        monitor-exit(r11);	 Catch:{ all -> 0x01af }
-        r0 = 1;
-        return r0;
-    L_0x016b:
-        r0 = move-exception;
-        goto L_0x0178;
-    L_0x016d:
-        r0 = move-exception;
-        r20 = r2;
-        r21 = r4;
-        goto L_0x0196;
-    L_0x0173:
-        r0 = move-exception;
-        r20 = r2;
-        r21 = r4;
-    L_0x0178:
-        r2 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0195 }
-        r2.<init>();	 Catch:{ all -> 0x0195 }
-        r4 = "removeTooOldApInfoRecord error:";	 Catch:{ all -> 0x0195 }
-        r2.append(r4);	 Catch:{ all -> 0x0195 }
-        r2.append(r0);	 Catch:{ all -> 0x0195 }
-        r2 = r2.toString();	 Catch:{ all -> 0x0195 }
-        r1.loge(r2);	 Catch:{ all -> 0x0195 }
-        if (r13 == 0) goto L_0x0192;
-    L_0x018f:
-        r13.close();	 Catch:{ all -> 0x01af }
-    L_0x0192:
-        monitor-exit(r11);	 Catch:{ all -> 0x01af }
-        r2 = 0;	 Catch:{ all -> 0x01af }
-        return r2;	 Catch:{ all -> 0x01af }
-    L_0x0195:
-        r0 = move-exception;	 Catch:{ all -> 0x01af }
-    L_0x0196:
-        if (r13 == 0) goto L_0x019b;	 Catch:{ all -> 0x01af }
-    L_0x0198:
-        r13.close();	 Catch:{ all -> 0x01af }
-    L_0x019b:
-        throw r0;	 Catch:{ all -> 0x01af }
-    L_0x019c:
-        r20 = r2;	 Catch:{ all -> 0x01af }
-        r21 = r4;	 Catch:{ all -> 0x01af }
-    L_0x01a0:
-        r0 = "removeTooOldApInfoRecord database error.";	 Catch:{ all -> 0x01af }
-        r1.loge(r0);	 Catch:{ all -> 0x01af }
-        monitor-exit(r11);	 Catch:{ all -> 0x01af }
-        r2 = 0;	 Catch:{ all -> 0x01af }
-        return r2;	 Catch:{ all -> 0x01af }
-    L_0x01a8:
-        r0 = move-exception;	 Catch:{ all -> 0x01af }
-        r20 = r2;	 Catch:{ all -> 0x01af }
-        r21 = r4;	 Catch:{ all -> 0x01af }
-    L_0x01ad:
-        monitor-exit(r11);	 Catch:{ all -> 0x01af }
-        throw r0;
-    L_0x01af:
-        r0 = move-exception;
-        goto L_0x01ad;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.wifi.wifipro.WifiProHistoryDBManager.removeTooOldApInfoRecord():boolean");
+        long totalConnectTime;
+        SQLException e;
+        StringBuilder stringBuilder;
+        Throwable th;
+        int recCnt = 0;
+        Vector<String> delRecordsVentor = new Vector();
+        Date currDate = new Date();
+        long currDateMsTime = currDate.getTime();
+        logd("removeTooOldApInfoRecord enter.");
+        synchronized (this.mBqeLock) {
+            int recCnt2;
+            Date date;
+            try {
+                if (this.mDatabase == null) {
+                    recCnt2 = 0;
+                    date = currDate;
+                } else if (this.mDatabase.isOpen()) {
+                    delRecordsVentor.clear();
+                    Cursor c = null;
+                    try {
+                        int id;
+                        c = this.mDatabase.rawQuery("SELECT * FROM WifiProApInfoRecodTable", null);
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("all record count=");
+                        stringBuilder2.append(c.getCount());
+                        logd(stringBuilder2.toString());
+                        while (c.moveToNext()) {
+                            long lastConnDateMsTime = c.getLong(c.getColumnIndex("lastConnectTime"));
+                            long totalConnectTime2 = (long) c.getInt(c.getColumnIndex("totalUseTime"));
+                            try {
+                                long pastDays = (currDateMsTime - lastConnDateMsTime) / MS_OF_ONE_DAY;
+                                if (pastDays <= TOO_OLD_VALID_DAY || totalConnectTime2 - (AGING_MS_OF_EACH_DAY * pastDays) >= 0) {
+                                    recCnt2 = recCnt;
+                                    date = currDate;
+                                    totalConnectTime = totalConnectTime2;
+                                } else {
+                                    logi("check result: need delete.");
+                                    id = c.getInt(c.getColumnIndex("_id"));
+                                    String ssid = c.getString(c.getColumnIndex("apSSID"));
+                                    recCnt2 = recCnt;
+                                    try {
+                                        recCnt = c.getString(c.getColumnIndex("apBSSID"));
+                                        date = currDate;
+                                    } catch (SQLException e2) {
+                                        e = e2;
+                                        date = currDate;
+                                        totalConnectTime = totalConnectTime2;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("removeTooOldApInfoRecord error:");
+                                        stringBuilder.append(e);
+                                        loge(stringBuilder.toString());
+                                        if (c != null) {
+                                        }
+                                        return false;
+                                    } catch (Throwable th2) {
+                                        th = th2;
+                                        date = currDate;
+                                        totalConnectTime = totalConnectTime2;
+                                        if (c != null) {
+                                        }
+                                        throw th;
+                                    }
+                                    try {
+                                        StringBuilder stringBuilder3 = new StringBuilder();
+                                        totalConnectTime = totalConnectTime2;
+                                        try {
+                                            stringBuilder3.append("check record: ssid:");
+                                            stringBuilder3.append(ssid);
+                                            stringBuilder3.append(", id:");
+                                            stringBuilder3.append(id);
+                                            stringBuilder3.append(", pass time:");
+                                            stringBuilder3.append(currDateMsTime - lastConnDateMsTime);
+                                            logi(stringBuilder3.toString());
+                                            delRecordsVentor.add(recCnt);
+                                        } catch (SQLException e3) {
+                                            e = e3;
+                                            totalConnectTime2 = totalConnectTime;
+                                        } catch (Throwable th3) {
+                                            th = th3;
+                                            totalConnectTime2 = totalConnectTime;
+                                            if (c != null) {
+                                            }
+                                            throw th;
+                                        }
+                                    } catch (SQLException e4) {
+                                        e = e4;
+                                        totalConnectTime = totalConnectTime2;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("removeTooOldApInfoRecord error:");
+                                        stringBuilder.append(e);
+                                        loge(stringBuilder.toString());
+                                        if (c != null) {
+                                        }
+                                        return false;
+                                    } catch (Throwable th4) {
+                                        th = th4;
+                                        totalConnectTime = totalConnectTime2;
+                                        if (c != null) {
+                                        }
+                                        throw th;
+                                    }
+                                }
+                                recCnt = recCnt2;
+                                currDate = date;
+                                totalConnectTime2 = totalConnectTime;
+                            } catch (SQLException e5) {
+                                e = e5;
+                                recCnt2 = recCnt;
+                                date = currDate;
+                                totalConnectTime = totalConnectTime2;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("removeTooOldApInfoRecord error:");
+                                stringBuilder.append(e);
+                                loge(stringBuilder.toString());
+                                if (c != null) {
+                                }
+                                return false;
+                            } catch (Throwable th5) {
+                                th = th5;
+                                recCnt2 = recCnt;
+                                date = currDate;
+                                totalConnectTime = totalConnectTime2;
+                                if (c != null) {
+                                }
+                                throw th;
+                            }
+                        }
+                        date = currDate;
+                        try {
+                            id = delRecordsVentor.size();
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("start delete ");
+                            stringBuilder.append(id);
+                            stringBuilder.append(" records.");
+                            logi(stringBuilder.toString());
+                            recCnt = 0;
+                            while (recCnt < id) {
+                                if (((String) delRecordsVentor.get(recCnt)) == null) {
+                                    break;
+                                }
+                                int delSize = id;
+                                this.mDatabase.delete(WifiProHistoryDBHelper.WP_AP_INFO_TB_NAME, "apBSSID like ?", new String[]{(String) delRecordsVentor.get(recCnt)});
+                                recCnt++;
+                                id = delSize;
+                            }
+                            if (c != null) {
+                                c.close();
+                            }
+                        } catch (SQLException e6) {
+                            e = e6;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("removeTooOldApInfoRecord error:");
+                            stringBuilder.append(e);
+                            loge(stringBuilder.toString());
+                            if (c != null) {
+                            }
+                            return false;
+                        }
+                    } catch (SQLException e7) {
+                        e = e7;
+                        recCnt2 = 0;
+                        date = currDate;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("removeTooOldApInfoRecord error:");
+                        stringBuilder.append(e);
+                        loge(stringBuilder.toString());
+                        if (c != null) {
+                            c.close();
+                        }
+                        return false;
+                    } catch (Throwable th6) {
+                        th = th6;
+                        recCnt2 = 0;
+                        date = currDate;
+                        if (c != null) {
+                            c.close();
+                        }
+                        throw th;
+                    }
+                } else {
+                    recCnt2 = 0;
+                    date = currDate;
+                }
+                loge("removeTooOldApInfoRecord database error.");
+                return false;
+            } catch (Throwable th7) {
+                th = th7;
+                recCnt2 = 0;
+                date = currDate;
+                throw th;
+            }
+        }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x008d, code:
+    /* JADX WARNING: Missing block: B:22:0x008d, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean statisticApInfoRecord() {
         logd("statisticApInfoRecord enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("statisticApInfoRecord database error.");
-                return false;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    this.mHomeApRecordCount = 0;
+                    this.mApRecordCount = 0;
+                    Cursor c = null;
+                    StringBuilder stringBuilder;
+                    try {
+                        c = this.mDatabase.rawQuery("SELECT * FROM WifiProApInfoRecodTable", null);
+                        this.mApRecordCount = c.getCount();
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("all record count=");
+                        stringBuilder2.append(this.mApRecordCount);
+                        logi(stringBuilder2.toString());
+                        while (c.moveToNext()) {
+                            if (c.getLong(c.getColumnIndex("judgeHomeAPTime")) > 0) {
+                                String ssid = c.getString(c.getColumnIndex("apSSID"));
+                                this.mHomeApRecordCount++;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("check record: Home ap ssid:");
+                                stringBuilder.append(ssid);
+                                stringBuilder.append(", total:");
+                                stringBuilder.append(this.mHomeApRecordCount);
+                                logi(stringBuilder.toString());
+                            }
+                        }
+                        if (c != null) {
+                            c.close();
+                        }
+                    } catch (SQLException e) {
+                        try {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("removeTooOldApInfoRecord error:");
+                            stringBuilder.append(e);
+                            loge(stringBuilder.toString());
+                            if (c != null) {
+                                c.close();
+                            }
+                            return false;
+                        } catch (Throwable th) {
+                            if (c != null) {
+                                c.close();
+                            }
+                        }
+                    }
+                }
             }
-            this.mHomeApRecordCount = 0;
-            this.mApRecordCount = 0;
-            Cursor c = null;
-            StringBuilder stringBuilder;
-            try {
-                c = this.mDatabase.rawQuery("SELECT * FROM WifiProApInfoRecodTable", null);
-                this.mApRecordCount = c.getCount();
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("all record count=");
-                stringBuilder2.append(this.mApRecordCount);
-                logi(stringBuilder2.toString());
-                while (c.moveToNext()) {
-                    if (c.getLong(c.getColumnIndex("judgeHomeAPTime")) > 0) {
-                        String ssid = c.getString(c.getColumnIndex("apSSID"));
-                        this.mHomeApRecordCount++;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("check record: Home ap ssid:");
-                        stringBuilder.append(ssid);
-                        stringBuilder.append(", total:");
-                        stringBuilder.append(this.mHomeApRecordCount);
-                        logi(stringBuilder.toString());
-                    }
-                }
-                if (c != null) {
-                    c.close();
-                }
-            } catch (SQLException e) {
-                try {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("removeTooOldApInfoRecord error:");
-                    stringBuilder.append(e);
-                    loge(stringBuilder.toString());
-                    if (c != null) {
-                        c.close();
-                    }
-                    return false;
-                } catch (Throwable th) {
-                    if (c != null) {
-                        c.close();
-                    }
-                }
-            }
+            loge("statisticApInfoRecord database error.");
+            return false;
         }
     }
 
@@ -672,81 +630,85 @@ public class WifiProHistoryDBManager {
     public boolean addOrUpdateEnterpriseApRecord(String apSSID, int secType) {
         logd("addOrUpdateEnterpriseApRecord enter.");
         synchronized (this.mBqeLock) {
-            StringBuilder stringBuilder;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || apSSID == null) {
-                loge("addOrUpdateEnterpriseApRecord error.");
-                return false;
-            } else if (queryEnterpriseApRecord(apSSID, secType)) {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("already exist the record ssid:");
-                stringBuilder.append(apSSID);
-                logi(stringBuilder.toString());
-                return true;
-            } else {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("add record here ssid:");
-                stringBuilder.append(apSSID);
-                logi(stringBuilder.toString());
-                boolean insertEnterpriseApRecord = insertEnterpriseApRecord(apSSID, secType);
-                return insertEnterpriseApRecord;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (apSSID != null) {
+                    StringBuilder stringBuilder;
+                    if (queryEnterpriseApRecord(apSSID, secType)) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("already exist the record ssid:");
+                        stringBuilder.append(apSSID);
+                        logi(stringBuilder.toString());
+                        return true;
+                    }
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("add record here ssid:");
+                    stringBuilder.append(apSSID);
+                    logi(stringBuilder.toString());
+                    boolean insertEnterpriseApRecord = insertEnterpriseApRecord(apSSID, secType);
+                    return insertEnterpriseApRecord;
+                }
             }
+            loge("addOrUpdateEnterpriseApRecord error.");
+            return false;
         }
     }
 
     public boolean queryEnterpriseApRecord(String apSSID, int secType) {
         logd("queryEnterpriseApRecord enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("queryEnterpriseApRecord database error.");
-                return false;
-            } else if (apSSID == null) {
-                loge("queryEnterpriseApRecord null error.");
-                return false;
-            } else {
-                Cursor c = null;
-                try {
-                    c = this.mDatabase.rawQuery("SELECT * FROM WifiProEnterpriseAPTable where (apSSID like ?) and (apSecurityType = ?)", new String[]{apSSID, String.valueOf(secType)});
-                    int recCnt = c.getCount();
-                    if (c != null) {
-                        c.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apSSID == null) {
+                        loge("queryEnterpriseApRecord null error.");
+                        return false;
                     }
-                    if (recCnt > 0) {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("SSID:");
-                        stringBuilder.append(apSSID);
-                        stringBuilder.append(", security: ");
-                        stringBuilder.append(secType);
-                        stringBuilder.append(" is in Enterprise Ap table. count:");
-                        stringBuilder.append(recCnt);
-                        logi(stringBuilder.toString());
-                        return true;
-                    }
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("SSID:");
-                    stringBuilder2.append(apSSID);
-                    stringBuilder2.append(", security: ");
-                    stringBuilder2.append(secType);
-                    stringBuilder2.append(" is not in Enterprise Ap table. count:");
-                    stringBuilder2.append(recCnt);
-                    logi(stringBuilder2.toString());
-                    return false;
-                } catch (SQLException e) {
+                    Cursor c = null;
                     try {
-                        StringBuilder stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append("queryEnterpriseApRecord error:");
-                        stringBuilder3.append(e);
-                        loge(stringBuilder3.toString());
+                        c = this.mDatabase.rawQuery("SELECT * FROM WifiProEnterpriseAPTable where (apSSID like ?) and (apSecurityType = ?)", new String[]{apSSID, String.valueOf(secType)});
+                        int recCnt = c.getCount();
                         if (c != null) {
                             c.close();
                         }
+                        if (recCnt > 0) {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("SSID:");
+                            stringBuilder.append(apSSID);
+                            stringBuilder.append(", security: ");
+                            stringBuilder.append(secType);
+                            stringBuilder.append(" is in Enterprise Ap table. count:");
+                            stringBuilder.append(recCnt);
+                            logi(stringBuilder.toString());
+                            return true;
+                        }
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("SSID:");
+                        stringBuilder2.append(apSSID);
+                        stringBuilder2.append(", security: ");
+                        stringBuilder2.append(secType);
+                        stringBuilder2.append(" is not in Enterprise Ap table. count:");
+                        stringBuilder2.append(recCnt);
+                        logi(stringBuilder2.toString());
                         return false;
-                    } catch (Throwable th) {
-                        if (c != null) {
-                            c.close();
+                    } catch (SQLException e) {
+                        try {
+                            StringBuilder stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("queryEnterpriseApRecord error:");
+                            stringBuilder3.append(e);
+                            loge(stringBuilder3.toString());
+                            if (c != null) {
+                                c.close();
+                            }
+                            return false;
+                        } catch (Throwable th) {
+                            if (c != null) {
+                                c.close();
+                            }
                         }
                     }
                 }
             }
+            loge("queryEnterpriseApRecord database error.");
+            return false;
         }
     }
 
@@ -824,24 +786,26 @@ public class WifiProHistoryDBManager {
     public boolean deleteRelate5GAPRcd(String relatedBSSID) {
         logi("deleteRelateApRcd enter");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("deleteRelateApRcd database error.");
-                return false;
-            } else if (relatedBSSID == null) {
-                loge("deleteRelateApRcd null error.");
-                return false;
-            } else {
-                try {
-                    this.mDatabase.delete(WifiProHistoryDBHelper.WP_RELATE_AP_TB_NAME, "(RelatedBSSID like ?)", new String[]{relatedBSSID});
-                    return true;
-                } catch (SQLException e) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("deleteRelateApRcd error:");
-                    stringBuilder.append(e);
-                    loge(stringBuilder.toString());
-                    return false;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (relatedBSSID == null) {
+                        loge("deleteRelateApRcd null error.");
+                        return false;
+                    }
+                    try {
+                        this.mDatabase.delete(WifiProHistoryDBHelper.WP_RELATE_AP_TB_NAME, "(RelatedBSSID like ?)", new String[]{relatedBSSID});
+                        return true;
+                    } catch (SQLException e) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("deleteRelateApRcd error:");
+                        stringBuilder.append(e);
+                        loge(stringBuilder.toString());
+                        return false;
+                    }
                 }
             }
+            loge("deleteRelateApRcd database error.");
+            return false;
         }
     }
 
@@ -894,24 +858,27 @@ public class WifiProHistoryDBManager {
     public boolean addOrUpdateApQualityRcd(WifiProApQualityRcd dbr) {
         logd("addOrUpdateApQualityRcd enter.");
         synchronized (this.mBqeLock) {
-            boolean updateApQualityRcd;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                loge("addOrUpdateApQualityRcd error.");
-                return false;
-            } else if (dbr.apBSSID == null) {
-                loge("addOrUpdateApQualityRcd null error.");
-                return false;
-            } else if (checkHistoryRecordExist(WifiProHistoryDBHelper.WP_QUALITY_TB_NAME, dbr.apBSSID)) {
-                updateApQualityRcd = updateApQualityRcd(dbr);
-                return updateApQualityRcd;
-            } else {
-                updateApQualityRcd = insertApQualityRcd(dbr);
-                return updateApQualityRcd;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    boolean updateApQualityRcd;
+                    if (dbr.apBSSID == null) {
+                        loge("addOrUpdateApQualityRcd null error.");
+                        return false;
+                    } else if (checkHistoryRecordExist(WifiProHistoryDBHelper.WP_QUALITY_TB_NAME, dbr.apBSSID)) {
+                        updateApQualityRcd = updateApQualityRcd(dbr);
+                        return updateApQualityRcd;
+                    } else {
+                        updateApQualityRcd = insertApQualityRcd(dbr);
+                        return updateApQualityRcd;
+                    }
+                }
             }
+            loge("addOrUpdateApQualityRcd error.");
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x00a1, code:
+    /* JADX WARNING: Missing block: B:30:0x00a1, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1052,20 +1019,25 @@ public class WifiProHistoryDBManager {
     public boolean addOrUpdateRelateApRcd(WifiProRelateApRcd dbr) {
         logd("addOrUpdateRelateApRcd enter.");
         synchronized (this.mBqeLock) {
-            boolean updateRelateApRcd;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                loge("addOrUpdateRelateApRcd error.");
-                return false;
-            } else if (dbr.apBSSID == null || dbr.mRelatedBSSID == null) {
-                loge("addOrUpdateRelateApRcd null error.");
-                return false;
-            } else if (checkRelateApRcdExist(dbr.apBSSID, dbr.mRelatedBSSID)) {
-                updateRelateApRcd = updateRelateApRcd(dbr);
-                return updateRelateApRcd;
-            } else {
-                updateRelateApRcd = insertRelateApRcd(dbr);
-                return updateRelateApRcd;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    if (dbr.apBSSID != null) {
+                        if (dbr.mRelatedBSSID != null) {
+                            boolean updateRelateApRcd;
+                            if (checkRelateApRcdExist(dbr.apBSSID, dbr.mRelatedBSSID)) {
+                                updateRelateApRcd = updateRelateApRcd(dbr);
+                                return updateRelateApRcd;
+                            }
+                            updateRelateApRcd = insertRelateApRcd(dbr);
+                            return updateRelateApRcd;
+                        }
+                    }
+                    loge("addOrUpdateRelateApRcd null error.");
+                    return false;
+                }
             }
+            loge("addOrUpdateRelateApRcd error.");
+            return false;
         }
     }
 
@@ -1073,56 +1045,60 @@ public class WifiProHistoryDBManager {
         int recCnt = 0;
         logd("queryRelateApRcd enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("queryRelateApRcd database error.");
-                return false;
-            } else if (apBssid == null || relateApList == null) {
-                loge("queryRelateApRcd null error.");
-                return false;
-            } else {
-                relateApList.clear();
-                Cursor c = null;
-                try {
-                    c = this.mDatabase.rawQuery("SELECT * FROM WifiProRelateApTable where apBSSID like ?", new String[]{apBssid});
-                    while (c.moveToNext()) {
-                        recCnt++;
-                        if (recCnt > 20) {
-                            break;
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (apBssid != null) {
+                        if (relateApList != null) {
+                            relateApList.clear();
+                            Cursor c = null;
+                            try {
+                                c = this.mDatabase.rawQuery("SELECT * FROM WifiProRelateApTable where apBSSID like ?", new String[]{apBssid});
+                                while (c.moveToNext()) {
+                                    recCnt++;
+                                    if (recCnt > 20) {
+                                        break;
+                                    }
+                                    WifiProRelateApRcd dbr = new WifiProRelateApRcd(apBssid);
+                                    dbr.mRelatedBSSID = c.getString(c.getColumnIndex("RelatedBSSID"));
+                                    dbr.mRelateType = c.getShort(c.getColumnIndex("RelateType"));
+                                    dbr.mMaxCurrentRSSI = c.getInt(c.getColumnIndex("MaxCurrentRSSI"));
+                                    dbr.mMaxRelatedRSSI = c.getInt(c.getColumnIndex("MaxRelatedRSSI"));
+                                    dbr.mMinCurrentRSSI = c.getInt(c.getColumnIndex("MinCurrentRSSI"));
+                                    dbr.mMinRelatedRSSI = c.getInt(c.getColumnIndex("MinRelatedRSSI"));
+                                    relateApList.add(dbr);
+                                }
+                                if (c != null) {
+                                    c.close();
+                                }
+                                if (recCnt == 0) {
+                                    logi("queryRelateApRcd not record.");
+                                    return false;
+                                }
+                                return true;
+                            } catch (SQLException e) {
+                                try {
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    stringBuilder.append("queryRelateApRcd error:");
+                                    stringBuilder.append(e);
+                                    loge(stringBuilder.toString());
+                                    if (c != null) {
+                                        c.close();
+                                    }
+                                    return false;
+                                } catch (Throwable th) {
+                                    if (c != null) {
+                                        c.close();
+                                    }
+                                }
+                            }
                         }
-                        WifiProRelateApRcd dbr = new WifiProRelateApRcd(apBssid);
-                        dbr.mRelatedBSSID = c.getString(c.getColumnIndex("RelatedBSSID"));
-                        dbr.mRelateType = c.getShort(c.getColumnIndex("RelateType"));
-                        dbr.mMaxCurrentRSSI = c.getInt(c.getColumnIndex("MaxCurrentRSSI"));
-                        dbr.mMaxRelatedRSSI = c.getInt(c.getColumnIndex("MaxRelatedRSSI"));
-                        dbr.mMinCurrentRSSI = c.getInt(c.getColumnIndex("MinCurrentRSSI"));
-                        dbr.mMinRelatedRSSI = c.getInt(c.getColumnIndex("MinRelatedRSSI"));
-                        relateApList.add(dbr);
                     }
-                    if (c != null) {
-                        c.close();
-                    }
-                    if (recCnt == 0) {
-                        logi("queryRelateApRcd not record.");
-                        return false;
-                    }
-                    return true;
-                } catch (SQLException e) {
-                    try {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("queryRelateApRcd error:");
-                        stringBuilder.append(e);
-                        loge(stringBuilder.toString());
-                        if (c != null) {
-                            c.close();
-                        }
-                        return false;
-                    } catch (Throwable th) {
-                        if (c != null) {
-                            c.close();
-                        }
-                    }
+                    loge("queryRelateApRcd null error.");
+                    return false;
                 }
             }
+            loge("queryRelateApRcd database error.");
+            return false;
         }
     }
 
@@ -1181,26 +1157,28 @@ public class WifiProHistoryDBManager {
     public boolean addOrUpdateDualBandApInfoRcd(WifiProDualBandApInfoRcd dbr) {
         logd("addOrUpdateDualBandApInfoRcd enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null) {
-                loge("addOrUpdateDualBandApInfoRcd error.");
-                return false;
-            } else if (dbr.apBSSID == null) {
-                loge("addOrUpdateDualBandApInfoRcd null error.");
-                return false;
-            } else {
-                dbr.mUpdateTime = System.currentTimeMillis();
-                boolean updateDualBandApInfoRcd;
-                if (checkHistoryRecordExist(WifiProHistoryDBHelper.WP_DUAL_BAND_AP_INFO_TB_NAME, dbr.apBSSID)) {
-                    updateDualBandApInfoRcd = updateDualBandApInfoRcd(dbr);
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (dbr != null) {
+                    if (dbr.apBSSID == null) {
+                        loge("addOrUpdateDualBandApInfoRcd null error.");
+                        return false;
+                    }
+                    dbr.mUpdateTime = System.currentTimeMillis();
+                    boolean updateDualBandApInfoRcd;
+                    if (checkHistoryRecordExist(WifiProHistoryDBHelper.WP_DUAL_BAND_AP_INFO_TB_NAME, dbr.apBSSID)) {
+                        updateDualBandApInfoRcd = updateDualBandApInfoRcd(dbr);
+                        return updateDualBandApInfoRcd;
+                    }
+                    updateDualBandApInfoRcd = insertDualBandApInfoRcd(dbr);
                     return updateDualBandApInfoRcd;
                 }
-                updateDualBandApInfoRcd = insertDualBandApInfoRcd(dbr);
-                return updateDualBandApInfoRcd;
             }
+            loge("addOrUpdateDualBandApInfoRcd error.");
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x00c6, code:
+    /* JADX WARNING: Missing block: B:30:0x00c6, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1264,7 +1242,7 @@ public class WifiProHistoryDBManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x00c9, code:
+    /* JADX WARNING: Missing block: B:26:0x00c9, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1272,66 +1250,68 @@ public class WifiProHistoryDBManager {
         List<WifiProDualBandApInfoRcd> mRecList = new ArrayList();
         logd("queryDualBandApInfoRcd enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-                loge("queryDualBandApInfoRcdBySsid database error.");
-                return null;
-            } else if (ssid == null) {
-                loge("queryDualBandApInfoRcdBySsid null error.");
-                return null;
-            } else {
-                Cursor c = null;
-                try {
-                    c = this.mDatabase.rawQuery("SELECT * FROM WifiProDualBandApInfoRcdTable where apSSID like ?", new String[]{ssid});
-                    while (c.moveToNext()) {
-                        WifiProDualBandApInfoRcd dbr = new WifiProDualBandApInfoRcd(null);
-                        dbr.apBSSID = c.getString(c.getColumnIndex("apBSSID"));
-                        dbr.mApSSID = ssid;
-                        dbr.mInetCapability = Short.valueOf(c.getShort(c.getColumnIndex("InetCapability")));
-                        dbr.mServingBand = Short.valueOf(c.getShort(c.getColumnIndex("ServingBand")));
-                        dbr.mApAuthType = Short.valueOf(c.getShort(c.getColumnIndex("ApAuthType")));
-                        dbr.mChannelFrequency = c.getInt(c.getColumnIndex("ChannelFrequency"));
-                        dbr.mDisappearCount = c.getShort(c.getColumnIndex("DisappearCount"));
-                        dbr.isInBlackList = c.getShort(c.getColumnIndex("isInBlackList"));
-                        dbr.mUpdateTime = c.getLong(c.getColumnIndex("UpdateTime"));
-                        logi("read record succ");
-                        mRecList.add(dbr);
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    if (ssid == null) {
+                        loge("queryDualBandApInfoRcdBySsid null error.");
+                        return null;
                     }
-                    if (c != null) {
-                        c.close();
-                    }
-                    if (mRecList.size() == 0) {
-                        logi("queryDualBandApInfoRcdBySsid not record.");
-                    }
-                } catch (SQLException e) {
+                    Cursor c = null;
                     try {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("queryDualBandApInfoRcdBySsid error:");
-                        stringBuilder.append(e);
-                        loge(stringBuilder.toString());
+                        c = this.mDatabase.rawQuery("SELECT * FROM WifiProDualBandApInfoRcdTable where apSSID like ?", new String[]{ssid});
+                        while (c.moveToNext()) {
+                            WifiProDualBandApInfoRcd dbr = new WifiProDualBandApInfoRcd(null);
+                            dbr.apBSSID = c.getString(c.getColumnIndex("apBSSID"));
+                            dbr.mApSSID = ssid;
+                            dbr.mInetCapability = Short.valueOf(c.getShort(c.getColumnIndex("InetCapability")));
+                            dbr.mServingBand = Short.valueOf(c.getShort(c.getColumnIndex("ServingBand")));
+                            dbr.mApAuthType = Short.valueOf(c.getShort(c.getColumnIndex("ApAuthType")));
+                            dbr.mChannelFrequency = c.getInt(c.getColumnIndex("ChannelFrequency"));
+                            dbr.mDisappearCount = c.getShort(c.getColumnIndex("DisappearCount"));
+                            dbr.isInBlackList = c.getShort(c.getColumnIndex("isInBlackList"));
+                            dbr.mUpdateTime = c.getLong(c.getColumnIndex("UpdateTime"));
+                            logi("read record succ");
+                            mRecList.add(dbr);
+                        }
                         if (c != null) {
                             c.close();
                         }
-                        return null;
-                    } catch (Throwable th) {
-                        if (c != null) {
-                            c.close();
+                        if (mRecList.size() == 0) {
+                            logi("queryDualBandApInfoRcdBySsid not record.");
+                        }
+                    } catch (SQLException e) {
+                        try {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("queryDualBandApInfoRcdBySsid error:");
+                            stringBuilder.append(e);
+                            loge(stringBuilder.toString());
+                            if (c != null) {
+                                c.close();
+                            }
+                            return null;
+                        } catch (Throwable th) {
+                            if (c != null) {
+                                c.close();
+                            }
                         }
                     }
                 }
             }
+            loge("queryDualBandApInfoRcdBySsid database error.");
+            return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x00ac, code:
+    /* JADX WARNING: Missing block: B:14:0x00ac, code skipped:
             if (r3 != null) goto L_0x00ae;
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:21:0x00c9, code:
+    /* JADX WARNING: Missing block: B:21:0x00c9, code skipped:
             if (r3 == null) goto L_0x00cc;
      */
-    /* JADX WARNING: Missing block: B:24:0x00cd, code:
+    /* JADX WARNING: Missing block: B:24:0x00cd, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1399,28 +1379,30 @@ public class WifiProHistoryDBManager {
     public boolean addOrUpdateApRSSIThreshold(String apBSSID, String rssiThreshold) {
         logd("addOrUpdateApRSSIThreshold enter.");
         synchronized (this.mBqeLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || apBSSID == null || rssiThreshold == null) {
-                loge("addOrUpdateApRSSIThreshold error.");
-                return false;
+            if (!(this.mDatabase == null || !this.mDatabase.isOpen() || apBSSID == null)) {
+                if (rssiThreshold != null) {
+                    if (!checkHistoryRecordExist(WifiProHistoryDBHelper.WP_DUAL_BAND_AP_INFO_TB_NAME, apBSSID)) {
+                        insertDualBandApInfoRcd(new WifiProDualBandApInfoRcd(apBSSID));
+                    }
+                    boolean updateApRSSIThreshold = updateApRSSIThreshold(apBSSID, rssiThreshold);
+                    return updateApRSSIThreshold;
+                }
             }
-            if (!checkHistoryRecordExist(WifiProHistoryDBHelper.WP_DUAL_BAND_AP_INFO_TB_NAME, apBSSID)) {
-                insertDualBandApInfoRcd(new WifiProDualBandApInfoRcd(apBSSID));
-            }
-            boolean updateApRSSIThreshold = updateApRSSIThreshold(apBSSID, rssiThreshold);
-            return updateApRSSIThreshold;
+            loge("addOrUpdateApRSSIThreshold error.");
+            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0057, code:
+    /* JADX WARNING: Missing block: B:19:0x0057, code skipped:
             if (r3 != null) goto L_0x0059;
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:25:0x0074, code:
+    /* JADX WARNING: Missing block: B:26:0x0074, code skipped:
             if (r3 == null) goto L_0x0077;
      */
-    /* JADX WARNING: Missing block: B:28:0x0078, code:
+    /* JADX WARNING: Missing block: B:29:0x0078, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

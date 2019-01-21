@@ -1,30 +1,31 @@
 package com.huawei.android.pushagent.model.token;
 
-import com.huawei.android.pushagent.datatype.http.server.TokenDelReq;
-import com.huawei.android.pushagent.datatype.http.server.TokenDelRsp;
-import com.huawei.android.pushagent.model.b.a;
-import com.huawei.android.pushagent.model.prefs.b;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.datatype.http.server.TokenApplyReq;
+import com.huawei.android.pushagent.datatype.http.server.TokenApplyRsp;
+import com.huawei.android.pushagent.model.prefs.a;
+import com.huawei.android.pushagent.model.prefs.g;
+import com.huawei.android.pushagent.utils.d;
 import java.util.List;
 
 final class c implements Runnable {
-    final /* synthetic */ a cs;
+    final /* synthetic */ TokenApply gb;
 
-    c(a aVar) {
-        this.cs = aVar;
+    c(TokenApply tokenApply) {
+        this.gb = tokenApply;
     }
 
     public void run() {
-        if (g.fq(this.cs.appCtx)) {
-            a.xc(this.cs.appCtx);
-            int or = b.oq(this.cs.appCtx).or();
-            List kw = this.cs.kt();
-            if (kw.size() != 0) {
-                TokenDelRsp tokenDelRsp = (TokenDelRsp) new com.huawei.android.pushagent.model.c.b(this.cs.appCtx, new TokenDelReq(or, kw, b.oq(this.cs.appCtx).getDeviceIdType())).yp();
-                if (tokenDelRsp == null) {
-                    com.huawei.android.pushagent.utils.f.c.eq("PushLog3413", "fail to apply token");
+        if (d.yp(this.gb.appCtx)) {
+            String connId = a.ff(this.gb.appCtx).getConnId();
+            int kq = g.kp(this.gb.appCtx).kq();
+            List -wrap0 = this.gb.getTokenReqs();
+            int deviceIdType = g.kp(this.gb.appCtx).getDeviceIdType();
+            if (-wrap0.size() != 0) {
+                TokenApplyRsp tokenApplyRsp = (TokenApplyRsp) new com.huawei.android.pushagent.model.b.a(this.gb.appCtx, new TokenApplyReq(connId, kq, -wrap0, deviceIdType)).nb();
+                if (tokenApplyRsp == null) {
+                    com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "fail to apply token, http level failed");
                 } else {
-                    this.cs.ku(tokenDelRsp);
+                    this.gb.responseToken(tokenApplyRsp);
                 }
             }
         }

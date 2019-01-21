@@ -1,6 +1,7 @@
 package org.bouncycastle.cms;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,7 +9,6 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.BERSet;
@@ -30,7 +30,6 @@ public class CMSAuthenticatedDataGenerator extends CMSAuthenticatedGenerator {
     }
 
     public CMSAuthenticatedData generate(CMSTypedData cMSTypedData, MacCalculator macCalculator, DigestCalculator digestCalculator) throws CMSException {
-        ASN1Encodable bEROctetString;
         CMSTypedData cMSTypedData2 = cMSTypedData;
         final DigestCalculator digestCalculator2 = digestCalculator;
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
@@ -38,35 +37,34 @@ public class CMSAuthenticatedDataGenerator extends CMSAuthenticatedGenerator {
             aSN1EncodableVector.add(generate.generate(macCalculator.getKey()));
         }
         ASN1Set aSN1Set = null;
-        OutputStream byteArrayOutputStream;
-        OutputStream teeOutputStream;
-        ASN1Encodable bEROctetString2;
+        ByteArrayOutputStream byteArrayOutputStream;
+        TeeOutputStream teeOutputStream;
         if (digestCalculator2 != null) {
             try {
                 byteArrayOutputStream = new ByteArrayOutputStream();
                 teeOutputStream = new TeeOutputStream(digestCalculator.getOutputStream(), byteArrayOutputStream);
                 cMSTypedData2.write(teeOutputStream);
                 teeOutputStream.close();
-                bEROctetString2 = new BEROctetString(byteArrayOutputStream.toByteArray());
+                BEROctetString bEROctetString = new BEROctetString(byteArrayOutputStream.toByteArray());
                 Map baseParameters = getBaseParameters(cMSTypedData.getContentType(), digestCalculator.getAlgorithmIdentifier(), macCalculator.getAlgorithmIdentifier(), digestCalculator.getDigest());
                 if (this.authGen == null) {
                     this.authGen = new DefaultAuthenticatedAttributeTableGenerator();
                 }
-                ASN1Set dERSet = new DERSet(this.authGen.getAttributes(Collections.unmodifiableMap(baseParameters)).toASN1EncodableVector());
+                DERSet dERSet = new DERSet(this.authGen.getAttributes(Collections.unmodifiableMap(baseParameters)).toASN1EncodableVector());
                 try {
-                    byteArrayOutputStream = macCalculator.getOutputStream();
-                    byteArrayOutputStream.write(dERSet.getEncoded(ASN1Encoding.DER));
-                    byteArrayOutputStream.close();
-                    ASN1OctetString dEROctetString = new DEROctetString(macCalculator.getMac());
+                    OutputStream outputStream = macCalculator.getOutputStream();
+                    outputStream.write(dERSet.getEncoded(ASN1Encoding.DER));
+                    outputStream.close();
+                    DEROctetString dEROctetString = new DEROctetString(macCalculator.getMac());
                     if (this.unauthGen != null) {
                         aSN1Set = new BERSet(this.unauthGen.getAttributes(Collections.unmodifiableMap(baseParameters)).toASN1EncodableVector());
                     }
                     ASN1Set aSN1Set2 = aSN1Set;
-                    ASN1Encodable authenticatedData = new AuthenticatedData(this.originatorInfo, new DERSet(aSN1EncodableVector), macCalculator.getAlgorithmIdentifier(), digestCalculator.getAlgorithmIdentifier(), new ContentInfo(CMSObjectIdentifiers.data, bEROctetString2), dERSet, dEROctetString, aSN1Set2);
-                } catch (Exception e) {
+                    ASN1Encodable authenticatedData = new AuthenticatedData(this.originatorInfo, new DERSet(aSN1EncodableVector), macCalculator.getAlgorithmIdentifier(), digestCalculator.getAlgorithmIdentifier(), new ContentInfo(CMSObjectIdentifiers.data, bEROctetString), dERSet, dEROctetString, aSN1Set2);
+                } catch (IOException e) {
                     throw new CMSException("exception decoding algorithm parameters.", e);
                 }
-            } catch (Exception e2) {
+            } catch (IOException e2) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to perform digest calculation: ");
                 stringBuilder.append(e2.getMessage());
@@ -78,17 +76,17 @@ public class CMSAuthenticatedDataGenerator extends CMSAuthenticatedGenerator {
             teeOutputStream = new TeeOutputStream(byteArrayOutputStream, macCalculator.getOutputStream());
             cMSTypedData2.write(teeOutputStream);
             teeOutputStream.close();
-            bEROctetString = new BEROctetString(byteArrayOutputStream.toByteArray());
-            ASN1OctetString dEROctetString2 = new DEROctetString(macCalculator.getMac());
+            BEROctetString bEROctetString2 = new BEROctetString(byteArrayOutputStream.toByteArray());
+            DEROctetString dEROctetString2 = new DEROctetString(macCalculator.getMac());
             if (this.unauthGen != null) {
                 aSN1Set = new BERSet(this.unauthGen.getAttributes(new HashMap()).toASN1EncodableVector());
             }
             ASN1Set aSN1Set3 = aSN1Set;
-            bEROctetString2 = new AuthenticatedData(this.originatorInfo, new DERSet(aSN1EncodableVector), macCalculator.getAlgorithmIdentifier(), null, new ContentInfo(CMSObjectIdentifiers.data, bEROctetString), null, dEROctetString2, aSN1Set3);
-        } catch (Exception e22) {
+            ASN1Encodable authenticatedData2 = new AuthenticatedData(this.originatorInfo, new DERSet(aSN1EncodableVector), macCalculator.getAlgorithmIdentifier(), null, new ContentInfo(CMSObjectIdentifiers.data, bEROctetString2), null, dEROctetString2, aSN1Set3);
+        } catch (IOException e22) {
             throw new CMSException("exception decoding algorithm parameters.", e22);
         }
-        return new CMSAuthenticatedData(new ContentInfo(CMSObjectIdentifiers.authenticatedData, bEROctetString), new DigestCalculatorProvider() {
+        return new CMSAuthenticatedData(new ContentInfo(CMSObjectIdentifiers.authenticatedData, r1), new DigestCalculatorProvider() {
             public DigestCalculator get(AlgorithmIdentifier algorithmIdentifier) throws OperatorCreationException {
                 return digestCalculator2;
             }

@@ -11,7 +11,7 @@ public class CMSAuthenticatedGenerator extends CMSEnvelopedGenerator {
     protected CMSAttributeTableGenerator unauthGen;
 
     protected Map getBaseParameters(ASN1ObjectIdentifier aSN1ObjectIdentifier, AlgorithmIdentifier algorithmIdentifier, AlgorithmIdentifier algorithmIdentifier2, byte[] bArr) {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put(CMSAttributeTableGenerator.CONTENT_TYPE, aSN1ObjectIdentifier);
         hashMap.put(CMSAttributeTableGenerator.DIGEST_ALGORITHM_IDENTIFIER, algorithmIdentifier);
         hashMap.put(CMSAttributeTableGenerator.DIGEST, Arrays.clone(bArr));

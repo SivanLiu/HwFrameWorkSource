@@ -250,17 +250,17 @@ public class AwareBroadcastSend {
         }
     }
 
-    /* JADX WARNING: Missing block: B:54:0x00fb, code:
+    /* JADX WARNING: Missing block: B:56:0x00fb, code skipped:
             if (com.android.server.mtm.iaware.srms.AwareBroadcastDebug.getDebugDetail() == false) goto L_0x0117;
      */
-    /* JADX WARNING: Missing block: B:55:0x00fd, code:
+    /* JADX WARNING: Missing block: B:57:0x00fd, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("battery br summary (skip,total,mainFactorChange,maxCVBigChange,volBigChange,abnormalTemp,normalTempBigChange): ");
             r1.append(getBatteryStatisticsData());
             android.rms.iaware.AwareLog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:56:0x0117, code:
+    /* JADX WARNING: Missing block: B:58:0x0117, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -282,27 +282,33 @@ public class AwareBroadcastSend {
         }
         synchronized (this.mBatteryStatLock) {
             this.mCountBatteryBrTotal++;
-            if (this.mHealthInfo.batteryStatus != this.mLastBatteryStatus || this.mHealthInfo.batteryHealth != this.mLastBatteryHealth || this.mHealthInfo.batteryPresent != this.mLastBatteryPresent || this.mHealthInfo.batteryLevel != this.mLastBatteryLevel || this.mPlugType != this.mLastPlugType || this.mHealthInfo.maxChargingCurrent != this.mLastMaxChargingCurrent || this.mInvalidCharger != this.mLastInvalidCharger) {
-                this.mCountMainFactorChange++;
-                return false;
-            } else if (this.mHealthInfo.maxChargingVoltage != this.mLastMaxChargingVoltage && Math.abs(this.mHealthInfo.maxChargingVoltage - this.mLastMaxChargingVoltage) >= this.mMaxChargingVolChangeLowestStep) {
-                this.mCountMaxCVBigChange++;
-                return false;
-            } else if (this.mHealthInfo.batteryVoltage == this.mLastBatteryVoltage || Math.abs(this.mHealthInfo.batteryVoltage - this.mLastBatteryVoltage) < this.mVolChangeLowestStep) {
-                if (this.mHealthInfo.batteryTemperature != this.mLastBatteryTemperature) {
-                    if (this.mHealthInfo.batteryTemperature <= this.mBatteryNormalTempLow || this.mHealthInfo.batteryTemperature >= this.mBatteryNormalTempHigh) {
-                        this.mCountAbnormalTemp++;
+            if (this.mHealthInfo.batteryStatus == this.mLastBatteryStatus && this.mHealthInfo.batteryHealth == this.mLastBatteryHealth && this.mHealthInfo.batteryPresent == this.mLastBatteryPresent && this.mHealthInfo.batteryLevel == this.mLastBatteryLevel && this.mPlugType == this.mLastPlugType && this.mHealthInfo.maxChargingCurrent == this.mLastMaxChargingCurrent) {
+                if (this.mInvalidCharger == this.mLastInvalidCharger) {
+                    if (this.mHealthInfo.maxChargingVoltage != this.mLastMaxChargingVoltage && Math.abs(this.mHealthInfo.maxChargingVoltage - this.mLastMaxChargingVoltage) >= this.mMaxChargingVolChangeLowestStep) {
+                        this.mCountMaxCVBigChange++;
                         return false;
-                    } else if (Math.abs(this.mHealthInfo.batteryTemperature - this.mLastBatteryTemperature) >= this.mTempChangeLowestStep) {
-                        this.mCountNormalTempBigChange++;
+                    } else if (this.mHealthInfo.batteryVoltage == this.mLastBatteryVoltage || Math.abs(this.mHealthInfo.batteryVoltage - this.mLastBatteryVoltage) < this.mVolChangeLowestStep) {
+                        if (this.mHealthInfo.batteryTemperature != this.mLastBatteryTemperature) {
+                            if (this.mHealthInfo.batteryTemperature > this.mBatteryNormalTempLow) {
+                                if (this.mHealthInfo.batteryTemperature < this.mBatteryNormalTempHigh) {
+                                    if (Math.abs(this.mHealthInfo.batteryTemperature - this.mLastBatteryTemperature) >= this.mTempChangeLowestStep) {
+                                        this.mCountNormalTempBigChange++;
+                                        return false;
+                                    }
+                                }
+                            }
+                            this.mCountAbnormalTemp++;
+                            return false;
+                        }
+                        this.mCountBatteryBrSkip++;
+                    } else {
+                        this.mCountVoltageBigChange++;
                         return false;
                     }
                 }
-                this.mCountBatteryBrSkip++;
-            } else {
-                this.mCountVoltageBigChange++;
-                return false;
             }
+            this.mCountMainFactorChange++;
+            return false;
         }
     }
 
@@ -504,7 +510,7 @@ public class AwareBroadcastSend {
         pw.println(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0107, code:
+    /* JADX WARNING: Missing block: B:18:0x0107, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

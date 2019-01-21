@@ -305,7 +305,7 @@ public class HwLocationManagerService extends LocationManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x010d, code:
+    /* JADX WARNING: Missing block: B:23:0x010d, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -746,15 +746,19 @@ public class HwLocationManagerService extends LocationManagerService {
                 String str2;
                 StringBuilder stringBuilder2;
                 if (packagename == null && uid == 0) {
-                    str2 = TAG;
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("remove All SupervisoryControlProc ");
-                    stringBuilder2.append(this.mSupervisoryPkgList.toString());
-                    Slog.d(str2, stringBuilder2.toString());
-                    for (Entry<String, String> entry : this.mSupervisoryPkgList.entrySet()) {
-                        mSwitchRecords.putAll(getRemoveSwitchRecords((String) entry.getKey()));
+                    try {
+                        str2 = TAG;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("remove All SupervisoryControlProc ");
+                        stringBuilder2.append(this.mSupervisoryPkgList.toString());
+                        Slog.d(str2, stringBuilder2.toString());
+                        for (Entry<String, String> entry : this.mSupervisoryPkgList.entrySet()) {
+                            mSwitchRecords.putAll(getRemoveSwitchRecords((String) entry.getKey()));
+                        }
+                        this.mSupervisoryPkgList.clear();
+                    } catch (Throwable th) {
+                        throw th;
                     }
-                    this.mSupervisoryPkgList.clear();
                 } else if (packagename != null) {
                     str2 = TAG;
                     stringBuilder2 = new StringBuilder();
@@ -895,7 +899,7 @@ public class HwLocationManagerService extends LocationManagerService {
         return updateproviders;
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0047, code:
+    /* JADX WARNING: Missing block: B:25:0x0047, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -999,53 +1003,57 @@ public class HwLocationManagerService extends LocationManagerService {
             }
             NetworkInfo infoWifi = connectivity.getNetworkInfo(1);
             NetworkInfo infoMoblie = connectivity.getNetworkInfo(0);
-            if (infoWifi == null || infoMoblie == null) {
-                Slog.e(TAG, "infoWifi or infoMoblie is null error!");
-                return false;
+            if (infoWifi != null) {
+                if (infoMoblie != null) {
+                    boolean isWifiConn = infoWifi.isConnected();
+                    boolean isMobileConn = infoMoblie.isConnected();
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("uid is ");
+                    stringBuilder.append(i);
+                    stringBuilder.append(" , isWifiConn is ");
+                    stringBuilder.append(isWifiConn);
+                    stringBuilder.append(" , isMobileConn is ");
+                    stringBuilder.append(isMobileConn);
+                    Slog.d(str, stringBuilder.toString());
+                    HwNetworkPolicyManager manager = HwNetworkPolicyManager.from(this.mHwContext);
+                    if (manager == null) {
+                        Slog.e(TAG, "HwNetworkPolicyManager is null error!");
+                        return false;
+                    }
+                    identity = Binder.clearCallingIdentity();
+                    int policy = 0;
+                    policy = manager.getHwUidPolicy(i);
+                    Binder.restoreCallingIdentity(identity);
+                    boolean wifiAccess = (policy & 2) == 0;
+                    boolean mobileAccess = (policy & 1) == 0;
+                    String str2 = TAG;
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("policy is ");
+                    stringBuilder2.append(policy);
+                    stringBuilder2.append(" , wifiAccess is ");
+                    stringBuilder2.append(wifiAccess);
+                    stringBuilder2.append(", mobileAccess is ");
+                    stringBuilder2.append(mobileAccess);
+                    Slog.d(str2, stringBuilder2.toString());
+                    boolean wifiAvaiable = wifiAccess && isWifiConn;
+                    boolean mobileAvailable = mobileAccess && isMobileConn;
+                    str2 = TAG;
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("wifiAvaiable is ");
+                    stringBuilder3.append(wifiAvaiable);
+                    stringBuilder3.append(" , mobileAvailable is ");
+                    stringBuilder3.append(mobileAvailable);
+                    Slog.d(str2, stringBuilder3.toString());
+                    if (!wifiAvaiable) {
+                        if (!mobileAvailable) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
             }
-            boolean isWifiConn = infoWifi.isConnected();
-            boolean isMobileConn = infoMoblie.isConnected();
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("uid is ");
-            stringBuilder.append(i);
-            stringBuilder.append(" , isWifiConn is ");
-            stringBuilder.append(isWifiConn);
-            stringBuilder.append(" , isMobileConn is ");
-            stringBuilder.append(isMobileConn);
-            Slog.d(str, stringBuilder.toString());
-            HwNetworkPolicyManager manager = HwNetworkPolicyManager.from(this.mHwContext);
-            if (manager == null) {
-                Slog.e(TAG, "HwNetworkPolicyManager is null error!");
-                return false;
-            }
-            identity = Binder.clearCallingIdentity();
-            int policy = 0;
-            policy = manager.getHwUidPolicy(i);
-            Binder.restoreCallingIdentity(identity);
-            boolean wifiAccess = (policy & 2) == 0;
-            boolean mobileAccess = (policy & 1) == 0;
-            String str2 = TAG;
-            StringBuilder stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("policy is ");
-            stringBuilder2.append(policy);
-            stringBuilder2.append(" , wifiAccess is ");
-            stringBuilder2.append(wifiAccess);
-            stringBuilder2.append(", mobileAccess is ");
-            stringBuilder2.append(mobileAccess);
-            Slog.d(str2, stringBuilder2.toString());
-            boolean wifiAvaiable = wifiAccess && isWifiConn;
-            boolean mobileAvailable = mobileAccess && isMobileConn;
-            str2 = TAG;
-            StringBuilder stringBuilder3 = new StringBuilder();
-            stringBuilder3.append("wifiAvaiable is ");
-            stringBuilder3.append(wifiAvaiable);
-            stringBuilder3.append(" , mobileAvailable is ");
-            stringBuilder3.append(mobileAvailable);
-            Slog.d(str2, stringBuilder3.toString());
-            if (wifiAvaiable || mobileAvailable) {
-                return true;
-            }
+            Slog.e(TAG, "infoWifi or infoMoblie is null error!");
             return false;
         } catch (RuntimeException e) {
             String str3 = TAG;
@@ -1537,7 +1545,7 @@ public class HwLocationManagerService extends LocationManagerService {
     }
 
     private boolean isDualBandSupported() {
-        return this.mContext.getResources().getBoolean(17957073);
+        return this.mContext.getResources().getBoolean(17957074);
     }
 
     protected void hwSendBehavior(BehaviorId bid) {
@@ -1556,7 +1564,7 @@ public class HwLocationManagerService extends LocationManagerService {
     }
 
     public ArrayList<String> gnssDetect(String packageName) {
-        ArrayList<String> gnssDetect;
+        ArrayList gnssDetect;
         synchronized (this.mLocationManagerServiceUtil.getmLock()) {
             gnssDetect = HwGnssDetectManager.getInstance(this.mHwContext).gnssDetect(packageName);
         }
@@ -1580,7 +1588,7 @@ public class HwLocationManagerService extends LocationManagerService {
         hwLockCheck();
     }
 
-    /* JADX WARNING: Missing block: B:38:0x011e, code:
+    /* JADX WARNING: Missing block: B:39:0x011e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1588,48 +1596,51 @@ public class HwLocationManagerService extends LocationManagerService {
         List<RunningAppProcessInfo> appProcessList = ((ActivityManager) this.mContext.getSystemService("activity")).getRunningAppProcesses();
         synchronized (this.mLocationManagerServiceUtil.getmLock()) {
             HashMap<String, ArrayList<UpdateRecord>> recordsByProvider = this.mLocationManagerServiceUtil.getRecordsByProvider();
-            if (recordsByProvider == null || recordsByProvider.isEmpty()) {
-            } else if (appProcessList == null) {
-                Log.w(TAG, "no Process find");
-            } else {
-                HashMap<Object, Receiver> receivers = (HashMap) this.mLocationManagerServiceUtil.getReceivers().clone();
-                for (Entry<String, ArrayList<UpdateRecord>> entry : recordsByProvider.entrySet()) {
-                    ArrayList<UpdateRecord> records = (ArrayList) entry.getValue();
-                    if (records != null) {
-                        Iterator it = ((ArrayList) records.clone()).iterator();
-                        while (it.hasNext()) {
-                            UpdateRecord record = (UpdateRecord) it.next();
-                            if (receivers.containsValue(record.mReceiver)) {
-                                boolean isfound = false;
-                                for (RunningAppProcessInfo appProcess : appProcessList) {
-                                    if (appProcess.pid == record.mReceiver.mIdentity.mPid && appProcess.uid == record.mReceiver.mIdentity.mUid) {
-                                        isfound = true;
-                                        break;
+            if (recordsByProvider != null) {
+                if (!recordsByProvider.isEmpty()) {
+                    if (appProcessList == null) {
+                        Log.w(TAG, "no Process find");
+                        return;
+                    }
+                    HashMap<Object, Receiver> receivers = (HashMap) this.mLocationManagerServiceUtil.getReceivers().clone();
+                    for (Entry<String, ArrayList<UpdateRecord>> entry : recordsByProvider.entrySet()) {
+                        ArrayList<UpdateRecord> records = (ArrayList) entry.getValue();
+                        if (records != null) {
+                            Iterator it = ((ArrayList) records.clone()).iterator();
+                            while (it.hasNext()) {
+                                UpdateRecord record = (UpdateRecord) it.next();
+                                if (receivers.containsValue(record.mReceiver)) {
+                                    boolean isfound = false;
+                                    for (RunningAppProcessInfo appProcess : appProcessList) {
+                                        if (appProcess.pid == record.mReceiver.mIdentity.mPid && appProcess.uid == record.mReceiver.mIdentity.mUid) {
+                                            isfound = true;
+                                            break;
+                                        }
                                     }
+                                    if (!isfound) {
+                                        this.mLocationManagerServiceUtil.removeUpdatesLocked(record.mReceiver);
+                                        String str = TAG;
+                                        StringBuilder stringBuilder = new StringBuilder();
+                                        stringBuilder.append("process may be died, but request not remove!  pid = ");
+                                        stringBuilder.append(record.mReceiver.mIdentity.mPid);
+                                        stringBuilder.append(" uid = ");
+                                        stringBuilder.append(record.mReceiver.mIdentity.mUid);
+                                        stringBuilder.append(" receiver = ");
+                                        stringBuilder.append(record.mReceiver.toString());
+                                        Log.w(str, stringBuilder.toString());
+                                    }
+                                } else {
+                                    record.disposeLocked(false);
+                                    String str2 = TAG;
+                                    StringBuilder stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("receiver not exists, but updateRecord not remove!  pid = ");
+                                    stringBuilder2.append(record.mReceiver.mIdentity.mPid);
+                                    stringBuilder2.append(" uid = ");
+                                    stringBuilder2.append(record.mReceiver.mIdentity.mUid);
+                                    stringBuilder2.append(" UpdateRecord = ");
+                                    stringBuilder2.append(record);
+                                    Log.w(str2, stringBuilder2.toString());
                                 }
-                                if (!isfound) {
-                                    this.mLocationManagerServiceUtil.removeUpdatesLocked(record.mReceiver);
-                                    String str = TAG;
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    stringBuilder.append("process may be died, but request not remove!  pid = ");
-                                    stringBuilder.append(record.mReceiver.mIdentity.mPid);
-                                    stringBuilder.append(" uid = ");
-                                    stringBuilder.append(record.mReceiver.mIdentity.mUid);
-                                    stringBuilder.append(" receiver = ");
-                                    stringBuilder.append(record.mReceiver.toString());
-                                    Log.w(str, stringBuilder.toString());
-                                }
-                            } else {
-                                record.disposeLocked(false);
-                                String str2 = TAG;
-                                StringBuilder stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("receiver not exists, but updateRecord not remove!  pid = ");
-                                stringBuilder2.append(record.mReceiver.mIdentity.mPid);
-                                stringBuilder2.append(" uid = ");
-                                stringBuilder2.append(record.mReceiver.mIdentity.mUid);
-                                stringBuilder2.append(" UpdateRecord = ");
-                                stringBuilder2.append(record);
-                                Log.w(str2, stringBuilder2.toString());
                             }
                         }
                     }

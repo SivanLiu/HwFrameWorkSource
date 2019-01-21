@@ -318,7 +318,7 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
     private HwFalseTouchMonitor mFalseTouchMonitor = null;
     private int mFingerPrintId = -1;
     boolean mFingerSenseEnabled = true;
-    private int mFingerprintHardwareType;
+    private int mFingerprintHardwareType = -1;
     private ContentObserver mFingerprintObserver;
     private boolean mFirstSetCornerDefault = true;
     private boolean mFirstSetCornerInLandNoNotch = true;
@@ -907,6 +907,9 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         if (PickUpWakeScreenManager.isPickupSensorSupport(this.mContext)) {
             PickUpWakeScreenManager.getInstance(this.mContext, this.mHandler, this.mWindowManagerFuncs, this.mKeyguardDelegate).pickUpWakeScreenInit();
         }
+        Message msg = this.mHandlerEx.obtainMessage(MSG_NOTIFY_FINGER_OPTICAL);
+        msg.setAsynchronous(true);
+        this.mHandlerEx.sendMessage(msg);
     }
 
     public void registerExternalPointerEventListener() {
@@ -1015,9 +1018,6 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         if (this.mAppEyeHomeKey != null) {
             this.mAppEyeHomeKey.init(null);
         }
-        Message msg = this.mHandlerEx.obtainMessage(MSG_NOTIFY_FINGER_OPTICAL);
-        msg.setAsynchronous(true);
-        this.mHandlerEx.sendMessage(msg);
     }
 
     private void registerReceivers(Context context) {
@@ -1475,12 +1475,12 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         if (this.mTrikeyNaviMode == 1) {
             return isExcluedScene();
         }
-        return this.mDeviceProvisioned ^ true;
+        return this.mDeviceProvisioned ^ 1;
     }
 
     private boolean isExcluedRecentScene() {
         if (this.mTrikeyNaviMode == 1) {
-            return this.mDeviceProvisioned ^ true;
+            return this.mDeviceProvisioned ^ 1;
         }
         return isExcluedScene();
     }
@@ -1539,7 +1539,7 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x003e, code:
+    /* JADX WARNING: Missing block: B:10:0x003e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1581,31 +1581,32 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
                         stringBuilder.append("get Emergency power TopActivity is:");
                         stringBuilder.append(pkgName);
                         Log.d(str, stringBuilder.toString());
-                        if ("com.android.emergency/.view.ViewCountDownActivity".equals(pkgName) || "com.android.emergency/.view.EmergencyNumberActivity".equals(pkgName)) {
-                            Log.d(TAG, "current topActivity is emergency, return ");
-                            if (!(powerManager == null || powerManager.isScreenOn())) {
-                                powerManager.wakeUp(SystemClock.uptimeMillis());
+                        if (!"com.android.emergency/.view.ViewCountDownActivity".equals(pkgName)) {
+                            if (!"com.android.emergency/.view.EmergencyNumberActivity".equals(pkgName)) {
+                                Intent intent = new Intent();
+                                intent.setPackage(PKG_NAME_EMERGENCY);
+                                intent.setAction("android.emergency.COUNT_DOWN");
+                                intent.addCategory("android.intent.category.DEFAULT");
+                                if (isSoSEmergencyInstalled(intent)) {
+                                    this.mIsFreezePowerkey = true;
+                                    this.mHandlerEx.removeMessages(MSG_FREEZE_POWER_KEY);
+                                    Log.d(TAG, "Emergency power start activity");
+                                    this.mContext.startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
+                                }
+                                if (this.mIsFreezePowerkey) {
+                                    if (powerManager != null) {
+                                        powerManager.wakeUp(SystemClock.uptimeMillis());
+                                    }
+                                    this.mHandlerEx.removeMessages(MSG_FREEZE_POWER_KEY);
+                                    Message msg = this.mHandlerEx.obtainMessage(MSG_FREEZE_POWER_KEY);
+                                    msg.setAsynchronous(true);
+                                    this.mHandlerEx.sendMessageDelayed(msg, 1000);
+                                }
                             }
-                            return;
                         }
-                        Intent intent = new Intent();
-                        intent.setPackage(PKG_NAME_EMERGENCY);
-                        intent.setAction("android.emergency.COUNT_DOWN");
-                        intent.addCategory("android.intent.category.DEFAULT");
-                        if (isSoSEmergencyInstalled(intent)) {
-                            this.mIsFreezePowerkey = true;
-                            this.mHandlerEx.removeMessages(MSG_FREEZE_POWER_KEY);
-                            Log.d(TAG, "Emergency power start activity");
-                            this.mContext.startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
-                        }
-                        if (this.mIsFreezePowerkey) {
-                            if (powerManager != null) {
-                                powerManager.wakeUp(SystemClock.uptimeMillis());
-                            }
-                            this.mHandlerEx.removeMessages(MSG_FREEZE_POWER_KEY);
-                            Message msg = this.mHandlerEx.obtainMessage(MSG_FREEZE_POWER_KEY);
-                            msg.setAsynchronous(true);
-                            this.mHandlerEx.sendMessageDelayed(msg, 1000);
+                        Log.d(TAG, "current topActivity is emergency, return ");
+                        if (!(powerManager == null || powerManager.isScreenOn())) {
+                            powerManager.wakeUp(SystemClock.uptimeMillis());
                         }
                     } catch (ActivityNotFoundException ex) {
                         str = TAG;
@@ -2870,37 +2871,37 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         	at jadx.core.dex.visitors.regions.TracedRegionVisitor.processBlock(TracedRegionVisitor.java:23)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:53)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1080)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1080)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1080)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
         	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverse(DepthRegionTraversal.java:18)
         	at jadx.core.dex.visitors.regions.ProcessVariables.visit(ProcessVariables.java:183)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -3016,18 +3017,28 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
     }
 
     private void notifyRapidCaptureService(String command) {
+        String str;
+        StringBuilder stringBuilder;
         if (this.mSystemReady) {
             Intent intent = new Intent(HUAWEI_RAPIDCAPTURE_START_MODE);
             intent.setPackage("com.huawei.camera");
             intent.putExtra(SMARTKEY_TAG, command);
-            this.mContext.startServiceAsUser(intent, UserHandle.CURRENT_OR_SELF);
+            try {
+                this.mContext.startServiceAsUser(intent, UserHandle.CURRENT_OR_SELF);
+            } catch (Exception e) {
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("unable to start service:");
+                stringBuilder.append(intent);
+                Slog.e(str, stringBuilder.toString(), e);
+            }
             if (this.mVolumeDownWakeLock != null) {
                 this.mVolumeDownWakeLock.acquire(500);
             }
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
+                str = TAG;
+                stringBuilder = new StringBuilder();
                 stringBuilder.append("start Rapid Capture Service, command:");
                 stringBuilder.append(extras.get(SMARTKEY_TAG));
                 Log.d(str, stringBuilder.toString());
@@ -3227,27 +3238,23 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
 
     private void notifyFingerOptical() {
         this.mFingerprintHardwareType = FingerprintManagerEx.getHardwareType();
-        this.mWindowManagerFuncs.registerPointerEventListener(new PointerEventListener() {
-            public void onPointerEvent(MotionEvent motionEvent) {
-                if (HwPhoneWindowManager.this.mFingerprintHardwareType == -1) {
-                    HwPhoneWindowManager.this.mFingerprintHardwareType = FingerprintManagerEx.getHardwareType();
-                    String str = HwPhoneWindowManager.TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("have not get HardwareType, try again and type is");
-                    stringBuilder.append(HwPhoneWindowManager.this.mFingerprintHardwareType);
-                    Log.d(str, stringBuilder.toString());
+        String str = TAG;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("system ready, register pointer event listenr for UD Optical fingerprint, mFingerprintHardwareType = ");
+        stringBuilder.append(this.mFingerprintHardwareType);
+        Log.i(str, stringBuilder.toString());
+        if (this.mFingerprintHardwareType == 1) {
+            this.mWindowManagerFuncs.registerPointerEventListener(new PointerEventListener() {
+                public void onPointerEvent(MotionEvent motionEvent) {
+                    if (motionEvent.getActionMasked() == 1) {
+                        FingerViewController.getInstance(HwPhoneWindowManager.this.mContext).notifyTouchUp(motionEvent.getRawX(), motionEvent.getRawY());
+                    } else if (motionEvent.getActionMasked() == 6) {
+                        int actionIndex = motionEvent.getActionIndex();
+                        FingerViewController.getInstance(HwPhoneWindowManager.this.mContext).notifyTouchUp(motionEvent.getX(actionIndex), motionEvent.getY(actionIndex));
+                    }
                 }
-                if (HwPhoneWindowManager.this.mFingerprintHardwareType != 1) {
-                    return;
-                }
-                if (motionEvent.getActionMasked() == 1) {
-                    FingerViewController.getInstance(HwPhoneWindowManager.this.mContext).notifyTouchUp(motionEvent.getRawX(), motionEvent.getRawY());
-                } else if (motionEvent.getActionMasked() == 6) {
-                    int actionIndex = motionEvent.getActionIndex();
-                    FingerViewController.getInstance(HwPhoneWindowManager.this.mContext).notifyTouchUp(motionEvent.getX(actionIndex), motionEvent.getY(actionIndex));
-                }
-            }
-        });
+            });
+        }
     }
 
     private void interceptTouchDisableMode() {
@@ -3957,17 +3964,19 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
     private boolean isTOPActivity(String appnames) {
         try {
             List<RunningTaskInfo> tasks = ((ActivityManager) this.mContext.getSystemService("activity")).getRunningTasks(1);
-            if (tasks == null || tasks.isEmpty()) {
-                return false;
-            }
-            for (RunningTaskInfo info : tasks) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("info.topActivity.getPackageName() is ");
-                stringBuilder.append(info.topActivity.getPackageName());
-                Log.i(str, stringBuilder.toString());
-                if (info.topActivity.getPackageName().equals(appnames) && info.baseActivity.getPackageName().equals(appnames)) {
-                    return true;
+            if (tasks != null) {
+                if (!tasks.isEmpty()) {
+                    for (RunningTaskInfo info : tasks) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("info.topActivity.getPackageName() is ");
+                        stringBuilder.append(info.topActivity.getPackageName());
+                        Log.i(str, stringBuilder.toString());
+                        if (info.topActivity.getPackageName().equals(appnames) && info.baseActivity.getPackageName().equals(appnames)) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             }
             return false;
@@ -3985,15 +3994,19 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
     private boolean isCloudOnPCTOP() {
         try {
             List<RunningTaskInfo> tasks = ((ActivityManager) this.mContext.getSystemService("activity")).getRunningTasks(1);
-            if (tasks == null || tasks.isEmpty()) {
-                return false;
-            }
-            for (RunningTaskInfo info : tasks) {
-                if (info.topActivity == null || info.baseActivity == null) {
+            if (tasks != null) {
+                if (!tasks.isEmpty()) {
+                    for (RunningTaskInfo info : tasks) {
+                        if (info.topActivity != null) {
+                            if (info.baseActivity != null) {
+                                if ("com.huawei.cloud".equals(info.topActivity.getPackageName()) && "com.huawei.cloud".equals(info.baseActivity.getPackageName()) && HwPCUtils.isPcDynamicStack(info.stackId) && "com.huawei.ahdp.session.VmActivity".equals(info.topActivity.getClassName())) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }
                     return false;
-                }
-                if ("com.huawei.cloud".equals(info.topActivity.getPackageName()) && "com.huawei.cloud".equals(info.baseActivity.getPackageName()) && HwPCUtils.isPcDynamicStack(info.stackId) && "com.huawei.ahdp.session.VmActivity".equals(info.topActivity.getClassName())) {
-                    return true;
                 }
             }
             return false;
@@ -4005,6 +4018,8 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
     }
 
     private void notifyVassistantService(String command, int mode, KeyEvent event) {
+        String str;
+        StringBuilder stringBuilder;
         Intent intent = new Intent(ACTION_HUAWEI_VASSISTANT_SERVICE);
         intent.putExtra(HUAWEI_VASSISTANT_EXTRA_START_MODE, mode);
         intent.putExtra(SMARTKEY_TAG, command);
@@ -4012,14 +4027,22 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
             intent.putExtra("KeyEvent", event);
         }
         intent.setPackage(HUAWEI_VASSISTANT_PACKAGE);
-        this.mContext.startService(intent);
+        try {
+            this.mContext.startService(intent);
+        } catch (Exception e) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("unable to start service:");
+            stringBuilder.append(intent);
+            Slog.e(str, stringBuilder.toString(), e);
+        }
         if (this.mVolumeDownWakeLock != null) {
             this.mVolumeDownWakeLock.acquire(500);
         }
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("start VASSISTANT Service, state:");
             stringBuilder.append(extras.get(HUAWEI_VASSISTANT_EXTRA_START_MODE));
             stringBuilder.append(" command:");
@@ -4288,7 +4311,7 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         return this.mStatuBarObsecured;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0045, code:
+    /* JADX WARNING: Missing block: B:20:0x0045, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4540,7 +4563,7 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
     private void showKeyEnableToast() {
         this.mHandler.post(new Runnable() {
             public void run() {
-                Toast toast = Toast.makeText(HwPhoneWindowManager.this.mContext, 33686186, 0);
+                Toast toast = Toast.makeText(HwPhoneWindowManager.this.mContext, 33686189, 0);
                 toast.getWindowParams().type = HwArbitrationDEFS.MSG_MPLINK_UNBIND_FAIL;
                 LayoutParams windowParams = toast.getWindowParams();
                 windowParams.privateFlags |= 16;
@@ -5515,32 +5538,42 @@ public class HwPhoneWindowManager extends PhoneWindowManager implements TouchExp
         }
     }
 
-    public boolean isHwStartWindowEnabled() {
-        return StartWindowFeature.isStartWindowEnable();
+    public boolean isHwStartWindowEnabled(int type) {
+        if (type == 0) {
+            return StartWindowFeature.isStartWindowEnable();
+        }
+        if (type == 1) {
+            return StartWindowFeature.isRotateOptEnabled();
+        }
+        return false;
     }
 
-    public Context addHwStartWindow(String packageName, Context overrideContext, Context context, TypedArray typedArray, int windowFlags) {
-        if (overrideContext == null || context == null || typedArray == null) {
+    public Context addHwStartWindow(ApplicationInfo appInfo, Context overrideContext, Context context, TypedArray typedArray, int windowFlags) {
+        if (overrideContext == null || context == null || typedArray == null || appInfo == null) {
             return null;
         }
         boolean addHwStartWindowFlag = false;
         boolean windowIsTranslucent = typedArray.getBoolean(true, false);
         boolean windowDisableStarting = typedArray.getBoolean(true, false);
         boolean windowShowWallpaper = typedArray.getBoolean(true, false);
-        ApplicationInfo appInfo = context.getApplicationInfo();
-        boolean isUnistall = (appInfo.isSystemApp() || appInfo.isPrivilegedApp() || appInfo.isUpdatedSystemApp()) ? false : true;
-        if ((windowDisableStarting || windowIsTranslucent || (windowShowWallpaper && (windowFlags & HighBitsCompModeID.MODE_COLOR_ENHANCE) != HighBitsCompModeID.MODE_COLOR_ENHANCE)) && HwStartWindowRecord.getInstance().isStartWindowApp(packageName) && HwStartWindowRecord.getInstance().checkStartWindowApp(packageName)) {
+        if ((windowDisableStarting || windowIsTranslucent || (windowShowWallpaper && (windowFlags & HighBitsCompModeID.MODE_COLOR_ENHANCE) != HighBitsCompModeID.MODE_COLOR_ENHANCE)) && HwStartWindowRecord.getInstance().checkStartWindowApp(Integer.valueOf(appInfo.uid))) {
             addHwStartWindowFlag = true;
         }
-        if (!addHwStartWindowFlag || !isUnistall) {
+        if (!addHwStartWindowFlag) {
             return null;
         }
         overrideContext.setTheme(overrideContext.getResources().getIdentifier("androidhwext:style/Theme.Emui.NoActionBar", null, null));
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("addHwStartWindow set default on app : ");
-        stringBuilder.append(packageName);
+        stringBuilder.append(appInfo.packageName);
         Slog.d(str, stringBuilder.toString());
         return overrideContext;
+    }
+
+    public void setGestureNavMode(String packageName, int uid, int leftMode, int rightMode, int bottomMode) {
+        if (this.mGestureNavManager != null) {
+            this.mGestureNavManager.setGestureNavMode(packageName, uid, leftMode, rightMode, bottomMode);
+        }
     }
 }

@@ -94,7 +94,7 @@ public class ECUtil {
             return new ECPrivateKeyParameters(eCPrivateKey2.getS(), new ECDomainParameters(parameters.getCurve(), parameters.getG(), parameters.getN(), parameters.getH(), parameters.getSeed()));
         } else {
             try {
-                Object encoded = privateKey.getEncoded();
+                byte[] encoded = privateKey.getEncoded();
                 if (encoded != null) {
                     privateKey = BouncyCastleProvider.getPrivateKey(PrivateKeyInfo.getInstance(encoded));
                     if (privateKey instanceof java.security.interfaces.ECPrivateKey) {
@@ -124,7 +124,7 @@ public class ECUtil {
             return new ECPublicKeyParameters(EC5Util.convertPoint(eCPublicKey2.getParams(), eCPublicKey2.getW(), false), new ECDomainParameters(parameters.getCurve(), parameters.getG(), parameters.getN(), parameters.getH(), parameters.getSeed()));
         } else {
             try {
-                Object encoded = publicKey.getEncoded();
+                byte[] encoded = publicKey.getEncoded();
                 if (encoded != null) {
                     publicKey = BouncyCastleProvider.getPublicKey(SubjectPublicKeyInfo.getInstance(encoded));
                     if (publicKey instanceof java.security.interfaces.ECPublicKey) {

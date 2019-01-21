@@ -52,7 +52,7 @@ public class SoundTriggerDbHelper extends SQLiteOpenHelper {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x004b, code:
+    /* JADX WARNING: Missing block: B:9:0x004b, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -80,7 +80,7 @@ public class SoundTriggerDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x003b, code:
+    /* JADX WARNING: Missing block: B:13:0x003b, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

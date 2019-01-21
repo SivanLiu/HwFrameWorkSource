@@ -34,45 +34,49 @@ public class HwABSDataBaseManager {
         return mHwABSDataBaseManager;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
+    /* JADX WARNING: Missing block: B:12:0x001d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeDB() {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                HwABSUtils.logD("HwABSDataBaseManager closeDB()");
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    HwABSUtils.logD("HwABSDataBaseManager closeDB()");
+                    this.mDatabase.close();
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x002f, code:
+    /* JADX WARNING: Missing block: B:14:0x002f, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:15:0x0031, code:
+    /* JADX WARNING: Missing block: B:16:0x0031, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void addOrUpdateApInfos(HwABSApInfoData data) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || data == null) {
-            } else if (getApInfoByBssid(data.mBssid) == null) {
-                HwABSUtils.logD("addOrUpdateApInfos inlineAddApInfo");
-                checkIfAllCaseNumSatisfy();
-                inlineAddApInfo(data);
-            } else {
-                HwABSUtils.logD("addOrUpdateApInfos");
-                inlineUpdateApInfo(data);
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (data != null) {
+                    if (getApInfoByBssid(data.mBssid) == null) {
+                        HwABSUtils.logD("addOrUpdateApInfos inlineAddApInfo");
+                        checkIfAllCaseNumSatisfy();
+                        inlineAddApInfo(data);
+                    } else {
+                        HwABSUtils.logD("addOrUpdateApInfos");
+                        inlineUpdateApInfo(data);
+                    }
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x00a5, code:
+    /* JADX WARNING: Missing block: B:18:0x00a5, code skipped:
             return r3;
      */
-    /* JADX WARNING: Missing block: B:32:0x00cc, code:
+    /* JADX WARNING: Missing block: B:32:0x00cc, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -110,7 +114,7 @@ public class HwABSDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0096, code:
+    /* JADX WARNING: Missing block: B:18:0x0096, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -148,10 +152,10 @@ public class HwABSDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x00a7, code:
+    /* JADX WARNING: Missing block: B:19:0x00a7, code skipped:
             return r4;
      */
-    /* JADX WARNING: Missing block: B:33:0x00ce, code:
+    /* JADX WARNING: Missing block: B:33:0x00ce, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -189,15 +193,16 @@ public class HwABSDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x001a, code:
+    /* JADX WARNING: Missing block: B:13:0x001a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void deleteAPInfosByBssid(HwABSApInfoData data) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || data == null) {
-            } else {
-                inlineDeleteApInfoByBssid(data.mBssid);
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (data != null) {
+                    inlineDeleteApInfoByBssid(data.mBssid);
+                }
             }
         }
     }
@@ -205,9 +210,12 @@ public class HwABSDataBaseManager {
     public void deleteAPInfosBySsid(HwABSApInfoData data) {
         synchronized (this.mLock) {
             if (data == null) {
-                return;
+                try {
+                } catch (Throwable th) {
+                }
+            } else {
+                inlineDeleteApInfoBySsid(data.mSsid);
             }
-            inlineDeleteApInfoBySsid(data.mSsid);
         }
     }
 
@@ -277,10 +285,10 @@ public class HwABSDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x009f, code:
+    /* JADX WARNING: Missing block: B:19:0x009f, code skipped:
             return r4;
      */
-    /* JADX WARNING: Missing block: B:33:0x00c6, code:
+    /* JADX WARNING: Missing block: B:33:0x00c6, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -318,10 +326,10 @@ public class HwABSDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0118, code:
+    /* JADX WARNING: Missing block: B:17:0x0118, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:31:0x013f, code:
+    /* JADX WARNING: Missing block: B:31:0x013f, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -378,49 +386,51 @@ public class HwABSDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x00dd, code:
+    /* JADX WARNING: Missing block: B:12:0x00dd, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void inlineAddCHRInfo(HwABSCHRStatistics data) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                this.mDatabase.execSQL("INSERT INTO StatisticsTable VALUES(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{Integer.valueOf(data.long_connect_event), Integer.valueOf(data.short_connect_event), Integer.valueOf(data.search_event), Integer.valueOf(data.antenna_preempted_screen_on_event), Integer.valueOf(data.antenna_preempted_screen_off_event), Integer.valueOf(data.mo_mt_call_event), Integer.valueOf(data.siso_to_mimo_event), Integer.valueOf(data.ping_pong_times), Integer.valueOf(data.max_ping_pong_times), Long.valueOf(data.mimo_time), Long.valueOf(data.siso_time), Long.valueOf(data.mimo_screen_on_time), Long.valueOf(data.siso_screen_on_time), Long.valueOf(data.last_upload_time), Integer.valueOf(data.mRssiL0), Integer.valueOf(data.mRssiL1), Integer.valueOf(data.mRssiL2), Integer.valueOf(data.mRssiL3), Integer.valueOf(data.mRssiL4), Integer.valueOf(0)});
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    this.mDatabase.execSQL("INSERT INTO StatisticsTable VALUES(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{Integer.valueOf(data.long_connect_event), Integer.valueOf(data.short_connect_event), Integer.valueOf(data.search_event), Integer.valueOf(data.antenna_preempted_screen_on_event), Integer.valueOf(data.antenna_preempted_screen_off_event), Integer.valueOf(data.mo_mt_call_event), Integer.valueOf(data.siso_to_mimo_event), Integer.valueOf(data.ping_pong_times), Integer.valueOf(data.max_ping_pong_times), Long.valueOf(data.mimo_time), Long.valueOf(data.siso_time), Long.valueOf(data.mimo_screen_on_time), Long.valueOf(data.siso_screen_on_time), Long.valueOf(data.last_upload_time), Integer.valueOf(data.mRssiL0), Integer.valueOf(data.mRssiL1), Integer.valueOf(data.mRssiL2), Integer.valueOf(data.mRssiL3), Integer.valueOf(data.mRssiL4), Integer.valueOf(0)});
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x00fe, code:
+    /* JADX WARNING: Missing block: B:12:0x00fe, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void inlineUpdateCHRInfo(HwABSCHRStatistics data) {
         synchronized (this.mLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                HwABSUtils.logD("inlineUpdateCHRInfo ");
-                ContentValues values = new ContentValues();
-                values.put("long_connect_event", Integer.valueOf(data.long_connect_event));
-                values.put("short_connect_event", Integer.valueOf(data.short_connect_event));
-                values.put("search_event", Integer.valueOf(data.search_event));
-                values.put("antenna_preempted_screen_on_event", Integer.valueOf(data.antenna_preempted_screen_on_event));
-                values.put("antenna_preempted_screen_off_event", Integer.valueOf(data.antenna_preempted_screen_off_event));
-                values.put("mo_mt_call_event", Integer.valueOf(data.mo_mt_call_event));
-                values.put("siso_to_mimo_event", Integer.valueOf(data.siso_to_mimo_event));
-                values.put("ping_pong_times", Integer.valueOf(data.ping_pong_times));
-                values.put("max_ping_pong_times", Integer.valueOf(data.max_ping_pong_times));
-                values.put("mimo_time", Long.valueOf(data.mimo_time));
-                values.put("siso_time", Long.valueOf(data.siso_time));
-                values.put("mimo_screen_on_time", Long.valueOf(data.mimo_screen_on_time));
-                values.put("siso_screen_on_time", Long.valueOf(data.siso_screen_on_time));
-                values.put("last_upload_time", Long.valueOf(data.last_upload_time));
-                values.put("rssiL0", Integer.valueOf(data.mRssiL0));
-                values.put("rssiL1", Integer.valueOf(data.mRssiL1));
-                values.put("rssiL2", Integer.valueOf(data.mRssiL2));
-                values.put("rssiL3", Integer.valueOf(data.mRssiL3));
-                values.put("rssiL4", Integer.valueOf(data.mRssiL4));
-                this.mDatabase.update(HwABSDataBaseHelper.STATISTICS_TABLE_NAME, values, "_id like ?", new String[]{"1"});
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    HwABSUtils.logD("inlineUpdateCHRInfo ");
+                    ContentValues values = new ContentValues();
+                    values.put("long_connect_event", Integer.valueOf(data.long_connect_event));
+                    values.put("short_connect_event", Integer.valueOf(data.short_connect_event));
+                    values.put("search_event", Integer.valueOf(data.search_event));
+                    values.put("antenna_preempted_screen_on_event", Integer.valueOf(data.antenna_preempted_screen_on_event));
+                    values.put("antenna_preempted_screen_off_event", Integer.valueOf(data.antenna_preempted_screen_off_event));
+                    values.put("mo_mt_call_event", Integer.valueOf(data.mo_mt_call_event));
+                    values.put("siso_to_mimo_event", Integer.valueOf(data.siso_to_mimo_event));
+                    values.put("ping_pong_times", Integer.valueOf(data.ping_pong_times));
+                    values.put("max_ping_pong_times", Integer.valueOf(data.max_ping_pong_times));
+                    values.put("mimo_time", Long.valueOf(data.mimo_time));
+                    values.put("siso_time", Long.valueOf(data.siso_time));
+                    values.put("mimo_screen_on_time", Long.valueOf(data.mimo_screen_on_time));
+                    values.put("siso_screen_on_time", Long.valueOf(data.siso_screen_on_time));
+                    values.put("last_upload_time", Long.valueOf(data.last_upload_time));
+                    values.put("rssiL0", Integer.valueOf(data.mRssiL0));
+                    values.put("rssiL1", Integer.valueOf(data.mRssiL1));
+                    values.put("rssiL2", Integer.valueOf(data.mRssiL2));
+                    values.put("rssiL3", Integer.valueOf(data.mRssiL3));
+                    values.put("rssiL4", Integer.valueOf(data.mRssiL4));
+                    this.mDatabase.update(HwABSDataBaseHelper.STATISTICS_TABLE_NAME, values, "_id like ?", new String[]{"1"});
+                }
             }
         }
     }

@@ -228,13 +228,13 @@ public class HwConnectivityManagerImpl implements HwConnectivityManager {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:46:0x0169, code:
+    /* JADX WARNING: Missing block: B:47:0x0169, code skipped:
             if (r8 == null) goto L_0x019b;
      */
-    /* JADX WARNING: Missing block: B:47:0x016b, code:
+    /* JADX WARNING: Missing block: B:48:0x016b, code skipped:
             r8.close();
      */
-    /* JADX WARNING: Missing block: B:52:0x0192, code:
+    /* JADX WARNING: Missing block: B:53:0x0192, code skipped:
             if (r8 == null) goto L_0x019b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

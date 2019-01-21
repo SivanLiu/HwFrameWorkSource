@@ -50,7 +50,7 @@ public abstract class BcContentVerifierProviderBuilder {
             public ContentVerifier get(AlgorithmIdentifier algorithmIdentifier) throws OperatorCreationException {
                 try {
                     return new SigVerifier(algorithmIdentifier, BcContentVerifierProviderBuilder.this.createSignatureStream(algorithmIdentifier, BcContentVerifierProviderBuilder.this.extractKeyParameters(x509CertificateHolder.getSubjectPublicKeyInfo())));
-                } catch (Throwable e) {
+                } catch (IOException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("exception on setup: ");
                     stringBuilder.append(e);

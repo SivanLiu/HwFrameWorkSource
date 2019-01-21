@@ -3,7 +3,6 @@ package org.bouncycastle.openssl;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -110,7 +109,7 @@ public class MiscPEMGenerator implements PemObjectGenerator {
         }
         byte[] iv = this.encryptor.getIV();
         encoded = this.encryptor.encrypt(encoded);
-        List arrayList = new ArrayList(2);
+        ArrayList arrayList = new ArrayList(2);
         arrayList.add(new PemHeader("Proc-Type", "4,ENCRYPTED"));
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(toUpperCase);
@@ -134,7 +133,7 @@ public class MiscPEMGenerator implements PemObjectGenerator {
     public PemObject generate() throws PemGenerationException {
         try {
             return createPemObject(this.obj);
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("encoding exception: ");
             stringBuilder.append(e.getMessage());

@@ -8,26 +8,26 @@ public class HeartBeatReqMessage extends PushMessage {
     private byte nextHeartBeatInterval = (byte) 10;
 
     public HeartBeatReqMessage() {
-        super(jk());
+        super(v());
     }
 
-    private static byte jk() {
+    private static byte v() {
         return (byte) -38;
     }
 
-    public void jj(byte b) {
+    public void u(byte b) {
         this.nextHeartBeatInterval = b;
     }
 
-    public byte[] is() {
-        return new byte[]{it(), this.nextHeartBeatInterval};
+    public byte[] b() {
+        return new byte[]{c(), this.nextHeartBeatInterval};
     }
 
-    public PushMessage jc(InputStream inputStream) {
+    public PushMessage a(InputStream inputStream) {
         return null;
     }
 
     public String toString() {
-        return new StringBuffer(getClass().getSimpleName()).append(" cmdId:").append(iw()).append(" NextHeartBeatInterval:").append(this.nextHeartBeatInterval).toString();
+        return new StringBuffer(getClass().getSimpleName()).append(" cmdId:").append(d()).append(" NextHeartBeatInterval:").append(this.nextHeartBeatInterval).toString();
     }
 }

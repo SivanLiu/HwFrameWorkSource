@@ -26,14 +26,15 @@ public class CertificateTransparencyLogInstallReceiver extends ConfigUpdateInsta
         super("/data/misc/keychain/trusted_ct_logs/", "ct_logs", "metadata/", "version");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x0135 A:{Splitter: B:11:0x0068, ExcHandler: java.io.IOException (r1_10 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:41:0x0135, code:
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x0135 A:{ExcHandler: IOException | RuntimeException (r1_10 'e' java.lang.Exception), Splitter:B:11:0x0068} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x0135 A:{ExcHandler: IOException | RuntimeException (r1_10 'e' java.lang.Exception), Splitter:B:11:0x0068} */
+    /* JADX WARNING: Missing block: B:41:0x0135, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:42:0x0136, code:
+    /* JADX WARNING: Missing block: B:42:0x0136, code skipped:
             android.os.FileUtils.deleteContentsAndDir(r3);
      */
-    /* JADX WARNING: Missing block: B:43:0x0139, code:
+    /* JADX WARNING: Missing block: B:43:0x0139, code skipped:
             throw r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -91,16 +92,15 @@ public class CertificateTransparencyLogInstallReceiver extends ConfigUpdateInsta
                     }
                 } catch (JSONException e) {
                     throw new IOException("Failed to parse logs", e);
-                } catch (ErrnoException e2) {
-                    throw new IOException("Failed to create symlink", e2);
-                } catch (Exception e3) {
+                } catch (IOException | RuntimeException e2) {
+                } catch (ErrnoException e3) {
+                    throw new IOException("Failed to create symlink", e3);
                 }
-            } else {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Unable to set permissions on ");
-                stringBuilder.append(this.updateDir.getCanonicalPath());
-                throw new IOException(stringBuilder.toString());
             }
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Unable to set permissions on ");
+            stringBuilder.append(this.updateDir.getCanonicalPath());
+            throw new IOException(stringBuilder.toString());
         }
         stringBuilder = new StringBuilder();
         stringBuilder.append("Unable to make directory ");

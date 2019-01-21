@@ -104,7 +104,7 @@ public final class TreeTypeAdapter<T> extends TypeAdapter<T> {
         if (d != null) {
             return d;
         }
-        TypeAdapter<T> delegateAdapter = this.gson.getDelegateAdapter(this.skipPast, this.typeToken);
+        TypeAdapter delegateAdapter = this.gson.getDelegateAdapter(this.skipPast, this.typeToken);
         this.delegate = delegateAdapter;
         return delegateAdapter;
     }

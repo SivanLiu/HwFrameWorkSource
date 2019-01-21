@@ -181,7 +181,7 @@ public class HwCCModePlugin extends Stub implements IHwSecurityPlugin {
         if (HWDBG) {
             Slog.d(TAG, "wait for user to confirm");
         }
-        AlertDialog dialog = new Builder(this.mContext).setTitle(this.mContext.getString(33686159)).setMessage(this.mContext.getString(33686162)).setNeutralButton(this.mContext.getString(33685916), new OnClickListener() {
+        AlertDialog dialog = new Builder(this.mContext).setTitle(this.mContext.getString(33686161)).setMessage(this.mContext.getString(33686165)).setNeutralButton(this.mContext.getString(33685916), new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (HwCCModePlugin.HWDBG) {
                     Slog.d(HwCCModePlugin.TAG, "Entering recovery mode");

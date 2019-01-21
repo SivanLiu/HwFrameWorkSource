@@ -389,6 +389,8 @@ public class ValidateNotificationPeople implements NotificationSignalExtractor {
         return rr;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0093  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private PeopleRankingReconsideration validatePeople(Context context, String key, Bundle extras, List<String> peopleOverride, float[] affinityOut) {
         String str = key;
         if (extras == null) {
@@ -415,13 +417,18 @@ public class ValidateNotificationPeople implements NotificationSignalExtractor {
             if (!TextUtils.isEmpty(handle)) {
                 synchronized (this.mPeopleCache) {
                     LookupResult personIdx2 = (LookupResult) this.mPeopleCache.get(getCacheKey(context.getUserId(), handle));
-                    if (personIdx2 == null || personIdx2.isExpired()) {
-                        pendingLookups.add(handle);
-                    } else if (DEBUG) {
-                        Slog.d(TAG, "using cached lookupResult");
-                    }
                     if (personIdx2 != null) {
-                        affinity = Math.max(affinity, personIdx2.getAffinity());
+                        if (!personIdx2.isExpired()) {
+                            if (DEBUG) {
+                                Slog.d(TAG, "using cached lookupResult");
+                            }
+                            if (personIdx2 != null) {
+                                affinity = Math.max(affinity, personIdx2.getAffinity());
+                            }
+                        }
+                    }
+                    pendingLookups.add(handle);
+                    if (personIdx2 != null) {
                     }
                 }
                 personIdx++;
@@ -551,16 +558,16 @@ public class ValidateNotificationPeople implements NotificationSignalExtractor {
         return searchContacts(context, Uri.withAppendedPath(Email.CONTENT_LOOKUP_URI, Uri.encode(email)));
     }
 
-    /* JADX WARNING: Missing block: B:13:0x002f, code:
+    /* JADX WARNING: Missing block: B:13:0x002f, code skipped:
             if (r1 != null) goto L_0x0031;
      */
-    /* JADX WARNING: Missing block: B:14:0x0031, code:
+    /* JADX WARNING: Missing block: B:14:0x0031, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:19:0x003f, code:
+    /* JADX WARNING: Missing block: B:19:0x003f, code skipped:
             if (r1 == null) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:20:0x0042, code:
+    /* JADX WARNING: Missing block: B:20:0x0042, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

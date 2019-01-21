@@ -315,7 +315,7 @@ public class IntentFirewall {
                     callerPackageCount = callerPackagesArray.length;
                     callerPackages = joinPackages(callerPackagesArray);
                 }
-            } catch (int callerPackageCount2) {
+            } catch (RemoteException callerPackageCount2) {
                 Slog.e(TAG, "Remote exception while retrieving packages", callerPackageCount2);
             }
         } else {
@@ -385,12 +385,12 @@ public class IntentFirewall {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x00f8 A:{Splitter: B:6:0x0020, ExcHandler: java.io.IOException (r0_27 'e' java.io.IOException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x00f8 A:{ExcHandler: IOException (r0_27 'e' java.io.IOException), Splitter:B:6:0x0020} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:28:0x0077, code:
+    /* JADX WARNING: Missing block: B:28:0x0077, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:29:0x0078, code:
+    /* JADX WARNING: Missing block: B:29:0x0078, code skipped:
             r12 = r0;
             r12 = TAG;
             r13 = new java.lang.StringBuilder();
@@ -398,32 +398,32 @@ public class IntentFirewall {
             r13.append(r1);
             android.util.Slog.e(r12, r13.toString(), r0);
      */
-    /* JADX WARNING: Missing block: B:52:0x00f5, code:
+    /* JADX WARNING: Missing block: B:52:0x00f5, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:53:0x00f6, code:
+    /* JADX WARNING: Missing block: B:53:0x00f6, code skipped:
             r4 = r0;
      */
-    /* JADX WARNING: Missing block: B:54:0x00f8, code:
+    /* JADX WARNING: Missing block: B:54:0x00f8, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:55:0x00f9, code:
+    /* JADX WARNING: Missing block: B:55:0x00f9, code skipped:
             r4 = r0;
      */
-    /* JADX WARNING: Missing block: B:57:?, code:
+    /* JADX WARNING: Missing block: B:57:?, code skipped:
             r0 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Error reading intent firewall rules from ");
             r5.append(r1);
             android.util.Slog.e(r0, r5.toString(), r4);
      */
-    /* JADX WARNING: Missing block: B:59:?, code:
+    /* JADX WARNING: Missing block: B:59:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:60:0x0114, code:
+    /* JADX WARNING: Missing block: B:60:0x0114, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:61:0x0115, code:
+    /* JADX WARNING: Missing block: B:61:0x0115, code skipped:
             r5 = r0;
             r5 = TAG;
             r7 = new java.lang.StringBuilder();
@@ -431,20 +431,20 @@ public class IntentFirewall {
             r7.append(r1);
             android.util.Slog.e(r5, r7.toString(), r0);
      */
-    /* JADX WARNING: Missing block: B:73:?, code:
+    /* JADX WARNING: Missing block: B:73:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:74:0x0167, code:
+    /* JADX WARNING: Missing block: B:74:0x0167, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:75:0x0168, code:
+    /* JADX WARNING: Missing block: B:75:0x0168, code skipped:
             r5 = r0;
             r5 = new java.lang.StringBuilder();
             r5.append("Error while closing ");
             r5.append(r1);
             android.util.Slog.e(TAG, r5.toString(), r0);
      */
-    /* JADX WARNING: Missing block: B:76:0x017f, code:
+    /* JADX WARNING: Missing block: B:76:0x017f, code skipped:
             throw r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -486,7 +486,7 @@ public class IntentFirewall {
                         i = outerDepth;
                     } else {
                         try {
-                            fis.close();
+                            break;
                         } catch (IOException ex) {
                             iOException = ex;
                             str = TAG;
@@ -495,21 +495,21 @@ public class IntentFirewall {
                             stringBuilder.append(file);
                             Slog.e(str, stringBuilder.toString(), ex);
                         }
-                        for (i = 0; i < rulesByType.size(); i++) {
-                            List<Rule> rules2 = (List) rulesByType.get(i);
-                            FirewallIntentResolver resolver = resolvers[i];
-                            for (int ruleIndex = 0; ruleIndex < rules2.size(); ruleIndex++) {
-                                int i2;
-                                Rule rule2 = (Rule) rules2.get(ruleIndex);
-                                for (i2 = 0; i2 < rule2.getIntentFilterCount(); i2++) {
-                                    resolver.addFilter(rule2.getIntentFilter(i2));
-                                }
-                                for (i2 = 0; i2 < rule2.getComponentFilterCount(); i2++) {
-                                    resolver.addComponentFilter(rule2.getComponentFilter(i2), rule2);
-                                }
-                            }
+                    }
+                }
+                fis.close();
+                for (i = 0; i < rulesByType.size(); i++) {
+                    List<Rule> rules2 = (List) rulesByType.get(i);
+                    FirewallIntentResolver resolver = resolvers[i];
+                    for (int ruleIndex = 0; ruleIndex < rules2.size(); ruleIndex++) {
+                        int i2;
+                        Rule rule2 = (Rule) rules2.get(ruleIndex);
+                        for (i2 = 0; i2 < rule2.getIntentFilterCount(); i2++) {
+                            resolver.addFilter(rule2.getIntentFilter(i2));
                         }
-                        return;
+                        for (i2 = 0; i2 < rule2.getComponentFilterCount(); i2++) {
+                            resolver.addComponentFilter(rule2.getComponentFilter(i2), rule2);
+                        }
                     }
                 }
             } catch (XmlPullParserException e) {

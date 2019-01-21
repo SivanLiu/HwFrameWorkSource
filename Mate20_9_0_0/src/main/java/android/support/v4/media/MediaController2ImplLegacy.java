@@ -109,7 +109,7 @@ class MediaController2ImplLegacy implements SupportLibraryImpl {
         }
 
         public void onSessionReady() {
-            MediaController2ImplLegacy.this.sendCommand("android.support.v4.media.controller.command.CONNECT", new ResultReceiver(MediaController2ImplLegacy.this.mHandler) {
+            MediaController2ImplLegacy.this.sendCommand("android.support.v4.media.controller.command.CONNECT", (ResultReceiver) new ResultReceiver(MediaController2ImplLegacy.this.mHandler) {
                 protected void onReceiveResult(int resultCode, Bundle resultData) {
                     if (MediaController2ImplLegacy.this.mHandlerThread.isAlive()) {
                         switch (resultCode) {
@@ -717,7 +717,7 @@ class MediaController2ImplLegacy implements SupportLibraryImpl {
         return i;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x001e, code:
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -751,7 +751,7 @@ class MediaController2ImplLegacy implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0022, code:
+    /* JADX WARNING: Missing block: B:13:0x0022, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -790,7 +790,7 @@ class MediaController2ImplLegacy implements SupportLibraryImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0023, code:
+    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -843,7 +843,7 @@ class MediaController2ImplLegacy implements SupportLibraryImpl {
 
     @Nullable
     public List<MediaItem2> getPlaylist() {
-        List<MediaItem2> list;
+        List list;
         synchronized (this.mLock) {
             list = this.mPlaylist;
         }
@@ -985,34 +985,34 @@ class MediaController2ImplLegacy implements SupportLibraryImpl {
         return this.mInstance;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0088, code:
+    /* JADX WARNING: Missing block: B:11:0x0088, code skipped:
             if (null == null) goto L_0x008d;
      */
-    /* JADX WARNING: Missing block: B:12:0x008a, code:
+    /* JADX WARNING: Missing block: B:12:0x008a, code skipped:
             close();
      */
-    /* JADX WARNING: Missing block: B:13:0x008d, code:
+    /* JADX WARNING: Missing block: B:13:0x008d, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:0x009b, code:
+    /* JADX WARNING: Missing block: B:19:0x009b, code skipped:
             if (true == false) goto L_0x00a0;
      */
-    /* JADX WARNING: Missing block: B:20:0x009d, code:
+    /* JADX WARNING: Missing block: B:20:0x009d, code skipped:
             close();
      */
-    /* JADX WARNING: Missing block: B:21:0x00a0, code:
+    /* JADX WARNING: Missing block: B:21:0x00a0, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             r14.mCallbackExecutor.execute(new android.support.v4.media.MediaController2ImplLegacy.AnonymousClass2(r14));
      */
-    /* JADX WARNING: Missing block: B:27:0x00c3, code:
+    /* JADX WARNING: Missing block: B:27:0x00c3, code skipped:
             if (null == null) goto L_0x00c8;
      */
-    /* JADX WARNING: Missing block: B:28:0x00c5, code:
+    /* JADX WARNING: Missing block: B:28:0x00c5, code skipped:
             close();
      */
-    /* JADX WARNING: Missing block: B:29:0x00c8, code:
+    /* JADX WARNING: Missing block: B:29:0x00c8, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

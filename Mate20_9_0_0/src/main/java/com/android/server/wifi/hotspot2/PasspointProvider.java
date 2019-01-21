@@ -25,6 +25,7 @@ import com.android.server.wifi.hotspot2.anqp.eap.NonEAPInnerAuth;
 import com.android.server.wifi.util.InformationElementUtil.RoamingConsortium;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -345,11 +346,6 @@ public class PasspointProvider {
         return builder.toString();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0027 A:{Splitter: B:3:0x0004, ExcHandler: java.security.cert.CertificateEncodingException (e java.security.cert.CertificateEncodingException)} */
-    /* JADX WARNING: Missing block: B:12:0x0028, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static X509Certificate getClientCertificate(X509Certificate[] certChain, byte[] expectedSha256Fingerprint) {
         if (certChain == null) {
             return null;
@@ -363,7 +359,8 @@ public class PasspointProvider {
                 }
             }
             return null;
-        } catch (CertificateEncodingException e) {
+        } catch (NoSuchAlgorithmException | CertificateEncodingException e) {
+            return null;
         }
     }
 
@@ -399,7 +396,7 @@ public class PasspointProvider {
     /* JADX WARNING: Removed duplicated region for block: B:19:0x007c  */
     /* JADX WARNING: Removed duplicated region for block: B:18:0x007a  */
     /* JADX WARNING: Removed duplicated region for block: B:17:0x0078  */
-    /* JADX WARNING: Missing block: B:13:0x0056, code:
+    /* JADX WARNING: Missing block: B:13:0x0056, code skipped:
             if (r5.equals("PAP") != false) goto L_0x005a;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

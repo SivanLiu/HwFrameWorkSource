@@ -139,7 +139,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         MyPackageMonitor() {
         }
 
-        /* JADX WARNING: Missing block: B:17:0x0085, code:
+        /* JADX WARNING: Missing block: B:17:0x0085, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -174,10 +174,10 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0038, code:
+        /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:17:0x003a, code:
+        /* JADX WARNING: Missing block: B:18:0x003a, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -188,15 +188,16 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                 }
                 WallpaperData wallpaper = (WallpaperData) WallpaperManagerService.this.mWallpaperMap.get(WallpaperManagerService.this.mCurrentUserId);
                 if (wallpaper != null) {
-                    if (wallpaper.wallpaperComponent == null || !wallpaper.wallpaperComponent.getPackageName().equals(packageName)) {
-                    } else {
-                        doPackagesChangedLocked(true, wallpaper);
+                    if (wallpaper.wallpaperComponent != null) {
+                        if (wallpaper.wallpaperComponent.getPackageName().equals(packageName)) {
+                            doPackagesChangedLocked(true, wallpaper);
+                        }
                     }
                 }
             }
         }
 
-        /* JADX WARNING: Missing block: B:17:0x0063, code:
+        /* JADX WARNING: Missing block: B:17:0x0063, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -221,7 +222,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             }
         }
 
-        /* JADX WARNING: Missing block: B:18:0x0042, code:
+        /* JADX WARNING: Missing block: B:18:0x0042, code skipped:
             return r1;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -248,7 +249,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             }
         }
 
-        /* JADX WARNING: Missing block: B:11:0x0026, code:
+        /* JADX WARNING: Missing block: B:11:0x0026, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -345,7 +346,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         final Binder mToken = new Binder();
         WallpaperData mWallpaper;
 
-        /* JADX WARNING: Missing block: B:14:0x004f, code:
+        /* JADX WARNING: Missing block: B:14:0x004f, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -451,16 +452,16 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             }
         }
 
-        /* JADX WARNING: Missing block: B:11:0x002d, code:
+        /* JADX WARNING: Missing block: B:11:0x002d, code skipped:
             r0 = r1;
      */
-        /* JADX WARNING: Missing block: B:12:0x002e, code:
+        /* JADX WARNING: Missing block: B:12:0x002e, code skipped:
             if (r0 == 0) goto L_0x0037;
      */
-        /* JADX WARNING: Missing block: B:13:0x0030, code:
+        /* JADX WARNING: Missing block: B:13:0x0030, code skipped:
             com.android.server.wallpaper.WallpaperManagerService.access$100(r4.this$0, r4.mWallpaper, r0);
      */
-        /* JADX WARNING: Missing block: B:14:0x0037, code:
+        /* JADX WARNING: Missing block: B:14:0x0037, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -618,7 +619,12 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             WallpaperData wallpaper = null;
             synchronized (WallpaperManagerService.this.mLock) {
                 if (lockChanged) {
-                    wallpaper = (WallpaperData) WallpaperManagerService.this.mLockWallpaperMap.get(this.mUserId);
+                    try {
+                        wallpaper = (WallpaperData) WallpaperManagerService.this.mLockWallpaperMap.get(this.mUserId);
+                    } catch (Throwable th) {
+                        while (true) {
+                        }
+                    }
                 }
                 if (wallpaper == null) {
                     wallpaper = (WallpaperData) WallpaperManagerService.this.mWallpaperMap.get(this.mUserId);
@@ -627,12 +633,10 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             return wallpaper != null ? wallpaper : this.mWallpaper;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:69:0x00ee  */
-        /* JADX WARNING: Missing block: B:28:0x0071, code:
+        /* JADX WARNING: Removed duplicated region for block: B:63:0x00e1 A:{SYNTHETIC, Splitter:B:63:0x00e1} */
+        /* JADX WARNING: Removed duplicated region for block: B:70:0x00ee  */
+        /* JADX WARNING: Missing block: B:28:0x0071, code skipped:
             if (r15.imageWallpaperPending != false) goto L_0x0079;
-     */
-        /* JADX WARNING: Missing block: B:55:0x00be, code:
-            if ((r0 & r4.whichPending) != 0) goto L_0x00c3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onEvent(int event, String path) {
@@ -672,6 +676,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                                 }
                             }
                             if (written) {
+                                int i2;
                                 WallpaperData wallpaper2;
                                 SELinux.restorecon(changedFile);
                                 if (moved) {
@@ -680,7 +685,6 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                                 }
                                 WallpaperManagerService.this.generateCrop(wallpaper);
                                 wallpaper.imageWallpaperPending = false;
-                                int i2;
                                 if (sysWallpaperChanged) {
                                     try {
                                         obj = obj2;
@@ -708,6 +712,15 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                                     wallpaperData = wallpaper2;
                                 } else {
                                     wallpaperData = wallpaper2;
+                                    if ((i2 & wallpaperData.whichPending) != 0) {
+                                    }
+                                    WallpaperManagerService.this.saveSettingsLocked(wallpaperData.userId);
+                                    if (wallpaperData.setComplete != null) {
+                                        try {
+                                            wallpaperData.setComplete.onWallpaperChanged();
+                                        } catch (RemoteException e) {
+                                        }
+                                    }
                                 }
                                 if (!lockWallpaperChanged) {
                                     WallpaperManagerService.this.mLockWallpaperMap.remove(wallpaperData.userId);
@@ -716,10 +729,6 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                                 notifyColorsWhich |= 2;
                                 WallpaperManagerService.this.saveSettingsLocked(wallpaperData.userId);
                                 if (wallpaperData.setComplete != null) {
-                                    try {
-                                        wallpaperData.setComplete.onWallpaperChanged();
-                                    } catch (RemoteException e) {
-                                    }
                                 }
                             } else {
                                 obj = obj2;
@@ -758,7 +767,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
 
         public void onStart() {
             try {
-                this.mService = (IWallpaperManagerService) Class.forName(getContext().getResources().getString(17039845)).getConstructor(new Class[]{Context.class}).newInstance(new Object[]{getContext()});
+                this.mService = (IWallpaperManagerService) Class.forName(getContext().getResources().getString(17039846)).getConstructor(new Class[]{Context.class}).newInstance(new Object[]{getContext()});
                 publishBinderService(WallpaperManagerService.WALLPAPER_CROP, this.mService);
             } catch (Exception exp) {
                 Slog.wtf(WallpaperManagerService.TAG, "Failed to instantiate WallpaperManagerService", exp);
@@ -823,13 +832,13 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         return result;
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0026, code:
+    /* JADX WARNING: Missing block: B:8:0x0026, code skipped:
             if (r1 == null) goto L_0x002c;
      */
-    /* JADX WARNING: Missing block: B:9:0x0028, code:
+    /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             notifyWallpaperColorsChanged(r1, 1);
      */
-    /* JADX WARNING: Missing block: B:10:0x002c, code:
+    /* JADX WARNING: Missing block: B:10:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -851,35 +860,35 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x002d, code:
+    /* JADX WARNING: Missing block: B:15:0x002d, code skipped:
             notifyColorListeners(r5.primaryColors, r6, r5.userId);
      */
-    /* JADX WARNING: Missing block: B:16:0x0034, code:
+    /* JADX WARNING: Missing block: B:16:0x0034, code skipped:
             if (r1 == false) goto L_0x004e;
      */
-    /* JADX WARNING: Missing block: B:17:0x0036, code:
+    /* JADX WARNING: Missing block: B:17:0x0036, code skipped:
             extractColors(r5);
             r0 = r4.mLock;
      */
-    /* JADX WARNING: Missing block: B:18:0x003b, code:
+    /* JADX WARNING: Missing block: B:18:0x003b, code skipped:
             monitor-enter(r0);
      */
-    /* JADX WARNING: Missing block: B:21:0x003e, code:
+    /* JADX WARNING: Missing block: B:21:0x003e, code skipped:
             if (r5.primaryColors != null) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:22:0x0040, code:
+    /* JADX WARNING: Missing block: B:22:0x0040, code skipped:
             monitor-exit(r0);
      */
-    /* JADX WARNING: Missing block: B:23:0x0041, code:
+    /* JADX WARNING: Missing block: B:23:0x0041, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:24:0x0042, code:
+    /* JADX WARNING: Missing block: B:24:0x0042, code skipped:
             monitor-exit(r0);
      */
-    /* JADX WARNING: Missing block: B:25:0x0043, code:
+    /* JADX WARNING: Missing block: B:25:0x0043, code skipped:
             notifyColorListeners(r5.primaryColors, r6, r5.userId);
      */
-    /* JADX WARNING: Missing block: B:30:0x004e, code:
+    /* JADX WARNING: Missing block: B:30:0x004e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -949,10 +958,18 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         int wallpaperId;
         String cropFile = null;
         synchronized (this.mLock) {
-            boolean imageWallpaper = this.mImageWallpaper.equals(wallpaper.wallpaperComponent) || wallpaper.wallpaperComponent == null;
-            if (imageWallpaper && wallpaper.cropFile != null && wallpaper.cropFile.exists()) {
-                cropFile = wallpaper.cropFile.getAbsolutePath();
+            boolean imageWallpaper;
+            if (!this.mImageWallpaper.equals(wallpaper.wallpaperComponent)) {
+                if (wallpaper.wallpaperComponent != null) {
+                    imageWallpaper = false;
+                    if (imageWallpaper && wallpaper.cropFile != null && wallpaper.cropFile.exists()) {
+                        cropFile = wallpaper.cropFile.getAbsolutePath();
+                    }
+                    wallpaperId = wallpaper.wallpaperId;
+                }
             }
+            imageWallpaper = true;
+            cropFile = wallpaper.cropFile.getAbsolutePath();
             wallpaperId = wallpaper.wallpaperId;
         }
         WallpaperColors colors = null;
@@ -1205,7 +1222,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
     public WallpaperManagerService(Context context) {
         this.mContext = context;
         this.mShuttingDown = false;
-        this.mImageWallpaper = ComponentName.unflattenFromString(context.getResources().getString(17040203));
+        this.mImageWallpaper = ComponentName.unflattenFromString(context.getResources().getString(17040204));
         this.mDefaultWallpaperComponent = WallpaperManager.getDefaultWallpaperComponent(context);
         this.mIWindowManager = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
         this.mIPackageManager = AppGlobals.getPackageManager();
@@ -1380,7 +1397,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         wallpaperManagerService.notifyWallpaperColorsChanged(lockWallpaper, 2);
     }
 
-    /* JADX WARNING: Missing block: B:26:0x006f, code:
+    /* JADX WARNING: Missing block: B:26:0x006f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1442,6 +1459,8 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:28:0x006c=Splitter:B:28:0x006c, B:48:0x009c=Splitter:B:48:0x009c} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void clearWallpaperLocked(boolean defaultFailed, int which, int userId, IRemoteCallback reply) {
         int i = which;
         int i2 = userId;
@@ -1508,7 +1527,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                         }
                         Binder.restoreCallingIdentity(ident);
                         return;
-                    } catch (RuntimeException e1) {
+                    } catch (IllegalArgumentException e1) {
                         e2 = e1;
                     }
                 } finally {
@@ -1533,9 +1552,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                             loadSettingsLocked(user.id, false);
                             wd = (WallpaperData) this.mWallpaperMap.get(user.id);
                         }
-                        if (wd == null || !name.equals(wd.name)) {
-                            continue;
-                        } else {
+                        if (wd != null && name.equals(wd.name)) {
                             return true;
                         }
                     }
@@ -1553,7 +1570,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         return p;
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0065, code:
+    /* JADX WARNING: Missing block: B:30:0x0065, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1612,7 +1629,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         }
     }
 
-    /* JADX WARNING: Missing block: B:33:0x0060, code:
+    /* JADX WARNING: Missing block: B:33:0x0060, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1676,7 +1693,16 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             synchronized (this.mLock) {
                 SparseArray<WallpaperData> sparseArray;
                 if (i == 2) {
-                    sparseArray = this.mLockWallpaperMap;
+                    try {
+                        sparseArray = this.mLockWallpaperMap;
+                    } catch (FileNotFoundException e2) {
+                        Slog.w(TAG, "Error getting wallpaper", e2);
+                        return null;
+                    } catch (NullPointerException e22) {
+                        Slog.w(TAG, "getting wallpaper null", e22);
+                        return null;
+                    } catch (Throwable th) {
+                    }
                 } else {
                     sparseArray = this.mWallpaperMap;
                 }
@@ -1685,16 +1711,8 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
                     return null;
                 }
                 if (bundle != null) {
-                    try {
-                        bundle.putInt("width", wallpaper.width);
-                        bundle.putInt("height", wallpaper.height);
-                    } catch (FileNotFoundException e2) {
-                        Slog.w(TAG, "Error getting wallpaper", e2);
-                        return null;
-                    } catch (FileNotFoundException e22) {
-                        Slog.w(TAG, "getting wallpaper null", e22);
-                        return null;
-                    }
+                    bundle.putInt("width", wallpaper.width);
+                    bundle.putInt("height", wallpaper.height);
                 }
                 if (iWallpaperManagerCallback != null && wallpaper.callbacks.isContainIBinder(iWallpaperManagerCallback) == null) {
                     wallpaper.callbacks.register(iWallpaperManagerCallback);
@@ -1788,25 +1806,25 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:21:0x004b, code:
+    /* JADX WARNING: Missing block: B:23:0x004b, code skipped:
             if (r0 == false) goto L_0x0050;
      */
-    /* JADX WARNING: Missing block: B:22:0x004d, code:
+    /* JADX WARNING: Missing block: B:24:0x004d, code skipped:
             extractColors(r2);
      */
-    /* JADX WARNING: Missing block: B:23:0x0050, code:
+    /* JADX WARNING: Missing block: B:25:0x0050, code skipped:
             r1 = r9.mLock;
      */
-    /* JADX WARNING: Missing block: B:24:0x0052, code:
+    /* JADX WARNING: Missing block: B:26:0x0052, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:28:?, code skipped:
             r3 = getThemeColorsLocked(r2.primaryColors);
      */
-    /* JADX WARNING: Missing block: B:27:0x0059, code:
+    /* JADX WARNING: Missing block: B:29:0x0059, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:28:0x005a, code:
+    /* JADX WARNING: Missing block: B:30:0x005a, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1817,7 +1835,12 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             WallpaperData wallpaperData = null;
             synchronized (this.mLock) {
                 if (which == 2) {
-                    wallpaperData = (WallpaperData) this.mLockWallpaperMap.get(userId);
+                    try {
+                        wallpaperData = (WallpaperData) this.mLockWallpaperMap.get(userId);
+                    } catch (Throwable th) {
+                        while (true) {
+                        }
+                    }
                 }
                 if (wallpaperData == null) {
                     wallpaperData = (WallpaperData) this.mWallpaperMap.get(userId);
@@ -2049,7 +2072,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
 
     /* JADX WARNING: Removed duplicated region for block: B:89:0x01f6  */
     /* JADX WARNING: Removed duplicated region for block: B:87:0x01f0  */
-    /* JADX WARNING: Missing block: B:38:0x00f0, code:
+    /* JADX WARNING: Missing block: B:38:0x00f0, code skipped:
             r9 = new android.app.WallpaperInfo(r1.mContext, (android.content.pm.ResolveInfo) r11.get(r12));
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2140,7 +2163,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             }
             WallpaperConnection newConn = new WallpaperConnection(wi, wallpaperData);
             intent.setComponent(componentName2);
-            intent.putExtra("android.intent.extra.client_label", 17041348);
+            intent.putExtra("android.intent.extra.client_label", 17041349);
             intent.putExtra("android.intent.extra.client_intent", PendingIntent.getActivityAsUser(this.mContext, 0, Intent.createChooser(new Intent("android.intent.action.SET_WALLPAPER"), this.mContext.getText(17039750)), 0, null, new UserHandle(serviceUserId)));
             if (this.mContext.bindServiceAsUser(intent, newConn, 570425345, new UserHandle(serviceUserId))) {
                 reportWallpaper(componentName2);
@@ -2275,7 +2298,7 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         if (dpm.isDeviceOwnerApp(callingPackage) || dpm.isProfileOwnerApp(callingPackage)) {
             return true;
         }
-        return true ^ ((UserManager) this.mContext.getSystemService("user")).hasUserRestriction("no_set_wallpaper");
+        return 1 ^ ((UserManager) this.mContext.getSystemService("user")).hasUserRestriction("no_set_wallpaper");
     }
 
     public boolean isWallpaperBackupEligible(int which, int userId) {
@@ -2423,54 +2446,54 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         return wallpaper;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x01ba  */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x01d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01ea  */
-    /* JADX WARNING: Removed duplicated region for block: B:70:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01ba  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01d3  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x01ea  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:? A:{SYNTHETIC, RETURN} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadSettingsLocked(int userId, boolean keepDimensionHints) {
         String str;
@@ -2808,17 +2831,23 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
             Color tertiary = null;
             Color secondary = null;
             Color primary = null;
-            int i = 0;
-            while (i < id) {
+            for (int i = 0; i < id; i++) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("colorValue");
                 stringBuilder.append(i);
                 Color color = Color.valueOf(getAttributeInt(parser, stringBuilder.toString(), 0));
-                if (i != 0 && i != 1 && i != 2) {
-                    break;
+                if (i != 0) {
+                    if (i != 1) {
+                        if (i != 2) {
+                            break;
+                        }
+                        tertiary = color;
+                    } else {
+                        secondary = color;
+                    }
+                } else {
+                    primary = color;
                 }
-                tertiary = color;
-                i++;
             }
             wallpaper.primaryColors = new WallpaperColors(primary, secondary, tertiary, getAttributeInt(parser, "colorHints", 0));
         }
@@ -2874,20 +2903,20 @@ public class WallpaperManagerService extends Stub implements IWallpaperManagerSe
         throw new RuntimeException("settingsRestored() can only be called from the system process");
     }
 
-    /* JADX WARNING: Missing block: B:51:0x0127, code:
+    /* JADX WARNING: Missing block: B:51:0x0127, code skipped:
             if (r14 != null) goto L_0x0129;
      */
-    /* JADX WARNING: Missing block: B:52:0x0129, code:
+    /* JADX WARNING: Missing block: B:52:0x0129, code skipped:
             android.os.FileUtils.sync(r14);
      */
-    /* JADX WARNING: Missing block: B:53:0x012c, code:
+    /* JADX WARNING: Missing block: B:53:0x012c, code skipped:
             libcore.io.IoUtils.closeQuietly(null);
             libcore.io.IoUtils.closeQuietly(r14);
      */
-    /* JADX WARNING: Missing block: B:60:0x0152, code:
+    /* JADX WARNING: Missing block: B:60:0x0152, code skipped:
             if (r14 != null) goto L_0x0129;
      */
-    /* JADX WARNING: Missing block: B:67:0x0179, code:
+    /* JADX WARNING: Missing block: B:67:0x0179, code skipped:
             if (r14 != null) goto L_0x0129;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

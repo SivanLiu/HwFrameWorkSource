@@ -219,12 +219,12 @@ public class Treehash {
                 Object bArr3;
                 int i = 0;
                 while (this.tailLength > 0 && i == ((Integer) this.heightOfNodes.lastElement()).intValue()) {
-                    Object obj = new byte[(this.messDigestTree.getDigestSize() << 1)];
-                    System.arraycopy(this.tailStack.lastElement(), 0, obj, 0, this.messDigestTree.getDigestSize());
+                    byte[] bArr4 = new byte[(this.messDigestTree.getDigestSize() << 1)];
+                    System.arraycopy(this.tailStack.lastElement(), 0, bArr4, 0, this.messDigestTree.getDigestSize());
                     this.tailStack.removeElementAt(this.tailStack.size() - 1);
                     this.heightOfNodes.removeElementAt(this.heightOfNodes.size() - 1);
-                    System.arraycopy(bArr3, 0, obj, this.messDigestTree.getDigestSize(), this.messDigestTree.getDigestSize());
-                    this.messDigestTree.update(obj, 0, obj.length);
+                    System.arraycopy(bArr3, 0, bArr4, this.messDigestTree.getDigestSize(), this.messDigestTree.getDigestSize());
+                    this.messDigestTree.update(bArr4, 0, bArr4.length);
                     bArr3 = new byte[this.messDigestTree.getDigestSize()];
                     this.messDigestTree.doFinal(bArr3, 0);
                     i++;
@@ -234,12 +234,12 @@ public class Treehash {
                 this.heightOfNodes.addElement(Integers.valueOf(i));
                 this.tailLength++;
                 if (((Integer) this.heightOfNodes.lastElement()).intValue() == this.firstNodeHeight) {
-                    Object obj2 = new byte[(this.messDigestTree.getDigestSize() << 1)];
-                    System.arraycopy(this.firstNode, 0, obj2, 0, this.messDigestTree.getDigestSize());
-                    System.arraycopy(this.tailStack.lastElement(), 0, obj2, this.messDigestTree.getDigestSize(), this.messDigestTree.getDigestSize());
+                    byte[] bArr5 = new byte[(this.messDigestTree.getDigestSize() << 1)];
+                    System.arraycopy(this.firstNode, 0, bArr5, 0, this.messDigestTree.getDigestSize());
+                    System.arraycopy(this.tailStack.lastElement(), 0, bArr5, this.messDigestTree.getDigestSize(), this.messDigestTree.getDigestSize());
                     this.tailStack.removeElementAt(this.tailStack.size() - 1);
                     this.heightOfNodes.removeElementAt(this.heightOfNodes.size() - 1);
-                    this.messDigestTree.update(obj2, 0, obj2.length);
+                    this.messDigestTree.update(bArr5, 0, bArr5.length);
                     this.firstNode = new byte[this.messDigestTree.getDigestSize()];
                     this.messDigestTree.doFinal(this.firstNode, 0);
                     this.firstNodeHeight++;

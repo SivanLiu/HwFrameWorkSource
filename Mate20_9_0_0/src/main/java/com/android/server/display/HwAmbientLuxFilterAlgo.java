@@ -39,6 +39,7 @@ public class HwAmbientLuxFilterAlgo {
     private float mBrightenDeltaLuxMin;
     private boolean mCoverModeDayEnable = false;
     private boolean mCoverState = false;
+    private boolean mDarkTimeDelayFromBrightnessEnable = false;
     private float mDarkenDeltaLuxForBackSensorCoverMode;
     private float mDarkenDeltaLuxMax;
     private float mDarkenDeltaLuxMin;
@@ -664,7 +665,7 @@ public class HwAmbientLuxFilterAlgo {
         return this.mNormDarkenDebounceTime + earliedtime;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0034, code:
+    /* JADX WARNING: Missing block: B:15:0x0034, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -835,9 +836,7 @@ public class HwAmbientLuxFilterAlgo {
         } else {
             this.mNormBrighenDebounceTime = (long) this.mData.brightTimeDelay;
         }
-        if (mLux >= this.mData.darkTimeDelayLuxThreshold || !this.mData.darkTimeDelayEnable) {
-            this.mNormDarkenDebounceTime = (long) (((float) this.mData.darkenDebounceTime) * (1.0f + ((this.mData.darkenDebounceTimeParaBig * (this.mStability - ((float) this.mData.stabilityConstant))) / 100.0f)));
-        } else {
+        if ((mLux < this.mData.darkTimeDelayLuxThreshold || this.mDarkTimeDelayFromBrightnessEnable) && this.mData.darkTimeDelayEnable) {
             float ambientLuxDarkenDelta = calculateDarkenThresholdDelta(this.mAmbientLux);
             float currentAmbientLux = buffer.getLux(buffer.size() - 1);
             float luxNormalizedFactor = ((this.mData.darkTimeDelayBeta2 * (this.mAmbientLux - currentAmbientLux)) + (this.mData.darkTimeDelayBeta1 * ((this.mAmbientLux - currentAmbientLux) - ambientLuxDarkenDelta))) + 1.0f;
@@ -846,6 +845,8 @@ public class HwAmbientLuxFilterAlgo {
             } else {
                 this.mNormDarkenDebounceTime = ((long) this.mData.darkTimeDelay) + ((long) ((this.mData.darkTimeDelayBeta0 * (1.0f + (this.mData.darkTimeDelayBeta2 * 1.0f))) / luxNormalizedFactor));
             }
+        } else {
+            this.mNormDarkenDebounceTime = (long) (((float) this.mData.darkenDebounceTime) * (1.0f + ((this.mData.darkenDebounceTimeParaBig * (this.mStability - ((float) this.mData.stabilityConstant))) / 100.0f)));
         }
         this.mNormBrighenDebounceTimeForSmallThr = (long) this.mData.brighenDebounceTimeForSmallThr;
         this.mNormDarkenDebounceTimeForSmallThr = (long) this.mData.darkenDebounceTimeForSmallThr;
@@ -1878,5 +1879,18 @@ public class HwAmbientLuxFilterAlgo {
             stringBuilder.append(this.mGameModeEnable);
             Slog.d(str, stringBuilder.toString());
         }
+    }
+
+    public void setDarkTimeDelayFromBrightnessEnable(boolean enable) {
+        if (DEBUG && enable != this.mDarkTimeDelayFromBrightnessEnable) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("DarkTimeDelayFromBrightnessEnable=");
+            stringBuilder.append(this.mDarkTimeDelayFromBrightnessEnable);
+            stringBuilder.append(",enable=");
+            stringBuilder.append(enable);
+            Slog.d(str, stringBuilder.toString());
+        }
+        this.mDarkTimeDelayFromBrightnessEnable = enable;
     }
 }

@@ -409,25 +409,37 @@ public class WifiMetrics {
             return sb.toString();
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:18:0x007a A:{Catch:{ all -> 0x0080 }} */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void updateFromWifiConfiguration(WifiConfiguration config) {
             synchronized (WifiMetrics.this.mLock) {
                 if (config != null) {
-                    this.mRouterFingerPrintProto.hidden = config.hiddenSSID;
-                    if (config.dtimInterval > 0) {
-                        this.mRouterFingerPrintProto.dtim = config.dtimInterval;
-                    }
-                    WifiMetrics.this.mCurrentConnectionEvent.mConfigSsid = config.SSID;
-                    if (config.allowedKeyManagement != null && config.allowedKeyManagement.get(0)) {
-                        WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.authentication = 1;
-                    } else if (config.isEnterprise()) {
-                        WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.authentication = 3;
-                    } else {
-                        WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.authentication = 2;
-                    }
-                    WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.passpoint = config.isPasspoint();
-                    ScanResult candidate = config.getNetworkSelectionStatus().getCandidate();
-                    if (candidate != null) {
-                        WifiMetrics.this.updateMetricsFromScanResult(candidate);
+                    try {
+                        this.mRouterFingerPrintProto.hidden = config.hiddenSSID;
+                        if (config.dtimInterval > 0) {
+                            this.mRouterFingerPrintProto.dtim = config.dtimInterval;
+                        }
+                        WifiMetrics.this.mCurrentConnectionEvent.mConfigSsid = config.SSID;
+                        ScanResult candidate;
+                        if (config.allowedKeyManagement == null || !config.allowedKeyManagement.get(0)) {
+                            if (config.isEnterprise()) {
+                                WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.authentication = 3;
+                            } else {
+                                WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.authentication = 2;
+                            }
+                            WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.passpoint = config.isPasspoint();
+                            candidate = config.getNetworkSelectionStatus().getCandidate();
+                            if (candidate != null) {
+                                WifiMetrics.this.updateMetricsFromScanResult(candidate);
+                            }
+                        } else {
+                            WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.authentication = 1;
+                            WifiMetrics.this.mCurrentConnectionEvent.mRouterFingerPrint.mRouterFingerPrintProto.passpoint = config.isPasspoint();
+                            candidate = config.getNetworkSelectionStatus().getCandidate();
+                            if (candidate != null) {
+                            }
+                        }
+                    } finally {
                     }
                 }
             }
@@ -1101,14 +1113,17 @@ public class WifiMetrics {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0037, code:
+    /* JADX WARNING: Missing block: B:14:0x0037, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void incrementSoftApStartResult(boolean result, int failureCode) {
         synchronized (this.mLock) {
             if (result) {
-                this.mSoftApManagerReturnCodeCounts.put(1, this.mSoftApManagerReturnCodeCounts.get(1) + 1);
+                try {
+                    this.mSoftApManagerReturnCodeCounts.put(1, this.mSoftApManagerReturnCodeCounts.get(1) + 1);
+                } catch (Throwable th) {
+                }
             } else if (failureCode == 1) {
                 this.mSoftApManagerReturnCodeCounts.put(3, this.mSoftApManagerReturnCodeCounts.get(3) + 1);
             } else {
@@ -1152,7 +1167,7 @@ public class WifiMetrics {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002c, code:
+    /* JADX WARNING: Missing block: B:17:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1329,203 +1344,206 @@ public class WifiMetrics {
         }
     }
 
-    /* JADX WARNING: Missing block: B:101:0x02c3, code:
+    /* JADX WARNING: Missing block: B:102:0x02c3, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void incrementAvailableNetworksHistograms(List<ScanDetail> scanDetails, boolean isFullBand) {
         boolean validBssid;
         synchronized (this.mLock) {
-            if (this.mWifiConfigManager == null || this.mWifiNetworkSelector == null || this.mPasspointManager == null) {
-            } else if (isFullBand) {
-                int openOrSavedBssids;
-                int savedBssids;
-                int openBssids;
-                Set<ScanResultMatchInfo> savedSsids;
-                Set<ScanResultMatchInfo> ssids = new HashSet();
-                Set<ScanResultMatchInfo> openSsids = new HashSet();
-                Set<ScanResultMatchInfo> savedSsids2 = new HashSet();
-                Set<PasspointProvider> savedPasspointProviderProfiles = new HashSet();
-                int passpointR2Aps = 0;
-                Map<ANQPNetworkKey, Integer> passpointR1UniqueEss = new HashMap();
-                Map<ANQPNetworkKey, Integer> passpointR2UniqueEss = new HashMap();
-                Iterator scanDetail = scanDetails.iterator();
-                int savedPasspointProviderBssids = 0;
-                int openOrSavedBssids2 = 0;
-                int savedBssids2 = 0;
-                int openBssids2 = 0;
-                int bssids = 0;
-                int passpointR1Aps = 0;
-                int supporting80211mcAps = 0;
-                while (scanDetail.hasNext()) {
-                    int passpointR1Aps2;
-                    Set<ScanResultMatchInfo> savedSsids3;
-                    PasspointProvider passpointProvider;
-                    Iterator it = scanDetail;
-                    ScanDetail scanDetail2 = (ScanDetail) scanDetail.next();
-                    NetworkDetail networkDetail = scanDetail2.getNetworkDetail();
-                    ScanResult scanResult = scanDetail2.getScanResult();
-                    Set<PasspointProvider> savedPasspointProviderProfiles2 = savedPasspointProviderProfiles;
-                    NetworkDetail networkDetail2 = networkDetail;
-                    if (networkDetail2.is80211McResponderSupport()) {
-                        supporting80211mcAps++;
-                    }
-                    int supporting80211mcAps2 = supporting80211mcAps;
-                    ScanResult scanResult2 = scanResult;
-                    ScanResultMatchInfo matchInfo = ScanResultMatchInfo.fromScanResult(scanResult2);
-                    boolean z = false;
-                    if (networkDetail2.isInterworking()) {
-                        PasspointProvider passpointProvider2;
-                        openOrSavedBssids = openOrSavedBssids2;
-                        Pair<PasspointProvider, PasspointMatch> providerMatch = this.mPasspointManager.matchProvider(scanResult2);
-                        if (providerMatch != null) {
-                            savedBssids = savedBssids2;
-                            passpointProvider2 = (PasspointProvider) providerMatch.first;
-                        } else {
-                            savedBssids = savedBssids2;
-                            passpointProvider2 = null;
-                        }
-                        PasspointProvider passpointProvider3 = passpointProvider2;
-                        if (networkDetail2.getHSRelease() == HSRelease.R1) {
-                            passpointR1Aps++;
-                        } else if (networkDetail2.getHSRelease() == HSRelease.R2) {
-                            passpointR2Aps++;
-                        }
-                        savedBssids2 = passpointR1Aps;
-                        long bssid = 0;
-                        validBssid = false;
-                        try {
-                            bssid = Utils.parseMac(scanResult2.BSSID);
-                            openOrSavedBssids2 = 1;
-                            passpointR1Aps2 = savedBssids2;
-                        } catch (IllegalArgumentException e) {
-                            String str = TAG;
-                            passpointR1Aps2 = savedBssids2;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            boolean validBssid2 = validBssid;
-                            stringBuilder.append("Invalid BSSID provided in the scan result: ");
-                            stringBuilder.append(scanResult2.BSSID);
-                            Log.e(str, stringBuilder.toString());
-                            openOrSavedBssids2 = validBssid2;
-                        }
-                        if (openOrSavedBssids2 != 0) {
-                            savedSsids3 = savedSsids2;
-                            openBssids = openBssids2;
-                            ANQPNetworkKey uniqueEss = ANQPNetworkKey.buildKey(scanResult2.SSID, bssid, scanResult2.hessid, networkDetail2.getAnqpDomainID());
-                            Integer savedSsids4;
-                            if (networkDetail2.getHSRelease() == HSRelease.R1) {
-                                savedSsids4 = (Integer) passpointR1UniqueEss.get(uniqueEss);
-                                passpointR1UniqueEss.put(uniqueEss, Integer.valueOf((savedSsids4 == null ? 0 : savedSsids4.intValue()) + 1));
-                            } else if (networkDetail2.getHSRelease() == HSRelease.R2) {
-                                savedSsids4 = (Integer) passpointR2UniqueEss.get(uniqueEss);
-                                passpointR2UniqueEss.put(uniqueEss, Integer.valueOf((savedSsids4 == null ? 0 : savedSsids4.intValue()) + 1));
+            if (!(this.mWifiConfigManager == null || this.mWifiNetworkSelector == null)) {
+                if (this.mPasspointManager != null) {
+                    if (isFullBand) {
+                        int openOrSavedBssids;
+                        int savedBssids;
+                        int openBssids;
+                        Set<ScanResultMatchInfo> savedSsids;
+                        Set<ScanResultMatchInfo> ssids = new HashSet();
+                        Set<ScanResultMatchInfo> openSsids = new HashSet();
+                        Set<ScanResultMatchInfo> savedSsids2 = new HashSet();
+                        Set<PasspointProvider> savedPasspointProviderProfiles = new HashSet();
+                        int passpointR2Aps = 0;
+                        Map<ANQPNetworkKey, Integer> passpointR1UniqueEss = new HashMap();
+                        Map<ANQPNetworkKey, Integer> passpointR2UniqueEss = new HashMap();
+                        Iterator scanDetail = scanDetails.iterator();
+                        int savedPasspointProviderBssids = 0;
+                        int openOrSavedBssids2 = 0;
+                        int savedBssids2 = 0;
+                        int openBssids2 = 0;
+                        int bssids = 0;
+                        int passpointR1Aps = 0;
+                        int supporting80211mcAps = 0;
+                        while (scanDetail.hasNext()) {
+                            int passpointR1Aps2;
+                            Set<ScanResultMatchInfo> savedSsids3;
+                            PasspointProvider passpointProvider;
+                            Iterator it = scanDetail;
+                            ScanDetail scanDetail2 = (ScanDetail) scanDetail.next();
+                            NetworkDetail networkDetail = scanDetail2.getNetworkDetail();
+                            ScanResult scanResult = scanDetail2.getScanResult();
+                            Set<PasspointProvider> savedPasspointProviderProfiles2 = savedPasspointProviderProfiles;
+                            NetworkDetail networkDetail2 = networkDetail;
+                            if (networkDetail2.is80211McResponderSupport()) {
+                                supporting80211mcAps++;
                             }
-                        } else {
-                            savedSsids3 = savedSsids2;
-                            openBssids = openBssids2;
+                            int supporting80211mcAps2 = supporting80211mcAps;
+                            ScanResult scanResult2 = scanResult;
+                            ScanResultMatchInfo matchInfo = ScanResultMatchInfo.fromScanResult(scanResult2);
+                            boolean z = false;
+                            if (networkDetail2.isInterworking()) {
+                                PasspointProvider passpointProvider2;
+                                openOrSavedBssids = openOrSavedBssids2;
+                                Pair<PasspointProvider, PasspointMatch> providerMatch = this.mPasspointManager.matchProvider(scanResult2);
+                                if (providerMatch != null) {
+                                    savedBssids = savedBssids2;
+                                    passpointProvider2 = (PasspointProvider) providerMatch.first;
+                                } else {
+                                    savedBssids = savedBssids2;
+                                    passpointProvider2 = null;
+                                }
+                                PasspointProvider passpointProvider3 = passpointProvider2;
+                                if (networkDetail2.getHSRelease() == HSRelease.R1) {
+                                    passpointR1Aps++;
+                                } else if (networkDetail2.getHSRelease() == HSRelease.R2) {
+                                    passpointR2Aps++;
+                                }
+                                savedBssids2 = passpointR1Aps;
+                                long bssid = 0;
+                                validBssid = false;
+                                try {
+                                    bssid = Utils.parseMac(scanResult2.BSSID);
+                                    openOrSavedBssids2 = 1;
+                                    passpointR1Aps2 = savedBssids2;
+                                } catch (IllegalArgumentException e) {
+                                    String str = TAG;
+                                    passpointR1Aps2 = savedBssids2;
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    boolean validBssid2 = validBssid;
+                                    stringBuilder.append("Invalid BSSID provided in the scan result: ");
+                                    stringBuilder.append(scanResult2.BSSID);
+                                    Log.e(str, stringBuilder.toString());
+                                    openOrSavedBssids2 = validBssid2;
+                                }
+                                if (openOrSavedBssids2 != 0) {
+                                    savedSsids3 = savedSsids2;
+                                    openBssids = openBssids2;
+                                    ANQPNetworkKey uniqueEss = ANQPNetworkKey.buildKey(scanResult2.SSID, bssid, scanResult2.hessid, networkDetail2.getAnqpDomainID());
+                                    Integer savedSsids4;
+                                    if (networkDetail2.getHSRelease() == HSRelease.R1) {
+                                        savedSsids4 = (Integer) passpointR1UniqueEss.get(uniqueEss);
+                                        passpointR1UniqueEss.put(uniqueEss, Integer.valueOf((savedSsids4 == null ? 0 : savedSsids4.intValue()) + 1));
+                                    } else if (networkDetail2.getHSRelease() == HSRelease.R2) {
+                                        savedSsids4 = (Integer) passpointR2UniqueEss.get(uniqueEss);
+                                        passpointR2UniqueEss.put(uniqueEss, Integer.valueOf((savedSsids4 == null ? 0 : savedSsids4.intValue()) + 1));
+                                    }
+                                } else {
+                                    savedSsids3 = savedSsids2;
+                                    openBssids = openBssids2;
+                                }
+                                passpointProvider = passpointProvider3;
+                            } else {
+                                savedSsids3 = savedSsids2;
+                                openBssids = openBssids2;
+                                savedBssids = savedBssids2;
+                                openOrSavedBssids = openOrSavedBssids2;
+                                passpointR1Aps2 = passpointR1Aps;
+                                Pair<PasspointProvider, PasspointMatch> pair = null;
+                                passpointProvider = null;
+                            }
+                            if (this.mWifiNetworkSelector.isSignalTooWeak(scanResult2) != null) {
+                                scanDetail = it;
+                                savedPasspointProviderProfiles = savedPasspointProviderProfiles2;
+                                supporting80211mcAps = supporting80211mcAps2;
+                                openOrSavedBssids2 = openOrSavedBssids;
+                                savedBssids2 = savedBssids;
+                                passpointR1Aps = passpointR1Aps2;
+                                savedSsids2 = savedSsids3;
+                                openBssids2 = openBssids;
+                            } else {
+                                ScanResultMatchInfo savedSsids5 = matchInfo;
+                                ssids.add(savedSsids5);
+                                bssids++;
+                                boolean isOpen = savedSsids5.networkType == 0;
+                                WifiConfiguration config = this.mWifiConfigManager.getConfiguredNetworkForScanDetail(scanDetail2);
+                                validBssid = (config == null || config.isEphemeral() || config.isPasspoint()) ? false : true;
+                                if (passpointProvider != null) {
+                                    z = true;
+                                }
+                                boolean isSavedPasspoint = z;
+                                if (isOpen) {
+                                    openSsids.add(savedSsids5);
+                                    openBssids++;
+                                }
+                                if (validBssid) {
+                                    savedSsids = savedSsids3;
+                                    savedSsids.add(savedSsids5);
+                                    savedBssids++;
+                                } else {
+                                    savedSsids = savedSsids3;
+                                }
+                                if (isOpen || validBssid) {
+                                    openOrSavedBssids++;
+                                }
+                                if (isSavedPasspoint) {
+                                    ScanResultMatchInfo matchInfo2 = savedSsids5;
+                                    savedSsids2 = savedPasspointProviderProfiles2;
+                                    savedSsids2.add(passpointProvider);
+                                    savedPasspointProviderBssids++;
+                                } else {
+                                    savedSsids2 = savedPasspointProviderProfiles2;
+                                }
+                                savedPasspointProviderProfiles = savedSsids2;
+                                supporting80211mcAps = supporting80211mcAps2;
+                                openOrSavedBssids2 = openOrSavedBssids;
+                                savedBssids2 = savedBssids;
+                                passpointR1Aps = passpointR1Aps2;
+                                openBssids2 = openBssids;
+                                savedSsids2 = savedSsids;
+                                scanDetail = it;
+                            }
                         }
-                        passpointProvider = passpointProvider3;
-                    } else {
-                        savedSsids3 = savedSsids2;
+                        savedSsids = savedSsids2;
                         openBssids = openBssids2;
                         savedBssids = savedBssids2;
+                        Set<PasspointProvider> savedPasspointProviderProfiles3 = savedPasspointProviderProfiles;
                         openOrSavedBssids = openOrSavedBssids2;
-                        passpointR1Aps2 = passpointR1Aps;
-                        Pair<PasspointProvider, PasspointMatch> pair = null;
-                        passpointProvider = null;
+                        WifiLog wifiLog = this.mWifiLogProto;
+                        wifiLog.fullBandAllSingleScanListenerResults++;
+                        incrementTotalScanSsids(this.mTotalSsidsInScanHistogram, ssids.size());
+                        incrementTotalScanResults(this.mTotalBssidsInScanHistogram, bssids);
+                        incrementSsid(this.mAvailableOpenSsidsInScanHistogram, openSsids.size());
+                        incrementBssid(this.mAvailableOpenBssidsInScanHistogram, openBssids);
+                        incrementSsid(this.mAvailableSavedSsidsInScanHistogram, savedSsids.size());
+                        incrementBssid(this.mAvailableSavedBssidsInScanHistogram, savedBssids);
+                        openSsids.addAll(savedSsids);
+                        incrementSsid(this.mAvailableOpenOrSavedSsidsInScanHistogram, openSsids.size());
+                        incrementBssid(this.mAvailableOpenOrSavedBssidsInScanHistogram, openOrSavedBssids);
+                        incrementSsid(this.mAvailableSavedPasspointProviderProfilesInScanHistogram, savedPasspointProviderProfiles3.size());
+                        incrementBssid(this.mAvailableSavedPasspointProviderBssidsInScanHistogram, savedPasspointProviderBssids);
+                        incrementTotalPasspointAps(this.mObservedHotspotR1ApInScanHistogram, passpointR1Aps);
+                        incrementTotalPasspointAps(this.mObservedHotspotR2ApInScanHistogram, passpointR2Aps);
+                        incrementTotalUniquePasspointEss(this.mObservedHotspotR1EssInScanHistogram, passpointR1UniqueEss.size());
+                        incrementTotalUniquePasspointEss(this.mObservedHotspotR2EssInScanHistogram, passpointR2UniqueEss.size());
+                        Iterator it2 = passpointR1UniqueEss.values().iterator();
+                        while (it2.hasNext()) {
+                            Iterator it3 = it2;
+                            Set<ScanResultMatchInfo> ssids2 = ssids;
+                            incrementPasspointPerUniqueEss(this.mObservedHotspotR1ApsPerEssInScanHistogram, ((Integer) it2.next()).intValue());
+                            it2 = it3;
+                            ssids = ssids2;
+                        }
+                        it2 = passpointR2UniqueEss.values().iterator();
+                        while (it2.hasNext()) {
+                            Iterator it4 = it2;
+                            incrementPasspointPerUniqueEss(this.mObservedHotspotR2ApsPerEssInScanHistogram, ((Integer) it2.next()).intValue());
+                            it2 = it4;
+                        }
+                        increment80211mcAps(this.mObserved80211mcApInScanHistogram, supporting80211mcAps);
+                        return;
                     }
-                    if (this.mWifiNetworkSelector.isSignalTooWeak(scanResult2) != null) {
-                        scanDetail = it;
-                        savedPasspointProviderProfiles = savedPasspointProviderProfiles2;
-                        supporting80211mcAps = supporting80211mcAps2;
-                        openOrSavedBssids2 = openOrSavedBssids;
-                        savedBssids2 = savedBssids;
-                        passpointR1Aps = passpointR1Aps2;
-                        savedSsids2 = savedSsids3;
-                        openBssids2 = openBssids;
-                    } else {
-                        ScanResultMatchInfo savedSsids5 = matchInfo;
-                        ssids.add(savedSsids5);
-                        bssids++;
-                        boolean isOpen = savedSsids5.networkType == 0;
-                        WifiConfiguration config = this.mWifiConfigManager.getConfiguredNetworkForScanDetail(scanDetail2);
-                        validBssid = (config == null || config.isEphemeral() || config.isPasspoint()) ? false : true;
-                        if (passpointProvider != null) {
-                            z = true;
-                        }
-                        boolean isSavedPasspoint = z;
-                        if (isOpen) {
-                            openSsids.add(savedSsids5);
-                            openBssids++;
-                        }
-                        if (validBssid) {
-                            savedSsids = savedSsids3;
-                            savedSsids.add(savedSsids5);
-                            savedBssids++;
-                        } else {
-                            savedSsids = savedSsids3;
-                        }
-                        if (isOpen || validBssid) {
-                            openOrSavedBssids++;
-                        }
-                        if (isSavedPasspoint) {
-                            ScanResultMatchInfo matchInfo2 = savedSsids5;
-                            savedSsids2 = savedPasspointProviderProfiles2;
-                            savedSsids2.add(passpointProvider);
-                            savedPasspointProviderBssids++;
-                        } else {
-                            savedSsids2 = savedPasspointProviderProfiles2;
-                        }
-                        savedPasspointProviderProfiles = savedSsids2;
-                        supporting80211mcAps = supporting80211mcAps2;
-                        openOrSavedBssids2 = openOrSavedBssids;
-                        savedBssids2 = savedBssids;
-                        passpointR1Aps = passpointR1Aps2;
-                        openBssids2 = openBssids;
-                        savedSsids2 = savedSsids;
-                        scanDetail = it;
-                    }
+                    WifiLog wifiLog2 = this.mWifiLogProto;
+                    wifiLog2.partialAllSingleScanListenerResults++;
                 }
-                savedSsids = savedSsids2;
-                openBssids = openBssids2;
-                savedBssids = savedBssids2;
-                Set<PasspointProvider> savedPasspointProviderProfiles3 = savedPasspointProviderProfiles;
-                openOrSavedBssids = openOrSavedBssids2;
-                WifiLog wifiLog = this.mWifiLogProto;
-                wifiLog.fullBandAllSingleScanListenerResults++;
-                incrementTotalScanSsids(this.mTotalSsidsInScanHistogram, ssids.size());
-                incrementTotalScanResults(this.mTotalBssidsInScanHistogram, bssids);
-                incrementSsid(this.mAvailableOpenSsidsInScanHistogram, openSsids.size());
-                incrementBssid(this.mAvailableOpenBssidsInScanHistogram, openBssids);
-                incrementSsid(this.mAvailableSavedSsidsInScanHistogram, savedSsids.size());
-                incrementBssid(this.mAvailableSavedBssidsInScanHistogram, savedBssids);
-                openSsids.addAll(savedSsids);
-                incrementSsid(this.mAvailableOpenOrSavedSsidsInScanHistogram, openSsids.size());
-                incrementBssid(this.mAvailableOpenOrSavedBssidsInScanHistogram, openOrSavedBssids);
-                incrementSsid(this.mAvailableSavedPasspointProviderProfilesInScanHistogram, savedPasspointProviderProfiles3.size());
-                incrementBssid(this.mAvailableSavedPasspointProviderBssidsInScanHistogram, savedPasspointProviderBssids);
-                incrementTotalPasspointAps(this.mObservedHotspotR1ApInScanHistogram, passpointR1Aps);
-                incrementTotalPasspointAps(this.mObservedHotspotR2ApInScanHistogram, passpointR2Aps);
-                incrementTotalUniquePasspointEss(this.mObservedHotspotR1EssInScanHistogram, passpointR1UniqueEss.size());
-                incrementTotalUniquePasspointEss(this.mObservedHotspotR2EssInScanHistogram, passpointR2UniqueEss.size());
-                Iterator it2 = passpointR1UniqueEss.values().iterator();
-                while (it2.hasNext()) {
-                    Iterator it3 = it2;
-                    Set<ScanResultMatchInfo> ssids2 = ssids;
-                    incrementPasspointPerUniqueEss(this.mObservedHotspotR1ApsPerEssInScanHistogram, ((Integer) it2.next()).intValue());
-                    it2 = it3;
-                    ssids = ssids2;
-                }
-                it2 = passpointR2UniqueEss.values().iterator();
-                while (it2.hasNext()) {
-                    Iterator it4 = it2;
-                    incrementPasspointPerUniqueEss(this.mObservedHotspotR2ApsPerEssInScanHistogram, ((Integer) it2.next()).intValue());
-                    it2 = it4;
-                }
-                increment80211mcAps(this.mObserved80211mcApInScanHistogram, supporting80211mcAps);
-            } else {
-                WifiLog wifiLog2 = this.mWifiLogProto;
-                wifiLog2.partialAllSingleScanListenerResults++;
             }
         }
     }

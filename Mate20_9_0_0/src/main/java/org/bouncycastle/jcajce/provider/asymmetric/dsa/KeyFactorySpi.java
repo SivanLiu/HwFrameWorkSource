@@ -27,7 +27,7 @@ public class KeyFactorySpi extends BaseKeyFactorySpi {
         }
         try {
             return new BCDSAPublicKey((DSAPublicKeySpec) keySpec);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("invalid KeySpec: ");
             stringBuilder.append(e.getMessage());

@@ -188,7 +188,7 @@ public final class PinnerService extends SystemService {
                     this.mDone = true;
                 }
             }
-            return this.mDone ^ true;
+            return this.mDone ^ 1;
         }
     }
 
@@ -408,7 +408,6 @@ public final class PinnerService extends SystemService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:77:0x0132  */
     /* JADX WARNING: Removed duplicated region for block: B:82:0x0142  */
     /* JADX WARNING: Removed duplicated region for block: B:77:0x0132  */
     /* JADX WARNING: Removed duplicated region for block: B:82:0x0142  */
@@ -422,6 +421,7 @@ public final class PinnerService extends SystemService {
     /* JADX WARNING: Removed duplicated region for block: B:82:0x0142  */
     /* JADX WARNING: Removed duplicated region for block: B:77:0x0132  */
     /* JADX WARNING: Removed duplicated region for block: B:82:0x0142  */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0132  */
     /* JADX WARNING: Removed duplicated region for block: B:82:0x0142  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static PinnedFile pinFileRanges(String fileToPin, int maxBytesToPin, PinRangeSource pinRangeSource) {
@@ -459,6 +459,7 @@ public final class PinnerService extends SystemService {
                         Slog.e(str, stringBuilder.toString(), ex);
                         safeClose(fd);
                         if (address2 >= 0) {
+                            safeMunmap(address2, (long) mapSize);
                         }
                         return null;
                     } catch (Throwable th) {
@@ -467,6 +468,7 @@ public final class PinnerService extends SystemService {
                         address = address2;
                         safeClose(fd2);
                         if (address >= 0) {
+                            safeMunmap(address, (long) mapSize);
                         }
                         throw ex2;
                     }
@@ -563,14 +565,12 @@ public final class PinnerService extends SystemService {
                         Slog.e(str, stringBuilder.toString(), ex);
                         safeClose(fd);
                         if (address2 >= 0) {
-                            safeMunmap(address2, (long) mapSize);
                         }
                         return null;
                     } catch (Throwable th5) {
                         ex2 = th5;
                         safeClose(fd2);
                         if (address >= 0) {
-                            safeMunmap(address, (long) mapSize);
                         }
                         throw ex2;
                     }

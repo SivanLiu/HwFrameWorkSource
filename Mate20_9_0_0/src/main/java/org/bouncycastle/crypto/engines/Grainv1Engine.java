@@ -126,7 +126,7 @@ public class Grainv1Engine implements StreamCipher {
     public void init(boolean z, CipherParameters cipherParameters) throws IllegalArgumentException {
         if (cipherParameters instanceof ParametersWithIV) {
             ParametersWithIV parametersWithIV = (ParametersWithIV) cipherParameters;
-            Object iv = parametersWithIV.getIV();
+            byte[] iv = parametersWithIV.getIV();
             if (iv == null || iv.length != 8) {
                 throw new IllegalArgumentException("Grain v1 requires exactly 8 bytes of IV");
             } else if (parametersWithIV.getParameters() instanceof KeyParameter) {

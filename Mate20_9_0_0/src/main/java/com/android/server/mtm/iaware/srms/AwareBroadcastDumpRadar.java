@@ -248,9 +248,16 @@ public class AwareBroadcastDumpRadar {
             }
             if (System.currentTimeMillis() - this.mTrackSpeedTime >= 1000) {
                 synchronized (this.mCacheSpeedMap) {
-                    for (int i = 0; i < 6; i++) {
-                        if (!this.mCacheSpeedMap.containsKey(Integer.valueOf(i))) {
-                            this.mCacheSpeedMap.put(Integer.valueOf(i), new ArrayList());
+                    int i = 0;
+                    while (i < 6) {
+                        try {
+                            if (!this.mCacheSpeedMap.containsKey(Integer.valueOf(i))) {
+                                this.mCacheSpeedMap.put(Integer.valueOf(i), new ArrayList());
+                            }
+                            i++;
+                        } catch (Throwable th) {
+                            while (true) {
+                            }
                         }
                     }
                     List<Long> beforeList = (List) this.mCacheSpeedMap.get(Integer.valueOf(0));
@@ -368,23 +375,31 @@ public class AwareBroadcastDumpRadar {
         }
         if (isBetaUser) {
             synchronized (this.mTrackDataSpeeds) {
-                for (int i3 = 0; i3 < 6; i3++) {
-                    addBrSpeedDataLocked(this.mTrackDataSpeeds[i3], (List) temp.get(Integer.valueOf(i3)));
+                int i3 = 0;
+                while (i3 < 6) {
+                    try {
+                        addBrSpeedDataLocked(this.mTrackDataSpeeds[i3], (List) temp.get(Integer.valueOf(i3)));
+                        i3++;
+                    } catch (Throwable th) {
+                    }
                 }
             }
         }
         synchronized (this.mCmcDataSpeeds) {
             while (i < 6) {
-                addBrSpeedDataLocked(this.mCmcDataSpeeds[i], (List) temp.get(Integer.valueOf(i)));
-                i++;
+                try {
+                    addBrSpeedDataLocked(this.mCmcDataSpeeds[i], (List) temp.get(Integer.valueOf(i)));
+                    i++;
+                } catch (Throwable th2) {
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0056, code:
+    /* JADX WARNING: Missing block: B:25:0x0056, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:26:0x0057, code:
+    /* JADX WARNING: Missing block: B:26:0x0057, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -411,7 +426,7 @@ public class AwareBroadcastDumpRadar {
         }
     }
 
-    /* JADX WARNING: Missing block: B:50:0x00ec, code:
+    /* JADX WARNING: Missing block: B:50:0x00ec, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

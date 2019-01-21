@@ -10,7 +10,7 @@ public class JceGenericKey extends GenericKey {
     }
 
     private static Object getRepresentation(Key key) {
-        Object encoded = key.getEncoded();
+        byte[] encoded = key.getEncoded();
         return encoded != null ? encoded : key;
     }
 }

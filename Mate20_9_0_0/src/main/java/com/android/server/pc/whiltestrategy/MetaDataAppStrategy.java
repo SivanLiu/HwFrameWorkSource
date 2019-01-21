@@ -26,10 +26,12 @@ public class MetaDataAppStrategy implements AppStrategy {
             ApplicationInfo info = context.getPackageManager().getApplicationInfo(packageName, 128);
             if (!(info == null || info.packageName == null || info.metaData == null)) {
                 int state = info.metaData.getInt(META_DATA_NAME, 0);
-                if (state == 0 || state == 1 || state == -1) {
-                    return state;
+                if (!(state == 0 || state == 1)) {
+                    if (state != -1) {
+                        Log.e(TAG, "meta data value is illegal!");
+                    }
                 }
-                Log.e(TAG, "meta data value is illegal!");
+                return state;
             }
         } catch (NameNotFoundException e) {
             Log.e(TAG, "getAppState NameNotFoundException", e);
@@ -53,11 +55,12 @@ public class MetaDataAppStrategy implements AppStrategy {
                 if (!(appInfo == null || appInfo.packageName == null)) {
                     if (appInfo.metaData != null) {
                         int state = appInfo.metaData.getInt(META_DATA_NAME, 0);
-                        if (state == 0 || state == 1 || state == -1) {
-                            allAppSupportPCState.put(appInfo.packageName, Integer.valueOf(state));
-                        } else {
-                            allAppSupportPCState.put(appInfo.packageName, Integer.valueOf(0));
+                        if (!(state == 0 || state == 1)) {
+                            if (state != -1) {
+                                allAppSupportPCState.put(appInfo.packageName, Integer.valueOf(0));
+                            }
                         }
+                        allAppSupportPCState.put(appInfo.packageName, Integer.valueOf(state));
                     } else {
                         allAppSupportPCState.put(appInfo.packageName, Integer.valueOf(0));
                     }

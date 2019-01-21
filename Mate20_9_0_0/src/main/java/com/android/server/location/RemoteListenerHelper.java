@@ -122,7 +122,7 @@ abstract class RemoteListenerHelper<TListener extends IInterface> {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:31:0x005a, code:
+    /* JADX WARNING: Missing block: B:32:0x005a, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

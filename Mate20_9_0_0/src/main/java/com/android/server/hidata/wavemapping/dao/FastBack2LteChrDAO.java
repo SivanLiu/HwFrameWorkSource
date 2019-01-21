@@ -61,44 +61,11 @@ public class FastBack2LteChrDAO {
         this.unknownSpace = 0;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x00a5, code:
+    /* JADX WARNING: Missing block: B:10:0x00a5, code skipped:
             if (r2 != null) goto L_0x00a7;
      */
-    /* JADX WARNING: Missing block: B:11:0x00a7, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:16:0x00c7, code:
+    /* JADX WARNING: Missing block: B:20:0x00e3, code skipped:
             if (r2 == null) goto L_0x00e6;
-     */
-    /* JADX WARNING: Missing block: B:19:0x00e3, code:
-            if (r2 == null) goto L_0x00e6;
-     */
-    /* JADX WARNING: Missing block: B:20:0x00e6, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getTotalCounters in Back2LteChrTable found:");
-            r3.append(r1);
-            r3.append(":");
-            r3.append(r6.sumlowRatCnt);
-            r3.append(":");
-            r3.append(r6.suminLteCnt);
-            r3.append(":");
-            r3.append(r6.sumoutLteCnt);
-            r3.append(":");
-            r3.append(r6.sumfastBack);
-            r3.append(":");
-            r3.append(r6.sumsuccessBack);
-            r3.append(":");
-            r3.append(r6.sumcells4G);
-            r3.append(":");
-            r3.append(r6.sumrefCnt);
-            r3.append(":");
-            r3.append(r6.sumunknownDB);
-            r3.append(":");
-            r3.append(r6.sumunknownSpace);
-            com.android.server.hidata.wavemapping.util.LogUtil.d(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0154, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getTotalCounters() {
@@ -134,6 +101,32 @@ public class FastBack2LteChrDAO {
             stringBuilder.append("exception getTotalCounters in Back2LteChrTable Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getTotalCounters in Back2LteChrTable found:");
+            stringBuilder2.append(found);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumlowRatCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.suminLteCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumoutLteCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumfastBack);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumsuccessBack);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumcells4G);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumrefCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumunknownDB);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.sumunknownSpace);
+            LogUtil.d(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -141,46 +134,11 @@ public class FastBack2LteChrDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x008c, code:
+    /* JADX WARNING: Missing block: B:7:0x008c, code skipped:
             if (r4 != null) goto L_0x008e;
      */
-    /* JADX WARNING: Missing block: B:8:0x008e, code:
-            r4.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x00ae, code:
+    /* JADX WARNING: Missing block: B:17:0x00ca, code skipped:
             if (r4 == null) goto L_0x00cd;
-     */
-    /* JADX WARNING: Missing block: B:16:0x00ca, code:
-            if (r4 == null) goto L_0x00cd;
-     */
-    /* JADX WARNING: Missing block: B:17:0x00cd, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("getCountersByLocation in Back2LteChrTable found:");
-            r2.append(r3);
-            r2.append(" location:");
-            r2.append(r7.location);
-            r2.append(":");
-            r2.append(r7.lowRatCnt);
-            r2.append(":");
-            r2.append(r7.inLteCnt);
-            r2.append(":");
-            r2.append(r7.outLteCnt);
-            r2.append(":");
-            r2.append(r7.fastBack);
-            r2.append(":");
-            r2.append(r7.successBack);
-            r2.append(":");
-            r2.append(r7.cells4G);
-            r2.append(":");
-            r2.append(r7.refCnt);
-            r2.append(":");
-            r2.append(r7.unknownDB);
-            r2.append(":");
-            r2.append(r7.unknownSpace);
-            com.android.server.hidata.wavemapping.util.LogUtil.d(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x0145, code:
-            return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getCountersByLocation(String loc) {
@@ -217,6 +175,34 @@ public class FastBack2LteChrDAO {
             stringBuilder.append("exception getCountersByLocation in Back2LteChrTable Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getCountersByLocation in Back2LteChrTable found:");
+            stringBuilder2.append(found);
+            stringBuilder2.append(" location:");
+            stringBuilder2.append(this.location);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.lowRatCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.inLteCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.outLteCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.fastBack);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.successBack);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.cells4G);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.refCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.unknownDB);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.unknownSpace);
+            LogUtil.d(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -224,46 +210,11 @@ public class FastBack2LteChrDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x008b, code:
+    /* JADX WARNING: Missing block: B:7:0x008b, code skipped:
             if (r4 != null) goto L_0x008d;
      */
-    /* JADX WARNING: Missing block: B:8:0x008d, code:
-            r4.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x00ad, code:
+    /* JADX WARNING: Missing block: B:17:0x00c9, code skipped:
             if (r4 == null) goto L_0x00cc;
-     */
-    /* JADX WARNING: Missing block: B:16:0x00c9, code:
-            if (r4 == null) goto L_0x00cc;
-     */
-    /* JADX WARNING: Missing block: B:17:0x00cc, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getCountersByLocation in Back2LteChrTable found:");
-            r3.append(r2);
-            r3.append(" location:");
-            r3.append(r7.location);
-            r3.append(":");
-            r3.append(r7.lowRatCnt);
-            r3.append(":");
-            r3.append(r7.inLteCnt);
-            r3.append(":");
-            r3.append(r7.outLteCnt);
-            r3.append(":");
-            r3.append(r7.fastBack);
-            r3.append(":");
-            r3.append(r7.successBack);
-            r3.append(":");
-            r3.append(r7.cells4G);
-            r3.append(":");
-            r3.append(r7.refCnt);
-            r3.append(":");
-            r3.append(r7.unknownDB);
-            r3.append(":");
-            r3.append(r7.unknownSpace);
-            com.android.server.hidata.wavemapping.util.LogUtil.d(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x0144, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getCountersByLocation() {
@@ -299,6 +250,34 @@ public class FastBack2LteChrDAO {
             stringBuilder.append("exception getCountersByLocation in Back2LteChrTable Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getCountersByLocation in Back2LteChrTable found:");
+            stringBuilder2.append(found);
+            stringBuilder2.append(" location:");
+            stringBuilder2.append(this.location);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.lowRatCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.inLteCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.outLteCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.fastBack);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.successBack);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.cells4G);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.refCnt);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.unknownDB);
+            stringBuilder2.append(":");
+            stringBuilder2.append(this.unknownSpace);
+            LogUtil.d(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -306,26 +285,11 @@ public class FastBack2LteChrDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x001f, code:
+    /* JADX WARNING: Missing block: B:7:0x001f, code skipped:
             if (r4 != null) goto L_0x0021;
      */
-    /* JADX WARNING: Missing block: B:8:0x0021, code:
-            r4.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x0040, code:
+    /* JADX WARNING: Missing block: B:17:0x005c, code skipped:
             if (r4 == null) goto L_0x005f;
-     */
-    /* JADX WARNING: Missing block: B:16:0x005c, code:
-            if (r4 == null) goto L_0x005f;
-     */
-    /* JADX WARNING: Missing block: B:17:0x005f, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getRecordByLoc in Back2LteChrTable found:");
-            r3.append(r2);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:18:0x0073, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getRecordByLoc() {
@@ -352,6 +316,14 @@ public class FastBack2LteChrDAO {
             stringBuilder.append("exception getRecordByLoc in Back2LteChrTable Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getRecordByLoc in Back2LteChrTable found:");
+            stringBuilder2.append(found);
+            LogUtil.i(stringBuilder2.toString());
+            return found;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();

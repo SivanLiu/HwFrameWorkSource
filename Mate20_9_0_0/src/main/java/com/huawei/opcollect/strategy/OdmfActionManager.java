@@ -381,19 +381,20 @@ public class OdmfActionManager {
         updateEventList(list, isSwitchChange);
     }
 
-    /* JADX WARNING: Missing block: B:31:0x0085, code:
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* JADX WARNING: Missing block: B:31:0x0085, code skipped:
             if (isPolicyNeedLocation() != false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:32:0x0087, code:
+    /* JADX WARNING: Missing block: B:32:0x0087, code skipped:
             com.huawei.opcollect.location.SystemLocation.getInstance(r7.mContext).disable();
      */
-    /* JADX WARNING: Missing block: B:40:?, code:
+    /* JADX WARNING: Missing block: B:40:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:41:?, code:
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:42:?, code:
+    /* JADX WARNING: Missing block: B:42:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -420,19 +421,20 @@ public class OdmfActionManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:31:0x0085, code:
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* JADX WARNING: Missing block: B:31:0x0085, code skipped:
             if (isPolicyNeedLocation() != false) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:32:0x0087, code:
+    /* JADX WARNING: Missing block: B:32:0x0087, code skipped:
             com.huawei.opcollect.location.SystemLocation.getInstance(r7.mContext).disable();
      */
-    /* JADX WARNING: Missing block: B:40:?, code:
+    /* JADX WARNING: Missing block: B:40:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:41:?, code:
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:42:?, code:
+    /* JADX WARNING: Missing block: B:42:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

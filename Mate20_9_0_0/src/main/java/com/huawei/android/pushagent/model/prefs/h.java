@@ -1,70 +1,107 @@
 package com.huawei.android.pushagent.model.prefs;
 
 import android.content.Context;
-import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.f.a;
-import java.util.HashSet;
+import com.huawei.android.pushagent.utils.b.b;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 public class h {
-    private static final byte[] fx = new byte[0];
-    private static h fy;
-    private final a fz;
+    private HashMap<String, Object> cz = new HashMap();
+    protected Context da = null;
+    private String db = "";
 
-    private h(Context context) {
-        this.fz = new a(context, "pclient_request_info");
+    public h(Context context, String str) {
+        this.da = context.getApplicationContext();
+        this.db = str;
     }
 
-    public static h qr(Context context) {
-        return qw(context);
+    public boolean setValue(String str, Object obj) {
+        this.cz.put(str, obj);
+        new b(this.da, this.db).th(str, obj);
+        return true;
     }
 
-    private static h qw(Context context) {
-        h hVar;
-        synchronized (fx) {
-            if (fy == null) {
-                fy = new h(context);
-            }
-            hVar = fy;
+    public boolean lf(Map<String, Object> map) {
+        this.cz.putAll(map);
+        le();
+        return true;
+    }
+
+    private Object ld(String str) {
+        return this.cz.get(str);
+    }
+
+    private Object getValue(String str, Object obj) {
+        Object ld = ld(str);
+        if (ld == null) {
+            return obj;
         }
-        return hVar;
+        return ld;
     }
 
-    public boolean qu() {
-        return this.fz.eg();
+    public HashMap<String, Object> lb() {
+        return this.cz;
     }
 
-    public boolean qv(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return false;
+    public int getInt(String str, int i) {
+        Object value = getValue(str, Integer.valueOf(i));
+        if (value instanceof Integer) {
+            return ((Integer) value).intValue();
         }
-        return this.fz.ea(str, "true");
+        if (value instanceof Long) {
+            return (int) ((Long) value).longValue();
+        }
+        return i;
     }
 
-    public boolean remove(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return false;
+    public long getLong(String str, long j) {
+        Object value = getValue(str, Long.valueOf(j));
+        if (value instanceof Integer) {
+            return (long) ((Integer) value).intValue();
         }
-        return this.fz.ed(str);
+        if (value instanceof Long) {
+            return ((Long) value).longValue();
+        }
+        return j;
     }
 
-    public String qs(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
+    public boolean lc(String str, boolean z) {
+        Object value = getValue(str, Boolean.valueOf(z));
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
         }
-        return this.fz.ec(str);
+        return z;
     }
 
-    public Set<String> qt() {
-        Map all = this.fz.getAll();
-        if (all == null) {
-            return new HashSet();
+    public String getString(String str, String str2) {
+        return String.valueOf(getValue(str, str2));
+    }
+
+    protected HashMap<String, Object> la() {
+        this.cz.clear();
+        HashMap hashMap = new HashMap();
+        for (Entry entry : new b(this.da, this.db).getAll().entrySet()) {
+            hashMap.put((String) entry.getKey(), entry.getValue());
         }
-        Set<String> keySet = all.keySet();
-        if (keySet == null) {
-            return new HashSet();
+        if (hashMap.size() != 0) {
+            this.cz = hashMap;
         }
-        return keySet;
+        return hashMap;
+    }
+
+    private boolean le() {
+        new b(this.da, this.db).tn(this.cz);
+        return true;
+    }
+
+    public String toString() {
+        String str = " ";
+        String str2 = ":";
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Entry entry : this.cz.entrySet()) {
+            stringBuffer.append((String) entry.getKey()).append(str2).append(entry.getValue()).append(str);
+        }
+        return stringBuffer.toString();
     }
 }

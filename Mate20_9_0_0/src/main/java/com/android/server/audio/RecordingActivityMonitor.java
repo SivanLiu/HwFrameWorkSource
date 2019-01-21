@@ -189,7 +189,7 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:125:0x0296, code:
+    /* JADX WARNING: Missing block: B:125:0x0296, code skipped:
             r16 = r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -280,10 +280,12 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 break;
                                             } catch (XmlPullParserException e) {
                                                 list = whiteAppList1;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e2) {
                                                 list = whiteAppList1;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 3:
                                             list4 = whiteAppList4;
@@ -301,11 +303,13 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                             } catch (XmlPullParserException e3) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e4) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 4:
                                             list5 = whiteAppList5;
@@ -324,12 +328,14 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
                                                 list3 = whiteAppList3;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e6) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
                                                 list3 = whiteAppList3;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 5:
                                             list6 = whiteAppList6;
@@ -349,13 +355,15 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list2 = whiteAppList2;
                                                 list3 = whiteAppList3;
                                                 list4 = whiteAppList4;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e8) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
                                                 list3 = whiteAppList3;
                                                 list4 = whiteAppList4;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 6:
                                             list7 = whiteAppList7;
@@ -376,14 +384,16 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list3 = whiteAppList3;
                                                 list4 = whiteAppList4;
                                                 list5 = whiteAppList5;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e10) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
                                                 list3 = whiteAppList3;
                                                 list4 = whiteAppList4;
                                                 list5 = whiteAppList5;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 7:
                                             list8 = whiteAppList8;
@@ -405,7 +415,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list4 = whiteAppList4;
                                                 list5 = whiteAppList5;
                                                 list6 = whiteAppList6;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e12) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
@@ -413,7 +424,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list4 = whiteAppList4;
                                                 list5 = whiteAppList5;
                                                 list6 = whiteAppList6;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 8:
                                             list9 = whiteAppList9;
@@ -436,7 +448,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list5 = whiteAppList5;
                                                 list6 = whiteAppList6;
                                                 list7 = whiteAppList7;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e14) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
@@ -445,7 +458,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list5 = whiteAppList5;
                                                 list6 = whiteAppList6;
                                                 list7 = whiteAppList7;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 9:
                                             list10 = whiteAppList10;
@@ -469,7 +483,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list6 = whiteAppList6;
                                                 list7 = whiteAppList7;
                                                 list8 = whiteAppList8;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e16) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
@@ -479,7 +494,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list6 = whiteAppList6;
                                                 list7 = whiteAppList7;
                                                 list8 = whiteAppList8;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         case 10:
                                             try {
@@ -504,7 +520,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list7 = whiteAppList7;
                                                 list8 = whiteAppList8;
                                                 list9 = whiteAppList9;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                                return;
                                             } catch (IOException e18) {
                                                 list = whiteAppList1;
                                                 list2 = whiteAppList2;
@@ -515,7 +532,8 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                                 list7 = whiteAppList7;
                                                 list8 = whiteAppList8;
                                                 list9 = whiteAppList9;
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                         default:
                                             list = whiteAppList1;
@@ -535,19 +553,67 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                                             } catch (XmlPullParserException e19) {
                                                 break;
                                             } catch (IOException e20) {
-                                                break;
+                                                Log.e(TAG, "RecordWhiteList IOException");
+                                                return;
                                             }
                                     }
                                 }
                             } catch (XmlPullParserException e21) {
+                                list = whiteAppList1;
+                                list2 = whiteAppList2;
+                                list3 = whiteAppList3;
+                                list4 = whiteAppList4;
+                                list5 = whiteAppList5;
+                                list6 = whiteAppList6;
+                                list7 = whiteAppList7;
+                                list8 = whiteAppList8;
+                                list9 = whiteAppList9;
+                                list10 = whiteAppList10;
+                                Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                                return;
                             } catch (IOException e22) {
+                                list = whiteAppList1;
+                                list2 = whiteAppList2;
+                                list3 = whiteAppList3;
+                                list4 = whiteAppList4;
+                                list5 = whiteAppList5;
+                                list6 = whiteAppList6;
+                                list7 = whiteAppList7;
+                                list8 = whiteAppList8;
+                                list9 = whiteAppList9;
+                                list10 = whiteAppList10;
+                                Log.e(TAG, "RecordWhiteList IOException");
+                                return;
                             }
                         } catch (XmlPullParserException e23) {
+                            list = whiteAppList1;
+                            list2 = whiteAppList2;
+                            list3 = whiteAppList3;
+                            list4 = whiteAppList4;
+                            list5 = whiteAppList5;
+                            list6 = whiteAppList6;
+                            list7 = whiteAppList7;
+                            list8 = whiteAppList8;
+                            list9 = whiteAppList9;
+                            list10 = whiteAppList10;
+                            Log.e(TAG, "RecordWhiteList XmlPullParserException");
+                            return;
                         } catch (IOException e24) {
+                            list = whiteAppList1;
+                            list2 = whiteAppList2;
+                            list3 = whiteAppList3;
+                            list4 = whiteAppList4;
+                            list5 = whiteAppList5;
+                            list6 = whiteAppList6;
+                            list7 = whiteAppList7;
+                            list8 = whiteAppList8;
+                            list9 = whiteAppList9;
+                            list10 = whiteAppList10;
+                            Log.e(TAG, "RecordWhiteList IOException");
+                            return;
                         }
-                    } else {
-                        xmlPullParser = parser;
                     }
+                    xmlPullParser = parser;
                     list = whiteAppList1;
                     list2 = whiteAppList2;
                     list3 = whiteAppList3;
@@ -851,27 +917,31 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
     List<AudioRecordingConfiguration> getActiveRecordingConfigurations(boolean isPrivileged) {
         synchronized (this.mRecordConfigs) {
             if (isPrivileged) {
-                List arrayList = new ArrayList(this.mRecordConfigs.values());
-                return arrayList;
+                try {
+                    ArrayList arrayList = new ArrayList(this.mRecordConfigs.values());
+                    return arrayList;
+                } catch (Throwable th) {
+                }
+            } else {
+                List<AudioRecordingConfiguration> configsPublic = anonymizeForPublicConsumption(new ArrayList(this.mRecordConfigs.values()));
+                return configsPublic;
             }
-            List<AudioRecordingConfiguration> configsPublic = anonymizeForPublicConsumption(new ArrayList(this.mRecordConfigs.values()));
-            return configsPublic;
         }
     }
 
-    /* JADX WARNING: Missing block: B:51:0x0169, code:
+    /* JADX WARNING: Missing block: B:53:0x0169, code skipped:
             if (r9 == false) goto L_0x0177;
      */
-    /* JADX WARNING: Missing block: B:52:0x016b, code:
+    /* JADX WARNING: Missing block: B:54:0x016b, code skipped:
             r2 = new java.util.ArrayList(r1.mRecordConfigs.values());
      */
-    /* JADX WARNING: Missing block: B:53:0x0177, code:
+    /* JADX WARNING: Missing block: B:55:0x0177, code skipped:
             r2 = null;
      */
-    /* JADX WARNING: Missing block: B:54:0x0178, code:
+    /* JADX WARNING: Missing block: B:56:0x0178, code skipped:
             monitor-exit(r18);
      */
-    /* JADX WARNING: Missing block: B:55:0x0179, code:
+    /* JADX WARNING: Missing block: B:57:0x0179, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -895,7 +965,7 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                     }
                     boolean configChanged3 = configChanged;
                     if (configChanged3) {
-                        Event recordingEvent = recordingEvent;
+                        RecordingEvent recordingEvent = recordingEvent;
                         i4 = i3;
                         sEventLogger.log(new RecordingEvent(event, i, i3, source, null));
                     } else {
@@ -941,7 +1011,7 @@ public final class RecordingActivityMonitor implements AudioRecordingCallback {
                         }
                         boolean configChanged4 = configChanged;
                         if (configChanged4) {
-                            Event recordingEvent2 = recordingEvent2;
+                            RecordingEvent recordingEvent2 = recordingEvent2;
                             String packageName3 = packageName2;
                             hashMap2 = hashMap;
                             i3 = i2;

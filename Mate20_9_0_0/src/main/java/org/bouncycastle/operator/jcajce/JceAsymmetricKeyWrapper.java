@@ -1,8 +1,10 @@
 package org.bouncycastle.operator.jcajce;
 
 import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Provider;
+import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -116,36 +118,30 @@ public class JceAsymmetricKeyWrapper extends AsymmetricKeyWrapper {
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0025 A:{Catch:{ InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025 }, Splitter: B:2:0x001d, ExcHandler: java.security.InvalidKeyException (e java.security.InvalidKeyException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0025 A:{Catch:{ InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025 }, Splitter: B:2:0x001d, ExcHandler: java.security.InvalidKeyException (e java.security.InvalidKeyException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0025 A:{Catch:{ InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025 }, Splitter: B:2:0x001d, ExcHandler: java.security.InvalidKeyException (e java.security.InvalidKeyException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0025 A:{Catch:{ InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025, InvalidKeyException -> 0x0025 }, Splitter: B:2:0x001d, ExcHandler: java.security.InvalidKeyException (e java.security.InvalidKeyException)} */
-    /* JADX WARNING: Missing block: B:7:0x0037, code:
-            r1 = null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public byte[] generateWrappedKey(GenericKey genericKey) throws OperatorException {
+        byte[] bArr;
         Cipher createAsymmetricWrapper = this.helper.createAsymmetricWrapper(getAlgorithmIdentifier().getAlgorithm(), this.extraMappings);
         AlgorithmParameters createAlgorithmParameters = this.helper.createAlgorithmParameters(getAlgorithmIdentifier());
         if (createAlgorithmParameters != null) {
             try {
                 createAsymmetricWrapper.init(3, this.publicKey, createAlgorithmParameters, this.random);
-            } catch (InvalidKeyException e) {
+            } catch (IllegalStateException | UnsupportedOperationException | GeneralSecurityException | InvalidKeyException | ProviderException e) {
+                bArr = null;
             }
         } else {
             createAsymmetricWrapper.init(3, this.publicKey, this.random);
         }
-        byte[] wrap = createAsymmetricWrapper.wrap(OperatorUtils.getJceKey(genericKey));
-        if (wrap != null) {
-            return wrap;
+        bArr = createAsymmetricWrapper.wrap(OperatorUtils.getJceKey(genericKey));
+        if (bArr != null) {
+            return bArr;
         }
         try {
             createAsymmetricWrapper.init(1, this.publicKey, this.random);
             return createAsymmetricWrapper.doFinal(OperatorUtils.getJceKey(genericKey).getEncoded());
-        } catch (Throwable e2) {
+        } catch (InvalidKeyException e2) {
             throw new OperatorException("unable to encrypt contents key", e2);
-        } catch (Throwable e22) {
-            throw new OperatorException("unable to encrypt contents key", e22);
+        } catch (GeneralSecurityException e3) {
+            throw new OperatorException("unable to encrypt contents key", e3);
         }
     }
 

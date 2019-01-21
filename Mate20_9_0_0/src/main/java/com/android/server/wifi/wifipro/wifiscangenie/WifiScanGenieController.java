@@ -44,6 +44,7 @@ public class WifiScanGenieController {
     public static final int MSG_CONFIGURED_CHANGED = 1;
     public static final int MSG_INIT_PREFERRED_CHANNELS = 7;
     public static final int MSG_NETWORK_CONNECTED_NOTIFIED = 2;
+    public static final int MSG_NETWORK_DISCONNECTED_NOTIFIED = 8;
     public static final int MSG_NETWORK_ROAMING_COMPLETED_NOTIFIED = 4;
     public static final int MSG_SCAN_RESULTS_AVAILABLE = 3;
     private static final String OOB_STARTUP_GUIDE = "com.huawei.hwstartupguide";
@@ -145,92 +146,94 @@ public class WifiScanGenieController {
         Log.d(TAG, "WifiScanGenieController init!");
     }
 
-    /* JADX WARNING: Missing block: B:38:?, code:
+    /* JADX WARNING: Missing block: B:39:?, code skipped:
             r2 = "";
             r4 = com.android.server.wifi.wifipro.HwAutoConnectManager.getInstance();
      */
-    /* JADX WARNING: Missing block: B:39:0x0066, code:
+    /* JADX WARNING: Missing block: B:40:0x0066, code skipped:
             if (r4 == null) goto L_0x0072;
      */
-    /* JADX WARNING: Missing block: B:40:0x0068, code:
+    /* JADX WARNING: Missing block: B:41:0x0068, code skipped:
             r1 = r4.getCurrentTopUid();
             r2 = r4.getCurrentPackageName();
      */
-    /* JADX WARNING: Missing block: B:42:0x0078, code:
+    /* JADX WARNING: Missing block: B:43:0x0078, code skipped:
             if (OOB_STARTUP_GUIDE.equals(r2) == false) goto L_0x0083;
      */
-    /* JADX WARNING: Missing block: B:43:0x007a, code:
+    /* JADX WARNING: Missing block: B:44:0x007a, code skipped:
             android.util.Log.d(TAG, "getScanfrequencys, OOB_STARTUP_GUIDE matched!");
      */
-    /* JADX WARNING: Missing block: B:45:0x0082, code:
+    /* JADX WARNING: Missing block: B:46:0x0082, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:47:0x0085, code:
+    /* JADX WARNING: Missing block: B:48:0x0085, code skipped:
             if (r10.mDataBaseImpl == null) goto L_0x00d2;
      */
-    /* JADX WARNING: Missing block: B:48:0x0087, code:
+    /* JADX WARNING: Missing block: B:49:0x0087, code skipped:
             r5 = r10.mDataBaseImpl.queryScanRecordsByCellid(r10.mCurrentCellId);
      */
-    /* JADX WARNING: Missing block: B:49:0x008f, code:
+    /* JADX WARNING: Missing block: B:50:0x008f, code skipped:
             if (r5 == null) goto L_0x00cb;
      */
-    /* JADX WARNING: Missing block: B:50:0x0091, code:
+    /* JADX WARNING: Missing block: B:51:0x0091, code skipped:
             r6 = r5.iterator();
      */
-    /* JADX WARNING: Missing block: B:52:0x0099, code:
+    /* JADX WARNING: Missing block: B:53:0x0099, code skipped:
             if (r6.hasNext() == false) goto L_0x00b7;
      */
-    /* JADX WARNING: Missing block: B:54:0x00a7, code:
+    /* JADX WARNING: Missing block: B:55:0x00a7, code skipped:
             if (((com.android.server.wifi.wifipro.wifiscangenie.WifiScanGenieDataBaseImpl.ScanRecord) r6.next()).getCurrentFrequency() != -100) goto L_0x00b6;
      */
-    /* JADX WARNING: Missing block: B:55:0x00a9, code:
+    /* JADX WARNING: Missing block: B:56:0x00a9, code skipped:
             r10.mPunishedCellId = r10.mCurrentCellId;
             android.util.Log.d(TAG, "getScanfrequencys, INVALID_FREQ_PUNISHED");
      */
-    /* JADX WARNING: Missing block: B:57:0x00b5, code:
+    /* JADX WARNING: Missing block: B:58:0x00b5, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:59:0x00b7, code:
+    /* JADX WARNING: Missing block: B:60:0x00b7, code skipped:
             android.util.Log.d(TAG, "no punished, use the specified channels to scan");
             r6 = fusefrequencys(frequencyDb(r5));
             r10.mConncetedUseSpecifiedChannels = true;
      */
-    /* JADX WARNING: Missing block: B:61:0x00ca, code:
+    /* JADX WARNING: Missing block: B:62:0x00ca, code skipped:
             return r6;
      */
-    /* JADX WARNING: Missing block: B:62:0x00cb, code:
+    /* JADX WARNING: Missing block: B:63:0x00cb, code skipped:
             android.util.Log.w(TAG, "queryScanRecordsByCellid is null");
      */
-    /* JADX WARNING: Missing block: B:64:0x00d3, code:
+    /* JADX WARNING: Missing block: B:65:0x00d3, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<Integer> getScanfrequencys() {
         synchronized (this.mNetworkInfoLock) {
             this.mCurrentCellId = WifiProCommonUtils.getCurrentCellId();
-            if (this.mCurrentCellId == -1 || this.mCurrentCellId == this.mPunishedCellId) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("getScanfrequencys, INVAILD_ID or unallowed id = ");
-                stringBuilder.append(this.mPunishedCellId);
-                Log.d(str, stringBuilder.toString());
-                return null;
-            }
-            synchronized (this.m5GCapabilityLock) {
-                if (this.m5GFreqCapability == 100) {
-                    Log.d(TAG, "getScanfrequencys, DEV_5G_CAPABILITY_UNKNOWN");
-                    this.mWifiScanGenieHandler.sendMessage(this.mWifiScanGenieHandler.obtainMessage(6));
-                    return null;
-                } else if (this.m5GFreqCapability == 102) {
-                    Log.d(TAG, "getScanfrequencys, DEV_5G_CAPABILITY_UNSUPPORTED");
-                    return null;
-                } else if (this.m5GFreqCapability == 101) {
-                    Log.d(TAG, "getScanfrequencys, DEV_5G_CAPABILITY_SUPPORTED");
-                    if (this.mCommonFrequencys.size() == 0) {
-                        return null;
+            if (this.mCurrentCellId != -1) {
+                if (this.mCurrentCellId != this.mPunishedCellId) {
+                    synchronized (this.m5GCapabilityLock) {
+                        if (this.m5GFreqCapability == 100) {
+                            Log.d(TAG, "getScanfrequencys, DEV_5G_CAPABILITY_UNKNOWN");
+                            this.mWifiScanGenieHandler.sendMessage(this.mWifiScanGenieHandler.obtainMessage(6));
+                            return null;
+                        } else if (this.m5GFreqCapability == 102) {
+                            Log.d(TAG, "getScanfrequencys, DEV_5G_CAPABILITY_UNSUPPORTED");
+                            return null;
+                        } else if (this.m5GFreqCapability == 101) {
+                            Log.d(TAG, "getScanfrequencys, DEV_5G_CAPABILITY_SUPPORTED");
+                            if (this.mCommonFrequencys.size() == 0) {
+                                return null;
+                            }
+                        }
                     }
                 }
             }
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("getScanfrequencys, INVAILD_ID or unallowed id = ");
+            stringBuilder.append(this.mPunishedCellId);
+            Log.d(str, stringBuilder.toString());
+            return null;
         }
     }
 
@@ -245,8 +248,11 @@ public class WifiScanGenieController {
     public void notifyNetworkRoamingCompleted(String bssid) {
         synchronized (this.mNetworkInfoLock) {
             if (bssid != null) {
-                if (!(this.mCurrentBSSID == null || bssid.equals(this.mCurrentBSSID) || this.mCurrentWifiConfig == null)) {
-                    this.mWifiScanGenieHandler.sendMessage(this.mWifiScanGenieHandler.obtainMessage(4, this.mCurrentWifiConfig));
+                try {
+                    if (!(this.mCurrentBSSID == null || bssid.equals(this.mCurrentBSSID) || this.mCurrentWifiConfig == null)) {
+                        this.mWifiScanGenieHandler.sendMessage(this.mWifiScanGenieHandler.obtainMessage(4, this.mCurrentWifiConfig));
+                    }
+                } finally {
                 }
             }
         }
@@ -263,28 +269,17 @@ public class WifiScanGenieController {
     }
 
     public void handleWiFiDisconnected() {
-        Log.d(TAG, "WifiScanGenie handleWiFiDisconnected");
-        if (this.mDataBaseImpl != null) {
-            synchronized (this.mNetworkInfoLock) {
-                reSetCurrentAPInfo();
-                this.mConncetedUseSpecifiedChannels = false;
-                this.mConncetedBackGround = false;
-                this.m11vSupported = false;
-                synchronized (this.mChannelsLock) {
-                    this.mRecentConnectedChannels.clear();
-                }
-            }
-        }
+        this.mWifiScanGenieHandler.sendMessage(this.mWifiScanGenieHandler.obtainMessage(8));
     }
 
     public void handleWiFiConnected(WifiConfiguration currentWifiConfig, boolean cellIdChanged) {
         this.mWifiScanGenieHandler.sendMessage(this.mWifiScanGenieHandler.obtainMessage(2, currentWifiConfig));
     }
 
-    /* JADX WARNING: Missing block: B:78:0x01b3, code:
+    /* JADX WARNING: Missing block: B:81:0x01b3, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:83:0x01cf, code:
+    /* JADX WARNING: Missing block: B:86:0x01cf, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -295,103 +290,107 @@ public class WifiScanGenieController {
             stringBuilder.append("handleWifiConnectedMsg, cellIdChanged:");
             stringBuilder.append(cellIdChanged);
             Log.d(str, stringBuilder.toString());
-            if (this.mDataBaseImpl == null || currentWifiConfig == null) {
-            } else if (HwFrameworkFactory.getHwInnerWifiManager().getHwMeteredHint(this.mContext)) {
-                Log.d(TAG, "handleWifiConnectedMsg, this is mobile ap,ignore it");
-            } else {
-                String str2;
-                StringBuilder stringBuilder2;
-                if (this.mCurrentCellId == -1) {
-                    this.mCurrentCellId = WifiProCommonUtils.getCurrentCellId();
-                    str2 = TAG;
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("handleWifiConnectedMsg, id  = ");
-                    stringBuilder2.append(this.mCurrentCellId);
-                    Log.d(str2, stringBuilder2.toString());
-                }
-                if (this.mCurrentCellId == -1 || this.mCurrentCellId == this.mPunishedCellId) {
-                    str2 = TAG;
-                    StringBuilder stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("handleWifiConnectedMsg, INVAILD_ID, id  = ");
-                    stringBuilder3.append(this.mCurrentCellId);
-                    Log.d(str2, stringBuilder3.toString());
-                    return;
-                }
-                String str3;
-                StringBuilder stringBuilder4;
-                this.mCurrentWifiConfig = currentWifiConfig;
-                if (this.mCurrentWifiConfig != null) {
-                    this.mCurrentPriority = this.mCurrentWifiConfig.priority;
-                    str2 = TAG;
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("wifi connect,mCurrentPriority: ");
-                    stringBuilder2.append(this.mCurrentPriority);
-                    Log.d(str2, stringBuilder2.toString());
-                }
-                if (!cellIdChanged) {
-                    getCurrentAPInfo();
-                }
-                List<ScanRecord> scanRecords = this.mDataBaseImpl.queryScanRecordsByCellid(this.mCurrentCellId);
-                if (scanRecords != null) {
-                    for (ScanRecord scanRecord : scanRecords) {
-                        if (scanRecord.getCurrentFrequency() == -100) {
-                            this.mPunishedCellId = this.mCurrentCellId;
-                            Log.d(TAG, "handleWifiConnectedMsg, INVALID_FREQ_PUNISHED");
-                            return;
-                        }
+            if (this.mDataBaseImpl != null) {
+                if (currentWifiConfig != null) {
+                    if (HwFrameworkFactory.getHwInnerWifiManager().getHwMeteredHint(this.mContext)) {
+                        Log.d(TAG, "handleWifiConnectedMsg, this is mobile ap,ignore it");
+                        return;
                     }
-                }
-                List<ScanRecord> scanRecordList = this.mDataBaseImpl.queryScanRecordsByBssid(this.mCurrentBSSID);
-                if (scanRecordList == null || scanRecordList.size() <= 0) {
-                    addNewRecord();
-                } else {
-                    boolean isNewChannel = true;
-                    if (((ScanRecord) scanRecordList.get(0)).getCurrentFrequency() == this.mCurrentFrequency) {
-                        isNewChannel = false;
+                    String str2;
+                    StringBuilder stringBuilder2;
+                    if (this.mCurrentCellId == -1) {
+                        this.mCurrentCellId = WifiProCommonUtils.getCurrentCellId();
+                        str2 = TAG;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("handleWifiConnectedMsg, id  = ");
+                        stringBuilder2.append(this.mCurrentCellId);
+                        Log.d(str2, stringBuilder2.toString());
                     }
-                    boolean isNewCellId = true;
                     if (this.mCurrentCellId != -1) {
-                        for (ScanRecord record : scanRecordList) {
-                            if (record.getCellid() == this.mCurrentCellId) {
-                                isNewCellId = false;
+                        if (this.mCurrentCellId != this.mPunishedCellId) {
+                            String str3;
+                            StringBuilder stringBuilder3;
+                            this.mCurrentWifiConfig = currentWifiConfig;
+                            if (this.mCurrentWifiConfig != null) {
+                                this.mCurrentPriority = this.mCurrentWifiConfig.priority;
+                                str2 = TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("wifi connect,mCurrentPriority: ");
+                                stringBuilder2.append(this.mCurrentPriority);
+                                Log.d(str2, stringBuilder2.toString());
+                            }
+                            if (!cellIdChanged) {
+                                getCurrentAPInfo();
+                            }
+                            List<ScanRecord> scanRecords = this.mDataBaseImpl.queryScanRecordsByCellid(this.mCurrentCellId);
+                            if (scanRecords != null) {
+                                for (ScanRecord scanRecord : scanRecords) {
+                                    if (scanRecord.getCurrentFrequency() == -100) {
+                                        this.mPunishedCellId = this.mCurrentCellId;
+                                        Log.d(TAG, "handleWifiConnectedMsg, INVALID_FREQ_PUNISHED");
+                                        return;
+                                    }
+                                }
+                            }
+                            List<ScanRecord> scanRecordList = this.mDataBaseImpl.queryScanRecordsByBssid(this.mCurrentBSSID);
+                            if (scanRecordList == null || scanRecordList.size() <= 0) {
+                                addNewRecord();
+                            } else {
+                                boolean isNewChannel = true;
+                                if (((ScanRecord) scanRecordList.get(0)).getCurrentFrequency() == this.mCurrentFrequency) {
+                                    isNewChannel = false;
+                                }
+                                boolean isNewCellId = true;
+                                if (this.mCurrentCellId != -1) {
+                                    for (ScanRecord record : scanRecordList) {
+                                        if (record.getCellid() == this.mCurrentCellId) {
+                                            isNewCellId = false;
+                                        }
+                                    }
+                                }
+                                if (isNewChannel && !cellIdChanged) {
+                                    str3 = TAG;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("wifi connect, is isNewChannel ,mCurrentFrequency: ");
+                                    stringBuilder3.append(this.mCurrentFrequency);
+                                    Log.d(str3, stringBuilder3.toString());
+                                    this.mDataBaseImpl.updateBssidChannelRecord(this.mCurrentBSSID, this.mCurrentSSID, this.mCurrentFrequency, this.mCurrentPriority);
+                                }
+                                if (isNewCellId && this.mCurrentCellId != -1) {
+                                    Log.d(TAG, "wifi connect, is isNewCellId");
+                                    addNewRecord();
+                                }
+                                if (!(isNewChannel || isNewCellId || cellIdChanged)) {
+                                    Log.d(TAG, "wifi connect, only update ssid , priority ,use time ");
+                                    this.mDataBaseImpl.updateBssidPriorityRecord(this.mCurrentSSID, this.mCurrentPriority);
+                                }
+                            }
+                            if (ScanResult.is24GHz(this.mCurrentFrequency) && this.mCurrentBSSID != null) {
+                                List<ScanResult> scanResults = WifiproUtils.getScanResultsFromWsm();
+                                if (scanResults != null) {
+                                    for (ScanResult scanResult : scanResults) {
+                                        if (this.mCurrentBSSID.equals(scanResult.BSSID) && scanResult.dot11vNetwork) {
+                                            str3 = TAG;
+                                            stringBuilder3 = new StringBuilder();
+                                            stringBuilder3.append("handleWifiConnectedMsg, ssid = ");
+                                            stringBuilder3.append(scanResult.SSID);
+                                            stringBuilder3.append(", freq = ");
+                                            stringBuilder3.append(scanResult.frequency);
+                                            stringBuilder3.append(", 11v = ");
+                                            stringBuilder3.append(scanResult.dot11vNetwork);
+                                            Log.d(str3, stringBuilder3.toString());
+                                            this.m11vSupported = true;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                    if (isNewChannel && !cellIdChanged) {
-                        str3 = TAG;
-                        stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append("wifi connect, is isNewChannel ,mCurrentFrequency: ");
-                        stringBuilder4.append(this.mCurrentFrequency);
-                        Log.d(str3, stringBuilder4.toString());
-                        this.mDataBaseImpl.updateBssidChannelRecord(this.mCurrentBSSID, this.mCurrentSSID, this.mCurrentFrequency, this.mCurrentPriority);
-                    }
-                    if (isNewCellId && this.mCurrentCellId != -1) {
-                        Log.d(TAG, "wifi connect, is isNewCellId");
-                        addNewRecord();
-                    }
-                    if (!(isNewChannel || isNewCellId || cellIdChanged)) {
-                        Log.d(TAG, "wifi connect, only update ssid , priority ,use time ");
-                        this.mDataBaseImpl.updateBssidPriorityRecord(this.mCurrentSSID, this.mCurrentPriority);
-                    }
-                }
-                if (ScanResult.is24GHz(this.mCurrentFrequency) && this.mCurrentBSSID != null) {
-                    List<ScanResult> scanResults = WifiproUtils.getScanResultsFromWsm();
-                    if (scanResults != null) {
-                        for (ScanResult scanResult : scanResults) {
-                            if (this.mCurrentBSSID.equals(scanResult.BSSID) && scanResult.dot11vNetwork) {
-                                str3 = TAG;
-                                stringBuilder4 = new StringBuilder();
-                                stringBuilder4.append("handleWifiConnectedMsg, ssid = ");
-                                stringBuilder4.append(scanResult.SSID);
-                                stringBuilder4.append(", freq = ");
-                                stringBuilder4.append(scanResult.frequency);
-                                stringBuilder4.append(", 11v = ");
-                                stringBuilder4.append(scanResult.dot11vNetwork);
-                                Log.d(str3, stringBuilder4.toString());
-                                this.m11vSupported = true;
-                            }
-                        }
-                    }
+                    str2 = TAG;
+                    StringBuilder stringBuilder4 = new StringBuilder();
+                    stringBuilder4.append("handleWifiConnectedMsg, INVAILD_ID, id  = ");
+                    stringBuilder4.append(this.mCurrentCellId);
+                    Log.d(str2, stringBuilder4.toString());
                 }
             }
         }
@@ -415,10 +414,9 @@ public class WifiScanGenieController {
         }
     }
 
-    private void handleScanResultsAvailable() {
-        if (this.mCurrentBSSID != null && this.mCurrentWifiConfig != null && this.mCurrentSSID != null && !this.mConncetedBackGround) {
+    private void handleScanResultsAvailable(List<ScanResult> scanResults) {
+        if (this.mCurrentBSSID != null && this.mCurrentWifiConfig != null && this.mCurrentSSID != null && !this.mConncetedBackGround && scanResults != null) {
             boolean currentCellIdPunished = false;
-            List<ScanResult> scanResults = this.mWifiManager.getScanResults();
             List<Integer> all5gFreqs = new ArrayList();
             int j = 0;
             for (int i = 0; i < scanResults.size(); i++) {
@@ -533,7 +531,7 @@ public class WifiScanGenieController {
         this.mCurrentWifiConfig = null;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0074, code:
+    /* JADX WARNING: Missing block: B:35:0x008c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -549,9 +547,17 @@ public class WifiScanGenieController {
                     boolean curr5gAvailable = false;
                     if (ScanResult.is5GHz(COMMON_CHANNELS[i])) {
                         for (int j = 0; j < AVAI_5G_SIZE; j++) {
-                            if (COMMON_CHANNELS[i] == Integer.parseInt((String) available5GChannels.get(j))) {
-                                curr5gAvailable = true;
-                                break;
+                            if (!TextUtils.isEmpty((CharSequence) available5GChannels.get(j))) {
+                                int available5GFreq = -1;
+                                try {
+                                    available5GFreq = Integer.parseInt((String) available5GChannels.get(j));
+                                } catch (NumberFormatException e) {
+                                    Log.d(TAG, "NumberFormatException:");
+                                }
+                                if (COMMON_CHANNELS[i] == available5GFreq) {
+                                    curr5gAvailable = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -568,73 +574,93 @@ public class WifiScanGenieController {
         handlerThread.start();
         this.mWifiScanGenieHandler = new Handler(handlerThread.getLooper()) {
             public void handleMessage(Message msg) {
+                boolean needParseScanResults;
                 switch (msg.what) {
                     case 1:
                         Intent confg_intent = msg.obj;
                         WifiConfiguration conn_cfg = (WifiConfiguration) confg_intent.getParcelableExtra("wifiConfiguration");
-                        if (conn_cfg != null && !conn_cfg.isTempCreated && confg_intent.getIntExtra("changeReason", -1) == 1) {
+                        if (!(conn_cfg == null || conn_cfg.isTempCreated || confg_intent.getIntExtra("changeReason", -1) != 1)) {
                             String str = WifiScanGenieController.TAG;
                             StringBuilder stringBuilder = new StringBuilder();
                             stringBuilder.append("user forget ");
                             stringBuilder.append(conn_cfg.SSID);
                             Log.d(str, stringBuilder.toString());
                             WifiScanGenieController.this.mDataBaseImpl.deleteSsidRecord(conn_cfg.SSID);
-                            return;
+                            break;
                         }
-                        return;
                     case 2:
                     case 4:
                         WifiScanGenieController.this.handleWifiConnectedMsg(msg.obj, false);
-                        return;
+                        break;
                     case 3:
+                        needParseScanResults = false;
                         synchronized (WifiScanGenieController.this.mNetworkInfoLock) {
                             if (!(!WifiScanGenieController.this.mConncetedUseSpecifiedChannels || WifiScanGenieController.this.m11vSupported || WifiScanGenieController.this.mCurrentFrequency == -1 || WifiScanGenieController.this.mCurrentCellId == WifiScanGenieController.this.mPunishedCellId || WifiScanGenieController.this.mCurrentCellId == -1 || !ScanResult.is24GHz(WifiScanGenieController.this.mCurrentFrequency))) {
-                                WifiScanGenieController.this.handleScanResultsAvailable();
+                                needParseScanResults = true;
                             }
                         }
-                        return;
+                        if (needParseScanResults) {
+                            List<ScanResult> scanResults = WifiScanGenieController.this.mWifiManager.getScanResults();
+                            synchronized (WifiScanGenieController.this.mNetworkInfoLock) {
+                                WifiScanGenieController.this.handleScanResultsAvailable(scanResults);
+                            }
+                            break;
+                        }
+                        break;
                     case 5:
                         Log.d(WifiScanGenieController.TAG, "MSG_BOOT_COMPLETED");
                         if (WifiScanGenieController.this.mCellIdChangedListener == null) {
                             WifiScanGenieController.this.mCellIdChangedListener = new CellIdChangedListener(WifiScanGenieController.this, null);
                             WifiScanGenieController.this.mTelephonyManager.listen(WifiScanGenieController.this.mCellIdChangedListener, 16);
-                            return;
+                            break;
                         }
-                        return;
+                        break;
                     case 6:
                         Log.d(WifiScanGenieController.TAG, "###MSG_5G_CAPABILITY_QUERY");
-                        boolean is5GHzBandSupported = WifiScanGenieController.this.mWifiManager.is5GHzBandSupported();
+                        needParseScanResults = WifiScanGenieController.this.mWifiManager.is5GHzBandSupported();
                         synchronized (WifiScanGenieController.this.m5GCapabilityLock) {
                             String str2 = WifiScanGenieController.TAG;
                             StringBuilder stringBuilder2 = new StringBuilder();
                             stringBuilder2.append("is5GHzBandSupported = ");
-                            stringBuilder2.append(is5GHzBandSupported);
+                            stringBuilder2.append(needParseScanResults);
                             Log.d(str2, stringBuilder2.toString());
                             int i = 102;
-                            WifiScanGenieController.this.m5GFreqCapability = is5GHzBandSupported ? 101 : 102;
-                            ContentResolver access$1400 = WifiScanGenieController.this.mContentResolver;
+                            WifiScanGenieController.this.m5GFreqCapability = needParseScanResults ? 101 : 102;
+                            ContentResolver access$1800 = WifiScanGenieController.this.mContentResolver;
                             String str3 = WifiScanGenieController.DEV_5G_CAPABILITY_FALG;
-                            if (is5GHzBandSupported) {
+                            if (needParseScanResults) {
                                 i = 101;
                             }
-                            Secure.putInt(access$1400, str3, i);
+                            Secure.putInt(access$1800, str3, i);
                         }
-                        if (is5GHzBandSupported) {
+                        if (needParseScanResults) {
                             List<Integer> availableChannels = WifiInjector.getInstance().getWifiScanner().getAvailableChannels(2);
-                            if (availableChannels != null) {
+                            if (!(availableChannels == null || availableChannels.isEmpty())) {
                                 Secure.putString(WifiScanGenieController.this.mContentResolver, WifiScanGenieController.DEV_5G_AVAILABLE_FREQ_FALG, availableChannels.toString());
                                 WifiScanGenieController.this.parseAvailablePreferredChannels(availableChannels.toString());
-                                return;
+                                break;
                             }
-                            return;
                         }
-                        return;
+                        break;
                     case 7:
                         Log.d(WifiScanGenieController.TAG, "###MSG_INIT_PREFERRED_CHANNELS");
                         WifiScanGenieController.this.parseAvailablePreferredChannels(Secure.getString(WifiScanGenieController.this.mContentResolver, WifiScanGenieController.DEV_5G_AVAILABLE_FREQ_FALG));
-                        return;
-                    default:
-                        return;
+                        break;
+                    case 8:
+                        Log.d(WifiScanGenieController.TAG, "WifiScanGenie handleWiFiDisconnected");
+                        if (WifiScanGenieController.this.mDataBaseImpl != null) {
+                            synchronized (WifiScanGenieController.this.mNetworkInfoLock) {
+                                WifiScanGenieController.this.reSetCurrentAPInfo();
+                                WifiScanGenieController.this.mConncetedUseSpecifiedChannels = false;
+                                WifiScanGenieController.this.mConncetedBackGround = false;
+                                WifiScanGenieController.this.m11vSupported = false;
+                                synchronized (WifiScanGenieController.this.mChannelsLock) {
+                                    WifiScanGenieController.this.mRecentConnectedChannels.clear();
+                                }
+                            }
+                        } else {
+                            return;
+                        }
                 }
             }
         };

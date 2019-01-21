@@ -451,9 +451,9 @@ class LongArray implements Cloneable {
     }
 
     private long[] resizedInts(int i) {
-        Object obj = new long[i];
-        System.arraycopy(this.m_ints, 0, obj, 0, Math.min(this.m_ints.length, i));
-        return obj;
+        long[] jArr = new long[i];
+        System.arraycopy(this.m_ints, 0, jArr, 0, Math.min(this.m_ints.length, i));
+        return jArr;
     }
 
     private static long shiftUp(long[] jArr, int i, int i2, int i3) {
@@ -707,32 +707,32 @@ class LongArray implements Cloneable {
             multiplyWord(j, longArray2.m_ints, i5, jArr, 0);
             return reduceResult(jArr, 0, degree, i2, iArr2);
         }
-        Object obj;
+        long[] jArr2;
         degree2 = ((degree2 + 7) + 63) >>> 6;
         int[] iArr3 = new int[16];
-        Object obj2 = new long[(degree2 << 4)];
+        long[] jArr3 = new long[(degree2 << 4)];
         iArr3[1] = degree2;
-        System.arraycopy(longArray2.m_ints, 0, obj2, degree2, i5);
+        System.arraycopy(longArray2.m_ints, 0, jArr3, degree2, i5);
         int i6 = 2;
         int i7 = degree2;
         while (i6 < 16) {
             i7 += degree2;
             iArr3[i6] = i7;
             if ((i6 & 1) == 0) {
-                obj = obj2;
-                shiftUp(obj2, i7 >>> 1, obj2, i7, degree2, 1);
+                jArr2 = jArr3;
+                shiftUp(jArr3, i7 >>> 1, jArr3, i7, degree2, 1);
             } else {
-                obj = obj2;
-                add(obj, degree2, obj, i7 - degree2, obj, i7, degree2);
+                jArr2 = jArr3;
+                add(jArr2, degree2, jArr2, i7 - degree2, jArr2, i7, degree2);
             }
             i6++;
-            obj2 = obj;
+            jArr3 = jArr2;
         }
-        obj = obj2;
-        long[] jArr2 = new long[obj.length];
-        shiftUp(obj, 0, jArr2, 0, obj.length, 4);
+        jArr2 = jArr3;
+        long[] jArr4 = new long[jArr2.length];
+        shiftUp(jArr2, 0, jArr4, 0, jArr2.length, 4);
         jArr = longArray3.m_ints;
-        long[] jArr3 = new long[(degree << 3)];
+        long[] jArr5 = new long[(degree << 3)];
         for (int i8 = 0; i8 < i4; i8++) {
             long j2 = jArr[i8];
             int i9 = i8;
@@ -740,7 +740,7 @@ class LongArray implements Cloneable {
                 j2 >>>= 4;
                 int i10 = ((int) j2) & 15;
                 long j3 = j2;
-                addBoth(jArr3, i9, obj, iArr3[((int) j2) & 15], jArr2, iArr3[i10], degree2);
+                addBoth(jArr5, i9, jArr2, iArr3[((int) j2) & 15], jArr4, iArr3[i10], degree2);
                 j2 = j3 >>> 4;
                 if (j2 == 0) {
                     break;
@@ -748,13 +748,13 @@ class LongArray implements Cloneable {
                 i9 += degree;
             }
         }
-        int length = jArr3.length;
+        int length = jArr5.length;
         while (true) {
             length -= degree;
             if (length == 0) {
-                return reduceResult(jArr3, 0, degree, i2, iArr2);
+                return reduceResult(jArr5, 0, degree, i2, iArr2);
             }
-            addShiftedUp(jArr3, length - degree, jArr3, length, degree, 8);
+            addShiftedUp(jArr5, length - degree, jArr5, length, degree, 8);
         }
     }
 
@@ -908,30 +908,30 @@ class LongArray implements Cloneable {
         int i9;
         degree2 = ((degree2 + 7) + 63) >>> 6;
         int[] iArr3 = new int[16];
-        Object obj = new long[(degree2 << 4)];
+        long[] jArr2 = new long[(degree2 << 4)];
         iArr3[1] = degree2;
-        System.arraycopy(longArray2.m_ints, 0, obj, degree2, i5);
+        System.arraycopy(longArray2.m_ints, 0, jArr2, degree2, i5);
         int i10 = 2;
         i5 = degree2;
         while (i10 < 16) {
-            Object obj2;
+            long[] jArr3;
             i5 += degree2;
             iArr3[i10] = i5;
             if ((i10 & 1) == 0) {
-                obj2 = obj;
-                shiftUp(obj, i5 >>> 1, obj, i5, degree2, 1);
+                jArr3 = jArr2;
+                shiftUp(jArr2, i5 >>> 1, jArr2, i5, degree2, 1);
             } else {
-                obj2 = obj;
-                add(obj2, degree2, obj2, i5 - degree2, obj2, i5, degree2);
+                jArr3 = jArr2;
+                add(jArr3, degree2, jArr3, i5 - degree2, jArr3, i5, degree2);
             }
             i10++;
-            obj = obj2;
+            jArr2 = jArr3;
         }
-        Object obj3 = obj;
-        long[] jArr2 = new long[obj3.length];
-        shiftUp(obj3, 0, jArr2, 0, obj3.length, 4);
+        long[] jArr4 = jArr2;
+        long[] jArr5 = new long[jArr4.length];
+        shiftUp(jArr4, 0, jArr5, 0, jArr4.length, 4);
         jArr = longArray3.m_ints;
-        long[] jArr3 = new long[degree];
+        long[] jArr6 = new long[degree];
         int i11 = 56;
         int i12 = 56;
         while (true) {
@@ -946,11 +946,11 @@ class LongArray implements Cloneable {
                 i8 = (i8 >>> 4) & 15;
                 int i14 = i13;
                 i6 = i7;
-                addBoth(jArr3, i13 - 1, obj3, iArr3[i9], jArr2, iArr3[i8], degree2);
+                addBoth(jArr6, i13 - 1, jArr4, iArr3[i9], jArr5, iArr3[i8], degree2);
                 i13 = i14 + 2;
                 i7 = i6;
             }
-            shiftUp(jArr3, 0, degree, i7);
+            shiftUp(jArr6, 0, degree, i7);
             i12 -= 8;
             i6 = 1;
         }
@@ -962,15 +962,15 @@ class LongArray implements Cloneable {
                 i9 = i8 & 15;
                 i8 = (i8 >>> 4) & 15;
                 i12 = i7;
-                addBoth(jArr3, i7, obj3, iArr3[i9], jArr2, iArr3[i8], degree2);
+                addBoth(jArr6, i7, jArr4, iArr3[i9], jArr5, iArr3[i8], degree2);
                 i7 = i12 + 2;
             }
             if (i11 > 0) {
-                shiftUp(jArr3, 0, degree, i6);
+                shiftUp(jArr6, 0, degree, i6);
             }
             i11 -= 8;
         }
-        return reduceResult(jArr3, 0, degree, i2, iArr2);
+        return reduceResult(jArr6, 0, degree, i2, iArr2);
     }
 
     public LongArray modReduce(int i, int[] iArr) {
@@ -1001,15 +1001,15 @@ class LongArray implements Cloneable {
         if (usedLength == 0) {
             return this;
         }
-        Object obj = new long[(((i2 + 63) >>> 6) << 1)];
-        System.arraycopy(this.m_ints, 0, obj, 0, usedLength);
+        long[] jArr = new long[(((i2 + 63) >>> 6) << 1)];
+        System.arraycopy(this.m_ints, 0, jArr, 0, usedLength);
         while (true) {
             i--;
             if (i < 0) {
-                return new LongArray(obj, 0, usedLength);
+                return new LongArray(jArr, 0, usedLength);
             }
-            squareInPlace(obj, usedLength, i2, iArr);
-            usedLength = reduceInPlace(obj, 0, obj.length, i2, iArr);
+            squareInPlace(jArr, usedLength, i2, iArr);
+            usedLength = reduceInPlace(jArr, 0, jArr.length, i2, iArr);
         }
     }
 
@@ -1049,30 +1049,30 @@ class LongArray implements Cloneable {
         }
         degree2 = ((degree2 + 7) + 63) >>> 6;
         int[] iArr2 = new int[16];
-        Object obj = new long[(degree2 << 4)];
+        long[] jArr2 = new long[(degree2 << 4)];
         iArr2[1] = degree2;
-        System.arraycopy(longArray2.m_ints, 0, obj, degree2, i4);
+        System.arraycopy(longArray2.m_ints, 0, jArr2, degree2, i4);
         int i5 = 2;
         int i6 = degree2;
         while (i5 < 16) {
-            Object obj2;
+            long[] jArr3;
             i6 += degree2;
             iArr2[i5] = i6;
             if ((i5 & 1) == 0) {
-                obj2 = obj;
-                shiftUp(obj, i6 >>> 1, obj, i6, degree2, 1);
+                jArr3 = jArr2;
+                shiftUp(jArr2, i6 >>> 1, jArr2, i6, degree2, 1);
             } else {
-                obj2 = obj;
-                add(obj2, degree2, obj2, i6 - degree2, obj2, i6, degree2);
+                jArr3 = jArr2;
+                add(jArr3, degree2, jArr3, i6 - degree2, jArr3, i6, degree2);
             }
             i5++;
-            obj = obj2;
+            jArr2 = jArr3;
         }
-        Object obj3 = obj;
-        long[] jArr2 = new long[obj3.length];
-        shiftUp(obj3, 0, jArr2, 0, obj3.length, 4);
+        long[] jArr4 = jArr2;
+        long[] jArr5 = new long[jArr4.length];
+        shiftUp(jArr4, 0, jArr5, 0, jArr4.length, 4);
         jArr = longArray3.m_ints;
-        long[] jArr3 = new long[(degree << 3)];
+        long[] jArr6 = new long[(degree << 3)];
         for (i4 = 0; i4 < i3; i4++) {
             long j2 = jArr[i4];
             int i7 = i4;
@@ -1080,7 +1080,7 @@ class LongArray implements Cloneable {
                 long j3 = j2 >>> 4;
                 int i8 = ((int) j3) & 15;
                 long j4 = j3;
-                addBoth(jArr3, i7, obj3, iArr2[((int) j2) & 15], jArr2, iArr2[i8], degree2);
+                addBoth(jArr6, i7, jArr4, iArr2[((int) j2) & 15], jArr5, iArr2[i8], degree2);
                 j2 = j4 >>> 4;
                 if (j2 == 0) {
                     break;
@@ -1088,22 +1088,22 @@ class LongArray implements Cloneable {
                 i7 += degree;
             }
         }
-        int length = jArr3.length;
+        int length = jArr6.length;
         while (true) {
             length -= degree;
             if (length == 0) {
-                return new LongArray(jArr3, 0, degree);
+                return new LongArray(jArr6, 0, degree);
             }
-            addShiftedUp(jArr3, length - degree, jArr3, length, degree, 8);
+            addShiftedUp(jArr6, length - degree, jArr6, length, degree, 8);
         }
     }
 
     public void reduce(int i, int[] iArr) {
-        Object obj = this.m_ints;
-        i = reduceInPlace(obj, 0, obj.length, i, iArr);
-        if (i < obj.length) {
+        long[] jArr = this.m_ints;
+        i = reduceInPlace(jArr, 0, jArr.length, i, iArr);
+        if (i < jArr.length) {
             this.m_ints = new long[i];
-            System.arraycopy(obj, 0, this.m_ints, 0, i);
+            System.arraycopy(jArr, 0, this.m_ints, 0, i);
         }
     }
 

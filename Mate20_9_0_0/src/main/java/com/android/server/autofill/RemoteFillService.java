@@ -80,7 +80,7 @@ final class RemoteFillService implements DeathRecipient {
             this.mServiceHandler.postAtTime(this.mTimeoutTrigger, SystemClock.uptimeMillis() + 5000);
         }
 
-        /* JADX WARNING: Missing block: B:9:0x000d, code:
+        /* JADX WARNING: Missing block: B:9:0x000d, code skipped:
             r0 = com.android.server.autofill.RemoteFillService.LOG_TAG;
             r1 = new java.lang.StringBuilder();
             r1.append(r5.getClass().getSimpleName());
@@ -88,10 +88,10 @@ final class RemoteFillService implements DeathRecipient {
             android.util.Slog.w(r0, r1.toString());
             r0 = (com.android.server.autofill.RemoteFillService) r5.mWeakService.get();
      */
-        /* JADX WARNING: Missing block: B:10:0x0033, code:
+        /* JADX WARNING: Missing block: B:10:0x0033, code skipped:
             if (r0 == null) goto L_0x0060;
      */
-        /* JADX WARNING: Missing block: B:11:0x0035, code:
+        /* JADX WARNING: Missing block: B:11:0x0035, code skipped:
             r1 = com.android.server.autofill.RemoteFillService.LOG_TAG;
             r2 = new java.lang.StringBuilder();
             r2.append(r5.getClass().getSimpleName());
@@ -101,7 +101,7 @@ final class RemoteFillService implements DeathRecipient {
             android.util.Slog.w(r1, r2.toString());
             r5.onTimeout(r0);
      */
-        /* JADX WARNING: Missing block: B:12:0x0060, code:
+        /* JADX WARNING: Missing block: B:12:0x0060, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -120,12 +120,14 @@ final class RemoteFillService implements DeathRecipient {
 
         protected final boolean finish() {
             synchronized (this.mLock) {
-                if (this.mCompleted || this.mCancelled) {
-                    return false;
+                if (!this.mCompleted) {
+                    if (!this.mCancelled) {
+                        this.mCompleted = true;
+                        this.mServiceHandler.removeCallbacks(this.mTimeoutTrigger);
+                        return true;
+                    }
                 }
-                this.mCompleted = true;
-                this.mServiceHandler.removeCallbacks(this.mTimeoutTrigger);
-                return true;
+                return false;
             }
         }
 
@@ -136,12 +138,14 @@ final class RemoteFillService implements DeathRecipient {
 
         boolean cancel() {
             synchronized (this.mLock) {
-                if (this.mCancelled || this.mCompleted) {
-                    return false;
+                if (!this.mCancelled) {
+                    if (!this.mCompleted) {
+                        this.mCancelled = true;
+                        this.mServiceHandler.removeCallbacks(this.mTimeoutTrigger);
+                        return true;
+                    }
                 }
-                this.mCancelled = true;
-                this.mServiceHandler.removeCallbacks(this.mTimeoutTrigger);
-                return true;
+                return false;
             }
         }
 
@@ -246,28 +250,28 @@ final class RemoteFillService implements DeathRecipient {
             remoteService.dispatchOnFillRequestTimeout(this);
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0027, code:
+        /* JADX WARNING: Missing block: B:9:0x0027, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:11:0x0029, code:
+        /* JADX WARNING: Missing block: B:11:0x0029, code skipped:
             r0 = getService();
      */
-        /* JADX WARNING: Missing block: B:12:0x002d, code:
+        /* JADX WARNING: Missing block: B:12:0x002d, code skipped:
             if (r0 == null) goto L_0x0058;
      */
-        /* JADX WARNING: Missing block: B:14:0x0033, code:
+        /* JADX WARNING: Missing block: B:14:0x0033, code skipped:
             if (com.android.server.autofill.RemoteFillService.access$400(r0) == null) goto L_0x0058;
      */
-        /* JADX WARNING: Missing block: B:16:?, code:
+        /* JADX WARNING: Missing block: B:16:?, code skipped:
             com.android.server.autofill.RemoteFillService.access$400(r0).onFillRequest(r4.mRequest, r4.mCallback);
      */
-        /* JADX WARNING: Missing block: B:18:0x0042, code:
+        /* JADX WARNING: Missing block: B:18:0x0042, code skipped:
             android.util.Slog.e(com.android.server.autofill.RemoteFillService.LOG_TAG, "onFillRequest has Exception : IndexOutOfBoundsException");
      */
-        /* JADX WARNING: Missing block: B:19:0x004b, code:
+        /* JADX WARNING: Missing block: B:19:0x004b, code skipped:
             r1 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:20:0x004c, code:
+        /* JADX WARNING: Missing block: B:20:0x004c, code skipped:
             android.util.Slog.e(com.android.server.autofill.RemoteFillService.LOG_TAG, "Error calling on fill request", r1);
             com.android.server.autofill.RemoteFillService.access$1200(r0, r4, null);
      */

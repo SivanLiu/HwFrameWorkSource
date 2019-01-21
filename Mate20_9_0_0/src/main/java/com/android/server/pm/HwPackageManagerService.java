@@ -112,6 +112,7 @@ import huawei.cust.HwCfgFilePolicy;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -393,7 +394,7 @@ public class HwPackageManagerService extends PackageManagerService {
     }
 
     public static synchronized PackageManagerService getInstance(Context context, Installer installer, boolean factoryTest, boolean onlyCore) {
-        PackageManagerService packageManagerService;
+        HwPackageManagerService hwPackageManagerService;
         synchronized (HwPackageManagerService.class) {
             if (mHwPackageManagerService == null) {
                 initCustStoppedApps();
@@ -430,9 +431,9 @@ public class HwPackageManagerService extends PackageManagerService {
                     Slog.e(str, stringBuilder.toString());
                 }
             }
-            packageManagerService = mHwPackageManagerService;
+            hwPackageManagerService = mHwPackageManagerService;
         }
-        return packageManagerService;
+        return hwPackageManagerService;
     }
 
     public HwPackageManagerService(Context context, Installer installer, boolean factoryTest, boolean onlyCore) {
@@ -472,10 +473,8 @@ public class HwPackageManagerService extends PackageManagerService {
             String pkgNameList = Secure.getString(this.mContext.getContentResolver(), "privacy_app_list");
             if (pkgNameList == null) {
                 Slog.e(TAG, " pkgNameList = null ");
-                return;
             } else if (pkgNameList.equals("")) {
                 Slog.e(TAG, " pkgNameList is null");
-                return;
             } else {
                 PackageSetting pkgSetting;
                 int packageUid2;
@@ -553,6 +552,10 @@ public class HwPackageManagerService extends PackageManagerService {
                                                     pkgSetting = pkgSetting2;
                                                     pkgSetting2 = callingPackage3;
                                                     components2 = components3;
+                                                    while (true) {
+                                                        break;
+                                                    }
+                                                    throw th;
                                                 }
                                             }
                                             if (!components3.contains(componentName)) {
@@ -610,6 +613,10 @@ public class HwPackageManagerService extends PackageManagerService {
                                                     pkgSetting = pkgSetting2;
                                                     pkgSetting2 = callingPackage3;
                                                     components2 = components3;
+                                                    while (true) {
+                                                        break;
+                                                    }
+                                                    throw th;
                                                 }
                                             }
                                         } catch (Throwable th8) {
@@ -618,12 +625,20 @@ public class HwPackageManagerService extends PackageManagerService {
                                             str4 = componentName;
                                             pkgSetting = pkgSetting2;
                                             pkgSetting2 = callingPackage3;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
                                         }
                                     }
                                 } catch (Throwable th9) {
                                     th = th9;
                                     str3 = packageName;
                                     str4 = componentName;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
                                 }
                                 str3 = packageName;
                                 str4 = componentName;
@@ -643,6 +658,10 @@ public class HwPackageManagerService extends PackageManagerService {
                                 str4 = componentName;
                                 str = callingPackage2;
                                 arrayList = components2;
+                                while (true) {
+                                    break;
+                                }
+                                throw th;
                             }
                         }
                     }
@@ -666,19 +685,13 @@ public class HwPackageManagerService extends PackageManagerService {
                     }
                     i3++;
                 }
-                return;
             }
         }
-        return;
-        while (true) {
-            break;
-        }
-        throw th;
     }
 
     public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
         boolean setwallpaper = false;
-        Bundle bundle = null;
+        FileDescriptor fileDescriptor = null;
         int userId;
         List<String> list;
         switch (code) {
@@ -727,9 +740,9 @@ public class HwPackageManagerService extends PackageManagerService {
                 String action = data.readString();
                 String pkg = data.readString();
                 if (data.readInt() != 0) {
-                    bundle = (Bundle) Bundle.CREATOR.createFromParcel(data);
+                    fileDescriptor = (Bundle) Bundle.CREATOR.createFromParcel(data);
                 }
-                Bundle extras = bundle;
+                FileDescriptor extras = fileDescriptor;
                 sendLimitedPackageBroadcast(action, pkg, extras, data.readString(), data.createIntArray());
                 reply.writeNoException();
                 return true;
@@ -1335,7 +1348,7 @@ public class HwPackageManagerService extends PackageManagerService {
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("!mIsDefaultPreferredActivityChanged= ");
-        stringBuilder.append(this.mIsDefaultPreferredActivityChanged ^ true);
+        stringBuilder.append(this.mIsDefaultPreferredActivityChanged ^ 1);
         stringBuilder.append(" ,mIsDefaultGoogleCalendar= ");
         stringBuilder.append(this.mIsDefaultGoogleCalendar);
         Log.i(str, stringBuilder.toString());
@@ -1489,7 +1502,7 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:37:?, code:
+    /* JADX WARNING: Missing block: B:37:?, code skipped:
             r2.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1824,10 +1837,10 @@ public class HwPackageManagerService extends PackageManagerService {
         loadUninstalledDelapp(file, true);
     }
 
-    /* JADX WARNING: Missing block: B:43:?, code:
+    /* JADX WARNING: Missing block: B:43:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:87:?, code:
+    /* JADX WARNING: Missing block: B:87:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2054,7 +2067,7 @@ public class HwPackageManagerService extends PackageManagerService {
         return new File[]{systemPrivAppDir, systemAppDir};
     }
 
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             r0.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2357,17 +2370,22 @@ public class HwPackageManagerService extends PackageManagerService {
                 if (this.mAvailableFeatures.containsKey("android.hardware.nfc.hcef")) {
                     this.mAvailableFeatures.remove("android.hardware.nfc.hcef");
                 }
-                if (mUninstallApk == null || "".equals(mUninstallApk)) {
-                    mUninstallApk = "/system/app/NfcNci_45.apk;/system/app/HwNfcTag.apk";
-                } else if (!mUninstallApk.contains("/system/app/NfcNci_45.apk")) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append(mUninstallApk);
-                    stringBuilder.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
-                    stringBuilder.append("/system/app/NfcNci_45.apk");
-                    stringBuilder.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
-                    stringBuilder.append("/system/app/HwNfcTag.apk");
-                    mUninstallApk = stringBuilder.toString();
+                if (mUninstallApk != null) {
+                    if (!"".equals(mUninstallApk)) {
+                        if (!mUninstallApk.contains("/system/app/NfcNci_45.apk")) {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(mUninstallApk);
+                            stringBuilder.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
+                            stringBuilder.append("/system/app/NfcNci_45.apk");
+                            stringBuilder.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
+                            stringBuilder.append("/system/app/HwNfcTag.apk");
+                            mUninstallApk = stringBuilder.toString();
+                            return;
+                        }
+                        return;
+                    }
                 }
+                mUninstallApk = "/system/app/NfcNci_45.apk;/system/app/HwNfcTag.apk";
             }
         } catch (Exception e2) {
         }
@@ -3244,8 +3262,8 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:19:0x0048 A:{SYNTHETIC, Splitter: B:19:0x0048} */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x0039  */
+    /* JADX WARNING: Removed duplicated region for block: B:23:0x0048 A:{SYNTHETIC, Splitter:B:23:0x0048} */
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0039  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static void loadMultiWinWhiteList(Context aContext) {
         File configFile = getCustomizedFileName(FILE_MULTIWINDOW_WHITELIST, 0);
@@ -3259,7 +3277,7 @@ public class HwPackageManagerService extends PackageManagerService {
                         if (inputStream != null) {
                             try {
                                 inputStream.close();
-                            } catch (FileNotFoundException e) {
+                            } catch (IOException e) {
                                 Slog.e(TAG, "loadMultiWinWhiteList:- IOE while closing stream", e);
                             }
                         }
@@ -3323,7 +3341,7 @@ public class HwPackageManagerService extends PackageManagerService {
                     if (inputStream != null) {
                         try {
                             inputStream.close();
-                        } catch (FileNotFoundException e2) {
+                        } catch (IOException e2) {
                             Slog.e(TAG, "loadMultiWinWhiteList:- IOE while closing stream", e2);
                         }
                     }
@@ -3334,12 +3352,12 @@ public class HwPackageManagerService extends PackageManagerService {
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (FileNotFoundException e222) {
+            } catch (XmlPullParserException e222) {
                 Log.e(TAG, "loadMultiWinWhiteList", e222);
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (FileNotFoundException e2222) {
+            } catch (IOException e2222) {
                 Log.e(TAG, "loadMultiWinWhiteList", e2222);
                 if (inputStream != null) {
                     inputStream.close();
@@ -3360,7 +3378,7 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001b, code:
+    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3371,7 +3389,7 @@ public class HwPackageManagerService extends PackageManagerService {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001b, code:
+    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3463,10 +3481,14 @@ public class HwPackageManagerService extends PackageManagerService {
     }
 
     private boolean isParentControlEnabled() {
-        if (Secure.getInt(this.mContext.getContentResolver(), "childmode_status", 0) == 0 || getPackageInfo("com.huawei.parentcontrol", 0, 0) == null) {
+        if (Secure.getInt(this.mContext.getContentResolver(), "childmode_status", 0) == 0 || getPackageInfo("com.huawei.parentcontrol", 0, 0) == null || !isChinaArea()) {
             return false;
         }
         return true;
+    }
+
+    private boolean isChinaArea() {
+        return SystemProperties.get("ro.config.hw_optb", "0").equals("156");
     }
 
     private boolean isInstallerValidForParentControl(String installer) {
@@ -3503,7 +3525,12 @@ public class HwPackageManagerService extends PackageManagerService {
         this.isBlackListExist = z;
         if (this.isBlackListExist) {
             synchronized (this.mPackages) {
-                z = hasOtaUpdate() || BlackListAppsUtils.isBlackListUpdate(this.mBlackListInfo, this.mDisableAppListInfo) || !validateDisabledAppFile();
+                if (!(hasOtaUpdate() || BlackListAppsUtils.isBlackListUpdate(this.mBlackListInfo, this.mDisableAppListInfo))) {
+                    if (validateDisabledAppFile()) {
+                        z = false;
+                    }
+                }
+                z = true;
             }
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();
@@ -3687,7 +3714,7 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x0072, code:
+    /* JADX WARNING: Missing block: B:33:0x0072, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3706,28 +3733,34 @@ public class HwPackageManagerService extends PackageManagerService {
                         Slog.e(str, stringBuilder.toString());
                         return;
                     }
-                    Package pkg = pkgSetting.pkg;
                     String str2;
                     StringBuilder stringBuilder2;
-                    if (pkg == null || !pkg.hasComponentClassName(className)) {
-                        str2 = TAG;
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("Failed setComponentEnabledSetting: component class ");
-                        stringBuilder2.append(className);
-                        stringBuilder2.append(" does not exist in ");
-                        stringBuilder2.append(packageName);
-                        Slog.w(str2, stringBuilder2.toString());
-                    } else if (newState != 0) {
-                        if (newState != 2) {
-                            str2 = TAG;
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("Invalid new component state: ");
-                            stringBuilder2.append(newState);
-                            Slog.e(str2, stringBuilder2.toString());
-                        } else if (!pkgSetting.disableComponentLPw(className, userId)) {
+                    Package pkg = pkgSetting.pkg;
+                    if (pkg != null) {
+                        if (pkg.hasComponentClassName(className)) {
+                            if (newState != 0) {
+                                if (newState != 2) {
+                                    str2 = TAG;
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("Invalid new component state: ");
+                                    stringBuilder2.append(newState);
+                                    Slog.e(str2, stringBuilder2.toString());
+                                    return;
+                                } else if (!pkgSetting.disableComponentLPw(className, userId)) {
+                                    return;
+                                }
+                            } else if (!pkgSetting.restoreComponentLPw(className, userId)) {
+                                return;
+                            }
                         }
-                    } else if (!pkgSetting.restoreComponentLPw(className, userId)) {
                     }
+                    str2 = TAG;
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Failed setComponentEnabledSetting: component class ");
+                    stringBuilder2.append(className);
+                    stringBuilder2.append(" does not exist in ");
+                    stringBuilder2.append(packageName);
+                    Slog.w(str2, stringBuilder2.toString());
                 }
             }
         }
@@ -4045,26 +4078,26 @@ public class HwPackageManagerService extends PackageManagerService {
         return SCAN_INSTALL_CALLER_PACKAGES.contains(getNameForUid(callingUid));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:86:0x0210 A:{SYNTHETIC} */
-    /* JADX WARNING: Missing block: B:28:0x0092, code:
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0210 A:{SYNTHETIC} */
+    /* JADX WARNING: Missing block: B:28:0x0092, code skipped:
             r15 = false;
      */
-    /* JADX WARNING: Missing block: B:30:?, code:
+    /* JADX WARNING: Missing block: B:30:?, code skipped:
             r8 = r9.mSettings.getPackageLPr(r14);
      */
-    /* JADX WARNING: Missing block: B:31:0x009a, code:
+    /* JADX WARNING: Missing block: B:31:0x009a, code skipped:
             if (r8 == null) goto L_0x0187;
      */
-    /* JADX WARNING: Missing block: B:33:0x00a6, code:
+    /* JADX WARNING: Missing block: B:33:0x00a6, code skipped:
             if (r8.isAnyInstalled(sUserManager.getUserIds()) == false) goto L_0x0187;
      */
-    /* JADX WARNING: Missing block: B:35:0x00ae, code:
+    /* JADX WARNING: Missing block: B:35:0x00ae, code skipped:
             if (r10.equals(r8.codePathString) != false) goto L_0x00d5;
      */
-    /* JADX WARNING: Missing block: B:36:0x00b0, code:
+    /* JADX WARNING: Missing block: B:36:0x00b0, code skipped:
             if (r21 == null) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:37:0x00b3, code:
+    /* JADX WARNING: Missing block: B:38:0x00b3, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("Scan install ,");
@@ -4073,29 +4106,29 @@ public class HwPackageManagerService extends PackageManagerService {
             r1.append(r8.codePathString);
             android.util.Slog.w(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:39:0x00d6, code:
+    /* JADX WARNING: Missing block: B:40:0x00d6, code skipped:
             if (r11 != -1) goto L_0x00e3;
      */
-    /* JADX WARNING: Missing block: B:40:0x00d8, code:
+    /* JADX WARNING: Missing block: B:41:0x00d8, code skipped:
             r0 = r8.queryInstalledUsers(sUserManager.getUserIds(), false);
      */
-    /* JADX WARNING: Missing block: B:41:0x00e3, code:
+    /* JADX WARNING: Missing block: B:42:0x00e3, code skipped:
             r0 = new int[]{r11};
      */
-    /* JADX WARNING: Missing block: B:42:0x00e7, code:
+    /* JADX WARNING: Missing block: B:43:0x00e7, code skipped:
             r2 = 1;
             r1 = 0;
      */
-    /* JADX WARNING: Missing block: B:44:0x00eb, code:
+    /* JADX WARNING: Missing block: B:45:0x00eb, code skipped:
             if (r1 >= r0.length) goto L_0x0148;
      */
-    /* JADX WARNING: Missing block: B:46:0x00ef, code:
+    /* JADX WARNING: Missing block: B:47:0x00ef, code skipped:
             if (r0[r1] == 0) goto L_0x011b;
      */
-    /* JADX WARNING: Missing block: B:48:0x00fb, code:
+    /* JADX WARNING: Missing block: B:49:0x00fb, code skipped:
             if (getUserManagerInternal().isClonedProfile(r0[r1]) == false) goto L_0x011b;
      */
-    /* JADX WARNING: Missing block: B:49:0x00fd, code:
+    /* JADX WARNING: Missing block: B:50:0x00fd, code skipped:
             r3 = TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("Scan install, skipping cloned user ");
@@ -4103,13 +4136,13 @@ public class HwPackageManagerService extends PackageManagerService {
             r4.append("!");
             android.util.Slog.d(r3, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:50:0x011b, code:
+    /* JADX WARNING: Missing block: B:51:0x011b, code skipped:
             r2 = installExistingPackageAsUserInternal(r14, r0[r1], 0, 0);
      */
-    /* JADX WARNING: Missing block: B:51:0x0122, code:
+    /* JADX WARNING: Missing block: B:52:0x0122, code skipped:
             if (1 == r2) goto L_0x0145;
      */
-    /* JADX WARNING: Missing block: B:52:0x0124, code:
+    /* JADX WARNING: Missing block: B:53:0x0124, code skipped:
             r3 = TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("Scan install failed for user ");
@@ -4118,34 +4151,34 @@ public class HwPackageManagerService extends PackageManagerService {
             r4.append(r10);
             android.util.Slog.w(r3, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:53:0x0145, code:
+    /* JADX WARNING: Missing block: B:54:0x0145, code skipped:
             r1 = r1 + 1;
      */
-    /* JADX WARNING: Missing block: B:54:0x0148, code:
+    /* JADX WARNING: Missing block: B:55:0x0148, code skipped:
             if (1 != r2) goto L_0x014b;
      */
-    /* JADX WARNING: Missing block: B:55:0x014b, code:
+    /* JADX WARNING: Missing block: B:57:0x014b, code skipped:
             r13 = false;
      */
-    /* JADX WARNING: Missing block: B:56:0x014c, code:
+    /* JADX WARNING: Missing block: B:58:0x014c, code skipped:
             r15 = r13;
      */
-    /* JADX WARNING: Missing block: B:57:0x014d, code:
+    /* JADX WARNING: Missing block: B:59:0x014d, code skipped:
             if (r15 == false) goto L_0x0167;
      */
-    /* JADX WARNING: Missing block: B:58:0x014f, code:
+    /* JADX WARNING: Missing block: B:60:0x014f, code skipped:
             r1 = r9.mSettings.getPackageLPr(r14);
      */
-    /* JADX WARNING: Missing block: B:59:0x0155, code:
+    /* JADX WARNING: Missing block: B:61:0x0155, code skipped:
             if (r1 == null) goto L_0x0167;
      */
-    /* JADX WARNING: Missing block: B:61:0x0162, code:
+    /* JADX WARNING: Missing block: B:63:0x0162, code skipped:
             if (r1.queryInstalledUsers(sUserManager.getUserIds(), false).length != 0) goto L_0x0167;
      */
-    /* JADX WARNING: Missing block: B:62:0x0164, code:
+    /* JADX WARNING: Missing block: B:64:0x0164, code skipped:
             removeFromUninstalledDelapp(r14);
      */
-    /* JADX WARNING: Missing block: B:63:0x0167, code:
+    /* JADX WARNING: Missing block: B:65:0x0167, code skipped:
             r1 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Scan install , installExistingPackageAsUser:");
@@ -4154,34 +4187,34 @@ public class HwPackageManagerService extends PackageManagerService {
             r3.append(r15);
             android.util.Slog.d(r1, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:64:0x0187, code:
+    /* JADX WARNING: Missing block: B:66:0x0187, code skipped:
             r2 = new java.io.File(r10);
             r0 = 139792;
             r1 = 16;
      */
-    /* JADX WARNING: Missing block: B:65:0x0195, code:
+    /* JADX WARNING: Missing block: B:67:0x0195, code skipped:
             if (isNoSystemPreApp(r10) == false) goto L_0x01a1;
      */
-    /* JADX WARNING: Missing block: B:66:0x0197, code:
+    /* JADX WARNING: Missing block: B:68:0x0197, code skipped:
             r1 = 0;
             r0 = 139792 & -131073;
      */
-    /* JADX WARNING: Missing block: B:69:0x01a5, code:
+    /* JADX WARNING: Missing block: B:71:0x01a5, code skipped:
             if (isPrivilegedPreApp(r10) == false) goto L_0x019c;
      */
-    /* JADX WARNING: Missing block: B:70:0x01a7, code:
+    /* JADX WARNING: Missing block: B:72:0x01a7, code skipped:
             r0 = 139792 | vendor.huawei.hardware.hwdisplay.displayengine.V1_0.HighBitsDetailModeID.MODE_FOLIAGE;
      */
-    /* JADX WARNING: Missing block: B:73:0x01ba, code:
+    /* JADX WARNING: Missing block: B:75:0x01ba, code skipped:
             r19 = r8;
      */
-    /* JADX WARNING: Missing block: B:76:0x01c9, code:
+    /* JADX WARNING: Missing block: B:78:0x01c9, code skipped:
             if (scanPackageLI(r2, r1, r0, 0, new android.os.UserHandle(android.os.UserHandle.getUserId(android.os.Binder.getCallingUid())), 1107296256) == null) goto L_0x01cd;
      */
-    /* JADX WARNING: Missing block: B:77:0x01cb, code:
+    /* JADX WARNING: Missing block: B:79:0x01cb, code skipped:
             r12 = true;
      */
-    /* JADX WARNING: Missing block: B:78:0x01cd, code:
+    /* JADX WARNING: Missing block: B:80:0x01cd, code skipped:
             r15 = r12;
             r3 = TAG;
             r4 = new java.lang.StringBuilder();
@@ -4191,45 +4224,45 @@ public class HwPackageManagerService extends PackageManagerService {
             r4.append(r15);
             android.util.Slog.d(r3, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:79:0x01ed, code:
+    /* JADX WARNING: Missing block: B:81:0x01ed, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:80:0x01ef, code:
+    /* JADX WARNING: Missing block: B:82:0x01ef, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:81:0x01f0, code:
+    /* JADX WARNING: Missing block: B:83:0x01f0, code skipped:
             r19 = r8;
      */
-    /* JADX WARNING: Missing block: B:83:?, code:
+    /* JADX WARNING: Missing block: B:85:?, code skipped:
             r1 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Scan install, failed to parse package: ");
             r3.append(r0.getMessage());
             android.util.Slog.e(r1, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:84:0x020c, code:
+    /* JADX WARNING: Missing block: B:86:0x020c, code skipped:
             r1 = r15;
      */
-    /* JADX WARNING: Missing block: B:85:0x020f, code:
+    /* JADX WARNING: Missing block: B:87:0x020f, code skipped:
             monitor-enter(r9.mScanInstallApkList);
      */
-    /* JADX WARNING: Missing block: B:88:0x0216, code:
+    /* JADX WARNING: Missing block: B:90:0x0216, code skipped:
             if (r9.mScanInstallApkList.remove(r10) != false) goto L_0x0218;
      */
-    /* JADX WARNING: Missing block: B:89:0x0218, code:
+    /* JADX WARNING: Missing block: B:91:0x0218, code skipped:
             r0 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Scan install , remove from list:");
             r3.append(r10);
             android.util.Slog.i(r0, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:91:0x022f, code:
+    /* JADX WARNING: Missing block: B:93:0x022f, code skipped:
             r15 = r1;
      */
-    /* JADX WARNING: Missing block: B:96:0x0237, code:
+    /* JADX WARNING: Missing block: B:98:0x0237, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:98:?, code:
+    /* JADX WARNING: Missing block: B:100:?, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Scan install ");
@@ -4238,29 +4271,29 @@ public class HwPackageManagerService extends PackageManagerService {
             r2.append(r0.getMessage());
             android.util.Slog.e(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:100:0x025c, code:
+    /* JADX WARNING: Missing block: B:102:0x025c, code skipped:
             monitor-enter(r9.mScanInstallApkList);
      */
-    /* JADX WARNING: Missing block: B:103:0x0263, code:
+    /* JADX WARNING: Missing block: B:105:0x0263, code skipped:
             if (r9.mScanInstallApkList.remove(r10) != false) goto L_0x0265;
      */
-    /* JADX WARNING: Missing block: B:104:0x0265, code:
+    /* JADX WARNING: Missing block: B:106:0x0265, code skipped:
             r0 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Scan install , remove from list:");
             r2.append(r10);
             android.util.Slog.i(r0, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:106:0x027d, code:
+    /* JADX WARNING: Missing block: B:109:0x027d, code skipped:
             return r15;
      */
-    /* JADX WARNING: Missing block: B:111:0x0283, code:
+    /* JADX WARNING: Missing block: B:114:0x0283, code skipped:
             monitor-enter(r9.mScanInstallApkList);
      */
-    /* JADX WARNING: Missing block: B:114:0x028a, code:
+    /* JADX WARNING: Missing block: B:117:0x028a, code skipped:
             if (r9.mScanInstallApkList.remove(r10) != false) goto L_0x028c;
      */
-    /* JADX WARNING: Missing block: B:115:0x028c, code:
+    /* JADX WARNING: Missing block: B:118:0x028c, code skipped:
             r1 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Scan install , remove from list:");
@@ -4444,9 +4477,9 @@ public class HwPackageManagerService extends PackageManagerService {
     }
 
     private static File adjustmccmncList(String canonicalPath, String apkFile) {
+        File adjustRetFile = null;
         try {
             StringBuilder stringBuilder;
-            File adjustRetFile;
             StringBuilder stringBuilder2;
             if (mCustPackageManagerService == null || !mCustPackageManagerService.isMccMncMatch()) {
                 String apkPath = new StringBuilder();
@@ -4478,24 +4511,23 @@ public class HwPackageManagerService extends PackageManagerService {
                 stringBuilder2.append("adjustRetFile mccmnc :");
                 stringBuilder2.append(adjustRetFile.getPath());
                 Flog.i(205, stringBuilder2.toString());
-                return adjustRetFile;
+            } else {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append(canonicalPath);
+                stringBuilder.append("/");
+                stringBuilder.append(apkFile);
+                if (new File(stringBuilder.toString()).exists()) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append(canonicalPath);
+                    stringBuilder.append("/");
+                    stringBuilder.append(apkFile);
+                    adjustRetFile = new File(stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("adjustRetFile :");
+                    stringBuilder2.append(adjustRetFile.getPath());
+                    Flog.i(205, stringBuilder2.toString());
+                }
             }
-            stringBuilder = new StringBuilder();
-            stringBuilder.append(canonicalPath);
-            stringBuilder.append("/");
-            stringBuilder.append(apkFile);
-            if (!new File(stringBuilder.toString()).exists()) {
-                return null;
-            }
-            stringBuilder = new StringBuilder();
-            stringBuilder.append(canonicalPath);
-            stringBuilder.append("/");
-            stringBuilder.append(apkFile);
-            adjustRetFile = new File(stringBuilder.toString());
-            stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("adjustRetFile :");
-            stringBuilder2.append(adjustRetFile.getPath());
-            Flog.i(205, stringBuilder2.toString());
             return adjustRetFile;
         } catch (IOException e) {
             Slog.e(TAG, "Unable to obtain canonical paths");
@@ -4875,9 +4907,9 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x006b A:{SYNTHETIC, Splitter: B:17:0x006b} */
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x006b A:{SYNTHETIC, Splitter:B:17:0x006b} */
     /* JADX WARNING: Removed duplicated region for block: B:11:0x0034 A:{Catch:{ XmlPullParserException -> 0x0153, IOException -> 0x0129, all -> 0x0127 }} */
-    /* JADX WARNING: Missing block: B:53:?, code:
+    /* JADX WARNING: Missing block: B:53:?, code skipped:
             r0.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5224,22 +5256,22 @@ public class HwPackageManagerService extends PackageManagerService {
             if (this.mSettings != null) {
                 copyRet = getPackagesAbi(pkg.packageName);
             }
-            if (copyRet >= 0 || copyRet == -114) {
-                if (copyRet >= 0) {
-                    pkg.applicationInfo.primaryCpuAbi = abiList[copyRet];
-                } else if (copyRet == -114 && cpuAbiOverride != null) {
-                    pkg.applicationInfo.primaryCpuAbi = cpuAbiOverride;
-                } else if (needsRenderScriptOverride) {
-                    pkg.applicationInfo.primaryCpuAbi = abiList[0];
+            if (copyRet < 0) {
+                if (copyRet != -114) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Error unpackaging native libs for app, errorCode=");
+                    stringBuilder.append(copyRet);
+                    throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, stringBuilder.toString());
                 }
-                setNativeLibraryPaths(pkg, sAppLib32InstallDir);
-                IoUtils.closeQuietly(handle);
-                return;
             }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Error unpackaging native libs for app, errorCode=");
-            stringBuilder.append(copyRet);
-            throw new PackageManagerException(RequestStatus.SYS_ETIMEDOUT, stringBuilder.toString());
+            if (copyRet >= 0) {
+                pkg.applicationInfo.primaryCpuAbi = abiList[copyRet];
+            } else if (copyRet == -114 && cpuAbiOverride != null) {
+                pkg.applicationInfo.primaryCpuAbi = cpuAbiOverride;
+            } else if (needsRenderScriptOverride) {
+                pkg.applicationInfo.primaryCpuAbi = abiList[0];
+            }
+            setNativeLibraryPaths(pkg, sAppLib32InstallDir);
         } catch (IOException ioe) {
             String str = TAG;
             StringBuilder stringBuilder2 = new StringBuilder();
@@ -5249,6 +5281,7 @@ public class HwPackageManagerService extends PackageManagerService {
         } catch (Throwable th) {
             IoUtils.closeQuietly(null);
         }
+        IoUtils.closeQuietly(handle);
     }
 
     protected boolean isPackageAbiRestored(String name) {
@@ -5527,7 +5560,7 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0023, code:
+    /* JADX WARNING: Missing block: B:9:0x0023, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5537,7 +5570,7 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:?, code:
+    /* JADX WARNING: Missing block: B:28:?, code skipped:
             r3.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5743,13 +5776,15 @@ public class HwPackageManagerService extends PackageManagerService {
             out.startTag(null, "values");
             int N = mUninstalledDelappList.size();
             while (i < N) {
-                if (LocationManagerServiceUtil.GOOGLE_GMS_PROCESS.equals(mUninstalledDelappList.get(i)) || "com.google.android.gsf.login".equals(mUninstalledDelappList.get(i)) || "com.google.android.gsf".equals(mUninstalledDelappList.get(i))) {
-                    Slog.d(TAG, "GmsCore no need write to file");
-                } else {
-                    out.startTag(null, "string");
-                    out.attribute(null, "name", (String) mUninstalledDelappList.get(i));
-                    out.endTag(null, "string");
+                if (!(LocationManagerServiceUtil.GOOGLE_GMS_PROCESS.equals(mUninstalledDelappList.get(i)) || "com.google.android.gsf.login".equals(mUninstalledDelappList.get(i)))) {
+                    if (!"com.google.android.gsf".equals(mUninstalledDelappList.get(i))) {
+                        out.startTag(null, "string");
+                        out.attribute(null, "name", (String) mUninstalledDelappList.get(i));
+                        out.endTag(null, "string");
+                        i++;
+                    }
                 }
+                Slog.d(TAG, "GmsCore no need write to file");
                 i++;
             }
             out.endTag(null, "values");
@@ -5904,18 +5939,6 @@ public class HwPackageManagerService extends PackageManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0034 A:{ExcHandler: java.lang.IllegalArgumentException (r7_1 'e' java.lang.RuntimeException), Splitter: B:7:0x002a} */
-    /* JADX WARNING: Missing block: B:11:0x0034, code:
-            r7 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0035, code:
-            r8 = TAG;
-            r9 = new java.lang.StringBuilder();
-            r9.append("deleteNonRequiredComponentsForClone exception:");
-            r9.append(r7.getMessage());
-            android.util.Slog.d(r8, r9.toString());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static void deleteNonRequiredComponentsForClone(PackageManagerService pms, int clonedProfileUserId) {
         for (String str : pms.mContext.getResources().getStringArray(33816591)) {
             String[] componentArray = str.split("/");
@@ -5925,7 +5948,12 @@ public class HwPackageManagerService extends PackageManagerService {
                     if (pms.getComponentEnabledSetting(component, clonedProfileUserId) != 2) {
                         pms.setComponentEnabledSetting(component, 2, 1, clonedProfileUserId);
                     }
-                } catch (RuntimeException e) {
+                } catch (IllegalArgumentException | SecurityException e) {
+                    String str2 = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("deleteNonRequiredComponentsForClone exception:");
+                    stringBuilder.append(e.getMessage());
+                    Slog.d(str2, stringBuilder.toString());
                 }
             }
         }

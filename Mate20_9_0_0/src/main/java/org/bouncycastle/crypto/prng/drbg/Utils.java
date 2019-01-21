@@ -32,9 +32,9 @@ class Utils {
     }
 
     static byte[] hash_df(Digest digest, byte[] bArr, int i) {
-        Object obj = new byte[((i + 7) / 8)];
-        int length = obj.length / digest.getDigestSize();
-        Object obj2 = new byte[digest.getDigestSize()];
+        byte[] bArr2 = new byte[((i + 7) / 8)];
+        int length = bArr2.length / digest.getDigestSize();
+        byte[] bArr3 = new byte[digest.getDigestSize()];
         int i2 = 0;
         int i3 = 1;
         for (int i4 = 0; i4 <= length; i4++) {
@@ -44,22 +44,22 @@ class Utils {
             digest.update((byte) (i >> 8));
             digest.update((byte) i);
             digest.update(bArr, 0, bArr.length);
-            digest.doFinal(obj2, 0);
-            System.arraycopy(obj2, 0, obj, obj2.length * i4, obj.length - (obj2.length * i4) > obj2.length ? obj2.length : obj.length - (obj2.length * i4));
+            digest.doFinal(bArr3, 0);
+            System.arraycopy(bArr3, 0, bArr2, bArr3.length * i4, bArr2.length - (bArr3.length * i4) > bArr3.length ? bArr3.length : bArr2.length - (bArr3.length * i4));
             i3++;
         }
         i %= 8;
         if (i != 0) {
             int i5 = 8 - i;
             int i6 = 0;
-            while (i2 != obj.length) {
-                i = obj[i2] & 255;
-                obj[i2] = (byte) ((i6 << (8 - i5)) | (i >>> i5));
+            while (i2 != bArr2.length) {
+                i = bArr2[i2] & 255;
+                bArr2[i2] = (byte) ((i6 << (8 - i5)) | (i >>> i5));
                 i2++;
                 i6 = i;
             }
         }
-        return obj;
+        return bArr2;
     }
 
     static boolean isTooLarge(byte[] bArr, int i) {

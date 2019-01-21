@@ -1052,7 +1052,7 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
             }
         }
 
-        /* JADX WARNING: Missing block: B:29:0x0090, code:
+        /* JADX WARNING: Missing block: B:29:0x0090, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1135,7 +1135,7 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
             }
         }
 
-        /* JADX WARNING: Missing block: B:26:0x0092, code:
+        /* JADX WARNING: Missing block: B:26:0x0092, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1579,7 +1579,7 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
             wifiProStateMachine = WifiProStateMachine.this;
             stringBuilder = new StringBuilder();
             stringBuilder.append("EVENT_TRY_WIFI_ROVE_OUT, allow wifi to mobile ");
-            stringBuilder.append(this.isWiFiHandoverPriority ^ true);
+            stringBuilder.append(this.isWiFiHandoverPriority ^ 1);
             wifiProStateMachine.logD(stringBuilder.toString());
             WifiProStateMachine.this.mBadBssid = WifiProStateMachine.this.mCurrentBssid;
             WifiProStateMachine.this.mBadSsid = WifiProStateMachine.this.mCurrentSsid;
@@ -2737,7 +2737,7 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
             return Global.getInt(context.getContentResolver(), "device_provisioned", 0) == 1;
         }
 
-        /* JADX WARNING: Missing block: B:10:0x0043, code:
+        /* JADX WARNING: Missing block: B:10:0x0043, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4299,79 +4299,85 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
 
     public synchronized void onNetworkQosChange(int type, int level, boolean updateUiOnly) {
         if (1 == type) {
-            this.mCurrentWifiLevel = level;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("onNetworkQosChange, currentWifiLevel == ");
-            stringBuilder.append(level);
-            stringBuilder.append(", wifiNoInternet = ");
-            stringBuilder.append(this.mIsWiFiNoInternet);
-            stringBuilder.append(", updateUiOnly = ");
-            stringBuilder.append(updateUiOnly);
-            logD(stringBuilder.toString());
-            sendMessage(EVENT_WIFI_QOS_CHANGE, level, 0, Boolean.valueOf(updateUiOnly));
+            try {
+                this.mCurrentWifiLevel = level;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("onNetworkQosChange, currentWifiLevel == ");
+                stringBuilder.append(level);
+                stringBuilder.append(", wifiNoInternet = ");
+                stringBuilder.append(this.mIsWiFiNoInternet);
+                stringBuilder.append(", updateUiOnly = ");
+                stringBuilder.append(updateUiOnly);
+                logD(stringBuilder.toString());
+                sendMessage(EVENT_WIFI_QOS_CHANGE, level, 0, Boolean.valueOf(updateUiOnly));
+            } catch (Throwable th) {
+            }
         } else if (type == 0) {
             sendMessage(EVENT_MOBILE_QOS_CHANGE, level);
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0030, code:
+    /* JADX WARNING: Missing block: B:13:0x0030, code skipped:
             if (r3.mIsWiFiNoInternet == false) goto L_0x0032;
      */
-    /* JADX WARNING: Missing block: B:15:0x0034, code:
+    /* JADX WARNING: Missing block: B:15:0x0034, code skipped:
             if (r3.mIsUserHandoverWiFi != false) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:16:0x0036, code:
+    /* JADX WARNING: Missing block: B:16:0x0036, code skipped:
             logD("wifi no internet and recovered, notify SCE");
             com.android.server.wifi.HwSelfCureEngine.getInstance().notifyInternetAccessRecovery();
      */
-    /* JADX WARNING: Missing block: B:18:0x0049, code:
+    /* JADX WARNING: Missing block: B:18:0x0049, code skipped:
             if (isKeepCurrWiFiConnected() == false) goto L_0x0055;
      */
-    /* JADX WARNING: Missing block: B:19:0x004b, code:
+    /* JADX WARNING: Missing block: B:19:0x004b, code skipped:
             logD("keep curreny connect,ignore wifi check result");
             sendMessage(EVENT_CHECK_WIFI_INTERNET_RESULT, 5);
      */
-    /* JADX WARNING: Missing block: B:21:0x0054, code:
+    /* JADX WARNING: Missing block: B:21:0x0054, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:23:0x0057, code:
+    /* JADX WARNING: Missing block: B:23:0x0057, code skipped:
             if (com.android.server.wifi.wifipro.WifiproUtils.NET_INET_QOS_LEVEL_UNKNOWN != r5) goto L_0x0061;
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             sendMessage(EVENT_WIFI_CHECK_UNKOWN, r5);
      */
-    /* JADX WARNING: Missing block: B:28:0x0060, code:
+    /* JADX WARNING: Missing block: B:28:0x0060, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:31:0x0065, code:
+    /* JADX WARNING: Missing block: B:31:0x0065, code skipped:
             if (isWifiEvaluating() != false) goto L_0x0072;
      */
-    /* JADX WARNING: Missing block: B:33:0x0068, code:
+    /* JADX WARNING: Missing block: B:33:0x0068, code skipped:
             if (7 != r5) goto L_0x006b;
      */
-    /* JADX WARNING: Missing block: B:34:0x006a, code:
+    /* JADX WARNING: Missing block: B:34:0x006a, code skipped:
             r5 = -1;
      */
-    /* JADX WARNING: Missing block: B:35:0x006b, code:
+    /* JADX WARNING: Missing block: B:35:0x006b, code skipped:
             updateWifiInternetStateChange(r5);
             sendMessage(EVENT_CHECK_WIFI_INTERNET_RESULT, r5);
      */
-    /* JADX WARNING: Missing block: B:36:0x0072, code:
+    /* JADX WARNING: Missing block: B:36:0x0072, code skipped:
             sendMessage(EVENT_CHECK_WIFI_INTERNET_RESULT, r5);
      */
-    /* JADX WARNING: Missing block: B:43:0x0084, code:
+    /* JADX WARNING: Missing block: B:44:0x0084, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void onNetworkDetectionResult(int type, int level) {
         if (1 == type) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("wifi Detection level == ");
-            stringBuilder.append(level);
-            logD(stringBuilder.toString());
-            if (HwSelfCureEngine.getInstance().isSelfCureOngoing() && 5 != level) {
-                logD("SelfCureOngoing, ignore wifi check result");
-            } else if (5 == level) {
+            try {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("wifi Detection level == ");
+                stringBuilder.append(level);
+                logD(stringBuilder.toString());
+                if (HwSelfCureEngine.getInstance().isSelfCureOngoing() && 5 != level) {
+                    logD("SelfCureOngoing, ignore wifi check result");
+                } else if (5 == level) {
+                }
+            } catch (Throwable th) {
             }
         } else if (type == 0) {
             sendMessage(EVENT_CHECK_MOBILE_QOS_RESULT, level);
@@ -4381,7 +4387,10 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
     public synchronized void onWifiHandoverChange(int type, boolean result, String bssid, int errorReason) {
         if (1 == type) {
             if (result) {
-                this.mWifiProStatisticsManager.increaseWiFiHandoverWiFiCount(this.mWifiToWifiType);
+                try {
+                    this.mWifiProStatisticsManager.increaseWiFiHandoverWiFiCount(this.mWifiToWifiType);
+                } catch (Throwable th) {
+                }
             }
             this.mNewSelect_bssid = bssid;
             sendMessage(EVENT_WIFI_HANDOVER_WIFI_RESULT, Boolean.valueOf(result));
@@ -4398,35 +4407,37 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
     public synchronized void onDualBandNetWorkFind(List<HwDualBandMonitorInfo> apList) {
         StringBuilder stringBuilder;
         if (apList != null) {
-            if (apList.size() != 0 && this.mDualBandMonitorStart) {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("onDualBandNetWorkFind  apList.size() = ");
-                stringBuilder.append(apList.size());
-                logD(stringBuilder.toString());
-                this.mDualBandMonitorStart = false;
-                this.mDualBandEstimateApList.clear();
-                this.mAvailable5GAPBssid = null;
-                this.mDualBandEstimateInfoSize = apList.size();
-                for (HwDualBandMonitorInfo monitorInfo : apList) {
-                    WifiProEstimateApInfo apInfo = new WifiProEstimateApInfo();
-                    apInfo.setApBssid(monitorInfo.mBssid);
-                    apInfo.setEstimateApSsid(monitorInfo.mSsid);
-                    apInfo.setApAuthType(monitorInfo.mAuthType);
-                    apInfo.setApRssi(monitorInfo.mCurrentRssi);
-                    apInfo.setDualbandAPType(monitorInfo.mIsDualbandAP);
-                    this.mDualBandEstimateApList.add(apInfo);
-                    this.mNetworkQosMonitor.getApHistoryQualityScore(apInfo);
+            if (apList.size() != 0) {
+                if (this.mDualBandMonitorStart) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("onDualBandNetWorkFind  apList.size() = ");
+                    stringBuilder.append(apList.size());
+                    logD(stringBuilder.toString());
+                    this.mDualBandMonitorStart = false;
+                    this.mDualBandEstimateApList.clear();
+                    this.mAvailable5GAPBssid = null;
+                    this.mDualBandEstimateInfoSize = apList.size();
+                    for (HwDualBandMonitorInfo monitorInfo : apList) {
+                        WifiProEstimateApInfo apInfo = new WifiProEstimateApInfo();
+                        apInfo.setApBssid(monitorInfo.mBssid);
+                        apInfo.setEstimateApSsid(monitorInfo.mSsid);
+                        apInfo.setApAuthType(monitorInfo.mAuthType);
+                        apInfo.setApRssi(monitorInfo.mCurrentRssi);
+                        apInfo.setDualbandAPType(monitorInfo.mIsDualbandAP);
+                        this.mDualBandEstimateApList.add(apInfo);
+                        this.mNetworkQosMonitor.getApHistoryQualityScore(apInfo);
+                    }
+                    refreshConnectedNetWork();
+                    this.mDualBandEstimateInfoSize++;
+                    WifiProEstimateApInfo currentApInfo = new WifiProEstimateApInfo();
+                    currentApInfo.setApBssid(this.mCurrentBssid);
+                    currentApInfo.setEstimateApSsid(this.mCurrentSsid);
+                    currentApInfo.setApRssi(this.mCurrentRssi);
+                    currentApInfo.set5GAP(false);
+                    this.mDualBandEstimateApList.add(currentApInfo);
+                    this.mNetworkQosMonitor.getApHistoryQualityScore(currentApInfo);
+                    return;
                 }
-                refreshConnectedNetWork();
-                this.mDualBandEstimateInfoSize++;
-                WifiProEstimateApInfo currentApInfo = new WifiProEstimateApInfo();
-                currentApInfo.setApBssid(this.mCurrentBssid);
-                currentApInfo.setEstimateApSsid(this.mCurrentSsid);
-                currentApInfo.setApRssi(this.mCurrentRssi);
-                currentApInfo.set5GAP(false);
-                this.mDualBandEstimateApList.add(currentApInfo);
-                this.mNetworkQosMonitor.getApHistoryQualityScore(currentApInfo);
-                return;
             }
         }
         stringBuilder = new StringBuilder();
@@ -4702,8 +4713,11 @@ public class WifiProStateMachine extends StateMachine implements INetworkQosCall
 
     public synchronized void onUserConfirm(int type, int status) {
         if (2 == status) {
-            logD("UserConfirm  is OK ");
-            sendMessage(EVENT_DIALOG_OK, type, -1);
+            try {
+                logD("UserConfirm  is OK ");
+                sendMessage(EVENT_DIALOG_OK, type, -1);
+            } catch (Throwable th) {
+            }
         } else if (1 == status) {
             logD("UserConfirm  is CANCEL");
             sendMessage(EVENT_DIALOG_CANCEL, type, -1);

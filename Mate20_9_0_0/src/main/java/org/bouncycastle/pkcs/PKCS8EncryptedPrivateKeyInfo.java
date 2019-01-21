@@ -23,12 +23,12 @@ public class PKCS8EncryptedPrivateKeyInfo {
         StringBuilder stringBuilder;
         try {
             return EncryptedPrivateKeyInfo.getInstance(ASN1Primitive.fromByteArray(bArr));
-        } catch (Throwable e) {
+        } catch (ClassCastException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());
             throw new PKCSIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e2.getMessage());
@@ -39,7 +39,7 @@ public class PKCS8EncryptedPrivateKeyInfo {
     public PrivateKeyInfo decryptPrivateKeyInfo(InputDecryptorProvider inputDecryptorProvider) throws PKCSException {
         try {
             return PrivateKeyInfo.getInstance(Streams.readAll(inputDecryptorProvider.get(this.encryptedPrivateKeyInfo.getEncryptionAlgorithm()).getInputStream(new ByteArrayInputStream(this.encryptedPrivateKeyInfo.getEncryptedData()))));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to read encrypted data: ");
             stringBuilder.append(e.getMessage());

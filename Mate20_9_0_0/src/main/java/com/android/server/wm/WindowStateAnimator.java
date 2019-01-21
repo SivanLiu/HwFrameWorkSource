@@ -365,13 +365,13 @@ public class WindowStateAnimator {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:88:0x01dc A:{Splitter: B:54:0x0156, ExcHandler: java.lang.Exception (e java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:88:0x01dc A:{Splitter: B:54:0x0156, ExcHandler: java.lang.Exception (e java.lang.Exception)} */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x01dc A:{ExcHandler: Exception (e java.lang.Exception), Splitter:B:54:0x0156} */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x01dc A:{ExcHandler: Exception (e java.lang.Exception), Splitter:B:54:0x0156} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:88:0x01dc, code:
+    /* JADX WARNING: Missing block: B:88:0x01dc, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:89:0x01dd, code:
+    /* JADX WARNING: Missing block: B:89:0x01dd, code skipped:
             r1 = r18;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1095,7 +1095,7 @@ public class WindowStateAnimator {
         if (((attrs.flags & DumpState.DUMP_SERVICE_PERMISSIONS) != 0 ? -3 : attrs.format) != this.mSurfaceFormat) {
             return false;
         }
-        setOpaqueLocked(PixelFormat.formatHasAlpha(attrs.format) ^ true);
+        setOpaqueLocked(PixelFormat.formatHasAlpha(attrs.format) ^ 1);
         return true;
     }
 

@@ -504,7 +504,7 @@ public class TextServicesManagerService extends Stub {
         private TextServicesMonitor() {
         }
 
-        /* JADX WARNING: Missing block: B:24:0x0066, code:
+        /* JADX WARNING: Missing block: B:24:0x0066, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -691,49 +691,49 @@ public class TextServicesManagerService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0028, code:
+    /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             if (r6 == null) goto L_0x009b;
      */
-    /* JADX WARNING: Missing block: B:11:0x002e, code:
+    /* JADX WARNING: Missing block: B:11:0x002e, code skipped:
             if (r6.getSubtypeCount() != 0) goto L_0x0032;
      */
-    /* JADX WARNING: Missing block: B:12:0x0032, code:
+    /* JADX WARNING: Missing block: B:12:0x0032, code skipped:
             if (r5 != 0) goto L_0x0037;
      */
-    /* JADX WARNING: Missing block: B:13:0x0034, code:
+    /* JADX WARNING: Missing block: B:13:0x0034, code skipped:
             if (r13 != false) goto L_0x0037;
      */
-    /* JADX WARNING: Missing block: B:14:0x0036, code:
+    /* JADX WARNING: Missing block: B:14:0x0036, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:15:0x0037, code:
+    /* JADX WARNING: Missing block: B:15:0x0037, code skipped:
             r1 = null;
      */
-    /* JADX WARNING: Missing block: B:16:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             if (r5 != 0) goto L_0x0060;
      */
-    /* JADX WARNING: Missing block: B:17:0x003a, code:
+    /* JADX WARNING: Missing block: B:17:0x003a, code skipped:
             r7 = com.android.internal.view.IInputMethodManager.Stub.asInterface(android.os.ServiceManager.getService("input_method"));
      */
-    /* JADX WARNING: Missing block: B:18:0x0044, code:
+    /* JADX WARNING: Missing block: B:18:0x0044, code skipped:
             if (r7 == null) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             r8 = r7.getCurrentInputMethodSubtype();
      */
-    /* JADX WARNING: Missing block: B:21:0x004b, code:
+    /* JADX WARNING: Missing block: B:21:0x004b, code skipped:
             if (r8 == null) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:22:0x004d, code:
+    /* JADX WARNING: Missing block: B:22:0x004d, code skipped:
             r9 = r8.getLocale();
      */
-    /* JADX WARNING: Missing block: B:23:0x0055, code:
+    /* JADX WARNING: Missing block: B:23:0x0055, code skipped:
             if (android.text.TextUtils.isEmpty(r9) != false) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:24:0x0057, code:
+    /* JADX WARNING: Missing block: B:24:0x0057, code skipped:
             r1 = r9;
      */
-    /* JADX WARNING: Missing block: B:49:0x009b, code:
+    /* JADX WARNING: Missing block: B:49:0x009b, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

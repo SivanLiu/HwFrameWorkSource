@@ -26,13 +26,13 @@ public class KDFFeedbackBytesGenerator implements MacDerivationFunction {
         this.h = mac.getMacSize();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0038, code:
+    /* JADX WARNING: Missing block: B:12:0x0038, code skipped:
             r5.ios[r5.ios.length - 3] = (byte) (r0 >>> 16);
      */
-    /* JADX WARNING: Missing block: B:13:0x0044, code:
+    /* JADX WARNING: Missing block: B:13:0x0044, code skipped:
             r5.ios[r5.ios.length - 2] = (byte) (r0 >>> 8);
      */
-    /* JADX WARNING: Missing block: B:14:0x0050, code:
+    /* JADX WARNING: Missing block: B:14:0x0050, code skipped:
             r5.ios[r5.ios.length - 1] = (byte) r0;
             r5.prf.update(r5.ios, 0, r5.ios.length);
      */

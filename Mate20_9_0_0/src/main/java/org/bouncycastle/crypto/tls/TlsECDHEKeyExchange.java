@@ -2,7 +2,6 @@ package org.bouncycastle.crypto.tls;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Vector;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Signer;
@@ -17,7 +16,7 @@ public class TlsECDHEKeyExchange extends TlsECDHKeyExchange {
     }
 
     public byte[] generateServerKeyExchange() throws IOException {
-        OutputStream digestInputBuffer = new DigestInputBuffer();
+        DigestInputBuffer digestInputBuffer = new DigestInputBuffer();
         this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralServerKeyExchange(this.context.getSecureRandom(), this.namedCurves, this.clientECPointFormats, digestInputBuffer);
         SignatureAndHashAlgorithm signatureAndHashAlgorithm = TlsUtils.getSignatureAndHashAlgorithm(this.context, this.serverCredentials);
         Digest createHash = TlsUtils.createHash(signatureAndHashAlgorithm);
@@ -55,8 +54,8 @@ public class TlsECDHEKeyExchange extends TlsECDHKeyExchange {
 
     public void processServerKeyExchange(InputStream inputStream) throws IOException {
         SecurityParameters securityParameters = this.context.getSecurityParameters();
-        OutputStream signerInputBuffer = new SignerInputBuffer();
-        InputStream teeInputStream = new TeeInputStream(inputStream, signerInputBuffer);
+        SignerInputBuffer signerInputBuffer = new SignerInputBuffer();
+        TeeInputStream teeInputStream = new TeeInputStream(inputStream, signerInputBuffer);
         ECDomainParameters readECParameters = TlsECCUtils.readECParameters(this.namedCurves, this.clientECPointFormats, teeInputStream);
         byte[] readOpaque8 = TlsUtils.readOpaque8(teeInputStream);
         DigitallySigned parseSignature = parseSignature(inputStream);

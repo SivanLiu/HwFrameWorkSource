@@ -225,7 +225,7 @@ public class HwAutoUpdate {
     /* JADX WARNING: Removed duplicated region for block: B:29:0x006e  */
     /* JADX WARNING: Removed duplicated region for block: B:28:0x0068  */
     /* JADX WARNING: Removed duplicated region for block: B:27:0x0062  */
-    /* JADX WARNING: Missing block: B:14:0x0035, code:
+    /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             if (r3.equals("--reboot") == false) goto L_0x0056;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

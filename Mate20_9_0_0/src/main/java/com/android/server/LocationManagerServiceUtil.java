@@ -370,7 +370,7 @@ public class LocationManagerServiceUtil {
             } else {
                 Slog.e(TAG, "bindSpecificService: no network location provider found, init again");
                 needUpdateProvider = true;
-                networkProvider = LocationProviderProxy.createAndBind(this.mContext, "network", NETWORK_LOCATION_SERVICE_ACTION, 17956962, 17039832, 17236014, getLocationHandler());
+                networkProvider = LocationProviderProxy.createAndBind(this.mContext, "network", NETWORK_LOCATION_SERVICE_ACTION, 17956962, 17039833, 17236014, getLocationHandler());
                 if (networkProvider != null) {
                     getRealProviders().put("network", networkProvider);
                     getProxyProviders().add(networkProvider);
@@ -382,7 +382,7 @@ public class LocationManagerServiceUtil {
             } else {
                 Slog.e(TAG, "bindSpecificService: no geocoder provider found, init agan");
                 needUpdateProvider = true;
-                setGeocodeProvider(GeocoderProxy.createAndBind(this.mContext, 17956954, 17039808, 17236014, getLocationHandler()));
+                setGeocodeProvider(GeocoderProxy.createAndBind(this.mContext, 17956954, 17039809, 17236014, getLocationHandler()));
             }
             if (needUpdateProvider) {
                 updateProvidersLocked();
@@ -459,5 +459,22 @@ public class LocationManagerServiceUtil {
                 }
             }
         }
+    }
+
+    public ArrayList<String> getGPSRequestPkgs() {
+        ArrayList<String> gpsRequestPkgs = new ArrayList();
+        synchronized (getmLock()) {
+            ArrayList<UpdateRecord> records = (ArrayList) getRecordsByProvider().get("gps");
+            if (records != null) {
+                Iterator it = records.iterator();
+                while (it.hasNext()) {
+                    String packageName = ((UpdateRecord) it.next()).mReceiver.mIdentity.mPackageName;
+                    if (!gpsRequestPkgs.contains(packageName)) {
+                        gpsRequestPkgs.add(packageName);
+                    }
+                }
+            }
+        }
+        return gpsRequestPkgs;
     }
 }

@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class HwNotchScreenWhiteConfig {
     private static final boolean CHINA_AREA = SystemProperties.get("ro.config.hw_optb", "0").equals("156");
@@ -296,9 +297,9 @@ public class HwNotchScreenWhiteConfig {
         loadNotchScreenWhiteList();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:22:0x0084 A:{Catch:{ FileNotFoundException -> 0x0078, XmlPullParserException -> 0x0075, IOException -> 0x0072, all -> 0x006f }} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:57:0x014f A:{SYNTHETIC, Splitter: B:57:0x014f} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0084 A:{Catch:{ FileNotFoundException -> 0x0078, XmlPullParserException -> 0x0075, IOException -> 0x0072, all -> 0x006f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:89:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x014f A:{SYNTHETIC, Splitter:B:62:0x014f} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadNotchScreenWhiteList() {
         String str;
@@ -367,7 +368,7 @@ public class HwNotchScreenWhiteConfig {
                         try {
                             inputStream.close();
                             return;
-                        } catch (FileNotFoundException e3) {
+                        } catch (IOException e3) {
                             Log.e(TAG, "load notch screen config: IO Exception while closing stream", e3);
                             return;
                         }
@@ -381,14 +382,14 @@ public class HwNotchScreenWhiteConfig {
                     return;
                 }
                 return;
-            } catch (FileNotFoundException e322) {
+            } catch (XmlPullParserException e322) {
                 Log.e(TAG, "load notch screen config: ", e322);
                 if (inputStream != null) {
                     inputStream.close();
                     return;
                 }
                 return;
-            } catch (FileNotFoundException e3222) {
+            } catch (IOException e3222) {
                 Log.e(TAG, "load notch screen config: ", e3222);
                 if (inputStream != null) {
                     inputStream.close();
@@ -600,7 +601,7 @@ public class HwNotchScreenWhiteConfig {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001e, code:
+    /* JADX WARNING: Missing block: B:9:0x001e, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

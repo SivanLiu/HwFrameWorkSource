@@ -22,9 +22,9 @@ class HttpUtil {
         }
 
         private String[] copy(String[] strArr) {
-            Object obj = new String[strArr.length];
-            System.arraycopy(strArr, 0, obj, 0, obj.length);
-            return obj;
+            String[] strArr2 = new String[strArr.length];
+            System.arraycopy(strArr, 0, strArr2, 0, strArr2.length);
+            return strArr2;
         }
 
         private boolean hasHeader(String str) {
@@ -123,7 +123,7 @@ class HttpUtil {
         }
 
         Map<String, String> Parse() {
-            Map<String, String> hashMap = new HashMap();
+            HashMap hashMap = new HashMap();
             while (this.p < this.src.length()) {
                 skipWhiteSpace();
                 String consumeAlpha = consumeAlpha();
@@ -161,10 +161,10 @@ class HttpUtil {
             return new String[]{str};
         }
         int length = strArr.length;
-        Object obj = new String[(length + 1)];
-        System.arraycopy(strArr, 0, obj, 0, length);
-        obj[length] = str;
-        return obj;
+        String[] strArr2 = new String[(length + 1)];
+        System.arraycopy(strArr, 0, strArr2, 0, length);
+        strArr2[length] = str;
+        return strArr2;
     }
 
     static String mergeCSL(String str, Map<String, String> map) {

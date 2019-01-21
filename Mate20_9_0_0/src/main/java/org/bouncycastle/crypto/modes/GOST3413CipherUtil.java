@@ -7,9 +7,9 @@ class GOST3413CipherUtil {
     }
 
     public static byte[] LSB(byte[] bArr, int i) {
-        Object obj = new byte[i];
-        System.arraycopy(bArr, bArr.length - i, obj, 0, i);
-        return obj;
+        byte[] bArr2 = new byte[i];
+        System.arraycopy(bArr, bArr.length - i, bArr2, 0, i);
+        return bArr2;
     }
 
     public static byte[] MSB(byte[] bArr, int i) {
@@ -20,9 +20,9 @@ class GOST3413CipherUtil {
         if (bArr.length < i + i2) {
             i = bArr.length - i2;
         }
-        Object obj = new byte[i];
-        System.arraycopy(bArr, i2, obj, 0, i);
-        return obj;
+        byte[] bArr2 = new byte[i];
+        System.arraycopy(bArr, i2, bArr2, 0, i);
+        return bArr2;
     }
 
     public static byte[] sum(byte[] bArr, byte[] bArr2) {

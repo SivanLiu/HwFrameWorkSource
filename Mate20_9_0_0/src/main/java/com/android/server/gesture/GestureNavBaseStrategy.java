@@ -53,6 +53,7 @@ public class GestureNavBaseStrategy {
     protected Looper mLooper;
     protected final int mMaximumVelocity;
     private int mMoveOutTimeThreshold;
+    private int mMultiTouchThreshold;
     protected int mNavId;
     protected ArrayList<Float> mPendingMoveDistance;
     protected ArrayList<PointF> mPendingMovePoints;
@@ -62,6 +63,8 @@ public class GestureNavBaseStrategy {
     private int mSlideUpThreshold;
     private int mSource;
     private Handler mStrategyHandler;
+    protected float mTouchCurrentRawX;
+    protected float mTouchCurrentRawY;
     protected float mTouchDownRawX;
     protected float mTouchDownRawY;
     private Rect mTouchDownRegion;
@@ -198,6 +201,7 @@ public class GestureNavBaseStrategy {
         this.mSlideOutThresholdMajorAxis = ((int) (((float) windowThreshold) * 1.2f)) + slipOutThresholdOffset();
         this.mSlideOutThresholdMinorAxis = ((int) (((float) windowThreshold) * 1.6f)) + slipOutThresholdOffset();
         this.mSlideUpThreshold = ((int) (((float) windowThreshold) * 2.0f)) + slipOverThresholdOffset();
+        this.mMultiTouchThreshold = ((int) (((float) windowThreshold) * 3.0f)) + slipOverThresholdOffset();
         if (GestureNavConst.DEBUG) {
             String str = GestureNavConst.TAG_GESTURE_STRATEGY;
             StringBuilder stringBuilder = new StringBuilder();
@@ -278,6 +282,25 @@ public class GestureNavBaseStrategy {
         return false;
     }
 
+    protected boolean isMultiTouchBad(MotionEvent event) {
+        int actionIndex = event.getActionIndex();
+        float rawX = event.getX(actionIndex) - this.mXOffset;
+        float rawY = event.getY(actionIndex) - this.mYOffset;
+        float distance = Math.abs(this.mCheckDistanceY ? rawY - this.mTouchCurrentRawY : rawX - this.mTouchCurrentRawX);
+        if (GestureNavConst.DEBUG) {
+            String str = GestureNavConst.TAG_GESTURE_STRATEGY;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("MultiTouch rawX=");
+            stringBuilder.append(rawX);
+            stringBuilder.append(", rawY=");
+            stringBuilder.append(rawY);
+            stringBuilder.append(", distance=");
+            stringBuilder.append(distance);
+            Log.d(str, stringBuilder.toString());
+        }
+        return distance > ((float) this.mMultiTouchThreshold);
+    }
+
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
         if (action != 5) {
@@ -305,6 +328,8 @@ public class GestureNavBaseStrategy {
         this.mTouchDownRawY = event.getRawY();
         this.mXOffset = event.getX() - this.mTouchDownRawX;
         this.mYOffset = event.getY() - this.mTouchDownRawY;
+        this.mTouchCurrentRawX = this.mTouchDownRawX;
+        this.mTouchCurrentRawY = this.mTouchDownRawY;
         this.mDeviceId = event.getDeviceId();
         this.mSource = event.getSource();
         if (GestureNavConst.DEBUG) {
@@ -335,57 +360,55 @@ public class GestureNavBaseStrategy {
         if (!this.mHasMultiTouched) {
             this.mHasMultiTouched = true;
         }
-        if (!this.mGestureFailed && !this.mGuestureReallyStarted && shouldDropMultiTouch()) {
-            int pointerCount = event.getPointerCount();
-            int count = pointerCount;
-            if (pointerCount > 1) {
-                String str = GestureNavConst.TAG_GESTURE_STRATEGY;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Multi touch pointer down, count=");
-                stringBuilder.append(count);
-                Log.i(str, stringBuilder.toString());
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(" ,pointerCount=");
-                stringBuilder2.append(count);
-                gestureFailed(6, false, stringBuilder2.toString(), event.getEventTime());
+        if (!this.mGestureFailed && !this.mGuestureReallyStarted) {
+            if (shouldDropMultiTouch() || isMultiTouchBad(event)) {
+                int pointerCount = event.getPointerCount();
+                int count = pointerCount;
+                if (pointerCount > 1) {
+                    String str = GestureNavConst.TAG_GESTURE_STRATEGY;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Multi touch pointer down, count=");
+                    stringBuilder.append(count);
+                    Log.i(str, stringBuilder.toString());
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(" ,pointerCount=");
+                    stringBuilder2.append(count);
+                    gestureFailed(6, false, stringBuilder2.toString(), event.getEventTime());
+                }
             }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:58:0x0194  */
-    /* JADX WARNING: Removed duplicated region for block: B:92:? A:{SYNTHETIC, RETURN, SKIP} */
-    /* JADX WARNING: Removed duplicated region for block: B:85:0x02a5  */
+    /* JADX WARNING: Removed duplicated region for block: B:56:0x018f  */
+    /* JADX WARNING: Removed duplicated region for block: B:80:0x0280  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handleActionMove(MotionEvent event) {
-        float offsetX;
-        float offsetY;
-        int slipOutMode;
-        int slipOutMode2;
-        float offsetX2;
+        StringBuilder stringBuilder;
+        long time;
         MotionEvent motionEvent = event;
         if (this.mVelocityTracker != null) {
             this.mVelocityTracker.addMovement(motionEvent);
         }
-        float rawX = event.getRawX();
-        float rawY = event.getRawY();
-        float offsetX3 = rawX - this.mTouchDownRawX;
-        float offsetY2 = rawY - this.mTouchDownRawY;
-        float distanceX = distanceX(offsetX3);
-        float distanceY = distanceY(offsetY2);
+        this.mTouchCurrentRawX = event.getRawX();
+        this.mTouchCurrentRawY = event.getRawY();
+        float offsetX = this.mTouchCurrentRawX - this.mTouchDownRawX;
+        float offsetY = this.mTouchCurrentRawY - this.mTouchDownRawY;
+        float distanceX = distanceX(offsetX);
+        float distanceY = distanceY(offsetY);
         float distance = diff(distanceX, distanceY);
         if (GestureNavConst.DEBUG_ALL) {
             String str = GestureNavConst.TAG_GESTURE_STRATEGY;
-            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder = new StringBuilder();
             stringBuilder.append("Move rawX=");
-            stringBuilder.append(rawX);
+            stringBuilder.append(this.mTouchCurrentRawX);
             stringBuilder.append(", rawY=");
-            stringBuilder.append(rawY);
+            stringBuilder.append(this.mTouchCurrentRawY);
             stringBuilder.append(", distance=");
             stringBuilder.append(distance);
             Log.d(str, stringBuilder.toString());
         }
         if (!(this.mGestureFailed || this.mGestureSlowProcessStarted)) {
-            recordPendingMoveDatas(motionEvent, distance, rawX, rawY);
+            recordPendingMoveDatas(motionEvent, distance, this.mTouchCurrentRawX, this.mTouchCurrentRawY);
         }
         if (this.mPreCheckingFastSlideTimeout && this.mFastSlideMajorAxisChecking) {
             if (GestureNavConst.DEBUG) {
@@ -393,37 +416,29 @@ public class GestureNavBaseStrategy {
             }
             this.mFastSlideMajorAxisChecking = false;
         }
+        float distance2;
+        int slipOutMode;
         if (this.mUseProxyAngleStrategy || this.mGestureFailed || this.mHasCheckAngle) {
-            offsetX = offsetX3;
-            offsetY = offsetY2;
+            distance2 = distance;
             slipOutMode = 0;
         } else {
             int distanceExceedThreshold = distanceExceedThreshold(distanceX, distanceY);
             slipOutMode = distanceExceedThreshold;
             if (distanceExceedThreshold == 1) {
+                double angle;
                 long delayTime;
-                int slipOutMode3;
-                String str2;
-                StringBuilder stringBuilder2;
+                int slipOutMode2;
                 this.mHasCheckAngle = true;
-                double angle = angle(Math.abs(offsetX3), Math.abs(offsetY2));
-                int velocity = 0;
-                StringBuilder stringBuilder3;
-                if (angle > ((double) moveOutAngleThreshold())) {
-                    stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append(", angle=");
-                    stringBuilder3.append(angle);
-                    offsetX = offsetX3;
-                    offsetY = offsetY2;
-                    offsetX3 = angle;
-                    String stringBuilder4 = stringBuilder3.toString();
-                    slipOutMode2 = slipOutMode;
-                    gestureFailed(2, false, stringBuilder4, event.getEventTime());
+                double angle2 = angle(Math.abs(offsetX), Math.abs(offsetY));
+                float velocity = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
+                if (angle2 > ((double) moveOutAngleThreshold())) {
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(", angle=");
+                    stringBuilder2.append(angle2);
+                    angle = angle2;
+                    gestureFailed(2, false, stringBuilder2.toString(), event.getEventTime());
                 } else {
-                    slipOutMode2 = slipOutMode;
-                    offsetX = offsetX3;
-                    offsetY = offsetY2;
-                    offsetX3 = angle;
+                    angle = angle2;
                     if (!this.mHasCheckTimeout) {
                         this.mHasCheckTimeout = true;
                         VelocityTracker vt = this.mVelocityTracker;
@@ -437,109 +452,92 @@ public class GestureNavBaseStrategy {
                                 this.mFastSlideMajorAxisChecking = true;
                                 this.mStrategyHandler.sendEmptyMessageDelayed(4, delayTime);
                             }
-                            slipOutMode3 = velocity;
-                            str2 = GestureNavConst.TAG_GESTURE_STRATEGY;
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("angle:");
-                            stringBuilder2.append(offsetX3);
-                            stringBuilder2.append(", velocity:");
-                            stringBuilder2.append(slipOutMode3);
-                            stringBuilder2.append(", checkTimeout:");
-                            stringBuilder2.append(this.mHasCheckTimeout);
-                            stringBuilder2.append(", fastChecking:");
-                            stringBuilder2.append(this.mFastSlideMajorAxisChecking);
-                            stringBuilder2.append(", delayTime:");
-                            stringBuilder2.append(delayTime);
-                            stringBuilder2.append(", slipOutMode:");
-                            stringBuilder2.append(slipOutMode2);
-                            stringBuilder2.append(", distanceX:");
-                            stringBuilder2.append(distanceX);
-                            stringBuilder2.append(", distanceY:");
-                            stringBuilder2.append(distanceY);
-                            Log.i(str2, stringBuilder2.toString());
-                            if (slipOutMode2 == 2 && !this.mHasChangeTimeoutWhenSlideOut) {
+                            slipOutMode2 = GestureNavConst.TAG_GESTURE_STRATEGY;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("angle:");
+                            distance2 = distance;
+                            stringBuilder.append(angle);
+                            stringBuilder.append(", velocity:");
+                            stringBuilder.append(velocity);
+                            stringBuilder.append(", checkTimeout:");
+                            stringBuilder.append(this.mHasCheckTimeout);
+                            stringBuilder.append(", fastChecking:");
+                            stringBuilder.append(this.mFastSlideMajorAxisChecking);
+                            stringBuilder.append(", delayTime:");
+                            stringBuilder.append(delayTime);
+                            stringBuilder.append(", slipOutMode:");
+                            stringBuilder.append(slipOutMode);
+                            stringBuilder.append(", distanceX:");
+                            stringBuilder.append(distanceX);
+                            stringBuilder.append(", distanceY:");
+                            stringBuilder.append(distanceY);
+                            Log.i(slipOutMode2, stringBuilder.toString());
+                            if (slipOutMode == 2 && !this.mHasChangeTimeoutWhenSlideOut) {
                                 this.mHasChangeTimeoutWhenSlideOut = true;
                                 this.mMoveOutTimeThreshold = moveOutTimeThreshold(true);
                             }
                             if (!this.mGestureFailed || this.mHasCheckTimeout) {
-                                offsetX2 = offsetX;
-                                distanceX = offsetY;
+                                time = 0;
                             } else {
                                 long eventTime = event.getEventTime() - this.mTouchDownTime;
-                                long time = eventTime;
+                                time = eventTime;
                                 if (eventTime > ((long) this.mMoveOutTimeThreshold)) {
-                                    double angle2;
-                                    String str3;
-                                    StringBuilder stringBuilder5;
-                                    this.mHasCheckTimeout = true;
-                                    float f;
-                                    if (frameContainsPoint(rawX, rawY)) {
-                                        stringBuilder3 = new StringBuilder();
-                                        stringBuilder3.append(", time=");
-                                        stringBuilder3.append(time);
-                                        stringBuilder3.append("ms, point(");
-                                        stringBuilder3.append(rawX);
-                                        stringBuilder3.append(", ");
-                                        stringBuilder3.append(rawY);
-                                        stringBuilder3.append(")");
-                                        gestureFailed(1, false, stringBuilder3.toString(), event.getEventTime());
-                                        f = distanceX;
-                                        offsetX2 = offsetX;
-                                        distanceX = offsetY;
-                                    } else if (this.mHasCheckAngle) {
-                                        offsetX2 = offsetX;
-                                        distanceX = offsetY;
-                                    } else {
-                                        this.mHasCheckAngle = true;
-                                        float offsetX4 = offsetX;
-                                        float offsetY3 = offsetY;
-                                        angle = angle(Math.abs(offsetX4), Math.abs(offsetY3));
-                                        if (angle > ((double) moveOutAngleThreshold())) {
-                                            stringBuilder3 = new StringBuilder();
-                                            stringBuilder3.append(", timeout angle=");
-                                            stringBuilder3.append(angle);
-                                            offsetX = angle;
-                                            offsetX2 = offsetX4;
-                                            distanceX = offsetY3;
-                                            gestureFailed(2, false, stringBuilder3.toString(), event.getEventTime());
+                                    long time2;
+                                    String str2;
+                                    StringBuilder stringBuilder3;
+                                    this.mHasCheckTimeout = 1;
+                                    if (frameContainsPoint(this.mTouchCurrentRawX, this.mTouchCurrentRawY) != null) {
+                                        time2 = new StringBuilder();
+                                        time2.append(", time=");
+                                        time2.append(time);
+                                        time2.append("ms, point(");
+                                        time2.append(this.mTouchCurrentRawX);
+                                        time2.append(", ");
+                                        time2.append(this.mTouchCurrentRawY);
+                                        time2.append(")");
+                                        gestureFailed(1, false, time2.toString(), event.getEventTime());
+                                    } else if (this.mHasCheckAngle == null) {
+                                        long angle3;
+                                        this.mHasCheckAngle = 1;
+                                        long angle4 = angle(Math.abs(offsetX), Math.abs(offsetY));
+                                        if (angle4 > ((double) moveOutAngleThreshold())) {
+                                            time2 = new StringBuilder();
+                                            time2.append(", timeout angle=");
+                                            time2.append(angle4);
+                                            angle3 = angle4;
+                                            gestureFailed(2, false, time2.toString(), event.getEventTime());
                                         } else {
-                                            offsetX = angle;
-                                            offsetX2 = offsetX4;
-                                            f = distanceX;
-                                            distanceX = offsetY3;
+                                            angle3 = angle4;
                                         }
-                                        angle2 = offsetX;
-                                        str3 = GestureNavConst.TAG_GESTURE_STRATEGY;
-                                        stringBuilder5 = new StringBuilder();
-                                        stringBuilder5.append("move out time:");
-                                        stringBuilder5.append(time);
-                                        stringBuilder5.append("ms, threshold:");
-                                        stringBuilder5.append(this.mMoveOutTimeThreshold);
-                                        stringBuilder5.append("ms, point(");
-                                        stringBuilder5.append(rawX);
-                                        stringBuilder5.append(", ");
-                                        stringBuilder5.append(rawY);
-                                        stringBuilder5.append("), angle:");
-                                        stringBuilder5.append(angle2);
-                                        Log.i(str3, stringBuilder5.toString());
+                                        time2 = angle3;
+                                        str2 = GestureNavConst.TAG_GESTURE_STRATEGY;
+                                        stringBuilder3 = new StringBuilder();
+                                        stringBuilder3.append("move out time:");
+                                        stringBuilder3.append(time);
+                                        stringBuilder3.append("ms, threshold:");
+                                        stringBuilder3.append(this.mMoveOutTimeThreshold);
+                                        stringBuilder3.append("ms, point(");
+                                        stringBuilder3.append(this.mTouchCurrentRawX);
+                                        stringBuilder3.append(", ");
+                                        stringBuilder3.append(this.mTouchCurrentRawY);
+                                        stringBuilder3.append("), angle:");
+                                        stringBuilder3.append(time2);
+                                        Log.i(str2, stringBuilder3.toString());
                                     }
-                                    angle2 = 0.0d;
-                                    str3 = GestureNavConst.TAG_GESTURE_STRATEGY;
-                                    stringBuilder5 = new StringBuilder();
-                                    stringBuilder5.append("move out time:");
-                                    stringBuilder5.append(time);
-                                    stringBuilder5.append("ms, threshold:");
-                                    stringBuilder5.append(this.mMoveOutTimeThreshold);
-                                    stringBuilder5.append("ms, point(");
-                                    stringBuilder5.append(rawX);
-                                    stringBuilder5.append(", ");
-                                    stringBuilder5.append(rawY);
-                                    stringBuilder5.append("), angle:");
-                                    stringBuilder5.append(angle2);
-                                    Log.i(str3, stringBuilder5.toString());
-                                } else {
-                                    offsetX2 = offsetX;
-                                    distanceX = offsetY;
+                                    time2 = 0;
+                                    str2 = GestureNavConst.TAG_GESTURE_STRATEGY;
+                                    stringBuilder3 = new StringBuilder();
+                                    stringBuilder3.append("move out time:");
+                                    stringBuilder3.append(time);
+                                    stringBuilder3.append("ms, threshold:");
+                                    stringBuilder3.append(this.mMoveOutTimeThreshold);
+                                    stringBuilder3.append("ms, point(");
+                                    stringBuilder3.append(this.mTouchCurrentRawX);
+                                    stringBuilder3.append(", ");
+                                    stringBuilder3.append(this.mTouchCurrentRawY);
+                                    stringBuilder3.append("), angle:");
+                                    stringBuilder3.append(time2);
+                                    Log.i(str2, stringBuilder3.toString());
                                 }
                             }
                             if (!this.mGuestureReallyStarted && gestureReady()) {
@@ -547,71 +545,64 @@ public class GestureNavBaseStrategy {
                                 this.mGuestureReallyStarted = true;
                                 onGestureReallyStarted();
                             }
-                            if (!this.mGuestureReallyStarted && !this.mFastSlideMajorAxisChecking) {
-                                if (!this.mGestureSlowProcessStarted) {
-                                    Log.i(GestureNavConst.TAG_GESTURE_STRATEGY, "gesture slow process started");
-                                    this.mGestureSlowProcessStarted = true;
-                                    onGestureSlowProcessStarted(this.mPendingMoveDistance);
-                                }
-                                onGestureSlowProcess(distance, offsetX2, distanceX);
-                                return;
+                            if (this.mGuestureReallyStarted || this.mFastSlideMajorAxisChecking) {
                             }
+                            if (!this.mGestureSlowProcessStarted) {
+                                Log.i(GestureNavConst.TAG_GESTURE_STRATEGY, "gesture slow process started");
+                                this.mGestureSlowProcessStarted = true;
+                                onGestureSlowProcessStarted(this.mPendingMoveDistance);
+                            }
+                            onGestureSlowProcess(distance2, offsetX, offsetY);
                             return;
                         }
                     }
                 }
-                slipOutMode3 = velocity;
                 delayTime = 0;
-                str2 = GestureNavConst.TAG_GESTURE_STRATEGY;
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("angle:");
-                stringBuilder2.append(offsetX3);
-                stringBuilder2.append(", velocity:");
-                stringBuilder2.append(slipOutMode3);
-                stringBuilder2.append(", checkTimeout:");
-                stringBuilder2.append(this.mHasCheckTimeout);
-                stringBuilder2.append(", fastChecking:");
-                stringBuilder2.append(this.mFastSlideMajorAxisChecking);
-                stringBuilder2.append(", delayTime:");
-                stringBuilder2.append(delayTime);
-                stringBuilder2.append(", slipOutMode:");
-                stringBuilder2.append(slipOutMode2);
-                stringBuilder2.append(", distanceX:");
-                stringBuilder2.append(distanceX);
-                stringBuilder2.append(", distanceY:");
-                stringBuilder2.append(distanceY);
-                Log.i(str2, stringBuilder2.toString());
+                slipOutMode2 = GestureNavConst.TAG_GESTURE_STRATEGY;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("angle:");
+                distance2 = distance;
+                stringBuilder.append(angle);
+                stringBuilder.append(", velocity:");
+                stringBuilder.append(velocity);
+                stringBuilder.append(", checkTimeout:");
+                stringBuilder.append(this.mHasCheckTimeout);
+                stringBuilder.append(", fastChecking:");
+                stringBuilder.append(this.mFastSlideMajorAxisChecking);
+                stringBuilder.append(", delayTime:");
+                stringBuilder.append(delayTime);
+                stringBuilder.append(", slipOutMode:");
+                stringBuilder.append(slipOutMode);
+                stringBuilder.append(", distanceX:");
+                stringBuilder.append(distanceX);
+                stringBuilder.append(", distanceY:");
+                stringBuilder.append(distanceY);
+                Log.i(slipOutMode2, stringBuilder.toString());
                 this.mHasChangeTimeoutWhenSlideOut = true;
                 this.mMoveOutTimeThreshold = moveOutTimeThreshold(true);
                 if (this.mGestureFailed) {
                 }
-                offsetX2 = offsetX;
-                distanceX = offsetY;
+                time = 0;
                 Log.i(GestureNavConst.TAG_GESTURE_STRATEGY, "gesture really started");
                 this.mGuestureReallyStarted = true;
                 onGestureReallyStarted();
-                if (!this.mGuestureReallyStarted) {
-                    return;
+                if (this.mGuestureReallyStarted) {
                 }
-                return;
             }
-            offsetX = offsetX3;
-            offsetY = offsetY2;
+            distance2 = distance;
         }
         if (this.mUseProxyAngleStrategy && !this.mHasCheckAngle) {
             this.mHasCheckAngle = true;
         }
-        slipOutMode2 = slipOutMode;
         this.mHasChangeTimeoutWhenSlideOut = true;
         this.mMoveOutTimeThreshold = moveOutTimeThreshold(true);
         if (this.mGestureFailed) {
         }
-        offsetX2 = offsetX;
-        distanceX = offsetY;
+        time = 0;
         Log.i(GestureNavConst.TAG_GESTURE_STRATEGY, "gesture really started");
         this.mGuestureReallyStarted = true;
         onGestureReallyStarted();
-        if (!this.mGuestureReallyStarted) {
+        if (this.mGuestureReallyStarted) {
         }
     }
 
@@ -619,6 +610,8 @@ public class GestureNavBaseStrategy {
         this.mTouchUpTime = event.getEventTime();
         this.mTouchUpRawX = event.getRawX();
         this.mTouchUpRawY = event.getRawY();
+        this.mTouchCurrentRawX = this.mTouchUpRawX;
+        this.mTouchCurrentRawY = this.mTouchUpRawY;
         this.mStrategyHandler.removeMessages(4);
         float velocity = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
         if (this.mVelocityTracker != null) {
@@ -628,7 +621,7 @@ public class GestureNavBaseStrategy {
             this.mVelocityTracker.recycle();
             this.mVelocityTracker = null;
         }
-        if (this.mGestureFailed && action == 1) {
+        if (this.mGestureFailed && action == 1 && this.mGestureFailedReason != 6) {
             Log.i(GestureNavConst.TAG_GESTURE_STRATEGY, "Receive up after gesture failed");
             onGestureUpArrivedAfterFailed(this.mTouchUpRawX, this.mTouchUpRawY, this.mTouchDownTime);
         }

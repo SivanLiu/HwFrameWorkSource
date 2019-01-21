@@ -66,64 +66,64 @@ public class SystemTrimPolicy {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x002d, code:
+    /* JADX WARNING: Missing block: B:13:0x002d, code skipped:
             if (r14 == null) goto L_0x0108;
      */
-    /* JADX WARNING: Missing block: B:15:0x0033, code:
+    /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             if (r14.isEmpty() == false) goto L_0x0037;
      */
-    /* JADX WARNING: Missing block: B:16:0x0037, code:
+    /* JADX WARNING: Missing block: B:16:0x0037, code skipped:
             r0 = new android.util.ArraySet();
             r1 = new android.util.ArraySet();
             r2 = new android.util.ArrayMap();
             r3 = r14.iterator();
      */
-    /* JADX WARNING: Missing block: B:18:0x004e, code:
+    /* JADX WARNING: Missing block: B:18:0x004e, code skipped:
             if (r3.hasNext() == false) goto L_0x0107;
      */
-    /* JADX WARNING: Missing block: B:19:0x0050, code:
+    /* JADX WARNING: Missing block: B:19:0x0050, code skipped:
             r4 = (com.android.server.mtm.iaware.appmng.AwareProcessInfo) r3.next();
      */
-    /* JADX WARNING: Missing block: B:20:0x0057, code:
+    /* JADX WARNING: Missing block: B:20:0x0057, code skipped:
             if (r4 == null) goto L_0x004a;
      */
-    /* JADX WARNING: Missing block: B:22:0x005b, code:
+    /* JADX WARNING: Missing block: B:22:0x005b, code skipped:
             if (r4.mProcInfo == null) goto L_0x004a;
      */
-    /* JADX WARNING: Missing block: B:24:0x0061, code:
+    /* JADX WARNING: Missing block: B:24:0x0061, code skipped:
             if (r4.mProcInfo.mPackageName == null) goto L_0x004a;
      */
-    /* JADX WARNING: Missing block: B:26:0x006b, code:
+    /* JADX WARNING: Missing block: B:26:0x006b, code skipped:
             if (r4.mProcInfo.mPackageName.isEmpty() == false) goto L_0x006e;
      */
-    /* JADX WARNING: Missing block: B:28:0x006e, code:
+    /* JADX WARNING: Missing block: B:28:0x006e, code skipped:
             r5 = (java.lang.String) r4.mProcInfo.mPackageName.get(0);
      */
-    /* JADX WARNING: Missing block: B:29:0x007e, code:
+    /* JADX WARNING: Missing block: B:29:0x007e, code skipped:
             if (android.text.TextUtils.isEmpty(r5) == false) goto L_0x0081;
      */
-    /* JADX WARNING: Missing block: B:31:0x0081, code:
+    /* JADX WARNING: Missing block: B:31:0x0081, code skipped:
             r8 = r13.mProcThreshold;
      */
-    /* JADX WARNING: Missing block: B:32:0x0085, code:
+    /* JADX WARNING: Missing block: B:32:0x0085, code skipped:
             monitor-enter(r8);
      */
-    /* JADX WARNING: Missing block: B:35:0x008c, code:
+    /* JADX WARNING: Missing block: B:35:0x008c, code skipped:
             if (r13.mProcThreshold.containsKey(r5) != false) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:36:0x008e, code:
+    /* JADX WARNING: Missing block: B:36:0x008e, code skipped:
             monitor-exit(r8);
      */
-    /* JADX WARNING: Missing block: B:38:0x0090, code:
+    /* JADX WARNING: Missing block: B:38:0x0090, code skipped:
             r6 = ((java.lang.Long) r13.mProcThreshold.get(r5)).longValue();
      */
-    /* JADX WARNING: Missing block: B:39:0x009d, code:
+    /* JADX WARNING: Missing block: B:39:0x009d, code skipped:
             monitor-exit(r8);
      */
-    /* JADX WARNING: Missing block: B:41:0x00a2, code:
+    /* JADX WARNING: Missing block: B:41:0x00a2, code skipped:
             if (r1.contains(r5) == false) goto L_0x00c1;
      */
-    /* JADX WARNING: Missing block: B:42:0x00a4, code:
+    /* JADX WARNING: Missing block: B:42:0x00a4, code skipped:
             r0.add(r4.mProcInfo);
             r8 = TAG;
             r9 = new java.lang.StringBuilder();
@@ -131,22 +131,22 @@ public class SystemTrimPolicy {
             r9.append(r5);
             android.rms.iaware.AwareLog.d(r8, r9.toString());
      */
-    /* JADX WARNING: Missing block: B:43:0x00c1, code:
+    /* JADX WARNING: Missing block: B:43:0x00c1, code skipped:
             r8 = getPss(r4.mProcInfo);
      */
-    /* JADX WARNING: Missing block: B:44:0x00cb, code:
+    /* JADX WARNING: Missing block: B:44:0x00cb, code skipped:
             if (r2.containsKey(r5) == false) goto L_0x00d8;
      */
-    /* JADX WARNING: Missing block: B:45:0x00cd, code:
+    /* JADX WARNING: Missing block: B:45:0x00cd, code skipped:
             r8 = r8 + ((java.lang.Long) r2.get(r5)).longValue();
      */
-    /* JADX WARNING: Missing block: B:46:0x00d8, code:
+    /* JADX WARNING: Missing block: B:46:0x00d8, code skipped:
             r2.put(r5, java.lang.Long.valueOf(r8));
      */
-    /* JADX WARNING: Missing block: B:47:0x00e1, code:
+    /* JADX WARNING: Missing block: B:47:0x00e1, code skipped:
             if (r8 <= r6) goto L_0x0102;
      */
-    /* JADX WARNING: Missing block: B:48:0x00e3, code:
+    /* JADX WARNING: Missing block: B:48:0x00e3, code skipped:
             r1.add(r5);
             r0.add(r4.mProcInfo);
             r10 = TAG;
@@ -155,13 +155,13 @@ public class SystemTrimPolicy {
             r11.append(r5);
             android.rms.iaware.AwareLog.d(r10, r11.toString());
      */
-    /* JADX WARNING: Missing block: B:54:0x0107, code:
+    /* JADX WARNING: Missing block: B:54:0x0107, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:55:0x0108, code:
+    /* JADX WARNING: Missing block: B:55:0x0108, code skipped:
             android.rms.iaware.AwareLog.w(TAG, "no proc need to trim");
      */
-    /* JADX WARNING: Missing block: B:56:0x010f, code:
+    /* JADX WARNING: Missing block: B:56:0x010f, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

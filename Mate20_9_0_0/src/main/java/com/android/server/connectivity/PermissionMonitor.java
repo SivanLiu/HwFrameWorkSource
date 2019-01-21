@@ -244,30 +244,31 @@ public class PermissionMonitor {
         return currentPermission;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0042, code:
+    /* JADX WARNING: Missing block: B:10:0x0042, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private synchronized void onAppAdded(String appName, int appUid) {
-        if (TextUtils.isEmpty(appName) || appUid < 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Invalid app in onAppAdded: ");
-            stringBuilder.append(appName);
-            stringBuilder.append(" | ");
-            stringBuilder.append(appUid);
-            loge(stringBuilder.toString());
-            return;
+        if (!TextUtils.isEmpty(appName)) {
+            if (appUid >= 0) {
+                Boolean permission = highestPermissionForUid((Boolean) this.mApps.get(Integer.valueOf(appUid)), appName);
+                if (permission != this.mApps.get(Integer.valueOf(appUid))) {
+                    this.mApps.put(Integer.valueOf(appUid), permission);
+                    Map<Integer, Boolean> apps = new HashMap();
+                    apps.put(Integer.valueOf(appUid), permission);
+                    update(this.mUsers, apps, true);
+                }
+            }
         }
-        Boolean permission = highestPermissionForUid((Boolean) this.mApps.get(Integer.valueOf(appUid)), appName);
-        if (permission != this.mApps.get(Integer.valueOf(appUid))) {
-            this.mApps.put(Integer.valueOf(appUid), permission);
-            Map<Integer, Boolean> apps = new HashMap();
-            apps.put(Integer.valueOf(appUid), permission);
-            update(this.mUsers, apps, true);
-        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Invalid app in onAppAdded: ");
+        stringBuilder.append(appName);
+        stringBuilder.append(" | ");
+        stringBuilder.append(appUid);
+        loge(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0082, code:
+    /* JADX WARNING: Missing block: B:30:0x0082, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

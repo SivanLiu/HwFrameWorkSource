@@ -380,10 +380,10 @@ public class DoubleMetaphone implements StringEncoder {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0048, code:
+    /* JADX WARNING: Missing block: B:15:0x0048, code skipped:
             if (contains(r9, r11 - 2, 1, "B", "H", "D") == false) goto L_0x004a;
      */
-    /* JADX WARNING: Missing block: B:18:0x005a, code:
+    /* JADX WARNING: Missing block: B:18:0x005a, code skipped:
             if (contains(r9, r11 - 3, 1, "B", "H", "D") == false) goto L_0x005c;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -488,7 +488,7 @@ public class DoubleMetaphone implements StringEncoder {
         return charAt(value, index + 1) == 'R' ? index + 2 : index + 1;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0079, code:
+    /* JADX WARNING: Missing block: B:22:0x0079, code skipped:
             if (contains(r7, r9 + 1, 1, "M", "N", "L", "W") == false) goto L_0x007b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

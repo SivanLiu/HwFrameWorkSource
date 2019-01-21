@@ -462,7 +462,7 @@ public class HwMtmBroadcastResourceManager implements AbsHwMtmBroadcastResourceM
             boolean isProxyed = r.iawareCtrlType == 1;
             AwareBroadcastPolicy policy = getIawareBrPolicy();
             if (policy != null) {
-                this.mBrDumpRadar.trackBrFlowSpeed(enqueue, isProxyed, policy.isSpeedNoCtrol() ^ true, true ^ policy.isScreenOff());
+                this.mBrDumpRadar.trackBrFlowSpeed(enqueue, isProxyed, policy.isSpeedNoCtrol() ^ 1, 1 ^ policy.isScreenOff());
             }
         }
     }
@@ -762,7 +762,7 @@ public class HwMtmBroadcastResourceManager implements AbsHwMtmBroadcastResourceM
         return -1;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0048, code:
+    /* JADX WARNING: Missing block: B:19:0x0048, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

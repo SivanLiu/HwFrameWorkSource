@@ -6,10 +6,12 @@ import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PSSParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
@@ -181,12 +183,12 @@ class OperatorHelper {
         StringBuilder stringBuilder;
         try {
             return (X509Certificate) this.helper.createCertificateFactory("X.509").generateCertificate(new ByteArrayInputStream(x509CertificateHolder.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot get encoded form of certificate: ");
             stringBuilder.append(e.getMessage());
             throw new OpCertificateException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchProviderException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find factory provider: ");
             stringBuilder.append(e2.getMessage());
@@ -198,26 +200,26 @@ class OperatorHelper {
         StringBuilder stringBuilder;
         try {
             return this.helper.createKeyFactory(subjectPublicKeyInfo.getAlgorithm().getAlgorithm().getId()).generatePublic(new X509EncodedKeySpec(subjectPublicKeyInfo.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot get encoded form of key: ");
             stringBuilder.append(e.getMessage());
             throw new OperatorCreationException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchAlgorithmException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key factory: ");
             stringBuilder.append(e2.getMessage());
             throw new OperatorCreationException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (NoSuchProviderException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find factory provider: ");
-            stringBuilder.append(e22.getMessage());
-            throw new OperatorCreationException(stringBuilder.toString(), e22);
-        } catch (Throwable e222) {
+            stringBuilder.append(e3.getMessage());
+            throw new OperatorCreationException(stringBuilder.toString(), e3);
+        } catch (InvalidKeySpecException e4) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key factory: ");
-            stringBuilder.append(e222.getMessage());
-            throw new OperatorCreationException(stringBuilder.toString(), e222);
+            stringBuilder.append(e4.getMessage());
+            throw new OperatorCreationException(stringBuilder.toString(), e4);
         }
     }
 
@@ -231,7 +233,7 @@ class OperatorHelper {
             try {
                 createAlgorithmParameters.init(algorithmIdentifier.getParameters().toASN1Primitive().getEncoded());
                 return createAlgorithmParameters;
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("cannot initialise algorithm parameters: ");
                 stringBuilder.append(e.getMessage());
@@ -239,7 +241,7 @@ class OperatorHelper {
             }
         } catch (NoSuchAlgorithmException e2) {
             return null;
-        } catch (Throwable e3) {
+        } catch (NoSuchProviderException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create algorithm parameters: ");
             stringBuilder.append(e3.getMessage());
@@ -269,7 +271,7 @@ class OperatorHelper {
                 }
             }
             return this.helper.createCipher(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e3) {
+        } catch (GeneralSecurityException e3) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create cipher: ");
             stringBuilder.append(e3.getMessage());
@@ -347,7 +349,7 @@ class OperatorHelper {
                 }
             }
             return this.helper.createCipher(aSN1ObjectIdentifier.getId());
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create cipher: ");
             stringBuilder.append(e2.getMessage());

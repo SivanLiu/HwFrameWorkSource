@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.Encodable;
 import org.bouncycastle.util.Store;
@@ -20,7 +21,7 @@ public class SimplePKIResponse implements Encodable {
             } else if (this.certificateResponse.getSignedContent() != null) {
                 throw new CMCException("malformed response: Signed Content found");
             }
-        } catch (Throwable e) {
+        } catch (CMSException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("malformed response: ");
             stringBuilder.append(e.getMessage());
@@ -35,7 +36,7 @@ public class SimplePKIResponse implements Encodable {
     private static ContentInfo parseBytes(byte[] bArr) throws CMCException {
         try {
             return ContentInfo.getInstance(ASN1Primitive.fromByteArray(bArr));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());

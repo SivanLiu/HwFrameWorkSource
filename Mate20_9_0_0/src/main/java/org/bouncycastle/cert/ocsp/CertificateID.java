@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.CertID;
@@ -15,6 +14,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 
 public class CertificateID {
     public static final AlgorithmIdentifier HASH_SHA1 = new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
@@ -37,13 +37,13 @@ public class CertificateID {
             OutputStream outputStream = digestCalculator.getOutputStream();
             outputStream.write(x509CertificateHolder.toASN1Structure().getSubject().getEncoded(ASN1Encoding.DER));
             outputStream.close();
-            ASN1OctetString dEROctetString = new DEROctetString(digestCalculator.getDigest());
+            DEROctetString dEROctetString = new DEROctetString(digestCalculator.getDigest());
             SubjectPublicKeyInfo subjectPublicKeyInfo = x509CertificateHolder.getSubjectPublicKeyInfo();
             OutputStream outputStream2 = digestCalculator.getOutputStream();
             outputStream2.write(subjectPublicKeyInfo.getPublicKeyData().getBytes());
             outputStream2.close();
             return new CertID(digestCalculator.getAlgorithmIdentifier(), dEROctetString, new DEROctetString(digestCalculator.getDigest()), aSN1Integer);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("problem creating ID: ");
             stringBuilder.append(e);
@@ -85,7 +85,7 @@ public class CertificateID {
     public boolean matchesIssuer(X509CertificateHolder x509CertificateHolder, DigestCalculatorProvider digestCalculatorProvider) throws OCSPException {
         try {
             return createCertID(digestCalculatorProvider.get(this.id.getHashAlgorithm()), x509CertificateHolder, this.id.getSerialNumber()).equals(this.id);
-        } catch (Throwable e) {
+        } catch (OperatorCreationException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to create digest calculator: ");
             stringBuilder.append(e.getMessage());

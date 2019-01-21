@@ -4,6 +4,7 @@ import android.app.admin.SecurityLog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Slog;
 import com.android.internal.os.BackgroundThread;
 import com.android.server.zrhung.IZRHungService;
 import java.io.File;
@@ -52,14 +53,6 @@ public final class ProcessLoggingHandler extends Handler {
         sendMessage(msg);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x003f A:{Splitter: B:5:0x000f, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x003f, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0040, code:
-            android.util.Slog.w(TAG, "computeStringHashOfApk() failed", r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private String computeStringHashOfApk(String apkFile) {
         if (apkFile == null) {
             return "No APK";
@@ -74,7 +67,8 @@ public final class ProcessLoggingHandler extends Handler {
                 }
                 apkHash = sb.toString();
                 this.mProcessLoggingBaseApkHashes.put(apkFile, apkHash);
-            } catch (Exception e) {
+            } catch (IOException | NoSuchAlgorithmException e) {
+                Slog.w(TAG, "computeStringHashOfApk() failed", e);
             }
         }
         return apkHash != null ? apkHash : "Failed to count APK hash";

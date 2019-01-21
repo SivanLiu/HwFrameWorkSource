@@ -175,10 +175,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x009f, code:
+    /* JADX WARNING: Missing block: B:17:0x009f, code skipped:
             return r3;
      */
-    /* JADX WARNING: Missing block: B:22:0x00a6, code:
+    /* JADX WARNING: Missing block: B:22:0x00a6, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -211,7 +211,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0043, code:
+    /* JADX WARNING: Missing block: B:14:0x0043, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -238,9 +238,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0101 A:{LOOP_END, LOOP:0: B:8:0x0046->B:45:0x0101, Catch:{ all -> 0x0148, all -> 0x0159 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0101 A:{LOOP_END, LOOP:0: B:8:0x0046->B:45:0x0101, Catch:{ all -> 0x0148, all -> 0x0159 }} */
-    /* JADX WARNING: Missing block: B:46:0x0106, code:
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0101 A:{LOOP_END, LOOP:0: B:8:0x0046->B:48:0x0101, Catch:{ all -> 0x0148, all -> 0x0159 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0100 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0100 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0101 A:{LOOP_END, LOOP:0: B:8:0x0046->B:48:0x0101, Catch:{ all -> 0x0148, all -> 0x0159 }} */
+    /* JADX WARNING: Missing block: B:49:0x0106, code skipped:
             r23 = r0;
             r0 = new android.hardware.soundtrigger.SoundTrigger.Keyphrase[1];
             r1 = r4;
@@ -249,20 +251,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             r0[0] = new android.hardware.soundtrigger.SoundTrigger.Keyphrase(r4, r5, r6, r7, r22);
             r3 = null;
      */
-    /* JADX WARNING: Missing block: B:47:0x011c, code:
+    /* JADX WARNING: Missing block: B:50:0x011c, code skipped:
             if (r2 == null) goto L_0x0123;
      */
-    /* JADX WARNING: Missing block: B:48:0x011e, code:
+    /* JADX WARNING: Missing block: B:51:0x011e, code skipped:
             r3 = java.util.UUID.fromString(r2);
      */
-    /* JADX WARNING: Missing block: B:49:0x0123, code:
+    /* JADX WARNING: Missing block: B:52:0x0123, code skipped:
             r4 = new android.hardware.soundtrigger.SoundTrigger.KeyphraseSoundModel(java.util.UUID.fromString(r13), r3, r1, r0);
      */
-    /* JADX WARNING: Missing block: B:51:?, code:
+    /* JADX WARNING: Missing block: B:54:?, code skipped:
             r11.close();
             r10.close();
      */
-    /* JADX WARNING: Missing block: B:53:0x0134, code:
+    /* JADX WARNING: Missing block: B:56:0x0134, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -270,7 +272,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Throwable th;
         String bcp47Locale2 = Locale.forLanguageTag(bcp47Locale).toLanguageTag();
         synchronized (this) {
-            String str;
+            String bcp47Locale3;
             try {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("SELECT  * FROM sound_model WHERE keyphrase_id= '");
@@ -289,14 +291,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         while (true) {
                             if (c.getInt(c.getColumnIndex(SoundModelContract.KEY_TYPE)) == 0) {
                                 String modelUuid = c.getString(c.getColumnIndex("model_uuid"));
-                                if (modelUuid == null) {
-                                    try {
-                                        Slog.w(TAG, "Ignoring SoundModel since it doesn't specify an ID");
-                                    } catch (Throwable th2) {
-                                        th = th2;
-                                        str = bcp47Locale2;
-                                    }
-                                } else {
+                                if (modelUuid != null) {
                                     String vendorUuidString = null;
                                     int vendorUuidColumn = c.getColumnIndex("vendor_uuid");
                                     if (vendorUuidColumn != -1) {
@@ -308,46 +303,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                     int[] users = getArrayForCommaSeparatedString(c.getString(c.getColumnIndex(SoundModelContract.KEY_USERS)));
                                     String modelLocale = c.getString(c.getColumnIndex(SoundModelContract.KEY_LOCALE));
                                     String text = c.getString(c.getColumnIndex(SoundModelContract.KEY_HINT_TEXT));
-                                    if (users == null) {
-                                        str = bcp47Locale2;
+                                    if (users != null) {
+                                        int[] users2;
+                                        bcp47Locale3 = bcp47Locale2;
+                                        bcp47Locale2 = users.length;
+                                        boolean isAvailableForCurrentUser = false;
+                                        boolean isAvailableForCurrentUser2 = false;
+                                        while (isAvailableForCurrentUser2 < bcp47Locale2) {
+                                            String str = bcp47Locale2;
+                                            users2 = users;
+                                            if (userHandle == users[isAvailableForCurrentUser2]) {
+                                                isAvailableForCurrentUser2 = true;
+                                                break;
+                                            }
+                                            isAvailableForCurrentUser2++;
+                                            bcp47Locale2 = str;
+                                            users = users2;
+                                        }
+                                        bcp47Locale2 = userHandle;
+                                        users2 = users;
+                                        isAvailableForCurrentUser2 = isAvailableForCurrentUser;
+                                        if (isAvailableForCurrentUser2) {
+                                            break;
+                                        } else if (c.moveToNext()) {
+                                        }
+                                    } else {
+                                        bcp47Locale3 = bcp47Locale2;
                                         try {
                                             Slog.w(TAG, "Ignoring SoundModel since it doesn't specify users");
                                             bcp47Locale2 = userHandle;
                                             if (c.moveToNext()) {
-                                                bcp47Locale2 = str;
+                                                break;
                                             }
-                                        } catch (Throwable th3) {
-                                            th = th3;
+                                            bcp47Locale2 = bcp47Locale3;
+                                        } catch (Throwable th2) {
+                                            th = th2;
                                             throw th;
                                         }
                                     }
-                                    int[] users2;
-                                    str = bcp47Locale2;
-                                    bcp47Locale2 = users.length;
-                                    boolean isAvailableForCurrentUser = false;
-                                    boolean isAvailableForCurrentUser2 = false;
-                                    while (isAvailableForCurrentUser2 < bcp47Locale2) {
-                                        String str2 = bcp47Locale2;
-                                        users2 = users;
-                                        if (userHandle == users[isAvailableForCurrentUser2]) {
-                                            isAvailableForCurrentUser2 = true;
-                                            break;
-                                        }
-                                        isAvailableForCurrentUser2++;
-                                        bcp47Locale2 = str2;
-                                        users = users2;
-                                    }
-                                    bcp47Locale2 = userHandle;
-                                    users2 = users;
-                                    isAvailableForCurrentUser2 = isAvailableForCurrentUser;
-                                    if (isAvailableForCurrentUser2) {
-                                        break;
-                                    }
-                                    if (c.moveToNext()) {
-                                    }
+                                }
+                                try {
+                                    Slog.w(TAG, "Ignoring SoundModel since it doesn't specify an ID");
+                                } catch (Throwable th3) {
+                                    th = th3;
+                                    bcp47Locale3 = bcp47Locale2;
                                 }
                             }
-                            str = bcp47Locale2;
+                            bcp47Locale3 = bcp47Locale2;
                             bcp47Locale2 = userHandle;
                             if (c.moveToNext()) {
                             }
@@ -359,11 +361,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     return null;
                 } catch (Throwable th4) {
                     th = th4;
-                    str = bcp47Locale2;
+                    bcp47Locale3 = bcp47Locale2;
+                    c.close();
+                    db.close();
+                    throw th;
                 }
             } catch (Throwable th5) {
                 th = th5;
-                str = bcp47Locale2;
+                bcp47Locale3 = bcp47Locale2;
                 throw th;
             }
         }

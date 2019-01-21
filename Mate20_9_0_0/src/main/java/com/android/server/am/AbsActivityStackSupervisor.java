@@ -10,7 +10,7 @@ public abstract class AbsActivityStackSupervisor extends ConfigurationContainer 
     protected static final int REPORT_DISPLAY_REMOVE_TIMEOUT_MSG = 10002;
     protected static final int REPORT_WINDOW_STATE_CHANGED_MSG = 10001;
 
-    protected void recognitionMaliciousApp(IApplicationThread caller, Intent intet) {
+    protected void recognitionMaliciousApp(IApplicationThread caller, Intent intet, int userId) {
     }
 
     boolean shouldNotKillProcWhenRemoveTask(String pkg) {

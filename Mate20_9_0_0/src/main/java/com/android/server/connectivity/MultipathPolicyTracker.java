@@ -92,15 +92,6 @@ public class MultipathPolicyTracker {
         final int subId;
         final String subscriberId;
 
-        /* JADX WARNING: Removed duplicated region for block: B:13:0x0082 A:{Splitter: B:1:0x0011, ExcHandler: java.lang.ClassCastException (r2_8 'e' java.lang.RuntimeException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:13:0x0082 A:{Splitter: B:1:0x0011, ExcHandler: java.lang.ClassCastException (r2_8 'e' java.lang.RuntimeException)} */
-        /* JADX WARNING: Missing block: B:13:0x0082, code:
-            r2 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:15:0x009c, code:
-            throw new java.lang.IllegalStateException(java.lang.String.format("Can't get subId from mobile network %s (%s): %s", new java.lang.Object[]{r14, r15, r2.getMessage()}));
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public MultipathTracker(final Network network, NetworkCapabilities nc) {
             this.network = network;
             this.mNetworkCapabilities = new NetworkCapabilities(nc);
@@ -124,7 +115,8 @@ public class MultipathPolicyTracker {
                     throw new IllegalStateException(String.format("Can't get TelephonyManager for subId %d", new Object[]{Integer.valueOf(this.subId)}));
                 }
                 throw new IllegalStateException(String.format("Missing TelephonyManager", new Object[0]));
-            } catch (RuntimeException e) {
+            } catch (ClassCastException | NullPointerException | NumberFormatException e) {
+                throw new IllegalStateException(String.format("Can't get subId from mobile network %s (%s): %s", new Object[]{network, nc, e.getMessage()}));
             }
         }
 

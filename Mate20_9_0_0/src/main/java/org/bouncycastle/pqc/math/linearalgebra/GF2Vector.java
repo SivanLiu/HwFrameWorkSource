@@ -238,7 +238,7 @@ public class GF2Vector extends Vector {
     public Vector multiply(Permutation permutation) {
         int[] vector = permutation.getVector();
         if (this.length == vector.length) {
-            Vector gF2Vector = new GF2Vector(this.length);
+            GF2Vector gF2Vector = new GF2Vector(this.length);
             for (int i = 0; i < vector.length; i++) {
                 if ((this.v[vector[i] >> 5] & (1 << (vector[i] & 31))) != 0) {
                     int[] iArr = gF2Vector.v;

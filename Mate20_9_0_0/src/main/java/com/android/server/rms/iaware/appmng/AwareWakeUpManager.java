@@ -280,48 +280,48 @@ public class AwareWakeUpManager {
         this.mPushTags.add("com.huawei.android.push.intent.HEARTBEAT_RSP_TIMEOUT");
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0041, code:
+    /* JADX WARNING: Missing block: B:18:0x0041, code skipped:
             if (r3 != 0) goto L_0x004d;
      */
-    /* JADX WARNING: Missing block: B:20:0x0045, code:
+    /* JADX WARNING: Missing block: B:20:0x0045, code skipped:
             if (r1.mIsDebugMode == false) goto L_0x004c;
      */
-    /* JADX WARNING: Missing block: B:21:0x0047, code:
+    /* JADX WARNING: Missing block: B:21:0x0047, code skipped:
             debugLog("ERROR overload without wakeup");
      */
-    /* JADX WARNING: Missing block: B:22:0x004c, code:
+    /* JADX WARNING: Missing block: B:22:0x004c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:24:0x0053, code:
+    /* JADX WARNING: Missing block: B:24:0x0053, code skipped:
             if (r1.mNatTime <= r1.mIntervalWindowLength) goto L_0x0058;
      */
-    /* JADX WARNING: Missing block: B:25:0x0055, code:
+    /* JADX WARNING: Missing block: B:25:0x0055, code skipped:
             r7 = r1.mIntervalWindowLength;
      */
-    /* JADX WARNING: Missing block: B:26:0x0058, code:
+    /* JADX WARNING: Missing block: B:26:0x0058, code skipped:
             r7 = r1.mNatTime;
      */
-    /* JADX WARNING: Missing block: B:27:0x005a, code:
+    /* JADX WARNING: Missing block: B:27:0x005a, code skipped:
             r9 = (r3 + r7) - r2.whenElapsed;
             r11 = r2.windowLength;
             r19 = android.os.SystemClock.elapsedRealtime();
      */
-    /* JADX WARNING: Missing block: B:28:0x0067, code:
+    /* JADX WARNING: Missing block: B:28:0x0067, code skipped:
             if (r11 >= 0) goto L_0x007a;
      */
-    /* JADX WARNING: Missing block: B:29:0x0069, code:
+    /* JADX WARNING: Missing block: B:29:0x0069, code skipped:
             r11 = com.android.server.AlarmManagerService.maxTriggerTime(r19, r2.whenElapsed, r2.repeatInterval) - r2.whenElapsed;
      */
-    /* JADX WARNING: Missing block: B:31:0x007c, code:
+    /* JADX WARNING: Missing block: B:31:0x007c, code skipped:
             if (r11 >= r9) goto L_0x0083;
      */
-    /* JADX WARNING: Missing block: B:32:0x007e, code:
+    /* JADX WARNING: Missing block: B:32:0x007e, code skipped:
             r2.maxWhenElapsed = r2.whenElapsed + r9;
      */
-    /* JADX WARNING: Missing block: B:34:0x0085, code:
+    /* JADX WARNING: Missing block: B:34:0x0085, code skipped:
             if (r1.mIsDebugMode == false) goto L_0x00cb;
      */
-    /* JADX WARNING: Missing block: B:35:0x0087, code:
+    /* JADX WARNING: Missing block: B:35:0x0087, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append("EVENT_EXTEND tag = ");
             r0.append(r2.statsTag);
@@ -337,7 +337,7 @@ public class AwareWakeUpManager {
             r0.append(r9);
             debugLog(r0.toString());
      */
-    /* JADX WARNING: Missing block: B:36:0x00cb, code:
+    /* JADX WARNING: Missing block: B:36:0x00cb, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

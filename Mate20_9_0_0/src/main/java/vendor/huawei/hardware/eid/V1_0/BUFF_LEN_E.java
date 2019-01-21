@@ -22,7 +22,7 @@ public final class BUFF_LEN_E {
         if (o == 8192) {
             return "CERTIFICATE_MAX_LEN";
         }
-        if (o == SEC_IMAGE_MAX_LEN) {
+        if (o == 491520) {
             return "SEC_IMAGE_MAX_LEN";
         }
         if (o == 2048) {
@@ -37,16 +37,16 @@ public final class BUFF_LEN_E {
         if (o == 4096) {
             return "INFO_SIGN_MAX_LEN";
         }
-        if (o == IMAGE_NV21_SIZE) {
+        if (o == 460800) {
             return "IMAGE_NV21_SIZE";
         }
-        if (o == ID_INFO_MAX_LEN) {
+        if (o == 5120) {
             return "ID_INFO_MAX_LEN";
         }
-        if (o == OUTPUT_MAX_TRANSPOT_LEN) {
+        if (o == 163840) {
             return "OUTPUT_MAX_TRANSPOT_LEN";
         }
-        if (o == INPUT_MAX_TRANSPOT_LEN) {
+        if (o == 153600) {
             return "INPUT_MAX_TRANSPOT_LEN";
         }
         if (o == 3) {
@@ -58,7 +58,7 @@ public final class BUFF_LEN_E {
         if (o == 256) {
             return "MAX_AID_LEN";
         }
-        if (o == MAX_LOGO_SIZE) {
+        if (o == 24576) {
             return "MAX_LOGO_SIZE";
         }
         StringBuilder stringBuilder = new StringBuilder();
@@ -74,9 +74,9 @@ public final class BUFF_LEN_E {
             list.add("CERTIFICATE_MAX_LEN");
             flipped = 0 | 8192;
         }
-        if ((o & SEC_IMAGE_MAX_LEN) == SEC_IMAGE_MAX_LEN) {
+        if ((o & 491520) == 491520) {
             list.add("SEC_IMAGE_MAX_LEN");
-            flipped |= SEC_IMAGE_MAX_LEN;
+            flipped |= 491520;
         }
         if ((o & 2048) == 2048) {
             list.add("DE_SKEY_MAX_LEN");
@@ -94,21 +94,21 @@ public final class BUFF_LEN_E {
             list.add("INFO_SIGN_MAX_LEN");
             flipped |= 4096;
         }
-        if ((o & IMAGE_NV21_SIZE) == IMAGE_NV21_SIZE) {
+        if ((o & 460800) == 460800) {
             list.add("IMAGE_NV21_SIZE");
-            flipped |= IMAGE_NV21_SIZE;
+            flipped |= 460800;
         }
-        if ((o & ID_INFO_MAX_LEN) == ID_INFO_MAX_LEN) {
+        if ((o & 5120) == 5120) {
             list.add("ID_INFO_MAX_LEN");
-            flipped |= ID_INFO_MAX_LEN;
+            flipped |= 5120;
         }
-        if ((o & OUTPUT_MAX_TRANSPOT_LEN) == OUTPUT_MAX_TRANSPOT_LEN) {
+        if ((o & 163840) == 163840) {
             list.add("OUTPUT_MAX_TRANSPOT_LEN");
-            flipped |= OUTPUT_MAX_TRANSPOT_LEN;
+            flipped |= 163840;
         }
-        if ((o & INPUT_MAX_TRANSPOT_LEN) == INPUT_MAX_TRANSPOT_LEN) {
+        if ((o & 153600) == 153600) {
             list.add("INPUT_MAX_TRANSPOT_LEN");
-            flipped |= INPUT_MAX_TRANSPOT_LEN;
+            flipped |= 153600;
         }
         if ((o & 3) == 3) {
             list.add("OUTPUT_TRANSPOT_TIMES");
@@ -122,9 +122,9 @@ public final class BUFF_LEN_E {
             list.add("MAX_AID_LEN");
             flipped |= 256;
         }
-        if ((o & MAX_LOGO_SIZE) == MAX_LOGO_SIZE) {
+        if ((o & 24576) == 24576) {
             list.add("MAX_LOGO_SIZE");
-            flipped |= MAX_LOGO_SIZE;
+            flipped |= 24576;
         }
         if (o != flipped) {
             StringBuilder stringBuilder = new StringBuilder();

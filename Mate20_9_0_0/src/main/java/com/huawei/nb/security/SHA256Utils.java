@@ -33,10 +33,7 @@ public class SHA256Utils {
                 strHexString.append(hex);
             }
             return strHexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            DSLog.e("SHA256Utils An error happens when sha256Encrypting", new Object[0]);
-            return null;
-        } catch (UnsupportedEncodingException e2) {
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
             DSLog.e("SHA256Utils An error happens when sha256Encrypting", new Object[0]);
             return null;
         }
@@ -45,6 +42,7 @@ public class SHA256Utils {
     public static String getFileSha256(File file) {
         Exception e;
         NoSuchAlgorithmException e2;
+        NoSuchAlgorithmException noSuchAlgorithmException;
         Throwable th;
         InputStream fis = null;
         InputStream bufferedInputStream = null;
@@ -77,26 +75,34 @@ public class SHA256Utils {
             } catch (NoSuchAlgorithmException e4) {
                 e2 = e4;
                 bufferedInputStream = bufferedInputStream2;
-            } catch (Throwable th2) {
-                th = th2;
-                bufferedInputStream = bufferedInputStream2;
-            }
-        } catch (IOException e5) {
-            e = e5;
-            try {
-                DSLog.e("SHA256Utils An error happens when getting FileSha256", new Object[0]);
-                closeStream(bufferedInputStream);
-                closeStream(fis);
-                return null;
+                noSuchAlgorithmException = e2;
+                try {
+                    DSLog.e("SHA256Utils An error happens when getting FileSha256", new Object[0]);
+                    closeStream(bufferedInputStream);
+                    closeStream(fis);
+                    return null;
+                } catch (Throwable th2) {
+                    th = th2;
+                    closeStream(bufferedInputStream);
+                    closeStream(fis);
+                    throw th;
+                }
             } catch (Throwable th3) {
                 th = th3;
+                bufferedInputStream = bufferedInputStream2;
                 closeStream(bufferedInputStream);
                 closeStream(fis);
                 throw th;
             }
+        } catch (IOException e5) {
+            e = e5;
+            DSLog.e("SHA256Utils An error happens when getting FileSha256", new Object[0]);
+            closeStream(bufferedInputStream);
+            closeStream(fis);
+            return null;
         } catch (NoSuchAlgorithmException e6) {
             e2 = e6;
-            NoSuchAlgorithmException noSuchAlgorithmException = e2;
+            noSuchAlgorithmException = e2;
             DSLog.e("SHA256Utils An error happens when getting FileSha256", new Object[0]);
             closeStream(bufferedInputStream);
             closeStream(fis);

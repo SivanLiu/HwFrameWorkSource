@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ShortcutServiceInternal;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -47,6 +48,7 @@ import android.os.UserManager.EnforcingUser;
 import android.os.UserManagerInternal;
 import android.os.UserManagerInternal.UserRestrictionsListener;
 import android.os.storage.StorageManager;
+import android.provider.Settings.Global;
 import android.provider.Settings.Secure;
 import android.security.GateKeeper;
 import android.service.gatekeeper.IGateKeeperService;
@@ -65,6 +67,7 @@ import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.app.IAppOpsService;
 import com.android.internal.os.BackgroundThread;
+import com.android.internal.util.DumpUtils;
 import com.android.internal.util.FastXmlSerializer;
 import com.android.internal.util.Preconditions;
 import com.android.internal.util.XmlUtils;
@@ -72,6 +75,8 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.server.LocalServices;
 import com.android.server.LockGuard;
 import com.android.server.SystemService;
+import com.android.server.am.UserState;
+import com.android.server.storage.DeviceStorageMonitorInternal;
 import huawei.android.security.IHwBehaviorCollectManager.BehaviorId;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -273,7 +278,10 @@ public class UserManagerService extends AbsUserManagerService {
             UserData userData = UserManagerService.this.getUserDataNoChecks(userId);
             synchronized (UserManagerService.this.mPackagesLock) {
                 if (userData != null) {
-                    UserManagerService.this.writeUserLP(userData);
+                    try {
+                        UserManagerService.this.writeUserLP(userData);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     String str = UserManagerService.LOG_TAG;
                     StringBuilder stringBuilder = new StringBuilder();
@@ -317,18 +325,20 @@ public class UserManagerService extends AbsUserManagerService {
             try {
                 synchronized (UserManagerService.this.mPackagesLock) {
                     UserData userData = UserManagerService.this.getUserDataNoChecks(userId);
-                    if (userData == null || userData.info.partial) {
-                        String str = UserManagerService.LOG_TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("setUserIcon: unknown user #");
-                        stringBuilder.append(userId);
-                        Slog.w(str, stringBuilder.toString());
-                        Binder.restoreCallingIdentity(ident);
-                        return;
+                    if (userData != null) {
+                        if (!userData.info.partial) {
+                            UserManagerService.this.writeBitmapLP(userData.info, bitmap);
+                            UserManagerService.this.writeUserLP(userData);
+                            UserManagerService.this.sendUserInfoChangedBroadcast(userId);
+                            Binder.restoreCallingIdentity(ident);
+                            return;
+                        }
                     }
-                    UserManagerService.this.writeBitmapLP(userData.info, bitmap);
-                    UserManagerService.this.writeUserLP(userData);
-                    UserManagerService.this.sendUserInfoChangedBroadcast(userId);
+                    String str = UserManagerService.LOG_TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("setUserIcon: unknown user #");
+                    stringBuilder.append(userId);
+                    Slog.w(str, stringBuilder.toString());
                     Binder.restoreCallingIdentity(ident);
                 }
             } catch (Throwable th) {
@@ -441,7 +451,7 @@ public class UserManagerService extends AbsUserManagerService {
             return UserManagerService.this.getUserInfoNoChecks(userId) != null;
         }
 
-        /* JADX WARNING: Missing block: B:29:0x007c, code:
+        /* JADX WARNING: Missing block: B:31:0x007c, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -461,27 +471,32 @@ public class UserManagerService extends AbsUserManagerService {
                     throw new SecurityException(stringBuilder.toString());
                 }
                 UserInfo targetUserInfo = UserManagerService.this.getUserInfoLU(targetUserId);
-                if (targetUserInfo == null || !targetUserInfo.isEnabled()) {
-                    if (throwSecurityException) {
-                        String str = UserManagerService.LOG_TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(debugMsg);
-                        stringBuilder2.append(" for disabled profile ");
-                        stringBuilder2.append(targetUserId);
-                        stringBuilder2.append(" from ");
-                        stringBuilder2.append(callingUserId);
-                        Slog.w(str, stringBuilder2.toString());
+                if (targetUserInfo != null) {
+                    if (targetUserInfo.isEnabled()) {
+                        if (targetUserInfo.profileGroupId != -10000) {
+                            if (targetUserInfo.profileGroupId == callingUserInfo.profileGroupId) {
+                                return true;
+                            }
+                        }
+                        if (throwSecurityException) {
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append(debugMsg);
+                            stringBuilder2.append(" for unrelated profile ");
+                            stringBuilder2.append(targetUserId);
+                            throw new SecurityException(stringBuilder2.toString());
+                        }
+                        return false;
                     }
-                } else if (targetUserInfo.profileGroupId != -10000 && targetUserInfo.profileGroupId == callingUserInfo.profileGroupId) {
-                    return true;
-                } else if (throwSecurityException) {
+                }
+                if (throwSecurityException) {
+                    String str = UserManagerService.LOG_TAG;
                     StringBuilder stringBuilder3 = new StringBuilder();
                     stringBuilder3.append(debugMsg);
-                    stringBuilder3.append(" for unrelated profile ");
+                    stringBuilder3.append(" for disabled profile ");
                     stringBuilder3.append(targetUserId);
-                    throw new SecurityException(stringBuilder3.toString());
-                } else {
-                    return false;
+                    stringBuilder3.append(" from ");
+                    stringBuilder3.append(callingUserId);
+                    Slog.w(str, stringBuilder3.toString());
                 }
             }
         }
@@ -542,7 +557,7 @@ public class UserManagerService extends AbsUserManagerService {
             return UserManagerService.this.mRemovingUserIds.get(userId) && userId >= 128 && userId < 148;
         }
 
-        /* JADX WARNING: Missing block: B:23:0x0052, code:
+        /* JADX WARNING: Missing block: B:23:0x0052, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -673,1084 +688,6 @@ public class UserManagerService extends AbsUserManagerService {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        */
-    private android.content.pm.UserInfo createUserInternalUnchecked(java.lang.String r31, int r32, int r33, java.lang.String[] r34) {
-        /*
-        r30 = this;
-        r1 = r30;
-        r2 = r32;
-        r3 = r33;
-        r0 = com.android.server.storage.DeviceStorageMonitorInternal.class;
-        r0 = com.android.server.LocalServices.getService(r0);
-        r4 = r0;
-        r4 = (com.android.server.storage.DeviceStorageMonitorInternal) r4;
-        r0 = r4.isMemoryLow();
-        r5 = 0;
-        if (r0 == 0) goto L_0x001e;
-    L_0x0016:
-        r0 = "UserManagerService";
-        r6 = "Cannot add user. Not enough space on disk.";
-        android.util.Log.w(r0, r6);
-        return r5;
-    L_0x001e:
-        r0 = r2 & 4;
-        if (r0 == 0) goto L_0x0024;
-    L_0x0022:
-        r0 = 1;
-        goto L_0x0025;
-    L_0x0024:
-        r0 = 0;
-    L_0x0025:
-        r8 = r0;
-        r0 = r2 & 32;
-        if (r0 == 0) goto L_0x002c;
-    L_0x002a:
-        r0 = 1;
-        goto L_0x002d;
-    L_0x002c:
-        r0 = 0;
-    L_0x002d:
-        r9 = r0;
-        r0 = r2 & 8;
-        if (r0 == 0) goto L_0x0034;
-    L_0x0032:
-        r0 = 1;
-        goto L_0x0035;
-    L_0x0034:
-        r0 = 0;
-    L_0x0035:
-        r10 = r0;
-        r0 = r2 & 512;
-        if (r0 == 0) goto L_0x003c;
-    L_0x003a:
-        r0 = 1;
-        goto L_0x003d;
-    L_0x003c:
-        r0 = 0;
-    L_0x003d:
-        r11 = r0;
-        r0 = 134217728; // 0x8000000 float:3.85186E-34 double:6.63123685E-316;
-        r0 = r0 & r2;
-        if (r0 == 0) goto L_0x0045;
-    L_0x0043:
-        r0 = 1;
-        goto L_0x0046;
-    L_0x0045:
-        r0 = 0;
-    L_0x0046:
-        r12 = r0;
-        r13 = android.os.Binder.clearCallingIdentity();
-        r0 = 67108864; // 0x4000000 float:1.5046328E-36 double:3.31561842E-316;
-        r0 = r0 & r2;
-        if (r0 == 0) goto L_0x0052;
-    L_0x0050:
-        r0 = 1;
-        goto L_0x0053;
-    L_0x0052:
-        r0 = 0;
-    L_0x0053:
-        r15 = r0;
-        r0 = 900; // 0x384 float:1.261E-42 double:4.447E-321;
-        r5 = new java.lang.StringBuilder;
-        r5.<init>();
-        r7 = "Create user internal, flags= ";
-        r5.append(r7);
-        r7 = java.lang.Integer.toHexString(r32);
-        r5.append(r7);
-        r7 = " parentId= ";
-        r5.append(r7);
-        r5.append(r3);
-        r7 = " isGuest= ";
-        r5.append(r7);
-        r5.append(r8);
-        r7 = " isManagedProfile= ";
-        r5.append(r7);
-        r5.append(r9);
-        r5 = r5.toString();
-        android.util.Flog.i(r0, r5);
-        r5 = r1.mPackagesLock;	 Catch:{ all -> 0x0437 }
-        monitor-enter(r5);	 Catch:{ all -> 0x0437 }
-        r7 = 0;
-        r0 = r1.mContext;	 Catch:{ all -> 0x0423 }
-        r0 = r0.getContentResolver();	 Catch:{ all -> 0x0423 }
-        r6 = "hw_suw_frp_state";	 Catch:{ all -> 0x0423 }
-        r16 = r4;
-        r4 = 0;
-        r0 = android.provider.Settings.Secure.getInt(r0, r6, r4);	 Catch:{ all -> 0x0416 }
-        r4 = 1;
-        if (r0 != r4) goto L_0x00c7;
-    L_0x009c:
-        r0 = r1.mContext;	 Catch:{ all -> 0x00b9 }
-        r0 = r0.getContentResolver();	 Catch:{ all -> 0x00b9 }
-        r4 = "device_provisioned";	 Catch:{ all -> 0x00b9 }
-        r6 = 0;	 Catch:{ all -> 0x00b9 }
-        r0 = android.provider.Settings.Global.getInt(r0, r4, r6);	 Catch:{ all -> 0x00b9 }
-        r4 = 1;	 Catch:{ all -> 0x00b9 }
-        if (r0 == r4) goto L_0x00c7;	 Catch:{ all -> 0x00b9 }
-    L_0x00ac:
-        r0 = "UserManagerService";	 Catch:{ all -> 0x00b9 }
-        r4 = "can not create new user before FRP unlock";	 Catch:{ all -> 0x00b9 }
-        android.util.Log.w(r0, r4);	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x00b9:
-        r0 = move-exception;
-        r20 = r2;
-        r25 = r11;
-        r26 = r12;
-        r1 = r13;
-        r14 = r31;
-        r11 = r34;
-        goto L_0x0431;
-    L_0x00c7:
-        if (r12 == 0) goto L_0x00e6;
-    L_0x00c9:
-        r0 = r1.mContext;	 Catch:{ all -> 0x00b9 }
-        r0 = r0.getContentResolver();	 Catch:{ all -> 0x00b9 }
-        r4 = "device_provisioned";	 Catch:{ all -> 0x00b9 }
-        r6 = 0;	 Catch:{ all -> 0x00b9 }
-        r0 = android.provider.Settings.Global.getInt(r0, r4, r6);	 Catch:{ all -> 0x00b9 }
-        r4 = 1;	 Catch:{ all -> 0x00b9 }
-        if (r0 == r4) goto L_0x00e6;	 Catch:{ all -> 0x00b9 }
-    L_0x00d9:
-        r0 = "UserManagerService";	 Catch:{ all -> 0x00b9 }
-        r4 = "can not create repair mode user during start-up guide process";	 Catch:{ all -> 0x00b9 }
-        android.util.Log.w(r0, r4);	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x00e6:
-        r0 = -10000; // 0xffffffffffffd8f0 float:NaN double:NaN;
-        if (r3 == r0) goto L_0x00fe;
-    L_0x00ea:
-        r4 = r1.mUsersLock;	 Catch:{ all -> 0x00b9 }
-        monitor-enter(r4);	 Catch:{ all -> 0x00b9 }
-        r6 = r1.getUserDataLU(r3);	 Catch:{ all -> 0x00b9 }
-        r7 = r6;	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r4);	 Catch:{ all -> 0x00b9 }
-        if (r7 != 0) goto L_0x00fe;
-    L_0x00f5:
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x00fb:
-        r0 = move-exception;
-        monitor-exit(r4);	 Catch:{ all -> 0x00b9 }
-        throw r0;	 Catch:{ all -> 0x00b9 }
-    L_0x00fe:
-        if (r9 == 0) goto L_0x0123;	 Catch:{ all -> 0x00b9 }
-    L_0x0100:
-        r4 = 0;	 Catch:{ all -> 0x00b9 }
-        r6 = r1.canAddMoreManagedProfiles(r3, r4);	 Catch:{ all -> 0x00b9 }
-        if (r6 != 0) goto L_0x0123;	 Catch:{ all -> 0x00b9 }
-    L_0x0107:
-        r0 = "UserManagerService";	 Catch:{ all -> 0x00b9 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00b9 }
-        r4.<init>();	 Catch:{ all -> 0x00b9 }
-        r6 = "Cannot add more managed profiles for user ";	 Catch:{ all -> 0x00b9 }
-        r4.append(r6);	 Catch:{ all -> 0x00b9 }
-        r4.append(r3);	 Catch:{ all -> 0x00b9 }
-        r4 = r4.toString();	 Catch:{ all -> 0x00b9 }
-        android.util.Log.e(r0, r4);	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x0123:
-        if (r12 != 0) goto L_0x0139;
-    L_0x0125:
-        if (r8 != 0) goto L_0x0139;
-    L_0x0127:
-        if (r9 != 0) goto L_0x0139;
-    L_0x0129:
-        if (r11 != 0) goto L_0x0139;
-    L_0x012b:
-        r4 = r30.isUserLimitReached();	 Catch:{ all -> 0x00b9 }
-        if (r4 == 0) goto L_0x0139;	 Catch:{ all -> 0x00b9 }
-    L_0x0131:
-        if (r15 != 0) goto L_0x0139;	 Catch:{ all -> 0x00b9 }
-    L_0x0133:
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x0139:
-        if (r8 == 0) goto L_0x0147;
-    L_0x013b:
-        r4 = r30.findCurrentGuestUser();	 Catch:{ all -> 0x00b9 }
-        if (r4 == 0) goto L_0x0147;	 Catch:{ all -> 0x00b9 }
-    L_0x0141:
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x0147:
-        if (r10 == 0) goto L_0x015e;
-    L_0x0149:
-        r4 = android.os.UserManager.isSplitSystemUser();	 Catch:{ all -> 0x00b9 }
-        if (r4 != 0) goto L_0x015e;	 Catch:{ all -> 0x00b9 }
-    L_0x014f:
-        if (r3 == 0) goto L_0x015e;	 Catch:{ all -> 0x00b9 }
-    L_0x0151:
-        r0 = "UserManagerService";	 Catch:{ all -> 0x00b9 }
-        r4 = "Cannot add restricted profile - parent user must be owner";	 Catch:{ all -> 0x00b9 }
-        android.util.Log.w(r0, r4);	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x015e:
-        if (r10 == 0) goto L_0x0199;
-    L_0x0160:
-        r4 = android.os.UserManager.isSplitSystemUser();	 Catch:{ all -> 0x00b9 }
-        if (r4 == 0) goto L_0x0199;	 Catch:{ all -> 0x00b9 }
-    L_0x0166:
-        if (r7 != 0) goto L_0x0175;	 Catch:{ all -> 0x00b9 }
-    L_0x0168:
-        r0 = "UserManagerService";	 Catch:{ all -> 0x00b9 }
-        r4 = "Cannot add restricted profile - parent user must be specified";	 Catch:{ all -> 0x00b9 }
-        android.util.Log.w(r0, r4);	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x0175:
-        r4 = r7.info;	 Catch:{ all -> 0x00b9 }
-        r4 = r4.canHaveProfile();	 Catch:{ all -> 0x00b9 }
-        if (r4 != 0) goto L_0x0199;	 Catch:{ all -> 0x00b9 }
-    L_0x017d:
-        r0 = "UserManagerService";	 Catch:{ all -> 0x00b9 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00b9 }
-        r4.<init>();	 Catch:{ all -> 0x00b9 }
-        r6 = "Cannot add restricted profile - profiles cannot be created for the specified parent user id ";	 Catch:{ all -> 0x00b9 }
-        r4.append(r6);	 Catch:{ all -> 0x00b9 }
-        r4.append(r3);	 Catch:{ all -> 0x00b9 }
-        r4 = r4.toString();	 Catch:{ all -> 0x00b9 }
-        android.util.Log.w(r0, r4);	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r5);	 Catch:{ all -> 0x00b9 }
-        android.os.Binder.restoreCallingIdentity(r13);
-        r0 = 0;
-        return r0;
-    L_0x0199:
-        r4 = android.os.UserManager.isSplitSystemUser();	 Catch:{ all -> 0x0416 }
-        if (r4 == 0) goto L_0x01b9;
-    L_0x019f:
-        if (r8 != 0) goto L_0x01b9;
-    L_0x01a1:
-        if (r9 != 0) goto L_0x01b9;
-    L_0x01a3:
-        r4 = r30.getPrimaryUser();	 Catch:{ all -> 0x00b9 }
-        if (r4 != 0) goto L_0x01b9;	 Catch:{ all -> 0x00b9 }
-    L_0x01a9:
-        r2 = r2 | 1;	 Catch:{ all -> 0x00b9 }
-        r4 = r1.mUsersLock;	 Catch:{ all -> 0x00b9 }
-        monitor-enter(r4);	 Catch:{ all -> 0x00b9 }
-        r6 = r1.mIsDeviceManaged;	 Catch:{ all -> 0x00b9 }
-        if (r6 != 0) goto L_0x01b4;	 Catch:{ all -> 0x00b9 }
-    L_0x01b2:
-        r2 = r2 | 2;	 Catch:{ all -> 0x00b9 }
-    L_0x01b4:
-        monitor-exit(r4);	 Catch:{ all -> 0x00b9 }
-        goto L_0x01b9;	 Catch:{ all -> 0x00b9 }
-    L_0x01b6:
-        r0 = move-exception;	 Catch:{ all -> 0x00b9 }
-        monitor-exit(r4);	 Catch:{ all -> 0x00b9 }
-        throw r0;	 Catch:{ all -> 0x00b9 }
-    L_0x01b9:
-        if (r12 == 0) goto L_0x01be;
-    L_0x01bb:
-        r4 = 127; // 0x7f float:1.78E-43 double:6.27E-322;
-        goto L_0x01c2;
-    L_0x01be:
-        r4 = r1.getNextAvailableId(r15);	 Catch:{ all -> 0x0408 }
-    L_0x01c2:
-        r6 = android.os.Environment.getUserSystemDirectory(r4);	 Catch:{ all -> 0x0408 }
-        r6.mkdirs();	 Catch:{ all -> 0x0408 }
-        r6 = android.content.res.Resources.getSystem();	 Catch:{ all -> 0x0408 }
-        r0 = 17956979; // 0x1120073 float:2.6816287E-38 double:8.8719264E-317;	 Catch:{ all -> 0x0408 }
-        r0 = r6.getBoolean(r0);	 Catch:{ all -> 0x0408 }
-        r6 = r0;
-        r17 = r13;
-        r13 = r1.mUsersLock;	 Catch:{ all -> 0x03f9 }
-        monitor-enter(r13);	 Catch:{ all -> 0x03f9 }
-        if (r8 == 0) goto L_0x01de;
-    L_0x01dc:
-        if (r6 != 0) goto L_0x01fe;
-    L_0x01de:
-        r0 = r1.mForceEphemeralUsers;	 Catch:{ all -> 0x03e5 }
-        if (r0 != 0) goto L_0x01fe;
-    L_0x01e2:
-        if (r7 == 0) goto L_0x0201;
-    L_0x01e4:
-        r0 = r7.info;	 Catch:{ all -> 0x01ed }
-        r0 = r0.isEphemeral();	 Catch:{ all -> 0x01ed }
-        if (r0 == 0) goto L_0x0201;
-    L_0x01ec:
-        goto L_0x01fe;
-    L_0x01ed:
-        r0 = move-exception;
-        r14 = r31;
-        r20 = r2;
-        r19 = r6;
-        r25 = r11;
-        r26 = r12;
-        r1 = r17;
-        r11 = r34;
-        goto L_0x03f5;
-    L_0x01fe:
-        r0 = r2 | 256;
-        r2 = r0;
-    L_0x0201:
-        r0 = new android.content.pm.UserInfo;	 Catch:{ all -> 0x03d5 }
-        r14 = r31;
-        r19 = r6;
-        r6 = 0;
-        r0.<init>(r4, r14, r6, r2);	 Catch:{ all -> 0x03c9 }
-        r6 = r1.mNextSerialNumber;	 Catch:{ all -> 0x03c9 }
-        r20 = r2;
-        r2 = r6 + 1;
-        r1.mNextSerialNumber = r2;	 Catch:{ all -> 0x03bf }
-        r0.serialNumber = r6;	 Catch:{ all -> 0x03bf }
-        r21 = java.lang.System.currentTimeMillis();	 Catch:{ all -> 0x03bf }
-        r23 = 946080000000; // 0xdc46c32800 float:24980.0 double:4.674256262175E-312;
-        r2 = (r21 > r23 ? 1 : (r21 == r23 ? 0 : -1));
-        if (r2 <= 0) goto L_0x0229;
-    L_0x0222:
-        r25 = r11;
-        r26 = r12;
-        r11 = r21;
-        goto L_0x0231;
-    L_0x0229:
-        r23 = 0;
-        r25 = r11;
-        r26 = r12;
-        r11 = r23;
-    L_0x0231:
-        r0.creationTime = r11;	 Catch:{ all -> 0x03b9 }
-        r2 = 1;	 Catch:{ all -> 0x03b9 }
-        r0.partial = r2;	 Catch:{ all -> 0x03b9 }
-        r2 = android.os.Build.FINGERPRINT;	 Catch:{ all -> 0x03b9 }
-        r0.lastLoggedInFingerprint = r2;	 Catch:{ all -> 0x03b9 }
-        if (r9 == 0) goto L_0x024e;
-    L_0x023c:
-        r2 = -10000; // 0xffffffffffffd8f0 float:NaN double:NaN;
-        if (r3 == r2) goto L_0x024e;
-    L_0x0240:
-        r2 = r1.getFreeProfileBadgeLU(r3);	 Catch:{ all -> 0x0247 }
-        r0.profileBadge = r2;	 Catch:{ all -> 0x0247 }
-        goto L_0x024e;
-    L_0x0247:
-        r0 = move-exception;
-        r11 = r34;
-        r1 = r17;
-        goto L_0x03f5;
-    L_0x024e:
-        r2 = new com.android.server.pm.UserManagerService$UserData;	 Catch:{ all -> 0x03b9 }
-        r2.<init>();	 Catch:{ all -> 0x03b9 }
-        r2.info = r0;	 Catch:{ all -> 0x03b9 }
-        r6 = r1.mUsers;	 Catch:{ all -> 0x03b9 }
-        r6.put(r4, r2);	 Catch:{ all -> 0x03b9 }
-        if (r15 == 0) goto L_0x0266;
-    L_0x025c:
-        r6 = "UserManagerService";	 Catch:{ all -> 0x0247 }
-        r11 = "create cloned profile user, set mHasClonedProfile true.";	 Catch:{ all -> 0x0247 }
-        android.util.Slog.i(r6, r11);	 Catch:{ all -> 0x0247 }
-        r6 = 1;	 Catch:{ all -> 0x0247 }
-        r1.mHasClonedProfile = r6;	 Catch:{ all -> 0x0247 }
-    L_0x0266:
-        monitor-exit(r13);	 Catch:{ all -> 0x03b9 }
-        r1.writeUserLP(r2);	 Catch:{ all -> 0x03b2 }
-        r30.writeUserListLP();	 Catch:{ all -> 0x03b2 }
-        if (r7 == 0) goto L_0x02b1;
-    L_0x026f:
-        if (r9 != 0) goto L_0x0290;
-    L_0x0271:
-        if (r15 == 0) goto L_0x0274;
-    L_0x0273:
-        goto L_0x0290;
-    L_0x0274:
-        if (r10 == 0) goto L_0x02b1;
-    L_0x0276:
-        r6 = r7.info;	 Catch:{ all -> 0x02aa }
-        r6 = r6.restrictedProfileParentId;	 Catch:{ all -> 0x02aa }
-        r11 = -10000; // 0xffffffffffffd8f0 float:NaN double:NaN;	 Catch:{ all -> 0x02aa }
-        if (r6 != r11) goto L_0x0289;	 Catch:{ all -> 0x02aa }
-    L_0x027e:
-        r6 = r7.info;	 Catch:{ all -> 0x02aa }
-        r11 = r7.info;	 Catch:{ all -> 0x02aa }
-        r11 = r11.id;	 Catch:{ all -> 0x02aa }
-        r6.restrictedProfileParentId = r11;	 Catch:{ all -> 0x02aa }
-        r1.writeUserLP(r7);	 Catch:{ all -> 0x02aa }
-    L_0x0289:
-        r6 = r7.info;	 Catch:{ all -> 0x02aa }
-        r6 = r6.restrictedProfileParentId;	 Catch:{ all -> 0x02aa }
-        r0.restrictedProfileParentId = r6;	 Catch:{ all -> 0x02aa }
-        goto L_0x02b1;	 Catch:{ all -> 0x02aa }
-    L_0x0290:
-        r6 = r7.info;	 Catch:{ all -> 0x02aa }
-        r6 = r6.profileGroupId;	 Catch:{ all -> 0x02aa }
-        r11 = -10000; // 0xffffffffffffd8f0 float:NaN double:NaN;	 Catch:{ all -> 0x02aa }
-        if (r6 != r11) goto L_0x02a3;	 Catch:{ all -> 0x02aa }
-    L_0x0298:
-        r6 = r7.info;	 Catch:{ all -> 0x02aa }
-        r11 = r7.info;	 Catch:{ all -> 0x02aa }
-        r11 = r11.id;	 Catch:{ all -> 0x02aa }
-        r6.profileGroupId = r11;	 Catch:{ all -> 0x02aa }
-        r1.writeUserLP(r7);	 Catch:{ all -> 0x02aa }
-    L_0x02a3:
-        r6 = r7.info;	 Catch:{ all -> 0x02aa }
-        r6 = r6.profileGroupId;	 Catch:{ all -> 0x02aa }
-        r0.profileGroupId = r6;	 Catch:{ all -> 0x02aa }
-        goto L_0x02b1;
-    L_0x02aa:
-        r0 = move-exception;
-        r11 = r34;
-        r1 = r17;
-        goto L_0x0431;
-    L_0x02b1:
-        monitor-exit(r5);	 Catch:{ all -> 0x03b2 }
-        r5 = r0;
-        r0 = r1.mContext;	 Catch:{ all -> 0x03ab }
-        r6 = android.os.storage.StorageManager.class;	 Catch:{ all -> 0x03ab }
-        r0 = r0.getSystemService(r6);	 Catch:{ all -> 0x03ab }
-        r0 = (android.os.storage.StorageManager) r0;	 Catch:{ all -> 0x03ab }
-        r6 = r0;	 Catch:{ all -> 0x03ab }
-        r0 = r1.isSupportISec;	 Catch:{ all -> 0x03ab }
-        if (r0 == 0) goto L_0x02d3;
-    L_0x02c2:
-        r0 = r5.serialNumber;	 Catch:{ all -> 0x02cc }
-        r7 = r5.isEphemeral();	 Catch:{ all -> 0x02cc }
-        r6.createUserKeyISec(r4, r0, r7);	 Catch:{ all -> 0x02cc }
-        goto L_0x02dc;
-    L_0x02cc:
-        r0 = move-exception;
-        r11 = r34;
-    L_0x02cf:
-        r1 = r17;
-        goto L_0x0445;
-    L_0x02d3:
-        r0 = r5.serialNumber;	 Catch:{ all -> 0x03ab }
-        r7 = r5.isEphemeral();	 Catch:{ all -> 0x03ab }
-        r6.createUserKey(r4, r0, r7);	 Catch:{ all -> 0x03ab }
-    L_0x02dc:
-        r0 = r1.mUserDataPreparer;	 Catch:{ all -> 0x03ab }
-        r7 = r5.serialNumber;	 Catch:{ all -> 0x03ab }
-        r11 = 3;	 Catch:{ all -> 0x03ab }
-        r0.prepareUserData(r4, r7, r11);	 Catch:{ all -> 0x03ab }
-        r0 = r1.mPm;	 Catch:{ all -> 0x03ab }
-        r11 = r34;
-        r0.createNewUser(r4, r11);	 Catch:{ all -> 0x03a9 }
-        r0 = 0;	 Catch:{ all -> 0x03a9 }
-        r5.partial = r0;	 Catch:{ all -> 0x03a9 }
-        r7 = r1.mPackagesLock;	 Catch:{ all -> 0x03a9 }
-        monitor-enter(r7);	 Catch:{ all -> 0x03a9 }
-        r1.writeUserLP(r2);	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-        monitor-exit(r7);	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-        r30.updateUserIds();	 Catch:{ all -> 0x03a9 }
-        r0 = new android.os.Bundle;	 Catch:{ all -> 0x03a9 }
-        r0.<init>();	 Catch:{ all -> 0x03a9 }
-        r7 = r0;
-        if (r8 == 0) goto L_0x030f;
-    L_0x0300:
-        r12 = r1.mGuestRestrictions;	 Catch:{ all -> 0x030d }
-        monitor-enter(r12);	 Catch:{ all -> 0x030d }
-        r0 = r1.mGuestRestrictions;	 Catch:{ all -> 0x030d }
-        r7.putAll(r0);	 Catch:{ all -> 0x030d }
-        monitor-exit(r12);	 Catch:{ all -> 0x030d }
-        goto L_0x030f;	 Catch:{ all -> 0x030d }
-    L_0x030a:
-        r0 = move-exception;	 Catch:{ all -> 0x030d }
-        monitor-exit(r12);	 Catch:{ all -> 0x030d }
-        throw r0;	 Catch:{ all -> 0x030d }
-    L_0x030d:
-        r0 = move-exception;
-        goto L_0x02cf;
-    L_0x030f:
-        r12 = r1.mRestrictionsLock;	 Catch:{ all -> 0x03a9 }
-        monitor-enter(r12);	 Catch:{ all -> 0x03a9 }
-        r0 = r1.mBaseUserRestrictions;	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-        r0.append(r4, r7);	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-        monitor-exit(r12);	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-        r0 = r1.mPm;	 Catch:{ all -> 0x0392 }
-        r0.onNewUserCreated(r4);	 Catch:{ all -> 0x0392 }
-        r0 = r1.mContext;	 Catch:{ all -> 0x0392 }
-        r12 = 0;	 Catch:{ all -> 0x0392 }
-        android.hwtheme.HwThemeManager.applyDefaultHwTheme(r12, r0, r4);	 Catch:{ all -> 0x0392 }
-        r0 = new android.content.Intent;	 Catch:{ all -> 0x0392 }
-        r12 = "android.intent.action.USER_ADDED";	 Catch:{ all -> 0x0392 }
-        r0.<init>(r12);	 Catch:{ all -> 0x0392 }
-        r12 = "android.intent.extra.user_handle";	 Catch:{ all -> 0x0392 }
-        r0.putExtra(r12, r4);	 Catch:{ all -> 0x0392 }
-        r12 = r1.mContext;	 Catch:{ all -> 0x0392 }
-        r13 = android.os.UserHandle.ALL;	 Catch:{ all -> 0x0392 }
-        r3 = "android.permission.MANAGE_USERS";	 Catch:{ all -> 0x0392 }
-        r12.sendBroadcastAsUser(r0, r13, r3);	 Catch:{ all -> 0x0392 }
-        r3 = r1.mContext;	 Catch:{ all -> 0x0392 }
-        if (r8 == 0) goto L_0x0340;
-    L_0x033c:
-        r12 = "users_guest_created";	 Catch:{ all -> 0x030d }
-        goto L_0x0349;	 Catch:{ all -> 0x030d }
-    L_0x0340:
-        if (r25 == 0) goto L_0x0346;	 Catch:{ all -> 0x030d }
-    L_0x0342:
-        r12 = "users_demo_created";	 Catch:{ all -> 0x030d }
-        goto L_0x0349;
-    L_0x0346:
-        r12 = "users_user_created";	 Catch:{ all -> 0x0392 }
-    L_0x0349:
-        r13 = 1;	 Catch:{ all -> 0x0392 }
-        com.android.internal.logging.MetricsLogger.count(r3, r12, r13);	 Catch:{ all -> 0x0392 }
-        r3 = "ro.sf.real_lcd_density";	 Catch:{ all -> 0x0392 }
-        r12 = "ro.sf.lcd_density";	 Catch:{ all -> 0x0392 }
-        r13 = 0;	 Catch:{ all -> 0x0392 }
-        r12 = android.os.SystemProperties.getInt(r12, r13);	 Catch:{ all -> 0x0392 }
-        r3 = android.os.SystemProperties.getInt(r3, r12);	 Catch:{ all -> 0x0392 }
-        r12 = "persist.sys.dpi";	 Catch:{ all -> 0x0392 }
-        r12 = android.os.SystemProperties.getInt(r12, r3);	 Catch:{ all -> 0x0392 }
-        r13 = "persist.sys.realdpi";	 Catch:{ all -> 0x0392 }
-        r13 = android.os.SystemProperties.getInt(r13, r12);	 Catch:{ all -> 0x0392 }
-        r27 = r0;	 Catch:{ all -> 0x0392 }
-        r0 = r1.mContext;	 Catch:{ all -> 0x0392 }
-        r0 = r0.getContentResolver();	 Catch:{ all -> 0x0392 }
-        r1 = "display_density_forced";	 Catch:{ all -> 0x0392 }
-        r28 = r3;	 Catch:{ all -> 0x0392 }
-        r3 = java.lang.Integer.toString(r13);	 Catch:{ all -> 0x0392 }
-        android.provider.Settings.Secure.putStringForUser(r0, r1, r3, r4);	 Catch:{ all -> 0x0392 }
-        if (r26 == 0) goto L_0x0388;
-    L_0x037f:
-        r0 = "persist.sys.RepairMode";	 Catch:{ all -> 0x030d }
-        r1 = "true";	 Catch:{ all -> 0x030d }
-        android.os.SystemProperties.set(r0, r1);	 Catch:{ all -> 0x030d }
-    L_0x0388:
-        r6 = r17;
-        android.os.Binder.restoreCallingIdentity(r6);
-        r0 = r5;
-        r1 = r2;
-        r2 = r4;
-        return r0;
-    L_0x0392:
-        r0 = move-exception;
-        r1 = r17;
-        goto L_0x0445;
-    L_0x0397:
-        r0 = move-exception;
-        r29 = r2;
-        r1 = r17;
-    L_0x039c:
-        monitor-exit(r12);	 Catch:{ all -> 0x039e }
-        throw r0;	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-    L_0x039e:
-        r0 = move-exception;
-        goto L_0x039c;
-    L_0x03a0:
-        r0 = move-exception;
-        r29 = r2;
-        r1 = r17;
-    L_0x03a5:
-        monitor-exit(r7);	 Catch:{ all -> 0x03a7 }
-        throw r0;	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-    L_0x03a7:
-        r0 = move-exception;
-        goto L_0x03a5;
-    L_0x03a9:
-        r0 = move-exception;
-        goto L_0x03ae;
-    L_0x03ab:
-        r0 = move-exception;
-        r11 = r34;
-    L_0x03ae:
-        r1 = r17;
-        goto L_0x0445;
-    L_0x03b2:
-        r0 = move-exception;
-        r11 = r34;
-        r1 = r17;
-        goto L_0x0431;
-    L_0x03b9:
-        r0 = move-exception;
-        r11 = r34;
-        r1 = r17;
-        goto L_0x03f5;
-    L_0x03bf:
-        r0 = move-exception;
-        r25 = r11;
-        r26 = r12;
-        r1 = r17;
-        r11 = r34;
-        goto L_0x03f5;
-    L_0x03c9:
-        r0 = move-exception;
-        r20 = r2;
-        r25 = r11;
-        r26 = r12;
-        r1 = r17;
-        r11 = r34;
-        goto L_0x03f5;
-    L_0x03d5:
-        r0 = move-exception;
-        r14 = r31;
-        r20 = r2;
-        r19 = r6;
-        r25 = r11;
-        r26 = r12;
-        r1 = r17;
-        r11 = r34;
-        goto L_0x03f5;
-    L_0x03e5:
-        r0 = move-exception;
-        r14 = r31;
-        r3 = r2;
-        r19 = r6;
-        r25 = r11;
-        r26 = r12;
-        r1 = r17;
-        r11 = r34;
-        r20 = r3;
-    L_0x03f5:
-        monitor-exit(r13);	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        throw r0;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-    L_0x03f7:
-        r0 = move-exception;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        goto L_0x03f5;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-    L_0x03f9:
-        r0 = move-exception;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r14 = r31;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r3 = r2;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r25 = r11;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r26 = r12;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r1 = r17;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r11 = r34;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r20 = r3;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        goto L_0x0431;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-    L_0x0408:
-        r0 = move-exception;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r3 = r2;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r25 = r11;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r26 = r12;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r1 = r13;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r14 = r31;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r11 = r34;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r20 = r3;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        goto L_0x0431;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-    L_0x0416:
-        r0 = move-exception;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r25 = r11;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r26 = r12;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r1 = r13;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r14 = r31;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r11 = r34;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r20 = r32;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        goto L_0x0431;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-    L_0x0423:
-        r0 = move-exception;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r16 = r4;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r25 = r11;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r26 = r12;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r1 = r13;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r14 = r31;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r11 = r34;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        r20 = r32;	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-    L_0x0431:
-        monitor-exit(r5);	 Catch:{ all -> 0x03f7, all -> 0x0435 }
-        throw r0;	 Catch:{ all -> 0x03a0, all -> 0x0397, all -> 0x0433 }
-    L_0x0433:
-        r0 = move-exception;
-        goto L_0x0445;
-    L_0x0435:
-        r0 = move-exception;
-        goto L_0x0431;
-    L_0x0437:
-        r0 = move-exception;
-        r16 = r4;
-        r25 = r11;
-        r26 = r12;
-        r1 = r13;
-        r14 = r31;
-        r11 = r34;
-        r20 = r32;
-    L_0x0445:
-        android.os.Binder.restoreCallingIdentity(r1);
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.UserManagerService.createUserInternalUnchecked(java.lang.String, int, int, java.lang.String[]):android.content.pm.UserInfo");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        */
-    protected void dump(java.io.FileDescriptor r23, java.io.PrintWriter r24, java.lang.String[] r25) {
-        /*
-        r22 = this;
-        r1 = r22;
-        r10 = r24;
-        r0 = r1.mContext;
-        r2 = "UserManagerService";
-        r0 = com.android.internal.util.DumpUtils.checkDumpPermission(r0, r2, r10);
-        if (r0 != 0) goto L_0x000f;
-    L_0x000e:
-        return;
-    L_0x000f:
-        r11 = java.lang.System.currentTimeMillis();
-        r13 = android.os.SystemClock.elapsedRealtime();
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r15 = r1.mPackagesLock;
-        monitor-enter(r15);
-        r8 = r1.mUsersLock;	 Catch:{ all -> 0x02c5 }
-        monitor-enter(r8);	 Catch:{ all -> 0x02c5 }
-        r0 = "Users:";	 Catch:{ all -> 0x02bc }
-        r10.println(r0);	 Catch:{ all -> 0x02bc }
-        r0 = 0;	 Catch:{ all -> 0x02bc }
-    L_0x0028:
-        r9 = r0;	 Catch:{ all -> 0x02bc }
-        r0 = r1.mUsers;	 Catch:{ all -> 0x02bc }
-        r0 = r0.size();	 Catch:{ all -> 0x02bc }
-        if (r9 >= r0) goto L_0x01d6;	 Catch:{ all -> 0x02bc }
-    L_0x0031:
-        r0 = r1.mUsers;	 Catch:{ all -> 0x02bc }
-        r0 = r0.valueAt(r9);	 Catch:{ all -> 0x02bc }
-        r0 = (com.android.server.pm.UserManagerService.UserData) r0;	 Catch:{ all -> 0x02bc }
-        r6 = r0;	 Catch:{ all -> 0x02bc }
-        if (r6 != 0) goto L_0x0045;	 Catch:{ all -> 0x02bc }
-        r20 = r8;	 Catch:{ all -> 0x02bc }
-        r21 = r9;	 Catch:{ all -> 0x02bc }
-        r18 = r13;	 Catch:{ all -> 0x02bc }
-        goto L_0x01ac;	 Catch:{ all -> 0x02bc }
-    L_0x0045:
-        r0 = r6.info;	 Catch:{ all -> 0x02bc }
-        r7 = r0;	 Catch:{ all -> 0x02bc }
-        r0 = r7.id;	 Catch:{ all -> 0x02bc }
-        r4 = r0;	 Catch:{ all -> 0x02bc }
-        r0 = "  ";	 Catch:{ all -> 0x02bc }
-        r10.print(r0);	 Catch:{ all -> 0x02bc }
-        r10.print(r7);	 Catch:{ all -> 0x02bc }
-        r0 = " serialNo=";	 Catch:{ all -> 0x02bc }
-        r10.print(r0);	 Catch:{ all -> 0x02bc }
-        r0 = r7.serialNumber;	 Catch:{ all -> 0x02bc }
-        r10.print(r0);	 Catch:{ all -> 0x02bc }
-        r0 = r1.mRemovingUserIds;	 Catch:{ all -> 0x02bc }
-        r0 = r0.get(r4);	 Catch:{ all -> 0x02bc }
-        if (r0 == 0) goto L_0x0072;
-    L_0x0065:
-        r0 = " <removing> ";	 Catch:{ all -> 0x006b }
-        r10.print(r0);	 Catch:{ all -> 0x006b }
-        goto L_0x0072;
-    L_0x006b:
-        r0 = move-exception;
-        r20 = r8;
-        r18 = r13;
-        goto L_0x02c1;
-    L_0x0072:
-        r0 = r7.partial;	 Catch:{ all -> 0x02bc }
-        if (r0 == 0) goto L_0x007b;
-    L_0x0076:
-        r0 = " <partial>";	 Catch:{ all -> 0x006b }
-        r10.print(r0);	 Catch:{ all -> 0x006b }
-    L_0x007b:
-        r24.println();	 Catch:{ all -> 0x02bc }
-        r0 = "    State: ";	 Catch:{ all -> 0x02bc }
-        r10.print(r0);	 Catch:{ all -> 0x02bc }
-        r2 = r1.mUserStates;	 Catch:{ all -> 0x02bc }
-        monitor-enter(r2);	 Catch:{ all -> 0x02bc }
-        r0 = r1.mUserStates;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = -1;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r0.get(r4, r5);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r0;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        monitor-exit(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = com.android.server.am.UserState.stateToString(r5);	 Catch:{ all -> 0x02bc }
-        r10.println(r0);	 Catch:{ all -> 0x02bc }
-        r0 = "    Created: ";	 Catch:{ all -> 0x02bc }
-        r10.print(r0);	 Catch:{ all -> 0x02bc }
-        r0 = r7.creationTime;	 Catch:{ all -> 0x01c0 }
-        r2 = r10;
-        r16 = r4;
-        r17 = r5;
-        r4 = r11;
-        r18 = r13;
-        r13 = r6;
-        r14 = r7;
-        r6 = r0;
-        dumpTimeAgo(r2, r3, r4, r6);	 Catch:{ all -> 0x01b9 }
-        r0 = "    Last logged in: ";	 Catch:{ all -> 0x01b9 }
-        r10.print(r0);	 Catch:{ all -> 0x01b9 }
-        r0 = r14.lastLoggedInTime;	 Catch:{ all -> 0x01b9 }
-        r4 = r10;
-        r5 = r3;
-        r6 = r11;
-        r20 = r8;
-        r21 = r9;
-        r8 = r0;
-        dumpTimeAgo(r4, r5, r6, r8);	 Catch:{ all -> 0x01b7 }
-        r0 = "    Last logged in fingerprint: ";	 Catch:{ all -> 0x01b7 }
-        r10.print(r0);	 Catch:{ all -> 0x01b7 }
-        r0 = r14.lastLoggedInFingerprint;	 Catch:{ all -> 0x01b7 }
-        r10.println(r0);	 Catch:{ all -> 0x01b7 }
-        r0 = "    Start time: ";	 Catch:{ all -> 0x01b7 }
-        r10.print(r0);	 Catch:{ all -> 0x01b7 }
-        r8 = r13.startRealtime;	 Catch:{ all -> 0x01b7 }
-        r4 = r10;	 Catch:{ all -> 0x01b7 }
-        r5 = r3;	 Catch:{ all -> 0x01b7 }
-        r6 = r18;	 Catch:{ all -> 0x01b7 }
-        dumpTimeAgo(r4, r5, r6, r8);	 Catch:{ all -> 0x01b7 }
-        r0 = "    Unlock time: ";	 Catch:{ all -> 0x01b7 }
-        r10.print(r0);	 Catch:{ all -> 0x01b7 }
-        r8 = r13.unlockRealtime;	 Catch:{ all -> 0x01b7 }
-        r4 = r10;	 Catch:{ all -> 0x01b7 }
-        r5 = r3;	 Catch:{ all -> 0x01b7 }
-        r6 = r18;	 Catch:{ all -> 0x01b7 }
-        dumpTimeAgo(r4, r5, r6, r8);	 Catch:{ all -> 0x01b7 }
-        r0 = "    Has profile owner: ";	 Catch:{ all -> 0x01b7 }
-        r10.print(r0);	 Catch:{ all -> 0x01b7 }
-        r1 = r22;
-        r0 = r1.mIsUserManaged;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r4 = r16;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r0.get(r4);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.println(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "    Restrictions:";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.println(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = r1.mRestrictionsLock;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        monitor-enter(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "      ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r1.mBaseUserRestrictions;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r6 = r14.id;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r5.get(r6);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = (android.os.Bundle) r5;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        com.android.server.pm.UserRestrictionsUtils.dumpRestrictions(r10, r0, r5);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "    Device policy global restrictions:";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.println(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "      ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r1.mDevicePolicyGlobalUserRestrictions;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r6 = r14.id;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r5.get(r6);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = (android.os.Bundle) r5;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        com.android.server.pm.UserRestrictionsUtils.dumpRestrictions(r10, r0, r5);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "    Device policy local restrictions:";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.println(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "      ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r1.mDevicePolicyLocalUserRestrictions;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r6 = r14.id;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r5.get(r6);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = (android.os.Bundle) r5;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        com.android.server.pm.UserRestrictionsUtils.dumpRestrictions(r10, r0, r5);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "    Effective restrictions:";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.println(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = "      ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r1.mCachedEffectiveUserRestrictions;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r6 = r14.id;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = r5.get(r6);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r5 = (android.os.Bundle) r5;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        com.android.server.pm.UserRestrictionsUtils.dumpRestrictions(r10, r0, r5);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        monitor-exit(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r13.account;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        if (r0 == 0) goto L_0x0166;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x014d:
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.<init>();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = "    Account name: ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.append(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = r13.account;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.append(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r0.toString();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.print(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r24.println();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x0166:
-        r0 = r13.seedAccountName;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        if (r0 == 0) goto L_0x01ac;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x016a:
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.<init>();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = "    Seed account name: ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.append(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = r13.seedAccountName;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.append(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r0.toString();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.print(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r24.println();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r13.seedAccountType;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        if (r0 == 0) goto L_0x01a0;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x0187:
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.<init>();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = "         account type: ";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.append(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r2 = r13.seedAccountType;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0.append(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r0 = r0.toString();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.print(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r24.println();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x01a0:
-        r0 = r13.seedAccountOptions;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        if (r0 == 0) goto L_0x01ac;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x01a4:
-        r0 = "         account options exist";	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r10.print(r0);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r24.println();	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x01ac:
-        r0 = r21 + 1;
-        r13 = r18;
-        r8 = r20;
-        goto L_0x0028;
-    L_0x01b4:
-        r0 = move-exception;
-        monitor-exit(r2);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        throw r0;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x01b7:
-        r0 = move-exception;
-        goto L_0x01bc;
-    L_0x01b9:
-        r0 = move-exception;
-        r20 = r8;
-    L_0x01bc:
-        r1 = r22;
-        goto L_0x02c1;
-    L_0x01c0:
-        r0 = move-exception;
-        r20 = r8;
-        r18 = r13;
-        r1 = r22;
-        goto L_0x02c1;
-    L_0x01c9:
-        r0 = move-exception;
-        r20 = r8;
-        r21 = r9;
-        r18 = r13;
-        r13 = r6;
-        r14 = r7;
-    L_0x01d2:
-        monitor-exit(r2);	 Catch:{ all -> 0x01d4 }
-        throw r0;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x01d4:
-        r0 = move-exception;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        goto L_0x01d2;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-    L_0x01d6:
-        r20 = r8;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r18 = r13;	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        monitor-exit(r20);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        r24.println();	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r2 = "  Device owner id:";	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r2 = r1.mDeviceOwnerUserId;	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        r24.println();	 Catch:{ all -> 0x02ca }
-        r0 = "  Guest restrictions:";	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        r2 = r1.mGuestRestrictions;	 Catch:{ all -> 0x02ca }
-        monitor-enter(r2);	 Catch:{ all -> 0x02ca }
-        r0 = "    ";	 Catch:{ all -> 0x02ca }
-        r4 = r1.mGuestRestrictions;	 Catch:{ all -> 0x02ca }
-        com.android.server.pm.UserRestrictionsUtils.dumpRestrictions(r10, r0, r4);	 Catch:{ all -> 0x02ca }
-        monitor-exit(r2);	 Catch:{ all -> 0x02ca }
-        r2 = r1.mUsersLock;	 Catch:{ all -> 0x02ca }
-        monitor-enter(r2);	 Catch:{ all -> 0x02ca }
-        r24.println();	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r4 = "  Device managed: ";	 Catch:{ all -> 0x02ca }
-        r0.append(r4);	 Catch:{ all -> 0x02ca }
-        r4 = r1.mIsDeviceManaged;	 Catch:{ all -> 0x02ca }
-        r0.append(r4);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        r0 = r1.mRemovingUserIds;	 Catch:{ all -> 0x02ca }
-        r0 = r0.size();	 Catch:{ all -> 0x02ca }
-        if (r0 <= 0) goto L_0x0244;	 Catch:{ all -> 0x02ca }
-    L_0x022b:
-        r24.println();	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r4 = "  Recently removed userIds: ";	 Catch:{ all -> 0x02ca }
-        r0.append(r4);	 Catch:{ all -> 0x02ca }
-        r4 = r1.mRecentlyRemovedIds;	 Catch:{ all -> 0x02ca }
-        r0.append(r4);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-    L_0x0244:
-        monitor-exit(r2);	 Catch:{ all -> 0x02ca }
-        r2 = r1.mUserStates;	 Catch:{ all -> 0x02ca }
-        monitor-enter(r2);	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r4 = "  Started users state: ";	 Catch:{ all -> 0x02ca }
-        r0.append(r4);	 Catch:{ all -> 0x02ca }
-        r4 = r1.mUserStates;	 Catch:{ all -> 0x02ca }
-        r0.append(r4);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        monitor-exit(r2);	 Catch:{ all -> 0x02ca }
-        r24.println();	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r2 = "  Max users: ";	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r2 = android.os.UserManager.getMaxSupportedUsers();	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r2 = "  Supports switchable users: ";	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r2 = android.os.UserManager.supportsMultipleUsers();	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x02ca }
-        r0.<init>();	 Catch:{ all -> 0x02ca }
-        r2 = "  All guests ephemeral: ";	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r2 = android.content.res.Resources.getSystem();	 Catch:{ all -> 0x02ca }
-        r4 = 17956979; // 0x1120073 float:2.6816287E-38 double:8.8719264E-317;	 Catch:{ all -> 0x02ca }
-        r2 = r2.getBoolean(r4);	 Catch:{ all -> 0x02ca }
-        r0.append(r2);	 Catch:{ all -> 0x02ca }
-        r0 = r0.toString();	 Catch:{ all -> 0x02ca }
-        r10.println(r0);	 Catch:{ all -> 0x02ca }
-        monitor-exit(r15);	 Catch:{ all -> 0x02ca }
-        return;
-    L_0x02b3:
-        r0 = move-exception;
-        monitor-exit(r2);	 Catch:{ all -> 0x02ca }
-        throw r0;	 Catch:{ all -> 0x02ca }
-    L_0x02b6:
-        r0 = move-exception;
-        monitor-exit(r2);	 Catch:{ all -> 0x02ca }
-        throw r0;	 Catch:{ all -> 0x02ca }
-    L_0x02b9:
-        r0 = move-exception;
-        monitor-exit(r2);	 Catch:{ all -> 0x02ca }
-        throw r0;	 Catch:{ all -> 0x02ca }
-    L_0x02bc:
-        r0 = move-exception;
-        r20 = r8;
-        r18 = r13;
-    L_0x02c1:
-        monitor-exit(r20);	 Catch:{ all -> 0x01c9, all -> 0x02c3 }
-        throw r0;	 Catch:{ all -> 0x02ca }
-    L_0x02c3:
-        r0 = move-exception;	 Catch:{ all -> 0x02ca }
-        goto L_0x02c1;	 Catch:{ all -> 0x02ca }
-    L_0x02c5:
-        r0 = move-exception;	 Catch:{ all -> 0x02ca }
-        r18 = r13;	 Catch:{ all -> 0x02ca }
-    L_0x02c8:
-        monitor-exit(r15);	 Catch:{ all -> 0x02ca }
-        throw r0;
-    L_0x02ca:
-        r0 = move-exception;
-        goto L_0x02c8;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.UserManagerService.dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]):void");
-    }
-
     static {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("system");
@@ -1825,7 +762,7 @@ public class UserManagerService extends AbsUserManagerService {
             sInstance = this;
             UserInfo info = getUserInfoLU(0);
             if (!(info == null || info.name == null)) {
-                this.isOwnerNameChanged = info.name.equals(this.mContext.getResources().getString(17040626)) ^ 1;
+                this.isOwnerNameChanged = info.name.equals(this.mContext.getResources().getString(17040627)) ^ 1;
             }
         }
         this.mLocalService = new LocalService(this, null);
@@ -1894,13 +831,13 @@ public class UserManagerService extends AbsUserManagerService {
         return str;
     }
 
-    /* JADX WARNING: Missing block: B:18:0x003c, code:
+    /* JADX WARNING: Missing block: B:18:0x003c, code skipped:
             if (r0 == null) goto L_0x0041;
      */
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             writeUserLP(r0);
      */
-    /* JADX WARNING: Missing block: B:22:0x0042, code:
+    /* JADX WARNING: Missing block: B:22:0x0042, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1955,7 +892,7 @@ public class UserManagerService extends AbsUserManagerService {
                     }
                     if (ui.id == 0 && !this.isOwnerNameChanged) {
                         boolean nameChanged = false;
-                        String ownerName = this.mContext.getResources().getString(17040626);
+                        String ownerName = this.mContext.getResources().getString(17040627);
                         if (!(TextUtils.isEmpty(ui.name) || ui.name.equals(ownerName))) {
                             nameChanged = true;
                         }
@@ -1986,7 +923,7 @@ public class UserManagerService extends AbsUserManagerService {
         }
         long ident = Binder.clearCallingIdentity();
         try {
-            List<UserInfo> profilesLU;
+            List profilesLU;
             synchronized (this.mUsersLock) {
                 profilesLU = getProfilesLU(userId, enabledOnly, returnFullInfo);
             }
@@ -2072,13 +1009,13 @@ public class UserManagerService extends AbsUserManagerService {
         return isSameProfileGroupNoChecks(userId, otherUserId);
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0025, code:
+    /* JADX WARNING: Missing block: B:17:0x0025, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:17:0x0027, code:
+    /* JADX WARNING: Missing block: B:19:0x0027, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:19:0x0029, code:
+    /* JADX WARNING: Missing block: B:21:0x0029, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2086,12 +1023,16 @@ public class UserManagerService extends AbsUserManagerService {
         synchronized (this.mUsersLock) {
             UserInfo userInfo = getUserInfoLU(userId);
             boolean z = false;
-            if (userInfo == null || userInfo.profileGroupId == -10000) {
-            } else {
-                UserInfo otherUserInfo = getUserInfoLU(otherUserId);
-                if (otherUserInfo == null || otherUserInfo.profileGroupId == -10000) {
-                } else if (userInfo.profileGroupId == otherUserInfo.profileGroupId) {
-                    z = true;
+            if (userInfo != null) {
+                if (userInfo.profileGroupId != -10000) {
+                    UserInfo otherUserInfo = getUserInfoLU(otherUserId);
+                    if (otherUserInfo != null) {
+                        if (otherUserInfo.profileGroupId != -10000) {
+                            if (userInfo.profileGroupId == otherUserInfo.profileGroupId) {
+                                z = true;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -2182,41 +1123,41 @@ public class UserManagerService extends AbsUserManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x003e, code:
+    /* JADX WARNING: Missing block: B:14:0x003e, code skipped:
             r4 = r6.mPackagesLock;
      */
-    /* JADX WARNING: Missing block: B:15:0x0040, code:
+    /* JADX WARNING: Missing block: B:15:0x0040, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             writeUserLP(r3);
      */
-    /* JADX WARNING: Missing block: B:18:0x0044, code:
+    /* JADX WARNING: Missing block: B:18:0x0044, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:19:0x0045, code:
+    /* JADX WARNING: Missing block: B:19:0x0045, code skipped:
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:20:0x0046, code:
+    /* JADX WARNING: Missing block: B:20:0x0046, code skipped:
             if (r8 == false) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             android.app.ActivityManager.getService().stopUser(r7, true, null);
             ((android.app.ActivityManagerInternal) com.android.server.LocalServices.getService(android.app.ActivityManagerInternal.class)).killForegroundAppsForUser(r7);
      */
-    /* JADX WARNING: Missing block: B:23:0x005c, code:
+    /* JADX WARNING: Missing block: B:23:0x005c, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:24:0x005e, code:
-            if (r9 == null) goto L_0x0067;
+    /* JADX WARNING: Missing block: B:25:0x005e, code skipped:
+            if (r9 == null) goto L_0x0066;
      */
-    /* JADX WARNING: Missing block: B:25:0x0060, code:
+    /* JADX WARNING: Missing block: B:26:0x0060, code skipped:
             r0 = new com.android.server.pm.UserManagerService.DisableQuietModeUserUnlockedCallback(r6, r9);
      */
-    /* JADX WARNING: Missing block: B:26:0x0067, code:
+    /* JADX WARNING: Missing block: B:28:0x0067, code skipped:
             android.app.ActivityManager.getService().startUserInBackgroundWithListener(r7, r0);
      */
-    /* JADX WARNING: Missing block: B:27:0x006f, code:
+    /* JADX WARNING: Missing block: B:29:0x006f, code skipped:
             r0.rethrowAsRuntimeException();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2411,7 +1352,7 @@ public class UserManagerService extends AbsUserManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0037, code:
+    /* JADX WARNING: Missing block: B:11:0x0037, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2449,10 +1390,10 @@ public class UserManagerService extends AbsUserManagerService {
         return isRestricted;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x002d, code:
+    /* JADX WARNING: Missing block: B:18:0x002d, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:19:0x002f, code:
+    /* JADX WARNING: Missing block: B:20:0x002f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2461,11 +1402,14 @@ public class UserManagerService extends AbsUserManagerService {
         synchronized (this.mUsersLock) {
             UserInfo userInfo = getUserInfoLU(userId);
             boolean z = false;
-            if (userInfo == null || !userInfo.canHaveProfile()) {
-            } else if (!userInfo.isAdmin()) {
-                return false;
-            } else if (!(this.mIsDeviceManaged || this.mIsUserManaged.get(userId))) {
-                z = true;
+            if (userInfo != null) {
+                if (userInfo.canHaveProfile()) {
+                    if (!userInfo.isAdmin()) {
+                        return false;
+                    } else if (!(this.mIsDeviceManaged || this.mIsUserManaged.get(userId))) {
+                        z = true;
+                    }
+                }
             }
         }
     }
@@ -2534,13 +1478,13 @@ public class UserManagerService extends AbsUserManagerService {
         return this.mLocalService.exists(userId);
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0052, code:
+    /* JADX WARNING: Missing block: B:21:0x0052, code skipped:
             if (r0 == false) goto L_0x0057;
      */
-    /* JADX WARNING: Missing block: B:21:0x0054, code:
+    /* JADX WARNING: Missing block: B:22:0x0054, code skipped:
             sendUserInfoChangedBroadcast(r7);
      */
-    /* JADX WARNING: Missing block: B:22:0x0057, code:
+    /* JADX WARNING: Missing block: B:23:0x0057, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2549,26 +1493,27 @@ public class UserManagerService extends AbsUserManagerService {
         boolean changed = false;
         synchronized (this.mPackagesLock) {
             UserData userData = getUserDataNoChecks(userId);
-            if (userData == null || userData.info.partial) {
-                String str = LOG_TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("setUserName: unknown user #");
-                stringBuilder.append(userId);
-                Slog.w(str, stringBuilder.toString());
-                return;
-            }
-            if (!(name == null || name.equals(userData.info.name))) {
-                userData.info.name = name;
-                writeUserLP(userData);
-                changed = true;
-            }
-            if (name != null && userId == 0) {
-                if (this.mContext.getResources() == null || !name.equals(this.mContext.getResources().getString(17040626))) {
-                    this.isOwnerNameChanged = true;
-                } else {
-                    this.isOwnerNameChanged = false;
+            if (userData != null) {
+                if (!userData.info.partial) {
+                    if (!(name == null || name.equals(userData.info.name))) {
+                        userData.info.name = name;
+                        writeUserLP(userData);
+                        changed = true;
+                    }
+                    if (name != null && userId == 0) {
+                        if (this.mContext.getResources() == null || !name.equals(this.mContext.getResources().getString(17040627))) {
+                            this.isOwnerNameChanged = true;
+                        } else {
+                            this.isOwnerNameChanged = false;
+                        }
+                    }
                 }
             }
+            String str = LOG_TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("setUserName: unknown user #");
+            stringBuilder.append(userId);
+            Slog.w(str, stringBuilder.toString());
         }
     }
 
@@ -2591,43 +1536,45 @@ public class UserManagerService extends AbsUserManagerService {
     public ParcelFileDescriptor getUserIcon(int targetUserId) {
         synchronized (this.mPackagesLock) {
             UserInfo targetUserInfo = getUserInfoNoChecks(targetUserId);
-            if (targetUserInfo == null || targetUserInfo.partial) {
-                String str = LOG_TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("getUserIcon: unknown user #");
-                stringBuilder.append(targetUserId);
-                Slog.w(str, stringBuilder.toString());
-                return null;
+            if (targetUserInfo != null) {
+                if (!targetUserInfo.partial) {
+                    int callingUserId = UserHandle.getCallingUserId();
+                    int callingGroupId = getUserInfoNoChecks(callingUserId).profileGroupId;
+                    boolean sameGroup = callingGroupId != -10000 && callingGroupId == targetUserInfo.profileGroupId;
+                    if (!(callingUserId == targetUserId || sameGroup)) {
+                        checkManageUsersPermission("get the icon of a user who is not related");
+                    }
+                    if (targetUserInfo.iconPath == null) {
+                        return null;
+                    }
+                    String targetUserInfo2 = targetUserInfo.iconPath;
+                    try {
+                        return ParcelFileDescriptor.open(new File(targetUserInfo2), 268435456);
+                    } catch (FileNotFoundException e) {
+                        Log.e(LOG_TAG, "Couldn't find icon file", e);
+                        return null;
+                    }
+                }
             }
-            int callingUserId = UserHandle.getCallingUserId();
-            int callingGroupId = getUserInfoNoChecks(callingUserId).profileGroupId;
-            boolean sameGroup = callingGroupId != -10000 && callingGroupId == targetUserInfo.profileGroupId;
-            if (!(callingUserId == targetUserId || sameGroup)) {
-                checkManageUsersPermission("get the icon of a user who is not related");
-            }
-            if (targetUserInfo.iconPath == null) {
-                return null;
-            }
-            String targetUserInfo2 = targetUserInfo.iconPath;
-            try {
-                return ParcelFileDescriptor.open(new File(targetUserInfo2), 268435456);
-            } catch (FileNotFoundException e) {
-                Log.e(LOG_TAG, "Couldn't find icon file", e);
-                return null;
-            }
+            String str = LOG_TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("getUserIcon: unknown user #");
+            stringBuilder.append(targetUserId);
+            Slog.w(str, stringBuilder.toString());
+            return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x002d, code:
+    /* JADX WARNING: Missing block: B:12:0x002d, code skipped:
             r1 = r2;
      */
-    /* JADX WARNING: Missing block: B:12:0x002e, code:
+    /* JADX WARNING: Missing block: B:13:0x002e, code skipped:
             if (r0 == false) goto L_0x0033;
      */
-    /* JADX WARNING: Missing block: B:13:0x0030, code:
+    /* JADX WARNING: Missing block: B:14:0x0030, code skipped:
             scheduleWriteUser(r1);
      */
-    /* JADX WARNING: Missing block: B:14:0x0033, code:
+    /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2636,17 +1583,20 @@ public class UserManagerService extends AbsUserManagerService {
         boolean scheduleWriteUser = false;
         synchronized (this.mUsersLock) {
             UserData userData = (UserData) this.mUsers.get(userId);
-            if (userData == null || userData.info.partial) {
-                String str = LOG_TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("makeInitialized: unknown user #");
-                stringBuilder.append(userId);
-                Slog.w(str, stringBuilder.toString());
-            } else if ((userData.info.flags & 16) == 0) {
-                UserInfo userInfo = userData.info;
-                userInfo.flags |= 16;
-                scheduleWriteUser = true;
+            if (userData != null) {
+                if (!userData.info.partial) {
+                    if ((userData.info.flags & 16) == 0) {
+                        UserInfo userInfo = userData.info;
+                        userInfo.flags |= 16;
+                        scheduleWriteUser = true;
+                    }
+                }
             }
+            String str = LOG_TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("makeInitialized: unknown user #");
+            stringBuilder.append(userId);
+            Slog.w(str, stringBuilder.toString());
         }
     }
 
@@ -2703,7 +1653,10 @@ public class UserManagerService extends AbsUserManagerService {
         }
         synchronized (this.mRestrictionsLock) {
             if (globalChanged) {
-                applyUserRestrictionsForAllUsersLR();
+                try {
+                    applyUserRestrictionsForAllUsersLR();
+                } catch (Throwable th) {
+                }
             } else if (localChanged) {
                 applyUserRestrictionsLR(userId);
             }
@@ -2941,10 +1894,10 @@ public class UserManagerService extends AbsUserManagerService {
         return count >= UserManager.getMaxSupportedUsers();
     }
 
-    /* JADX WARNING: Missing block: B:33:0x0071, code:
+    /* JADX WARNING: Missing block: B:36:0x0071, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:35:0x0073, code:
+    /* JADX WARNING: Missing block: B:38:0x0073, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2968,10 +1921,13 @@ public class UserManagerService extends AbsUserManagerService {
         }
         synchronized (this.mUsersLock) {
             UserInfo userInfo = getUserInfoLU(userId);
-            if (userInfo == null || !userInfo.canHaveProfile()) {
-            } else {
-                int usersCountAfterRemoving = getAliveUsersExcludingGuestsCountLU() - profilesRemovedCount;
-                if (usersCountAfterRemoving == 1 || usersCountAfterRemoving < UserManager.getMaxSupportedUsers()) {
+            if (userInfo != null) {
+                if (userInfo.canHaveProfile()) {
+                    int usersCountAfterRemoving = getAliveUsersExcludingGuestsCountLU() - profilesRemovedCount;
+                    if (usersCountAfterRemoving != 1) {
+                        if (usersCountAfterRemoving < UserManager.getMaxSupportedUsers()) {
+                        }
+                    }
                     z = true;
                 }
             }
@@ -3071,8 +2027,8 @@ public class UserManagerService extends AbsUserManagerService {
                 FileUtils.setPermissions(dir.getPath(), 505, -1, -1);
             }
             CompressFormat compressFormat = CompressFormat.PNG;
-            OutputStream fileOutputStream = new FileOutputStream(tmp);
-            OutputStream os = fileOutputStream;
+            FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+            FileOutputStream os = fileOutputStream;
             if (bitmap.compress(compressFormat, 100, fileOutputStream) && tmp.renameTo(file) && SELinux.restorecon(file)) {
                 info.iconPath = file.getAbsolutePath();
             }
@@ -3095,11 +2051,7 @@ public class UserManagerService extends AbsUserManagerService {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:15:0x0042  */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0034 A:{Catch:{ IOException -> 0x0168, IOException -> 0x0168, Exception -> 0x014d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:89:0x0168 A:{Catch:{ all -> 0x014b }, PHI: r0 , Splitter: B:5:0x0014, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Missing block: B:90:0x0169, code:
-            fallbackToSingleUserLP();
-     */
+    /* JADX WARNING: Removed duplicated region for block: B:12:0x0034 A:{Catch:{ IOException | XmlPullParserException -> 0x0168, Exception -> 0x014d }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void readUserListLP() {
         if (this.mUserListFile.exists()) {
@@ -3174,13 +2126,18 @@ public class UserManagerService extends AbsUserManagerService {
                                             UserRestrictionsUtils.readRestrictions(parser, this.mGuestRestrictions);
                                         }
                                     }
-                                } else if (versionNumber.equals(TAG_DEVICE_OWNER_USER_ID) || versionNumber.equals(TAG_GLOBAL_RESTRICTION_OWNER_ID)) {
+                                } else {
+                                    if (!versionNumber.equals(TAG_DEVICE_OWNER_USER_ID)) {
+                                        if (!versionNumber.equals(TAG_GLOBAL_RESTRICTION_OWNER_ID)) {
+                                            if (versionNumber.equals(TAG_DEVICE_POLICY_RESTRICTIONS)) {
+                                                oldDevicePolicyGlobalUserRestrictions = UserRestrictionsUtils.readRestrictions(parser);
+                                            }
+                                        }
+                                    }
                                     String ownerUserId = parser.getAttributeValue(null, ATTR_ID);
                                     if (ownerUserId != null) {
                                         this.mDeviceOwnerUserId = Integer.parseInt(ownerUserId);
                                     }
-                                } else if (versionNumber.equals(TAG_DEVICE_POLICY_RESTRICTIONS)) {
-                                    oldDevicePolicyGlobalUserRestrictions = UserRestrictionsUtils.readRestrictions(parser);
                                 }
                             }
                         }
@@ -3190,7 +2147,8 @@ public class UserManagerService extends AbsUserManagerService {
                 }
                 if (type == 2) {
                 }
-            } catch (IOException e) {
+            } catch (IOException | XmlPullParserException e) {
+                fallbackToSingleUserLP();
             } catch (Exception e2) {
                 try {
                     lastSerialNumber = LOG_TAG;
@@ -3215,7 +2173,7 @@ public class UserManagerService extends AbsUserManagerService {
         if (userVersion < 1) {
             userData = getUserDataNoChecks(0);
             if ("Primary".equals(userData.info.name)) {
-                userData.info.name = this.mContext.getResources().getString(17040626);
+                userData.info.name = this.mContext.getResources().getString(17040627);
                 scheduleWriteUser(userData);
             }
             userVersion = 1;
@@ -3304,7 +2262,7 @@ public class UserManagerService extends AbsUserManagerService {
     }
 
     private String getOwnerName() {
-        return this.mContext.getResources().getString(17040626);
+        return this.mContext.getResources().getString(17040627);
     }
 
     private void scheduleWriteUser(UserData UserData) {
@@ -3469,7 +2427,7 @@ public class UserManagerService extends AbsUserManagerService {
         return null;
     }
 
-    /* JADX WARNING: Missing block: B:93:0x0290, code:
+    /* JADX WARNING: Missing block: B:93:0x0290, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3798,6 +2756,556 @@ public class UserManagerService extends AbsUserManagerService {
         return null;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:177:0x0229  */
+    /* JADX WARNING: Removed duplicated region for block: B:176:0x0222  */
+    /* JADX WARNING: Removed duplicated region for block: B:190:0x025c A:{SYNTHETIC, Splitter:B:190:0x025c} */
+    /* JADX WARNING: Missing block: B:162:0x01ea, code skipped:
+            if (r7.info.isEphemeral() != false) goto L_0x01fe;
+     */
+    /* JADX WARNING: Missing block: B:195:?, code skipped:
+            r1.writeUserLP(r2);
+            writeUserListLP();
+     */
+    /* JADX WARNING: Missing block: B:196:0x026d, code skipped:
+            if (r7 == null) goto L_0x02b1;
+     */
+    /* JADX WARNING: Missing block: B:197:0x026f, code skipped:
+            if (r9 != false) goto L_0x0290;
+     */
+    /* JADX WARNING: Missing block: B:198:0x0271, code skipped:
+            if (r15 == false) goto L_0x0274;
+     */
+    /* JADX WARNING: Missing block: B:199:0x0274, code skipped:
+            if (r10 == false) goto L_0x02b1;
+     */
+    /* JADX WARNING: Missing block: B:202:0x027c, code skipped:
+            if (r7.info.restrictedProfileParentId != -10000) goto L_0x0289;
+     */
+    /* JADX WARNING: Missing block: B:203:0x027e, code skipped:
+            r7.info.restrictedProfileParentId = r7.info.id;
+            r1.writeUserLP(r7);
+     */
+    /* JADX WARNING: Missing block: B:204:0x0289, code skipped:
+            r0.restrictedProfileParentId = r7.info.restrictedProfileParentId;
+     */
+    /* JADX WARNING: Missing block: B:206:0x0296, code skipped:
+            if (r7.info.profileGroupId != -10000) goto L_0x02a3;
+     */
+    /* JADX WARNING: Missing block: B:207:0x0298, code skipped:
+            r7.info.profileGroupId = r7.info.id;
+            r1.writeUserLP(r7);
+     */
+    /* JADX WARNING: Missing block: B:208:0x02a3, code skipped:
+            r0.profileGroupId = r7.info.profileGroupId;
+     */
+    /* JADX WARNING: Missing block: B:209:0x02aa, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:210:0x02ab, code skipped:
+            r11 = r34;
+            r1 = r17;
+     */
+    /* JADX WARNING: Missing block: B:213:0x02b2, code skipped:
+            r5 = r0;
+     */
+    /* JADX WARNING: Missing block: B:215:?, code skipped:
+            r6 = (android.os.storage.StorageManager) r1.mContext.getSystemService(android.os.storage.StorageManager.class);
+     */
+    /* JADX WARNING: Missing block: B:216:0x02c0, code skipped:
+            if (r1.isSupportISec == false) goto L_0x02d3;
+     */
+    /* JADX WARNING: Missing block: B:218:?, code skipped:
+            r6.createUserKeyISec(r4, r5.serialNumber, r5.isEphemeral());
+     */
+    /* JADX WARNING: Missing block: B:219:0x02cc, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:220:0x02cd, code skipped:
+            r11 = r34;
+     */
+    /* JADX WARNING: Missing block: B:223:?, code skipped:
+            r6.createUserKey(r4, r5.serialNumber, r5.isEphemeral());
+     */
+    /* JADX WARNING: Missing block: B:224:0x02dc, code skipped:
+            r1.mUserDataPreparer.prepareUserData(r4, r5.serialNumber, 3);
+     */
+    /* JADX WARNING: Missing block: B:227:?, code skipped:
+            r1.mPm.createNewUser(r4, r34);
+            r5.partial = false;
+            r7 = r1.mPackagesLock;
+     */
+    /* JADX WARNING: Missing block: B:228:0x02f0, code skipped:
+            monitor-enter(r7);
+     */
+    /* JADX WARNING: Missing block: B:230:?, code skipped:
+            r1.writeUserLP(r2);
+     */
+    /* JADX WARNING: Missing block: B:231:0x02f4, code skipped:
+            monitor-exit(r7);
+     */
+    /* JADX WARNING: Missing block: B:233:?, code skipped:
+            updateUserIds();
+     */
+    /* JADX WARNING: Missing block: B:234:0x02fd, code skipped:
+            r7 = new android.os.Bundle();
+     */
+    /* JADX WARNING: Missing block: B:235:0x02fe, code skipped:
+            if (r8 == false) goto L_0x030f;
+     */
+    /* JADX WARNING: Missing block: B:237:?, code skipped:
+            r12 = r1.mGuestRestrictions;
+     */
+    /* JADX WARNING: Missing block: B:238:0x0302, code skipped:
+            monitor-enter(r12);
+     */
+    /* JADX WARNING: Missing block: B:240:?, code skipped:
+            r7.putAll(r1.mGuestRestrictions);
+     */
+    /* JADX WARNING: Missing block: B:241:0x0308, code skipped:
+            monitor-exit(r12);
+     */
+    /* JADX WARNING: Missing block: B:247:0x030d, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:249:?, code skipped:
+            r12 = r1.mRestrictionsLock;
+     */
+    /* JADX WARNING: Missing block: B:250:0x0311, code skipped:
+            monitor-enter(r12);
+     */
+    /* JADX WARNING: Missing block: B:252:?, code skipped:
+            r1.mBaseUserRestrictions.append(r4, r7);
+     */
+    /* JADX WARNING: Missing block: B:253:0x0317, code skipped:
+            monitor-exit(r12);
+     */
+    /* JADX WARNING: Missing block: B:255:?, code skipped:
+            r1.mPm.onNewUserCreated(r4);
+            android.hwtheme.HwThemeManager.applyDefaultHwTheme(false, r1.mContext, r4);
+            r0 = new android.content.Intent("android.intent.action.USER_ADDED");
+            r0.putExtra("android.intent.extra.user_handle", r4);
+            r1.mContext.sendBroadcastAsUser(r0, android.os.UserHandle.ALL, "android.permission.MANAGE_USERS");
+            r3 = r1.mContext;
+     */
+    /* JADX WARNING: Missing block: B:256:0x033a, code skipped:
+            if (r8 == false) goto L_0x0340;
+     */
+    /* JADX WARNING: Missing block: B:258:?, code skipped:
+            r12 = TRON_GUEST_CREATED;
+     */
+    /* JADX WARNING: Missing block: B:259:0x0340, code skipped:
+            if (r25 == false) goto L_0x0346;
+     */
+    /* JADX WARNING: Missing block: B:260:0x0342, code skipped:
+            r12 = TRON_DEMO_CREATED;
+     */
+    /* JADX WARNING: Missing block: B:262:?, code skipped:
+            r12 = TRON_USER_CREATED;
+     */
+    /* JADX WARNING: Missing block: B:263:0x0349, code skipped:
+            com.android.internal.logging.MetricsLogger.count(r3, r12, 1);
+            r3 = android.os.SystemProperties.getInt("ro.sf.real_lcd_density", android.os.SystemProperties.getInt("ro.sf.lcd_density", 0));
+            r27 = r0;
+            r28 = r3;
+            android.provider.Settings.Secure.putStringForUser(r1.mContext.getContentResolver(), "display_density_forced", java.lang.Integer.toString(android.os.SystemProperties.getInt("persist.sys.realdpi", android.os.SystemProperties.getInt("persist.sys.dpi", r3))), r4);
+     */
+    /* JADX WARNING: Missing block: B:264:0x037d, code skipped:
+            if (r26 == false) goto L_0x0388;
+     */
+    /* JADX WARNING: Missing block: B:266:?, code skipped:
+            android.os.SystemProperties.set("persist.sys.RepairMode", "true");
+     */
+    /* JADX WARNING: Missing block: B:267:0x0388, code skipped:
+            android.os.Binder.restoreCallingIdentity(r17);
+            r1 = r2;
+            r2 = r4;
+     */
+    /* JADX WARNING: Missing block: B:268:0x0391, code skipped:
+            return r5;
+     */
+    /* JADX WARNING: Missing block: B:269:0x0392, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:270:0x0393, code skipped:
+            r1 = r17;
+     */
+    /* JADX WARNING: Missing block: B:272:0x0398, code skipped:
+            r29 = r2;
+            r1 = r17;
+     */
+    /* JADX WARNING: Missing block: B:280:0x03a1, code skipped:
+            r29 = r2;
+            r1 = r17;
+     */
+    /* JADX WARNING: Missing block: B:287:0x03a9, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:288:0x03ab, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:289:0x03ac, code skipped:
+            r11 = r34;
+     */
+    /* JADX WARNING: Missing block: B:290:0x03ae, code skipped:
+            r1 = r17;
+     */
+    /* JADX WARNING: Missing block: B:291:0x03b2, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:292:0x03b3, code skipped:
+            r11 = r34;
+            r1 = r17;
+     */
+    /* JADX WARNING: Missing block: B:320:0x0433, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private UserInfo createUserInternalUnchecked(String name, int flags, int parentId, String[] disallowedPackages) {
+        Throwable th;
+        int i;
+        boolean z;
+        boolean z2;
+        String str;
+        long ident;
+        boolean z3;
+        String[] strArr;
+        DeviceStorageMonitorInternal deviceStorageMonitorInternal;
+        long ident2 = this;
+        int flags2 = flags;
+        int i2 = parentId;
+        DeviceStorageMonitorInternal dsm = (DeviceStorageMonitorInternal) LocalServices.getService(DeviceStorageMonitorInternal.class);
+        if (dsm.isMemoryLow()) {
+            Log.w(LOG_TAG, "Cannot add user. Not enough space on disk.");
+            return null;
+        }
+        boolean isGuest = (flags2 & 4) != 0;
+        boolean isManagedProfile = (flags2 & 32) != 0;
+        boolean isRestricted = (flags2 & 8) != 0;
+        boolean isDemo = (flags2 & 512) != 0;
+        boolean isRepairMode = (134217728 & flags2) != 0;
+        long ident3 = Binder.clearCallingIdentity();
+        boolean isClonedProfile = (67108864 & flags2) != 0;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Create user internal, flags= ");
+        stringBuilder.append(Integer.toHexString(flags));
+        stringBuilder.append(" parentId= ");
+        stringBuilder.append(i2);
+        stringBuilder.append(" isGuest= ");
+        stringBuilder.append(isGuest);
+        stringBuilder.append(" isManagedProfile= ");
+        stringBuilder.append(isManagedProfile);
+        Flog.i(900, stringBuilder.toString());
+        try {
+            synchronized (ident2.mPackagesLock) {
+                UserData parent = null;
+                try {
+                    try {
+                        if (Secure.getInt(ident2.mContext.getContentResolver(), SUW_FRP_STATE, null) == 1) {
+                            try {
+                                if (Global.getInt(ident2.mContext.getContentResolver(), "device_provisioned", 0) != 1) {
+                                    Log.w(LOG_TAG, "can not create new user before FRP unlock");
+                                    Binder.restoreCallingIdentity(ident3);
+                                    return null;
+                                }
+                            } catch (Throwable th2) {
+                                th = th2;
+                                i = flags2;
+                                z = isDemo;
+                                z2 = isRepairMode;
+                                ident2 = ident3;
+                                str = name;
+                                isDemo = disallowedPackages;
+                            }
+                        }
+                        if (isRepairMode) {
+                            if (Global.getInt(ident2.mContext.getContentResolver(), "device_provisioned", 0) != 1) {
+                                Log.w(LOG_TAG, "can not create repair mode user during start-up guide process");
+                                Binder.restoreCallingIdentity(ident3);
+                                return null;
+                            }
+                        }
+                        if (i2 != -10000) {
+                            synchronized (ident2.mUsersLock) {
+                                parent = ident2.getUserDataLU(i2);
+                            }
+                            if (parent == null) {
+                                Binder.restoreCallingIdentity(ident3);
+                                return null;
+                            }
+                        }
+                        String str2;
+                        StringBuilder stringBuilder2;
+                        if (!isManagedProfile || ident2.canAddMoreManagedProfiles(i2, false)) {
+                            if (!(isRepairMode || isGuest || isManagedProfile || isDemo)) {
+                                if (isUserLimitReached() && !isClonedProfile) {
+                                    Binder.restoreCallingIdentity(ident3);
+                                    return null;
+                                }
+                            }
+                            if (isGuest) {
+                                if (findCurrentGuestUser() != null) {
+                                    Binder.restoreCallingIdentity(ident3);
+                                    return null;
+                                }
+                            }
+                            if (isRestricted) {
+                                if (!(UserManager.isSplitSystemUser() || i2 == 0)) {
+                                    Log.w(LOG_TAG, "Cannot add restricted profile - parent user must be owner");
+                                    Binder.restoreCallingIdentity(ident3);
+                                    return null;
+                                }
+                            }
+                            if (isRestricted) {
+                                if (UserManager.isSplitSystemUser()) {
+                                    if (parent == null) {
+                                        Log.w(LOG_TAG, "Cannot add restricted profile - parent user must be specified");
+                                        Binder.restoreCallingIdentity(ident3);
+                                        return null;
+                                    } else if (!parent.info.canHaveProfile()) {
+                                        str2 = LOG_TAG;
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Cannot add restricted profile - profiles cannot be created for the specified parent user id ");
+                                        stringBuilder2.append(i2);
+                                        Log.w(str2, stringBuilder2.toString());
+                                        Binder.restoreCallingIdentity(ident3);
+                                        return null;
+                                    }
+                                }
+                            }
+                            if (!(!UserManager.isSplitSystemUser() || isGuest || isManagedProfile)) {
+                                if (getPrimaryUser() == null) {
+                                    flags2 |= 1;
+                                    synchronized (ident2.mUsersLock) {
+                                        if (!ident2.mIsDeviceManaged) {
+                                            flags2 |= 2;
+                                        }
+                                    }
+                                }
+                            }
+                            if (isRepairMode) {
+                                dsm = REPAIR_MODE_USER_ID;
+                            } else {
+                                try {
+                                    dsm = ident2.getNextAvailableId(isClonedProfile);
+                                } catch (Throwable th3) {
+                                    th = th3;
+                                    z = isDemo;
+                                    z2 = isRepairMode;
+                                    ident2 = ident3;
+                                    str = name;
+                                    isDemo = disallowedPackages;
+                                    i = flags2;
+                                    throw th;
+                                }
+                            }
+                            Environment.getUserSystemDirectory(dsm).mkdirs();
+                            boolean ephemeralGuests = Resources.getSystem().getBoolean(17956979);
+                            ident = ident3;
+                            try {
+                                synchronized (ident2.mUsersLock) {
+                                    UserInfo userInfo;
+                                    int i3;
+                                    long now;
+                                    if (!(isGuest && ephemeralGuests)) {
+                                        try {
+                                            if (!ident2.mForceEphemeralUsers) {
+                                                if (parent != null) {
+                                                    try {
+                                                    } catch (Throwable th4) {
+                                                        th = th4;
+                                                        str = name;
+                                                        i = flags2;
+                                                        z3 = ephemeralGuests;
+                                                        z = isDemo;
+                                                        z2 = isRepairMode;
+                                                        ident2 = ident;
+                                                        isDemo = disallowedPackages;
+                                                        while (true) {
+                                                            try {
+                                                                break;
+                                                            } catch (Throwable th5) {
+                                                                th = th5;
+                                                                throw th;
+                                                            }
+                                                        }
+                                                        throw th;
+                                                    }
+                                                }
+                                                try {
+                                                    userInfo = new UserInfo(dsm, name, false, flags2);
+                                                    i3 = ident2.mNextSerialNumber;
+                                                    try {
+                                                        ident2.mNextSerialNumber = i3 + 1;
+                                                        userInfo.serialNumber = i3;
+                                                        now = System.currentTimeMillis();
+                                                        if (now <= EPOCH_PLUS_30_YEARS) {
+                                                            z = isDemo;
+                                                            z2 = isRepairMode;
+                                                            isDemo = now;
+                                                        } else {
+                                                            z = isDemo;
+                                                            z2 = isRepairMode;
+                                                            isDemo = 0;
+                                                        }
+                                                    } catch (Throwable th6) {
+                                                        th = th6;
+                                                        z = isDemo;
+                                                        z2 = isRepairMode;
+                                                        ident2 = ident;
+                                                        isDemo = disallowedPackages;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw th;
+                                                    }
+                                                    try {
+                                                        userInfo.creationTime = isDemo;
+                                                        userInfo.partial = true;
+                                                        userInfo.lastLoggedInFingerprint = Build.FINGERPRINT;
+                                                        if (isManagedProfile && i2 != -10000) {
+                                                            userInfo.profileBadge = ident2.getFreeProfileBadgeLU(i2);
+                                                        }
+                                                        flags2 = new UserData();
+                                                        flags2.info = userInfo;
+                                                        ident2.mUsers.put(dsm, flags2);
+                                                        if (isClonedProfile) {
+                                                            Slog.i(LOG_TAG, "create cloned profile user, set mHasClonedProfile true.");
+                                                            ident2.mHasClonedProfile = true;
+                                                        }
+                                                    } catch (Throwable th7) {
+                                                        th = th7;
+                                                        strArr = disallowedPackages;
+                                                        ident2 = ident;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw th;
+                                                    }
+                                                } catch (Throwable th8) {
+                                                    th = th8;
+                                                    i = flags2;
+                                                    z = isDemo;
+                                                    z2 = isRepairMode;
+                                                    ident2 = ident;
+                                                    isDemo = disallowedPackages;
+                                                    while (true) {
+                                                        break;
+                                                    }
+                                                    throw th;
+                                                }
+                                            }
+                                        } catch (Throwable th9) {
+                                            th = th9;
+                                            str = name;
+                                            z3 = ephemeralGuests;
+                                            z = isDemo;
+                                            z2 = isRepairMode;
+                                            ident2 = ident;
+                                            isDemo = disallowedPackages;
+                                            i = flags2;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
+                                        }
+                                    }
+                                    flags2 |= 256;
+                                    try {
+                                        userInfo = new UserInfo(dsm, name, false, flags2);
+                                        i3 = ident2.mNextSerialNumber;
+                                        ident2.mNextSerialNumber = i3 + 1;
+                                        userInfo.serialNumber = i3;
+                                        now = System.currentTimeMillis();
+                                        if (now <= EPOCH_PLUS_30_YEARS) {
+                                        }
+                                        userInfo.creationTime = isDemo;
+                                        userInfo.partial = true;
+                                        userInfo.lastLoggedInFingerprint = Build.FINGERPRINT;
+                                        try {
+                                            userInfo.profileBadge = ident2.getFreeProfileBadgeLU(i2);
+                                            flags2 = new UserData();
+                                            flags2.info = userInfo;
+                                            ident2.mUsers.put(dsm, flags2);
+                                            if (isClonedProfile) {
+                                            }
+                                        } catch (Throwable th10) {
+                                            th = th10;
+                                            strArr = disallowedPackages;
+                                            ident2 = ident;
+                                        }
+                                    } catch (Throwable th11) {
+                                        th = th11;
+                                        str = name;
+                                        i = flags2;
+                                        z3 = ephemeralGuests;
+                                        z = isDemo;
+                                        z2 = isRepairMode;
+                                        ident2 = ident;
+                                        isDemo = disallowedPackages;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw th;
+                                    }
+                                }
+                            } catch (Throwable th12) {
+                                th = th12;
+                                str = name;
+                                z = isDemo;
+                                z2 = isRepairMode;
+                                ident2 = ident;
+                                isDemo = disallowedPackages;
+                                i = flags2;
+                                throw th;
+                            }
+                        } else {
+                            str2 = LOG_TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Cannot add more managed profiles for user ");
+                            stringBuilder2.append(i2);
+                            Log.e(str2, stringBuilder2.toString());
+                            Binder.restoreCallingIdentity(ident3);
+                            return null;
+                        }
+                    } catch (Throwable th13) {
+                        th = th13;
+                        z = isDemo;
+                        z2 = isRepairMode;
+                        ident2 = ident3;
+                        str = name;
+                        isDemo = disallowedPackages;
+                        i = flags;
+                        throw th;
+                    }
+                } catch (Throwable th14) {
+                    th = th14;
+                    deviceStorageMonitorInternal = dsm;
+                    z = isDemo;
+                    z2 = isRepairMode;
+                    ident2 = ident3;
+                    str = name;
+                    isDemo = disallowedPackages;
+                    i = flags;
+                    throw th;
+                }
+            }
+        } catch (Throwable th15) {
+            th = th15;
+            deviceStorageMonitorInternal = dsm;
+            z = isDemo;
+            z2 = isRepairMode;
+            ident2 = ident3;
+            str = name;
+            isDemo = disallowedPackages;
+            i = flags;
+            Binder.restoreCallingIdentity(ident2);
+            throw th;
+        }
+        ident2 = ident;
+        Binder.restoreCallingIdentity(ident2);
+        throw th;
+    }
+
     @VisibleForTesting
     UserData putUserInfo(UserInfo userInfo) {
         UserData userData = new UserData();
@@ -3848,19 +3356,25 @@ public class UserManagerService extends AbsUserManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0045, code:
+    /* JADX WARNING: Missing block: B:21:0x0045, code skipped:
             if (r5.info.isGuest() != false) goto L_0x004c;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:23:0x0048, code skipped:
+            android.os.Binder.restoreCallingIdentity(r0);
+     */
+    /* JADX WARNING: Missing block: B:24:0x004b, code skipped:
+            return false;
+     */
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             r5.info.guestToRemove = true;
             r2 = r5.info;
             r2.flags |= 64;
             writeUserLP(r5);
      */
-    /* JADX WARNING: Missing block: B:26:0x005d, code:
+    /* JADX WARNING: Missing block: B:28:0x005d, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
-    /* JADX WARNING: Missing block: B:27:0x0061, code:
+    /* JADX WARNING: Missing block: B:29:0x0061, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3875,9 +3389,9 @@ public class UserManagerService extends AbsUserManagerService {
             synchronized (this.mPackagesLock) {
                 synchronized (this.mUsersLock) {
                     UserData userData = (UserData) this.mUsers.get(userHandle);
-                    if (userHandle == 0 || userData == null || this.mRemovingUserIds.get(userHandle)) {
-                        Binder.restoreCallingIdentity(ident);
-                        return false;
+                    if (!(userHandle == 0 || userData == null)) {
+                        if (this.mRemovingUserIds.get(userHandle)) {
+                        }
                     }
                 }
             }
@@ -3916,13 +3430,13 @@ public class UserManagerService extends AbsUserManagerService {
         return removeUserUnchecked(userHandle);
     }
 
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r6.info.partial = true;
             r5 = r6.info;
             r5.flags |= 64;
             writeUserLP(r6);
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             r10.mAppOpsService.removeUser(r11);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3940,17 +3454,19 @@ public class UserManagerService extends AbsUserManagerService {
             synchronized (this.mPackagesLock) {
                 synchronized (this.mUsersLock) {
                     userData = (UserData) this.mUsers.get(userHandle);
-                    if (userHandle == 0 || userData == null || this.mRemovingUserIds.get(userHandle)) {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Removing user stopped, userHandle ");
-                        stringBuilder.append(userHandle);
-                        stringBuilder.append(" user ");
-                        stringBuilder.append(userData);
-                        Flog.i(900, stringBuilder.toString());
-                        Binder.restoreCallingIdentity(ident);
-                        return false;
+                    if (!(userHandle == 0 || userData == null)) {
+                        if (!this.mRemovingUserIds.get(userHandle)) {
+                            addRemovingUserIdLocked(userHandle);
+                        }
                     }
-                    addRemovingUserIdLocked(userHandle);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Removing user stopped, userHandle ");
+                    stringBuilder.append(userHandle);
+                    stringBuilder.append(" user ");
+                    stringBuilder.append(userData);
+                    Flog.i(900, stringBuilder.toString());
+                    Binder.restoreCallingIdentity(ident);
+                    return false;
                 }
             }
         } catch (RemoteException e) {
@@ -4131,8 +3647,11 @@ public class UserManagerService extends AbsUserManagerService {
         }
         synchronized (this.mAppRestrictionsLock) {
             if (restrictions != null) {
-                if (!restrictions.isEmpty()) {
-                    writeApplicationRestrictionsLAr(packageName, restrictions, userId);
+                try {
+                    if (!restrictions.isEmpty()) {
+                        writeApplicationRestrictionsLAr(packageName, restrictions, userId);
+                    }
+                } finally {
                 }
             }
             cleanAppRestrictionsForPackageLAr(packageName, userId);
@@ -4166,18 +3685,6 @@ public class UserManagerService extends AbsUserManagerService {
         return readApplicationRestrictionsLAr(new AtomicFile(new File(Environment.getUserSystemDirectory(userId), packageToRestrictionsFileName(packageName))));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0062 A:{PHI: r2 , Splitter: B:4:0x0016, ExcHandler: java.io.IOException (r3_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0062, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            r4 = LOG_TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("Error parsing ");
-            r5.append(r7.getBaseFile());
-            android.util.Log.w(r4, r5.toString(), r3);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mAppRestrictionsLock")
     @VisibleForTesting
     static Bundle readApplicationRestrictionsLAr(AtomicFile restrictionsFile) {
@@ -4187,14 +3694,16 @@ public class UserManagerService extends AbsUserManagerService {
             return restrictions;
         }
         FileInputStream fis = null;
+        String str;
+        StringBuilder stringBuilder;
         try {
             fis = restrictionsFile.openRead();
             XmlPullParser parser = Xml.newPullParser();
             parser.setInput(fis, StandardCharsets.UTF_8.name());
             XmlUtils.nextElement(parser);
             if (parser.getEventType() != 2) {
-                String str = LOG_TAG;
-                StringBuilder stringBuilder = new StringBuilder();
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
                 stringBuilder.append("Unable to read restrictions file ");
                 stringBuilder.append(restrictionsFile.getBaseFile());
                 Slog.e(str, stringBuilder.toString());
@@ -4206,7 +3715,12 @@ public class UserManagerService extends AbsUserManagerService {
             }
             IoUtils.closeQuietly(fis);
             return restrictions;
-        } catch (Exception e) {
+        } catch (IOException | XmlPullParserException e) {
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Error parsing ");
+            stringBuilder.append(restrictionsFile.getBaseFile());
+            Log.w(str, stringBuilder.toString(), e);
         } catch (Throwable th) {
             IoUtils.closeQuietly(fis);
         }
@@ -4388,7 +3902,12 @@ public class UserManagerService extends AbsUserManagerService {
         UserInfo userInfo = null;
         synchronized (this.mUsersLock) {
             if (callingUserId == userHandle) {
-                userInfo = getUserInfoLU(userHandle);
+                try {
+                    userInfo = getUserInfoLU(userHandle);
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             } else {
                 UserInfo parent = getProfileParentLU(userHandle);
                 if (parent != null && parent.id == callingUserId) {
@@ -4483,16 +4002,16 @@ public class UserManagerService extends AbsUserManagerService {
         scheduleWriteUser(userData);
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0076, code:
+    /* JADX WARNING: Missing block: B:28:0x0076, code skipped:
             r0 = r1;
      */
-    /* JADX WARNING: Missing block: B:29:0x0077, code:
+    /* JADX WARNING: Missing block: B:29:0x0077, code skipped:
             if (r0 < 0) goto L_0x007a;
      */
-    /* JADX WARNING: Missing block: B:30:0x0079, code:
+    /* JADX WARNING: Missing block: B:30:0x0079, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:32:0x0081, code:
+    /* JADX WARNING: Missing block: B:32:0x0081, code skipped:
             throw new java.lang.IllegalStateException("No user id available!");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4549,13 +4068,13 @@ public class UserManagerService extends AbsUserManagerService {
         return stringBuilder.toString();
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0033, code:
+    /* JADX WARNING: Missing block: B:16:0x0033, code skipped:
             if (r11 == false) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             writeUserLP(r2);
      */
-    /* JADX WARNING: Missing block: B:20:0x0039, code:
+    /* JADX WARNING: Missing block: B:20:0x0039, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4625,13 +4144,18 @@ public class UserManagerService extends AbsUserManagerService {
         checkManageUsersPermission("Cannot check seed account information");
         synchronized (this.mUsersLock) {
             int userSize = this.mUsers.size();
-            int i = 0;
-            while (i < userSize) {
+            for (int i = 0; i < userSize; i++) {
                 UserData data = (UserData) this.mUsers.valueAt(i);
-                if (data.info.isInitialized() || data.seedAccountName == null || !data.seedAccountName.equals(accountName) || data.seedAccountType == null || !data.seedAccountType.equals(accountType)) {
-                    i++;
-                } else {
-                    return true;
+                if (!data.info.isInitialized()) {
+                    if (data.seedAccountName == null) {
+                        continue;
+                    } else if (data.seedAccountName.equals(accountName)) {
+                        if (data.seedAccountType == null) {
+                            continue;
+                        } else if (data.seedAccountType.equals(accountType)) {
+                            return true;
+                        }
+                    }
                 }
             }
             return false;
@@ -4642,15 +4166,27 @@ public class UserManagerService extends AbsUserManagerService {
         new Shell(this, null).exec(this, in, out, err, args, callback, resultReceiver);
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x0025 A:{Catch:{ RemoteException -> 0x002a }} */
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0024 A:{Catch:{ RemoteException -> 0x002a }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     int onShellCommand(Shell shell, String cmd) {
         if (cmd == null) {
             return shell.handleDefaultCommands(cmd);
         }
         PrintWriter pw = shell.getOutPrintWriter();
         try {
-            int i = (cmd.hashCode() == 3322014 && cmd.equals("list")) ? 0 : -1;
+            int i;
+            if (cmd.hashCode() == 3322014) {
+                if (cmd.equals("list")) {
+                    i = 0;
+                    if (i == 0) {
+                        return -1;
+                    }
+                    return runList(pw);
+                }
+            }
+            i = -1;
             if (i == 0) {
-                return runList(pw);
             }
         } catch (RemoteException e) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -4658,7 +4194,6 @@ public class UserManagerService extends AbsUserManagerService {
             stringBuilder.append(e);
             pw.println(stringBuilder.toString());
         }
-        return -1;
     }
 
     private int runList(PrintWriter pw) throws RemoteException {
@@ -4678,6 +4213,252 @@ public class UserManagerService extends AbsUserManagerService {
             pw.println(stringBuilder.toString());
         }
         return 0;
+    }
+
+    /* JADX WARNING: Missing block: B:81:0x01d6, code skipped:
+            r18 = r13;
+     */
+    /* JADX WARNING: Missing block: B:82:0x01da, code skipped:
+            monitor-exit(r8);
+     */
+    /* JADX WARNING: Missing block: B:84:?, code skipped:
+            r24.println();
+            r0 = new java.lang.StringBuilder();
+            r0.append("  Device owner id:");
+            r0.append(r1.mDeviceOwnerUserId);
+            r10.println(r0.toString());
+            r24.println();
+            r10.println("  Guest restrictions:");
+            r2 = r1.mGuestRestrictions;
+     */
+    /* JADX WARNING: Missing block: B:85:0x01fe, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:87:?, code skipped:
+            com.android.server.pm.UserRestrictionsUtils.dumpRestrictions(r10, "    ", r1.mGuestRestrictions);
+     */
+    /* JADX WARNING: Missing block: B:88:0x0206, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:90:?, code skipped:
+            r2 = r1.mUsersLock;
+     */
+    /* JADX WARNING: Missing block: B:91:0x0209, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:93:?, code skipped:
+            r24.println();
+            r0 = new java.lang.StringBuilder();
+            r0.append("  Device managed: ");
+            r0.append(r1.mIsDeviceManaged);
+            r10.println(r0.toString());
+     */
+    /* JADX WARNING: Missing block: B:94:0x0229, code skipped:
+            if (r1.mRemovingUserIds.size() <= 0) goto L_0x0244;
+     */
+    /* JADX WARNING: Missing block: B:95:0x022b, code skipped:
+            r24.println();
+            r0 = new java.lang.StringBuilder();
+            r0.append("  Recently removed userIds: ");
+            r0.append(r1.mRecentlyRemovedIds);
+            r10.println(r0.toString());
+     */
+    /* JADX WARNING: Missing block: B:96:0x0244, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:98:?, code skipped:
+            r2 = r1.mUserStates;
+     */
+    /* JADX WARNING: Missing block: B:99:0x0247, code skipped:
+            monitor-enter(r2);
+     */
+    /* JADX WARNING: Missing block: B:101:?, code skipped:
+            r0 = new java.lang.StringBuilder();
+            r0.append("  Started users state: ");
+            r0.append(r1.mUserStates);
+            r10.println(r0.toString());
+     */
+    /* JADX WARNING: Missing block: B:102:0x025e, code skipped:
+            monitor-exit(r2);
+     */
+    /* JADX WARNING: Missing block: B:104:?, code skipped:
+            r24.println();
+            r0 = new java.lang.StringBuilder();
+            r0.append("  Max users: ");
+            r0.append(android.os.UserManager.getMaxSupportedUsers());
+            r10.println(r0.toString());
+            r0 = new java.lang.StringBuilder();
+            r0.append("  Supports switchable users: ");
+            r0.append(android.os.UserManager.supportsMultipleUsers());
+            r10.println(r0.toString());
+            r0 = new java.lang.StringBuilder();
+            r0.append("  All guests ephemeral: ");
+            r0.append(android.content.res.Resources.getSystem().getBoolean(17956979));
+            r10.println(r0.toString());
+     */
+    /* JADX WARNING: Missing block: B:106:0x02b2, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:134:0x02ca, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    protected void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
+        Throwable th;
+        UserManagerService userManagerService = this;
+        PrintWriter printWriter = pw;
+        if (DumpUtils.checkDumpPermission(userManagerService.mContext, LOG_TAG, printWriter)) {
+            long now = System.currentTimeMillis();
+            long nowRealtime = SystemClock.elapsedRealtime();
+            StringBuilder sb = new StringBuilder();
+            synchronized (userManagerService.mPackagesLock) {
+                long nowRealtime2;
+                try {
+                    Object obj = userManagerService.mUsersLock;
+                    synchronized (obj) {
+                        printWriter.println("Users:");
+                        int i = 0;
+                        while (true) {
+                            int i2 = i;
+                            if (i2 >= userManagerService.mUsers.size()) {
+                                break;
+                            }
+                            Object obj2;
+                            int i3;
+                            UserData userData = (UserData) userManagerService.mUsers.valueAt(i2);
+                            if (userData == null) {
+                                obj2 = obj;
+                                i3 = i2;
+                                nowRealtime2 = nowRealtime;
+                            } else {
+                                UserInfo userInfo = userData.info;
+                                int userId = userInfo.id;
+                                printWriter.print("  ");
+                                printWriter.print(userInfo);
+                                printWriter.print(" serialNo=");
+                                printWriter.print(userInfo.serialNumber);
+                                if (userManagerService.mRemovingUserIds.get(userId)) {
+                                    try {
+                                        printWriter.print(" <removing> ");
+                                    } catch (Throwable th2) {
+                                        th = th2;
+                                        obj2 = obj;
+                                        nowRealtime2 = nowRealtime;
+                                    }
+                                }
+                                try {
+                                    int state;
+                                    UserInfo userInfo2;
+                                    int userId2;
+                                    UserData userData2;
+                                    if (userInfo.partial) {
+                                        printWriter.print(" <partial>");
+                                    }
+                                    pw.println();
+                                    printWriter.print("    State: ");
+                                    synchronized (userManagerService.mUserStates) {
+                                        try {
+                                            state = userManagerService.mUserStates.get(userId, -1);
+                                        } catch (Throwable th3) {
+                                            th = th3;
+                                            throw th;
+                                        }
+                                    }
+                                    printWriter.println(UserState.stateToString(state));
+                                    printWriter.print("    Created: ");
+                                    try {
+                                        userId2 = userId;
+                                        nowRealtime2 = nowRealtime;
+                                        userData2 = userData;
+                                        userInfo2 = userInfo;
+                                    } catch (Throwable th4) {
+                                        th = th4;
+                                        obj2 = obj;
+                                        nowRealtime2 = nowRealtime;
+                                        throw th;
+                                    }
+                                    try {
+                                        dumpTimeAgo(printWriter, sb, now, userInfo.creationTime);
+                                        printWriter.print("    Last logged in: ");
+                                        obj2 = obj;
+                                        i3 = i2;
+                                        try {
+                                            StringBuilder stringBuilder;
+                                            dumpTimeAgo(printWriter, sb, now, userInfo2.lastLoggedInTime);
+                                            printWriter.print("    Last logged in fingerprint: ");
+                                            printWriter.println(userInfo2.lastLoggedInFingerprint);
+                                            printWriter.print("    Start time: ");
+                                            dumpTimeAgo(printWriter, sb, nowRealtime2, userData2.startRealtime);
+                                            printWriter.print("    Unlock time: ");
+                                            dumpTimeAgo(printWriter, sb, nowRealtime2, userData2.unlockRealtime);
+                                            printWriter.print("    Has profile owner: ");
+                                            userManagerService = this;
+                                            printWriter.println(userManagerService.mIsUserManaged.get(userId2));
+                                            printWriter.println("    Restrictions:");
+                                            synchronized (userManagerService.mRestrictionsLock) {
+                                                UserRestrictionsUtils.dumpRestrictions(printWriter, "      ", (Bundle) userManagerService.mBaseUserRestrictions.get(userInfo2.id));
+                                                printWriter.println("    Device policy global restrictions:");
+                                                UserRestrictionsUtils.dumpRestrictions(printWriter, "      ", (Bundle) userManagerService.mDevicePolicyGlobalUserRestrictions.get(userInfo2.id));
+                                                printWriter.println("    Device policy local restrictions:");
+                                                UserRestrictionsUtils.dumpRestrictions(printWriter, "      ", (Bundle) userManagerService.mDevicePolicyLocalUserRestrictions.get(userInfo2.id));
+                                                printWriter.println("    Effective restrictions:");
+                                                UserRestrictionsUtils.dumpRestrictions(printWriter, "      ", (Bundle) userManagerService.mCachedEffectiveUserRestrictions.get(userInfo2.id));
+                                            }
+                                            if (userData2.account != null) {
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("    Account name: ");
+                                                stringBuilder.append(userData2.account);
+                                                printWriter.print(stringBuilder.toString());
+                                                pw.println();
+                                            }
+                                            if (userData2.seedAccountName != null) {
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("    Seed account name: ");
+                                                stringBuilder.append(userData2.seedAccountName);
+                                                printWriter.print(stringBuilder.toString());
+                                                pw.println();
+                                                if (userData2.seedAccountType != null) {
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("         account type: ");
+                                                    stringBuilder.append(userData2.seedAccountType);
+                                                    printWriter.print(stringBuilder.toString());
+                                                    pw.println();
+                                                }
+                                                if (userData2.seedAccountOptions != null) {
+                                                    printWriter.print("         account options exist");
+                                                    pw.println();
+                                                }
+                                            }
+                                        } catch (Throwable th5) {
+                                            th = th5;
+                                            throw th;
+                                        }
+                                    } catch (Throwable th6) {
+                                        th = th6;
+                                        obj2 = obj;
+                                        throw th;
+                                    }
+                                } catch (Throwable th7) {
+                                    th = th7;
+                                    obj2 = obj;
+                                    nowRealtime2 = nowRealtime;
+                                    throw th;
+                                }
+                            }
+                            i = i3 + 1;
+                            nowRealtime = nowRealtime2;
+                            obj = obj2;
+                        }
+                        while (true) {
+                        }
+                    }
+                } catch (Throwable th8) {
+                    th = th8;
+                    nowRealtime2 = nowRealtime;
+                    throw th;
+                }
+            }
+        }
     }
 
     private static void dumpTimeAgo(PrintWriter pw, StringBuilder sb, long nowTime, long time) {

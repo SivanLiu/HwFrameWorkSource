@@ -14,6 +14,7 @@ import org.bouncycastle.jcajce.util.DefaultJcaJceHelper;
 import org.bouncycastle.jcajce.util.NamedJcaJceHelper;
 import org.bouncycastle.jcajce.util.ProviderJcaJceHelper;
 import org.bouncycastle.operator.InputDecryptor;
+import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.jcajce.JceAsymmetricKeyUnwrapper;
 
 public class JceAsymmetricValueDecryptorGenerator implements ValueDecryptorGenerator {
@@ -36,7 +37,7 @@ public class JceAsymmetricValueDecryptorGenerator implements ValueDecryptorGener
                 jceAsymmetricKeyUnwrapper.setProvider(this.providerName);
             }
             return new SecretKeySpec((byte[]) jceAsymmetricKeyUnwrapper.generateUnwrappedKey(algorithmIdentifier2, bArr).getRepresentation(), algorithmIdentifier2.getAlgorithm().getId());
-        } catch (Throwable e) {
+        } catch (OperatorException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("key invalid in message: ");
             stringBuilder.append(e.getMessage());

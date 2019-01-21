@@ -1,37 +1,31 @@
 package com.huawei.android.pushagent.utils.a;
 
-import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.f.b;
-import com.huawei.android.pushagent.utils.f.c;
-import java.security.MessageDigest;
+import com.huawei.android.pushagent.utils.b.a;
+import java.lang.reflect.InvocationTargetException;
 
-public class e {
-    public static String r(String str) {
-        String str2 = "";
-        if (TextUtils.isEmpty(str)) {
-            return str2;
-        }
+public abstract class e implements g {
+    public String getDeviceId() {
         try {
-            return b.el(MessageDigest.getInstance("MD5").digest(s(str)));
-        } catch (Throwable e) {
-            c.es("PushLog3413", "NoSuchAlgorithmException / " + e.toString(), e);
-            return str2;
-        } catch (Throwable e2) {
-            c.es("PushLog3413", "getMD5str failed:" + e2.toString(), e2);
-            return str2;
-        }
-    }
-
-    private static byte[] s(String str) {
-        if (TextUtils.isEmpty(str)) {
-            c.eq("PushLog3413", "getUTF8Bytes, str is empty");
-            return new byte[0];
-        }
-        try {
-            return str.getBytes("UTF-8");
-        } catch (Throwable e) {
-            c.es("PushLog3413", "getBytes error:" + str, e);
-            return new byte[0];
+            Class cls = Class.forName("com.huawei.android.os.BuildEx");
+            Object invoke = cls.getDeclaredMethod("getUDID", new Class[0]).invoke(cls, new Object[0]);
+            if (invoke == null || !(invoke instanceof String)) {
+                a.su("PushLog3414", "udid is null");
+                return null;
+            }
+            a.sv("PushLog3414", "get udid successful.");
+            return (String) invoke;
+        } catch (ClassNotFoundException e) {
+            a.su("PushLog3414", "not support udid class");
+        } catch (NoSuchMethodException e2) {
+            a.su("PushLog3414", "not support udid method");
+        } catch (SecurityException e3) {
+            a.su("PushLog3414", "not support udid method");
+        } catch (IllegalAccessException e4) {
+            a.su("PushLog3414", "not support udid invoke");
+        } catch (IllegalArgumentException e5) {
+            a.su("PushLog3414", "not support udid invoke");
+        } catch (InvocationTargetException e6) {
+            a.su("PushLog3414", "not support udid invoke");
         }
     }
 }

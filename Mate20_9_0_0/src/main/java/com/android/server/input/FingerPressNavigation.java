@@ -241,7 +241,7 @@ public class FingerPressNavigation {
         }
         this.mKeyguardOn = z;
         if (this.mCircle != null) {
-            this.mCircle.setCanNaviDraw(this.mKeyguardOn ^ true);
+            this.mCircle.setCanNaviDraw(this.mKeyguardOn ^ 1);
         }
         if (focusAttrs != null) {
             str = focusAttrs.packageName;

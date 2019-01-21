@@ -1,5 +1,6 @@
 package org.bouncycastle.dvcs;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -25,7 +26,7 @@ public abstract class DVCSRequestBuilder {
     public void addExtension(ASN1ObjectIdentifier aSN1ObjectIdentifier, boolean z, ASN1Encodable aSN1Encodable) throws DVCSException {
         try {
             this.extGenerator.addExtension(aSN1ObjectIdentifier, z, aSN1Encodable);
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode extension: ");
             stringBuilder.append(e.getMessage());

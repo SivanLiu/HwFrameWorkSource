@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -32,7 +31,7 @@ public abstract class DTLSProtocol {
         throw new TlsFatalAlert((short) 80);
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001b, code:
+    /* JADX WARNING: Missing block: B:10:0x001b, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -45,13 +44,13 @@ public abstract class DTLSProtocol {
     }
 
     protected static byte[] generateCertificate(Certificate certificate) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         certificate.encode(byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
     protected static byte[] generateSupplementalData(Vector vector) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         TlsProtocol.writeSupplementalData(byteArrayOutputStream, vector);
         return byteArrayOutputStream.toByteArray();
     }

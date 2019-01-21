@@ -154,8 +154,7 @@ public class TaskPersister {
                         if (task.inRecents) {
                             try {
                                 stringWriter = TaskPersister.this.saveToXml(task);
-                            } catch (IOException e4) {
-                            } catch (XmlPullParserException e5) {
+                            } catch (IOException | XmlPullParserException e4) {
                             }
                         }
                     } finally {
@@ -176,7 +175,7 @@ public class TaskPersister {
                         file.write(stringWriter.toString().getBytes());
                         file.write(10);
                         atomicFile.finishWrite(file);
-                    } catch (IOException e6) {
+                    } catch (IOException e5) {
                         if (file != null) {
                             atomicFile.failWrite(file);
                         }
@@ -185,7 +184,7 @@ public class TaskPersister {
                         stringBuilder.append("Unable to open ");
                         stringBuilder.append(atomicFile);
                         stringBuilder.append(" for persisting. ");
-                        stringBuilder.append(e6);
+                        stringBuilder.append(e5);
                         Slog.e(str, stringBuilder.toString());
                     }
                 }
@@ -359,29 +358,36 @@ public class TaskPersister {
     void wakeup(TaskRecord task, boolean flush) {
         synchronized (this) {
             if (task != null) {
-                int queueNdx = this.mWriteQueue.size() - 1;
-                while (queueNdx >= 0) {
-                    WriteQueueItem item = (WriteQueueItem) this.mWriteQueue.get(queueNdx);
-                    if ((item instanceof TaskWriteQueueItem) && ((TaskWriteQueueItem) item).mTask == task) {
-                        if (!task.inRecents) {
-                            removeThumbnails(task);
+                try {
+                    int queueNdx = this.mWriteQueue.size() - 1;
+                    while (queueNdx >= 0) {
+                        WriteQueueItem item = (WriteQueueItem) this.mWriteQueue.get(queueNdx);
+                        if ((item instanceof TaskWriteQueueItem) && ((TaskWriteQueueItem) item).mTask == task) {
+                            if (!task.inRecents) {
+                                removeThumbnails(task);
+                            }
+                            if (queueNdx < 0 && task.isPersistable) {
+                                this.mWriteQueue.add(new TaskWriteQueueItem(task));
+                            }
+                        } else {
+                            queueNdx--;
                         }
-                        if (queueNdx < 0 && task.isPersistable) {
-                            this.mWriteQueue.add(new TaskWriteQueueItem(task));
-                        }
-                    } else {
-                        queueNdx--;
                     }
+                    this.mWriteQueue.add(new TaskWriteQueueItem(task));
+                } finally {
                 }
-                this.mWriteQueue.add(new TaskWriteQueueItem(task));
             } else {
                 this.mWriteQueue.add(new WriteQueueItem());
             }
-            if (flush || this.mWriteQueue.size() > 6) {
-                this.mNextWriteTime = -1;
-            } else if (this.mNextWriteTime == 0) {
-                this.mNextWriteTime = SystemClock.uptimeMillis() + PRE_TASK_DELAY_MS;
+            if (!flush) {
+                if (this.mWriteQueue.size() <= 6) {
+                    if (this.mNextWriteTime == 0) {
+                        this.mNextWriteTime = SystemClock.uptimeMillis() + PRE_TASK_DELAY_MS;
+                    }
+                    notifyAll();
+                }
             }
+            this.mNextWriteTime = -1;
             notifyAll();
         }
         yieldIfQueueTooDeep();
@@ -511,9 +517,10 @@ public class TaskPersister {
         return null;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x0209 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x01f8  */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x0209 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01f8  */
+    /* JADX WARNING: Removed duplicated region for block: B:85:0x0209 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:85:0x0209 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x01f8  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     List<TaskRecord> restoreTasksForUserLocked(int userId, SparseBooleanArray preaddedTasks) {
         NumberFormatException e;
@@ -540,244 +547,247 @@ public class TaskPersister {
         while (true) {
             int taskNdx3 = taskNdx2;
             int i2 = 1;
-            if (taskNdx3 < recentFiles2.length) {
-                File taskFile = recentFiles2[taskNdx3];
-                if (taskFile.getName().endsWith(TASK_FILENAME_SUFFIX)) {
-                    try {
-                        taskNdx2 = Integer.parseInt(taskFile.getName().substring(z, taskFile.getName().length() - TASK_FILENAME_SUFFIX.length()));
-                        if (preaddedTasks.get(taskNdx2, z)) {
-                            try {
-                                String str2 = TAG;
-                                StringBuilder stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Task #");
-                                stringBuilder2.append(taskNdx2);
-                                stringBuilder2.append(" has already been created so we don't restore again");
-                                Slog.w(str2, stringBuilder2.toString());
-                            } catch (NumberFormatException e3) {
-                                e = e3;
-                                recentFiles = recentFiles2;
-                                taskNdx = taskNdx3;
-                            }
-                        } else {
-                            BufferedReader reader = null;
-                            boolean deleteFile = z;
-                            String str3;
-                            try {
-                                reader = new BufferedReader(new FileReader(taskFile));
-                                XmlPullParser in = Xml.newPullParser();
-                                in.setInput(reader);
-                                while (true) {
-                                    int next = in.next();
-                                    int event = next;
-                                    if (next == i2 || event == 3) {
+            if (taskNdx3 >= recentFiles2.length) {
+                break;
+            }
+            File taskFile = recentFiles2[taskNdx3];
+            if (taskFile.getName().endsWith(TASK_FILENAME_SUFFIX)) {
+                try {
+                    taskNdx2 = Integer.parseInt(taskFile.getName().substring(z, taskFile.getName().length() - TASK_FILENAME_SUFFIX.length()));
+                    if (preaddedTasks.get(taskNdx2, z)) {
+                        try {
+                            String str2 = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Task #");
+                            stringBuilder2.append(taskNdx2);
+                            stringBuilder2.append(" has already been created so we don't restore again");
+                            Slog.w(str2, stringBuilder2.toString());
+                        } catch (NumberFormatException e3) {
+                            e = e3;
+                            recentFiles = recentFiles2;
+                            taskNdx = taskNdx3;
+                        }
+                    } else {
+                        BufferedReader reader = null;
+                        boolean deleteFile = z;
+                        String str3;
+                        try {
+                            reader = new BufferedReader(new FileReader(taskFile));
+                            XmlPullParser in = Xml.newPullParser();
+                            in.setInput(reader);
+                            while (true) {
+                                int next = in.next();
+                                int event = next;
+                                if (next == i2 || event == 3) {
+                                    recentFiles = recentFiles2;
+                                    taskNdx = taskNdx3;
+                                    IoUtils.closeQuietly(reader);
+                                } else {
+                                    String name = in.getName();
+                                    if (event != 2) {
                                         recentFiles = recentFiles2;
                                         taskNdx = taskNdx3;
-                                        IoUtils.closeQuietly(reader);
-                                    } else {
-                                        String name = in.getName();
-                                        if (event != 2) {
+                                    } else if (TAG_TASK.equals(name)) {
+                                        TaskRecord task = TaskRecord.restoreFromXml(in, this.mStackSupervisor);
+                                        StringBuilder stringBuilder3;
+                                        if (task != null) {
+                                            i2 = task.taskId;
                                             recentFiles = recentFiles2;
-                                            taskNdx = taskNdx3;
-                                        } else if (TAG_TASK.equals(name)) {
-                                            TaskRecord task = TaskRecord.restoreFromXml(in, this.mStackSupervisor);
-                                            StringBuilder stringBuilder3;
-                                            if (task != null) {
-                                                i2 = task.taskId;
-                                                recentFiles = recentFiles2;
-                                                try {
-                                                    if (this.mStackSupervisor.anyTaskForIdLocked(i2, 1) != null) {
-                                                        str3 = TAG;
-                                                        StringBuilder stringBuilder4 = new StringBuilder();
-                                                        taskNdx = taskNdx3;
-                                                        try {
-                                                            stringBuilder4.append("Existing task with taskId ");
-                                                            stringBuilder4.append(i2);
-                                                            stringBuilder4.append("found");
-                                                            Slog.wtf(str3, stringBuilder4.toString());
-                                                        } catch (Exception e4) {
-                                                            e2 = e4;
-                                                            try {
-                                                                str3 = TAG;
-                                                                stringBuilder = new StringBuilder();
-                                                                stringBuilder.append("Unable to parse ");
-                                                                stringBuilder.append(taskFile);
-                                                                stringBuilder.append(". Error ");
-                                                                Slog.wtf(str3, stringBuilder.toString(), e2);
-                                                                str3 = TAG;
-                                                                stringBuilder = new StringBuilder();
-                                                                stringBuilder.append("Failing file: ");
-                                                                stringBuilder.append(fileToString(taskFile));
-                                                                Slog.e(str3, stringBuilder.toString());
-                                                                IoUtils.closeQuietly(reader);
-                                                                if (!true) {
-                                                                }
-                                                                taskFile.delete();
-                                                                taskNdx2 = taskNdx + 1;
-                                                                recentFiles2 = recentFiles;
-                                                                z = false;
-                                                            } catch (Throwable th2) {
-                                                                th = th2;
-                                                            }
-                                                        }
-                                                    } else {
-                                                        taskNdx = taskNdx3;
-                                                        if (i != task.userId) {
-                                                            str3 = TAG;
-                                                            stringBuilder3 = new StringBuilder();
-                                                            stringBuilder3.append("Task with userId ");
-                                                            stringBuilder3.append(task.userId);
-                                                            stringBuilder3.append(" found in ");
-                                                            stringBuilder3.append(userTasksDir.getAbsolutePath());
-                                                            Slog.wtf(str3, stringBuilder3.toString());
-                                                        } else {
-                                                            this.mStackSupervisor.setNextTaskIdForUserLocked(i2, i);
-                                                            task.isPersistable = true;
-                                                            tasks.add(task);
-                                                            recoveredTaskIds.add(Integer.valueOf(i2));
-                                                        }
-                                                    }
-                                                } catch (Exception e5) {
-                                                    e2 = e5;
+                                            try {
+                                                if (this.mStackSupervisor.anyTaskForIdLocked(i2, 1) != null) {
+                                                    str3 = TAG;
+                                                    StringBuilder stringBuilder4 = new StringBuilder();
                                                     taskNdx = taskNdx3;
-                                                    str3 = TAG;
-                                                    stringBuilder = new StringBuilder();
-                                                    stringBuilder.append("Unable to parse ");
-                                                    stringBuilder.append(taskFile);
-                                                    stringBuilder.append(". Error ");
-                                                    Slog.wtf(str3, stringBuilder.toString(), e2);
-                                                    str3 = TAG;
-                                                    stringBuilder = new StringBuilder();
-                                                    stringBuilder.append("Failing file: ");
-                                                    stringBuilder.append(fileToString(taskFile));
-                                                    Slog.e(str3, stringBuilder.toString());
-                                                    IoUtils.closeQuietly(reader);
-                                                    if (true) {
-                                                        taskNdx2 = taskNdx + 1;
-                                                        recentFiles2 = recentFiles;
-                                                        z = false;
+                                                    try {
+                                                        stringBuilder4.append("Existing task with taskId ");
+                                                        stringBuilder4.append(i2);
+                                                        stringBuilder4.append("found");
+                                                        Slog.wtf(str3, stringBuilder4.toString());
+                                                    } catch (Exception e4) {
+                                                        e2 = e4;
+                                                        try {
+                                                            str3 = TAG;
+                                                            stringBuilder = new StringBuilder();
+                                                            stringBuilder.append("Unable to parse ");
+                                                            stringBuilder.append(taskFile);
+                                                            stringBuilder.append(". Error ");
+                                                            Slog.wtf(str3, stringBuilder.toString(), e2);
+                                                            str3 = TAG;
+                                                            stringBuilder = new StringBuilder();
+                                                            stringBuilder.append("Failing file: ");
+                                                            stringBuilder.append(fileToString(taskFile));
+                                                            Slog.e(str3, stringBuilder.toString());
+                                                            IoUtils.closeQuietly(reader);
+                                                            if (!true) {
+                                                            }
+                                                            taskFile.delete();
+                                                            taskNdx2 = taskNdx + 1;
+                                                            recentFiles2 = recentFiles;
+                                                            z = false;
+                                                        } catch (Throwable th2) {
+                                                            th = th2;
+                                                            IoUtils.closeQuietly(reader);
+                                                            if (deleteFile) {
+                                                                taskFile.delete();
+                                                            }
+                                                            throw th;
+                                                        }
                                                     }
-                                                    taskFile.delete();
+                                                }
+                                                taskNdx = taskNdx3;
+                                                if (i != task.userId) {
+                                                    str3 = TAG;
+                                                    stringBuilder3 = new StringBuilder();
+                                                    stringBuilder3.append("Task with userId ");
+                                                    stringBuilder3.append(task.userId);
+                                                    stringBuilder3.append(" found in ");
+                                                    stringBuilder3.append(userTasksDir.getAbsolutePath());
+                                                    Slog.wtf(str3, stringBuilder3.toString());
+                                                } else {
+                                                    this.mStackSupervisor.setNextTaskIdForUserLocked(i2, i);
+                                                    task.isPersistable = true;
+                                                    tasks.add(task);
+                                                    recoveredTaskIds.add(Integer.valueOf(i2));
+                                                }
+                                            } catch (Exception e5) {
+                                                e2 = e5;
+                                                taskNdx = taskNdx3;
+                                                str3 = TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Unable to parse ");
+                                                stringBuilder.append(taskFile);
+                                                stringBuilder.append(". Error ");
+                                                Slog.wtf(str3, stringBuilder.toString(), e2);
+                                                str3 = TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Failing file: ");
+                                                stringBuilder.append(fileToString(taskFile));
+                                                Slog.e(str3, stringBuilder.toString());
+                                                IoUtils.closeQuietly(reader);
+                                                if (true) {
                                                     taskNdx2 = taskNdx + 1;
                                                     recentFiles2 = recentFiles;
                                                     z = false;
-                                                } catch (Throwable th3) {
-                                                    th = th3;
-                                                    taskNdx = taskNdx3;
-                                                    IoUtils.closeQuietly(reader);
-                                                    if (deleteFile) {
-                                                        taskFile.delete();
-                                                    }
-                                                    throw th;
                                                 }
+                                                taskFile.delete();
+                                                taskNdx2 = taskNdx + 1;
+                                                recentFiles2 = recentFiles;
+                                                z = false;
+                                            } catch (Throwable th3) {
+                                                th = th3;
+                                                taskNdx = taskNdx3;
+                                                IoUtils.closeQuietly(reader);
+                                                if (deleteFile) {
+                                                }
+                                                throw th;
                                             }
-                                            recentFiles = recentFiles2;
-                                            taskNdx = taskNdx3;
-                                            str3 = TAG;
-                                            stringBuilder3 = new StringBuilder();
-                                            stringBuilder3.append("restoreTasksForUserLocked: Unable to restore taskFile=");
-                                            stringBuilder3.append(taskFile);
-                                            stringBuilder3.append(": ");
-                                            stringBuilder3.append(fileToString(taskFile));
-                                            Slog.e(str3, stringBuilder3.toString());
-                                        } else {
-                                            recentFiles = recentFiles2;
-                                            taskNdx = taskNdx3;
-                                            str3 = TAG;
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("restoreTasksForUserLocked: Unknown xml event=");
-                                            stringBuilder.append(event);
-                                            stringBuilder.append(" name=");
-                                            stringBuilder.append(name);
-                                            Slog.wtf(str3, stringBuilder.toString());
                                         }
-                                        XmlUtils.skipCurrentTag(in);
-                                        recentFiles2 = recentFiles;
-                                        taskNdx3 = taskNdx;
-                                        i2 = 1;
-                                        SparseBooleanArray sparseBooleanArray = preaddedTasks;
+                                        recentFiles = recentFiles2;
+                                        taskNdx = taskNdx3;
+                                        str3 = TAG;
+                                        stringBuilder3 = new StringBuilder();
+                                        stringBuilder3.append("restoreTasksForUserLocked: Unable to restore taskFile=");
+                                        stringBuilder3.append(taskFile);
+                                        stringBuilder3.append(": ");
+                                        stringBuilder3.append(fileToString(taskFile));
+                                        Slog.e(str3, stringBuilder3.toString());
+                                    } else {
+                                        recentFiles = recentFiles2;
+                                        taskNdx = taskNdx3;
+                                        str3 = TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("restoreTasksForUserLocked: Unknown xml event=");
+                                        stringBuilder.append(event);
+                                        stringBuilder.append(" name=");
+                                        stringBuilder.append(name);
+                                        Slog.wtf(str3, stringBuilder.toString());
                                     }
-                                }
-                                recentFiles = recentFiles2;
-                                taskNdx = taskNdx3;
-                                IoUtils.closeQuietly(reader);
-                                if (!deleteFile) {
-                                    taskNdx2 = taskNdx + 1;
+                                    XmlUtils.skipCurrentTag(in);
                                     recentFiles2 = recentFiles;
-                                    z = false;
+                                    taskNdx3 = taskNdx;
+                                    i2 = 1;
+                                    SparseBooleanArray sparseBooleanArray = preaddedTasks;
                                 }
-                            } catch (Exception e6) {
-                                e2 = e6;
-                                recentFiles = recentFiles2;
-                                taskNdx = taskNdx3;
-                                str3 = TAG;
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("Unable to parse ");
-                                stringBuilder.append(taskFile);
-                                stringBuilder.append(". Error ");
-                                Slog.wtf(str3, stringBuilder.toString(), e2);
-                                str3 = TAG;
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("Failing file: ");
-                                stringBuilder.append(fileToString(taskFile));
-                                Slog.e(str3, stringBuilder.toString());
-                                IoUtils.closeQuietly(reader);
-                                if (true) {
-                                }
-                                taskFile.delete();
+                            }
+                            recentFiles = recentFiles2;
+                            taskNdx = taskNdx3;
+                            IoUtils.closeQuietly(reader);
+                            if (!deleteFile) {
                                 taskNdx2 = taskNdx + 1;
                                 recentFiles2 = recentFiles;
                                 z = false;
-                            } catch (Throwable th4) {
-                                th = th4;
-                                recentFiles = recentFiles2;
-                                taskNdx = taskNdx3;
-                                IoUtils.closeQuietly(reader);
-                                if (deleteFile) {
-                                }
-                                throw th;
+                            }
+                        } catch (Exception e6) {
+                            e2 = e6;
+                            recentFiles = recentFiles2;
+                            taskNdx = taskNdx3;
+                            str3 = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Unable to parse ");
+                            stringBuilder.append(taskFile);
+                            stringBuilder.append(". Error ");
+                            Slog.wtf(str3, stringBuilder.toString(), e2);
+                            str3 = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failing file: ");
+                            stringBuilder.append(fileToString(taskFile));
+                            Slog.e(str3, stringBuilder.toString());
+                            IoUtils.closeQuietly(reader);
+                            if (true) {
                             }
                             taskFile.delete();
                             taskNdx2 = taskNdx + 1;
                             recentFiles2 = recentFiles;
                             z = false;
+                        } catch (Throwable th4) {
+                            th = th4;
+                            recentFiles = recentFiles2;
+                            taskNdx = taskNdx3;
+                            IoUtils.closeQuietly(reader);
+                            if (deleteFile) {
+                            }
+                            throw th;
                         }
-                    } catch (NumberFormatException e7) {
-                        e = e7;
-                        recentFiles = recentFiles2;
-                        taskNdx = taskNdx3;
-                        Slog.w(TAG, "Unexpected task file name", e);
+                        taskFile.delete();
                         taskNdx2 = taskNdx + 1;
                         recentFiles2 = recentFiles;
                         z = false;
                     }
+                } catch (NumberFormatException e7) {
+                    e = e7;
+                    recentFiles = recentFiles2;
+                    taskNdx = taskNdx3;
+                    Slog.w(TAG, "Unexpected task file name", e);
+                    taskNdx2 = taskNdx + 1;
+                    recentFiles2 = recentFiles;
+                    z = false;
                 }
-                recentFiles = recentFiles2;
-                taskNdx = taskNdx3;
-                taskNdx2 = taskNdx + 1;
-                recentFiles2 = recentFiles;
-                z = false;
-            } else {
-                removeObsoleteFiles(recoveredTaskIds, userTasksDir.listFiles());
-                for (taskNdx2 = tasks.size() - 1; taskNdx2 >= 0; taskNdx2--) {
-                    TaskRecord task2 = (TaskRecord) tasks.get(taskNdx2);
-                    task2.setPrevAffiliate(taskIdToTask(task2.mPrevAffiliateTaskId, tasks));
-                    task2.setNextAffiliate(taskIdToTask(task2.mNextAffiliateTaskId, tasks));
-                }
-                Collections.sort(tasks, new Comparator<TaskRecord>() {
-                    public int compare(TaskRecord lhs, TaskRecord rhs) {
-                        long diff = rhs.mLastTimeMoved - lhs.mLastTimeMoved;
-                        if (diff < 0) {
-                            return -1;
-                        }
-                        if (diff > 0) {
-                            return 1;
-                        }
-                        return 0;
-                    }
-                });
-                return tasks;
             }
+            recentFiles = recentFiles2;
+            taskNdx = taskNdx3;
+            taskNdx2 = taskNdx + 1;
+            recentFiles2 = recentFiles;
+            z = false;
         }
+        removeObsoleteFiles(recoveredTaskIds, userTasksDir.listFiles());
+        for (taskNdx2 = tasks.size() - 1; taskNdx2 >= 0; taskNdx2--) {
+            TaskRecord task2 = (TaskRecord) tasks.get(taskNdx2);
+            task2.setPrevAffiliate(taskIdToTask(task2.mPrevAffiliateTaskId, tasks));
+            task2.setNextAffiliate(taskIdToTask(task2.mNextAffiliateTaskId, tasks));
+        }
+        Collections.sort(tasks, new Comparator<TaskRecord>() {
+            public int compare(TaskRecord lhs, TaskRecord rhs) {
+                long diff = rhs.mLastTimeMoved - lhs.mLastTimeMoved;
+                if (diff < 0) {
+                    return -1;
+                }
+                if (diff > 0) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+        return tasks;
     }
 
     private static void removeObsoleteFiles(ArraySet<Integer> persistentTaskIds, File[] files) {

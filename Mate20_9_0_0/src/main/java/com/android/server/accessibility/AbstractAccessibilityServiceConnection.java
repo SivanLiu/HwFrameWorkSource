@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 abstract class AbstractAccessibilityServiceConnection extends Stub implements ServiceConnection, DeathRecipient, KeyEventFilter, FingerprintGestureClient {
@@ -204,7 +205,7 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         setDynamicallyConfigurableProperties(accessibilityServiceInfo);
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001f, code:
+    /* JADX WARNING: Missing block: B:13:0x001f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -340,50 +341,50 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0042, code:
+    /* JADX WARNING: Missing block: B:21:0x0042, code skipped:
             r3 = android.os.Binder.getCallingPid();
             r5 = r1.mSystemSupport.replaceCallbackIfNeeded(r32, r12, r31, r3, r33);
             r6 = android.os.Binder.getCallingUid();
             r7 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r13.getRemote().findAccessibilityNodeInfosByViewId(r28, r30, r2, r31, r5, r1.mFetchFlags, r3, r33, r25);
             r0 = r1.mSecurityPolicy.computeValidReportedPackages(r6, r13.getPackageName(), r13.getUid());
      */
-    /* JADX WARNING: Missing block: B:24:0x0083, code:
+    /* JADX WARNING: Missing block: B:24:0x0083, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:25:0x0086, code:
+    /* JADX WARNING: Missing block: B:25:0x0086, code skipped:
             if (r2 == null) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:27:0x0090, code:
+    /* JADX WARNING: Missing block: B:27:0x0090, code skipped:
             if (android.os.Binder.isProxy(r13.getRemote()) == false) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:28:0x0092, code:
+    /* JADX WARNING: Missing block: B:28:0x0092, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:29:0x0095, code:
+    /* JADX WARNING: Missing block: B:29:0x0095, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:30:0x0096, code:
+    /* JADX WARNING: Missing block: B:30:0x0096, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:0x0097, code:
+    /* JADX WARNING: Missing block: B:31:0x0097, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:35:0x00a6, code:
+    /* JADX WARNING: Missing block: B:35:0x00a6, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:36:0x00a9, code:
+    /* JADX WARNING: Missing block: B:36:0x00a9, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:38:0x00ab, code:
+    /* JADX WARNING: Missing block: B:38:0x00ab, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:42:0x00ba, code:
+    /* JADX WARNING: Missing block: B:42:0x00ba, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:43:0x00bd, code:
+    /* JADX WARNING: Missing block: B:43:0x00bd, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -417,50 +418,50 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0042, code:
+    /* JADX WARNING: Missing block: B:21:0x0042, code skipped:
             r3 = android.os.Binder.getCallingPid();
             r5 = r1.mSystemSupport.replaceCallbackIfNeeded(r32, r12, r31, r3, r33);
             r6 = android.os.Binder.getCallingUid();
             r7 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r13.getRemote().findAccessibilityNodeInfosByText(r28, r30, r2, r31, r5, r1.mFetchFlags, r3, r33, r25);
             r0 = r1.mSecurityPolicy.computeValidReportedPackages(r6, r13.getPackageName(), r13.getUid());
      */
-    /* JADX WARNING: Missing block: B:24:0x0083, code:
+    /* JADX WARNING: Missing block: B:24:0x0083, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:25:0x0086, code:
+    /* JADX WARNING: Missing block: B:25:0x0086, code skipped:
             if (r2 == null) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:27:0x0090, code:
+    /* JADX WARNING: Missing block: B:27:0x0090, code skipped:
             if (android.os.Binder.isProxy(r13.getRemote()) == false) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:28:0x0092, code:
+    /* JADX WARNING: Missing block: B:28:0x0092, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:29:0x0095, code:
+    /* JADX WARNING: Missing block: B:29:0x0095, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:30:0x0096, code:
+    /* JADX WARNING: Missing block: B:30:0x0096, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:0x0097, code:
+    /* JADX WARNING: Missing block: B:31:0x0097, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:35:0x00a6, code:
+    /* JADX WARNING: Missing block: B:35:0x00a6, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:36:0x00a9, code:
+    /* JADX WARNING: Missing block: B:36:0x00a9, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:38:0x00ab, code:
+    /* JADX WARNING: Missing block: B:38:0x00ab, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:42:0x00ba, code:
+    /* JADX WARNING: Missing block: B:42:0x00ba, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:43:0x00bd, code:
+    /* JADX WARNING: Missing block: B:43:0x00bd, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -494,50 +495,50 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0042, code:
+    /* JADX WARNING: Missing block: B:21:0x0042, code skipped:
             r3 = android.os.Binder.getCallingPid();
             r5 = r1.mSystemSupport.replaceCallbackIfNeeded(r31, r12, r30, r3, r33);
             r6 = android.os.Binder.getCallingUid();
             r7 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r13.getRemote().findAccessibilityNodeInfoByAccessibilityId(r28, r2, r30, r5, r1.mFetchFlags | r32, r3, r33, r24, r35);
             r0 = r1.mSecurityPolicy.computeValidReportedPackages(r6, r13.getPackageName(), r13.getUid());
      */
-    /* JADX WARNING: Missing block: B:24:0x0083, code:
+    /* JADX WARNING: Missing block: B:24:0x0083, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:25:0x0086, code:
+    /* JADX WARNING: Missing block: B:25:0x0086, code skipped:
             if (r2 == null) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:27:0x0090, code:
+    /* JADX WARNING: Missing block: B:27:0x0090, code skipped:
             if (android.os.Binder.isProxy(r13.getRemote()) == false) goto L_0x0095;
      */
-    /* JADX WARNING: Missing block: B:28:0x0092, code:
+    /* JADX WARNING: Missing block: B:28:0x0092, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:29:0x0095, code:
+    /* JADX WARNING: Missing block: B:29:0x0095, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:30:0x0096, code:
+    /* JADX WARNING: Missing block: B:30:0x0096, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:0x0097, code:
+    /* JADX WARNING: Missing block: B:31:0x0097, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:35:0x00a6, code:
+    /* JADX WARNING: Missing block: B:35:0x00a6, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:36:0x00a9, code:
+    /* JADX WARNING: Missing block: B:36:0x00a9, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:38:0x00ab, code:
+    /* JADX WARNING: Missing block: B:38:0x00ab, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:42:0x00ba, code:
+    /* JADX WARNING: Missing block: B:42:0x00ba, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:43:0x00bd, code:
+    /* JADX WARNING: Missing block: B:43:0x00bd, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -571,13 +572,13 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0043, code:
+    /* JADX WARNING: Missing block: B:22:0x0043, code skipped:
             r3 = android.os.Binder.getCallingPid();
             r18 = r1.mSystemSupport.replaceCallbackIfNeeded(r28, r14, r27, r3, r29);
             r12 = android.os.Binder.getCallingUid();
             r10 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:25:0x0064, code:
+    /* JADX WARNING: Missing block: B:25:0x0064, code skipped:
             r4 = r10;
             r10 = r2;
             r19 = r2;
@@ -586,72 +587,72 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
             r4 = r13;
             r5 = r14;
      */
-    /* JADX WARNING: Missing block: B:27:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             r13.getRemote().findFocus(r24, r15, r10, r27, r18, r1.mFetchFlags, r3, r29, r17);
             r0 = r1.mSecurityPolicy.computeValidReportedPackages(r2, r4.getPackageName(), r4.getUid());
      */
-    /* JADX WARNING: Missing block: B:28:0x0089, code:
+    /* JADX WARNING: Missing block: B:28:0x0089, code skipped:
             android.os.Binder.restoreCallingIdentity(r20);
      */
-    /* JADX WARNING: Missing block: B:29:0x008e, code:
+    /* JADX WARNING: Missing block: B:29:0x008e, code skipped:
             if (r19 == null) goto L_0x00a0;
      */
-    /* JADX WARNING: Missing block: B:31:0x0098, code:
+    /* JADX WARNING: Missing block: B:31:0x0098, code skipped:
             if (android.os.Binder.isProxy(r4.getRemote()) == false) goto L_0x00a0;
      */
-    /* JADX WARNING: Missing block: B:32:0x009a, code:
+    /* JADX WARNING: Missing block: B:32:0x009a, code skipped:
             r19.recycle();
      */
-    /* JADX WARNING: Missing block: B:33:0x00a0, code:
+    /* JADX WARNING: Missing block: B:33:0x00a0, code skipped:
             r8 = r19;
      */
-    /* JADX WARNING: Missing block: B:34:0x00a2, code:
+    /* JADX WARNING: Missing block: B:34:0x00a2, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:35:0x00a3, code:
+    /* JADX WARNING: Missing block: B:35:0x00a3, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:36:0x00a4, code:
+    /* JADX WARNING: Missing block: B:36:0x00a4, code skipped:
             r8 = r19;
             r6 = r20;
      */
-    /* JADX WARNING: Missing block: B:38:0x00aa, code:
+    /* JADX WARNING: Missing block: B:38:0x00aa, code skipped:
             r8 = r19;
             r6 = r20;
      */
-    /* JADX WARNING: Missing block: B:39:0x00af, code:
+    /* JADX WARNING: Missing block: B:39:0x00af, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:40:0x00b0, code:
+    /* JADX WARNING: Missing block: B:40:0x00b0, code skipped:
             r8 = r2;
             r6 = r10;
             r2 = r12;
             r4 = r13;
             r5 = r14;
      */
-    /* JADX WARNING: Missing block: B:41:0x00b5, code:
+    /* JADX WARNING: Missing block: B:41:0x00b5, code skipped:
             android.os.Binder.restoreCallingIdentity(r6);
      */
-    /* JADX WARNING: Missing block: B:45:0x00c4, code:
+    /* JADX WARNING: Missing block: B:45:0x00c4, code skipped:
             r8.recycle();
      */
-    /* JADX WARNING: Missing block: B:46:0x00c7, code:
+    /* JADX WARNING: Missing block: B:46:0x00c7, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:48:0x00c9, code:
+    /* JADX WARNING: Missing block: B:48:0x00c9, code skipped:
             r8 = r2;
             r6 = r10;
             r2 = r12;
             r4 = r13;
             r5 = r14;
      */
-    /* JADX WARNING: Missing block: B:49:0x00ce, code:
+    /* JADX WARNING: Missing block: B:49:0x00ce, code skipped:
             android.os.Binder.restoreCallingIdentity(r6);
      */
-    /* JADX WARNING: Missing block: B:53:0x00dd, code:
+    /* JADX WARNING: Missing block: B:53:0x00dd, code skipped:
             r8.recycle();
      */
-    /* JADX WARNING: Missing block: B:55:0x00e1, code:
+    /* JADX WARNING: Missing block: B:55:0x00e1, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -690,50 +691,50 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x003f, code:
+    /* JADX WARNING: Missing block: B:20:0x003f, code skipped:
             r3 = android.os.Binder.getCallingPid();
             r5 = r1.mSystemSupport.replaceCallbackIfNeeded(r32, r12, r31, r3, r33);
             r6 = android.os.Binder.getCallingUid();
             r7 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             r13.getRemote().focusSearch(r28, r30, r2, r31, r5, r1.mFetchFlags, r3, r33, r25);
             r0 = r1.mSecurityPolicy.computeValidReportedPackages(r6, r13.getPackageName(), r13.getUid());
      */
-    /* JADX WARNING: Missing block: B:23:0x0080, code:
+    /* JADX WARNING: Missing block: B:23:0x0080, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:24:0x0083, code:
+    /* JADX WARNING: Missing block: B:24:0x0083, code skipped:
             if (r2 == null) goto L_0x0092;
      */
-    /* JADX WARNING: Missing block: B:26:0x008d, code:
+    /* JADX WARNING: Missing block: B:26:0x008d, code skipped:
             if (android.os.Binder.isProxy(r13.getRemote()) == false) goto L_0x0092;
      */
-    /* JADX WARNING: Missing block: B:27:0x008f, code:
+    /* JADX WARNING: Missing block: B:27:0x008f, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:28:0x0092, code:
+    /* JADX WARNING: Missing block: B:28:0x0092, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:29:0x0093, code:
+    /* JADX WARNING: Missing block: B:29:0x0093, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:30:0x0094, code:
+    /* JADX WARNING: Missing block: B:30:0x0094, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:34:0x00a3, code:
+    /* JADX WARNING: Missing block: B:34:0x00a3, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:35:0x00a6, code:
+    /* JADX WARNING: Missing block: B:35:0x00a6, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:37:0x00a8, code:
+    /* JADX WARNING: Missing block: B:37:0x00a8, code skipped:
             android.os.Binder.restoreCallingIdentity(r7);
      */
-    /* JADX WARNING: Missing block: B:41:0x00b7, code:
+    /* JADX WARNING: Missing block: B:41:0x00b7, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:42:0x00ba, code:
+    /* JADX WARNING: Missing block: B:42:0x00ba, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -803,13 +804,13 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x000e, code:
+    /* JADX WARNING: Missing block: B:9:0x000e, code skipped:
             r0 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r2 = r3.mSystemSupport.getMagnificationController().getScale();
      */
-    /* JADX WARNING: Missing block: B:14:0x0021, code:
+    /* JADX WARNING: Missing block: B:14:0x0021, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -822,7 +823,7 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         return r2;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002b, code:
+    /* JADX WARNING: Missing block: B:12:0x002b, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -847,7 +848,7 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0028, code:
+    /* JADX WARNING: Missing block: B:13:0x0028, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -871,7 +872,7 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0028, code:
+    /* JADX WARNING: Missing block: B:13:0x0028, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -903,13 +904,13 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0017, code:
+    /* JADX WARNING: Missing block: B:12:0x0017, code skipped:
             r0 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             r2 = r3.mSystemSupport.getMagnificationController().reset(r4);
      */
-    /* JADX WARNING: Missing block: B:17:0x002a, code:
+    /* JADX WARNING: Missing block: B:17:0x002a, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -924,7 +925,7 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         return r2;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0038, code:
+    /* JADX WARNING: Missing block: B:19:0x0038, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1013,11 +1014,11 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
             if (this.mServiceInterface != null) {
                 this.mServiceInterface.init(null, this.mId, null);
             }
-        } catch (RemoteException e) {
-        }
-        if (this.mService != null) {
-            this.mService.unlinkToDeath(this, 0);
-            this.mService = null;
+            if (this.mService != null) {
+                this.mService.unlinkToDeath(this, 0);
+                this.mService = null;
+            }
+        } catch (RemoteException | NoSuchElementException e) {
         }
         this.mServiceInterface = null;
         this.mReceivedAccessibilityButtonCallbackSinceBind = false;
@@ -1077,13 +1078,13 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             r1.onAccessibilityEvent(r7, r8);
      */
-    /* JADX WARNING: Missing block: B:23:0x003f, code:
+    /* JADX WARNING: Missing block: B:23:0x003f, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             r2 = LOG_TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Error during sending ");
@@ -1092,7 +1093,7 @@ abstract class AbstractAccessibilityServiceConnection extends Stub implements Se
             r3.append(r1);
             android.util.Slog.e(r2, r3.toString(), r0);
      */
-    /* JADX WARNING: Missing block: B:27:0x0060, code:
+    /* JADX WARNING: Missing block: B:27:0x0060, code skipped:
             r7.recycle();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

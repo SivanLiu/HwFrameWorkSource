@@ -1,5 +1,6 @@
 package org.bouncycastle.asn1;
 
+import java.io.IOException;
 import java.util.Enumeration;
 
 class LazyConstructionEnumeration implements Enumeration {
@@ -13,7 +14,7 @@ class LazyConstructionEnumeration implements Enumeration {
     private Object readObject() {
         try {
             return this.aIn.readObject();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("malformed DER construction: ");
             stringBuilder.append(e);

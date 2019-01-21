@@ -25,7 +25,7 @@ public class G3413OFBBlockCipher extends StreamBlockCipher {
     }
 
     private void generateR() {
-        Object LSB = GOST3413CipherUtil.LSB(this.R, this.m - this.blockSize);
+        byte[] LSB = GOST3413CipherUtil.LSB(this.R, this.m - this.blockSize);
         System.arraycopy(LSB, 0, this.R, 0, LSB.length);
         System.arraycopy(this.Y, 0, this.R, LSB.length, this.m - LSB.length);
     }

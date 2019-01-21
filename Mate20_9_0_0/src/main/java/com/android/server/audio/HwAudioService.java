@@ -49,6 +49,7 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.UserManagerInternal;
 import android.provider.Settings.Secure;
+import android.provider.Settings.System;
 import android.provider.SettingsEx.Systemex;
 import android.rms.iaware.IAwareSdk;
 import android.rms.iaware.IForegroundAppTypeCallback;
@@ -107,6 +108,7 @@ public class HwAudioService extends AudioService {
     private static final String CURRENT_PRODUCT_NAME = SystemProperties.get("ro.product.device", null);
     private static final boolean DEBUG = SystemProperties.getBoolean("ro.media.debuggable", false);
     private static final boolean DEBUG_THEME_SOUND = false;
+    private static final int DEFAULT_STREAM_TYPE = 1;
     private static final int DEVICE_IN_HEADPHONE = -1979705328;
     private static final int DEVICE_OUT_HEADPHONE = 604004364;
     private static final int DUALPA_RCV_DEALY_DURATION = 5000;
@@ -144,6 +146,7 @@ public class HwAudioService extends AudioService {
     private static final int RADIO_UID = 1001;
     private static final int RECORDSTATE_STOPPED = 1;
     private static final String SESSION_ID = "session_id";
+    private static final int SETTINGS_RING_TYPE = 2;
     private static final String SOUNDTRIGGER_MAD_OFF = "mad=off";
     private static final String SOUNDTRIGGER_MAD_ON = "mad=on";
     private static final String SOUNDTRIGGER_START = "start";
@@ -646,6 +649,24 @@ public class HwAudioService extends AudioService {
         stringBuilder.append(userId);
         Slog.i(str, stringBuilder.toString());
         checkWithUserSwith(userId, false);
+    }
+
+    protected void updateDefaultStream() {
+        if (this.mContentResolver == null) {
+            Slog.i(TAG, "mContentResolver is null.");
+            return;
+        }
+        int streamType = System.getIntForUser(this.mContentResolver, "default_volume_key_control", 1, -2);
+        String str = TAG;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("get default stream : ");
+        stringBuilder.append(streamType);
+        Slog.i(str, stringBuilder.toString());
+        if (streamType == 2) {
+            this.mDefaultVolStream = 2;
+        } else {
+            this.mDefaultVolStream = 3;
+        }
     }
 
     private void checkWithUserSwith(int userId, boolean background) {
@@ -1208,6 +1229,21 @@ public class HwAudioService extends AudioService {
         }
     }
 
+    private boolean hasCameraRecordPermission(String packageName) {
+        boolean z = false;
+        if (packageName == null || packageName.length() == 0) {
+            return false;
+        }
+        PackageManager pm = this.mContext.getPackageManager();
+        if (pm == null) {
+            return false;
+        }
+        if (pm.checkPermission("android.permission.CAMERA", packageName) == 0 && pm.checkPermission("android.permission.RECORD_AUDIO", packageName) == 0) {
+            z = true;
+        }
+        return z;
+    }
+
     protected void handleMessageEx(Message msg) {
         int i = msg.what;
         if (i == MSG_DUALPA_RCV_DEALY) {
@@ -1247,13 +1283,13 @@ public class HwAudioService extends AudioService {
             }
             int fromRingerMode = msg.arg1;
             int ringerMode = msg.arg2;
-            if (isFirstTimeShow(caller)) {
+            if (!isFirstTimeShow(caller) || hasCameraRecordPermission(caller)) {
+                Slog.i(TAG, "AudioException showRingerModeToast");
+                showRingerModeToast(caller, fromRingerMode, ringerMode);
+            } else {
                 Slog.i(TAG, "AudioException showRingerModeDialog");
                 showRingerModeDialog(caller, fromRingerMode, ringerMode);
                 savePkgNameToDB(caller);
-            } else {
-                Slog.i(TAG, "AudioException showRingerModeToast");
-                showRingerModeToast(caller, fromRingerMode, ringerMode);
             }
             onAudioException(HW_RING_MODE_TYPE_EXCEPTION_OCCOUR, tempMsg);
         }
@@ -1801,7 +1837,7 @@ public class HwAudioService extends AudioService {
         if (TextUtils.isEmpty(pkgs)) {
             return true;
         }
-        return pkgs.contains(caller) ^ true;
+        return pkgs.contains(caller) ^ 1;
     }
 
     private void savePkgNameToDB(String caller) {
@@ -2133,7 +2169,10 @@ public class HwAudioService extends AudioService {
             this.mHwAudioServiceEx.updateTypeCNotify(type, state);
             synchronized (this.mConnectedDevices) {
                 if (state == 1) {
-                    this.mHeadphones.add(new HeadphoneInfo(type, address, name, caller));
+                    try {
+                        this.mHeadphones.add(new HeadphoneInfo(type, address, name, caller));
+                    } catch (Throwable th) {
+                    }
                 } else {
                     for (int i = 0; i < this.mHeadphones.size(); i++) {
                         if (((HeadphoneInfo) this.mHeadphones.get(i)).mDeviceType == type) {
@@ -2157,13 +2196,13 @@ public class HwAudioService extends AudioService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002f, code:
+    /* JADX WARNING: Missing block: B:14:0x002f, code skipped:
             if (r2 == null) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r0.notifyIncallModeChange(r2.getPid(), r1);
      */
-    /* JADX WARNING: Missing block: B:17:0x0039, code:
+    /* JADX WARNING: Missing block: B:17:0x0039, code skipped:
             r0.notifyIncallModeChange(0, 0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2347,7 +2386,7 @@ public class HwAudioService extends AudioService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0050, code:
+    /* JADX WARNING: Missing block: B:19:0x0050, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

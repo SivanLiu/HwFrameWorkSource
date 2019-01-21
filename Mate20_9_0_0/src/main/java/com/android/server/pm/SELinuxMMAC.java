@@ -37,22 +37,20 @@ public final class SELinuxMMAC {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x00ad A:{Splitter: B:11:0x0029, ExcHandler: java.lang.IllegalStateException (r2_3 'ex' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x00ad A:{Splitter: B:11:0x0029, ExcHandler: java.lang.IllegalStateException (r2_3 'ex' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:8:0x000b, code:
+    /* JADX WARNING: Missing block: B:8:0x000b, code skipped:
             r1 = new java.util.ArrayList();
             r3 = android.util.Xml.newPullParser();
             r4 = sMacPermissions.size();
             r6 = null;
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:9:0x001f, code:
+    /* JADX WARNING: Missing block: B:9:0x001f, code skipped:
             if (r0 >= r4) goto L_0x00de;
      */
-    /* JADX WARNING: Missing block: B:10:0x0021, code:
+    /* JADX WARNING: Missing block: B:10:0x0021, code skipped:
             r7 = (java.io.File) sMacPermissions.get(r0);
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r6 = new java.io.FileReader(r7);
             r8 = TAG;
             r9 = new java.lang.StringBuilder();
@@ -63,61 +61,61 @@ public final class SELinuxMMAC {
             r3.nextTag();
             r3.require(2, null, "policy");
      */
-    /* JADX WARNING: Missing block: B:14:0x0058, code:
+    /* JADX WARNING: Missing block: B:14:0x0058, code skipped:
             if (r3.next() == 3) goto L_0x0088;
      */
-    /* JADX WARNING: Missing block: B:16:0x005e, code:
+    /* JADX WARNING: Missing block: B:16:0x005e, code skipped:
             if (r3.getEventType() == 2) goto L_0x0061;
      */
-    /* JADX WARNING: Missing block: B:18:0x0061, code:
+    /* JADX WARNING: Missing block: B:18:0x0061, code skipped:
             r8 = r3.getName();
             r9 = true;
      */
-    /* JADX WARNING: Missing block: B:19:0x006d, code:
+    /* JADX WARNING: Missing block: B:19:0x006d, code skipped:
             if (r8.hashCode() == -902467798) goto L_0x0070;
      */
-    /* JADX WARNING: Missing block: B:21:0x0077, code:
+    /* JADX WARNING: Missing block: B:22:0x0077, code skipped:
             if (r8.equals("signer") == false) goto L_0x007a;
      */
-    /* JADX WARNING: Missing block: B:22:0x0079, code:
+    /* JADX WARNING: Missing block: B:23:0x0079, code skipped:
             r9 = false;
      */
-    /* JADX WARNING: Missing block: B:23:0x007a, code:
+    /* JADX WARNING: Missing block: B:24:0x007a, code skipped:
             if (r9 == false) goto L_0x0080;
      */
-    /* JADX WARNING: Missing block: B:24:0x007c, code:
+    /* JADX WARNING: Missing block: B:25:0x007c, code skipped:
             skip(r3);
      */
-    /* JADX WARNING: Missing block: B:25:0x0080, code:
+    /* JADX WARNING: Missing block: B:26:0x0080, code skipped:
             r1.add(readSignerOrThrow(r3));
      */
-    /* JADX WARNING: Missing block: B:27:0x0088, code:
+    /* JADX WARNING: Missing block: B:28:0x0088, code skipped:
             libcore.io.IoUtils.closeQuietly(r6);
             r0 = r0 + 1;
      */
-    /* JADX WARNING: Missing block: B:28:0x008f, code:
+    /* JADX WARNING: Missing block: B:29:0x008f, code skipped:
             r2 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:29:0x0091, code:
+    /* JADX WARNING: Missing block: B:30:0x0091, code skipped:
             r2 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r8 = TAG;
             r9 = new java.lang.StringBuilder();
             r9.append("Exception parsing ");
             r9.append(r7);
             android.util.Slog.w(r8, r9.toString(), r2);
      */
-    /* JADX WARNING: Missing block: B:32:0x00a8, code:
+    /* JADX WARNING: Missing block: B:33:0x00a8, code skipped:
             libcore.io.IoUtils.closeQuietly(r6);
      */
-    /* JADX WARNING: Missing block: B:33:0x00ac, code:
+    /* JADX WARNING: Missing block: B:34:0x00ac, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:34:0x00ad, code:
+    /* JADX WARNING: Missing block: B:35:0x00ad, code skipped:
             r2 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:36:?, code:
+    /* JADX WARNING: Missing block: B:37:?, code skipped:
             r8 = new java.lang.StringBuilder("Exception @");
             r8.append(r3.getPositionDescription());
             r8.append(" while parsing ");
@@ -126,52 +124,52 @@ public final class SELinuxMMAC {
             r8.append(r2);
             android.util.Slog.w(TAG, r8.toString());
      */
-    /* JADX WARNING: Missing block: B:37:0x00d5, code:
+    /* JADX WARNING: Missing block: B:38:0x00d5, code skipped:
             libcore.io.IoUtils.closeQuietly(r6);
      */
-    /* JADX WARNING: Missing block: B:38:0x00d9, code:
+    /* JADX WARNING: Missing block: B:39:0x00d9, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:39:0x00da, code:
+    /* JADX WARNING: Missing block: B:40:0x00da, code skipped:
             libcore.io.IoUtils.closeQuietly(r6);
      */
-    /* JADX WARNING: Missing block: B:40:0x00dd, code:
+    /* JADX WARNING: Missing block: B:41:0x00dd, code skipped:
             throw r2;
      */
-    /* JADX WARNING: Missing block: B:41:0x00de, code:
+    /* JADX WARNING: Missing block: B:42:0x00de, code skipped:
             r7 = new com.android.server.pm.PolicyComparator();
             java.util.Collections.sort(r1, r7);
      */
-    /* JADX WARNING: Missing block: B:42:0x00eb, code:
+    /* JADX WARNING: Missing block: B:43:0x00eb, code skipped:
             if (r7.foundDuplicate() == false) goto L_0x00f5;
      */
-    /* JADX WARNING: Missing block: B:43:0x00ed, code:
+    /* JADX WARNING: Missing block: B:44:0x00ed, code skipped:
             android.util.Slog.w(TAG, "ERROR! Duplicate entries found parsing mac_permissions.xml files");
      */
-    /* JADX WARNING: Missing block: B:44:0x00f4, code:
+    /* JADX WARNING: Missing block: B:45:0x00f4, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:45:0x00f5, code:
+    /* JADX WARNING: Missing block: B:46:0x00f5, code skipped:
             r5 = sPolicies;
      */
-    /* JADX WARNING: Missing block: B:46:0x00f7, code:
+    /* JADX WARNING: Missing block: B:47:0x00f7, code skipped:
             monitor-enter(r5);
      */
-    /* JADX WARNING: Missing block: B:48:?, code:
+    /* JADX WARNING: Missing block: B:49:?, code skipped:
             sPolicies.clear();
             sPolicies.addAll(r1);
             sPolicyRead = true;
      */
-    /* JADX WARNING: Missing block: B:49:0x0104, code:
+    /* JADX WARNING: Missing block: B:50:0x0104, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:50:0x0105, code:
+    /* JADX WARNING: Missing block: B:51:0x0105, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:51:0x0106, code:
+    /* JADX WARNING: Missing block: B:52:0x0106, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:53:0x0108, code:
+    /* JADX WARNING: Missing block: B:54:0x0108, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

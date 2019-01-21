@@ -3,7 +3,6 @@ package org.bouncycastle.pkcs.jcajce;
 import java.io.OutputStream;
 import java.security.Provider;
 import java.security.SecureRandom;
-import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.Mac;
 import javax.crypto.spec.PBEParameterSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -48,8 +47,8 @@ public class JcePKCS12MacCalculatorBuilder implements PKCS12MacCalculatorBuilder
             this.saltLength = createMac.getMacLength();
             final byte[] bArr = new byte[this.saltLength];
             this.random.nextBytes(bArr);
-            AlgorithmParameterSpec pBEParameterSpec = new PBEParameterSpec(bArr, this.iterationCount);
-            final Object pKCS12Key = new PKCS12Key(cArr);
+            PBEParameterSpec pBEParameterSpec = new PBEParameterSpec(bArr, this.iterationCount);
+            final PKCS12Key pKCS12Key = new PKCS12Key(cArr);
             createMac.init(pKCS12Key, pBEParameterSpec);
             return new MacCalculator() {
                 public AlgorithmIdentifier getAlgorithmIdentifier() {
@@ -68,7 +67,7 @@ public class JcePKCS12MacCalculatorBuilder implements PKCS12MacCalculatorBuilder
                     return new MacOutputStream(createMac);
                 }
             };
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to create MAC calculator: ");
             stringBuilder.append(e.getMessage());

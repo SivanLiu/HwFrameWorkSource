@@ -152,7 +152,7 @@ public class AwareBroadcastRegister {
     }
 
     public HashMap<String, Integer> getBRCounts() {
-        HashMap<String, Integer> hashMap;
+        HashMap hashMap;
         synchronized (this.mBRCounts) {
             hashMap = this.mBRCounts;
         }
@@ -165,13 +165,16 @@ public class AwareBroadcastRegister {
             Integer count;
             if (isRegister) {
                 if (brId != null) {
-                    if (!brId.isEmpty()) {
-                        count = (Integer) this.mBRCounts.get(brId);
-                        if (count == null) {
-                            this.mBRCounts.put(brId, Integer.valueOf(1));
-                        } else {
-                            this.mBRCounts.put(brId, Integer.valueOf(count.intValue() + 1));
+                    try {
+                        if (!brId.isEmpty()) {
+                            count = (Integer) this.mBRCounts.get(brId);
+                            if (count == null) {
+                                this.mBRCounts.put(brId, Integer.valueOf(1));
+                            } else {
+                                this.mBRCounts.put(brId, Integer.valueOf(count.intValue() + 1));
+                            }
                         }
+                    } finally {
                     }
                 }
             } else if (!(brId == null || brId.isEmpty())) {
@@ -210,7 +213,7 @@ public class AwareBroadcastRegister {
         return sb.toString();
     }
 
-    /* JADX WARNING: Missing block: B:29:0x007a, code:
+    /* JADX WARNING: Missing block: B:29:0x007a, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

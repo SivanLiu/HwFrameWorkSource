@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.os.PowerManager;
 import android.util.Log;
 import com.android.internal.util.State;
 import com.android.internal.util.StateMachine;
@@ -69,6 +70,7 @@ public class HwWMStateMachine extends StateMachine {
     private LocatingState mLocatingState = new LocatingState();
     private LocationDAO mLocationDAO;
     private PositionState mPositionState = new PositionState();
+    private PowerManager mPowerManager = null;
     private RecognitionState mRecognitionState = new RecognitionState();
     private long mScanEndTime = 0;
     private WifiManager mWifiManager;
@@ -183,22 +185,23 @@ public class HwWMStateMachine extends StateMachine {
                     try {
                         LogUtil.i("Into MSG_ADD_FREQ_LOCATION_TOOL");
                         bundle = message.getData();
-                        if (bundle == null || bundle.get("LOCATION") == null) {
-                            LogUtil.w(" no bundle location");
-                        } else {
-                            curLocation = bundle.get("LOCATION").toString();
-                            freqLoc = -1;
-                            if (curLocation.equals(Constant.NAME_FREQLOCATION_HOME)) {
-                                freqLoc = 0;
-                            } else if (curLocation.equals(Constant.NAME_FREQLOCATION_OFFICE)) {
-                                freqLoc = 1;
+                        if (bundle != null) {
+                            if (bundle.get("LOCATION") != null) {
+                                curLocation = bundle.get("LOCATION").toString();
+                                freqLoc = -1;
+                                if (curLocation.equals(Constant.NAME_FREQLOCATION_HOME)) {
+                                    freqLoc = 0;
+                                } else if (curLocation.equals(Constant.NAME_FREQLOCATION_OFFICE)) {
+                                    freqLoc = 1;
+                                }
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("MSG_ADD_FREQ_LOCATION_TOOL,curLocation=");
+                                stringBuilder2.append(curLocation);
+                                LogUtil.d(stringBuilder2.toString());
+                                HwWMStateMachine.this.mFrequentLocation.updateWaveMapping(freqLoc, 0);
                             }
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("MSG_ADD_FREQ_LOCATION_TOOL,curLocation=");
-                            stringBuilder2.append(curLocation);
-                            LogUtil.d(stringBuilder2.toString());
-                            HwWMStateMachine.this.mFrequentLocation.updateWaveMapping(freqLoc, 0);
                         }
+                        LogUtil.w(" no bundle location");
                     } catch (Exception e) {
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("processMessage:");
@@ -209,51 +212,52 @@ public class HwWMStateMachine extends StateMachine {
                     LogUtil.d("Into MSG_IN_FREQ_LOCATION");
                     try {
                         bundle = message.getData();
-                        if (bundle == null || bundle.get("LOCATION") == null) {
-                            LogUtil.w(" no bundle location");
-                        } else {
-                            curLocation = bundle.get("LOCATION").toString();
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append("MSG_IN_FREQ_LOCATION,curLocation=");
-                            stringBuilder.append(curLocation);
-                            LogUtil.d(stringBuilder.toString());
-                            if (HwWMStateMachine.this.cur_place == null || HwWMStateMachine.this.cur_place.getPlace() == null) {
-                                LogUtil.d(" cur_place == null");
-                                HwWMStateMachine.this.getCur_place(curLocation);
-                                if (HwWMStateMachine.this.cur_place.getPlace() == null) {
-                                    stringBuilder = new StringBuilder();
-                                    stringBuilder.append(" getPlace error:");
-                                    stringBuilder.append(HwWMStateMachine.this.cur_place.toString());
-                                    LogUtil.e(stringBuilder.toString());
-                                    HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mDefaultState);
-                                } else if (!HwWMStateMachine.this.cur_place.getPlace().equals(curLocation)) {
-                                    stringBuilder = new StringBuilder();
-                                    stringBuilder.append(" getPlace:");
-                                    stringBuilder.append(HwWMStateMachine.this.cur_place.toString());
-                                    stringBuilder.append(" not the same as input location:");
-                                    stringBuilder.append(curLocation);
-                                    LogUtil.e(stringBuilder.toString());
-                                    HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mDefaultState);
-                                }
-                            } else if (HwWMStateMachine.this.cur_place.getPlace().equals(curLocation)) {
+                        if (bundle != null) {
+                            if (bundle.get("LOCATION") != null) {
+                                curLocation = bundle.get("LOCATION").toString();
                                 stringBuilder = new StringBuilder();
-                                stringBuilder.append(" the same location - KEEP current state, current ");
-                                stringBuilder.append(HwWMStateMachine.this.cur_place.toString());
+                                stringBuilder.append("MSG_IN_FREQ_LOCATION,curLocation=");
+                                stringBuilder.append(curLocation);
                                 LogUtil.d(stringBuilder.toString());
-                            }
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append(" cur_place.getPlace()=");
-                            stringBuilder.append(HwWMStateMachine.this.cur_place.getPlace());
-                            LogUtil.i(stringBuilder.toString());
-                            HwWMStateMachine.this.collectFingersHandler = new CollectFingersHandler(HwWMStateMachine.this.mCtx, HwWMStateMachine.this.cur_place.getPlace(), HwWMStateMachine.this.getHandler());
-                            HwWMStateMachine.this.mCollectUserFingersHandler.assignSpaceExp2Space(HwWMStateMachine.this.last_preLable);
-                            HwWMStateMachine.this.mCollectUserFingersHandler.setFreqLocation(HwWMStateMachine.this.cur_place.getPlace());
-                            if (HwWMStateMachine.this.cur_place.getState() == 4) {
-                                HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mLocatingState);
-                            } else {
-                                HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mCollectTrainingState);
+                                if (HwWMStateMachine.this.cur_place == null || HwWMStateMachine.this.cur_place.getPlace() == null) {
+                                    LogUtil.d(" cur_place == null");
+                                    HwWMStateMachine.this.getCur_place(curLocation);
+                                    if (HwWMStateMachine.this.cur_place.getPlace() == null) {
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append(" getPlace error:");
+                                        stringBuilder.append(HwWMStateMachine.this.cur_place.toString());
+                                        LogUtil.e(stringBuilder.toString());
+                                        HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mDefaultState);
+                                    } else if (!HwWMStateMachine.this.cur_place.getPlace().equals(curLocation)) {
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append(" getPlace:");
+                                        stringBuilder.append(HwWMStateMachine.this.cur_place.toString());
+                                        stringBuilder.append(" not the same as input location:");
+                                        stringBuilder.append(curLocation);
+                                        LogUtil.e(stringBuilder.toString());
+                                        HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mDefaultState);
+                                    }
+                                } else if (HwWMStateMachine.this.cur_place.getPlace().equals(curLocation)) {
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append(" the same location - KEEP current state, current ");
+                                    stringBuilder.append(HwWMStateMachine.this.cur_place.toString());
+                                    LogUtil.d(stringBuilder.toString());
+                                }
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append(" cur_place.getPlace()=");
+                                stringBuilder.append(HwWMStateMachine.this.cur_place.getPlace());
+                                LogUtil.i(stringBuilder.toString());
+                                HwWMStateMachine.this.collectFingersHandler = new CollectFingersHandler(HwWMStateMachine.this.mCtx, HwWMStateMachine.this.cur_place.getPlace(), HwWMStateMachine.this.getHandler());
+                                HwWMStateMachine.this.mCollectUserFingersHandler.assignSpaceExp2Space(HwWMStateMachine.this.last_preLable);
+                                HwWMStateMachine.this.mCollectUserFingersHandler.setFreqLocation(HwWMStateMachine.this.cur_place.getPlace());
+                                if (HwWMStateMachine.this.cur_place.getState() == 4) {
+                                    HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mLocatingState);
+                                } else {
+                                    HwWMStateMachine.this.transitionTo(HwWMStateMachine.this.mCollectTrainingState);
+                                }
                             }
                         }
+                        LogUtil.w(" no bundle location");
                     } catch (Exception e2) {
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("WMStateCons.MSG_IN_FREQ_LOCATION:");
@@ -311,10 +315,10 @@ public class HwWMStateMachine extends StateMachine {
                             break;
                         case WMStateCons.MSG_CELL_CHANGE /*93*/:
                         case WMStateCons.MSG_CELL_IN_SERVICE /*95*/:
+                        case WMStateCons.MSG_CELL_OUT_OF_SERVICE /*96*/:
                             LogUtil.i("Into MSG_CELL_CHANGE");
                             if (HwWMStateMachine.this.mCollectUserFingersHandler != null) {
                                 HwWMStateMachine.this.mCollectUserFingersHandler.updateMobileDurationForCell(true);
-                                HwWMStateMachine.this.mCollectUserFingersHandler.checkOutOf4GCoverage(false);
                                 break;
                             }
                             break;
@@ -323,13 +327,6 @@ public class HwWMStateMachine extends StateMachine {
                             if (HwWMStateMachine.this.mCollectUserFingersHandler != null) {
                                 HwWMStateMachine.this.mCollectUserFingersHandler.assignSpaceExp2Space(HwWMStateMachine.this.last_preLable);
                                 HwWMStateMachine.this.mCollectUserFingersHandler.setCurrScrbId();
-                                break;
-                            }
-                            break;
-                        case WMStateCons.MSG_CELL_OUT_OF_SERVICE /*96*/:
-                            LogUtil.i("Into MSG_CELL_OUT_OF_SERVICE");
-                            if (HwWMStateMachine.this.mCollectUserFingersHandler != null) {
-                                HwWMStateMachine.this.mCollectUserFingersHandler.updateMobileDurationForCell(true);
                                 break;
                             }
                             break;
@@ -553,40 +550,54 @@ public class HwWMStateMachine extends StateMachine {
             } else if (i != 140) {
                 return false;
             } else {
-                LogUtil.d("into MSG_CHECK_4G_COVERAGE, check 4G coverage by mainAp result");
-                StringBuilder stringBuilder;
+                boolean isScreenOff = true;
+                if (HwWMStateMachine.this.mPowerManager != null) {
+                    isScreenOff = HwWMStateMachine.this.mPowerManager.isInteractive() ^ 1;
+                }
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("into MSG_CHECK_4G_COVERAGE, check 4G coverage by mainAp result: ACT_STATE=");
+                stringBuilder.append(HwWMStateMachine.this.SUBSTATE_ACTIVITY);
+                stringBuilder.append(", isScreenOff=");
+                stringBuilder.append(isScreenOff);
+                LogUtil.d(stringBuilder.toString());
+                StringBuilder stringBuilder2;
                 try {
-                    if (2 == HwWMStateMachine.this.SUBSTATE_ACTIVITY) {
-                        LogUtil.d(" Activity Substate Moving: restart timer");
-                        HwWMStateMachine.this.mActiveCollectHandler.stopOut4gRecgScan();
-                    } else if (1 == HwWMStateMachine.this.SUBSTATE_ACTIVITY) {
-                        if (this.mainApRecognizeService == null) {
-                            LogUtil.e(" null == recognizeService");
-                        } else {
-                            RecognizeResult recognizeResult = this.mainApRecognizeService.identifyLocationByMainAp(HwWMStateMachine.this.cur_mainApPlaceInfo);
-                            if (recognizeResult == null) {
-                                LogUtil.d(" mainAp recognizeResult failure, recognizeResult = null");
-                                HwWMStateMachine.this.mActiveCollectHandler.startOut4gRecgScan();
-                            } else if (recognizeResult.getMainApRgResult().contains(Constant.RESULT_UNKNOWN)) {
-                                LogUtil.d(" mainAp recognizeResult failure, result == unknonw");
-                                HwWMStateMachine.this.mActiveCollectHandler.startOut4gRecgScan();
-                            } else {
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append(" found the mainAp space:");
-                                stringBuilder.append(recognizeResult.toString());
-                                LogUtil.d(stringBuilder.toString());
-                                if (!HwWMStateMachine.this.mCollectUserFingersHandler.determine4gCoverage(recognizeResult.normalizeCopy())) {
-                                    HwWMStateMachine.this.mActiveCollectHandler.startOut4gRecgScan();
+                    if (2 != HwWMStateMachine.this.SUBSTATE_ACTIVITY) {
+                        if (!isScreenOff) {
+                            if (1 == HwWMStateMachine.this.SUBSTATE_ACTIVITY) {
+                                if (this.mainApRecognizeService == null) {
+                                    LogUtil.e(" null == recognizeService");
+                                } else {
+                                    RecognizeResult recognizeResult = this.mainApRecognizeService.identifyLocationByMainAp(HwWMStateMachine.this.cur_mainApPlaceInfo);
+                                    if (recognizeResult == null) {
+                                        LogUtil.d(" mainAp recognizeResult failure, recognizeResult = null");
+                                        HwWMStateMachine.this.mActiveCollectHandler.startOut4gRecgScan();
+                                    } else if (recognizeResult.getMainApRgResult().contains(Constant.RESULT_UNKNOWN)) {
+                                        LogUtil.d(" mainAp recognizeResult failure, result == unknonw");
+                                        HwWMStateMachine.this.mActiveCollectHandler.startOut4gRecgScan();
+                                    } else {
+                                        stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append(" found the mainAp space:");
+                                        stringBuilder2.append(recognizeResult.toString());
+                                        LogUtil.d(stringBuilder2.toString());
+                                        if (!HwWMStateMachine.this.mCollectUserFingersHandler.determine4gCoverage(recognizeResult.normalizeCopy())) {
+                                            HwWMStateMachine.this.mActiveCollectHandler.startOut4gRecgScan();
+                                        }
+                                    }
                                 }
                             }
+                            HwWMStateMachine.this.mCollectUserFingersHandler.checkOutOf4GCoverage(true);
+                            return true;
                         }
                     }
+                    LogUtil.d(" Activity Substate Moving: restart timer");
+                    HwWMStateMachine.this.mActiveCollectHandler.stopOut4gRecgScan();
                     HwWMStateMachine.this.mCollectUserFingersHandler.checkOutOf4GCoverage(true);
                 } catch (Exception e) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("WMStateCons.MSG_RECOGNITIONSTATE_WIFI_UPDATE_SCAN_RESULT,LocatingState,e:");
-                    stringBuilder.append(e.getMessage());
-                    LogUtil.e(stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("WMStateCons.MSG_RECOGNITIONSTATE_WIFI_UPDATE_SCAN_RESULT,LocatingState,e:");
+                    stringBuilder2.append(e.getMessage());
+                    LogUtil.e(stringBuilder2.toString());
                 }
                 return true;
             }
@@ -640,9 +651,17 @@ public class HwWMStateMachine extends StateMachine {
                 } else if (i != 140) {
                     return false;
                 } else {
-                    LogUtil.d("into MSG_CHECK_4G_COVERAGE, check 4G coverage by current results");
-                    HwWMStateMachine.this.mCollectUserFingersHandler.determine4gCoverage(HwWMStateMachine.this.last_preLable);
-                    HwWMStateMachine.this.mCollectUserFingersHandler.checkOutOf4GCoverage(true);
+                    boolean isScreenOff = true;
+                    if (HwWMStateMachine.this.mPowerManager != null) {
+                        isScreenOff = HwWMStateMachine.this.mPowerManager.isInteractive() ^ 1;
+                    }
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("into MSG_CHECK_4G_COVERAGE, check 4G coverage by current results: isScreenOff=");
+                    stringBuilder.append(isScreenOff);
+                    LogUtil.d(stringBuilder.toString());
+                    if (!isScreenOff && HwWMStateMachine.this.mCollectUserFingersHandler.determine4gCoverage(HwWMStateMachine.this.last_preLable)) {
+                        HwWMStateMachine.this.mCollectUserFingersHandler.checkOutOf4GCoverage(true);
+                    }
                 }
                 return true;
             }
@@ -725,6 +744,9 @@ public class HwWMStateMachine extends StateMachine {
                     stringBuilder.append(e.getMessage());
                     LogUtil.e(stringBuilder.toString());
                 }
+            } else if (i == 93 || i == 95) {
+                LogUtil.i("Into MSG_CELL_CHANGE");
+                HwWMStateMachine.this.check4gCoverage();
             } else if (i != 100) {
                 return false;
             } else {
@@ -825,6 +847,9 @@ public class HwWMStateMachine extends StateMachine {
     public void init() {
         LogUtil.d("init begin.");
         try {
+            Context context = this.mCtx;
+            Context context2 = this.mCtx;
+            this.mPowerManager = (PowerManager) context.getSystemService("power");
             this.param = ParamManager.getInstance().getParameterInfo();
             this.uiService = new UiService(getHandler());
             UiService uiService = this.uiService;
@@ -998,6 +1023,19 @@ public class HwWMStateMachine extends StateMachine {
             stringBuilder3.append(result.getPlace());
             LogUtil.d(stringBuilder3.toString());
             return true;
+        }
+    }
+
+    private void check4gCoverage() {
+        try {
+            if (this.mCollectUserFingersHandler != null && this.mCollectUserFingersHandler.updateMobileDurationForCell(true)) {
+                this.mCollectUserFingersHandler.checkOutOf4GCoverage(true);
+            }
+        } catch (Exception e) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("check4gCoverage,e:");
+            stringBuilder.append(e.getMessage());
+            LogUtil.e(stringBuilder.toString());
         }
     }
 }

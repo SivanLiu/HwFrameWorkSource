@@ -42,9 +42,9 @@ public class TlsBlockCipher implements TlsCipher {
         TlsMac tlsMac2 = tlsMac;
         tlsMac = new TlsMac(tlsContext3, digest2, bArr2, digestSize2, digest2.getDigestSize());
         digestSize2 += digest2.getDigestSize();
-        CipherParameters keyParameter = new KeyParameter(calculateKeyBlock, digestSize2, i2);
+        KeyParameter keyParameter = new KeyParameter(calculateKeyBlock, digestSize2, i2);
         digestSize2 += i2;
-        CipherParameters keyParameter2 = new KeyParameter(calculateKeyBlock, digestSize2, i2);
+        KeyParameter keyParameter2 = new KeyParameter(calculateKeyBlock, digestSize2, i2);
         digestSize2 += i2;
         if (this.useExplicitIV) {
             bArr = new byte[blockCipher.getBlockSize()];
@@ -57,23 +57,24 @@ public class TlsBlockCipher implements TlsCipher {
         }
         if (digestSize2 == i3) {
             CipherParameters parametersWithIV;
+            CipherParameters parametersWithIV2;
             if (tlsContext.isServer()) {
                 this.writeMac = tlsMac2;
                 this.readMac = tlsMac;
                 this.encryptCipher = blockCipher4;
                 this.decryptCipher = blockCipher3;
                 parametersWithIV = new ParametersWithIV(keyParameter2, bArr2);
-                keyParameter = new ParametersWithIV(keyParameter, bArr);
+                parametersWithIV2 = new ParametersWithIV(keyParameter, bArr);
             } else {
                 this.writeMac = tlsMac;
                 this.readMac = tlsMac2;
                 this.encryptCipher = blockCipher3;
                 this.decryptCipher = blockCipher4;
                 parametersWithIV = new ParametersWithIV(keyParameter, bArr);
-                keyParameter = new ParametersWithIV(keyParameter2, bArr2);
+                parametersWithIV2 = new ParametersWithIV(keyParameter2, bArr2);
             }
             this.encryptCipher.init(true, parametersWithIV);
-            this.decryptCipher.init(false, keyParameter);
+            this.decryptCipher.init(false, parametersWithIV2);
             return;
         }
         throw new TlsFatalAlert((short) 80);
@@ -107,11 +108,11 @@ public class TlsBlockCipher implements TlsCipher {
 Method generation error in method: org.bouncycastle.crypto.tls.TlsBlockCipher.checkPaddingConstantTime(byte[], int, int, int, int):int, dex: 
 jadx.core.utils.exceptions.CodegenException: Error generate insn: PHI: (r1_3 'i6' int) = (r1_1 'i6' int), (r1_1 'i6' int), (r1_2 'i6' int) binds: {(r1_1 'i6' int)=B:10:0x002a, (r1_1 'i6' int)=B:11:0x002c, (r1_2 'i6' int)=B:5:0x0017} in method: org.bouncycastle.crypto.tls.TlsBlockCipher.checkPaddingConstantTime(byte[], int, int, int, int):int, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:183)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:185)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -187,8 +188,8 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
     }
 
     public byte[] encodePlaintext(long j, short s, byte[] bArr, int i, int i2) {
+        byte[] bArr2;
         Object obj;
-        Object obj2;
         int i3;
         int i4;
         int i5 = i2;
@@ -204,48 +205,48 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
         if (this.useExplicitIV) {
             size += blockSize;
         }
-        Object obj3 = new byte[size];
+        Object obj2 = new byte[size];
         if (this.useExplicitIV) {
-            obj = new byte[blockSize];
-            this.context.getNonceRandomGenerator().nextBytes(obj);
-            this.encryptCipher.init(true, new ParametersWithIV(null, obj));
-            System.arraycopy(obj, 0, obj3, 0, blockSize);
-            obj2 = bArr;
+            bArr2 = new byte[blockSize];
+            this.context.getNonceRandomGenerator().nextBytes(bArr2);
+            this.encryptCipher.init(true, new ParametersWithIV(null, bArr2));
+            System.arraycopy(bArr2, 0, obj2, 0, blockSize);
+            obj = bArr;
             i3 = i;
             i4 = 0 + blockSize;
         } else {
-            obj2 = bArr;
+            obj = bArr;
             i3 = i;
             i4 = 0;
         }
-        System.arraycopy(obj2, i3, obj3, i4, i5);
+        System.arraycopy(obj, i3, obj2, i4, i5);
         int i8 = i4 + i5;
         if (!this.encryptThenMAC) {
-            obj = this.writeMac.calculateMac(j, s, obj2, i3, i5);
-            System.arraycopy(obj, 0, obj3, i8, obj.length);
-            i8 += obj.length;
+            bArr2 = this.writeMac.calculateMac(j, s, obj, i3, i5);
+            System.arraycopy(bArr2, 0, obj2, i8, bArr2.length);
+            i8 += bArr2.length;
         }
         int i9 = i8;
         size = 0;
         while (size <= i7) {
             int i10 = i9 + 1;
-            obj3[i9] = (byte) i7;
+            obj2[i9] = (byte) i7;
             size++;
             i9 = i10;
         }
         while (i4 < i9) {
-            this.encryptCipher.processBlock(obj3, i4, obj3, i4);
+            this.encryptCipher.processBlock(obj2, i4, obj2, i4);
             i4 += blockSize;
         }
         if (!this.encryptThenMAC) {
-            return obj3;
+            return obj2;
         }
         size = 0;
-        Object obj4 = obj3;
-        Object calculateMac = this.writeMac.calculateMac(j, s, obj3, 0, i9);
-        System.arraycopy(calculateMac, size, obj4, i9, calculateMac.length);
+        Object obj3 = obj2;
+        byte[] calculateMac = this.writeMac.calculateMac(j, s, obj2, 0, i9);
+        System.arraycopy(calculateMac, size, obj3, i9, calculateMac.length);
         int length = calculateMac.length;
-        return obj4;
+        return obj3;
     }
 
     public int getPlaintextLimit(int i) {

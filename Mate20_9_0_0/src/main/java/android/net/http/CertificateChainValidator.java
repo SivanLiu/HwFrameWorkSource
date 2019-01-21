@@ -112,11 +112,6 @@ public class CertificateChainValidator {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x006c A:{Splitter: B:17:0x002e, Catch:{ NoSuchMethodException -> 0x006c, NoSuchMethodException -> 0x006c, InvocationTargetException -> 0x0052, GeneralSecurityException -> 0x0073 }, ExcHandler: java.lang.NoSuchMethodException (e java.lang.NoSuchMethodException)} */
-    /* JADX WARNING: Missing block: B:28:0x006d, code:
-            r6.checkServerTrusted(r11, r13);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static SslError verifyServerDomainAndCertificates(X509Certificate[] chain, String domain, String authType) throws IOException {
         X509Certificate currCertificate = chain[0];
         if (currCertificate != null) {
@@ -124,10 +119,12 @@ public class CertificateChainValidator {
             if (!valid) {
                 return new SslError(2, currCertificate);
             }
+            X509TrustManager x509TrustManager;
             try {
-                X509TrustManager x509TrustManager = Conscrypt.getDefaultX509TrustManager();
+                x509TrustManager = Conscrypt.getDefaultX509TrustManager();
                 x509TrustManager.getClass().getMethod("checkServerTrusted", new Class[]{X509Certificate[].class, String.class, String.class}).invoke(x509TrustManager, new Object[]{chain, authType, domain});
-            } catch (NoSuchMethodException e) {
+            } catch (IllegalAccessException | NoSuchMethodException e) {
+                x509TrustManager.checkServerTrusted(chain, authType);
             } catch (InvocationTargetException e2) {
                 if (e2.getCause() instanceof CertificateException) {
                     throw ((CertificateException) e2.getCause());

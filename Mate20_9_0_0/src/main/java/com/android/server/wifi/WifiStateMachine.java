@@ -220,6 +220,7 @@ public class WifiStateMachine extends AbsWifiStateMachine {
     static final int CMD_WPS_PIN_RETRY = 131576;
     private static final String CONNECT_FROM_USER = "connect_from_user";
     public static final int CONNECT_MODE = 1;
+    private static final int CONNECT_REQUEST_DELAY_MSECS = 50;
     private static boolean DBG = HWFLOW;
     private static final int DEFAULT_MTU = 1500;
     private static final int DEFAULT_POLL_RSSI_INTERVAL_MSECS = 3000;
@@ -498,7 +499,7 @@ public class WifiStateMachine extends AbsWifiStateMachine {
             WifiStateMachine.this.stopClientMode();
         }
 
-        /* JADX WARNING: Missing block: B:170:0x05d6, code:
+        /* JADX WARNING: Missing block: B:170:0x05d6, code skipped:
             if (r9.equals(r10.toString()) != false) goto L_0x05d8;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -711,11 +712,14 @@ public class WifiStateMachine extends AbsWifiStateMachine {
                         String bssid = bundle.getString(WifiStateMachine.BSSID_TO_CONNECT);
                         synchronized (WifiStateMachine.this.mWifiReqCountLock) {
                             if (!WifiStateMachine.this.hasConnectionRequests()) {
-                                if (WifiStateMachine.this.mNetworkAgent == null) {
-                                    WifiStateMachine.this.loge("CMD_START_CONNECT but no requests and not connected, bailing");
-                                } else if (!(connectFromUser || WifiStateMachine.this.mWifiPermissionsUtil.checkNetworkSettingsPermission(i3))) {
-                                    WifiStateMachine.this.loge("CMD_START_CONNECT but no requests and connected, but app does not have sufficient permissions, bailing");
+                                if (WifiStateMachine.this.mNetworkAgent != null) {
+                                    if (!(connectFromUser || WifiStateMachine.this.mWifiPermissionsUtil.checkNetworkSettingsPermission(i3))) {
+                                        WifiStateMachine.this.loge("CMD_START_CONNECT but no requests and connected, but app does not have sufficient permissions, bailing");
+                                        break;
+                                    }
                                 }
+                                WifiStateMachine.this.loge("CMD_START_CONNECT but no requests and not connected, bailing");
+                                break;
                             }
                             config2 = WifiStateMachine.this.mWifiConfigManager.getConfiguredNetworkWithoutMasking(netId3);
                             wifiStateMachine2 = WifiStateMachine.this;
@@ -936,31 +940,34 @@ public class WifiStateMachine extends AbsWifiStateMachine {
                     break;
                 case WifiMonitor.SUPPLICANT_STATE_CHANGE_EVENT /*147462*/:
                     SupplicantState state = WifiStateMachine.this.handleSupplicantStateChange(message2);
-                    if (state == SupplicantState.DISCONNECTED && WifiStateMachine.this.mNetworkInfo.getState() != NetworkInfo.State.DISCONNECTED) {
-                        if (WifiStateMachine.this.mVerboseLoggingEnabled) {
-                            WifiStateMachine.this.log("Missed CTRL-EVENT-DISCONNECTED, disconnect");
+                    if (state != SupplicantState.INTERFACE_DISABLED) {
+                        if (state == SupplicantState.DISCONNECTED && WifiStateMachine.this.mNetworkInfo.getState() != NetworkInfo.State.DISCONNECTED) {
+                            if (WifiStateMachine.this.mVerboseLoggingEnabled) {
+                                WifiStateMachine.this.log("Missed CTRL-EVENT-DISCONNECTED, disconnect");
+                            }
+                            WifiStateMachine.this.handleNetworkDisconnect();
+                            WifiStateMachine.this.transitionTo(WifiStateMachine.this.mDisconnectedState);
                         }
-                        WifiStateMachine.this.handleNetworkDisconnect();
-                        WifiStateMachine.this.transitionTo(WifiStateMachine.this.mDisconnectedState);
-                    }
-                    if (state == SupplicantState.COMPLETED) {
-                        WifiStateMachine.this.mIpClient.confirmConfiguration();
-                        WifiStateMachine.this.mWifiScoreReport.noteIpCheck();
-                    }
-                    StateChangeResult stateChangeResult = message2.obj;
-                    if (stateChangeResult != null) {
-                        res2 = stateChangeResult.networkId;
-                        config = WifiStateMachine.this.mWifiConfigManager.getConfiguredNetwork(res2);
-                        if (config != null && config.getNetworkSelectionStatus().isNetworkEnabled() && config.getNetworkSelectionStatus().getDisableReasonCounter(3) > 0 && WifiStateMachine.this.mClock.getElapsedSinceBootMillis() - WifiStateMachine.this.mLastAuthFailureTimestamp < WifiStateMachine.LAST_AUTH_FAILURE_GAP && !WifiStateMachine.this.isConnected() && state == SupplicantState.DISCONNECTED) {
-                            str = WifiStateMachine.TAG;
-                            stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("start an immediate connection for network ");
-                            stringBuilder3.append(res2);
-                            Log.d(str, stringBuilder3.toString());
-                            WifiStateMachine.this.startConnectToNetwork(res2, 1010, "any");
-                            break;
+                        if (state == SupplicantState.COMPLETED) {
+                            WifiStateMachine.this.mIpClient.confirmConfiguration();
+                            WifiStateMachine.this.mWifiScoreReport.noteIpCheck();
+                        }
+                        StateChangeResult stateChangeResult = message2.obj;
+                        if (stateChangeResult != null) {
+                            res2 = stateChangeResult.networkId;
+                            config = WifiStateMachine.this.mWifiConfigManager.getConfiguredNetwork(res2);
+                            if (config != null && config.getNetworkSelectionStatus().isNetworkEnabled() && config.getNetworkSelectionStatus().getDisableReasonCounter(3) > 0 && WifiStateMachine.this.mClock.getElapsedSinceBootMillis() - WifiStateMachine.this.mLastAuthFailureTimestamp < WifiStateMachine.LAST_AUTH_FAILURE_GAP && !WifiStateMachine.this.isConnected() && state == SupplicantState.DISCONNECTED) {
+                                str = WifiStateMachine.TAG;
+                                stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("start an immediate connection for network ");
+                                stringBuilder3.append(res2);
+                                Log.d(str, stringBuilder3.toString());
+                                WifiStateMachine.this.startConnectToNetwork(res2, 1010, "any");
+                                break;
+                            }
                         }
                     }
+                    return false;
                     break;
                 case WifiMonitor.AUTHENTICATION_FAILURE_EVENT /*147463*/:
                     WifiStateMachine.this.mWifiDiagnostics.captureBugReportData(2);
@@ -1710,7 +1717,6 @@ public class WifiStateMachine extends AbsWifiStateMachine {
                 case WifiStateMachine.CMD_SET_DETECT_PERIOD /*131773*/:
                 case WifiMonitor.NETWORK_CONNECTION_EVENT /*147459*/:
                 case WifiMonitor.NETWORK_DISCONNECTION_EVENT /*147460*/:
-                case WifiMonitor.SUPPLICANT_STATE_CHANGE_EVENT /*147462*/:
                 case WifiMonitor.AUTHENTICATION_FAILURE_EVENT /*147463*/:
                 case WifiMonitor.WPS_OVERLAP_EVENT /*147466*/:
                 case WifiMonitor.SUP_REQUEST_IDENTITY /*147471*/:
@@ -1941,6 +1947,13 @@ public class WifiStateMachine extends AbsWifiStateMachine {
                     }
                     wifiStateMachine2.mTemporarilyDisconnectWifi = z;
                     WifiStateMachine.this.replyToMessage(message2, WifiP2pServiceImpl.DISCONNECT_WIFI_RESPONSE);
+                    break;
+                case WifiMonitor.SUPPLICANT_STATE_CHANGE_EVENT /*147462*/:
+                    if (message2.obj.state == SupplicantState.INTERFACE_DISABLED) {
+                        Log.e(WifiStateMachine.TAG, "Detected drive hang , recover");
+                        WifiStateMachine.this.mWifiInjector.getSelfRecovery().trigger(1);
+                        break;
+                    }
                     break;
                 case WifiMonitor.EVENT_ANT_CORE_ROB /*147757*/:
                     WifiStateMachine.this.handleAntenaPreempted();
@@ -3367,7 +3380,7 @@ public class WifiStateMachine extends AbsWifiStateMachine {
         this.mLastBssid = null;
         this.mLastNetworkId = -1;
         this.mLastSignalLevel = -1;
-        this.mPrimaryDeviceType = this.mContext.getResources().getString(17039848);
+        this.mPrimaryDeviceType = this.mContext.getResources().getString(17039849);
         this.mCountryCode = countryCode;
         this.mWifiScoreReport = new WifiScoreReport(this.mWifiInjector.getScoringParams(), this.mClock);
         this.mNetworkCapabilitiesFilter.addTransportType(1);
@@ -3449,7 +3462,7 @@ public class WifiStateMachine extends AbsWifiStateMachine {
         this.mWakeLock = powerManager.newWakeLock(1, getName());
         this.mSuspendWakeLock = powerManager.newWakeLock(1, "WifiSuspend");
         this.mSuspendWakeLock.setReferenceCounted(false);
-        this.mTcpBufferSizes = this.mContext.getResources().getString(17039850);
+        this.mTcpBufferSizes = this.mContext.getResources().getString(17039851);
         addState(this.mDefaultState);
         addState(this.mConnectModeState, this.mDefaultState);
         addState(this.mL2ConnectedState, this.mConnectModeState);
@@ -3596,7 +3609,7 @@ public class WifiStateMachine extends AbsWifiStateMachine {
     }
 
     public boolean setRandomMacOui() {
-        String oui = this.mContext.getResources().getString(17039849);
+        String oui = this.mContext.getResources().getString(17039850);
         if (TextUtils.isEmpty(oui)) {
             oui = GOOGLE_OUI;
         }
@@ -3747,15 +3760,11 @@ public class WifiStateMachine extends AbsWifiStateMachine {
         return stats;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001d A:{Splitter: B:0:0x0000, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Missing block: B:5:0x0025, code:
-            throw new android.net.KeepalivePacketData.InvalidPacketException(-21);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private byte[] getDstMacForKeepalive(KeepalivePacketData packetData) throws InvalidPacketException {
         try {
             return NativeUtil.macAddressToByteArray(macAddressFromRoute(RouteInfo.selectBestRoute(this.mLinkProperties.getRoutes(), packetData.dstAddress).getGateway().getHostAddress()));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new InvalidPacketException(-21);
         }
     }
 
@@ -4216,6 +4225,9 @@ public class WifiStateMachine extends AbsWifiStateMachine {
                 this.mReportedRunning = false;
             }
             this.mWakeLock.setWorkSource(newSource);
+            try {
+            } catch (Throwable th) {
+            }
         }
     }
 
@@ -6087,7 +6099,7 @@ public class WifiStateMachine extends AbsWifiStateMachine {
                 }
             }
         }
-        if (config != null) {
+        if (!(this.mNetworkAgent == null || config == null)) {
             this.mNetworkAgent.duplexSelected(config.connectToCellularAndWLAN, config.noInternetAccessExpected);
         }
         setNetworkDetailedState(DetailedState.CONNECTED);
@@ -6191,7 +6203,12 @@ public class WifiStateMachine extends AbsWifiStateMachine {
         Bundle bundle = new Bundle();
         bundle.putBoolean(CONNECT_FROM_USER, true);
         bundle.putString(BSSID_TO_CONNECT, bssid);
-        sendMessage(CMD_START_CONNECT, networkId, uid, bundle);
+        if (this.mNetworkAgent != null || hasConnectionRequests() || this.mNetworkFactory == null || this.mNetworkFactory.hasMessages(536576)) {
+            sendMessage(CMD_START_CONNECT, networkId, uid, bundle);
+            return;
+        }
+        Log.w(TAG, "delay connect request");
+        sendMessageDelayed(CMD_START_CONNECT, networkId, uid, bundle, 50);
     }
 
     public void startRoamToNetwork(int networkId, ScanResult scanResult) {

@@ -2,6 +2,7 @@ package com.android.server.policy;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.graphics.Rect;
@@ -261,11 +262,14 @@ public abstract class AbsPhoneWindowManager {
     protected void uploadKeyEvent(int keyEvent) {
     }
 
-    public boolean isHwStartWindowEnabled() {
+    public boolean isHwStartWindowEnabled(int type) {
         return false;
     }
 
-    public Context addHwStartWindow(String packageName, Context overrideContext, Context context, TypedArray typedArray, int windowFlags) {
+    public Context addHwStartWindow(ApplicationInfo appInfo, Context overrideContext, Context context, TypedArray typedArray, int windowFlags) {
         return null;
+    }
+
+    public void setGestureNavMode(String packageName, int uid, int leftMode, int rightMode, int bottomMode) {
     }
 }

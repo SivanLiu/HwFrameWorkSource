@@ -330,7 +330,7 @@ public class NetworkScorerAppManager {
     }
 
     private String getDefaultPackageSetting() {
-        return this.mContext.getResources().getString(17039787);
+        return this.mContext.getResources().getString(17039788);
     }
 
     private String getNetworkRecommendationsPackage() {

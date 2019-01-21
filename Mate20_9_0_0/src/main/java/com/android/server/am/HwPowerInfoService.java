@@ -420,21 +420,22 @@ public class HwPowerInfoService implements IHwPowerInfoService {
         Data.mTime = this.dateFormate.format(new Date(System.currentTimeMillis()));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:87:0x013a A:{SYNTHETIC, Splitter: B:87:0x013a} */
-    /* JADX WARNING: Removed duplicated region for block: B:91:0x0141 A:{SYNTHETIC, Splitter: B:91:0x0141} */
-    /* JADX WARNING: Removed duplicated region for block: B:95:0x0148 A:{SYNTHETIC, Splitter: B:95:0x0148} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0125 A:{SYNTHETIC, Splitter: B:76:0x0125} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x012c A:{SYNTHETIC, Splitter: B:80:0x012c} */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:59:0x0100=Splitter:B:59:0x0100, B:45:0x00e4=Splitter:B:45:0x00e4, B:73:0x011c=Splitter:B:73:0x011c} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0125 A:{SYNTHETIC, Splitter:B:76:0x0125} */
+    /* JADX WARNING: Removed duplicated region for block: B:80:0x012c A:{SYNTHETIC, Splitter:B:80:0x012c} */
     /* JADX WARNING: Removed duplicated region for block: B:104:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x0133 A:{SYNTHETIC, Splitter: B:84:0x0133} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x0109 A:{SYNTHETIC, Splitter: B:62:0x0109} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x0110 A:{SYNTHETIC, Splitter: B:66:0x0110} */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x0133 A:{SYNTHETIC, Splitter:B:84:0x0133} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x0109 A:{SYNTHETIC, Splitter:B:62:0x0109} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0110 A:{SYNTHETIC, Splitter:B:66:0x0110} */
     /* JADX WARNING: Removed duplicated region for block: B:103:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x0117 A:{SYNTHETIC, Splitter: B:70:0x0117} */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00ed A:{SYNTHETIC, Splitter: B:48:0x00ed} */
-    /* JADX WARNING: Removed duplicated region for block: B:52:0x00f4 A:{SYNTHETIC, Splitter: B:52:0x00f4} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x0117 A:{SYNTHETIC, Splitter:B:70:0x0117} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x00ed A:{SYNTHETIC, Splitter:B:48:0x00ed} */
+    /* JADX WARNING: Removed duplicated region for block: B:52:0x00f4 A:{SYNTHETIC, Splitter:B:52:0x00f4} */
     /* JADX WARNING: Removed duplicated region for block: B:102:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x00fb A:{SYNTHETIC, Splitter: B:56:0x00fb} */
+    /* JADX WARNING: Removed duplicated region for block: B:56:0x00fb A:{SYNTHETIC, Splitter:B:56:0x00fb} */
+    /* JADX WARNING: Removed duplicated region for block: B:87:0x013a A:{SYNTHETIC, Splitter:B:87:0x013a} */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x0141 A:{SYNTHETIC, Splitter:B:91:0x0141} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x0148 A:{SYNTHETIC, Splitter:B:95:0x0148} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void getDataFromWakeupSource(LogInfo Data) {
         Throwable th;
@@ -466,81 +467,48 @@ public class HwPowerInfoService implements IHwPowerInfoService {
                             index = index2;
                             Log.e(TAG, "not found the wakeupsource");
                             if (inputReader != null) {
-                                try {
-                                    inputReader.close();
-                                } catch (Exception e2) {
-                                }
                             }
                             if (read != null) {
-                                try {
-                                    read.close();
-                                } catch (Exception e3) {
-                                }
                             }
                             if (fInputStream == null) {
-                                fInputStream.close();
-                                return;
                             }
-                            return;
-                        } catch (UnsupportedEncodingException e4) {
+                        } catch (UnsupportedEncodingException e2) {
                             index = index2;
                             Log.e(TAG, "not support utf-8");
                             if (inputReader != null) {
-                                try {
-                                    inputReader.close();
-                                } catch (Exception e5) {
-                                }
                             }
                             if (read != null) {
-                                try {
-                                    read.close();
-                                } catch (Exception e6) {
-                                }
                             }
                             if (fInputStream == null) {
-                                fInputStream.close();
-                                return;
                             }
-                            return;
-                        } catch (IOException e7) {
+                        } catch (IOException e3) {
                             index = index2;
                             try {
                                 Log.e(TAG, "read wakeupsource failed");
                                 if (inputReader != null) {
-                                    try {
-                                        inputReader.close();
-                                    } catch (Exception e8) {
-                                    }
                                 }
                                 if (read != null) {
-                                    try {
-                                        read.close();
-                                    } catch (Exception e9) {
-                                    }
                                 }
                                 if (fInputStream == null) {
-                                    fInputStream.close();
-                                    return;
                                 }
-                                return;
                             } catch (Throwable th2) {
                                 th = th2;
                                 if (inputReader != null) {
                                     try {
                                         inputReader.close();
-                                    } catch (Exception e10) {
+                                    } catch (Exception e4) {
                                     }
                                 }
                                 if (read != null) {
                                     try {
                                         read.close();
-                                    } catch (Exception e11) {
+                                    } catch (Exception e5) {
                                     }
                                 }
                                 if (fInputStream != null) {
                                     try {
                                         fInputStream.close();
-                                    } catch (IOException e12) {
+                                    } catch (IOException e6) {
                                     }
                                 }
                                 throw th;
@@ -568,39 +536,66 @@ public class HwPowerInfoService implements IHwPowerInfoService {
             }
             try {
                 inputReader.close();
-            } catch (Exception e13) {
+            } catch (Exception e7) {
             }
             try {
                 read.close();
-            } catch (Exception e14) {
+            } catch (Exception e8) {
             }
             try {
                 fInputStream.close();
-            } catch (IOException e15) {
+            } catch (IOException e9) {
             }
-        } catch (FileNotFoundException e16) {
+        } catch (FileNotFoundException e10) {
             Log.e(TAG, "not found the wakeupsource");
             if (inputReader != null) {
+                try {
+                    inputReader.close();
+                } catch (Exception e11) {
+                }
             }
             if (read != null) {
+                try {
+                    read.close();
+                } catch (Exception e12) {
+                }
             }
             if (fInputStream == null) {
+                fInputStream.close();
             }
-        } catch (UnsupportedEncodingException e17) {
+        } catch (UnsupportedEncodingException e13) {
             Log.e(TAG, "not support utf-8");
             if (inputReader != null) {
+                try {
+                    inputReader.close();
+                } catch (Exception e14) {
+                }
             }
             if (read != null) {
+                try {
+                    read.close();
+                } catch (Exception e15) {
+                }
             }
             if (fInputStream == null) {
+                fInputStream.close();
             }
-        } catch (IOException e18) {
+        } catch (IOException e16) {
             Log.e(TAG, "read wakeupsource failed");
             if (inputReader != null) {
+                try {
+                    inputReader.close();
+                } catch (Exception e17) {
+                }
             }
             if (read != null) {
+                try {
+                    read.close();
+                } catch (Exception e18) {
+                }
             }
             if (fInputStream == null) {
+                fInputStream.close();
             }
         }
     }
@@ -1337,14 +1332,17 @@ public class HwPowerInfoService implements IHwPowerInfoService {
         synchronized (mLockInit) {
             HwPowerInfoService hwPowerInfoService;
             if (isSystemReady) {
-                if (mSingleInstance == null) {
-                    mSingleInstance = new HwPowerInfoService();
-                    if (context != null) {
-                        registerMyReceiver(context);
+                try {
+                    if (mSingleInstance == null) {
+                        mSingleInstance = new HwPowerInfoService();
+                        if (context != null) {
+                            registerMyReceiver(context);
+                        }
+                    } else {
+                        hwPowerInfoService = mSingleInstance;
+                        return hwPowerInfoService;
                     }
-                } else {
-                    hwPowerInfoService = mSingleInstance;
-                    return hwPowerInfoService;
+                } finally {
                 }
             } else if (!(context == null || mSingleInstance == null)) {
                 Log.i(TAG, "unInstance");

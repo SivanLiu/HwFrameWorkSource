@@ -38,8 +38,8 @@ public class HwForceRotationManagerService extends Stub {
         }
     };
     private boolean mIsAppInForceRotationWhiteList = false;
-    private String mPrvCompontentName = "";
-    private String mPrvPackageName = "";
+    private String mPrvCompontentName = BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
+    private String mPrvPackageName = BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
     private String mTmpAppName;
     private Map<String, AppToastInfo> mToastedAppInfos;
 
@@ -73,6 +73,10 @@ public class HwForceRotationManagerService extends Stub {
         return isAppForceLandRotatable(aToken);
     }
 
+    /* JADX WARNING: Missing block: B:40:0x00a8, code skipped:
+            r0 = r3;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected synchronized boolean isAppForceLandRotatable(IBinder aToken) {
         boolean z;
         ForceRotationAppInfo tmpFRAI;
@@ -89,7 +93,31 @@ public class HwForceRotationManagerService extends Stub {
             int tmpOrientation = tmpFRAI.getmOrientation();
             String str;
             StringBuilder stringBuilder;
-            if (ActivityRecord.forToken(tmpToken) == null) {
+            if (ActivityRecord.forToken(tmpToken) != null) {
+                if (aToken == tmpToken) {
+                    if (tmpOrientation != 1 && tmpOrientation != 7 && tmpOrientation != 9) {
+                        if (tmpOrientation != 12) {
+                            if (tmpOrientation == 0 || tmpOrientation == 6 || tmpOrientation == 8 || tmpOrientation == 11 || tmpOrientation == -1 || tmpOrientation == 4 || tmpOrientation == 5 || tmpOrientation == 2 || tmpOrientation == 13) {
+                                break;
+                            } else if (tmpOrientation == 10) {
+                                break;
+                            } else {
+                                str = TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("utk:pn=");
+                                stringBuilder.append(tmpFRAI.getmPackageName());
+                                stringBuilder.append(", o=");
+                                stringBuilder.append(tmpOrientation);
+                                Slog.d(str, stringBuilder.toString());
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    break;
+                }
+                continue;
+            } else {
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("ftk:pn=");
@@ -98,20 +126,6 @@ public class HwForceRotationManagerService extends Stub {
                 stringBuilder.append(tmpOrientation);
                 Slog.d(str, stringBuilder.toString());
                 iter.remove();
-            } else if (aToken != tmpToken) {
-                continue;
-            } else if (tmpOrientation == 1 || tmpOrientation == 7 || tmpOrientation == 9 || tmpOrientation == 12) {
-                portaitFRAI = tmpFRAI;
-            } else if (tmpOrientation == 0 || tmpOrientation == 6 || tmpOrientation == 8 || tmpOrientation == 11 || tmpOrientation == -1 || tmpOrientation == 4 || tmpOrientation == 5 || tmpOrientation == 2 || tmpOrientation == 13 || tmpOrientation == 10) {
-                landscapeFRAI = tmpFRAI;
-            } else {
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("utk:pn=");
-                stringBuilder.append(tmpFRAI.getmPackageName());
-                stringBuilder.append(", o=");
-                stringBuilder.append(tmpOrientation);
-                Slog.d(str, stringBuilder.toString());
             }
         }
         landscapeFRAI = tmpFRAI;
@@ -138,10 +152,10 @@ public class HwForceRotationManagerService extends Stub {
         return frai;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002d, code:
+    /* JADX WARNING: Missing block: B:9:0x002d, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:18:0x0059, code:
+    /* JADX WARNING: Missing block: B:18:0x0059, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -179,10 +193,10 @@ public class HwForceRotationManagerService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x004c, code:
+    /* JADX WARNING: Missing block: B:23:0x004c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:31:0x0086, code:
+    /* JADX WARNING: Missing block: B:32:0x0086, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -194,23 +208,25 @@ public class HwForceRotationManagerService extends Stub {
             if (!isAppForceLandRotatable(packageName, aToken)) {
                 return;
             }
-            if (!TextUtils.isEmpty(packageName) && pid > 0) {
-                AppToastInfo tmp = (AppToastInfo) this.mToastedAppInfos.get(packageName);
-                if (tmp == null || (pid != tmp.getmPid() && processName.equals(tmp.getmProcessName()))) {
-                    if (tmp == null) {
-                        tmp = new AppToastInfo(packageName, processName, pid);
-                    } else {
-                        tmp.setmPid(pid);
+            if (!TextUtils.isEmpty(packageName)) {
+                if (pid > 0) {
+                    AppToastInfo tmp = (AppToastInfo) this.mToastedAppInfos.get(packageName);
+                    if (tmp == null || (pid != tmp.getmPid() && processName.equals(tmp.getmProcessName()))) {
+                        if (tmp == null) {
+                            tmp = new AppToastInfo(packageName, processName, pid);
+                        } else {
+                            tmp.setmPid(pid);
+                        }
+                        this.mToastedAppInfos.put(packageName, tmp);
+                        Message msg = this.mHandler.obtainMessage();
+                        msg.what = 1;
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("show Toast message in package:");
+                        stringBuilder.append(packageName);
+                        Slog.v(str, stringBuilder.toString());
+                        this.mHandler.sendMessage(msg);
                     }
-                    this.mToastedAppInfos.put(packageName, tmp);
-                    Message msg = this.mHandler.obtainMessage();
-                    msg.what = 1;
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("show Toast message in package:");
-                    stringBuilder.append(packageName);
-                    Slog.v(str, stringBuilder.toString());
-                    this.mHandler.sendMessage(msg);
                 }
             }
         }

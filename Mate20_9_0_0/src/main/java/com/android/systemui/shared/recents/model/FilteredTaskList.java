@@ -108,7 +108,7 @@ class FilteredTaskList {
     }
 
     ArrayList<Task> getTasks() {
-        ArrayList<Task> arrayList;
+        ArrayList arrayList;
         synchronized (this.mFilteredTasks) {
             arrayList = this.mFilteredTasks;
         }

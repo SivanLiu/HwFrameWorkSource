@@ -80,6 +80,7 @@ import java.util.Objects;
 import java.util.Random;
 import libcore.io.IoUtils;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 public class PackageInstallerService extends Stub {
@@ -251,7 +252,7 @@ public class PackageInstallerService extends Stub {
             this.mTarget = target;
             this.mPackageName = packageName;
             if (showNotification) {
-                this.mNotification = PackageInstallerService.buildSuccessNotification(this.mContext, this.mContext.getResources().getString(17040627), packageName, userId);
+                this.mNotification = PackageInstallerService.buildSuccessNotification(this.mContext, this.mContext.getResources().getString(17040628), packageName, userId);
             } else {
                 this.mNotification = null;
             }
@@ -320,9 +321,9 @@ public class PackageInstallerService extends Stub {
                 Notification notification = this.mContext;
                 Resources resources = this.mContext.getResources();
                 if (update) {
-                    i = 17040629;
+                    i = 17040630;
                 } else {
-                    i = 17040628;
+                    i = 17040629;
                 }
                 notification = PackageInstallerService.buildSuccessNotification(notification, resources.getString(i), basePackageName, this.mUserId);
                 if (notification != null) {
@@ -433,6 +434,7 @@ public class PackageInstallerService extends Stub {
                 prepareStageDir(stageDir);
             } catch (IllegalStateException e) {
                 throw new IOException(e);
+            } catch (Throwable th) {
             }
         }
         return stageDir;
@@ -453,12 +455,22 @@ public class PackageInstallerService extends Stub {
         return stringBuilder;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0092 A:{PHI: r0 , Splitter: B:1:0x0006, ExcHandler: java.io.IOException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:25:0x0092, code:
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x0092 A:{PHI: r0 , ExcHandler: IOException | XmlPullParserException (r1_3 'e' java.lang.Exception), Splitter:B:1:0x0006} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:20:0x0086, code skipped:
+            r2 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:21:0x0087, code skipped:
+            android.util.Slog.e(TAG, "Could not read session", r2);
+     */
+    /* JADX WARNING: Missing block: B:25:0x0092, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:27:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             android.util.Slog.wtf(TAG, "Failed reading install sessions", r1);
+     */
+    /* JADX WARNING: Missing block: B:28:0x009b, code skipped:
+            libcore.io.IoUtils.closeQuietly(r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mSessions")
@@ -476,35 +488,29 @@ public class PackageInstallerService extends Stub {
                     break;
                 } else if (type == 2) {
                     if ("session".equals(in.getName())) {
-                        try {
-                            boolean valid;
-                            PackageInstallerSession session = PackageInstallerSession.readFromXml(in, this.mInternalCallback, this.mContext, this.mPm, this.mInstallThread.getLooper(), this.mSessionsDir);
-                            if (System.currentTimeMillis() - session.createdMillis >= MAX_AGE_MILLIS) {
-                                String str = TAG;
-                                StringBuilder stringBuilder = new StringBuilder();
-                                stringBuilder.append("Abandoning old session first created at ");
-                                stringBuilder.append(session.createdMillis);
-                                Slog.w(str, stringBuilder.toString());
-                                valid = false;
-                            } else {
-                                valid = true;
-                            }
-                            if (valid) {
-                                this.mSessions.put(session.sessionId, session);
-                            } else {
-                                addHistoricalSessionLocked(session);
-                            }
-                            this.mAllocatedSessions.put(session.sessionId, true);
-                        } catch (Exception e) {
-                            Slog.e(TAG, "Could not read session", e);
+                        boolean valid;
+                        PackageInstallerSession session = PackageInstallerSession.readFromXml(in, this.mInternalCallback, this.mContext, this.mPm, this.mInstallThread.getLooper(), this.mSessionsDir);
+                        if (System.currentTimeMillis() - session.createdMillis >= MAX_AGE_MILLIS) {
+                            String str = TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Abandoning old session first created at ");
+                            stringBuilder.append(session.createdMillis);
+                            Slog.w(str, stringBuilder.toString());
+                            valid = false;
+                        } else {
+                            valid = true;
                         }
+                        if (valid) {
+                            this.mSessions.put(session.sessionId, session);
+                        } else {
+                            addHistoricalSessionLocked(session);
+                        }
+                        this.mAllocatedSessions.put(session.sessionId, true);
                     }
                 }
             }
-        } catch (FileNotFoundException e2) {
-        } catch (Exception e3) {
-        } catch (Throwable th) {
-            IoUtils.closeQuietly(fis);
+        } catch (FileNotFoundException e) {
+        } catch (IOException | XmlPullParserException e2) {
         }
         IoUtils.closeQuietly(fis);
     }
@@ -568,64 +574,64 @@ public class PackageInstallerService extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:66:0x0163, code:
+    /* JADX WARNING: Missing block: B:66:0x0163, code skipped:
             r18 = java.lang.System.currentTimeMillis();
      */
-    /* JADX WARNING: Missing block: B:67:0x016d, code:
+    /* JADX WARNING: Missing block: B:67:0x016d, code skipped:
             if ((r15.installFlags & 16) == 0) goto L_0x0183;
      */
-    /* JADX WARNING: Missing block: B:69:0x0173, code:
+    /* JADX WARNING: Missing block: B:69:0x0173, code skipped:
             if ((r15.installFlags & 2048) == 0) goto L_0x0176;
      */
-    /* JADX WARNING: Missing block: B:70:0x0176, code:
+    /* JADX WARNING: Missing block: B:70:0x0176, code skipped:
             r2 = false;
      */
-    /* JADX WARNING: Missing block: B:71:0x0177, code:
+    /* JADX WARNING: Missing block: B:71:0x0177, code skipped:
             r20 = buildStageDir(r15.volumeUuid, r11, r2);
             r21 = null;
      */
-    /* JADX WARNING: Missing block: B:72:0x0183, code:
+    /* JADX WARNING: Missing block: B:72:0x0183, code skipped:
             r20 = null;
             r21 = buildExternalStageCid(r11);
      */
-    /* JADX WARNING: Missing block: B:73:0x018b, code:
+    /* JADX WARNING: Missing block: B:73:0x018b, code skipped:
             r22 = r11;
             r23 = r14;
             r2 = new com.android.server.pm.PackageInstallerSession(r1.mInternalCallback, r1.mContext, r1.mPm, r1.mInstallThread.getLooper(), r11, r12, r13, r14, r15, r18, r20, r21, false, false);
             r3 = r1.mSessions;
      */
-    /* JADX WARNING: Missing block: B:74:0x01b2, code:
+    /* JADX WARNING: Missing block: B:74:0x01b2, code skipped:
             monitor-enter(r3);
      */
-    /* JADX WARNING: Missing block: B:77:0x01b5, code:
+    /* JADX WARNING: Missing block: B:77:0x01b5, code skipped:
             r4 = r22;
      */
-    /* JADX WARNING: Missing block: B:79:?, code:
+    /* JADX WARNING: Missing block: B:79:?, code skipped:
             r1.mSessions.put(r4, r2);
      */
-    /* JADX WARNING: Missing block: B:80:0x01ba, code:
+    /* JADX WARNING: Missing block: B:80:0x01ba, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:81:0x01bb, code:
+    /* JADX WARNING: Missing block: B:81:0x01bb, code skipped:
             com.android.server.pm.PackageInstallerService.Callbacks.access$200(r1.mCallbacks, r2.sessionId, r2.userId);
             writeSessionsAsync();
      */
-    /* JADX WARNING: Missing block: B:82:0x01c7, code:
+    /* JADX WARNING: Missing block: B:82:0x01c7, code skipped:
             return r4;
      */
-    /* JADX WARNING: Missing block: B:83:0x01c8, code:
+    /* JADX WARNING: Missing block: B:83:0x01c8, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:84:0x01ca, code:
+    /* JADX WARNING: Missing block: B:84:0x01ca, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:85:0x01cb, code:
+    /* JADX WARNING: Missing block: B:85:0x01cb, code skipped:
             r4 = r22;
      */
-    /* JADX WARNING: Missing block: B:87:?, code:
+    /* JADX WARNING: Missing block: B:87:?, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:88:0x01ce, code:
+    /* JADX WARNING: Missing block: B:88:0x01ce, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -882,7 +882,7 @@ public class HwNormalizedAutomaticBrightnessController extends AutomaticBrightne
 
     private void reportLightSensorEventToAlgo(long time, float lux) {
         this.mHwNormalizedAutomaticBrightnessHandler.removeMessages(1);
-        lux = getTouchProximityProcessedLux(this.mAmbientLuxValid ^ true, lux);
+        lux = getTouchProximityProcessedLux(this.mAmbientLuxValid ^ 1, lux);
         if (!this.mAmbientLuxValid) {
             String str;
             StringBuilder stringBuilder;
@@ -941,14 +941,34 @@ public class HwNormalizedAutomaticBrightnessController extends AutomaticBrightne
         this.mAmbientLux = this.mHwAmbientLuxFilterAlgo.getCurrentAmbientLux();
         boolean isDarkAdaptStateChanged = handleDarkAdaptDetector(lux);
         if (this.mHwAmbientLuxFilterAlgo.needToUpdateBrightness() || isDarkAdaptStateChanged) {
+            StringBuilder stringBuilder3;
             if (DEBUG) {
                 String str3 = TAG;
-                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3 = new StringBuilder();
                 stringBuilder3.append("need to update brightness: mAmbientLux=");
                 stringBuilder3.append(this.mAmbientLux);
                 Slog.d(str3, stringBuilder3.toString());
             }
             this.mHwAmbientLuxFilterAlgo.brightnessUpdated();
+            if (this.mData.darkTimeDelayEnable) {
+                float defaultBrightness2 = mHwNormalizedScreenAutoBrightnessSpline.getNewDefaultBrightness(this.mAmbientLux);
+                if (this.mAmbientLux < this.mData.darkTimeDelayLuxThreshold || defaultBrightness2 >= this.mData.darkTimeDelayBrightness) {
+                    this.mHwAmbientLuxFilterAlgo.setDarkTimeDelayFromBrightnessEnable(false);
+                } else {
+                    if (DEBUG) {
+                        String str4 = TAG;
+                        stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append("DarkTimeDelay mAmbientLux=");
+                        stringBuilder3.append(this.mAmbientLux);
+                        stringBuilder3.append(",defaultBrightness=");
+                        stringBuilder3.append(defaultBrightness2);
+                        stringBuilder3.append(",thresh=");
+                        stringBuilder3.append(this.mData.darkTimeDelayBrightness);
+                        Slog.d(str4, stringBuilder3.toString());
+                    }
+                    this.mHwAmbientLuxFilterAlgo.setDarkTimeDelayFromBrightnessEnable(true);
+                }
+            }
             updateAutoBrightness(true);
         }
         if (!this.mHwReportValueWhenSensorOnChange) {
@@ -1120,7 +1140,7 @@ public class HwNormalizedAutomaticBrightnessController extends AutomaticBrightne
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0034, code:
+    /* JADX WARNING: Missing block: B:12:0x0034, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1269,9 +1289,11 @@ public class HwNormalizedAutomaticBrightnessController extends AutomaticBrightne
             updateCoverModeDayBrightness();
         }
         if (this.mPowerOnOffStatus != powerStatus) {
+            boolean enableTmp;
+            boolean setCurveOk;
             if (!powerStatus) {
-                boolean enableTmp = mHwNormalizedScreenAutoBrightnessSpline.getNewCurveEableTmp();
-                boolean setCurveOk = mHwNormalizedScreenAutoBrightnessSpline.setNewCurveEnable(enableTmp);
+                enableTmp = mHwNormalizedScreenAutoBrightnessSpline.getNewCurveEableTmp();
+                setCurveOk = mHwNormalizedScreenAutoBrightnessSpline.setNewCurveEnable(enableTmp);
                 if (enableTmp) {
                     String str2 = TAG;
                     StringBuilder stringBuilder2 = new StringBuilder();
@@ -1287,13 +1309,21 @@ public class HwNormalizedAutomaticBrightnessController extends AutomaticBrightne
                 if (powerStatus) {
                     this.mPowerOnVehicleTimestamp = SystemClock.elapsedRealtime();
                     if (this.mPowerOnVehicleTimestamp - this.mPowerOffVehicleTimestamp > this.mData.vehicleModeDisableTimeMillis) {
+                        enableTmp = mHwNormalizedScreenAutoBrightnessSpline.getVehicleModeBrightnessEnable();
+                        setCurveOk = mHwNormalizedScreenAutoBrightnessSpline.getVehicleModeQuitForPowerOnEnable();
+                        if (enableTmp && setCurveOk) {
+                            mHwNormalizedScreenAutoBrightnessSpline.setVehicleModeQuitEnable();
+                            if (DEBUG) {
+                                Slog.d(TAG, "VehicleBrightMode quit from lastOnScreen");
+                            }
+                        }
                         this.mVehicleModeQuitEnable = true;
                         if (DEBUG) {
-                            str = TAG;
+                            String str3 = TAG;
                             StringBuilder stringBuilder3 = new StringBuilder();
                             stringBuilder3.append("VehicleBrightMode mVehicleModeQuitEnable OnOfftime=");
                             stringBuilder3.append(this.mPowerOnVehicleTimestamp - this.mPowerOffVehicleTimestamp);
-                            Slog.d(str, stringBuilder3.toString());
+                            Slog.d(str3, stringBuilder3.toString());
                         }
                     }
                 } else {
@@ -1969,7 +1999,7 @@ public class HwNormalizedAutomaticBrightnessController extends AutomaticBrightne
                     this.mHwDualSensorEventListenerImpl.detachFrontSensorData(this.mSensorObserver);
                 }
             }
-            this.mAmbientLuxValid = this.mResetAmbientLuxAfterWarmUpConfig ^ true;
+            this.mAmbientLuxValid = this.mResetAmbientLuxAfterWarmUpConfig ^ 1;
             if (DEBUG) {
                 str = TAG;
                 stringBuilder = new StringBuilder();

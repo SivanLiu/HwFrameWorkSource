@@ -2,7 +2,6 @@ package org.bouncycastle.jcajce.provider.asymmetric.x509;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -29,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.security.auth.x500.X500Principal;
-import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -86,7 +84,7 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
             try {
                 extensionBytes = getExtensionBytes("2.5.29.15");
                 if (extensionBytes != null) {
-                    ASN1BitString instance = DERBitString.getInstance(ASN1Primitive.fromByteArray(extensionBytes));
+                    DERBitString instance = DERBitString.getInstance(ASN1Primitive.fromByteArray(extensionBytes));
                     byte[] bytes = instance.getBytes();
                     int length = (bytes.length * 8) - instance.getPadBits();
                     int i = 9;
@@ -133,12 +131,12 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
             return null;
         }
         try {
-            Collection arrayList = new ArrayList();
+            ArrayList arrayList = new ArrayList();
             Enumeration objects = ASN1Sequence.getInstance(bArr).getObjects();
             while (objects.hasMoreElements()) {
                 Object encoded;
                 GeneralName instance = GeneralName.getInstance(objects.nextElement());
-                List arrayList2 = new ArrayList();
+                ArrayList arrayList2 = new ArrayList();
                 arrayList2.add(Integers.valueOf(instance.getTagNo()));
                 switch (instance.getTagNo()) {
                     case 0:
@@ -236,7 +234,7 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
 
     public Set getCriticalExtensionOIDs() {
         if (getVersion() == 3) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             Extensions extensions = this.c.getTBSCertificate().getExtensions();
             if (extensions != null) {
                 Enumeration oids = extensions.oids();
@@ -267,7 +265,7 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
         }
         try {
             ASN1Sequence aSN1Sequence = (ASN1Sequence) new ASN1InputStream(extensionBytes).readObject();
-            List arrayList = new ArrayList();
+            ArrayList arrayList = new ArrayList();
             for (int i = 0; i != aSN1Sequence.size(); i++) {
                 arrayList.add(((ASN1ObjectIdentifier) aSN1Sequence.getObjectAt(i)).getId());
             }
@@ -322,7 +320,7 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
 
     public X500Principal getIssuerX500Principal() {
         try {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             new ASN1OutputStream(byteArrayOutputStream).writeObject(this.c.getIssuer());
             return new X500Principal(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
@@ -336,7 +334,7 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
 
     public Set getNonCriticalExtensionOIDs() {
         if (getVersion() == 3) {
-            Set hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             Extensions extensions = this.c.getTBSCertificate().getExtensions();
             if (extensions != null) {
                 Enumeration oids = extensions.oids();
@@ -417,7 +415,7 @@ class X509CertificateObject extends X509Certificate implements PKCS12BagAttribut
 
     public X500Principal getSubjectX500Principal() {
         try {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             new ASN1OutputStream(byteArrayOutputStream).writeObject(this.c.getSubject());
             return new X500Principal(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {

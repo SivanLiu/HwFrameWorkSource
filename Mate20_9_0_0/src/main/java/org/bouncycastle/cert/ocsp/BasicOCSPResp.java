@@ -132,7 +132,7 @@ public class BasicOCSPResp implements Encodable {
             outputStream.write(this.resp.getTbsResponseData().getEncoded(ASN1Encoding.DER));
             outputStream.close();
             return contentVerifier.verify(getSignature());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception processing sig: ");
             stringBuilder.append(e);

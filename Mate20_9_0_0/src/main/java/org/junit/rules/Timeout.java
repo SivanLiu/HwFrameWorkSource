@@ -74,7 +74,7 @@ public class Timeout implements TestRule {
     public Statement apply(Statement base, Description description) {
         try {
             return createFailOnTimeoutStatement(base);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return new Statement() {
                 public void evaluate() throws Throwable {
                     throw new RuntimeException("Invalid parameters for Timeout", e);

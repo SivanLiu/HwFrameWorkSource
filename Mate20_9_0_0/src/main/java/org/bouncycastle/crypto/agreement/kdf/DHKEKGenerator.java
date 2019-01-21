@@ -35,7 +35,7 @@ public class DHKEKGenerator implements DerivationFunction {
             if (j <= 8589934591L) {
                 long j2 = (long) digestSize;
                 int i5 = (int) (((j + j2) - 1) / j2);
-                Object obj2 = new byte[this.digest.getDigestSize()];
+                byte[] bArr2 = new byte[this.digest.getDigestSize()];
                 int i6 = 0;
                 int i7 = i3;
                 int i8 = i4;
@@ -59,13 +59,13 @@ public class DHKEKGenerator implements DerivationFunction {
                     try {
                         byte[] encoded = new DERSequence(aSN1EncodableVector).getEncoded(ASN1Encoding.DER);
                         this.digest.update(encoded, 0, encoded.length);
-                        this.digest.doFinal(obj2, 0);
+                        this.digest.doFinal(bArr2, 0);
                         if (i7 > digestSize) {
-                            System.arraycopy(obj2, 0, obj, i8, digestSize);
+                            System.arraycopy(bArr2, 0, obj, i8, digestSize);
                             i8 += digestSize;
                             i7 -= digestSize;
                         } else {
-                            System.arraycopy(obj2, 0, obj, i8, i7);
+                            System.arraycopy(bArr2, 0, obj, i8, i7);
                         }
                         i4++;
                         i3++;

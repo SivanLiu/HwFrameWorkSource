@@ -228,7 +228,7 @@ public final class HwActivityManagerService extends ActivityManagerService {
         TrimMemoryReceiver() {
         }
 
-        /* JADX WARNING: Missing block: B:7:0x001d, code:
+        /* JADX WARNING: Missing block: B:7:0x001d, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1457,19 +1457,19 @@ public final class HwActivityManagerService extends ActivityManagerService {
         if (pm != null && intent.hasCategory("android.intent.category.HOME")) {
             long origId = Binder.clearCallingIdentity();
             try {
-                for (ResolveInfo info : pm.queryIntentActivitiesAsUser(mainIntent, 0, userId)) {
-                    if (info != null && info.priority == 0 && cmp != null && info.activityInfo != null && cmp.getPackageName().equals(info.activityInfo.packageName)) {
-                        String str = TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("info priority is 0, cmp: ");
-                        stringBuilder.append(cmp);
-                        stringBuilder.append(", userId: ");
-                        stringBuilder.append(userId);
-                        Log.d(str, stringBuilder.toString());
-                        return true;
-                    }
+                ResolveInfo info = pm.resolveActivityAsUser(mainIntent, 0, userId);
+                if (info == null || info.priority != 0 || cmp == null || info.activityInfo == null || !cmp.getPackageName().equals(info.activityInfo.packageName)) {
+                    Binder.restoreCallingIdentity(origId);
+                } else {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("info priority is 0, cmp: ");
+                    stringBuilder.append(cmp);
+                    stringBuilder.append(", userId: ");
+                    stringBuilder.append(userId);
+                    Log.d(str, stringBuilder.toString());
+                    return true;
                 }
-                Binder.restoreCallingIdentity(origId);
             } finally {
                 Binder.restoreCallingIdentity(origId);
             }
@@ -1477,7 +1477,7 @@ public final class HwActivityManagerService extends ActivityManagerService {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0019, code:
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1747,7 +1747,7 @@ public final class HwActivityManagerService extends ActivityManagerService {
         Slog.i(str, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0049, code:
+    /* JADX WARNING: Missing block: B:20:0x0049, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1773,7 +1773,7 @@ public final class HwActivityManagerService extends ActivityManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0049, code:
+    /* JADX WARNING: Missing block: B:20:0x0049, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2035,14 +2035,18 @@ public final class HwActivityManagerService extends ActivityManagerService {
     public void togglePCMode(boolean pcMode, int displayId) {
         synchronized (this) {
             if (!pcMode) {
-                ActivityDisplay activityDisplay = (ActivityDisplay) this.mStackSupervisor.mActivityDisplays.get(displayId);
-                if (activityDisplay != null && (this.mStackSupervisor instanceof HwActivityStackSupervisor)) {
-                    int size = activityDisplay.getChildCount();
-                    ArrayList<ActivityStack> stacks = new ArrayList();
-                    for (int i = 0; i < size; i++) {
-                        stacks.add(activityDisplay.getChildAt(i));
+                try {
+                    ActivityDisplay activityDisplay = (ActivityDisplay) this.mStackSupervisor.mActivityDisplays.get(displayId);
+                    if (activityDisplay != null && (this.mStackSupervisor instanceof HwActivityStackSupervisor)) {
+                        int size = activityDisplay.getChildCount();
+                        ArrayList<ActivityStack> stacks = new ArrayList();
+                        for (int i = 0; i < size; i++) {
+                            stacks.add(activityDisplay.getChildAt(i));
+                        }
+                        ((HwActivityStackSupervisor) this.mStackSupervisor).onDisplayRemoved(stacks);
                     }
-                    ((HwActivityStackSupervisor) this.mStackSupervisor).onDisplayRemoved(stacks);
+                } catch (Throwable th) {
+                    throw th;
                 }
             }
             if (this.mWindowManager instanceof HwWindowManagerService) {
@@ -2065,10 +2069,10 @@ public final class HwActivityManagerService extends ActivityManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:57:0x0161, code:
+    /* JADX WARNING: Missing block: B:57:0x0161, code skipped:
             android.os.Binder.restoreCallingIdentity(r12);
      */
-    /* JADX WARNING: Missing block: B:58:0x0165, code:
+    /* JADX WARNING: Missing block: B:58:0x0165, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2176,13 +2180,13 @@ public final class HwActivityManagerService extends ActivityManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:43:0x0098, code:
+    /* JADX WARNING: Missing block: B:44:0x0098, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:44:0x009b, code:
+    /* JADX WARNING: Missing block: B:45:0x009b, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:49:0x00a2, code:
+    /* JADX WARNING: Missing block: B:50:0x00a2, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2210,9 +2214,10 @@ public final class HwActivityManagerService extends ActivityManagerService {
                                 if (bounds == null) {
                                     bounds = multiWindowMgr.getMaximizedBounds();
                                 }
-                                if (bounds.width() == 0 || bounds.height() == 0) {
-                                } else {
-                                    rect.offsetTo((int) (xPos - (((float) rect.width()) * ((xPos - ((float) bounds.left)) / ((float) bounds.width())))), (int) (yPos - (((float) rect.height()) * ((yPos - ((float) bounds.top)) / ((float) bounds.height())))));
+                                if (bounds.width() != 0) {
+                                    if (bounds.height() != 0) {
+                                        rect.offsetTo((int) (xPos - (((float) rect.width()) * ((xPos - ((float) bounds.left)) / ((float) bounds.width())))), (int) (yPos - (((float) rect.height()) * ((yPos - ((float) bounds.top)) / ((float) bounds.height())))));
+                                    }
                                 }
                             }
                             tr.resize(rect, 3, true, false);
@@ -2227,9 +2232,9 @@ public final class HwActivityManagerService extends ActivityManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x003b A:{SYNTHETIC, Splitter: B:24:0x003b} */
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x0036 A:{SKIP, Catch:{ all -> 0x00dc }} */
-    /* JADX WARNING: Missing block: B:42:0x00d6, code:
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x003b A:{SYNTHETIC, Splitter:B:25:0x003b} */
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x0036 A:{SKIP, Catch:{ all -> 0x001d, all -> 0x00dc }} */
+    /* JADX WARNING: Missing block: B:43:0x00d6, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2328,7 +2333,7 @@ public final class HwActivityManagerService extends ActivityManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0015, code:
+    /* JADX WARNING: Missing block: B:9:0x0015, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2375,10 +2380,10 @@ public final class HwActivityManagerService extends ActivityManagerService {
         return hwRti;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001c, code:
+    /* JADX WARNING: Missing block: B:13:0x001c, code skipped:
             super.overridePendingTransition(r3, r4, r5, r6);
      */
-    /* JADX WARNING: Missing block: B:14:0x001f, code:
+    /* JADX WARNING: Missing block: B:14:0x001f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2437,7 +2442,7 @@ public final class HwActivityManagerService extends ActivityManagerService {
         return (task.getOverrideBounds().width() == rect.width() && task.getOverrideBounds().height() == rect.height()) ? false : true;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001b, code:
+    /* JADX WARNING: Missing block: B:10:0x001b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

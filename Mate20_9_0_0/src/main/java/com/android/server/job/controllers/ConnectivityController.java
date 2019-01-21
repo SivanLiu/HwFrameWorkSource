@@ -158,7 +158,7 @@ public final class ConnectivityController extends StateController implements OnN
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0024, code:
+    /* JADX WARNING: Missing block: B:16:0x0024, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -204,6 +204,12 @@ public final class ConnectivityController extends StateController implements OnN
         return changed;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x0060  */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x0075  */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x006b  */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x007d A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:12:0x0036  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void updateTrackedJobs(int filterUid, Network filterNetwork) {
         int i = filterUid;
         Network network = filterNetwork;
@@ -214,35 +220,58 @@ public final class ConnectivityController extends StateController implements OnN
             boolean z = true;
             int i2 = this.mTrackedJobs.size() - 1;
             while (i2 >= 0) {
+                boolean uidMatch;
                 JobStatus js = (JobStatus) this.mTrackedJobs.valueAt(i2);
                 int uid = js.getSourceUid();
                 boolean networkMatch = false;
                 int netId = -1;
-                boolean uidMatch = (i == -1 || i == uid) ? z : false;
-                if (uidMatch) {
-                    Network network2 = (Network) uidToNetwork.get(uid);
-                    if (network2 == null) {
-                        network2 = this.mConnManager.getActiveNetworkForUid(uid);
-                        uidToNetwork.put(uid, network2);
-                    }
-                    if (network == null || Objects.equals(network, network2)) {
-                        networkMatch = z;
-                    }
-                    boolean forceUpdate = Objects.equals(js.network, network2) ^ z;
-                    if (networkMatch || forceUpdate) {
-                        NetworkCapabilities capabilities;
-                        if (network2 != null) {
-                            netId = network2.netId;
+                if (i != -1) {
+                    if (i != uid) {
+                        uidMatch = false;
+                        if (!uidMatch) {
+                            boolean forceUpdate;
+                            NetworkCapabilities capabilities;
+                            NetworkCapabilities capabilities2;
+                            Network network2 = (Network) uidToNetwork.get(uid);
+                            if (network2 == null) {
+                                network2 = this.mConnManager.getActiveNetworkForUid(uid);
+                                uidToNetwork.put(uid, network2);
+                            }
+                            if (network != null) {
+                                if (!Objects.equals(network, network2)) {
+                                    forceUpdate = Objects.equals(js.network, network2) ^ z;
+                                    if (!networkMatch || forceUpdate) {
+                                        if (network2 != null) {
+                                            netId = network2.netId;
+                                        }
+                                        capabilities = (NetworkCapabilities) networkToCapabilities.get(netId);
+                                        if (capabilities != null) {
+                                            capabilities2 = this.mConnManager.getNetworkCapabilities(network2);
+                                            networkToCapabilities.put(netId, capabilities2);
+                                        } else {
+                                            capabilities2 = capabilities;
+                                        }
+                                        changed |= updateConstraintsSatisfied(js, network2, capabilities2);
+                                    }
+                                }
+                            }
+                            networkMatch = z;
+                            forceUpdate = Objects.equals(js.network, network2) ^ z;
+                            if (networkMatch) {
+                            }
+                            if (network2 != null) {
+                            }
+                            capabilities = (NetworkCapabilities) networkToCapabilities.get(netId);
+                            if (capabilities != null) {
+                            }
+                            changed |= updateConstraintsSatisfied(js, network2, capabilities2);
                         }
-                        NetworkCapabilities capabilities2 = (NetworkCapabilities) networkToCapabilities.get(netId);
-                        if (capabilities2 == null) {
-                            capabilities = this.mConnManager.getNetworkCapabilities(network2);
-                            networkToCapabilities.put(netId, capabilities);
-                        } else {
-                            capabilities = capabilities2;
-                        }
-                        changed |= updateConstraintsSatisfied(js, network2, capabilities);
+                        i2--;
+                        z = true;
                     }
+                }
+                uidMatch = z;
+                if (!uidMatch) {
                 }
                 i2--;
                 z = true;

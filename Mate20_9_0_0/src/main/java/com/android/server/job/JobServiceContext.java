@@ -283,10 +283,10 @@ public final class JobServiceContext implements ServiceConnection {
         doCallback(cb, ongoing, "finished start");
     }
 
-    /* JADX WARNING: Missing block: B:15:0x002d, code:
+    /* JADX WARNING: Missing block: B:16:0x002d, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
-    /* JADX WARNING: Missing block: B:16:0x0030, code:
+    /* JADX WARNING: Missing block: B:17:0x0030, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -295,14 +295,16 @@ public final class JobServiceContext implements ServiceConnection {
         try {
             synchronized (this.mLock) {
                 assertCallerLocked(cb);
-                if (this.mVerb == 3 || this.mVerb == 4) {
-                    Binder.restoreCallingIdentity(ident);
-                    return null;
+                if (this.mVerb != 3) {
+                    if (this.mVerb != 4) {
+                        JobWorkItem work = this.mRunningJob.dequeueWorkLocked();
+                        if (work == null && !this.mRunningJob.hasExecutingWorkLocked()) {
+                            doCallbackLocked(false, "last work dequeued");
+                        }
+                    }
                 }
-                JobWorkItem work = this.mRunningJob.dequeueWorkLocked();
-                if (work == null && !this.mRunningJob.hasExecutingWorkLocked()) {
-                    doCallbackLocked(false, "last work dequeued");
-                }
+                Binder.restoreCallingIdentity(ident);
+                return null;
             }
         } catch (Throwable th) {
             Binder.restoreCallingIdentity(ident);
@@ -327,29 +329,31 @@ public final class JobServiceContext implements ServiceConnection {
     public void onServiceConnected(ComponentName name, IBinder service) {
         synchronized (this.mLock) {
             JobStatus runningJob = this.mRunningJob;
-            if (runningJob == null || !name.equals(runningJob.getServiceComponent())) {
-                closeAndCleanupJobLocked(true, "connected for different component");
-                return;
+            if (runningJob != null) {
+                if (name.equals(runningJob.getServiceComponent())) {
+                    this.service = IJobService.Stub.asInterface(service);
+                    WakeLock wl = ((PowerManager) this.mContext.getSystemService("power")).newWakeLock(1, runningJob.getTag());
+                    wl.setWorkSource(deriveWorkSource(runningJob));
+                    wl.setReferenceCounted(false);
+                    wl.acquire();
+                    if (this.mWakeLock != null) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Bound new job ");
+                        stringBuilder.append(runningJob);
+                        stringBuilder.append(" but live wakelock ");
+                        stringBuilder.append(this.mWakeLock);
+                        stringBuilder.append(" tag=");
+                        stringBuilder.append(this.mWakeLock.getTag());
+                        Slog.w(str, stringBuilder.toString());
+                        this.mWakeLock.release();
+                    }
+                    this.mWakeLock = wl;
+                    doServiceBoundLocked();
+                    return;
+                }
             }
-            this.service = IJobService.Stub.asInterface(service);
-            WakeLock wl = ((PowerManager) this.mContext.getSystemService("power")).newWakeLock(1, runningJob.getTag());
-            wl.setWorkSource(deriveWorkSource(runningJob));
-            wl.setReferenceCounted(false);
-            wl.acquire();
-            if (this.mWakeLock != null) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Bound new job ");
-                stringBuilder.append(runningJob);
-                stringBuilder.append(" but live wakelock ");
-                stringBuilder.append(this.mWakeLock);
-                stringBuilder.append(" tag=");
-                stringBuilder.append(this.mWakeLock.getTag());
-                Slog.w(str, stringBuilder.toString());
-                this.mWakeLock.release();
-            }
-            this.mWakeLock = wl;
-            doServiceBoundLocked();
+            closeAndCleanupJobLocked(true, "connected for different component");
         }
     }
 

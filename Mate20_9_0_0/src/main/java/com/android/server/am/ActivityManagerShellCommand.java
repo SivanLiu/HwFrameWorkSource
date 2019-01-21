@@ -371,16 +371,16 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     this.mGdbProcess = runtime.exec(strArr);
                     final InputStreamReader converter = new InputStreamReader(this.mGdbProcess.getInputStream());
                     this.mGdbThread = new Thread() {
-                        /* JADX WARNING: Missing block: B:13:?, code:
+                        /* JADX WARNING: Missing block: B:13:?, code skipped:
             r2 = r0.readLine();
      */
-                        /* JADX WARNING: Missing block: B:14:0x0025, code:
+                        /* JADX WARNING: Missing block: B:14:0x0025, code skipped:
             if (r2 != null) goto L_0x0028;
      */
-                        /* JADX WARNING: Missing block: B:15:0x0027, code:
+                        /* JADX WARNING: Missing block: B:15:0x0027, code skipped:
             return;
      */
-                        /* JADX WARNING: Missing block: B:16:0x0028, code:
+                        /* JADX WARNING: Missing block: B:16:0x0028, code skipped:
             r3 = r6.this$0.mPw;
             r4 = new java.lang.StringBuilder();
             r4.append("GDB: ");
@@ -388,7 +388,7 @@ final class ActivityManagerShellCommand extends ShellCommand {
             r3.println(r4.toString());
             r6.this$0.mPw.flush();
      */
-                        /* JADX WARNING: Missing block: B:19:0x004b, code:
+                        /* JADX WARNING: Missing block: B:19:0x004b, code skipped:
             return;
      */
                         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -490,44 +490,63 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     StringBuilder stringBuilder;
                     if (line.length() <= 0) {
                         addNewline = false;
-                    } else if ("q".equals(line) || "quit".equals(line)) {
-                        resumeController(0);
+                    } else if ("q".equals(line)) {
+                        break;
+                    } else if ("quit".equals(line)) {
+                        break;
                     } else if (this.mState == 1) {
-                        if ("c".equals(line) || "continue".equals(line)) {
-                            resumeController(0);
-                        } else if ("k".equals(line) || "kill".equals(line)) {
-                            resumeController(1);
-                        } else {
-                            printWriter = this.mPw;
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append("Invalid command: ");
-                            stringBuilder.append(line);
-                            printWriter.println(stringBuilder.toString());
+                        if (!"c".equals(line)) {
+                            if (!"continue".equals(line)) {
+                                if (!"k".equals(line)) {
+                                    if (!"kill".equals(line)) {
+                                        printWriter = this.mPw;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Invalid command: ");
+                                        stringBuilder.append(line);
+                                        printWriter.println(stringBuilder.toString());
+                                    }
+                                }
+                                resumeController(1);
+                            }
                         }
-                    } else if (this.mState == 3) {
-                        if ("c".equals(line) || "continue".equals(line)) {
-                            resumeController(0);
-                        } else if ("k".equals(line) || "kill".equals(line)) {
-                            resumeController(1);
-                        } else if ("w".equals(line) || "wait".equals(line)) {
-                            resumeController(1);
-                        } else {
-                            printWriter = this.mPw;
-                            stringBuilder = new StringBuilder();
-                            stringBuilder.append("Invalid command: ");
-                            stringBuilder.append(line);
-                            printWriter.println(stringBuilder.toString());
-                        }
-                    } else if (this.mState != 2) {
-                        printWriter = this.mPw;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Invalid command: ");
-                        stringBuilder.append(line);
-                        printWriter.println(stringBuilder.toString());
-                    } else if ("c".equals(line) || "continue".equals(line)) {
                         resumeController(0);
-                    } else if ("k".equals(line) || "kill".equals(line)) {
-                        resumeController(1);
+                    } else if (this.mState == 3) {
+                        if (!"c".equals(line)) {
+                            if (!"continue".equals(line)) {
+                                if (!"k".equals(line)) {
+                                    if (!"kill".equals(line)) {
+                                        if (!"w".equals(line)) {
+                                            if (!"wait".equals(line)) {
+                                                printWriter = this.mPw;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Invalid command: ");
+                                                stringBuilder.append(line);
+                                                printWriter.println(stringBuilder.toString());
+                                            }
+                                        }
+                                        resumeController(1);
+                                    }
+                                }
+                                resumeController(1);
+                            }
+                        }
+                        resumeController(0);
+                    } else if (this.mState == 2) {
+                        if (!"c".equals(line)) {
+                            if (!"continue".equals(line)) {
+                                if (!"k".equals(line)) {
+                                    if (!"kill".equals(line)) {
+                                        printWriter = this.mPw;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Invalid command: ");
+                                        stringBuilder.append(line);
+                                        printWriter.println(stringBuilder.toString());
+                                    }
+                                }
+                                resumeController(1);
+                            }
+                        }
+                        resumeController(0);
                     } else {
                         printWriter = this.mPw;
                         stringBuilder = new StringBuilder();
@@ -551,6 +570,7 @@ final class ActivityManagerShellCommand extends ShellCommand {
                 } catch (Throwable th) {
                     this.mInterface.setActivityController(null, this.mMonkey);
                 }
+            } catch (Throwable th2) {
             }
             this.mInterface.setActivityController(null, this.mMonkey);
         }
@@ -705,30 +725,30 @@ final class ActivityManagerShellCommand extends ShellCommand {
             	at jadx.core.dex.visitors.regions.TracedRegionVisitor.processBlock(TracedRegionVisitor.java:23)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:53)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1080)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1080)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.lambda$traverseInternal$0(DepthRegionTraversal.java:57)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverseInternal(DepthRegionTraversal.java:57)
             	at jadx.core.dex.visitors.regions.DepthRegionTraversal.traverse(DepthRegionTraversal.java:18)
             	at jadx.core.dex.visitors.regions.ProcessVariables.visit(ProcessVariables.java:183)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
             	at jadx.core.ProcessClass.process(ProcessClass.java:32)
             	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -739,8 +759,8 @@ final class ActivityManagerShellCommand extends ShellCommand {
             	at jadx.api.JavaClass.decompile(JavaClass.java:62)
             	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
             */
-        /* JADX WARNING: Removed duplicated region for block: B:35:0x00a3  */
-        /* JADX WARNING: Missing block: B:35:0x00a3, code:
+        /* JADX WARNING: Removed duplicated region for block: B:36:0x00a3  */
+        /* JADX WARNING: Missing block: B:36:0x00a3, code skipped:
             r7.mInternal.clearOomAdjObserver();
      */
         void run() throws android.os.RemoteException {
@@ -852,7 +872,7 @@ final class ActivityManagerShellCommand extends ShellCommand {
             r1.unregisterUidObserver(r7);
             throw r0;
             */
-            throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.ActivityManagerShellCommand.MyUidObserver.run():void");
+            throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.ActivityManagerShellCommand$MyUidObserver.run():void");
         }
     }
 
@@ -876,364 +896,363 @@ final class ActivityManagerShellCommand extends ShellCommand {
         }
         PrintWriter pw = getOutPrintWriter();
         try {
-            boolean z;
+            int i;
             switch (cmd.hashCode()) {
                 case -2121667104:
                     if (cmd.equals("dumpheap")) {
-                        z = true;
+                        i = 14;
                         break;
                     }
                 case -1969672196:
                     if (cmd.equals("set-debug-app")) {
-                        z = true;
+                        i = 15;
                         break;
                     }
                 case -1719979774:
                     if (cmd.equals("get-inactive")) {
-                        z = true;
+                        i = 49;
                         break;
                     }
                 case -1710503333:
                     if (cmd.equals("package-importance")) {
-                        z = true;
+                        i = 32;
                         break;
                     }
                 case -1667670943:
                     if (cmd.equals("get-standby-bucket")) {
-                        z = true;
+                        i = 51;
                         break;
                     }
                 case -1619282346:
                     if (cmd.equals("start-user")) {
-                        z = true;
+                        i = 38;
                         break;
                     }
                 case -1618876223:
                     if (cmd.equals("broadcast")) {
-                        z = true;
+                        i = 10;
                         break;
                     }
                 case -1324660647:
                     if (cmd.equals("suppress-resize-config-changes")) {
-                        z = true;
+                        i = 47;
                         break;
                     }
                 case -1303445945:
                     if (cmd.equals("send-trim-memory")) {
-                        z = true;
+                        i = 52;
                         break;
                     }
                 case -1131287478:
                     if (cmd.equals("start-service")) {
-                        z = true;
+                        i = 3;
                         break;
                     }
                 case -1002578147:
                     if (cmd.equals("get-uid-state")) {
-                        z = true;
+                        i = 45;
                         break;
                     }
                 case -965273485:
                     if (cmd.equals("stopservice")) {
-                        z = true;
+                        i = 8;
                         break;
                     }
                 case -930080590:
                     if (cmd.equals("startfgservice")) {
-                        z = true;
+                        i = 5;
                         break;
                     }
                 case -907667276:
                     if (cmd.equals("unlock-user")) {
-                        z = true;
+                        i = 39;
                         break;
                     }
                 case -892396682:
                     if (cmd.equals("start-foreground-service")) {
-                        z = true;
+                        i = 6;
                         break;
                     }
                 case -870018278:
                     if (cmd.equals("to-uri")) {
-                        z = true;
+                        i = 33;
                         break;
                     }
                 case -812219210:
                     if (cmd.equals("get-current-user")) {
-                        z = true;
+                        i = 37;
                         break;
                     }
                 case -747637291:
                     if (cmd.equals("set-standby-bucket")) {
-                        z = true;
+                        i = 50;
                         break;
                     }
                 case -699625063:
                     if (cmd.equals("get-config")) {
-                        z = true;
+                        i = 46;
                         break;
                     }
                 case -606123342:
                     if (cmd.equals("kill-all")) {
-                        z = true;
+                        i = 24;
                         break;
                     }
                 case -548621938:
                     if (cmd.equals("is-user-stopped")) {
-                        z = true;
+                        i = 41;
                         break;
                     }
                 case -387147436:
                     if (cmd.equals("track-associations")) {
-                        z = true;
+                        i = 43;
                         break;
                     }
                 case -354890749:
                     if (cmd.equals("screen-compat")) {
-                        z = true;
+                        i = 31;
                         break;
                     }
                 case -309425751:
                     if (cmd.equals("profile")) {
-                        z = true;
+                        i = 13;
                         break;
                     }
                 case -170987146:
                     if (cmd.equals("set-inactive")) {
-                        z = true;
+                        i = 48;
                         break;
                     }
                 case -146027423:
                     if (cmd.equals("watch-uids")) {
-                        z = true;
+                        i = 27;
                         break;
                     }
                 case -100644880:
                     if (cmd.equals("startforegroundservice")) {
-                        z = true;
+                        i = 4;
                         break;
                     }
                 case -27715536:
                     if (cmd.equals("make-uid-idle")) {
-                        z = true;
+                        i = 25;
                         break;
                     }
                 case 3194994:
                     if (cmd.equals("hang")) {
-                        z = true;
+                        i = 28;
                         break;
                     }
                 case 3291998:
                     if (cmd.equals("kill")) {
-                        z = true;
+                        i = 23;
                         break;
                     }
                 case 3552645:
                     if (cmd.equals("task")) {
-                        z = true;
+                        i = 55;
                         break;
                     }
                 case 88586660:
                     if (cmd.equals("force-stop")) {
-                        z = true;
+                        i = 21;
                         break;
                     }
                 case 94921639:
                     if (cmd.equals("crash")) {
-                        z = true;
+                        i = 22;
                         break;
                     }
                 case 109757064:
                     if (cmd.equals("stack")) {
-                        z = true;
+                        i = 54;
                         break;
                     }
                 case 109757538:
                     if (cmd.equals("start")) {
-                        z = false;
+                        i = 0;
                         break;
                     }
                 case 113399775:
                     if (cmd.equals("write")) {
-                        z = true;
+                        i = 56;
                         break;
                     }
                 case 185053203:
                     if (cmd.equals("startservice")) {
-                        z = true;
+                        i = 2;
                         break;
                     }
                 case 237240942:
                     if (cmd.equals("to-app-uri")) {
-                        z = true;
+                        i = 35;
                         break;
                     }
                 case 549617690:
                     if (cmd.equals("start-activity")) {
-                        z = true;
+                        i = 1;
                         break;
                     }
                 case 622433197:
                     if (cmd.equals("untrack-associations")) {
-                        z = true;
+                        i = 44;
                         break;
                     }
                 case 667014829:
                     if (cmd.equals("bug-report")) {
-                        z = true;
+                        i = 20;
                         break;
                     }
                 case 680834441:
                     if (cmd.equals("supports-split-screen-multi-window")) {
-                        z = true;
+                        i = 59;
                         break;
                     }
                 case 723112852:
                     if (cmd.equals("trace-ipc")) {
-                        z = true;
+                        i = 12;
                         break;
                     }
                 case 764545184:
                     if (cmd.equals("supports-multiwindow")) {
-                        z = true;
+                        i = 58;
                         break;
                     }
                 case 808179021:
                     if (cmd.equals("to-intent-uri")) {
-                        z = true;
+                        i = 34;
                         break;
                     }
                 case 810242677:
                     if (cmd.equals("set-watch-heap")) {
-                        z = true;
+                        i = 18;
                         break;
                     }
                 case 817137578:
                     if (cmd.equals("clear-watch-heap")) {
-                        z = true;
+                        i = 19;
                         break;
                     }
                 case 822490030:
                     if (cmd.equals("set-agent-app")) {
-                        z = true;
+                        i = 16;
                         break;
                     }
                 case 900455412:
                     if (cmd.equals("start-fg-service")) {
-                        z = true;
+                        i = 7;
                         break;
                     }
                 case 1024703869:
                     if (cmd.equals("attach-agent")) {
-                        z = true;
+                        i = 57;
                         break;
                     }
                 case 1078591527:
                     if (cmd.equals("clear-debug-app")) {
-                        z = true;
+                        i = 17;
                         break;
                     }
                 case 1097506319:
                     if (cmd.equals("restart")) {
-                        z = true;
+                        i = 29;
                         break;
                     }
                 case 1129261387:
                     if (cmd.equals("update-appinfo")) {
-                        z = true;
+                        i = 60;
                         break;
                     }
                 case 1219773618:
                     if (cmd.equals("get-started-user-state")) {
-                        z = true;
+                        i = 42;
                         break;
                     }
                 case 1236319578:
                     if (cmd.equals("monitor")) {
-                        z = true;
+                        i = 26;
                         break;
                     }
                 case 1395483623:
                     if (cmd.equals("instrument")) {
-                        z = true;
+                        i = 11;
                         break;
                     }
                 case 1583986358:
                     if (cmd.equals("stop-user")) {
-                        z = true;
+                        i = 40;
                         break;
                     }
                 case 1618908732:
                     if (cmd.equals("wait-for-broadcast-idle")) {
-                        z = true;
+                        i = 62;
                         break;
                     }
                 case 1671764162:
                     if (cmd.equals("display")) {
-                        z = true;
+                        i = 53;
                         break;
                     }
                 case 1852789518:
                     if (cmd.equals("no-home-screen")) {
-                        z = true;
+                        i = 61;
                         break;
                     }
                 case 1861559962:
                     if (cmd.equals("idle-maintenance")) {
-                        z = true;
+                        i = 30;
                         break;
                     }
                 case 1863290858:
                     if (cmd.equals("stop-service")) {
-                        z = true;
+                        i = 9;
                         break;
                     }
                 case 2083239620:
                     if (cmd.equals("switch-user")) {
-                        z = true;
+                        i = 36;
                         break;
                     }
                 default:
-                    z = true;
-                    break;
             }
-            switch (z) {
-                case false:
-                case true:
+            i = -1;
+            switch (i) {
+                case 0:
+                case 1:
                     return runStartActivity(pw);
-                case true:
-                case true:
+                case 2:
+                case 3:
                     return runStartService(pw, false);
-                case true:
-                case true:
-                case true:
-                case true:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
                     return runStartService(pw, true);
-                case true:
-                case true:
+                case 8:
+                case 9:
                     return runStopService(pw);
-                case true:
+                case 10:
                     return runSendBroadcast(pw);
-                case true:
+                case 11:
                     getOutPrintWriter().println("Error: must be invoked through 'am instrument'.");
                     return -1;
-                case true:
+                case 12:
                     return runTraceIpc(pw);
-                case true:
+                case 13:
                     return runProfile(pw);
-                case true:
+                case 14:
                     return runDumpHeap(pw);
-                case true:
+                case 15:
                     return runSetDebugApp(pw);
-                case true:
+                case 16:
                     return runSetAgentApp(pw);
-                case true:
+                case 17:
                     return runClearDebugApp(pw);
-                case true:
+                case 18:
                     return runSetWatchHeap(pw);
                 case H.REPORT_WINDOWS_CHANGE /*19*/:
                     return runClearWatchHeap(pw);
-                case true:
+                case 20:
                     return runBugReport(pw);
                 case BackupHandler.MSG_OP_COMPLETE /*21*/:
                     return runForceStop(pw);
@@ -1241,41 +1260,41 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     return runCrash(pw);
                 case H.BOOT_TIMEOUT /*23*/:
                     return runKill(pw);
-                case true:
+                case 24:
                     return runKillAll(pw);
                 case H.SHOW_STRICT_MODE_VIOLATION /*25*/:
                     return runMakeIdle(pw);
                 case H.DO_ANIMATION_CALLBACK /*26*/:
                     return runMonitor(pw);
-                case true:
+                case 27:
                     return runWatchUids(pw);
                 case NetworkConstants.ARP_PAYLOAD_LEN /*28*/:
                     return runHang(pw);
                 case HdmiCecKeycode.CEC_KEYCODE_NUMBER_ENTRY_MODE /*29*/:
                     return runRestart(pw);
-                case true:
+                case 30:
                     return runIdleMaintenance(pw);
                 case HdmiCecKeycode.CEC_KEYCODE_NUMBER_12 /*31*/:
                     return runScreenCompat(pw);
-                case true:
+                case 32:
                     return runPackageImportance(pw);
-                case true:
+                case 33:
                     return runToUri(pw, 0);
-                case true:
+                case 34:
                     return runToUri(pw, 1);
-                case true:
+                case 35:
                     return runToUri(pw, 2);
-                case true:
+                case 36:
                     return runSwitchUser(pw);
-                case true:
+                case 37:
                     return runGetCurrentUser(pw);
-                case true:
+                case 38:
                     return runStartUser(pw);
-                case true:
+                case 39:
                     return runUnlockUser(pw);
-                case true:
+                case 40:
                     return runStopUser(pw);
-                case true:
+                case 41:
                     return runIsUserStopped(pw);
                 case HdmiCecKeycode.CEC_KEYCODE_DOT /*42*/:
                     return runGetStartedUserState(pw);
@@ -1287,25 +1306,25 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     return getUidState(pw);
                 case H.WINDOW_REPLACEMENT_TIMEOUT /*46*/:
                     return runGetConfig(pw);
-                case true:
+                case 47:
                     return runSuppressResizeConfigChanges(pw);
-                case true:
+                case 48:
                     return runSetInactive(pw);
-                case true:
+                case 49:
                     return runGetInactive(pw);
                 case HdmiCecKeycode.CEC_KEYCODE_PREVIOUS_CHANNEL /*50*/:
                     return runSetStandbyBucket(pw);
-                case true:
+                case 51:
                     return runGetStandbyBucket(pw);
-                case true:
+                case 52:
                     return runSendTrimMemory(pw);
-                case true:
+                case 53:
                     return runDisplay(pw);
-                case true:
+                case 54:
                     return runStack(pw);
-                case true:
+                case 55:
                     return runTask(pw);
-                case true:
+                case 56:
                     return runWrite(pw);
                 case H.NOTIFY_KEYGUARD_TRUSTED_CHANGED /*57*/:
                     return runAttachAgent(pw);
@@ -1313,11 +1332,11 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     return runSupportsMultiwindow(pw);
                 case H.SET_RUNNING_REMOTE_ANIMATION /*59*/:
                     return runSupportsSplitScreenMultiwindow(pw);
-                case true:
+                case 60:
                     return runUpdateApplicationInfo(pw);
                 case H.RECOMPUTE_FOCUS /*61*/:
                     return runNoHomeScreen(pw);
-                case true:
+                case 62:
                     return runWaitForBroadcastIdle(pw);
                 default:
                     return handleDefaultCommands(cmd);
@@ -1414,7 +1433,7 @@ final class ActivityManagerShellCommand extends ShellCommand {
         try {
             Intent intent = makeIntent(-2);
             int i = -1;
-            boolean z = true;
+            int i2 = 1;
             if (this.mUserId == -1) {
                 getErrPrintWriter().println("Error: Can't start service with user 'all'");
                 return 1;
@@ -1427,10 +1446,10 @@ final class ActivityManagerShellCommand extends ShellCommand {
             }
             String mimeType2 = mimeType;
             while (true) {
-                int i2;
-                String mimeType3;
-                boolean z2;
                 int i3;
+                String mimeType3;
+                int i4;
+                int i5;
                 int res;
                 if (this.mStopOption) {
                     if (intent.getComponent() != null) {
@@ -1443,13 +1462,13 @@ final class ActivityManagerShellCommand extends ShellCommand {
                             stringBuilder.append("Error: Intent does not match any activities: ");
                             stringBuilder.append(intent);
                             errPrintWriter.println(stringBuilder.toString());
-                        } else if (activities.size() > z) {
+                        } else if (activities.size() > i2) {
                             errPrintWriter = getErrPrintWriter();
                             stringBuilder = new StringBuilder();
                             stringBuilder.append("Error: Intent matches multiple activities; can't stop: ");
                             stringBuilder.append(intent);
                             errPrintWriter.println(stringBuilder.toString());
-                            return z;
+                            return i2;
                         } else {
                             mimeType = ((ResolveInfo) activities.get(0)).activityInfo.packageName;
                         }
@@ -1472,7 +1491,7 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     if (this.mProfileFile != null) {
                         fd = openFileForSystem(this.mProfileFile, "w");
                         if (fd == null) {
-                            return z;
+                            return i2;
                         }
                     }
                     profilerInfo = new ProfilerInfo(this.mProfileFile, fd, this.mSamplingInterval, this.mAutoStop, this.mStreaming, this.mAgent, this.mAttachAgentDuringBind);
@@ -1508,44 +1527,44 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     }
                     options.setLaunchTaskId(this.mTaskId);
                     if (this.mIsTaskOverlay) {
-                        options.setTaskOverlay(z, z);
+                        options.setTaskOverlay(i2, i2);
                     }
                 }
                 if (this.mIsLockTask) {
                     if (options == null) {
                         options = ActivityOptions.makeBasic();
                     }
-                    options.setLockTaskEnabled(z);
+                    options.setLockTaskEnabled(i2);
                 }
                 ActivityOptions options2 = options;
                 Bundle bundle = null;
                 if (this.mWaitOption) {
                     WaitResult result2 = this.mInterface;
-                    int i4 = this.mStartFlags;
+                    int i6 = this.mStartFlags;
                     if (options2 != null) {
                         bundle = options2.toBundle();
                     }
-                    i2 = 0;
+                    i3 = 0;
                     mimeType3 = mimeType2;
-                    z2 = z;
-                    i3 = i;
-                    result2 = result2.startActivityAndWait(null, null, intent, mimeType2, null, null, 0, i4, profilerInfo, bundle, this.mUserId);
+                    i4 = i2;
+                    i5 = i;
+                    result2 = result2.startActivityAndWait(null, null, intent, mimeType2, null, null, 0, i6, profilerInfo, bundle, this.mUserId);
                     res = result2.result;
                     result = result2;
                 } else {
                     ActivityOptions options3 = options2;
-                    i2 = 0;
+                    i3 = 0;
                     mimeType3 = mimeType2;
-                    z2 = z;
-                    i3 = i;
+                    i4 = i2;
+                    i5 = i;
                     IActivityManager iActivityManager = this.mInterface;
-                    int i5 = this.mStartFlags;
+                    int i7 = this.mStartFlags;
                     ActivityOptions options4 = options3;
                     if (options4 != null) {
                         bundle = options4.toBundle();
                     }
                     options3 = options4;
-                    res = iActivityManager.startActivityAsUser(null, null, intent, mimeType3, null, null, 0, i5, profilerInfo, bundle, this.mUserId);
+                    res = iActivityManager.startActivityAsUser(null, null, intent, mimeType3, null, null, 0, i7, profilerInfo, bundle, this.mUserId);
                 }
                 int res2 = res;
                 long endTime = SystemClock.uptimeMillis();
@@ -1658,18 +1677,18 @@ final class ActivityManagerShellCommand extends ShellCommand {
                     this.mInterface.unhandledBack();
                 }
                 if (this.mRepeat <= 0) {
-                    return i2;
+                    return i3;
                 }
-                i = i3;
+                i = i5;
                 mimeType2 = mimeType3;
-                z = z2;
+                i2 = i4;
             }
             errPrintWriter = getErrPrintWriter();
             stringBuilder = new StringBuilder();
             stringBuilder.append("Error: Intent does not match any activities: ");
             stringBuilder.append(intent);
             errPrintWriter.println(stringBuilder.toString());
-            return z;
+            return i2;
         } catch (URISyntaxException e2) {
             URISyntaxException uRISyntaxException = e2;
             throw new RuntimeException(e2.getMessage(), e2);
@@ -1930,12 +1949,15 @@ final class ActivityManagerShellCommand extends ShellCommand {
         }
         ProfilerInfo profilerInfo2 = profilerInfo;
         if (wall) {
-            profileFile = SystemProperties.get("dalvik.vm.extra-opts");
-            if (profileFile == null || !profileFile.contains("-Xprofile:wallclock")) {
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append(profileFile);
-                stringBuilder3.append(" -Xprofile:wallclock");
-                stringBuilder3.toString();
+            try {
+                profileFile = SystemProperties.get("dalvik.vm.extra-opts");
+                if (profileFile == null || !profileFile.contains("-Xprofile:wallclock")) {
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append(profileFile);
+                    stringBuilder3.append(" -Xprofile:wallclock");
+                    stringBuilder3.toString();
+                }
+            } catch (Throwable th) {
             }
         }
         if (this.mInterface.profileControl(process22, userId, start, profilerInfo2, 0)) {

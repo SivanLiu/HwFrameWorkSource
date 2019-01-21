@@ -67,7 +67,7 @@ public class Permutation {
         throw new IllegalArgumentException("array is not a permutation vector");
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001e, code:
+    /* JADX WARNING: Missing block: B:11:0x001e, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

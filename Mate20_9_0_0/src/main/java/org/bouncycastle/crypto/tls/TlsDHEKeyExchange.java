@@ -2,7 +2,6 @@ package org.bouncycastle.crypto.tls;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Vector;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Signer;
@@ -18,7 +17,7 @@ public class TlsDHEKeyExchange extends TlsDHKeyExchange {
 
     public byte[] generateServerKeyExchange() throws IOException {
         if (this.dhParameters != null) {
-            OutputStream digestInputBuffer = new DigestInputBuffer();
+            DigestInputBuffer digestInputBuffer = new DigestInputBuffer();
             this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralServerKeyExchange(this.context.getSecureRandom(), this.dhParameters, digestInputBuffer);
             SignatureAndHashAlgorithm signatureAndHashAlgorithm = TlsUtils.getSignatureAndHashAlgorithm(this.context, this.serverCredentials);
             Digest createHash = TlsUtils.createHash(signatureAndHashAlgorithm);
@@ -52,7 +51,7 @@ public class TlsDHEKeyExchange extends TlsDHKeyExchange {
 
     public void processServerKeyExchange(InputStream inputStream) throws IOException {
         SecurityParameters securityParameters = this.context.getSecurityParameters();
-        OutputStream signerInputBuffer = new SignerInputBuffer();
+        SignerInputBuffer signerInputBuffer = new SignerInputBuffer();
         ServerDHParams parse = ServerDHParams.parse(new TeeInputStream(inputStream, signerInputBuffer));
         DigitallySigned parseSignature = parseSignature(inputStream);
         Signer initVerifyer = initVerifyer(this.tlsSigner, parseSignature.getAlgorithm(), securityParameters);

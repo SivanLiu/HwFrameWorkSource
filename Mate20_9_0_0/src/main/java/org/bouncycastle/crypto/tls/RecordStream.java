@@ -278,13 +278,13 @@ class RecordStream {
                     i4 = bArr2.length;
                     s2 = s;
                 }
-                Object encodePlaintext = tlsCipher.encodePlaintext(nextValue, s2, bArr2, i3, i4);
-                checkLength(encodePlaintext.length, this.ciphertextLimit, (short) 80);
-                byte[] bArr3 = new byte[(encodePlaintext.length + 5)];
+                bArr = tlsCipher.encodePlaintext(nextValue, s2, bArr2, i3, i4);
+                checkLength(bArr.length, this.ciphertextLimit, (short) 80);
+                byte[] bArr3 = new byte[(bArr.length + 5)];
                 TlsUtils.writeUint8(s, bArr3, 0);
                 TlsUtils.writeVersion(this.writeVersion, bArr3, 1);
-                TlsUtils.writeUint16(encodePlaintext.length, bArr3, 3);
-                System.arraycopy(encodePlaintext, 0, bArr3, 5, encodePlaintext.length);
+                TlsUtils.writeUint16(bArr.length, bArr3, 3);
+                System.arraycopy(bArr, 0, bArr3, 5, bArr.length);
                 this.output.write(bArr3);
                 this.output.flush();
                 return;

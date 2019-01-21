@@ -86,7 +86,7 @@ public class KeyAgreementSpi extends BaseAgreementSpi {
             try {
                 this.result = this.agreement.calculateAgreement(generatePublicKeyParameter((PublicKey) key));
                 return null;
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 StringBuilder stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("calculation failed: ");
                 stringBuilder2.append(e.getMessage());

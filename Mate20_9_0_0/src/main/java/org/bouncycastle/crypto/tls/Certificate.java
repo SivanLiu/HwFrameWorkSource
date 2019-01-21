@@ -24,7 +24,7 @@ public class Certificate {
         if (readUint24 == 0) {
             return EMPTY_CHAIN;
         }
-        InputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint24, inputStream));
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint24, inputStream));
         Vector vector = new Vector();
         while (byteArrayInputStream.available() > 0) {
             vector.addElement(org.bouncycastle.asn1.x509.Certificate.getInstance(TlsUtils.readASN1Object(TlsUtils.readOpaque24(byteArrayInputStream))));
@@ -37,9 +37,9 @@ public class Certificate {
     }
 
     protected org.bouncycastle.asn1.x509.Certificate[] cloneCertificateList() {
-        Object obj = new org.bouncycastle.asn1.x509.Certificate[this.certificateList.length];
-        System.arraycopy(this.certificateList, 0, obj, 0, obj.length);
-        return obj;
+        org.bouncycastle.asn1.x509.Certificate[] certificateArr = new org.bouncycastle.asn1.x509.Certificate[this.certificateList.length];
+        System.arraycopy(this.certificateList, 0, certificateArr, 0, certificateArr.length);
+        return certificateArr;
     }
 
     public void encode(OutputStream outputStream) throws IOException {
@@ -48,7 +48,7 @@ public class Certificate {
         int i2 = 0;
         int i3 = i2;
         while (i2 < this.certificateList.length) {
-            Object encoded = this.certificateList[i2].getEncoded(ASN1Encoding.DER);
+            byte[] encoded = this.certificateList[i2].getEncoded(ASN1Encoding.DER);
             vector.addElement(encoded);
             i3 += encoded.length + 3;
             i2++;

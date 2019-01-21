@@ -114,8 +114,8 @@ public class PerformAdbRestoreTask implements Runnable {
         this.mClearedPackages.add(BackupManagerService.SETTINGS_PACKAGE);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:97:0x01ae A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:79:0x0160 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x01ae A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x0160 A:{SYNTHETIC} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void run() {
         Slog.i(BackupManagerService.TAG, "--- Performing full-dataset restore ---");
@@ -199,18 +199,13 @@ public class PerformAdbRestoreTask implements Runnable {
                     } catch (IOException e222) {
                         Slog.w(BackupManagerService.TAG, "Close of restore data pipe threw", e222);
                         synchronized (this.mLatchObject) {
-                            this.mLatchObject.set(true);
-                            this.mLatchObject.notifyAll();
-                            this.mObbConnection.tearDown();
-                            this.mObserver = FullBackupRestoreObserverUtils.sendEndRestore(this.mObserver);
-                            Slog.d(BackupManagerService.TAG, "Full restore pass complete.");
-                            this.mBackupManagerService.getWakelock().release();
-                            return;
                         }
                     }
                 }
                 this.mInputFile.close();
                 synchronized (this.mLatchObject) {
+                    this.mLatchObject.set(true);
+                    this.mLatchObject.notifyAll();
                 }
             } catch (Throwable th) {
                 tearDownPipes();
@@ -535,77 +530,75 @@ public class PerformAdbRestoreTask implements Runnable {
                 String userIvHex = readHeaderLine(rawInStream);
                 String masterKeyBlobHex = readHeaderLine(rawInStream);
                 result = attemptMasterKeyDecryption(decryptPassword, BackupPasswordManager.PBKDF_CURRENT, userSalt, ckSalt, rounds, userIvHex, masterKeyBlobHex, rawInStream, false);
-                if (result != null || !pbkdf2Fallback) {
-                    return result;
+                if (result == null && pbkdf2Fallback) {
+                    result = attemptMasterKeyDecryption(decryptPassword, BackupPasswordManager.PBKDF_FALLBACK, userSalt, ckSalt, rounds, userIvHex, masterKeyBlobHex, rawInStream, true);
                 }
-                return attemptMasterKeyDecryption(decryptPassword, BackupPasswordManager.PBKDF_FALLBACK, userSalt, ckSalt, rounds, userIvHex, masterKeyBlobHex, rawInStream, true);
+            } else {
+                String str2 = BackupManagerService.TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Unsupported encryption method: ");
+                stringBuilder.append(str);
+                Slog.w(str2, stringBuilder.toString());
             }
-            String str2 = BackupManagerService.TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Unsupported encryption method: ");
-            stringBuilder.append(str);
-            Slog.w(str2, stringBuilder.toString());
-            return result;
         } catch (NumberFormatException e) {
             Slog.w(BackupManagerService.TAG, "Can't parse restore data header");
-            return result;
         } catch (IOException e2) {
             Slog.w(BackupManagerService.TAG, "Can't read input header");
-            return result;
         }
+        return result;
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:55:0x017d A:{Catch:{ IOException -> 0x04fd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x01f5 A:{Catch:{ IOException -> 0x021d, NameNotFoundException -> 0x021b }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x01bd A:{Catch:{ IOException -> 0x021d, NameNotFoundException -> 0x021b }} */
-    /* JADX WARNING: Removed duplicated region for block: B:77:0x0211 A:{Catch:{ IOException -> 0x021d, NameNotFoundException -> 0x021b }} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x020e A:{Catch:{ IOException -> 0x021d, NameNotFoundException -> 0x021b }} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x0223 A:{Catch:{ IOException -> 0x04fd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:167:0x04b4 A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:91:0x0274 A:{Catch:{ IOException -> 0x04fd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:161:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
-    /* JADX WARNING: Removed duplicated region for block: B:161:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:161:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
-    /* JADX WARNING: Removed duplicated region for block: B:161:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x0526  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x01f5 A:{Catch:{ NameNotFoundException | IOException -> 0x021b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x01bd A:{Catch:{ NameNotFoundException | IOException -> 0x021b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0211 A:{Catch:{ NameNotFoundException | IOException -> 0x021b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x020e A:{Catch:{ NameNotFoundException | IOException -> 0x021b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0223 A:{Catch:{ IOException -> 0x04fd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:166:0x04b4 A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:90:0x0274 A:{Catch:{ IOException -> 0x04fd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x03e8 A:{Catch:{ IOException -> 0x04ae }} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x046b A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0475 A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x04bb A:{Catch:{ IOException -> 0x04f8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:200:0x0526  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0523  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     boolean restoreOneFile(InputStream instream, boolean mustKillAgent, byte[] buffer, PackageInfo onlyPackage, boolean allowApks, int token, IBackupManagerMonitor monitor) {
         IOException e;
@@ -1098,8 +1091,7 @@ public class PerformAdbRestoreTask implements Runnable {
                         }
                         this.mAgent = backupManagerService.bindToAgentSynchronous(applicationInfo, i2);
                         this.mAgentPackage = pkg2;
-                    } catch (IOException e16) {
-                    } catch (NameNotFoundException e17) {
+                    } catch (NameNotFoundException | IOException e16) {
                     }
                     if (this.mAgent == null) {
                     }
@@ -1126,8 +1118,8 @@ public class PerformAdbRestoreTask implements Runnable {
             }
             iBackupManagerMonitor = monitor;
             info = info2;
-        } catch (IOException e18) {
-            e10 = e18;
+        } catch (IOException e17) {
+            e10 = e17;
             i = token;
             inputStream = inputStream2;
             bArr2 = bArr;

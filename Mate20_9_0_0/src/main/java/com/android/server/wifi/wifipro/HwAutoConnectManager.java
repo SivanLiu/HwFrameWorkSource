@@ -61,6 +61,7 @@ public class HwAutoConnectManager {
     private static final long DELAYED_TIME_WIFI_ICON = 200;
     public static final String KEY_HUAWEI_EMPLOYEE = "\"Huawei-Employee\"WPA_EAP";
     private static final int MAX_PORTAL_HTTP_TIMES = 3;
+    private static final int MAX_START_BROWSER_TIME = 120;
     private static final int MSG_BLACKLIST_BSSID_TIMEOUT = 118;
     private static final int MSG_CHECK_PORTAL_NETWORK = 101;
     private static final int MSG_DISCONNECT_NETWORK = 102;
@@ -83,6 +84,7 @@ public class HwAutoConnectManager {
     private static final int MSG_WIFI_CLOSED = 110;
     private static final int MSG_WIFI_DISABLED_RCVD = 117;
     private static final String PORTAL_STATUS_BAR_TAG = "wifipro_portal_status_bar";
+    private static final int START_BROWSER_TIMEOUT = -100;
     private static final String TAG = "HwAutoConnectManager";
     private static HwAutoConnectManager mHwAutoConnectManager = null;
     private IActivityObserver mActivityObserver = new Stub() {
@@ -125,6 +127,7 @@ public class HwAutoConnectManager {
     private KeyguardManager mKeyguardManager;
     private boolean mLaaDiabledRequest = false;
     private Object mNetworkCheckLock = new Object();
+    private long mNetworkConnectedTime = -1;
     private HwNetworkPropertyRechecker mNetworkPropertyRechecker;
     private WifiConfiguration mPopUpNotifyWifiConfig = null;
     private int mPopUpWifiRssi = WifiHandover.INVALID_RSSI;
@@ -204,10 +207,13 @@ public class HwAutoConnectManager {
         this.mHandler = new Handler(handlerThread.getLooper()) {
             public void handleMessage(Message msg) {
                 Message message = msg;
+                long j = 0;
                 String str = null;
                 boolean z = false;
                 HwAutoConnectManager hwAutoConnectManager;
                 StringBuilder stringBuilder;
+                HwAutoConnectManager hwAutoConnectManager2;
+                int maxRssi;
                 switch (message.what) {
                     case 101:
                         if (HwAutoConnectManager.this.mBackGroundRunning.get()) {
@@ -235,6 +241,7 @@ public class HwAutoConnectManager {
                         HwAutoConnectManager.this.mPortalRedirectedUrl = null;
                         HwAutoConnectManager.this.mPortalRespCode = 599;
                         HwAutoConnectManager.this.mFirstDetected = false;
+                        HwAutoConnectManager.this.mNetworkConnectedTime = -1;
                         HwAutoConnectManager.this.removeDelayedMessage(103);
                         HwAutoConnectManager.this.mHandler.removeMessages(112);
                         HwAutoConnectManager.this.mHandler.removeMessages(121);
@@ -282,6 +289,7 @@ public class HwAutoConnectManager {
                             synchronized (HwAutoConnectManager.this.mPortalDatabaseLock) {
                                 HwAutoConnectManager.this.mPortalUnauthDatabase.clear();
                             }
+                            break;
                         }
                         break;
                     case 108:
@@ -313,7 +321,7 @@ public class HwAutoConnectManager {
                                 stringBuilder.append(str);
                                 hwAutoConnectManager.LOGD(stringBuilder.toString());
                             }
-                            HwAutoConnectManager hwAutoConnectManager2 = HwAutoConnectManager.this;
+                            hwAutoConnectManager2 = HwAutoConnectManager.this;
                             if (message.arg1 == 101) {
                                 z = true;
                             }
@@ -325,7 +333,7 @@ public class HwAutoConnectManager {
                         HwAutoConnectManager.this.mWifiStateMachine.sendMessage(131874, 2);
                         break;
                     case 114:
-                        int maxRssi = message.arg1;
+                        maxRssi = message.arg1;
                         String configKey = message.obj;
                         if (!(configKey == null || HwAutoConnectManager.this.mPopUpNotifyWifiConfig == null || !configKey.equals(HwAutoConnectManager.this.mPopUpNotifyWifiConfig.configKey()))) {
                             HwAutoConnectManager.this.mPopUpWifiRssi = maxRssi;
@@ -348,13 +356,17 @@ public class HwAutoConnectManager {
                         WifiConfiguration current = WifiProCommonUtils.getCurrentWifiConfig(HwAutoConnectManager.this.mWifiManager);
                         synchronized (HwAutoConnectManager.this.mAutoConnectFilterLock) {
                             if (current != null) {
-                                if (!(current.configKey() == null || !current.configKey().equals(HwAutoConnectManager.this.mCurrentBlacklistConfigKey) || current.getNetworkSelectionStatus().isNetworkEnabled())) {
-                                    HwAutoConnectManager hwAutoConnectManager3 = HwAutoConnectManager.this;
-                                    StringBuilder stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("##enableNetwork currentBlacklistConfigKey networkId = ");
-                                    stringBuilder2.append(current.networkId);
-                                    hwAutoConnectManager3.LOGD(stringBuilder2.toString());
-                                    HwAutoConnectManager.this.mWifiManager.enableNetwork(current.networkId, false);
+                                try {
+                                    if (!(current.configKey() == null || !current.configKey().equals(HwAutoConnectManager.this.mCurrentBlacklistConfigKey) || current.getNetworkSelectionStatus().isNetworkEnabled())) {
+                                        HwAutoConnectManager hwAutoConnectManager3 = HwAutoConnectManager.this;
+                                        StringBuilder stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("##enableNetwork currentBlacklistConfigKey networkId = ");
+                                        stringBuilder2.append(current.networkId);
+                                        hwAutoConnectManager3.LOGD(stringBuilder2.toString());
+                                        HwAutoConnectManager.this.mWifiManager.enableNetwork(current.networkId, false);
+                                    }
+                                } finally {
+                                    break;
                                 }
                             }
                             HwAutoConnectManager.this.mCurrentAutoJoinTargetBssid = null;
@@ -363,6 +375,7 @@ public class HwAutoConnectManager {
                             HwAutoConnectManager.this.mAutoJoinDisabledNetworkCnt = 0;
                         }
                         HwAutoConnectManager.this.mHandler.removeMessages(118);
+                        HwAutoConnectManager.this.mNetworkConnectedTime = System.currentTimeMillis();
                         HwAutoConnectManager.this.handlePortalOutOfRange();
                         break;
                     case 117:
@@ -382,6 +395,7 @@ public class HwAutoConnectManager {
                             HwAutoConnectManager.this.mAutoJoinBlacklistBssid.clear();
                             HwAutoConnectManager.this.mAutoJoinDisabledNetworkCnt = 0;
                         }
+                        break;
                     case 119:
                         HwAutoConnectManager.this.LOGD("###MSG_USER_ENTER_WLAN_SETTINGS");
                         if (HwAutoConnectManager.this.mBackGroundRunning.get()) {
@@ -393,6 +407,7 @@ public class HwAutoConnectManager {
                             HwAutoConnectManager.this.mAutoJoinBlacklistBssid.clear();
                             HwAutoConnectManager.this.mAutoJoinDisabledNetworkCnt = 0;
                         }
+                        break;
                     case 120:
                         HwAutoConnectManager.this.LOGD("###MSG_PORTAL_NETWORK_CONNECTED");
                         if (!WifiProCommonUtils.isInMonitorList(WifiProCommonUtils.getPackageName(HwAutoConnectManager.this.mContext, WifiProCommonUtils.getForegroundAppUid(HwAutoConnectManager.this.mContext)), HwAutoConnectManager.BROWSERS_PRE_INSTALLED)) {
@@ -404,12 +419,22 @@ public class HwAutoConnectManager {
                         break;
                     case 121:
                         HwAutoConnectManager.this.LOGD("###MSG_PORTAL_BROWSER_LAUNCHED_TIMEOUT");
-                        HwAutoConnectManager.this.handleBrowserLaunchedTimeout();
+                        HwAutoConnectManager.this.handleBrowserLaunchedTimeout(-100);
                         break;
                     case 122:
                         if (HwAutoConnectManager.this.mHandler.hasMessages(121)) {
                             HwAutoConnectManager.this.LOGD("###MSG_PORTAL_BROWSER_LAUNCHED");
                             HwAutoConnectManager.this.mHandler.removeMessages(121);
+                            if (HwAutoConnectManager.this.mNetworkConnectedTime > 0) {
+                                j = (System.currentTimeMillis() - HwAutoConnectManager.this.mNetworkConnectedTime) / 1000;
+                            }
+                            maxRssi = (int) j;
+                            hwAutoConnectManager2 = HwAutoConnectManager.this;
+                            int i = 120;
+                            if (maxRssi <= 120) {
+                                i = maxRssi;
+                            }
+                            hwAutoConnectManager2.handleBrowserLaunchedTimeout(i);
                             break;
                         }
                         break;
@@ -468,21 +493,27 @@ public class HwAutoConnectManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0063, code:
+    /* JADX WARNING: Missing block: B:21:0x0077, code skipped:
             r0 = com.android.server.wifi.HwWifiServiceFactory.getHwWifiCHRService();
      */
-    /* JADX WARNING: Missing block: B:22:0x0067, code:
-            if (r0 == null) goto L_0x0079;
+    /* JADX WARNING: Missing block: B:22:0x007b, code skipped:
+            if (r0 == null) goto L_0x0092;
      */
-    /* JADX WARNING: Missing block: B:23:0x0069, code:
-            r0.uploadDFTEvent(909002061, new android.os.Bundle());
+    /* JADX WARNING: Missing block: B:23:0x007d, code skipped:
+            r1 = new android.os.Bundle();
+            r1.putInt("Server", r5);
+            r0.uploadDFTEvent(909002061, r1);
             LOGD("###handleBrowserLaunchedTimeout");
      */
-    /* JADX WARNING: Missing block: B:24:0x0079, code:
+    /* JADX WARNING: Missing block: B:24:0x0092, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
-    private void handleBrowserLaunchedTimeout() {
+    private void handleBrowserLaunchedTimeout(int deltaTimeSec) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("###handleBrowserLaunchedTimeout, deltaTimeSec = ");
+        stringBuilder.append(deltaTimeSec);
+        LOGD(stringBuilder.toString());
         if (1 != Global.getInt(this.mContext.getContentResolver(), "hw_disable_portal", 0)) {
             if ("CMCC".equalsIgnoreCase(SystemProperties.get("ro.config.operators", ""))) {
                 if ("CMCC".equals(WifiProCommonUtils.getCurrentSsid(this.mWifiManager))) {
@@ -804,32 +835,35 @@ public class HwAutoConnectManager {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:19:0x0049  */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x0020  */
+    /* JADX WARNING: Removed duplicated region for block: B:20:0x0049 A:{Catch:{ all -> 0x001b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x0020 A:{Catch:{ all -> 0x001b }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean isAutoJoinAllowedSetTargetBssid(WifiConfiguration config, String targetBssid) {
         synchronized (this.mAutoConnectFilterLock) {
             boolean matchedBlacklistSsid;
             if (config != null) {
-                if (config.configKey() != null && config.configKey().equals(this.mCurrentBlacklistConfigKey)) {
-                    matchedBlacklistSsid = true;
-                    if (matchedBlacklistSsid) {
-                        this.mCurrentAutoJoinTargetBssid = targetBssid;
-                        boolean matchedHuaweiEmployee = (config == null || config.configKey() == null || !config.configKey().equals(KEY_HUAWEI_EMPLOYEE)) ? false : true;
-                        if (matchedHuaweiEmployee) {
-                            return true;
+                try {
+                    if (config.configKey() != null && config.configKey().equals(this.mCurrentBlacklistConfigKey)) {
+                        matchedBlacklistSsid = true;
+                        if (matchedBlacklistSsid) {
+                            this.mCurrentAutoJoinTargetBssid = targetBssid;
+                            boolean matchedHuaweiEmployee = (config == null || config.configKey() == null || !config.configKey().equals(KEY_HUAWEI_EMPLOYEE)) ? false : true;
+                            if (matchedHuaweiEmployee) {
+                                return true;
+                            }
+                            return false;
                         }
-                        return false;
+                        this.mCurrentAutoJoinTargetBssid = targetBssid;
+                        if (!config.getNetworkSelectionStatus().isNetworkEnabled()) {
+                            this.mAutoJoinDisabledNetworkCnt++;
+                        }
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("isAutoJoinAllowedSetTargetBssid, autoJoinDisabedNetworkCnt = ");
+                        stringBuilder.append(this.mAutoJoinDisabledNetworkCnt);
+                        LOGD(stringBuilder.toString());
+                        return true;
                     }
-                    this.mCurrentAutoJoinTargetBssid = targetBssid;
-                    if (!config.getNetworkSelectionStatus().isNetworkEnabled()) {
-                        this.mAutoJoinDisabledNetworkCnt++;
-                    }
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("isAutoJoinAllowedSetTargetBssid, autoJoinDisabedNetworkCnt = ");
-                    stringBuilder.append(this.mAutoJoinDisabledNetworkCnt);
-                    LOGD(stringBuilder.toString());
-                    return true;
+                } finally {
                 }
             }
             matchedBlacklistSsid = false;

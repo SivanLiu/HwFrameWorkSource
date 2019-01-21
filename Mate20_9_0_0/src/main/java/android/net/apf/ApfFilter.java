@@ -18,6 +18,7 @@ import android.net.util.InterfaceParams;
 import android.net.util.NetworkConstants;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.PacketSocketAddress;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -225,21 +227,19 @@ public class ApfFilter {
             return HexDump.toHexString(this.mPacket.array(), 0, this.mPacket.capacity(), false);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:11:0x0026 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.ClassCastException (e java.lang.ClassCastException)} */
-        /* JADX WARNING: Missing block: B:13:0x0029, code:
-            return "???";
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         private String IPv6AddresstoString(int pos) {
             try {
                 byte[] array = this.mPacket.array();
-                if (pos < 0 || pos + 16 > array.length || pos + 16 < pos) {
-                    return "???";
+                if (pos >= 0 && pos + 16 <= array.length) {
+                    if (pos + 16 >= pos) {
+                        return ((Inet6Address) InetAddress.getByAddress(Arrays.copyOfRange(array, pos, pos + 16))).getHostAddress();
+                    }
                 }
-                return ((Inet6Address) InetAddress.getByAddress(Arrays.copyOfRange(array, pos, pos + 16))).getHostAddress();
+                return "???";
             } catch (UnsupportedOperationException e) {
                 return "???";
-            } catch (ClassCastException e2) {
+            } catch (ClassCastException | UnknownHostException e2) {
+                return "???";
             }
         }
 
@@ -266,11 +266,6 @@ public class ApfFilter {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:11:0x006b A:{Splitter: B:0:0x0000, ExcHandler: java.nio.BufferUnderflowException (e java.nio.BufferUnderflowException)} */
-        /* JADX WARNING: Missing block: B:13:0x006e, code:
-            return "<Malformed RA>";
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public String toString() {
             try {
                 StringBuffer sb = new StringBuffer();
@@ -284,7 +279,8 @@ public class ApfFilter {
                     rdnssOptionToString(sb, ((Integer) it.next()).intValue());
                 }
                 return sb.toString();
-            } catch (BufferUnderflowException e) {
+            } catch (IndexOutOfBoundsException | BufferUnderflowException e) {
+                return "<Malformed RA>";
             }
         }
 
@@ -461,23 +457,15 @@ public class ApfFilter {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:5:0x0023 A:{Splitter: B:3:0x000b, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:5:0x0023, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:7:0x0026, code:
-            if (r4.mStopped == false) goto L_0x0028;
-     */
-        /* JADX WARNING: Missing block: B:8:0x0028, code:
-            android.util.Log.e(android.net.apf.ApfFilter.TAG, "Read error", r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             ApfFilter.this.log("begin monitoring");
             while (!this.mStopped) {
                 try {
                     updateStats(ApfFilter.this.processRa(this.mPacket, Os.read(this.mSocket, this.mPacket, 0, this.mPacket.length)));
-                } catch (Exception e) {
+                } catch (ErrnoException | IOException e) {
+                    if (!this.mStopped) {
+                        Log.e(ApfFilter.TAG, "Read error", e);
+                    }
                 }
             }
             logStats();
@@ -601,17 +589,6 @@ public class ApfFilter {
         return bl.stream().mapToInt(-$$Lambda$ApfFilter$UV1wDVoVlbcxpr8zevj_aMFtUGw.INSTANCE).toArray();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x0054 A:{Splitter: B:0:0x0000, ExcHandler: java.net.SocketException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x0054, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:0x0055, code:
-            android.util.Log.e(TAG, "Error starting filter", r0);
-     */
-    /* JADX WARNING: Missing block: B:20:0x005c, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     void maybeStartFilter() {
         try {
@@ -627,7 +604,8 @@ public class ApfFilter {
             NetworkUtils.attachRaFilter(socket, this.mApfCapabilities.apfPacketFormat);
             this.mReceiveThread = new ReceiveThread(socket);
             this.mReceiveThread.start();
-        } catch (Exception e) {
+        } catch (ErrnoException | SocketException e) {
+            Log.e(TAG, "Error starting filter", e);
         }
     }
 
@@ -793,17 +771,6 @@ public class ApfFilter {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x0104 A:{Splitter: B:3:0x0020, ExcHandler: android.net.apf.ApfGenerator.IllegalInstructionException (r5_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:24:0x0104, code:
-            r5 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:25:0x0105, code:
-            android.util.Log.e(TAG, "Failed to generate APF program.", r5);
-     */
-    /* JADX WARNING: Missing block: B:26:0x010c, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("this")
     @VisibleForTesting
     void installNewProgramLocked() {
@@ -867,7 +834,8 @@ public class ApfFilter {
                 z = true;
             }
             apfProgramEvent.flags = ApfProgramEvent.flagsFor(z, this.mMulticastFilter);
-        } catch (Exception e) {
+        } catch (IllegalInstructionException | IllegalStateException e) {
+            Log.e(TAG, "Failed to generate APF program.", e);
         }
     }
 
@@ -1068,8 +1036,6 @@ public class ApfFilter {
         return value;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x0070 A:{Splitter: B:11:0x0051, ExcHandler: java.net.UnknownHostException (e java.net.UnknownHostException)} */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void dump(IndentingPrintWriter pw) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Capabilities: ");
@@ -1088,7 +1054,7 @@ public class ApfFilter {
             stringBuilder.append("IPv4 address: ");
             stringBuilder.append(InetAddress.getByAddress(this.mIPv4Address).getHostAddress());
             pw.println(stringBuilder.toString());
-        } catch (UnknownHostException e) {
+        } catch (NullPointerException | UnknownHostException e) {
         }
         if (this.mLastTimeInstalledProgram == 0) {
             pw.println("No program installed.");

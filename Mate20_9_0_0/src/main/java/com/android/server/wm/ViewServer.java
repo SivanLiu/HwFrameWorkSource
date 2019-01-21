@@ -39,6 +39,10 @@ class ViewServer implements Runnable {
             this.mClient = client;
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:24:0x0097 A:{Catch:{ IOException -> 0x00c7, all -> 0x00c5 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:60:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
+        /* JADX WARNING: Removed duplicated region for block: B:31:0x00ba A:{SYNTHETIC, Splitter:B:31:0x00ba} */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             BufferedReader in = null;
             try {
@@ -67,25 +71,33 @@ class ViewServer implements Runnable {
                     result = windowManagerAutolistLoop();
                 } else {
                     result = ViewServer.this.mWindowManager.viewServerWindowCommand(this.mClient, command, parameters);
+                    if (!result) {
+                        String str = ViewServer.LOG_TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("An error occurred with the command: ");
+                        stringBuilder.append(command);
+                        Slog.w(str, stringBuilder.toString());
+                    }
+                    in.close();
+                    if (this.mClient == null) {
+                        try {
+                            this.mClient.close();
+                            return;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+                    return;
                 }
-                if (!result) {
-                    String str = ViewServer.LOG_TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("An error occurred with the command: ");
-                    stringBuilder.append(command);
-                    Slog.w(str, stringBuilder.toString());
+                if (result) {
                 }
                 try {
                     in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException e2) {
+                    e2.printStackTrace();
                 }
-                if (this.mClient != null) {
-                    try {
-                        this.mClient.close();
-                    } catch (IOException e2) {
-                        e2.printStackTrace();
-                    }
+                if (this.mClient == null) {
                 }
             } catch (IOException e22) {
                 Slog.w(ViewServer.LOG_TAG, "Connection error: ", e22);

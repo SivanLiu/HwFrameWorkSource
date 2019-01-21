@@ -42,6 +42,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
@@ -116,11 +117,147 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
         public Def() {
             super(null);
         }
+
+        public /* bridge */ /* synthetic */ Enumeration engineAliases() {
+            return super.engineAliases();
+        }
+
+        public /* bridge */ /* synthetic */ boolean engineContainsAlias(String str) {
+            return super.engineContainsAlias(str);
+        }
+
+        public /* bridge */ /* synthetic */ void engineDeleteEntry(String str) throws KeyStoreException {
+            super.engineDeleteEntry(str);
+        }
+
+        public /* bridge */ /* synthetic */ Certificate engineGetCertificate(String str) {
+            return super.engineGetCertificate(str);
+        }
+
+        public /* bridge */ /* synthetic */ String engineGetCertificateAlias(Certificate certificate) {
+            return super.engineGetCertificateAlias(certificate);
+        }
+
+        public /* bridge */ /* synthetic */ Certificate[] engineGetCertificateChain(String str) {
+            return super.engineGetCertificateChain(str);
+        }
+
+        public /* bridge */ /* synthetic */ Date engineGetCreationDate(String str) {
+            return super.engineGetCreationDate(str);
+        }
+
+        public /* bridge */ /* synthetic */ Key engineGetKey(String str, char[] cArr) throws NoSuchAlgorithmException, UnrecoverableKeyException {
+            return super.engineGetKey(str, cArr);
+        }
+
+        public /* bridge */ /* synthetic */ boolean engineIsCertificateEntry(String str) {
+            return super.engineIsCertificateEntry(str);
+        }
+
+        public /* bridge */ /* synthetic */ boolean engineIsKeyEntry(String str) {
+            return super.engineIsKeyEntry(str);
+        }
+
+        public /* bridge */ /* synthetic */ void engineLoad(InputStream inputStream, char[] cArr) throws IOException, NoSuchAlgorithmException, CertificateException {
+            super.engineLoad(inputStream, cArr);
+        }
+
+        public /* bridge */ /* synthetic */ void engineSetCertificateEntry(String str, Certificate certificate) throws KeyStoreException {
+            super.engineSetCertificateEntry(str, certificate);
+        }
+
+        public /* bridge */ /* synthetic */ void engineSetKeyEntry(String str, Key key, char[] cArr, Certificate[] certificateArr) throws KeyStoreException {
+            super.engineSetKeyEntry(str, key, cArr, certificateArr);
+        }
+
+        public /* bridge */ /* synthetic */ void engineSetKeyEntry(String str, byte[] bArr, Certificate[] certificateArr) throws KeyStoreException {
+            super.engineSetKeyEntry(str, bArr, certificateArr);
+        }
+
+        public /* bridge */ /* synthetic */ int engineSize() {
+            return super.engineSize();
+        }
+
+        public /* bridge */ /* synthetic */ void engineStore(OutputStream outputStream, char[] cArr) throws IOException, NoSuchAlgorithmException, CertificateException {
+            super.engineStore(outputStream, cArr);
+        }
+
+        public /* bridge */ /* synthetic */ void engineStore(LoadStoreParameter loadStoreParameter) throws CertificateException, NoSuchAlgorithmException, IOException {
+            super.engineStore(loadStoreParameter);
+        }
     }
 
     public static class Std extends BcFKSKeyStoreSpi {
         public Std() {
             super(new BouncyCastleProvider());
+        }
+
+        public /* bridge */ /* synthetic */ Enumeration engineAliases() {
+            return super.engineAliases();
+        }
+
+        public /* bridge */ /* synthetic */ boolean engineContainsAlias(String str) {
+            return super.engineContainsAlias(str);
+        }
+
+        public /* bridge */ /* synthetic */ void engineDeleteEntry(String str) throws KeyStoreException {
+            super.engineDeleteEntry(str);
+        }
+
+        public /* bridge */ /* synthetic */ Certificate engineGetCertificate(String str) {
+            return super.engineGetCertificate(str);
+        }
+
+        public /* bridge */ /* synthetic */ String engineGetCertificateAlias(Certificate certificate) {
+            return super.engineGetCertificateAlias(certificate);
+        }
+
+        public /* bridge */ /* synthetic */ Certificate[] engineGetCertificateChain(String str) {
+            return super.engineGetCertificateChain(str);
+        }
+
+        public /* bridge */ /* synthetic */ Date engineGetCreationDate(String str) {
+            return super.engineGetCreationDate(str);
+        }
+
+        public /* bridge */ /* synthetic */ Key engineGetKey(String str, char[] cArr) throws NoSuchAlgorithmException, UnrecoverableKeyException {
+            return super.engineGetKey(str, cArr);
+        }
+
+        public /* bridge */ /* synthetic */ boolean engineIsCertificateEntry(String str) {
+            return super.engineIsCertificateEntry(str);
+        }
+
+        public /* bridge */ /* synthetic */ boolean engineIsKeyEntry(String str) {
+            return super.engineIsKeyEntry(str);
+        }
+
+        public /* bridge */ /* synthetic */ void engineLoad(InputStream inputStream, char[] cArr) throws IOException, NoSuchAlgorithmException, CertificateException {
+            super.engineLoad(inputStream, cArr);
+        }
+
+        public /* bridge */ /* synthetic */ void engineSetCertificateEntry(String str, Certificate certificate) throws KeyStoreException {
+            super.engineSetCertificateEntry(str, certificate);
+        }
+
+        public /* bridge */ /* synthetic */ void engineSetKeyEntry(String str, Key key, char[] cArr, Certificate[] certificateArr) throws KeyStoreException {
+            super.engineSetKeyEntry(str, key, cArr, certificateArr);
+        }
+
+        public /* bridge */ /* synthetic */ void engineSetKeyEntry(String str, byte[] bArr, Certificate[] certificateArr) throws KeyStoreException {
+            super.engineSetKeyEntry(str, bArr, certificateArr);
+        }
+
+        public /* bridge */ /* synthetic */ int engineSize() {
+            return super.engineSize();
+        }
+
+        public /* bridge */ /* synthetic */ void engineStore(OutputStream outputStream, char[] cArr) throws IOException, NoSuchAlgorithmException, CertificateException {
+            super.engineStore(outputStream, cArr);
+        }
+
+        public /* bridge */ /* synthetic */ void engineStore(LoadStoreParameter loadStoreParameter) throws CertificateException, NoSuchAlgorithmException, IOException {
+            super.engineStore(loadStoreParameter);
         }
     }
 
@@ -381,11 +518,11 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
             return null;
         }
         org.bouncycastle.asn1.x509.Certificate[] certificateChain = EncryptedPrivateKeyData.getInstance(objectData.getData()).getCertificateChain();
-        Certificate[] certificateArr = new X509Certificate[certificateChain.length];
-        for (int i = 0; i != certificateArr.length; i++) {
-            certificateArr[i] = decodeCertificate(certificateChain[i]);
+        X509Certificate[] x509CertificateArr = new X509Certificate[certificateChain.length];
+        for (int i = 0; i != x509CertificateArr.length; i++) {
+            x509CertificateArr[i] = decodeCertificate(certificateChain[i]);
         }
-        return certificateArr;
+        return x509CertificateArr;
     }
 
     public Date engineGetCreationDate(String str) {
@@ -414,7 +551,7 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
             EncryptedPrivateKeyInfo instance = EncryptedPrivateKeyInfo.getInstance(EncryptedPrivateKeyData.getInstance(objectData.getData()).getEncryptedPrivateKeyInfo());
             try {
                 PrivateKeyInfo instance2 = PrivateKeyInfo.getInstance(decryptData("PRIVATE_KEY_ENCRYPTION", instance.getEncryptionAlgorithm(), cArr, instance.getEncryptedData()));
-                Key generatePrivate = (this.provider != null ? KeyFactory.getInstance(instance2.getPrivateKeyAlgorithm().getAlgorithm().getId(), this.provider) : KeyFactory.getInstance(getPublicKeyAlg(instance2.getPrivateKeyAlgorithm().getAlgorithm()))).generatePrivate(new PKCS8EncodedKeySpec(instance2.getEncoded()));
+                PrivateKey generatePrivate = (this.provider != null ? KeyFactory.getInstance(instance2.getPrivateKeyAlgorithm().getAlgorithm().getId(), this.provider) : KeyFactory.getInstance(getPublicKeyAlg(instance2.getPrivateKeyAlgorithm().getAlgorithm()))).generatePrivate(new PKCS8EncodedKeySpec(instance2.getEncoded()));
                 this.privateKeyCache.put(str, generatePrivate);
                 return generatePrivate;
             } catch (Exception e) {
@@ -529,7 +666,7 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
         try {
             this.entries.put(str, new ObjectData(CERTIFICATE, str, date, date2, certificate.getEncoded(), null));
             this.lastModifiedDate = date2;
-        } catch (Throwable e) {
+        } catch (CertificateEncodingException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("BCFKS KeyStore unable to handle certificate: ");
             stringBuilder.append(e.getMessage());
@@ -561,7 +698,7 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
                     instance = this.provider == null ? Cipher.getInstance("AES/CCM/NoPadding") : Cipher.getInstance("AES/CCM/NoPadding", this.provider);
                     instance.init(1, new SecretKeySpec(generateKey, "AES"));
                     this.entries.put(str, new ObjectData(PRIVATE_KEY, str, extractCreationDate, date, createPrivateKeySequence(new EncryptedPrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.id_PBES2, new PBES2Parameters(generatePkbdAlgorithmIdentifier, new EncryptionScheme(NISTObjectIdentifiers.id_aes256_CCM, CCMParameters.getInstance(instance.getParameters().getEncoded())))), instance.doFinal(encoded)), certificateArr).getEncoded(), null));
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("BCFKS KeyStore exception storing private key: ");
                     stringBuilder.append(e.toString());
@@ -598,7 +735,7 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
                     }
                 }
                 this.entries.put(str, new ObjectData(SECRET_KEY, str, extractCreationDate, date, new EncryptedSecretKeyData(new AlgorithmIdentifier(PKCSObjectIdentifiers.id_PBES2, new PBES2Parameters(generatePkbdAlgorithmIdentifier, new EncryptionScheme(NISTObjectIdentifiers.id_aes256_CCM, CCMParameters.getInstance(instance.getParameters().getEncoded())))), instance.doFinal(encoded)).getEncoded(), null));
-            } catch (Throwable e2) {
+            } catch (Exception e2) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("BCFKS KeyStore exception storing private key: ");
                 stringBuilder.append(e2.toString());
@@ -621,19 +758,19 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
                 try {
                     this.privateKeyCache.remove(str);
                     this.entries.put(str, new ObjectData(PROTECTED_PRIVATE_KEY, str, extractCreationDate, date, createPrivateKeySequence(instance, certificateArr).getEncoded(), null));
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("BCFKS KeyStore exception storing protected private key: ");
                     stringBuilder.append(e.toString());
                     throw new ExtKeyStoreException(stringBuilder.toString(), e);
                 }
-            } catch (Throwable e2) {
+            } catch (Exception e2) {
                 throw new ExtKeyStoreException("BCFKS KeyStore private key encoding must be an EncryptedPrivateKeyInfo.", e2);
             }
         }
         try {
             this.entries.put(str, new ObjectData(PROTECTED_SECRET_KEY, str, extractCreationDate, date, bArr, null));
-        } catch (Throwable e22) {
+        } catch (Exception e22) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("BCFKS KeyStore exception storing protected private key: ");
             stringBuilder.append(e22.toString());
@@ -696,7 +833,7 @@ class BcFKSKeyStoreSpi extends KeyStoreSpi {
                 try {
                     ((CallbackHandlerProtection) protectionParameter).getCallbackHandler().handle(new Callback[]{new PasswordCallback("password: ", false)});
                     cArr = r1.getPassword();
-                } catch (Throwable e) {
+                } catch (UnsupportedCallbackException e) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("PasswordCallback not recognised: ");
                     stringBuilder.append(e.getMessage());

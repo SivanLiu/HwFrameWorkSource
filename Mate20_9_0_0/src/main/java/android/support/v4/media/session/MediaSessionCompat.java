@@ -181,7 +181,7 @@ public class MediaSessionCompat {
                         Callback.this.onRemoveQueueItem((MediaDescriptionCompat) extras.getParcelable(MediaControllerCompat.COMMAND_ARGUMENT_MEDIA_DESCRIPTION));
                     } else if (command.equals(MediaControllerCompat.COMMAND_REMOVE_QUEUE_ITEM_AT)) {
                         impl = (MediaSessionImplApi21) Callback.this.mSessionImpl.get();
-                        if (impl != null && impl.mQueue != null) {
+                        if (!(impl == null || impl.mQueue == null)) {
                             int index = extras.getInt(MediaControllerCompat.COMMAND_ARGUMENT_INDEX, -1);
                             if (index >= 0 && index < impl.mQueue.size()) {
                                 item = (QueueItem) impl.mQueue.get(index);
@@ -1382,8 +1382,8 @@ public class MediaSessionCompat {
                                     QueueItem item = (msg.arg1 < 0 || msg.arg1 >= MediaSessionImplBase.this.mQueue.size()) ? null : (QueueItem) MediaSessionImplBase.this.mQueue.get(msg.arg1);
                                     if (item != null) {
                                         cb.onRemoveQueueItem(item.getDescription());
-                                        break;
                                     }
+                                    break;
                                 }
                                 break;
                             case 29:
@@ -1394,6 +1394,8 @@ public class MediaSessionCompat {
                                 break;
                             case 31:
                                 cb.onSetRating((RatingCompat) msg.obj, data);
+                                break;
+                            default:
                                 break;
                         }
                         this.mRemoteUserInfo = null;
@@ -1751,7 +1753,7 @@ public class MediaSessionCompat {
             }
 
             public List<QueueItem> getQueue() {
-                List<QueueItem> list;
+                List list;
                 synchronized (MediaSessionImplBase.this.mLock) {
                     list = MediaSessionImplBase.this.mQueue;
                 }

@@ -787,7 +787,7 @@ public class AwareAppStartupPolicy {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0085, code:
+    /* JADX WARNING: Missing block: B:19:0x0085, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -925,29 +925,29 @@ public class AwareAppStartupPolicy {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0036, code:
+    /* JADX WARNING: Missing block: B:8:0x0036, code skipped:
             if (r0 == null) goto L_0x000a;
      */
-    /* JADX WARNING: Missing block: B:9:0x0038, code:
+    /* JADX WARNING: Missing block: B:9:0x0038, code skipped:
             if (r1 != null) goto L_0x003b;
      */
-    /* JADX WARNING: Missing block: B:11:0x003b, code:
+    /* JADX WARNING: Missing block: B:11:0x003b, code skipped:
             r3 = 0;
             r4 = r1.size();
             r5 = mSbLogMerge;
             r6 = r1.iterator();
      */
-    /* JADX WARNING: Missing block: B:13:0x004a, code:
+    /* JADX WARNING: Missing block: B:13:0x004a, code skipped:
             if (r6.hasNext() == false) goto L_0x00d8;
      */
-    /* JADX WARNING: Missing block: B:14:0x004c, code:
+    /* JADX WARNING: Missing block: B:14:0x004c, code skipped:
             r7 = (java.lang.String) r6.next();
             r8 = r3 % 10;
      */
-    /* JADX WARNING: Missing block: B:15:0x0056, code:
+    /* JADX WARNING: Missing block: B:15:0x0056, code skipped:
             if (r8 != 0) goto L_0x00a4;
      */
-    /* JADX WARNING: Missing block: B:16:0x0058, code:
+    /* JADX WARNING: Missing block: B:16:0x0058, code skipped:
             r5.setLength(0);
             r5.append("req:");
             r5.append(r0.req.getDesc());
@@ -965,31 +965,31 @@ public class AwareAppStartupPolicy {
             r5.append(' ');
             r5.append("{");
      */
-    /* JADX WARNING: Missing block: B:17:0x00a4, code:
+    /* JADX WARNING: Missing block: B:17:0x00a4, code skipped:
             if (r7 == null) goto L_0x00b2;
      */
-    /* JADX WARNING: Missing block: B:19:0x00ac, code:
+    /* JADX WARNING: Missing block: B:19:0x00ac, code skipped:
             if (r7.startsWith(PKG_PREFIX) == false) goto L_0x00b2;
      */
-    /* JADX WARNING: Missing block: B:20:0x00ae, code:
+    /* JADX WARNING: Missing block: B:20:0x00ae, code skipped:
             r7 = r7.substring(r2);
      */
-    /* JADX WARNING: Missing block: B:22:0x00b4, code:
+    /* JADX WARNING: Missing block: B:22:0x00b4, code skipped:
             if (r8 == 9) goto L_0x00c2;
      */
-    /* JADX WARNING: Missing block: B:24:0x00b8, code:
+    /* JADX WARNING: Missing block: B:24:0x00b8, code skipped:
             if (r3 != (r4 - 1)) goto L_0x00bb;
      */
-    /* JADX WARNING: Missing block: B:25:0x00bb, code:
+    /* JADX WARNING: Missing block: B:25:0x00bb, code skipped:
             r5.append(r7);
             r5.append(',');
      */
-    /* JADX WARNING: Missing block: B:26:0x00c2, code:
+    /* JADX WARNING: Missing block: B:26:0x00c2, code skipped:
             r5.append(r7);
             r5.append("}");
             android.rms.iaware.AwareLog.i(TAG_SIMPLE, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:27:0x00d4, code:
+    /* JADX WARNING: Missing block: B:27:0x00d4, code skipped:
             r3 = r3 + 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1038,13 +1038,13 @@ public class AwareAppStartupPolicy {
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x008d, code:
+    /* JADX WARNING: Missing block: B:24:0x008d, code skipped:
             if (r1.mHandler.hasMessages(8) != false) goto L_0x0096;
      */
-    /* JADX WARNING: Missing block: B:25:0x008f, code:
+    /* JADX WARNING: Missing block: B:25:0x008f, code skipped:
             r1.mHandler.sendEmptyMessageDelayed(8, 1000);
      */
-    /* JADX WARNING: Missing block: B:26:0x0096, code:
+    /* JADX WARNING: Missing block: B:26:0x0096, code skipped:
             r10 = r17;
             r6 = r20;
             r7 = r23;
@@ -1053,7 +1053,7 @@ public class AwareAppStartupPolicy {
             r9 = r5;
             r5 = r19;
      */
-    /* JADX WARNING: Missing block: B:43:?, code:
+    /* JADX WARNING: Missing block: B:43:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1436,7 +1436,7 @@ public class AwareAppStartupPolicy {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x007b, code:
+    /* JADX WARNING: Missing block: B:15:0x007b, code skipped:
             r7 = new android.os.Bundle();
             r7.putStringArray("B_TARGET_PKG", r0);
             r7.putStringArray("B_CALL_TYPE", r1);
@@ -1449,13 +1449,13 @@ public class AwareAppStartupPolicy {
             r8.setPackage("com.huawei.systemmanager");
             r8.putExtras(r7);
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             r13.mContext.startServiceAsUser(r8, android.os.UserHandle.CURRENT);
      */
-    /* JADX WARNING: Missing block: B:19:0x00bb, code:
+    /* JADX WARNING: Missing block: B:19:0x00bb, code skipped:
             android.rms.iaware.AwareLog.e(TAG, "startRecordService catch IllegalStateException");
      */
-    /* JADX WARNING: Missing block: B:21:0x00c5, code:
+    /* JADX WARNING: Missing block: B:21:0x00c5, code skipped:
             android.rms.iaware.AwareLog.e(TAG, "startRecordService catch SecurityException");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1604,7 +1604,7 @@ public class AwareAppStartupPolicy {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002f, code:
+    /* JADX WARNING: Missing block: B:9:0x002f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

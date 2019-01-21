@@ -13,6 +13,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.annotations.VisibleForTesting.Visibility;
 import com.android.server.EventLogTags;
 import com.android.server.SystemService;
+import com.android.timezone.distro.DistroException;
 import com.android.timezone.distro.DistroVersion;
 import com.android.timezone.distro.StagedDistroOperation;
 import com.android.timezone.distro.TimeZoneDistro;
@@ -121,15 +122,32 @@ public final class RulesManagerService extends Stub {
             this.mCallback = callback;
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:11:0x0026 A:{Catch:{ Exception -> 0x003a, all -> 0x0038 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:10:0x0024 A:{Catch:{ Exception -> 0x003a, all -> 0x0038 }} */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             EventLogTags.writeTimezoneUninstallStarted(RulesManagerService.toStringOrNull(this.mCheckToken));
             boolean packageTrackerStatus = false;
             try {
+                boolean z;
+                int callbackResultCode;
                 int uninstallResult = RulesManagerService.this.mInstaller.stageUninstall();
                 sendUninstallNotificationIntentIfRequired(uninstallResult);
-                boolean z = uninstallResult == 0 || uninstallResult == 1;
+                if (uninstallResult != 0) {
+                    if (uninstallResult != 1) {
+                        z = false;
+                        packageTrackerStatus = z;
+                        callbackResultCode = packageTrackerStatus ? 0 : 1;
+                        EventLogTags.writeTimezoneUninstallComplete(RulesManagerService.toStringOrNull(this.mCheckToken), callbackResultCode);
+                        RulesManagerService.this.sendFinishedStatus(this.mCallback, callbackResultCode);
+                        RulesManagerService.this.mPackageTracker.recordCheckResult(this.mCheckToken, packageTrackerStatus);
+                        RulesManagerService.this.mOperationInProgress.set(false);
+                    }
+                }
+                z = true;
                 packageTrackerStatus = z;
-                int callbackResultCode = packageTrackerStatus ? 0 : 1;
+                if (packageTrackerStatus) {
+                }
                 EventLogTags.writeTimezoneUninstallComplete(RulesManagerService.toStringOrNull(this.mCheckToken), callbackResultCode);
                 RulesManagerService.this.sendFinishedStatus(this.mCallback, callbackResultCode);
             } catch (Exception e) {
@@ -194,21 +212,6 @@ public final class RulesManagerService extends Stub {
         return getRulesStateInternal();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0023 A:{Splitter: B:5:0x000c, ExcHandler: com.android.timezone.distro.DistroException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0055 A:{Splitter: B:17:0x0037, ExcHandler: com.android.timezone.distro.DistroException (r5_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x0023, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            android.util.Slog.w(TAG, "Failed to read installed distro.", r2);
-     */
-    /* JADX WARNING: Missing block: B:26:0x0055, code:
-            r5 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:28:?, code:
-            android.util.Slog.w(TAG, "Failed to read staged distro.", r5);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private RulesState getRulesStateInternal() {
         RulesState rulesState;
         synchronized (this) {
@@ -225,7 +228,9 @@ public final class RulesManagerService extends Stub {
                         distroStatus = 2;
                         installedDistroRulesVersion = new DistroRulesVersion(installedDistroVersion.rulesVersion, installedDistroVersion.revision);
                     }
-                } catch (Exception e) {
+                } catch (DistroException | IOException e) {
+                    Slog.w(TAG, "Failed to read installed distro.", e);
+                } catch (Throwable th) {
                 }
                 boolean operationInProgress = this.mOperationInProgress.get();
                 DistroRulesVersion stagedDistroRulesVersion = null;
@@ -242,7 +247,8 @@ public final class RulesManagerService extends Stub {
                             DistroVersion stagedDistroVersion = stagedDistroOperation.distroVersion;
                             stagedDistroRulesVersion = new DistroRulesVersion(stagedDistroVersion.rulesVersion, stagedDistroVersion.revision);
                         }
-                    } catch (Exception e2) {
+                    } catch (DistroException | IOException e2) {
+                        Slog.w(TAG, "Failed to read staged distro.", e2);
                     }
                 }
                 int stagedOperationStatus2 = stagedOperationStatus;
@@ -255,34 +261,34 @@ public final class RulesManagerService extends Stub {
         return rulesState;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0026, code:
+    /* JADX WARNING: Missing block: B:13:0x0026, code skipped:
             if (r8 == null) goto L_0x0037;
      */
-    /* JADX WARNING: Missing block: B:14:0x0028, code:
+    /* JADX WARNING: Missing block: B:14:0x0028, code skipped:
             if (r1 == false) goto L_0x0037;
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r8.close();
      */
-    /* JADX WARNING: Missing block: B:17:0x002e, code:
+    /* JADX WARNING: Missing block: B:17:0x002e, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:18:0x002f, code:
+    /* JADX WARNING: Missing block: B:18:0x002f, code skipped:
             android.util.Slog.w(TAG, "Failed to close distroParcelFileDescriptor", r3);
      */
-    /* JADX WARNING: Missing block: B:25:0x004a, code:
+    /* JADX WARNING: Missing block: B:25:0x004a, code skipped:
             if (r8 == null) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:26:0x004c, code:
+    /* JADX WARNING: Missing block: B:26:0x004c, code skipped:
             if (null == null) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:28:?, code:
+    /* JADX WARNING: Missing block: B:28:?, code skipped:
             r8.close();
      */
-    /* JADX WARNING: Missing block: B:29:0x0052, code:
+    /* JADX WARNING: Missing block: B:29:0x0052, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:30:0x0053, code:
+    /* JADX WARNING: Missing block: B:30:0x0053, code skipped:
             android.util.Slog.w(TAG, "Failed to close distroParcelFileDescriptor", r3);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

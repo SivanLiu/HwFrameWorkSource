@@ -51,8 +51,11 @@ public final class UsbMidiDevice implements Closeable {
             }
             synchronized (UsbMidiDevice.this.mLock) {
                 if (hasOpenPorts) {
-                    if (!UsbMidiDevice.this.mIsOpen) {
-                        UsbMidiDevice.this.openLocked();
+                    try {
+                        if (!UsbMidiDevice.this.mIsOpen) {
+                            UsbMidiDevice.this.openLocked();
+                        }
+                    } finally {
                     }
                 }
                 if (!hasOpenPorts && UsbMidiDevice.this.mIsOpen) {
@@ -168,7 +171,7 @@ public final class UsbMidiDevice implements Closeable {
         }
         final MidiReceiver[] outputReceivers = this.mServer.getOutputPortReceivers();
         new Thread("UsbMidiDevice input thread") {
-            /* JADX WARNING: Missing block: B:21:?, code:
+            /* JADX WARNING: Missing block: B:24:?, code skipped:
             android.system.Os.poll(com.android.server.usb.UsbMidiDevice.access$500(r11.this$0), -1);
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */

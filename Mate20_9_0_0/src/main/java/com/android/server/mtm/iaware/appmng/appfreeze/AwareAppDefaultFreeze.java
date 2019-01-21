@@ -168,36 +168,43 @@ public class AwareAppDefaultFreeze extends CleanSource {
                 this.mFreezeAppInfos.clear();
                 StringBuffer sb = new StringBuffer();
                 for (AwareProcessBlockInfo processInfo : awareProcessBlockInfos) {
-                    if ((processInfo.mCleanType == CleanType.FREEZE_NOMAL || processInfo.mCleanType == CleanType.FREEZE_UP_DOWNLOAD) && !(str.equals(processInfo.mPackageName) && UserHandle.getUserId(processInfo.mUid) == AwareAppAssociate.getInstance().getCurUserId())) {
-                        List<AwareProcessInfo> infos = processInfo.mProcessList;
-                        if (!(infos == null || infos.size() == 0)) {
-                            AppInfo appInfo = new AppInfo(processInfo.mUid, processInfo.mPackageName);
-                            List<Integer> pids = new ArrayList(infos.size());
-                            Iterator iterator = infos.iterator();
-                            while (iterator.hasNext()) {
-                                AwareProcessInfo info = (AwareProcessInfo) iterator.next();
-                                if (info.mProcInfo == null) {
-                                    iterator.remove();
-                                } else {
-                                    int pid = info.mPid;
-                                    if (checkPidValid(pid, info.mProcInfo.mUid)) {
-                                        pids.add(Integer.valueOf(pid));
-                                        sb.append(pid);
-                                        sb.append(',');
+                    if (processInfo.mCleanType == CleanType.FREEZE_NOMAL || processInfo.mCleanType == CleanType.FREEZE_UP_DOWNLOAD) {
+                        if (str.equals(processInfo.mPackageName) && UserHandle.getUserId(processInfo.mUid) == AwareAppAssociate.getInstance().getCurUserId()) {
+                            str = pkgName;
+                        } else {
+                            List<AwareProcessInfo> infos = processInfo.mProcessList;
+                            if (infos != null) {
+                                if (infos.size() != 0) {
+                                    AppInfo appInfo = new AppInfo(processInfo.mUid, processInfo.mPackageName);
+                                    List<Integer> pids = new ArrayList(infos.size());
+                                    Iterator iterator = infos.iterator();
+                                    while (iterator.hasNext()) {
+                                        AwareProcessInfo info = (AwareProcessInfo) iterator.next();
+                                        if (info.mProcInfo == null) {
+                                            iterator.remove();
+                                        } else {
+                                            int pid = info.mPid;
+                                            if (checkPidValid(pid, info.mProcInfo.mUid)) {
+                                                pids.add(Integer.valueOf(pid));
+                                                sb.append(pid);
+                                                sb.append(',');
+                                            } else {
+                                                iterator.remove();
+                                            }
+                                        }
+                                        str = pkgName;
+                                    }
+                                    pidCnt += infos.size();
+                                    appInfo.setPids(pids);
+                                    this.mUidLoadMap.put(processInfo.mUid, new UidLoadPair(appInfo));
+                                    if (processInfo.mCleanType == CleanType.FREEZE_UP_DOWNLOAD) {
+                                        this.mFreezeAppInfos.add(0, appInfo);
                                     } else {
-                                        iterator.remove();
+                                        this.mFreezeAppInfos.add(appInfo);
                                     }
                                 }
-                                str = pkgName;
                             }
-                            pidCnt += infos.size();
-                            appInfo.setPids(pids);
-                            this.mUidLoadMap.put(processInfo.mUid, new UidLoadPair(appInfo));
-                            if (processInfo.mCleanType == CleanType.FREEZE_UP_DOWNLOAD) {
-                                this.mFreezeAppInfos.add(0, appInfo);
-                            } else {
-                                this.mFreezeAppInfos.add(appInfo);
-                            }
+                            str = pkgName;
                         }
                     }
                     str = pkgName;

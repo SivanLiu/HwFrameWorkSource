@@ -15,9 +15,9 @@ final class FactoryErrorDialog extends BaseErrorDialog {
     public FactoryErrorDialog(Context context, CharSequence msg) {
         super(context);
         setCancelable(false);
-        setTitle(context.getText(17040049));
+        setTitle(context.getText(17040050));
         setMessage(msg);
-        setButton(-1, context.getText(17040052), this.mHandler.obtainMessage(0));
+        setButton(-1, context.getText(17040053), this.mHandler.obtainMessage(0));
         LayoutParams attrs = getWindow().getAttributes();
         attrs.setTitle("Factory Error");
         getWindow().setAttributes(attrs);

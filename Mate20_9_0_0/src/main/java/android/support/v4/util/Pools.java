@@ -65,7 +65,7 @@ public final class Pools {
         }
 
         public T acquire() {
-            T acquire;
+            Object acquire;
             synchronized (this.mLock) {
                 acquire = super.acquire();
             }

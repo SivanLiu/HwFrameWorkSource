@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.BERSet;
@@ -22,14 +21,14 @@ public class CMSEnvelopedDataGenerator extends CMSEnvelopedGenerator {
     private CMSEnvelopedData doGenerate(CMSTypedData cMSTypedData, OutputEncryptor outputEncryptor) throws CMSException {
         if (this.oldRecipientInfoGenerators.isEmpty()) {
             ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             try {
                 OutputStream outputStream = outputEncryptor.getOutputStream(byteArrayOutputStream);
                 cMSTypedData.write(outputStream);
                 outputStream.close();
                 byte[] toByteArray = byteArrayOutputStream.toByteArray();
                 AlgorithmIdentifier algorithmIdentifier = outputEncryptor.getAlgorithmIdentifier();
-                ASN1OctetString bEROctetString = new BEROctetString(toByteArray);
+                BEROctetString bEROctetString = new BEROctetString(toByteArray);
                 GenericKey key = outputEncryptor.getKey();
                 for (RecipientInfoGenerator generate : this.recipientInfoGenerators) {
                     aSN1EncodableVector.add(generate.generate(key));

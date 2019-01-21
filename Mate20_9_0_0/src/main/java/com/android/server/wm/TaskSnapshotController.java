@@ -149,71 +149,100 @@ class TaskSnapshotController {
     }
 
     private TaskSnapshot snapshotTask(Task task) {
-        WindowContainer windowContainer = task;
+        Task task2 = task;
         AppWindowToken top = (AppWindowToken) task.getTopChild();
         if (top == null) {
             return null;
         }
         WindowState mainWindow = top.findMainWindow();
-        if (mainWindow == null || !this.mService.mPolicy.isScreenOn() || task.getSurfaceControl() == null || top.hasCommittedReparentToAnimationLeash()) {
+        if (mainWindow == null) {
             return null;
         }
-        boolean z = true;
-        if (top.forAllWindows(-$$Lambda$TaskSnapshotController$1IXTXVXjIGs9ncGKW_v40ivZeoI.INSTANCE, true)) {
-            boolean isLowRamDevice = ActivityManager.isLowRamDeviceStatic();
-            float scaleFraction = isLowRamDevice ? TaskSnapshotPersister.REDUCED_SCALE : 1.0f;
-            if (!isLowRamDevice && IS_EMUI_LITE) {
-                Context context = ActivityThread.currentApplication();
-                if (context != null) {
-                    scaleFraction *= context.getResources().getFraction(34668545, 1, 1);
+        if (!this.mService.mPolicy.isScreenOn()) {
+            Slog.i(TAG, "Attempted to take screenshot while display was off.");
+            return null;
+        } else if (task.getSurfaceControl() == null) {
+            return null;
+        } else {
+            if (top.hasCommittedReparentToAnimationLeash()) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to take screenshot. App is animating ");
+                stringBuilder.append(top);
+                Slog.w(str, stringBuilder.toString());
+                return null;
+            }
+            boolean z = true;
+            String str2;
+            if (top.forAllWindows(-$$Lambda$TaskSnapshotController$1IXTXVXjIGs9ncGKW_v40ivZeoI.INSTANCE, true)) {
+                boolean isLowRamDevice = ActivityManager.isLowRamDeviceStatic();
+                float scaleFraction = isLowRamDevice ? TaskSnapshotPersister.REDUCED_SCALE : 1.0f;
+                if (!isLowRamDevice && IS_EMUI_LITE) {
+                    Context context = ActivityThread.currentApplication();
+                    if (context != null) {
+                        scaleFraction *= context.getResources().getFraction(34668545, 1, 1);
+                    }
                 }
-            }
-            float scaleFraction2 = scaleFraction;
-            windowContainer.getBounds(this.mTmpRect);
-            if (!HwPCUtils.isValidExtDisplayId(mainWindow.getDisplayId()) || this.mService.mHwWMSEx.getPCScreenDisplayMode() == 0) {
-                this.mTmpRect.offsetTo(0, 0);
-            } else {
-                Point p = new Point(0, 0);
-                this.mService.mHwWMSEx.updateDimPositionForPCMode(windowContainer, this.mTmpRect);
-                this.mService.mHwWMSEx.updateSurfacePositionForPCMode(mainWindow, p);
-                this.mTmpRect.offsetTo(p.x + mainWindow.mAttrs.surfaceInsets.left, p.y + mainWindow.mAttrs.surfaceInsets.top);
-            }
-            if (IS_NOTCH_PROP && this.mService.getDefaultDisplayContentLocked().getRotation() == 1 && !mainWindow.mFrame.isEmpty()) {
-                this.mTmpRect.intersect(mainWindow.mFrame);
-            }
-            GraphicBuffer buffer = null;
-            if (this.mService.getLazyMode() == 0) {
-                buffer = SurfaceControl.captureLayers(task.getSurfaceControl().getHandle(), this.mTmpRect, scaleFraction2);
-            } else if (mainWindow.getSurfaceControl() != null) {
-                this.mTmpRect.scale(0.75f);
-                buffer = SurfaceControl.captureLayers(mainWindow.getSurfaceControl().getHandle(), this.mTmpRect, scaleFraction2 / 0.75f);
-            }
-            GraphicBuffer buffer2 = buffer;
-            boolean isWindowTranslucent = mainWindow.getAttrs().format != -1;
-            float f;
-            if (buffer2 == null || buffer2.getWidth() <= 1) {
-                f = scaleFraction2;
-            } else if (buffer2.getHeight() <= 1) {
-                GraphicBuffer graphicBuffer = buffer2;
-                f = scaleFraction2;
-            } else {
-                int i = top.getConfiguration().orientation;
-                Rect insets = getInsets(mainWindow);
-                int windowingMode = task.getWindowingMode();
-                int systemUiVisibility = getSystemUiVisibility(task);
-                if (top.fillsParent() && !isWindowTranslucent) {
-                    z = false;
+                float scaleFraction2 = scaleFraction;
+                task2.getBounds(this.mTmpRect);
+                if (!HwPCUtils.isValidExtDisplayId(mainWindow.getDisplayId()) || this.mService.mHwWMSEx.getPCScreenDisplayMode() == 0) {
+                    if (top.getConfiguration().orientation == 2 && this.mTmpRect.width() < this.mTmpRect.height()) {
+                        this.mTmpRect.set(this.mTmpRect.top, this.mTmpRect.left, this.mTmpRect.bottom, this.mTmpRect.right);
+                        String str3 = TAG;
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Screenshot bounds is updated to: ");
+                        stringBuilder2.append(this.mTmpRect);
+                        Slog.i(str3, stringBuilder2.toString());
+                    }
+                    this.mTmpRect.offsetTo(0, 0);
+                } else {
+                    Point p = new Point(0, 0);
+                    this.mService.mHwWMSEx.updateDimPositionForPCMode(task2, this.mTmpRect);
+                    this.mService.mHwWMSEx.updateSurfacePositionForPCMode(mainWindow, p);
+                    this.mTmpRect.offsetTo(p.x + mainWindow.mAttrs.surfaceInsets.left, p.y + mainWindow.mAttrs.surfaceInsets.top);
                 }
-                return new TaskSnapshot(buffer2, i, insets, isLowRamDevice, scaleFraction2, true, windowingMode, systemUiVisibility, z);
+                if (IS_NOTCH_PROP && this.mService.getDefaultDisplayContentLocked().getRotation() == 1 && !mainWindow.mFrame.isEmpty()) {
+                    this.mTmpRect.intersect(mainWindow.mFrame);
+                }
+                GraphicBuffer buffer = null;
+                if (this.mService.getLazyMode() == 0) {
+                    buffer = SurfaceControl.captureLayers(task.getSurfaceControl().getHandle(), this.mTmpRect, scaleFraction2);
+                } else if (mainWindow.getSurfaceControl() != null) {
+                    this.mTmpRect.scale(0.75f);
+                    buffer = SurfaceControl.captureLayers(mainWindow.getSurfaceControl().getHandle(), this.mTmpRect, scaleFraction2 / 0.75f);
+                }
+                GraphicBuffer buffer2 = buffer;
+                boolean isWindowTranslucent = mainWindow.getAttrs().format != -1;
+                float f;
+                if (buffer2 == null || buffer2.getWidth() <= 1) {
+                    f = scaleFraction2;
+                } else if (buffer2.getHeight() <= 1) {
+                    GraphicBuffer graphicBuffer = buffer2;
+                    f = scaleFraction2;
+                } else {
+                    int i = top.getConfiguration().orientation;
+                    Rect insets = getInsets(mainWindow);
+                    int windowingMode = task.getWindowingMode();
+                    int systemUiVisibility = getSystemUiVisibility(task);
+                    if (top.fillsParent() && !isWindowTranslucent) {
+                        z = false;
+                    }
+                    return new TaskSnapshot(buffer2, i, insets, isLowRamDevice, scaleFraction2, true, windowingMode, systemUiVisibility, z);
+                }
+                str2 = TAG;
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("Failed to take screenshot for ");
+                stringBuilder3.append(task2);
+                Slog.w(str2, stringBuilder3.toString());
+                return null;
             }
+            str2 = TAG;
+            StringBuilder stringBuilder4 = new StringBuilder();
+            stringBuilder4.append("Failed to take screenshot. No visible windows for ");
+            stringBuilder4.append(task2);
+            Slog.w(str2, stringBuilder4.toString());
             return null;
         }
-        String str = TAG;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Failed to take screenshot. No visible windows for ");
-        stringBuilder.append(windowContainer);
-        Slog.w(str, stringBuilder.toString());
-        return null;
     }
 
     static /* synthetic */ boolean lambda$snapshotTask$0(WindowState ws) {

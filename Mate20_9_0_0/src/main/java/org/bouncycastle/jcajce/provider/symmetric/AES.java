@@ -1017,42 +1017,42 @@ public final class AES {
 
     public static class PBEWithSHA1AESCBC128 extends BaseBlockCipher {
         public PBEWithSHA1AESCBC128() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
             super(cBCBlockCipher, 2, 1, 128, 16);
         }
     }
 
     public static class PBEWithSHA1AESCBC192 extends BaseBlockCipher {
         public PBEWithSHA1AESCBC192() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
             super(cBCBlockCipher, 2, 1, 192, 16);
         }
     }
 
     public static class PBEWithSHA1AESCBC256 extends BaseBlockCipher {
         public PBEWithSHA1AESCBC256() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
             super(cBCBlockCipher, 2, 1, 256, 16);
         }
     }
 
     public static class PBEWithSHA256AESCBC128 extends BaseBlockCipher {
         public PBEWithSHA256AESCBC128() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
             super(cBCBlockCipher, 2, 4, 128, 16);
         }
     }
 
     public static class PBEWithSHA256AESCBC192 extends BaseBlockCipher {
         public PBEWithSHA256AESCBC192() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
             super(cBCBlockCipher, 2, 4, 192, 16);
         }
     }
 
     public static class PBEWithSHA256AESCBC256 extends BaseBlockCipher {
         public PBEWithSHA256AESCBC256() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new AESEngine());
             super(cBCBlockCipher, 2, 4, 256, 16);
         }
     }

@@ -9,7 +9,7 @@ class CertPathUtils {
     }
 
     static Set getCriticalExtensionsOIDs(X509CertificateHolder[] x509CertificateHolderArr) {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (int i = 0; i != x509CertificateHolderArr.length; i++) {
             hashSet.addAll(x509CertificateHolderArr[i].getCriticalExtensionOIDs());
         }

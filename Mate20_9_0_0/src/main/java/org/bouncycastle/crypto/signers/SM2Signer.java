@@ -70,7 +70,7 @@ public class SM2Signer implements Signer, ECConstants {
         return bArr;
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0070, code:
+    /* JADX WARNING: Missing block: B:18:0x0070, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -128,7 +128,7 @@ public class SM2Signer implements Signer, ECConstants {
                 if (!nextK.equals(ZERO)) {
                     try {
                         return derEncode(mod, nextK);
-                    } catch (Throwable e) {
+                    } catch (IOException e) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("unable to encode signature: ");
                         stringBuilder.append(e.getMessage());

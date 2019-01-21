@@ -56,7 +56,7 @@ public class TlsDHKeyExchange extends AbstractTlsKeyExchange {
         if (!requiresServerKeyExchange()) {
             return null;
         }
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralServerKeyExchange(this.context.getSecureRandom(), this.dhParameters, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
@@ -109,7 +109,7 @@ public class TlsDHKeyExchange extends AbstractTlsKeyExchange {
                         this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey((DHPublicKeyParameters) this.serverPublicKey);
                         this.dhParameters = validateDHParameters(this.dhAgreePublicKey.getParameters());
                         i = 8;
-                    } catch (Throwable e) {
+                    } catch (ClassCastException e) {
                         throw new TlsFatalAlert((short) 46, e);
                     }
                 } else if (this.tlsSigner.isValidPublicKey(this.serverPublicKey)) {
@@ -119,7 +119,7 @@ public class TlsDHKeyExchange extends AbstractTlsKeyExchange {
                 }
                 TlsUtils.validateKeyUsage(certificateAt, i);
                 super.processServerCertificate(certificate);
-            } catch (Throwable e2) {
+            } catch (RuntimeException e2) {
                 throw new TlsFatalAlert((short) 43, e2);
             }
         }

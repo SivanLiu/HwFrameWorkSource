@@ -77,9 +77,9 @@ public class PKCS1Encoding implements AsymmetricBlockCipher {
             Arrays.fill(bArr, (byte) 0);
             throw new InvalidCipherTextException("block incorrect");
         } else if (i == 0) {
-            Object obj = new byte[(bArr.length - i2)];
-            System.arraycopy(bArr, i2, obj, 0, obj.length);
-            return obj;
+            byte[] bArr2 = new byte[(bArr.length - i2)];
+            System.arraycopy(bArr, i2, bArr2, 0, bArr2.length);
+            return bArr2;
         } else {
             Arrays.fill(bArr, (byte) 0);
             throw new InvalidCipherTextException("block incorrect size");
@@ -112,25 +112,25 @@ public class PKCS1Encoding implements AsymmetricBlockCipher {
 
     private byte[] encodeBlock(byte[] bArr, int i, int i2) throws InvalidCipherTextException {
         if (i2 <= getInputBlockSize()) {
-            Object obj = new byte[this.engine.getInputBlockSize()];
+            byte[] bArr2 = new byte[this.engine.getInputBlockSize()];
             int i3;
             if (this.forPrivateKey) {
-                obj[0] = 1;
-                for (i3 = 1; i3 != (obj.length - i2) - 1; i3++) {
-                    obj[i3] = (byte) -1;
+                bArr2[0] = (byte) 1;
+                for (i3 = 1; i3 != (bArr2.length - i2) - 1; i3++) {
+                    bArr2[i3] = (byte) -1;
                 }
             } else {
-                this.random.nextBytes(obj);
-                obj[0] = (byte) 2;
-                for (i3 = 1; i3 != (obj.length - i2) - 1; i3++) {
-                    while (obj[i3] == (byte) 0) {
-                        obj[i3] = (byte) this.random.nextInt();
+                this.random.nextBytes(bArr2);
+                bArr2[0] = (byte) 2;
+                for (i3 = 1; i3 != (bArr2.length - i2) - 1; i3++) {
+                    while (bArr2[i3] == (byte) 0) {
+                        bArr2[i3] = (byte) this.random.nextInt();
                     }
                 }
             }
-            obj[(obj.length - i2) - 1] = null;
-            System.arraycopy(bArr, i, obj, obj.length - i2, i2);
-            return this.engine.processBlock(obj, 0, obj.length);
+            bArr2[(bArr2.length - i2) - 1] = (byte) 0;
+            System.arraycopy(bArr, i, bArr2, bArr2.length - i2, i2);
+            return this.engine.processBlock(bArr2, 0, bArr2.length);
         }
         throw new IllegalArgumentException("input data too large");
     }
@@ -161,7 +161,7 @@ public class PKCS1Encoding implements AsymmetricBlockCipher {
         });
         boolean z = true;
         if (str2 != null) {
-            return str2.equals("true") ^ true;
+            return str2.equals("true") ^ 1;
         }
         if (str != null) {
             if (str.equals("true")) {
@@ -186,7 +186,7 @@ public class PKCS1Encoding implements AsymmetricBlockCipher {
         return this.engine;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0052, code:
+    /* JADX WARNING: Missing block: B:16:0x0052, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
@@ -189,7 +190,7 @@ public class Categories extends Suite {
         try {
             filter(CategoryFilter.categoryFilter(isAnyIncluded(klass), getIncludedCategory(klass), isAnyExcluded(klass), getExcludedCategory(klass)));
             assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
-        } catch (Throwable e) {
+        } catch (NoTestsRemainException e) {
             throw new InitializationError(e);
         }
     }

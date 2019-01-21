@@ -185,7 +185,6 @@ abstract class ServerMessageBlock extends Response implements Request, SmbConsta
                         dstIndex = dstIndex2;
                         logStream = log;
                         if (LogStream.level > 1) {
-                            uee.printStackTrace(log);
                         }
                         return dstIndex - start;
                     }
@@ -200,6 +199,7 @@ abstract class ServerMessageBlock extends Response implements Request, SmbConsta
                 uee = e2;
                 logStream = log;
                 if (LogStream.level > 1) {
+                    uee.printStackTrace(log);
                 }
                 return dstIndex - start;
             }

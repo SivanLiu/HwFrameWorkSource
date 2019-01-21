@@ -114,7 +114,7 @@ public class AccessibilityNodeInfoDumper {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0034, code:
+    /* JADX WARNING: Missing block: B:10:0x0034, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

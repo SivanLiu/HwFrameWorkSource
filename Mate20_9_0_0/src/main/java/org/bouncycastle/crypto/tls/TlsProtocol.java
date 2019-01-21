@@ -194,22 +194,22 @@ public abstract class TlsProtocol {
         return bArr2;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x002e, code:
+    /* JADX WARNING: Missing block: B:17:0x002e, code skipped:
             if (r4 == false) goto L_0x0031;
      */
-    /* JADX WARNING: Missing block: B:18:0x0030, code:
+    /* JADX WARNING: Missing block: B:18:0x0030, code skipped:
             return 2;
      */
-    /* JADX WARNING: Missing block: B:19:0x0031, code:
+    /* JADX WARNING: Missing block: B:19:0x0031, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:20:0x0032, code:
+    /* JADX WARNING: Missing block: B:20:0x0032, code skipped:
             if (r4 == false) goto L_0x0035;
      */
-    /* JADX WARNING: Missing block: B:21:0x0034, code:
+    /* JADX WARNING: Missing block: B:21:0x0034, code skipped:
             return 2;
      */
-    /* JADX WARNING: Missing block: B:23:0x003a, code:
+    /* JADX WARNING: Missing block: B:23:0x003a, code skipped:
             throw new org.bouncycastle.crypto.tls.TlsFatalAlert((short) 47);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -458,7 +458,7 @@ public abstract class TlsProtocol {
                     if (readUint8 == (short) 20) {
                         TlsContext context = getContext();
                         if (this.expected_verify_data == null && context.getSecurityParameters().getMasterSecret() != null) {
-                            this.expected_verify_data = createVerifyData(context.isServer() ^ true);
+                            this.expected_verify_data = createVerifyData(context.isServer() ^ 1);
                         }
                     }
                     byteQueue.copyTo(this.recordStream.getHandshakeHashUpdater(), i);
@@ -477,10 +477,10 @@ public abstract class TlsProtocol {
         }
         byte[] readOpaque16 = TlsUtils.readOpaque16(byteArrayInputStream);
         assertEmpty(byteArrayInputStream);
-        InputStream byteArrayInputStream2 = new ByteArrayInputStream(readOpaque16);
+        byteArrayInputStream = new ByteArrayInputStream(readOpaque16);
         Hashtable hashtable = new Hashtable();
-        while (byteArrayInputStream2.available() > 0) {
-            if (hashtable.put(Integers.valueOf(TlsUtils.readUint16(byteArrayInputStream2)), TlsUtils.readOpaque16(byteArrayInputStream2)) != null) {
+        while (byteArrayInputStream.available() > 0) {
+            if (hashtable.put(Integers.valueOf(TlsUtils.readUint16(byteArrayInputStream)), TlsUtils.readOpaque16(byteArrayInputStream)) != null) {
                 throw new TlsFatalAlert((short) 47);
             }
         }
@@ -490,16 +490,16 @@ public abstract class TlsProtocol {
     protected static Vector readSupplementalDataMessage(ByteArrayInputStream byteArrayInputStream) throws IOException {
         byte[] readOpaque24 = TlsUtils.readOpaque24(byteArrayInputStream);
         assertEmpty(byteArrayInputStream);
-        InputStream byteArrayInputStream2 = new ByteArrayInputStream(readOpaque24);
+        byteArrayInputStream = new ByteArrayInputStream(readOpaque24);
         Vector vector = new Vector();
-        while (byteArrayInputStream2.available() > 0) {
-            vector.addElement(new SupplementalDataEntry(TlsUtils.readUint16(byteArrayInputStream2), TlsUtils.readOpaque16(byteArrayInputStream2)));
+        while (byteArrayInputStream.available() > 0) {
+            vector.addElement(new SupplementalDataEntry(TlsUtils.readUint16(byteArrayInputStream), TlsUtils.readOpaque16(byteArrayInputStream)));
         }
         return vector;
     }
 
     protected static void writeExtensions(OutputStream outputStream, Hashtable hashtable) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         writeSelectedExtensions(byteArrayOutputStream, hashtable, true);
         writeSelectedExtensions(byteArrayOutputStream, hashtable, false);
         TlsUtils.writeOpaque16(byteArrayOutputStream.toByteArray(), outputStream);
@@ -520,7 +520,7 @@ public abstract class TlsProtocol {
     }
 
     protected static void writeSupplementalData(OutputStream outputStream, Vector vector) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         for (int i = 0; i < vector.size(); i++) {
             SupplementalDataEntry supplementalDataEntry = (SupplementalDataEntry) vector.elementAt(i);
             int dataType = supplementalDataEntry.getDataType();
@@ -605,7 +605,7 @@ public abstract class TlsProtocol {
             this.alertQueue.shrink();
             this.handshakeQueue.shrink();
             this.recordStream.finaliseHandshake();
-            this.appDataSplitEnabled = TlsUtils.isTLSv11(getContext()) ^ true;
+            this.appDataSplitEnabled = TlsUtils.isTLSv11(getContext()) ^ 1;
             if (!this.appDataReady) {
                 this.appDataReady = true;
                 if (this.blocking) {
@@ -788,7 +788,7 @@ public abstract class TlsProtocol {
         throw new TlsFatalAlert((short) 80);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
+    /* JADX WARNING: Missing block: B:11:0x001d, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -898,15 +898,15 @@ public abstract class TlsProtocol {
     protected void safeCheckRecordHeader(byte[] bArr) throws IOException {
         try {
             this.recordStream.checkRecordHeader(bArr);
-        } catch (Throwable e) {
+        } catch (TlsFatalAlert e) {
             handleException(e.getAlertDescription(), "Failed to read record", e);
             throw e;
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             handleException((short) 80, "Failed to read record", e2);
             throw e2;
-        } catch (Throwable e22) {
-            handleException((short) 80, "Failed to read record", e22);
-            throw new TlsFatalAlert((short) 80, e22);
+        } catch (RuntimeException e3) {
+            handleException((short) 80, "Failed to read record", e3);
+            throw new TlsFatalAlert((short) 80, e3);
         }
     }
 
@@ -921,30 +921,30 @@ public abstract class TlsProtocol {
             }
         } catch (TlsFatalAlertReceived e) {
             throw e;
-        } catch (Throwable e2) {
+        } catch (TlsFatalAlert e2) {
             handleException(e2.getAlertDescription(), "Failed to read record", e2);
             throw e2;
-        } catch (Throwable e3) {
+        } catch (IOException e3) {
             handleException((short) 80, "Failed to read record", e3);
             throw e3;
-        } catch (Throwable e32) {
-            handleException((short) 80, "Failed to read record", e32);
-            throw new TlsFatalAlert((short) 80, e32);
+        } catch (RuntimeException e4) {
+            handleException((short) 80, "Failed to read record", e4);
+            throw new TlsFatalAlert((short) 80, e4);
         }
     }
 
     protected void safeWriteRecord(short s, byte[] bArr, int i, int i2) throws IOException {
         try {
             this.recordStream.writeRecord(s, bArr, i, i2);
-        } catch (Throwable e) {
+        } catch (TlsFatalAlert e) {
             handleException(e.getAlertDescription(), "Failed to write record", e);
             throw e;
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             handleException((short) 80, "Failed to write record", e2);
             throw e2;
-        } catch (Throwable e22) {
-            handleException((short) 80, "Failed to write record", e22);
-            throw new TlsFatalAlert((short) 80, e22);
+        } catch (RuntimeException e3) {
+            handleException((short) 80, "Failed to write record", e3);
+            throw new TlsFatalAlert((short) 80, e3);
         }
     }
 
@@ -962,7 +962,7 @@ public abstract class TlsProtocol {
                 return;
             }
         }
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 11);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 11);
         certificate.encode(handshakeMessage);
         handshakeMessage.writeToRecordStream();
     }
@@ -981,7 +981,7 @@ public abstract class TlsProtocol {
     }
 
     protected void sendSupplementalDataMessage(Vector vector) throws IOException {
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 23);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 23);
         writeSupplementalData(handshakeMessage, vector);
         handshakeMessage.writeToRecordStream();
     }

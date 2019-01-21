@@ -121,7 +121,7 @@ public class RootDetectReport {
             }
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0020, code:
+        /* JADX WARNING: Missing block: B:9:0x0020, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -249,18 +249,18 @@ public class RootDetectReport {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00c1  */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x0105  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00c1  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x0105  */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00c1  */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x0105  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00c1  */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x0105  */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x00c1  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x0105  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x00c1  */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x0105  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x00c1  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x0105  */
+    /* JADX WARNING: Removed duplicated region for block: B:57:0x00c1  */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x0105  */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x011c  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int triggerRootScan() {
         String kernelRootStatus;

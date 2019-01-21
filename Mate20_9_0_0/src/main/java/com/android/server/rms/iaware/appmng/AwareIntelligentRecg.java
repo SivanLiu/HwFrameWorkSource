@@ -212,7 +212,10 @@ public final class AwareIntelligentRecg {
                         case 6:
                             synchronized (AwareIntelligentRecg.this.mFrozenAppList) {
                                 if (eventType == 1) {
-                                    AwareIntelligentRecg.this.mFrozenAppList.add(Integer.valueOf(uid));
+                                    try {
+                                        AwareIntelligentRecg.this.mFrozenAppList.add(Integer.valueOf(uid));
+                                    } catch (Throwable th) {
+                                    }
                                 } else if (eventType == 2) {
                                     AwareIntelligentRecg.this.mFrozenAppList.remove(Integer.valueOf(uid));
                                 }
@@ -231,7 +234,10 @@ public final class AwareIntelligentRecg {
                         case 8:
                             synchronized (AwareIntelligentRecg.this.mBluetoothAppList) {
                                 if (eventType == 1) {
-                                    AwareIntelligentRecg.this.mBluetoothAppList.add(Integer.valueOf(uid));
+                                    try {
+                                        AwareIntelligentRecg.this.mBluetoothAppList.add(Integer.valueOf(uid));
+                                    } catch (Throwable th2) {
+                                    }
                                 } else if (eventType == 2) {
                                     AwareIntelligentRecg.this.mBluetoothAppList.remove(Integer.valueOf(uid));
                                 }
@@ -1322,13 +1328,13 @@ public final class AwareIntelligentRecg {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001b, code:
+    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
             if (com.android.server.rms.iaware.appmng.AwareAppKeyBackgroup.getInstance().isAudioCache(r4) == false) goto L_0x001e;
      */
-    /* JADX WARNING: Missing block: B:10:0x001d, code:
+    /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:12:0x001f, code:
+    /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1644,11 +1650,10 @@ public final class AwareIntelligentRecg {
                     windowsList = list;
                 } catch (Throwable th3) {
                     th = th3;
+                    throw th;
                 }
             }
-            return;
         }
-        throw th;
     }
 
     private void addToast(int window, int code, int width, int height, float alpha, String pkg, int uid) {
@@ -1686,17 +1691,17 @@ public final class AwareIntelligentRecg {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x005c, code:
+    /* JADX WARNING: Missing block: B:16:0x005c, code skipped:
             if (DEBUG == false) goto L_0x0074;
      */
-    /* JADX WARNING: Missing block: B:17:0x005e, code:
+    /* JADX WARNING: Missing block: B:17:0x005e, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("[removeToast]:");
             r1.append(r5);
             android.rms.iaware.AwareLog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:18:0x0074, code:
+    /* JADX WARNING: Missing block: B:18:0x0074, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1740,11 +1745,18 @@ public final class AwareIntelligentRecg {
         AwareLog.i(str, stringBuilder.toString());
         if (window > 0) {
             synchronized (this.mToasts) {
+                boolean isEvil;
                 AwareProcessWindowInfo toastInfo = (AwareProcessWindowInfo) this.mToasts.get(Integer.valueOf(window));
-                boolean isEvil = width <= AwareProcessWindowInfo.getMinWindowWidth() || height <= AwareProcessWindowInfo.getMinWindowHeight() || alpha == GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO || phide;
-                if (toastInfo != null && toastInfo.containsWindow(code)) {
-                    toastInfo.addWindow(Integer.valueOf(code), isEvil);
+                if (width > AwareProcessWindowInfo.getMinWindowWidth() && height > AwareProcessWindowInfo.getMinWindowHeight() && alpha != GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO) {
+                    if (!phide) {
+                        isEvil = false;
+                        if (toastInfo != null && toastInfo.containsWindow(code)) {
+                            toastInfo.addWindow(Integer.valueOf(code), isEvil);
+                        }
+                    }
                 }
+                isEvil = true;
+                toastInfo.addWindow(Integer.valueOf(code), isEvil);
             }
             if (DEBUG) {
                 str = TAG;
@@ -2413,7 +2425,7 @@ public final class AwareIntelligentRecg {
     /* JADX WARNING: Removed duplicated region for block: B:65:0x010c A:{Catch:{ all -> 0x017b }} */
     /* JADX WARNING: Removed duplicated region for block: B:79:0x0147  */
     /* JADX WARNING: Removed duplicated region for block: B:79:0x0147  */
-    /* JADX WARNING: Missing block: B:93:0x017d, code:
+    /* JADX WARNING: Missing block: B:93:0x017d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2562,17 +2574,17 @@ public final class AwareIntelligentRecg {
         }
     }
 
-    /* JADX WARNING: Missing block: B:48:0x0110, code:
+    /* JADX WARNING: Missing block: B:48:0x0110, code skipped:
             r0 = r4.keySet().iterator();
      */
-    /* JADX WARNING: Missing block: B:50:0x011c, code:
+    /* JADX WARNING: Missing block: B:50:0x011c, code skipped:
             if (r0.hasNext() == false) goto L_0x0132;
      */
-    /* JADX WARNING: Missing block: B:51:0x011e, code:
+    /* JADX WARNING: Missing block: B:51:0x011e, code skipped:
             r2 = (com.android.server.rms.iaware.appmng.AwareIntelligentRecg.AlarmInfo) r0.next();
             updateAlarmCmp(r2, ((java.lang.Boolean) r4.get(r2)).booleanValue());
      */
-    /* JADX WARNING: Missing block: B:52:0x0132, code:
+    /* JADX WARNING: Missing block: B:52:0x0132, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2867,7 +2879,7 @@ public final class AwareIntelligentRecg {
         return result;
     }
 
-    /* JADX WARNING: Missing block: B:36:0x0066, code:
+    /* JADX WARNING: Missing block: B:36:0x0066, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2953,7 +2965,7 @@ public final class AwareIntelligentRecg {
             return false;
         }
         if (this.mDataMgr.getWidgetCnt() > this.mWidgetCheckUpdateCnt && SystemClock.elapsedRealtime() - time > this.mWidgetCheckUpdateInterval) {
-            return isUpDownTrigInIntervalTime(uid, this.mWidgetCheckUpdateInterval) ^ true;
+            return isUpDownTrigInIntervalTime(uid, this.mWidgetCheckUpdateInterval) ^ 1;
         }
         return true;
     }
@@ -2994,28 +3006,28 @@ public final class AwareIntelligentRecg {
         sendMsgWidgetUpDownLoadClear();
     }
 
-    /* JADX WARNING: Missing block: B:34:0x007e, code:
+    /* JADX WARNING: Missing block: B:34:0x007e, code skipped:
             if (android.app.mtm.iaware.appmng.AppMngConstant.AppStartSource.THIRD_ACTIVITY.equals(r12) != false) goto L_0x0093;
      */
-    /* JADX WARNING: Missing block: B:36:0x0086, code:
+    /* JADX WARNING: Missing block: B:36:0x0086, code skipped:
             if (android.app.mtm.iaware.appmng.AppMngConstant.AppStartSource.BIND_SERVICE.equals(r12) == false) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:37:0x0089, code:
+    /* JADX WARNING: Missing block: B:37:0x0089, code skipped:
             if (r14 == false) goto L_0x008c;
      */
-    /* JADX WARNING: Missing block: B:38:0x008b, code:
+    /* JADX WARNING: Missing block: B:38:0x008b, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:40:0x008d, code:
+    /* JADX WARNING: Missing block: B:40:0x008d, code skipped:
             if (r0.length != 2) goto L_0x0092;
      */
-    /* JADX WARNING: Missing block: B:41:0x008f, code:
+    /* JADX WARNING: Missing block: B:41:0x008f, code skipped:
             sendRecgPushSdkMessage(r9, r10, r11);
      */
-    /* JADX WARNING: Missing block: B:42:0x0092, code:
+    /* JADX WARNING: Missing block: B:42:0x0092, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:43:0x0093, code:
+    /* JADX WARNING: Missing block: B:43:0x0093, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3675,7 +3687,7 @@ public final class AwareIntelligentRecg {
         }
         synchronized (this.mToasts) {
             AwareProcessWindowInfo toastInfo = (AwareProcessWindowInfo) this.mToasts.get(Integer.valueOf(pid));
-            if (!(toastInfo == null || toastInfo.isEvil())) {
+            if (toastInfo != null && !toastInfo.isEvil()) {
                 z = true;
             }
         }
@@ -3904,22 +3916,25 @@ public final class AwareIntelligentRecg {
                 pw.println("AwareIntelligentRecg dumpFrozen start");
                 synchronized (this.mFrozenAppList) {
                     if (uid == 0) {
-                        for (Integer AppUid : this.mFrozenAppList) {
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("frozen app:");
-                            stringBuilder.append(InnerUtils.getPackageNameByUid(AppUid.intValue()));
-                            stringBuilder.append(",uid:");
-                            stringBuilder.append(AppUid);
-                            pw.println(stringBuilder.toString());
+                        try {
+                            for (Integer AppUid : this.mFrozenAppList) {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("frozen app:");
+                                stringBuilder.append(InnerUtils.getPackageNameByUid(AppUid.intValue()));
+                                stringBuilder.append(",uid:");
+                                stringBuilder.append(AppUid);
+                                pw.println(stringBuilder.toString());
+                            }
+                        } catch (Throwable th) {
+                            throw th;
                         }
-                    } else {
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("uid:");
-                        stringBuilder2.append(uid);
-                        stringBuilder2.append(",frozen:");
-                        stringBuilder2.append(isAppFrozen(uid));
-                        pw.println(stringBuilder2.toString());
                     }
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("uid:");
+                    stringBuilder2.append(uid);
+                    stringBuilder2.append(",frozen:");
+                    stringBuilder2.append(isAppFrozen(uid));
+                    pw.println(stringBuilder2.toString());
                 }
                 return;
             }
@@ -3933,22 +3948,25 @@ public final class AwareIntelligentRecg {
                 pw.println("AwareIntelligentRecg dumpBluetooth start");
                 synchronized (this.mBluetoothAppList) {
                     if (uid == 0) {
-                        for (Integer AppUid : this.mBluetoothAppList) {
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("bluetooth app:");
-                            stringBuilder.append(InnerUtils.getPackageNameByUid(AppUid.intValue()));
-                            stringBuilder.append(",uid:");
-                            stringBuilder.append(AppUid);
-                            pw.println(stringBuilder.toString());
+                        try {
+                            for (Integer AppUid : this.mBluetoothAppList) {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("bluetooth app:");
+                                stringBuilder.append(InnerUtils.getPackageNameByUid(AppUid.intValue()));
+                                stringBuilder.append(",uid:");
+                                stringBuilder.append(AppUid);
+                                pw.println(stringBuilder.toString());
+                            }
+                        } catch (Throwable th) {
+                            throw th;
                         }
-                    } else {
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("uid:");
-                        stringBuilder2.append(uid);
-                        stringBuilder2.append(",bluetooth:");
-                        stringBuilder2.append(isAppBluetooth(uid));
-                        pw.println(stringBuilder2.toString());
                     }
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("uid:");
+                    stringBuilder2.append(uid);
+                    stringBuilder2.append(",bluetooth:");
+                    stringBuilder2.append(isAppBluetooth(uid));
+                    pw.println(stringBuilder2.toString());
                 }
                 return;
             }
@@ -4330,34 +4348,34 @@ public final class AwareIntelligentRecg {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0027, code:
+    /* JADX WARNING: Missing block: B:12:0x0027, code skipped:
             r6 = r9.mAppChangeToBGTime;
      */
-    /* JADX WARNING: Missing block: B:13:0x0029, code:
+    /* JADX WARNING: Missing block: B:13:0x0029, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:16:0x0030, code:
+    /* JADX WARNING: Missing block: B:16:0x0030, code skipped:
             if (r9.mAppChangeToBGTime.containsKey(r10) != false) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:17:0x0032, code:
+    /* JADX WARNING: Missing block: B:17:0x0032, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:18:0x0033, code:
+    /* JADX WARNING: Missing block: B:18:0x0033, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:19:0x0034, code:
+    /* JADX WARNING: Missing block: B:19:0x0034, code skipped:
             r3 = ((java.lang.Long) r9.mAppChangeToBGTime.get(r10)).longValue();
      */
-    /* JADX WARNING: Missing block: B:20:0x0041, code:
+    /* JADX WARNING: Missing block: B:20:0x0041, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:22:0x0044, code:
+    /* JADX WARNING: Missing block: B:22:0x0044, code skipped:
             if (r1 >= r3) goto L_0x0047;
      */
-    /* JADX WARNING: Missing block: B:23:0x0046, code:
+    /* JADX WARNING: Missing block: B:23:0x0046, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:25:0x0048, code:
+    /* JADX WARNING: Missing block: B:25:0x0048, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4433,7 +4451,10 @@ public final class AwareIntelligentRecg {
             userIdPkg = userIdPkg.toString();
             synchronized (this.mHwStopUserIdPkg) {
                 if (hwStop) {
-                    this.mHwStopUserIdPkg.add(userIdPkg);
+                    try {
+                        this.mHwStopUserIdPkg.add(userIdPkg);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     this.mHwStopUserIdPkg.remove(userIdPkg);
                 }
@@ -4774,7 +4795,7 @@ public final class AwareIntelligentRecg {
         }
     }
 
-    /* JADX WARNING: Missing block: B:33:0x00e1, code:
+    /* JADX WARNING: Missing block: B:33:0x00e1, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4856,10 +4877,10 @@ public final class AwareIntelligentRecg {
         return elapsedRealtime;
     }
 
-    /* JADX WARNING: Missing block: B:29:0x009a, code:
+    /* JADX WARNING: Missing block: B:31:0x009a, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:31:0x009c, code:
+    /* JADX WARNING: Missing block: B:33:0x009c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4873,38 +4894,42 @@ public final class AwareIntelligentRecg {
         }
         synchronized (this.mRegKeepAlivePkgs) {
             ArrayMap<String, Long> appMap = (ArrayMap) this.mRegKeepAlivePkgs.get(Integer.valueOf(userId));
-            String str;
-            boolean ret;
-            if (appMap == null || appMap.isEmpty()) {
-            } else if (appMap.containsKey(pkg)) {
-                boolean ret2;
-                long keptTime = ((Long) appMap.get(pkg)).longValue() - SystemClock.elapsedRealtime();
-                str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(pkg);
-                stringBuilder.append(" still need kept in iaware for ");
-                stringBuilder.append(keptTime);
-                stringBuilder.append(" ms");
-                AwareLog.d(str, stringBuilder.toString());
-                if (keptTime <= 0) {
-                    appMap.remove(pkg);
-                    ret2 = false;
-                } else if (keptTime < 1800000) {
-                    ret2 = true;
-                } else if (isKeptAliveAppByPg(pkg, uid)) {
-                    ret2 = true;
-                } else {
-                    appMap.remove(pkg);
-                    ret2 = false;
+            if (appMap != null) {
+                if (!appMap.isEmpty()) {
+                    String str;
+                    boolean ret;
+                    if (appMap.containsKey(pkg)) {
+                        boolean ret2;
+                        long keptTime = ((Long) appMap.get(pkg)).longValue() - SystemClock.elapsedRealtime();
+                        str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(pkg);
+                        stringBuilder.append(" still need kept in iaware for ");
+                        stringBuilder.append(keptTime);
+                        stringBuilder.append(" ms");
+                        AwareLog.d(str, stringBuilder.toString());
+                        if (keptTime <= 0) {
+                            appMap.remove(pkg);
+                            ret2 = false;
+                        } else if (keptTime < 1800000) {
+                            ret2 = true;
+                        } else if (isKeptAliveAppByPg(pkg, uid)) {
+                            ret2 = true;
+                        } else {
+                            appMap.remove(pkg);
+                            ret2 = false;
+                            ret = ret2;
+                        }
+                        ret = ret2;
+                    } else {
+                        ret = false;
+                        str = TAG;
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append(pkg);
+                        stringBuilder2.append(" is not in iaware alive record.");
+                        AwareLog.d(str, stringBuilder2.toString());
+                    }
                 }
-                ret = ret2;
-            } else {
-                ret = false;
-                str = TAG;
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append(pkg);
-                stringBuilder2.append(" is not in iaware alive record.");
-                AwareLog.d(str, stringBuilder2.toString());
             }
         }
     }

@@ -34,16 +34,16 @@ public class Input {
         new Input().run(args);
     }
 
-    /* JADX WARNING: Missing block: B:44:0x00d3, code:
+    /* JADX WARNING: Missing block: B:45:0x00d3, code skipped:
             sendSwipe(r8, java.lang.Float.parseFloat(r15[r0 + 1]), java.lang.Float.parseFloat(r15[r0 + 2]), java.lang.Float.parseFloat(r15[r0 + 3]), java.lang.Float.parseFloat(r15[r0 + 4]), r1);
      */
-    /* JADX WARNING: Missing block: B:45:0x00f8, code:
+    /* JADX WARNING: Missing block: B:46:0x00f8, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:56:0x0117, code:
+    /* JADX WARNING: Missing block: B:57:0x0117, code skipped:
             sendDragAndDrop(r8, java.lang.Float.parseFloat(r15[r0 + 1]), java.lang.Float.parseFloat(r15[r0 + 2]), java.lang.Float.parseFloat(r15[r0 + 3]), java.lang.Float.parseFloat(r15[r0 + 4]), r1);
      */
-    /* JADX WARNING: Missing block: B:57:0x013c, code:
+    /* JADX WARNING: Missing block: B:58:0x013c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

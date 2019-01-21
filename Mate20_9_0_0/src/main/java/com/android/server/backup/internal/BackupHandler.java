@@ -67,56 +67,56 @@ public class BackupHandler extends Handler {
         this.mAgentTimeoutParameters = (BackupAgentTimeoutParameters) Preconditions.checkNotNull(backupManagerService.getAgentTimeoutParameters(), "Timeout parameters cannot be null");
     }
 
-    /* JADX WARNING: Missing block: B:141:0x043d, code:
+    /* JADX WARNING: Missing block: B:144:0x043d, code skipped:
             r21 = true;
      */
-    /* JADX WARNING: Missing block: B:142:0x0443, code:
+    /* JADX WARNING: Missing block: B:145:0x0443, code skipped:
             if (r14.size() <= 0) goto L_0x0488;
      */
-    /* JADX WARNING: Missing block: B:145:0x0459, code:
+    /* JADX WARNING: Missing block: B:148:0x0459, code skipped:
             r7 = r7;
             r23 = r14;
      */
-    /* JADX WARNING: Missing block: B:147:?, code:
+    /* JADX WARNING: Missing block: B:150:?, code skipped:
             sendMessage(obtainMessage(20, new com.android.server.backup.internal.PerformBackupTask(r1.backupManagerService, r4, r5.transportDirName(), r14, r19, null, null, new com.android.server.backup.internal.-$$Lambda$BackupHandler$TJcRazGYTaUxjeiX6mPLlipfZUI(r3, r4), java.util.Collections.emptyList(), false, false)));
      */
-    /* JADX WARNING: Missing block: B:148:0x0479, code:
+    /* JADX WARNING: Missing block: B:151:0x0479, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:149:0x047b, code:
+    /* JADX WARNING: Missing block: B:152:0x047b, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:150:0x047c, code:
+    /* JADX WARNING: Missing block: B:153:0x047c, code skipped:
             r23 = r14;
      */
-    /* JADX WARNING: Missing block: B:151:0x047e, code:
+    /* JADX WARNING: Missing block: B:154:0x047e, code skipped:
             android.util.Slog.e(com.android.server.backup.BackupManagerService.TAG, "Transport became unavailable attempting backup or error initializing backup task", r0);
             r21 = false;
      */
-    /* JADX WARNING: Missing block: B:152:0x0488, code:
+    /* JADX WARNING: Missing block: B:155:0x0488, code skipped:
             r23 = r14;
             android.util.Slog.v(com.android.server.backup.BackupManagerService.TAG, "Backup requested but nothing pending");
             r21 = false;
      */
-    /* JADX WARNING: Missing block: B:153:0x0493, code:
+    /* JADX WARNING: Missing block: B:156:0x0493, code skipped:
             if (r21 == false) goto L_0x0495;
      */
-    /* JADX WARNING: Missing block: B:154:0x0495, code:
+    /* JADX WARNING: Missing block: B:157:0x0495, code skipped:
             r3.disposeOfTransportClient(r4, r2);
      */
-    /* JADX WARNING: Missing block: B:155:0x049e, code:
+    /* JADX WARNING: Missing block: B:158:0x049e, code skipped:
             monitor-enter(r1.backupManagerService.getQueueLock());
      */
-    /* JADX WARNING: Missing block: B:157:?, code:
+    /* JADX WARNING: Missing block: B:160:?, code skipped:
             r1.backupManagerService.setBackupRunning(false);
      */
-    /* JADX WARNING: Missing block: B:159:0x04a5, code:
+    /* JADX WARNING: Missing block: B:162:0x04a5, code skipped:
             r1.backupManagerService.getWakelock().release();
      */
-    /* JADX WARNING: Missing block: B:194:?, code:
+    /* JADX WARNING: Missing block: B:200:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:195:?, code:
+    /* JADX WARNING: Missing block: B:201:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -293,21 +293,21 @@ public final class DecisionUtil {
         dismissPCRecommendDialog();
         Builder builder = new Builder(context, 33947691);
         View contentView = LayoutInflater.from(context).inflate(34013312, null);
-        mRecommendDialog = builder.setPositiveButton(33686127, new OnClickListener() {
+        mRecommendDialog = builder.setPositiveButton(33686129, new OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 DecisionUtil.dismissPCRecommendDialog();
                 DecisionUtil.startSearch(DecisionUtil.mContext);
                 DecisionUtil.executeReportEvent(DecisionUtil.mContext, DecisionUtil.OP_TYPE_GOTO);
             }
-        }).setNegativeButton(33686125, new OnClickListener() {
+        }).setNegativeButton(33686127, new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 DecisionUtil.executeReportEvent(DecisionUtil.mContext, DecisionUtil.OP_TYPE_CANCEL);
             }
         }).setView(contentView).create();
         TextView tipTextView = (TextView) contentView.findViewById(34603236);
-        String linkStr = context.getResources().getString(33686126);
-        String tmpInfo = context.getResources().getString(33686124);
+        String linkStr = context.getResources().getString(33686128);
+        String tmpInfo = context.getResources().getString(33686126);
         int start = tmpInfo.length();
         StringBuilder agreeInfo = new StringBuilder(tmpInfo);
         agreeInfo.append(linkStr);
@@ -343,7 +343,11 @@ public final class DecisionUtil {
             intent.setPackage("com.huawei.tips");
             intent.putExtra("featureID", RECOMMEND_FEATURE_ID);
             intent.setFlags(268435456);
-            mContext.startActivity(intent);
+            try {
+                mContext.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                HwPCUtils.log(TAG, "PlayingSkills app not found.");
+            }
         }
     }
 

@@ -1,74 +1,97 @@
 package com.huawei.android.pushagent.utils.e;
 
-import android.content.Context;
-import android.os.Build;
-import com.huawei.android.pushagent.model.flowcontrol.a.b;
-import com.huawei.android.pushagent.utils.f.c;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map.Entry;
+import android.text.TextUtils;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class a {
-    private static void de(Context context, int i, HashMap<Short, Object> hashMap) {
-        if (context == null || hashMap == null) {
-            c.ep("PushLog3413", "startMonitor, map is null");
-            return;
-        }
-        c.ep("PushLog3413", "startMonitor, eventId is " + i);
-        String ec = new com.huawei.android.pushagent.utils.f.a(context, "PushMonitor").ec(String.valueOf(i));
-        b bVar = new b(86400000, 2);
-        bVar.zu(ec);
-        if (bVar.zr(1)) {
-            c.ep("PushLog3413", "begin to startMonitor");
-            new Thread(new b(context, bVar, i, hashMap)).start();
-            return;
-        }
-        c.ep("PushLog3413", "can't report too many times");
+    public static byte[] vx(byte[] bArr, byte[] bArr2) {
+        return vy(bArr, bArr2, null);
     }
 
-    public static void dc(Context context) {
-        HashMap hashMap = new HashMap();
-        hashMap.put(Short.valueOf((short) 0), String.valueOf(3413));
-        hashMap.put(Short.valueOf((short) 1), Build.MODEL);
-        de(context, 907124001, hashMap);
-    }
-
-    public static void db(Context context, String str) {
-        HashMap hashMap = new HashMap();
-        hashMap.put(Short.valueOf((short) 0), String.valueOf(3413));
-        hashMap.put(Short.valueOf((short) 1), str);
-        de(context, 907124002, hashMap);
-    }
-
-    private static void dd(Context context, b bVar, int i, HashMap<Short, Object> hashMap) {
+    public static byte[] vy(byte[] bArr, byte[] bArr2, byte[] bArr3) {
         try {
-            Class cls = Class.forName("android.util.IMonitor");
-            Class cls2 = Class.forName("android.util.IMonitor$EventStream");
-            Method declaredMethod = cls.getDeclaredMethod("openEventStream", new Class[]{Integer.TYPE});
-            Method declaredMethod2 = cls.getDeclaredMethod("closeEventStream", new Class[]{cls2});
-            Method declaredMethod3 = cls.getDeclaredMethod("sendEvent", new Class[]{cls2});
-            Object invoke = declaredMethod.invoke(cls, new Object[]{Integer.valueOf(i)});
-            if (invoke != null) {
-                for (Entry entry : hashMap.entrySet()) {
-                    short shortValue = ((Short) entry.getKey()).shortValue();
-                    Object value = entry.getValue();
-                    cls2.getDeclaredMethod("setParam", new Class[]{Short.TYPE, value.getClass()}).invoke(invoke, new Object[]{Short.valueOf(shortValue), value});
-                }
-                declaredMethod3.invoke(cls, new Object[]{invoke});
-                declaredMethod2.invoke(cls, new Object[]{invoke});
-                bVar.zq(1);
-                new com.huawei.android.pushagent.utils.f.a(context, "PushMonitor").ee(String.valueOf(i), bVar.zt());
+            b wa = b.wa(bArr2);
+            if (bArr3 == null) {
+                return wa.wb(bArr);
             }
-        } catch (ClassNotFoundException e) {
-            c.eq("PushLog3413", " ClassNotFoundException startMonitor " + e.toString());
-        } catch (NoSuchMethodException e2) {
-            c.eq("PushLog3413", " NoSuchMethodException startMonitor " + e2.toString());
-        } catch (IllegalArgumentException e3) {
-            c.eq("PushLog3413", " IllegalArgumentException startMonitor " + e3.toString());
-        } catch (IllegalAccessException e4) {
-            c.eq("PushLog3413", " IllegalAccessException startMonitor " + e4.toString());
-        } catch (Exception e5) {
-            c.eq("PushLog3413", " Exception startMonitor " + e5.toString());
+            return wa.wc(bArr, bArr3);
+        } catch (InvalidKeyException e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "InvalidKeyException:" + e.getMessage(), e);
+            return null;
+        } catch (BadPaddingException e2) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "aesEncrypter get BadPaddingException:" + e2.getMessage(), e2);
+            return null;
+        } catch (IllegalBlockSizeException e3) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "IllegalBlockSizeException:" + e3.getMessage(), e3);
+            return null;
+        } catch (NoSuchAlgorithmException e4) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "NoSuchAlgorithmException:" + e4.getMessage(), e4);
+            return null;
+        } catch (NoSuchPaddingException e5) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "NoSuchPaddingException:" + e5.getMessage(), e5);
+            return null;
+        } catch (Exception e6) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "Exception:" + e6.getMessage(), e6);
+            return null;
         }
+    }
+
+    public static byte[] vw(byte[] bArr, byte[] bArr2) {
+        try {
+            return b.wa(bArr2).wd(bArr);
+        } catch (InvalidKeyException e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "InvalidKeyException:" + e.getMessage(), e);
+            return null;
+        } catch (BadPaddingException e2) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "BadPaddingException:" + e2.getMessage(), e2);
+            return null;
+        } catch (IllegalBlockSizeException e3) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "IllegalBlockSizeException:" + e3.getMessage(), e3);
+            return null;
+        } catch (NoSuchAlgorithmException e4) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "NoSuchAlgorithmException:" + e4.getMessage(), e4);
+            return null;
+        } catch (NoSuchPaddingException e5) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "NoSuchPaddingException:" + e5.getMessage(), e5);
+            return null;
+        } catch (Exception e6) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "Exception:" + e6.getMessage(), e6);
+            return null;
+        }
+    }
+
+    public static byte[] vz(byte[] bArr, String str) {
+        byte[] bArr2 = null;
+        try {
+            return g.wx(bArr, str);
+        } catch (Exception e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", "rsa encrypt data error ", e);
+            return bArr2;
+        }
+    }
+
+    public static String vu(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+        return e.wl(str);
+    }
+
+    public static String vt(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+        return e.wm(str);
+    }
+
+    public static String vv(String str, byte[] bArr) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+        return e.wn(str, bArr);
     }
 }

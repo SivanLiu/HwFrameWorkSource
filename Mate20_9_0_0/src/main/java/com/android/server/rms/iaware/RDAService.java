@@ -160,12 +160,15 @@ public class RDAService {
             if (!this.mFakeForegroundList.isEmpty()) {
                 this.mFakeForegroundList.clear();
             }
-            if (processList == null || processList.isEmpty()) {
-                writeLock.unlock();
-            } else {
-                this.mFakeForegroundList.addAll(processList);
+            if (processList != null) {
+                if (!processList.isEmpty()) {
+                    this.mFakeForegroundList.addAll(processList);
+                    writeLock.unlock();
+                    return;
+                }
             }
-        } finally {
+            writeLock.unlock();
+        } catch (Throwable th) {
             writeLock.unlock();
         }
     }

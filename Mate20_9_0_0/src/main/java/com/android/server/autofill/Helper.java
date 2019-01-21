@@ -17,10 +17,10 @@ import java.util.LinkedList;
 
 public final class Helper {
     private static final String TAG = "AutofillHelper";
-    public static boolean sDebug = true;
+    public static boolean sDebug = false;
     public static Boolean sFullScreenMode = null;
     static int sPartitionMaxCount = 10;
-    public static boolean sVerbose = true;
+    public static boolean sVerbose = false;
     public static int sVisibleDatasetsMaxCount = 3;
 
     private interface ViewNodeFilter {

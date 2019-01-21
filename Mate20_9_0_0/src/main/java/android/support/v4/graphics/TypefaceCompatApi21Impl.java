@@ -39,18 +39,18 @@ class TypefaceCompatApi21Impl extends TypefaceCompatBaseImpl {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x005f A:{Splitter: B:6:0x001a, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x005f A:{Splitter:B:6:0x001a, ExcHandler: all (th java.lang.Throwable)} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:41:0x005f, code:
+    /* JADX WARNING: Missing block: B:42:0x005f, code skipped:
             r4 = th;
      */
-    /* JADX WARNING: Missing block: B:42:0x0060, code:
+    /* JADX WARNING: Missing block: B:43:0x0060, code skipped:
             r5 = null;
      */
-    /* JADX WARNING: Missing block: B:46:0x0064, code:
+    /* JADX WARNING: Missing block: B:47:0x0064, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:47:0x0065, code:
+    /* JADX WARNING: Missing block: B:48:0x0065, code skipped:
             r9 = r5;
             r5 = r4;
             r4 = r9;
@@ -69,26 +69,27 @@ class TypefaceCompatApi21Impl extends TypefaceCompatBaseImpl {
             pfd = context.getContentResolver().openFileDescriptor(bestFont.getUri(), "r", cancellationSignal);
             try {
                 File file = getFile(pfd);
-                if (file == null || !file.canRead()) {
-                    fis = new FileInputStream(pfd.getFileDescriptor());
-                    try {
-                        Typeface createFromInputStream = super.createFromInputStream(context, fis);
-                        fis.close();
+                if (file != null) {
+                    if (file.canRead()) {
+                        Typeface createFromFile = Typeface.createFromFile(file);
                         if (pfd != null) {
                             pfd.close();
                         }
-                        return createFromInputStream;
-                    } catch (Throwable th22) {
-                        Throwable th3 = th22;
-                        th22 = th;
-                        th = th3;
+                        return createFromFile;
                     }
-                } else {
-                    Typeface createFromFile = Typeface.createFromFile(file);
+                }
+                fis = new FileInputStream(pfd.getFileDescriptor());
+                try {
+                    Typeface createFromInputStream = super.createFromInputStream(context, fis);
+                    fis.close();
                     if (pfd != null) {
                         pfd.close();
                     }
-                    return createFromFile;
+                    return createFromInputStream;
+                } catch (Throwable th22) {
+                    Throwable th3 = th22;
+                    th22 = th;
+                    th = th3;
                 }
             } catch (Throwable th4) {
             }

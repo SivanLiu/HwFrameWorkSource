@@ -20,6 +20,7 @@ import com.android.server.wifi.util.InformationElementUtil.TrafficIndicationMap;
 import com.android.server.wifi.util.InformationElementUtil.VhtOperation;
 import com.android.server.wifi.util.InformationElementUtil.Vsa;
 import com.android.server.wifi.util.InformationElementUtil.WifiMode;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
@@ -118,8 +119,6 @@ public class NetworkDetail {
         this(bssid, infoElements, anqpLines, freq, null);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x014f A:{Splitter: B:7:0x0078, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x014f A:{Splitter: B:7:0x0078, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
     /* JADX WARNING: Removed duplicated region for block: B:82:0x01f6  */
     /* JADX WARNING: Removed duplicated region for block: B:59:0x01a1  */
     /* JADX WARNING: Removed duplicated region for block: B:86:0x026c  */
@@ -129,68 +128,32 @@ public class NetworkDetail {
     /* JADX WARNING: Removed duplicated region for block: B:92:0x028f  */
     /* JADX WARNING: Removed duplicated region for block: B:101:0x02fc  */
     /* JADX WARNING: Removed duplicated region for block: B:96:0x02b4  */
-    /* JADX WARNING: Removed duplicated region for block: B:22:0x00bd A:{Splitter: B:14:0x009c, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:22:0x00bd A:{Splitter: B:14:0x009c, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
     /* JADX WARNING: Removed duplicated region for block: B:102:0x030c  */
     /* JADX WARNING: Removed duplicated region for block: B:56:0x019b  */
-    /* JADX WARNING: Removed duplicated region for block: B:52:0x016c A:{Splitter: B:3:0x0072, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:52:0x016c A:{Splitter: B:3:0x0072, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
     /* JADX WARNING: Removed duplicated region for block: B:56:0x019b  */
     /* JADX WARNING: Removed duplicated region for block: B:102:0x030c  */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x012a A:{Splitter: B:41:0x0116, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x012a A:{Splitter: B:41:0x0116, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
     /* JADX WARNING: Removed duplicated region for block: B:102:0x030c  */
     /* JADX WARNING: Removed duplicated region for block: B:56:0x019b  */
-    /* JADX WARNING: Removed duplicated region for block: B:38:0x0105 A:{Splitter: B:33:0x00e8, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:38:0x0105 A:{Splitter: B:33:0x00e8, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:29:0x00d7 A:{Splitter: B:25:0x00c9, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:29:0x00d7 A:{Splitter: B:25:0x00c9, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0143 A:{Splitter: B:10:0x0088, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0143 A:{Splitter: B:10:0x0088, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Missing block: B:21:0x00b4, code:
+    /* JADX WARNING: Removed duplicated region for block: B:56:0x019b  */
+    /* JADX WARNING: Removed duplicated region for block: B:102:0x030c  */
+    /* JADX WARNING: Removed duplicated region for block: B:102:0x030c  */
+    /* JADX WARNING: Removed duplicated region for block: B:56:0x019b  */
+    /* JADX WARNING: Removed duplicated region for block: B:56:0x019b  */
+    /* JADX WARNING: Removed duplicated region for block: B:102:0x030c  */
+    /* JADX WARNING: Missing block: B:21:0x00b4, code skipped:
             r25 = r5;
             r26 = r6;
             r6 = r16;
             r4 = r17;
      */
-    /* JADX WARNING: Missing block: B:22:0x00bd, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:23:0x00be, code:
-            r25 = r5;
-            r26 = r6;
-            r6 = r16;
-            r4 = r17;
-     */
-    /* JADX WARNING: Missing block: B:28:0x00d3, code:
+    /* JADX WARNING: Missing block: B:28:0x00d3, code skipped:
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:29:0x00d7, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:30:0x00d8, code:
-            r25 = r5;
+    /* JADX WARNING: Missing block: B:37:0x0100, code skipped:
             r26 = r6;
             r6 = r16;
      */
-    /* JADX WARNING: Missing block: B:31:0x00de, code:
-            r5 = r18;
-     */
-    /* JADX WARNING: Missing block: B:37:0x0100, code:
-            r26 = r6;
-            r6 = r16;
-     */
-    /* JADX WARNING: Missing block: B:38:0x0105, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:39:0x0106, code:
-            r26 = r6;
-            r6 = r16;
-     */
-    /* JADX WARNING: Missing block: B:45:0x012a, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:46:0x012c, code:
+    /* JADX WARNING: Missing block: B:46:0x012c, code skipped:
             r7 = r7 + 1;
             r20 = r2;
             r17 = r4;
@@ -202,64 +165,17 @@ public class NetworkDetail {
             r2 = r40;
             r4 = r43;
      */
-    /* JADX WARNING: Missing block: B:47:0x0143, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:48:0x0144, code:
-            r25 = r5;
-            r26 = r6;
-            r6 = r16;
-            r4 = r17;
-            r5 = r18;
-     */
-    /* JADX WARNING: Missing block: B:49:0x014f, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:50:0x0150, code:
-            r25 = r5;
-            r26 = r6;
-            r6 = r16;
-            r4 = r17;
-            r5 = r18;
-            r2 = r20;
-     */
-    /* JADX WARNING: Missing block: B:52:0x016c, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:53:0x016d, code:
-            r25 = null;
-            r26 = false;
-            r6 = r16;
-            r4 = r17;
-            r5 = r18;
-            r2 = r20;
-            r21 = null;
-     */
-    /* JADX WARNING: Missing block: B:54:0x017b, code:
-            r3 = com.android.server.wifi.hotspot2.Utils.hs2LogTag(getClass());
-            r7 = new java.lang.StringBuilder();
-            r27 = r2;
-            r7.append("Caught ");
-            r7.append(r0);
-            android.util.Log.d(r3, r7.toString());
-     */
-    /* JADX WARNING: Missing block: B:55:0x0199, code:
-            if (r21 == null) goto L_0x030c;
-     */
-    /* JADX WARNING: Missing block: B:56:0x019b, code:
-            r19 = r0;
-     */
-    /* JADX WARNING: Missing block: B:102:0x030c, code:
-            r36 = r4;
-            r30 = r5;
-            r35 = r6;
-            r5 = r27;
-     */
-    /* JADX WARNING: Missing block: B:103:0x031b, code:
-            throw new java.lang.IllegalArgumentException("Malformed IE string (no SSID)", r0);
-     */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public NetworkDetail(String bssid, InformationElement[] infoElements, List<String> list, int freq, String cap) {
+        byte[] ssidOctets;
+        RuntimeException e;
+        String hs2LogTag;
+        StringBuilder stringBuilder;
+        byte[] ssidOctets2;
+        String ssid;
+        SupportedRates supportedRates;
+        boolean isHiddenSsid;
+        SupportedRates supportedRates2;
         ArrayList<Integer> iesFound = infoElements;
         this.mDtimInterval = -1;
         this.mStream1 = 0;
@@ -268,16 +184,13 @@ public class NetworkDetail {
         this.mStream4 = 0;
         this.mTxMcsSet = 0;
         if (iesFound != null) {
-            byte[] ssidOctets;
-            int ssidOctets2;
-            String ssid;
-            boolean isHiddenSsid;
-            SupportedRates supportedRates;
+            int ssidOctets3;
+            String ssid2;
+            boolean isHiddenSsid2;
+            SupportedRates supportedRates3;
             SupportedRates extendedSupportedRates;
             APCapInfo apCapInfo;
             ArrayList<Integer> iesFound2;
-            String ssid2;
-            boolean isHiddenSsid2;
             this.mBSSID = Utils.parseMac(bssid);
             this.mCapabilities = cap;
             String ssid3 = null;
@@ -290,7 +203,7 @@ public class NetworkDetail {
             VhtOperation vhtOperation = new VhtOperation();
             ExtendedCapabilities extendedCapabilities = new ExtendedCapabilities();
             TrafficIndicationMap trafficIndicationMap = new TrafficIndicationMap();
-            SupportedRates supportedRates2 = new SupportedRates();
+            SupportedRates supportedRates4 = new SupportedRates();
             SupportedRates extendedSupportedRates2 = new SupportedRates();
             APCapInfo apCapInfo2 = new APCapInfo();
             RuntimeException exception = null;
@@ -298,65 +211,101 @@ public class NetworkDetail {
             try {
                 int length = iesFound.length;
                 ssidOctets = null;
-                ssidOctets2 = 0;
-                while (ssidOctets2 < length) {
+                ssidOctets3 = 0;
+                while (ssidOctets3 < length) {
                     try {
                         int i = length;
-                        InformationElement ie = iesFound[ssidOctets2];
+                        InformationElement ie = iesFound[ssidOctets3];
                         iesFound = iesFound3;
                         try {
                             iesFound.add(Integer.valueOf(ie.id));
                             switch (ie.id) {
                                 case 0:
-                                    ssid = ssid3;
-                                    isHiddenSsid = isHiddenSsid3;
-                                    supportedRates = supportedRates2;
+                                    ssid2 = ssid3;
+                                    isHiddenSsid2 = isHiddenSsid3;
+                                    supportedRates3 = supportedRates4;
                                     extendedSupportedRates = extendedSupportedRates2;
                                     apCapInfo = apCapInfo2;
                                     ssidOctets = ie.bytes;
                                     break;
                                 case 1:
-                                    ssid = ssid3;
+                                    ssid2 = ssid3;
                                     extendedSupportedRates = extendedSupportedRates2;
                                     apCapInfo = apCapInfo2;
-                                    isHiddenSsid = isHiddenSsid3;
-                                    supportedRates = supportedRates2;
+                                    isHiddenSsid2 = isHiddenSsid3;
+                                    supportedRates3 = supportedRates4;
                                     try {
-                                        supportedRates.from(ie);
+                                        supportedRates3.from(ie);
                                         break;
-                                    } catch (IllegalArgumentException e) {
+                                    } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e2) {
+                                        e = e2;
+                                        hs2LogTag = Utils.hs2LogTag(getClass());
+                                        stringBuilder = new StringBuilder();
+                                        iesFound2 = iesFound;
+                                        stringBuilder.append("Caught ");
+                                        stringBuilder.append(e);
+                                        Log.d(hs2LogTag, stringBuilder.toString());
+                                        if (ssidOctets != null) {
+                                        }
                                     }
+                                    break;
                                 case 5:
-                                    ssid = ssid3;
+                                    ssid2 = ssid3;
                                     extendedSupportedRates = extendedSupportedRates2;
                                     apCapInfo = apCapInfo2;
                                     trafficIndicationMap.from(ie);
                                     break;
                                 case 11:
-                                    ssid = ssid3;
+                                    ssid2 = ssid3;
                                     extendedSupportedRates = extendedSupportedRates2;
                                     apCapInfo = apCapInfo2;
                                     bssLoad.from(ie);
                                     break;
                                 case 45:
                                     extendedSupportedRates = extendedSupportedRates2;
-                                    ssid = ssid3;
+                                    ssid2 = ssid3;
                                     apCapInfo = apCapInfo2;
                                     try {
                                         apCapInfo.from(ie);
                                         break;
-                                    } catch (IllegalArgumentException e2) {
+                                    } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e3) {
+                                        e = e3;
+                                        isHiddenSsid2 = isHiddenSsid3;
+                                        supportedRates3 = supportedRates4;
+                                        hs2LogTag = Utils.hs2LogTag(getClass());
+                                        stringBuilder = new StringBuilder();
+                                        iesFound2 = iesFound;
+                                        stringBuilder.append("Caught ");
+                                        stringBuilder.append(e);
+                                        Log.d(hs2LogTag, stringBuilder.toString());
+                                        if (ssidOctets != null) {
+                                        }
                                     }
+                                    break;
                                 case 50:
                                     extendedSupportedRates = extendedSupportedRates2;
                                     try {
                                         extendedSupportedRates.from(ie);
-                                        ssid = ssid3;
-                                        isHiddenSsid = isHiddenSsid3;
-                                        supportedRates = supportedRates2;
+                                        ssid2 = ssid3;
+                                        isHiddenSsid2 = isHiddenSsid3;
+                                        supportedRates3 = supportedRates4;
                                         break;
-                                    } catch (IllegalArgumentException e3) {
+                                    } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e4) {
+                                        e = e4;
+                                        ssid2 = ssid3;
+                                        isHiddenSsid2 = isHiddenSsid3;
+                                        supportedRates3 = supportedRates4;
+                                        apCapInfo = apCapInfo2;
+                                        hs2LogTag = Utils.hs2LogTag(getClass());
+                                        stringBuilder = new StringBuilder();
+                                        iesFound2 = iesFound;
+                                        stringBuilder.append("Caught ");
+                                        stringBuilder.append(e);
+                                        Log.d(hs2LogTag, stringBuilder.toString());
+                                        if (ssidOctets != null) {
+                                        }
                                     }
+                                    break;
                                 case 61:
                                     htOperation.from(ie);
                                     break;
@@ -376,74 +325,173 @@ public class NetworkDetail {
                                     try {
                                         vsa.from(ie);
                                         break;
-                                    } catch (IllegalArgumentException e4) {
+                                    } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e5) {
+                                        e = e5;
+                                        ssid2 = ssid3;
+                                        isHiddenSsid2 = isHiddenSsid3;
+                                        supportedRates3 = supportedRates4;
+                                        extendedSupportedRates = extendedSupportedRates2;
+                                        apCapInfo = apCapInfo2;
+                                        hs2LogTag = Utils.hs2LogTag(getClass());
+                                        stringBuilder = new StringBuilder();
+                                        iesFound2 = iesFound;
+                                        stringBuilder.append("Caught ");
+                                        stringBuilder.append(e);
+                                        Log.d(hs2LogTag, stringBuilder.toString());
+                                        if (ssidOctets != null) {
+                                            exception = e;
+                                            ssidOctets2 = ssidOctets;
+                                            if (ssidOctets2 == null) {
+                                            }
+                                            this.mStream1 = apCapInfo.getStream1();
+                                            this.mStream2 = apCapInfo.getStream2();
+                                            this.mStream3 = apCapInfo.getStream3();
+                                            this.mStream4 = apCapInfo.getStream4();
+                                            this.mTxMcsSet = apCapInfo.getTxMcsSet();
+                                            this.mSSID = ssid;
+                                            supportedRates = supportedRates3;
+                                            this.mHESSID = interworking.hessid;
+                                            this.mIsHiddenSsid = isHiddenSsid;
+                                            this.mStationCount = bssLoad.stationCount;
+                                            this.mChannelUtilization = bssLoad.channelUtilization;
+                                            this.mCapacity = bssLoad.capacity;
+                                            this.mAnt = interworking.ant;
+                                            this.mInternet = interworking.internet;
+                                            this.mHSRelease = vsa.hsRelease;
+                                            this.mAnqpDomainID = vsa.anqpDomainID;
+                                            this.mAnqpOICount = roamingConsortium.anqpOICount;
+                                            this.mRoamingConsortiums = roamingConsortium.getRoamingConsortiums();
+                                            this.mExtendedCapabilities = extendedCapabilities;
+                                            this.mANQPElements = null;
+                                            this.mPrimaryFreq = freq;
+                                            if (vhtOperation.isValid()) {
+                                            }
+                                            if (trafficIndicationMap.isValid()) {
+                                            }
+                                            ssidOctets3 = 0;
+                                            if (extendedSupportedRates.isValid()) {
+                                            }
+                                            supportedRates2 = supportedRates;
+                                            if (supportedRates2.isValid()) {
+                                            }
+                                        } else {
+                                            APCapInfo aPCapInfo = apCapInfo;
+                                            SupportedRates supportedRates5 = supportedRates3;
+                                            throw new IllegalArgumentException("Malformed IE string (no SSID)", e);
+                                        }
                                     }
+                                    break;
                                 default:
-                                    ssid = ssid3;
-                                    isHiddenSsid = isHiddenSsid3;
-                                    supportedRates = supportedRates2;
+                                    ssid2 = ssid3;
+                                    isHiddenSsid2 = isHiddenSsid3;
+                                    supportedRates3 = supportedRates4;
                                     extendedSupportedRates = extendedSupportedRates2;
                                     apCapInfo = apCapInfo2;
                                     break;
                             }
-                        } catch (IllegalArgumentException e5) {
+                        } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e6) {
+                            e = e6;
+                            ssid2 = ssid3;
+                            isHiddenSsid2 = isHiddenSsid3;
+                            supportedRates3 = supportedRates4;
+                            extendedSupportedRates = extendedSupportedRates2;
+                            apCapInfo = apCapInfo2;
+                            hs2LogTag = Utils.hs2LogTag(getClass());
+                            stringBuilder = new StringBuilder();
+                            iesFound2 = iesFound;
+                            stringBuilder.append("Caught ");
+                            stringBuilder.append(e);
+                            Log.d(hs2LogTag, stringBuilder.toString());
+                            if (ssidOctets != null) {
+                            }
                         }
-                    } catch (IllegalArgumentException e6) {
+                    } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e7) {
+                        e = e7;
+                        ssid2 = ssid3;
+                        isHiddenSsid2 = isHiddenSsid3;
+                        supportedRates3 = supportedRates4;
+                        extendedSupportedRates = extendedSupportedRates2;
+                        apCapInfo = apCapInfo2;
+                        iesFound = iesFound3;
+                        hs2LogTag = Utils.hs2LogTag(getClass());
+                        stringBuilder = new StringBuilder();
+                        iesFound2 = iesFound;
+                        stringBuilder.append("Caught ");
+                        stringBuilder.append(e);
+                        Log.d(hs2LogTag, stringBuilder.toString());
+                        if (ssidOctets != null) {
+                        }
                     }
                 }
-                ssid = ssid3;
-                isHiddenSsid = isHiddenSsid3;
-                supportedRates = supportedRates2;
+                ssid2 = ssid3;
+                isHiddenSsid2 = isHiddenSsid3;
+                supportedRates3 = supportedRates4;
                 extendedSupportedRates = extendedSupportedRates2;
                 apCapInfo = apCapInfo2;
                 iesFound2 = iesFound3;
-            } catch (IllegalArgumentException e7) {
+            } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException | BufferUnderflowException e8) {
+                e = e8;
+                ssid2 = null;
+                isHiddenSsid2 = false;
+                supportedRates3 = supportedRates4;
+                extendedSupportedRates = extendedSupportedRates2;
+                apCapInfo = apCapInfo2;
+                iesFound = iesFound3;
+                ssidOctets = null;
+                hs2LogTag = Utils.hs2LogTag(getClass());
+                stringBuilder = new StringBuilder();
+                iesFound2 = iesFound;
+                stringBuilder.append("Caught ");
+                stringBuilder.append(e);
+                Log.d(hs2LogTag, stringBuilder.toString());
+                if (ssidOctets != null) {
+                }
             }
-            byte[] ssidOctets3 = ssidOctets;
-            if (ssidOctets3 == null) {
+            ssidOctets2 = ssidOctets;
+            if (ssidOctets2 == null) {
                 String str;
                 try {
-                    ssid2 = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(ssidOctets3)).toString();
-                } catch (CharacterCodingException e8) {
-                    ssid2 = null;
+                    ssid = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(ssidOctets2)).toString();
+                } catch (CharacterCodingException e9) {
+                    ssid = null;
                 }
-                if (ssid2 == null) {
+                if (ssid == null) {
                     if (!extendedCapabilities.isStrictUtf8()) {
                     } else if (exception == null) {
-                        str = ssid2;
+                        str = ssid;
                     } else {
                         throw new IllegalArgumentException("Failed to decode SSID in dubious IE string");
                     }
-                    str = new String(ssidOctets3, StandardCharsets.ISO_8859_1);
+                    str = new String(ssidOctets2, StandardCharsets.ISO_8859_1);
                 } else {
-                    str = ssid2;
+                    str = ssid;
                 }
-                boolean length2 = ssidOctets3.length;
+                boolean length2 = ssidOctets2.length;
                 boolean isHiddenSsid4 = true;
                 boolean isHiddenSsid5 = false;
                 while (isHiddenSsid5 < length2) {
-                    if (ssidOctets3[isHiddenSsid5] != (byte) 0) {
-                        isHiddenSsid2 = false;
-                        ssid2 = str;
+                    if (ssidOctets2[isHiddenSsid5] != (byte) 0) {
+                        isHiddenSsid = false;
+                        ssid = str;
                     } else {
                         isHiddenSsid5++;
                     }
                 }
-                ssid2 = str;
-                isHiddenSsid2 = isHiddenSsid4;
+                ssid = str;
+                isHiddenSsid = isHiddenSsid4;
             } else {
-                ssid2 = ssid;
-                isHiddenSsid2 = isHiddenSsid;
+                ssid = ssid2;
+                isHiddenSsid = isHiddenSsid2;
             }
             this.mStream1 = apCapInfo.getStream1();
             this.mStream2 = apCapInfo.getStream2();
             this.mStream3 = apCapInfo.getStream3();
             this.mStream4 = apCapInfo.getStream4();
             this.mTxMcsSet = apCapInfo.getTxMcsSet();
-            this.mSSID = ssid2;
-            SupportedRates supportedRates3 = supportedRates;
+            this.mSSID = ssid;
+            supportedRates = supportedRates3;
             this.mHESSID = interworking.hessid;
-            this.mIsHiddenSsid = isHiddenSsid2;
+            this.mIsHiddenSsid = isHiddenSsid;
             this.mStationCount = bssLoad.stationCount;
             this.mChannelUtilization = bssLoad.channelUtilization;
             this.mCapacity = bssLoad.capacity;
@@ -457,39 +505,39 @@ public class NetworkDetail {
             this.mANQPElements = null;
             this.mPrimaryFreq = freq;
             if (vhtOperation.isValid()) {
-                this.mChannelWidth = htOperation.getChannelWidth();
-                this.mCenterfreq0 = htOperation.getCenterFreq0(this.mPrimaryFreq);
-                this.mCenterfreq1 = 0;
-            } else {
                 this.mChannelWidth = vhtOperation.getChannelWidth();
                 this.mCenterfreq0 = vhtOperation.getCenterFreq0();
                 this.mCenterfreq1 = vhtOperation.getCenterFreq1();
+            } else {
+                this.mChannelWidth = htOperation.getChannelWidth();
+                this.mCenterfreq0 = htOperation.getCenterFreq0(this.mPrimaryFreq);
+                this.mCenterfreq1 = 0;
             }
             if (trafficIndicationMap.isValid()) {
                 this.mDtimInterval = trafficIndicationMap.mDtimPeriod;
             }
-            ssidOctets2 = 0;
+            ssidOctets3 = 0;
             if (extendedSupportedRates.isValid()) {
-                byte[] bArr = ssidOctets3;
+                ssidOctets3 = ((Integer) extendedSupportedRates.mRates.get(extendedSupportedRates.mRates.size() - 1)).intValue();
             } else {
-                ssidOctets2 = ((Integer) extendedSupportedRates.mRates.get(extendedSupportedRates.mRates.size() - 1)).intValue();
+                byte[] bArr = ssidOctets2;
             }
-            SupportedRates supportedRates4 = supportedRates3;
-            ArrayList<Integer> apCapInfo3;
-            if (supportedRates4.isValid()) {
-                boolean z = isHiddenSsid2;
-                SupportedRates supportedRates5 = extendedSupportedRates;
-                apCapInfo3 = iesFound2;
-                this.mWifiMode = 0;
-                this.mMaxRate = 0;
-                SupportedRates supportedRates6 = null;
+            supportedRates2 = supportedRates;
+            ArrayList<Integer> iesFound4;
+            if (supportedRates2.isValid()) {
+                supportedRates3 = ((Integer) supportedRates2.mRates.get(supportedRates2.mRates.size() - 1)).intValue();
+                this.mMaxRate = supportedRates3 > ssidOctets3 ? supportedRates3 : ssidOctets3;
+                iesFound4 = iesFound2;
+                int maxRateA = supportedRates3;
+                this.mWifiMode = WifiMode.determineMode(this.mPrimaryFreq, this.mMaxRate, vhtOperation.isValid(), iesFound4.contains(Integer.valueOf(61)), iesFound4.contains(Integer.valueOf(42)));
                 return;
             }
-            supportedRates = ((Integer) supportedRates4.mRates.get(supportedRates4.mRates.size() - 1)).intValue();
-            this.mMaxRate = supportedRates > ssidOctets2 ? supportedRates : ssidOctets2;
-            apCapInfo3 = iesFound2;
-            int maxRateA = supportedRates;
-            this.mWifiMode = WifiMode.determineMode(this.mPrimaryFreq, this.mMaxRate, vhtOperation.isValid(), apCapInfo3.contains(Integer.valueOf(61)), apCapInfo3.contains(Integer.valueOf(42)));
+            boolean z = isHiddenSsid;
+            SupportedRates supportedRates6 = extendedSupportedRates;
+            iesFound4 = iesFound2;
+            this.mWifiMode = 0;
+            this.mMaxRate = 0;
+            SupportedRates supportedRates7 = null;
             return;
         }
         throw new IllegalArgumentException("Null information elements");

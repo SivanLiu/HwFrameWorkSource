@@ -16,12 +16,12 @@ public class ModCertTemplate extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:13:0x0057 in {4, 6, 9, 11, 12} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -36,17 +36,13 @@ public class ModCertTemplate extends ASN1Object {
         r1 = 3;
         r2 = 4;
         if (r0 == r2) goto L_0x001a;
-    L_0x000b:
         r0 = r6.size();
         if (r0 != r1) goto L_0x0012;
-    L_0x0011:
         goto L_0x001a;
-    L_0x0012:
         r6 = new java.lang.IllegalArgumentException;
         r0 = "incorrect sequence size";
         r6.<init>(r0);
         throw r6;
-    L_0x001a:
         r0 = 0;
         r0 = r6.getObjectAt(r0);
         r0 = org.bouncycastle.asn1.cmc.BodyPartPath.getInstance(r0);
@@ -58,17 +54,14 @@ public class ModCertTemplate extends ASN1Object {
         r3 = r6.size();
         r4 = 2;
         if (r3 != r2) goto L_0x0050;
-    L_0x0037:
         r0 = r6.getObjectAt(r4);
         r0 = org.bouncycastle.asn1.ASN1Boolean.getInstance(r0);
         r0 = r0.isTrue();
         r5.replace = r0;
         r6 = r6.getObjectAt(r1);
-    L_0x0049:
         r6 = org.bouncycastle.asn1.crmf.CertTemplate.getInstance(r6);
         r5.certTemplate = r6;
         return;
-    L_0x0050:
         r5.replace = r0;
         r6 = r6.getObjectAt(r4);
         goto L_0x0049;

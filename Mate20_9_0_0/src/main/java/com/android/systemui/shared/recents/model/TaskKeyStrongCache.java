@@ -37,11 +37,11 @@ public class TaskKeyStrongCache<V> extends TaskKeyCache<V> {
     }
 
     protected V getCacheEntry(int id) {
-        V v;
+        Object obj;
         synchronized (this.mCache) {
-            v = this.mCache.get(Integer.valueOf(id));
+            obj = this.mCache.get(Integer.valueOf(id));
         }
-        return v;
+        return obj;
     }
 
     protected void putCacheEntry(int id, V value) {

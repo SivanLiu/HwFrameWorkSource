@@ -67,18 +67,18 @@ public class VMPCMac implements Mac {
             this.P[i4] = this.P[this.s & 255];
             this.P[this.s & 255] = b2;
         }
-        Object obj = new byte[20];
+        byte[] bArr2 = new byte[20];
         for (int i5 = 0; i5 < 20; i5++) {
             int i6 = i5 & 255;
             this.s = this.P[(this.s + this.P[i6]) & 255];
-            obj[i5] = this.P[(this.P[this.P[this.s & 255] & 255] + 1) & 255];
+            bArr2[i5] = this.P[(this.P[this.P[this.s & 255] & 255] + 1) & 255];
             byte b3 = this.P[i6];
             this.P[i6] = this.P[this.s & 255];
             this.P[this.s & 255] = b3;
         }
-        System.arraycopy(obj, 0, bArr, i, obj.length);
+        System.arraycopy(bArr2, 0, bArr, i, bArr2.length);
         reset();
-        return obj.length;
+        return bArr2.length;
     }
 
     public String getAlgorithmName() {

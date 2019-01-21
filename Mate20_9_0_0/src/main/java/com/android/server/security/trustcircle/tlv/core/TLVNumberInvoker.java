@@ -19,7 +19,7 @@ public abstract class TLVNumberInvoker<T extends Number> extends TLVInvoker<Numb
                 LogHelper.e(ICommand.TAG, "error_tlv in TLVNumberInvoker.byteArray2Type:input byte array is null");
                 return null;
             }
-            T byteArray2Int = ByteUtil.byteArray2Int(raw);
+            Integer byteArray2Int = ByteUtil.byteArray2Int(raw);
             this.mType = byteArray2Int;
             return byteArray2Int;
         }
@@ -39,7 +39,7 @@ public abstract class TLVNumberInvoker<T extends Number> extends TLVInvoker<Numb
                 LogHelper.e(ICommand.TAG, "error_tlv in TLVNumberInvoker.byteArray2Type:input byte array is null");
                 return null;
             }
-            T byteArray2Long = ByteUtil.byteArray2Long(raw);
+            Long byteArray2Long = ByteUtil.byteArray2Long(raw);
             this.mType = byteArray2Long;
             return byteArray2Long;
         }
@@ -59,7 +59,7 @@ public abstract class TLVNumberInvoker<T extends Number> extends TLVInvoker<Numb
                 LogHelper.e(ICommand.TAG, "error_tlv in TLVNumberInvoker.byteArray2Type:input byte array is null");
                 return null;
             }
-            T byteArray2Short = ByteUtil.byteArray2Short(raw);
+            Short byteArray2Short = ByteUtil.byteArray2Short(raw);
             this.mType = byteArray2Short;
             return byteArray2Short;
         }

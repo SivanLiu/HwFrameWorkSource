@@ -375,9 +375,12 @@ public final class MediaProjectionManagerService extends SystemService implement
         public void onRouteSelected(MediaRouter router, int type, RouteInfo info) {
             synchronized (MediaProjectionManagerService.this.mLock) {
                 if ((type & 4) != 0) {
-                    MediaProjectionManagerService.this.mMediaRouteInfo = info;
-                    if (MediaProjectionManagerService.this.mProjectionGrant != null) {
-                        MediaProjectionManagerService.this.mProjectionGrant.stop();
+                    try {
+                        MediaProjectionManagerService.this.mMediaRouteInfo = info;
+                        if (MediaProjectionManagerService.this.mProjectionGrant != null) {
+                            MediaProjectionManagerService.this.mProjectionGrant.stop();
+                        }
+                    } finally {
                     }
                 }
             }

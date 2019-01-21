@@ -7,10 +7,15 @@ import android.app.backup.IFullBackupRestoreObserver;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.util.AndroidException;
+import android.os.RemoteException;
+import android.util.EventLog;
+import android.util.Log;
 import android.util.Slog;
+import com.android.internal.backup.IBackupTransport;
 import com.android.internal.util.Preconditions;
+import com.android.server.EventLogTags;
 import com.android.server.backup.BackupAgentTimeoutParameters;
 import com.android.server.backup.BackupManagerService;
 import com.android.server.backup.BackupRestoreTask;
@@ -19,9 +24,13 @@ import com.android.server.backup.TransportManager;
 import com.android.server.backup.internal.OnTaskFinishedListener;
 import com.android.server.backup.internal.Operation;
 import com.android.server.backup.transport.TransportClient;
+import com.android.server.backup.transport.TransportNotAvailableException;
 import com.android.server.backup.utils.AppBackupUtils;
 import com.android.server.backup.utils.BackupManagerMonitorUtils;
 import com.android.server.backup.utils.BackupObserverUtils;
+import com.android.server.job.JobSchedulerShellCommand;
+import com.android.server.job.controllers.JobStatus;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -252,1202 +261,6 @@ public class PerformFullTransportBackupTask extends FullBackupTask implements Ba
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        */
-    public void run() {
-        /*
-        r47 = this;
-        r10 = r47;
-        r1 = 0;
-        r2 = 0;
-        r3 = 0;
-        r11 = 0;
-        r12 = r11;
-        r14 = 0;
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r0 = r0.isEnabled();	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        if (r0 == 0) goto L_0x068f;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-    L_0x0011:
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r0 = r0.isProvisioned();	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        if (r0 != 0) goto L_0x001d;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-    L_0x0019:
-        r27 = r12;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        goto L_0x0691;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-    L_0x001d:
-        r0 = r10.mTransportClient;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r5 = "PFTBT.run()";	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r0 = r0.connect(r5);	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r15 = r0;
-        r9 = 1;
-        if (r15 != 0) goto L_0x00ad;
-    L_0x0029:
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x00a8 }
-        r5 = "Transport not present; full data backup not performed";	 Catch:{ Exception -> 0x00a8 }
-        android.util.Slog.w(r0, r5);	 Catch:{ Exception -> 0x00a8 }
-        r12 = -1000; // 0xfffffffffffffc18 float:NaN double:NaN;	 Catch:{ Exception -> 0x00a8 }
-        r0 = r10.mMonitor;	 Catch:{ Exception -> 0x00a8 }
-        r5 = 15;	 Catch:{ Exception -> 0x00a8 }
-        r6 = r10.mCurrentPackage;	 Catch:{ Exception -> 0x00a8 }
-        r0 = com.android.server.backup.utils.BackupManagerMonitorUtils.monitorEvent(r0, r5, r6, r9, r14);	 Catch:{ Exception -> 0x00a8 }
-        r10.mMonitor = r0;	 Catch:{ Exception -> 0x00a8 }
-        r0 = r10.mCancelAll;
-        if (r0 == 0) goto L_0x0044;
-    L_0x0042:
-        r12 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;
-    L_0x0044:
-        r5 = r12;
-        r0 = "PFTBT";
-        r6 = new java.lang.StringBuilder;
-        r6.<init>();
-        r7 = "Full backup completed with status: ";
-        r6.append(r7);
-        r6.append(r5);
-        r6 = r6.toString();
-        android.util.Slog.i(r0, r6);
-        r0 = r10.mBackupObserver;
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r0, r5);
-        r10.cleanUpPipes(r2);
-        r10.cleanUpPipes(r1);
-        r47.unregisterTask();
-        r0 = r10.mJob;
-        if (r0 == 0) goto L_0x0072;
-    L_0x006d:
-        r0 = r10.mJob;
-        r0.finishBackupPass();
-    L_0x0072:
-        r0 = r10.backupManagerService;
-        r6 = r0.getQueueLock();
-        monitor-enter(r6);
-        r0 = r10.backupManagerService;
-        r0.setRunningFullBackupTask(r14);
-        monitor-exit(r6);
-        r0 = r10.mListener;
-        r6 = "PFTBT.run()";
-        r0.onFinished(r6);
-        r0 = r10.mLatch;
-        r0.countDown();
-        r0 = r10.mUpdateSchedule;
-        if (r0 == 0) goto L_0x0094;
-    L_0x008f:
-        r0 = r10.backupManagerService;
-        r0.scheduleNextFullBackupJob(r3);
-    L_0x0094:
-        r0 = "PFTBT";
-        r6 = "Full data backup pass finished.";
-        android.util.Slog.i(r0, r6);
-        r0 = r10.backupManagerService;
-        r0 = r0.getWakelock();
-        r0.release();
-        return;
-    L_0x00a5:
-        r0 = move-exception;
-        monitor-exit(r6);
-        throw r0;
-    L_0x00a8:
-        r0 = move-exception;
-        r27 = r12;
-        goto L_0x0757;
-    L_0x00ad:
-        r0 = r10.mPackages;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r0 = r0.size();	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r8 = r0;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r0 = 8192; // 0x2000 float:1.14794E-41 double:4.0474E-320;	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r0 = new byte[r0];	 Catch:{ Exception -> 0x0754, all -> 0x074e }
-        r5 = r0;
-        r0 = r11;
-    L_0x00ba:
-        r6 = r0;
-        if (r6 >= r8) goto L_0x0610;
-    L_0x00bd:
-        r10.mBackupRunner = r14;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = r10.mPackages;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = r0.get(r6);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = (android.content.pm.PackageInfo) r0;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r7 = r0;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = r7.packageName;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r16 = r0;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13.<init>();	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r14 = "Initiating full-data transport backup of ";	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13.append(r14);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r14 = r16;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13.append(r14);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r9 = " token: ";	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13.append(r9);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r9 = r10.mCurrentOpToken;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13.append(r9);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r9 = r13.toString();	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        android.util.Slog.i(r0, r9);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = 2840; // 0xb18 float:3.98E-42 double:1.403E-320;	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        android.util.EventLog.writeEvent(r0, r14);	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r0 = android.os.ParcelFileDescriptor.createPipe();	 Catch:{ Exception -> 0x0609, all -> 0x0601 }
-        r13 = r0;
-        r0 = r10.mUserInitiated;	 Catch:{ Exception -> 0x05fa, all -> 0x05f4 }
-        r9 = r0;	 Catch:{ Exception -> 0x05fa, all -> 0x05f4 }
-        r18 = 9223372036854775807; // 0x7fffffffffffffff float:NaN double:NaN;	 Catch:{ Exception -> 0x05fa, all -> 0x05f4 }
-        r2 = r10.mCancelLock;	 Catch:{ Exception -> 0x05fa, all -> 0x05f4 }
-        monitor-enter(r2);	 Catch:{ Exception -> 0x05fa, all -> 0x05f4 }
-        r0 = r10.mCancelAll;	 Catch:{ all -> 0x05d3 }
-        if (r0 == 0) goto L_0x0122;
-    L_0x0107:
-        monitor-exit(r2);	 Catch:{ all -> 0x010e }
-        r25 = r3;
-        r27 = r12;
-        goto L_0x0615;
-    L_0x010e:
-        r0 = move-exception;
-        r23 = r2;
-        r25 = r3;
-        r41 = r5;
-        r29 = r6;
-        r5 = r7;
-        r20 = r8;
-        r17 = r9;
-        r27 = r12;
-        r12 = r14;
-        r9 = r15;
-        goto L_0x05e5;
-    L_0x0122:
-        r0 = r13[r11];	 Catch:{ all -> 0x05d3 }
-        r0 = r15.performFullBackup(r7, r0, r9);	 Catch:{ all -> 0x05d3 }
-        if (r0 != 0) goto L_0x01f8;
-    L_0x012a:
-        r11 = r7.packageName;	 Catch:{ all -> 0x01e4 }
-        r20 = r3;
-        r3 = 1;
-        r22 = r15.getBackupQuota(r11, r3);	 Catch:{ all -> 0x01d0 }
-        r11 = r6;
-        r4 = r7;
-        r6 = r22;
-        r3 = android.os.ParcelFileDescriptor.createPipe();	 Catch:{ all -> 0x01ba }
-        r16 = r3;
-        r3 = new com.android.server.backup.fullbackup.PerformFullTransportBackupTask$SinglePackageBackupRunner;	 Catch:{ all -> 0x01a4 }
-        r17 = 1;	 Catch:{ all -> 0x01a4 }
-        r18 = r16[r17];	 Catch:{ all -> 0x01a4 }
-        r1 = r10.mTransportClient;	 Catch:{ all -> 0x01a4 }
-        r24 = r8;
-        r8 = r10.mBackupRunnerOpToken;	 Catch:{ all -> 0x018c }
-        r19 = r15.getTransportFlags();	 Catch:{ all -> 0x018c }
-        r22 = r1;
-        r1 = r3;
-        r23 = r2;
-        r2 = r10;
-        r27 = r12;
-        r25 = r20;
-        r12 = r3;
-        r3 = r18;
-        r28 = r4;
-        r29 = r11;
-        r11 = r5;
-        r5 = r22;
-        r20 = r24;
-        r30 = r14;
-        r14 = r17;
-        r17 = r9;
-        r9 = r19;
-        r1.<init>(r2, r3, r4, r5, r6, r8, r9);	 Catch:{ all -> 0x017e }
-        r10.mBackupRunner = r12;	 Catch:{ all -> 0x017e }
-        r1 = r16[r14];	 Catch:{ all -> 0x017e }
-        r1.close();	 Catch:{ all -> 0x017e }
-        r1 = 0;	 Catch:{ all -> 0x017e }
-        r16[r14] = r1;	 Catch:{ all -> 0x017e }
-        r10.mIsDoingBackup = r14;	 Catch:{ all -> 0x017e }
-        r1 = r16;
-        goto L_0x020c;
-    L_0x017e:
-        r0 = move-exception;
-        r18 = r6;
-        r41 = r11;
-        r9 = r15;
-        r1 = r16;
-        r5 = r28;
-        r12 = r30;
-        goto L_0x05e5;
-    L_0x018c:
-        r0 = move-exception;
-        r23 = r2;
-        r17 = r9;
-        r29 = r11;
-        r27 = r12;
-        r25 = r20;
-        r20 = r24;
-        r41 = r5;
-        r18 = r6;
-        r12 = r14;
-        r9 = r15;
-        r1 = r16;
-        r5 = r4;
-        goto L_0x05e5;
-    L_0x01a4:
-        r0 = move-exception;
-        r23 = r2;
-        r17 = r9;
-        r29 = r11;
-        r27 = r12;
-        r25 = r20;
-        r20 = r8;
-        r41 = r5;
-        r18 = r6;
-        r12 = r14;
-        r9 = r15;
-        r1 = r16;
-        goto L_0x01cd;
-    L_0x01ba:
-        r0 = move-exception;
-        r23 = r2;
-        r17 = r9;
-        r29 = r11;
-        r27 = r12;
-        r25 = r20;
-        r20 = r8;
-        r41 = r5;
-        r18 = r6;
-        r12 = r14;
-        r9 = r15;
-    L_0x01cd:
-        r5 = r4;
-        goto L_0x05e5;
-    L_0x01d0:
-        r0 = move-exception;
-        r23 = r2;
-        r29 = r6;
-        r17 = r9;
-        r27 = r12;
-        r25 = r20;
-        r20 = r8;
-        r41 = r5;
-        r5 = r7;
-        r12 = r14;
-        r9 = r15;
-        goto L_0x05e5;
-    L_0x01e4:
-        r0 = move-exception;
-        r23 = r2;
-        r25 = r3;
-        r29 = r6;
-        r20 = r8;
-        r17 = r9;
-        r27 = r12;
-        r41 = r5;
-        r5 = r7;
-        r12 = r14;
-        r9 = r15;
-        goto L_0x05e5;
-    L_0x01f8:
-        r23 = r2;
-        r25 = r3;
-        r11 = r5;
-        r29 = r6;
-        r28 = r7;
-        r20 = r8;
-        r17 = r9;
-        r27 = r12;
-        r30 = r14;
-        r14 = 1;
-        r6 = r18;
-    L_0x020c:
-        monitor-exit(r23);	 Catch:{ all -> 0x05c8 }
-        if (r0 != 0) goto L_0x03c9;
-    L_0x020f:
-        r3 = 0;
-        r4 = r13[r3];	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4.close();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r13[r3] = r4;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3 = new java.lang.Thread;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4 = r10.mBackupRunner;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = "package-backup-bridge";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3.<init>(r4, r5);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3.start();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3 = new java.io.FileInputStream;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = r1[r4];	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4 = r5.getFileDescriptor();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3.<init>(r4);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4 = new java.io.FileOutputStream;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = r13[r14];	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = r5.getFileDescriptor();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4.<init>(r5);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = r10.mBackupRunner;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r18 = r5.getPreflightResultBlocking();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r31 = r18;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r18 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r33 = r15;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r14 = r31;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = (r14 > r18 ? 1 : (r14 == r18 ? 0 : -1));	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        if (r5 >= 0) goto L_0x0277;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x0250:
-        r5 = r10.mMonitor;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = r10.mCurrentPackage;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r12 = "android.app.backup.extra.LOG_PREFLIGHT_ERROR";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r34 = r8;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r9 = com.android.server.backup.utils.BackupManagerMonitorUtils.putMonitoringExtra(r8, r12, r14);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = 16;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r12 = 3;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = com.android.server.backup.utils.BackupManagerMonitorUtils.monitorEvent(r5, r8, r2, r12, r9);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r10.mMonitor = r2;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = (int) r14;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r39 = r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r36 = r3;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r38 = r4;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r41 = r11;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r12 = r30;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r9 = r33;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3 = r34;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        goto L_0x0337;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x0277:
-        r34 = r8;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x027b:
-        r5 = r3.read(r11);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        if (r5 <= 0) goto L_0x02d4;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x0281:
-        r8 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4.write(r11, r8, r5);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = r10.mCancelLock;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        monitor-enter(r8);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = r10.mCancelAll;	 Catch:{ all -> 0x02c9 }
-        if (r0 != 0) goto L_0x029a;
-    L_0x028c:
-        r9 = r33;
-        r0 = r9.sendBackupData(r5);	 Catch:{ all -> 0x0294 }
-        r2 = r0;
-        goto L_0x029c;
-    L_0x0294:
-        r0 = move-exception;
-        r36 = r3;
-        r12 = r30;
-        goto L_0x02d0;
-    L_0x029a:
-        r9 = r33;
-    L_0x029c:
-        monitor-exit(r8);	 Catch:{ all -> 0x02c1 }
-        r37 = r2;
-        r36 = r3;
-        r2 = (long) r5;
-        r2 = r34 + r2;
-        r0 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        if (r0 == 0) goto L_0x02b9;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02a8:
-        r0 = (r14 > r18 ? 1 : (r14 == r18 ? 0 : -1));	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        if (r0 <= 0) goto L_0x02b9;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02ac:
-        r0 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = new android.app.backup.BackupProgress;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.<init>(r14, r2);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r12 = r30;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnUpdate(r0, r12, r8);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        goto L_0x02bb;
-    L_0x02b9:
-        r12 = r30;
-    L_0x02bb:
-        r38 = r4;
-        r3 = r2;
-        r2 = r37;
-        goto L_0x02de;
-    L_0x02c1:
-        r0 = move-exception;
-        r37 = r2;
-        r36 = r3;
-        r12 = r30;
-        goto L_0x02d0;
-    L_0x02c9:
-        r0 = move-exception;
-        r36 = r3;
-        r12 = r30;
-        r9 = r33;
-    L_0x02d0:
-        monitor-exit(r8);	 Catch:{ all -> 0x02d2 }
-        throw r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02d2:
-        r0 = move-exception;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        goto L_0x02d0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02d4:
-        r36 = r3;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r12 = r30;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r9 = r33;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r38 = r4;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3 = r34;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02de:
-        if (r5 <= 0) goto L_0x02ef;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02e0:
-        if (r2 == 0) goto L_0x02e3;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02e2:
-        goto L_0x02ef;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02e3:
-        r34 = r3;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = r5;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r33 = r9;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r30 = r12;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r3 = r36;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r4 = r38;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        goto L_0x027b;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02ef:
-        r0 = -1005; // 0xfffffffffffffc13 float:NaN double:NaN;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        if (r2 != r0) goto L_0x0333;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x02f3:
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.<init>();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r39 = r2;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = "Package hit quota limit in-flight ";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r2);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = ": ";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r2);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r3);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = " of ";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r2);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r6);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = r8.toString();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        android.util.Slog.w(r0, r2);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = r10.mMonitor;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = 18;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = r10.mCurrentPackage;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r40 = r5;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r41 = r11;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = 0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r11 = 1;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = com.android.server.backup.utils.BackupManagerMonitorUtils.monitorEvent(r0, r2, r8, r11, r5);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r10.mMonitor = r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = r10.mBackupRunner;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0.sendQuotaExceeded(r3, r6);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        goto L_0x0337;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x0333:
-        r39 = r2;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r41 = r11;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x0337:
-        r0 = r10.mBackupRunner;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r0 = r0.getBackupResultBlocking();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r2 = r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r5 = r10.mCancelLock;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        monitor-enter(r5);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = 0;
-        r10.mIsDoingBackup = r8;	 Catch:{ all -> 0x03c0 }
-        r0 = r10.mCancelAll;	 Catch:{ all -> 0x03c0 }
-        if (r0 != 0) goto L_0x035d;
-    L_0x0348:
-        if (r2 != 0) goto L_0x035a;
-    L_0x034a:
-        r0 = r9.finishBackup();	 Catch:{ all -> 0x0353 }
-        if (r39 != 0) goto L_0x035d;	 Catch:{ all -> 0x0353 }
-    L_0x0350:
-        r39 = r0;	 Catch:{ all -> 0x0353 }
-    L_0x0352:
-        goto L_0x035d;	 Catch:{ all -> 0x0353 }
-    L_0x0353:
-        r0 = move-exception;	 Catch:{ all -> 0x0353 }
-        r46 = r2;	 Catch:{ all -> 0x0353 }
-        r44 = r3;	 Catch:{ all -> 0x0353 }
-        goto L_0x03c5;	 Catch:{ all -> 0x0353 }
-    L_0x035a:
-        r9.cancelFullBackup();	 Catch:{ all -> 0x0353 }
-    L_0x035d:
-        monitor-exit(r5);	 Catch:{ all -> 0x03c0 }
-        if (r39 != 0) goto L_0x0364;
-    L_0x0360:
-        if (r2 == 0) goto L_0x0364;
-    L_0x0362:
-        r0 = r2;
-        goto L_0x0366;
-    L_0x0364:
-        r0 = r39;
-    L_0x0366:
-        if (r0 == 0) goto L_0x0386;
-    L_0x0368:
-        r5 = "PFTBT";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.<init>();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r11 = "Error ";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r11);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r0);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r11 = " backing up ";	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r11);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        android.util.Slog.e(r5, r8);	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x0386:
-        r18 = r9.requestFullBackupTime();	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-        r42 = r18;
-        r5 = "PFTBT";	 Catch:{ Exception -> 0x03b9, all -> 0x03b3 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x03b9, all -> 0x03b3 }
-        r8.<init>();	 Catch:{ Exception -> 0x03b9, all -> 0x03b3 }
-        r11 = "Transport suggested backoff=";	 Catch:{ Exception -> 0x03b9, all -> 0x03b3 }
-        r8.append(r11);	 Catch:{ Exception -> 0x03b9, all -> 0x03b3 }
-        r46 = r2;
-        r44 = r3;
-        r2 = r42;
-        r8.append(r2);	 Catch:{ Exception -> 0x03af, all -> 0x03ab }
-        r4 = r8.toString();	 Catch:{ Exception -> 0x03af, all -> 0x03ab }
-        android.util.Slog.i(r5, r4);	 Catch:{ Exception -> 0x03af, all -> 0x03ab }
-        r3 = r2;
-        r2 = r0;
-        goto L_0x03d1;
-    L_0x03ab:
-        r0 = move-exception;
-        r3 = r2;
-        goto L_0x07eb;
-    L_0x03af:
-        r0 = move-exception;
-        r3 = r2;
-        goto L_0x05c5;
-    L_0x03b3:
-        r0 = move-exception;
-        r2 = r42;
-        r3 = r2;
-        goto L_0x07eb;
-    L_0x03b9:
-        r0 = move-exception;
-        r2 = r42;
-        r3 = r2;
-        r2 = r13;
-        goto L_0x0757;
-    L_0x03c0:
-        r0 = move-exception;
-        r46 = r2;
-        r44 = r3;
-    L_0x03c5:
-        monitor-exit(r5);	 Catch:{ all -> 0x03c7 }
-        throw r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x03c7:
-        r0 = move-exception;
-        goto L_0x03c5;
-    L_0x03c9:
-        r41 = r11;
-        r9 = r15;
-        r12 = r30;
-        r2 = r0;
-        r3 = r25;
-    L_0x03d1:
-        r0 = r10.mUpdateSchedule;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r0 == 0) goto L_0x03de;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x03d5:
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = java.lang.System.currentTimeMillis();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.enqueueFullBackup(r12, r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x03de:
-        r0 = -1002; // 0xfffffffffffffc16 float:NaN double:NaN;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r2 != r0) goto L_0x0426;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x03e2:
-        r5 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r5, r12, r0);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = "Transport rejected backup of ";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5.append(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5.append(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = ", skipping";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5.append(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5 = r5.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.Slog.i(r0, r5);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = 2841; // 0xb19 float:3.981E-42 double:1.4036E-320;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5 = 2;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5 = new java.lang.Object[r5];	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = 0;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5[r8] = r12;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = "transport rejected";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r11 = 1;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5[r11] = r8;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.EventLog.writeEvent(r0, r5);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.mBackupRunner;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r0 == 0) goto L_0x0422;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0417:
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r5 = r28;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r5.applicationInfo;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.tearDownAgentAndKill(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        goto L_0x056e;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0422:
-        r5 = r28;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        goto L_0x056e;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0426:
-        r5 = r28;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r11 = 1;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = -1005; // 0xfffffffffffffc13 float:NaN double:NaN;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r2 != r0) goto L_0x0456;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x042d:
-        r8 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r8, r12, r0);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = "Transport quota exceeded for package: ";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.Slog.i(r0, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = 2845; // 0xb1d float:3.987E-42 double:1.4056E-320;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.EventLog.writeEvent(r0, r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r5.applicationInfo;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.tearDownAgentAndKill(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        goto L_0x056e;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0456:
-        r0 = -1003; // 0xfffffffffffffc15 float:NaN double:NaN;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r2 != r0) goto L_0x0483;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x045a:
-        r8 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r8, r12, r0);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = "Application failure for package: ";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.Slog.w(r0, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = 2823; // 0xb07 float:3.956E-42 double:1.3947E-320;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.EventLog.writeEvent(r0, r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r5.applicationInfo;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.tearDownAgentAndKill(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        goto L_0x056e;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0483:
-        r0 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r2 != r0) goto L_0x04ba;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0487:
-        r8 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r8, r12, r0);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = "Backup cancelled. package=";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = ", cancelAll=";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = r10.mCancelAll;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.Slog.w(r0, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = 2846; // 0xb1e float:3.988E-42 double:1.406E-320;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.EventLog.writeEvent(r0, r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r5.applicationInfo;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.tearDownAgentAndKill(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        goto L_0x056e;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x04ba:
-        if (r2 == 0) goto L_0x055e;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x04bc:
-        r0 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = -1000; // 0xfffffffffffffc18 float:NaN double:NaN;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r0, r12, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r11 = "Transport failed; aborting backup: ";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r11);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r2);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.Slog.w(r0, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = 2842; // 0xb1a float:3.982E-42 double:1.404E-320;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = 0;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.Object[r8];	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.EventLog.writeEvent(r0, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = -1000; // 0xfffffffffffffc18 float:NaN double:NaN;
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x055a, all -> 0x0555 }
-        r11 = r5.applicationInfo;	 Catch:{ Exception -> 0x055a, all -> 0x0555 }
-        r0.tearDownAgentAndKill(r11);	 Catch:{ Exception -> 0x055a, all -> 0x0555 }
-        r0 = r10.mCancelAll;
-        if (r0 == 0) goto L_0x04f0;
-    L_0x04ee:
-        r8 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;
-    L_0x04f0:
-        r11 = r8;
-        r0 = "PFTBT";
-        r8 = new java.lang.StringBuilder;
-        r8.<init>();
-        r14 = "Full backup completed with status: ";
-        r8.append(r14);
-        r8.append(r11);
-        r8 = r8.toString();
-        android.util.Slog.i(r0, r8);
-        r0 = r10.mBackupObserver;
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r0, r11);
-        r10.cleanUpPipes(r13);
-        r10.cleanUpPipes(r1);
-        r47.unregisterTask();
-        r0 = r10.mJob;
-        if (r0 == 0) goto L_0x051e;
-    L_0x0519:
-        r0 = r10.mJob;
-        r0.finishBackupPass();
-    L_0x051e:
-        r0 = r10.backupManagerService;
-        r14 = r0.getQueueLock();
-        monitor-enter(r14);
-        r0 = r10.backupManagerService;
-        r8 = 0;
-        r0.setRunningFullBackupTask(r8);
-        monitor-exit(r14);
-        r0 = r10.mListener;
-        r8 = "PFTBT.run()";
-        r0.onFinished(r8);
-        r0 = r10.mLatch;
-        r0.countDown();
-        r0 = r10.mUpdateSchedule;
-        if (r0 == 0) goto L_0x0541;
-    L_0x053c:
-        r0 = r10.backupManagerService;
-        r0.scheduleNextFullBackupJob(r3);
-    L_0x0541:
-        r0 = "PFTBT";
-        r8 = "Full data backup pass finished.";
-        android.util.Slog.i(r0, r8);
-        r0 = r10.backupManagerService;
-        r0 = r0.getWakelock();
-        r0.release();
-        return;
-    L_0x0552:
-        r0 = move-exception;
-        monitor-exit(r14);
-        throw r0;
-    L_0x0555:
-        r0 = move-exception;
-        r27 = r8;
-        goto L_0x07eb;
-    L_0x055a:
-        r0 = move-exception;
-        r27 = r8;
-        goto L_0x05c5;
-    L_0x055e:
-        r0 = r10.mBackupObserver;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = 0;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r0, r12, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = 2843; // 0xb1b float:3.984E-42 double:1.4046E-320;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.EventLog.writeEvent(r0, r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.logBackupComplete(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x056e:
-        r10.cleanUpPipes(r13);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r10.cleanUpPipes(r1);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r5.applicationInfo;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        if (r0 == 0) goto L_0x05b2;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-    L_0x0578:
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = "Unbinding agent in ";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        android.util.Slog.i(r0, r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.<init>();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r14 = "unbinding ";	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r14);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8.append(r12);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r8 = r8.toString();	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0.addBackupTrace(r8);	 Catch:{ Exception -> 0x05c4, all -> 0x05c1 }
-        r0 = r10.backupManagerService;	 Catch:{ RemoteException -> 0x05b1 }
-        r0 = r0.getActivityManager();	 Catch:{ RemoteException -> 0x05b1 }
-        r8 = r5.applicationInfo;	 Catch:{ RemoteException -> 0x05b1 }
-        r0.unbindBackupAgent(r8);	 Catch:{ RemoteException -> 0x05b1 }
-        goto L_0x05b2;
-    L_0x05b1:
-        r0 = move-exception;
-    L_0x05b2:
-        r0 = r29 + 1;
-        r15 = r9;
-        r9 = r11;
-        r2 = r13;
-        r8 = r20;
-        r12 = r27;
-        r5 = r41;
-        r11 = 0;
-        r14 = 0;
-        goto L_0x00ba;
-    L_0x05c1:
-        r0 = move-exception;
-        goto L_0x07eb;
-    L_0x05c4:
-        r0 = move-exception;
-    L_0x05c5:
-        r2 = r13;
-        goto L_0x0757;
-    L_0x05c8:
-        r0 = move-exception;
-        r41 = r11;
-        r9 = r15;
-        r5 = r28;
-        r12 = r30;
-        r18 = r6;
-        goto L_0x05e5;
-    L_0x05d3:
-        r0 = move-exception;
-        r23 = r2;
-        r25 = r3;
-        r41 = r5;
-        r29 = r6;
-        r5 = r7;
-        r20 = r8;
-        r17 = r9;
-        r27 = r12;
-        r12 = r14;
-        r9 = r15;
-    L_0x05e5:
-        monitor-exit(r23);	 Catch:{ all -> 0x05f2 }
-        throw r0;	 Catch:{ Exception -> 0x05ec, all -> 0x05e7 }
-    L_0x05e7:
-        r0 = move-exception;
-        r3 = r25;
-        goto L_0x07eb;
-    L_0x05ec:
-        r0 = move-exception;
-        r2 = r13;
-        r3 = r25;
-        goto L_0x0757;
-    L_0x05f2:
-        r0 = move-exception;
-        goto L_0x05e5;
-    L_0x05f4:
-        r0 = move-exception;
-        r25 = r3;
-        r27 = r12;
-        goto L_0x0607;
-    L_0x05fa:
-        r0 = move-exception;
-        r25 = r3;
-        r27 = r12;
-        r2 = r13;
-        goto L_0x060e;
-    L_0x0601:
-        r0 = move-exception;
-        r25 = r3;
-        r27 = r12;
-        r13 = r2;
-    L_0x0607:
-        goto L_0x07eb;
-    L_0x0609:
-        r0 = move-exception;
-        r25 = r3;
-        r27 = r12;
-    L_0x060e:
-        goto L_0x0757;
-    L_0x0610:
-        r25 = r3;
-        r27 = r12;
-        r13 = r2;
-    L_0x0615:
-        r0 = r10.mCancelAll;
-        if (r0 == 0) goto L_0x061c;
-    L_0x0619:
-        r12 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;
-        goto L_0x061e;
-    L_0x061c:
-        r12 = r27;
-    L_0x061e:
-        r0 = "PFTBT";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "Full backup completed with status: ";
-        r2.append(r3);
-        r2.append(r12);
-        r2 = r2.toString();
-        android.util.Slog.i(r0, r2);
-        r0 = r10.mBackupObserver;
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r0, r12);
-        r10.cleanUpPipes(r13);
-        r10.cleanUpPipes(r1);
-        r47.unregisterTask();
-        r0 = r10.mJob;
-        if (r0 == 0) goto L_0x064b;
-    L_0x0646:
-        r0 = r10.mJob;
-        r0.finishBackupPass();
-    L_0x064b:
-        r0 = r10.backupManagerService;
-        r5 = r0.getQueueLock();
-        monitor-enter(r5);
-        r0 = r10.backupManagerService;	 Catch:{ all -> 0x0688 }
-        r2 = 0;	 Catch:{ all -> 0x0688 }
-        r0.setRunningFullBackupTask(r2);	 Catch:{ all -> 0x0688 }
-        monitor-exit(r5);	 Catch:{ all -> 0x0688 }
-        r0 = r10.mListener;
-        r2 = "PFTBT.run()";
-        r0.onFinished(r2);
-        r0 = r10.mLatch;
-        r0.countDown();
-        r0 = r10.mUpdateSchedule;
-        if (r0 == 0) goto L_0x0671;
-    L_0x0669:
-        r0 = r10.backupManagerService;
-        r6 = r25;
-        r0.scheduleNextFullBackupJob(r6);
-        goto L_0x0673;
-    L_0x0671:
-        r6 = r25;
-    L_0x0673:
-        r0 = "PFTBT";
-        r2 = "Full data backup pass finished.";
-        android.util.Slog.i(r0, r2);
-        r0 = r10.backupManagerService;
-        r0 = r0.getWakelock();
-        r0.release();
-        r3 = r6;
-        r5 = r12;
-        goto L_0x07e3;
-    L_0x0688:
-        r0 = move-exception;
-        r6 = r25;
-    L_0x068b:
-        monitor-exit(r5);	 Catch:{ all -> 0x068d }
-        throw r0;
-    L_0x068d:
-        r0 = move-exception;
-        goto L_0x068b;
-    L_0x068f:
-        r27 = r12;
-    L_0x0691:
-        r0 = "PFTBT";	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5 = new java.lang.StringBuilder;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5.<init>();	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = "full backup requested but enabled=";	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5.append(r6);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = r10.backupManagerService;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = r6.isEnabled();	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5.append(r6);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = " provisioned=";	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5.append(r6);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = r10.backupManagerService;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = r6.isProvisioned();	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5.append(r6);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = "; ignoring";	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5.append(r6);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r5 = r5.toString();	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        android.util.Slog.i(r0, r5);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r0 = r10.backupManagerService;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r0 = r0.isProvisioned();	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        if (r0 == 0) goto L_0x06cb;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-    L_0x06c8:
-        r0 = 13;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        goto L_0x06cd;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-    L_0x06cb:
-        r0 = 14;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-    L_0x06cd:
-        r5 = r0;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r0 = r10.mMonitor;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = 0;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r7 = 3;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r0 = com.android.server.backup.utils.BackupManagerMonitorUtils.monitorEvent(r0, r5, r6, r7, r6);	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r10.mMonitor = r0;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r6 = 0;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r10.mUpdateSchedule = r6;	 Catch:{ Exception -> 0x074c, all -> 0x0748 }
-        r0 = -2001; // 0xfffffffffffff82f float:NaN double:NaN;
-        r6 = r10.mCancelAll;
-        if (r6 == 0) goto L_0x06e3;
-    L_0x06e1:
-        r0 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;
-    L_0x06e3:
-        r6 = r0;
-        r0 = "PFTBT";
-        r7 = new java.lang.StringBuilder;
-        r7.<init>();
-        r8 = "Full backup completed with status: ";
-        r7.append(r8);
-        r7.append(r6);
-        r7 = r7.toString();
-        android.util.Slog.i(r0, r7);
-        r0 = r10.mBackupObserver;
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r0, r6);
-        r10.cleanUpPipes(r2);
-        r10.cleanUpPipes(r1);
-        r47.unregisterTask();
-        r0 = r10.mJob;
-        if (r0 == 0) goto L_0x0711;
-    L_0x070c:
-        r0 = r10.mJob;
-        r0.finishBackupPass();
-    L_0x0711:
-        r0 = r10.backupManagerService;
-        r7 = r0.getQueueLock();
-        monitor-enter(r7);
-        r0 = r10.backupManagerService;
-        r8 = 0;
-        r0.setRunningFullBackupTask(r8);
-        monitor-exit(r7);
-        r0 = r10.mListener;
-        r7 = "PFTBT.run()";
-        r0.onFinished(r7);
-        r0 = r10.mLatch;
-        r0.countDown();
-        r0 = r10.mUpdateSchedule;
-        if (r0 == 0) goto L_0x0734;
-    L_0x072f:
-        r0 = r10.backupManagerService;
-        r0.scheduleNextFullBackupJob(r3);
-    L_0x0734:
-        r0 = "PFTBT";
-        r7 = "Full data backup pass finished.";
-        android.util.Slog.i(r0, r7);
-        r0 = r10.backupManagerService;
-        r0 = r0.getWakelock();
-        r0.release();
-        return;
-    L_0x0745:
-        r0 = move-exception;
-        monitor-exit(r7);
-        throw r0;
-    L_0x0748:
-        r0 = move-exception;
-        r13 = r2;
-        goto L_0x07eb;
-    L_0x074c:
-        r0 = move-exception;
-        goto L_0x0757;
-    L_0x074e:
-        r0 = move-exception;
-        r27 = r12;
-        r13 = r2;
-        goto L_0x07eb;
-    L_0x0754:
-        r0 = move-exception;
-        r27 = r12;
-    L_0x0757:
-        r12 = -1000; // 0xfffffffffffffc18 float:NaN double:NaN;
-        r5 = "PFTBT";	 Catch:{ all -> 0x07e7 }
-        r6 = "Exception trying full transport backup";	 Catch:{ all -> 0x07e7 }
-        android.util.Slog.w(r5, r6, r0);	 Catch:{ all -> 0x07e7 }
-        r5 = r10.mMonitor;	 Catch:{ all -> 0x07e7 }
-        r6 = 19;	 Catch:{ all -> 0x07e7 }
-        r7 = r10.mCurrentPackage;	 Catch:{ all -> 0x07e7 }
-        r8 = "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP";	 Catch:{ all -> 0x07e7 }
-        r9 = android.util.Log.getStackTraceString(r0);	 Catch:{ all -> 0x07e7 }
-        r11 = 0;	 Catch:{ all -> 0x07e7 }
-        r8 = com.android.server.backup.utils.BackupManagerMonitorUtils.putMonitoringExtra(r11, r8, r9);	 Catch:{ all -> 0x07e7 }
-        r9 = 3;	 Catch:{ all -> 0x07e7 }
-        r5 = com.android.server.backup.utils.BackupManagerMonitorUtils.monitorEvent(r5, r6, r7, r9, r8);	 Catch:{ all -> 0x07e7 }
-        r10.mMonitor = r5;	 Catch:{ all -> 0x07e7 }
-        r0 = r10.mCancelAll;
-        if (r0 == 0) goto L_0x0780;
-    L_0x077c:
-        r0 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;
-        r5 = r0;
-        goto L_0x0781;
-    L_0x0780:
-        r5 = r12;
-    L_0x0781:
-        r0 = "PFTBT";
-        r6 = new java.lang.StringBuilder;
-        r6.<init>();
-        r7 = "Full backup completed with status: ";
-        r6.append(r7);
-        r6.append(r5);
-        r6 = r6.toString();
-        android.util.Slog.i(r0, r6);
-        r0 = r10.mBackupObserver;
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r0, r5);
-        r10.cleanUpPipes(r2);
-        r10.cleanUpPipes(r1);
-        r47.unregisterTask();
-        r0 = r10.mJob;
-        if (r0 == 0) goto L_0x07ae;
-    L_0x07a9:
-        r0 = r10.mJob;
-        r0.finishBackupPass();
-    L_0x07ae:
-        r0 = r10.backupManagerService;
-        r6 = r0.getQueueLock();
-        monitor-enter(r6);
-        r0 = r10.backupManagerService;
-        r7 = 0;
-        r0.setRunningFullBackupTask(r7);
-        monitor-exit(r6);
-        r0 = r10.mListener;
-        r6 = "PFTBT.run()";
-        r0.onFinished(r6);
-        r0 = r10.mLatch;
-        r0.countDown();
-        r0 = r10.mUpdateSchedule;
-        if (r0 == 0) goto L_0x07d1;
-    L_0x07cc:
-        r0 = r10.backupManagerService;
-        r0.scheduleNextFullBackupJob(r3);
-    L_0x07d1:
-        r0 = "PFTBT";
-        r6 = "Full data backup pass finished.";
-        android.util.Slog.i(r0, r6);
-        r0 = r10.backupManagerService;
-        r0 = r0.getWakelock();
-        r0.release();
-        r13 = r2;
-    L_0x07e3:
-        return;
-    L_0x07e4:
-        r0 = move-exception;
-        monitor-exit(r6);
-        throw r0;
-    L_0x07e7:
-        r0 = move-exception;
-        r13 = r2;
-        r27 = r12;
-    L_0x07eb:
-        r2 = r10.mCancelAll;
-        if (r2 == 0) goto L_0x07f1;
-    L_0x07ef:
-        r27 = -2003; // 0xfffffffffffff82d float:NaN double:NaN;
-    L_0x07f1:
-        r2 = r27;
-        r5 = "PFTBT";
-        r6 = new java.lang.StringBuilder;
-        r6.<init>();
-        r7 = "Full backup completed with status: ";
-        r6.append(r7);
-        r6.append(r2);
-        r6 = r6.toString();
-        android.util.Slog.i(r5, r6);
-        r5 = r10.mBackupObserver;
-        com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r5, r2);
-        r10.cleanUpPipes(r13);
-        r10.cleanUpPipes(r1);
-        r47.unregisterTask();
-        r5 = r10.mJob;
-        if (r5 == 0) goto L_0x0820;
-    L_0x081b:
-        r5 = r10.mJob;
-        r5.finishBackupPass();
-    L_0x0820:
-        r5 = r10.backupManagerService;
-        r5 = r5.getQueueLock();
-        monitor-enter(r5);
-        r6 = r10.backupManagerService;
-        r7 = 0;
-        r6.setRunningFullBackupTask(r7);
-        monitor-exit(r5);
-        r5 = r10.mListener;
-        r6 = "PFTBT.run()";
-        r5.onFinished(r6);
-        r5 = r10.mLatch;
-        r5.countDown();
-        r5 = r10.mUpdateSchedule;
-        if (r5 == 0) goto L_0x0843;
-    L_0x083e:
-        r5 = r10.backupManagerService;
-        r5.scheduleNextFullBackupJob(r3);
-    L_0x0843:
-        r5 = "PFTBT";
-        r6 = "Full data backup pass finished.";
-        android.util.Slog.i(r5, r6);
-        r5 = r10.backupManagerService;
-        r5 = r5.getWakelock();
-        r5.release();
-        throw r0;
-    L_0x0854:
-        r0 = move-exception;
-        monitor-exit(r5);
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.backup.fullbackup.PerformFullTransportBackupTask.run():void");
-    }
-
     public static PerformFullTransportBackupTask newWithCurrentTransport(BackupManagerService backupManagerService, IFullBackupRestoreObserver observer, String[] whichPackages, boolean updateSchedule, FullBackupJob runningJob, CountDownLatch latch, IBackupObserver backupObserver, IBackupManagerMonitor monitor, boolean userInitiated, String caller) {
         TransportManager transportManager = backupManagerService.getTransportManager();
         TransportClient transportClient = transportManager.getCurrentTransportClient(caller);
@@ -1532,25 +345,19 @@ public class PerformFullTransportBackupTask extends FullBackupTask implements Ba
     public void execute() {
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x0036 A:{Splitter: B:14:0x002a, ExcHandler: android.os.RemoteException (r1_9 'e' android.util.AndroidException)} */
-    /* JADX WARNING: Missing block: B:16:0x0036, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:18:?, code:
-            r2 = TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("Error calling cancelFullBackup() on transport: ");
-            r3.append(r1);
-            android.util.Slog.w(r2, r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:20:0x004e, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void handleCancel(boolean cancelAll) {
         synchronized (this.mCancelLock) {
             if (!cancelAll) {
-                Slog.wtf(TAG, "Expected cancelAll to be true.");
+                try {
+                    Slog.wtf(TAG, "Expected cancelAll to be true.");
+                } catch (RemoteException | TransportNotAvailableException e) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Error calling cancelFullBackup() on transport: ");
+                    stringBuilder.append(e);
+                    Slog.w(str, stringBuilder.toString());
+                } catch (Throwable th) {
+                }
             }
             if (this.mCancelAll) {
                 Slog.d(TAG, "Ignoring duplicate cancel call.");
@@ -1559,15 +366,1281 @@ public class PerformFullTransportBackupTask extends FullBackupTask implements Ba
             this.mCancelAll = true;
             if (this.mIsDoingBackup) {
                 this.backupManagerService.handleCancel(this.mBackupRunnerOpToken, cancelAll);
-                try {
-                    this.mTransportClient.getConnectedTransport("PFTBT.handleCancel()").cancelFullBackup();
-                } catch (AndroidException e) {
-                }
+                this.mTransportClient.getConnectedTransport("PFTBT.handleCancel()").cancelFullBackup();
             }
         }
     }
 
     public void operationComplete(long result) {
+    }
+
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Removed duplicated region for block: B:335:0x077c  */
+    /* JADX WARNING: Removed duplicated region for block: B:336:0x0780  */
+    /* JADX WARNING: Removed duplicated region for block: B:339:0x07a9  */
+    /* JADX WARNING: Removed duplicated region for block: B:342:0x07b5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:347:0x07cc  */
+    /* JADX WARNING: Removed duplicated region for block: B:358:0x07ef  */
+    /* JADX WARNING: Removed duplicated region for block: B:361:0x081b  */
+    /* JADX WARNING: Removed duplicated region for block: B:364:0x0827 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:369:0x083e  */
+    /* JADX WARNING: Missing block: B:113:0x029d, code skipped:
+            r37 = r2;
+            r36 = r3;
+            r2 = r34 + ((long) r5);
+     */
+    /* JADX WARNING: Missing block: B:116:0x02a6, code skipped:
+            if (r10.mBackupObserver == null) goto L_0x02b9;
+     */
+    /* JADX WARNING: Missing block: B:118:0x02aa, code skipped:
+            if (r14 <= 0) goto L_0x02b9;
+     */
+    /* JADX WARNING: Missing block: B:119:0x02ac, code skipped:
+            r12 = r30;
+            com.android.server.backup.utils.BackupObserverUtils.sendBackupOnUpdate(r10.mBackupObserver, r12, new android.app.backup.BackupProgress(r14, r2));
+     */
+    /* JADX WARNING: Missing block: B:120:0x02b9, code skipped:
+            r12 = r30;
+     */
+    /* JADX WARNING: Missing block: B:121:0x02bb, code skipped:
+            r38 = r4;
+            r3 = r2;
+            r2 = r37;
+     */
+    /* JADX WARNING: Missing block: B:158:0x035e, code skipped:
+            if (r39 != 0) goto L_0x0364;
+     */
+    /* JADX WARNING: Missing block: B:159:0x0360, code skipped:
+            if (r2 == 0) goto L_0x0364;
+     */
+    /* JADX WARNING: Missing block: B:160:0x0362, code skipped:
+            r0 = r2;
+     */
+    /* JADX WARNING: Missing block: B:161:0x0364, code skipped:
+            r0 = r39;
+     */
+    /* JADX WARNING: Missing block: B:162:0x0366, code skipped:
+            if (r0 == 0) goto L_0x0386;
+     */
+    /* JADX WARNING: Missing block: B:164:?, code skipped:
+            r5 = TAG;
+            r8 = new java.lang.StringBuilder();
+            r8.append("Error ");
+            r8.append(r0);
+            r8.append(" backing up ");
+            r8.append(r12);
+            android.util.Slog.e(r5, r8.toString());
+     */
+    /* JADX WARNING: Missing block: B:166:0x038a, code skipped:
+            r42 = r9.requestFullBackupTime();
+     */
+    /* JADX WARNING: Missing block: B:168:?, code skipped:
+            r5 = TAG;
+            r8 = new java.lang.StringBuilder();
+            r8.append("Transport suggested backoff=");
+     */
+    /* JADX WARNING: Missing block: B:169:0x0398, code skipped:
+            r46 = r2;
+            r44 = r3;
+            r2 = r42;
+     */
+    /* JADX WARNING: Missing block: B:171:?, code skipped:
+            r8.append(r2);
+            android.util.Slog.i(r5, r8.toString());
+     */
+    /* JADX WARNING: Missing block: B:172:0x03a8, code skipped:
+            r3 = r2;
+            r2 = r0;
+     */
+    /* JADX WARNING: Missing block: B:173:0x03ab, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:174:0x03ac, code skipped:
+            r3 = r2;
+     */
+    /* JADX WARNING: Missing block: B:175:0x03af, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:176:0x03b0, code skipped:
+            r3 = r2;
+     */
+    /* JADX WARNING: Missing block: B:177:0x03b3, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:178:0x03b4, code skipped:
+            r3 = r42;
+     */
+    /* JADX WARNING: Missing block: B:179:0x03b9, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:180:0x03ba, code skipped:
+            r3 = r42;
+            r2 = r13;
+     */
+    /* JADX WARNING: Missing block: B:210:0x04bc, code skipped:
+            com.android.server.backup.utils.BackupObserverUtils.sendBackupOnPackageResult(r10.mBackupObserver, r12, com.android.server.job.JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE);
+            r0 = TAG;
+            r8 = new java.lang.StringBuilder();
+            r8.append("Transport failed; aborting backup: ");
+            r8.append(r2);
+            android.util.Slog.w(r0, r8.toString());
+            android.util.EventLog.writeEvent(com.android.server.EventLogTags.FULL_BACKUP_TRANSPORT_FAILURE, new java.lang.Object[0]);
+     */
+    /* JADX WARNING: Missing block: B:211:0x04e1, code skipped:
+            r8 = com.android.server.job.JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+     */
+    /* JADX WARNING: Missing block: B:213:?, code skipped:
+            r10.backupManagerService.tearDownAgentAndKill(r5.applicationInfo);
+     */
+    /* JADX WARNING: Missing block: B:215:0x04ec, code skipped:
+            if (r10.mCancelAll == false) goto L_0x04f0;
+     */
+    /* JADX WARNING: Missing block: B:216:0x04ee, code skipped:
+            r8 = -2003;
+     */
+    /* JADX WARNING: Missing block: B:217:0x04f0, code skipped:
+            r11 = r8;
+            r0 = TAG;
+            r8 = new java.lang.StringBuilder();
+            r8.append("Full backup completed with status: ");
+            r8.append(r11);
+            android.util.Slog.i(r0, r8.toString());
+            com.android.server.backup.utils.BackupObserverUtils.sendBackupFinished(r10.mBackupObserver, r11);
+            cleanUpPipes(r13);
+            cleanUpPipes(r1);
+            unregisterTask();
+     */
+    /* JADX WARNING: Missing block: B:218:0x0517, code skipped:
+            if (r10.mJob == null) goto L_0x051e;
+     */
+    /* JADX WARNING: Missing block: B:219:0x0519, code skipped:
+            r10.mJob.finishBackupPass();
+     */
+    /* JADX WARNING: Missing block: B:220:0x051e, code skipped:
+            r14 = r10.backupManagerService.getQueueLock();
+     */
+    /* JADX WARNING: Missing block: B:221:0x0524, code skipped:
+            monitor-enter(r14);
+     */
+    /* JADX WARNING: Missing block: B:223:?, code skipped:
+            r10.backupManagerService.setRunningFullBackupTask(null);
+     */
+    /* JADX WARNING: Missing block: B:224:0x052b, code skipped:
+            monitor-exit(r14);
+     */
+    /* JADX WARNING: Missing block: B:225:0x052c, code skipped:
+            r10.mListener.onFinished("PFTBT.run()");
+            r10.mLatch.countDown();
+     */
+    /* JADX WARNING: Missing block: B:226:0x053a, code skipped:
+            if (r10.mUpdateSchedule == false) goto L_0x0541;
+     */
+    /* JADX WARNING: Missing block: B:227:0x053c, code skipped:
+            r10.backupManagerService.scheduleNextFullBackupJob(r3);
+     */
+    /* JADX WARNING: Missing block: B:228:0x0541, code skipped:
+            android.util.Slog.i(TAG, "Full data backup pass finished.");
+            r10.backupManagerService.getWakelock().release();
+     */
+    /* JADX WARNING: Missing block: B:229:0x0551, code skipped:
+            return;
+     */
+    /* JADX WARNING: Missing block: B:234:0x0555, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:235:0x0556, code skipped:
+            r27 = com.android.server.job.JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+     */
+    /* JADX WARNING: Missing block: B:236:0x055a, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:237:0x055b, code skipped:
+            r27 = com.android.server.job.JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public void run() {
+        int backupRunStatus;
+        Exception e;
+        ParcelFileDescriptor[] parcelFileDescriptorArr;
+        Throwable th;
+        int backupRunStatus2;
+        String str;
+        long backoff;
+        Object obj;
+        Object obj2;
+        boolean z;
+        int flags;
+        long backoff2;
+        byte[] buffer;
+        PackageInfo currentPackage;
+        int i;
+        ParcelFileDescriptor[] enginePipes;
+        byte[] bArr;
+        long j;
+        PackageInfo currentPackage2;
+        String packageName;
+        int i2;
+        long j2;
+        ParcelFileDescriptor[] enginePipes2 = null;
+        ParcelFileDescriptor[] transportPipes = null;
+        long backoff3 = 0;
+        int buffer2 = 0;
+        int backupRunStatus3 = 0;
+        SinglePackageBackupRunner packageName2 = null;
+        int backupRunStatus4;
+        String str2;
+        StringBuilder stringBuilder;
+        try {
+            int i3;
+            StringBuilder stringBuilder2;
+            if (!this.backupManagerService.isEnabled()) {
+                backupRunStatus = backupRunStatus3;
+            } else if (this.backupManagerService.isProvisioned()) {
+                IBackupTransport transport = this.mTransportClient.connect("PFTBT.run()");
+                if (transport == null) {
+                    try {
+                        Slog.w(TAG, "Transport not present; full data backup not performed");
+                        backupRunStatus3 = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                        this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 15, this.mCurrentPackage, 1, null);
+                        if (this.mCancelAll) {
+                            backupRunStatus3 = -2003;
+                        }
+                        backupRunStatus4 = backupRunStatus3;
+                        str2 = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Full backup completed with status: ");
+                        stringBuilder.append(backupRunStatus4);
+                        Slog.i(str2, stringBuilder.toString());
+                        BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+                        cleanUpPipes(null);
+                        cleanUpPipes(null);
+                        unregisterTask();
+                        if (this.mJob != null) {
+                            this.mJob.finishBackupPass();
+                        }
+                        synchronized (this.backupManagerService.getQueueLock()) {
+                            this.backupManagerService.setRunningFullBackupTask(null);
+                        }
+                        this.mListener.onFinished("PFTBT.run()");
+                        this.mLatch.countDown();
+                        if (this.mUpdateSchedule) {
+                            this.backupManagerService.scheduleNextFullBackupJob(0);
+                        }
+                        Slog.i(TAG, "Full data backup pass finished.");
+                        this.backupManagerService.getWakelock().release();
+                        return;
+                    } catch (Exception e2) {
+                        e = e2;
+                        backupRunStatus = backupRunStatus3;
+                        try {
+                            Slog.w(TAG, "Exception trying full transport backup", e);
+                            this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 19, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP", Log.getStackTraceString(e)));
+                            if (this.mCancelAll) {
+                            }
+                            str2 = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Full backup completed with status: ");
+                            stringBuilder.append(backupRunStatus4);
+                            Slog.i(str2, stringBuilder.toString());
+                            BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+                            cleanUpPipes(transportPipes);
+                            cleanUpPipes(enginePipes2);
+                            unregisterTask();
+                            if (this.mJob != null) {
+                            }
+                            synchronized (this.backupManagerService.getQueueLock()) {
+                            }
+                            this.mListener.onFinished("PFTBT.run()");
+                            this.mLatch.countDown();
+                            if (this.mUpdateSchedule) {
+                            }
+                            Slog.i(TAG, "Full data backup pass finished.");
+                            this.backupManagerService.getWakelock().release();
+                            parcelFileDescriptorArr = transportPipes;
+                        } catch (Throwable th2) {
+                            th = th2;
+                            parcelFileDescriptorArr = transportPipes;
+                            backupRunStatus = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                            if (this.mCancelAll) {
+                                backupRunStatus = -2003;
+                            }
+                            backupRunStatus2 = backupRunStatus;
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Full backup completed with status: ");
+                            stringBuilder.append(backupRunStatus2);
+                            Slog.i(str, stringBuilder.toString());
+                            BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+                            cleanUpPipes(parcelFileDescriptorArr);
+                            cleanUpPipes(enginePipes2);
+                            unregisterTask();
+                            if (this.mJob != null) {
+                                this.mJob.finishBackupPass();
+                            }
+                            synchronized (this.backupManagerService.getQueueLock()) {
+                                this.backupManagerService.setRunningFullBackupTask(null);
+                            }
+                            this.mListener.onFinished("PFTBT.run()");
+                            this.mLatch.countDown();
+                            if (this.mUpdateSchedule) {
+                                this.backupManagerService.scheduleNextFullBackupJob(backoff3);
+                            }
+                            Slog.i(TAG, "Full data backup pass finished.");
+                            this.backupManagerService.getWakelock().release();
+                            throw th;
+                        }
+                    }
+                }
+                long backoff4;
+                BackupManagerService backupManagerService;
+                int N = this.mPackages.size();
+                byte[] buffer3 = new byte[8192];
+                i3 = 0;
+                while (true) {
+                    backoff4 = i3;
+                    if (backoff4 >= N) {
+                        backoff = backoff3;
+                        backupRunStatus = backupRunStatus3;
+                        parcelFileDescriptorArr = transportPipes;
+                        break;
+                    }
+                    PackageInfo currentPackage3;
+                    String packageName3;
+                    try {
+                        this.mBackupRunner = packageName2;
+                        currentPackage3 = (PackageInfo) this.mPackages.get(backoff4);
+                        String packageName4 = currentPackage3.packageName;
+                        str2 = TAG;
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append("Initiating full-data transport backup of ");
+                        packageName3 = packageName4;
+                        stringBuilder3.append(packageName3);
+                        stringBuilder3.append(" token: ");
+                        stringBuilder3.append(this.mCurrentOpToken);
+                        Slog.i(str2, stringBuilder3.toString());
+                        EventLog.writeEvent(EventLogTags.FULL_BACKUP_PACKAGE, packageName3);
+                        parcelFileDescriptorArr = ParcelFileDescriptor.createPipe();
+                    } catch (Exception e3) {
+                        e = e3;
+                        backoff = backoff3;
+                        backupRunStatus = backupRunStatus3;
+                        Slog.w(TAG, "Exception trying full transport backup", e);
+                        this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 19, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP", Log.getStackTraceString(e)));
+                        backupRunStatus4 = this.mCancelAll ? -2003 : JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                        str2 = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Full backup completed with status: ");
+                        stringBuilder.append(backupRunStatus4);
+                        Slog.i(str2, stringBuilder.toString());
+                        BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+                        cleanUpPipes(transportPipes);
+                        cleanUpPipes(enginePipes2);
+                        unregisterTask();
+                        if (this.mJob != null) {
+                            this.mJob.finishBackupPass();
+                        }
+                        synchronized (this.backupManagerService.getQueueLock()) {
+                            this.backupManagerService.setRunningFullBackupTask(null);
+                        }
+                        this.mListener.onFinished("PFTBT.run()");
+                        this.mLatch.countDown();
+                        if (this.mUpdateSchedule) {
+                            this.backupManagerService.scheduleNextFullBackupJob(backoff3);
+                        }
+                        Slog.i(TAG, "Full data backup pass finished.");
+                        this.backupManagerService.getWakelock().release();
+                        parcelFileDescriptorArr = transportPipes;
+                    } catch (Throwable th3) {
+                        th = th3;
+                        backoff = backoff3;
+                        backupRunStatus = backupRunStatus3;
+                        parcelFileDescriptorArr = transportPipes;
+                        if (this.mCancelAll) {
+                        }
+                        backupRunStatus2 = backupRunStatus;
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Full backup completed with status: ");
+                        stringBuilder.append(backupRunStatus2);
+                        Slog.i(str, stringBuilder.toString());
+                        BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+                        cleanUpPipes(parcelFileDescriptorArr);
+                        cleanUpPipes(enginePipes2);
+                        unregisterTask();
+                        if (this.mJob != null) {
+                        }
+                        synchronized (this.backupManagerService.getQueueLock()) {
+                        }
+                        this.mListener.onFinished("PFTBT.run()");
+                        this.mLatch.countDown();
+                        if (this.mUpdateSchedule) {
+                        }
+                        Slog.i(TAG, "Full data backup pass finished.");
+                        this.backupManagerService.getWakelock().release();
+                        throw th;
+                    }
+                    try {
+                        boolean flags2 = this.mUserInitiated;
+                        Object obj3 = this.mCancelLock;
+                        synchronized (obj3) {
+                            byte[] bArr2;
+                            int i4;
+                            try {
+                                if (this.mCancelAll) {
+                                    try {
+                                        break;
+                                    } catch (Throwable th4) {
+                                        th = th4;
+                                        obj = obj3;
+                                        backoff = backoff3;
+                                        bArr2 = buffer3;
+                                        obj2 = backoff4;
+                                        buffer3 = currentPackage3;
+                                        i4 = N;
+                                        z = flags2;
+                                        backupRunStatus = backupRunStatus3;
+                                        backupRunStatus3 = packageName3;
+                                        flags = transport;
+                                        while (true) {
+                                            try {
+                                                break;
+                                            } catch (Throwable th5) {
+                                                th = th5;
+                                            }
+                                        }
+                                        throw th;
+                                    }
+                                } else {
+                                    int i5;
+                                    int packageName5;
+                                    IBackupTransport iBackupTransport;
+                                    PackageInfo packageInfo;
+                                    String str3;
+                                    i3 = transport.performFullBackup(currentPackage3, parcelFileDescriptorArr[buffer2], flags2);
+                                    if (i3 == 0) {
+                                        int N2;
+                                        try {
+                                            backoff2 = backoff3;
+                                            try {
+                                                buffer = backoff4;
+                                                currentPackage = currentPackage3;
+                                                i = transport.getBackupQuota(currentPackage3.packageName, 1);
+                                                try {
+                                                    enginePipes = ParcelFileDescriptor.createPipe();
+                                                    try {
+                                                        N2 = N;
+                                                    } catch (Throwable th6) {
+                                                        th = th6;
+                                                        obj = obj3;
+                                                        z = flags2;
+                                                        bArr = buffer;
+                                                        backupRunStatus = backupRunStatus3;
+                                                        backoff = backoff2;
+                                                        backoff2 = N;
+                                                        bArr2 = buffer3;
+                                                        j = i;
+                                                        backupRunStatus3 = packageName3;
+                                                        flags = transport;
+                                                        enginePipes2 = enginePipes;
+                                                        buffer3 = currentPackage;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw th;
+                                                    }
+                                                } catch (Throwable th7) {
+                                                    th = th7;
+                                                    obj = obj3;
+                                                    z = flags2;
+                                                    bArr = buffer;
+                                                    backupRunStatus = backupRunStatus3;
+                                                    backoff = backoff2;
+                                                    backoff2 = N;
+                                                    j = i;
+                                                    backupRunStatus3 = packageName3;
+                                                    flags = transport;
+                                                    buffer3 = currentPackage;
+                                                    while (true) {
+                                                        break;
+                                                    }
+                                                    throw th;
+                                                }
+                                            } catch (Throwable th8) {
+                                                th = th8;
+                                                obj = obj3;
+                                                obj2 = backoff4;
+                                                z = flags2;
+                                                backupRunStatus = backupRunStatus3;
+                                                backoff = backoff2;
+                                                bArr2 = buffer3;
+                                                buffer3 = currentPackage3;
+                                                backupRunStatus3 = packageName3;
+                                                flags = transport;
+                                                while (true) {
+                                                    break;
+                                                }
+                                                throw th;
+                                            }
+                                        } catch (Throwable th9) {
+                                            th = th9;
+                                            obj = obj3;
+                                            backoff = backoff3;
+                                            obj2 = backoff4;
+                                            i4 = N;
+                                            z = flags2;
+                                            backupRunStatus = backupRunStatus3;
+                                            bArr2 = buffer3;
+                                            buffer3 = currentPackage3;
+                                            backupRunStatus3 = packageName3;
+                                            flags = transport;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
+                                        }
+                                        try {
+                                            SinglePackageBackupRunner singlePackageBackupRunner = singlePackageBackupRunner;
+                                            obj = obj3;
+                                            backupRunStatus = backupRunStatus3;
+                                            backoff = backoff2;
+                                            SinglePackageBackupRunner singlePackageBackupRunner2 = singlePackageBackupRunner;
+                                            currentPackage2 = currentPackage;
+                                            i5 = buffer;
+                                            buffer = buffer3;
+                                            i4 = N2;
+                                            packageName = packageName3;
+                                            packageName5 = 1;
+                                            try {
+                                                singlePackageBackupRunner = new SinglePackageBackupRunner(this, enginePipes[1], currentPackage, this.mTransportClient, i, this.mBackupRunnerOpToken, transport.getTransportFlags());
+                                                this.mBackupRunner = singlePackageBackupRunner2;
+                                                enginePipes[packageName5].close();
+                                                enginePipes[packageName5] = null;
+                                                this.mIsDoingBackup = packageName5;
+                                                enginePipes2 = enginePipes;
+                                            } catch (Throwable th10) {
+                                                th = th10;
+                                                j = i;
+                                                bArr2 = buffer;
+                                                iBackupTransport = transport;
+                                                enginePipes2 = enginePipes;
+                                                packageInfo = currentPackage2;
+                                                str3 = packageName;
+                                                while (true) {
+                                                    break;
+                                                }
+                                                throw th;
+                                            }
+                                        } catch (Throwable th11) {
+                                            th = th11;
+                                            obj = obj3;
+                                            z = flags2;
+                                            bArr = buffer;
+                                            backupRunStatus = backupRunStatus3;
+                                            backoff = backoff2;
+                                            backoff2 = N2;
+                                            bArr2 = buffer3;
+                                            j = i;
+                                            backupRunStatus3 = packageName3;
+                                            flags = transport;
+                                            enginePipes2 = enginePipes;
+                                            buffer3 = currentPackage;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
+                                        }
+                                    } else {
+                                        obj = obj3;
+                                        backoff = backoff3;
+                                        buffer = buffer3;
+                                        i5 = backoff4;
+                                        currentPackage2 = currentPackage3;
+                                        i4 = N;
+                                        z = flags2;
+                                        backupRunStatus = backupRunStatus3;
+                                        packageName = packageName3;
+                                        packageName5 = 1;
+                                        i = JobStatus.NO_LATEST_RUNTIME;
+                                    }
+                                    try {
+                                        StringBuilder stringBuilder4;
+                                        if (i3 == 0) {
+                                            try {
+                                                int backupPackageStatus;
+                                                parcelFileDescriptorArr[0].close();
+                                                parcelFileDescriptorArr[0] = null;
+                                                new Thread(this.mBackupRunner, "package-backup-bridge").start();
+                                                FileInputStream in = new FileInputStream(enginePipes2[0].getFileDescriptor());
+                                                FileOutputStream out = new FileOutputStream(parcelFileDescriptorArr[packageName5].getFileDescriptor());
+                                                IBackupTransport transport2 = transport;
+                                                long preflightResult = this.mBackupRunner.getPreflightResultBlocking();
+                                                long totalRead;
+                                                FileInputStream fileInputStream;
+                                                FileOutputStream fileOutputStream;
+                                                if (preflightResult < 0) {
+                                                    totalRead = 0;
+                                                    this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 16, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra((Bundle) 0, "android.app.backup.extra.LOG_PREFLIGHT_ERROR", preflightResult));
+                                                    backupPackageStatus = (int) preflightResult;
+                                                    fileInputStream = in;
+                                                    fileOutputStream = out;
+                                                    bArr2 = buffer;
+                                                    str3 = packageName;
+                                                    iBackupTransport = transport2;
+                                                    backoff3 = totalRead;
+                                                } else {
+                                                    totalRead = 0;
+                                                    backupRunStatus2 = i3;
+                                                    while (true) {
+                                                        backupRunStatus4 = in.read(buffer);
+                                                        if (backupRunStatus4 > 0) {
+                                                            out.write(buffer, 0, backupRunStatus4);
+                                                            synchronized (this.mCancelLock) {
+                                                                try {
+                                                                    if (this.mCancelAll) {
+                                                                        iBackupTransport = transport2;
+                                                                    } else {
+                                                                        iBackupTransport = transport2;
+                                                                        try {
+                                                                            backupRunStatus2 = iBackupTransport.sendBackupData(backupRunStatus4);
+                                                                        } catch (Throwable th12) {
+                                                                            th = th12;
+                                                                            fileInputStream = in;
+                                                                            str3 = packageName;
+                                                                            while (true) {
+                                                                                try {
+                                                                                    break;
+                                                                                } catch (Throwable th13) {
+                                                                                    th = th13;
+                                                                                }
+                                                                            }
+                                                                            throw th;
+                                                                        }
+                                                                    }
+                                                                    try {
+                                                                    } catch (Throwable th14) {
+                                                                        th = th14;
+                                                                        int i6 = backupRunStatus2;
+                                                                        fileInputStream = in;
+                                                                        str3 = packageName;
+                                                                        while (true) {
+                                                                            break;
+                                                                        }
+                                                                        throw th;
+                                                                    }
+                                                                } catch (Throwable th15) {
+                                                                    th = th15;
+                                                                    fileInputStream = in;
+                                                                    str3 = packageName;
+                                                                    iBackupTransport = transport2;
+                                                                    while (true) {
+                                                                        break;
+                                                                    }
+                                                                    throw th;
+                                                                }
+                                                            }
+                                                        }
+                                                        fileInputStream = in;
+                                                        str3 = packageName;
+                                                        iBackupTransport = transport2;
+                                                        fileOutputStream = out;
+                                                        backoff3 = totalRead;
+                                                        if (backupRunStatus4 <= 0) {
+                                                            break;
+                                                        } else if (backupRunStatus2 != 0) {
+                                                            break;
+                                                        } else {
+                                                            totalRead = backoff3;
+                                                            i3 = backupRunStatus4;
+                                                            transport2 = iBackupTransport;
+                                                            packageName = str3;
+                                                            in = fileInputStream;
+                                                            out = fileOutputStream;
+                                                        }
+                                                    }
+                                                    if (backupRunStatus2 == -1005) {
+                                                        str2 = TAG;
+                                                        stringBuilder4 = new StringBuilder();
+                                                        backupPackageStatus = backupRunStatus2;
+                                                        stringBuilder4.append("Package hit quota limit in-flight ");
+                                                        stringBuilder4.append(str3);
+                                                        stringBuilder4.append(": ");
+                                                        stringBuilder4.append(backoff3);
+                                                        stringBuilder4.append(" of ");
+                                                        stringBuilder4.append(i);
+                                                        Slog.w(str2, stringBuilder4.toString());
+                                                        bArr2 = buffer;
+                                                        this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 18, this.mCurrentPackage, 1, 0);
+                                                        this.mBackupRunner.sendQuotaExceeded(backoff3, i);
+                                                    } else {
+                                                        backupPackageStatus = backupRunStatus2;
+                                                        bArr2 = buffer;
+                                                    }
+                                                }
+                                                backupRunStatus2 = this.mBackupRunner.getBackupResultBlocking();
+                                                synchronized (this.mCancelLock) {
+                                                    try {
+                                                        this.mIsDoingBackup = false;
+                                                        if (!this.mCancelAll) {
+                                                            if (backupRunStatus2 == 0) {
+                                                                try {
+                                                                    i3 = iBackupTransport.finishBackup();
+                                                                    if (backupPackageStatus == 0) {
+                                                                        backupPackageStatus = i3;
+                                                                    }
+                                                                } catch (Throwable th16) {
+                                                                    th = th16;
+                                                                    i2 = backupRunStatus2;
+                                                                    j2 = backoff3;
+                                                                    while (true) {
+                                                                        try {
+                                                                            break;
+                                                                        } catch (Throwable th17) {
+                                                                            th = th17;
+                                                                        }
+                                                                    }
+                                                                    throw th;
+                                                                }
+                                                            } else {
+                                                                iBackupTransport.cancelFullBackup();
+                                                            }
+                                                        }
+                                                    } catch (Throwable th18) {
+                                                        th = th18;
+                                                        i2 = backupRunStatus2;
+                                                        j2 = backoff3;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw th;
+                                                    }
+                                                }
+                                            } catch (Exception e4) {
+                                                e = e4;
+                                                transportPipes = parcelFileDescriptorArr;
+                                                backoff3 = backoff;
+                                            } catch (Throwable th19) {
+                                                th = th19;
+                                                backoff3 = backoff;
+                                                if (this.mCancelAll) {
+                                                }
+                                                backupRunStatus2 = backupRunStatus;
+                                                str = TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Full backup completed with status: ");
+                                                stringBuilder.append(backupRunStatus2);
+                                                Slog.i(str, stringBuilder.toString());
+                                                BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+                                                cleanUpPipes(parcelFileDescriptorArr);
+                                                cleanUpPipes(enginePipes2);
+                                                unregisterTask();
+                                                if (this.mJob != null) {
+                                                }
+                                                synchronized (this.backupManagerService.getQueueLock()) {
+                                                }
+                                                this.mListener.onFinished("PFTBT.run()");
+                                                this.mLatch.countDown();
+                                                if (this.mUpdateSchedule) {
+                                                }
+                                                Slog.i(TAG, "Full data backup pass finished.");
+                                                this.backupManagerService.getWakelock().release();
+                                                throw th;
+                                            }
+                                        }
+                                        bArr2 = buffer;
+                                        iBackupTransport = transport;
+                                        str3 = packageName;
+                                        backupRunStatus2 = i3;
+                                        backoff3 = backoff;
+                                        try {
+                                            if (this.mUpdateSchedule) {
+                                                this.backupManagerService.enqueueFullBackup(str3, System.currentTimeMillis());
+                                            }
+                                            if (backupRunStatus2 == JobSchedulerShellCommand.CMD_ERR_CONSTRAINTS) {
+                                                BackupObserverUtils.sendBackupOnPackageResult(this.mBackupObserver, str3, JobSchedulerShellCommand.CMD_ERR_CONSTRAINTS);
+                                                str2 = TAG;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("Transport rejected backup of ");
+                                                stringBuilder2.append(str3);
+                                                stringBuilder2.append(", skipping");
+                                                Slog.i(str2, stringBuilder2.toString());
+                                                Object[] objArr = new Object[2];
+                                                objArr[0] = str3;
+                                                buffer2 = 1;
+                                                objArr[1] = "transport rejected";
+                                                EventLog.writeEvent(EventLogTags.FULL_BACKUP_AGENT_FAILURE, objArr);
+                                                if (this.mBackupRunner != null) {
+                                                    packageInfo = currentPackage2;
+                                                    this.backupManagerService.tearDownAgentAndKill(packageInfo.applicationInfo);
+                                                } else {
+                                                    packageInfo = currentPackage2;
+                                                }
+                                            } else {
+                                                packageInfo = currentPackage2;
+                                                buffer2 = 1;
+                                                if (backupRunStatus2 == -1005) {
+                                                    BackupObserverUtils.sendBackupOnPackageResult(this.mBackupObserver, str3, -1005);
+                                                    str2 = TAG;
+                                                    stringBuilder4 = new StringBuilder();
+                                                    stringBuilder4.append("Transport quota exceeded for package: ");
+                                                    stringBuilder4.append(str3);
+                                                    Slog.i(str2, stringBuilder4.toString());
+                                                    EventLog.writeEvent(EventLogTags.FULL_BACKUP_QUOTA_EXCEEDED, str3);
+                                                    this.backupManagerService.tearDownAgentAndKill(packageInfo.applicationInfo);
+                                                } else if (backupRunStatus2 == -1003) {
+                                                    BackupObserverUtils.sendBackupOnPackageResult(this.mBackupObserver, str3, -1003);
+                                                    str2 = TAG;
+                                                    stringBuilder4 = new StringBuilder();
+                                                    stringBuilder4.append("Application failure for package: ");
+                                                    stringBuilder4.append(str3);
+                                                    Slog.w(str2, stringBuilder4.toString());
+                                                    EventLog.writeEvent(EventLogTags.BACKUP_AGENT_FAILURE, str3);
+                                                    this.backupManagerService.tearDownAgentAndKill(packageInfo.applicationInfo);
+                                                } else if (backupRunStatus2 == -2003) {
+                                                    BackupObserverUtils.sendBackupOnPackageResult(this.mBackupObserver, str3, -2003);
+                                                    str2 = TAG;
+                                                    stringBuilder4 = new StringBuilder();
+                                                    stringBuilder4.append("Backup cancelled. package=");
+                                                    stringBuilder4.append(str3);
+                                                    stringBuilder4.append(", cancelAll=");
+                                                    stringBuilder4.append(this.mCancelAll);
+                                                    Slog.w(str2, stringBuilder4.toString());
+                                                    EventLog.writeEvent(EventLogTags.FULL_BACKUP_CANCELLED, str3);
+                                                    this.backupManagerService.tearDownAgentAndKill(packageInfo.applicationInfo);
+                                                } else if (backupRunStatus2 != 0) {
+                                                    break;
+                                                } else {
+                                                    BackupObserverUtils.sendBackupOnPackageResult(this.mBackupObserver, str3, 0);
+                                                    EventLog.writeEvent(EventLogTags.FULL_BACKUP_SUCCESS, str3);
+                                                    this.backupManagerService.logBackupComplete(str3);
+                                                }
+                                            }
+                                            cleanUpPipes(parcelFileDescriptorArr);
+                                            cleanUpPipes(enginePipes2);
+                                            if (packageInfo.applicationInfo != null) {
+                                                str2 = TAG;
+                                                stringBuilder4 = new StringBuilder();
+                                                stringBuilder4.append("Unbinding agent in ");
+                                                stringBuilder4.append(str3);
+                                                Slog.i(str2, stringBuilder4.toString());
+                                                backupManagerService = this.backupManagerService;
+                                                stringBuilder4 = new StringBuilder();
+                                                stringBuilder4.append("unbinding ");
+                                                stringBuilder4.append(str3);
+                                                backupManagerService.addBackupTrace(stringBuilder4.toString());
+                                                try {
+                                                    this.backupManagerService.getActivityManager().unbindBackupAgent(packageInfo.applicationInfo);
+                                                } catch (RemoteException e5) {
+                                                }
+                                            }
+                                            i3 = i5 + 1;
+                                            transport = iBackupTransport;
+                                            iBackupTransport = buffer2;
+                                            transportPipes = parcelFileDescriptorArr;
+                                            N = i4;
+                                            backupRunStatus3 = backupRunStatus;
+                                            buffer3 = bArr2;
+                                            buffer2 = 0;
+                                            packageName2 = null;
+                                        } catch (Exception e6) {
+                                            e = e6;
+                                            transportPipes = parcelFileDescriptorArr;
+                                            Slog.w(TAG, "Exception trying full transport backup", e);
+                                            this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 19, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP", Log.getStackTraceString(e)));
+                                            if (this.mCancelAll) {
+                                            }
+                                            str2 = TAG;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Full backup completed with status: ");
+                                            stringBuilder.append(backupRunStatus4);
+                                            Slog.i(str2, stringBuilder.toString());
+                                            BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+                                            cleanUpPipes(transportPipes);
+                                            cleanUpPipes(enginePipes2);
+                                            unregisterTask();
+                                            if (this.mJob != null) {
+                                            }
+                                            synchronized (this.backupManagerService.getQueueLock()) {
+                                            }
+                                            this.mListener.onFinished("PFTBT.run()");
+                                            this.mLatch.countDown();
+                                            if (this.mUpdateSchedule) {
+                                            }
+                                            Slog.i(TAG, "Full data backup pass finished.");
+                                            this.backupManagerService.getWakelock().release();
+                                            parcelFileDescriptorArr = transportPipes;
+                                        } catch (Throwable th20) {
+                                            th = th20;
+                                            if (this.mCancelAll) {
+                                            }
+                                            backupRunStatus2 = backupRunStatus;
+                                            str = TAG;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Full backup completed with status: ");
+                                            stringBuilder.append(backupRunStatus2);
+                                            Slog.i(str, stringBuilder.toString());
+                                            BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+                                            cleanUpPipes(parcelFileDescriptorArr);
+                                            cleanUpPipes(enginePipes2);
+                                            unregisterTask();
+                                            if (this.mJob != null) {
+                                            }
+                                            synchronized (this.backupManagerService.getQueueLock()) {
+                                            }
+                                            this.mListener.onFinished("PFTBT.run()");
+                                            this.mLatch.countDown();
+                                            if (this.mUpdateSchedule) {
+                                            }
+                                            Slog.i(TAG, "Full data backup pass finished.");
+                                            this.backupManagerService.getWakelock().release();
+                                            throw th;
+                                        }
+                                    } catch (Throwable th21) {
+                                        th = th21;
+                                        bArr2 = buffer;
+                                        flags = transport;
+                                        buffer3 = currentPackage2;
+                                        backupRunStatus3 = packageName;
+                                        j = i;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw th;
+                                    }
+                                }
+                            } catch (Throwable th22) {
+                                th = th22;
+                                obj = obj3;
+                                backoff = backoff3;
+                                bArr2 = buffer3;
+                                obj2 = backoff4;
+                                i4 = N;
+                                z = flags2;
+                                backupRunStatus = backupRunStatus3;
+                                backupRunStatus3 = packageName3;
+                                while (true) {
+                                    break;
+                                }
+                                throw th;
+                            }
+                        }
+                        backoff = backoff3;
+                        backupRunStatus = backupRunStatus3;
+                        break;
+                    } catch (Exception e7) {
+                        e = e7;
+                        backoff = backoff3;
+                        backupRunStatus = backupRunStatus3;
+                        transportPipes = parcelFileDescriptorArr;
+                        Slog.w(TAG, "Exception trying full transport backup", e);
+                        this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 19, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP", Log.getStackTraceString(e)));
+                        if (this.mCancelAll) {
+                        }
+                        str2 = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Full backup completed with status: ");
+                        stringBuilder.append(backupRunStatus4);
+                        Slog.i(str2, stringBuilder.toString());
+                        BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+                        cleanUpPipes(transportPipes);
+                        cleanUpPipes(enginePipes2);
+                        unregisterTask();
+                        if (this.mJob != null) {
+                        }
+                        synchronized (this.backupManagerService.getQueueLock()) {
+                        }
+                        this.mListener.onFinished("PFTBT.run()");
+                        this.mLatch.countDown();
+                        if (this.mUpdateSchedule) {
+                        }
+                        Slog.i(TAG, "Full data backup pass finished.");
+                        this.backupManagerService.getWakelock().release();
+                        parcelFileDescriptorArr = transportPipes;
+                    } catch (Throwable th23) {
+                        th = th23;
+                        backoff = backoff3;
+                        backupRunStatus = backupRunStatus3;
+                        if (this.mCancelAll) {
+                        }
+                        backupRunStatus2 = backupRunStatus;
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Full backup completed with status: ");
+                        stringBuilder.append(backupRunStatus2);
+                        Slog.i(str, stringBuilder.toString());
+                        BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+                        cleanUpPipes(parcelFileDescriptorArr);
+                        cleanUpPipes(enginePipes2);
+                        unregisterTask();
+                        if (this.mJob != null) {
+                        }
+                        synchronized (this.backupManagerService.getQueueLock()) {
+                        }
+                        this.mListener.onFinished("PFTBT.run()");
+                        this.mLatch.countDown();
+                        if (this.mUpdateSchedule) {
+                        }
+                        Slog.i(TAG, "Full data backup pass finished.");
+                        this.backupManagerService.getWakelock().release();
+                        throw th;
+                    }
+                }
+                if (this.mCancelAll) {
+                    backupRunStatus3 = -2003;
+                } else {
+                    backupRunStatus3 = backupRunStatus;
+                }
+                str2 = TAG;
+                StringBuilder stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("Full backup completed with status: ");
+                stringBuilder5.append(backupRunStatus3);
+                Slog.i(str2, stringBuilder5.toString());
+                BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus3);
+                cleanUpPipes(parcelFileDescriptorArr);
+                cleanUpPipes(enginePipes2);
+                unregisterTask();
+                if (this.mJob != null) {
+                    this.mJob.finishBackupPass();
+                }
+                synchronized (this.backupManagerService.getQueueLock()) {
+                    try {
+                        this.backupManagerService.setRunningFullBackupTask(null);
+                    } finally {
+                        backoff4 = backoff;
+                        while (true) {
+                        }
+                    }
+                }
+                this.mListener.onFinished("PFTBT.run()");
+                this.mLatch.countDown();
+                if (this.mUpdateSchedule) {
+                    backupManagerService = this.backupManagerService;
+                } else {
+                    backoff4 = backoff;
+                }
+                Slog.i(TAG, "Full data backup pass finished.");
+                this.backupManagerService.getWakelock().release();
+                backoff3 = backoff4;
+                backupRunStatus4 = backupRunStatus3;
+            } else {
+                backupRunStatus = backupRunStatus3;
+            }
+            try {
+                str2 = TAG;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("full backup requested but enabled=");
+                stringBuilder2.append(this.backupManagerService.isEnabled());
+                stringBuilder2.append(" provisioned=");
+                stringBuilder2.append(this.backupManagerService.isProvisioned());
+                stringBuilder2.append("; ignoring");
+                Slog.i(str2, stringBuilder2.toString());
+                if (this.backupManagerService.isProvisioned()) {
+                    i3 = 13;
+                } else {
+                    i3 = 14;
+                }
+                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, i3, null, 3, null);
+                this.mUpdateSchedule = false;
+                i3 = -2001;
+                if (this.mCancelAll) {
+                    i3 = -2003;
+                }
+                i = i3;
+                str2 = TAG;
+                StringBuilder stringBuilder6 = new StringBuilder();
+                stringBuilder6.append("Full backup completed with status: ");
+                stringBuilder6.append(i);
+                Slog.i(str2, stringBuilder6.toString());
+                BackupObserverUtils.sendBackupFinished(this.mBackupObserver, i);
+                cleanUpPipes(null);
+                cleanUpPipes(null);
+                unregisterTask();
+                if (this.mJob != null) {
+                    this.mJob.finishBackupPass();
+                }
+                synchronized (this.backupManagerService.getQueueLock()) {
+                    this.backupManagerService.setRunningFullBackupTask(null);
+                }
+                this.mListener.onFinished("PFTBT.run()");
+                this.mLatch.countDown();
+                if (this.mUpdateSchedule) {
+                    this.backupManagerService.scheduleNextFullBackupJob(0);
+                }
+                Slog.i(TAG, "Full data backup pass finished.");
+                this.backupManagerService.getWakelock().release();
+            } catch (Exception e8) {
+                e = e8;
+                Slog.w(TAG, "Exception trying full transport backup", e);
+                this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 19, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP", Log.getStackTraceString(e)));
+                if (this.mCancelAll) {
+                }
+                str2 = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Full backup completed with status: ");
+                stringBuilder.append(backupRunStatus4);
+                Slog.i(str2, stringBuilder.toString());
+                BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+                cleanUpPipes(transportPipes);
+                cleanUpPipes(enginePipes2);
+                unregisterTask();
+                if (this.mJob != null) {
+                }
+                synchronized (this.backupManagerService.getQueueLock()) {
+                }
+                this.mListener.onFinished("PFTBT.run()");
+                this.mLatch.countDown();
+                if (this.mUpdateSchedule) {
+                }
+                Slog.i(TAG, "Full data backup pass finished.");
+                this.backupManagerService.getWakelock().release();
+                parcelFileDescriptorArr = transportPipes;
+            } catch (Throwable th24) {
+                th = th24;
+                parcelFileDescriptorArr = null;
+                if (this.mCancelAll) {
+                }
+                backupRunStatus2 = backupRunStatus;
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Full backup completed with status: ");
+                stringBuilder.append(backupRunStatus2);
+                Slog.i(str, stringBuilder.toString());
+                BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+                cleanUpPipes(parcelFileDescriptorArr);
+                cleanUpPipes(enginePipes2);
+                unregisterTask();
+                if (this.mJob != null) {
+                }
+                synchronized (this.backupManagerService.getQueueLock()) {
+                }
+                this.mListener.onFinished("PFTBT.run()");
+                this.mLatch.countDown();
+                if (this.mUpdateSchedule) {
+                }
+                Slog.i(TAG, "Full data backup pass finished.");
+                this.backupManagerService.getWakelock().release();
+                throw th;
+            }
+        } catch (Exception e9) {
+            e = e9;
+            backupRunStatus = backupRunStatus3;
+            Slog.w(TAG, "Exception trying full transport backup", e);
+            this.mMonitor = BackupManagerMonitorUtils.monitorEvent(this.mMonitor, 19, this.mCurrentPackage, 3, BackupManagerMonitorUtils.putMonitoringExtra(null, "android.app.backup.extra.LOG_EXCEPTION_FULL_BACKUP", Log.getStackTraceString(e)));
+            if (this.mCancelAll) {
+            }
+            str2 = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Full backup completed with status: ");
+            stringBuilder.append(backupRunStatus4);
+            Slog.i(str2, stringBuilder.toString());
+            BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus4);
+            cleanUpPipes(transportPipes);
+            cleanUpPipes(enginePipes2);
+            unregisterTask();
+            if (this.mJob != null) {
+            }
+            synchronized (this.backupManagerService.getQueueLock()) {
+            }
+            this.mListener.onFinished("PFTBT.run()");
+            this.mLatch.countDown();
+            if (this.mUpdateSchedule) {
+            }
+            Slog.i(TAG, "Full data backup pass finished.");
+            this.backupManagerService.getWakelock().release();
+            parcelFileDescriptorArr = transportPipes;
+        } catch (Throwable th25) {
+            th = th25;
+            backupRunStatus = backupRunStatus3;
+            parcelFileDescriptorArr = null;
+            if (this.mCancelAll) {
+            }
+            backupRunStatus2 = backupRunStatus;
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Full backup completed with status: ");
+            stringBuilder.append(backupRunStatus2);
+            Slog.i(str, stringBuilder.toString());
+            BackupObserverUtils.sendBackupFinished(this.mBackupObserver, backupRunStatus2);
+            cleanUpPipes(parcelFileDescriptorArr);
+            cleanUpPipes(enginePipes2);
+            unregisterTask();
+            if (this.mJob != null) {
+            }
+            synchronized (this.backupManagerService.getQueueLock()) {
+            }
+            this.mListener.onFinished("PFTBT.run()");
+            this.mLatch.countDown();
+            if (this.mUpdateSchedule) {
+            }
+            Slog.i(TAG, "Full data backup pass finished.");
+            this.backupManagerService.getWakelock().release();
+            throw th;
+        }
     }
 
     void cleanUpPipes(ParcelFileDescriptor[] pipes) {

@@ -39,10 +39,10 @@ class DragDropController {
             this.mService = service;
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0023, code:
+        /* JADX WARNING: Missing block: B:9:0x0023, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:13:0x002e, code:
+        /* JADX WARNING: Missing block: B:13:0x002e, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -127,68 +127,68 @@ class DragDropController {
         this.mDragState.sendDragStartedIfNeededLocked(window);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter: B:179:0x0331} */
-    /* JADX WARNING: Missing block: B:21:0x005e, code:
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x0331 A:{SYNTHETIC, Splitter:B:179:0x0331} */
+    /* JADX WARNING: Missing block: B:21:0x005e, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             ((com.android.server.wm.WindowManagerInternal.IDragDropCallback) r8.mCallback.get()).postPerformDrag();
      */
-    /* JADX WARNING: Missing block: B:22:0x006c, code:
+    /* JADX WARNING: Missing block: B:22:0x006c, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:40:0x009e, code:
+    /* JADX WARNING: Missing block: B:40:0x009e, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             ((com.android.server.wm.WindowManagerInternal.IDragDropCallback) r8.mCallback.get()).postPerformDrag();
      */
-    /* JADX WARNING: Missing block: B:41:0x00ac, code:
+    /* JADX WARNING: Missing block: B:41:0x00ac, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:57:0x00e5, code:
+    /* JADX WARNING: Missing block: B:57:0x00e5, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             ((com.android.server.wm.WindowManagerInternal.IDragDropCallback) r8.mCallback.get()).postPerformDrag();
      */
-    /* JADX WARNING: Missing block: B:58:0x00f3, code:
+    /* JADX WARNING: Missing block: B:58:0x00f3, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:74:0x011a, code:
+    /* JADX WARNING: Missing block: B:74:0x011a, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             ((com.android.server.wm.WindowManagerInternal.IDragDropCallback) r8.mCallback.get()).postPerformDrag();
      */
-    /* JADX WARNING: Missing block: B:75:0x0128, code:
+    /* JADX WARNING: Missing block: B:75:0x0128, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:105:0x01ae, code:
+    /* JADX WARNING: Missing block: B:105:0x01ae, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             ((com.android.server.wm.WindowManagerInternal.IDragDropCallback) r8.mCallback.get()).postPerformDrag();
      */
-    /* JADX WARNING: Missing block: B:106:0x01bd, code:
+    /* JADX WARNING: Missing block: B:106:0x01bd, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:158:?, code:
+    /* JADX WARNING: Missing block: B:158:?, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:159:0x02e9, code:
+    /* JADX WARNING: Missing block: B:159:0x02e9, code skipped:
             ((com.android.server.wm.WindowManagerInternal.IDragDropCallback) r8.mCallback.get()).postPerformDrag();
      */
-    /* JADX WARNING: Missing block: B:160:0x02f5, code:
+    /* JADX WARNING: Missing block: B:160:0x02f5, code skipped:
             return r9;
      */
-    /* JADX WARNING: Missing block: B:161:0x02f6, code:
+    /* JADX WARNING: Missing block: B:161:0x02f6, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:162:0x02f7, code:
+    /* JADX WARNING: Missing block: B:162:0x02f7, code skipped:
             r18 = r1;
             r14 = r5;
      */
-    /* JADX WARNING: Missing block: B:194:0x0354, code:
+    /* JADX WARNING: Missing block: B:194:0x0354, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:195:0x0355, code:
+    /* JADX WARNING: Missing block: B:195:0x0355, code skipped:
             r4 = r1;
             r14 = r3;
             r6 = r5;
@@ -577,10 +577,10 @@ class DragDropController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0021, code:
+    /* JADX WARNING: Missing block: B:12:0x0021, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:13:0x0024, code:
+    /* JADX WARNING: Missing block: B:13:0x0024, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -14,6 +14,7 @@ import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Encodable;
 
@@ -49,7 +50,7 @@ public class CMSAuthenticatedData implements Encodable {
         this.authAttrs = instance.getAuthAttrs();
         this.mac = instance.getMac().getOctets();
         this.unauthAttrs = instance.getUnauthAttrs();
-        CMSReadable cMSProcessableByteArray = new CMSProcessableByteArray(ASN1OctetString.getInstance(instance.getEncapsulatedContentInfo().getContent()).getOctets());
+        CMSProcessableByteArray cMSProcessableByteArray = new CMSProcessableByteArray(ASN1OctetString.getInstance(instance.getEncapsulatedContentInfo().getContent()).getOctets());
         if (this.authAttrs == null) {
             this.recipientInfoStore = CMSEnvelopedHelper.buildRecipientInformationStore(recipientInfos, this.macAlg, new CMSAuthenticatedSecureReadable(this.macAlg, cMSProcessableByteArray));
         } else if (digestCalculatorProvider != null) {
@@ -74,7 +75,7 @@ public class CMSAuthenticatedData implements Encodable {
                         }
                     });
                     return;
-                } catch (Exception e) {
+                } catch (OperatorCreationException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("unable to create digest calculator: ");
                     stringBuilder.append(e.getMessage());

@@ -75,7 +75,7 @@ public class MediaUpdateService extends SystemService {
             /* JADX WARNING: Removed duplicated region for block: B:21:0x0051  */
             /* JADX WARNING: Removed duplicated region for block: B:20:0x004b  */
             /* JADX WARNING: Removed duplicated region for block: B:19:0x0045  */
-            /* JADX WARNING: Missing block: B:13:0x0033, code:
+            /* JADX WARNING: Missing block: B:13:0x0033, code skipped:
             if (r0.equals("android.intent.action.PACKAGE_REMOVED") != false) goto L_0x0041;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */

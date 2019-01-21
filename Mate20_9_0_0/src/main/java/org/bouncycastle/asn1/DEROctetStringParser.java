@@ -21,7 +21,7 @@ public class DEROctetStringParser implements ASN1OctetStringParser {
     public ASN1Primitive toASN1Primitive() {
         try {
             return getLoadedObject();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("IOException converting stream to byte array: ");
             stringBuilder.append(e.getMessage());

@@ -119,7 +119,7 @@ public class TlsECCUtils {
     public static ECPublicKeyParameters deserializeECPublicKey(short[] sArr, ECDomainParameters eCDomainParameters, byte[] bArr) throws IOException {
         try {
             return new ECPublicKeyParameters(deserializeECPoint(sArr, eCDomainParameters.getCurve(), bArr), eCDomainParameters);
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
             throw new TlsFatalAlert((short) 47, e);
         }
     }
@@ -365,7 +365,6 @@ public class TlsECCUtils {
     public static ECDomainParameters readECParameters(int[] iArr, short[] sArr, InputStream inputStream) throws IOException {
         try {
             BigInteger readECParameter;
-            ECCurve fp;
             switch (TlsUtils.readUint8(inputStream)) {
                 case (short) 1:
                     checkNamedCurve(iArr, 65281);
@@ -375,7 +374,7 @@ public class TlsECCUtils {
                     byte[] readOpaque8 = TlsUtils.readOpaque8(inputStream);
                     BigInteger readECParameter3 = readECParameter(inputStream);
                     readECParameter = readECParameter(inputStream);
-                    fp = new Fp(readECParameter2, readECFieldElement, readECFieldElement2, readECParameter3, readECParameter);
+                    Fp fp = new Fp(readECParameter2, readECFieldElement, readECFieldElement2, readECParameter3, readECParameter);
                     return new ECDomainParameters(fp, deserializeECPoint(sArr, fp, readOpaque8), readECParameter3, readECParameter);
                 case (short) 2:
                     checkNamedCurve(iArr, 65282);
@@ -398,10 +397,11 @@ public class TlsECCUtils {
                         byte[] readOpaque82 = TlsUtils.readOpaque8(inputStream);
                         BigInteger readECParameter4 = readECParameter(inputStream);
                         readECParameter = readECParameter(inputStream);
+                        ECCurve f2m;
                         if (readUint8 == (short) 2) {
-                            fp = new F2m(readUint16, readECExponent2, i, readECExponent, readECFieldElement3, readECFieldElement4, readECParameter4, readECParameter);
+                            f2m = new F2m(readUint16, readECExponent2, i, readECExponent, readECFieldElement3, readECFieldElement4, readECParameter4, readECParameter);
                         } else {
-                            fp = new F2m(readUint16, readECExponent2, readECFieldElement3, readECFieldElement4, readECParameter4, readECParameter);
+                            f2m = new F2m(readUint16, readECExponent2, readECFieldElement3, readECFieldElement4, readECParameter4, readECParameter);
                         }
                         return new ECDomainParameters(r13, deserializeECPoint(sArr, r13, readOpaque82), readECParameter4, readECParameter);
                     }
@@ -416,14 +416,14 @@ public class TlsECCUtils {
                 default:
                     throw new TlsFatalAlert((short) 47);
             }
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
             throw new TlsFatalAlert((short) 47, e);
         }
     }
 
     public static int[] readSupportedEllipticCurvesExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             int readUint16 = TlsUtils.readUint16(byteArrayInputStream);
             if (readUint16 < 2 || (readUint16 & 1) != 0) {
                 throw new TlsFatalAlert((short) 50);
@@ -437,7 +437,7 @@ public class TlsECCUtils {
 
     public static short[] readSupportedPointFormatsExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             short readUint8 = TlsUtils.readUint8(byteArrayInputStream);
             if (readUint8 >= (short) 1) {
                 short[] readUint8Array = TlsUtils.readUint8Array(readUint8, byteArrayInputStream);

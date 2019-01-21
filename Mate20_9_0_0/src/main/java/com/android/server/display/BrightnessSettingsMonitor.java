@@ -180,7 +180,7 @@ class BrightnessSettingsMonitor implements MonitorModule {
     public void triggerUploadTimer() {
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0030, code:
+    /* JADX WARNING: Missing block: B:9:0x0030, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -246,7 +246,7 @@ class BrightnessSettingsMonitor implements MonitorModule {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002d, code:
+    /* JADX WARNING: Missing block: B:9:0x002d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -320,7 +320,7 @@ class BrightnessSettingsMonitor implements MonitorModule {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002c, code:
+    /* JADX WARNING: Missing block: B:9:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

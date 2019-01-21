@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 import org.bouncycastle.asn1.ASN1Choice;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Object;
@@ -19,7 +18,7 @@ public class Time extends ASN1Object implements ASN1Choice {
     ASN1Primitive time;
 
     public Time(Date date) {
-        TimeZone simpleTimeZone = new SimpleTimeZone(0, "Z");
+        SimpleTimeZone simpleTimeZone = new SimpleTimeZone(0, "Z");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         simpleDateFormat.setTimeZone(simpleTimeZone);
         StringBuilder stringBuilder = new StringBuilder();
@@ -32,7 +31,7 @@ public class Time extends ASN1Object implements ASN1Choice {
     }
 
     public Time(Date date, Locale locale) {
-        TimeZone simpleTimeZone = new SimpleTimeZone(0, "Z");
+        SimpleTimeZone simpleTimeZone = new SimpleTimeZone(0, "Z");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", locale);
         simpleDateFormat.setTimeZone(simpleTimeZone);
         StringBuilder stringBuilder = new StringBuilder();

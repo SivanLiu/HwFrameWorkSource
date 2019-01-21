@@ -52,6 +52,14 @@ public class KeyboardInterceptor extends BaseEventStreamTransformation implement
         }
     }
 
+    public /* bridge */ /* synthetic */ EventStreamTransformation getNext() {
+        return super.getNext();
+    }
+
+    public /* bridge */ /* synthetic */ void setNext(EventStreamTransformation eventStreamTransformation) {
+        super.setNext(eventStreamTransformation);
+    }
+
     public KeyboardInterceptor(AccessibilityManagerService service, WindowManagerPolicy policy) {
         this.mAms = service;
         this.mPolicy = policy;

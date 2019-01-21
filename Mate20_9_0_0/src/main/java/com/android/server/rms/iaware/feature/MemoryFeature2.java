@@ -366,6 +366,8 @@ public class MemoryFeature2 extends RFeature {
                                     break;
                                 }
                                 break;
+                            default:
+                                break;
                         }
                         int systemTrimSwitch;
                         String str;
@@ -749,7 +751,7 @@ public class MemoryFeature2 extends RFeature {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0032, code:
+    /* JADX WARNING: Missing block: B:13:0x0032, code skipped:
             if (r10.equals(com.android.server.rms.iaware.memory.utils.MemoryConstant.MEM_REPAIR_CONSTANT_FG_MIN_COUNT) != false) goto L_0x004a;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -843,16 +845,18 @@ public class MemoryFeature2 extends RFeature {
     private boolean parseConstMinCount(String itemValue, int[] constValues, int index) {
         try {
             int minCount = Integer.parseInt(itemValue.trim());
-            if (minCount < 6 || minCount > 50) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("error minCount:");
-                stringBuilder.append(minCount);
-                AwareLog.i(str, stringBuilder.toString());
-                return false;
+            if (minCount >= 6) {
+                if (minCount <= 50) {
+                    constValues[index] = minCount;
+                    return true;
+                }
             }
-            constValues[index] = minCount;
-            return true;
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("error minCount:");
+            stringBuilder.append(minCount);
+            AwareLog.i(str, stringBuilder.toString());
+            return false;
         } catch (NumberFormatException e) {
             AwareLog.e(TAG, "parse memory xml error");
             return false;
@@ -862,16 +866,18 @@ public class MemoryFeature2 extends RFeature {
     private boolean parseConstInterval(String itemValue, int[] constValues, int index) {
         try {
             int interval = Integer.parseInt(itemValue.trim());
-            if (interval < 2 || interval > 30) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("error interval:");
-                stringBuilder.append(interval);
-                AwareLog.i(str, stringBuilder.toString());
-                return false;
+            if (interval >= 2) {
+                if (interval <= 30) {
+                    constValues[index] = interval;
+                    return true;
+                }
             }
-            constValues[index] = interval;
-            return true;
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("error interval:");
+            stringBuilder.append(interval);
+            AwareLog.i(str, stringBuilder.toString());
+            return false;
         } catch (NumberFormatException e) {
             AwareLog.e(TAG, "parse memory xml error");
             return false;
@@ -881,16 +887,18 @@ public class MemoryFeature2 extends RFeature {
     private boolean parseConstDValuePercent(String itemValue, int[] constValues, int index) {
         try {
             int percent = Integer.parseInt(itemValue.trim());
-            if (percent < 1 || percent > 30) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("error percent:");
-                stringBuilder.append(percent);
-                AwareLog.i(str, stringBuilder.toString());
-                return false;
+            if (percent >= 1) {
+                if (percent <= 30) {
+                    constValues[index] = percent;
+                    return true;
+                }
             }
-            constValues[index] = percent;
-            return true;
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("error percent:");
+            stringBuilder.append(percent);
+            AwareLog.i(str, stringBuilder.toString());
+            return false;
         } catch (NumberFormatException e) {
             AwareLog.e(TAG, "parse memory xml error");
             return false;
@@ -953,31 +961,33 @@ public class MemoryFeature2 extends RFeature {
                 long minFloatThres = Long.parseLong(sets[0].trim());
                 long maxFloatThres = Long.parseLong(sets[1].trim());
                 long percentage = Long.parseLong(sets[2].trim());
-                if (minFloatThres < 0 || maxFloatThres < 0 || minFloatThres >= maxFloatThres || percentage < 1) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("error minthres:");
-                    stringBuilder.append(minFloatThres);
-                    stringBuilder.append(",maxthres:");
-                    stringBuilder.append(maxFloatThres);
-                    stringBuilder.append(",percent:");
-                    stringBuilder.append(percentage);
-                    AwareLog.i(str, stringBuilder.toString());
-                    return false;
+                if (minFloatThres >= 0 && maxFloatThres >= 0 && minFloatThres < maxFloatThres) {
+                    if (percentage >= 1) {
+                        memThresHolds[0] = minFloatThres * 1024;
+                        memThresHolds[1] = 1024 * maxFloatThres;
+                        memThresHolds[2] = percentage;
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("mem minthres:");
+                        stringBuilder.append(minFloatThres);
+                        stringBuilder.append(",maxthres:");
+                        stringBuilder.append(maxFloatThres);
+                        stringBuilder.append(",percent:");
+                        stringBuilder.append(percentage);
+                        AwareLog.i(str, stringBuilder.toString());
+                        return true;
+                    }
                 }
-                memThresHolds[0] = minFloatThres * 1024;
-                memThresHolds[1] = 1024 * maxFloatThres;
-                memThresHolds[2] = percentage;
                 String str2 = TAG;
                 StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("mem minthres:");
+                stringBuilder2.append("error minthres:");
                 stringBuilder2.append(minFloatThres);
                 stringBuilder2.append(",maxthres:");
                 stringBuilder2.append(maxFloatThres);
                 stringBuilder2.append(",percent:");
                 stringBuilder2.append(percentage);
                 AwareLog.i(str2, stringBuilder2.toString());
-                return true;
+                return false;
             } catch (NumberFormatException e) {
                 AwareLog.e(TAG, "parse memory xml error");
                 return false;
@@ -1053,24 +1063,26 @@ public class MemoryFeature2 extends RFeature {
 
     private boolean parseProcThres(String itemValue, long[] thresHolds, int index, long totalMemMb) {
         try {
-            long thres = Long.parseLong(itemValue.trim());
             String str;
             StringBuilder stringBuilder;
-            if (thres < 1 || thres >= totalMemMb) {
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("error process threshold:");
-                stringBuilder.append(thres);
-                AwareLog.i(str, stringBuilder.toString());
-                return false;
+            long thres = Long.parseLong(itemValue.trim());
+            if (thres >= 1) {
+                if (thres < totalMemMb) {
+                    thresHolds[index] = 1024 * thres;
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("process threshold:");
+                    stringBuilder.append(thres);
+                    AwareLog.i(str, stringBuilder.toString());
+                    return true;
+                }
             }
-            thresHolds[index] = 1024 * thres;
             str = TAG;
             stringBuilder = new StringBuilder();
-            stringBuilder.append("process threshold:");
+            stringBuilder.append("error process threshold:");
             stringBuilder.append(thres);
             AwareLog.i(str, stringBuilder.toString());
-            return true;
+            return false;
         } catch (NumberFormatException e) {
             AwareLog.e(TAG, "parse memory xml error");
             return false;

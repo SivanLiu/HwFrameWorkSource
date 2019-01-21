@@ -449,33 +449,33 @@ public class DSTU7624Engine implements BlockCipher {
     }
 
     private void workingKeyExpandEven(long[] jArr, long[] jArr2) {
-        Object obj = new long[this.wordsInKey];
-        long[] jArr3 = new long[this.wordsInBlock];
-        System.arraycopy(jArr, 0, obj, 0, this.wordsInKey);
+        long[] jArr3 = new long[this.wordsInKey];
+        long[] jArr4 = new long[this.wordsInBlock];
+        System.arraycopy(jArr, 0, jArr3, 0, this.wordsInKey);
         long j = 281479271743489L;
         int i = 0;
         while (true) {
             int i2;
-            long[] jArr4;
+            long[] jArr5;
             for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                jArr3[i2] = jArr2[i2] + j;
+                jArr4[i2] = jArr2[i2] + j;
             }
             for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                this.internalState[i2] = obj[i2] + jArr3[i2];
-            }
-            subBytes();
-            shiftRows();
-            mixColumns();
-            for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                jArr4 = this.internalState;
-                jArr4[i2] = jArr4[i2] ^ jArr3[i2];
+                this.internalState[i2] = jArr3[i2] + jArr4[i2];
             }
             subBytes();
             shiftRows();
             mixColumns();
             for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                jArr4 = this.internalState;
-                jArr4[i2] = jArr4[i2] + jArr3[i2];
+                jArr5 = this.internalState;
+                jArr5[i2] = jArr5[i2] ^ jArr4[i2];
+            }
+            subBytes();
+            shiftRows();
+            mixColumns();
+            for (i2 = 0; i2 < this.wordsInBlock; i2++) {
+                jArr5 = this.internalState;
+                jArr5[i2] = jArr5[i2] + jArr4[i2];
             }
             System.arraycopy(this.internalState, 0, this.roundKeys[i], 0, this.wordsInBlock);
             if (this.roundsAmount != i) {
@@ -483,24 +483,24 @@ public class DSTU7624Engine implements BlockCipher {
                     i += 2;
                     j <<= 1;
                     for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                        jArr3[i2] = jArr2[i2] + j;
+                        jArr4[i2] = jArr2[i2] + j;
                     }
                     for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                        this.internalState[i2] = obj[this.wordsInBlock + i2] + jArr3[i2];
-                    }
-                    subBytes();
-                    shiftRows();
-                    mixColumns();
-                    for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                        jArr4 = this.internalState;
-                        jArr4[i2] = jArr4[i2] ^ jArr3[i2];
+                        this.internalState[i2] = jArr3[this.wordsInBlock + i2] + jArr4[i2];
                     }
                     subBytes();
                     shiftRows();
                     mixColumns();
                     for (i2 = 0; i2 < this.wordsInBlock; i2++) {
-                        jArr4 = this.internalState;
-                        jArr4[i2] = jArr4[i2] + jArr3[i2];
+                        jArr5 = this.internalState;
+                        jArr5[i2] = jArr5[i2] ^ jArr4[i2];
+                    }
+                    subBytes();
+                    shiftRows();
+                    mixColumns();
+                    for (i2 = 0; i2 < this.wordsInBlock; i2++) {
+                        jArr5 = this.internalState;
+                        jArr5[i2] = jArr5[i2] + jArr4[i2];
                     }
                     System.arraycopy(this.internalState, 0, this.roundKeys[i], 0, this.wordsInBlock);
                     if (this.roundsAmount == i) {
@@ -509,11 +509,11 @@ public class DSTU7624Engine implements BlockCipher {
                 }
                 i += 2;
                 j <<= 1;
-                long j2 = obj[0];
-                for (i2 = 1; i2 < obj.length; i2++) {
-                    obj[i2 - 1] = obj[i2];
+                long j2 = jArr3[0];
+                for (i2 = 1; i2 < jArr3.length; i2++) {
+                    jArr3[i2 - 1] = jArr3[i2];
                 }
-                obj[obj.length - 1] = j2;
+                jArr3[jArr3.length - 1] = j2;
             } else {
                 return;
             }
@@ -522,35 +522,35 @@ public class DSTU7624Engine implements BlockCipher {
 
     private void workingKeyExpandKT(long[] jArr, long[] jArr2) {
         int i;
-        Object obj = new long[this.wordsInBlock];
-        Object obj2 = new long[this.wordsInBlock];
+        long[] jArr3 = new long[this.wordsInBlock];
+        long[] jArr4 = new long[this.wordsInBlock];
         this.internalState = new long[this.wordsInBlock];
-        long[] jArr3 = this.internalState;
-        jArr3[0] = jArr3[0] + ((long) ((this.wordsInBlock + this.wordsInKey) + 1));
+        long[] jArr5 = this.internalState;
+        jArr5[0] = jArr5[0] + ((long) ((this.wordsInBlock + this.wordsInKey) + 1));
         if (this.wordsInBlock == this.wordsInKey) {
-            System.arraycopy(jArr, 0, obj, 0, obj.length);
-            System.arraycopy(jArr, 0, obj2, 0, obj2.length);
+            System.arraycopy(jArr, 0, jArr3, 0, jArr3.length);
+            System.arraycopy(jArr, 0, jArr4, 0, jArr4.length);
         } else {
-            System.arraycopy(jArr, 0, obj, 0, this.wordsInBlock);
-            System.arraycopy(jArr, this.wordsInBlock, obj2, 0, this.wordsInBlock);
+            System.arraycopy(jArr, 0, jArr3, 0, this.wordsInBlock);
+            System.arraycopy(jArr, this.wordsInBlock, jArr4, 0, this.wordsInBlock);
         }
         for (i = 0; i < this.internalState.length; i++) {
-            jArr3 = this.internalState;
-            jArr3[i] = jArr3[i] + obj[i];
-        }
-        subBytes();
-        shiftRows();
-        mixColumns();
-        for (i = 0; i < this.internalState.length; i++) {
-            jArr3 = this.internalState;
-            jArr3[i] = jArr3[i] ^ obj2[i];
+            jArr5 = this.internalState;
+            jArr5[i] = jArr5[i] + jArr3[i];
         }
         subBytes();
         shiftRows();
         mixColumns();
         for (i = 0; i < this.internalState.length; i++) {
-            long[] jArr4 = this.internalState;
-            jArr4[i] = jArr4[i] + obj[i];
+            jArr5 = this.internalState;
+            jArr5[i] = jArr5[i] ^ jArr4[i];
+        }
+        subBytes();
+        shiftRows();
+        mixColumns();
+        for (i = 0; i < this.internalState.length; i++) {
+            jArr4 = this.internalState;
+            jArr4[i] = jArr4[i] + jArr3[i];
         }
         subBytes();
         shiftRows();

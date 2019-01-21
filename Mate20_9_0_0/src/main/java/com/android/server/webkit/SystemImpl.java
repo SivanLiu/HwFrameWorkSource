@@ -56,19 +56,6 @@ public class SystemImpl implements SystemInterface {
         return LazyHolder.INSTANCE;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x00e0 A:{PHI: r3 , Splitter: B:1:0x000c, ExcHandler: org.xmlpull.v1.XmlPullParserException (r5_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:45:0x00e0, code:
-            r5 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:47:?, code:
-            r7 = new java.lang.StringBuilder();
-            r7.append("Error when parsing WebView config ");
-            r7.append(r5);
-     */
-    /* JADX WARNING: Missing block: B:48:0x00f7, code:
-            throw new android.util.AndroidRuntimeException(r7.toString());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private SystemImpl() {
         int numFallbackPackages = 0;
         int numAvailableByDefaultPackages = 0;
@@ -123,7 +110,11 @@ public class SystemImpl implements SystemInterface {
                     Log.e(TAG, "Found an element that is not a WebView provider");
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException | XmlPullParserException e) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Error when parsing WebView config ");
+            stringBuilder.append(e);
+            throw new AndroidRuntimeException(stringBuilder.toString());
         } catch (Throwable th) {
             if (parser != null) {
                 parser.close();
@@ -209,37 +200,6 @@ public class SystemImpl implements SystemInterface {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x0013 A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:7:0x0013, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x0014, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Tried to ");
-     */
-    /* JADX WARNING: Missing block: B:9:0x0020, code:
-            if (r8 != false) goto L_0x0022;
-     */
-    /* JADX WARNING: Missing block: B:10:0x0022, code:
-            r3 = "enable ";
-     */
-    /* JADX WARNING: Missing block: B:11:0x0025, code:
-            r3 = "disable ";
-     */
-    /* JADX WARNING: Missing block: B:12:0x0027, code:
-            r2.append(r3);
-            r2.append(r7);
-            r2.append(" for user ");
-            r2.append(r9);
-            r2.append(": ");
-            r2.append(r0);
-            android.util.Log.w(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void enablePackageForUser(String packageName, boolean enable, int userId) {
         try {
             int i;
@@ -250,7 +210,17 @@ public class SystemImpl implements SystemInterface {
                 i = 3;
             }
             packageManager.setApplicationEnabledSetting(packageName, i, 0, userId, null);
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalArgumentException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Tried to ");
+            stringBuilder.append(enable ? "enable " : "disable ");
+            stringBuilder.append(packageName);
+            stringBuilder.append(" for user ");
+            stringBuilder.append(userId);
+            stringBuilder.append(": ");
+            stringBuilder.append(e);
+            Log.w(str, stringBuilder.toString());
         }
     }
 

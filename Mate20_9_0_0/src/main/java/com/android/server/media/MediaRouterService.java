@@ -726,42 +726,42 @@ public final class MediaRouterService extends Stub implements Monitor {
             }
         }
 
-        /* JADX WARNING: Missing block: B:10:0x002d, code:
+        /* JADX WARNING: Missing block: B:10:0x002d, code skipped:
             if ((r1 & 4) == 0) goto L_0x0035;
      */
-        /* JADX WARNING: Missing block: B:11:0x002f, code:
+        /* JADX WARNING: Missing block: B:11:0x002f, code skipped:
             if (r5 == false) goto L_0x0033;
      */
-        /* JADX WARNING: Missing block: B:12:0x0031, code:
+        /* JADX WARNING: Missing block: B:12:0x0031, code skipped:
             r0 = 2;
      */
-        /* JADX WARNING: Missing block: B:13:0x0033, code:
+        /* JADX WARNING: Missing block: B:13:0x0033, code skipped:
             r0 = 1;
      */
-        /* JADX WARNING: Missing block: B:14:0x0035, code:
+        /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             r0 = 0;
      */
-        /* JADX WARNING: Missing block: B:16:0x0038, code:
+        /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             if (r8.mDiscoveryMode == r0) goto L_?;
      */
-        /* JADX WARNING: Missing block: B:17:0x003a, code:
+        /* JADX WARNING: Missing block: B:17:0x003a, code skipped:
             r8.mDiscoveryMode = r0;
             r2 = r8.mProviderRecords.size();
      */
-        /* JADX WARNING: Missing block: B:18:0x0043, code:
+        /* JADX WARNING: Missing block: B:18:0x0043, code skipped:
             r3 = r4;
      */
-        /* JADX WARNING: Missing block: B:19:0x0044, code:
+        /* JADX WARNING: Missing block: B:19:0x0044, code skipped:
             if (r3 >= r2) goto L_0x005a;
      */
-        /* JADX WARNING: Missing block: B:20:0x0046, code:
+        /* JADX WARNING: Missing block: B:20:0x0046, code skipped:
             ((com.android.server.media.MediaRouterService.UserHandler.ProviderRecord) r8.mProviderRecords.get(r3)).getProvider().setDiscoveryMode(r8.mDiscoveryMode);
             r4 = r3 + 1;
      */
-        /* JADX WARNING: Missing block: B:29:?, code:
+        /* JADX WARNING: Missing block: B:29:?, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:30:?, code:
+        /* JADX WARNING: Missing block: B:30:?, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1136,9 +1136,17 @@ public final class MediaRouterService extends Stub implements Monitor {
                             StringBuilder stringBuilder;
                             if ((newRoutes.mainType & 19) == 0) {
                                 MediaRouterService mediaRouterService = MediaRouterService.this;
-                                if (!(newRoutes.bluetoothName == null && MediaRouterService.this.mActiveBluetoothDevice == null)) {
-                                    z = true;
+                                if (newRoutes.bluetoothName == null) {
+                                    if (MediaRouterService.this.mActiveBluetoothDevice == null) {
+                                        mediaRouterService.mGlobalBluetoothA2dpOn = z;
+                                        str = MediaRouterService.TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("headset was plugged out:");
+                                        stringBuilder.append(MediaRouterService.this.mGlobalBluetoothA2dpOn);
+                                        Slog.w(str, stringBuilder.toString());
+                                    }
                                 }
+                                z = true;
                                 mediaRouterService.mGlobalBluetoothA2dpOn = z;
                                 str = MediaRouterService.TAG;
                                 stringBuilder = new StringBuilder();
@@ -1458,7 +1466,7 @@ public final class MediaRouterService extends Stub implements Monitor {
                 this.mAllClientRecords.put(binder, clientRecord2);
                 initializeClientLocked(clientRecord2);
                 clientRecord = clientRecord2;
-            } catch (ClientRecord clientRecord3) {
+            } catch (RemoteException clientRecord3) {
                 ClientRecord clientRecord4 = clientRecord3;
                 throw new RuntimeException("Media router client died prematurely.", clientRecord3);
             }

@@ -95,7 +95,10 @@ public class Reader {
     public void registerReaderEventCallback(EventCallBack callBack) {
         synchronized (this.mEventCallBackList) {
             if (callBack == null) {
-                Log.v(TAG, "The callback is null");
+                try {
+                    Log.v(TAG, "The callback is null");
+                } catch (Throwable th) {
+                }
             } else if (this.mEventCallBackList.contains(callBack)) {
                 String str = TAG;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -112,11 +115,15 @@ public class Reader {
     public boolean unregisterReaderEventCallback(EventCallBack callBack) {
         synchronized (this.mEventCallBackList) {
             if (callBack == null) {
-                Log.v(TAG, "The callback is null");
-                return false;
+                try {
+                    Log.v(TAG, "The callback is null");
+                    return false;
+                } catch (Throwable th) {
+                }
+            } else {
+                boolean remove = this.mEventCallBackList.remove(callBack);
+                return remove;
             }
-            boolean remove = this.mEventCallBackList.remove(callBack);
-            return remove;
         }
     }
 

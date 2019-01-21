@@ -46,6 +46,7 @@ import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.util.proto.ProtoOutputStream;
+import android.view.IApplicationToken.Stub;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.app.IVoiceInteractor;
@@ -427,7 +428,7 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
         int currentMode = getWindowingMode();
         ActivityDisplay display = getDisplay();
         TaskRecord topTask = topTask();
-        AbsActivityStack splitScreenStack = display.getSplitScreenPrimaryStack();
+        ActivityStack splitScreenStack = display.getSplitScreenPrimaryStack();
         this.mTmpOptions.setLaunchWindowingMode(i);
         int windowingMode = creating ? i : display.resolveWindowingMode(null, this.mTmpOptions, topTask, getActivityType());
         if (splitScreenStack == this && windowingMode == 4) {
@@ -888,10 +889,10 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
     void findTaskLocked(ActivityRecord target, FindTaskResult result) {
         int userId;
         ActivityStack activityStack = this;
-        ConfigurationContainer configurationContainer = target;
+        ActivityRecord activityRecord = target;
         FindTaskResult findTaskResult = result;
-        Intent intent = configurationContainer.intent;
-        ActivityInfo info = configurationContainer.info;
+        Intent intent = activityRecord.intent;
+        ActivityInfo info = activityRecord.info;
         ComponentName cls = intent.getComponent();
         if (info.targetActivity != null) {
             cls = new ComponentName(info.packageName, info.targetActivity);
@@ -904,7 +905,7 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
             String str = ActivityManagerService.TAG;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Looking for task of ");
-            stringBuilder.append(configurationContainer);
+            stringBuilder.append(activityRecord);
             stringBuilder.append(" in ");
             stringBuilder.append(activityStack);
             Slog.d(str, stringBuilder.toString());
@@ -932,7 +933,7 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                 } else if ((r.userId != userId2 && (!activityStack.mStackSupervisor.isCurrentProfileLocked(r.userId) || !activityStack.mStackSupervisor.isCurrentProfileLocked(userId2))) || r.launchMode == 3) {
                     info2 = info;
                     userId = userId2;
-                } else if (r.hasCompatibleActivityType(configurationContainer)) {
+                } else if (r.hasCompatibleActivityType(activityRecord)) {
                     Uri taskDocumentData;
                     StringBuilder stringBuilder3;
                     Intent taskIntent = task.intent;
@@ -1016,7 +1017,7 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                         activityStack = this;
                         z = false;
                     } else {
-                        if (task.rootAffinity.equals(configurationContainer.taskAffinity)) {
+                        if (task.rootAffinity.equals(activityRecord.taskAffinity)) {
                             if (ActivityManagerDebugConfig.DEBUG_TASKS) {
                                 Slog.d(ActivityManagerService.TAG, "Found matching affinity candidate!");
                             }
@@ -1845,22 +1846,6 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
         ensureActivitiesVisibleLocked(starting, configChanges, preserveWindows, true);
     }
 
-    /* JADX WARNING: Missing block: B:127:0x02df, code:
-            if (r7.mTranslucentActivityWaiting == null) goto L_0x02ed;
-     */
-    /* JADX WARNING: Missing block: B:129:0x02e7, code:
-            if (r7.mUndrawnActivitiesBelowTopTranslucent.isEmpty() == false) goto L_0x02ed;
-     */
-    /* JADX WARNING: Missing block: B:130:0x02e9, code:
-            notifyActivityDrawnLocked(null);
-     */
-    /* JADX WARNING: Missing block: B:131:0x02ed, code:
-            r7.mStackSupervisor.getKeyguardController().endActivityVisibilityUpdate();
-     */
-    /* JADX WARNING: Missing block: B:132:0x02f7, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     final void ensureActivitiesVisibleLocked(ActivityRecord starting, int configChanges, boolean preserveWindows, boolean notifyClients) {
         Throwable th;
         ActivityRecord activityRecord = starting;
@@ -1954,52 +1939,55 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                                         } else {
                                             r.ensureActivityConfiguration(0, preserveWindows, true);
                                         }
-                                        if (r.app && r.app.thread) {
-                                            if (r.visible) {
-                                                if (ActivityManagerDebugConfig.DEBUG_VISIBILITY) {
-                                                    activities = TAG_VISIBILITY;
-                                                    StringBuilder stringBuilder2 = new StringBuilder();
-                                                    stringBuilder2.append("Skipping: already visible at ");
-                                                    stringBuilder2.append(r);
-                                                    Slog.v(activities, stringBuilder2.toString());
-                                                }
-                                                if (r.mClientVisibilityDeferred && task) {
-                                                    r.makeClientVisible();
-                                                }
-                                                if (r.handleAlreadyVisible()) {
-                                                    resumeNextActivity2 = false;
-                                                    r2 = r;
-                                                    reallyVisible = activities2;
-                                                    task2 = task3;
-                                                    z4 = visibleIgnoringKeyguard;
-                                                    z3 = false;
-                                                    configChanges2 |= r2.configChangeFlags;
-                                                }
-                                            } else {
-                                                if (!this.mService.getActivityStartController().mCurActivityPkName.equals(r.appInfo.packageName)) {
-                                                    LogPower.push(true, "visible", r.appInfo.packageName);
-                                                }
-                                                r.makeVisibleIfNeeded(activityRecord, task);
-                                            }
-                                            r2 = r;
-                                            reallyVisible = activities2;
-                                            activityNdx2 = configChanges3;
-                                            task2 = task3;
-                                            z4 = visibleIgnoringKeyguard;
-                                            z3 = false;
-                                        } else {
-                                            z3 = false;
-                                            r2 = r;
-                                            reallyVisible = activities2;
-                                            activityNdx2 = configChanges3;
-                                            task2 = task3;
-                                            if (makeVisibleAndRestartIfNeeded(activityRecord, configChanges2, isTop, resumeNextActivity2, r2)) {
-                                                if (activityNdx2 >= reallyVisible.size()) {
-                                                    configChanges3 = reallyVisible.size() - 1;
-                                                    configChanges2 |= r2.configChangeFlags;
+                                        if (r.app) {
+                                            if (r.app.thread) {
+                                                if (r.visible) {
+                                                    if (ActivityManagerDebugConfig.DEBUG_VISIBILITY) {
+                                                        activities = TAG_VISIBILITY;
+                                                        StringBuilder stringBuilder2 = new StringBuilder();
+                                                        stringBuilder2.append("Skipping: already visible at ");
+                                                        stringBuilder2.append(r);
+                                                        Slog.v(activities, stringBuilder2.toString());
+                                                    }
+                                                    if (r.mClientVisibilityDeferred && task) {
+                                                        r.makeClientVisible();
+                                                    }
+                                                    if (r.handleAlreadyVisible()) {
+                                                        resumeNextActivity2 = false;
+                                                        r2 = r;
+                                                        reallyVisible = activities2;
+                                                        task2 = task3;
+                                                        z4 = visibleIgnoringKeyguard;
+                                                        z3 = false;
+                                                        configChanges2 |= r2.configChangeFlags;
+                                                    }
                                                 } else {
-                                                    resumeNextActivity2 = false;
+                                                    if (!this.mService.getActivityStartController().mCurActivityPkName.equals(r.appInfo.packageName)) {
+                                                        LogPower.push(true, "visible", r.appInfo.packageName);
+                                                    }
+                                                    r.makeVisibleIfNeeded(activityRecord, task);
                                                 }
+                                                r2 = r;
+                                                reallyVisible = activities2;
+                                                activityNdx2 = configChanges3;
+                                                task2 = task3;
+                                                z4 = visibleIgnoringKeyguard;
+                                                z3 = false;
+                                                configChanges3 = activityNdx2;
+                                                configChanges2 |= r2.configChangeFlags;
+                                            }
+                                        }
+                                        z3 = false;
+                                        r2 = r;
+                                        reallyVisible = activities2;
+                                        activityNdx2 = configChanges3;
+                                        task2 = task3;
+                                        if (makeVisibleAndRestartIfNeeded(activityRecord, configChanges2, isTop, resumeNextActivity2, r2)) {
+                                            if (activityNdx2 >= reallyVisible.size()) {
+                                                configChanges3 = reallyVisible.size() - 1;
+                                                configChanges2 |= r2.configChangeFlags;
+                                            } else {
+                                                resumeNextActivity2 = false;
                                             }
                                         }
                                         configChanges3 = activityNdx2;
@@ -2095,8 +2083,14 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                 } catch (Throwable th3) {
                     th = th3;
                     configChanges2 = configChanges3;
+                    this.mStackSupervisor.getKeyguardController().endActivityVisibilityUpdate();
+                    throw th;
                 }
             }
+            if (this.mTranslucentActivityWaiting != null && this.mUndrawnActivitiesBelowTopTranslucent.isEmpty()) {
+                notifyActivityDrawnLocked(null);
+            }
+            this.mStackSupervisor.getKeyguardController().endActivityVisibilityUpdate();
         } catch (Throwable th4) {
             th = th4;
             configChanges2 = configChanges;
@@ -2272,6 +2266,8 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                     case PAUSED:
                         addToStopping(r, true, canEnterPictureInPicture);
                         break;
+                    default:
+                        break;
                 }
             } catch (Exception e) {
                 str = ActivityManagerService.TAG;
@@ -2339,11 +2335,11 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                 if (waitingActivity.app != null && waitingActivity.app.thread != null) {
                     try {
                         IApplicationThread iApplicationThread = waitingActivity.app.thread;
-                        IBinder iBinder = waitingActivity.appToken;
+                        Stub stub = waitingActivity.appToken;
                         if (r != null) {
                             z = true;
                         }
-                        iApplicationThread.scheduleTranslucentConversionComplete(iBinder, z);
+                        iApplicationThread.scheduleTranslucentConversionComplete(stub, z);
                     } catch (RemoteException e) {
                     }
                 }
@@ -2422,9 +2418,9 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:290:0x060c A:{SYNTHETIC, Splitter: B:290:0x060c} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x060c A:{SYNTHETIC, Splitter:B:290:0x060c} */
     /* JADX WARNING: Removed duplicated region for block: B:299:0x067f  */
-    /* JADX WARNING: Removed duplicated region for block: B:305:0x06ab A:{SYNTHETIC, Splitter: B:305:0x06ab} */
+    /* JADX WARNING: Removed duplicated region for block: B:305:0x06ab A:{SYNTHETIC, Splitter:B:305:0x06ab} */
     /* JADX WARNING: Removed duplicated region for block: B:342:0x0795 A:{Catch:{ all -> 0x0801, all -> 0x0805 }} */
     /* JADX WARNING: Removed duplicated region for block: B:345:0x07bb A:{Catch:{ all -> 0x0801, all -> 0x0805 }} */
     /* JADX WARNING: Removed duplicated region for block: B:349:0x07e1 A:{SKIP, Catch:{ all -> 0x0801, all -> 0x0805 }} */
@@ -2440,28 +2436,28 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
     /* JADX WARNING: Removed duplicated region for block: B:349:0x07e1 A:{SKIP, Catch:{ all -> 0x0801, all -> 0x0805 }} */
     /* JADX WARNING: Removed duplicated region for block: B:348:0x07dd A:{Catch:{ all -> 0x0801, all -> 0x0805 }} */
     /* JADX WARNING: Removed duplicated region for block: B:355:0x07f9 A:{Catch:{ all -> 0x0801, all -> 0x0805 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:282:0x05fa A:{Splitter: B:265:0x05b9, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:282:0x05fa A:{ExcHandler: all (th java.lang.Throwable), Splitter:B:265:0x05b9} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:25:0x004f, code:
+    /* JADX WARNING: Missing block: B:25:0x004f, code skipped:
             if (com.android.server.am.ActivityManagerService.isInCallActivity(r12) != false) goto L_0x0051;
      */
-    /* JADX WARNING: Missing block: B:218:0x04b8, code:
+    /* JADX WARNING: Missing block: B:218:0x04b8, code skipped:
             if (r21 == false) goto L_0x04c3;
      */
-    /* JADX WARNING: Missing block: B:261:0x05aa, code:
+    /* JADX WARNING: Missing block: B:261:0x05aa, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:282:0x05fa, code:
+    /* JADX WARNING: Missing block: B:282:0x05fa, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:283:0x05fb, code:
+    /* JADX WARNING: Missing block: B:283:0x05fb, code skipped:
             r10 = r6;
      */
-    /* JADX WARNING: Missing block: B:285:0x05ff, code:
+    /* JADX WARNING: Missing block: B:285:0x05ff, code skipped:
             r22 = r4;
             r10 = r6;
      */
-    /* JADX WARNING: Missing block: B:310:?, code:
+    /* JADX WARNING: Missing block: B:310:?, code skipped:
             r0 = new java.lang.StringBuilder();
             r1 = r7.mStackSupervisor;
             r0.append(r1.mActivityLaunchTrack);
@@ -2469,10 +2465,10 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
             r1.mActivityLaunchTrack = r0.toString();
             r12.completeResumeLocked();
      */
-    /* JADX WARNING: Missing block: B:312:0x06e3, code:
+    /* JADX WARNING: Missing block: B:312:0x06e3, code skipped:
             if (android.util.Jlog.isUBMEnable() == false) goto L_0x074e;
      */
-    /* JADX WARNING: Missing block: B:313:0x06e5, code:
+    /* JADX WARNING: Missing block: B:313:0x06e5, code skipped:
             r1 = new java.lang.StringBuilder();
             r1.append("AS#");
             r1.append(r12.intent.getComponent().flattenToShortString());
@@ -2480,47 +2476,47 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
             r1.append(r12.app.pid);
             r1.append(",");
      */
-    /* JADX WARNING: Missing block: B:314:0x070f, code:
+    /* JADX WARNING: Missing block: B:314:0x070f, code skipped:
             if (r8 == null) goto L_0x0721;
      */
-    /* JADX WARNING: Missing block: B:316:0x0713, code:
+    /* JADX WARNING: Missing block: B:316:0x0713, code skipped:
             if (r8.intent != null) goto L_0x0716;
      */
-    /* JADX WARNING: Missing block: B:317:0x0716, code:
+    /* JADX WARNING: Missing block: B:317:0x0716, code skipped:
             r2 = r8.intent.getComponent().flattenToShortString();
      */
-    /* JADX WARNING: Missing block: B:318:0x0721, code:
+    /* JADX WARNING: Missing block: B:318:0x0721, code skipped:
             r2 = "null";
      */
-    /* JADX WARNING: Missing block: B:319:0x0724, code:
+    /* JADX WARNING: Missing block: B:319:0x0724, code skipped:
             r1.append(r2);
             r1.append(",");
      */
-    /* JADX WARNING: Missing block: B:320:0x072c, code:
+    /* JADX WARNING: Missing block: B:320:0x072c, code skipped:
             if (r8 == null) goto L_0x073c;
      */
-    /* JADX WARNING: Missing block: B:322:0x0730, code:
+    /* JADX WARNING: Missing block: B:322:0x0730, code skipped:
             if (r8.app != null) goto L_0x0733;
      */
-    /* JADX WARNING: Missing block: B:323:0x0733, code:
+    /* JADX WARNING: Missing block: B:323:0x0733, code skipped:
             r2 = java.lang.Integer.valueOf(r8.app.pid);
      */
-    /* JADX WARNING: Missing block: B:324:0x073c, code:
+    /* JADX WARNING: Missing block: B:324:0x073c, code skipped:
             r2 = "unknow";
      */
-    /* JADX WARNING: Missing block: B:325:0x073f, code:
+    /* JADX WARNING: Missing block: B:325:0x073f, code skipped:
             r1.append(r2);
             r1.append(")");
             android.util.Jlog.d(273, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:326:0x074e, code:
+    /* JADX WARNING: Missing block: B:326:0x074e, code skipped:
             r10 = r23;
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:327:0x0754, code:
+    /* JADX WARNING: Missing block: B:327:0x0754, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:328:0x0755, code:
+    /* JADX WARNING: Missing block: B:328:0x0755, code skipped:
             r1 = com.android.server.am.ActivityManagerService.TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Exception thrown during resume of ");
@@ -2529,13 +2525,13 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
             r10 = r23;
             requestFinishActivityLocked(r12.appToken, 0, null, "resume-exception", true);
      */
-    /* JADX WARNING: Missing block: B:329:0x077b, code:
+    /* JADX WARNING: Missing block: B:329:0x077b, code skipped:
             if (com.android.server.am.ActivityManagerDebugConfig.DEBUG_STACK != false) goto L_0x077d;
      */
-    /* JADX WARNING: Missing block: B:330:0x077d, code:
+    /* JADX WARNING: Missing block: B:330:0x077d, code skipped:
             r7.mStackSupervisor.validateTopActivitiesLocked();
      */
-    /* JADX WARNING: Missing block: B:332:0x0783, code:
+    /* JADX WARNING: Missing block: B:332:0x0783, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4116,7 +4112,9 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
         return finishActivityLocked(r, resultCode, resultData, reason, oomAdj, false);
     }
 
-    /* JADX WARNING: Missing block: B:34:0x00b5, code:
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x0170 A:{Catch:{ all -> 0x01bd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:87:0x0178 A:{Catch:{ all -> 0x01bd }} */
+    /* JADX WARNING: Missing block: B:34:0x00b5, code skipped:
             if (com.android.server.am.ActivityManagerDebugConfig.DEBUG_TRANSITION != false) goto L_0x00b7;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4225,21 +4223,29 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                 if (activityRecord.visible && !r.isSplitMode()) {
                     prepareActivityHideTransitionAnimation(activityRecord, transit);
                 }
-                if (!(activityRecord.visible || activityRecord.nowVisible)) {
-                    finishMode = 1;
+                if (!activityRecord.visible) {
+                    if (!activityRecord.nowVisible) {
+                        finishMode = 1;
+                        if (finishCurrentActivityLocked(activityRecord, finishMode, oomAdj, "finishActivityLocked") == null) {
+                            removedActivity = true;
+                        }
+                        if (task.onlyHasTaskOverlayActivities(true)) {
+                            Iterator it = task.mActivities.iterator();
+                            while (it.hasNext()) {
+                                ActivityRecord taskOverlay = (ActivityRecord) it.next();
+                                if (taskOverlay.mTaskOverlay) {
+                                    prepareActivityHideTransitionAnimation(taskOverlay, transit);
+                                }
+                            }
+                        }
+                        this.mWindowManager.continueSurfaceLayout();
+                        return removedActivity;
+                    }
                 }
                 try {
                     if (finishCurrentActivityLocked(activityRecord, finishMode, oomAdj, "finishActivityLocked") == null) {
-                        removedActivity = true;
                     }
                     if (task.onlyHasTaskOverlayActivities(true)) {
-                        Iterator it = task.mActivities.iterator();
-                        while (it.hasNext()) {
-                            ActivityRecord taskOverlay = (ActivityRecord) it.next();
-                            if (taskOverlay.mTaskOverlay) {
-                                prepareActivityHideTransitionAnimation(taskOverlay, transit);
-                            }
-                        }
                     }
                     this.mWindowManager.continueSurfaceLayout();
                     return removedActivity;
@@ -5215,60 +5221,62 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
         }
         ActivityDisplay ad;
         try {
+            StringBuilder stringBuilder2;
+            ActivityDisplay activityDisplay;
+            String str2;
             getDisplay().deferUpdateImeTarget();
             insertTaskAtTop(taskRecord, null);
             ActivityRecord top = tr.getTopActivity();
-            ActivityDisplay activityDisplay;
-            String str2;
-            StringBuilder stringBuilder2;
-            if (top == null || !top.okToShowLocked()) {
-                if (top != null) {
-                    this.mStackSupervisor.mRecentTasks.add(top.getTask());
-                }
-                ActivityOptions.abort(options);
-                activityDisplay = getDisplay();
-                if (activityDisplay != null) {
-                    activityDisplay.continueUpdateImeTarget();
-                } else {
-                    str2 = ActivityManagerService.TAG;
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("activityDisplay is null for ");
-                    stringBuilder2.append(this.mDisplayId);
-                    Slog.e(str2, stringBuilder2.toString());
-                    if (!(HwPCUtils.isPcCastModeInServer() || HwVRUtils.isVRMode() || this.mDisplayId == -1)) {
-                        ad = this.mStackSupervisor.getActivityDisplayOrCreateLocked(this.mDisplayId);
-                        if (ad != null) {
-                            ad.continueUpdateImeTarget();
+            if (top != null) {
+                if (top.okToShowLocked()) {
+                    ActivityRecord r = topRunningActivityLocked();
+                    this.mStackSupervisor.moveFocusableActivityStackToFrontLocked(r, str);
+                    if (ActivityManagerDebugConfig.DEBUG_TRANSITION) {
+                        String str3 = ActivityManagerService.TAG;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("Prepare to front transition: task=");
+                        stringBuilder2.append(taskRecord);
+                        Slog.v(str3, stringBuilder2.toString());
+                    }
+                    if (noAnimation) {
+                        this.mWindowManager.prepareAppTransition(0, false);
+                        if (r != null) {
+                            this.mStackSupervisor.mNoAnimActivities.add(r);
+                        }
+                        ActivityOptions.abort(options);
+                    } else {
+                        updateTransitLocked(10, activityOptions);
+                    }
+                    if (canEnterPipOnTaskSwitch(topActivity, taskRecord, null, activityOptions)) {
+                        topActivity.supportsEnterPipOnTaskSwitch = true;
+                    }
+                    this.mStackSupervisor.mActivityLaunchTrack = "taskMove";
+                    this.mStackSupervisor.resumeFocusedStackTopActivityLocked();
+                    EventLog.writeEvent(EventLogTags.AM_TASK_TO_FRONT, new Object[]{Integer.valueOf(taskRecord.userId), Integer.valueOf(taskRecord.taskId)});
+                    this.mService.mTaskChangeNotificationController.notifyTaskMovedToFront(taskRecord.taskId);
+                    activityDisplay = getDisplay();
+                    if (activityDisplay != null) {
+                        activityDisplay.continueUpdateImeTarget();
+                    } else {
+                        str2 = ActivityManagerService.TAG;
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("activityDisplay is null for ");
+                        stringBuilder2.append(this.mDisplayId);
+                        Slog.e(str2, stringBuilder2.toString());
+                        if (!(HwPCUtils.isPcCastModeInServer() || HwVRUtils.isVRMode() || this.mDisplayId == -1)) {
+                            ad = this.mStackSupervisor.getActivityDisplayOrCreateLocked(this.mDisplayId);
+                            if (ad != null) {
+                                ad.continueUpdateImeTarget();
+                            }
                         }
                     }
+                    return;
                 }
-                return;
             }
-            ActivityRecord r = topRunningActivityLocked();
-            this.mStackSupervisor.moveFocusableActivityStackToFrontLocked(r, str);
-            if (ActivityManagerDebugConfig.DEBUG_TRANSITION) {
-                String str3 = ActivityManagerService.TAG;
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Prepare to front transition: task=");
-                stringBuilder2.append(taskRecord);
-                Slog.v(str3, stringBuilder2.toString());
+            if (top != null) {
+                this.mStackSupervisor.mRecentTasks.add(top.getTask());
             }
-            if (noAnimation) {
-                this.mWindowManager.prepareAppTransition(0, false);
-                if (r != null) {
-                    this.mStackSupervisor.mNoAnimActivities.add(r);
-                }
-                ActivityOptions.abort(options);
-            } else {
-                updateTransitLocked(10, activityOptions);
-            }
-            if (canEnterPipOnTaskSwitch(topActivity, taskRecord, null, activityOptions)) {
-                topActivity.supportsEnterPipOnTaskSwitch = true;
-            }
-            this.mStackSupervisor.mActivityLaunchTrack = "taskMove";
-            this.mStackSupervisor.resumeFocusedStackTopActivityLocked();
-            EventLog.writeEvent(EventLogTags.AM_TASK_TO_FRONT, new Object[]{Integer.valueOf(taskRecord.userId), Integer.valueOf(taskRecord.taskId)});
-            this.mService.mTaskChangeNotificationController.notifyTaskMovedToFront(taskRecord.taskId);
+            ActivityOptions.abort(options);
             activityDisplay = getDisplay();
             if (activityDisplay != null) {
                 activityDisplay.continueUpdateImeTarget();
@@ -5410,13 +5418,14 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
                 for (int i = this.mTaskHistory.size() - 1; i >= 0; i--) {
                     TaskRecord task = (TaskRecord) this.mTaskHistory.get(i);
                     if (task.isResizeable()) {
-                        if (inFreeformWindowingMode() || HwPCUtils.isExtDynamicStack(this.mStackId)) {
-                            this.mTmpRect2.set(task.getOverrideBounds());
-                            fitWithinBounds(this.mTmpRect2, bounds);
-                            task.updateOverrideConfiguration(this.mTmpRect2);
-                        } else {
-                            task.updateOverrideConfiguration(taskBounds, insetBounds);
+                        if (!inFreeformWindowingMode()) {
+                            if (!HwPCUtils.isExtDynamicStack(this.mStackId)) {
+                                task.updateOverrideConfiguration(taskBounds, insetBounds);
+                            }
                         }
+                        this.mTmpRect2.set(task.getOverrideBounds());
+                        fitWithinBounds(this.mTmpRect2, bounds);
+                        task.updateOverrideConfiguration(this.mTmpRect2);
                     }
                     this.mTmpBounds.put(task.taskId, task.getOverrideBounds());
                     if (tempTaskInsetBounds != null) {
@@ -5482,7 +5491,7 @@ public class ActivityStack<T extends StackWindowController> extends AbsActivityS
             stringBuilder.append(r2);
             Slog.e(str, stringBuilder.toString());
         }
-        return true ^ r2.finishing;
+        return 1 ^ r2.finishing;
     }
 
     void closeSystemDialogsLocked() {

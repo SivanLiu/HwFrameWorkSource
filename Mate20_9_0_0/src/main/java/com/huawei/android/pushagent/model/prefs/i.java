@@ -1,37 +1,45 @@
 package com.huawei.android.pushagent.model.prefs;
 
 import android.content.Context;
-import com.huawei.android.pushagent.utils.f.a;
+import com.huawei.android.pushagent.utils.b.b;
 
 public class i {
-    private static final byte[] ga = new byte[0];
-    private static i gb;
-    private final a gc;
+    private static final byte[] dc = new byte[0];
+    private static i dd;
+    private final b de;
 
     private i(Context context) {
-        this.gc = new a(context, "push_disagreement");
+        this.de = new b(context, "PowerGenieControl");
     }
 
-    public static i qx(Context context) {
-        return ra(context);
+    public static i lg(Context context) {
+        return ll(context);
     }
 
-    private static i ra(Context context) {
+    private static i ll(Context context) {
         i iVar;
-        synchronized (ga) {
-            if (gb == null) {
-                gb = new i(context);
+        synchronized (dc) {
+            if (dd == null) {
+                dd = new i(context);
             }
-            iVar = gb;
+            iVar = dd;
         }
         return iVar;
     }
 
-    public boolean qy(String str) {
-        return this.gc.eb(str, false);
+    public String lh() {
+        return this.de.tg("whiteList");
     }
 
-    public boolean qz(String str, boolean z) {
-        return this.gc.ea(str, Boolean.valueOf(z));
+    public boolean lk(String str) {
+        return this.de.tm("whiteList", str);
+    }
+
+    public int li() {
+        return this.de.getInt("ctrlState", 0);
+    }
+
+    public void lj(int i) {
+        this.de.to("ctrlState", Integer.valueOf(i));
     }
 }

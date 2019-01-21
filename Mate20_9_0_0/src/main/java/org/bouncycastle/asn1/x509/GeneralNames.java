@@ -39,9 +39,9 @@ public class GeneralNames extends ASN1Object {
     }
 
     public GeneralName[] getNames() {
-        Object obj = new GeneralName[this.names.length];
-        System.arraycopy(this.names, 0, obj, 0, this.names.length);
-        return obj;
+        GeneralName[] generalNameArr = new GeneralName[this.names.length];
+        System.arraycopy(this.names, 0, generalNameArr, 0, this.names.length);
+        return generalNameArr;
     }
 
     public ASN1Primitive toASN1Primitive() {

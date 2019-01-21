@@ -1,5 +1,6 @@
 package android.test;
 
+import android.util.Log;
 import dalvik.system.DexFile;
 import java.io.File;
 import java.io.IOException;
@@ -91,19 +92,6 @@ public class ClassPathPackageInfoSource {
         return ((ClassPathPackageInfo) this.cache.get(packageName)).getTopLevelClassesRecursive();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0047 A:{ExcHandler: java.lang.ClassNotFoundException (r3_6 'e' java.lang.Throwable), Splitter: B:9:0x0036} */
-    /* JADX WARNING: Missing block: B:15:0x0047, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0048, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("Cannot load class. Make sure it is in your apk. Class name: '");
-            r5.append(r2);
-            r5.append("'. Message: ");
-            r5.append(r3.getMessage());
-            android.util.Log.w("ClassPathPackageInfoSource", r5.toString(), r3);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private ClassPathPackageInfo createPackageInfo(String packageName) {
         Set<String> subpackageNames = new TreeSet();
         TreeSet<String> classNames = new TreeSet();
@@ -114,7 +102,13 @@ public class ClassPathPackageInfoSource {
                 if (!className.endsWith(".Manifest")) {
                     try {
                         topLevelClasses.add(Class.forName(className, false, this.classLoader != null ? this.classLoader : CLASS_LOADER));
-                    } catch (Throwable e) {
+                    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Cannot load class. Make sure it is in your apk. Class name: '");
+                        stringBuilder.append(className);
+                        stringBuilder.append("'. Message: ");
+                        stringBuilder.append(e.getMessage());
+                        Log.w("ClassPathPackageInfoSource", stringBuilder.toString(), e);
                     }
                 }
             }

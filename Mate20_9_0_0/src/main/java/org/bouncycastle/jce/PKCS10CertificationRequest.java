@@ -12,7 +12,6 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.PSSParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashSet;
@@ -281,7 +280,7 @@ public class PKCS10CertificationRequest extends CertificationRequest {
 
     public PublicKey getPublicKey(String str) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
         ASN1Encodable subjectPublicKeyInfo = this.reqInfo.getSubjectPublicKeyInfo();
-        KeySpec x509EncodedKeySpec;
+        X509EncodedKeySpec x509EncodedKeySpec;
         AlgorithmIdentifier algorithm;
         try {
             x509EncodedKeySpec = new X509EncodedKeySpec(new DERBitString(subjectPublicKeyInfo).getOctets());

@@ -29,7 +29,7 @@ public class CertStoreCollectionSpi extends CertStoreSpi {
     }
 
     public Collection engineGetCRLs(CRLSelector cRLSelector) throws CertStoreException {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         Iterator it = this.params.getCollection().iterator();
         if (cRLSelector == null) {
             while (it.hasNext()) {
@@ -50,7 +50,7 @@ public class CertStoreCollectionSpi extends CertStoreSpi {
     }
 
     public Collection engineGetCertificates(CertSelector certSelector) throws CertStoreException {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         Iterator it = this.params.getCollection().iterator();
         if (certSelector == null) {
             while (it.hasNext()) {

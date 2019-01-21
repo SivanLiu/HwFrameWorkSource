@@ -307,7 +307,7 @@ public class AppTimeLimitController {
         this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(1, group), timeout);
     }
 
-    /* JADX WARNING: Missing block: B:21:0x006e, code:
+    /* JADX WARNING: Missing block: B:21:0x006e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

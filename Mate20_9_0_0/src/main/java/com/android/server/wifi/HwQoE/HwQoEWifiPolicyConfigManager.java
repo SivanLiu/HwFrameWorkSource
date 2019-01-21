@@ -71,33 +71,33 @@ public class HwQoEWifiPolicyConfigManager {
             XmlPullParser parser = Xml.newPullParser();
             inputStream = context.getAssets().open(CONF_FILE_NAME);
             parser.setInput(inputStream, "UTF-8");
-            int eventType = parser.getEventType();
-            while (eventType != 1) {
-                if (eventType != 0 && eventType == 2) {
-                    if (XML_TAG_VERSION.equals(parser.getName())) {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("whitelist VERSION = ");
-                        stringBuilder.append(parser.nextText());
-                        HwQoEUtils.logD(stringBuilder.toString());
-                    } else if (XML_TAG_SLEEP_POLICY.equals(parser.getName())) {
-                        if (this.mDefaultWiFiSleepPolicyMap == null) {
-                            this.mDefaultWiFiSleepPolicyMap = new HashMap();
+            for (int eventType = parser.getEventType(); eventType != 1; eventType = parser.next()) {
+                if (eventType != 0) {
+                    if (eventType == 2) {
+                        if (XML_TAG_VERSION.equals(parser.getName())) {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("whitelist VERSION = ");
+                            stringBuilder.append(parser.nextText());
+                            HwQoEUtils.logD(stringBuilder.toString());
+                        } else if (XML_TAG_SLEEP_POLICY.equals(parser.getName())) {
+                            if (this.mDefaultWiFiSleepPolicyMap == null) {
+                                this.mDefaultWiFiSleepPolicyMap = new HashMap();
+                            }
+                        } else if (XML_TAG_APP_NAME1.equals(parser.getName())) {
+                            this.mWiFiSleepAppName = parser.nextText();
+                            if (!TextUtils.isEmpty(this.mWiFiSleepAppName)) {
+                                this.mWiFiSleepAppName = this.mWiFiSleepAppName.replaceAll(" ", "");
+                            }
+                        } else if (XML_TAG_SLEEP_TIME.equals(parser.getName())) {
+                            this.mWiFiSleepTime = parser.nextText();
+                            if (!TextUtils.isEmpty(this.mWiFiSleepTime)) {
+                                this.mWiFiSleepTime = this.mWiFiSleepTime.replaceAll(" ", "");
+                                putDefaultWiFiSleepPolicyMap(this.mWiFiSleepAppName, this.mWiFiSleepTime);
+                            }
+                            this.mWiFiSleepAppName = null;
                         }
-                    } else if (XML_TAG_APP_NAME1.equals(parser.getName())) {
-                        this.mWiFiSleepAppName = parser.nextText();
-                        if (!TextUtils.isEmpty(this.mWiFiSleepAppName)) {
-                            this.mWiFiSleepAppName = this.mWiFiSleepAppName.replaceAll(" ", "");
-                        }
-                    } else if (XML_TAG_SLEEP_TIME.equals(parser.getName())) {
-                        this.mWiFiSleepTime = parser.nextText();
-                        if (!TextUtils.isEmpty(this.mWiFiSleepTime)) {
-                            this.mWiFiSleepTime = this.mWiFiSleepTime.replaceAll(" ", "");
-                            putDefaultWiFiSleepPolicyMap(this.mWiFiSleepAppName, this.mWiFiSleepTime);
-                        }
-                        this.mWiFiSleepAppName = null;
                     }
                 }
-                eventType = parser.next();
             }
             if (inputStream != null) {
                 try {

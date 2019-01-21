@@ -17,8 +17,12 @@ import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.Log;
 import com.android.internal.annotations.VisibleForTesting;
+import com.android.server.wifi.scanner.ScanResultRecords;
 import com.android.server.wifi.util.NativeUtil;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
@@ -118,7 +122,7 @@ public class WifiConfigurationUtil {
             return true;
         }
         if (newConfig.getIpAssignment() == IpAssignment.STATIC) {
-            return Objects.equals(existingConfig.getStaticIpConfiguration(), newConfig.getStaticIpConfiguration()) ^ true;
+            return Objects.equals(existingConfig.getStaticIpConfiguration(), newConfig.getStaticIpConfiguration()) ^ 1;
         }
         return false;
     }
@@ -133,11 +137,11 @@ public class WifiConfigurationUtil {
         } else if (newConfig.getProxySettings() != existingConfig.getProxySettings()) {
             return true;
         } else {
-            return true ^ Objects.equals(existingConfig.getHttpProxy(), newConfig.getHttpProxy());
+            return 1 ^ Objects.equals(existingConfig.getHttpProxy(), newConfig.getHttpProxy());
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0057, code:
+    /* JADX WARNING: Missing block: B:19:0x0057, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -160,6 +164,32 @@ public class WifiConfigurationUtil {
         return true;
     }
 
+    private static boolean isGBKEncodedString(String ssid) {
+        if (ssid.isEmpty()) {
+            Log.e(TAG, "ssid is empty");
+            return false;
+        }
+        ArrayList<Byte> ssidArray = ScanResultRecords.getDefault().getOriSsid(NativeUtil.removeEnclosingQuotes(ssid));
+        if (ssidArray != null) {
+            byte[] buff = NativeUtil.byteArrayFromArrayList(ssidArray);
+            try {
+                if (Charset.isSupported("GBK")) {
+                    byte[] newBuff = NativeUtil.removeEnclosingQuotes(ssid).getBytes("GBK");
+                    if (buff.length == newBuff.length) {
+                        for (int i = 0; i < buff.length; i++) {
+                            if (buff[i] != newBuff[i]) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+            }
+        }
+        return false;
+    }
+
     private static boolean validateSsid(String ssid, boolean isAdd) {
         if (isAdd) {
             if (ssid == null) {
@@ -177,20 +207,36 @@ public class WifiConfigurationUtil {
         String str;
         StringBuilder stringBuilder2;
         if (ssid.startsWith("\"")) {
-            byte[] ssidBytes = ssid.getBytes(StandardCharsets.UTF_8);
-            if (ssidBytes.length < 3) {
+            if (!isGBKEncodedString(ssid)) {
+                byte[] ssidBytes = ssid.getBytes(StandardCharsets.UTF_8);
+                if (ssidBytes.length < 3) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("validateSsid failed: utf-8 ssid string size too small: ");
+                    stringBuilder.append(ssidBytes.length);
+                    Log.e(str, stringBuilder.toString());
+                    return false;
+                } else if (ssidBytes.length > 34) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("validateSsid failed: utf-8 ssid string size too large: ");
+                    stringBuilder.append(ssidBytes.length);
+                    Log.e(str, stringBuilder.toString());
+                    return false;
+                }
+            } else if (ssid.length() < 3) {
                 str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("validateSsid failed: utf-8 ssid string size too small: ");
-                stringBuilder.append(ssidBytes.length);
-                Log.e(str, stringBuilder.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("validateSsid failed: GBK ssid string size too small: ");
+                stringBuilder2.append(ssid.length());
+                Log.e(str, stringBuilder2.toString());
                 return false;
-            } else if (ssidBytes.length > 34) {
+            } else if (ssid.length() > 34) {
                 str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("validateSsid failed: utf-8 ssid string size too large: ");
-                stringBuilder.append(ssidBytes.length);
-                Log.e(str, stringBuilder.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("validateSsid failed: GBK ssid string size too large: ");
+                stringBuilder2.append(ssid.length());
+                Log.e(str, stringBuilder2.toString());
                 return false;
             }
         } else if (ssid.length() < 2) {
@@ -370,7 +416,7 @@ public class WifiConfigurationUtil {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0026, code:
+    /* JADX WARNING: Missing block: B:17:0x0026, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

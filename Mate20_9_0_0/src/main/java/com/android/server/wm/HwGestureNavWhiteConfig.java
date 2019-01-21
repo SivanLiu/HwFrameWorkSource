@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import libcore.io.IoUtils;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class HwGestureNavWhiteConfig {
     private static final String CURRENT_ROM_VERSION = SystemProperties.get("ro.build.version.incremental", "B001");
@@ -143,51 +144,56 @@ public class HwGestureNavWhiteConfig {
         this.mNewWin = win;
     }
 
-    /* JADX WARNING: Missing block: B:41:0x00b7, code:
+    /* JADX WARNING: Missing block: B:43:0x00b7, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:51:0x00eb, code:
+    /* JADX WARNING: Missing block: B:53:0x00eb, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized boolean isEnable() {
         this.mCurrentWin = this.mNewWin;
         boolean z = false;
-        if (this.mCurrentWin != null && this.mService != null) {
-            int rotation = this.mService.getDefaultDisplayContentLocked().getRotation();
-            if (rotation == 0 || rotation == 2) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("rotation is ");
-                stringBuilder.append(rotation);
-                Slog.d(str, stringBuilder.toString());
-                return false;
-            }
-            GestureNavAttr whitename = findInList();
-            if (whitename != null) {
-                return whitename.action;
-            }
-            int LastSystemUiFlags = 0;
-            if (this.mService.mPolicy instanceof HwPhoneWindowManager) {
-                LastSystemUiFlags = ((HwPhoneWindowManager) this.mService.mPolicy).getLastSystemUiFlags();
-            }
-            if (this.DEBUG) {
+        if (this.mCurrentWin != null) {
+            if (this.mService != null) {
+                int rotation = this.mService.getDefaultDisplayContentLocked().getRotation();
+                if (rotation != 0) {
+                    if (rotation != 2) {
+                        GestureNavAttr whitename = findInList();
+                        if (whitename != null) {
+                            return whitename.action;
+                        }
+                        int LastSystemUiFlags = 0;
+                        if (this.mService.mPolicy instanceof HwPhoneWindowManager) {
+                            LastSystemUiFlags = ((HwPhoneWindowManager) this.mService.mPolicy).getLastSystemUiFlags();
+                        }
+                        if (this.DEBUG) {
+                            String str = TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("win:return ");
+                            stringBuilder.append((this.mCurrentWin.getAttrs().flags & 1024) != 0);
+                            stringBuilder.append(" ");
+                            stringBuilder.append((LastSystemUiFlags & 4) != 0);
+                            stringBuilder.append(" win:");
+                            stringBuilder.append(this.mCurrentWin);
+                            stringBuilder.append(" extra ");
+                            stringBuilder.append(checkgestnavflags(1));
+                            Slog.d(str, stringBuilder.toString());
+                        }
+                        if (!(((this.mCurrentWin.getAttrs().flags & 1024) == 0 && ((LastSystemUiFlags & 4) == 0 || this.mCurrentWin.toString().contains(GestureNavConst.STATUSBAR_WINDOW))) || checkgestnavflags(1))) {
+                            z = true;
+                        }
+                    }
+                }
                 String str2 = TAG;
                 StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("win:return ");
-                stringBuilder2.append((this.mCurrentWin.getAttrs().flags & 1024) != 0);
-                stringBuilder2.append(" ");
-                stringBuilder2.append((LastSystemUiFlags & 4) != 0);
-                stringBuilder2.append(" win:");
-                stringBuilder2.append(this.mCurrentWin);
-                stringBuilder2.append(" extra ");
-                stringBuilder2.append(checkgestnavflags(1));
+                stringBuilder2.append("rotation is ");
+                stringBuilder2.append(rotation);
                 Slog.d(str2, stringBuilder2.toString());
+                return false;
             }
-            if (!(((this.mCurrentWin.getAttrs().flags & 1024) == 0 && ((LastSystemUiFlags & 4) == 0 || this.mCurrentWin.toString().contains(GestureNavConst.STATUSBAR_WINDOW))) || checkgestnavflags(1))) {
-                z = true;
-            }
-        } else if (this.mService == null) {
+        }
+        if (this.mService == null) {
             String str3 = TAG;
             StringBuilder stringBuilder3 = new StringBuilder();
             stringBuilder3.append("mService == null");
@@ -337,9 +343,9 @@ public class HwGestureNavWhiteConfig {
         loadconfig(configfile);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0027 A:{Catch:{ FileNotFoundException -> 0x001b, XmlPullParserException -> 0x0018, IOException -> 0x0015, all -> 0x0012 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:64:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00ea A:{SYNTHETIC, Splitter: B:37:0x00ea} */
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0027 A:{Catch:{ FileNotFoundException -> 0x001b, XmlPullParserException -> 0x0018, IOException -> 0x0015, all -> 0x0012 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00ea A:{SYNTHETIC, Splitter:B:42:0x00ea} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadconfig(File configfile) {
         InputStream inputStream = null;
@@ -393,7 +399,7 @@ public class HwGestureNavWhiteConfig {
                         try {
                             inputStream.close();
                             return;
-                        } catch (FileNotFoundException e) {
+                        } catch (IOException e) {
                             Log.e(TAG, "load GestureNav config: IO Exception while closing stream", e);
                             return;
                         }
@@ -407,14 +413,14 @@ public class HwGestureNavWhiteConfig {
                     return;
                 }
                 return;
-            } catch (FileNotFoundException e22) {
+            } catch (XmlPullParserException e22) {
                 Log.e(TAG, "load GestureNav XmlPullParserException: ", e22);
                 if (inputStream != null) {
                     inputStream.close();
                     return;
                 }
                 return;
-            } catch (FileNotFoundException e222) {
+            } catch (IOException e222) {
                 Log.e(TAG, "load GestureNav IOException: ", e222);
                 if (inputStream != null) {
                     inputStream.close();
@@ -438,14 +444,14 @@ public class HwGestureNavWhiteConfig {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter: B:26:0x0067} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter: B:31:0x0074} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter: B:26:0x0067} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter: B:31:0x0074} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter: B:26:0x0067} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter: B:31:0x0074} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter: B:26:0x0067} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter: B:31:0x0074} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter:B:26:0x0067} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter:B:31:0x0074} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter:B:26:0x0067} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter:B:31:0x0074} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter:B:26:0x0067} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter:B:31:0x0074} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0067 A:{SYNTHETIC, Splitter:B:26:0x0067} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0074 A:{SYNTHETIC, Splitter:B:31:0x0074} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean copyFile(FileInputStream srcStream, String filePath) {
         boolean result;

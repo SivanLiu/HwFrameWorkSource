@@ -59,12 +59,12 @@ public class GF2Polynomial {
         this.blocks = ((i - 1) >> 5) + 1;
         this.value = new int[this.blocks];
         this.len = i;
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         int i2 = 0;
         if (toByteArray[0] == (byte) 0) {
-            Object obj = new byte[(toByteArray.length - 1)];
-            System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-            toByteArray = obj;
+            byte[] bArr = new byte[(toByteArray.length - 1)];
+            System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+            toByteArray = bArr;
         }
         int length = toByteArray.length & 3;
         int length2 = ((toByteArray.length - 1) >> 2) + 1;
@@ -174,10 +174,10 @@ public class GF2Polynomial {
             }
             return;
         }
-        Object obj = new int[this.blocks];
-        System.arraycopy(this.value, 0, obj, i, this.blocks - i);
+        int[] iArr = new int[this.blocks];
+        System.arraycopy(this.value, 0, iArr, i, this.blocks - i);
         this.value = null;
-        this.value = obj;
+        this.value = iArr;
     }
 
     private GF2Polynomial karaMult(GF2Polynomial gF2Polynomial) {
@@ -226,59 +226,58 @@ public class GF2Polynomial {
 
     private static int[] mult128(int[] iArr, int[] iArr2) {
         int[] iArr3 = new int[8];
-        Object obj = new int[2];
-        System.arraycopy(iArr, 0, obj, 0, Math.min(2, iArr.length));
-        Object obj2 = new int[2];
+        int[] iArr4 = new int[2];
+        System.arraycopy(iArr, 0, iArr4, 0, Math.min(2, iArr.length));
+        int[] iArr5 = new int[2];
         if (iArr.length > 2) {
-            System.arraycopy(iArr, 2, obj2, 0, Math.min(2, iArr.length - 2));
+            System.arraycopy(iArr, 2, iArr5, 0, Math.min(2, iArr.length - 2));
         }
-        Object obj3 = new int[2];
-        System.arraycopy(iArr2, 0, obj3, 0, Math.min(2, iArr2.length));
-        Object obj4 = new int[2];
+        iArr = new int[2];
+        System.arraycopy(iArr2, 0, iArr, 0, Math.min(2, iArr2.length));
+        int[] iArr6 = new int[2];
         if (iArr2.length > 2) {
-            System.arraycopy(iArr2, 2, obj4, 0, Math.min(2, iArr2.length - 2));
+            System.arraycopy(iArr2, 2, iArr6, 0, Math.min(2, iArr2.length - 2));
         }
         int[] mult64;
-        if (obj2[1] != null || obj4[1] != null) {
-            mult64 = mult64(obj2, obj4);
+        if (iArr5[1] != 0 || iArr6[1] != 0) {
+            mult64 = mult64(iArr5, iArr6);
             iArr3[7] = iArr3[7] ^ mult64[3];
             iArr3[6] = iArr3[6] ^ mult64[2];
             iArr3[5] = iArr3[5] ^ (mult64[1] ^ mult64[3]);
             iArr3[4] = iArr3[4] ^ (mult64[0] ^ mult64[2]);
             iArr3[3] = iArr3[3] ^ mult64[1];
             iArr3[2] = mult64[0] ^ iArr3[2];
-        } else if (!(obj2[0] == null && obj4[0] == null)) {
-            mult64 = mult32(obj2[0], obj4[0]);
+        } else if (!(iArr5[0] == 0 && iArr6[0] == 0)) {
+            mult64 = mult32(iArr5[0], iArr6[0]);
             iArr3[5] = iArr3[5] ^ mult64[1];
             iArr3[4] = iArr3[4] ^ mult64[0];
             iArr3[3] = iArr3[3] ^ mult64[1];
             iArr3[2] = mult64[0] ^ iArr3[2];
         }
-        obj2[0] = obj2[0] ^ obj[0];
-        obj2[1] = obj2[1] ^ obj[1];
-        obj4[0] = obj4[0] ^ obj3[0];
-        obj4[1] = obj4[1] ^ obj3[1];
-        int[] mult32;
-        if (obj2[1] == null && obj4[1] == null) {
-            mult32 = mult32(obj2[0], obj4[0]);
-            iArr3[3] = iArr3[3] ^ mult32[1];
-            iArr3[2] = mult32[0] ^ iArr3[2];
+        iArr5[0] = iArr5[0] ^ iArr4[0];
+        iArr5[1] = iArr5[1] ^ iArr4[1];
+        iArr6[0] = iArr6[0] ^ iArr[0];
+        iArr6[1] = iArr6[1] ^ iArr[1];
+        if (iArr5[1] == 0 && iArr6[1] == 0) {
+            iArr5 = mult32(iArr5[0], iArr6[0]);
+            iArr3[3] = iArr3[3] ^ iArr5[1];
+            iArr3[2] = iArr5[0] ^ iArr3[2];
         } else {
-            mult32 = mult64(obj2, obj4);
-            iArr3[5] = iArr3[5] ^ mult32[3];
-            iArr3[4] = iArr3[4] ^ mult32[2];
-            iArr3[3] = iArr3[3] ^ mult32[1];
-            iArr3[2] = mult32[0] ^ iArr3[2];
+            iArr5 = mult64(iArr5, iArr6);
+            iArr3[5] = iArr3[5] ^ iArr5[3];
+            iArr3[4] = iArr3[4] ^ iArr5[2];
+            iArr3[3] = iArr3[3] ^ iArr5[1];
+            iArr3[2] = iArr5[0] ^ iArr3[2];
         }
-        if (obj[1] == null && obj3[1] == null) {
-            iArr = mult32(obj[0], obj3[0]);
+        if (iArr4[1] == 0 && iArr[1] == 0) {
+            iArr = mult32(iArr4[0], iArr[0]);
             iArr3[3] = iArr3[3] ^ iArr[1];
             iArr3[2] = iArr3[2] ^ iArr[0];
             iArr3[1] = iArr3[1] ^ iArr[1];
             iArr3[0] = iArr[0] ^ iArr3[0];
             return iArr3;
         }
-        iArr = mult64(obj, obj3);
+        iArr = mult64(iArr4, iArr);
         iArr3[5] = iArr3[5] ^ iArr[3];
         iArr3[4] = iArr3[4] ^ iArr[2];
         iArr3[3] = iArr3[3] ^ (iArr[1] ^ iArr[3]);
@@ -292,21 +291,21 @@ public class GF2Polynomial {
         Object obj = iArr;
         Object obj2 = iArr2;
         int[] iArr3 = new int[16];
-        Object obj3 = new int[4];
-        System.arraycopy(obj, 0, obj3, 0, Math.min(4, obj.length));
-        Object obj4 = new int[4];
+        int[] iArr4 = new int[4];
+        System.arraycopy(obj, 0, iArr4, 0, Math.min(4, obj.length));
+        int[] iArr5 = new int[4];
         if (obj.length > 4) {
-            System.arraycopy(obj, 4, obj4, 0, Math.min(4, obj.length - 4));
+            System.arraycopy(obj, 4, iArr5, 0, Math.min(4, obj.length - 4));
         }
-        obj = new int[4];
-        System.arraycopy(obj2, 0, obj, 0, Math.min(4, obj2.length));
-        Object obj5 = new int[4];
+        int[] iArr6 = new int[4];
+        System.arraycopy(obj2, 0, iArr6, 0, Math.min(4, obj2.length));
+        int[] iArr7 = new int[4];
         if (obj2.length > 4) {
-            System.arraycopy(obj2, 4, obj5, 0, Math.min(4, obj2.length - 4));
+            System.arraycopy(obj2, 4, iArr7, 0, Math.min(4, obj2.length - 4));
         }
         int[] mult128;
-        if (obj4[3] != null || obj4[2] != null || obj5[3] != null || obj5[2] != null) {
-            mult128 = mult128(obj4, obj5);
+        if (iArr5[3] != 0 || iArr5[2] != 0 || iArr7[3] != 0 || iArr7[2] != 0) {
+            mult128 = mult128(iArr5, iArr7);
             iArr3[15] = iArr3[15] ^ mult128[7];
             iArr3[14] = iArr3[14] ^ mult128[6];
             iArr3[13] = iArr3[13] ^ mult128[5];
@@ -319,8 +318,8 @@ public class GF2Polynomial {
             iArr3[6] = iArr3[6] ^ mult128[2];
             iArr3[5] = iArr3[5] ^ mult128[1];
             iArr3[4] = mult128[0] ^ iArr3[4];
-        } else if (obj4[1] != null || obj5[1] != null) {
-            mult128 = mult64(obj4, obj5);
+        } else if (iArr5[1] != 0 || iArr7[1] != 0) {
+            mult128 = mult64(iArr5, iArr7);
             iArr3[11] = iArr3[11] ^ mult128[3];
             iArr3[10] = iArr3[10] ^ mult128[2];
             iArr3[9] = iArr3[9] ^ mult128[1];
@@ -329,43 +328,43 @@ public class GF2Polynomial {
             iArr3[6] = iArr3[6] ^ mult128[2];
             iArr3[5] = iArr3[5] ^ mult128[1];
             iArr3[4] = mult128[0] ^ iArr3[4];
-        } else if (!(obj4[0] == null && obj5[0] == null)) {
-            mult128 = mult32(obj4[0], obj5[0]);
+        } else if (!(iArr5[0] == 0 && iArr7[0] == 0)) {
+            mult128 = mult32(iArr5[0], iArr7[0]);
             iArr3[9] = iArr3[9] ^ mult128[1];
             iArr3[8] = iArr3[8] ^ mult128[0];
             iArr3[5] = iArr3[5] ^ mult128[1];
             iArr3[4] = mult128[0] ^ iArr3[4];
         }
-        obj4[0] = obj4[0] ^ obj3[0];
-        obj4[1] = obj4[1] ^ obj3[1];
-        obj4[2] = obj4[2] ^ obj3[2];
-        obj4[3] = obj4[3] ^ obj3[3];
-        obj5[0] = obj5[0] ^ obj[0];
-        obj5[1] = obj5[1] ^ obj[1];
-        obj5[2] = obj5[2] ^ obj[2];
-        obj5[3] = obj5[3] ^ obj[3];
-        int[] mult1282 = mult128(obj4, obj5);
-        iArr3[11] = iArr3[11] ^ mult1282[7];
-        iArr3[10] = iArr3[10] ^ mult1282[6];
-        iArr3[9] = iArr3[9] ^ mult1282[5];
-        iArr3[8] = iArr3[8] ^ mult1282[4];
-        iArr3[7] = iArr3[7] ^ mult1282[3];
-        iArr3[6] = iArr3[6] ^ mult1282[2];
-        iArr3[5] = iArr3[5] ^ mult1282[1];
-        iArr3[4] = mult1282[0] ^ iArr3[4];
-        int[] mult1283 = mult128(obj3, obj);
-        iArr3[11] = iArr3[11] ^ mult1283[7];
-        iArr3[10] = iArr3[10] ^ mult1283[6];
-        iArr3[9] = iArr3[9] ^ mult1283[5];
-        iArr3[8] = iArr3[8] ^ mult1283[4];
-        iArr3[7] = iArr3[7] ^ (mult1283[3] ^ mult1283[7]);
-        iArr3[6] = iArr3[6] ^ (mult1283[2] ^ mult1283[6]);
-        iArr3[5] = iArr3[5] ^ (mult1283[1] ^ mult1283[5]);
-        iArr3[4] = iArr3[4] ^ (mult1283[0] ^ mult1283[4]);
-        iArr3[3] = iArr3[3] ^ mult1283[3];
-        iArr3[2] = iArr3[2] ^ mult1283[2];
-        iArr3[1] = iArr3[1] ^ mult1283[1];
-        iArr3[0] = mult1283[0] ^ iArr3[0];
+        iArr5[0] = iArr5[0] ^ iArr4[0];
+        iArr5[1] = iArr5[1] ^ iArr4[1];
+        iArr5[2] = iArr5[2] ^ iArr4[2];
+        iArr5[3] = iArr5[3] ^ iArr4[3];
+        iArr7[0] = iArr7[0] ^ iArr6[0];
+        iArr7[1] = iArr7[1] ^ iArr6[1];
+        iArr7[2] = iArr7[2] ^ iArr6[2];
+        iArr7[3] = iArr7[3] ^ iArr6[3];
+        iArr5 = mult128(iArr5, iArr7);
+        iArr3[11] = iArr3[11] ^ iArr5[7];
+        iArr3[10] = iArr3[10] ^ iArr5[6];
+        iArr3[9] = iArr3[9] ^ iArr5[5];
+        iArr3[8] = iArr3[8] ^ iArr5[4];
+        iArr3[7] = iArr3[7] ^ iArr5[3];
+        iArr3[6] = iArr3[6] ^ iArr5[2];
+        iArr3[5] = iArr3[5] ^ iArr5[1];
+        iArr3[4] = iArr5[0] ^ iArr3[4];
+        iArr6 = mult128(iArr4, iArr6);
+        iArr3[11] = iArr3[11] ^ iArr6[7];
+        iArr3[10] = iArr3[10] ^ iArr6[6];
+        iArr3[9] = iArr3[9] ^ iArr6[5];
+        iArr3[8] = iArr3[8] ^ iArr6[4];
+        iArr3[7] = iArr3[7] ^ (iArr6[3] ^ iArr6[7]);
+        iArr3[6] = iArr3[6] ^ (iArr6[2] ^ iArr6[6]);
+        iArr3[5] = iArr3[5] ^ (iArr6[1] ^ iArr6[5]);
+        iArr3[4] = iArr3[4] ^ (iArr6[0] ^ iArr6[4]);
+        iArr3[3] = iArr3[3] ^ iArr6[3];
+        iArr3[2] = iArr3[2] ^ iArr6[2];
+        iArr3[1] = iArr3[1] ^ iArr6[1];
+        iArr3[0] = iArr6[0] ^ iArr3[0];
         return iArr3;
     }
 
@@ -391,19 +390,19 @@ public class GF2Polynomial {
         Object obj = iArr;
         Object obj2 = iArr2;
         int[] iArr3 = new int[32];
-        Object obj3 = new int[8];
-        System.arraycopy(obj, 0, obj3, 0, Math.min(8, obj.length));
-        Object obj4 = new int[8];
+        int[] iArr4 = new int[8];
+        System.arraycopy(obj, 0, iArr4, 0, Math.min(8, obj.length));
+        int[] iArr5 = new int[8];
         if (obj.length > 8) {
-            System.arraycopy(obj, 8, obj4, 0, Math.min(8, obj.length - 8));
+            System.arraycopy(obj, 8, iArr5, 0, Math.min(8, obj.length - 8));
         }
-        obj = new int[8];
-        System.arraycopy(obj2, 0, obj, 0, Math.min(8, obj2.length));
-        Object obj5 = new int[8];
+        int[] iArr6 = new int[8];
+        System.arraycopy(obj2, 0, iArr6, 0, Math.min(8, obj2.length));
+        int[] iArr7 = new int[8];
         if (obj2.length > 8) {
-            System.arraycopy(obj2, 8, obj5, 0, Math.min(8, obj2.length - 8));
+            System.arraycopy(obj2, 8, iArr7, 0, Math.min(8, obj2.length - 8));
         }
-        int[] mult256 = mult256(obj4, obj5);
+        int[] mult256 = mult256(iArr5, iArr7);
         iArr3[31] = iArr3[31] ^ mult256[15];
         iArr3[30] = iArr3[30] ^ mult256[14];
         iArr3[29] = iArr3[29] ^ mult256[13];
@@ -428,23 +427,23 @@ public class GF2Polynomial {
         iArr3[10] = iArr3[10] ^ mult256[2];
         iArr3[9] = iArr3[9] ^ mult256[1];
         iArr3[8] = mult256[0] ^ iArr3[8];
-        obj4[0] = obj4[0] ^ obj3[0];
-        obj4[1] = obj4[1] ^ obj3[1];
-        obj4[2] = obj4[2] ^ obj3[2];
-        obj4[3] = obj4[3] ^ obj3[3];
-        obj4[4] = obj4[4] ^ obj3[4];
-        obj4[5] = obj4[5] ^ obj3[5];
-        obj4[6] = obj4[6] ^ obj3[6];
-        obj4[7] = obj4[7] ^ obj3[7];
-        obj5[0] = obj5[0] ^ obj[0];
-        obj5[1] = obj5[1] ^ obj[1];
-        obj5[2] = obj5[2] ^ obj[2];
-        obj5[3] = obj5[3] ^ obj[3];
-        obj5[4] = obj5[4] ^ obj[4];
-        obj5[5] = obj5[5] ^ obj[5];
-        obj5[6] = obj5[6] ^ obj[6];
-        obj5[7] = obj5[7] ^ obj[7];
-        mult256 = mult256(obj4, obj5);
+        iArr5[0] = iArr5[0] ^ iArr4[0];
+        iArr5[1] = iArr5[1] ^ iArr4[1];
+        iArr5[2] = iArr5[2] ^ iArr4[2];
+        iArr5[3] = iArr5[3] ^ iArr4[3];
+        iArr5[4] = iArr5[4] ^ iArr4[4];
+        iArr5[5] = iArr5[5] ^ iArr4[5];
+        iArr5[6] = iArr5[6] ^ iArr4[6];
+        iArr5[7] = iArr5[7] ^ iArr4[7];
+        iArr7[0] = iArr7[0] ^ iArr6[0];
+        iArr7[1] = iArr7[1] ^ iArr6[1];
+        iArr7[2] = iArr7[2] ^ iArr6[2];
+        iArr7[3] = iArr7[3] ^ iArr6[3];
+        iArr7[4] = iArr7[4] ^ iArr6[4];
+        iArr7[5] = iArr7[5] ^ iArr6[5];
+        iArr7[6] = iArr7[6] ^ iArr6[6];
+        iArr7[7] = iArr7[7] ^ iArr6[7];
+        mult256 = mult256(iArr5, iArr7);
         iArr3[23] = iArr3[23] ^ mult256[15];
         iArr3[22] = iArr3[22] ^ mult256[14];
         iArr3[21] = iArr3[21] ^ mult256[13];
@@ -461,31 +460,31 @@ public class GF2Polynomial {
         iArr3[10] = iArr3[10] ^ mult256[2];
         iArr3[9] = iArr3[9] ^ mult256[1];
         iArr3[8] = mult256[0] ^ iArr3[8];
-        int[] mult2562 = mult256(obj3, obj);
-        iArr3[23] = iArr3[23] ^ mult2562[15];
-        iArr3[22] = iArr3[22] ^ mult2562[14];
-        iArr3[21] = iArr3[21] ^ mult2562[13];
-        iArr3[20] = iArr3[20] ^ mult2562[12];
-        iArr3[19] = iArr3[19] ^ mult2562[11];
-        iArr3[18] = iArr3[18] ^ mult2562[10];
-        iArr3[17] = iArr3[17] ^ mult2562[9];
-        iArr3[16] = iArr3[16] ^ mult2562[8];
-        iArr3[15] = iArr3[15] ^ (mult2562[7] ^ mult2562[15]);
-        iArr3[14] = iArr3[14] ^ (mult2562[6] ^ mult2562[14]);
-        iArr3[13] = iArr3[13] ^ (mult2562[5] ^ mult2562[13]);
-        iArr3[12] = iArr3[12] ^ (mult2562[4] ^ mult2562[12]);
-        iArr3[11] = iArr3[11] ^ (mult2562[3] ^ mult2562[11]);
-        iArr3[10] = iArr3[10] ^ (mult2562[2] ^ mult2562[10]);
-        iArr3[9] = iArr3[9] ^ (mult2562[1] ^ mult2562[9]);
-        iArr3[8] = iArr3[8] ^ (mult2562[0] ^ mult2562[8]);
-        iArr3[7] = iArr3[7] ^ mult2562[7];
-        iArr3[6] = iArr3[6] ^ mult2562[6];
-        iArr3[5] = iArr3[5] ^ mult2562[5];
-        iArr3[4] = iArr3[4] ^ mult2562[4];
-        iArr3[3] = iArr3[3] ^ mult2562[3];
-        iArr3[2] = iArr3[2] ^ mult2562[2];
-        iArr3[1] = iArr3[1] ^ mult2562[1];
-        iArr3[0] = mult2562[0] ^ iArr3[0];
+        iArr6 = mult256(iArr4, iArr6);
+        iArr3[23] = iArr3[23] ^ iArr6[15];
+        iArr3[22] = iArr3[22] ^ iArr6[14];
+        iArr3[21] = iArr3[21] ^ iArr6[13];
+        iArr3[20] = iArr3[20] ^ iArr6[12];
+        iArr3[19] = iArr3[19] ^ iArr6[11];
+        iArr3[18] = iArr3[18] ^ iArr6[10];
+        iArr3[17] = iArr3[17] ^ iArr6[9];
+        iArr3[16] = iArr3[16] ^ iArr6[8];
+        iArr3[15] = iArr3[15] ^ (iArr6[7] ^ iArr6[15]);
+        iArr3[14] = iArr3[14] ^ (iArr6[6] ^ iArr6[14]);
+        iArr3[13] = iArr3[13] ^ (iArr6[5] ^ iArr6[13]);
+        iArr3[12] = iArr3[12] ^ (iArr6[4] ^ iArr6[12]);
+        iArr3[11] = iArr3[11] ^ (iArr6[3] ^ iArr6[11]);
+        iArr3[10] = iArr3[10] ^ (iArr6[2] ^ iArr6[10]);
+        iArr3[9] = iArr3[9] ^ (iArr6[1] ^ iArr6[9]);
+        iArr3[8] = iArr3[8] ^ (iArr6[0] ^ iArr6[8]);
+        iArr3[7] = iArr3[7] ^ iArr6[7];
+        iArr3[6] = iArr3[6] ^ iArr6[6];
+        iArr3[5] = iArr3[5] ^ iArr6[5];
+        iArr3[4] = iArr3[4] ^ iArr6[4];
+        iArr3[3] = iArr3[3] ^ iArr6[3];
+        iArr3[2] = iArr3[2] ^ iArr6[2];
+        iArr3[1] = iArr3[1] ^ iArr6[1];
+        iArr3[0] = iArr6[0] ^ iArr3[0];
         return iArr3;
     }
 
@@ -624,11 +623,11 @@ public class GF2Polynomial {
                     this.blocks = i;
                     return;
                 }
-                Object obj = new int[i];
-                System.arraycopy(this.value, 0, obj, 0, this.blocks);
+                int[] iArr = new int[i];
+                System.arraycopy(this.value, 0, iArr, 0, this.blocks);
                 this.blocks = i;
                 this.value = null;
-                this.value = obj;
+                this.value = iArr;
             }
         }
     }
@@ -1008,10 +1007,10 @@ public class GF2Polynomial {
             this.value[0] = 0;
             return;
         }
-        Object obj = new int[this.blocks];
-        System.arraycopy(this.value, 0, obj, 1, this.blocks - 1);
+        int[] iArr = new int[this.blocks];
+        System.arraycopy(this.value, 0, iArr, 1, this.blocks - 1);
         this.value = null;
-        this.value = obj;
+        this.value = iArr;
     }
 
     public GF2Polynomial shiftLeft() {
@@ -1069,34 +1068,35 @@ public class GF2Polynomial {
     }
 
     public void shiftLeftThis() {
+        int[] iArr;
         int i;
         if ((this.len & 31) == 0) {
             this.len++;
             this.blocks++;
             if (this.blocks > this.value.length) {
-                Object obj = new int[this.blocks];
-                System.arraycopy(this.value, 0, obj, 0, this.value.length);
+                iArr = new int[this.blocks];
+                System.arraycopy(this.value, 0, iArr, 0, this.value.length);
                 this.value = null;
-                this.value = obj;
+                this.value = iArr;
             }
             for (i = this.blocks - 1; i >= 1; i--) {
-                int[] iArr = this.value;
+                int[] iArr2 = this.value;
                 int i2 = i - 1;
-                iArr[i] = iArr[i] | (this.value[i2] >>> 31);
-                iArr = this.value;
-                iArr[i2] = iArr[i2] << 1;
+                iArr2[i] = iArr2[i] | (this.value[i2] >>> 31);
+                iArr2 = this.value;
+                iArr2[i2] = iArr2[i2] << 1;
             }
             return;
         }
         this.len++;
         for (i = this.blocks - 1; i >= 1; i--) {
-            int[] iArr2 = this.value;
-            iArr2[i] = iArr2[i] << 1;
-            iArr2 = this.value;
-            iArr2[i] = iArr2[i] | (this.value[i - 1] >>> 31);
+            int[] iArr3 = this.value;
+            iArr3[i] = iArr3[i] << 1;
+            iArr3 = this.value;
+            iArr3[i] = iArr3[i] | (this.value[i - 1] >>> 31);
         }
-        int[] iArr3 = this.value;
-        iArr3[0] = iArr3[0] << 1;
+        iArr = this.value;
+        iArr[0] = iArr[0] << 1;
     }
 
     public GF2Polynomial shiftRight() {
@@ -1174,12 +1174,12 @@ public class GF2Polynomial {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:15:0x00b9 in {2, 7, 9, 13, 14} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -1191,9 +1191,7 @@ public class GF2Polynomial {
         r10 = this;
         r0 = r10.isZero();
         if (r0 == 0) goto L_0x0007;
-    L_0x0006:
         return;
-    L_0x0007:
         r0 = r10.value;
         r0 = r0.length;
         r1 = r10.blocks;
@@ -1202,12 +1200,9 @@ public class GF2Polynomial {
         r3 = -16777216; // 0xffffffffff000000 float:-1.7014118E38 double:NaN;
         r4 = 16711680; // 0xff0000 float:2.3418052E-38 double:8.256667E-317;
         if (r0 < r1) goto L_0x006c;
-    L_0x0017:
         r0 = r10.blocks;
         r0 = r0 + -1;
-    L_0x001b:
         if (r0 < 0) goto L_0x005d;
-    L_0x001d:
         r1 = r10.value;
         r5 = r0 << 1;
         r6 = r5 + 1;
@@ -1243,7 +1238,6 @@ public class GF2Polynomial {
         r1[r5] = r6;
         r0 = r0 + -1;
         goto L_0x001b;
-    L_0x005d:
         r0 = r10.blocks;
         r0 = r0 << 1;
         r10.blocks = r0;
@@ -1252,15 +1246,12 @@ public class GF2Polynomial {
         r0 = r0 + -1;
         r10.len = r0;
         return;
-    L_0x006c:
         r0 = r10.blocks;
         r0 = r0 << 1;
         r0 = new int[r0];
         r1 = 0;
-    L_0x0073:
         r5 = r10.blocks;
         if (r1 >= r5) goto L_0x00b3;
-    L_0x0077:
         r5 = r1 << 1;
         r6 = squaringTable;
         r7 = r10.value;
@@ -1294,7 +1285,6 @@ public class GF2Polynomial {
         r0[r5] = r6;
         r1 = r1 + 1;
         goto L_0x0073;
-    L_0x00b3:
         r1 = 0;
         r10.value = r1;
         r10.value = r0;
@@ -1348,9 +1338,9 @@ public class GF2Polynomial {
     }
 
     public int[] toIntegerArray() {
-        Object obj = new int[this.blocks];
-        System.arraycopy(this.value, 0, obj, 0, this.blocks);
-        return obj;
+        int[] iArr = new int[this.blocks];
+        System.arraycopy(this.value, 0, iArr, 0, this.blocks);
+        return iArr;
     }
 
     public String toString(int i) {
@@ -1443,13 +1433,13 @@ public class GF2Polynomial {
     public boolean vectorMult(GF2Polynomial gF2Polynomial) throws RuntimeException {
         if (this.len == gF2Polynomial.len) {
             int i = 0;
-            boolean z = false;
+            int i2 = 0;
             while (i < this.blocks) {
-                int i2 = this.value[i] & gF2Polynomial.value[i];
-                z = (((z ^ parity[i2 & 255]) ^ parity[(i2 >>> 8) & 255]) ^ parity[(i2 >>> 16) & 255]) ^ parity[(i2 >>> 24) & 255];
+                int i3 = this.value[i] & gF2Polynomial.value[i];
+                i2 = (((i2 ^ parity[i3 & 255]) ^ parity[(i3 >>> 8) & 255]) ^ parity[(i3 >>> 16) & 255]) ^ parity[(i3 >>> 24) & 255];
                 i++;
             }
-            return z;
+            return i2;
         }
         throw new RuntimeException();
     }

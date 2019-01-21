@@ -2,7 +2,6 @@ package org.bouncycastle.jcajce.spec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.security.spec.AlgorithmParameterSpec;
 import java.text.SimpleDateFormat;
@@ -65,7 +64,7 @@ public class SkeinParameterSpec implements AlgorithmParameterSpec {
 
         public Builder setPersonalisation(Date date, String str, String str2) {
             try {
-                OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, "UTF-8");
                 outputStreamWriter.write(new SimpleDateFormat("YYYYMMDD").format(date));
                 outputStreamWriter.write(" ");
@@ -84,7 +83,7 @@ public class SkeinParameterSpec implements AlgorithmParameterSpec {
 
         public Builder setPersonalisation(Date date, Locale locale, String str, String str2) {
             try {
-                OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, "UTF-8");
                 outputStreamWriter.write(new SimpleDateFormat("YYYYMMDD", locale).format(date));
                 outputStreamWriter.write(" ");

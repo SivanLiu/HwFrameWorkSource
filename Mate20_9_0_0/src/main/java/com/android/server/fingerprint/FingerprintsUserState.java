@@ -102,7 +102,7 @@ class FingerprintsUserState {
     }
 
     public List<Fingerprint> getFingerprints() {
-        List copy;
+        ArrayList copy;
         synchronized (this) {
             copy = getCopy(this.mFingerprints);
         }
@@ -112,7 +112,7 @@ class FingerprintsUserState {
     private String getUniqueName() {
         int guess = 1;
         while (true) {
-            String name = this.mCtx.getString(17040079, new Object[]{Integer.valueOf(guess)});
+            String name = this.mCtx.getString(17040080, new Object[]{Integer.valueOf(guess)});
             if (isUnique(name)) {
                 return name;
             }
@@ -184,11 +184,6 @@ class FingerprintsUserState {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:9:0x0023 A:{Splitter: B:5:0x0012, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Missing block: B:11:?, code:
-            android.util.Slog.e(TAG, "Failed parsing settings fingerprint file");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("this")
     private void readStateSyncLocked() {
         if (this.mFile.exists()) {
@@ -198,7 +193,8 @@ class FingerprintsUserState {
                     XmlPullParser parser = Xml.newPullParser();
                     parser.setInput(in, null);
                     parseStateLocked(parser);
-                } catch (XmlPullParserException e) {
+                } catch (IOException | XmlPullParserException e) {
+                    Slog.e(TAG, "Failed parsing settings fingerprint file");
                 } catch (Throwable th) {
                     IoUtils.closeQuietly(in);
                 }

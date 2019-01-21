@@ -3,6 +3,9 @@ package com.android.server.policy;
 import android.util.Log;
 import android.util.Xml;
 import com.android.server.gesture.GestureNavConst;
+import huawei.cust.HwCfgFilePolicy;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -133,141 +136,75 @@ public class EasyWakeUpXmlParse {
         return defaultvalue;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.policy.EasyWakeUpXmlParse.parseHwEasyWakeUpdatesFile():void, dom blocks: [B:5:0x000e, B:12:0x0028]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private static void parseHwEasyWakeUpdatesFile() throws java.lang.Exception {
-        /*
-        r0 = 0;
-        r1 = r0;
-        r2 = "xml/hw_easywakeupmotion_config.xml";	 Catch:{ NoClassDefFoundError -> 0x0027 }
-        r3 = 0;	 Catch:{ NoClassDefFoundError -> 0x0027 }
-        r2 = huawei.cust.HwCfgFilePolicy.getCfgFile(r2, r3);	 Catch:{ NoClassDefFoundError -> 0x0027 }
-        r0 = r2;
-        if (r0 != 0) goto L_0x0047;
-    L_0x000e:
-        r2 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3 = "/data/cust/xml/hw_easywakeupmotion_config.xml";	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2.<init>(r3);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r0 = r2;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2 = r0.exists();	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        if (r2 != 0) goto L_0x0047;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x001c:
-        r2 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3 = "/system/etc/xml/hw_easywakeupmotion_config.xml";	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2.<init>(r3);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0023:
-        r0 = r2;
-        goto L_0x0047;
-    L_0x0025:
-        r2 = move-exception;
-        goto L_0x0056;
-    L_0x0027:
-        r2 = move-exception;
-        r3 = TAG;	 Catch:{ all -> 0x0025 }
-        r4 = "HwCfgFilePolicy NoClassDefFoundError";	 Catch:{ all -> 0x0025 }
-        android.util.Log.d(r3, r4);	 Catch:{ all -> 0x0025 }
-        if (r0 != 0) goto L_0x0047;
-    L_0x0031:
-        r2 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3 = "/data/cust/xml/hw_easywakeupmotion_config.xml";	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2.<init>(r3);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r0 = r2;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2 = r0.exists();	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        if (r2 != 0) goto L_0x0047;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x003f:
-        r2 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3 = "/system/etc/xml/hw_easywakeupmotion_config.xml";	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2.<init>(r3);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x0023;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0047:
-        r2 = new java.io.FileInputStream;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2.<init>(r0);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r1 = r2;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        parseHwEasyWakeUpDate(r1);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0051:
-        r1.close();
-        r0 = 0;
-        goto L_0x00a5;
-    L_0x0056:
-        if (r0 != 0) goto L_0x0079;
-    L_0x0058:
-        r3 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r4 = "/data/cust/xml/hw_easywakeupmotion_config.xml";	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3.<init>(r4);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r0 = r3;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3 = r0.exists();	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        if (r3 != 0) goto L_0x0079;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0066:
-        r3 = new java.io.File;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r4 = "/system/etc/xml/hw_easywakeupmotion_config.xml";	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r3.<init>(r4);	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r0 = r3;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x0079;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x006f:
-        r0 = move-exception;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x00a6;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0071:
-        r0 = move-exception;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x007a;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0073:
-        r0 = move-exception;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x0083;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0075:
-        r0 = move-exception;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x008e;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0077:
-        r0 = move-exception;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        goto L_0x0099;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-    L_0x0079:
-        throw r2;	 Catch:{ FileNotFoundException -> 0x0077, XmlPullParserException -> 0x0075, IOException -> 0x0073, Exception -> 0x0071 }
-        r2 = new java.lang.Exception;	 Catch:{ all -> 0x006f }
-        r3 = "Exception";	 Catch:{ all -> 0x006f }
-        r2.<init>(r3);	 Catch:{ all -> 0x006f }
-        throw r2;	 Catch:{ all -> 0x006f }
-        r2 = TAG;	 Catch:{ all -> 0x006f }
-        r3 = "hw_easywakeupmotion_config.xml IOException";	 Catch:{ all -> 0x006f }
-        android.util.Log.e(r2, r3);	 Catch:{ all -> 0x006f }
-        if (r1 == 0) goto L_0x00a4;	 Catch:{ all -> 0x006f }
-    L_0x008d:
-        goto L_0x0051;	 Catch:{ all -> 0x006f }
-        r2 = TAG;	 Catch:{ all -> 0x006f }
-        r3 = "hw_easywakeupmotion_config.xml XmlPullParserException";	 Catch:{ all -> 0x006f }
-        android.util.Log.e(r2, r3);	 Catch:{ all -> 0x006f }
-        if (r1 == 0) goto L_0x00a4;	 Catch:{ all -> 0x006f }
-    L_0x0098:
-        goto L_0x0051;	 Catch:{ all -> 0x006f }
-        r2 = TAG;	 Catch:{ all -> 0x006f }
-        r3 = "hw_easywakeupmotion_config.xml FileNotFoundException";	 Catch:{ all -> 0x006f }
-        android.util.Log.e(r2, r3);	 Catch:{ all -> 0x006f }
-        if (r1 == 0) goto L_0x00a4;
-    L_0x00a3:
-        goto L_0x0051;
-    L_0x00a4:
-        r0 = r1;
-    L_0x00a5:
-        return;
-    L_0x00a6:
-        if (r1 == 0) goto L_0x00ac;
-    L_0x00a8:
-        r1.close();
-        r1 = 0;
-    L_0x00ac:
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.policy.EasyWakeUpXmlParse.parseHwEasyWakeUpdatesFile():void");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:5:0x000e, B:12:0x0028] */
+    /* JADX WARNING: Missing block: B:21:0x0056, code skipped:
+            if (null == null) goto L_0x0058;
+     */
+    /* JADX WARNING: Missing block: B:24:0x0064, code skipped:
+            if (new java.io.File(HWEASYWAKEUP_MOTION_CONFIG_CUST_PATH).exists() == false) goto L_0x0066;
+     */
+    /* JADX WARNING: Missing block: B:25:0x0066, code skipped:
+            r0 = new java.io.File(HWEASYWAKEUP_MOTION_CONFIG_SYSTEM_PATH);
+     */
+    /* JADX WARNING: Missing block: B:39:0x0082, code skipped:
+            throw new java.lang.Exception("Exception");
+     */
+    /* JADX WARNING: Missing block: B:40:0x0083, code skipped:
+            android.util.Log.e(TAG, "hw_easywakeupmotion_config.xml IOException");
+     */
+    /* JADX WARNING: Missing block: B:41:0x008b, code skipped:
+            if (r1 != null) goto L_0x008d;
+     */
+    /* JADX WARNING: Missing block: B:43:0x008e, code skipped:
+            android.util.Log.e(TAG, "hw_easywakeupmotion_config.xml XmlPullParserException");
+     */
+    /* JADX WARNING: Missing block: B:44:0x0096, code skipped:
+            if (r1 != null) goto L_0x0098;
+     */
+    /* JADX WARNING: Missing block: B:46:0x0099, code skipped:
+            android.util.Log.e(TAG, "hw_easywakeupmotion_config.xml FileNotFoundException");
+     */
+    /* JADX WARNING: Missing block: B:47:0x00a1, code skipped:
+            if (r1 == null) goto L_0x00a4;
+     */
+    /* JADX WARNING: Missing block: B:48:0x00a4, code skipped:
+            r0 = r1;
+     */
+    /* JADX WARNING: Missing block: B:49:0x00a6, code skipped:
+            if (r1 != null) goto L_0x00a8;
+     */
+    /* JADX WARNING: Missing block: B:50:0x00a8, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:52:?, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private static void parseHwEasyWakeUpdatesFile() throws Exception {
+        File mCustFile = null;
+        InputStream inputstream = null;
+        File file;
+        try {
+            mCustFile = HwCfgFilePolicy.getCfgFile("xml/hw_easywakeupmotion_config.xml", 0);
+            if (mCustFile == null) {
+                mCustFile = new File(HWEASYWAKEUP_MOTION_CONFIG_CUST_PATH);
+                if (!mCustFile.exists()) {
+                    file = new File(HWEASYWAKEUP_MOTION_CONFIG_SYSTEM_PATH);
+                    mCustFile = file;
+                }
+            }
+        } catch (NoClassDefFoundError e) {
+            Log.d(TAG, "HwCfgFilePolicy NoClassDefFoundError");
+            if (null == null) {
+                mCustFile = new File(HWEASYWAKEUP_MOTION_CONFIG_CUST_PATH);
+                if (!mCustFile.exists()) {
+                    file = new File(HWEASYWAKEUP_MOTION_CONFIG_SYSTEM_PATH);
+                }
+            }
+        }
+        inputstream = new FileInputStream(mCustFile);
+        parseHwEasyWakeUpDate(inputstream);
+        inputstream.close();
     }
 
     private static void parseHwEasyWakeUpDate(InputStream inputstream) throws XmlPullParserException, IOException {

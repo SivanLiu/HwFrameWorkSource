@@ -109,8 +109,8 @@ public class HwAPPQoEResourceMangerImpl {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:111:0x02a6  */
-    /* JADX WARNING: Missing block: B:33:0x00bf, code:
+    /* JADX WARNING: Removed duplicated region for block: B:113:0x02a6  */
+    /* JADX WARNING: Missing block: B:34:0x00bf, code skipped:
             r10 = r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -741,151 +741,158 @@ public class HwAPPQoEResourceMangerImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0068, code:
+    /* JADX WARNING: Missing block: B:27:0x0068, code skipped:
             if (r0 == null) goto L_0x0080;
      */
-    /* JADX WARNING: Missing block: B:27:0x006a, code:
+    /* JADX WARNING: Missing block: B:28:0x006a, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("checkIsMonitorAPKScence end:");
             r2.append(r0);
             com.android.server.hidata.appqoe.HwAPPQoEUtils.logD(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
+    /* JADX WARNING: Missing block: B:29:0x0080, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HwAPPQoEAPKConfig checkIsMonitorAPKScence(String packageName, String className) {
         HwAPPQoEAPKConfig config = null;
         synchronized (this.mLock) {
-            if (!this.isXmlLoadFinsh || this.mAPKConfigList.size() == 0 || packageName == null) {
-                return null;
-            }
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("checkIsMonitorAPKScence input :");
-            stringBuilder.append(packageName);
-            stringBuilder.append(",");
-            stringBuilder.append(className);
-            HwAPPQoEUtils.logD(str, stringBuilder.toString());
-            for (HwAPPQoEAPKConfig apkConfig : this.mAPKConfigList) {
-                if (className == null || !className.contains(apkConfig.className)) {
-                    if (packageName.equals(apkConfig.packageName) && apkConfig.mScenceId % 1000 == 0) {
-                        config = apkConfig;
+            if (this.isXmlLoadFinsh && this.mAPKConfigList.size() != 0) {
+                if (packageName != null) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("checkIsMonitorAPKScence input :");
+                    stringBuilder.append(packageName);
+                    stringBuilder.append(",");
+                    stringBuilder.append(className);
+                    HwAPPQoEUtils.logD(str, stringBuilder.toString());
+                    for (HwAPPQoEAPKConfig apkConfig : this.mAPKConfigList) {
+                        if (className == null || !className.contains(apkConfig.className)) {
+                            if (packageName.equals(apkConfig.packageName) && apkConfig.mScenceId % 1000 == 0) {
+                                config = apkConfig;
+                            }
+                        } else if (3 == apkConfig.mScenceType) {
+                            config = null;
+                        } else {
+                            config = apkConfig;
+                        }
                     }
-                } else if (3 == apkConfig.mScenceType) {
-                    config = null;
-                } else {
-                    config = apkConfig;
                 }
             }
+            return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0051, code:
+    /* JADX WARNING: Missing block: B:19:0x0051, code skipped:
             if (r0 == null) goto L_0x0069;
      */
-    /* JADX WARNING: Missing block: B:19:0x0053, code:
+    /* JADX WARNING: Missing block: B:20:0x0053, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("checkIsMonitorVideoScence end:");
             r2.append(r0);
             com.android.server.hidata.appqoe.HwAPPQoEUtils.logD(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:20:0x0069, code:
+    /* JADX WARNING: Missing block: B:21:0x0069, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HwAPPQoEAPKConfig checkIsMonitorVideoScence(String packageName, String className) {
         HwAPPQoEAPKConfig config = null;
         synchronized (this.mLock) {
-            if (this.isXmlLoadFinsh && this.mAPKConfigList.size() != 0 && packageName != null) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("checkIsMonitorVideoScence input :");
-                stringBuilder.append(packageName);
-                stringBuilder.append(",");
-                stringBuilder.append(className);
-                HwAPPQoEUtils.logD(str, stringBuilder.toString());
-                for (HwAPPQoEAPKConfig apkConfig : this.mAPKConfigList) {
-                    if (className != null && className.contains(apkConfig.className)) {
-                        config = apkConfig;
-                        break;
+            if (this.isXmlLoadFinsh && this.mAPKConfigList.size() != 0) {
+                if (packageName != null) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("checkIsMonitorVideoScence input :");
+                    stringBuilder.append(packageName);
+                    stringBuilder.append(",");
+                    stringBuilder.append(className);
+                    HwAPPQoEUtils.logD(str, stringBuilder.toString());
+                    for (HwAPPQoEAPKConfig apkConfig : this.mAPKConfigList) {
+                        if (className != null && className.contains(apkConfig.className)) {
+                            config = apkConfig;
+                            break;
+                        }
                     }
                 }
-            } else {
-                return null;
             }
+            return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             if (r0 == null) goto L_0x005f;
      */
-    /* JADX WARNING: Missing block: B:17:0x0049, code:
+    /* JADX WARNING: Missing block: B:18:0x0049, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("checkIsMonitorGameScence end:");
             r2.append(r0);
             com.android.server.hidata.appqoe.HwAPPQoEUtils.logD(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:18:0x005f, code:
+    /* JADX WARNING: Missing block: B:19:0x005f, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HwAPPQoEGameConfig checkIsMonitorGameScence(String packageName) {
         HwAPPQoEGameConfig config = null;
         synchronized (this.mLock) {
-            if (!this.isXmlLoadFinsh || this.mGameConfigList.size() == 0 || packageName == null) {
-                return null;
-            }
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("checkIsMonitorGameScence input :");
-            stringBuilder.append(packageName);
-            HwAPPQoEUtils.logD(str, stringBuilder.toString());
-            for (HwAPPQoEGameConfig gameConfig : this.mGameConfigList) {
-                if (packageName.contains(gameConfig.mGameName)) {
-                    config = gameConfig;
-                    break;
+            if (this.isXmlLoadFinsh && this.mGameConfigList.size() != 0) {
+                if (packageName != null) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("checkIsMonitorGameScence input :");
+                    stringBuilder.append(packageName);
+                    HwAPPQoEUtils.logD(str, stringBuilder.toString());
+                    for (HwAPPQoEGameConfig gameConfig : this.mGameConfigList) {
+                        if (packageName.contains(gameConfig.mGameName)) {
+                            config = gameConfig;
+                            break;
+                        }
+                    }
                 }
             }
+            return null;
         }
     }
 
     public HwAPPQoEGameConfig getGameScenceConfig(int appId) {
         synchronized (this.mLock) {
-            if (!this.isXmlLoadFinsh || this.mGameConfigList.size() == 0) {
-                return null;
-            }
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("getGameScenceConfig input :");
-            stringBuilder.append(appId);
-            HwAPPQoEUtils.logD(str, stringBuilder.toString());
-            for (HwAPPQoEGameConfig gameConfig : this.mGameConfigList) {
-                if (appId == gameConfig.mGameId) {
-                    str = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("getGameScenceConfig:");
-                    stringBuilder2.append(gameConfig.toString());
-                    HwAPPQoEUtils.logD(str, stringBuilder2.toString());
-                    return gameConfig;
+            if (this.isXmlLoadFinsh) {
+                if (this.mGameConfigList.size() != 0) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("getGameScenceConfig input :");
+                    stringBuilder.append(appId);
+                    HwAPPQoEUtils.logD(str, stringBuilder.toString());
+                    for (HwAPPQoEGameConfig gameConfig : this.mGameConfigList) {
+                        if (appId == gameConfig.mGameId) {
+                            str = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("getGameScenceConfig:");
+                            stringBuilder2.append(gameConfig.toString());
+                            HwAPPQoEUtils.logD(str, stringBuilder2.toString());
+                            return gameConfig;
+                        }
+                    }
+                    HwAPPQoEUtils.logD(TAG, "getGameScenceConfig, not found");
+                    return null;
                 }
             }
-            HwAPPQoEUtils.logD(TAG, "getGameScenceConfig, not found");
             return null;
         }
     }
 
-    /* JADX WARNING: Missing block: B:37:0x0066, code:
+    /* JADX WARNING: Missing block: B:37:0x0066, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("getScenceAction, action:");
             r2.append(r0);
             com.android.server.hidata.appqoe.HwAPPQoEUtils.logD(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:38:0x007c, code:
+    /* JADX WARNING: Missing block: B:38:0x007c, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -917,31 +924,33 @@ public class HwAPPQoEResourceMangerImpl {
 
     public HwAPPQoEAPKConfig getAPKScenceConfig(int scenceId) {
         synchronized (this.mLock) {
-            if (!this.isXmlLoadFinsh || this.mAPKConfigList.size() == 0) {
-                return null;
-            }
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("getAPKScenceConfig input :");
-            stringBuilder.append(scenceId);
-            HwAPPQoEUtils.logD(str, stringBuilder.toString());
-            for (HwAPPQoEAPKConfig apkConfig : this.mAPKConfigList) {
-                if (scenceId == apkConfig.mScenceId) {
-                    str = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("getAPKScenceConfig:");
-                    stringBuilder2.append(apkConfig.toString());
-                    HwAPPQoEUtils.logD(str, stringBuilder2.toString());
-                    return apkConfig;
+            if (this.isXmlLoadFinsh) {
+                if (this.mAPKConfigList.size() != 0) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("getAPKScenceConfig input :");
+                    stringBuilder.append(scenceId);
+                    HwAPPQoEUtils.logD(str, stringBuilder.toString());
+                    for (HwAPPQoEAPKConfig apkConfig : this.mAPKConfigList) {
+                        if (scenceId == apkConfig.mScenceId) {
+                            str = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("getAPKScenceConfig:");
+                            stringBuilder2.append(apkConfig.toString());
+                            HwAPPQoEUtils.logD(str, stringBuilder2.toString());
+                            return apkConfig;
+                        }
+                    }
+                    HwAPPQoEUtils.logD(TAG, "getAPKScenceConfig, not found");
+                    return null;
                 }
             }
-            HwAPPQoEUtils.logD(TAG, "getAPKScenceConfig, not found");
             return null;
         }
     }
 
     public List<HwAPPQoEAPKConfig> getAPKConfigList() {
-        List<HwAPPQoEAPKConfig> list;
+        List list;
         synchronized (this.mLock) {
             list = this.mAPKConfigList;
         }
@@ -949,7 +958,7 @@ public class HwAPPQoEResourceMangerImpl {
     }
 
     public List<HwAPPQoEGameConfig> getGameConfigList() {
-        List<HwAPPQoEGameConfig> list;
+        List list;
         synchronized (this.mLock) {
             list = this.mGameConfigList;
         }

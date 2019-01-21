@@ -208,9 +208,10 @@ class UsageStatsDatabase {
         return this.mNewUpdate;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0042 A:{Splitter: B:1:0x000b, ExcHandler: java.lang.NumberFormatException (e java.lang.NumberFormatException)} */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:20:0x003e=Splitter:B:20:0x003e, B:10:0x002f=Splitter:B:10:0x002f} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void checkVersionAndBuildLocked() {
+        BufferedReader reader;
         Throwable th;
         Throwable th2;
         String currentFingerprint = getBuildFingerprint();
@@ -218,7 +219,7 @@ class UsageStatsDatabase {
         this.mNewUpdate = true;
         int version = 0;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(this.mVersionFile));
+            reader = new BufferedReader(new FileReader(this.mVersionFile));
             try {
                 int version2 = Integer.parseInt(reader.readLine());
                 String buildFingerprint = reader.readLine();
@@ -230,44 +231,44 @@ class UsageStatsDatabase {
                 }
                 $closeResource(null, reader);
                 version = version2;
-                if (version != 3) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Upgrading from version ");
-                    stringBuilder.append(version);
-                    stringBuilder.append(" to ");
-                    stringBuilder.append(3);
-                    Slog.i(str, stringBuilder.toString());
-                    doUpgradeLocked(version);
-                }
-                if (version != 3 || this.mNewUpdate) {
-                    BufferedWriter writer;
-                    try {
-                        writer = new BufferedWriter(new FileWriter(this.mVersionFile));
-                        writer.write(Integer.toString(3));
-                        writer.write("\n");
-                        writer.write(currentFingerprint);
-                        writer.write("\n");
-                        writer.flush();
-                        $closeResource(null, writer);
-                        return;
-                    } catch (IOException e) {
-                        Slog.e(TAG, "Failed to write new version");
-                        throw new RuntimeException(e);
-                    } catch (Throwable th3) {
-                        $closeResource(r1, writer);
-                    }
-                }
-                return;
             } catch (Throwable th22) {
-                Throwable th4 = th22;
+                Throwable th3 = th22;
                 th22 = th;
-                th = th4;
+                th = th3;
             }
-            $closeResource(th22, reader);
-            throw th;
-        } catch (NumberFormatException e2) {
+        } catch (IOException | NumberFormatException e) {
         }
+        if (version != 3) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Upgrading from version ");
+            stringBuilder.append(version);
+            stringBuilder.append(" to ");
+            stringBuilder.append(3);
+            Slog.i(str, stringBuilder.toString());
+            doUpgradeLocked(version);
+        }
+        if (version != 3 || this.mNewUpdate) {
+            BufferedWriter writer;
+            try {
+                writer = new BufferedWriter(new FileWriter(this.mVersionFile));
+                writer.write(Integer.toString(3));
+                writer.write("\n");
+                writer.write(currentFingerprint);
+                writer.write("\n");
+                writer.flush();
+                $closeResource(null, writer);
+                return;
+            } catch (IOException e2) {
+                Slog.e(TAG, "Failed to write new version");
+                throw new RuntimeException(e2);
+            } catch (Throwable th4) {
+                $closeResource(r1, writer);
+            }
+        }
+        return;
+        $closeResource(th22, reader);
+        throw th;
     }
 
     private static /* synthetic */ void $closeResource(Throwable x0, AutoCloseable x1) {
@@ -307,7 +308,7 @@ class UsageStatsDatabase {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0097, code:
+    /* JADX WARNING: Missing block: B:21:0x0097, code skipped:
             r18 = r10;
             r11.clear();
             r6 = r6 + 1;
@@ -378,20 +379,21 @@ class UsageStatsDatabase {
     public IntervalStats getLatestUsageStats(int intervalType) {
         synchronized (this.mLock) {
             if (intervalType >= 0) {
-                if (intervalType < this.mIntervalDirs.length) {
-                    int fileCount = this.mSortedStatFiles[intervalType].size();
-                    if (fileCount == 0) {
-                        return null;
-                    }
-                    try {
+                try {
+                    if (intervalType < this.mIntervalDirs.length) {
+                        int fileCount = this.mSortedStatFiles[intervalType].size();
+                        if (fileCount == 0) {
+                            return null;
+                        }
                         AtomicFile f = (AtomicFile) this.mSortedStatFiles[intervalType].valueAt(fileCount - 1);
                         IntervalStats stats = new IntervalStats();
                         UsageStatsXml.read(f, stats);
                         return stats;
-                    } catch (IOException e) {
-                        Slog.e(TAG, "Failed to read usage stats file", e);
-                        return null;
                     }
+                } catch (IOException e) {
+                    Slog.e(TAG, "Failed to read usage stats file", e);
+                    return null;
+                } catch (Throwable th) {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
@@ -404,13 +406,16 @@ class UsageStatsDatabase {
     public long getLatestUsageStatsBeginTime(int intervalType) {
         synchronized (this.mLock) {
             if (intervalType >= 0) {
-                if (intervalType < this.mIntervalDirs.length) {
-                    int statsFileCount = this.mSortedStatFiles[intervalType].size();
-                    if (statsFileCount > 0) {
-                        long keyAt = this.mSortedStatFiles[intervalType].keyAt(statsFileCount - 1);
-                        return keyAt;
+                try {
+                    if (intervalType < this.mIntervalDirs.length) {
+                        int statsFileCount = this.mSortedStatFiles[intervalType].size();
+                        if (statsFileCount > 0) {
+                            long keyAt = this.mSortedStatFiles[intervalType].keyAt(statsFileCount - 1);
+                            return keyAt;
+                        }
+                        return -1;
                     }
-                    return -1;
+                } catch (Throwable th) {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
@@ -427,58 +432,61 @@ class UsageStatsDatabase {
         long j2 = endTime;
         synchronized (this.mLock) {
             if (i >= 0) {
-                if (i < this.mIntervalDirs.length) {
-                    TimeSparseArray<AtomicFile> intervalStats = this.mSortedStatFiles[i];
-                    if (j2 <= j) {
-                        return null;
-                    }
-                    int startIndex = intervalStats.closestIndexOnOrBefore(j);
-                    if (startIndex < 0) {
-                        startIndex = 0;
-                    }
-                    int startIndex2 = startIndex;
-                    startIndex = intervalStats.closestIndexOnOrBefore(j2);
-                    if (startIndex < 0) {
-                        return null;
-                    }
-                    if (intervalStats.keyAt(startIndex) == j2) {
-                        startIndex--;
+                try {
+                    if (i < this.mIntervalDirs.length) {
+                        TimeSparseArray<AtomicFile> intervalStats = this.mSortedStatFiles[i];
+                        if (j2 <= j) {
+                            return null;
+                        }
+                        int startIndex = intervalStats.closestIndexOnOrBefore(j);
+                        if (startIndex < 0) {
+                            startIndex = 0;
+                        }
+                        int startIndex2 = startIndex;
+                        startIndex = intervalStats.closestIndexOnOrBefore(j2);
                         if (startIndex < 0) {
                             return null;
                         }
-                    }
-                    int endIndex = startIndex;
-                    IntervalStats stats = new IntervalStats();
-                    ArrayList<T> results = new ArrayList();
-                    startIndex = startIndex2;
-                    while (true) {
-                        int i2 = startIndex;
-                        if (i2 <= endIndex) {
-                            StatCombiner<T> statCombiner;
-                            try {
-                                UsageStatsXml.read((AtomicFile) intervalStats.valueAt(i2), stats);
-                                if (j < stats.endTime) {
-                                    try {
-                                        combiner.combine(stats, false, results);
-                                    } catch (IOException e2) {
-                                        e = e2;
+                        if (intervalStats.keyAt(startIndex) == j2) {
+                            startIndex--;
+                            if (startIndex < 0) {
+                                return null;
+                            }
+                        }
+                        int endIndex = startIndex;
+                        IntervalStats stats = new IntervalStats();
+                        ArrayList<T> results = new ArrayList();
+                        startIndex = startIndex2;
+                        while (true) {
+                            int i2 = startIndex;
+                            if (i2 <= endIndex) {
+                                StatCombiner<T> statCombiner;
+                                try {
+                                    UsageStatsXml.read((AtomicFile) intervalStats.valueAt(i2), stats);
+                                    if (j < stats.endTime) {
+                                        try {
+                                            combiner.combine(stats, false, results);
+                                        } catch (IOException e2) {
+                                            e = e2;
+                                        }
+                                    } else {
+                                        statCombiner = combiner;
                                     }
-                                } else {
+                                } catch (IOException e3) {
+                                    e = e3;
                                     statCombiner = combiner;
+                                    Slog.e(TAG, "Failed to read usage stats file", e);
+                                    startIndex = i2 + 1;
+                                    j = beginTime;
                                 }
-                            } catch (IOException e3) {
-                                e = e3;
-                                statCombiner = combiner;
-                                Slog.e(TAG, "Failed to read usage stats file", e);
                                 startIndex = i2 + 1;
                                 j = beginTime;
+                            } else {
+                                return results;
                             }
-                            startIndex = i2 + 1;
-                            j = beginTime;
-                        } else {
-                            return results;
                         }
                     }
+                } catch (Throwable th) {
                 }
             }
             StringBuilder stringBuilder = new StringBuilder();
@@ -612,21 +620,24 @@ class UsageStatsDatabase {
         if (stats != null) {
             synchronized (this.mLock) {
                 if (intervalType >= 0) {
-                    if (intervalType < this.mIntervalDirs.length) {
-                        AtomicFile f = (AtomicFile) this.mSortedStatFiles[intervalType].get(stats.beginTime);
-                        if (f == null) {
-                            f = new AtomicFile(new File(this.mIntervalDirs[intervalType], Long.toString(stats.beginTime)));
-                            this.mSortedStatFiles[intervalType].put(stats.beginTime, f);
-                            String str = TAG;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("putUsageStats: put SortedStatFiles ");
-                            stringBuilder.append(f.getBaseFile().getName());
-                            stringBuilder.append(" for interval ");
-                            stringBuilder.append(intervalType);
-                            Slog.d(str, stringBuilder.toString());
+                    try {
+                        if (intervalType < this.mIntervalDirs.length) {
+                            AtomicFile f = (AtomicFile) this.mSortedStatFiles[intervalType].get(stats.beginTime);
+                            if (f == null) {
+                                f = new AtomicFile(new File(this.mIntervalDirs[intervalType], Long.toString(stats.beginTime)));
+                                this.mSortedStatFiles[intervalType].put(stats.beginTime, f);
+                                String str = TAG;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("putUsageStats: put SortedStatFiles ");
+                                stringBuilder.append(f.getBaseFile().getName());
+                                stringBuilder.append(" for interval ");
+                                stringBuilder.append(intervalType);
+                                Slog.d(str, stringBuilder.toString());
+                            }
+                            UsageStatsXml.write(f, stats);
+                            stats.lastTimeSaved = f.getLastModifiedTime();
                         }
-                        UsageStatsXml.write(f, stats);
-                        stats.lastTimeSaved = f.getLastModifiedTime();
+                    } catch (Throwable th) {
                     }
                 }
                 StringBuilder stringBuilder2 = new StringBuilder();
@@ -680,166 +691,90 @@ class UsageStatsDatabase {
         return toByteArray;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.usage.UsageStatsDatabase.applyRestoredPayload(java.lang.String, byte[]):void, dom blocks: [B:33:0x00bb, B:43:0x00cd]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    void applyRestoredPayload(java.lang.String r18, byte[] r19) {
-        /*
-        r17 = this;
-        r1 = r17;
-        r2 = r1.mLock;
-        monitor-enter(r2);
-        r0 = "usage_stats";	 Catch:{ all -> 0x00e3 }
-        r3 = r18;
-        r0 = r0.equals(r3);	 Catch:{ all -> 0x00e1 }
-        if (r0 == 0) goto L_0x00dd;	 Catch:{ all -> 0x00e1 }
-        r0 = 0;	 Catch:{ all -> 0x00e1 }
-        r4 = r1.getLatestUsageStats(r0);	 Catch:{ all -> 0x00e1 }
-        r5 = 1;	 Catch:{ all -> 0x00e1 }
-        r6 = r1.getLatestUsageStats(r5);	 Catch:{ all -> 0x00e1 }
-        r7 = 2;	 Catch:{ all -> 0x00e1 }
-        r8 = r1.getLatestUsageStats(r7);	 Catch:{ all -> 0x00e1 }
-        r9 = 3;	 Catch:{ all -> 0x00e1 }
-        r10 = r1.getLatestUsageStats(r9);	 Catch:{ all -> 0x00e1 }
-        r11 = new java.io.DataInputStream;	 Catch:{ IOException -> 0x00ca, all -> 0x00c6 }
-        r12 = new java.io.ByteArrayInputStream;	 Catch:{ IOException -> 0x00ca, all -> 0x00c6 }
-        r13 = r19;
-        r12.<init>(r13);	 Catch:{ IOException -> 0x00c4 }
-        r11.<init>(r12);	 Catch:{ IOException -> 0x00c4 }
-        r12 = r11.readInt();	 Catch:{ IOException -> 0x00c4 }
-        if (r12 < r5) goto L_0x00bf;	 Catch:{ IOException -> 0x00c4 }
-    L_0x003a:
-        if (r12 <= r5) goto L_0x003e;	 Catch:{ IOException -> 0x00c4 }
-    L_0x003c:
-        goto L_0x00bf;	 Catch:{ IOException -> 0x00c4 }
-    L_0x003e:
-        r14 = r0;	 Catch:{ IOException -> 0x00c4 }
-    L_0x003f:
-        r15 = r1.mIntervalDirs;	 Catch:{ IOException -> 0x00c4 }
-        r15 = r15.length;	 Catch:{ IOException -> 0x00c4 }
-        if (r14 >= r15) goto L_0x004e;	 Catch:{ IOException -> 0x00c4 }
-    L_0x0044:
-        r15 = r1.mIntervalDirs;	 Catch:{ IOException -> 0x00c4 }
-        r15 = r15[r14];	 Catch:{ IOException -> 0x00c4 }
-        deleteDirectoryContents(r15);	 Catch:{ IOException -> 0x00c4 }
-        r14 = r14 + 1;	 Catch:{ IOException -> 0x00c4 }
-        goto L_0x003f;	 Catch:{ IOException -> 0x00c4 }
-    L_0x004e:
-        r14 = r11.readInt();	 Catch:{ IOException -> 0x00c4 }
-        r15 = r0;	 Catch:{ IOException -> 0x00c4 }
-    L_0x0053:
-        if (r15 >= r14) goto L_0x006a;	 Catch:{ IOException -> 0x00c4 }
-    L_0x0055:
-        r9 = getIntervalStatsBytes(r11);	 Catch:{ IOException -> 0x00c4 }
-        r9 = deserializeIntervalStats(r9);	 Catch:{ IOException -> 0x00c4 }
-        r16 = r1.mergeStats(r9, r4);	 Catch:{ IOException -> 0x00c4 }
-        r9 = r16;	 Catch:{ IOException -> 0x00c4 }
-        r1.putUsageStats(r0, r9);	 Catch:{ IOException -> 0x00c4 }
-        r15 = r15 + 1;	 Catch:{ IOException -> 0x00c4 }
-        r9 = 3;	 Catch:{ IOException -> 0x00c4 }
-        goto L_0x0053;	 Catch:{ IOException -> 0x00c4 }
-    L_0x006a:
-        r9 = r11.readInt();	 Catch:{ IOException -> 0x00c4 }
-        r14 = r0;	 Catch:{ IOException -> 0x00c4 }
-    L_0x006f:
-        if (r14 >= r9) goto L_0x0085;	 Catch:{ IOException -> 0x00c4 }
-    L_0x0071:
-        r15 = getIntervalStatsBytes(r11);	 Catch:{ IOException -> 0x00c4 }
-        r15 = deserializeIntervalStats(r15);	 Catch:{ IOException -> 0x00c4 }
-        r16 = r1.mergeStats(r15, r6);	 Catch:{ IOException -> 0x00c4 }
-        r15 = r16;	 Catch:{ IOException -> 0x00c4 }
-        r1.putUsageStats(r5, r15);	 Catch:{ IOException -> 0x00c4 }
-        r14 = r14 + 1;	 Catch:{ IOException -> 0x00c4 }
-        goto L_0x006f;	 Catch:{ IOException -> 0x00c4 }
-    L_0x0085:
-        r5 = r11.readInt();	 Catch:{ IOException -> 0x00c4 }
-        r9 = r0;	 Catch:{ IOException -> 0x00c4 }
-    L_0x008a:
-        if (r9 >= r5) goto L_0x009f;	 Catch:{ IOException -> 0x00c4 }
-    L_0x008c:
-        r14 = getIntervalStatsBytes(r11);	 Catch:{ IOException -> 0x00c4 }
-        r14 = deserializeIntervalStats(r14);	 Catch:{ IOException -> 0x00c4 }
-        r15 = r1.mergeStats(r14, r8);	 Catch:{ IOException -> 0x00c4 }
-        r14 = r15;	 Catch:{ IOException -> 0x00c4 }
-        r1.putUsageStats(r7, r14);	 Catch:{ IOException -> 0x00c4 }
-        r9 = r9 + 1;	 Catch:{ IOException -> 0x00c4 }
-        goto L_0x008a;	 Catch:{ IOException -> 0x00c4 }
-    L_0x009f:
-        r7 = r11.readInt();	 Catch:{ IOException -> 0x00c4 }
-        r5 = r7;	 Catch:{ IOException -> 0x00c4 }
-    L_0x00a5:
-        if (r0 >= r5) goto L_0x00bb;	 Catch:{ IOException -> 0x00c4 }
-    L_0x00a7:
-        r7 = getIntervalStatsBytes(r11);	 Catch:{ IOException -> 0x00c4 }
-        r7 = deserializeIntervalStats(r7);	 Catch:{ IOException -> 0x00c4 }
-        r9 = r1.mergeStats(r7, r10);	 Catch:{ IOException -> 0x00c4 }
-        r7 = r9;	 Catch:{ IOException -> 0x00c4 }
-        r9 = 3;	 Catch:{ IOException -> 0x00c4 }
-        r1.putUsageStats(r9, r7);	 Catch:{ IOException -> 0x00c4 }
-        r0 = r0 + 1;
-        goto L_0x00a5;
-    L_0x00bb:
-        r17.indexFilesLocked();	 Catch:{ all -> 0x00ea }
-        goto L_0x00d7;	 Catch:{ all -> 0x00ea }
-    L_0x00bf:
-        r17.indexFilesLocked();	 Catch:{ all -> 0x00ea }
-        monitor-exit(r2);	 Catch:{ all -> 0x00ea }
-        return;
-    L_0x00c4:
-        r0 = move-exception;
-        goto L_0x00cd;
-    L_0x00c6:
-        r0 = move-exception;
-        r13 = r19;
-        goto L_0x00d9;
-    L_0x00ca:
-        r0 = move-exception;
-        r13 = r19;
-    L_0x00cd:
-        r5 = "UsageStatsDatabase";	 Catch:{ all -> 0x00d8 }
-        r7 = "Failed to read data from input stream";	 Catch:{ all -> 0x00d8 }
-        android.util.Slog.d(r5, r7, r0);	 Catch:{ all -> 0x00d8 }
-        r17.indexFilesLocked();	 Catch:{ all -> 0x00ea }
-    L_0x00d7:
-        goto L_0x00df;	 Catch:{ all -> 0x00ea }
-    L_0x00d8:
-        r0 = move-exception;	 Catch:{ all -> 0x00ea }
-    L_0x00d9:
-        r17.indexFilesLocked();	 Catch:{ all -> 0x00ea }
-        throw r0;	 Catch:{ all -> 0x00ea }
-    L_0x00dd:
-        r13 = r19;	 Catch:{ all -> 0x00ea }
-    L_0x00df:
-        monitor-exit(r2);	 Catch:{ all -> 0x00ea }
-        return;	 Catch:{ all -> 0x00ea }
-    L_0x00e1:
-        r0 = move-exception;	 Catch:{ all -> 0x00ea }
-        goto L_0x00e6;	 Catch:{ all -> 0x00ea }
-    L_0x00e3:
-        r0 = move-exception;	 Catch:{ all -> 0x00ea }
-        r3 = r18;	 Catch:{ all -> 0x00ea }
-    L_0x00e6:
-        r13 = r19;	 Catch:{ all -> 0x00ea }
-    L_0x00e8:
-        monitor-exit(r2);	 Catch:{ all -> 0x00ea }
-        throw r0;
-    L_0x00ea:
-        r0 = move-exception;
-        goto L_0x00e8;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.usage.UsageStatsDatabase.applyRestoredPayload(java.lang.String, byte[]):void");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:34:0x00bb, B:44:0x00cd] */
+    /* JADX WARNING: Missing block: B:49:0x00d8, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:62:0x00ea, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    void applyRestoredPayload(String key, byte[] payload) {
+        IOException ioe;
+        byte[] bArr;
+        Throwable th;
+        synchronized (this.mLock) {
+            try {
+                try {
+                    if (KEY_USAGE_STATS.equals(key)) {
+                        int i = 0;
+                        IntervalStats dailyConfigSource = getLatestUsageStats(0);
+                        IntervalStats weeklyConfigSource = getLatestUsageStats(1);
+                        IntervalStats monthlyConfigSource = getLatestUsageStats(2);
+                        IntervalStats yearlyConfigSource = getLatestUsageStats(3);
+                        try {
+                            try {
+                                DataInputStream in = new DataInputStream(new ByteArrayInputStream(payload));
+                                int backupDataVersion = in.readInt();
+                                if (backupDataVersion >= 1) {
+                                    if (backupDataVersion <= 1) {
+                                        for (File deleteDirectoryContents : this.mIntervalDirs) {
+                                            deleteDirectoryContents(deleteDirectoryContents);
+                                        }
+                                        int i2 = in.readInt();
+                                        for (int i3 = 0; i3 < i2; i3++) {
+                                            putUsageStats(0, mergeStats(deserializeIntervalStats(getIntervalStatsBytes(in)), dailyConfigSource));
+                                        }
+                                        int fileCount = in.readInt();
+                                        for (i2 = 0; i2 < fileCount; i2++) {
+                                            putUsageStats(1, mergeStats(deserializeIntervalStats(getIntervalStatsBytes(in)), weeklyConfigSource));
+                                        }
+                                        int fileCount2 = in.readInt();
+                                        for (fileCount = 0; fileCount < fileCount2; fileCount++) {
+                                            putUsageStats(2, mergeStats(deserializeIntervalStats(getIntervalStatsBytes(in)), monthlyConfigSource));
+                                        }
+                                        fileCount2 = in.readInt();
+                                        while (i < fileCount2) {
+                                            putUsageStats(3, mergeStats(deserializeIntervalStats(getIntervalStatsBytes(in)), yearlyConfigSource));
+                                            i++;
+                                        }
+                                        indexFilesLocked();
+                                    }
+                                }
+                                indexFilesLocked();
+                                return;
+                            } catch (IOException e) {
+                                ioe = e;
+                                Slog.d(TAG, "Failed to read data from input stream", ioe);
+                                indexFilesLocked();
+                                return;
+                            }
+                        } catch (IOException e2) {
+                            ioe = e2;
+                            bArr = payload;
+                            Slog.d(TAG, "Failed to read data from input stream", ioe);
+                            indexFilesLocked();
+                            return;
+                        } catch (Throwable th2) {
+                            th = th2;
+                            bArr = payload;
+                            indexFilesLocked();
+                            throw th;
+                        }
+                    }
+                    bArr = payload;
+                } catch (Throwable th3) {
+                    th = th3;
+                    bArr = payload;
+                    throw th;
+                }
+            } catch (Throwable th4) {
+                th = th4;
+                String str = key;
+                bArr = payload;
+                throw th;
+            }
+        }
     }
 
     private IntervalStats mergeStats(IntervalStats beingRestored, IntervalStats onDevice) {

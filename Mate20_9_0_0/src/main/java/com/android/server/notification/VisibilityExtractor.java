@@ -10,7 +10,7 @@ public class VisibilityExtractor implements NotificationSignalExtractor {
     public void initialize(Context ctx, NotificationUsageStats usageStats) {
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001b, code:
+    /* JADX WARNING: Missing block: B:9:0x001b, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

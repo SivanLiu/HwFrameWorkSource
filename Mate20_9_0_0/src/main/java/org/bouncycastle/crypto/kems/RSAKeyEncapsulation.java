@@ -30,9 +30,9 @@ public class RSAKeyEncapsulation implements KeyEncapsulation {
         if (this.key.isPrivate()) {
             BigInteger modulus = this.key.getModulus();
             BigInteger exponent = this.key.getExponent();
-            Object obj = new byte[i2];
-            System.arraycopy(bArr, i, obj, 0, obj.length);
-            return generateKey(modulus, new BigInteger(1, obj).modPow(exponent, modulus), i3);
+            byte[] bArr2 = new byte[i2];
+            System.arraycopy(bArr, i, bArr2, 0, bArr2.length);
+            return generateKey(modulus, new BigInteger(1, bArr2).modPow(exponent, modulus), i3);
         }
         throw new IllegalArgumentException("Private key required for decryption");
     }
@@ -48,7 +48,7 @@ public class RSAKeyEncapsulation implements KeyEncapsulation {
         BigInteger modulus = this.key.getModulus();
         BigInteger exponent = this.key.getExponent();
         BigInteger createRandomInRange = BigIntegers.createRandomInRange(ZERO, modulus.subtract(ONE), this.rnd);
-        Object asUnsignedByteArray = BigIntegers.asUnsignedByteArray((modulus.bitLength() + 7) / 8, createRandomInRange.modPow(exponent, modulus));
+        byte[] asUnsignedByteArray = BigIntegers.asUnsignedByteArray((modulus.bitLength() + 7) / 8, createRandomInRange.modPow(exponent, modulus));
         System.arraycopy(asUnsignedByteArray, 0, bArr, i, asUnsignedByteArray.length);
         return generateKey(modulus, createRandomInRange, i2);
     }

@@ -263,22 +263,24 @@ public class CollectFingersHandler {
                 String tempSsid = ((ScanResult) wifiList.get(i)).SSID.replace(",", "").replace(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER, "");
                 if (!tempSsid.equals("")) {
                     String tempBssid = ((ScanResult) wifiList.get(i)).BSSID.replace(",", "").replace(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER, "");
-                    if (!tempBssid.equals("") && this.mobileApDAO.findBySsidForUpdateTime(tempSsid, tempBssid) == null) {
-                        if (this.enterpriseApDAO.findBySsidForUpdateTime(tempSsid) == null) {
-                            if (hpSsidCnt.containsKey(tempSsid)) {
-                                ((AtomicInteger) hpSsidCnt.get(tempSsid)).incrementAndGet();
-                            } else {
-                                hpSsidCnt.put(tempSsid, new AtomicInteger(1));
+                    if (!tempBssid.equals("")) {
+                        if (this.mobileApDAO.findBySsidForUpdateTime(tempSsid, tempBssid) == null) {
+                            if (this.enterpriseApDAO.findBySsidForUpdateTime(tempSsid) == null) {
+                                if (hpSsidCnt.containsKey(tempSsid)) {
+                                    ((AtomicInteger) hpSsidCnt.get(tempSsid)).incrementAndGet();
+                                } else {
+                                    hpSsidCnt.put(tempSsid, new AtomicInteger(1));
+                                }
                             }
+                            fLine.append(tempSsid);
+                            fLine.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
+                            fLine.append(tempBssid);
+                            fLine.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
+                            fLine.append(((ScanResult) wifiList.get(i)).level);
+                            fLine.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
+                            fLine.append(((ScanResult) wifiList.get(i)).frequency);
+                            fLine.append(",");
                         }
-                        fLine.append(tempSsid);
-                        fLine.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
-                        fLine.append(tempBssid);
-                        fLine.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
-                        fLine.append(((ScanResult) wifiList.get(i)).level);
-                        fLine.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
-                        fLine.append(((ScanResult) wifiList.get(i)).frequency);
-                        fLine.append(",");
                     }
                 }
                 i++;
@@ -419,68 +421,72 @@ public class CollectFingersHandler {
             StringBuilder fLine = new StringBuilder();
             Bundle wifiInfo = NetUtil.getWifiStateString(this.context);
             String dataPath = NetUtil.getNetworkType(this.context);
-            if (batch == null || batch.equals("")) {
-                LogUtil.d(" sendAllInfoToFile batch == null");
-                return false;
-            } else if (resultWifiScan == null || resultWifiScan.equals("")) {
-                LogUtil.d(" sendAllInfoToFile resultWifiScan == null");
-                return false;
-            } else {
-                String wifiSsid = wifiInfo.getString("wifiAp", "UNKNOWN");
-                if (wifiSsid == null) {
-                    wifiSsid = "UNKNOWN";
+            if (batch != null) {
+                if (!batch.equals("")) {
+                    if (resultWifiScan != null) {
+                        if (!resultWifiScan.equals("")) {
+                            String wifiSsid = wifiInfo.getString("wifiAp", "UNKNOWN");
+                            if (wifiSsid == null) {
+                                wifiSsid = "UNKNOWN";
+                            }
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(" sendAllInfoToFile batch:");
+                            stringBuilder.append(batch);
+                            LogUtil.i(stringBuilder.toString());
+                            fLine.append(batch);
+                            fLine.append(",");
+                            fLine.append(BehaviorReceiver.getArState());
+                            fLine.append(",");
+                            TimeUtil timeUtil = this.timeUtil;
+                            fLine.append(TimeUtil.getTime());
+                            fLine.append(",");
+                            fLine.append(System.currentTimeMillis());
+                            fLine.append(",");
+                            fLine.append(this.currLoc);
+                            fLine.append(",");
+                            fLine.append(BehaviorReceiver.getScrnState());
+                            fLine.append(",");
+                            fLine.append(dataPath);
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append(wifiInfo.getString("wifiState", "UNKNOWN"));
+                            fLine.append(",");
+                            fLine.append(wifiSsid.replace(",", "").replace("\"", ""));
+                            fLine.append(",");
+                            fLine.append(wifiInfo.getString("wifiMAC", "UNKNOWN"));
+                            fLine.append(",");
+                            fLine.append(wifiInfo.getString("wifiCh", "UNKNOWN"));
+                            fLine.append(",");
+                            fLine.append(wifiInfo.getString("wifiLS", "UNKNOWN"));
+                            fLine.append(",");
+                            fLine.append(wifiInfo.getString("wifiRssi", "UNKNOWN"));
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append("0");
+                            fLine.append(",");
+                            fLine.append(resultWifiScan);
+                            fLine.append(Constant.lineSeperate);
+                            FileUtils.writeFile(this.strCollectFileName, fLine.toString());
+                            resultWifiScan = "";
+                            return true;
+                        }
+                    }
+                    LogUtil.d(" sendAllInfoToFile resultWifiScan == null");
+                    return false;
                 }
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(" sendAllInfoToFile batch:");
-                stringBuilder.append(batch);
-                LogUtil.i(stringBuilder.toString());
-                fLine.append(batch);
-                fLine.append(",");
-                fLine.append(BehaviorReceiver.getArState());
-                fLine.append(",");
-                TimeUtil timeUtil = this.timeUtil;
-                fLine.append(TimeUtil.getTime());
-                fLine.append(",");
-                fLine.append(System.currentTimeMillis());
-                fLine.append(",");
-                fLine.append(this.currLoc);
-                fLine.append(",");
-                fLine.append(BehaviorReceiver.getScrnState());
-                fLine.append(",");
-                fLine.append(dataPath);
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append(wifiInfo.getString("wifiState", "UNKNOWN"));
-                fLine.append(",");
-                fLine.append(wifiSsid.replace(",", "").replace("\"", ""));
-                fLine.append(",");
-                fLine.append(wifiInfo.getString("wifiMAC", "UNKNOWN"));
-                fLine.append(",");
-                fLine.append(wifiInfo.getString("wifiCh", "UNKNOWN"));
-                fLine.append(",");
-                fLine.append(wifiInfo.getString("wifiLS", "UNKNOWN"));
-                fLine.append(",");
-                fLine.append(wifiInfo.getString("wifiRssi", "UNKNOWN"));
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append("0");
-                fLine.append(",");
-                fLine.append(resultWifiScan);
-                fLine.append(Constant.lineSeperate);
-                FileUtils.writeFile(this.strCollectFileName, fLine.toString());
-                resultWifiScan = "";
-                return true;
             }
+            LogUtil.d(" sendAllInfoToFile batch == null");
+            return false;
         } catch (Exception e) {
             StringBuilder stringBuilder2 = new StringBuilder();
             stringBuilder2.append(" sendAllInfoToFile ");

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HwLaaController {
@@ -58,7 +59,7 @@ public class HwLaaController {
         return requestSendLaaCmd(enable, type);
     }
 
-    /* JADX WARNING: Missing block: B:21:0x005b, code:
+    /* JADX WARNING: Missing block: B:21:0x005b, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -215,13 +216,13 @@ public class HwLaaController {
                 stringBuilder.append("IllegalAccessException:");
                 stringBuilder.append(e.getMessage());
                 HwLaaUtils.logD(str, stringBuilder.toString());
-            } catch (IllegalAccessException e2) {
+            } catch (IllegalArgumentException e2) {
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("IllegalArgumentException:");
                 stringBuilder.append(e2.getMessage());
                 HwLaaUtils.logD(str, stringBuilder.toString());
-            } catch (IllegalAccessException e22) {
+            } catch (InvocationTargetException e22) {
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("InvocationTargetException:");

@@ -17,7 +17,7 @@ public class MessageImprintBuilder {
             outputStream.write(bArr);
             outputStream.close();
             return new MessageImprint(new DigestInfo(this.digestCalculator.getAlgorithmIdentifier(), this.digestCalculator.getDigest()));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to build MessageImprint: ");
             stringBuilder.append(e.getMessage());

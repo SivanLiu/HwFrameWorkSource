@@ -162,8 +162,10 @@ public class HwGpsLogController {
     private void checkGpsLogStatus() {
         try {
             String result = Global.getString(this.mContext.getContentResolver(), GPS_LOG_ENABLE);
-            if (result != null && !"".equals(result)) {
-                operatorLog(Boolean.parseBoolean(result));
+            if (result != null) {
+                if (!"".equals(result)) {
+                    operatorLog(Boolean.parseBoolean(result));
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

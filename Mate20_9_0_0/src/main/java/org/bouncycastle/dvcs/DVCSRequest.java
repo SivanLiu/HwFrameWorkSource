@@ -12,12 +12,12 @@ public class DVCSRequest extends DVCSMessage {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:23:0x00ac in {5, 8, 11, 13, 16, 19, 22, 25, 28, 30} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -36,24 +36,19 @@ public class DVCSRequest extends DVCSMessage {
         r1 = r4.getContentType();
         r0 = r0.equals(r1);
         if (r0 == 0) goto L_0x00e0;
-    L_0x000f:
         r0 = r4.getContent();	 Catch:{ Exception -> 0x00c4 }
         r0 = r0.toASN1Primitive();	 Catch:{ Exception -> 0x00c4 }
         r0 = r0 instanceof org.bouncycastle.asn1.ASN1Sequence;	 Catch:{ Exception -> 0x00c4 }
         if (r0 == 0) goto L_0x0026;	 Catch:{ Exception -> 0x00c4 }
-    L_0x001b:
         r4 = r4.getContent();	 Catch:{ Exception -> 0x00c4 }
         r4 = org.bouncycastle.asn1.dvcs.DVCSRequest.getInstance(r4);	 Catch:{ Exception -> 0x00c4 }
-    L_0x0023:
         r3.asn1 = r4;	 Catch:{ Exception -> 0x00c4 }
         goto L_0x0037;	 Catch:{ Exception -> 0x00c4 }
-    L_0x0026:
         r4 = r4.getContent();	 Catch:{ Exception -> 0x00c4 }
         r4 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r4);	 Catch:{ Exception -> 0x00c4 }
         r4 = r4.getOctets();	 Catch:{ Exception -> 0x00c4 }
         r4 = org.bouncycastle.asn1.dvcs.DVCSRequest.getInstance(r4);	 Catch:{ Exception -> 0x00c4 }
         goto L_0x0023;
-    L_0x0037:
         r4 = new org.bouncycastle.dvcs.DVCSRequestInfo;
         r0 = r3.asn1;
         r0 = r0.getRequestInformation();
@@ -65,49 +60,40 @@ public class DVCSRequest extends DVCSMessage {
         r0 = r0.getValue();
         r0 = r0.intValue();
         if (r4 != r0) goto L_0x0064;
-    L_0x0056:
         r4 = new org.bouncycastle.dvcs.CPDRequestData;
         r0 = r3.asn1;
         r0 = r0.getData();
         r4.<init>(r0);
-    L_0x0061:
         r3.data = r4;
         return;
-    L_0x0064:
         r0 = org.bouncycastle.asn1.dvcs.ServiceType.VSD;
         r0 = r0.getValue();
         r0 = r0.intValue();
         if (r4 != r0) goto L_0x007c;
-    L_0x0070:
         r4 = new org.bouncycastle.dvcs.VSDRequestData;
         r0 = r3.asn1;
         r0 = r0.getData();
         r4.<init>(r0);
         goto L_0x0061;
-    L_0x007c:
         r0 = org.bouncycastle.asn1.dvcs.ServiceType.VPKC;
         r0 = r0.getValue();
         r0 = r0.intValue();
         if (r4 != r0) goto L_0x0094;
-    L_0x0088:
         r4 = new org.bouncycastle.dvcs.VPKCRequestData;
         r0 = r3.asn1;
         r0 = r0.getData();
         r4.<init>(r0);
         goto L_0x0061;
-    L_0x0094:
         r0 = org.bouncycastle.asn1.dvcs.ServiceType.CCPD;
         r0 = r0.getValue();
         r0 = r0.intValue();
         if (r4 != r0) goto L_0x00ad;
-    L_0x00a0:
         r4 = new org.bouncycastle.dvcs.CCPDRequestData;
         r0 = r3.asn1;
         r0 = r0.getData();
         r4.<init>(r0);
         goto L_0x0061;
         return;
-    L_0x00ad:
         r0 = new org.bouncycastle.dvcs.DVCSConstructionException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -117,7 +103,6 @@ public class DVCSRequest extends DVCSMessage {
         r4 = r1.toString();
         r0.<init>(r4);
         throw r0;
-    L_0x00c4:
         r4 = move-exception;
         r0 = new org.bouncycastle.dvcs.DVCSConstructionException;
         r1 = new java.lang.StringBuilder;
@@ -129,7 +114,6 @@ public class DVCSRequest extends DVCSMessage {
         r1 = r1.toString();
         r0.<init>(r1, r4);
         throw r0;
-    L_0x00e0:
         r4 = new org.bouncycastle.dvcs.DVCSConstructionException;
         r0 = "ContentInfo not a DVCS Request";
         r4.<init>(r0);

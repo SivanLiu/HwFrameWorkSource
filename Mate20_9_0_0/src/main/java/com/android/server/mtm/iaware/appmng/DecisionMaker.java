@@ -95,7 +95,7 @@ public class DecisionMaker {
         return resultList;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x003f, code:
+    /* JADX WARNING: Missing block: B:24:0x003f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -176,17 +176,18 @@ public class DecisionMaker {
 
     public int getAppStartPolicy(String packageName, AppStartSource source) {
         ArrayMap<EnumWithDesc, ArrayMap<String, ListItem>> featureList = (ArrayMap) this.mAllList.get(AppMngFeature.APP_START);
-        if (featureList != null) {
-            ArrayMap<String, ListItem> list = (ArrayMap) featureList.get(source);
-            if (list != null) {
-                ListItem item = (ListItem) list.get(packageName);
-                if (item != null) {
-                    return item.getPolicy();
-                }
-                return 0;
-            }
+        if (featureList == null) {
+            return 1;
         }
-        return 1;
+        ArrayMap<String, ListItem> list = (ArrayMap) featureList.get(source);
+        if (list == null) {
+            return 0;
+        }
+        ListItem item = (ListItem) list.get(packageName);
+        if (item != null) {
+            return item.getPolicy();
+        }
+        return 0;
     }
 
     public void addFeatureList(AppMngFeature feature, ArrayMap<EnumWithDesc, ArrayMap<String, ListItem>> addLists) {
@@ -500,7 +501,7 @@ public class DecisionMaker {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004b, code:
+    /* JADX WARNING: Missing block: B:17:0x004b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

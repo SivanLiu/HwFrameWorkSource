@@ -158,10 +158,10 @@ public class UsbDebuggingManager {
             super(UsbDebuggingManager.TAG);
         }
 
-        /* JADX WARNING: Missing block: B:12:?, code:
+        /* JADX WARNING: Missing block: B:12:?, code skipped:
             listenToSocket();
      */
-        /* JADX WARNING: Missing block: B:15:0x0012, code:
+        /* JADX WARNING: Missing block: B:15:0x0012, code skipped:
             android.os.SystemClock.sleep(1000);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

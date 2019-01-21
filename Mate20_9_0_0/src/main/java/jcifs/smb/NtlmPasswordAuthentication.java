@@ -423,7 +423,7 @@ public final class NtlmPasswordAuthentication implements Principal, Serializable
                         md4.digest(dest, offset, 16);
                         return;
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new SmbException(BLANK, e);
             }
             throw new SmbException(BLANK, e);

@@ -94,7 +94,7 @@ public class KeyWordController extends AwareStateController {
             stringBuilder.append(filterValue);
             AwareLog.i(str, stringBuilder.toString());
         }
-        boolean z = false;
+        int i = 0;
         if (TextUtils.isEmpty(filterValue)) {
             if (this.DEBUG) {
                 AwareLog.w(TAG, "iaware_brjob keyword config error!");
@@ -111,28 +111,28 @@ public class KeyWordController extends AwareStateController {
         String[] keywords = filterValue.split("[\\[\\]]");
         IntentFilter filter = new IntentFilter(job.getAction());
         String host = null;
-        int i = 0;
+        int i2 = 0;
         String port = null;
         boolean specialFormat = false;
         while (true) {
-            int i2 = i;
-            if (i2 < keywords.length) {
+            int i3 = i2;
+            if (i3 < keywords.length) {
                 String filterValue2;
-                if (!(keywords[i2] == null || keywords[i2].trim().length() == 0)) {
-                    if (!":".equals(keywords[i2].trim())) {
+                if (!(keywords[i3] == null || keywords[i3].trim().length() == 0)) {
+                    if (!":".equals(keywords[i3].trim())) {
                         StringBuilder stringBuilder2;
-                        String[] values = keywords[i2].split("[:]");
-                        String[] pkgValues = keywords[i2].split("[:@]");
+                        String[] values = keywords[i3].split("[:]");
+                        String[] pkgValues = keywords[i3].split("[:@]");
                         if (this.DEBUG) {
                             str = TAG;
                             stringBuilder2 = new StringBuilder();
                             stringBuilder2.append("iaware_brjob config keyword: ");
-                            stringBuilder2.append(keywords[i2]);
+                            stringBuilder2.append(keywords[i3]);
                             AwareLog.i(str, stringBuilder2.toString());
                         }
                         String str2;
                         if (pkgValues.length == 3) {
-                            if (!"packageName".equals(pkgValues[z])) {
+                            if (!"packageName".equals(pkgValues[i])) {
                                 str2 = TAG;
                                 StringBuilder stringBuilder3 = new StringBuilder();
                                 stringBuilder3.append("iaware_brjob KeyWord value format is wrong: ");
@@ -148,10 +148,10 @@ public class KeyWordController extends AwareStateController {
                             stringBuilder2.append("iaware_brjob KeyWord value format is wrong: ");
                             stringBuilder2.append(job.getComponentName());
                             AwareLog.e(str, stringBuilder2.toString());
-                            awareJobStatus.setSatisfied("KeyWord", z);
+                            awareJobStatus.setSatisfied("KeyWord", i);
                             return;
                         } else {
-                            String key = values[z];
+                            String key = values[i];
                             str2 = values[1];
                             if (!TextUtils.isEmpty(key)) {
                                 if (!TextUtils.isEmpty(str2)) {
@@ -187,23 +187,23 @@ public class KeyWordController extends AwareStateController {
                                         stringBuilder.append("iaware_brjob invalid key: ");
                                         stringBuilder.append(key);
                                         AwareLog.e(str, stringBuilder.toString());
-                                        i = i2 + 1;
+                                        i2 = i3 + 1;
                                         filterValue = filterValue2;
-                                        z = false;
+                                        i = 0;
                                     }
                                 }
                             }
                         }
                     }
                     filterValue2 = filterValue;
-                    i = i2 + 1;
+                    i2 = i3 + 1;
                     filterValue = filterValue2;
-                    z = false;
+                    i = 0;
                 }
                 filterValue2 = filterValue;
-                i = i2 + 1;
+                i2 = i3 + 1;
                 filterValue = filterValue2;
-                z = false;
+                i = 0;
             } else {
                 if (specialFormat) {
                     filterValue = host;
@@ -211,7 +211,7 @@ public class KeyWordController extends AwareStateController {
                     if (host != null) {
                         filter.addDataAuthority(host, port);
                     }
-                    int match = filter.match(intent.getAction(), job.getHwBroadcastRecord().getResolvedType(), intent.getScheme(), intent.getData(), null, TAG);
+                    i = filter.match(intent.getAction(), job.getHwBroadcastRecord().getResolvedType(), intent.getScheme(), intent.getData(), null, TAG);
                     if (this.DEBUG) {
                         String str3 = TAG;
                         StringBuilder stringBuilder4 = new StringBuilder();
@@ -224,10 +224,10 @@ public class KeyWordController extends AwareStateController {
                         stringBuilder4.append(", ");
                         stringBuilder4.append(intent.getData());
                         stringBuilder4.append(", result: ");
-                        stringBuilder4.append(match);
+                        stringBuilder4.append(i);
                         AwareLog.i(str3, stringBuilder4.toString());
                     }
-                    if (match >= 0) {
+                    if (i >= 0) {
                         awareJobStatus.setSatisfied("KeyWord", true);
                     } else {
                         awareJobStatus.setSatisfied("KeyWord", false);
@@ -330,7 +330,7 @@ public class KeyWordController extends AwareStateController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0016, code:
+    /* JADX WARNING: Missing block: B:10:0x0016, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -378,7 +378,7 @@ public class KeyWordController extends AwareStateController {
             return intent.getBooleanExtra(key, false);
         }
         if (value.equals("false")) {
-            return true ^ intent.getBooleanExtra(key, true);
+            return 1 ^ intent.getBooleanExtra(key, true);
         }
         return false;
     }

@@ -47,14 +47,14 @@ public class BCRainbowPrivateKey implements PrivateKey {
         int i = ((RainbowUtil.equals(this.A1inv, bCRainbowPrivateKey.getInvA1()) ? 1 : false) == 0 || !RainbowUtil.equals(this.A2inv, bCRainbowPrivateKey.getInvA2())) ? false : 1;
         i = (i == 0 || !RainbowUtil.equals(this.b1, bCRainbowPrivateKey.getB1())) ? false : 1;
         i = (i == 0 || !RainbowUtil.equals(this.b2, bCRainbowPrivateKey.getB2())) ? false : 1;
-        boolean z = i != 0 && Arrays.equals(this.vi, bCRainbowPrivateKey.getVi());
+        i = (i == 0 || !Arrays.equals(this.vi, bCRainbowPrivateKey.getVi())) ? false : 1;
         if (this.layers.length != bCRainbowPrivateKey.getLayers().length) {
             return false;
         }
         for (int length = this.layers.length - 1; length >= 0; length--) {
-            z &= this.layers[length].equals(bCRainbowPrivateKey.getLayers()[length]);
+            i &= this.layers[length].equals(bCRainbowPrivateKey.getLayers()[length]);
         }
-        return z;
+        return i;
     }
 
     public final String getAlgorithm() {

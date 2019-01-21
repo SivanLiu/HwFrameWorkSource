@@ -57,6 +57,10 @@ public class PerformInitializeTask implements Runnable {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:53:0x0193 A:{LOOP_END, LOOP:3: B:51:0x018d->B:53:0x0193} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x017c A:{LOOP_END, LOOP:2: B:46:0x0176->B:48:0x017c} */
+    /* JADX WARNING: Removed duplicated region for block: B:53:0x0193 A:{LOOP_END, LOOP:3: B:51:0x018d->B:53:0x0193} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x017c A:{LOOP_END, LOOP:2: B:46:0x0176->B:48:0x017c} */
     /* JADX WARNING: Removed duplicated region for block: B:48:0x017c A:{LOOP_END, LOOP:2: B:46:0x0176->B:48:0x017c} */
     /* JADX WARNING: Removed duplicated region for block: B:53:0x0193 A:{LOOP_END, LOOP:3: B:51:0x018d->B:53:0x0193} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -117,44 +121,82 @@ public class PerformInitializeTask implements Runnable {
                             this.mBackupManagerService.recordInitPending(false, transportName, str);
                             notifyResult(transportName, 0);
                         } else {
+                            long delay;
+                            String str2;
+                            StringBuilder stringBuilder2;
+                            int result3;
                             strArr2 = strArr;
                             i = length;
                             Slog.e(BackupManagerService.TAG, "Transport error in initializeDevice()");
                             EventLog.writeEvent(EventLogTags.BACKUP_TRANSPORT_FAILURE, "(initialize)");
                             this.mBackupManagerService.recordInitPending(true, transportName, str);
                             notifyResult(transportName, status);
-                            int result3 = status;
+                            int result4 = status;
                             try {
-                                long delay = transport.requestBackupTime();
-                                String str2 = BackupManagerService.TAG;
-                                StringBuilder stringBuilder2 = new StringBuilder();
-                                int result4 = result3;
+                                delay = transport.requestBackupTime();
+                                str2 = BackupManagerService.TAG;
+                                stringBuilder2 = new StringBuilder();
+                                result3 = result4;
+                            } catch (Exception e2) {
+                                e = e2;
+                                result2 = result4;
                                 try {
-                                    stringBuilder2.append("Init failed on ");
-                                    stringBuilder2.append(transportName);
-                                    stringBuilder2.append(" resched in ");
-                                    stringBuilder2.append(delay);
-                                    Slog.w(str2, stringBuilder2.toString());
-                                    i2 = 0;
-                                    this.mBackupManagerService.getAlarmManager().set(0, System.currentTimeMillis() + delay, this.mBackupManagerService.getRunInitIntent());
-                                    result = result4;
-                                    result2++;
-                                    millis = i2;
-                                    strArr = strArr2;
-                                    length = i;
-                                } catch (Exception e2) {
-                                    e = e2;
-                                    result2 = result4;
+                                    Slog.e(BackupManagerService.TAG, "Unexpected error performing init", e);
+                                    result = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                                    for (TransportClient transportClient2 : transportClientsToDisposeOf) {
+                                        this.mTransportManager.disposeOfTransportClient(transportClient2, callerLogString);
+                                    }
+                                    notifyFinished(result);
+                                    this.mListener.onFinished(callerLogString);
                                 } catch (Throwable th2) {
                                     th = th2;
-                                    result = result4;
+                                    result = result2;
+                                    for (TransportClient transportClient3 : transportClientsToDisposeOf) {
+                                        this.mTransportManager.disposeOfTransportClient(transportClient3, callerLogString);
+                                    }
+                                    notifyFinished(result);
+                                    this.mListener.onFinished(callerLogString);
+                                    throw th;
                                 }
+                            } catch (Throwable th3) {
+                                th = th3;
+                                result = result4;
+                                while (r4.hasNext()) {
+                                }
+                                notifyFinished(result);
+                                this.mListener.onFinished(callerLogString);
+                                throw th;
+                            }
+                            try {
+                                stringBuilder2.append("Init failed on ");
+                                stringBuilder2.append(transportName);
+                                stringBuilder2.append(" resched in ");
+                                stringBuilder2.append(delay);
+                                Slog.w(str2, stringBuilder2.toString());
+                                i2 = 0;
+                                this.mBackupManagerService.getAlarmManager().set(0, System.currentTimeMillis() + delay, this.mBackupManagerService.getRunInitIntent());
+                                result = result3;
+                                result2++;
+                                millis = i2;
+                                strArr = strArr2;
+                                length = i;
                             } catch (Exception e3) {
                                 e = e3;
                                 result2 = result3;
-                            } catch (Throwable th3) {
-                                th = th3;
+                                Slog.e(BackupManagerService.TAG, "Unexpected error performing init", e);
+                                result = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                                while (r0.hasNext()) {
+                                }
+                                notifyFinished(result);
+                                this.mListener.onFinished(callerLogString);
+                            } catch (Throwable th4) {
+                                th = th4;
                                 result = result3;
+                                while (r4.hasNext()) {
+                                }
+                                notifyFinished(result);
+                                this.mListener.onFinished(callerLogString);
+                                throw th;
                             }
                         }
                     }
@@ -166,23 +208,12 @@ public class PerformInitializeTask implements Runnable {
                 } catch (Exception e4) {
                     e = e4;
                     result2 = result;
-                    try {
-                        Slog.e(BackupManagerService.TAG, "Unexpected error performing init", e);
-                        result = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
-                        for (TransportClient result5 : transportClientsToDisposeOf) {
-                        }
-                        notifyFinished(result);
-                        this.mListener.onFinished(callerLogString);
-                    } catch (Throwable th4) {
-                        th = th4;
-                        result = result2;
-                        for (TransportClient transportClient2 : transportClientsToDisposeOf) {
-                            this.mTransportManager.disposeOfTransportClient(transportClient2, callerLogString);
-                        }
-                        notifyFinished(result);
-                        this.mListener.onFinished(callerLogString);
-                        throw th;
+                    Slog.e(BackupManagerService.TAG, "Unexpected error performing init", e);
+                    result = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                    while (r0.hasNext()) {
                     }
+                    notifyFinished(result);
+                    this.mListener.onFinished(callerLogString);
                 } catch (Throwable th5) {
                     th = th5;
                     while (r4.hasNext()) {
@@ -192,15 +223,14 @@ public class PerformInitializeTask implements Runnable {
                     throw th;
                 }
             }
-            for (TransportClient result52 : transportClientsToDisposeOf) {
-                this.mTransportManager.disposeOfTransportClient(result52, callerLogString);
+            for (TransportClient transportClient22 : transportClientsToDisposeOf) {
+                this.mTransportManager.disposeOfTransportClient(transportClient22, callerLogString);
             }
         } catch (Exception e5) {
             e = e5;
             Slog.e(BackupManagerService.TAG, "Unexpected error performing init", e);
             result = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
             while (r0.hasNext()) {
-                this.mTransportManager.disposeOfTransportClient(result52, callerLogString);
             }
             notifyFinished(result);
             this.mListener.onFinished(callerLogString);

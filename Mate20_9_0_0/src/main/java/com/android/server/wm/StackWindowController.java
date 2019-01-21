@@ -41,6 +41,10 @@ public class StackWindowController extends WindowContainerController<TaskStack, 
         }
     }
 
+    public /* bridge */ /* synthetic */ void onOverrideConfigurationChanged(Configuration configuration) {
+        super.onOverrideConfigurationChanged(configuration);
+    }
+
     public StackWindowController(int stackId, StackWindowListener listener, int displayId, boolean onTop, Rect outBounds) {
         this(stackId, listener, displayId, onTop, outBounds, WindowManagerService.getInstance());
     }

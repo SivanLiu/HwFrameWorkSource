@@ -19,7 +19,7 @@ public class DefaultSecretKeySizeProvider implements SecretKeySizeProvider {
     private static final Map KEY_SIZES;
 
     static {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put(new ASN1ObjectIdentifier(CMSEnvelopedGenerator.CAST5_CBC), Integers.valueOf(128));
         hashMap.put(PKCSObjectIdentifiers.des_EDE3_CBC, Integers.valueOf(192));
         hashMap.put(PKCSObjectIdentifiers.id_alg_CMS3DESwrap, Integers.valueOf(192));

@@ -616,8 +616,10 @@ public class SyncManager extends AbsSyncManager {
 
         private boolean tryEnqueueMessageUntilReadyToRun(Message msg) {
             synchronized (this) {
-                if (SyncManager.this.mBootCompleted && SyncManager.this.mProvisioned && SyncManager.this.mJobServiceReady) {
-                    return false;
+                if (SyncManager.this.mBootCompleted && SyncManager.this.mProvisioned) {
+                    if (SyncManager.this.mJobServiceReady) {
+                        return false;
+                    }
                 }
                 if (SyncManager.this.mProvisioned || !(msg.obj instanceof SyncOperation)) {
                     this.mUnreadyQueue.add(Message.obtain(msg));
@@ -781,8 +783,8 @@ public class SyncManager extends AbsSyncManager {
                             }
                             if (reschedule) {
                                 deferStoppedSyncH(op, 0);
-                                break;
                             }
+                            break;
                         }
                         break;
                     case 12:
@@ -796,6 +798,8 @@ public class SyncManager extends AbsSyncManager {
                     case 14:
                         Pair<EndPoint, String> args = msg.obj;
                         removePeriodicSyncH((EndPoint) args.first, msg.getData(), (String) args.second);
+                        break;
+                    default:
                         break;
                 }
             } catch (RemoteException e) {
@@ -1361,7 +1365,7 @@ public class SyncManager extends AbsSyncManager {
             boolean isLoggable = Log.isLoggable("SyncManager", 2);
             SyncOperation syncOperation = activeSyncContext2.mSyncOperation;
             EndPoint info = syncOperation.target;
-            boolean upstreamActivity = false;
+            int upstreamActivity = 0;
             if (activeSyncContext2.mIsLinkedToDeath) {
                 activeSyncContext2.mSyncAdapter.asBinder().unlinkToDeath(activeSyncContext2, 0);
                 activeSyncContext2.mIsLinkedToDeath = false;
@@ -1398,7 +1402,7 @@ public class SyncManager extends AbsSyncManager {
                 } else {
                     historyMessage = SyncStorageEngine.MESG_SUCCESS;
                     downstreamActivity = 0;
-                    upstreamActivity = false;
+                    upstreamActivity = 0;
                     SyncManager.this.clearBackoffSetting(syncOperation.target, "sync success");
                     if (syncOperation.isDerivedFromFailedPeriodicSync()) {
                         reschedulePeriodicSyncH(syncOperation);
@@ -1426,7 +1430,7 @@ public class SyncManager extends AbsSyncManager {
                 }
                 historyMessage = SyncStorageEngine.MESG_CANCELED;
                 downstreamActivity = 0;
-                upstreamActivity = false;
+                upstreamActivity = 0;
                 closeActiveSyncContext(activeSyncContext2);
             }
             int downstreamActivity2 = downstreamActivity;
@@ -1501,9 +1505,9 @@ public class SyncManager extends AbsSyncManager {
                     if (isActivityAvailable(clickIntent)) {
                         UserHandle user = new UserHandle(userId);
                         PendingIntent pendingIntent = PendingIntent.getActivityAsUser(SyncManager.this.mContext, 0, clickIntent, 268435456, null, user);
-                        CharSequence tooManyDeletesDescFormat = SyncManager.this.mContext.getResources().getText(17039864);
+                        CharSequence tooManyDeletesDescFormat = SyncManager.this.mContext.getResources().getText(17039865);
                         Context contextForUser = SyncManager.this.getContextForUser(user);
-                        Notification notification = new Builder(contextForUser, SystemNotificationChannels.ACCOUNT).setSmallIcon(17303480).setLargeIcon(BitmapFactory.decodeResource(SyncManager.this.mContext.getResources(), 33751680)).setTicker(SyncManager.this.mContext.getString(17039862)).setWhen(System.currentTimeMillis()).setColor(contextForUser.getColor(17170784)).setContentTitle(contextForUser.getString(17039863)).setContentText(String.format(tooManyDeletesDescFormat.toString(), new Object[]{authorityName})).setContentIntent(pendingIntent).build();
+                        Notification notification = new Builder(contextForUser, SystemNotificationChannels.ACCOUNT).setSmallIcon(17303480).setLargeIcon(BitmapFactory.decodeResource(SyncManager.this.mContext.getResources(), 33751680)).setTicker(SyncManager.this.mContext.getString(17039863)).setWhen(System.currentTimeMillis()).setColor(contextForUser.getColor(17170784)).setContentTitle(contextForUser.getString(17039864)).setContentText(String.format(tooManyDeletesDescFormat.toString(), new Object[]{authorityName})).setContentIntent(pendingIntent).build();
                         notification.flags |= 2;
                         SyncManager.this.mNotificationMgr.notifyAsUser(Integer.toString(account.hashCode() ^ authority.hashCode()), 18, notification, user);
                         return;
@@ -1586,9 +1590,9 @@ public class SyncManager extends AbsSyncManager {
     }
 
     static /* synthetic */ boolean access$1876(SyncManager x0, int x1) {
-        boolean z = (byte) (x0.mProvisioned | x1);
-        x0.mProvisioned = z;
-        return z;
+        byte b = (byte) (x0.mProvisioned | x1);
+        x0.mProvisioned = b;
+        return b;
     }
 
     private boolean isJobIdInUseLockedH(int jobId, List<JobInfo> pendingJobs) {
@@ -1722,7 +1726,7 @@ public class SyncManager extends AbsSyncManager {
         });
     }
 
-    /* JADX WARNING: Missing block: B:30:0x00d0, code:
+    /* JADX WARNING: Missing block: B:30:0x00d0, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2016,10 +2020,10 @@ public class SyncManager extends AbsSyncManager {
     /* JADX WARNING: Removed duplicated region for block: B:112:0x0300  */
     /* JADX WARNING: Removed duplicated region for block: B:25:0x00bb  */
     /* JADX WARNING: Removed duplicated region for block: B:22:0x00b0  */
-    /* JADX WARNING: Missing block: B:105:0x02f2, code:
+    /* JADX WARNING: Missing block: B:105:0x02f2, code skipped:
             if (r12.mSyncStorageEngine.getSyncAutomatically(r11.account, r11.userId, r9) != false) goto L_0x02fb;
      */
-    /* JADX WARNING: Missing block: B:126:0x0422, code:
+    /* JADX WARNING: Missing block: B:126:0x0422, code skipped:
             if (r11 == r57) goto L_0x0430;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3040,7 +3044,7 @@ public class SyncManager extends AbsSyncManager {
         Intent intent = new Intent();
         intent.setAction("android.content.SyncAdapter");
         intent.setComponent(syncAdapterComponent);
-        intent.putExtra("android.intent.extra.client_label", 17041223);
+        intent.putExtra("android.intent.extra.client_label", 17041224);
         intent.putExtra("android.intent.extra.client_intent", PendingIntent.getActivityAsUser(context, 0, new Intent("android.settings.SYNC_SETTINGS"), 0, null, UserHandle.of(userId)));
         return intent;
     }

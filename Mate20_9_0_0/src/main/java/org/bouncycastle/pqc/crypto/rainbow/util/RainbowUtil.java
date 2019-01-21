@@ -83,32 +83,32 @@ public class RainbowUtil {
         if (sArr.length != sArr2.length) {
             return false;
         }
-        boolean z = true;
+        int i = 1;
         for (int length = sArr.length - 1; length >= 0; length--) {
-            z &= sArr[length] == sArr2[length] ? 1 : 0;
+            i &= sArr[length] == sArr2[length] ? 1 : 0;
         }
-        return z;
+        return i;
     }
 
     public static boolean equals(short[][] sArr, short[][] sArr2) {
         if (sArr.length != sArr2.length) {
             return false;
         }
-        boolean z = true;
+        int i = 1;
         for (int length = sArr.length - 1; length >= 0; length--) {
-            z &= equals(sArr[length], sArr2[length]);
+            i &= equals(sArr[length], sArr2[length]);
         }
-        return z;
+        return i;
     }
 
     public static boolean equals(short[][][] sArr, short[][][] sArr2) {
         if (sArr.length != sArr2.length) {
             return false;
         }
-        boolean z = true;
+        int i = 1;
         for (int length = sArr.length - 1; length >= 0; length--) {
-            z &= equals(sArr[length], sArr2[length]);
+            i &= equals(sArr[length], sArr2[length]);
         }
-        return z;
+        return i;
     }
 }

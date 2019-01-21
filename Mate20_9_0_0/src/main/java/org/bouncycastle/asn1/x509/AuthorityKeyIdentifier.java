@@ -12,7 +12,6 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
-import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 
 public class AuthorityKeyIdentifier extends ASN1Object {
@@ -51,7 +50,7 @@ public class AuthorityKeyIdentifier extends ASN1Object {
         this.keyidentifier = null;
         this.certissuer = null;
         this.certserno = null;
-        Digest sHA1Digest = new SHA1Digest();
+        SHA1Digest sHA1Digest = new SHA1Digest();
         byte[] bArr = new byte[sHA1Digest.getDigestSize()];
         byte[] bytes = subjectPublicKeyInfo.getPublicKeyData().getBytes();
         sHA1Digest.update(bytes, 0, bytes.length);
@@ -63,7 +62,7 @@ public class AuthorityKeyIdentifier extends ASN1Object {
         this.keyidentifier = null;
         this.certissuer = null;
         this.certserno = null;
-        Digest sHA1Digest = new SHA1Digest();
+        SHA1Digest sHA1Digest = new SHA1Digest();
         byte[] bArr = new byte[sHA1Digest.getDigestSize()];
         byte[] bytes = subjectPublicKeyInfo.getPublicKeyData().getBytes();
         sHA1Digest.update(bytes, 0, bytes.length);

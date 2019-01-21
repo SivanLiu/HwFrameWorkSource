@@ -209,7 +209,7 @@ class TvInputHardwareManager implements Callback {
             this();
         }
 
-        /* JADX WARNING: Missing block: B:31:0x00e4, code:
+        /* JADX WARNING: Missing block: B:31:0x00e4, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -491,7 +491,7 @@ class TvInputHardwareManager implements Callback {
             }
         }
 
-        /* JADX WARNING: Missing block: B:30:0x006f, code:
+        /* JADX WARNING: Missing block: B:30:0x006f, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -675,10 +675,10 @@ class TvInputHardwareManager implements Callback {
             }
         }
 
-        /* JADX WARNING: Missing block: B:17:0x002d, code:
+        /* JADX WARNING: Missing block: B:18:0x002d, code skipped:
             return r2;
      */
-        /* JADX WARNING: Missing block: B:19:0x002f, code:
+        /* JADX WARNING: Missing block: B:20:0x002f, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -687,16 +687,19 @@ class TvInputHardwareManager implements Callback {
                 boolean z = false;
                 if (this.mReleased) {
                     return false;
-                } else if (surface == null || config == null) {
-                } else if (config.getType() != 2) {
-                    return false;
-                } else if (TvInputHardwareManager.this.mHal.addOrUpdateStream(this.mInfo.getDeviceId(), surface, config) == 0) {
-                    z = true;
+                } else if (surface != null) {
+                    if (config != null) {
+                        if (config.getType() != 2) {
+                            return false;
+                        } else if (TvInputHardwareManager.this.mHal.addOrUpdateStream(this.mInfo.getDeviceId(), surface, config) == 0) {
+                            z = true;
+                        }
+                    }
                 }
             }
         }
 
-        /* JADX WARNING: Missing block: B:14:0x0023, code:
+        /* JADX WARNING: Missing block: B:14:0x0023, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -744,7 +747,7 @@ class TvInputHardwareManager implements Callback {
                 return true;
             }
             previousSink.removeAll(this.mAudioSink);
-            return previousSink.isEmpty() ^ true;
+            return previousSink.isEmpty() ^ 1;
         }
 
         private void handleAudioSinkUpdated() {
@@ -880,7 +883,7 @@ class TvInputHardwareManager implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0033, code:
+    /* JADX WARNING: Missing block: B:12:0x0033, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -904,7 +907,7 @@ class TvInputHardwareManager implements Callback {
     }
 
     public List<TvInputHardwareInfo> getHardwareList() {
-        List<TvInputHardwareInfo> unmodifiableList;
+        List unmodifiableList;
         synchronized (this.mLock) {
             unmodifiableList = Collections.unmodifiableList(this.mHardwareList);
         }
@@ -912,7 +915,7 @@ class TvInputHardwareManager implements Callback {
     }
 
     public List<HdmiDeviceInfo> getHdmiDeviceList() {
-        List<HdmiDeviceInfo> unmodifiableList;
+        List unmodifiableList;
         synchronized (this.mLock) {
             unmodifiableList = Collections.unmodifiableList(this.mHdmiDeviceList);
         }
@@ -925,7 +928,7 @@ class TvInputHardwareManager implements Callback {
         return connectionCallingUid == null || connectionResolvedUserId == null || connectionCallingUid.intValue() != callingUid || connectionResolvedUserId.intValue() != resolvedUserId;
     }
 
-    /* JADX WARNING: Missing block: B:27:0x00b9, code:
+    /* JADX WARNING: Missing block: B:28:0x00b9, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1062,7 +1065,7 @@ class TvInputHardwareManager implements Callback {
         throw new NullPointerException();
     }
 
-    /* JADX WARNING: Missing block: B:16:0x003e, code:
+    /* JADX WARNING: Missing block: B:17:0x003e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1075,9 +1078,10 @@ class TvInputHardwareManager implements Callback {
                 stringBuilder.append("Invalid deviceId : ");
                 stringBuilder.append(deviceId);
                 Slog.e(str, stringBuilder.toString());
-            } else if (connection.getHardwareLocked() != hardware || checkUidChangedLocked(connection, callingUid, resolvedUserId)) {
-            } else {
-                connection.resetLocked(null, null, null, null, null);
+            } else if (connection.getHardwareLocked() == hardware) {
+                if (!checkUidChangedLocked(connection, callingUid, resolvedUserId)) {
+                    connection.resetLocked(null, null, null, null, null);
+                }
             }
         }
     }
@@ -1121,7 +1125,7 @@ class TvInputHardwareManager implements Callback {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1177,11 +1181,11 @@ class TvInputHardwareManager implements Callback {
     /* JADX WARNING: Removed duplicated region for block: B:13:0x002e  */
     /* JADX WARNING: Removed duplicated region for block: B:18:0x004e  */
     /* JADX WARNING: Removed duplicated region for block: B:15:0x0045  */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0069 A:{LOOP_START, LOOP:0: B:27:0x0069->B:34:0x0083, PHI: r3 } */
+    /* JADX WARNING: Removed duplicated region for block: B:27:0x0069 A:{LOOP_START, PHI: r3 , LOOP:0: B:27:0x0069->B:34:0x0083} */
     /* JADX WARNING: Removed duplicated region for block: B:13:0x002e  */
     /* JADX WARNING: Removed duplicated region for block: B:18:0x004e  */
     /* JADX WARNING: Removed duplicated region for block: B:15:0x0045  */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0069 A:{LOOP_START, LOOP:0: B:27:0x0069->B:34:0x0083, PHI: r3 } */
+    /* JADX WARNING: Removed duplicated region for block: B:27:0x0069 A:{LOOP_START, PHI: r3 , LOOP:0: B:27:0x0069->B:34:0x0083} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handleVolumeChange(Context context, Intent intent) {
         String action = intent.getAction();

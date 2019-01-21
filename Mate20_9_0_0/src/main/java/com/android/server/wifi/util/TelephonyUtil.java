@@ -10,10 +10,14 @@ import android.util.Pair;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.server.wifi.WifiNative;
 import com.android.server.wifi.hotspot2.anqp.Constants;
-import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.HashMap;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class TelephonyUtil {
     public static final String DEFAULT_EAP_PREFIX = "\u0000";
@@ -101,24 +105,6 @@ public class TelephonyUtil {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0015 A:{Splitter: B:0:0x0000, ExcHandler: java.security.NoSuchAlgorithmException (r0_2 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0015 A:{Splitter: B:0:0x0000, ExcHandler: java.security.NoSuchAlgorithmException (r0_2 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0015 A:{Splitter: B:0:0x0000, ExcHandler: java.security.NoSuchAlgorithmException (r0_2 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0015 A:{Splitter: B:0:0x0000, ExcHandler: java.security.NoSuchAlgorithmException (r0_2 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Missing block: B:3:0x0015, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:4:0x0016, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Encryption failed: ");
-            r2.append(r0.getMessage());
-            android.util.Log.e(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:5:0x0031, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     public String encryptDataUsingPublicKey(PublicKey key, byte[] data) {
         try {
@@ -126,7 +112,13 @@ public class TelephonyUtil {
             cipher.init(1, key);
             byte[] encryptedBytes = cipher.doFinal(data);
             return Base64.encodeToString(encryptedBytes, 0, encryptedBytes.length, 0);
-        } catch (GeneralSecurityException e) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Encryption failed: ");
+            stringBuilder.append(e.getMessage());
+            Log.e(str, stringBuilder.toString());
+            return null;
         }
     }
 

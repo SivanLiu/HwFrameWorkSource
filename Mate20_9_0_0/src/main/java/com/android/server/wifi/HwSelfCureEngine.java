@@ -2164,11 +2164,14 @@ public class HwSelfCureEngine extends StateMachine {
         LOGD(stringBuilder.toString());
         if (this.mInitialized && status == 0) {
             sendMessage(113);
-        } else if (-1 == status || -2 == status) {
-            sendMessage(120);
-            notifyVoWiFiSelCureEnd(-1);
         } else {
-            this.mSelfCureOngoing.set(false);
+            if (-1 != status) {
+                if (-2 != status) {
+                    this.mSelfCureOngoing.set(false);
+                    notifyVoWiFiSelCureEnd(-1);
+                }
+            }
+            sendMessage(120);
             notifyVoWiFiSelCureEnd(-1);
         }
     }
@@ -2206,7 +2209,7 @@ public class HwSelfCureEngine extends StateMachine {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x007a, code:
+    /* JADX WARNING: Missing block: B:29:0x007a, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

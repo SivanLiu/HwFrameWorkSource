@@ -55,8 +55,8 @@ public class PKMACBuilder {
     }
 
     private MacCalculator genCalculator(final PBMParameter pBMParameter, char[] cArr) throws CRMFException {
-        Object toUTF8ByteArray = Strings.toUTF8ByteArray(cArr);
-        Object octets = pBMParameter.getSalt().getOctets();
+        byte[] toUTF8ByteArray = Strings.toUTF8ByteArray(cArr);
+        byte[] octets = pBMParameter.getSalt().getOctets();
         byte[] bArr = new byte[(toUTF8ByteArray.length + octets.length)];
         System.arraycopy(toUTF8ByteArray, 0, bArr, 0, toUTF8ByteArray.length);
         System.arraycopy(octets, 0, bArr, toUTF8ByteArray.length, octets.length);
@@ -80,7 +80,7 @@ public class PKMACBuilder {
             public byte[] getMac() {
                 try {
                     return PKMACBuilder.this.calculator.calculateMac(bArr, this.bOut.toByteArray());
-                } catch (Throwable e) {
+                } catch (CRMFException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("exception calculating mac: ");
                     stringBuilder.append(e.getMessage());

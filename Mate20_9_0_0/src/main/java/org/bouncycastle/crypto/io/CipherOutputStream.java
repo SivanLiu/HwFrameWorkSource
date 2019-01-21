@@ -4,6 +4,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 
@@ -53,7 +54,7 @@ public class CipherOutputStream extends FilterOutputStream {
     /* JADX WARNING: Removed duplicated region for block: B:27:0x005b A:{RETURN} */
     /* JADX WARNING: Removed duplicated region for block: B:27:0x005b A:{RETURN} */
     /* JADX WARNING: Removed duplicated region for block: B:28:0x005c  */
-    /* JADX WARNING: Missing block: B:24:0x0055, code:
+    /* JADX WARNING: Missing block: B:24:0x0055, code skipped:
             if (r1 != null) goto L_0x0058;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -97,16 +98,16 @@ public class CipherOutputStream extends FilterOutputStream {
             }
             outputStream.write(bArr, 0, doFinal);
             iOException = null;
-        } catch (Throwable e2) {
+        } catch (InvalidCipherTextException e2) {
             iOException = new InvalidCipherTextIOException("Error finalising cipher data", e2);
-        } catch (Throwable e22) {
-            iOException = new CipherIOException("Error closing stream: ", e22);
+        } catch (Exception e3) {
+            iOException = new CipherIOException("Error closing stream: ", e3);
         }
         try {
             flush();
             this.out.close();
-        } catch (IOException e3) {
-            e = e3;
+        } catch (IOException e4) {
+            e = e4;
         }
         e = iOException;
         if (e != null) {
@@ -131,10 +132,10 @@ public class CipherOutputStream extends FilterOutputStream {
         write(bArr, 0, bArr.length);
     }
 
-    /* JADX WARNING: Missing block: B:3:0x0014, code:
+    /* JADX WARNING: Missing block: B:3:0x0014, code skipped:
             if (r9 != 0) goto L_0x0016;
      */
-    /* JADX WARNING: Missing block: B:9:0x002e, code:
+    /* JADX WARNING: Missing block: B:9:0x002e, code skipped:
             if (r9 != 0) goto L_0x0016;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

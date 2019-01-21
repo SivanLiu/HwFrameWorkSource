@@ -34,6 +34,10 @@ public class HttpsConnection extends Connection {
     private Object mSuspendLock = new Object();
     private boolean mSuspended = false;
 
+    public /* bridge */ /* synthetic */ String toString() {
+        return super.toString();
+    }
+
     static {
         initializeEngine(null);
     }
@@ -50,7 +54,7 @@ public class HttpsConnection extends Connection {
                 e = FileClientSessionCache.usingDirectory(sessionDir);
             } catch (KeyManagementException e2) {
                 throw new RuntimeException(e2);
-            } catch (KeyManagementException e22) {
+            } catch (IOException e22) {
                 throw new RuntimeException(e22);
             }
         }

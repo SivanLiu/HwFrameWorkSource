@@ -33,7 +33,7 @@ public class GlobalActionPerformer {
         this.mScreenshotHelperSupplier = screenshotHelperSupplier;
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0014, code:
+    /* JADX WARNING: Missing block: B:6:0x0014, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -1186,10 +1186,10 @@ public class DisplayContent extends AbsDisplayContent {
             this.mOverlayLayer = b.setName("Display Overlays").build();
             getPendingTransaction().setLayer(this.mWindowingLayer, 0).setLayerStack(this.mWindowingLayer, this.mDisplayId).show(this.mWindowingLayer).setLayer(this.mOverlayLayer, 1).setLayerStack(this.mOverlayLayer, this.mDisplayId).show(this.mOverlayLayer);
             getPendingTransaction().apply();
-            super.addChild(this.mBelowAppWindowsContainers, null);
-            super.addChild(this.mTaskStackContainers, null);
-            super.addChild(this.mAboveAppWindowsContainers, null);
-            super.addChild(this.mImeWindowsContainers, null);
+            super.addChild((WindowContainer) this.mBelowAppWindowsContainers, null);
+            super.addChild((WindowContainer) this.mTaskStackContainers, null);
+            super.addChild((WindowContainer) this.mAboveAppWindowsContainers, null);
+            super.addChild((WindowContainer) this.mImeWindowsContainers, null);
             this.mService.mRoot.addChild((WindowContainer) this, null);
             this.mDisplayReady = true;
             return;
@@ -2372,7 +2372,7 @@ public class DisplayContent extends AbsDisplayContent {
                 Slog.v(str, stringBuilder.toString());
             }
             boolean isPCDisplay = HwPCUtils.enabled() && this.mDisplayId != -1 && this.mDisplayId != 0 && (this.mDisplayInfo.type == 2 || this.mDisplayInfo.type == 3 || (((this.mDisplayInfo.type == 5 || this.mDisplayInfo.type == 4) && SystemProperties.getBoolean("hw_pc_support_overlay", false)) || (this.mDisplayInfo.type == 5 && ("com.hpplay.happycast".equals(this.mDisplayInfo.ownerPackageName) || "com.huawei.works".equals(this.mDisplayInfo.ownerPackageName)))));
-            if (!(HwVRUtils.isVRMode() && HwVRUtils.isValidVRDisplayId(this.mDisplayId))) {
+            if (!HwVRUtils.isVRMode() || !HwVRUtils.isValidVRDisplayId(this.mDisplayId)) {
                 isVRDisplay = false;
             }
             if (this.mService.canDispatchPointerEvents()) {

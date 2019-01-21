@@ -280,8 +280,10 @@ public class HwCustPackageManagerServiceImpl extends HwCustPackageManagerService
     private boolean isSDCardMounted() {
         try {
             for (VolumeInfo vol : Stub.asInterface(ServiceManager.getService("mount")).getVolumes(0)) {
-                if (vol.getDisk() != null && vol.isMountedWritable() && vol.getDisk().isSd() && isFirstSdVolume(vol)) {
-                    return HWLOGW_E;
+                if (vol.getDisk() != null) {
+                    if (vol.isMountedWritable() && vol.getDisk().isSd() && isFirstSdVolume(vol)) {
+                        return HWLOGW_E;
+                    }
                 }
             }
         } catch (RemoteException e) {

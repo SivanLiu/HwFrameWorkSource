@@ -114,65 +114,68 @@ class Request {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:117:0x0112 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x009d A:{SYNTHETIC, Splitter: B:30:0x009d} */
-    /* JADX WARNING: Removed duplicated region for block: B:99:0x013f A:{Catch:{ EOFException -> 0x0138, IOException -> 0x011d, all -> 0x0117, all -> 0x0145 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x0148  */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x0148  */
-    /* JADX WARNING: Removed duplicated region for block: B:88:0x0126  */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x0148  */
-    /* JADX WARNING: Missing block: B:50:?, code:
+    /* JADX WARNING: Removed duplicated region for block: B:112:0x0112 A:{SYNTHETIC, EDGE_INSN: B:112:0x0112->B:81:0x0112 ?: BREAK  , EDGE_INSN: B:112:0x0112->B:81:0x0112 ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x009d A:{SYNTHETIC, Splitter:B:30:0x009d} */
+    /* JADX WARNING: Removed duplicated region for block: B:100:0x013f A:{Catch:{ EOFException -> 0x0138, IOException -> 0x011d, all -> 0x0117, all -> 0x0145 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x0148  */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x0148  */
+    /* JADX WARNING: Removed duplicated region for block: B:100:0x013f A:{Catch:{ EOFException -> 0x0138, IOException -> 0x011d, all -> 0x0117, all -> 0x0145 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:89:0x0126  */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x0148  */
+    /* JADX WARNING: Removed duplicated region for block: B:89:0x0126  */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x0148  */
+    /* JADX WARNING: Missing block: B:50:?, code skipped:
             r15 = r13.read(r14, r2, r14.length - r2);
      */
-    /* JADX WARNING: Missing block: B:51:0x00d7, code:
+    /* JADX WARNING: Missing block: B:51:0x00d7, code skipped:
             if (r15 == true) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:52:0x00d9, code:
+    /* JADX WARNING: Missing block: B:52:0x00d9, code skipped:
             r2 = r2 + r15;
      */
-    /* JADX WARNING: Missing block: B:53:0x00da, code:
+    /* JADX WARNING: Missing block: B:53:0x00da, code skipped:
             if (r10 == false) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:54:0x00dc, code:
+    /* JADX WARNING: Missing block: B:54:0x00dc, code skipped:
             r1.mReceivedBytes += r15;
      */
-    /* JADX WARNING: Missing block: B:56:0x00e2, code:
+    /* JADX WARNING: Missing block: B:56:0x00e2, code skipped:
             if (r15 == true) goto L_0x00ec;
      */
-    /* JADX WARNING: Missing block: B:57:0x00e4, code:
+    /* JADX WARNING: Missing block: B:57:0x00e4, code skipped:
             if (r2 < r7) goto L_0x00e7;
      */
-    /* JADX WARNING: Missing block: B:59:0x00ec, code:
+    /* JADX WARNING: Missing block: B:60:0x00ec, code skipped:
             r1.mEventHandler.data(r14, r2);
      */
-    /* JADX WARNING: Missing block: B:60:0x00f1, code:
+    /* JADX WARNING: Missing block: B:61:0x00f1, code skipped:
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:67:0x00f8, code:
+    /* JADX WARNING: Missing block: B:68:0x00f8, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:68:0x00f9, code:
+    /* JADX WARNING: Missing block: B:69:0x00f9, code skipped:
             r15 = r2;
      */
-    /* JADX WARNING: Missing block: B:69:0x00fb, code:
+    /* JADX WARNING: Missing block: B:70:0x00fb, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:70:0x00fc, code:
+    /* JADX WARNING: Missing block: B:71:0x00fc, code skipped:
             r15 = r2;
      */
-    /* JADX WARNING: Missing block: B:72:0x00ff, code:
+    /* JADX WARNING: Missing block: B:73:0x00ff, code skipped:
             r15 = r2;
      */
-    /* JADX WARNING: Missing block: B:81:0x0114, code:
-            if (r13 != null) goto L_0x014e;
-     */
-    /* JADX WARNING: Missing block: B:90:0x012b, code:
-            if (r13 != null) goto L_0x014e;
-     */
-    /* JADX WARNING: Missing block: B:104:0x014c, code:
+    /* JADX WARNING: Missing block: B:82:0x0114, code skipped:
             if (r13 == null) goto L_0x0156;
      */
-    /* JADX WARNING: Missing block: B:105:0x014e, code:
+    /* JADX WARNING: Missing block: B:91:0x012b, code skipped:
+            if (r13 != null) goto L_0x014e;
+     */
+    /* JADX WARNING: Missing block: B:105:0x014c, code skipped:
+            if (r13 != null) goto L_0x014e;
+     */
+    /* JADX WARNING: Missing block: B:106:0x014e, code skipped:
             r13.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -226,38 +229,53 @@ class Request {
                             len = false;
                             while (true) {
                                 hasBody2 = hasBody;
-                                if (len) {
-                                    try {
-                                        synchronized (this) {
-                                            while (this.mLoadingPaused) {
-                                                try {
-                                                    wait();
-                                                } catch (InterruptedException e2) {
-                                                    InterruptedException interruptedException = e2;
-                                                    StringBuilder stringBuilder = new StringBuilder();
-                                                    v = v2;
-                                                    stringBuilder.append("Interrupted exception whilst network thread paused at WebCore's request. ");
-                                                    stringBuilder.append(e2.getMessage());
-                                                    HttpLog.e(stringBuilder.toString());
-                                                    v2 = v;
-                                                } catch (Throwable th2) {
-                                                    th = th2;
-                                                }
+                                if (!len) {
+                                    break;
+                                }
+                                try {
+                                    synchronized (this) {
+                                        while (this.mLoadingPaused) {
+                                            try {
+                                                wait();
+                                            } catch (InterruptedException e2) {
+                                                InterruptedException interruptedException = e2;
+                                                StringBuilder stringBuilder = new StringBuilder();
+                                                v = v2;
+                                                stringBuilder.append("Interrupted exception whilst network thread paused at WebCore's request. ");
+                                                stringBuilder.append(e2.getMessage());
+                                                HttpLog.e(stringBuilder.toString());
+                                                v2 = v;
+                                            } catch (Throwable th2) {
+                                                th = th2;
+                                                throw th;
                                             }
-                                            v = v2;
                                         }
-                                    } catch (EOFException e3) {
                                         v = v2;
-                                        count2 = count;
-                                    } catch (IOException e4) {
-                                        e = e4;
-                                        v = v2;
-                                        count2 = count;
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        v = v2;
-                                        count2 = count;
                                     }
+                                } catch (EOFException e3) {
+                                    v = v2;
+                                    count2 = count;
+                                    if (count2 > 0) {
+                                        this.mEventHandler.data(buf, count2);
+                                    }
+                                } catch (IOException e4) {
+                                    e = e4;
+                                    v = v2;
+                                    count2 = count;
+                                    if (statusCode != HttpStatus.SC_OK || statusCode == HttpStatus.SC_PARTIAL_CONTENT) {
+                                        if (supportPartialContent && count2 > 0) {
+                                            this.mEventHandler.data(buf, count2);
+                                        }
+                                        throw e;
+                                    }
+                                } catch (Throwable th3) {
+                                    th = th3;
+                                    v = v2;
+                                    count2 = count;
+                                    if (nis2 != null) {
+                                        nis2.close();
+                                    }
+                                    throw th;
                                 }
                                 hasBody = hasBody2;
                                 v2 = v;
@@ -267,24 +285,20 @@ class Request {
                         hasBody2 = hasBody;
                         v = v2;
                         if (count2 > 0) {
-                            this.mEventHandler.data(buf, count2);
                         }
                     } catch (IOException e6) {
                         e = e6;
                         hasBody2 = hasBody;
                         v = v2;
-                        if (statusCode != HttpStatus.SC_OK || statusCode == HttpStatus.SC_PARTIAL_CONTENT) {
-                            if (supportPartialContent && count2 > 0) {
-                                this.mEventHandler.data(buf, count2);
-                            }
-                            throw e;
+                        if (statusCode != HttpStatus.SC_OK) {
                         }
+                        this.mEventHandler.data(buf, count2);
+                        throw e;
                     } catch (Throwable th4) {
                         th = th4;
                         hasBody2 = hasBody;
                         v = v2;
                         if (nis2 != null) {
-                            nis2.close();
                         }
                         throw th;
                     }
@@ -298,7 +312,7 @@ class Request {
                     len = false;
                     while (true) {
                         hasBody2 = hasBody;
-                        if (len) {
+                        if (!len) {
                         }
                         hasBody = hasBody2;
                         v2 = v;
@@ -327,10 +341,7 @@ class Request {
             this.mConnection.setCanPersist(entity2, statusLine.getProtocolVersion(), header.getConnectionType());
             this.mEventHandler.endData();
             complete();
-            return;
         }
-        return;
-        throw th;
     }
 
     synchronized void cancel() {

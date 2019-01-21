@@ -144,7 +144,7 @@ public class WifiStatusListenerTransport extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x004b, code:
+    /* JADX WARNING: Missing block: B:19:0x004b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

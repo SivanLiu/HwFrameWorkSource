@@ -66,7 +66,7 @@ public class DeviceBluetoothPlugin extends DevicePolicyPlugin {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0077, code:
+    /* JADX WARNING: Missing block: B:28:0x0077, code skipped:
             if (r6.equals(BLUETOOTH_BLACK_LIST) != false) goto L_0x007b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -159,7 +159,7 @@ public class DeviceBluetoothPlugin extends DevicePolicyPlugin {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0077, code:
+    /* JADX WARNING: Missing block: B:28:0x0077, code skipped:
             if (r6.equals(BLUETOOTH_BLACK_LIST) != false) goto L_0x007b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

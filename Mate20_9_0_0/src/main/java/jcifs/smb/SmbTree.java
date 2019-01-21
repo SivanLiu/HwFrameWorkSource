@@ -36,7 +36,8 @@ class SmbTree {
         return matches(tree.share, tree.service);
     }
 
-    /* JADX WARNING: Missing block: B:44:?, code:
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* JADX WARNING: Missing block: B:45:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -96,7 +97,7 @@ class SmbTree {
         }
     }
 
-    /* JADX WARNING: Missing block: B:37:?, code:
+    /* JADX WARNING: Missing block: B:37:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -111,7 +112,7 @@ class SmbTree {
                         treeDisconnect(true);
                         this.connectionState = 0;
                         throw se;
-                    } catch (Throwable ie) {
+                    } catch (InterruptedException ie) {
                         throw new SmbException(ie.getMessage(), ie);
                     }
                 }
@@ -138,6 +139,8 @@ class SmbTree {
         }
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void treeDisconnect(boolean inError) {
         synchronized (this.session.transport()) {
             if (this.connectionState != 2) {

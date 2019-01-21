@@ -163,28 +163,28 @@ public class SlideTouchEvent {
     public void preformStartLazyMode(float x) {
         final float distanceX = x;
         new AsyncTask<Void, Void, Void>() {
-            /* JADX WARNING: Missing block: B:7:0x002c, code:
+            /* JADX WARNING: Missing block: B:7:0x002c, code skipped:
             if (r5 != null) goto L_0x002e;
      */
-            /* JADX WARNING: Missing block: B:8:0x002e, code:
+            /* JADX WARNING: Missing block: B:8:0x002e, code skipped:
             r5.recycle();
      */
-            /* JADX WARNING: Missing block: B:15:0x0055, code:
+            /* JADX WARNING: Missing block: B:15:0x0055, code skipped:
             if (r5 != null) goto L_0x002e;
      */
-            /* JADX WARNING: Missing block: B:16:0x0058, code:
+            /* JADX WARNING: Missing block: B:16:0x0058, code skipped:
             android.util.Log.d("APS", "APS: SDR: special: Lazymode process wait begin ");
      */
-            /* JADX WARNING: Missing block: B:18:0x0066, code:
+            /* JADX WARNING: Missing block: B:18:0x0066, code skipped:
             if (1 != android.os.SystemProperties.getInt("sys.sdr.special", 0)) goto L_0x0076;
      */
-            /* JADX WARNING: Missing block: B:20:0x006a, code:
+            /* JADX WARNING: Missing block: B:20:0x006a, code skipped:
             if (r0 >= 100) goto L_0x0076;
      */
-            /* JADX WARNING: Missing block: B:23:?, code:
+            /* JADX WARNING: Missing block: B:23:?, code skipped:
             java.lang.Thread.sleep(10);
      */
-            /* JADX WARNING: Missing block: B:26:0x0076, code:
+            /* JADX WARNING: Missing block: B:26:0x0076, code skipped:
             r2 = new java.lang.StringBuilder();
             r2.append("APS: SDR: special: Lazymode process wait end, sleepCount=");
             r2.append(r0);
@@ -298,16 +298,16 @@ public class SlideTouchEvent {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:35:0x00ad  */
-    /* JADX WARNING: Missing block: B:17:0x005c, code:
+    /* JADX WARNING: Missing block: B:17:0x005c, code skipped:
             if (r3 != null) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:18:0x005e, code:
+    /* JADX WARNING: Missing block: B:18:0x005e, code skipped:
             r3.recycle();
      */
-    /* JADX WARNING: Missing block: B:36:0x00b0, code:
+    /* JADX WARNING: Missing block: B:36:0x00b0, code skipped:
             if (r3 == null) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:37:0x00b3, code:
+    /* JADX WARNING: Missing block: B:37:0x00b3, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

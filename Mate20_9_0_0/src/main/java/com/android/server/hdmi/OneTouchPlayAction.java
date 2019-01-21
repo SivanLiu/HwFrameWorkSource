@@ -47,7 +47,7 @@ final class OneTouchPlayAction extends HdmiCecFeatureAction {
         sendCommand(HdmiCecMessageBuilder.buildGiveDevicePowerStatus(getSourceAddress(), this.mTargetAddress));
     }
 
-    /* JADX WARNING: Missing block: B:11:0x002a, code:
+    /* JADX WARNING: Missing block: B:11:0x002a, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

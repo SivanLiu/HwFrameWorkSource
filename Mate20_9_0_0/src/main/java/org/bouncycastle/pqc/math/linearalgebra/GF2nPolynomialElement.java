@@ -140,7 +140,7 @@ public class GF2nPolynomialElement extends GF2nElement {
     }
 
     public GFElement add(GFElement gFElement) throws RuntimeException {
-        GFElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
+        GF2nPolynomialElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
         gF2nPolynomialElement.addToThis(gFElement);
         return gF2nPolynomialElement;
     }
@@ -182,7 +182,7 @@ public class GF2nPolynomialElement extends GF2nElement {
     }
 
     public GF2nElement increase() {
-        GF2nElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
+        GF2nPolynomialElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
         gF2nPolynomialElement.increaseThis();
         return gF2nPolynomialElement;
     }
@@ -271,7 +271,7 @@ public class GF2nPolynomialElement extends GF2nElement {
         gF2nPolynomialElement.polynomial.reduceN();
         int i = 1;
         for (int floorLog = IntegerFunctions.floorLog(degree) - 1; floorLog >= 0; floorLog--) {
-            GFElement gF2nPolynomialElement2 = new GF2nPolynomialElement(gF2nPolynomialElement);
+            GF2nPolynomialElement gF2nPolynomialElement2 = new GF2nPolynomialElement(gF2nPolynomialElement);
             for (int i2 = 1; i2 <= i; i2++) {
                 gF2nPolynomialElement2.squareThisPreCalc();
             }
@@ -296,7 +296,7 @@ public class GF2nPolynomialElement extends GF2nElement {
     }
 
     public GFElement multiply(GFElement gFElement) throws RuntimeException {
-        GFElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
+        GF2nPolynomialElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
         gF2nPolynomialElement.multiplyThisBy(gFElement);
         return gF2nPolynomialElement;
     }
@@ -326,7 +326,7 @@ public class GF2nPolynomialElement extends GF2nElement {
         if (i == 0) {
             return ONE;
         }
-        Object gF2nPolynomialElement = new GF2nPolynomialElement(this);
+        GF2nPolynomialElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
         gF2nPolynomialElement.polynomial.expandN((gF2nPolynomialElement.mDegree << 1) + 32);
         gF2nPolynomialElement.polynomial.reduceN();
         for (int i2 = 0; i2 < this.mDegree; i2++) {
@@ -345,10 +345,10 @@ public class GF2nPolynomialElement extends GF2nElement {
         if ((this.mDegree & 1) == 1) {
             return halfTrace();
         }
-        Object ZERO;
+        GF2nPolynomialElement ZERO;
         GF2nPolynomialElement gF2nPolynomialElement;
         do {
-            GFElement gF2nPolynomialElement2 = new GF2nPolynomialElement((GF2nPolynomialField) this.mField, new Random());
+            GF2nPolynomialElement gF2nPolynomialElement2 = new GF2nPolynomialElement((GF2nPolynomialField) this.mField, new Random());
             ZERO = ZERO((GF2nPolynomialField) this.mField);
             gF2nPolynomialElement = (GF2nPolynomialElement) gF2nPolynomialElement2.clone();
             for (int i = 1; i < this.mDegree; i++) {
@@ -390,7 +390,7 @@ public class GF2nPolynomialElement extends GF2nElement {
     }
 
     public GF2nElement squareRoot() {
-        GF2nElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
+        GF2nPolynomialElement gF2nPolynomialElement = new GF2nPolynomialElement(this);
         gF2nPolynomialElement.squareRootThis();
         return gF2nPolynomialElement;
     }

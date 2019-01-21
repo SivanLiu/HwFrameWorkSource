@@ -108,10 +108,10 @@ public class PrereadUtils {
         mPrereadOdex = Boolean.valueOf(z);
     }
 
-    /* JADX WARNING: Missing block: B:38:0x0097, code:
+    /* JADX WARNING: Missing block: B:38:0x0097, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:39:0x0098, code:
+    /* JADX WARNING: Missing block: B:39:0x0098, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -293,28 +293,30 @@ public class PrereadUtils {
             ByteBuffer buffer = ByteBuffer.allocate(264);
             try {
                 byte[] stringBytes = pkgName.getBytes("UTF-8");
-                if (stringBytes.length < 1 || stringBytes.length > 255) {
-                    AwareLog.w(TAG, "sendPrereadMsg incorrect packageName");
-                    return;
+                if (stringBytes.length >= 1) {
+                    if (stringBytes.length <= 255) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("sendPrereadMsg pkgname = ");
+                        stringBuilder.append(pkgName);
+                        AwareLog.i(str, stringBuilder.toString());
+                        buffer.clear();
+                        buffer.putInt(MemoryConstant.MSG_PREREAD_FILE);
+                        buffer.putInt(stringBytes.length);
+                        buffer.put(stringBytes);
+                        buffer.putChar(0);
+                        if (-1 == MemoryUtils.sendPacket(buffer)) {
+                            AwareLog.w(TAG, "sendPrereadMsg sendPacket failed");
+                            return;
+                        }
+                        if (parseRecvPacket(8) == 0) {
+                            mPrereadPkgList.clear();
+                            prereadDataUpdate();
+                        }
+                        return;
+                    }
                 }
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("sendPrereadMsg pkgname = ");
-                stringBuilder.append(pkgName);
-                AwareLog.i(str, stringBuilder.toString());
-                buffer.clear();
-                buffer.putInt(MemoryConstant.MSG_PREREAD_FILE);
-                buffer.putInt(stringBytes.length);
-                buffer.put(stringBytes);
-                buffer.putChar(0);
-                if (-1 == MemoryUtils.sendPacket(buffer)) {
-                    AwareLog.w(TAG, "sendPrereadMsg sendPacket failed");
-                    return;
-                }
-                if (parseRecvPacket(8) == 0) {
-                    mPrereadPkgList.clear();
-                    prereadDataUpdate();
-                }
+                AwareLog.w(TAG, "sendPrereadMsg incorrect packageName");
             } catch (UnsupportedEncodingException e) {
                 AwareLog.w(TAG, "UnsupportedEncodingException!");
             }
@@ -337,28 +339,30 @@ public class PrereadUtils {
         ByteBuffer buffer = ByteBuffer.allocate(268);
         try {
             byte[] stringValueBytes = stringValue.getBytes("UTF-8");
-            if (stringValueBytes.length < 1 || stringValueBytes.length > 255) {
-                AwareLog.w(TAG, "setPrereadPath incorrect stringValueBytes");
-                return false;
+            if (stringValueBytes.length >= 1) {
+                if (stringValueBytes.length <= 255) {
+                    String filename = new File(stringValue).getName();
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("setPrereadPath :opCode ");
+                    stringBuilder.append(opCode);
+                    stringBuilder.append(", ");
+                    stringBuilder.append(filename);
+                    AwareLog.d(str, stringBuilder.toString());
+                    buffer.clear();
+                    buffer.putInt(MemoryConstant.MSG_SET_PREREAD_PATH);
+                    buffer.putInt(opCode);
+                    buffer.putInt(stringValueBytes.length);
+                    buffer.put(stringValueBytes);
+                    buffer.putChar(0);
+                    if (-1 != MemoryUtils.sendPacket(buffer)) {
+                        return true;
+                    }
+                    AwareLog.w(TAG, "setPathPreread sendPacket failed");
+                    return false;
+                }
             }
-            String filename = new File(stringValue).getName();
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("setPrereadPath :opCode ");
-            stringBuilder.append(opCode);
-            stringBuilder.append(", ");
-            stringBuilder.append(filename);
-            AwareLog.d(str, stringBuilder.toString());
-            buffer.clear();
-            buffer.putInt(MemoryConstant.MSG_SET_PREREAD_PATH);
-            buffer.putInt(opCode);
-            buffer.putInt(stringValueBytes.length);
-            buffer.put(stringValueBytes);
-            buffer.putChar(0);
-            if (-1 != MemoryUtils.sendPacket(buffer)) {
-                return true;
-            }
-            AwareLog.w(TAG, "setPathPreread sendPacket failed");
+            AwareLog.w(TAG, "setPrereadPath incorrect stringValueBytes");
             return false;
         } catch (UnsupportedEncodingException e) {
             AwareLog.w(TAG, "UnsupportedEncodingException!");

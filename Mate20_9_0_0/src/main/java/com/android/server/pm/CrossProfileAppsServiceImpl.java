@@ -154,8 +154,10 @@ public class CrossProfileAppsServiceImpl extends Stub {
             int[] enabledProfileIds = this.mInjector.getUserManager().getEnabledProfileIds(callingUserId);
             targetProfiles = new ArrayList();
             for (int userId : enabledProfileIds) {
-                if (userId != callingUserId && isPackageEnabled(callingPackage, userId)) {
-                    targetProfiles.add(UserHandle.of(userId));
+                if (userId != callingUserId) {
+                    if (isPackageEnabled(callingPackage, userId)) {
+                        targetProfiles.add(UserHandle.of(userId));
+                    }
                 }
             }
             return targetProfiles;

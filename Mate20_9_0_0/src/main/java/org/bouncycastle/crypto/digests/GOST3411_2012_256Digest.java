@@ -19,9 +19,9 @@ public final class GOST3411_2012_256Digest extends GOST3411_2012Digest {
     }
 
     public int doFinal(byte[] bArr, int i) {
-        Object obj = new byte[64];
-        super.doFinal(obj, 0);
-        System.arraycopy(obj, 32, bArr, i, 32);
+        byte[] bArr2 = new byte[64];
+        super.doFinal(bArr2, 0);
+        System.arraycopy(bArr2, 32, bArr, i, 32);
         return 32;
     }
 

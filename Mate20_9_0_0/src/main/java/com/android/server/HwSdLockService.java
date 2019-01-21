@@ -404,7 +404,7 @@ public final class HwSdLockService {
                         HwSdLockService.this.mProgressDialog.setIndeterminate(true);
                         HwSdLockService.this.mProgressDialog.setCancelable(true);
                         HwSdLockService.this.mProgressDialog.getWindow().setType(2003);
-                        HwSdLockService.this.mProgressDialog.setMessage(HwSdLockService.this.mContext.getText(17040956));
+                        HwSdLockService.this.mProgressDialog.setMessage(HwSdLockService.this.mContext.getText(17040957));
                     }
                     HwSdLockService.this.mProgressDialog.show();
                 }

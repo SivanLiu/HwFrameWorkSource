@@ -13,7 +13,7 @@ public class SHA3Digest extends KeccakDigest {
         super((KeccakDigest) sHA3Digest);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x002d, code:
+    /* JADX WARNING: Missing block: B:11:0x002d, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

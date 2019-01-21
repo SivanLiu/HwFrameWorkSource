@@ -80,7 +80,7 @@ public class KeyFactorySpi extends BaseKeyFactorySpi implements AsymmetricKeyInf
     protected PublicKey engineGeneratePublic(KeySpec keySpec) throws InvalidKeySpecException {
         try {
             return keySpec instanceof ECPublicKeySpec ? new BCECPublicKey(this.algorithm, (ECPublicKeySpec) keySpec, this.configuration) : keySpec instanceof java.security.spec.ECPublicKeySpec ? new BCECPublicKey(this.algorithm, (java.security.spec.ECPublicKeySpec) keySpec, this.configuration) : super.engineGeneratePublic(keySpec);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("invalid KeySpec: ");
             stringBuilder.append(e.getMessage());

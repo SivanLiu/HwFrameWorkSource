@@ -1950,28 +1950,28 @@ public class HuaweiWifiWatchdogStateMachine extends StateMachine {
         /* JADX WARNING: Removed duplicated region for block: B:51:0x022b  */
         /* JADX WARNING: Removed duplicated region for block: B:55:0x0246  */
         /* JADX WARNING: Removed duplicated region for block: B:54:0x0241  */
-        /* JADX WARNING: Missing block: B:5:0x0016, code:
+        /* JADX WARNING: Missing block: B:5:0x0016, code skipped:
             r1 = r9;
      */
-        /* JADX WARNING: Missing block: B:255:0x079f, code:
+        /* JADX WARNING: Missing block: B:255:0x079f, code skipped:
             com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$8200(r8.this$0).mIPQLevel = (short) com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$4900(r8.this$0);
      */
-        /* JADX WARNING: Missing block: B:256:0x07b4, code:
+        /* JADX WARNING: Missing block: B:256:0x07b4, code skipped:
             if (com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$5500(r8.this$0) == null) goto L_0x07c4;
      */
-        /* JADX WARNING: Missing block: B:257:0x07b6, code:
+        /* JADX WARNING: Missing block: B:257:0x07b6, code skipped:
             com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$8200(r8.this$0).mRO_APSsid = com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$5500(r8.this$0);
      */
-        /* JADX WARNING: Missing block: B:258:0x07c4, code:
+        /* JADX WARNING: Missing block: B:258:0x07c4, code skipped:
             com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$8200(r8.this$0).mHistoryQuilityRO_Rate = (short) ((int) (r8.mGoodSpeedRate * 1000.0f));
             com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$8200(r8.this$0).mHighDataRateRO_Rate = (short) ((int) (com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$5900(r8.this$0) * 1000.0f));
             com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$8200(r8.this$0).mCreditScoreRO_Rate = (short) 1000;
             com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$3700(r8.this$0).setBQERoveOutReason(r14, r9, r11, r10, com.android.server.wifi.wifipro.HuaweiWifiWatchdogStateMachine.access$8200(r8.this$0));
      */
-        /* JADX WARNING: Missing block: B:281:0x0887, code:
+        /* JADX WARNING: Missing block: B:281:0x0887, code skipped:
             r1 = r69;
      */
-        /* JADX WARNING: Missing block: B:301:0x0932, code:
+        /* JADX WARNING: Missing block: B:301:0x0932, code skipped:
             return true;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

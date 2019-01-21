@@ -17,7 +17,7 @@ public final class DataStreamFileCodec<T> {
         this.mCodec = codec;
     }
 
-    /* JADX WARNING: Missing block: B:23:0x002d, code:
+    /* JADX WARNING: Missing block: B:23:0x002d, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -27,7 +27,7 @@ public final class DataStreamFileCodec<T> {
         FileInputStream fileInputStream = new FileInputStream(this.mFile);
         DataInputStream dataInputStream = new DataInputStream(fileInputStream);
         try {
-            T deserialize = this.mCodec.deserialize(dataInputStream);
+            Object deserialize = this.mCodec.deserialize(dataInputStream);
             $closeResource(null, dataInputStream);
             $closeResource(null, fileInputStream);
             return deserialize;
@@ -53,7 +53,7 @@ public final class DataStreamFileCodec<T> {
         x1.close();
     }
 
-    /* JADX WARNING: Missing block: B:37:0x0045, code:
+    /* JADX WARNING: Missing block: B:37:0x0045, code skipped:
             $closeResource(r1, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

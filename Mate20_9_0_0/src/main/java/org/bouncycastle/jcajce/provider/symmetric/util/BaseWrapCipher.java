@@ -7,6 +7,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
@@ -132,12 +133,12 @@ public abstract class BaseWrapCipher extends CipherSpi implements PBE {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:36:0x00a0 in {4, 7, 9, 10, 13, 18, 19, 24, 26, 29, 30, 31, 33, 35} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -153,64 +154,49 @@ public abstract class BaseWrapCipher extends CipherSpi implements PBE {
         r2 = this;
         r0 = r4 instanceof org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey;
         if (r0 == 0) goto L_0x0028;
-    L_0x0004:
         r4 = (org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey) r4;
         r0 = r5 instanceof javax.crypto.spec.PBEParameterSpec;
         if (r0 == 0) goto L_0x0015;
-    L_0x000a:
         r0 = r2.wrapEngine;
         r0 = r0.getAlgorithmName();
         r4 = org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util.makePBEParameters(r4, r5, r0);
         goto L_0x0032;
-    L_0x0015:
         r0 = r4.getParam();
         if (r0 == 0) goto L_0x0020;
-    L_0x001b:
         r4 = r4.getParam();
         goto L_0x0032;
-    L_0x0020:
         r3 = new java.security.InvalidAlgorithmParameterException;
         r4 = "PBE requires PBE parameters to be set.";
         r3.<init>(r4);
         throw r3;
-    L_0x0028:
         r0 = new org.bouncycastle.crypto.params.KeyParameter;
         r4 = r4.getEncoded();
         r0.<init>(r4);
         r4 = r0;
-    L_0x0032:
         r0 = r5 instanceof javax.crypto.spec.IvParameterSpec;
         if (r0 == 0) goto L_0x0043;
-    L_0x0036:
         r0 = r5;
         r0 = (javax.crypto.spec.IvParameterSpec) r0;
         r1 = new org.bouncycastle.crypto.params.ParametersWithIV;
         r0 = r0.getIV();
         r1.<init>(r4, r0);
         r4 = r1;
-    L_0x0043:
         r0 = r5 instanceof org.bouncycastle.jcajce.spec.GOST28147WrapParameterSpec;
         if (r0 == 0) goto L_0x005f;
-    L_0x0047:
         r5 = (org.bouncycastle.jcajce.spec.GOST28147WrapParameterSpec) r5;
         r0 = r5.getSBox();
         if (r0 == 0) goto L_0x0055;
-    L_0x004f:
         r1 = new org.bouncycastle.crypto.params.ParametersWithSBox;
         r1.<init>(r4, r0);
         r4 = r1;
-    L_0x0055:
         r0 = new org.bouncycastle.crypto.params.ParametersWithUKM;
         r5 = r5.getUKM();
         r0.<init>(r4, r5);
         r4 = r0;
-    L_0x005f:
         r5 = r4 instanceof org.bouncycastle.crypto.params.KeyParameter;
         if (r5 == 0) goto L_0x007a;
-    L_0x0063:
         r5 = r2.ivSize;
         if (r5 == 0) goto L_0x007a;
-    L_0x0067:
         r5 = r2.ivSize;
         r5 = new byte[r5];
         r2.iv = r5;
@@ -220,13 +206,10 @@ public abstract class BaseWrapCipher extends CipherSpi implements PBE {
         r0 = r2.iv;
         r5.<init>(r4, r0);
         r4 = r5;
-    L_0x007a:
         if (r6 == 0) goto L_0x0082;
-    L_0x007c:
         r5 = new org.bouncycastle.crypto.params.ParametersWithRandom;
         r5.<init>(r4, r6);
         r4 = r5;
-    L_0x0082:
         switch(r3) {
             case 1: goto L_0x0098;
             case 2: goto L_0x0098;
@@ -234,22 +217,17 @@ public abstract class BaseWrapCipher extends CipherSpi implements PBE {
             case 4: goto L_0x008d;
             default: goto L_0x0085;
         };
-    L_0x0085:
         r3 = java.lang.System.out;
         r4 = "eeek!";
         r3.println(r4);
         return;
-    L_0x008d:
         r3 = r2.wrapEngine;
         r5 = 0;
         goto L_0x0094;
-    L_0x0091:
         r3 = r2.wrapEngine;
         r5 = 1;
-    L_0x0094:
         r3.init(r5, r4);
         return;
-    L_0x0098:
         r3 = new java.lang.IllegalArgumentException;
         r4 = "engine only valid for wrapping";
         r3.<init>(r4);
@@ -276,15 +254,15 @@ public abstract class BaseWrapCipher extends CipherSpi implements PBE {
 
     protected Key engineUnwrap(byte[] bArr, String str, int i) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
-            Object engineDoFinal = this.wrapEngine == null ? engineDoFinal(bArr, 0, bArr.length) : this.wrapEngine.unwrap(bArr, 0, bArr.length);
+            bArr = this.wrapEngine == null ? engineDoFinal(bArr, 0, bArr.length) : this.wrapEngine.unwrap(bArr, 0, bArr.length);
             if (i == 3) {
-                return new SecretKeySpec(engineDoFinal, str);
+                return new SecretKeySpec(bArr, str);
             }
             StringBuilder stringBuilder;
             if (str.equals("") && i == 2) {
                 try {
-                    PrivateKeyInfo instance = PrivateKeyInfo.getInstance(engineDoFinal);
-                    Key privateKey = BouncyCastleProvider.getPrivateKey(instance);
+                    PrivateKeyInfo instance = PrivateKeyInfo.getInstance(bArr);
+                    PrivateKey privateKey = BouncyCastleProvider.getPrivateKey(instance);
                     if (privateKey != null) {
                         return privateKey;
                     }
@@ -300,10 +278,10 @@ public abstract class BaseWrapCipher extends CipherSpi implements PBE {
             try {
                 KeyFactory createKeyFactory = this.helper.createKeyFactory(str);
                 if (i == 1) {
-                    return createKeyFactory.generatePublic(new X509EncodedKeySpec(engineDoFinal));
+                    return createKeyFactory.generatePublic(new X509EncodedKeySpec(bArr));
                 }
                 if (i == 2) {
-                    return createKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(engineDoFinal));
+                    return createKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(bArr));
                 }
                 StringBuilder stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("Unknown key type ");

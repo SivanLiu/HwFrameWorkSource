@@ -235,7 +235,7 @@ public abstract class WNafUtil {
         ECCurve curve = eCPoint.getCurve();
         WNafPreCompInfo precompute = precompute(eCPoint, i, z);
         eCPoint = eCPointMap.map(eCPoint);
-        PreCompInfo wNafPreCompInfo = getWNafPreCompInfo(curve.getPreCompInfo(eCPoint, PRECOMP_NAME));
+        WNafPreCompInfo wNafPreCompInfo = getWNafPreCompInfo(curve.getPreCompInfo(eCPoint, PRECOMP_NAME));
         ECPoint twice = precompute.getTwice();
         if (twice != null) {
             wNafPreCompInfo.setTwice(eCPointMap.map(twice));
@@ -262,7 +262,7 @@ public abstract class WNafUtil {
     public static WNafPreCompInfo precompute(ECPoint eCPoint, int i, boolean z) {
         int i2;
         ECCurve curve = eCPoint.getCurve();
-        Object wNafPreCompInfo = getWNafPreCompInfo(curve.getPreCompInfo(eCPoint, PRECOMP_NAME));
+        WNafPreCompInfo wNafPreCompInfo = getWNafPreCompInfo(curve.getPreCompInfo(eCPoint, PRECOMP_NAME));
         int i3 = 0;
         i = 1 << Math.max(0, i - 2);
         ECPoint[] preComp = wNafPreCompInfo.getPreComp();
@@ -342,20 +342,20 @@ public abstract class WNafUtil {
     }
 
     private static ECPoint[] resizeTable(ECPoint[] eCPointArr, int i) {
-        Object obj = new ECPoint[i];
-        System.arraycopy(eCPointArr, 0, obj, 0, eCPointArr.length);
-        return obj;
+        ECPoint[] eCPointArr2 = new ECPoint[i];
+        System.arraycopy(eCPointArr, 0, eCPointArr2, 0, eCPointArr.length);
+        return eCPointArr2;
     }
 
     private static byte[] trim(byte[] bArr, int i) {
-        Object obj = new byte[i];
-        System.arraycopy(bArr, 0, obj, 0, obj.length);
-        return obj;
+        byte[] bArr2 = new byte[i];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr2.length);
+        return bArr2;
     }
 
     private static int[] trim(int[] iArr, int i) {
-        Object obj = new int[i];
-        System.arraycopy(iArr, 0, obj, 0, obj.length);
-        return obj;
+        int[] iArr2 = new int[i];
+        System.arraycopy(iArr, 0, iArr2, 0, iArr2.length);
+        return iArr2;
     }
 }

@@ -255,7 +255,7 @@ public class DeviceStorageMonitorService extends AbsDeviceStorageMonitorService 
         this.mCacheFileDeletedObserver = new CacheFileDeletedObserver();
         this.mCacheFileDeletedObserver.startWatching();
         if (context.getPackageManager().hasSystemFeature("android.software.leanback")) {
-            this.mNotifManager.createNotificationChannel(new NotificationChannel(TV_NOTIFICATION_CHANNEL_ID, context.getString(17039936), 4));
+            this.mNotifManager.createNotificationChannel(new NotificationChannel(TV_NOTIFICATION_CHANNEL_ID, context.getString(17039937), 4));
         }
         publishBinderService(SERVICE, this.mRemoteService);
         publishLocalService(DeviceStorageMonitorInternal.class, this.mLocalService);
@@ -453,15 +453,15 @@ public class DeviceStorageMonitorService extends AbsDeviceStorageMonitorService 
             Intent lowMemIntent = new Intent("android.os.storage.action.MANAGE_STORAGE");
             lowMemIntent.putExtra("android.os.storage.extra.UUID", uuid);
             lowMemIntent.addFlags(268435456);
-            CharSequence title = context.getText(17040400);
-            int i3 = 17040398;
+            CharSequence title = context.getText(17040401);
+            int i3 = 17040399;
             if (StorageManager.UUID_DEFAULT.equals(uuid)) {
                 if (!isBootImageOnDisk()) {
-                    i3 = 17040399;
+                    i3 = 17040400;
                 }
                 details = context.getText(i3);
             } else {
-                details = context.getText(17040398);
+                details = context.getText(17040399);
             }
             CharSequence details2 = details;
             Notification notification = new Builder(context, SystemNotificationChannels.ALERTS).setSmallIcon(17303473).setTicker(title).setColor(context.getColor(17170784)).setContentTitle(title).setContentText(details2).setContentIntent(PendingIntent.getActivityAsUser(context, 0, lowMemIntent, 0, null, UserHandle.CURRENT)).setStyle(new BigTextStyle().bigText(details2)).setVisibility(1).setCategory("sys").extend(new TvExtender().setChannelId(TV_NOTIFICATION_CHANNEL_ID)).build();

@@ -12,7 +12,7 @@ public class LogUtil {
     private static boolean showV = false;
     private static boolean showW = true;
     private static boolean showWTF = true;
-    private static final String tagPrefix = "WMapping.091001.";
+    private static final String tagPrefix = "WMapping.120401.";
 
     private static String generateTag() {
         String tag = "%s.%s(L:%d)";

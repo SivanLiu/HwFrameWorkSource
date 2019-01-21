@@ -371,16 +371,16 @@ public class OCBBlockCipher implements AEADBlockCipher {
         length = bArr2[15] & 63;
         bArr2[15] = (byte) (bArr2[15] & 192);
         if (this.KtopInput == null || !Arrays.areEqual(bArr2, this.KtopInput)) {
-            Object obj = new byte[16];
+            byte[] bArr3 = new byte[16];
             this.KtopInput = bArr2;
-            this.hashCipher.processBlock(this.KtopInput, 0, obj, 0);
-            System.arraycopy(obj, 0, this.Stretch, 0, 16);
+            this.hashCipher.processBlock(this.KtopInput, 0, bArr3, 0);
+            System.arraycopy(bArr3, 0, this.Stretch, 0, 16);
             while (i < 8) {
                 bArr2 = this.Stretch;
                 int i2 = 16 + i;
-                byte b = obj[i];
+                byte b = bArr3[i];
                 i++;
-                bArr2[i2] = (byte) (b ^ obj[i]);
+                bArr2[i2] = (byte) (b ^ bArr3[i]);
             }
         }
         return length;

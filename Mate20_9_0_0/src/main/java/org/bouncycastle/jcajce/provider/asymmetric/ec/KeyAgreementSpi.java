@@ -272,7 +272,6 @@ public class KeyAgreementSpi extends BaseAgreementSpi {
         ECPrivateKeyParameters eCPrivateKeyParameters;
         ECPublicKeyParameters eCPublicKeyParameters;
         ECPrivateKeyParameters eCPrivateKeyParameters2;
-        CipherParameters mQVPrivateParameters;
         StringBuilder stringBuilder;
         if (this.agreement instanceof ECMQVBasicAgreement) {
             this.mqvParameters = null;
@@ -296,7 +295,7 @@ public class KeyAgreementSpi extends BaseAgreementSpi {
                     this.mqvParameters = mQVParameterSpec;
                     this.ukmParameters = mQVParameterSpec.getUserKeyingMaterial();
                 }
-                mQVPrivateParameters = new MQVPrivateParameters(eCPrivateKeyParameters2, eCPrivateKeyParameters, eCPublicKeyParameters);
+                MQVPrivateParameters mQVPrivateParameters = new MQVPrivateParameters(eCPrivateKeyParameters2, eCPrivateKeyParameters, eCPublicKeyParameters);
                 this.parameters = eCPrivateKeyParameters2.getParameters();
                 ((ECMQVBasicAgreement) this.agreement).init(mQVPrivateParameters);
                 return;
@@ -317,9 +316,9 @@ public class KeyAgreementSpi extends BaseAgreementSpi {
                 }
                 this.dheParameters = dHUParameterSpec;
                 this.ukmParameters = dHUParameterSpec.getUserKeyingMaterial();
-                mQVPrivateParameters = new ECDHUPrivateParameters(eCPrivateKeyParameters2, eCPrivateKeyParameters, eCPublicKeyParameters);
+                ECDHUPrivateParameters eCDHUPrivateParameters = new ECDHUPrivateParameters(eCPrivateKeyParameters2, eCPrivateKeyParameters, eCPublicKeyParameters);
                 this.parameters = eCPrivateKeyParameters2.getParameters();
-                ((ECDHCUnifiedAgreement) this.agreement).init(mQVPrivateParameters);
+                ((ECDHCUnifiedAgreement) this.agreement).init(eCDHUPrivateParameters);
                 return;
             }
             stringBuilder = new StringBuilder();
@@ -384,7 +383,7 @@ public class KeyAgreementSpi extends BaseAgreementSpi {
             try {
                 this.result = this.agreement instanceof BasicAgreement ? bigIntToBytes(((BasicAgreement) this.agreement).calculateAgreement(mQVPublicParameters)) : ((ECDHCUnifiedAgreement) this.agreement).calculateAgreement(mQVPublicParameters);
                 return null;
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 StringBuilder stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("calculation failed: ");
                 stringBuilder2.append(e.getMessage());

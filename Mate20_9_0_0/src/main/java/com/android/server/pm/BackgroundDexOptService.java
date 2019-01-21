@@ -526,7 +526,7 @@ public class BackgroundDexOptService extends JobService implements IHwBackground
             }
             z = runPostBootUpdate(params, pm, pkgs);
         } else if (params.getJobId() == JOB_POST_BOOT_UPDATE_DELAYOPT) {
-            mBoot_Delayopt_Screen.set(((PowerManager) getSystemService("power")).isScreenOn() ^ true);
+            mBoot_Delayopt_Screen.set(((PowerManager) getSystemService("power")).isScreenOn() ^ 1);
             Intent bm = registerReceiver(null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
             AtomicBoolean atomicBoolean = mBoot_Delayopt_Power;
             if (2 == bm.getIntExtra("status", -1) || 5 == bm.getIntExtra("status", -1)) {

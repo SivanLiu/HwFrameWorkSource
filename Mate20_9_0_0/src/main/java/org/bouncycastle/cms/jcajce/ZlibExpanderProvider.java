@@ -20,7 +20,7 @@ public class ZlibExpanderProvider implements InputExpanderProvider {
             this.remaining = j;
         }
 
-        /* JADX WARNING: Missing block: B:5:0x0019, code:
+        /* JADX WARNING: Missing block: B:5:0x0019, code skipped:
             if (r4 >= 0) goto L_0x001b;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.android.server.hidata.wavemapping.cons.Constant;
 import com.android.server.hidata.wavemapping.entity.ApInfo;
 import com.android.server.hidata.wavemapping.util.LogUtil;
+import com.android.server.hidata.wavemapping.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class MobileApDAO {
         TAG = stringBuilder.toString();
     }
 
-    /* JADX WARNING: Missing block: B:22:0x008c, code:
+    /* JADX WARNING: Missing block: B:22:0x008c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -49,20 +50,11 @@ public class MobileApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x003d, code:
+    /* JADX WARNING: Missing block: B:7:0x003d, code skipped:
             if (r3 != null) goto L_0x003f;
      */
-    /* JADX WARNING: Missing block: B:8:0x003f, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x005e, code:
+    /* JADX WARNING: Missing block: B:17:0x007d, code skipped:
             if (r3 == null) goto L_0x0080;
-     */
-    /* JADX WARNING: Missing block: B:16:0x007d, code:
-            if (r3 == null) goto L_0x0080;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0080, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<ApInfo> findAllAps() {
@@ -86,6 +78,10 @@ public class MobileApDAO {
             stringBuilder.append("findAllAps Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return apInfos;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -93,20 +89,11 @@ public class MobileApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0021, code:
+    /* JADX WARNING: Missing block: B:7:0x0021, code skipped:
             if (r2 != null) goto L_0x0023;
      */
-    /* JADX WARNING: Missing block: B:8:0x0023, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x0042, code:
+    /* JADX WARNING: Missing block: B:17:0x0061, code skipped:
             if (r2 == null) goto L_0x0064;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0061, code:
-            if (r2 == null) goto L_0x0064;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0064, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int findAllCountBySrctype(int srctype) {
@@ -130,6 +117,10 @@ public class MobileApDAO {
             stringBuilder.append("findAllCountBySrctype Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return cnt;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -162,7 +153,7 @@ public class MobileApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0043, code:
+    /* JADX WARNING: Missing block: B:15:0x0043, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -182,20 +173,11 @@ public class MobileApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x005b, code:
+    /* JADX WARNING: Missing block: B:15:0x005b, code skipped:
             if (r2 != null) goto L_0x005d;
      */
-    /* JADX WARNING: Missing block: B:16:0x005d, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:21:0x007c, code:
+    /* JADX WARNING: Missing block: B:25:0x0098, code skipped:
             if (r2 == null) goto L_0x009b;
-     */
-    /* JADX WARNING: Missing block: B:24:0x0098, code:
-            if (r2 == null) goto L_0x009b;
-     */
-    /* JADX WARNING: Missing block: B:25:0x009b, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public ApInfo findBySsid(String ssid, String mac) {
@@ -228,6 +210,10 @@ public class MobileApDAO {
                 stringBuilder.append("findBySsid Exception: ");
                 stringBuilder.append(e2.getMessage());
                 LogUtil.e(stringBuilder.toString());
+                if (cursor != null) {
+                    cursor.close();
+                }
+                return apInfo;
             } catch (Throwable th) {
                 if (cursor != null) {
                     cursor.close();
@@ -236,36 +222,11 @@ public class MobileApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x005b, code:
+    /* JADX WARNING: Missing block: B:15:0x005b, code skipped:
             if (r2 != null) goto L_0x005d;
      */
-    /* JADX WARNING: Missing block: B:16:0x005d, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:21:0x007c, code:
+    /* JADX WARNING: Missing block: B:25:0x0098, code skipped:
             if (r2 == null) goto L_0x009b;
-     */
-    /* JADX WARNING: Missing block: B:24:0x0098, code:
-            if (r2 == null) goto L_0x009b;
-     */
-    /* JADX WARNING: Missing block: B:25:0x009b, code:
-            if (r0 == null) goto L_0x00c7;
-     */
-    /* JADX WARNING: Missing block: B:26:0x009d, code:
-            r0.setUptime(com.android.server.hidata.wavemapping.util.TimeUtil.getTime());
-     */
-    /* JADX WARNING: Missing block: B:27:0x00a8, code:
-            if (update(r0) != false) goto L_0x00c7;
-     */
-    /* JADX WARNING: Missing block: B:28:0x00aa, code:
-            com.android.server.hidata.wavemapping.util.LogUtil.d("findBySsidForUpdateTime update failure");
-            r3 = new java.lang.StringBuilder();
-            r3.append("                                      ,apinfo: ");
-            r3.append(r0.toString());
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00c7, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public ApInfo findBySsidForUpdateTime(String ssid, String bssid) {
@@ -298,6 +259,20 @@ public class MobileApDAO {
                 stringBuilder.append("findBySsidForUpdateTime Exception: ");
                 stringBuilder.append(e2.getMessage());
                 LogUtil.e(stringBuilder.toString());
+                if (cursor != null) {
+                    cursor.close();
+                }
+                if (apInfo != null) {
+                    apInfo.setUptime(TimeUtil.getTime());
+                    if (!update(apInfo)) {
+                        LogUtil.d("findBySsidForUpdateTime update failure");
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("                                      ,apinfo: ");
+                        stringBuilder2.append(apInfo.toString());
+                        LogUtil.i(stringBuilder2.toString());
+                    }
+                }
+                return apInfo;
             } catch (Throwable th) {
                 if (cursor != null) {
                     cursor.close();

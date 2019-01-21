@@ -348,7 +348,7 @@ final class WifiDisplayAdapter extends DisplayAdapter implements IWifiDisplayAda
         super(syncRoot, context, handler, listener, TAG);
         this.mHandler = new WifiDisplayHandler(handler.getLooper());
         this.mPersistentDataStore = persistentDataStore;
-        this.mSupportsProtectedBuffers = context.getResources().getBoolean(17957069);
+        this.mSupportsProtectedBuffers = context.getResources().getBoolean(17957070);
         this.mHwAdapterEx = HwServiceFactory.getHwWifiDisplayAdapterEx(this);
     }
 
@@ -625,10 +625,10 @@ final class WifiDisplayAdapter extends DisplayAdapter implements IWifiDisplayAda
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0056, code:
+    /* JADX WARNING: Missing block: B:14:0x0056, code skipped:
             getContext().sendBroadcastAsUser(r1, android.os.UserHandle.ALL);
      */
-    /* JADX WARNING: Missing block: B:15:0x0060, code:
+    /* JADX WARNING: Missing block: B:15:0x0060, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

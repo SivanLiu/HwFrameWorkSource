@@ -1033,7 +1033,7 @@ public class XmlUtil {
             XmlUtil.writeNextValue(out, XML_TAG_REALM, enterpriseConfig.getRealm());
         }
 
-        /* JADX WARNING: Missing block: B:53:0x00ce, code:
+        /* JADX WARNING: Missing block: B:53:0x00ce, code skipped:
             if (r5.equals(XML_TAG_ANON_IDENTITY) != false) goto L_0x00d2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

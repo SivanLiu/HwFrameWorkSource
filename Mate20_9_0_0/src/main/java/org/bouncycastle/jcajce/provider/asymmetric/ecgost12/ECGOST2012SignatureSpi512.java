@@ -38,7 +38,7 @@ public class ECGOST2012SignatureSpi512 extends SignatureSpi implements PKCSObjec
 
     protected void engineInitSign(PrivateKey privateKey) throws InvalidKeyException {
         if (privateKey instanceof ECKey) {
-            CipherParameters generatePrivateKeyParameter = ECUtil.generatePrivateKeyParameter(privateKey);
+            AsymmetricKeyParameter generatePrivateKeyParameter = ECUtil.generatePrivateKeyParameter(privateKey);
             this.digest.reset();
             if (this.appRandom != null) {
                 this.signer.init(true, new ParametersWithRandom(generatePrivateKeyParameter, this.appRandom));
@@ -78,21 +78,21 @@ public class ECGOST2012SignatureSpi512 extends SignatureSpi implements PKCSObjec
         byte[] bArr = new byte[this.digest.getDigestSize()];
         this.digest.doFinal(bArr, 0);
         try {
-            Object obj = new byte[this.size];
+            byte[] bArr2 = new byte[this.size];
             BigInteger[] generateSignature = this.signer.generateSignature(bArr);
-            Object toByteArray = generateSignature[0].toByteArray();
-            Object toByteArray2 = generateSignature[1].toByteArray();
-            if (toByteArray2[0] != (byte) 0) {
-                System.arraycopy(toByteArray2, 0, obj, this.halfSize - toByteArray2.length, toByteArray2.length);
+            byte[] toByteArray = generateSignature[0].toByteArray();
+            bArr = generateSignature[1].toByteArray();
+            if (bArr[0] != (byte) 0) {
+                System.arraycopy(bArr, 0, bArr2, this.halfSize - bArr.length, bArr.length);
             } else {
-                System.arraycopy(toByteArray2, 1, obj, this.halfSize - (toByteArray2.length - 1), toByteArray2.length - 1);
+                System.arraycopy(bArr, 1, bArr2, this.halfSize - (bArr.length - 1), bArr.length - 1);
             }
             if (toByteArray[0] != (byte) 0) {
-                System.arraycopy(toByteArray, 0, obj, this.size - toByteArray.length, toByteArray.length);
-                return obj;
+                System.arraycopy(toByteArray, 0, bArr2, this.size - toByteArray.length, toByteArray.length);
+                return bArr2;
             }
-            System.arraycopy(toByteArray, 1, obj, this.size - (toByteArray.length - 1), toByteArray.length - 1);
-            return obj;
+            System.arraycopy(toByteArray, 1, bArr2, this.size - (toByteArray.length - 1), toByteArray.length - 1);
+            return bArr2;
         } catch (Exception e) {
             throw new SignatureException(e.toString());
         }
@@ -110,10 +110,10 @@ public class ECGOST2012SignatureSpi512 extends SignatureSpi implements PKCSObjec
         byte[] bArr2 = new byte[this.digest.getDigestSize()];
         this.digest.doFinal(bArr2, 0);
         try {
-            Object obj = new byte[this.halfSize];
+            byte[] bArr3 = new byte[this.halfSize];
             System.arraycopy(bArr, 0, new byte[this.halfSize], 0, this.halfSize);
-            System.arraycopy(bArr, this.halfSize, obj, 0, this.halfSize);
-            BigInteger[] bigIntegerArr = new BigInteger[]{new BigInteger(1, obj), new BigInteger(1, r3)};
+            System.arraycopy(bArr, this.halfSize, bArr3, 0, this.halfSize);
+            BigInteger[] bigIntegerArr = new BigInteger[]{new BigInteger(1, bArr3), new BigInteger(1, r3)};
             return this.signer.verifySignature(bArr2, bigIntegerArr[0], bigIntegerArr[1]);
         } catch (Exception e) {
             throw new SignatureException("error decoding signature bytes.");

@@ -40,7 +40,7 @@ public class GpsActivityInfo {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0019, code:
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

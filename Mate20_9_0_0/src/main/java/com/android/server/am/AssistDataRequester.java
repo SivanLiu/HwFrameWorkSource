@@ -196,7 +196,7 @@ public class AssistDataRequester extends Stub {
         this.mAssistScreenshot.clear();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0027, code:
+    /* JADX WARNING: Missing block: B:12:0x0027, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -216,7 +216,7 @@ public class AssistDataRequester extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0027, code:
+    /* JADX WARNING: Missing block: B:12:0x0027, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

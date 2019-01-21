@@ -6,6 +6,7 @@ import org.bouncycastle.asn1.pkcs.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.SafeBag;
 import org.bouncycastle.cms.CMSEncryptedData;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.InputDecryptorProvider;
 
 public class PKCS12SafeBagFactory {
@@ -23,7 +24,7 @@ public class PKCS12SafeBagFactory {
             try {
                 this.safeBagSeq = ASN1Sequence.getInstance(new CMSEncryptedData(org.bouncycastle.asn1.cms.ContentInfo.getInstance(contentInfo)).getContent(inputDecryptorProvider));
                 return;
-            } catch (Throwable e) {
+            } catch (CMSException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to extract data: ");
                 stringBuilder.append(e.getMessage());

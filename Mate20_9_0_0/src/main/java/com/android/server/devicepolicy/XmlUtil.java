@@ -68,7 +68,7 @@ public class XmlUtil {
         }
     }
 
-    /* JADX WARNING: Missing block: B:35:0x00c4, code:
+    /* JADX WARNING: Missing block: B:35:0x00c4, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

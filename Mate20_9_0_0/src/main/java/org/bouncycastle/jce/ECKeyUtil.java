@@ -69,7 +69,7 @@ public class ECKeyUtil {
             throw e;
         } catch (NoSuchAlgorithmException e2) {
             throw e2;
-        } catch (Throwable e3) {
+        } catch (Exception e3) {
             throw new UnexpectedException(e3);
         }
     }
@@ -106,7 +106,7 @@ public class ECKeyUtil {
             throw e;
         } catch (NoSuchAlgorithmException e2) {
             throw e2;
-        } catch (Throwable e3) {
+        } catch (Exception e3) {
             throw new UnexpectedException(e3);
         }
     }

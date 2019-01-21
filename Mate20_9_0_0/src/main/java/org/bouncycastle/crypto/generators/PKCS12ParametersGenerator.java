@@ -45,7 +45,7 @@ public class PKCS12ParametersGenerator extends PBEParametersGenerator {
         Object obj;
         Object obj2;
         byte[] bArr = new byte[this.v];
-        Object obj3 = new byte[i2];
+        byte[] bArr2 = new byte[i2];
         for (int i3 = 0; i3 != bArr.length; i3++) {
             bArr[i3] = (byte) i;
         }
@@ -65,35 +65,35 @@ public class PKCS12ParametersGenerator extends PBEParametersGenerator {
                 obj2[i5] = this.password[i5 % this.password.length];
             }
         }
-        Object obj4 = new byte[(obj.length + obj2.length)];
-        System.arraycopy(obj, 0, obj4, 0, obj.length);
-        System.arraycopy(obj2, 0, obj4, obj.length, obj2.length);
-        byte[] bArr2 = new byte[this.v];
+        byte[] bArr3 = new byte[(obj.length + obj2.length)];
+        System.arraycopy(obj, 0, bArr3, 0, obj.length);
+        System.arraycopy(obj2, 0, bArr3, obj.length, obj2.length);
+        byte[] bArr4 = new byte[this.v];
         i2 = ((i2 + this.u) - 1) / this.u;
-        obj2 = new byte[this.u];
+        byte[] bArr5 = new byte[this.u];
         for (int i6 = 1; i6 <= i2; i6++) {
             int i7;
             this.digest.update(bArr, 0, bArr.length);
-            this.digest.update(obj4, 0, obj4.length);
-            this.digest.doFinal(obj2, 0);
+            this.digest.update(bArr3, 0, bArr3.length);
+            this.digest.doFinal(bArr5, 0);
             for (i7 = 1; i7 < this.iterationCount; i7++) {
-                this.digest.update(obj2, 0, obj2.length);
-                this.digest.doFinal(obj2, 0);
+                this.digest.update(bArr5, 0, bArr5.length);
+                this.digest.doFinal(bArr5, 0);
             }
-            for (i7 = 0; i7 != bArr2.length; i7++) {
-                bArr2[i7] = obj2[i7 % obj2.length];
+            for (i7 = 0; i7 != bArr4.length; i7++) {
+                bArr4[i7] = bArr5[i7 % bArr5.length];
             }
-            for (i7 = 0; i7 != obj4.length / this.v; i7++) {
-                adjust(obj4, this.v * i7, bArr2);
+            for (i7 = 0; i7 != bArr3.length / this.v; i7++) {
+                adjust(bArr3, this.v * i7, bArr4);
             }
             if (i6 == i2) {
                 i7 = i6 - 1;
-                System.arraycopy(obj2, 0, obj3, this.u * i7, obj3.length - (i7 * this.u));
+                System.arraycopy(bArr5, 0, bArr2, this.u * i7, bArr2.length - (i7 * this.u));
             } else {
-                System.arraycopy(obj2, 0, obj3, (i6 - 1) * this.u, obj2.length);
+                System.arraycopy(bArr5, 0, bArr2, (i6 - 1) * this.u, bArr5.length);
             }
         }
-        return obj3;
+        return bArr2;
     }
 
     public CipherParameters generateDerivedMacParameters(int i) {

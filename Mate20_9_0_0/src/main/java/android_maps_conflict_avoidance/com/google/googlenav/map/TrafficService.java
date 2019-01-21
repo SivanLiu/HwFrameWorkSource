@@ -87,10 +87,10 @@ public class TrafficService implements OutOfMemoryHandler, Runnable {
         stop();
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0058, code:
+    /* JADX WARNING: Missing block: B:24:0x0058, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:33:0x0069, code:
+    /* JADX WARNING: Missing block: B:33:0x0069, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

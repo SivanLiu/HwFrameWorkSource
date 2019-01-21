@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.os.ServiceSpecificException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserManager;
@@ -593,49 +594,49 @@ public class HwNetworkManagementService extends NetworkManagementService {
 Method generation error in method: com.android.server.HwNetworkManagementService.onTransact(int, android.os.Parcel, android.os.Parcel, int):boolean, dex: 
 jadx.core.utils.exceptions.CodegenException: Error generate insn: PHI: (r3_29 'size' int) = (r3_28 'size' int), (r3_32 'size' int) binds: {(r3_28 'size' int)=B:189:0x0388, (r3_32 'size' int)=B:101:0x03ef} in method: com.android.server.HwNetworkManagementService.onTransact(int, android.os.Parcel, android.os.Parcel, int):boolean, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:183)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:189)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:118)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:185)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:191)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -1907,7 +1908,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
             } catch (NullPointerException npe) {
                 Slog.e(TAG, "runNetFilterCmd:", npe);
                 return;
-            } catch (NullPointerException npe2) {
+            } catch (NativeDaemonConnectorException npe2) {
                 Slog.e(TAG, "runNetFilterCmd:", npe2);
                 return;
             }
@@ -1940,28 +1941,19 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0014 A:{ExcHandler: android.os.RemoteException (r0_1 'e' java.lang.Exception), Splitter: B:1:0x000d} */
-    /* JADX WARNING: Missing block: B:4:0x0014, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0015, code:
-            r4 = TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("Error closing sockets for uid ");
-            r5.append(r8);
-            r5.append(": ");
-            r5.append(r0);
-            android.util.Slog.e(r4, r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:6:0x0033, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean closeSocketsForUid(int uid) {
         try {
             this.mNetdService.socketDestroy(new UidRange[]{new UidRange(uid, uid)}, new int[0]);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | ServiceSpecificException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Error closing sockets for uid ");
+            stringBuilder.append(uid);
+            stringBuilder.append(": ");
+            stringBuilder.append(e);
+            Slog.e(str, stringBuilder.toString());
+            return false;
         }
     }
 

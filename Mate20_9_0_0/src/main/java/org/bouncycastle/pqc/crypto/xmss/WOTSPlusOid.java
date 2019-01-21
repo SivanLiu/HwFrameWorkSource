@@ -11,7 +11,7 @@ final class WOTSPlusOid implements XMSSOid {
     private final String stringRepresentation;
 
     static {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put(createKey(McElieceCCA2KeyGenParameterSpec.SHA256, 32, 16, 67), new WOTSPlusOid(16777217, "WOTSP_SHA2-256_W16"));
         hashMap.put(createKey(McElieceCCA2KeyGenParameterSpec.SHA512, 64, 16, 131), new WOTSPlusOid(33554434, "WOTSP_SHA2-512_W16"));
         hashMap.put(createKey("SHAKE128", 32, 16, 67), new WOTSPlusOid(50331651, "WOTSP_SHAKE128_W16"));

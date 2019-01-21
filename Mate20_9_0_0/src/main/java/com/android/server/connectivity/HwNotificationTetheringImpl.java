@@ -410,7 +410,7 @@ public class HwNotificationTetheringImpl implements HwNotificationTethering {
             return r.getText(33685850);
         }
         if (5 == notificationType) {
-            return r.getText(33686176);
+            return r.getText(33686179);
         }
         return r.getText(33685847);
     }
@@ -441,7 +441,7 @@ public class HwNotificationTetheringImpl implements HwNotificationTethering {
         if (notificationType != 5) {
             return r.getText(33685849);
         }
-        return r.getText(33686174);
+        return r.getText(33686177);
     }
 
     public Intent getNotificationIntent(int notificationType) {
@@ -462,7 +462,7 @@ public class HwNotificationTetheringImpl implements HwNotificationTethering {
         showTetheredNotificationWithNumbers(notificationType);
     }
 
-    /* JADX WARNING: Missing block: B:36:0x00c7, code:
+    /* JADX WARNING: Missing block: B:37:0x00c7, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -493,7 +493,7 @@ public class HwNotificationTetheringImpl implements HwNotificationTethering {
                 CharSequence message;
                 this.mTetheredNotification.flags = 32;
                 if (this.mWifiConnectNum <= 0) {
-                    message = Resources.getSystem().getText(33686177);
+                    message = Resources.getSystem().getText(33686180);
                 } else {
                     message = getNotificationMessageWithNumbers(notificationType);
                 }
@@ -501,11 +501,14 @@ public class HwNotificationTetheringImpl implements HwNotificationTethering {
             } else if (this.mWifiConnectNum > 0) {
                 notifyNotification(notificationType, getNotificationMessageWithNumbers(notificationType));
             }
-            if (this.mP2pConnectNum > 0 || this.mBluetoothUsbNum > 0) {
-                notifyNotification(notificationType, getNotificationMessageWithNumbers(notificationType));
-            } else if (notificationType == 3) {
-                notifyNotification(notificationType, Resources.getSystem().getText(33685848));
+            if (this.mP2pConnectNum <= 0) {
+                if (this.mBluetoothUsbNum <= 0) {
+                    if (notificationType == 3) {
+                        notifyNotification(notificationType, Resources.getSystem().getText(33685848));
+                    }
+                }
             }
+            notifyNotification(notificationType, getNotificationMessageWithNumbers(notificationType));
         }
     }
 
@@ -525,7 +528,7 @@ public class HwNotificationTetheringImpl implements HwNotificationTethering {
         PendingIntent pIntentCancel = PendingIntent.getBroadcast(this.mContext, 0, new Intent(START_TETHER_ACTION), 134217728);
         Resources resource = Resources.getSystem();
         CharSequence title = getNotificationTitle(5);
-        CharSequence message = resource.getText(33686175);
+        CharSequence message = resource.getText(33686178);
         CharSequence action_text = getNotificationActionText(5);
         int icon = getNotificationIcon(5);
         Builder stopApNotificationBuilder = new Builder(this.mContext, SystemNotificationChannels.NETWORK_STATUS);

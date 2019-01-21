@@ -1,6 +1,8 @@
 package org.bouncycastle.eac.jcajce;
 
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
@@ -61,12 +63,12 @@ public class JcaPublicKeyConverter {
         StringBuilder stringBuilder;
         try {
             return this.helper.createKeyFactory("ECDSA").generatePublic(new ECPublicKeySpec(getPublicPoint(eCDSAPublicKey), getParams(eCDSAPublicKey)));
-        } catch (Throwable e) {
+        } catch (NoSuchProviderException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find provider: ");
             stringBuilder.append(e.getMessage());
             throw new EACException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchAlgorithmException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find algorithm ECDSA: ");
             stringBuilder.append(e2.getMessage());
@@ -76,7 +78,7 @@ public class JcaPublicKeyConverter {
 
     private ECParameterSpec getParams(ECDSAPublicKey eCDSAPublicKey) {
         if (eCDSAPublicKey.hasParameters()) {
-            ECCurve fp = new Fp(eCDSAPublicKey.getPrimeModulusP(), eCDSAPublicKey.getFirstCoefA(), eCDSAPublicKey.getSecondCoefB(), eCDSAPublicKey.getOrderOfBasePointR(), eCDSAPublicKey.getCofactorF());
+            Fp fp = new Fp(eCDSAPublicKey.getPrimeModulusP(), eCDSAPublicKey.getFirstCoefA(), eCDSAPublicKey.getSecondCoefB(), eCDSAPublicKey.getOrderOfBasePointR(), eCDSAPublicKey.getCofactorF());
             ECPoint decodePoint = fp.decodePoint(eCDSAPublicKey.getBasePointG());
             return new ECParameterSpec(convertCurve(fp), new java.security.spec.ECPoint(decodePoint.getAffineXCoord().toBigInteger(), decodePoint.getAffineYCoord().toBigInteger()), eCDSAPublicKey.getOrderOfBasePointR(), eCDSAPublicKey.getCofactorF().intValue());
         }
@@ -99,12 +101,12 @@ public class JcaPublicKeyConverter {
         RSAPublicKey rSAPublicKey = (RSAPublicKey) publicKeyDataObject;
         try {
             return this.helper.createKeyFactory("RSA").generatePublic(new RSAPublicKeySpec(rSAPublicKey.getModulus(), rSAPublicKey.getPublicExponent()));
-        } catch (Throwable e) {
+        } catch (NoSuchProviderException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find provider: ");
             stringBuilder.append(e.getMessage());
             throw new EACException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchAlgorithmException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find algorithm ECDSA: ");
             stringBuilder.append(e2.getMessage());

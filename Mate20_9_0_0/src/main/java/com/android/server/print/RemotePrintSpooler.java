@@ -26,6 +26,7 @@ import com.android.internal.os.TransferPipe;
 import com.android.internal.util.dump.DualDumpOutputStream;
 import com.android.server.job.controllers.JobStatus;
 import com.android.server.utils.PriorityDump;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -323,47 +324,6 @@ final class RemotePrintSpooler {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x004a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:20:?, code:
-            android.util.Slog.e(LOG_TAG, "Error getting print jobs.", r1);
-     */
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r5.mUserHandle.getIdentifier());
-            r2.append("] getPrintJobInfos()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:22:0x0075, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:27:0x0080, code:
-            return null;
-     */
-    /* JADX WARNING: Missing block: B:31:0x0084, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r5.mUserHandle.getIdentifier());
-            r2.append("] getPrintJobInfos()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:32:0x00a8, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:34:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final List<PrintJobInfo> getPrintJobInfos(ComponentName componentName, int state, int appId) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
@@ -371,7 +331,7 @@ final class RemotePrintSpooler {
             this.mCanUnbind = false;
         }
         try {
-            List<PrintJobInfo> printJobInfos = this.mGetPrintJobInfosCaller.getPrintJobInfos(getRemoteInstanceLazy(), componentName, state, appId);
+            List printJobInfos = this.mGetPrintJobInfosCaller.getPrintJobInfos(getRemoteInstanceLazy(), componentName, state, appId);
             String str = LOG_TAG;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
@@ -383,61 +343,47 @@ final class RemotePrintSpooler {
                 this.mLock.notifyAll();
             }
             return printJobInfos;
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            StringBuilder stringBuilder2;
+            try {
+                Slog.e(LOG_TAG, "Error getting print jobs.", e);
+                String str2 = LOG_TAG;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] getPrintJobInfos()");
+                Slog.i(str2, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                    return null;
+                }
+            } catch (Throwable th) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] getPrintJobInfos()");
+                Slog.i(LOG_TAG, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error creating print job.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] createPrintJob()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] createPrintJob()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void createPrintJob(PrintJobInfo printJob) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().createPrintJob(printJob);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] createPrintJob()");
@@ -446,63 +392,45 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error creating print job.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] createPrintJob()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] createPrintJob()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x004a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error writing print job data.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x0052, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] writePrintJobData()");
-            android.util.Slog.i(r1, r2.toString());
-            libcore.io.IoUtils.closeQuietly(r5);
-     */
-    /* JADX WARNING: Missing block: B:21:0x0078, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0086, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] writePrintJobData()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-            libcore.io.IoUtils.closeQuietly(r5);
-     */
-    /* JADX WARNING: Missing block: B:29:0x00ad, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void writePrintJobData(ParcelFileDescriptor fd, PrintJobId printJobId) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().writePrintJobData(fd, printJobId);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] writePrintJobData()");
@@ -512,51 +440,35 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error writing print job data.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] writePrintJobData()");
+                Slog.i(str, stringBuilder.toString());
+                IoUtils.closeQuietly(fd);
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] writePrintJobData()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                IoUtils.closeQuietly(fd);
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x004a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:20:?, code:
-            android.util.Slog.e(LOG_TAG, "Error getting print job info.", r1);
-     */
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r5.mUserHandle.getIdentifier());
-            r2.append("] getPrintJobInfo()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:22:0x0075, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:27:0x0080, code:
-            return null;
-     */
-    /* JADX WARNING: Missing block: B:31:0x0084, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r5.mUserHandle.getIdentifier());
-            r2.append("] getPrintJobInfo()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:32:0x00a8, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:34:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final PrintJobInfo getPrintJobInfo(PrintJobId printJobId, int appId) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
@@ -576,61 +488,46 @@ final class RemotePrintSpooler {
                 this.mLock.notifyAll();
             }
             return printJobInfo;
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            StringBuilder stringBuilder2;
+            try {
+                Slog.e(LOG_TAG, "Error getting print job info.", e);
+                String str2 = LOG_TAG;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] getPrintJobInfo()");
+                Slog.i(str2, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                    return null;
+                }
+            } catch (Throwable th) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] getPrintJobInfo()");
+                Slog.i(LOG_TAG, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x004a, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:20:?, code:
-            android.util.Slog.e(LOG_TAG, "Error setting print job state.", r2);
-     */
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
-            r2 = LOG_TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("[user: ");
-            r3.append(r5.mUserHandle.getIdentifier());
-            r3.append("] setPrintJobState()");
-            android.util.Slog.i(r2, r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:22:0x0075, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:26:0x007f, code:
-            return false;
-     */
-    /* JADX WARNING: Missing block: B:30:0x0083, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r5.mUserHandle.getIdentifier());
-            r2.append("] setPrintJobState()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:31:0x00a7, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:33:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final boolean setPrintJobState(PrintJobId printJobId, int state, String error) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        StringBuilder stringBuilder;
         try {
             boolean printJobState = this.mSetPrintJobStatusCaller.setPrintJobState(getRemoteInstanceLazy(), printJobId, state, error);
             String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] setPrintJobState()");
@@ -640,61 +537,46 @@ final class RemotePrintSpooler {
                 this.mLock.notifyAll();
             }
             return printJobState;
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error setting print job state.", e);
+                String str2 = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setPrintJobState()");
+                Slog.i(str2, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                    return false;
+                }
+            } catch (Throwable th) {
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] setPrintJobState()");
+                Slog.i(LOG_TAG, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 're' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 're' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error setting progress.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setProgress()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setProgress()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void setProgress(PrintJobId printJobId, float progress) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().setProgress(printJobId, progress);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] setProgress()");
@@ -703,61 +585,45 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception re) {
+        } catch (RemoteException | InterruptedException | TimeoutException re) {
+            try {
+                Slog.e(LOG_TAG, "Error setting progress.", re);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setProgress()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setProgress()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error setting status.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setStatus()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setStatus()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void setStatus(PrintJobId printJobId, CharSequence status) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().setStatus(printJobId, status);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] setStatus()");
@@ -766,61 +632,45 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error setting status.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setStatus()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setStatus()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error setting status.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setStatus()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setStatus()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void setStatus(PrintJobId printJobId, int status, CharSequence appPackageName) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().setStatusRes(printJobId, status, appPackageName);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] setStatus()");
@@ -829,61 +679,45 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error setting status.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setStatus()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setStatus()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0049 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 're' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0049 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 're' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0049, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error loading new custom printer icon.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x0051, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] onCustomPrinterIconLoaded()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0074, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0082, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] onCustomPrinterIconLoaded()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a6, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void onCustomPrinterIconLoaded(PrinterId printerId, Icon icon) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             this.mCustomPrinterIconLoadedCaller.onCustomPrinterIconLoaded(getRemoteInstanceLazy(), printerId, icon);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] onCustomPrinterIconLoaded()");
@@ -892,51 +726,33 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception re) {
+        } catch (RemoteException | InterruptedException | TimeoutException re) {
+            try {
+                Slog.e(LOG_TAG, "Error loading new custom printer icon.", re);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] onCustomPrinterIconLoaded()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] onCustomPrinterIconLoaded()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x004a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:20:?, code:
-            android.util.Slog.e(LOG_TAG, "Error getting custom printer icon.", r1);
-     */
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
-            r3 = LOG_TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("[user: ");
-            r4.append(r6.mUserHandle.getIdentifier());
-            r4.append("] getCustomPrinterIcon()");
-            android.util.Slog.i(r3, r4.toString());
-     */
-    /* JADX WARNING: Missing block: B:22:0x0076, code:
-            monitor-enter(r6.mLock);
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r6.mCanUnbind = true;
-            r6.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:26:0x007f, code:
-            return null;
-     */
-    /* JADX WARNING: Missing block: B:30:0x0083, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r6.mUserHandle.getIdentifier());
-            r2.append("] getCustomPrinterIcon()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:31:0x00a7, code:
-            monitor-enter(r6.mLock);
-     */
-    /* JADX WARNING: Missing block: B:33:?, code:
-            r6.mCanUnbind = true;
-            r6.mLock.notifyAll();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final Icon getCustomPrinterIcon(PrinterId printerId) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
@@ -956,61 +772,46 @@ final class RemotePrintSpooler {
                 this.mLock.notifyAll();
             }
             return customPrinterIcon;
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error getting custom printer icon.", e);
+                String str2 = LOG_TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] getCustomPrinterIcon()");
+                Slog.i(str2, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                    return null;
+                }
+            } catch (Throwable th) {
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("[user: ");
+                stringBuilder3.append(this.mUserHandle.getIdentifier());
+                stringBuilder3.append("] getCustomPrinterIcon()");
+                Slog.i(LOG_TAG, stringBuilder3.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0049 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0049 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0049, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error clearing custom printer icon cache.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x0051, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] clearCustomPrinterIconCache()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0074, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0082, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] clearCustomPrinterIconCache()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a6, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void clearCustomPrinterIconCache() {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             this.mClearCustomPrinterIconCache.clearCustomPrinterIconCache(getRemoteInstanceLazy());
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] clearCustomPrinterIconCache()");
@@ -1019,61 +820,44 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error clearing custom printer icon cache.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] clearCustomPrinterIconCache()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] clearCustomPrinterIconCache()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x004a, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:20:?, code:
-            android.util.Slog.e(LOG_TAG, "Error setting print job tag.", r2);
-     */
-    /* JADX WARNING: Missing block: B:21:0x0052, code:
-            r2 = LOG_TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("[user: ");
-            r3.append(r5.mUserHandle.getIdentifier());
-            r3.append("] setPrintJobTag()");
-            android.util.Slog.i(r2, r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:22:0x0075, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:26:0x007f, code:
-            return false;
-     */
-    /* JADX WARNING: Missing block: B:30:0x0083, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r5.mUserHandle.getIdentifier());
-            r2.append("] setPrintJobTag()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:31:0x00a7, code:
-            monitor-enter(r5.mLock);
-     */
-    /* JADX WARNING: Missing block: B:33:?, code:
-            r5.mCanUnbind = true;
-            r5.mLock.notifyAll();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final boolean setPrintJobTag(PrintJobId printJobId, String tag) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        StringBuilder stringBuilder;
         try {
             boolean printJobTag = this.mSetPrintJobTagCaller.setPrintJobTag(getRemoteInstanceLazy(), printJobId, tag);
             String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] setPrintJobTag()");
@@ -1083,61 +867,46 @@ final class RemotePrintSpooler {
                 this.mLock.notifyAll();
             }
             return printJobTag;
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error setting print job tag.", e);
+                String str2 = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setPrintJobTag()");
+                Slog.i(str2, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                    return false;
+                }
+            } catch (Throwable th) {
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("[user: ");
+                stringBuilder2.append(this.mUserHandle.getIdentifier());
+                stringBuilder2.append("] setPrintJobTag()");
+                Slog.i(LOG_TAG, stringBuilder2.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error setting print job cancelling.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setPrintJobCancelling()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] setPrintJobCancelling()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void setPrintJobCancelling(PrintJobId printJobId, boolean cancelling) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().setPrintJobCancelling(printJobId, cancelling);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] setPrintJobCancelling()");
@@ -1146,7 +915,30 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error setting print job cancelling.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setPrintJobCancelling()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] setPrintJobCancelling()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
@@ -1209,57 +1001,18 @@ final class RemotePrintSpooler {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error pruning approved print services.", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] pruneApprovedPrintServices()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] pruneApprovedPrintServices()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void pruneApprovedPrintServices(List<ComponentName> servicesToKeep) {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().pruneApprovedPrintServices(servicesToKeep);
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] pruneApprovedPrintServices()");
@@ -1268,61 +1021,45 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | InterruptedException | TimeoutException e) {
+            try {
+                Slog.e(LOG_TAG, "Error pruning approved print services.", e);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] pruneApprovedPrintServices()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] pruneApprovedPrintServices()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'te' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0047 A:{Splitter: B:6:0x000e, ExcHandler: android.os.RemoteException (r1_4 'te' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            android.util.Slog.e(LOG_TAG, "Error removing obsolete print jobs .", r1);
-     */
-    /* JADX WARNING: Missing block: B:20:0x004f, code:
-            r1 = LOG_TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] removeObsoletePrintJobs()");
-            android.util.Slog.i(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x0072, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:28:0x0080, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("[user: ");
-            r2.append(r4.mUserHandle.getIdentifier());
-            r2.append("] removeObsoletePrintJobs()");
-            android.util.Slog.i(LOG_TAG, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a4, code:
-            monitor-enter(r4.mLock);
-     */
-    /* JADX WARNING: Missing block: B:31:?, code:
-            r4.mCanUnbind = true;
-            r4.mLock.notifyAll();
-     */
-    /* JADX WARNING: Missing block: B:49:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public final void removeObsoletePrintJobs() {
         throwIfCalledOnMainThread();
         synchronized (this.mLock) {
             throwIfDestroyedLocked();
             this.mCanUnbind = false;
         }
+        String str;
+        StringBuilder stringBuilder;
         try {
             getRemoteInstanceLazy().removeObsoletePrintJobs();
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
             stringBuilder.append("[user: ");
             stringBuilder.append(this.mUserHandle.getIdentifier());
             stringBuilder.append("] removeObsoletePrintJobs()");
@@ -1331,7 +1068,30 @@ final class RemotePrintSpooler {
                 this.mCanUnbind = true;
                 this.mLock.notifyAll();
             }
-        } catch (Exception te) {
+        } catch (RemoteException | InterruptedException | TimeoutException te) {
+            try {
+                Slog.e(LOG_TAG, "Error removing obsolete print jobs .", te);
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] removeObsoletePrintJobs()");
+                Slog.i(str, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            } catch (Throwable th) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("[user: ");
+                stringBuilder.append(this.mUserHandle.getIdentifier());
+                stringBuilder.append("] removeObsoletePrintJobs()");
+                Slog.i(LOG_TAG, stringBuilder.toString());
+                synchronized (this.mLock) {
+                    this.mCanUnbind = true;
+                    this.mLock.notifyAll();
+                }
+            }
         }
     }
 
@@ -1351,19 +1111,6 @@ final class RemotePrintSpooler {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x005a A:{Splitter: B:9:0x0024, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x005a A:{Splitter: B:9:0x0024, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x005a A:{Splitter: B:9:0x0024, ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:14:0x005a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:15:0x005b, code:
-            android.util.Slog.e(LOG_TAG, "Failed to dump remote instance", r0);
-     */
-    /* JADX WARNING: Missing block: B:23:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void dump(DualDumpOutputStream dumpStream) {
         synchronized (this.mLock) {
             dumpStream.write("is_destroyed", 1133871366145L, this.mDestroyed);
@@ -1375,7 +1122,8 @@ final class RemotePrintSpooler {
             } else {
                 dumpStream.writeNested("internal_state", TransferPipe.dumpAsync(getRemoteInstanceLazy().asBinder(), new String[0]));
             }
-        } catch (Exception e) {
+        } catch (RemoteException | IOException | InterruptedException | TimeoutException e) {
+            Slog.e(LOG_TAG, "Failed to dump remote instance", e);
         }
     }
 

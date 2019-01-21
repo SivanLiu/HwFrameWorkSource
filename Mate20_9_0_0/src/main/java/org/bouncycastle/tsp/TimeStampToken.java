@@ -21,6 +21,7 @@ import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.operator.DigestCalculator;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Store;
@@ -69,12 +70,12 @@ public class TimeStampToken {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:14:0x00b6 in {8, 10, 13, 16, 19, 21, 23} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -96,14 +97,12 @@ public class TimeStampToken {
         r0 = r0.getId();
         r4 = r4.equals(r0);
         if (r4 == 0) goto L_0x00ee;
-    L_0x0017:
         r4 = r3.tsToken;
         r4 = r4.getSignerInfos();
         r4 = r4.getSigners();
         r0 = r4.size();
         r1 = 1;
         if (r0 != r1) goto L_0x00ce;
-    L_0x0028:
         r4 = r4.iterator();
         r4 = r4.next();
         r4 = (org.bouncycastle.cms.SignerInformation) r4;
@@ -129,7 +128,6 @@ public class TimeStampToken {
         r4 = r4.get(r0);	 Catch:{ CMSException -> 0x00bf }
         r0 = 0;	 Catch:{ CMSException -> 0x00bf }
         if (r4 == 0) goto L_0x008c;	 Catch:{ CMSException -> 0x00bf }
-    L_0x006e:
         r4 = r4.getAttrValues();	 Catch:{ CMSException -> 0x00bf }
         r4 = r4.getObjectAt(r0);	 Catch:{ CMSException -> 0x00bf }
         r4 = org.bouncycastle.asn1.ess.SigningCertificate.getInstance(r4);	 Catch:{ CMSException -> 0x00bf }
@@ -138,16 +136,13 @@ public class TimeStampToken {
         r4 = r4[r0];	 Catch:{ CMSException -> 0x00bf }
         r4 = org.bouncycastle.asn1.ess.ESSCertID.getInstance(r4);	 Catch:{ CMSException -> 0x00bf }
         r1.<init>(r4);	 Catch:{ CMSException -> 0x00bf }
-    L_0x0089:
         r3.certID = r1;	 Catch:{ CMSException -> 0x00bf }
         return;	 Catch:{ CMSException -> 0x00bf }
-    L_0x008c:
         r4 = r3.tsaSignerInfo;	 Catch:{ CMSException -> 0x00bf }
         r4 = r4.getSignedAttributes();	 Catch:{ CMSException -> 0x00bf }
         r1 = org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_aa_signingCertificateV2;	 Catch:{ CMSException -> 0x00bf }
         r4 = r4.get(r1);	 Catch:{ CMSException -> 0x00bf }
         if (r4 == 0) goto L_0x00b7;	 Catch:{ CMSException -> 0x00bf }
-    L_0x009a:
         r4 = r4.getAttrValues();	 Catch:{ CMSException -> 0x00bf }
         r4 = r4.getObjectAt(r0);	 Catch:{ CMSException -> 0x00bf }
         r4 = org.bouncycastle.asn1.ess.SigningCertificateV2.getInstance(r4);	 Catch:{ CMSException -> 0x00bf }
@@ -158,19 +153,16 @@ public class TimeStampToken {
         r1.<init>(r4);	 Catch:{ CMSException -> 0x00bf }
         goto L_0x0089;	 Catch:{ CMSException -> 0x00bf }
         return;	 Catch:{ CMSException -> 0x00bf }
-    L_0x00b7:
         r4 = new org.bouncycastle.tsp.TSPValidationException;	 Catch:{ CMSException -> 0x00bf }
         r0 = "no signing certificate attribute found, time stamp invalid.";	 Catch:{ CMSException -> 0x00bf }
         r4.<init>(r0);	 Catch:{ CMSException -> 0x00bf }
         throw r4;	 Catch:{ CMSException -> 0x00bf }
-    L_0x00bf:
         r4 = move-exception;
         r0 = new org.bouncycastle.tsp.TSPException;
         r1 = r4.getMessage();
         r4 = r4.getUnderlyingException();
         r0.<init>(r1, r4);
         throw r0;
-    L_0x00ce:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -183,7 +175,6 @@ public class TimeStampToken {
         r4 = r1.toString();
         r0.<init>(r4);
         throw r0;
-    L_0x00ee:
         r4 = new org.bouncycastle.tsp.TSPValidationException;
         r0 = "ContentInfo object not for a time stamp.";
         r4.<init>(r0);
@@ -238,7 +229,7 @@ public class TimeStampToken {
     public boolean isSignatureValid(SignerInformationVerifier signerInformationVerifier) throws TSPException {
         try {
             return this.tsaSignerInfo.verify(signerInformationVerifier);
-        } catch (Throwable e) {
+        } catch (CMSException e) {
             if (e.getUnderlyingException() != null) {
                 throw new TSPException(e.getMessage(), e.getUnderlyingException());
             }
@@ -279,8 +270,9 @@ public class TimeStampToken {
                             if (obj == null) {
                                 throw new TSPValidationException("certificate name does not match certID for signature. ");
                             }
+                        } else {
+                            throw new TSPValidationException("certificate serial number does not match certID for signature.");
                         }
-                        throw new TSPValidationException("certificate serial number does not match certID for signature.");
                     }
                     TSPUtil.validateCertificate(associatedCertificate);
                     if (!associatedCertificate.isValidOn(this.tstInfo.getGenTime())) {
@@ -292,7 +284,7 @@ public class TimeStampToken {
                     }
                 }
                 throw new TSPValidationException("certificate hash does not match certID hash.");
-            } catch (Throwable e) {
+            } catch (CMSException e) {
                 if (e.getUnderlyingException() != null) {
                     throw new TSPException(e.getMessage(), e.getUnderlyingException());
                 }
@@ -300,16 +292,16 @@ public class TimeStampToken {
                 stringBuilder.append("CMS exception: ");
                 stringBuilder.append(e);
                 throw new TSPException(stringBuilder.toString(), e);
-            } catch (Throwable e2) {
+            } catch (IOException e2) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("problem processing certificate: ");
                 stringBuilder.append(e2);
                 throw new TSPException(stringBuilder.toString(), e2);
-            } catch (Throwable e22) {
+            } catch (OperatorCreationException e3) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to create digest: ");
-                stringBuilder.append(e22.getMessage());
-                throw new TSPException(stringBuilder.toString(), e22);
+                stringBuilder.append(e3.getMessage());
+                throw new TSPException(stringBuilder.toString(), e3);
             }
         }
         throw new IllegalArgumentException("verifier provider needs an associated certificate");

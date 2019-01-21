@@ -468,10 +468,10 @@ public final class HwGameAssistantController {
         this.mGameObservers.finishBroadcast();
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0029, code:
+    /* JADX WARNING: Missing block: B:14:0x0029, code skipped:
             r3.mHandler.sendEmptyMessage(102);
      */
-    /* JADX WARNING: Missing block: B:19:0x0034, code:
+    /* JADX WARNING: Missing block: B:19:0x0034, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

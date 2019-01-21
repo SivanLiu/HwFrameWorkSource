@@ -20,6 +20,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.NullDigest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.crypto.util.DigestFactory;
@@ -183,7 +184,7 @@ public class DSASigner extends SignatureSpi implements PKCSObjectIdentifiers, X5
     }
 
     protected void engineInitVerify(PublicKey publicKey) throws InvalidKeyException {
-        CipherParameters generatePublicKeyParameter = DSAUtil.generatePublicKeyParameter(publicKey);
+        AsymmetricKeyParameter generatePublicKeyParameter = DSAUtil.generatePublicKeyParameter(publicKey);
         this.digest.reset();
         this.signer.init(false, generatePublicKeyParameter);
     }

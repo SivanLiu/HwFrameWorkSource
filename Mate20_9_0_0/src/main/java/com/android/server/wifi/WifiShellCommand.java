@@ -14,26 +14,26 @@ public class WifiShellCommand extends ShellCommand {
         this.mStateMachine = stateMachine;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0076 A:{SYNTHETIC, Splitter: B:30:0x0076} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0076 A:{SYNTHETIC, Splitter: B:30:0x0076} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0076 A:{SYNTHETIC, Splitter: B:30:0x0076} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0076 A:{SYNTHETIC, Splitter: B:30:0x0076} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0076 A:{SYNTHETIC, Splitter:B:31:0x0076} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0076 A:{SYNTHETIC, Splitter:B:31:0x0076} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0076 A:{SYNTHETIC, Splitter:B:31:0x0076} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0055 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00b0 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x0095 A:{Catch:{ Exception -> 0x00d6 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x0076 A:{SYNTHETIC, Splitter:B:31:0x0076} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x005b A:{Catch:{ Exception -> 0x00d6 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int onCommand(String cmd) {
         String str;
@@ -58,56 +58,58 @@ public class WifiShellCommand extends ShellCommand {
         if (hashCode != -1861126232) {
             if (hashCode != -1267819290) {
                 if (hashCode != -29690534) {
-                    if (hashCode == 1120712756 && str.equals("get-ipreach-disconnect")) {
-                        i = 1;
-                        StringBuilder stringBuilder2;
-                        switch (i) {
-                            case 0:
-                                boolean enabled;
-                                str = getNextArgRequired();
-                                if ("enabled".equals(str)) {
-                                    enabled = true;
-                                } else if ("disabled".equals(str)) {
-                                    enabled = false;
-                                } else {
-                                    pw.println("Invalid argument to 'set-ipreach-disconnect' - must be 'enabled' or 'disabled'");
-                                    return -1;
-                                }
-                                this.mStateMachine.setIpReachabilityDisconnectEnabled(enabled);
-                                return 0;
-                            case 1:
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("IPREACH_DISCONNECT state is ");
-                                stringBuilder2.append(this.mStateMachine.getIpReachabilityDisconnectEnabled());
-                                pw.println(stringBuilder2.toString());
-                                return 0;
-                            case 2:
-                                try {
-                                    i = Integer.parseInt(getNextArgRequired());
-                                    if (i < 1) {
+                    if (hashCode == 1120712756) {
+                        if (str.equals("get-ipreach-disconnect")) {
+                            i = 1;
+                            StringBuilder stringBuilder2;
+                            switch (i) {
+                                case 0:
+                                    boolean enabled;
+                                    str = getNextArgRequired();
+                                    if ("enabled".equals(str)) {
+                                        enabled = true;
+                                    } else if ("disabled".equals(str)) {
+                                        enabled = false;
+                                    } else {
+                                        pw.println("Invalid argument to 'set-ipreach-disconnect' - must be 'enabled' or 'disabled'");
+                                        return -1;
+                                    }
+                                    this.mStateMachine.setIpReachabilityDisconnectEnabled(enabled);
+                                    return 0;
+                                case 1:
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("IPREACH_DISCONNECT state is ");
+                                    stringBuilder2.append(this.mStateMachine.getIpReachabilityDisconnectEnabled());
+                                    pw.println(stringBuilder2.toString());
+                                    return 0;
+                                case 2:
+                                    try {
+                                        i = Integer.parseInt(getNextArgRequired());
+                                        if (i < 1) {
+                                            pw.println("Invalid argument to 'set-poll-rssi-interval-msecs' - must be a positive integer");
+                                            return -1;
+                                        }
+                                        this.mStateMachine.setPollRssiIntervalMsecs(i);
+                                        return 0;
+                                    } catch (NumberFormatException e2) {
                                         pw.println("Invalid argument to 'set-poll-rssi-interval-msecs' - must be a positive integer");
                                         return -1;
                                     }
-                                    this.mStateMachine.setPollRssiIntervalMsecs(i);
+                                case 3:
+                                    stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("WifiStateMachine.mPollRssiIntervalMsecs = ");
+                                    stringBuilder2.append(this.mStateMachine.getPollRssiIntervalMsecs());
+                                    pw.println(stringBuilder2.toString());
                                     return 0;
-                                } catch (NumberFormatException e2) {
-                                    pw.println("Invalid argument to 'set-poll-rssi-interval-msecs' - must be a positive integer");
-                                    return -1;
-                                }
-                            case 3:
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("WifiStateMachine.mPollRssiIntervalMsecs = ");
-                                stringBuilder2.append(this.mStateMachine.getPollRssiIntervalMsecs());
-                                pw.println(stringBuilder2.toString());
-                                return 0;
-                            default:
-                                return handleDefaultCommands(cmd);
+                                default:
+                                    return handleDefaultCommands(cmd);
+                            }
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Exception: ");
+                            stringBuilder.append(e);
+                            pw.println(stringBuilder.toString());
+                            return -1;
                         }
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("Exception: ");
-                        stringBuilder.append(e);
-                        pw.println(stringBuilder.toString());
-                        return -1;
                     }
                 } else if (str.equals("set-poll-rssi-interval-msecs")) {
                     i = 2;

@@ -24,102 +24,57 @@ public class InterfaceController {
         this.mLog = log;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0012 A:{Splitter: B:1:0x0009, ExcHandler: java.lang.IllegalStateException (r2_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0012, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0013, code:
-            logError("IPv4 configuration failed: %s", r2);
-     */
-    /* JADX WARNING: Missing block: B:6:0x001d, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean setIPv4Address(LinkAddress address) {
         InterfaceConfiguration ifcg = new InterfaceConfiguration();
         ifcg.setLinkAddress(address);
         try {
             this.mNMS.setInterfaceConfig(this.mIfName, ifcg);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            logError("IPv4 configuration failed: %s", e);
+            return false;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0019 A:{Splitter: B:1:0x0001, ExcHandler: java.lang.IllegalStateException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0019, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001a, code:
-            logError("Failed to clear IPv4 address on interface %s: %s", r6.mIfName, r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0029, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean clearIPv4Address() {
         try {
             InterfaceConfiguration ifcg = new InterfaceConfiguration();
             ifcg.setLinkAddress(new LinkAddress("0.0.0.0/0"));
             this.mNMS.setInterfaceConfig(this.mIfName, ifcg);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            logError("Failed to clear IPv4 address on interface %s: %s", this.mIfName, e);
+            return false;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000a A:{Splitter: B:1:0x0001, ExcHandler: java.lang.IllegalStateException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x000a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000b, code:
-            logError("enabling IPv6 failed: %s", r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0015, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean enableIPv6() {
         try {
             this.mNMS.enableIpv6(this.mIfName);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            logError("enabling IPv6 failed: %s", e);
+            return false;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000a A:{Splitter: B:1:0x0001, ExcHandler: java.lang.IllegalStateException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x000a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000b, code:
-            logError("disabling IPv6 failed: %s", r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0015, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean disableIPv6() {
         try {
             this.mNMS.disableIpv6(this.mIfName);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            logError("disabling IPv6 failed: %s", e);
+            return false;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000a A:{Splitter: B:1:0x0001, ExcHandler: java.lang.IllegalStateException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x000a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000b, code:
-            logError("error setting IPv6 privacy extensions: %s", r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0015, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean setIPv6PrivacyExtensions(boolean enabled) {
         try {
             this.mNMS.setInterfaceIpv6PrivacyExtensions(this.mIfName, enabled);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            logError("error setting IPv6 privacy extensions: %s", e);
+            return false;
         }
     }
 
@@ -142,41 +97,23 @@ public class InterfaceController {
         return addAddress(addr.getAddress(), addr.getPrefixLength());
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000e A:{Splitter: B:1:0x0001, ExcHandler: android.os.ServiceSpecificException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x000e, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000f, code:
-            logError("failed to add %s/%d: %s", r7, java.lang.Integer.valueOf(r8), r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0023, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean addAddress(InetAddress ip, int prefixLen) {
         try {
             this.mNetd.interfaceAddAddress(this.mIfName, ip.getHostAddress(), prefixLen);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | ServiceSpecificException e) {
+            logError("failed to add %s/%d: %s", ip, Integer.valueOf(prefixLen), e);
+            return false;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000e A:{Splitter: B:1:0x0001, ExcHandler: android.os.ServiceSpecificException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x000e, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000f, code:
-            logError("failed to remove %s/%d: %s", r7, java.lang.Integer.valueOf(r8), r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0023, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean removeAddress(InetAddress ip, int prefixLen) {
         try {
             this.mNetd.interfaceDelAddress(this.mIfName, ip.getHostAddress(), prefixLen);
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | ServiceSpecificException e) {
+            logError("failed to remove %s/%d: %s", ip, Integer.valueOf(prefixLen), e);
+            return false;
         }
     }
 

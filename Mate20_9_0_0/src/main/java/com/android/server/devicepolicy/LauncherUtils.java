@@ -33,6 +33,7 @@ public class LauncherUtils {
         }
         if (find != -1) {
             IntentFilter inf = new IntentFilter("android.intent.action.MAIN");
+            inf.addAction("android.intent.action.MDM_SET_DEFAULT_LAUNCHER_FOR_ANTIMAL");
             inf.addCategory("android.intent.category.HOME");
             inf.addCategory("android.intent.category.DEFAULT");
             pm.addPreferredActivity(inf, bestMatch, set, set[find]);

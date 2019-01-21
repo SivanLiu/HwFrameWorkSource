@@ -433,7 +433,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             return ConnectivityManager.isNetworkTypeValid(type) && this.mTypeLists[type] != null;
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0022, code:
+        /* JADX WARNING: Missing block: B:12:0x0022, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -476,26 +476,26 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0024, code:
+        /* JADX WARNING: Missing block: B:12:0x0024, code skipped:
             r3 = android.net.NetworkInfo.DetailedState.DISCONNECTED;
      */
-        /* JADX WARNING: Missing block: B:13:0x0026, code:
+        /* JADX WARNING: Missing block: B:13:0x0026, code skipped:
             if (r2 != false) goto L_0x002a;
      */
-        /* JADX WARNING: Missing block: B:14:0x0028, code:
+        /* JADX WARNING: Missing block: B:14:0x0028, code skipped:
             if (r9 == false) goto L_0x0032;
      */
-        /* JADX WARNING: Missing block: B:15:0x002a, code:
+        /* JADX WARNING: Missing block: B:15:0x002a, code skipped:
             maybeLogBroadcast(r8, r3, r7, r9);
             com.android.server.ConnectivityService.access$200(r6.this$0, r8, r3, r7);
      */
-        /* JADX WARNING: Missing block: B:17:0x0036, code:
+        /* JADX WARNING: Missing block: B:17:0x0036, code skipped:
             if (r0.isEmpty() != false) goto L_0x0067;
      */
-        /* JADX WARNING: Missing block: B:18:0x0038, code:
+        /* JADX WARNING: Missing block: B:18:0x0038, code skipped:
             if (r2 == false) goto L_0x0067;
      */
-        /* JADX WARNING: Missing block: B:19:0x003a, code:
+        /* JADX WARNING: Missing block: B:19:0x003a, code skipped:
             r4 = new java.lang.StringBuilder();
             r4.append("Other network available for type ");
             r4.append(r7);
@@ -505,7 +505,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             maybeLogBroadcast(r1, r3, r7, com.android.server.ConnectivityService.access$100(r6.this$0, r1));
             com.android.server.ConnectivityService.access$200(r6.this$0, r1, r3, r7);
      */
-        /* JADX WARNING: Missing block: B:20:0x0067, code:
+        /* JADX WARNING: Missing block: B:20:0x0067, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -580,15 +580,17 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             pw.increaseIndent();
             synchronized (this.mTypeLists) {
                 while (type < this.mTypeLists.length) {
-                    if (!(this.mTypeLists[type] == null || this.mTypeLists[type].isEmpty())) {
-                        Iterator it = this.mTypeLists[type].iterator();
-                        while (it.hasNext()) {
-                            NetworkAgentInfo nai = (NetworkAgentInfo) it.next();
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append(type);
-                            stringBuilder2.append(" ");
-                            stringBuilder2.append(naiToString(nai));
-                            pw.println(stringBuilder2.toString());
+                    if (this.mTypeLists[type] != null) {
+                        if (!this.mTypeLists[type].isEmpty()) {
+                            Iterator it = this.mTypeLists[type].iterator();
+                            while (it.hasNext()) {
+                                NetworkAgentInfo nai = (NetworkAgentInfo) it.next();
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append(type);
+                                stringBuilder2.append(" ");
+                                stringBuilder2.append(naiToString(nai));
+                                pw.println(stringBuilder2.toString());
+                            }
                         }
                     }
                     type++;
@@ -987,29 +989,40 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             this();
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:15:0x0029 A:{Catch:{ Exception -> 0x006b }} */
+        /* JADX WARNING: Removed duplicated region for block: B:13:0x0024 A:{Catch:{ Exception -> 0x006b }} */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public int onCommand(String cmd) {
             if (cmd == null) {
                 return handleDefaultCommands(cmd);
             }
             PrintWriter pw = getOutPrintWriter();
             try {
-                boolean z = (cmd.hashCode() == 144736062 && cmd.equals("airplane-mode")) ? false : true;
-                if (z) {
-                    return handleDefaultCommands(cmd);
+                int i;
+                if (cmd.hashCode() == 144736062) {
+                    if (cmd.equals("airplane-mode")) {
+                        i = 0;
+                        if (i == 0) {
+                            return handleDefaultCommands(cmd);
+                        }
+                        String action = getNextArg();
+                        if ("enable".equals(action)) {
+                            ConnectivityService.this.setAirplaneMode(true);
+                            return 0;
+                        } else if ("disable".equals(action)) {
+                            ConnectivityService.this.setAirplaneMode(false);
+                            return 0;
+                        } else if (action == null) {
+                            pw.println(Global.getInt(ConnectivityService.this.mContext.getContentResolver(), "airplane_mode_on") == 0 ? "disabled" : "enabled");
+                            return 0;
+                        } else {
+                            onHelp();
+                            return -1;
+                        }
+                    }
                 }
-                String action = getNextArg();
-                if ("enable".equals(action)) {
-                    ConnectivityService.this.setAirplaneMode(true);
-                    return 0;
-                } else if ("disable".equals(action)) {
-                    ConnectivityService.this.setAirplaneMode(false);
-                    return 0;
-                } else if (action == null) {
-                    pw.println(Global.getInt(ConnectivityService.this.mContext.getContentResolver(), "airplane_mode_on") == 0 ? "disabled" : "enabled");
-                    return 0;
-                } else {
-                    onHelp();
-                    return -1;
+                i = -1;
+                if (i == 0) {
                 }
             } catch (Exception e) {
                 pw.println(e);
@@ -1437,17 +1450,23 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         synchronized (this.mNetworkForNetId) {
             int i = 100;
             while (i <= MAX_NET_ID) {
-                int netId = this.mNextNetId;
-                int i2 = this.mNextNetId + 1;
-                this.mNextNetId = i2;
-                if (i2 > MAX_NET_ID) {
-                    this.mNextNetId = 100;
-                }
-                if (this.mNetIdInUse.get(netId)) {
-                    i++;
-                } else {
-                    this.mNetIdInUse.put(netId, true);
-                    return netId;
+                try {
+                    int netId = this.mNextNetId;
+                    int i2 = this.mNextNetId + 1;
+                    this.mNextNetId = i2;
+                    if (i2 > MAX_NET_ID) {
+                        this.mNextNetId = 100;
+                    }
+                    if (this.mNetIdInUse.get(netId)) {
+                        i++;
+                    } else {
+                        this.mNetIdInUse.put(netId, true);
+                        return netId;
+                    }
+                } catch (Throwable th) {
+                    while (true) {
+                        throw th;
+                    }
                 }
             }
             throw new IllegalStateException("No free netIds");
@@ -1472,7 +1491,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             }
             info.setIsAvailable(z);
             NetworkCapabilities capabilities = new NetworkCapabilities();
-            capabilities.setCapability(18, true ^ info.isRoaming());
+            capabilities.setCapability(18, 1 ^ info.isRoaming());
             state = new NetworkState(info, new LinkProperties(), capabilities, null, null, null);
         }
         filterNetworkStateForUid(state, uid, ignoreBlocked);
@@ -1494,7 +1513,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         return networkAgentInfo;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0023, code:
+    /* JADX WARNING: Missing block: B:14:0x0023, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1530,16 +1549,16 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         return NetworkState.EMPTY;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0026, code:
+    /* JADX WARNING: Missing block: B:17:0x0026, code skipped:
             if (r4 != null) goto L_0x002b;
      */
-    /* JADX WARNING: Missing block: B:18:0x0028, code:
+    /* JADX WARNING: Missing block: B:18:0x0028, code skipped:
             r0 = com.android.server.backup.BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
      */
-    /* JADX WARNING: Missing block: B:19:0x002b, code:
+    /* JADX WARNING: Missing block: B:19:0x002b, code skipped:
             r0 = r4.getInterfaceName();
      */
-    /* JADX WARNING: Missing block: B:21:0x0035, code:
+    /* JADX WARNING: Missing block: B:21:0x0035, code skipped:
             return r3.mPolicyManagerInternal.isUidNetworkingBlocked(r5, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1556,16 +1575,16 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0031, code:
+    /* JADX WARNING: Missing block: B:17:0x0031, code skipped:
             if (r1 == false) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:16:0x0033, code:
+    /* JADX WARNING: Missing block: B:18:0x0033, code skipped:
             r0 = "BLOCKED";
      */
-    /* JADX WARNING: Missing block: B:17:0x0036, code:
+    /* JADX WARNING: Missing block: B:19:0x0036, code skipped:
             r0 = "UNBLOCKED";
      */
-    /* JADX WARNING: Missing block: B:18:0x0038, code:
+    /* JADX WARNING: Missing block: B:20:0x0038, code skipped:
             log(java.lang.String.format("Returning %s NetworkInfo to uid=%d", new java.lang.Object[]{r0, java.lang.Integer.valueOf(r8)}));
             r2 = r6.mNetworkInfoBlockingLogs;
             r3 = new java.lang.StringBuilder();
@@ -1574,7 +1593,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             r3.append(r8);
             r2.log(r3.toString());
      */
-    /* JADX WARNING: Missing block: B:19:0x0067, code:
+    /* JADX WARNING: Missing block: B:21:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1893,7 +1912,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         enforceAccessPermission();
         NetworkCapabilities caps = getUnfilteredActiveNetworkState(Binder.getCallingUid()).networkCapabilities;
         if (caps != null) {
-            return true ^ caps.hasCapability(11);
+            return 1 ^ caps.hasCapability(11);
         }
         return true;
     }
@@ -2782,7 +2801,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         }
     }
 
-    /* JADX WARNING: Missing block: B:53:0x00cd, code:
+    /* JADX WARNING: Missing block: B:53:0x00cd, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2992,7 +3011,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x001d, code:
+    /* JADX WARNING: Missing block: B:8:0x001d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3343,7 +3362,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         this.mHandler.sendMessage(this.mHandler.obtainMessage(36, Binder.getCallingUid(), encodeBool(hasConnectivity), network));
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0067, code:
+    /* JADX WARNING: Missing block: B:19:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3501,7 +3520,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         return proxyInfo;
     }
 
-    /* JADX WARNING: Missing block: B:43:0x008d, code:
+    /* JADX WARNING: Missing block: B:43:0x008d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3738,7 +3757,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x00b5, code:
+    /* JADX WARNING: Missing block: B:27:0x00b5, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3895,16 +3914,10 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         return -1;
     }
 
-    /* JADX WARNING: Missing block: B:36:0x00a3, code:
+    /* JADX WARNING: Missing block: B:36:0x00a3, code skipped:
             if (r0 == null) goto L_0x00cc;
      */
-    /* JADX WARNING: Missing block: B:38:?, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:43:0x00c0, code:
-            if (r0 == null) goto L_0x00cc;
-     */
-    /* JADX WARNING: Missing block: B:46:0x00c9, code:
+    /* JADX WARNING: Missing block: B:47:0x00c9, code skipped:
             if (r0 == null) goto L_0x00cc;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3964,20 +3977,26 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             stringBuilder.append("Xml parser exception reading Carrier Provisioning Urls file: ");
             stringBuilder.append(e5);
             loge(stringBuilder.toString());
-        } catch (IOException e6) {
+            if (fileReader != null) {
+                try {
+                    fileReader.close();
+                } catch (IOException e6) {
+                }
+            }
+            return null;
+        } catch (IOException e7) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("I/O exception reading Carrier Provisioning Urls file: ");
-            stringBuilder.append(e6);
+            stringBuilder.append(e7);
             loge(stringBuilder.toString());
         } catch (Throwable th) {
             if (fileReader != null) {
                 try {
                     fileReader.close();
-                } catch (IOException e7) {
+                } catch (IOException e8) {
                 }
             }
         }
-        return null;
     }
 
     public String getMobileProvisioningUrl() {
@@ -3985,7 +4004,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         String url = getProvisioningUrlBaseFromFile();
         StringBuilder stringBuilder;
         if (TextUtils.isEmpty(url)) {
-            url = this.mContext.getResources().getString(17040534);
+            url = this.mContext.getResources().getString(17040535);
             stringBuilder = new StringBuilder();
             stringBuilder.append("getMobileProvisioningUrl: mobile_provisioining_url from resource =");
             stringBuilder.append(url);
@@ -4031,7 +4050,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x003f, code:
+    /* JADX WARNING: Missing block: B:14:0x003f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4488,6 +4507,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             notifyIfacesChangedForNetworkStats();
             notifyNetworkCallbacks(networkAgent, 524295);
         }
+        updataNetworkAgentInfoForHicure(networkAgent);
         this.mKeepaliveTracker.handleCheckKeepalivesStillValid(networkAgent);
     }
 
@@ -5380,10 +5400,17 @@ public class ConnectivityService extends AbstractConnectivityService implements 
             networkAgent.networkCapabilities.addCapability(19);
             try {
                 if (networkAgent.isVPN()) {
+                    boolean z;
                     INetworkManagementService iNetworkManagementService = this.mNetd;
                     int i = networkAgent.network.netId;
-                    boolean isEmpty = networkAgent.linkProperties.getDnsServers().isEmpty() ^ true;
-                    boolean z = networkAgent.networkMisc == null || !networkAgent.networkMisc.allowBypass;
+                    int isEmpty = networkAgent.linkProperties.getDnsServers().isEmpty() ^ 1;
+                    if (networkAgent.networkMisc != null) {
+                        if (networkAgent.networkMisc.allowBypass) {
+                            z = false;
+                            iNetworkManagementService.createVirtualNetwork(i, isEmpty, z);
+                        }
+                    }
+                    z = true;
                     iNetworkManagementService.createVirtualNetwork(i, isEmpty, z);
                 } else {
                     this.mNetd.createPhysicalNetwork(networkAgent.network.netId, getNetworkPermission(networkAgent.networkCapabilities));
@@ -5728,7 +5755,7 @@ public class ConnectivityService extends AbstractConnectivityService implements 
     }
 
     public SparseArray<Vpn> getmVpns() {
-        SparseArray<Vpn> sparseArray;
+        SparseArray sparseArray;
         synchronized (this.mVpns) {
             sparseArray = this.mVpns;
         }

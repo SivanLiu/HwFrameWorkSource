@@ -22,7 +22,7 @@ public class ISOTrailers {
     private static final Map<String, Integer> trailerMap;
 
     static {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put("RIPEMD128", Integers.valueOf(13004));
         hashMap.put("RIPEMD160", Integers.valueOf(12748));
         hashMap.put(McElieceCCA2KeyGenParameterSpec.SHA1, Integers.valueOf(13260));

@@ -16,13 +16,13 @@ public class GeneralSubtree extends ASN1Object {
     private ASN1Integer maximum;
     private ASN1Integer minimum;
 
-    /* JADX WARNING: Missing block: B:16:0x00b5, code:
+    /* JADX WARNING: Missing block: B:16:0x00b5, code skipped:
             r4.maximum = org.bouncycastle.asn1.ASN1Integer.getInstance(r5, false);
      */
-    /* JADX WARNING: Missing block: B:17:0x00bb, code:
+    /* JADX WARNING: Missing block: B:17:0x00bb, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:0x00c2, code:
+    /* JADX WARNING: Missing block: B:19:0x00c2, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -78,12 +78,12 @@ public class GeneralSubtree extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x001a in {2, 4, 6, 7} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -100,18 +100,13 @@ public class GeneralSubtree extends ASN1Object {
         r0.<init>();
         r0.base = r1;
         if (r3 == 0) goto L_0x000e;
-    L_0x0007:
         r1 = new org.bouncycastle.asn1.ASN1Integer;
         r1.<init>(r3);
         r0.maximum = r1;
-    L_0x000e:
         if (r2 != 0) goto L_0x0014;
-    L_0x0010:
         r1 = 0;
-    L_0x0011:
         r0.minimum = r1;
         return;
-    L_0x0014:
         r1 = new org.bouncycastle.asn1.ASN1Integer;
         r1.<init>(r2);
         goto L_0x0011;

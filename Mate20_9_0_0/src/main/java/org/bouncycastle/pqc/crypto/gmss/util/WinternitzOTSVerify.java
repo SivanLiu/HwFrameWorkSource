@@ -27,10 +27,10 @@ public class WinternitzOTSVerify {
         if (i4 != obj.length) {
             return null;
         }
-        Object obj2;
-        Object obj3 = new byte[i4];
+        byte[] bArr5 = new byte[i4];
         int i5 = 8;
         int i6;
+        Object obj2;
         int i7;
         int i8;
         int i9;
@@ -45,7 +45,7 @@ public class WinternitzOTSVerify {
             obj2 = new byte[digestSize];
             i7 = i6;
             while (i7 < bArr3.length) {
-                Object obj4 = obj2;
+                Object obj3 = obj2;
                 int i14 = i6;
                 i6 = i13;
                 i13 = 0;
@@ -54,18 +54,18 @@ public class WinternitzOTSVerify {
                     i6 += i8;
                     i9 = i5;
                     i5 = i14 * digestSize;
-                    System.arraycopy(obj, i5, obj4, 0, digestSize);
+                    System.arraycopy(obj, i5, obj3, 0, digestSize);
                     while (i8 < i2) {
                         i10 = i6;
-                        this.messDigestOTS.update(obj4, 0, obj4.length);
-                        obj4 = new byte[this.messDigestOTS.getDigestSize()];
-                        this.messDigestOTS.doFinal(obj4, 0);
+                        this.messDigestOTS.update(obj3, 0, obj3.length);
+                        obj3 = new byte[this.messDigestOTS.getDigestSize()];
+                        this.messDigestOTS.doFinal(obj3, 0);
                         i8++;
                         i6 = i10;
-                        byte[] bArr5 = bArr2;
+                        byte[] bArr6 = bArr2;
                     }
                     i10 = i6;
-                    System.arraycopy(obj4, 0, obj3, i5, digestSize);
+                    System.arraycopy(obj3, 0, bArr5, i5, digestSize);
                     bArr3[i7] = (byte) (bArr3[i7] >>> this.w);
                     i14++;
                     i13++;
@@ -76,7 +76,7 @@ public class WinternitzOTSVerify {
                 i7++;
                 i13 = i6;
                 i6 = i14;
-                obj2 = obj4;
+                obj2 = obj3;
                 obj = bArr2;
             }
             i11 = (i3 << this.w) - i13;
@@ -88,12 +88,12 @@ public class WinternitzOTSVerify {
                     obj2 = new byte[this.messDigestOTS.getDigestSize()];
                     this.messDigestOTS.doFinal(obj2, 0);
                 }
-                System.arraycopy(obj2, 0, obj3, i7, digestSize);
+                System.arraycopy(obj2, 0, bArr5, i7, digestSize);
                 i11 >>>= this.w;
                 i6++;
             }
         } else {
-            Object obj5 = obj;
+            Object obj4 = obj;
             long j;
             if (this.w < 8) {
                 int i15;
@@ -102,7 +102,7 @@ public class WinternitzOTSVerify {
                 i8 = 0;
                 i9 = i8;
                 i10 = i9;
-                Object obj6 = new byte[digestSize];
+                Object obj5 = new byte[digestSize];
                 int i16 = i10;
                 while (i16 < i11) {
                     int i17 = i8;
@@ -112,36 +112,36 @@ public class WinternitzOTSVerify {
                         i17++;
                     }
                     i6 = 0;
-                    obj2 = obj6;
+                    obj2 = obj5;
                     for (i5 = 
 /*
 Method generation error in method: org.bouncycastle.pqc.crypto.gmss.util.WinternitzOTSVerify.Verify(byte[], byte[]):byte[], dex: 
 jadx.core.utils.exceptions.CodegenException: Error generate insn: PHI: (r11_11 'i5' int) = (r11_0 'i5' int), (r11_19 'i5' int) binds: {(r11_0 'i5' int)=B:24:0x00e8, (r11_19 'i5' int)=B:36:0x0153} in method: org.bouncycastle.pqc.crypto.gmss.util.WinternitzOTSVerify.Verify(byte[], byte[]):byte[], dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:183)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:218)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:118)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:185)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:220)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)

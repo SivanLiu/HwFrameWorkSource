@@ -133,7 +133,7 @@ public class RecentTasks {
     }
 
     void loadRecentsComponent(Resources res) {
-        String rawRecentsComponent = res.getString(17039839);
+        String rawRecentsComponent = res.getString(17039840);
         if (!TextUtils.isEmpty(rawRecentsComponent)) {
             ComponentName cn = ComponentName.unflattenFromString(rawRecentsComponent);
             if (cn != null) {

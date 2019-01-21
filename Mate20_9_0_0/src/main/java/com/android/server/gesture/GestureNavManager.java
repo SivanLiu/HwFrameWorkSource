@@ -42,8 +42,12 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
     private static final int MSG_PREFER_CHANGED = 8;
     private static final int MSG_RELOAD_NAV_GLOBAL_STATE = 2;
     private static final int MSG_ROTATION_CHANGED = 7;
+    private static final int MSG_SET_GESTURE_NAV_MODE = 11;
     private static final int MSG_UPDATE_NAV_GLOBAL_STATE = 1;
     private static final String TAG = "GestureNavManager";
+    private int mAppGestureNavBottomMode;
+    private int mAppGestureNavLeftMode;
+    private int mAppGestureNavRightMode;
     private GestureNavBottomStrategy mBottomStrategy;
     private Context mContext;
     private int mCurrentUserId;
@@ -105,6 +109,8 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
     private boolean mDeviceProvisioned;
     private DeviceStateController mDeviceStateController;
     private Point mDisplaySize = new Point();
+    private int mFocusAppUid;
+    private String mFocusPackageName;
     private int mFocusWinNavOptions;
     private String mFocusWindowTitle;
     private boolean mFocusWindowUsingNotch = true;
@@ -137,6 +143,41 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
     private WindowManager mWindowManager;
     private boolean mWindowViewSetuped;
 
+    private static final class AppGestureNavMode {
+        public int bottomMode;
+        public int leftMode;
+        public String packageName;
+        public int rightMode;
+        public int uid;
+
+        public AppGestureNavMode(String _packageName, int _uid, int _leftMode, int _rightMode, int _bottomMode) {
+            this.packageName = _packageName;
+            this.uid = _uid;
+            this.leftMode = _leftMode;
+            this.rightMode = _rightMode;
+            this.bottomMode = _bottomMode;
+        }
+
+        public boolean isFromSameApp(String _packageName, int _uid) {
+            return this.packageName != null && this.packageName.equals(_packageName) && this.uid == _uid;
+        }
+
+        public String toString() {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("pkg:");
+            stringBuilder.append(this.packageName);
+            stringBuilder.append(", uid:");
+            stringBuilder.append(this.uid);
+            stringBuilder.append(", left:");
+            stringBuilder.append(this.leftMode);
+            stringBuilder.append(", right:");
+            stringBuilder.append(this.rightMode);
+            stringBuilder.append(", bottom:");
+            stringBuilder.append(this.bottomMode);
+            return stringBuilder.toString();
+        }
+    }
+
     private final class DensityObserver extends ContentObserver {
         public DensityObserver(Handler handler) {
             super(handler);
@@ -146,6 +187,22 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
             if (GestureNavManager.this.mNavStarted && GestureNavManager.this.updateDisplayDensity()) {
                 GestureNavManager.this.mHandler.sendEmptyMessage(2);
             }
+        }
+    }
+
+    private static final class FocusWindowState {
+        public int gestureNavOptions;
+        public String packageName;
+        public String title;
+        public int uid;
+        public boolean usingNotch;
+
+        public FocusWindowState(String _packageName, int _uid, String _title, boolean _usingNotch, int _gestureNavOptions) {
+            this.packageName = _packageName;
+            this.uid = _uid;
+            this.title = _title;
+            this.usingNotch = _usingNotch;
+            this.gestureNavOptions = _gestureNavOptions;
         }
     }
 
@@ -164,8 +221,6 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
                 stringBuilder.append(msg.what);
                 Log.d(str, stringBuilder.toString());
             }
-            boolean z = false;
-            GestureNavManager gestureNavManager;
             switch (msg.what) {
                 case 1:
                     GestureNavManager.this.updateGestureNavGlobalState();
@@ -180,17 +235,13 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
                     GestureNavManager.this.handleDeviceStateChanged();
                     break;
                 case 5:
-                    gestureNavManager = GestureNavManager.this;
-                    String str2 = (String) msg.obj;
-                    if (msg.arg1 == 1) {
-                        z = true;
-                    }
-                    gestureNavManager.handleFocusChanged(str2, z, msg.arg2);
+                    GestureNavManager.this.handleFocusChanged((FocusWindowState) msg.obj);
                     break;
                 case 6:
-                    gestureNavManager = GestureNavManager.this;
-                    if (msg.arg1 == 1) {
-                        z = true;
+                    GestureNavManager gestureNavManager = GestureNavManager.this;
+                    boolean z = true;
+                    if (msg.arg1 != 1) {
+                        z = false;
                     }
                     gestureNavManager.handleKeygaurdStateChanged(z);
                     break;
@@ -202,6 +253,9 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
                     break;
                 case 9:
                     GestureNavManager.this.handleNotchDisplayChanged();
+                    break;
+                case 11:
+                    GestureNavManager.this.handleAppGestureNavMode((AppGestureNavMode) msg.obj);
                     break;
             }
             if (GestureNavConst.DEBUG) {
@@ -310,6 +364,7 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
     private void startGestureNavLocked() {
         Log.i(TAG, "startGestureNavLocked");
         this.mNavStarted = true;
+        resetAppGestureNavModeLocked();
         updateDisplayDensity();
         updateNotchDisplayStateLocked();
         this.mDeviceStateController = DeviceStateController.getInstance(this.mContext);
@@ -383,16 +438,27 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
         }
     }
 
-    public void onFocusWindowChanged(WindowState lastFocus, WindowState newFocus) {
-        if (this.mNavStarted && newFocus != null && newFocus.getAttrs() != null) {
-            String focusWindowTitle = newFocus.getAttrs().getTitle().toString();
-            this.mHandler.sendMessage(this.mHandler.obtainMessage(5, newFocus.isWindowUsingNotch(), newFocus.getHwGestureNavOptions(), focusWindowTitle));
-        }
-    }
-
     public void onKeyguardShowingChanged(boolean showing) {
         if (this.mNavStarted) {
             this.mHandler.sendMessage(this.mHandler.obtainMessage(6, showing, 0));
+        }
+    }
+
+    public void onFocusWindowChanged(WindowState lastFocus, WindowState newFocus) {
+        if (this.mNavStarted && newFocus != null && newFocus.getAttrs() != null) {
+            this.mHandler.sendMessage(this.mHandler.obtainMessage(5, new FocusWindowState(newFocus.getOwningPackage(), newFocus.getOwningUid(), newFocus.getAttrs().getTitle().toString(), newFocus.isWindowUsingNotch(), newFocus.getHwGestureNavOptions())));
+        }
+    }
+
+    public void setGestureNavMode(String packageName, int uid, int leftMode, int rightMode, int bottomMode) {
+        if (this.mNavStarted) {
+            if (packageName == null) {
+                Log.i(TAG, "packageName is null, return");
+            } else if (leftMode != rightMode) {
+                Log.i(TAG, "leftMode must be equal with right for current version, return");
+            } else {
+                this.mHandler.sendMessage(this.mHandler.obtainMessage(11, new AppGestureNavMode(packageName, uid, leftMode, rightMode, bottomMode)));
+            }
         }
     }
 
@@ -435,7 +501,7 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0013, code:
+    /* JADX WARNING: Missing block: B:11:0x0013, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -458,39 +524,69 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
         }
     }
 
-    private void handleFocusChanged(String focusedWindow, boolean usingNotch, int focusWindowNavOptions) {
+    private void handleFocusChanged(FocusWindowState focusWindowState) {
         synchronized (this.mLock) {
-            this.mFocusWindowTitle = focusedWindow;
+            resetAppGestureNavModeLocked();
+            this.mFocusAppUid = focusWindowState.uid;
+            this.mFocusPackageName = focusWindowState.packageName;
+            this.mFocusWindowTitle = focusWindowState.title;
+            this.mFocusWinNavOptions = focusWindowState.gestureNavOptions;
             this.mInKeyguardMainWindow = isInKeyguardMainWindowLocked();
             if (GestureNavConst.DEBUG) {
                 String str = TAG;
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Focus:");
                 stringBuilder.append(this.mFocusWindowTitle);
+                stringBuilder.append(", Uid=");
+                stringBuilder.append(this.mFocusAppUid);
                 stringBuilder.append(", UN=");
-                stringBuilder.append(usingNotch);
+                stringBuilder.append(focusWindowState.usingNotch);
                 stringBuilder.append(", LUN=");
                 stringBuilder.append(this.mFocusWindowUsingNotch);
                 stringBuilder.append(", FNO=");
-                stringBuilder.append(focusWindowNavOptions);
-                stringBuilder.append(", LFNO=");
                 stringBuilder.append(this.mFocusWinNavOptions);
                 stringBuilder.append(", IKMW=");
                 stringBuilder.append(this.mInKeyguardMainWindow);
+                stringBuilder.append(", pkg:");
+                stringBuilder.append(this.mFocusPackageName);
                 Log.d(str, stringBuilder.toString());
             }
-            this.mFocusWinNavOptions = focusWindowNavOptions;
-            if (this.mFocusWindowUsingNotch != usingNotch) {
-                this.mFocusWindowUsingNotch = usingNotch;
+            if (this.mFocusWindowUsingNotch != focusWindowState.usingNotch) {
+                this.mFocusWindowUsingNotch = focusWindowState.usingNotch;
                 updateConfigLocked();
                 updateNavWindowLocked();
             }
-            updateNavVisibleLocked();
+            updateNavVisibleLocked(this.mLandscape);
+        }
+    }
+
+    private void handleAppGestureNavMode(AppGestureNavMode appGestureNavMode) {
+        synchronized (this.mLock) {
+            if (GestureNavConst.DEBUG) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("AppMode:");
+                stringBuilder.append(appGestureNavMode);
+                Log.d(str, stringBuilder.toString());
+            }
+            if (appGestureNavMode.isFromSameApp(this.mFocusPackageName, this.mFocusAppUid)) {
+                this.mAppGestureNavLeftMode = appGestureNavMode.leftMode;
+                this.mAppGestureNavRightMode = appGestureNavMode.rightMode;
+                this.mAppGestureNavBottomMode = appGestureNavMode.bottomMode;
+                updateNavVisibleLocked();
+                return;
+            }
         }
     }
 
     private void handleKeygaurdStateChanged(boolean showing) {
         synchronized (this.mLock) {
+            if (showing) {
+                try {
+                    resetAppGestureNavModeLocked();
+                } catch (Throwable th) {
+                }
+            }
             this.mKeyguardShowing = showing;
             this.mInKeyguardMainWindow = isInKeyguardMainWindowLocked();
             if (GestureNavConst.DEBUG) {
@@ -611,6 +707,10 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
     }
 
     private void updateNavVisibleLocked() {
+        updateNavVisibleLocked(false);
+    }
+
+    private void updateNavVisibleLocked(boolean delay) {
         if (this.mWindowViewSetuped) {
             boolean showBack = true;
             boolean showBottom = true;
@@ -618,11 +718,11 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
                 showBack = false;
                 showBottom = false;
             } else {
+                if (isFocusWindowBackDisabledLocked()) {
+                    showBack = false;
+                }
                 if (!this.mDeviceProvisioned || !this.mUserSetuped || this.mGuideOrOtaAlive || isFocusWindowBottomDisabledLocked()) {
                     showBottom = false;
-                }
-                if (isSpecialWindowLocked(this.mFocusWindowTitle) || isFocusWindowBackDisabledLocked()) {
-                    showBack = false;
                 }
             }
             if (GestureNavConst.DEBUG) {
@@ -634,29 +734,31 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
                 stringBuilder.append(showBottom);
                 Log.i(str, stringBuilder.toString());
             }
-            enableBackNavLocked(showBack);
-            enableBottomNavLocked(showBottom);
+            enableBackNavLocked(showBack, delay);
+            enableBottomNavLocked(showBottom, delay);
         }
     }
 
-    private void enableBackNavLocked(boolean enable) {
+    private void enableBackNavLocked(boolean enable, boolean delay) {
         if (this.mWindowViewSetuped && this.mNavBackEnabled != enable) {
-            this.mGestureNavLeft.show(enable);
-            this.mGestureNavRight.show(enable);
+            this.mGestureNavLeft.show(enable, delay);
+            this.mGestureNavRight.show(enable, delay);
             this.mNavBackEnabled = enable;
             if (GestureNavConst.DEBUG) {
                 String str = TAG;
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("enableBackNav show:");
                 stringBuilder.append(this.mNavBackEnabled);
+                stringBuilder.append(", delay:");
+                stringBuilder.append(delay);
                 Log.i(str, stringBuilder.toString());
             }
         }
     }
 
-    private void enableBottomNavLocked(boolean enable) {
+    private void enableBottomNavLocked(boolean enable, boolean delay) {
         if (this.mWindowViewSetuped && this.mNavBottomEnabled != enable) {
-            this.mGestureNavBottom.show(enable);
+            this.mGestureNavBottom.show(enable, false);
             this.mNavBottomEnabled = enable;
             if (GestureNavConst.DEBUG) {
                 String str = TAG;
@@ -834,11 +936,39 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
     }
 
     private boolean isFocusWindowBackDisabledLocked() {
-        return (this.mFocusWinNavOptions & HighBitsDetailModeID.MODE_FOLIAGE) != 0;
+        boolean z = false;
+        switch (this.mAppGestureNavLeftMode) {
+            case 1:
+                return false;
+            case 2:
+                return true;
+            default:
+                if (isSpecialWindowLocked(this.mFocusWindowTitle) || (this.mFocusWinNavOptions & HighBitsDetailModeID.MODE_FOLIAGE) != 0) {
+                    z = true;
+                }
+                return z;
+        }
     }
 
     private boolean isFocusWindowBottomDisabledLocked() {
-        return (this.mFocusWinNavOptions & 524288) != 0;
+        boolean z = false;
+        switch (this.mAppGestureNavBottomMode) {
+            case 1:
+                return false;
+            case 2:
+                return true;
+            default:
+                if ((this.mFocusWinNavOptions & 524288) != 0) {
+                    z = true;
+                }
+                return z;
+        }
+    }
+
+    private void resetAppGestureNavModeLocked() {
+        this.mAppGestureNavLeftMode = 0;
+        this.mAppGestureNavRightMode = 0;
+        this.mAppGestureNavBottomMode = 0;
     }
 
     private boolean updateNotchDisplayStateLocked() {
@@ -945,16 +1075,7 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
             stringBuilder.append(" mNotchDisplayDisabled=");
             stringBuilder.append(this.mNotchDisplayDisabled);
             pw.print(stringBuilder.toString());
-            stringBuilder = new StringBuilder();
-            stringBuilder.append(" mFocusWindowUsingNotch=");
-            stringBuilder.append(this.mFocusWindowUsingNotch);
-            pw.print(stringBuilder.toString());
             pw.println();
-            pw.print(prefix);
-            stringBuilder = new StringBuilder();
-            stringBuilder.append("mFocusWindowTitle=");
-            stringBuilder.append(this.mFocusWindowTitle);
-            pw.println(stringBuilder.toString());
             pw.print(prefix);
             stringBuilder = new StringBuilder();
             stringBuilder.append("mHomeWindow=");
@@ -962,12 +1083,35 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
             pw.println(stringBuilder.toString());
             pw.print(prefix);
             stringBuilder = new StringBuilder();
-            stringBuilder.append("mDensityStr=");
-            stringBuilder.append(this.mDensityStr);
+            stringBuilder.append("mFocusWindowTitle=");
+            stringBuilder.append(this.mFocusWindowTitle);
+            pw.println(stringBuilder.toString());
+            pw.print(prefix);
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("mFocusWindowUsingNotch=");
+            stringBuilder.append(this.mFocusWindowUsingNotch);
             pw.print(stringBuilder.toString());
             stringBuilder = new StringBuilder();
             stringBuilder.append(" mFocusWinNavOptions=0x");
             stringBuilder.append(Integer.toHexString(this.mFocusWinNavOptions));
+            pw.print(stringBuilder.toString());
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" mFocusAppUid=");
+            stringBuilder.append(this.mFocusAppUid);
+            pw.print(stringBuilder.toString());
+            pw.println();
+            pw.print(prefix);
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("mAppGestureNavLeftMode=");
+            stringBuilder.append(this.mAppGestureNavLeftMode);
+            pw.print(stringBuilder.toString());
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" mAppGestureNavRightMode=");
+            stringBuilder.append(this.mAppGestureNavRightMode);
+            pw.print(stringBuilder.toString());
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" mAppGestureNavBottomMode=");
+            stringBuilder.append(this.mAppGestureNavBottomMode);
             pw.print(stringBuilder.toString());
             pw.println();
             pw.print(prefix);
@@ -992,6 +1136,10 @@ public class GestureNavManager implements IGestureEventProxy, Monitor {
             stringBuilder = new StringBuilder();
             stringBuilder.append(" mLandscape=");
             stringBuilder.append(this.mLandscape);
+            pw.print(stringBuilder.toString());
+            stringBuilder = new StringBuilder();
+            stringBuilder.append(" mDensityStr=");
+            stringBuilder.append(this.mDensityStr);
             pw.print(stringBuilder.toString());
             if (this.mHasNotch) {
                 stringBuilder = new StringBuilder();

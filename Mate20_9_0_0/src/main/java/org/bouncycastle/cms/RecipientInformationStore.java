@@ -44,12 +44,13 @@ public class RecipientInformationStore implements Iterable<RecipientInformation>
     }
 
     public Collection<Recipient> getRecipients(RecipientId recipientId) {
+        ArrayList arrayList;
         if (recipientId instanceof KeyTransRecipientId) {
             KeyTransRecipientId keyTransRecipientId = (KeyTransRecipientId) recipientId;
             X500Name issuer = keyTransRecipientId.getIssuer();
             byte[] subjectKeyIdentifier = keyTransRecipientId.getSubjectKeyIdentifier();
             if (!(issuer == null || subjectKeyIdentifier == null)) {
-                Collection arrayList = new ArrayList();
+                arrayList = new ArrayList();
                 Collection recipients = getRecipients(new KeyTransRecipientId(issuer, keyTransRecipientId.getSerialNumber()));
                 if (recipients != null) {
                     arrayList.addAll(recipients);
@@ -61,8 +62,8 @@ public class RecipientInformationStore implements Iterable<RecipientInformation>
                 return arrayList;
             }
         }
-        ArrayList arrayList2 = (ArrayList) this.table.get(recipientId);
-        return arrayList2 == null ? new ArrayList() : new ArrayList(arrayList2);
+        arrayList = (ArrayList) this.table.get(recipientId);
+        return arrayList == null ? new ArrayList() : new ArrayList(arrayList);
     }
 
     public Iterator<RecipientInformation> iterator() {

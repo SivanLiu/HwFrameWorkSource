@@ -1,6 +1,7 @@
 package org.bouncycastle.tsp.cms;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,7 +41,7 @@ public class CMSTimeStampedDataParser extends CMSContentInfoParser {
             stringBuilder.append("Malformed content - type must be ");
             stringBuilder.append(CMSObjectIdentifiers.timestampedData.getId());
             throw new IllegalArgumentException(stringBuilder.toString());
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder2 = new StringBuilder();
             stringBuilder2.append("parsing exception: ");
             stringBuilder2.append(e.getMessage());
@@ -57,7 +58,7 @@ public class CMSTimeStampedDataParser extends CMSContentInfoParser {
                 }
                 this.util = new TimeStampDataUtil(this.timeStampedData);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to parse evidence block: ");
             stringBuilder.append(e.getMessage());
@@ -90,7 +91,7 @@ public class CMSTimeStampedDataParser extends CMSContentInfoParser {
         try {
             parseTimeStamps();
             return this.util.getMessageImprintDigestCalculator(digestCalculatorProvider);
-        } catch (Throwable e) {
+        } catch (CMSException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to extract algorithm ID: ");
             stringBuilder.append(e.getMessage());

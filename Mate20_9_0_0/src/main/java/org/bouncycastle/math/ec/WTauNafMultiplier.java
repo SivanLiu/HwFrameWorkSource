@@ -13,7 +13,7 @@ public class WTauNafMultiplier extends AbstractECMultiplier {
         byte byteValue = abstractF2m2.getA().toBigInteger().byteValue();
         if (preCompInfo == null || !(preCompInfo instanceof WTauNafPreCompInfo)) {
             preComp = Tnaf.getPreComp(abstractF2m, byteValue);
-            PreCompInfo wTauNafPreCompInfo = new WTauNafPreCompInfo();
+            WTauNafPreCompInfo wTauNafPreCompInfo = new WTauNafPreCompInfo();
             wTauNafPreCompInfo.setPreComp(preComp);
             abstractF2m2.setPreCompInfo(abstractF2m, PRECOMP_NAME, wTauNafPreCompInfo);
         } else {

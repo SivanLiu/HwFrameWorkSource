@@ -276,119 +276,119 @@ public class Vpn {
             }
         }
 
-        /* JADX WARNING: Missing block: B:58:0x0113, code:
+        /* JADX WARNING: Missing block: B:60:0x0113, code skipped:
             if (r4.exists() != false) goto L_0x014b;
      */
-        /* JADX WARNING: Missing block: B:59:0x0115, code:
+        /* JADX WARNING: Missing block: B:61:0x0115, code skipped:
             r0 = 0;
      */
-        /* JADX WARNING: Missing block: B:61:0x0119, code:
+        /* JADX WARNING: Missing block: B:63:0x0119, code skipped:
             if (r0 >= r1.mDaemons.length) goto L_0x0146;
      */
-        /* JADX WARNING: Missing block: B:62:0x011b, code:
+        /* JADX WARNING: Missing block: B:64:0x011b, code skipped:
             r5 = r1.mDaemons[r0];
      */
-        /* JADX WARNING: Missing block: B:63:0x0123, code:
+        /* JADX WARNING: Missing block: B:65:0x0123, code skipped:
             if (r1.mArguments[r0] == null) goto L_0x0143;
      */
-        /* JADX WARNING: Missing block: B:65:0x0129, code:
+        /* JADX WARNING: Missing block: B:67:0x0129, code skipped:
             if (android.os.SystemService.isRunning(r5) == false) goto L_0x012c;
      */
-        /* JADX WARNING: Missing block: B:66:0x012c, code:
+        /* JADX WARNING: Missing block: B:69:0x012c, code skipped:
             r6 = new java.lang.StringBuilder();
             r6.append(r5);
             r6.append(" is dead");
      */
-        /* JADX WARNING: Missing block: B:67:0x0142, code:
+        /* JADX WARNING: Missing block: B:70:0x0142, code skipped:
             throw new java.lang.IllegalStateException(r6.toString());
      */
-        /* JADX WARNING: Missing block: B:68:0x0143, code:
+        /* JADX WARNING: Missing block: B:71:0x0143, code skipped:
             r0 = r0 + 1;
      */
-        /* JADX WARNING: Missing block: B:69:0x0146, code:
+        /* JADX WARNING: Missing block: B:72:0x0146, code skipped:
             checkInterruptAndDelay(true);
      */
-        /* JADX WARNING: Missing block: B:70:0x014b, code:
+        /* JADX WARNING: Missing block: B:73:0x014b, code skipped:
             r5 = android.os.FileUtils.readTextFile(r4, 0, null).split("\n", -1);
      */
-        /* JADX WARNING: Missing block: B:71:0x015a, code:
+        /* JADX WARNING: Missing block: B:74:0x015a, code skipped:
             if (r5.length != 7) goto L_0x02c8;
      */
-        /* JADX WARNING: Missing block: B:72:0x015c, code:
+        /* JADX WARNING: Missing block: B:75:0x015c, code skipped:
             r1.this$0.mConfig.interfaze = r5[0].trim();
             r1.this$0.mConfig.addLegacyAddresses(r5[1]);
      */
-        /* JADX WARNING: Missing block: B:73:0x0178, code:
+        /* JADX WARNING: Missing block: B:76:0x0178, code skipped:
             if (r1.this$0.mConfig.routes == null) goto L_0x0186;
      */
-        /* JADX WARNING: Missing block: B:75:0x0184, code:
+        /* JADX WARNING: Missing block: B:78:0x0184, code skipped:
             if (r1.this$0.mConfig.routes.isEmpty() == false) goto L_0x0190;
      */
-        /* JADX WARNING: Missing block: B:76:0x0186, code:
+        /* JADX WARNING: Missing block: B:79:0x0186, code skipped:
             r1.this$0.mConfig.addLegacyRoutes(r5[2]);
      */
-        /* JADX WARNING: Missing block: B:78:0x0196, code:
+        /* JADX WARNING: Missing block: B:81:0x0196, code skipped:
             if (r1.this$0.mConfig.dnsServers == null) goto L_0x01a4;
      */
-        /* JADX WARNING: Missing block: B:80:0x01a2, code:
+        /* JADX WARNING: Missing block: B:83:0x01a2, code skipped:
             if (r1.this$0.mConfig.dnsServers.size() != 0) goto L_0x01c1;
      */
-        /* JADX WARNING: Missing block: B:81:0x01a4, code:
+        /* JADX WARNING: Missing block: B:84:0x01a4, code skipped:
             r0 = r5[3].trim();
      */
-        /* JADX WARNING: Missing block: B:82:0x01af, code:
+        /* JADX WARNING: Missing block: B:85:0x01af, code skipped:
             if (r0.isEmpty() != false) goto L_0x01c1;
      */
-        /* JADX WARNING: Missing block: B:83:0x01b1, code:
+        /* JADX WARNING: Missing block: B:86:0x01b1, code skipped:
             r1.this$0.mConfig.dnsServers = java.util.Arrays.asList(r0.split(" "));
      */
-        /* JADX WARNING: Missing block: B:85:0x01c7, code:
+        /* JADX WARNING: Missing block: B:88:0x01c7, code skipped:
             if (r1.this$0.mConfig.searchDomains == null) goto L_0x01d5;
      */
-        /* JADX WARNING: Missing block: B:87:0x01d3, code:
+        /* JADX WARNING: Missing block: B:90:0x01d3, code skipped:
             if (r1.this$0.mConfig.searchDomains.size() != 0) goto L_0x01f2;
      */
-        /* JADX WARNING: Missing block: B:88:0x01d5, code:
+        /* JADX WARNING: Missing block: B:91:0x01d5, code skipped:
             r0 = r5[4].trim();
      */
-        /* JADX WARNING: Missing block: B:89:0x01e0, code:
+        /* JADX WARNING: Missing block: B:92:0x01e0, code skipped:
             if (r0.isEmpty() != false) goto L_0x01f2;
      */
-        /* JADX WARNING: Missing block: B:90:0x01e2, code:
+        /* JADX WARNING: Missing block: B:93:0x01e2, code skipped:
             r1.this$0.mConfig.searchDomains = java.util.Arrays.asList(r0.split(" "));
      */
-        /* JADX WARNING: Missing block: B:91:0x01f2, code:
+        /* JADX WARNING: Missing block: B:94:0x01f2, code skipped:
             r6 = r5[5];
      */
-        /* JADX WARNING: Missing block: B:92:0x01fa, code:
+        /* JADX WARNING: Missing block: B:95:0x01fa, code skipped:
             if (r6.isEmpty() != false) goto L_0x026c;
      */
-        /* JADX WARNING: Missing block: B:94:?, code:
+        /* JADX WARNING: Missing block: B:97:?, code skipped:
             r0 = java.net.InetAddress.parseNumericAddress(r6);
      */
-        /* JADX WARNING: Missing block: B:95:0x0204, code:
+        /* JADX WARNING: Missing block: B:98:0x0204, code skipped:
             if ((r0 instanceof java.net.Inet4Address) == false) goto L_0x021c;
      */
-        /* JADX WARNING: Missing block: B:96:0x0206, code:
+        /* JADX WARNING: Missing block: B:99:0x0206, code skipped:
             r1.this$0.mConfig.routes.add(new android.net.RouteInfo(new android.net.IpPrefix(r0, 32), 9));
      */
-        /* JADX WARNING: Missing block: B:98:0x021e, code:
+        /* JADX WARNING: Missing block: B:101:0x021e, code skipped:
             if ((r0 instanceof java.net.Inet6Address) == false) goto L_0x0236;
      */
-        /* JADX WARNING: Missing block: B:99:0x0220, code:
+        /* JADX WARNING: Missing block: B:102:0x0220, code skipped:
             r1.this$0.mConfig.routes.add(new android.net.RouteInfo(new android.net.IpPrefix(r0, 128), 9));
      */
-        /* JADX WARNING: Missing block: B:100:0x0236, code:
+        /* JADX WARNING: Missing block: B:103:0x0236, code skipped:
             r7 = TAG;
             r9 = new java.lang.StringBuilder();
             r9.append("Unknown IP address family for VPN endpoint: ");
             r9.append(r6);
             android.util.Log.e(r7, r9.toString());
      */
-        /* JADX WARNING: Missing block: B:101:0x024d, code:
+        /* JADX WARNING: Missing block: B:104:0x024d, code skipped:
             r0 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:103:?, code:
+        /* JADX WARNING: Missing block: B:106:?, code skipped:
             r7 = TAG;
             r9 = new java.lang.StringBuilder();
             r9.append("Exception constructing throw route to ");
@@ -397,7 +397,7 @@ public class Vpn {
             r9.append(r0);
             android.util.Log.e(r7, r9.toString());
      */
-        /* JADX WARNING: Missing block: B:118:0x02cf, code:
+        /* JADX WARNING: Missing block: B:122:0x02cf, code skipped:
             throw new java.lang.IllegalStateException("Cannot parse the state");
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -430,7 +430,14 @@ public class Vpn {
                 new File("/data/misc/vpn/abort").delete();
                 boolean restart2 = false;
                 for (String[] arguments2 : this.mArguments) {
-                    boolean z2 = restart2 || arguments2 != null;
+                    boolean z2;
+                    if (!restart2) {
+                        if (arguments2 == null) {
+                            z2 = false;
+                            restart2 = z2;
+                        }
+                    }
+                    z2 = true;
                     restart2 = z2;
                 }
                 if (restart2) {
@@ -592,7 +599,7 @@ public class Vpn {
         this.mLockdown = false;
         this.mBlockedUsers = new ArraySet();
         this.mPackageIntentReceiver = new BroadcastReceiver() {
-            /* JADX WARNING: Missing block: B:29:0x0090, code:
+            /* JADX WARNING: Missing block: B:31:0x0090, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -615,8 +622,10 @@ public class Vpn {
                             int i = -1;
                             int hashCode = action.hashCode();
                             if (hashCode != -810471698) {
-                                if (hashCode == 525384130 && action.equals("android.intent.action.PACKAGE_REMOVED")) {
-                                    i = 1;
+                                if (hashCode == 525384130) {
+                                    if (action.equals("android.intent.action.PACKAGE_REMOVED")) {
+                                        i = 1;
+                                    }
                                 }
                             } else if (action.equals("android.intent.action.PACKAGE_REPLACED")) {
                                 i = false;
@@ -631,6 +640,8 @@ public class Vpn {
                                         break;
                                     }
                                     break;
+                                default:
+                                    break;
                             }
                         }
                     }
@@ -642,8 +653,11 @@ public class Vpn {
             public void interfaceStatusChanged(String interfaze, boolean up) {
                 synchronized (Vpn.this) {
                     if (!up) {
-                        if (Vpn.this.mLegacyVpnRunner != null) {
-                            Vpn.this.mLegacyVpnRunner.check(interfaze);
+                        try {
+                            if (Vpn.this.mLegacyVpnRunner != null) {
+                                Vpn.this.mLegacyVpnRunner.check(interfaze);
+                            }
+                        } finally {
                         }
                     }
                 }
@@ -928,30 +942,30 @@ public class Vpn {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0024, code:
+    /* JADX WARNING: Missing block: B:16:0x0024, code skipped:
             r11 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             ((com.android.server.DeviceIdleController.LocalService) com.android.server.LocalServices.getService(com.android.server.DeviceIdleController.LocalService.class)).addPowerSaveTempWhitelistApp(android.os.Process.myUid(), r0, 60000, r13.mUserHandle, false, "vpn");
             r2 = new android.content.Intent("android.net.VpnService");
             r2.setPackage(r0);
      */
-    /* JADX WARNING: Missing block: B:21:0x0058, code:
+    /* JADX WARNING: Missing block: B:21:0x0058, code skipped:
             if (r13.mContext.startServiceAsUser(r2, android.os.UserHandle.of(r13.mUserHandle)) == null) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:22:0x005b, code:
+    /* JADX WARNING: Missing block: B:22:0x005b, code skipped:
             r9 = false;
      */
-    /* JADX WARNING: Missing block: B:23:0x005c, code:
+    /* JADX WARNING: Missing block: B:23:0x005c, code skipped:
             android.os.Binder.restoreCallingIdentity(r11);
      */
-    /* JADX WARNING: Missing block: B:24:0x005f, code:
+    /* JADX WARNING: Missing block: B:24:0x005f, code skipped:
             return r9;
      */
-    /* JADX WARNING: Missing block: B:25:0x0060, code:
+    /* JADX WARNING: Missing block: B:25:0x0060, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:27:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("VpnService ");
@@ -959,19 +973,19 @@ public class Vpn {
             r5.append(" failed to start");
             android.util.Log.e(r4, r5.toString(), r3);
      */
-    /* JADX WARNING: Missing block: B:28:0x007c, code:
+    /* JADX WARNING: Missing block: B:28:0x007c, code skipped:
             android.os.Binder.restoreCallingIdentity(r11);
      */
-    /* JADX WARNING: Missing block: B:29:0x0080, code:
+    /* JADX WARNING: Missing block: B:29:0x0080, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:30:0x0081, code:
+    /* JADX WARNING: Missing block: B:30:0x0081, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:0x0082, code:
+    /* JADX WARNING: Missing block: B:31:0x0082, code skipped:
             android.os.Binder.restoreCallingIdentity(r11);
      */
-    /* JADX WARNING: Missing block: B:32:0x0085, code:
+    /* JADX WARNING: Missing block: B:32:0x0085, code skipped:
             throw r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -996,10 +1010,10 @@ public class Vpn {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x002b, code:
+    /* JADX WARNING: Missing block: B:21:0x002b, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:50:0x006b, code:
+    /* JADX WARNING: Missing block: B:51:0x006b, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1257,7 +1271,7 @@ public class Vpn {
         this.mNetworkCapabilities.setUids(createUserAndRestrictedProfilesRanges(this.mUserHandle, this.mConfig.allowedApplications, this.mConfig.disallowedApplications));
         long token2 = Binder.clearCallingIdentity();
         try {
-            NetworkAgent anonymousClass2 = anonymousClass2;
+            AnonymousClass2 anonymousClass2 = anonymousClass2;
             long token3 = token2;
             try {
                 this.mNetworkAgent = new NetworkAgent(this, this.mLooper, this.mContext, NETWORKTYPE, this.mNetworkInfo, this.mNetworkCapabilities, lp, 101, networkMisc) {
@@ -1362,6 +1376,14 @@ public class Vpn {
                                     user = e;
                                     userManager = mgr;
                                     intent2 = intent;
+                                    IoUtils.closeQuietly(tun);
+                                    agentDisconnect();
+                                    this.mConfig = info2;
+                                    this.mConnection = oldConnection;
+                                    this.mNetworkCapabilities.setUids(oldUsers);
+                                    this.mNetworkAgent = oldNetworkAgent;
+                                    this.mInterface = oldInterface;
+                                    throw user;
                                 }
                             }
                             if (jniSetAddresses(interfaze, builder.toString()) >= 1) {
@@ -1646,24 +1668,6 @@ public class Vpn {
         setAllowOnlyVpnForUids(true, addedRanges);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0028 A:{Splitter: B:4:0x0014, ExcHandler: android.os.RemoteException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:10:0x0028, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:11:0x0029, code:
-            r2 = TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("Updating blocked=");
-            r3.append(r6);
-            r3.append(" for UIDs ");
-            r3.append(java.util.Arrays.toString(r7.toArray()));
-            r3.append(" failed");
-            android.util.Log.e(r2, r3.toString(), r1);
-     */
-    /* JADX WARNING: Missing block: B:12:0x0055, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("this")
     private boolean setAllowOnlyVpnForUids(boolean enforce, Collection<UidRange> ranges) {
         if (ranges.size() == 0) {
@@ -1677,7 +1681,16 @@ public class Vpn {
                 this.mBlockedUsers.removeAll(ranges);
             }
             return true;
-        } catch (Exception e) {
+        } catch (RemoteException | RuntimeException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Updating blocked=");
+            stringBuilder.append(enforce);
+            stringBuilder.append(" for UIDs ");
+            stringBuilder.append(Arrays.toString(ranges.toArray()));
+            stringBuilder.append(" failed");
+            Log.e(str, stringBuilder.toString(), e);
+            return false;
         }
     }
 
@@ -1784,7 +1797,7 @@ public class Vpn {
             return false;
         }
         if (this.mNetworkInfo.isConnected()) {
-            return appliesToUid(uid) ^ true;
+            return appliesToUid(uid) ^ 1;
         }
         for (UidRange uidRange : this.mBlockedUsers) {
             if (uidRange.contains(uid)) {
@@ -1805,7 +1818,7 @@ public class Vpn {
                 intent.setComponent(ComponentName.unflattenFromString(this.mContext.getString(17039777)));
                 intent.putExtra("lockdown", this.mLockdown);
                 intent.addFlags(268435456);
-                notificationManager.notifyAsUser(TAG, 17, new Builder(this.mContext, SystemNotificationChannels.VPN).setSmallIcon(17303738).setContentTitle(this.mContext.getString(17041339)).setContentText(this.mContext.getString(17041336)).setContentIntent(this.mSystemServices.pendingIntentGetActivityAsUser(intent, 201326592, user)).setCategory("sys").setVisibility(1).setOngoing(true).setColor(this.mContext.getColor(17170784)).build(), user);
+                notificationManager.notifyAsUser(TAG, 17, new Builder(this.mContext, SystemNotificationChannels.VPN).setSmallIcon(17303738).setContentTitle(this.mContext.getString(17041340)).setContentText(this.mContext.getString(17041337)).setContentIntent(this.mSystemServices.pendingIntentGetActivityAsUser(intent, 201326592, user)).setCategory("sys").setVisibility(1).setOngoing(true).setColor(this.mContext.getColor(17170784)).build(), user);
                 Binder.restoreCallingIdentity(token);
                 return;
             }
@@ -1969,7 +1982,7 @@ public class Vpn {
         return getLegacyVpnInfoPrivileged();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0028, code:
+    /* JADX WARNING: Missing block: B:12:0x0028, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

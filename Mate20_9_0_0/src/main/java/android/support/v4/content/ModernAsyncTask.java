@@ -123,14 +123,14 @@ abstract class ModernAsyncTask<Params, Progress, Result> {
     protected abstract Result doInBackground(Params... paramsArr);
 
     private static Handler getHandler() {
-        Handler handler;
+        InternalHandler internalHandler;
         synchronized (ModernAsyncTask.class) {
             if (sHandler == null) {
                 sHandler = new InternalHandler();
             }
-            handler = sHandler;
+            internalHandler = sHandler;
         }
-        return handler;
+        return internalHandler;
     }
 
     @RestrictTo({Scope.LIBRARY_GROUP})

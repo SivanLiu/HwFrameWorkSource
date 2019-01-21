@@ -429,11 +429,11 @@ public final class ColorDisplayService extends SystemService implements Callback
             dtm.setColorMatrix(100, to);
             return;
         }
-        TypeEvaluator typeEvaluator = COLOR_MATRIX_EVALUATOR;
+        ColorMatrixEvaluator colorMatrixEvaluator = COLOR_MATRIX_EVALUATOR;
         Object[] objArr = new Object[2];
         objArr[0] = from == null ? MATRIX_IDENTITY : from;
         objArr[1] = to;
-        this.mColorMatrixAnimator = ValueAnimator.ofObject(typeEvaluator, objArr);
+        this.mColorMatrixAnimator = ValueAnimator.ofObject(colorMatrixEvaluator, objArr);
         this.mColorMatrixAnimator.setDuration(TRANSITION_DURATION);
         this.mColorMatrixAnimator.setInterpolator(AnimationUtils.loadInterpolator(getContext(), 17563661));
         this.mColorMatrixAnimator.addUpdateListener(new AnimatorUpdateListener() {

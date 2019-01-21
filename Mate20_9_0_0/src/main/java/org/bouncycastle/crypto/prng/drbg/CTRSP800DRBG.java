@@ -43,16 +43,16 @@ public class CTRSP800DRBG implements SP80090DRBG {
 
     private void BCC(byte[] bArr, byte[] bArr2, byte[] bArr3, byte[] bArr4) {
         int blockSize = this._engine.getBlockSize();
-        Object obj = new byte[blockSize];
-        int length = bArr4.length / blockSize;
         byte[] bArr5 = new byte[blockSize];
+        int length = bArr4.length / blockSize;
+        byte[] bArr6 = new byte[blockSize];
         this._engine.init(true, new KeyParameter(expandKey(bArr2)));
-        this._engine.processBlock(bArr3, 0, obj, 0);
+        this._engine.processBlock(bArr3, 0, bArr5, 0);
         for (int i = 0; i < length; i++) {
-            XOR(bArr5, obj, bArr4, i * blockSize);
-            this._engine.processBlock(bArr5, 0, obj, 0);
+            XOR(bArr6, bArr5, bArr4, i * blockSize);
+            this._engine.processBlock(bArr6, 0, bArr5, 0);
         }
-        System.arraycopy(obj, 0, bArr, 0, bArr.length);
+        System.arraycopy(bArr5, 0, bArr, 0, bArr.length);
     }
 
     private byte[] Block_Cipher_df(byte[] bArr, int i) {
@@ -60,40 +60,40 @@ public class CTRSP800DRBG implements SP80090DRBG {
         int length = bArr.length;
         i /= 8;
         int i2 = 8 + length;
-        Object obj = new byte[(((((i2 + 1) + blockSize) - 1) / blockSize) * blockSize)];
-        copyIntToByteArray(obj, length, 0);
-        copyIntToByteArray(obj, i, 4);
-        System.arraycopy(bArr, 0, obj, 8, length);
-        obj[i2] = Byte.MIN_VALUE;
-        Object obj2 = new byte[((this._keySizeInBits / 8) + blockSize)];
-        Object obj3 = new byte[blockSize];
-        byte[] bArr2 = new byte[blockSize];
-        Object obj4 = new byte[(this._keySizeInBits / 8)];
-        System.arraycopy(K_BITS, 0, obj4, 0, obj4.length);
+        byte[] bArr2 = new byte[(((((i2 + 1) + blockSize) - 1) / blockSize) * blockSize)];
+        copyIntToByteArray(bArr2, length, 0);
+        copyIntToByteArray(bArr2, i, 4);
+        System.arraycopy(bArr, 0, bArr2, 8, length);
+        bArr2[i2] = Byte.MIN_VALUE;
+        bArr = new byte[((this._keySizeInBits / 8) + blockSize)];
+        byte[] bArr3 = new byte[blockSize];
+        byte[] bArr4 = new byte[blockSize];
+        byte[] bArr5 = new byte[(this._keySizeInBits / 8)];
+        System.arraycopy(K_BITS, 0, bArr5, 0, bArr5.length);
         int i3 = 0;
         while (true) {
             int i4 = i3 * blockSize;
             if (i4 * 8 >= this._keySizeInBits + (blockSize * 8)) {
                 break;
             }
-            copyIntToByteArray(bArr2, i3, 0);
-            BCC(obj3, obj4, bArr2, obj);
-            System.arraycopy(obj3, 0, obj2, i4, obj2.length - i4 > blockSize ? blockSize : obj2.length - i4);
+            copyIntToByteArray(bArr4, i3, 0);
+            BCC(bArr3, bArr5, bArr4, bArr2);
+            System.arraycopy(bArr3, 0, bArr, i4, bArr.length - i4 > blockSize ? blockSize : bArr.length - i4);
             i3++;
         }
-        obj3 = new byte[blockSize];
-        System.arraycopy(obj2, 0, obj4, 0, obj4.length);
-        System.arraycopy(obj2, obj4.length, obj3, 0, obj3.length);
-        obj2 = new byte[i];
-        this._engine.init(true, new KeyParameter(expandKey(obj4)));
+        bArr3 = new byte[blockSize];
+        System.arraycopy(bArr, 0, bArr5, 0, bArr5.length);
+        System.arraycopy(bArr, bArr5.length, bArr3, 0, bArr3.length);
+        bArr = new byte[i];
+        this._engine.init(true, new KeyParameter(expandKey(bArr5)));
         i = 0;
         while (true) {
             int i5 = i * blockSize;
-            if (i5 >= obj2.length) {
-                return obj2;
+            if (i5 >= bArr.length) {
+                return bArr;
             }
-            this._engine.processBlock(obj3, 0, obj3, 0);
-            System.arraycopy(obj3, 0, obj2, i5, obj2.length - i5 > blockSize ? blockSize : obj2.length - i5);
+            this._engine.processBlock(bArr3, 0, bArr3, 0);
+            System.arraycopy(bArr3, 0, bArr, i5, bArr.length - i5 > blockSize ? blockSize : bArr.length - i5);
             i++;
         }
     }
@@ -113,8 +113,8 @@ public class CTRSP800DRBG implements SP80090DRBG {
     }
 
     private void CTR_DRBG_Update(byte[] bArr, byte[] bArr2, byte[] bArr3) {
-        Object obj = new byte[bArr.length];
-        Object obj2 = new byte[this._engine.getBlockSize()];
+        byte[] bArr4 = new byte[bArr.length];
+        byte[] bArr5 = new byte[this._engine.getBlockSize()];
         int blockSize = this._engine.getBlockSize();
         this._engine.init(true, new KeyParameter(expandKey(bArr2)));
         int i = 0;
@@ -122,13 +122,13 @@ public class CTRSP800DRBG implements SP80090DRBG {
             int i2 = i * blockSize;
             if (i2 < bArr.length) {
                 addOneTo(bArr3);
-                this._engine.processBlock(bArr3, 0, obj2, 0);
-                System.arraycopy(obj2, 0, obj, i2, obj.length - i2 > blockSize ? blockSize : obj.length - i2);
+                this._engine.processBlock(bArr3, 0, bArr5, 0);
+                System.arraycopy(bArr5, 0, bArr4, i2, bArr4.length - i2 > blockSize ? blockSize : bArr4.length - i2);
                 i++;
             } else {
-                XOR(obj, bArr, obj, 0);
-                System.arraycopy(obj, 0, bArr2, 0, bArr2.length);
-                System.arraycopy(obj, bArr2.length, bArr3, 0, bArr3.length);
+                XOR(bArr4, bArr, bArr4, 0);
+                System.arraycopy(bArr4, 0, bArr2, 0, bArr2.length);
+                System.arraycopy(bArr4, bArr2.length, bArr3, 0, bArr3.length);
                 return;
             }
         }
@@ -234,14 +234,14 @@ public class CTRSP800DRBG implements SP80090DRBG {
         } else {
             bArr2 = new byte[this._seedLength];
         }
-        Object obj = new byte[this._V.length];
+        byte[] bArr3 = new byte[this._V.length];
         this._engine.init(true, new KeyParameter(expandKey(this._Key)));
-        for (int i = 0; i <= bArr.length / obj.length; i++) {
-            int length = bArr.length - (obj.length * i) > obj.length ? obj.length : bArr.length - (this._V.length * i);
+        for (int i = 0; i <= bArr.length / bArr3.length; i++) {
+            int length = bArr.length - (bArr3.length * i) > bArr3.length ? bArr3.length : bArr.length - (this._V.length * i);
             if (length != 0) {
                 addOneTo(this._V);
-                this._engine.processBlock(this._V, 0, obj, 0);
-                System.arraycopy(obj, 0, bArr, obj.length * i, length);
+                this._engine.processBlock(this._V, 0, bArr3, 0);
+                System.arraycopy(bArr3, 0, bArr, bArr3.length * i, length);
             }
         }
         CTR_DRBG_Update(bArr2, this._Key, this._V);

@@ -49,7 +49,7 @@ public abstract class DERGenerator extends ASN1Generator {
             int i2 = this._tagNo | 128;
             if (this._isExplicit) {
                 i2 = (this._tagNo | 32) | 128;
-                OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 writeDEREncoded(byteArrayOutputStream, i, bArr);
                 outputStream = this._out;
                 bArr = byteArrayOutputStream.toByteArray();

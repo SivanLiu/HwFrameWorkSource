@@ -9,11 +9,13 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashSet;
 import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -110,32 +112,32 @@ public abstract class JceKeyAgreeRecipient implements KeyAgreeRecipient {
         return createCipher.unwrap(bArr, this.helper.getBaseCipherName(aSN1ObjectIdentifier2), 3);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x00e5 A:{Splitter: B:0:0x0000, ExcHandler: java.security.NoSuchAlgorithmException (r9_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x00d3 A:{Splitter: B:0:0x0000, ExcHandler: java.security.spec.InvalidKeySpecException (r9_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x00ca A:{Splitter: B:0:0x0000, ExcHandler: javax.crypto.NoSuchPaddingException (r9_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x00c1 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.Exception (r9_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x00c1, code:
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x00e5 A:{Splitter:B:0:0x0000, ExcHandler: NoSuchAlgorithmException (r9_7 'e' java.security.NoSuchAlgorithmException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x00d3 A:{Splitter:B:0:0x0000, ExcHandler: InvalidKeySpecException (r9_5 'e' java.security.spec.InvalidKeySpecException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x00ca A:{Splitter:B:0:0x0000, ExcHandler: NoSuchPaddingException (r9_4 'e' javax.crypto.NoSuchPaddingException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:19:0x00c1 A:{Splitter:B:0:0x0000, ExcHandler: Exception (r9_3 'e' java.lang.Exception)} */
+    /* JADX WARNING: Missing block: B:19:0x00c1, code skipped:
             r9 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:20:0x00c9, code:
+    /* JADX WARNING: Missing block: B:21:0x00c9, code skipped:
             throw new org.bouncycastle.cms.CMSException("originator key invalid.", r9);
      */
-    /* JADX WARNING: Missing block: B:21:0x00ca, code:
+    /* JADX WARNING: Missing block: B:22:0x00ca, code skipped:
             r9 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:23:0x00d2, code:
+    /* JADX WARNING: Missing block: B:24:0x00d2, code skipped:
             throw new org.bouncycastle.cms.CMSException("required padding not supported.", r9);
      */
-    /* JADX WARNING: Missing block: B:24:0x00d3, code:
+    /* JADX WARNING: Missing block: B:25:0x00d3, code skipped:
             r9 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:26:0x00db, code:
+    /* JADX WARNING: Missing block: B:27:0x00db, code skipped:
             throw new org.bouncycastle.cms.CMSException("originator key spec invalid.", r9);
      */
-    /* JADX WARNING: Missing block: B:30:0x00e5, code:
+    /* JADX WARNING: Missing block: B:31:0x00e5, code skipped:
             r9 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:32:0x00ed, code:
+    /* JADX WARNING: Missing block: B:33:0x00ed, code skipped:
             throw new org.bouncycastle.cms.CMSException("can't find algorithm.", r9);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -145,9 +147,11 @@ public abstract class JceKeyAgreeRecipient implements KeyAgreeRecipient {
         try {
             instance = AlgorithmIdentifier.getInstance(algorithmIdentifier.getParameters());
             generatePublic = this.helper.createKeyFactory(subjectPublicKeyInfo.getAlgorithm().getAlgorithm()).generatePublic(new X509EncodedKeySpec(subjectPublicKeyInfo.getEncoded()));
-            Key calculateAgreedWrapKey = calculateAgreedWrapKey(algorithmIdentifier, instance, generatePublic, aSN1OctetString, this.recipientKey, ecc_cms_Generator);
-            if (!instance.getAlgorithm().equals(CryptoProObjectIdentifiers.id_Gost28147_89_None_KeyWrap) && !instance.getAlgorithm().equals(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_KeyWrap)) {
-                return unwrapSessionKey(instance.getAlgorithm(), calculateAgreedWrapKey, algorithmIdentifier2.getAlgorithm(), bArr);
+            SecretKey calculateAgreedWrapKey = calculateAgreedWrapKey(algorithmIdentifier, instance, generatePublic, aSN1OctetString, this.recipientKey, ecc_cms_Generator);
+            if (!instance.getAlgorithm().equals(CryptoProObjectIdentifiers.id_Gost28147_89_None_KeyWrap)) {
+                if (!instance.getAlgorithm().equals(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_KeyWrap)) {
+                    return unwrapSessionKey(instance.getAlgorithm(), calculateAgreedWrapKey, algorithmIdentifier2.getAlgorithm(), bArr);
+                }
             }
             Gost2814789EncryptedKey instance2 = Gost2814789EncryptedKey.getInstance(bArr);
             Gost2814789KeyWrapParameters instance3 = Gost2814789KeyWrapParameters.getInstance(instance.getParameters());
@@ -159,11 +163,11 @@ public abstract class JceKeyAgreeRecipient implements KeyAgreeRecipient {
                 return unwrapSessionKey(instance.getAlgorithm(), calculateAgreedWrapKey(algorithmIdentifier, instance, generatePublic, aSN1OctetString, this.recipientKey, old_ecc_cms_Generator), algorithmIdentifier2.getAlgorithm(), bArr);
             }
             throw e;
-        } catch (Exception e2) {
-        } catch (Exception e3) {
-        } catch (Exception e4) {
+        } catch (NoSuchAlgorithmException e2) {
+        } catch (InvalidKeySpecException e3) {
+        } catch (NoSuchPaddingException e4) {
         } catch (Exception e5) {
-        } catch (Exception e6) {
+        } catch (InvalidKeyException e6) {
             throw new CMSException("key invalid in message.", e6);
         }
     }

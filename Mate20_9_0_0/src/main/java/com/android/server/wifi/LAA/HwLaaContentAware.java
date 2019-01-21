@@ -289,16 +289,18 @@ public class HwLaaContentAware {
 
     private synchronized String getForegroundActivity() {
         List<RunningTaskInfo> runningTaskInfos = this.mActivityManager.getRunningTasks(1);
-        if (runningTaskInfos == null || runningTaskInfos.isEmpty()) {
-            HwLaaUtils.logD(TAG, "running task is null, ams is abnormal!!!");
-            return null;
+        if (runningTaskInfos != null) {
+            if (!runningTaskInfos.isEmpty()) {
+                RunningTaskInfo mRunningTask = (RunningTaskInfo) runningTaskInfos.get(0);
+                if (mRunningTask == null) {
+                    HwLaaUtils.logD(TAG, "failed to get RunningTaskInfo");
+                    return null;
+                }
+                return mRunningTask.topActivity.getPackageName();
+            }
         }
-        RunningTaskInfo mRunningTask = (RunningTaskInfo) runningTaskInfos.get(0);
-        if (mRunningTask == null) {
-            HwLaaUtils.logD(TAG, "failed to get RunningTaskInfo");
-            return null;
-        }
-        return mRunningTask.topActivity.getPackageName();
+        HwLaaUtils.logD(TAG, "running task is null, ams is abnormal!!!");
+        return null;
     }
 
     private void registerProcessObserver() {

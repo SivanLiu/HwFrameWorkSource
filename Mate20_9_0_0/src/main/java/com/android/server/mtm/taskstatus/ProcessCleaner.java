@@ -398,37 +398,8 @@ public class ProcessCleaner {
                                                         hasPerceptAlarm = hasPerceptAlarm3;
                                                         try {
                                                             map = alarmTagMap2;
-                                                            try {
-                                                                targetUid3 = targetUid;
-                                                                try {
-                                                                    if (appMngSort.isGroupBeHigher(info.mPid, info.mProcInfo.mUid, info.mProcInfo.mProcessName, info.mProcInfo.mPackageName, info.mMemGroup)) {
-                                                                        pidCantStop2.add(Integer.valueOf(info.mPid));
-                                                                    }
-                                                                } catch (Throwable th4) {
-                                                                    pidCantStop = th4;
-                                                                    z = quickKillAction;
-                                                                    awareAppMngSort = appMngSort;
-                                                                    hwActivityManagerService = targetUid2;
-                                                                    list = pidsWithNotification3;
-                                                                    list2 = dfxDataList;
-                                                                    while (true) {
-                                                                        break;
-                                                                    }
-                                                                    throw pidCantStop;
-                                                                }
-                                                            } catch (Throwable th5) {
-                                                                pidCantStop = th5;
-                                                                z = quickKillAction;
-                                                                awareAppMngSort = appMngSort;
-                                                                hwActivityManagerService = targetUid2;
-                                                                i = targetUid;
-                                                                list = pidsWithNotification3;
-                                                                targetUid = dfxDataList;
-                                                                isCleanAllRes3 = isCleanAllRes;
-                                                                isCleanUidActivity = hasPerceptAlarm;
-                                                            }
-                                                        } catch (Throwable th6) {
-                                                            pidCantStop = th6;
+                                                        } catch (Throwable th4) {
+                                                            pidCantStop = th4;
                                                             map = alarmTagMap2;
                                                             z = quickKillAction;
                                                             awareAppMngSort = appMngSort;
@@ -438,9 +409,13 @@ public class ProcessCleaner {
                                                             targetUid = dfxDataList;
                                                             isCleanAllRes3 = isCleanAllRes;
                                                             isCleanUidActivity = hasPerceptAlarm;
+                                                            while (true) {
+                                                                break;
+                                                            }
+                                                            throw pidCantStop;
                                                         }
-                                                    } catch (Throwable th7) {
-                                                        pidCantStop = th7;
+                                                    } catch (Throwable th5) {
+                                                        pidCantStop = th5;
                                                         map = alarmTagMap2;
                                                         z = quickKillAction;
                                                         isCleanUidActivity = hasPerceptAlarm3;
@@ -450,13 +425,49 @@ public class ProcessCleaner {
                                                         list = pidsWithNotification3;
                                                         targetUid = dfxDataList;
                                                         isCleanAllRes3 = isCleanAllRes;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw pidCantStop;
                                                     }
-                                                } else {
-                                                    z2 = isCleanUidActivity;
-                                                    hasPerceptAlarm = hasPerceptAlarm3;
-                                                    map = alarmTagMap2;
-                                                    targetUid3 = targetUid;
+                                                    try {
+                                                        targetUid3 = targetUid;
+                                                        try {
+                                                            if (appMngSort.isGroupBeHigher(info.mPid, info.mProcInfo.mUid, info.mProcInfo.mProcessName, info.mProcInfo.mPackageName, info.mMemGroup)) {
+                                                                pidCantStop2.add(Integer.valueOf(info.mPid));
+                                                            }
+                                                        } catch (Throwable th6) {
+                                                            pidCantStop = th6;
+                                                            z = quickKillAction;
+                                                            awareAppMngSort = appMngSort;
+                                                            hwActivityManagerService = targetUid2;
+                                                            list = pidsWithNotification3;
+                                                            list2 = dfxDataList;
+                                                            while (true) {
+                                                                break;
+                                                            }
+                                                            throw pidCantStop;
+                                                        }
+                                                    } catch (Throwable th7) {
+                                                        pidCantStop = th7;
+                                                        z = quickKillAction;
+                                                        awareAppMngSort = appMngSort;
+                                                        hwActivityManagerService = targetUid2;
+                                                        i = targetUid;
+                                                        list = pidsWithNotification3;
+                                                        targetUid = dfxDataList;
+                                                        isCleanAllRes3 = isCleanAllRes;
+                                                        isCleanUidActivity = hasPerceptAlarm;
+                                                        while (true) {
+                                                            break;
+                                                        }
+                                                        throw pidCantStop;
+                                                    }
                                                 }
+                                                z2 = isCleanUidActivity;
+                                                hasPerceptAlarm = hasPerceptAlarm3;
+                                                map = alarmTagMap2;
+                                                targetUid3 = targetUid;
                                                 it = it2;
                                                 isCleanAllRes3 = isCleanAllRes;
                                                 isCleanUidActivity = z2;
@@ -566,6 +577,10 @@ public class ProcessCleaner {
                                             pidCantStop = th11;
                                             z = quickKillAction;
                                             hwActivityManagerService = targetUid2;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw pidCantStop;
                                         }
                                     }
                                     boolean killResult = false;
@@ -587,6 +602,10 @@ public class ProcessCleaner {
                                             isCleanAllRes3 = isCleanAllRes;
                                             isCleanUidActivity = hasPerceptAlarm;
                                             i = targetUid3;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw pidCantStop;
                                         }
                                         try {
                                             killProcessSameUid(info.mPid, info.getRestartFlag(), isAsynchronous, reason2, true);
@@ -599,31 +618,39 @@ public class ProcessCleaner {
                                             list = pidsWithNotification;
                                             isCleanAllRes3 = isCleanAllRes;
                                             i = targetUid3;
-                                        }
-                                    } else {
-                                        awareAppMngSort = appMngSort;
-                                        hwActivityManagerService = targetUid2;
-                                        it3 = pidsWithNotification4;
-                                        pidsWithNotification = pidsWithNotification3;
-                                        hasPerceptAlarm2 = hasPerceptAlarm;
-                                        AwareProcessInfo info4 = info;
-                                        try {
-                                            if (pidCantStop2.contains(Integer.valueOf(info4.mPid))) {
-                                                pidCantStop3 = pidCantStop2;
-                                                pidCantStop2 = info4;
-                                            } else {
-                                                pidCantStop3 = pidCantStop2;
-                                                pidCantStop2 = info4;
-                                                killResult = killProcessSameUid(info4.mPid, info4.getRestartFlag(), isAsynchronous, reason2, null);
-                                            }
-                                        } catch (Throwable th14) {
-                                            pidCantStop = th14;
-                                            i = targetUid3;
-                                            z = quickKillAction;
-                                            list = pidsWithNotification;
-                                            isCleanAllRes3 = isCleanAllRes;
                                             isCleanUidActivity = hasPerceptAlarm2;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw pidCantStop;
                                         }
+                                    }
+                                    awareAppMngSort = appMngSort;
+                                    hwActivityManagerService = targetUid2;
+                                    it3 = pidsWithNotification4;
+                                    pidsWithNotification = pidsWithNotification3;
+                                    hasPerceptAlarm2 = hasPerceptAlarm;
+                                    AwareProcessInfo info4 = info;
+                                    try {
+                                        if (pidCantStop2.contains(Integer.valueOf(info4.mPid))) {
+                                            pidCantStop3 = pidCantStop2;
+                                            pidCantStop2 = info4;
+                                        } else {
+                                            pidCantStop3 = pidCantStop2;
+                                            pidCantStop2 = info4;
+                                            killResult = killProcessSameUid(info4.mPid, info4.getRestartFlag(), isAsynchronous, reason2, null);
+                                        }
+                                    } catch (Throwable th14) {
+                                        pidCantStop = th14;
+                                        i = targetUid3;
+                                        z = quickKillAction;
+                                        list = pidsWithNotification;
+                                        isCleanAllRes3 = isCleanAllRes;
+                                        isCleanUidActivity = hasPerceptAlarm2;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw pidCantStop;
                                     }
                                     if (killResult) {
                                         killList.add(Integer.valueOf(pidCantStop2.mPid));
@@ -671,6 +698,10 @@ public class ProcessCleaner {
                                                     isCleanAllRes3 = isCleanAllRes;
                                                     isCleanUidActivity = hasPerceptAlarm2;
                                                     dfxDataList2 = quickKillAction;
+                                                    while (true) {
+                                                        break;
+                                                    }
+                                                    throw pidCantStop;
                                                 }
                                             }
                                             z2 = isCleanUidActivity;
@@ -734,6 +765,10 @@ public class ProcessCleaner {
                                     list = pidsWithNotification3;
                                     isCleanAllRes3 = isCleanAllRes;
                                     isCleanUidActivity = hasPerceptAlarm;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw pidCantStop;
                                 }
                             } catch (Throwable th19) {
                                 pidCantStop = th19;
@@ -743,6 +778,10 @@ public class ProcessCleaner {
                                 list = pidsWithNotification3;
                                 isCleanUidActivity = hasPerceptAlarm;
                                 i = targetUid3;
+                                while (true) {
+                                    break;
+                                }
+                                throw pidCantStop;
                             }
                         }
                         pidCantStop3 = pidCantStop2;

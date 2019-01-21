@@ -64,13 +64,13 @@ public class PortalDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x00d1, code:
+    /* JADX WARNING: Missing block: B:29:0x00d1, code skipped:
             if (r1 != null) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:30:?, code:
+    /* JADX WARNING: Missing block: B:31:?, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:35:0x00e2, code:
+    /* JADX WARNING: Missing block: B:36:0x00e2, code skipped:
             if (r1 == null) goto L_0x00ee;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -126,16 +126,10 @@ public class PortalDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x007d, code:
+    /* JADX WARNING: Missing block: B:27:0x007d, code skipped:
             if (r0 == null) goto L_0x00a6;
      */
-    /* JADX WARNING: Missing block: B:29:?, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:34:0x008e, code:
-            if (r0 == null) goto L_0x00a6;
-     */
-    /* JADX WARNING: Missing block: B:37:0x009a, code:
+    /* JADX WARNING: Missing block: B:38:0x009a, code skipped:
             if (r0 == null) goto L_0x00a6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -166,6 +160,9 @@ public class PortalDataBaseManager {
                 } catch (SQLiteException e2) {
                     try {
                         Log.w(TAG, "syncQueryStarndardPortalNetwork, SQLiteException happened");
+                        if (cursor != null) {
+                            cursor.close();
+                        }
                     } catch (Throwable th) {
                         if (cursor != null) {
                             cursor.close();
@@ -176,19 +173,19 @@ public class PortalDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0025, code:
+    /* JADX WARNING: Missing block: B:17:0x0025, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:37:0x00bc, code:
+    /* JADX WARNING: Missing block: B:38:0x00bc, code skipped:
             if (r1 != null) goto L_0x00be;
      */
-    /* JADX WARNING: Missing block: B:39:?, code:
+    /* JADX WARNING: Missing block: B:40:?, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:44:0x00cb, code:
+    /* JADX WARNING: Missing block: B:45:0x00cb, code skipped:
             if (r1 == null) goto L_0x00d7;
      */
-    /* JADX WARNING: Missing block: B:53:0x00d8, code:
+    /* JADX WARNING: Missing block: B:54:0x00d8, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -247,13 +244,13 @@ public class PortalDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0046, code:
+    /* JADX WARNING: Missing block: B:21:0x0046, code skipped:
             if (r2 == null) goto L_0x0061;
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:28:0x0055, code:
+    /* JADX WARNING: Missing block: B:28:0x0055, code skipped:
             if (r2 == null) goto L_0x0061;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

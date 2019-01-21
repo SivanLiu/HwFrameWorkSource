@@ -104,7 +104,7 @@ public final class Twofish {
 
     public static class PBEWithSHA extends BaseBlockCipher {
         public PBEWithSHA() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new TwofishEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new TwofishEngine());
             super(cBCBlockCipher, 2, 1, 256, 16);
         }
     }

@@ -376,7 +376,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
             if (this.mDidBlockInteraction) {
                 return true;
             }
-            boolean blocksInteractionBelow = this.mDidBlockInteraction | (this.mBehavior != null ? this.mBehavior.blocksInteractionBelow(parent, child) : 0);
+            int blocksInteractionBelow = this.mDidBlockInteraction | (this.mBehavior != null ? this.mBehavior.blocksInteractionBelow(parent, child) : 0);
             this.mDidBlockInteraction = blocksInteractionBelow;
             return blocksInteractionBelow;
         }
@@ -874,7 +874,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
         return intercepted;
     }
 
-    /* JADX WARNING: Missing block: B:3:0x0015, code:
+    /* JADX WARNING: Missing block: B:3:0x0015, code skipped:
             if (r6 != false) goto L_0x0017;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1065,7 +1065,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
         measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
     }
 
-    /* JADX WARNING: Missing block: B:43:0x0138, code:
+    /* JADX WARNING: Missing block: B:43:0x0138, code skipped:
             if (r29.onMeasureChild(r7, r4, r21, r23, r26, 0) == false) goto L_0x0149;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

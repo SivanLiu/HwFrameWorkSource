@@ -178,6 +178,8 @@ public class BatteryService extends AbsBatteryService {
                         case 6:
                             service.getChargeStatus(new -$$Lambda$BatteryService$BatteryPropertiesRegistrar$hInbvsihGvN2hXqvdcoFYzdeqHw(outResult, prop));
                             break;
+                        default:
+                            break;
                     }
                     int i = outResult.value;
                     return i;
@@ -333,21 +335,6 @@ public class BatteryService extends AbsBatteryService {
             public final void onRegistration(String interfaceName, String instanceName, boolean preexisting) {
                 if (IHealth.kInterfaceName.equals(interfaceName) && HealthServiceWrapper.this.mInstanceName.equals(instanceName)) {
                     HealthServiceWrapper.this.mHandlerThread.getThreadHandler().post(new Runnable() {
-                        /* JADX WARNING: Removed duplicated region for block: B:5:0x005b A:{Splitter: B:0:0x0000, ExcHandler: java.util.NoSuchElementException (r0_4 'ex' java.lang.Exception)} */
-                        /* JADX WARNING: Missing block: B:5:0x005b, code:
-            r0 = move-exception;
-     */
-                        /* JADX WARNING: Missing block: B:6:0x005c, code:
-            r1 = com.android.server.BatteryService.HealthServiceWrapper.TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("health: Cannot get instance '");
-            r2.append(com.android.server.BatteryService.HealthServiceWrapper.access$2500(r5.this$1.this$0));
-            r2.append("': ");
-            r2.append(r0.getMessage());
-            r2.append(". Perhaps no permission?");
-            android.util.Slog.e(r1, r2.toString());
-     */
-                        /* Code decompiled incorrectly, please refer to instructions dump. */
                         public void run() {
                             try {
                                 IHealth newService = HealthServiceWrapper.this.mHealthSupplier.get(HealthServiceWrapper.this.mInstanceName);
@@ -360,7 +347,15 @@ public class BatteryService extends AbsBatteryService {
                                     Slog.i(str, stringBuilder.toString());
                                     HealthServiceWrapper.this.mCallback.onRegistration(oldService, newService, HealthServiceWrapper.this.mInstanceName);
                                 }
-                            } catch (Exception ex) {
+                            } catch (RemoteException | NoSuchElementException ex) {
+                                String str2 = HealthServiceWrapper.TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("health: Cannot get instance '");
+                                stringBuilder2.append(HealthServiceWrapper.this.mInstanceName);
+                                stringBuilder2.append("': ");
+                                stringBuilder2.append(ex.getMessage());
+                                stringBuilder2.append(". Perhaps no permission?");
+                                Slog.e(str2, stringBuilder2.toString());
                             }
                         }
                     });
@@ -1244,19 +1239,128 @@ public class BatteryService extends AbsBatteryService {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:21:0x0049  */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x01c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:114:0x01c0  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x007a  */
     /* JADX WARNING: Removed duplicated region for block: B:23:0x004e  */
     /* JADX WARNING: Removed duplicated region for block: B:21:0x0049  */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x01c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:114:0x01c0  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x007a  */
     /* JADX WARNING: Removed duplicated region for block: B:23:0x004e  */
     /* JADX WARNING: Removed duplicated region for block: B:21:0x0049  */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x01c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:114:0x01c0  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x007a  */
     /* JADX WARNING: Removed duplicated region for block: B:23:0x004e  */
-    /* JADX WARNING: Missing block: B:58:0x00e5, code:
-            if (r2.equals("usb") != false) goto L_0x0114;
+    /* JADX WARNING: Missing block: B:73:0x0113, code skipped:
+            r3 = true;
+     */
+    /* JADX WARNING: Missing block: B:74:0x0114, code skipped:
+            switch(r3) {
+                case 0: goto L_0x0173;
+                case 1: goto L_0x0165;
+                case 2: goto L_0x0157;
+                case 3: goto L_0x0149;
+                case 4: goto L_0x0140;
+                case 5: goto L_0x0137;
+                case 6: goto L_0x012d;
+                case 7: goto L_0x0123;
+                case 8: goto L_0x011b;
+                default: goto L_0x0117;
+            };
+     */
+    /* JADX WARNING: Missing block: B:76:0x011b, code skipped:
+            r11.mInvalidCharger = java.lang.Integer.parseInt(r7);
+     */
+    /* JADX WARNING: Missing block: B:77:0x0123, code skipped:
+            r11.mHealthInfo.batteryTemperature = java.lang.Integer.parseInt(r7);
+     */
+    /* JADX WARNING: Missing block: B:78:0x012d, code skipped:
+            r11.mHealthInfo.batteryChargeCounter = java.lang.Integer.parseInt(r7);
+     */
+    /* JADX WARNING: Missing block: B:79:0x0137, code skipped:
+            r11.mHealthInfo.batteryLevel = java.lang.Integer.parseInt(r7);
+     */
+    /* JADX WARNING: Missing block: B:80:0x0140, code skipped:
+            r11.mHealthInfo.batteryStatus = java.lang.Integer.parseInt(r7);
+     */
+    /* JADX WARNING: Missing block: B:81:0x0149, code skipped:
+            r3 = r11.mHealthInfo;
+     */
+    /* JADX WARNING: Missing block: B:82:0x014f, code skipped:
+            if (java.lang.Integer.parseInt(r7) == 0) goto L_0x0153;
+     */
+    /* JADX WARNING: Missing block: B:83:0x0151, code skipped:
+            r9 = true;
+     */
+    /* JADX WARNING: Missing block: B:84:0x0153, code skipped:
+            r9 = false;
+     */
+    /* JADX WARNING: Missing block: B:85:0x0154, code skipped:
+            r3.chargerWirelessOnline = r9;
+     */
+    /* JADX WARNING: Missing block: B:86:0x0157, code skipped:
+            r3 = r11.mHealthInfo;
+     */
+    /* JADX WARNING: Missing block: B:87:0x015d, code skipped:
+            if (java.lang.Integer.parseInt(r7) == 0) goto L_0x0161;
+     */
+    /* JADX WARNING: Missing block: B:88:0x015f, code skipped:
+            r9 = true;
+     */
+    /* JADX WARNING: Missing block: B:89:0x0161, code skipped:
+            r9 = false;
+     */
+    /* JADX WARNING: Missing block: B:90:0x0162, code skipped:
+            r3.chargerUsbOnline = r9;
+     */
+    /* JADX WARNING: Missing block: B:91:0x0165, code skipped:
+            r3 = r11.mHealthInfo;
+     */
+    /* JADX WARNING: Missing block: B:92:0x016b, code skipped:
+            if (java.lang.Integer.parseInt(r7) == 0) goto L_0x016f;
+     */
+    /* JADX WARNING: Missing block: B:93:0x016d, code skipped:
+            r9 = true;
+     */
+    /* JADX WARNING: Missing block: B:94:0x016f, code skipped:
+            r9 = false;
+     */
+    /* JADX WARNING: Missing block: B:95:0x0170, code skipped:
+            r3.chargerAcOnline = r9;
+     */
+    /* JADX WARNING: Missing block: B:96:0x0173, code skipped:
+            r3 = r11.mHealthInfo;
+     */
+    /* JADX WARNING: Missing block: B:97:0x0179, code skipped:
+            if (java.lang.Integer.parseInt(r7) == 0) goto L_0x017d;
+     */
+    /* JADX WARNING: Missing block: B:98:0x017b, code skipped:
+            r9 = true;
+     */
+    /* JADX WARNING: Missing block: B:99:0x017d, code skipped:
+            r9 = false;
+     */
+    /* JADX WARNING: Missing block: B:100:0x017e, code skipped:
+            r3.batteryPresent = r9;
+     */
+    /* JADX WARNING: Missing block: B:101:0x0181, code skipped:
+            r3 = new java.lang.StringBuilder();
+            r3.append("Unknown set option: ");
+            r3.append(r2);
+            r0.println(r3.toString());
+            r8 = false;
+     */
+    /* JADX WARNING: Missing block: B:102:0x0194, code skipped:
+            if (r8 == false) goto L_0x01f2;
+     */
+    /* JADX WARNING: Missing block: B:103:0x0196, code skipped:
+            r9 = android.os.Binder.clearCallingIdentity();
+     */
+    /* JADX WARNING: Missing block: B:105:?, code skipped:
+            r11.mUpdatesStopped = true;
+            processValuesFromShellLocked(r0, r1);
+     */
+    /* JADX WARNING: Missing block: B:107:?, code skipped:
+            android.os.Binder.restoreCallingIdentity(r9);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int onShellCommand(Shell shell, String cmd) {
@@ -1303,7 +1407,6 @@ public class BatteryService extends AbsBatteryService {
                                 pw.println("No value specified");
                                 return -1;
                             }
-                            long ident2;
                             try {
                                 if (!this.mUpdatesStopped) {
                                     copy(this.mLastHealthInfo, this.mHealthInfo);
@@ -1331,7 +1434,9 @@ public class BatteryService extends AbsBatteryService {
                                             break;
                                         }
                                     case 116100:
-                                        break;
+                                        if (key.equals("usb")) {
+                                            break;
+                                        }
                                     case 3556308:
                                         if (key.equals("temp")) {
                                             z2 = true;
@@ -1353,62 +1458,16 @@ public class BatteryService extends AbsBatteryService {
                                             break;
                                         }
                                     default:
-                                        z2 = true;
-                                        break;
-                                }
-                                switch (z2) {
-                                    case false:
-                                        this.mHealthInfo.batteryPresent = Integer.parseInt(value) != 0;
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.chargerAcOnline = Integer.parseInt(value) != 0;
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.chargerUsbOnline = Integer.parseInt(value) != 0;
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.chargerWirelessOnline = Integer.parseInt(value) != 0;
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.batteryStatus = Integer.parseInt(value);
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.batteryLevel = Integer.parseInt(value);
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.batteryChargeCounter = Integer.parseInt(value);
-                                        break;
-                                    case true:
-                                        this.mHealthInfo.batteryTemperature = Integer.parseInt(value);
-                                        break;
-                                    case true:
-                                        this.mInvalidCharger = Integer.parseInt(value);
-                                        break;
-                                    default:
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        stringBuilder.append("Unknown set option: ");
-                                        stringBuilder.append(key);
-                                        pw.println(stringBuilder.toString());
-                                        update = false;
-                                        break;
-                                }
-                                if (update) {
-                                    ident2 = Binder.clearCallingIdentity();
-                                    this.mUpdatesStopped = true;
-                                    processValuesFromShellLocked(pw, hashCode);
-                                    Binder.restoreCallingIdentity(ident2);
-                                    break;
                                 }
                             } catch (NumberFormatException e) {
-                                StringBuilder stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Bad value: ");
-                                stringBuilder2.append(value);
-                                pw.println(stringBuilder2.toString());
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("Bad value: ");
+                                stringBuilder.append(value);
+                                pw.println(stringBuilder.toString());
                                 return -1;
                             } catch (Throwable th) {
-                                Binder.restoreCallingIdentity(ident2);
+                                Binder.restoreCallingIdentity(ident);
                             }
-                            break;
                         case true:
                             hashCode = parseOptions(shell);
                             getContext().enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
@@ -1481,76 +1540,80 @@ public class BatteryService extends AbsBatteryService {
     private void dumpInternal(FileDescriptor fd, PrintWriter pw, String[] args) {
         synchronized (this.mLock) {
             if (args != null) {
-                if (args.length != 0) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("dumpInternal args[0]: ");
-                    stringBuilder.append(args[0]);
-                    stringBuilder.append(" mUpdatesStopped: ");
-                    stringBuilder.append(this.mUpdatesStopped);
-                    Flog.i(NativeResponseCode.SERVICE_REGISTRATION_FAILED, stringBuilder.toString());
+                try {
+                    if (args.length != 0) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("dumpInternal args[0]: ");
+                        stringBuilder.append(args[0]);
+                        stringBuilder.append(" mUpdatesStopped: ");
+                        stringBuilder.append(this.mUpdatesStopped);
+                        Flog.i(NativeResponseCode.SERVICE_REGISTRATION_FAILED, stringBuilder.toString());
+                    }
+                } finally {
                 }
             }
-            if (args == null || args.length == 0 || "-a".equals(args[0])) {
-                pw.println("Current Battery Service state:");
-                if (this.mUpdatesStopped) {
-                    pw.println("  (UPDATES STOPPED -- use 'reset' to restart)");
+            if (!(args == null || args.length == 0)) {
+                if (!"-a".equals(args[0])) {
+                    new Shell().exec(this.mBinderService, null, fd, null, args, null, new ResultReceiver(null));
                 }
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  AC powered: ");
-                stringBuilder2.append(this.mHealthInfo.chargerAcOnline);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  USB powered: ");
-                stringBuilder2.append(this.mHealthInfo.chargerUsbOnline);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  Wireless powered: ");
-                stringBuilder2.append(this.mHealthInfo.chargerWirelessOnline);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  Max charging current: ");
-                stringBuilder2.append(this.mHealthInfo.maxChargingCurrent);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  Max charging voltage: ");
-                stringBuilder2.append(this.mHealthInfo.maxChargingVoltage);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  Charge counter: ");
-                stringBuilder2.append(this.mHealthInfo.batteryChargeCounter);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  status: ");
-                stringBuilder2.append(this.mHealthInfo.batteryStatus);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  health: ");
-                stringBuilder2.append(this.mHealthInfo.batteryHealth);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  present: ");
-                stringBuilder2.append(this.mHealthInfo.batteryPresent);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  level: ");
-                stringBuilder2.append(this.mHealthInfo.batteryLevel);
-                pw.println(stringBuilder2.toString());
-                pw.println("  scale: 100");
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  voltage: ");
-                stringBuilder2.append(this.mHealthInfo.batteryVoltage);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  temperature: ");
-                stringBuilder2.append(this.mHealthInfo.batteryTemperature);
-                pw.println(stringBuilder2.toString());
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  technology: ");
-                stringBuilder2.append(this.mHealthInfo.batteryTechnology);
-                pw.println(stringBuilder2.toString());
-            } else {
-                new Shell().exec(this.mBinderService, null, fd, null, args, null, new ResultReceiver(null));
             }
+            pw.println("Current Battery Service state:");
+            if (this.mUpdatesStopped) {
+                pw.println("  (UPDATES STOPPED -- use 'reset' to restart)");
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  AC powered: ");
+            stringBuilder2.append(this.mHealthInfo.chargerAcOnline);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  USB powered: ");
+            stringBuilder2.append(this.mHealthInfo.chargerUsbOnline);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  Wireless powered: ");
+            stringBuilder2.append(this.mHealthInfo.chargerWirelessOnline);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  Max charging current: ");
+            stringBuilder2.append(this.mHealthInfo.maxChargingCurrent);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  Max charging voltage: ");
+            stringBuilder2.append(this.mHealthInfo.maxChargingVoltage);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  Charge counter: ");
+            stringBuilder2.append(this.mHealthInfo.batteryChargeCounter);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  status: ");
+            stringBuilder2.append(this.mHealthInfo.batteryStatus);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  health: ");
+            stringBuilder2.append(this.mHealthInfo.batteryHealth);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  present: ");
+            stringBuilder2.append(this.mHealthInfo.batteryPresent);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  level: ");
+            stringBuilder2.append(this.mHealthInfo.batteryLevel);
+            pw.println(stringBuilder2.toString());
+            pw.println("  scale: 100");
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  voltage: ");
+            stringBuilder2.append(this.mHealthInfo.batteryVoltage);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  temperature: ");
+            stringBuilder2.append(this.mHealthInfo.batteryTemperature);
+            pw.println(stringBuilder2.toString());
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("  technology: ");
+            stringBuilder2.append(this.mHealthInfo.batteryTechnology);
+            pw.println(stringBuilder2.toString());
         }
     }
 

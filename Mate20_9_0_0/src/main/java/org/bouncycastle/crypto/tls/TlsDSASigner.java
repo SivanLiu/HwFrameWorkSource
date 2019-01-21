@@ -46,7 +46,7 @@ public abstract class TlsDSASigner extends AbstractTlsSigner {
             throw new IllegalStateException();
         } else if (signatureAndHashAlgorithm == null || signatureAndHashAlgorithm.getSignature() == getSignatureAlgorithm()) {
             short hash = signatureAndHashAlgorithm == null ? (short) 2 : signatureAndHashAlgorithm.getHash();
-            Signer dSADigestSigner = new DSADigestSigner(createDSAImpl(hash), z ? new NullDigest() : TlsUtils.createHash(hash));
+            DSADigestSigner dSADigestSigner = new DSADigestSigner(createDSAImpl(hash), z ? new NullDigest() : TlsUtils.createHash(hash));
             dSADigestSigner.init(z2, makeInitParameters(z2, cipherParameters));
             return dSADigestSigner;
         } else {

@@ -1,5 +1,6 @@
 package org.bouncycastle.dvcs;
 
+import java.io.IOException;
 import java.util.Date;
 import org.bouncycastle.asn1.dvcs.DVCSRequestInformationBuilder;
 import org.bouncycastle.asn1.dvcs.DVCSTime;
@@ -15,7 +16,7 @@ public class VSDRequestBuilder extends DVCSRequestBuilder {
     public DVCSRequest build(CMSSignedData cMSSignedData) throws DVCSException {
         try {
             return createDVCRequest(new Data(cMSSignedData.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new DVCSException("Failed to encode CMS signed data", e);
         }
     }

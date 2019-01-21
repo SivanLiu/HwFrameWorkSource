@@ -64,7 +64,15 @@ class DefaultESTClient implements ESTClient {
         throw new ESTException("Too many redirects..");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x015b  */
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x006d A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0064 A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:20:0x0087 A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x00ba A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:23:0x009a A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x00f7 A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:40:0x014f A:{SYNTHETIC, Splitter:B:40:0x014f} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x013f A:{Catch:{ all -> 0x0155 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x015b  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public ESTResponse performRequest(ESTRequest eSTRequest) throws IOException {
         Throwable th;
@@ -72,59 +80,98 @@ class DefaultESTClient implements ESTClient {
         try {
             makeSource = this.sslSocketProvider.makeSource(eSTRequest.getURL().getHost(), eSTRequest.getURL().getPort());
             try {
+                OutputStream outputStream;
+                StringBuilder stringBuilder;
+                String stringBuilder2;
+                ESTRequestBuilder eSTRequestBuilder;
+                URL url;
                 String str;
                 String format;
+                StringBuilder stringBuilder3;
                 if (eSTRequest.getListener() != null) {
                     eSTRequest = eSTRequest.getListener().onConnection(makeSource, eSTRequest);
                 }
                 Set asKeySet = Properties.asKeySet("org.bouncycastle.debug.est");
-                OutputStream printingOutputStream = (asKeySet.contains("output") || asKeySet.contains("all")) ? new PrintingOutputStream(makeSource.getOutputStream()) : makeSource.getOutputStream();
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(eSTRequest.getURL().getPath());
-                stringBuilder.append(eSTRequest.getURL().getQuery() != null ? eSTRequest.getURL().getQuery() : "");
-                String stringBuilder2 = stringBuilder.toString();
-                ESTRequestBuilder eSTRequestBuilder = new ESTRequestBuilder(eSTRequest);
-                if (!eSTRequest.getHeaders().containsKey(HttpHeaders.CONNECTION)) {
-                    eSTRequestBuilder.addHeader(HttpHeaders.CONNECTION, HttpHeaders.CONNECTION_CLOSE);
+                if (!asKeySet.contains("output")) {
+                    if (!asKeySet.contains("all")) {
+                        outputStream = makeSource.getOutputStream();
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append(eSTRequest.getURL().getPath());
+                        stringBuilder.append(eSTRequest.getURL().getQuery() == null ? eSTRequest.getURL().getQuery() : "");
+                        stringBuilder2 = stringBuilder.toString();
+                        eSTRequestBuilder = new ESTRequestBuilder(eSTRequest);
+                        if (!eSTRequest.getHeaders().containsKey(HttpHeaders.CONNECTION)) {
+                            eSTRequestBuilder.addHeader(HttpHeaders.CONNECTION, HttpHeaders.CONNECTION_CLOSE);
+                        }
+                        url = eSTRequest.getURL();
+                        if (url.getPort() <= -1) {
+                            str = "Host";
+                            format = String.format("%s:%d", new Object[]{url.getHost(), Integer.valueOf(url.getPort())});
+                        } else {
+                            str = "Host";
+                            format = url.getHost();
+                        }
+                        eSTRequestBuilder.setHeader(str, format);
+                        eSTRequest = eSTRequestBuilder.build();
+                        stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append(eSTRequest.getMethod());
+                        stringBuilder3.append(" ");
+                        stringBuilder3.append(stringBuilder2);
+                        stringBuilder3.append(" HTTP/1.1");
+                        writeLine(outputStream, stringBuilder3.toString());
+                        for (Entry entry : eSTRequest.getHeaders().entrySet()) {
+                            String[] strArr = (String[]) entry.getValue();
+                            for (int i = 0; i != strArr.length; i++) {
+                                StringBuilder stringBuilder4 = new StringBuilder();
+                                stringBuilder4.append((String) entry.getKey());
+                                stringBuilder4.append(": ");
+                                stringBuilder4.append(strArr[i]);
+                                writeLine(outputStream, stringBuilder4.toString());
+                            }
+                        }
+                        outputStream.write(CRLF);
+                        outputStream.flush();
+                        eSTRequest.writeData(outputStream);
+                        outputStream.flush();
+                        if (eSTRequest.getHijacker() != null) {
+                            return new ESTResponse(eSTRequest, makeSource);
+                        }
+                        ESTResponse hijack = eSTRequest.getHijacker().hijack(eSTRequest, makeSource);
+                        if (makeSource != null && hijack == null) {
+                            makeSource.close();
+                        }
+                        return hijack;
+                    }
                 }
-                URL url = eSTRequest.getURL();
-                if (url.getPort() > -1) {
-                    str = "Host";
-                    format = String.format("%s:%d", new Object[]{url.getHost(), Integer.valueOf(url.getPort())});
-                } else {
-                    str = "Host";
-                    format = url.getHost();
+                outputStream = new PrintingOutputStream(makeSource.getOutputStream());
+                stringBuilder = new StringBuilder();
+                stringBuilder.append(eSTRequest.getURL().getPath());
+                if (eSTRequest.getURL().getQuery() == null) {
+                }
+                stringBuilder.append(eSTRequest.getURL().getQuery() == null ? eSTRequest.getURL().getQuery() : "");
+                stringBuilder2 = stringBuilder.toString();
+                eSTRequestBuilder = new ESTRequestBuilder(eSTRequest);
+                if (eSTRequest.getHeaders().containsKey(HttpHeaders.CONNECTION)) {
+                }
+                url = eSTRequest.getURL();
+                if (url.getPort() <= -1) {
                 }
                 eSTRequestBuilder.setHeader(str, format);
                 eSTRequest = eSTRequestBuilder.build();
-                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3 = new StringBuilder();
                 stringBuilder3.append(eSTRequest.getMethod());
                 stringBuilder3.append(" ");
                 stringBuilder3.append(stringBuilder2);
                 stringBuilder3.append(" HTTP/1.1");
-                writeLine(printingOutputStream, stringBuilder3.toString());
-                for (Entry entry : eSTRequest.getHeaders().entrySet()) {
-                    String[] strArr = (String[]) entry.getValue();
-                    for (int i = 0; i != strArr.length; i++) {
-                        StringBuilder stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append((String) entry.getKey());
-                        stringBuilder4.append(": ");
-                        stringBuilder4.append(strArr[i]);
-                        writeLine(printingOutputStream, stringBuilder4.toString());
-                    }
+                writeLine(outputStream, stringBuilder3.toString());
+                for (Entry entry2 : eSTRequest.getHeaders().entrySet()) {
                 }
-                printingOutputStream.write(CRLF);
-                printingOutputStream.flush();
-                eSTRequest.writeData(printingOutputStream);
-                printingOutputStream.flush();
-                if (eSTRequest.getHijacker() == null) {
-                    return new ESTResponse(eSTRequest, makeSource);
+                outputStream.write(CRLF);
+                outputStream.flush();
+                eSTRequest.writeData(outputStream);
+                outputStream.flush();
+                if (eSTRequest.getHijacker() != null) {
                 }
-                ESTResponse hijack = eSTRequest.getHijacker().hijack(eSTRequest, makeSource);
-                if (makeSource != null && hijack == null) {
-                    makeSource.close();
-                }
-                return hijack;
             } catch (Throwable th2) {
                 th = th2;
                 if (makeSource != null) {

@@ -173,31 +173,33 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
 
         public List<PrintJobInfo> getPrintJobs(int appId) {
             synchronized (UserState.this.mLock) {
-                List<PrintJobInfo> bucket;
                 List<PrintJobInfo> printJobs = null;
                 if (appId == -2) {
-                    int bucketCount = this.mPrintJobsForRunningApp.size();
-                    for (int i = 0; i < bucketCount; i++) {
-                        List<PrintJobInfo> bucket2 = (List) this.mPrintJobsForRunningApp.valueAt(i);
-                        if (printJobs == null) {
-                            printJobs = new ArrayList();
+                    try {
+                        int bucketCount = this.mPrintJobsForRunningApp.size();
+                        for (int i = 0; i < bucketCount; i++) {
+                            List<PrintJobInfo> bucket = (List) this.mPrintJobsForRunningApp.valueAt(i);
+                            if (printJobs == null) {
+                                printJobs = new ArrayList();
+                            }
+                            printJobs.addAll(bucket);
                         }
-                        printJobs.addAll(bucket2);
+                    } catch (Throwable th) {
                     }
                 } else {
-                    bucket = (List) this.mPrintJobsForRunningApp.get(appId);
-                    if (bucket != null) {
+                    List<PrintJobInfo> bucket2 = (List) this.mPrintJobsForRunningApp.get(appId);
+                    if (bucket2 != null) {
                         if (null == null) {
                             printJobs = new ArrayList();
                         }
-                        printJobs.addAll(bucket);
+                        printJobs.addAll(bucket2);
                     }
                 }
                 if (printJobs != null) {
                     return printJobs;
                 }
-                bucket = Collections.emptyList();
-                return bucket;
+                List emptyList = Collections.emptyList();
+                return emptyList;
             }
         }
 
@@ -636,7 +638,7 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         if (service != null) {
             service.onPrintJobQueued(printJob);
         } else {
-            this.mSpooler.setPrintJobState(printJob.getId(), 6, this.mContext.getString(17040967));
+            this.mSpooler.setPrintJobState(printJob.getId(), 6, this.mContext.getString(17040968));
         }
     }
 
@@ -800,7 +802,10 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         synchronized (this.mLock) {
             boolean isChanged = false;
             if (isEnabled) {
-                isChanged = this.mDisabledServices.remove(serviceName);
+                try {
+                    isChanged = this.mDisabledServices.remove(serviceName);
+                } catch (Throwable th) {
+                }
             } else {
                 int numServices = this.mInstalledServices.size();
                 for (int i = 0; i < numServices; i++) {
@@ -920,7 +925,7 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0045, code:
+    /* JADX WARNING: Missing block: B:17:0x0045, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -963,7 +968,7 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1007,7 +1012,7 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0050, code:
+    /* JADX WARNING: Missing block: B:17:0x0050, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1340,7 +1345,7 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
             try {
                 int printJobCount = printJobs.size();
                 for (int i = 0; i < printJobCount; i++) {
-                    this.mSpooler.setPrintJobState(((PrintJobInfo) printJobs.get(i)).getId(), 6, this.mContext.getString(17040967));
+                    this.mSpooler.setPrintJobState(((PrintJobInfo) printJobs.get(i)).getId(), 6, this.mContext.getString(17040968));
                 }
             } finally {
                 Binder.restoreCallingIdentity(identity);
@@ -1354,32 +1359,32 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0015, code:
+    /* JADX WARNING: Missing block: B:9:0x0015, code skipped:
             r1 = r2.size();
             r3 = 0;
      */
-    /* JADX WARNING: Missing block: B:10:0x001a, code:
+    /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             if (r3 >= r1) goto L_0x003c;
      */
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
+    /* JADX WARNING: Missing block: B:11:0x001c, code skipped:
             r4 = (com.android.server.print.UserState.PrintJobStateChangeListenerRecord) r2.get(r3);
      */
-    /* JADX WARNING: Missing block: B:12:0x0025, code:
+    /* JADX WARNING: Missing block: B:12:0x0025, code skipped:
             if (r4.appId == -2) goto L_0x002b;
      */
-    /* JADX WARNING: Missing block: B:14:0x0029, code:
+    /* JADX WARNING: Missing block: B:14:0x0029, code skipped:
             if (r4.appId != r0) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r4.listener.onPrintJobStateChanged(r9);
      */
-    /* JADX WARNING: Missing block: B:17:0x0031, code:
+    /* JADX WARNING: Missing block: B:17:0x0031, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:18:0x0032, code:
+    /* JADX WARNING: Missing block: B:18:0x0032, code skipped:
             android.util.Log.e(LOG_TAG, "Error notifying for print job state change", r5);
      */
-    /* JADX WARNING: Missing block: B:20:0x003c, code:
+    /* JADX WARNING: Missing block: B:20:0x003c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1394,23 +1399,23 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         int i++;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0011, code:
+    /* JADX WARNING: Missing block: B:9:0x0011, code skipped:
             r0 = r1.size();
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:10:0x0016, code:
+    /* JADX WARNING: Missing block: B:10:0x0016, code skipped:
             if (r2 >= r0) goto L_0x0031;
      */
-    /* JADX WARNING: Missing block: B:13:?, code:
+    /* JADX WARNING: Missing block: B:13:?, code skipped:
             ((android.print.IPrintServicesChangeListener) ((com.android.server.print.UserState.ListenerRecord) r1.get(r2)).listener).onPrintServicesChanged();
      */
-    /* JADX WARNING: Missing block: B:14:0x0026, code:
+    /* JADX WARNING: Missing block: B:14:0x0026, code skipped:
             r4 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:15:0x0027, code:
+    /* JADX WARNING: Missing block: B:15:0x0027, code skipped:
             android.util.Log.e(LOG_TAG, "Error notifying for print services change", r4);
      */
-    /* JADX WARNING: Missing block: B:17:0x0031, code:
+    /* JADX WARNING: Missing block: B:17:0x0031, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1424,23 +1429,23 @@ final class UserState implements PrintSpoolerCallbacks, PrintServiceCallbacks, R
         int i++;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0013, code:
+    /* JADX WARNING: Missing block: B:9:0x0013, code skipped:
             r0 = r1.size();
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:10:0x0018, code:
+    /* JADX WARNING: Missing block: B:10:0x0018, code skipped:
             if (r2 >= r0) goto L_0x0033;
      */
-    /* JADX WARNING: Missing block: B:13:?, code:
+    /* JADX WARNING: Missing block: B:13:?, code skipped:
             ((android.printservice.recommendation.IRecommendationsChangeListener) ((com.android.server.print.UserState.ListenerRecord) r1.get(r2)).listener).onRecommendationsChanged();
      */
-    /* JADX WARNING: Missing block: B:14:0x0028, code:
+    /* JADX WARNING: Missing block: B:14:0x0028, code skipped:
             r4 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:15:0x0029, code:
+    /* JADX WARNING: Missing block: B:15:0x0029, code skipped:
             android.util.Log.e(LOG_TAG, "Error notifying for print service recommendations change", r4);
      */
-    /* JADX WARNING: Missing block: B:17:0x0033, code:
+    /* JADX WARNING: Missing block: B:17:0x0033, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -272,37 +272,37 @@ public class ConditionProviders extends ManagedServices {
         return r2;
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0059, code:
+    /* JADX WARNING: Missing block: B:19:0x0059, code skipped:
             r0 = r11.length;
      */
-    /* JADX WARNING: Missing block: B:19:0x005c, code:
+    /* JADX WARNING: Missing block: B:20:0x005c, code skipped:
             if (r8.mCallback == null) goto L_0x006d;
      */
-    /* JADX WARNING: Missing block: B:21:0x0062, code:
+    /* JADX WARNING: Missing block: B:22:0x0062, code skipped:
             if ((r8.mCallback instanceof com.android.server.notification.ZenModeConditions) == false) goto L_0x006d;
      */
-    /* JADX WARNING: Missing block: B:22:0x0064, code:
+    /* JADX WARNING: Missing block: B:23:0x0064, code skipped:
             ((com.android.server.notification.ZenModeConditions) r8.mCallback).onConditionChanged(r11);
      */
-    /* JADX WARNING: Missing block: B:23:0x006d, code:
+    /* JADX WARNING: Missing block: B:24:0x006d, code skipped:
             r1 = r2;
      */
-    /* JADX WARNING: Missing block: B:24:0x006e, code:
+    /* JADX WARNING: Missing block: B:25:0x006e, code skipped:
             if (r1 >= r0) goto L_0x0080;
      */
-    /* JADX WARNING: Missing block: B:25:0x0070, code:
+    /* JADX WARNING: Missing block: B:26:0x0070, code skipped:
             r2 = r11[r1];
      */
-    /* JADX WARNING: Missing block: B:26:0x0074, code:
+    /* JADX WARNING: Missing block: B:27:0x0074, code skipped:
             if (r8.mCallback == null) goto L_0x007d;
      */
-    /* JADX WARNING: Missing block: B:27:0x0076, code:
+    /* JADX WARNING: Missing block: B:28:0x0076, code skipped:
             r8.mCallback.onConditionChanged(r2.id, r2);
      */
-    /* JADX WARNING: Missing block: B:28:0x007d, code:
+    /* JADX WARNING: Missing block: B:29:0x007d, code skipped:
             r2 = r1 + 1;
      */
-    /* JADX WARNING: Missing block: B:29:0x0080, code:
+    /* JADX WARNING: Missing block: B:30:0x0080, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -320,14 +320,15 @@ public class ConditionProviders extends ManagedServices {
                 Slog.d(str, stringBuilder.toString());
             }
             conditions = removeDuplicateConditions(pkg, conditions);
-            if (conditions == null || conditions.length == 0) {
-                return;
-            }
-            int i = 0;
-            for (Condition c : conditions) {
-                ConditionRecord r = getRecordLocked(c.id, info.component, true);
-                r.info = info;
-                r.condition = c;
+            if (conditions != null) {
+                if (conditions.length != 0) {
+                    int i = 0;
+                    for (Condition c : conditions) {
+                        ConditionRecord r = getRecordLocked(c.id, info.component, true);
+                        r.info = info;
+                        r.condition = c;
+                    }
+                }
             }
         }
     }

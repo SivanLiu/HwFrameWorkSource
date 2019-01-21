@@ -63,8 +63,9 @@ public interface IDisplayEngineService extends IInterface {
     public static final int DE_DATA_TYPE_VIDEO_HDR10 = 2;
     public static final int DE_DATA_TYPE_XNIT = 5;
     public static final int DE_DATA_TYPE_XNIT_BRIGHTLEVEL = 6;
-    public static final int DE_EFFECT_MAX = 4;
+    public static final int DE_EFFECT_MAX = 5;
     public static final int DE_EFFECT_TYPE_HBM_INFO = 1;
+    public static final int DE_EFFECT_TYPE_IS_IMAGE = 4;
     public static final int DE_EFFECT_TYPE_PANEL_INFO = 2;
     public static final int DE_EFFECT_TYPE_PANEL_NAME = 0;
     public static final int DE_EFFECT_TYPE_PANEL_VERSION = 3;

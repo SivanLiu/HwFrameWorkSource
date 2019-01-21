@@ -401,54 +401,54 @@ public class BrightnessTracker {
         this.mBgHandler.obtainMessage(1, userInitiated, 0, new BrightnessChangeValues(brightness, powerBrightnessFactor, isUserSetBrightness, isDefaultBrightnessConfig, this.mInjector.currentTimeMillis())).sendToTarget();
     }
 
-    /* JADX WARNING: Missing block: B:30:0x008d, code:
+    /* JADX WARNING: Missing block: B:30:0x008d, code skipped:
             r2 = r5;
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r0 = r1.mInjector.getFocusedStack();
      */
-    /* JADX WARNING: Missing block: B:33:0x0094, code:
+    /* JADX WARNING: Missing block: B:33:0x0094, code skipped:
             if (r0 == null) goto L_0x00e0;
      */
-    /* JADX WARNING: Missing block: B:35:0x0098, code:
+    /* JADX WARNING: Missing block: B:35:0x0098, code skipped:
             if (r0.topActivity == null) goto L_0x00e0;
      */
-    /* JADX WARNING: Missing block: B:36:0x009a, code:
+    /* JADX WARNING: Missing block: B:36:0x009a, code skipped:
             r2.setUserId(r0.userId);
             r2.setPackageName(r0.topActivity.getPackageName());
      */
-    /* JADX WARNING: Missing block: B:38:0x00b7, code:
+    /* JADX WARNING: Missing block: B:38:0x00b7, code skipped:
             if (r1.mInjector.getSecureIntForUser(r1.mContentResolver, "night_display_activated", 0, -2) != 1) goto L_0x00bb;
      */
-    /* JADX WARNING: Missing block: B:39:0x00b9, code:
+    /* JADX WARNING: Missing block: B:39:0x00b9, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:40:0x00bb, code:
+    /* JADX WARNING: Missing block: B:40:0x00bb, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:41:0x00bc, code:
+    /* JADX WARNING: Missing block: B:41:0x00bc, code skipped:
             r2.setNightMode(r0);
             r2.setColorTemperature(r1.mInjector.getSecureIntForUser(r1.mContentResolver, "night_display_color_temperature", 0, -2));
             r4 = r2.build();
             r5 = r1.mEventsLock;
      */
-    /* JADX WARNING: Missing block: B:42:0x00d3, code:
+    /* JADX WARNING: Missing block: B:42:0x00d3, code skipped:
             monitor-enter(r5);
      */
-    /* JADX WARNING: Missing block: B:44:?, code:
+    /* JADX WARNING: Missing block: B:44:?, code skipped:
             r1.mEventsDirty = true;
             r1.mEvents.append(r4);
      */
-    /* JADX WARNING: Missing block: B:45:0x00db, code:
+    /* JADX WARNING: Missing block: B:45:0x00db, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:46:0x00dc, code:
+    /* JADX WARNING: Missing block: B:46:0x00dc, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:50:0x00e0, code:
+    /* JADX WARNING: Missing block: B:50:0x00e0, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:52:0x00e2, code:
+    /* JADX WARNING: Missing block: B:52:0x00e2, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -686,20 +686,6 @@ public class BrightnessTracker {
         stream.flush();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x01d3 A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (r0_9 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x01d3 A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (r0_9 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x01d3 A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NullPointerException (r0_9 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:53:0x01d3, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:54:0x01d4, code:
-            r1.mEvents = new com.android.internal.util.RingBuffer(android.hardware.display.BrightnessChangeEvent.class, 100);
-            android.util.Slog.e(TAG, "Failed to parse brightness event", r0);
-     */
-    /* JADX WARNING: Missing block: B:55:0x01ed, code:
-            throw new java.io.IOException("failed to parse file", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mEventsLock")
     @VisibleForTesting
     void readEventsLocked(InputStream stream) throws IOException {
@@ -726,10 +712,7 @@ public class BrightnessTracker {
                 while (true) {
                     int next2 = parser.next();
                     type = next2;
-                    if (next2 == i) {
-                        return;
-                    }
-                    if (type != 3 || parser.getDepth() > outerDepth) {
+                    if (next2 != i && (type != 3 || parser.getDepth() > outerDepth)) {
                         int outerDepth2;
                         int type2;
                         if (type == 3) {
@@ -817,17 +800,19 @@ public class BrightnessTracker {
                         parser = xmlPullParser;
                         InputStream inputStream = stream;
                         i = 1;
-                    } else {
-                        return;
                     }
                 }
+                return;
             }
             xmlPullParser = parser;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Events not found in brightness tracker file ");
             stringBuilder.append(tag);
             throw new XmlPullParserException(stringBuilder.toString());
-        } catch (Exception e) {
+        } catch (IOException | NullPointerException | NumberFormatException | XmlPullParserException e) {
+            this.mEvents = new RingBuffer(BrightnessChangeEvent.class, 100);
+            Slog.e(TAG, "Failed to parse brightness event", e);
+            throw new IOException("failed to parse file", e);
         }
     }
 

@@ -1,85 +1,105 @@
 package com.huawei.android.pushagent.model.prefs;
 
 import android.content.Context;
-import com.huawei.android.pushagent.utils.f.a;
-import com.huawei.android.pushagent.utils.f.c;
+import android.text.TextUtils;
+import com.huawei.android.pushagent.utils.e.a;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class b {
-    private static final byte[] fb = new byte[0];
-    private static b fc;
-    private final a fd;
+    private static final byte[] ci = new byte[0];
+    private static b cj;
+    private final com.huawei.android.pushagent.utils.b.b ck;
 
     private b(Context context) {
-        this.fd = new a(context, "device_info");
+        this.ck = new com.huawei.android.pushagent.utils.b.b(context, "pclient_info_v2");
     }
 
-    public static b oq(Context context) {
-        return ov(context);
+    public static b il(Context context) {
+        return iq(context);
     }
 
-    private static b ov(Context context) {
+    private static b iq(Context context) {
         b bVar;
-        synchronized (fb) {
-            if (fc == null) {
-                fc = new b(context);
+        synchronized (ci) {
+            if (cj == null) {
+                cj = new b(context);
             }
-            bVar = fc;
+            bVar = cj;
         }
         return bVar;
     }
 
-    public int or() {
-        return this.fd.getInt("pushDeviceType", 1);
+    public boolean io() {
+        return this.ck.tf();
     }
 
-    public boolean oz(int i) {
-        c.ep("PushLog3413", "setDeviceType: " + i + "[1:NOT_GDPR, 2:GDPR]");
-        return this.fd.ea("pushDeviceType", Integer.valueOf(i));
+    public String ik(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+        return this.ck.tg(str);
     }
 
-    public String ou() {
-        return this.fd.ec("pushDeviceId");
+    public String in(String str) {
+        return a.vt(ik(str));
     }
 
-    public boolean pa(String str) {
-        return this.fd.ea("pushDeviceId", str);
+    public boolean is(String str, String str2) {
+        if (TextUtils.isEmpty(str)) {
+            return false;
+        }
+        return this.ck.th(str, str2);
     }
 
-    public String getDeviceId() {
-        String str = "";
+    public boolean it(String str, String str2) {
+        return is(str, a.vu(str2));
+    }
+
+    public void ir(String str) {
+        this.ck.ti(str);
+    }
+
+    public Set<String> ip() {
+        Map all = this.ck.getAll();
+        if (all == null) {
+            return new HashSet();
+        }
+        Set keySet = all.keySet();
+        if (keySet == null) {
+            return new HashSet();
+        }
+        return keySet;
+    }
+
+    public String im(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        }
         try {
-            return com.huawei.android.pushagent.utils.a.c.j(ou());
-        } catch (Throwable e) {
-            c.es("PushLog3413", e.toString(), e);
-            return str;
+            Map all = this.ck.getAll();
+            if (all == null) {
+                return null;
+            }
+            Set<Entry> entrySet = all.entrySet();
+            if (entrySet == null) {
+                return null;
+            }
+            for (Entry entry : entrySet) {
+                String str2 = (String) entry.getKey();
+                if (str.equals(a.vt((String) entry.getValue()))) {
+                    return str2;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", e.toString(), e);
         }
     }
 
-    public boolean oy(String str) {
-        return pa(com.huawei.android.pushagent.utils.a.c.k(str));
-    }
-
-    public int getDeviceIdType() {
-        return this.fd.getInt("pushDeviceIdType", -1);
-    }
-
-    public boolean setDeviceIdType(int i) {
-        return this.fd.ea("pushDeviceIdType", Integer.valueOf(i));
-    }
-
-    public String ot() {
-        return this.fd.ec("deviceId_v2");
-    }
-
-    public boolean ow() {
-        return this.fd.ed("deviceId_v2");
-    }
-
-    public boolean ox() {
-        return this.fd.ed("macAddress");
-    }
-
-    public void os() {
-        this.fd.dz();
+    public void ij() {
+        this.ck.tj();
     }
 }

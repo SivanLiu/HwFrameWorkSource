@@ -93,13 +93,13 @@ public class SM2P256V1Point extends AbstractFp {
             SM2P256V1Field.negate(iArr, iArr);
             Nat256.mul(iArr4, iArr, createExt);
             SM2P256V1Field.reduce32(Nat256.addBothTo(create2, create2, iArr), iArr);
-            ECFieldElement sM2P256V1FieldElement7 = new SM2P256V1FieldElement(create3);
-            SM2P256V1Field.square(create, sM2P256V1FieldElement7.x);
-            SM2P256V1Field.subtract(sM2P256V1FieldElement7.x, iArr, sM2P256V1FieldElement7.x);
-            ECFieldElement sM2P256V1FieldElement8 = new SM2P256V1FieldElement(iArr);
-            SM2P256V1Field.subtract(create2, sM2P256V1FieldElement7.x, sM2P256V1FieldElement8.x);
-            SM2P256V1Field.multiplyAddToExt(sM2P256V1FieldElement8.x, create, createExt);
-            SM2P256V1Field.reduce(createExt, sM2P256V1FieldElement8.x);
+            sM2P256V1FieldElement2 = new SM2P256V1FieldElement(create3);
+            SM2P256V1Field.square(create, sM2P256V1FieldElement2.x);
+            SM2P256V1Field.subtract(sM2P256V1FieldElement2.x, iArr, sM2P256V1FieldElement2.x);
+            ECFieldElement sM2P256V1FieldElement7 = new SM2P256V1FieldElement(iArr);
+            SM2P256V1Field.subtract(create2, sM2P256V1FieldElement2.x, sM2P256V1FieldElement7.x);
+            SM2P256V1Field.multiplyAddToExt(sM2P256V1FieldElement7.x, create, createExt);
+            SM2P256V1Field.reduce(createExt, sM2P256V1FieldElement7.x);
             sM2P256V1FieldElement = new SM2P256V1FieldElement(create4);
             if (!isOne) {
                 SM2P256V1Field.multiply(sM2P256V1FieldElement.x, sM2P256V1FieldElement5.x, sM2P256V1FieldElement.x);
@@ -107,7 +107,7 @@ public class SM2P256V1Point extends AbstractFp {
             if (!isOne2) {
                 SM2P256V1Field.multiply(sM2P256V1FieldElement.x, sM2P256V1FieldElement6.x, sM2P256V1FieldElement.x);
             }
-            return new SM2P256V1Point(curve, sM2P256V1FieldElement7, sM2P256V1FieldElement8, new ECFieldElement[]{sM2P256V1FieldElement}, this.withCompression);
+            return new SM2P256V1Point(curve, sM2P256V1FieldElement2, sM2P256V1FieldElement7, new ECFieldElement[]{sM2P256V1FieldElement}, this.withCompression);
         }
     }
 

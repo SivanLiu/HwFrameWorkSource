@@ -41,9 +41,9 @@ public class CramerShoupCoreEngine {
             throw new DataLengthException("input too large for Cramer Shoup cipher.");
         } else {
             if (!(i == 0 && i2 == bArr.length)) {
-                Object obj = new byte[i2];
-                System.arraycopy(bArr, i, obj, 0, i2);
-                bArr = obj;
+                byte[] bArr2 = new byte[i2];
+                System.arraycopy(bArr, i, bArr2, 0, i2);
+                bArr = bArr2;
             }
             BigInteger bigInteger = new BigInteger(1, bArr);
             if (bigInteger.compareTo(this.key.getParameters().getP()) < 0) {
@@ -54,22 +54,22 @@ public class CramerShoupCoreEngine {
     }
 
     public byte[] convertOutput(BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
-        Object obj;
+        byte[] toByteArray = bigInteger.toByteArray();
+        byte[] bArr;
         if (this.forEncryption) {
             if (toByteArray[0] == (byte) 0) {
-                obj = new byte[(toByteArray.length - 1)];
-                System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-                return obj;
+                bArr = new byte[(toByteArray.length - 1)];
+                System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+                return bArr;
             }
         } else if (toByteArray[0] == (byte) 0 && toByteArray.length > getOutputBlockSize()) {
-            obj = new byte[(toByteArray.length - 1)];
-            System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-            return obj;
+            bArr = new byte[(toByteArray.length - 1)];
+            System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+            return bArr;
         } else if (toByteArray.length < getOutputBlockSize()) {
-            obj = new byte[getOutputBlockSize()];
-            System.arraycopy(toByteArray, 0, obj, obj.length - toByteArray.length, toByteArray.length);
-            return obj;
+            bArr = new byte[getOutputBlockSize()];
+            System.arraycopy(toByteArray, 0, bArr, bArr.length - toByteArray.length, toByteArray.length);
+            return bArr;
         }
         return toByteArray;
     }

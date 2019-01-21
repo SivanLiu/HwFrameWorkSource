@@ -74,7 +74,7 @@ public abstract class Transport implements Runnable {
                 ioe2.printStackTrace(log);
             }
             throw ioe;
-        } catch (Throwable ie) {
+        } catch (InterruptedException ie) {
             throw new TransportException(ie);
         } catch (Throwable th) {
             this.response_map.remove(request);
@@ -195,7 +195,7 @@ public abstract class Transport implements Runnable {
                     this.state = 0;
                     throw te;
             }
-        } catch (Throwable ie) {
+        } catch (InterruptedException ie) {
             this.state = 0;
             this.thread = null;
             throw new TransportException(ie);
@@ -245,7 +245,7 @@ public abstract class Transport implements Runnable {
         }
     }
 
-    /* JADX WARNING: Missing block: B:63:?, code:
+    /* JADX WARNING: Missing block: B:65:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -270,7 +270,7 @@ public abstract class Transport implements Runnable {
                     }
                 }
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             ex0 = ex;
             synchronized (run_thread) {
                 if (run_thread != this.thread) {

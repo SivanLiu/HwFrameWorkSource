@@ -66,7 +66,7 @@ public class DVCSRequestInfo {
         }
         try {
             return requestTime.getGenTime() != null ? requestTime.getGenTime().getDate() : new TimeStampToken(requestTime.getTimeStampToken()).getTimeStampInfo().getGenTime();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to extract time: ");
             stringBuilder.append(e.getMessage());

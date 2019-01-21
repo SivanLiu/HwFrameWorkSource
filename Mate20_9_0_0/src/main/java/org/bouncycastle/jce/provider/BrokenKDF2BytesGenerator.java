@@ -23,7 +23,7 @@ public class BrokenKDF2BytesGenerator implements DerivationFunction {
                 IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Output length to large");
             }
             int digestSize = (int) (j / ((long) this.digest.getDigestSize()));
-            Object obj = new byte[this.digest.getDigestSize()];
+            byte[] bArr2 = new byte[this.digest.getDigestSize()];
             for (int i3 = 1; i3 <= digestSize; i3++) {
                 this.digest.update(this.shared, 0, this.shared.length);
                 this.digest.update((byte) (i3 & 255));
@@ -31,13 +31,13 @@ public class BrokenKDF2BytesGenerator implements DerivationFunction {
                 this.digest.update((byte) ((i3 >> 16) & 255));
                 this.digest.update((byte) ((i3 >> 24) & 255));
                 this.digest.update(this.iv, 0, this.iv.length);
-                this.digest.doFinal(obj, 0);
+                this.digest.doFinal(bArr2, 0);
                 int i4 = i2 - i;
-                if (i4 > obj.length) {
-                    System.arraycopy(obj, 0, bArr, i, obj.length);
-                    i += obj.length;
+                if (i4 > bArr2.length) {
+                    System.arraycopy(bArr2, 0, bArr, i, bArr2.length);
+                    i += bArr2.length;
                 } else {
-                    System.arraycopy(obj, 0, bArr, i, i4);
+                    System.arraycopy(bArr2, 0, bArr, i, i4);
                 }
             }
             this.digest.reset();

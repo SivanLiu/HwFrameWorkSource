@@ -163,15 +163,15 @@ public abstract class BaseAgreementSpi extends KeyAgreementSpi {
         while (i < bArr.length && bArr[i] == (byte) 0) {
             i++;
         }
-        Object obj = new byte[(bArr.length - i)];
-        System.arraycopy(bArr, i, obj, 0, obj.length);
-        return obj;
+        byte[] bArr2 = new byte[(bArr.length - i)];
+        System.arraycopy(bArr, i, bArr2, 0, bArr2.length);
+        return bArr2;
     }
 
     protected abstract byte[] calcSecret();
 
     protected int engineGenerateSecret(byte[] bArr, int i) throws IllegalStateException, ShortBufferException {
-        Object engineGenerateSecret = engineGenerateSecret();
+        byte[] engineGenerateSecret = engineGenerateSecret();
         if (bArr.length - i >= engineGenerateSecret.length) {
             System.arraycopy(engineGenerateSecret, 0, bArr, i, engineGenerateSecret.length);
             return engineGenerateSecret.length;
@@ -215,9 +215,9 @@ public abstract class BaseAgreementSpi extends KeyAgreementSpi {
                 throw new NoSuchAlgorithmException(stringBuilder.toString());
             }
         } else if (keySize > 0) {
-            Object obj = new byte[(keySize / 8)];
-            System.arraycopy(calcSecret, 0, obj, 0, obj.length);
-            calcSecret = obj;
+            byte[] bArr2 = new byte[(keySize / 8)];
+            System.arraycopy(calcSecret, 0, bArr2, 0, bArr2.length);
+            calcSecret = bArr2;
         }
         str = getAlgorithm(str);
         if (des.containsKey(str)) {

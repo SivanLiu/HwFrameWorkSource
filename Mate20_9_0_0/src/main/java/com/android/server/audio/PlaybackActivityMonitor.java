@@ -480,19 +480,19 @@ public final class PlaybackActivityMonitor implements PlayerDeathMonitor, Player
         }
     }
 
-    /* JADX WARNING: Missing block: B:30:0x00b5, code:
+    /* JADX WARNING: Missing block: B:30:0x00b5, code skipped:
             if (r3 == false) goto L_0x00be;
      */
-    /* JADX WARNING: Missing block: B:31:0x00b7, code:
+    /* JADX WARNING: Missing block: B:31:0x00b7, code skipped:
             if (r10 != 0) goto L_0x00bb;
      */
-    /* JADX WARNING: Missing block: B:32:0x00b9, code:
+    /* JADX WARNING: Missing block: B:32:0x00b9, code skipped:
             r5 = true;
      */
-    /* JADX WARNING: Missing block: B:33:0x00bb, code:
+    /* JADX WARNING: Missing block: B:33:0x00bb, code skipped:
             dispatchPlaybackChange(r5);
      */
-    /* JADX WARNING: Missing block: B:34:0x00be, code:
+    /* JADX WARNING: Missing block: B:34:0x00be, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -653,7 +653,7 @@ public final class PlaybackActivityMonitor implements PlayerDeathMonitor, Player
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:8:0x000e, code:
+    /* JADX WARNING: Missing block: B:8:0x000e, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("dispatchPlaybackChange to ");
@@ -662,75 +662,75 @@ public final class PlaybackActivityMonitor implements PlayerDeathMonitor, Player
             android.util.Log.v(r0, r1.toString());
             r1 = r9.mPlayerLock;
      */
-    /* JADX WARNING: Missing block: B:9:0x0031, code:
+    /* JADX WARNING: Missing block: B:9:0x0031, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:12:0x0038, code:
+    /* JADX WARNING: Missing block: B:12:0x0038, code skipped:
             if (r9.mPlayers.isEmpty() == false) goto L_0x003c;
      */
-    /* JADX WARNING: Missing block: B:13:0x003a, code:
+    /* JADX WARNING: Missing block: B:13:0x003a, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:14:0x003b, code:
+    /* JADX WARNING: Missing block: B:14:0x003b, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:15:0x003c, code:
+    /* JADX WARNING: Missing block: B:15:0x003c, code skipped:
             r0 = new java.util.ArrayList(r9.mPlayers.values());
      */
-    /* JADX WARNING: Missing block: B:16:0x0047, code:
+    /* JADX WARNING: Missing block: B:16:0x0047, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:17:0x0048, code:
+    /* JADX WARNING: Missing block: B:17:0x0048, code skipped:
             r2 = r9.mClients;
      */
-    /* JADX WARNING: Missing block: B:18:0x004a, code:
+    /* JADX WARNING: Missing block: B:18:0x004a, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:21:0x0051, code:
+    /* JADX WARNING: Missing block: B:21:0x0051, code skipped:
             if (r9.mClients.isEmpty() == false) goto L_0x0055;
      */
-    /* JADX WARNING: Missing block: B:22:0x0053, code:
+    /* JADX WARNING: Missing block: B:22:0x0053, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:23:0x0054, code:
+    /* JADX WARNING: Missing block: B:23:0x0054, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:25:0x0057, code:
+    /* JADX WARNING: Missing block: B:25:0x0057, code skipped:
             if (r9.mHasPublicClients == false) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:26:0x0059, code:
+    /* JADX WARNING: Missing block: B:26:0x0059, code skipped:
             r1 = anonymizeForPublicConsumption(r0);
      */
-    /* JADX WARNING: Missing block: B:27:0x005e, code:
+    /* JADX WARNING: Missing block: B:27:0x005e, code skipped:
             r1 = null;
      */
-    /* JADX WARNING: Missing block: B:28:0x005f, code:
+    /* JADX WARNING: Missing block: B:28:0x005f, code skipped:
             r3 = r9.mClients.iterator();
      */
-    /* JADX WARNING: Missing block: B:30:0x0069, code:
+    /* JADX WARNING: Missing block: B:30:0x0069, code skipped:
             if (r3.hasNext() == false) goto L_0x00bd;
      */
-    /* JADX WARNING: Missing block: B:31:0x006b, code:
+    /* JADX WARNING: Missing block: B:31:0x006b, code skipped:
             r4 = (com.android.server.audio.PlaybackActivityMonitor.PlayMonitorClient) r3.next();
      */
-    /* JADX WARNING: Missing block: B:34:0x0074, code:
+    /* JADX WARNING: Missing block: B:34:0x0074, code skipped:
             if (r4.mErrorCount >= 5) goto L_0x00bc;
      */
-    /* JADX WARNING: Missing block: B:36:0x0078, code:
+    /* JADX WARNING: Missing block: B:36:0x0078, code skipped:
             if (r4.mIsPrivileged == false) goto L_0x0087;
      */
-    /* JADX WARNING: Missing block: B:37:0x007a, code:
+    /* JADX WARNING: Missing block: B:37:0x007a, code skipped:
             android.util.Log.v(TAG, "configsSystem");
             r4.mDispatcherCb.dispatchPlaybackConfigChange(r0, r10);
      */
-    /* JADX WARNING: Missing block: B:38:0x0087, code:
+    /* JADX WARNING: Missing block: B:38:0x0087, code skipped:
             android.util.Log.v(TAG, "configsPublic");
             r4.mDispatcherCb.dispatchPlaybackConfigChange(r1, false);
      */
-    /* JADX WARNING: Missing block: B:39:0x0095, code:
+    /* JADX WARNING: Missing block: B:39:0x0095, code skipped:
             r5 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:41:?, code:
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             r4.mErrorCount++;
             r6 = TAG;
             r7 = new java.lang.StringBuilder();
@@ -740,10 +740,10 @@ public final class PlaybackActivityMonitor implements PlayerDeathMonitor, Player
             r7.append(r4);
             android.util.Log.e(r6, r7.toString(), r5);
      */
-    /* JADX WARNING: Missing block: B:43:0x00bd, code:
+    /* JADX WARNING: Missing block: B:43:0x00bd, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:44:0x00be, code:
+    /* JADX WARNING: Missing block: B:44:0x00be, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -950,14 +950,18 @@ public final class PlaybackActivityMonitor implements PlayerDeathMonitor, Player
     List<AudioPlaybackConfiguration> getActivePlaybackConfigurations(boolean isPrivileged) {
         synchronized (this.mPlayers) {
             if (isPrivileged) {
-                List arrayList = new ArrayList(this.mPlayers.values());
-                return arrayList;
+                try {
+                    ArrayList arrayList = new ArrayList(this.mPlayers.values());
+                    return arrayList;
+                } catch (Throwable th) {
+                }
+            } else {
+                List<AudioPlaybackConfiguration> configsPublic;
+                synchronized (this.mPlayerLock) {
+                    configsPublic = anonymizeForPublicConsumption(new ArrayList(this.mPlayers.values()));
+                }
+                return configsPublic;
             }
-            List<AudioPlaybackConfiguration> configsPublic;
-            synchronized (this.mPlayerLock) {
-                configsPublic = anonymizeForPublicConsumption(new ArrayList(this.mPlayers.values()));
-            }
-            return configsPublic;
         }
     }
 

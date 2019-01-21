@@ -1316,7 +1316,7 @@ class BluetoothManagerService extends Stub {
     }
 
     private boolean supportBluetoothPersistedState() {
-        return this.mContext.getResources().getBoolean(17957034);
+        return this.mContext.getResources().getBoolean(17957035);
     }
 
     private boolean isBluetoothPersistedStateOn() {
@@ -1685,6 +1685,7 @@ class BluetoothManagerService extends Stub {
             } catch (RemoteException e) {
                 HwLog.e(TAG, "isRadioEnabled()", e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return z;
@@ -1828,7 +1829,10 @@ class BluetoothManagerService extends Stub {
         Slog.d(str, stringBuilder.toString());
         synchronized (this.mReceiver) {
             if (persist) {
-                persistBluetoothSetting(0);
+                try {
+                    persistBluetoothSetting(0);
+                } catch (Throwable th) {
+                }
             }
             this.mEnableExternal = false;
             sendDisableMsg(1, packageName);
@@ -1940,13 +1944,13 @@ class BluetoothManagerService extends Stub {
         return this.mBluetoothGatt;
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0086, code:
+    /* JADX WARNING: Missing block: B:23:0x0086, code skipped:
             r0 = r7.mHandler.obtainMessage(MESSAGE_ADD_PROXY_DELAYED);
             r0.arg1 = r8;
             r0.obj = r9;
             r7.mHandler.sendMessageDelayed(r0, 100);
      */
-    /* JADX WARNING: Missing block: B:24:0x0099, code:
+    /* JADX WARNING: Missing block: B:24:0x0099, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2181,6 +2185,8 @@ class BluetoothManagerService extends Stub {
         this.mBluetoothLock.readLock().unlock();
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x003e A:{Catch:{ all -> 0x0072 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean checkIfCallerIsForegroundUser() {
         int callingUser = UserHandle.getCallingUserId();
         int callingUid = Binder.getCallingUid();
@@ -2192,22 +2198,29 @@ class BluetoothManagerService extends Stub {
         boolean valid = false;
         try {
             int foregroundUser = ActivityManager.getCurrentUser();
-            if (callingUser == foregroundUser || parentUser == foregroundUser || callingAppId == UsbTerminalTypes.TERMINAL_BIDIR_SKRPHONE || callingAppId == this.mSystemUiUid) {
-                z = true;
+            if (!(callingUser == foregroundUser || parentUser == foregroundUser || callingAppId == UsbTerminalTypes.TERMINAL_BIDIR_SKRPHONE)) {
+                if (callingAppId != this.mSystemUiUid) {
+                    valid = z;
+                    if (!valid) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("checkIfCallerIsForegroundUser: valid=");
+                        stringBuilder.append(valid);
+                        stringBuilder.append(" callingUser=");
+                        stringBuilder.append(callingUser);
+                        stringBuilder.append(" parentUser=");
+                        stringBuilder.append(parentUser);
+                        stringBuilder.append(" foregroundUser=");
+                        stringBuilder.append(foregroundUser);
+                        Slog.d(str, stringBuilder.toString());
+                    }
+                    Binder.restoreCallingIdentity(callingIdentity);
+                    return valid;
+                }
             }
+            z = true;
             valid = z;
-            if (!valid) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("checkIfCallerIsForegroundUser: valid=");
-                stringBuilder.append(valid);
-                stringBuilder.append(" callingUser=");
-                stringBuilder.append(callingUser);
-                stringBuilder.append(" parentUser=");
-                stringBuilder.append(parentUser);
-                stringBuilder.append(" foregroundUser=");
-                stringBuilder.append(foregroundUser);
-                Slog.d(str, stringBuilder.toString());
+            if (valid) {
             }
             Binder.restoreCallingIdentity(callingIdentity);
             return valid;
@@ -2387,19 +2400,19 @@ class BluetoothManagerService extends Stub {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:38:0x0055, code:
+    /* JADX WARNING: Missing block: B:39:0x0055, code skipped:
             if (r8 != false) goto L_0x0060;
      */
-    /* JADX WARNING: Missing block: B:39:0x0057, code:
+    /* JADX WARNING: Missing block: B:40:0x0057, code skipped:
             if (r9 == false) goto L_0x005a;
      */
-    /* JADX WARNING: Missing block: B:40:0x005a, code:
+    /* JADX WARNING: Missing block: B:41:0x005a, code skipped:
             android.os.SystemClock.sleep(50);
      */
-    /* JADX WARNING: Missing block: B:41:0x0060, code:
+    /* JADX WARNING: Missing block: B:42:0x0060, code skipped:
             android.os.SystemClock.sleep(800);
      */
-    /* JADX WARNING: Missing block: B:42:0x0065, code:
+    /* JADX WARNING: Missing block: B:43:0x0065, code skipped:
             r1 = r1 + 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

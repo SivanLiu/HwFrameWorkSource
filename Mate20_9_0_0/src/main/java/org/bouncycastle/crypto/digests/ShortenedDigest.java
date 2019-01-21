@@ -18,9 +18,9 @@ public class ShortenedDigest implements ExtendedDigest {
     }
 
     public int doFinal(byte[] bArr, int i) {
-        Object obj = new byte[this.baseDigest.getDigestSize()];
-        this.baseDigest.doFinal(obj, 0);
-        System.arraycopy(obj, 0, bArr, i, this.length);
+        byte[] bArr2 = new byte[this.baseDigest.getDigestSize()];
+        this.baseDigest.doFinal(bArr2, 0);
+        System.arraycopy(bArr2, 0, bArr, i, this.length);
         return this.length;
     }
 

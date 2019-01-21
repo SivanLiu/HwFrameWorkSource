@@ -718,7 +718,7 @@ public class ActivityRecord extends AbsActivityRecord implements AppWindowContai
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0036, code:
+    /* JADX WARNING: Missing block: B:15:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1970,29 +1970,31 @@ public class ActivityRecord extends AbsActivityRecord implements AppWindowContai
                     this.nowVisible = true;
                     this.lastVisibleTime = SystemClock.uptimeMillis();
                     int i = 0;
-                    if (this.idle || this.mStackSupervisor.isStoppingNoHistoryActivity()) {
-                        int size = this.mStackSupervisor.mActivitiesWaitingForVisibleActivity.size();
-                        if (size > 0) {
-                            while (true) {
-                                int i2 = i;
-                                if (i2 >= size) {
-                                    break;
-                                }
-                                ActivityRecord r = (ActivityRecord) this.mStackSupervisor.mActivitiesWaitingForVisibleActivity.get(i2);
-                                if (ActivityManagerDebugConfig.DEBUG_SWITCH) {
-                                    String str2 = ActivityManagerService.TAG;
-                                    StringBuilder stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("Was waiting for visible: ");
-                                    stringBuilder2.append(r);
-                                    Log.v(str2, stringBuilder2.toString());
-                                }
-                                i = i2 + 1;
-                            }
-                            this.mStackSupervisor.mActivitiesWaitingForVisibleActivity.clear();
-                            this.mStackSupervisor.scheduleIdleLocked();
+                    if (!this.idle) {
+                        if (!this.mStackSupervisor.isStoppingNoHistoryActivity()) {
+                            this.mStackSupervisor.processStoppingActivitiesLocked(null, false, true);
+                            this.service.scheduleAppGcsLocked();
                         }
-                    } else {
-                        this.mStackSupervisor.processStoppingActivitiesLocked(null, false, true);
+                    }
+                    int size = this.mStackSupervisor.mActivitiesWaitingForVisibleActivity.size();
+                    if (size > 0) {
+                        while (true) {
+                            int i2 = i;
+                            if (i2 >= size) {
+                                break;
+                            }
+                            ActivityRecord r = (ActivityRecord) this.mStackSupervisor.mActivitiesWaitingForVisibleActivity.get(i2);
+                            if (ActivityManagerDebugConfig.DEBUG_SWITCH) {
+                                String str2 = ActivityManagerService.TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Was waiting for visible: ");
+                                stringBuilder2.append(r);
+                                Log.v(str2, stringBuilder2.toString());
+                            }
+                            i = i2 + 1;
+                        }
+                        this.mStackSupervisor.mActivitiesWaitingForVisibleActivity.clear();
+                        this.mStackSupervisor.scheduleIdleLocked();
                     }
                     this.service.scheduleAppGcsLocked();
                 }
@@ -2036,7 +2038,12 @@ public class ActivityRecord extends AbsActivityRecord implements AppWindowContai
                 anrActivity = getWaitingHistoryRecordLocked();
                 anrApp = this.app;
                 z = true;
-                windowFromSameProcessAsActivity = this.app == null || this.app.pid == windowPid || windowPid == -1;
+                if (!(this.app == null || this.app.pid == windowPid)) {
+                    if (windowPid != -1) {
+                        windowFromSameProcessAsActivity = false;
+                    }
+                }
+                windowFromSameProcessAsActivity = true;
             } finally {
                 while (true) {
                 }
@@ -2137,7 +2144,7 @@ public class ActivityRecord extends AbsActivityRecord implements AppWindowContai
         return stack.mDisplayId;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x002a, code:
+    /* JADX WARNING: Missing block: B:19:0x002a, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

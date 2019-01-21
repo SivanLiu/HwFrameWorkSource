@@ -51,13 +51,13 @@ public class SRP6Util {
     }
 
     private static byte[] getPadded(BigInteger bigInteger, int i) {
-        Object asUnsignedByteArray = BigIntegers.asUnsignedByteArray(bigInteger);
+        byte[] asUnsignedByteArray = BigIntegers.asUnsignedByteArray(bigInteger);
         if (asUnsignedByteArray.length >= i) {
             return asUnsignedByteArray;
         }
-        Object obj = new byte[i];
-        System.arraycopy(asUnsignedByteArray, 0, obj, i - asUnsignedByteArray.length, asUnsignedByteArray.length);
-        return obj;
+        byte[] bArr = new byte[i];
+        System.arraycopy(asUnsignedByteArray, 0, bArr, i - asUnsignedByteArray.length, asUnsignedByteArray.length);
+        return bArr;
     }
 
     private static BigInteger hashPaddedPair(Digest digest, BigInteger bigInteger, BigInteger bigInteger2, BigInteger bigInteger3) {

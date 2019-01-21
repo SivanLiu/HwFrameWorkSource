@@ -58,9 +58,9 @@ public class ECIESKeyEncapsulation implements KeyEncapsulation {
             ECCurve curve = parameters.getCurve();
             BigInteger n = parameters.getN();
             BigInteger h = parameters.getH();
-            Object obj = new byte[i2];
-            System.arraycopy(bArr, i, obj, 0, i2);
-            ECPoint decodePoint = curve.decodePoint(obj);
+            byte[] bArr2 = new byte[i2];
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            ECPoint decodePoint = curve.decodePoint(bArr2);
             if (this.CofactorMode || this.OldCofactorMode) {
                 decodePoint = decodePoint.multiply(h);
             }
@@ -68,7 +68,7 @@ public class ECIESKeyEncapsulation implements KeyEncapsulation {
             if (this.CofactorMode) {
                 d = d.multiply(h.modInverse(n)).mod(n);
             }
-            return deriveKey(i3, obj, decodePoint.multiply(d).normalize().getAffineXCoord().getEncoded());
+            return deriveKey(i3, bArr2, decodePoint.multiply(d).normalize().getAffineXCoord().getEncoded());
         }
         throw new IllegalArgumentException("Private key required for encryption");
     }
@@ -107,7 +107,7 @@ public class ECIESKeyEncapsulation implements KeyEncapsulation {
             curve.normalizeAll(eCPointArr);
             ECPoint eCPoint = eCPointArr[0];
             ECPoint eCPoint2 = eCPointArr[1];
-            Object encoded = eCPoint.getEncoded(false);
+            byte[] encoded = eCPoint.getEncoded(false);
             System.arraycopy(encoded, 0, bArr, i, encoded.length);
             return deriveKey(i2, encoded, eCPoint2.getAffineXCoord().getEncoded());
         }

@@ -2,36 +2,35 @@ package com.huawei.android.pushagent.utils;
 
 import android.app.ActivityManager;
 import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.f.c;
 
 public abstract class a {
-    public static int fb() {
+    public static int xy() {
         return ActivityManager.getCurrentUser();
     }
 
-    public static String fa(int i) {
+    public static String ya(int i) {
         if (i < 0 || i > 99) {
             i = 0;
         }
-        return fc(String.valueOf(i));
+        return xx(String.valueOf(i));
     }
 
-    public static String fe(String str) {
-        return fc(str);
+    public static String yb(String str) {
+        return xx(str);
     }
 
-    public static int fd(String str) {
+    public static int xz(String str) {
         if (!TextUtils.isEmpty(str)) {
             try {
                 return Integer.parseInt(str);
             } catch (NumberFormatException e) {
-                c.eq("PushLog3413", "format userId failt, userId is: " + str);
+                com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "format userId failt, userId is: " + str);
             }
         }
-        return fb();
+        return xy();
     }
 
-    private static String fc(String str) {
+    private static String xx(String str) {
         if (TextUtils.isEmpty(str)) {
             return "00";
         }

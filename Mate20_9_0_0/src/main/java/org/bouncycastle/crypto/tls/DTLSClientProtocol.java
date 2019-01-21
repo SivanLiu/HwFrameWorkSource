@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -222,7 +221,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
             } catch (IOException e2) {
                 abortClientHandshake(clientHandshakeState, dTLSRecordLayer, (short) 80);
                 throw e2;
-            } catch (Throwable e3) {
+            } catch (RuntimeException e3) {
                 abortClientHandshake(clientHandshakeState, dTLSRecordLayer, (short) 80);
                 throw new TlsFatalAlert((short) 80, e3);
             } catch (Throwable th) {
@@ -234,13 +233,13 @@ public class DTLSClientProtocol extends DTLSProtocol {
     }
 
     protected byte[] generateCertificateVerify(ClientHandshakeState clientHandshakeState, DigitallySigned digitallySigned) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         digitallySigned.encode(byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
     protected byte[] generateClientHello(ClientHandshakeState clientHandshakeState, TlsClient tlsClient) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ProtocolVersion clientVersion = tlsClient.getClientVersion();
         if (clientVersion.isDTLS()) {
             TlsClientContextImpl tlsClientContextImpl = clientHandshakeState.clientContext;
@@ -260,7 +259,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
             clientHandshakeState.offeredCipherSuites = tlsClient.getCipherSuites();
             clientHandshakeState.clientExtensions = tlsClient.getClientExtensions();
             int contains = Arrays.contains(clientHandshakeState.offeredCipherSuites, 255) ^ 1;
-            if (!((TlsUtils.getExtensionData(clientHandshakeState.clientExtensions, TlsProtocol.EXT_RenegotiationInfo) == null ? 1 : (short) 0) == 0 || contains == 0)) {
+            if (!((TlsUtils.getExtensionData(clientHandshakeState.clientExtensions, TlsProtocol.EXT_RenegotiationInfo) == null ? 1 : 0) == 0 || contains == 0)) {
                 clientHandshakeState.offeredCipherSuites = Arrays.append(clientHandshakeState.offeredCipherSuites, 255);
             }
             if (isFallback && !Arrays.contains(clientHandshakeState.offeredCipherSuites, (int) CipherSuite.TLS_FALLBACK_SCSV)) {
@@ -278,7 +277,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
     }
 
     protected byte[] generateClientKeyExchange(ClientHandshakeState clientHandshakeState) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         clientHandshakeState.keyExchange.generateClientKeyExchange(byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
@@ -296,7 +295,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
 
     protected void processCertificateRequest(ClientHandshakeState clientHandshakeState, byte[] bArr) throws IOException {
         if (clientHandshakeState.authentication != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             clientHandshakeState.certificateRequest = CertificateRequest.parse(clientHandshakeState.clientContext, byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             clientHandshakeState.keyExchange.validateCertificateRequest(clientHandshakeState.certificateRequest);
@@ -307,7 +306,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
 
     protected void processCertificateStatus(ClientHandshakeState clientHandshakeState, byte[] bArr) throws IOException {
         if (clientHandshakeState.allowCertificateStatus) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             clientHandshakeState.certificateStatus = CertificateStatus.parse(byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             return;
@@ -316,7 +315,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
     }
 
     protected byte[] processHelloVerifyRequest(ClientHandshakeState clientHandshakeState, byte[] bArr) throws IOException {
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
         ProtocolVersion readVersion = TlsUtils.readVersion(byteArrayInputStream);
         byte[] readOpaque8 = TlsUtils.readOpaque8(byteArrayInputStream);
         TlsProtocol.assertEmpty(byteArrayInputStream);
@@ -330,14 +329,14 @@ public class DTLSClientProtocol extends DTLSProtocol {
     }
 
     protected void processNewSessionTicket(ClientHandshakeState clientHandshakeState, byte[] bArr) throws IOException {
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
         NewSessionTicket parse = NewSessionTicket.parse(byteArrayInputStream);
         TlsProtocol.assertEmpty(byteArrayInputStream);
         clientHandshakeState.client.notifyNewSessionTicket(parse);
     }
 
     protected Certificate processServerCertificate(ClientHandshakeState clientHandshakeState, byte[] bArr) throws IOException {
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
         Certificate parse = Certificate.parse(byteArrayInputStream);
         TlsProtocol.assertEmpty(byteArrayInputStream);
         clientHandshakeState.keyExchange.processServerCertificate(parse);
@@ -430,7 +429,7 @@ public class DTLSClientProtocol extends DTLSProtocol {
     }
 
     protected void processServerKeyExchange(ClientHandshakeState clientHandshakeState, byte[] bArr) throws IOException {
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
         clientHandshakeState.keyExchange.processServerKeyExchange(byteArrayInputStream);
         TlsProtocol.assertEmpty(byteArrayInputStream);
     }

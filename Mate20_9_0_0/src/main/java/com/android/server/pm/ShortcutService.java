@@ -360,7 +360,7 @@ public class ShortcutService extends Stub {
             this();
         }
 
-        /* JADX WARNING: Missing block: B:34:0x0099, code:
+        /* JADX WARNING: Missing block: B:34:0x0099, code skipped:
             return com.android.server.pm.ShortcutService.access$300(r3.this$0, r30);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -560,9 +560,11 @@ public class ShortcutService extends Stub {
                     ShortcutService.this.getLauncherShortcutsLocked(str, i2, i).attemptToRestoreIfNeededAndSave();
                     boolean getPinnedByAnyLauncher = ShortcutService.this.canSeeAnyPinnedShortcut(str, i, callingPid, callingUid);
                     ShortcutInfo si = getShortcutInfoLocked(i, str, str3, str2, i2, getPinnedByAnyLauncher);
-                    if (si != null && si.isEnabled() && (si.isAlive() || getPinnedByAnyLauncher)) {
-                        Intent[] intents = si.getIntents();
-                        return intents;
+                    if (si != null && si.isEnabled()) {
+                        if (si.isAlive() || getPinnedByAnyLauncher) {
+                            Intent[] intents = si.getIntents();
+                            return intents;
+                        }
                     }
                     String str4 = ShortcutService.TAG;
                     StringBuilder stringBuilder = new StringBuilder();
@@ -584,7 +586,7 @@ public class ShortcutService extends Stub {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x004c, code:
+        /* JADX WARNING: Missing block: B:13:0x004c, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -608,7 +610,7 @@ public class ShortcutService extends Stub {
             }
         }
 
-        /* JADX WARNING: Missing block: B:26:0x0084, code:
+        /* JADX WARNING: Missing block: B:27:0x0084, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -625,23 +627,24 @@ public class ShortcutService extends Stub {
                     return null;
                 }
                 ShortcutInfo shortcutInfo = p.findShortcutById(shortcutId);
-                if (shortcutInfo == null || !shortcutInfo.hasIconFile()) {
-                } else {
-                    String path = ShortcutService.this.mShortcutBitmapSaver.getBitmapPathMayWaitLocked(shortcutInfo);
-                    if (path == null) {
-                        Slog.w(ShortcutService.TAG, "null bitmap detected in getShortcutIconFd()");
-                        return null;
-                    }
-                    try {
-                        ParcelFileDescriptor open = ParcelFileDescriptor.open(new File(path), 268435456);
-                        return open;
-                    } catch (FileNotFoundException e) {
-                        String str = ShortcutService.TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Icon file not found: ");
-                        stringBuilder.append(path);
-                        Slog.e(str, stringBuilder.toString());
-                        return null;
+                if (shortcutInfo != null) {
+                    if (shortcutInfo.hasIconFile()) {
+                        String path = ShortcutService.this.mShortcutBitmapSaver.getBitmapPathMayWaitLocked(shortcutInfo);
+                        if (path == null) {
+                            Slog.w(ShortcutService.TAG, "null bitmap detected in getShortcutIconFd()");
+                            return null;
+                        }
+                        try {
+                            ParcelFileDescriptor open = ParcelFileDescriptor.open(new File(path), 268435456);
+                            return open;
+                        } catch (FileNotFoundException e) {
+                            String str = ShortcutService.TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Icon file not found: ");
+                            stringBuilder.append(path);
+                            Slog.e(str, stringBuilder.toString());
+                            return null;
+                        }
                     }
                 }
             }
@@ -786,6 +789,8 @@ public class ShortcutService extends Stub {
                             i = 3;
                             break;
                         }
+                        break;
+                    default:
                         break;
                 }
                 switch (i) {
@@ -1080,85 +1085,85 @@ public class ShortcutService extends Stub {
             }
         };
         this.mPackageMonitor = new BroadcastReceiver() {
-            /* JADX WARNING: Missing block: B:19:0x0051, code:
+            /* JADX WARNING: Missing block: B:19:0x0051, code skipped:
             if ("android.intent.action.ACTION_PREFERRED_ACTIVITY_CHANGED".equals(r1) == false) goto L_0x0059;
      */
-            /* JADX WARNING: Missing block: B:20:0x0053, code:
+            /* JADX WARNING: Missing block: B:20:0x0053, code skipped:
             r11.this$0.injectRestoreCallingIdentity(r2);
      */
-            /* JADX WARNING: Missing block: B:21:0x0058, code:
+            /* JADX WARNING: Missing block: B:21:0x0058, code skipped:
             return;
      */
-            /* JADX WARNING: Missing block: B:23:?, code:
+            /* JADX WARNING: Missing block: B:23:?, code skipped:
             r4 = r13.getData();
      */
-            /* JADX WARNING: Missing block: B:24:0x005d, code:
+            /* JADX WARNING: Missing block: B:24:0x005d, code skipped:
             if (r4 == null) goto L_0x0064;
      */
-            /* JADX WARNING: Missing block: B:25:0x005f, code:
+            /* JADX WARNING: Missing block: B:25:0x005f, code skipped:
             r5 = r4.getSchemeSpecificPart();
      */
-            /* JADX WARNING: Missing block: B:26:0x0064, code:
+            /* JADX WARNING: Missing block: B:26:0x0064, code skipped:
             r5 = null;
      */
-            /* JADX WARNING: Missing block: B:27:0x0065, code:
+            /* JADX WARNING: Missing block: B:27:0x0065, code skipped:
             if (r5 != null) goto L_0x0083;
      */
-            /* JADX WARNING: Missing block: B:28:0x0067, code:
+            /* JADX WARNING: Missing block: B:28:0x0067, code skipped:
             r6 = com.android.server.pm.ShortcutService.TAG;
             r7 = new java.lang.StringBuilder();
             r7.append("Intent broadcast does not contain package name: ");
             r7.append(r13);
             android.util.Slog.w(r6, r7.toString());
      */
-            /* JADX WARNING: Missing block: B:29:0x007d, code:
+            /* JADX WARNING: Missing block: B:29:0x007d, code skipped:
             r11.this$0.injectRestoreCallingIdentity(r2);
      */
-            /* JADX WARNING: Missing block: B:30:0x0082, code:
+            /* JADX WARNING: Missing block: B:30:0x0082, code skipped:
             return;
      */
-            /* JADX WARNING: Missing block: B:32:?, code:
+            /* JADX WARNING: Missing block: B:32:?, code skipped:
             r7 = false;
             r6 = r13.getBooleanExtra("android.intent.extra.REPLACING", false);
             r9 = r1.hashCode();
      */
-            /* JADX WARNING: Missing block: B:33:0x0092, code:
+            /* JADX WARNING: Missing block: B:33:0x0092, code skipped:
             if (r9 == 172491798) goto L_0x00c1;
      */
-            /* JADX WARNING: Missing block: B:35:0x0097, code:
+            /* JADX WARNING: Missing block: B:35:0x0097, code skipped:
             if (r9 == 267468725) goto L_0x00b7;
      */
-            /* JADX WARNING: Missing block: B:37:0x009c, code:
+            /* JADX WARNING: Missing block: B:37:0x009c, code skipped:
             if (r9 == 525384130) goto L_0x00ad;
      */
-            /* JADX WARNING: Missing block: B:39:0x00a1, code:
+            /* JADX WARNING: Missing block: B:39:0x00a1, code skipped:
             if (r9 == 1544582882) goto L_0x00a4;
      */
-            /* JADX WARNING: Missing block: B:41:0x00aa, code:
+            /* JADX WARNING: Missing block: B:42:0x00aa, code skipped:
             if (r1.equals("android.intent.action.PACKAGE_ADDED") == false) goto L_0x00cb;
      */
-            /* JADX WARNING: Missing block: B:43:0x00b3, code:
+            /* JADX WARNING: Missing block: B:45:0x00b3, code skipped:
             if (r1.equals("android.intent.action.PACKAGE_REMOVED") == false) goto L_0x00cb;
      */
-            /* JADX WARNING: Missing block: B:44:0x00b5, code:
+            /* JADX WARNING: Missing block: B:46:0x00b5, code skipped:
             r7 = true;
      */
-            /* JADX WARNING: Missing block: B:46:0x00bd, code:
+            /* JADX WARNING: Missing block: B:48:0x00bd, code skipped:
             if (r1.equals("android.intent.action.PACKAGE_DATA_CLEARED") == false) goto L_0x00cb;
      */
-            /* JADX WARNING: Missing block: B:47:0x00bf, code:
+            /* JADX WARNING: Missing block: B:49:0x00bf, code skipped:
             r7 = true;
      */
-            /* JADX WARNING: Missing block: B:49:0x00c7, code:
+            /* JADX WARNING: Missing block: B:51:0x00c7, code skipped:
             if (r1.equals("android.intent.action.PACKAGE_CHANGED") == false) goto L_0x00cb;
      */
-            /* JADX WARNING: Missing block: B:50:0x00c9, code:
+            /* JADX WARNING: Missing block: B:52:0x00c9, code skipped:
             r7 = true;
      */
-            /* JADX WARNING: Missing block: B:51:0x00cb, code:
+            /* JADX WARNING: Missing block: B:53:0x00cb, code skipped:
             r7 = true;
      */
-            /* JADX WARNING: Missing block: B:52:0x00cc, code:
+            /* JADX WARNING: Missing block: B:54:0x00cc, code skipped:
             switch(r7) {
                 case 0: goto L_0x00e4;
                 case 1: goto L_0x00dc;
@@ -1167,25 +1172,25 @@ public class ShortcutService extends Stub {
                 default: goto L_0x00cf;
             };
      */
-            /* JADX WARNING: Missing block: B:53:0x00d0, code:
+            /* JADX WARNING: Missing block: B:56:0x00d0, code skipped:
             com.android.server.pm.ShortcutService.access$1200(r11.this$0, r5, r0);
      */
-            /* JADX WARNING: Missing block: B:54:0x00d6, code:
+            /* JADX WARNING: Missing block: B:57:0x00d6, code skipped:
             com.android.server.pm.ShortcutService.access$1100(r11.this$0, r5, r0);
      */
-            /* JADX WARNING: Missing block: B:55:0x00dc, code:
+            /* JADX WARNING: Missing block: B:58:0x00dc, code skipped:
             if (r6 != false) goto L_0x00ff;
      */
-            /* JADX WARNING: Missing block: B:56:0x00de, code:
+            /* JADX WARNING: Missing block: B:59:0x00de, code skipped:
             com.android.server.pm.ShortcutService.access$1000(r11.this$0, r5, r0);
      */
-            /* JADX WARNING: Missing block: B:57:0x00e4, code:
+            /* JADX WARNING: Missing block: B:60:0x00e4, code skipped:
             if (r6 == false) goto L_0x00ec;
      */
-            /* JADX WARNING: Missing block: B:58:0x00e6, code:
+            /* JADX WARNING: Missing block: B:61:0x00e6, code skipped:
             com.android.server.pm.ShortcutService.access$800(r11.this$0, r5, r0);
      */
-            /* JADX WARNING: Missing block: B:59:0x00ec, code:
+            /* JADX WARNING: Missing block: B:62:0x00ec, code skipped:
             com.android.server.pm.ShortcutService.access$900(r11.this$0, r5, r0);
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1533,33 +1538,40 @@ public class ShortcutService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x00a9 A:{Splitter: B:1:0x0008, ExcHandler: java.io.IOException (r3_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:15:0x0039, code:
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x00a9 A:{ExcHandler: IOException | XmlPullParserException (r3_1 'e' java.lang.Exception), Splitter:B:1:0x0008} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:15:0x0039, code skipped:
             r8 = TAG;
             r10 = new java.lang.StringBuilder();
             r10.append("Invalid root tag: ");
             r10.append(r9);
             android.util.Slog.e(r8, r10.toString());
      */
-    /* JADX WARNING: Missing block: B:16:0x004f, code:
+    /* JADX WARNING: Missing block: B:16:0x004f, code skipped:
             if (r3 == null) goto L_0x0054;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:19:0x0054, code:
+    /* JADX WARNING: Missing block: B:19:0x0054, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:31:0x008e, code:
+    /* JADX WARNING: Missing block: B:32:0x008e, code skipped:
             if (r3 == null) goto L_0x00c9;
      */
-    /* JADX WARNING: Missing block: B:33:?, code:
+    /* JADX WARNING: Missing block: B:34:?, code skipped:
             r3.close();
      */
-    /* JADX WARNING: Missing block: B:47:0x00a9, code:
+    /* JADX WARNING: Missing block: B:43:0x00a0, code skipped:
+            r6 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:45:?, code skipped:
+            r4.addSuppressed(r6);
+     */
+    /* JADX WARNING: Missing block: B:48:0x00a9, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:48:0x00aa, code:
+    /* JADX WARNING: Missing block: B:49:0x00aa, code skipped:
             r4 = TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Failed to read file ");
@@ -1587,8 +1599,10 @@ public class ShortcutService extends Stub {
                     String tag = parser.getName();
                     if (next != 1) {
                         Object obj = -1;
-                        if (tag.hashCode() == -68726522 && tag.equals(TAG_LAST_RESET_TIME)) {
-                            obj = null;
+                        if (tag.hashCode() == -68726522) {
+                            if (tag.equals(TAG_LAST_RESET_TIME)) {
+                                obj = null;
+                            }
                         }
                         if (obj != null) {
                             String str = TAG;
@@ -1605,9 +1619,15 @@ public class ShortcutService extends Stub {
                 }
             }
         } catch (FileNotFoundException e) {
-        } catch (Exception e2) {
+        } catch (IOException | XmlPullParserException e2) {
         } catch (Throwable th) {
-            r4.addSuppressed(th);
+            if (in != null) {
+                if (r4 != null) {
+                    in.close();
+                } else {
+                    in.close();
+                }
+            }
         }
         getLastResetTimeLocked();
     }
@@ -1617,19 +1637,6 @@ public class ShortcutService extends Stub {
         return new File(injectUserDataPath(userId), FILENAME_USER_PACKAGES);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x004b A:{PHI: r2 , Splitter: B:5:0x003b, ExcHandler: org.xmlpull.v1.XmlPullParserException (r3_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:7:0x004b, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x004c, code:
-            r4 = TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("Failed to write to file ");
-            r5.append(r1.getBaseFile());
-            android.util.Slog.e(r4, r5.toString(), r3);
-            r1.failWrite(r2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mLock")
     private void saveUserLocked(int userId) {
         if (this.mUserManagerInternal.isRemovingUser(userId)) {
@@ -1651,7 +1658,13 @@ public class ShortcutService extends Stub {
             saveUserInternalLocked(userId, os, false);
             file.finishWrite(os);
             cleanupDanglingBitmapDirectoriesLocked(userId);
-        } catch (Exception e) {
+        } catch (IOException | XmlPullParserException e) {
+            String str2 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Failed to write to file ");
+            stringBuilder2.append(file.getBaseFile());
+            Slog.e(str2, stringBuilder2.toString(), e);
+            file.failWrite(os);
         }
     }
 
@@ -1675,19 +1688,6 @@ public class ShortcutService extends Stub {
         Slog.w(TAG, String.format("Invalid tag '%s' found at depth %d", new Object[]{tag, Integer.valueOf(depth)}));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:9:0x001d A:{Splitter: B:4:0x0011, ExcHandler: java.io.IOException (r4_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:9:0x001d A:{Splitter: B:4:0x0011, ExcHandler: java.io.IOException (r4_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:9:0x001d, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:11:?, code:
-            r5 = TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("Failed to read file ");
-            r6.append(r1.getBaseFile());
-            android.util.Slog.e(r5, r6.toString(), r4);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private ShortcutUser loadUserLocked(int userId) {
         AtomicFile file = new AtomicFile(getUserFile(userId));
         ShortcutUser ret = null;
@@ -1696,11 +1696,16 @@ public class ShortcutService extends Stub {
             try {
                 ret = loadUserInternal(userId, in, false);
                 return ret;
-            } catch (Exception e) {
+            } catch (InvalidFileFormatException | IOException | XmlPullParserException e) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to read file ");
+                stringBuilder.append(file.getBaseFile());
+                Slog.e(str, stringBuilder.toString(), e);
+                return ret;
             } finally {
                 IoUtils.closeQuietly(in);
             }
-            return ret;
         } catch (FileNotFoundException e2) {
             return null;
         }
@@ -2132,16 +2137,16 @@ public class ShortcutService extends Stub {
         injectPostToHandler(new -$$Lambda$ShortcutService$DzwraUeMWDwA0XDfFxd3sGOsA0E(this, userId, packageName));
     }
 
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r0 = r1.size() - 1;
      */
-    /* JADX WARNING: Missing block: B:12:0x0019, code:
+    /* JADX WARNING: Missing block: B:12:0x0019, code skipped:
             if (r0 < 0) goto L_0x002c;
      */
-    /* JADX WARNING: Missing block: B:13:0x001b, code:
+    /* JADX WARNING: Missing block: B:13:0x001b, code skipped:
             ((android.content.pm.ShortcutServiceInternal.ShortcutChangeListener) r1.get(r0)).onShortcutChanged(r5, r4);
      */
-    /* JADX WARNING: Missing block: B:14:0x0024, code:
+    /* JADX WARNING: Missing block: B:14:0x0024, code skipped:
             r0 = r0 - 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2280,25 +2285,27 @@ public class ShortcutService extends Stub {
                     ShortcutInfo source = (ShortcutInfo) newShortcuts.get(i2);
                     fixUpIncomingShortcutInfo(source, true);
                     ShortcutInfo target = ps.findShortcutById(source.getId());
-                    if (target != null && target.isVisibleToPublisher()) {
-                        if (target.isEnabled() != source.isEnabled()) {
-                            Slog.w(TAG, "ShortcutInfo.enabled cannot be changed with updateShortcuts()");
-                        }
-                        if (source.hasRank()) {
-                            target.setRankChanged();
-                            target.setImplicitRank(source.getImplicitRank());
-                        }
-                        boolean replacingIcon = source.getIcon() != null;
-                        if (replacingIcon) {
-                            removeIconLocked(target);
-                        }
-                        target.copyNonNullFieldsFrom(source);
-                        target.setTimestamp(injectCurrentTimeMillis());
-                        if (replacingIcon) {
-                            saveIconAndFixUpShortcutLocked(target);
-                        }
-                        if (replacingIcon || source.hasStringResources()) {
-                            fixUpShortcutResourceNamesAndValues(target);
+                    if (target != null) {
+                        if (target.isVisibleToPublisher()) {
+                            if (target.isEnabled() != source.isEnabled()) {
+                                Slog.w(TAG, "ShortcutInfo.enabled cannot be changed with updateShortcuts()");
+                            }
+                            if (source.hasRank()) {
+                                target.setRankChanged();
+                                target.setImplicitRank(source.getImplicitRank());
+                            }
+                            boolean replacingIcon = source.getIcon() != null;
+                            if (replacingIcon) {
+                                removeIconLocked(target);
+                            }
+                            target.copyNonNullFieldsFrom(source);
+                            target.setTimestamp(injectCurrentTimeMillis());
+                            if (replacingIcon) {
+                                saveIconAndFixUpShortcutLocked(target);
+                            }
+                            if (replacingIcon || source.hasStringResources()) {
+                                fixUpShortcutResourceNamesAndValues(target);
+                            }
                         }
                     }
                 }
@@ -2463,7 +2470,7 @@ public class ShortcutService extends Stub {
     }
 
     public ParceledListSlice<ShortcutInfo> getDynamicShortcuts(String packageName, int userId) {
-        ParceledListSlice<ShortcutInfo> shortcutsWithQueryLocked;
+        ParceledListSlice shortcutsWithQueryLocked;
         verifyCaller(packageName, userId);
         synchronized (this.mLock) {
             throwIfUserLockedL(userId);
@@ -2473,7 +2480,7 @@ public class ShortcutService extends Stub {
     }
 
     public ParceledListSlice<ShortcutInfo> getManifestShortcuts(String packageName, int userId) {
-        ParceledListSlice<ShortcutInfo> shortcutsWithQueryLocked;
+        ParceledListSlice shortcutsWithQueryLocked;
         verifyCaller(packageName, userId);
         synchronized (this.mLock) {
             throwIfUserLockedL(userId);
@@ -2483,7 +2490,7 @@ public class ShortcutService extends Stub {
     }
 
     public ParceledListSlice<ShortcutInfo> getPinnedShortcuts(String packageName, int userId) {
-        ParceledListSlice<ShortcutInfo> shortcutsWithQueryLocked;
+        ParceledListSlice shortcutsWithQueryLocked;
         verifyCaller(packageName, userId);
         synchronized (this.mLock) {
             throwIfUserLockedL(userId);
@@ -2534,13 +2541,13 @@ public class ShortcutService extends Stub {
         return i;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002e, code:
+    /* JADX WARNING: Missing block: B:9:0x002e, code skipped:
             r0 = injectClearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r6.mUsageStatsManagerInternal.reportShortcutUsage(r7, r8, r9);
      */
-    /* JADX WARNING: Missing block: B:14:0x003d, code:
+    /* JADX WARNING: Missing block: B:14:0x003d, code skipped:
             injectRestoreCallingIdentity(r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2697,15 +2704,17 @@ public class ShortcutService extends Stub {
                     detected = defaultLauncher;
                 } else {
                     detected = user.getLastKnownLauncher();
-                    if (!(detected == null || injectIsActivityEnabledAndExported(detected, i))) {
-                        String str = TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Cached launcher ");
-                        stringBuilder.append(detected);
-                        stringBuilder.append(" no longer exists");
-                        Slog.w(str, stringBuilder.toString());
-                        detected = null;
-                        user.clearLauncher();
+                    if (detected != null) {
+                        if (!injectIsActivityEnabledAndExported(detected, i)) {
+                            String str = TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Cached launcher ");
+                            stringBuilder.append(detected);
+                            stringBuilder.append(" no longer exists");
+                            Slog.w(str, stringBuilder.toString());
+                            detected = null;
+                            user.clearLauncher();
+                        }
                     }
                 }
                 if (detected == null) {
@@ -2719,9 +2728,11 @@ public class ShortcutService extends Stub {
                         }
                         ShortcutUser user2 = user;
                         ResolveInfo ri = (ResolveInfo) allHomeCandidates.get(i3);
-                        if (ri.activityInfo.applicationInfo.isSystemApp() && ri.priority >= lastPriority) {
-                            detected = ri.activityInfo.getComponentName();
-                            lastPriority = ri.priority;
+                        if (ri.activityInfo.applicationInfo.isSystemApp()) {
+                            if (ri.priority >= lastPriority) {
+                                detected = ri.activityInfo.getComponentName();
+                                lastPriority = ri.priority;
+                            }
                         }
                         i2 = i3 + 1;
                         user = user2;
@@ -3249,17 +3260,6 @@ public class ShortcutService extends Stub {
         return (pi.applicationInfo.flags & 32768) != 0;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x0073 A:{Catch:{ XmlPullParserException -> 0x0073, XmlPullParserException -> 0x0073 }, Splitter: B:15:0x0062, ExcHandler: org.xmlpull.v1.XmlPullParserException (r4_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:21:0x0073, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:22:0x0074, code:
-            android.util.Slog.w(TAG, "Backup failed.", r4);
-     */
-    /* JADX WARNING: Missing block: B:24:0x007c, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public byte[] getBackupPayload(int userId) {
         enforceSystem();
         synchronized (this.mLock) {
@@ -3283,31 +3283,20 @@ public class ShortcutService extends Stub {
                     byte[] payload = os.toByteArray();
                     this.mShortcutDumpFiles.save("backup-1-payload.txt", payload);
                     return payload;
-                } catch (Exception e) {
+                } catch (IOException | XmlPullParserException e) {
+                    Slog.w(TAG, "Backup failed.", e);
+                    return null;
                 }
-            } else {
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Can't backup: user ");
-                stringBuilder2.append(userId);
-                stringBuilder2.append(" is locked or not running");
-                wtf(stringBuilder2.toString());
-                return null;
             }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Can't backup: user ");
+            stringBuilder2.append(userId);
+            stringBuilder2.append(" is locked or not running");
+            wtf(stringBuilder2.toString());
+            return null;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x008d A:{Catch:{ XmlPullParserException -> 0x008d, XmlPullParserException -> 0x008d, XmlPullParserException -> 0x008d }, Splitter: B:10:0x0042, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:16:0x008d A:{Catch:{ XmlPullParserException -> 0x008d, XmlPullParserException -> 0x008d, XmlPullParserException -> 0x008d }, Splitter: B:10:0x0042, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:16:0x008d, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:17:0x008e, code:
-            android.util.Slog.w(TAG, "Restoration failed.", r2);
-     */
-    /* JADX WARNING: Missing block: B:19:0x0096, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void applyRestore(byte[] payload, int userId) {
         enforceSystem();
         synchronized (this.mLock) {
@@ -3323,15 +3312,17 @@ public class ShortcutService extends Stub {
                     this.mShortcutDumpFiles.save("restore-4.txt", new -$$Lambda$ShortcutService$w7_ouiisHmMMzTkQ_HUAHbawlLY(this));
                     this.mShortcutDumpFiles.save("restore-5-finish.txt", new -$$Lambda$ShortcutService$vKI79Gf4pKq8ASWghBXV-NKhZwk(this));
                     saveUserLocked(userId);
-                } catch (Exception e) {
+                    return;
+                } catch (InvalidFileFormatException | IOException | XmlPullParserException e) {
+                    Slog.w(TAG, "Restoration failed.", e);
+                    return;
                 }
-            } else {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Can't restore: user ");
-                stringBuilder.append(userId);
-                stringBuilder.append(" is locked or not running");
-                wtf(stringBuilder.toString());
             }
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Can't restore: user ");
+            stringBuilder.append(userId);
+            stringBuilder.append(" is locked or not running");
+            wtf(stringBuilder.toString());
         }
     }
 

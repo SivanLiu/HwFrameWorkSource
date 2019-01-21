@@ -153,13 +153,13 @@ public class VoiceInteractionManagerService extends SystemService {
                 }
             }
 
-            /* JADX WARNING: Missing block: B:11:0x0031, code:
+            /* JADX WARNING: Missing block: B:11:0x0031, code skipped:
             return;
      */
-            /* JADX WARNING: Missing block: B:27:0x0080, code:
+            /* JADX WARNING: Missing block: B:27:0x0080, code skipped:
             return;
      */
-            /* JADX WARNING: Missing block: B:43:0x00d7, code:
+            /* JADX WARNING: Missing block: B:44:0x00d7, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -187,11 +187,14 @@ public class VoiceInteractionManagerService extends SystemService {
                         }
                     } else if (curAssistant == null || isPackageDisappearing(curAssistant.getPackageName()) != 3) {
                         int change = isPackageDisappearing(curRecognizer.getPackageName());
-                        if (change == 3 || change == 2) {
-                            VoiceInteractionManagerServiceStub.this.setCurRecognizer(VoiceInteractionManagerServiceStub.this.findAvailRecognizer(null, userHandle), userHandle);
-                        } else if (isPackageModified(curRecognizer.getPackageName())) {
-                            VoiceInteractionManagerServiceStub.this.setCurRecognizer(VoiceInteractionManagerServiceStub.this.findAvailRecognizer(curRecognizer.getPackageName(), userHandle), userHandle);
+                        if (change != 3) {
+                            if (change != 2) {
+                                if (isPackageModified(curRecognizer.getPackageName())) {
+                                    VoiceInteractionManagerServiceStub.this.setCurRecognizer(VoiceInteractionManagerServiceStub.this.findAvailRecognizer(curRecognizer.getPackageName(), userHandle), userHandle);
+                                }
+                            }
                         }
+                        VoiceInteractionManagerServiceStub.this.setCurRecognizer(VoiceInteractionManagerServiceStub.this.findAvailRecognizer(null, userHandle), userHandle);
                     } else {
                         VoiceInteractionManagerServiceStub.this.setCurInteractor(null, userHandle);
                         VoiceInteractionManagerServiceStub.this.setCurRecognizer(null, userHandle);
@@ -328,7 +331,7 @@ public class VoiceInteractionManagerService extends SystemService {
         }
 
         private String getForceVoiceInteractionServicePackage(Resources res) {
-            String interactorPackage = res.getString(17039806);
+            String interactorPackage = res.getString(17039807);
             return TextUtils.isEmpty(interactorPackage) ? null : interactorPackage;
         }
 
@@ -360,20 +363,6 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:9:0x002d A:{Splitter: B:6:0x001c, ExcHandler: java.lang.RuntimeException (r4_4 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:9:0x002d, code:
-            r4 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:10:0x002e, code:
-            r5 = com.android.server.voiceinteraction.VoiceInteractionManagerService.TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("Bad voice interaction service name ");
-            r6.append(r0);
-            android.util.Slog.e(r5, r6.toString(), r4);
-            r1 = null;
-            r2 = null;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         void switchImplementationIfNeededLocked(boolean force) {
             if (!this.mSafeMode) {
                 String curService = Secure.getStringForUser(VoiceInteractionManagerService.this.mResolver, "voice_interaction_service", this.mCurUser);
@@ -384,7 +373,14 @@ public class VoiceInteractionManagerService extends SystemService {
                     try {
                         serviceComponent = ComponentName.unflattenFromString(curService);
                         serviceInfo = AppGlobals.getPackageManager().getServiceInfo(serviceComponent, 0, this.mCurUser);
-                    } catch (Exception e) {
+                    } catch (RemoteException | RuntimeException e) {
+                        String str = VoiceInteractionManagerService.TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Bad voice interaction service name ");
+                        stringBuilder.append(curService);
+                        Slog.e(str, stringBuilder.toString(), e);
+                        serviceComponent = null;
+                        serviceInfo = null;
                     }
                 }
                 if (!(serviceComponent == null || serviceInfo == null)) {
@@ -560,7 +556,7 @@ public class VoiceInteractionManagerService extends SystemService {
             return deliverNewSessionLocked;
         }
 
-        /* JADX WARNING: Missing block: B:12:0x001f, code:
+        /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -579,7 +575,7 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x001d, code:
+        /* JADX WARNING: Missing block: B:12:0x001d, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -598,7 +594,7 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x002b, code:
+        /* JADX WARNING: Missing block: B:13:0x002b, code skipped:
             return r0;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -619,7 +615,7 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x002b, code:
+        /* JADX WARNING: Missing block: B:13:0x002b, code skipped:
             return r0;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -640,10 +636,6 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x001d, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setKeepAwake(IBinder token, boolean keepAwake) {
             synchronized (this) {
                 if (this.mImpl == null) {
@@ -659,10 +651,6 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x001c, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void closeSystemDialogs(IBinder token) {
             synchronized (this) {
                 if (this.mImpl == null) {
@@ -678,10 +666,6 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x001d, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void finish(IBinder token) {
             synchronized (this) {
                 if (this.mImpl == null) {
@@ -697,10 +681,6 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0021, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setDisabledShowContext(int flags) {
             synchronized (this) {
                 if (this.mImpl == null) {
@@ -717,7 +697,7 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0021, code:
+        /* JADX WARNING: Missing block: B:12:0x0021, code skipped:
             return r3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -737,7 +717,7 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0021, code:
+        /* JADX WARNING: Missing block: B:12:0x0021, code skipped:
             return r3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -891,17 +871,19 @@ public class VoiceInteractionManagerService extends SystemService {
             long caller = Binder.clearCallingIdentity();
             try {
                 KeyphraseSoundModel soundModel = VoiceInteractionManagerService.this.mDbHelper.getKeyphraseSoundModel(keyphraseId, callingUid, bcp47Locale);
-                if (soundModel == null || soundModel.uuid == null || soundModel.keyphrases == null) {
-                    Slog.w(VoiceInteractionManagerService.TAG, "No matching sound model found in startRecognition");
-                    Binder.restoreCallingIdentity(caller);
-                    return Integer.MIN_VALUE;
+                if (!(soundModel == null || soundModel.uuid == null)) {
+                    if (soundModel.keyphrases != null) {
+                        synchronized (this) {
+                            VoiceInteractionManagerService.this.mLoadedKeyphraseIds.add(Integer.valueOf(keyphraseId));
+                        }
+                        int startRecognition = VoiceInteractionManagerService.this.mSoundTriggerInternal.startRecognition(keyphraseId, soundModel, callback, recognitionConfig);
+                        Binder.restoreCallingIdentity(caller);
+                        return startRecognition;
+                    }
                 }
-                synchronized (this) {
-                    VoiceInteractionManagerService.this.mLoadedKeyphraseIds.add(Integer.valueOf(keyphraseId));
-                }
-                int startRecognition = VoiceInteractionManagerService.this.mSoundTriggerInternal.startRecognition(keyphraseId, soundModel, callback, recognitionConfig);
+                Slog.w(VoiceInteractionManagerService.TAG, "No matching sound model found in startRecognition");
                 Binder.restoreCallingIdentity(caller);
-                return startRecognition;
+                return Integer.MIN_VALUE;
             } catch (Throwable th) {
                 Binder.restoreCallingIdentity(caller);
             }
@@ -956,7 +938,7 @@ public class VoiceInteractionManagerService extends SystemService {
             return componentName;
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0027, code:
+        /* JADX WARNING: Missing block: B:13:0x0027, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -996,10 +978,6 @@ public class VoiceInteractionManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0022, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void launchVoiceAssistFromKeyguard() {
             enforceCallingPermission("android.permission.ACCESS_VOICE_INTERACTION_SERVICE");
             synchronized (this) {

@@ -319,21 +319,6 @@ public class LegacyPasspointConfigParser {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x003e A:{Splitter: B:9:0x0013, ExcHandler: java.lang.NumberFormatException (r1_5 'e' java.lang.RuntimeException)} */
-    /* JADX WARNING: Missing block: B:15:0x003e, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x003f, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("Invalid line - ");
-            r3.append(r1.getMessage());
-            r3.append(": ");
-            r3.append(new java.lang.String(r6, java.nio.charset.StandardCharsets.UTF_8));
-     */
-    /* JADX WARNING: Missing block: B:17:0x0068, code:
-            throw new java.io.IOException(r3.toString());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static Pair<String, Integer> parseString(byte[] lineBytes, int startIndex) throws IOException {
         int prefixIndex = -1;
         for (int i = startIndex; i < lineBytes.length; i++) {
@@ -350,14 +335,19 @@ public class LegacyPasspointConfigParser {
                     length = lineBytes.length - strStartIndex;
                 }
                 return Pair.create(new String(lineBytes, strStartIndex, length, StandardCharsets.UTF_8), Integer.valueOf(strStartIndex + length));
-            } catch (RuntimeException e) {
+            } catch (IndexOutOfBoundsException | NumberFormatException e) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Invalid line - ");
+                stringBuilder.append(e.getMessage());
+                stringBuilder.append(": ");
+                stringBuilder.append(new String(lineBytes, StandardCharsets.UTF_8));
+                throw new IOException(stringBuilder.toString());
             }
-        } else {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Invalid line - missing string prefix: ");
-            stringBuilder.append(new String(lineBytes, StandardCharsets.UTF_8));
-            throw new IOException(stringBuilder.toString());
         }
+        StringBuilder stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("Invalid line - missing string prefix: ");
+        stringBuilder2.append(new String(lineBytes, StandardCharsets.UTF_8));
+        throw new IOException(stringBuilder2.toString());
     }
 
     private static long[] parseLongArray(String str) throws IOException {

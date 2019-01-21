@@ -1,8 +1,8 @@
 package android.net.dhcp;
 
+import android.net.netlink.StructNlMsgHdr;
 import android.os.SystemClock;
 import android.util.Log;
-import com.android.server.security.trustcircle.tlv.command.register.CMD_UNREG_REQ;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -50,7 +50,7 @@ public class HWArpPacket {
         buf.order(ByteOrder.BIG_ENDIAN);
         int i = 1;
         buf.putShort((short) 1);
-        buf.putShort(CMD_UNREG_REQ.TAG_USER_ID);
+        buf.putShort(StructNlMsgHdr.NLM_F_APPEND);
         buf.put((byte) 6);
         byte b = (byte) 4;
         buf.put((byte) 4);

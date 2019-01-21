@@ -291,7 +291,7 @@ public class MonkeySourceRandom implements MonkeyEventSource {
                     return;
                 } else if (cls < this.mFactors[10]) {
                     MonkeyEvent e = new MonkeyFlipEvent(this.mKeyboardOpen);
-                    this.mKeyboardOpen ^= true;
+                    this.mKeyboardOpen ^= 1;
                     this.mQ.addLast(e);
                     return;
                 } else {

@@ -48,7 +48,7 @@ public class X509V1CertificateGenerator {
         aSN1EncodableVector.add(new DERBitString(bArr));
         try {
             return (X509Certificate) this.certificateFactory.engineGenerateCertificate(new ByteArrayInputStream(new DERSequence(aSN1EncodableVector).getEncoded(ASN1Encoding.DER)));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ExtCertificateEncodingException("exception producing certificate object", e);
         }
     }
@@ -65,16 +65,16 @@ public class X509V1CertificateGenerator {
         TBSCertificate generateTBSCertificate = this.tbsGen.generateTBSCertificate();
         try {
             return generateJcaObject(generateTBSCertificate, X509Util.calculateSignature(this.sigOID, this.signatureAlgorithm, str, privateKey, secureRandom, generateTBSCertificate));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new ExtCertificateEncodingException("exception encoding TBS cert", e);
         }
     }
 
     public X509Certificate generate(PrivateKey privateKey, SecureRandom secureRandom) throws CertificateEncodingException, IllegalStateException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        Object generateTBSCertificate = this.tbsGen.generateTBSCertificate();
+        TBSCertificate generateTBSCertificate = this.tbsGen.generateTBSCertificate();
         try {
             return generateJcaObject(generateTBSCertificate, X509Util.calculateSignature(this.sigOID, this.signatureAlgorithm, privateKey, secureRandom, generateTBSCertificate));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             throw new ExtCertificateEncodingException("exception encoding TBS cert", e);
         }
     }

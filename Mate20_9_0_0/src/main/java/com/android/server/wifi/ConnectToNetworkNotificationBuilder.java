@@ -44,10 +44,10 @@ public class ConnectToNetworkNotificationBuilder {
                 obj = null;
                 switch (obj) {
                     case null:
-                        title = this.mContext.getText(17041387);
+                        title = this.mContext.getText(17041388);
                         break;
                     case 1:
-                        title = this.mContext.getText(17041384);
+                        title = this.mContext.getText(17041385);
                         break;
                     default:
                         StringBuilder stringBuilder = new StringBuilder();
@@ -56,8 +56,8 @@ public class ConnectToNetworkNotificationBuilder {
                         Log.wtf("ConnectToNetworkNotificationBuilder", stringBuilder.toString());
                         return null;
                 }
-                connectAction = new Builder(null, this.mResources.getText(17041383), getPrivateBroadcast(ACTION_CONNECT_TO_NETWORK, notifierTag)).build();
-                return createNotificationBuilder(title, network.SSID, notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).addAction(connectAction).addAction(new Builder(null, this.mResources.getText(17041382), getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).build()).build();
+                connectAction = new Builder(null, this.mResources.getText(17041384), getPrivateBroadcast(ACTION_CONNECT_TO_NETWORK, notifierTag)).build();
+                return createNotificationBuilder(title, network.SSID, notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).addAction(connectAction).addAction(new Builder(null, this.mResources.getText(17041383), getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).build()).build();
             }
         } else if (notifierTag.equals(CarrierNetworkNotifier.TAG)) {
             obj = 1;
@@ -69,8 +69,8 @@ public class ConnectToNetworkNotificationBuilder {
                 default:
                     break;
             }
-            connectAction = new Builder(null, this.mResources.getText(17041383), getPrivateBroadcast(ACTION_CONNECT_TO_NETWORK, notifierTag)).build();
-            return createNotificationBuilder(title, network.SSID, notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).addAction(connectAction).addAction(new Builder(null, this.mResources.getText(17041382), getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).build()).build();
+            connectAction = new Builder(null, this.mResources.getText(17041384), getPrivateBroadcast(ACTION_CONNECT_TO_NETWORK, notifierTag)).build();
+            return createNotificationBuilder(title, network.SSID, notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).addAction(connectAction).addAction(new Builder(null, this.mResources.getText(17041383), getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).build()).build();
         }
         obj = -1;
         switch (obj) {
@@ -81,20 +81,20 @@ public class ConnectToNetworkNotificationBuilder {
             default:
                 break;
         }
-        connectAction = new Builder(null, this.mResources.getText(17041383), getPrivateBroadcast(ACTION_CONNECT_TO_NETWORK, notifierTag)).build();
-        return createNotificationBuilder(title, network.SSID, notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).addAction(connectAction).addAction(new Builder(null, this.mResources.getText(17041382), getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).build()).build();
+        connectAction = new Builder(null, this.mResources.getText(17041384), getPrivateBroadcast(ACTION_CONNECT_TO_NETWORK, notifierTag)).build();
+        return createNotificationBuilder(title, network.SSID, notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).addAction(connectAction).addAction(new Builder(null, this.mResources.getText(17041383), getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK, notifierTag)).build()).build();
     }
 
     public Notification createNetworkConnectingNotification(String notifierTag, ScanResult network) {
-        return createNotificationBuilder(this.mContext.getText(17041389), network.SSID, notifierTag).setProgress(0, 0, true).build();
+        return createNotificationBuilder(this.mContext.getText(17041390), network.SSID, notifierTag).setProgress(0, 0, true).build();
     }
 
     public Notification createNetworkConnectedNotification(String notifierTag, ScanResult network) {
-        return createNotificationBuilder(this.mContext.getText(17041388), network.SSID, notifierTag).build();
+        return createNotificationBuilder(this.mContext.getText(17041389), network.SSID, notifierTag).build();
     }
 
     public Notification createNetworkFailedNotification(String notifierTag) {
-        return createNotificationBuilder(this.mContext.getText(17041390), this.mContext.getText(17041385), notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK_AFTER_CONNECT_FAILURE, notifierTag)).setAutoCancel(true).build();
+        return createNotificationBuilder(this.mContext.getText(17041391), this.mContext.getText(17041386), notifierTag).setContentIntent(getPrivateBroadcast(ACTION_PICK_WIFI_NETWORK_AFTER_CONNECT_FAILURE, notifierTag)).setAutoCancel(true).build();
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:12:0x0029 A:{RETURN} */

@@ -250,7 +250,7 @@ public class EventConditionProvider extends SystemConditionProviderService {
                 for (i = 0; i < this.mTrackers.size(); i++) {
                     ((CalendarTracker) this.mTrackers.valueAt(i)).setCallback(this.mSubscriptions.isEmpty() ? null : this.mTrackerCallback);
                 }
-                setRegistered(this.mSubscriptions.isEmpty() ^ true);
+                setRegistered(this.mSubscriptions.isEmpty() ^ 1);
                 long reevaluateAt2 = 0;
                 Iterator tracker = this.mSubscriptions.iterator();
                 while (tracker.hasNext()) {

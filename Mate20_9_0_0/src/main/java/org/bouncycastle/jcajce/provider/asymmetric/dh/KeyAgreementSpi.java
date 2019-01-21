@@ -43,19 +43,19 @@ public class KeyAgreementSpi extends BaseAgreementSpi {
 
     protected byte[] bigIntToBytes(BigInteger bigInteger) {
         int bitLength = (this.p.bitLength() + 7) / 8;
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         if (toByteArray.length == bitLength) {
             return toByteArray;
         }
-        Object obj;
+        byte[] bArr;
         if (toByteArray[0] == (byte) 0 && toByteArray.length == bitLength + 1) {
-            obj = new byte[(toByteArray.length - 1)];
-            System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-            return obj;
+            bArr = new byte[(toByteArray.length - 1)];
+            System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+            return bArr;
         }
-        obj = new byte[bitLength];
-        System.arraycopy(toByteArray, 0, obj, obj.length - toByteArray.length, toByteArray.length);
-        return obj;
+        bArr = new byte[bitLength];
+        System.arraycopy(toByteArray, 0, bArr, bArr.length - toByteArray.length, toByteArray.length);
+        return bArr;
     }
 
     protected byte[] calcSecret() {

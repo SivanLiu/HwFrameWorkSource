@@ -61,7 +61,7 @@ public class ECNRSigner implements DSA {
         this.key = eCKeyParameters;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x006f, code:
+    /* JADX WARNING: Missing block: B:19:0x006f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

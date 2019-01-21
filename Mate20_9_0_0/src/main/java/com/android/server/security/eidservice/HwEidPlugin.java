@@ -13,6 +13,7 @@ import android.util.Log;
 import com.android.server.security.core.IHwSecurityPlugin;
 import com.android.server.security.core.IHwSecurityPlugin.Creator;
 import huawei.android.security.IHwEidPlugin.Stub;
+import java.util.Arrays;
 import vendor.huawei.hardware.eid.V1_0.CERTIFICATE_REQUEST_MESSAGE_INPUT_INFO_S;
 import vendor.huawei.hardware.eid.V1_0.CERTIFICATE_REQUEST_MESSAGE_S;
 import vendor.huawei.hardware.eid.V1_0.ENCRYPTION_FACTOR_S;
@@ -20,7 +21,6 @@ import vendor.huawei.hardware.eid.V1_0.FACE_CHANGE_INPUT_INFO_S;
 import vendor.huawei.hardware.eid.V1_0.FACE_CHANGE_OUTPUT_INFO_S;
 import vendor.huawei.hardware.eid.V1_0.IDENTITY_INFORMATION_INPUT_INFO_S;
 import vendor.huawei.hardware.eid.V1_0.IDENTITY_INFORMATION_S;
-import vendor.huawei.hardware.eid.V1_0.IEid;
 import vendor.huawei.hardware.eid.V1_0.IEid.HWEidGetCertificateRequestMessageCallback;
 import vendor.huawei.hardware.eid.V1_0.IEid.HWEidGetFaceIsChangedCallback;
 import vendor.huawei.hardware.eid.V1_0.IEid.HWEidGetIdentityInformationCallback;
@@ -32,6 +32,15 @@ import vendor.huawei.hardware.eid.V1_0.INFO_SIGN_INPUT_INFO_S;
 import vendor.huawei.hardware.eid.V1_0.INFO_SIGN_OUTPUT_INFO_S;
 import vendor.huawei.hardware.eid.V1_0.INIT_TA_MSG_S;
 import vendor.huawei.hardware.eid.V1_0.SEC_IMAGE_S;
+import vendor.huawei.hardware.eid.V1_1.CUT_COORDINATE_S;
+import vendor.huawei.hardware.eid.V1_1.HIDL_VERSION_S;
+import vendor.huawei.hardware.eid.V1_1.IEid;
+import vendor.huawei.hardware.eid.V1_1.IEid.HWEidGetSecImageZipCallback;
+import vendor.huawei.hardware.eid.V1_1.IEid.HWEidGetUnsecImageZipCallback;
+import vendor.huawei.hardware.eid.V1_1.IEid.HWEidGetVersionCallback;
+import vendor.huawei.hardware.eid.V1_1.IMAGE_ZIP_CONTAINER_S;
+import vendor.huawei.hardware.eid.V1_1.INIT_CTID_TA_MSG_S;
+import vendor.huawei.hardware.eid.V1_1.SEC_IMAGE_ZIP_S;
 
 public class HwEidPlugin extends Stub implements IHwSecurityPlugin {
     public static final Object BINDLOCK = new Object();
@@ -47,11 +56,14 @@ public class HwEidPlugin extends Stub implements IHwSecurityPlugin {
             return HwEidPlugin.EID_MANAGER_PERMISSION;
         }
     };
+    private static final int CTID_VERSION = 1;
     private static final String EID_HIDL_SERVICE_NAME = "eid";
     private static final String EID_MANAGER_PERMISSION = "huawei.android.permission.EID_PERMISSION";
     private static final String EID_VERSION = "1.0";
     private static final int ENCRY_SET_SECMODE = 3;
     private static final boolean HW_DEBUG;
+    private static final int IMAGE_NV21_HEIGH = 640;
+    private static final int IMAGE_NV21_WEIGHT = 480;
     private static final int INPUT_MAX_TRANSPOT_LEN = 153600;
     private static final int INPUT_TRANSPOT_TIMES = 3;
     private static final int MAX_EID_HIDL_DEAMON_REGISTER_TIMES = 10;
@@ -68,7 +80,10 @@ public class HwEidPlugin extends Stub implements IHwSecurityPlugin {
     private int HWEidGetIdentityInformationRetValue = -1001;
     private int HWEidGetImageRetValue = -1001;
     private int HWEidGetInfoSignRetValue = -1001;
+    private int HWEidGetSecImageZipRetValue = -1001;
+    private int HWEidGetUnSecImageZipRetValue = -1001;
     private int HWEidGetUnsecImageRetValue = -1001;
+    private String eidGetVersionRet = "";
     private Context mContext = null;
     private IEid mEid;
     private DeathRecipient mEidHidlDeamonDeathRecipient = new DeathRecipient() {
@@ -185,6 +200,110 @@ public class HwEidPlugin extends Stub implements IHwSecurityPlugin {
 
     private int minArrayLen(int arrLenA, int arrLenB) {
         return arrLenA > arrLenB ? arrLenB : arrLenA;
+    }
+
+    private void freeBinderMemory() {
+        try {
+            IEid mTmpEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            Log.d(TAG, "eid get image release binder memory.");
+        } catch (Exception e) {
+            Log.e(TAG, "eid get image release binder memory fail.");
+        }
+    }
+
+    private CUT_COORDINATE_S getNewEidCoordinate(int up, int down, int left, int right) {
+        String str;
+        StringBuilder stringBuilder;
+        if (up < 0 || down > IMAGE_NV21_HEIGH || up >= down) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("getNewEidCoordinate: The para up down is error, up : ");
+            stringBuilder.append(up);
+            stringBuilder.append(" down : ");
+            stringBuilder.append(down);
+            Log.e(str, stringBuilder.toString());
+            return null;
+        } else if (left < 0 || right > IMAGE_NV21_WEIGHT || left >= right) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("getNewEidCoordinate: The para left down is error, left : ");
+            stringBuilder.append(left);
+            stringBuilder.append(" right : ");
+            stringBuilder.append(right);
+            Log.e(str, stringBuilder.toString());
+            return null;
+        } else {
+            CUT_COORDINATE_S coordinate = new CUT_COORDINATE_S();
+            coordinate.up = up;
+            coordinate.down = down;
+            coordinate.left = left;
+            coordinate.right = right;
+            return coordinate;
+        }
+    }
+
+    private ENCRYPTION_FACTOR_S getNewEidFactor(int encryption_method, int splitTime, int certificate_len, byte[] certificate) {
+        if (certificate == null) {
+            Log.e(TAG, "The para certificate is null");
+            return null;
+        }
+        ENCRYPTION_FACTOR_S factor = new ENCRYPTION_FACTOR_S();
+        factor.encryptionMethod = encryption_method;
+        factor.certificateLen = certificate_len;
+        factor.splitTimes = splitTime;
+        if (certificate.length > factor.certificate.length || certificate_len > certificate.length) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("getNewEidFactor: certificate_len: ");
+            stringBuilder.append(certificate_len);
+            stringBuilder.append(" certificate.length:");
+            stringBuilder.append(certificate.length);
+            stringBuilder.append(" factor.certificate.length: ");
+            stringBuilder.append(factor.certificate.length);
+            Log.e(str, stringBuilder.toString());
+            return null;
+        }
+        System.arraycopy(certificate, 0, factor.certificate, 0, certificate_len);
+        return factor;
+    }
+
+    private IMAGE_ZIP_CONTAINER_S getNewEidContainer(int hash_len, byte[] hash, int image_zip_len, byte[] image_zip) {
+        if (hash == null || image_zip == null) {
+            Log.e(TAG, "getNewEidContainer: The para hash or image_zip is null");
+            return null;
+        }
+        IMAGE_ZIP_CONTAINER_S container = new IMAGE_ZIP_CONTAINER_S();
+        container.hash_len = hash_len;
+        String str;
+        StringBuilder stringBuilder;
+        if (hash.length > container.hash.length || hash_len > hash.length) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("getNewEidContainer: hash.length:");
+            stringBuilder.append(hash.length);
+            stringBuilder.append(", container.hash.length : ");
+            stringBuilder.append(container.hash.length);
+            stringBuilder.append(" hash_len: ");
+            stringBuilder.append(hash_len);
+            Log.e(str, stringBuilder.toString());
+            return null;
+        }
+        System.arraycopy(hash, 0, container.hash, 0, hash_len);
+        container.image_len = image_zip_len;
+        if (image_zip.length > container.image.length || image_zip_len > image_zip.length) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("getNewEidContainer: image_zip.length: ");
+            stringBuilder.append(image_zip.length);
+            stringBuilder.append(" container.image.length: ");
+            stringBuilder.append(container.image.length);
+            stringBuilder.append(" image_zip_len: ");
+            stringBuilder.append(image_zip_len);
+            Log.e(str, stringBuilder.toString());
+            return null;
+        }
+        System.arraycopy(image_zip, 0, container.image, 0, image_zip_len);
+        return container;
     }
 
     public int eid_init(byte[] hw_aid, int hw_aid_len, byte[] eid_aid, int eid_aid_len, byte[] logo, int logo_size) {
@@ -434,17 +553,17 @@ public class HwEidPlugin extends Stub implements IHwSecurityPlugin {
         return ret;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x00ca  */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x00ca  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x00ca  */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00e4  */
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x00ca  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00e4  */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00ca  */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00ca  */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x00e4  */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00ca  */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x00e4  */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00ca  */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x00e4  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int eid_get_unsec_image(byte[] src_image, int src_image_len, int transpotCounter, int encryption_method, byte[] certificate, int certificate_len, byte[] image, int[] image_len, byte[] de_skey, int[] de_skey_len) {
         int i;
@@ -852,8 +971,450 @@ public class HwEidPlugin extends Stub implements IHwSecurityPlugin {
         return ret;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00a1  */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009e  */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009e  */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00a1  */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00a1  */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009e  */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009e  */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00a1  */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00c2  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public int eidGetSecImageZip(int hash_len, byte[] hash, int image_zip_len, byte[] image_zip, int up, int down, int left, int right, int encryption_method, int certificate_len, byte[] certificate, int[] sec_image_len, byte[] sec_image, int[] de_skey_len, byte[] de_skey) {
+        boolean hasExecption;
+        int ret;
+        String str;
+        StringBuilder stringBuilder;
+        int i;
+        int i2;
+        int i3;
+        checkPermission(EID_MANAGER_PERMISSION);
+        if (this.mEid == null) {
+            try {
+                this.mEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            } catch (Exception e) {
+                Log.e(TAG, "Try get mEid hidl deamon servcie failed");
+            }
+        }
+        boolean z;
+        if (this.mEid != null) {
+            try {
+                IMAGE_ZIP_CONTAINER_S container = getNewEidContainer(hash_len, hash, image_zip_len, image_zip);
+                try {
+                    CUT_COORDINATE_S coordinate = getNewEidCoordinate(up, down, left, right);
+                    try {
+                        ENCRYPTION_FACTOR_S factor = getNewEidFactor(encryption_method, 1, certificate_len, certificate);
+                        ENCRYPTION_FACTOR_S encryption_factor_s;
+                        if (coordinate == null || container == null) {
+                            encryption_factor_s = factor;
+                            z = false;
+                        } else if (factor == null) {
+                            encryption_factor_s = factor;
+                            z = false;
+                        } else {
+                            AnonymousClass9 anonymousClass9 = anonymousClass9;
+                            z = false;
+                            AnonymousClass9 anonymousClass92 = anonymousClass9;
+                            IEid iEid = this.mEid;
+                            final int[] iArr = sec_image_len;
+                            encryption_factor_s = factor;
+                            final byte[] bArr = sec_image;
+                            final int[] iArr2 = de_skey_len;
+                            final byte[] bArr2 = de_skey;
+                            try {
+                                anonymousClass9 = new HWEidGetSecImageZipCallback() {
+                                    public void onValues(int HWEidGetSecImageZipRet, SEC_IMAGE_ZIP_S output) {
+                                        if (HWEidGetSecImageZipRet == 0) {
+                                            iArr[0] = HwEidPlugin.this.minArrayLen(bArr.length, output.len);
+                                            System.arraycopy(output.image, 0, bArr, 0, iArr[0]);
+                                            iArr2[0] = HwEidPlugin.this.minArrayLen(bArr2.length, output.deSkeyLen);
+                                            System.arraycopy(output.deSkey, 0, bArr2, 0, iArr2[0]);
+                                        }
+                                        HwEidPlugin.this.HWEidGetSecImageZipRetValue = HWEidGetSecImageZipRet;
+                                    }
+                                };
+                                iEid.HWEidGetSecImageZip(container, coordinate, encryption_factor_s, anonymousClass92);
+                                freeBinderMemory();
+                                hasExecption = z;
+                            } catch (RemoteException e2) {
+                                Log.e(TAG, "eidGetSecImageZip from mEid hidl failed.");
+                                hasExecption = true;
+                                if (hasExecption) {
+                                }
+                                z = hasExecption;
+                                if (HW_DEBUG) {
+                                }
+                                return ret;
+                            }
+                            ret = hasExecption ? -1002 : this.HWEidGetSecImageZipRetValue;
+                            z = hasExecption;
+                        }
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("eidGetSecImageZip new container, coordinate or factor error, ret : ");
+                        stringBuilder.append(-1001);
+                        Log.e(str, stringBuilder.toString());
+                        return -1001;
+                    } catch (RemoteException e3) {
+                        z = false;
+                        Log.e(TAG, "eidGetSecImageZip from mEid hidl failed.");
+                        hasExecption = true;
+                        if (hasExecption) {
+                        }
+                        z = hasExecption;
+                        if (HW_DEBUG) {
+                        }
+                        return ret;
+                    }
+                } catch (RemoteException e4) {
+                    i = encryption_method;
+                    z = false;
+                    Log.e(TAG, "eidGetSecImageZip from mEid hidl failed.");
+                    hasExecption = true;
+                    if (hasExecption) {
+                    }
+                    z = hasExecption;
+                    if (HW_DEBUG) {
+                    }
+                    return ret;
+                }
+            } catch (RemoteException e5) {
+                i2 = left;
+                i3 = right;
+                i = encryption_method;
+                z = false;
+                Log.e(TAG, "eidGetSecImageZip from mEid hidl failed.");
+                hasExecption = true;
+                if (hasExecption) {
+                }
+                z = hasExecption;
+                if (HW_DEBUG) {
+                }
+                return ret;
+            }
+        }
+        i2 = left;
+        i3 = right;
+        i = encryption_method;
+        z = false;
+        ret = -1000;
+        this.mHwEidHidlHandler.sendEmptyMessageDelayed(1, 1000);
+        Log.e(TAG, "mEid hidl deamon is not ready when HWEidGetSecImageZip");
+        if (HW_DEBUG) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("eidGetSecImageZip from mEid hidl ret : ");
+            stringBuilder.append(ret);
+            Log.d(str, stringBuilder.toString());
+        }
+        return ret;
+    }
+
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x007f  */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x007c  */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x009c  */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x007c  */
+    /* JADX WARNING: Removed duplicated region for block: B:25:0x007f  */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x009c  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public int eidGetUnsecImageZip(int hash_len, byte[] hash, int image_zip_len, byte[] image_zip, int encryption_method, int certificate_len, byte[] certificate, int[] unsec_image_len, byte[] unsec_image, int[] de_skey_len, byte[] de_skey) {
+        int ret;
+        String str;
+        StringBuilder stringBuilder;
+        int i;
+        int i2;
+        byte[] bArr;
+        checkPermission(EID_MANAGER_PERMISSION);
+        boolean hasExecption = false;
+        if (this.mEid == null) {
+            try {
+                this.mEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            } catch (Exception e) {
+                Log.e(TAG, "Try get mEid hidl deamon servcie failed");
+            }
+        }
+        if (this.mEid != null) {
+            try {
+                IMAGE_ZIP_CONTAINER_S container = getNewEidContainer(hash_len, hash, image_zip_len, image_zip);
+                try {
+                    ENCRYPTION_FACTOR_S factor = getNewEidFactor(encryption_method, 1, certificate_len, certificate);
+                    if (container != null) {
+                        if (factor != null) {
+                            final int[] iArr = unsec_image_len;
+                            final byte[] bArr2 = unsec_image;
+                            final int[] iArr2 = de_skey_len;
+                            final byte[] bArr3 = de_skey;
+                            this.mEid.HWEidGetUnsecImageZip(container, factor, new HWEidGetUnsecImageZipCallback() {
+                                public void onValues(int HWEidGetUnSecImageZipRet, SEC_IMAGE_ZIP_S output) {
+                                    if (HWEidGetUnSecImageZipRet == 0) {
+                                        iArr[0] = HwEidPlugin.this.minArrayLen(output.len, bArr2.length);
+                                        System.arraycopy(output.image, 0, bArr2, 0, iArr[0]);
+                                        iArr2[0] = HwEidPlugin.this.minArrayLen(output.deSkeyLen, bArr3.length);
+                                        System.arraycopy(output.deSkey, 0, bArr3, 0, iArr2[0]);
+                                    }
+                                    HwEidPlugin.this.HWEidGetUnSecImageZipRetValue = HWEidGetUnSecImageZipRet;
+                                }
+                            });
+                            freeBinderMemory();
+                            ret = hasExecption ? -1002 : this.HWEidGetUnSecImageZipRetValue;
+                        }
+                    }
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("eidGetUnsecImageZip new container or new factor error, ret : ");
+                    stringBuilder.append(-1001);
+                    Log.e(str, stringBuilder.toString());
+                    return -1001;
+                } catch (RemoteException e2) {
+                    Log.e(TAG, "eidGetUnSecImageZip from mEid hidl failed.");
+                    hasExecption = true;
+                    if (hasExecption) {
+                    }
+                    if (HW_DEBUG) {
+                    }
+                    return ret;
+                }
+            } catch (RemoteException e3) {
+                i = encryption_method;
+                i2 = certificate_len;
+                bArr = certificate;
+                Log.e(TAG, "eidGetUnSecImageZip from mEid hidl failed.");
+                hasExecption = true;
+                if (hasExecption) {
+                }
+                if (HW_DEBUG) {
+                }
+                return ret;
+            }
+        }
+        i = encryption_method;
+        i2 = certificate_len;
+        bArr = certificate;
+        ret = -1000;
+        this.mHwEidHidlHandler.sendEmptyMessageDelayed(1, 1000);
+        Log.e(TAG, "mEid hidl deamon is not ready when HWEidUnGetSecImageZip");
+        if (HW_DEBUG) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("eidGetSecImageZip from mEid hidl ret : ");
+            stringBuilder.append(ret);
+            Log.d(str, stringBuilder.toString());
+        }
+        return ret;
+    }
+
     public String eid_get_version() {
         checkPermission(EID_MANAGER_PERMISSION);
-        return "1.0";
+        String ret = null;
+        if (this.mEid == null) {
+            try {
+                this.mEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            } catch (Exception e) {
+                Log.e(TAG, "Try get mEid hidl deamon servcie failed");
+            }
+        }
+        if (this.mEid != null) {
+            try {
+                this.mEid.HWEidGetVersion(new HWEidGetVersionCallback() {
+                    public void onValues(int HWEidGetVersionRet, HIDL_VERSION_S output) {
+                        if (HWEidGetVersionRet == 0) {
+                            HwEidPlugin hwEidPlugin = HwEidPlugin.this;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(output.main);
+                            stringBuilder.append(".");
+                            stringBuilder.append(output.sub);
+                            hwEidPlugin.eidGetVersionRet = stringBuilder.toString();
+                        }
+                    }
+                });
+                ret = this.eidGetVersionRet;
+                freeBinderMemory();
+            } catch (RemoteException e2) {
+                Log.e(TAG, "HWEidGetVersion from mEid hidl failed.");
+            }
+        } else {
+            this.mHwEidHidlHandler.sendEmptyMessageDelayed(1, 1000);
+            Log.e(TAG, "mEid hidl deamon is not ready when HWEidGetVersion");
+        }
+        if (HW_DEBUG) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("HWEidGetVersion from mEid hidl ret : ");
+            stringBuilder.append(ret);
+            Log.d(str, stringBuilder.toString());
+        }
+        return ret;
+    }
+
+    public int ctid_set_sec_mode() {
+        int ret;
+        String str;
+        StringBuilder stringBuilder;
+        checkPermission(EID_MANAGER_PERMISSION);
+        if (this.mEid == null) {
+            try {
+                this.mEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            } catch (Exception e) {
+                Log.e(TAG, "Try get mEid hidl deamon servcie failed");
+            }
+        }
+        if (this.mEid != null) {
+            try {
+                ret = this.mEid.HWCtidSetSecMode();
+                if (HW_DEBUG) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Ctid SetSecMode ret : ");
+                    stringBuilder.append(ret);
+                    Log.d(str, stringBuilder.toString());
+                }
+            } catch (RemoteException e2) {
+                Log.e(TAG, "HW CtidSetSecMode from hidl failed.");
+                String str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("RemoteException e:");
+                stringBuilder2.append(e2);
+                Log.e(str2, stringBuilder2.toString());
+                this.mEid = null;
+                return -1002;
+            }
+        }
+        ret = -1000;
+        this.mHwEidHidlHandler.sendEmptyMessageDelayed(1, 1000);
+        Log.e(TAG, "eid hidl deamon is not ready when eid init");
+        if (HW_DEBUG) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Ctid SetSecMode from mEid hidl ret : ");
+            stringBuilder.append(ret);
+            Log.d(str, stringBuilder.toString());
+        }
+        return ret;
+    }
+
+    public int ctid_get_sec_image() {
+        int ret;
+        String str;
+        StringBuilder stringBuilder;
+        checkPermission(EID_MANAGER_PERMISSION);
+        if (this.mEid == null) {
+            try {
+                this.mEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            } catch (Exception e) {
+                Log.e(TAG, "Try get mEid hidl deamon servcie failed");
+            }
+        }
+        if (this.mEid != null) {
+            try {
+                ret = this.mEid.HWCtidGetImage();
+                if (HW_DEBUG) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Ctid getSecImage ret : ");
+                    stringBuilder.append(ret);
+                    Log.d(str, stringBuilder.toString());
+                }
+            } catch (RemoteException e2) {
+                Log.e(TAG, "HW getSecImage from hidl failed.");
+                String str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("RemoteException e:");
+                stringBuilder2.append(e2);
+                Log.e(str2, stringBuilder2.toString());
+                this.mEid = null;
+                return -1002;
+            }
+        }
+        ret = -1000;
+        this.mHwEidHidlHandler.sendEmptyMessageDelayed(1, 1000);
+        Log.e(TAG, "eid hidl deamon is not ready when eid init");
+        if (HW_DEBUG) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Ctid getSecImage from mEid hidl ret : ");
+            stringBuilder.append(ret);
+            Log.d(str, stringBuilder.toString());
+        }
+        return ret;
+    }
+
+    public int ctid_get_service_verion_info(byte[] uuid, int uuid_len, String ta_path, int[] cmd_list, int cmd_count) {
+        int ret;
+        checkPermission(EID_MANAGER_PERMISSION);
+        boolean hasExecption = false;
+        if (this.mEid == null) {
+            try {
+                this.mEid = IEid.getService(EID_HIDL_SERVICE_NAME);
+            } catch (Exception e) {
+                Log.e(TAG, "Try get mEid hidl deamon servcie failed");
+            }
+        }
+        int i = 1;
+        if (this.mEid != null) {
+            String str;
+            try {
+                INIT_CTID_TA_MSG_S input = new INIT_CTID_TA_MSG_S();
+                input.uuid_len = minArrayLen(16, uuid_len);
+                input.ta_path_len = minArrayLen(511, ta_path.length());
+                input.cmdlist_cnt = cmd_count;
+                if (HW_DEBUG) {
+                    Log.d(TAG, Arrays.toString(uuid));
+                }
+                if (HW_DEBUG) {
+                    Log.d(TAG, ta_path);
+                }
+                if (HW_DEBUG) {
+                    Log.d(TAG, Arrays.toString(cmd_list));
+                }
+                if (uuid != null) {
+                    System.arraycopy(uuid, 0, input.uuid, 0, input.uuid_len);
+                }
+                System.arraycopy(ta_path.getBytes(), 0, input.ta_path, 0, input.ta_path_len);
+                if (cmd_list != null) {
+                    System.arraycopy(cmd_list, 0, input.cmd_list, 0, minArrayLen(cmd_list.length, input.cmdlist_cnt));
+                }
+                if (HW_DEBUG) {
+                    str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("ctid init param uuid_len : ");
+                    stringBuilder.append(uuid_len);
+                    stringBuilder.append(" ta path len:");
+                    stringBuilder.append(ta_path.length());
+                    stringBuilder.append("cmd cnt:");
+                    stringBuilder.append(cmd_count);
+                    Log.d(str, stringBuilder.toString());
+                }
+                this.mEid.HWCtidInitTa(input);
+            } catch (RemoteException e2) {
+                hasExecption = true;
+                Log.e(TAG, "eid get unsec image from mEid hidl failed.");
+                str = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("RemoteException e:");
+                stringBuilder2.append(e2);
+                Log.e(str, stringBuilder2.toString());
+                this.mEid = null;
+            }
+            if (hasExecption) {
+                i = -1002;
+            }
+            ret = i;
+        } else {
+            ret = -1000;
+            this.mHwEidHidlHandler.sendEmptyMessageDelayed(1, 1000);
+            Log.e(TAG, "mEid hidl deamon is not ready when eid get unsec image");
+        }
+        if (HW_DEBUG) {
+            String str2 = TAG;
+            StringBuilder stringBuilder3 = new StringBuilder();
+            stringBuilder3.append("ctid get version info from mEid hidl ret : ");
+            stringBuilder3.append(ret);
+            Log.d(str2, stringBuilder3.toString());
+        }
+        return ret;
     }
 }

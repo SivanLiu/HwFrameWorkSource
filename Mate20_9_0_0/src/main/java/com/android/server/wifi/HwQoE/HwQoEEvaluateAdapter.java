@@ -171,23 +171,26 @@ public class HwQoEEvaluateAdapter {
         stringBuilder2.append(this.isTCPDataUpdate);
         HwQoEUtils.logD(stringBuilder2.toString());
         synchronized (this.mLock) {
-            if (!isSuccess) {
-                for (IHwQoECallback mCallback : this.mCallBackList) {
-                    try {
-                        mCallback.onNetworkEvaluate(false, this.mResult);
-                    } catch (RemoteException e) {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("reportEvaluateResult is error ");
-                        stringBuilder.append(e.toString());
-                        HwQoEUtils.logE(stringBuilder.toString());
+            if (isSuccess) {
+                try {
+                    if (this.isOTADataUpdate && this.isOTARTTUpdate && this.isTCPDataUpdate) {
+                        for (IHwQoECallback mCallback : this.mCallBackList) {
+                            mCallback.onNetworkEvaluate(true, this.mResult);
+                        }
+                        this.mCallBackList.clear();
+                        this.isEvaluating = false;
                     }
+                } catch (RemoteException e) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("reportEvaluateResult is error ");
+                    stringBuilder.append(e.toString());
+                    HwQoEUtils.logE(stringBuilder.toString());
+                } catch (Throwable th) {
                 }
-                this.mCallBackList.clear();
-                this.isEvaluating = false;
-            } else if (this.isOTADataUpdate && this.isOTARTTUpdate && this.isTCPDataUpdate) {
+            } else {
                 for (IHwQoECallback mCallback2 : this.mCallBackList) {
                     try {
-                        mCallback2.onNetworkEvaluate(true, this.mResult);
+                        mCallback2.onNetworkEvaluate(false, this.mResult);
                     } catch (RemoteException e2) {
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("reportEvaluateResult is error ");

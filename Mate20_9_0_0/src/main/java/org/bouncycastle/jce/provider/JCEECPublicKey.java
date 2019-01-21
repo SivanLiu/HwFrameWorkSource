@@ -74,12 +74,12 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0039 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -97,15 +97,12 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
         r2 = r3.getQ();
         r1.q = r2;
         if (r4 != 0) goto L_0x0028;
-    L_0x0015:
         r2 = r0.getCurve();
         r3 = r0.getSeed();
         r2 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertCurve(r2, r3);
         r2 = r1.createSpec(r2, r0);
-    L_0x0025:
         r1.ecSpec = r2;
         return;
-    L_0x0028:
         r2 = r4.getCurve();
         r3 = r4.getSeed();
         r2 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertCurve(r2, r3);
@@ -127,12 +124,12 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:9:0x0063 in {2, 4, 7, 8} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -150,7 +147,6 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
         r2.q = r3;
         r3 = r4.getParams();
         if (r3 == 0) goto L_0x0034;
-    L_0x0015:
         r3 = r4.getParams();
         r3 = r3.getCurve();
         r0 = r4.getParams();
@@ -158,14 +154,11 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
         r3 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertCurve(r3, r0);
         r4 = r4.getParams();
         r3 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertSpec(r3, r4);
-    L_0x0031:
         r2.ecSpec = r3;
         return;
-    L_0x0034:
         r3 = r2.q;
         r3 = r3.getCurve();
         if (r3 != 0) goto L_0x0061;
-    L_0x003c:
         r3 = org.bouncycastle.jce.provider.BouncyCastleProvider.CONFIGURATION;
         r3 = r3.getEcImplicitlyCa();
         r3 = r3.getCurve();
@@ -178,7 +171,6 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
         r1 = 0;
         r3 = r3.createPoint(r4, r0, r1);
         r2.q = r3;
-    L_0x0061:
         r3 = 0;
         goto L_0x0031;
         return;
@@ -203,12 +195,12 @@ public class JCEECPublicKey implements ECPublicKey, org.bouncycastle.jce.interfa
     }
 
     private void extractBytes(byte[] bArr, int i, BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         int i2 = 0;
         if (toByteArray.length < 32) {
-            Object obj = new byte[32];
-            System.arraycopy(toByteArray, 0, obj, obj.length - toByteArray.length, toByteArray.length);
-            toByteArray = obj;
+            byte[] bArr2 = new byte[32];
+            System.arraycopy(toByteArray, 0, bArr2, bArr2.length - toByteArray.length, toByteArray.length);
+            toByteArray = bArr2;
         }
         while (i2 != 32) {
             bArr[i + i2] = toByteArray[(toByteArray.length - 1) - i2];

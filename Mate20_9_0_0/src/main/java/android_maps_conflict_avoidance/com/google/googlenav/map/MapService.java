@@ -50,7 +50,7 @@ public class MapService implements OutOfMemoryHandler, Runnable {
             super(MapService.this.requestType, flags);
         }
 
-        /* JADX WARNING: Missing block: B:19:0x004e, code:
+        /* JADX WARNING: Missing block: B:19:0x004e, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -188,7 +188,6 @@ public class MapService implements OutOfMemoryHandler, Runnable {
     }
 
     MapTile getTile(Tile tile, int priority, boolean loadTile, int scaleMode, long accessTime) {
-        boolean z;
         MapTile mapTile = (MapTile) this.mapCache.get(tile);
         if (accessTime == Long.MIN_VALUE) {
             accessTime = Config.getInstance().getClock().currentTimeMillis();
@@ -198,6 +197,7 @@ public class MapService implements OutOfMemoryHandler, Runnable {
                 mapTile = new MapTile(tile, (GoogleImage) null, true);
             } else {
                 synchronized (this.mapCache) {
+                    boolean z;
                     try {
                         setMapCacheLocked(true);
                         z = false;
@@ -208,65 +208,72 @@ public class MapService implements OutOfMemoryHandler, Runnable {
                                 tempImage = getTempImage(tile, scaleMode);
                                 if (loadTile && DataRequestDispatcher.getInstance().canDispatchNow()) {
                                     MapTile mapTile2 = new MapTile(tile, (GoogleImage) tempImage);
+                                    this.setMapCacheLocked(z);
                                 } else {
                                     mapTile = new MapTile(tile, tempImage, true);
                                     addMapEntry(mapTile);
+                                    try {
+                                        this.setMapCacheLocked(z);
+                                    } catch (Throwable th) {
+                                        z = th;
+                                        throw z;
+                                    }
                                 }
-                            } else {
-                                if (!loadTile) {
-                                    accessTime -= 20000;
-                                }
-                                addMapEntry(mapTile);
-                                Stats.getInstance().flashCacheHit();
                             }
-                        } catch (Throwable th) {
-                            z = th;
+                            if (!loadTile) {
+                                accessTime -= 20000;
+                            }
+                            addMapEntry(mapTile);
+                            Stats.getInstance().flashCacheHit();
+                            this.setMapCacheLocked(z);
+                        } catch (Throwable th2) {
+                            z = th2;
                             throw z;
                         } finally {
                             while (true) {
                                 this = 
 /*
 Method generation error in method: android_maps_conflict_avoidance.com.google.googlenav.map.MapService.getTile(android_maps_conflict_avoidance.com.google.googlenav.map.Tile, int, boolean, int, long):android_maps_conflict_avoidance.com.google.googlenav.map.MapTile, dex: 
-jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r6_3 'this' android_maps_conflict_avoidance.com.google.googlenav.map.MapService) = (r6_2 'this' android_maps_conflict_avoidance.com.google.googlenav.map.MapService), (r4_4 'tempImage' android_maps_conflict_avoidance.com.google.googlenav.map.MapService) in method: android_maps_conflict_avoidance.com.google.googlenav.map.MapService.getTile(android_maps_conflict_avoidance.com.google.googlenav.map.Tile, int, boolean, int, long):android_maps_conflict_avoidance.com.google.googlenav.map.MapTile, dex: 
+jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r6_4 'this' android_maps_conflict_avoidance.com.google.googlenav.map.MapService) = (r6_3 'this' android_maps_conflict_avoidance.com.google.googlenav.map.MapService), (r4_4 'tempImage' android_maps_conflict_avoidance.com.google.googlenav.map.MapService) in method: android_maps_conflict_avoidance.com.google.googlenav.map.MapService.getTile(android_maps_conflict_avoidance.com.google.googlenav.map.Tile, int, boolean, int, long):android_maps_conflict_avoidance.com.google.googlenav.map.MapTile, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
-	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:100)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:50)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:173)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:298)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:175)
 	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:278)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:228)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
 	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:118)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:280)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:230)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:67)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)

@@ -151,9 +151,9 @@ public class GMSSLeaf {
     void initLeafCalc(byte[] bArr) {
         this.i = 0;
         this.j = 0;
-        Object obj = new byte[this.mdsize];
-        System.arraycopy(bArr, 0, obj, 0, this.seed.length);
-        this.seed = this.gmssRandom.nextSeed(obj);
+        byte[] bArr2 = new byte[this.mdsize];
+        System.arraycopy(bArr, 0, bArr2, 0, this.seed.length);
+        this.seed = this.gmssRandom.nextSeed(bArr2);
     }
 
     GMSSLeaf nextLeaf() {

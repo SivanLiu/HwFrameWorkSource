@@ -40,25 +40,25 @@ abstract class AbstractTlsContext implements TlsContext {
     public byte[] exportKeyingMaterial(String str, byte[] bArr, int i) {
         if (bArr == null || TlsUtils.isValidUint16(bArr.length)) {
             SecurityParameters securityParameters = getSecurityParameters();
-            Object clientRandom = securityParameters.getClientRandom();
-            Object serverRandom = securityParameters.getServerRandom();
+            byte[] clientRandom = securityParameters.getClientRandom();
+            byte[] serverRandom = securityParameters.getServerRandom();
             int length = clientRandom.length + serverRandom.length;
             if (bArr != null) {
                 length += 2 + bArr.length;
             }
-            Object obj = new byte[length];
-            System.arraycopy(clientRandom, 0, obj, 0, clientRandom.length);
+            byte[] bArr2 = new byte[length];
+            System.arraycopy(clientRandom, 0, bArr2, 0, clientRandom.length);
             int length2 = clientRandom.length + 0;
-            System.arraycopy(serverRandom, 0, obj, length2, serverRandom.length);
+            System.arraycopy(serverRandom, 0, bArr2, length2, serverRandom.length);
             length2 += serverRandom.length;
             if (bArr != null) {
-                TlsUtils.writeUint16(bArr.length, obj, length2);
+                TlsUtils.writeUint16(bArr.length, bArr2, length2);
                 length2 += 2;
-                System.arraycopy(bArr, 0, obj, length2, bArr.length);
+                System.arraycopy(bArr, 0, bArr2, length2, bArr.length);
                 length2 += bArr.length;
             }
             if (length2 == length) {
-                return TlsUtils.PRF(this, securityParameters.getMasterSecret(), str, obj, i);
+                return TlsUtils.PRF(this, securityParameters.getMasterSecret(), str, bArr2, i);
             }
             throw new IllegalStateException("error in calculation of seed for export");
         }

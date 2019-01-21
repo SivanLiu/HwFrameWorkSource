@@ -398,7 +398,7 @@ public class CMPConnection implements CAConnection {
             conn.initialize(url, config.optJSONObject("cmp_headers"));
             conn.setUserConfig(config.optJSONObject("user_settings"));
             return conn;
-        } catch (Throwable ioe) {
+        } catch (IOException ioe) {
             String message = "Got unexpected IOException while setting up the connection with settings.";
             Log.e(TAG, message);
             throw new EnrollmentException(message, ioe);

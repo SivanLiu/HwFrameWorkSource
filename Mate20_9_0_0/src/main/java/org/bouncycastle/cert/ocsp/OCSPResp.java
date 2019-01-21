@@ -3,6 +3,7 @@ package org.bouncycastle.cert.ocsp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.bouncycastle.asn1.ASN1Exception;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
@@ -31,21 +32,21 @@ public class OCSPResp {
             if (this.resp == null) {
                 throw new CertIOException("malformed response: no response data found");
             }
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed response: ");
             stringBuilder.append(e.getMessage());
             throw new CertIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (ClassCastException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed response: ");
             stringBuilder.append(e2.getMessage());
             throw new CertIOException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (ASN1Exception e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed response: ");
-            stringBuilder.append(e22.getMessage());
-            throw new CertIOException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new CertIOException(stringBuilder.toString(), e3);
         }
     }
 
@@ -81,7 +82,7 @@ public class OCSPResp {
         }
         try {
             return new BasicOCSPResp(BasicOCSPResponse.getInstance(ASN1Primitive.fromByteArray(responseBytes.getResponse().getOctets())));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("problem decoding object: ");
             stringBuilder.append(e);

@@ -105,6 +105,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -138,6 +139,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
     private static final String ATTR_TYPE = "type";
     private static final String ATTR_USER_FLAGS = "userFlags";
     private static final String ATTR_VERSION = "version";
+    private static final int CHECK_VOLUME_COMPLETED = 0;
     private static final int CRYPTO_ALGORITHM_KEY_SIZE = 128;
     public static final String[] CRYPTO_TYPES = new String[]{"password", HealthServiceWrapper.INSTANCE_VENDOR, "pattern", "pin"};
     private static final boolean DEBUG_EVENTS = false;
@@ -147,8 +149,8 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
     private static final boolean EMULATE_FBE_SUPPORTED = true;
     private static final int H_ABNORMAL_SD_BROADCAST = 13;
     private static final int H_ABORT_IDLE_MAINT = 12;
+    private static final int H_BACKUP_DEV_MOUNT = 14;
     private static final int H_DAEMON_CONNECTED = 2;
-    private static final int H_EARL_MOUNT = 14;
     private static final int H_FSTRIM = 4;
     private static final int H_INTERNAL_BROADCAST = 7;
     private static final int H_PARTITION_FORGET = 9;
@@ -212,14 +214,16 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
         }
 
         public void onDiskCreated(String diskId, int flags) {
-            boolean isHuaweiEarl = StorageManagerService.this.checkIfHuaweiEarl();
+            int deviceCode = StorageManagerService.this.getUsbDeviceExInfo();
             synchronized (StorageManagerService.this.mLock) {
                 String value = SystemProperties.get("persist.sys.adoptable");
                 int i = -1;
                 int hashCode = value.hashCode();
                 if (hashCode != 464944051) {
-                    if (hashCode == 1528363547 && value.equals("force_off")) {
-                        i = 1;
+                    if (hashCode == 1528363547) {
+                        if (value.equals("force_off")) {
+                            i = 1;
+                        }
                     }
                 } else if (value.equals("force_on")) {
                     i = 0;
@@ -231,10 +235,16 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                     case 1:
                         flags &= -2;
                         break;
+                    default:
+                        break;
                 }
                 flags |= 1;
-                if ((flags & 8) != 0 && isHuaweiEarl) {
-                    flags |= 64;
+                if ((flags & 8) != 0) {
+                    if (deviceCode == 0) {
+                        flags |= 64;
+                    } else if (deviceCode == 1) {
+                        flags |= 128;
+                    }
                 }
                 StorageManagerService.this.mDisks.put(diskId, new DiskInfo(diskId, flags));
             }
@@ -282,6 +292,35 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                 VolumeInfo vol = new VolumeInfo(volId, type, (DiskInfo) StorageManagerService.this.mDisks.get(diskId), partGuid);
                 StorageManagerService.this.mVolumes.put(volId, vol);
                 StorageManagerService.this.onVolumeCreatedLocked(vol);
+            }
+        }
+
+        /* JADX WARNING: Missing block: B:11:0x005a, code skipped:
+            return;
+     */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public void onCheckVolumeCompleted(String volId, String diskId, String partGuid, int isSucc) {
+            String str = StorageManagerService.TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("onCheckVolumeCompleted :  volId = ");
+            stringBuilder.append(volId);
+            stringBuilder.append(",diskId = ");
+            stringBuilder.append(diskId);
+            stringBuilder.append(",partGuid = ");
+            stringBuilder.append(partGuid);
+            stringBuilder.append(",isSucc = ");
+            stringBuilder.append(isSucc);
+            Slog.i(str, stringBuilder.toString());
+            synchronized (StorageManagerService.this.mLock) {
+                VolumeInfo vol = (VolumeInfo) StorageManagerService.this.mVolumes.get(volId);
+                if (vol == null) {
+                } else if (isSucc == 0) {
+                    StorageManagerService.this.onCheckVolumeCompletedLocked(vol);
+                } else {
+                    int oldState = vol.state;
+                    vol.state = 6;
+                    StorageManagerService.this.mCallbacks.notifyVolumeStateChanged(vol, oldState, 6);
+                }
             }
         }
 
@@ -614,7 +653,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                 stringBuilder.append("Missing OBB info for: ");
                 stringBuilder.append(this.mObbState.canonicalPath);
                 throw new ObbException(20, stringBuilder.toString());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new ObbException(25, e);
             }
         }
@@ -725,6 +764,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                             }
                         }
                     }
+                    break;
             }
         }
 
@@ -1012,7 +1052,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                     StorageManagerService.this.mContext.sendBroadcastAsUser(msg.obj, UserHandle.ALL);
                     return;
                 case 14:
-                    StorageManagerService.this.checkIfHuaweiEarlMount();
+                    StorageManagerService.this.checkIfBackUpDeviceMount(((Integer) msg.obj).intValue());
                     return;
                 default:
                     return;
@@ -1037,7 +1077,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
         public ParcelFileDescriptor open() throws NativeDaemonConnectorException {
             try {
                 return new ParcelFileDescriptor(StorageManagerService.this.mVold.mountAppFuse(this.uid, Process.myPid(), this.mountId));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new NativeDaemonConnectorException("Failed to mount", e);
             }
         }
@@ -1121,7 +1161,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                     try {
                         String hashedKey2 = new BigInteger(SecretKeyFactory.getInstance(BackupPasswordManager.PBKDF_CURRENT).generateSecret(new PBEKeySpec(this.mKey.toCharArray(), obbInfo.salt, 1024, 128)).getEncoded()).toString(16);
                         binderKey = hashedKey2;
-                    } catch (Throwable e) {
+                    } catch (GeneralSecurityException e) {
                         throw new ObbException(20, e);
                     }
                 }
@@ -1133,7 +1173,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                     }
                     notifyObbStateChange(1);
                     return;
-                } catch (Throwable e2) {
+                } catch (Exception e2) {
                     throw new ObbException(21, e2);
                 }
             }
@@ -1187,7 +1227,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                         StorageManagerService.this.removeObbStateLocked(existingState);
                     }
                     notifyObbStateChange(2);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     throw new ObbException(22, e);
                 }
             }
@@ -1666,10 +1706,10 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
         } else if (vol.type == 0) {
             if (Objects.equals("primary_physical", this.mPrimaryStorageUuid) && vol.disk.isDefaultPrimary()) {
                 str = TAG;
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("Found primary storage at ");
-                stringBuilder3.append(vol);
-                Slog.v(str, stringBuilder3.toString());
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Found primary storage at ");
+                stringBuilder.append(vol);
+                Slog.v(str, stringBuilder.toString());
                 vol.mountFlags |= 1;
                 vol.mountFlags |= 2;
             }
@@ -1682,13 +1722,35 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                 Slog.i(TAG, "onVolumeCreatedLocked before getPrivacySpaceUserId");
                 vol.blockedUserId = getPrivacySpaceUserId();
             }
-            this.mHandler.obtainMessage(5, vol).sendToTarget();
         } else if (vol.type == 1) {
             this.mHandler.obtainMessage(5, vol).sendToTarget();
         } else {
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append("Skipping automatic mounting of ");
+            stringBuilder.append(vol);
+            Slog.d(str, stringBuilder.toString());
+        }
+    }
+
+    @GuardedBy("mLock")
+    protected void onCheckVolumeCompletedLocked(VolumeInfo vol) {
+        String str;
+        StringBuilder stringBuilder;
+        if (this.mPms.isOnlyCoreApps()) {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("onCheckVolumeCompletedLocked : System booted in core-only mode; ignoring volume ");
+            stringBuilder.append(vol.getId());
+            Slog.d(str, stringBuilder.toString());
+            return;
+        }
+        if (vol.type == 0) {
+            this.mHandler.obtainMessage(5, vol).sendToTarget();
+        } else {
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("onCheckVolumeCompletedLocked : Skipping automatic mounting of ");
             stringBuilder.append(vol);
             Slog.d(str, stringBuilder.toString());
         }
@@ -2019,8 +2081,11 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
 
     private void bootCompleted() {
         this.mBootCompleted = true;
-        if (checkIfHuaweiEarl()) {
-            this.mHandler.obtainMessage(14).sendToTarget();
+        int deviceCode = getUsbDeviceExInfo();
+        if (deviceCode < 0) {
+            Slog.i(TAG, "getUsbDeviceExInfo deviceCode < 0 ,return .");
+        } else {
+            this.mHandler.obtainMessage(14, Integer.valueOf(deviceCode)).sendToTarget();
         }
     }
 
@@ -2051,8 +2116,10 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                     if (TAG_VOLUMES.equals(tag)) {
                         int version = XmlUtils.readIntAttribute(in, ATTR_VERSION, 1);
                         boolean primaryPhysical = SystemProperties.getBoolean("ro.vold.primary_physical", false);
-                        if (version < 3 && (version < 2 || primaryPhysical)) {
-                            z = false;
+                        if (version < 3) {
+                            if (version < 2 || primaryPhysical) {
+                                z = false;
+                            }
                         }
                         if (z) {
                             this.mPrimaryStorageUuid = XmlUtils.readStringAttribute(in, ATTR_PRIMARY_STORAGE_UUID);
@@ -2539,13 +2606,13 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
         return str;
     }
 
-    /* JADX WARNING: Missing block: B:33:?, code:
+    /* JADX WARNING: Missing block: B:34:?, code skipped:
             r8.mVold.moveStorage(r2.id, r3.id, new com.android.server.StorageManagerService.AnonymousClass12(r8));
      */
-    /* JADX WARNING: Missing block: B:34:0x00d0, code:
+    /* JADX WARNING: Missing block: B:35:0x00d0, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:35:0x00d1, code:
+    /* JADX WARNING: Missing block: B:36:0x00d1, code skipped:
             android.util.Slog.wtf(TAG, r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2571,32 +2638,35 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                         return;
                     }
                 }
-                if (Objects.equals("primary_physical", this.mPrimaryStorageUuid) || Objects.equals("primary_physical", volumeUuid)) {
-                    Slog.d(TAG, "Skipping move to/from primary physical");
-                    onMoveStatusLocked(82);
-                    onMoveStatusLocked(-100);
-                    this.mHandler.obtainMessage(10).sendToTarget();
-                    return;
+                if (!Objects.equals("primary_physical", this.mPrimaryStorageUuid)) {
+                    if (!Objects.equals("primary_physical", volumeUuid)) {
+                        VolumeInfo from = findStorageForUuid(this.mPrimaryStorageUuid);
+                        VolumeInfo to = findStorageForUuid(volumeUuid);
+                        String str2;
+                        StringBuilder stringBuilder3;
+                        if (from == null) {
+                            str2 = TAG;
+                            stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("Failing move due to missing from volume ");
+                            stringBuilder3.append(this.mPrimaryStorageUuid);
+                            Slog.w(str2, stringBuilder3.toString());
+                            onMoveStatusLocked(-6);
+                            return;
+                        } else if (to == null) {
+                            str2 = TAG;
+                            stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("Failing move due to missing to volume ");
+                            stringBuilder3.append(volumeUuid);
+                            Slog.w(str2, stringBuilder3.toString());
+                            onMoveStatusLocked(-6);
+                            return;
+                        }
+                    }
                 }
-                VolumeInfo from = findStorageForUuid(this.mPrimaryStorageUuid);
-                VolumeInfo to = findStorageForUuid(volumeUuid);
-                String str2;
-                StringBuilder stringBuilder3;
-                if (from == null) {
-                    str2 = TAG;
-                    stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("Failing move due to missing from volume ");
-                    stringBuilder3.append(this.mPrimaryStorageUuid);
-                    Slog.w(str2, stringBuilder3.toString());
-                    onMoveStatusLocked(-6);
-                } else if (to == null) {
-                    str2 = TAG;
-                    stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("Failing move due to missing to volume ");
-                    stringBuilder3.append(volumeUuid);
-                    Slog.w(str2, stringBuilder3.toString());
-                    onMoveStatusLocked(-6);
-                }
+                Slog.d(TAG, "Skipping move to/from primary physical");
+                onMoveStatusLocked(82);
+                onMoveStatusLocked(-100);
+                this.mHandler.obtainMessage(10).sendToTarget();
             } else {
                 throw new IllegalStateException("Move already in progress");
             }
@@ -2947,35 +3017,22 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                 try {
                     int name = this.mNextAppFuseName;
                     this.mNextAppFuseName = name + 1;
-                    try {
-                        appFuseMount = new AppFuseMount(name, this.mAppFuseBridge.addBridge(new AppFuseMountScope(uid, pid, name)));
-                        break;
-                    } catch (FuseUnavailableMountException e) {
-                        if (newlyCreated) {
-                            Slog.e(TAG, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, e);
-                            return null;
-                        }
-                        this.mAppFuseBridge = null;
+                    appFuseMount = new AppFuseMount(name, this.mAppFuseBridge.addBridge(new AppFuseMountScope(uid, pid, name)));
+                    break;
+                } catch (NativeDaemonConnectorException e) {
+                    throw e.rethrowAsParcelableException();
+                } catch (FuseUnavailableMountException e2) {
+                    if (newlyCreated) {
+                        Slog.e(TAG, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, e2);
+                        return null;
                     }
-                } catch (NativeDaemonConnectorException e2) {
-                    throw e2.rethrowAsParcelableException();
+                    this.mAppFuseBridge = null;
                 }
             }
             return appFuseMount;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0028 A:{Splitter: B:1:0x000d, ExcHandler: com.android.internal.os.FuseUnavailableMountException (r2_1 'error' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0028, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0029, code:
-            android.util.Slog.v(TAG, "The mount point has already been invalid", r2);
-     */
-    /* JADX WARNING: Missing block: B:19:0x0030, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public ParcelFileDescriptor openProxyFileDescriptor(int mountId, int fileId, int mode) {
         Slog.v(TAG, "mountProxyFileDescriptor");
         int pid = Binder.getCallingPid();
@@ -2988,7 +3045,9 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                 ParcelFileDescriptor openFile = this.mAppFuseBridge.openFile(pid, mountId, fileId, mode);
                 return openFile;
             }
-        } catch (Exception error) {
+        } catch (FuseUnavailableMountException | InterruptedException error) {
+            Slog.v(TAG, "The mount point has already been invalid", error);
+            return null;
         }
     }
 
@@ -3051,13 +3110,13 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
         }
     }
 
-    /* JADX WARNING: Missing block: B:54:0x00b4, code:
+    /* JADX WARNING: Missing block: B:54:0x00b4, code skipped:
             if (r2.getPath() != null) goto L_0x00b9;
      */
-    /* JADX WARNING: Missing block: B:79:0x0101, code:
+    /* JADX WARNING: Missing block: B:79:0x0101, code skipped:
             if (r17 != false) goto L_0x0156;
      */
-    /* JADX WARNING: Missing block: B:80:0x0103, code:
+    /* JADX WARNING: Missing block: B:80:0x0103, code skipped:
             android.util.Log.w(TAG, "No primary storage defined yet; hacking together a stub");
             r0 = android.os.SystemProperties.getBoolean("ro.vold.primary_physical", false);
             r2 = "stub_primary";
@@ -3066,7 +3125,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
             r36 = r0;
             r11.add(0, new android.os.storage.StorageVolume("stub_primary", r4, r4, r1.mContext.getString(17039374), true, r0, r0 ^ 1, false, 0, new android.os.UserHandle(r3), null, "removed"));
      */
-    /* JADX WARNING: Missing block: B:82:0x0162, code:
+    /* JADX WARNING: Missing block: B:82:0x0162, code skipped:
             return (android.os.storage.StorageVolume[]) r11.toArray(new android.os.storage.StorageVolume[r11.size()]);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3119,6 +3178,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                                     th = th3;
                                     userInfo3 = userInfo2;
                                     z = forWrite;
+                                    throw th;
                                 }
                             }
                             i3 = userId;
@@ -3138,6 +3198,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                                 th = th4;
                                 userInfo3 = userInfo2;
                                 z = forWrite;
+                                throw th;
                             }
                         }
                         if (match) {
@@ -3165,6 +3226,7 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                                 str = packageName;
                             } catch (Throwable th5) {
                                 th = th5;
+                                throw th;
                             }
                         }
                     }
@@ -3179,7 +3241,6 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
                 }
                 z = forWrite;
             }
-            throw th;
         } catch (Throwable th6) {
             th = th6;
             z = forWrite;
@@ -3545,10 +3606,10 @@ class StorageManagerService extends AbsStorageManagerService implements Monitor,
     public void onCryptsdMessage(String message) {
     }
 
-    public boolean checkIfHuaweiEarl() {
-        return false;
+    public int getUsbDeviceExInfo() {
+        return -1;
     }
 
-    protected void checkIfHuaweiEarlMount() {
+    protected void checkIfBackUpDeviceMount(int deviceCode) {
     }
 }

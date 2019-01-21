@@ -2,6 +2,7 @@ package com.android.server.pm.auth;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+import com.android.server.pm.auth.util.CryptionUtils;
 import com.android.server.pm.auth.util.HwAuthLogger;
 import com.android.server.pm.auth.util.Utils;
 import java.io.IOException;
@@ -23,26 +24,11 @@ public class DevicePublicKeyLoader {
         return mPublicKey;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x003c, code:
+    /* JADX WARNING: Missing block: B:14:0x003c, code skipped:
             if (r2 != null) goto L_0x003e;
      */
-    /* JADX WARNING: Missing block: B:15:0x003e, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:20:0x005b, code:
+    /* JADX WARNING: Missing block: B:24:0x0075, code skipped:
             if (r2 == null) goto L_0x0078;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0075, code:
-            if (r2 == null) goto L_0x0078;
-     */
-    /* JADX WARNING: Missing block: B:24:0x0078, code:
-            if (r0 == null) goto L_0x007f;
-     */
-    /* JADX WARNING: Missing block: B:26:0x007e, code:
-            return com.android.server.pm.auth.util.CryptionUtils.getPublicKey(r0);
-     */
-    /* JADX WARNING: Missing block: B:28:0x0085, code:
-            return com.android.server.pm.auth.util.CryptionUtils.getPublicKey(PUBLIC_KEY);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static PublicKey loadDevicePublicKey(Context context) {
@@ -71,6 +57,13 @@ public class DevicePublicKeyLoader {
             stringBuilder.append("IOException:");
             stringBuilder.append(ex);
             HwAuthLogger.e("HwCertificationManager", stringBuilder.toString(), ex);
+            if (xpp != null) {
+                xpp.close();
+            }
+            if (hwPubKeyBytes != null) {
+                return CryptionUtils.getPublicKey(hwPubKeyBytes);
+            }
+            return CryptionUtils.getPublicKey(PUBLIC_KEY);
         } catch (Throwable th) {
             if (xpp != null) {
                 xpp.close();

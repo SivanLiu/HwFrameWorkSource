@@ -47,9 +47,9 @@ public class CertPathValidationResult {
 
     public CertPathValidationException[] getCauses() {
         if (this.causes != null) {
-            Object obj = new CertPathValidationException[this.causes.length];
-            System.arraycopy(this.causes, 0, obj, 0, this.causes.length);
-            return obj;
+            CertPathValidationException[] certPathValidationExceptionArr = new CertPathValidationException[this.causes.length];
+            System.arraycopy(this.causes, 0, certPathValidationExceptionArr, 0, this.causes.length);
+            return certPathValidationExceptionArr;
         } else if (this.unhandledCriticalExtensionOIDs.isEmpty()) {
             return null;
         } else {

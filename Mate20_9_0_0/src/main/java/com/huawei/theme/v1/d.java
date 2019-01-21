@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public final class d implements Runnable {
@@ -99,7 +100,7 @@ public final class d implements Runnable {
                     f.post(new c(this.a, jSONObject, z));
                 }
                 a.h();
-            } catch (Throwable e) {
+            } catch (JSONException e) {
                 Log.e("HiAnalytics", "onTerminate: JSONException.", e);
                 e.printStackTrace();
             }

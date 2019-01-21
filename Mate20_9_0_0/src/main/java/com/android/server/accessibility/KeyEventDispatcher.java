@@ -12,7 +12,6 @@ import android.util.Slog;
 import android.view.InputEventConsistencyVerifier;
 import android.view.KeyEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -139,8 +138,10 @@ public class KeyEventDispatcher implements Callback {
         }
         PendingKeyEvent pendingKeyEvent = message.obj;
         synchronized (this.mLock) {
-            Iterator it = this.mPendingEventsMap.values().iterator();
-            while (it.hasNext() && (!((ArrayList) it.next()).remove(pendingKeyEvent) || !removeReferenceToPendingEventLocked(pendingKeyEvent))) {
+            for (ArrayList<PendingKeyEvent> listForService : this.mPendingEventsMap.values()) {
+                if (listForService.remove(pendingKeyEvent) && removeReferenceToPendingEventLocked(pendingKeyEvent)) {
+                    break;
+                }
             }
         }
         return true;

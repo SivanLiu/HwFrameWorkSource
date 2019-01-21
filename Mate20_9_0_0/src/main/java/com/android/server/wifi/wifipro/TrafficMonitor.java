@@ -58,25 +58,27 @@ public class TrafficMonitor {
                             } else {
                                 TrafficMonitor.this.update();
                                 if (TrafficMonitor.this.mExpireTime > 0) {
-                                    int level = TrafficMonitor.this.transform(TrafficMonitor.this.getRxByteSpeed(2));
                                     String access$600;
                                     StringBuilder stringBuilder;
-                                    if (repeats <= 1 || !(level == -1 || TrafficMonitor.this.mSpeedLevel == level)) {
-                                        TrafficMonitor.this.mSpeedLevel = level;
-                                        access$600 = TrafficMonitor.TAG;
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append("no expired. level:");
-                                        stringBuilder.append(level);
-                                        Log.i(access$600, stringBuilder.toString());
-                                        TrafficMonitor.this.mHandler.post(TrafficMonitor.this.mCallBack);
-                                        TrafficMonitor.this.mHandler.removeMessages(102);
-                                    } else {
-                                        access$600 = TrafficMonitor.TAG;
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append("start expired. level:");
-                                        stringBuilder.append(level);
-                                        Log.i(access$600, stringBuilder.toString());
+                                    int level = TrafficMonitor.this.transform(TrafficMonitor.this.getRxByteSpeed(2));
+                                    if (repeats > 1) {
+                                        if (level == -1 || TrafficMonitor.this.mSpeedLevel == level) {
+                                            access$600 = TrafficMonitor.TAG;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("start expired. level:");
+                                            stringBuilder.append(level);
+                                            Log.i(access$600, stringBuilder.toString());
+                                            TrafficMonitor.this.mHandler.sendEmptyMessageDelayed(102, (long) TrafficMonitor.this.mExpireTime);
+                                        }
                                     }
+                                    TrafficMonitor.this.mSpeedLevel = level;
+                                    access$600 = TrafficMonitor.TAG;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append("no expired. level:");
+                                    stringBuilder.append(level);
+                                    Log.i(access$600, stringBuilder.toString());
+                                    TrafficMonitor.this.mHandler.post(TrafficMonitor.this.mCallBack);
+                                    TrafficMonitor.this.mHandler.removeMessages(102);
                                     TrafficMonitor.this.mHandler.sendEmptyMessageDelayed(102, (long) TrafficMonitor.this.mExpireTime);
                                 } else {
                                     TrafficMonitor.this.mHandler.post(TrafficMonitor.this.mCallBack);
@@ -105,6 +107,8 @@ public class TrafficMonitor {
                                 Log.i(TrafficMonitor.TAG, "send message MSG_CHECK_IPDATA");
                                 break;
                             }
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -512,9 +516,12 @@ public class TrafficMonitor {
     public void enableMonitor(boolean enable, int net_type) {
         synchronized (this.mHandler) {
             if (enable) {
-                this.networkType = net_type;
-                this.working = true;
-                Message.obtain(this.mHandler, 100, 0, 0).sendToTarget();
+                try {
+                    this.networkType = net_type;
+                    this.working = true;
+                    Message.obtain(this.mHandler, 100, 0, 0).sendToTarget();
+                } catch (Throwable th) {
+                }
             } else {
                 this.working = false;
                 this.networkType = -1;

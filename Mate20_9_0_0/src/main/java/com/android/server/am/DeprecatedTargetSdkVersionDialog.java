@@ -16,10 +16,10 @@ public class DeprecatedTargetSdkVersionDialog {
 
     public DeprecatedTargetSdkVersionDialog(AppWarnings manager, Context context, ApplicationInfo appInfo) {
         this.mPackageName = appInfo.packageName;
-        Builder builder = new Builder(context).setPositiveButton(17039370, new -$$Lambda$DeprecatedTargetSdkVersionDialog$06pwP7nH4-Aq27SqBfqb-dAMhzc(this, manager)).setMessage(context.getString(17039934)).setTitle(appInfo.loadSafeLabel(context.getPackageManager()));
+        Builder builder = new Builder(context).setPositiveButton(17039370, new -$$Lambda$DeprecatedTargetSdkVersionDialog$06pwP7nH4-Aq27SqBfqb-dAMhzc(this, manager)).setMessage(context.getString(17039935)).setTitle(appInfo.loadSafeLabel(context.getPackageManager()));
         Intent installerIntent = AppInstallerUtil.createIntent(context, appInfo.packageName);
         if (installerIntent != null) {
-            builder.setNeutralButton(17039933, new -$$Lambda$DeprecatedTargetSdkVersionDialog$rNs5B1U3M8_obMr8Ws5cSODCFn8(context, installerIntent));
+            builder.setNeutralButton(17039934, new -$$Lambda$DeprecatedTargetSdkVersionDialog$rNs5B1U3M8_obMr8Ws5cSODCFn8(context, installerIntent));
         }
         this.mDialog = builder.create();
         this.mDialog.create();

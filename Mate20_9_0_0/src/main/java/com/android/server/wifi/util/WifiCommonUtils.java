@@ -48,7 +48,7 @@ public class WifiCommonUtils {
         return ((frequency - 5170) / 5) + 34;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0059, code:
+    /* JADX WARNING: Missing block: B:22:0x0059, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

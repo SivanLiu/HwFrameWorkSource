@@ -2,6 +2,7 @@ package com.android.server.wm;
 
 import android.app.ActivityManager.TaskDescription;
 import android.app.ActivityManager.TaskSnapshot;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,6 +42,10 @@ public class TaskWindowContainerController extends WindowContainerController<Tas
                 }
             }
         }
+    }
+
+    public /* bridge */ /* synthetic */ void onOverrideConfigurationChanged(Configuration configuration) {
+        super.onOverrideConfigurationChanged(configuration);
     }
 
     public TaskWindowContainerController(int taskId, TaskWindowContainerListener listener, StackWindowController stackController, int userId, Rect bounds, int resizeMode, boolean supportsPictureInPicture, boolean toTop, boolean showForAllUsers, TaskDescription taskDescription) {

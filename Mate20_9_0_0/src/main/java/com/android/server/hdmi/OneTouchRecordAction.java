@@ -34,7 +34,7 @@ public class OneTouchRecordAction extends HdmiCecFeatureAction {
         addTimer(this.mState, RECORD_STATUS_TIMEOUT_MS);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001d, code:
+    /* JADX WARNING: Missing block: B:9:0x001d, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

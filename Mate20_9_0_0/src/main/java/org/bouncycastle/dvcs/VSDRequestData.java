@@ -1,6 +1,7 @@
 package org.bouncycastle.dvcs;
 
 import org.bouncycastle.asn1.dvcs.Data;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 
 public class VSDRequestData extends DVCSRequestData {
@@ -19,7 +20,7 @@ public class VSDRequestData extends DVCSRequestData {
             try {
                 this.doc = new CMSSignedData(this.data.getMessage().getOctets());
                 return;
-            } catch (Throwable e) {
+            } catch (CMSException e) {
                 throw new DVCSConstructionException("Can't read CMS SignedData from input", e);
             }
         }

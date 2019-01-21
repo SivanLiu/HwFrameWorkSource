@@ -134,13 +134,13 @@ public class X500Name extends ASN1Object implements ASN1Choice {
     }
 
     public RDN[] getRDNs() {
-        Object obj = new RDN[this.rdns.length];
-        System.arraycopy(this.rdns, 0, obj, 0, obj.length);
-        return obj;
+        RDN[] rdnArr = new RDN[this.rdns.length];
+        System.arraycopy(this.rdns, 0, rdnArr, 0, rdnArr.length);
+        return rdnArr;
     }
 
     public RDN[] getRDNs(ASN1ObjectIdentifier aSN1ObjectIdentifier) {
-        Object obj = new RDN[this.rdns.length];
+        RDN[] rdnArr = new RDN[this.rdns.length];
         int i = 0;
         int i2 = i;
         while (i != this.rdns.length) {
@@ -152,7 +152,7 @@ public class X500Name extends ASN1Object implements ASN1Choice {
                 while (i4 != typesAndValues.length) {
                     if (typesAndValues[i4].getType().equals(aSN1ObjectIdentifier)) {
                         i3 = i2 + 1;
-                        obj[i2] = rdn;
+                        rdnArr[i2] = rdn;
                     } else {
                         i4++;
                     }
@@ -160,16 +160,16 @@ public class X500Name extends ASN1Object implements ASN1Choice {
                 i++;
             } else if (rdn.getFirst().getType().equals(aSN1ObjectIdentifier)) {
                 i3 = i2 + 1;
-                obj[i2] = rdn;
+                rdnArr[i2] = rdn;
             } else {
                 i++;
             }
             i2 = i3;
             i++;
         }
-        Object obj2 = new RDN[i2];
-        System.arraycopy(obj, 0, obj2, 0, obj2.length);
-        return obj2;
+        RDN[] rdnArr2 = new RDN[i2];
+        System.arraycopy(rdnArr, 0, rdnArr2, 0, rdnArr2.length);
+        return rdnArr2;
     }
 
     public int hashCode() {

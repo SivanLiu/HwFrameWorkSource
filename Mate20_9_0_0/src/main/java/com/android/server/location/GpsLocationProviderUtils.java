@@ -15,6 +15,8 @@ public class GpsLocationProviderUtils extends EasyInvokeUtils {
     FieldObject<ContentObserver> mDefaultApnObserver;
     FieldObject<Integer> mPositionMode;
     FieldObject<Properties> mProperties;
+    FieldObject<Boolean> mStarted;
+    FieldObject<Boolean> mSuplEsEnabled;
     FieldObject<String> mSuplServerHost;
     FieldObject<Integer> mSuplServerPort;
     MethodObject<Void> native_set_agps_server;
@@ -78,5 +80,15 @@ public class GpsLocationProviderUtils extends EasyInvokeUtils {
     @SetField(fieldObject = "mDefaultApnObserver")
     public void setDefaultApnObserver(GnssLocationProvider gnssLocationProvider, ContentObserver value) {
         setField(this.mDefaultApnObserver, gnssLocationProvider, value);
+    }
+
+    @GetField(fieldObject = "mSuplEsEnabled")
+    public void setSuplEsEnabled(GnssLocationProvider gnssLocationProvider, boolean value) {
+        setField(this.mSuplEsEnabled, gnssLocationProvider, Boolean.valueOf(value));
+    }
+
+    @GetField(fieldObject = "mStarted")
+    public boolean getGnssStarted(GnssLocationProvider gnssLocationProvider) {
+        return ((Boolean) getField(this.mStarted, gnssLocationProvider)).booleanValue();
     }
 }

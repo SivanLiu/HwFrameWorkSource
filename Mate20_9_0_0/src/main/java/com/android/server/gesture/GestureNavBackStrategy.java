@@ -28,7 +28,7 @@ public class GestureNavBackStrategy extends GestureNavBaseStrategy {
 
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                GestureUtils.playHwEffectForBackIfNeed(GestureNavBackStrategy.this.mContext);
+                GestureUtils.performHapticFeedbackIfNeed(GestureNavBackStrategy.this.mContext);
             }
         }
     }

@@ -69,21 +69,22 @@ public final class ClientOperation implements Operation, BaseStream {
 
     public synchronized void abort() throws IOException {
         ensureOpen();
-        if (!this.mOperationDone || this.mReplyHeader.responseCode == ResponseCodes.OBEX_HTTP_CONTINUE) {
-            this.mExceptionMessage = "Operation aborted";
-            if (!this.mOperationDone && this.mReplyHeader.responseCode == ResponseCodes.OBEX_HTTP_CONTINUE) {
-                this.mOperationDone = true;
-                this.mParent.sendRequest(255, null, this.mReplyHeader, null, false);
-                if (this.mReplyHeader.responseCode == ResponseCodes.OBEX_HTTP_OK) {
-                    this.mExceptionMessage = null;
-                } else {
-                    throw new IOException("Invalid response code from server");
-                }
+        if (this.mOperationDone) {
+            if (this.mReplyHeader.responseCode != ResponseCodes.OBEX_HTTP_CONTINUE) {
+                throw new IOException("Operation has already ended");
             }
-            close();
-        } else {
-            throw new IOException("Operation has already ended");
         }
+        this.mExceptionMessage = "Operation aborted";
+        if (!this.mOperationDone && this.mReplyHeader.responseCode == ResponseCodes.OBEX_HTTP_CONTINUE) {
+            this.mOperationDone = true;
+            this.mParent.sendRequest(255, null, this.mReplyHeader, null, false);
+            if (this.mReplyHeader.responseCode == ResponseCodes.OBEX_HTTP_OK) {
+                this.mExceptionMessage = null;
+            } else {
+                throw new IOException("Invalid response code from server");
+            }
+        }
+        close();
     }
 
     public synchronized int getResponseCode() throws IOException {
@@ -362,13 +363,13 @@ public final class ClientOperation implements Operation, BaseStream {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002a, code:
+    /* JADX WARNING: Missing block: B:12:0x002a, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:28:0x0053, code:
+    /* JADX WARNING: Missing block: B:28:0x0053, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:56:0x0080, code:
+    /* JADX WARNING: Missing block: B:56:0x0080, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

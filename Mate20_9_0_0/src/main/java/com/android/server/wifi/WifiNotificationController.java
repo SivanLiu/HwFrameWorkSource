@@ -150,7 +150,7 @@ public class WifiNotificationController {
         filter.addAction(ACTION_NOTIFY_INTERNET_ACCESS_AP_FOUND);
         filter.addAction(ACTION_NOTIFY_INTERNET_ACCESS_AP_OUT_OF_RANGE);
         this.mContext.registerReceiver(new BroadcastReceiver() {
-            /* JADX WARNING: Missing block: B:17:0x0084, code:
+            /* JADX WARNING: Missing block: B:17:0x0084, code skipped:
             if (com.android.server.wifi.WifiNotificationController.access$500(r4.this$0) != false) goto L_0x0174;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -215,7 +215,7 @@ public class WifiNotificationController {
         this.mNotificationEnabledSettingObserver.register();
     }
 
-    /* JADX WARNING: Missing block: B:43:0x0096, code:
+    /* JADX WARNING: Missing block: B:43:0x0096, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

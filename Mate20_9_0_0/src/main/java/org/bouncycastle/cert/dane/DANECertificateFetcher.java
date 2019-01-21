@@ -17,7 +17,7 @@ public class DANECertificateFetcher {
     public List fetch(String str) throws DANEException {
         DANEEntrySelector createSelector = this.selectorFactory.createSelector(str);
         List<DANEEntry> entries = this.fetcherFactory.build(createSelector.getDomainName()).getEntries();
-        List arrayList = new ArrayList(entries.size());
+        ArrayList arrayList = new ArrayList(entries.size());
         for (DANEEntry dANEEntry : entries) {
             if (createSelector.match(dANEEntry)) {
                 arrayList.add(dANEEntry.getCertificate());

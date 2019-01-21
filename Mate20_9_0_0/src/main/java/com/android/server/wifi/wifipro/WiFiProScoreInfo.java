@@ -78,7 +78,7 @@ public class WiFiProScoreInfo implements Comparable {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0015, code:
+    /* JADX WARNING: Missing block: B:11:0x0015, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -86,7 +86,7 @@ public class WiFiProScoreInfo implements Comparable {
         return (properties == null || properties.abandon || 2 == properties.internetAccessType || 3 == properties.internetAccessType) ? 0 : 0;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x003d, code:
+    /* JADX WARNING: Missing block: B:24:0x003d, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -106,7 +106,7 @@ public class WiFiProScoreInfo implements Comparable {
         return ((newSignalLevel * 10) + boost_5G) + boost_trusted;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0037, code:
+    /* JADX WARNING: Missing block: B:24:0x0037, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

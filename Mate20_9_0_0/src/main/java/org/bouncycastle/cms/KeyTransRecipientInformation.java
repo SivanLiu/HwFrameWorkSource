@@ -7,12 +7,12 @@ public class KeyTransRecipientInformation extends RecipientInformation {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0041 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -28,16 +28,13 @@ public class KeyTransRecipientInformation extends RecipientInformation {
         r2 = r2.getRecipientIdentifier();
         r3 = r2.isTagged();
         if (r3 == 0) goto L_0x0027;
-    L_0x0013:
         r2 = r2.getId();
         r2 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r2);
         r3 = new org.bouncycastle.cms.KeyTransRecipientId;
         r2 = r2.getOctets();
         r3.<init>(r2);
-    L_0x0024:
         r1.rid = r3;
         return;
-    L_0x0027:
         r2 = r2.getId();
         r2 = org.bouncycastle.asn1.cms.IssuerAndSerialNumber.getInstance(r2);
         r3 = new org.bouncycastle.cms.KeyTransRecipientId;

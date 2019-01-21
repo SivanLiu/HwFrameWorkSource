@@ -34,9 +34,9 @@ public class CMSEnvelopedData implements Encodable {
             this.encAlg = encryptedContentInfo.getContentEncryptionAlgorithm();
             this.recipientInfoStore = CMSEnvelopedHelper.buildRecipientInformationStore(recipientInfos, this.encAlg, new CMSEnvelopedSecureReadable(this.encAlg, new CMSProcessableByteArray(encryptedContentInfo.getEncryptedContent().getOctets())));
             this.unprotectedAttributes = instance.getUnprotectedAttrs();
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             throw new CMSException("Malformed content.", e);
-        } catch (Exception e2) {
+        } catch (IllegalArgumentException e2) {
             throw new CMSException("Malformed content.", e2);
         }
     }

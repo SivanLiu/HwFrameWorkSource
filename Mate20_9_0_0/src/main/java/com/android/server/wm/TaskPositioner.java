@@ -79,7 +79,7 @@ class TaskPositioner {
             super(inputChannel, looper, choreographer);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:37:0x00af A:{Catch:{ all -> 0x0116, all -> 0x009a, Exception -> 0x0120 }} */
+        /* JADX WARNING: Removed duplicated region for block: B:39:0x00af A:{Catch:{ all -> 0x0116, all -> 0x009a, Exception -> 0x0120 }} */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onInputEvent(InputEvent event, int displayId) {
             if ((event instanceof MotionEvent) && (event.getSource() & 2) != 0) {
@@ -92,6 +92,7 @@ class TaskPositioner {
                 float newX = motionEvent.getRawX();
                 float newY = motionEvent.getRawY();
                 switch (motionEvent.getAction()) {
+                    case 0:
                     case 1:
                         TaskPositioner.this.mDragEnded = true;
                     case 2:
@@ -145,6 +146,7 @@ class TaskPositioner {
                         }
                         handled = true;
                         break;
+                    default:
                 }
                 if (TaskPositioner.this.mDragEnded) {
                 }

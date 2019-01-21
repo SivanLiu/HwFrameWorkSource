@@ -53,6 +53,7 @@ final class PackageStatusStorage {
                 Slog.e(LOG_TAG, "Package status invalid, resetting and retrying", e);
                 recoverFromBadData(e);
                 return getPackageStatusLocked();
+            } catch (Throwable th) {
             }
         }
         return packageStatusLocked;
@@ -282,6 +283,7 @@ final class PackageStatusStorage {
                 writePackageStatusLocked(Integer.valueOf(checkStatus), (int) System.currentTimeMillis(), packageVersions);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
+            } catch (Throwable th) {
             }
         }
     }

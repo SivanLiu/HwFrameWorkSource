@@ -36,7 +36,7 @@ public class DisplaySettings {
         }
     }
 
-    /* JADX WARNING: Missing block: B:2:0x000b, code:
+    /* JADX WARNING: Missing block: B:2:0x000b, code skipped:
             if (r0 == null) goto L_0x000d;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -76,7 +76,8 @@ public class DisplaySettings {
         entry.overscanBottom = bottom;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x007c A:{SYNTHETIC, Splitter: B:32:0x007c} */
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:76:0x0152=Splitter:B:76:0x0152, B:29:0x0074=Splitter:B:29:0x0074, B:41:0x00a6=Splitter:B:41:0x00a6, B:48:0x00c8=Splitter:B:48:0x00c8, B:55:0x00ea=Splitter:B:55:0x00ea, B:62:0x010c=Splitter:B:62:0x010c, B:69:0x012f=Splitter:B:69:0x012f} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x007c A:{SYNTHETIC, Splitter:B:32:0x007c} */
     /* JADX WARNING: Removed duplicated region for block: B:10:0x0024 A:{Catch:{ IllegalStateException -> 0x0134, NullPointerException -> 0x0111, NumberFormatException -> 0x00ee, XmlPullParserException -> 0x00cc, IOException -> 0x00aa, IndexOutOfBoundsException -> 0x0088, all -> 0x0085 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void readSettingsLocked() {

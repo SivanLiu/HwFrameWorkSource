@@ -236,7 +236,7 @@ public class HwFingersSnapshooter {
                     Log.e(TAG, "Invalid motionevent");
                     break;
             }
-            return true ^ this.mFilterCurrentTouch;
+            return 1 ^ this.mFilterCurrentTouch;
         }
         Log.i(TAG, "handleMotionEvent not a motionEvent");
         return true;
@@ -631,7 +631,7 @@ public class HwFingersSnapshooter {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0036, code:
+    /* JADX WARNING: Missing block: B:11:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

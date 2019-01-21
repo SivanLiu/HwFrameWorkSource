@@ -21,37 +21,16 @@
 
 * 3. 利用 [jadx](https://github.com/skylot/jadx)将转化后的 dex 文件转化为 java 源码;
 
-* 4. 编写脚本 convert.sh：
+* 4. 编写脚本 convert.sh，请见根目录中的 convert.sh
 
-```bash
-    files=`find arm64 oat/arm64 -name "*.vdex" -o -name "*.ovdex"`
-    if [ -d "tmp" ]; then
-        echo 文件夹存在
-        rm -rf tmp
-    fi
-    mkdir tmp
-    echo $PWD
-    prefix=$PWD
-    cd tmp
-    echo "==========从oat或odex中提取dex================="
-    for file in $files
-    do
-        # vdexExtractor -i "$prefix/$file" -o .
-        run.sh -i "$prefix/$file" -o .
-    done
-    echo "===========dex转java=============="
-    files=`find . -name "*.dex"`
-    for file in $files
-    do
-        jadx -d code --show-bad-code $file
-    done
-```
-* 5. Android 9.0 dex2oat 生成的衍生文件（odex、vdex 和 cdex）, 其中 cdex 需要用到 [compact_dex_converter](https://github.com/anestisb/vdexExtractor/blob/master/tools/deodex/run.sh) 脚本下载 compact_dex_converter 工具转化为标准的 dex，再用 最新的 jadx 转化成 java 源码  
-run.sh 会去下载 compact_dex_converter，速度太慢，自己可以先根据 constants.sh 中的网址下载解压后放到对应的目录：
+* 5. 注意：
+- Android 9.0 dex2oat 生成的衍生文件（odex、vdex 和 cdex）, 其中 cdex 需要用到 [compact_dex_converter](https://github.com/anestisb/vdexExtractor/blob/master/tools/deodex/run.sh) 脚本下载 
+- compact_dex_converter 工具转化为标准的 dex，再用最新的 jadx 转化成 java 源码，旧版本的 jadx 转化可能有问题，建议自己编译最新的源码使用； 
+- run.sh 会去下载 compact_dex_converter，速度太慢，自己可以先根据 constants.sh 中的网址下载解压后放到对应的目录：
 [linux](https://onedrive.live.com/download?cid=D1FAC8CC6BE2C2B0&resid=D1FAC8CC6BE2C2B0%21581&authkey=AE_kzPqzG_-R4T0)
-路径: vdexExtractor/tools/deodex/hostTools/Linux/api-API_28
+    路径: vdexExtractor/tools/deodex/hostTools/Linux/api-API_28
 [mac](https://onedrive.live.com/download?cid=D1FAC8CC6BE2C2B0&resid=D1FAC8CC6BE2C2B0%21580&authkey=ADMmFqIo6bj7X5Y)
-然后把 deps_prepare_env "$apiLevel" 一行注释掉就会使用本地已经下载好的依赖
+- 将 run.sh 中 deps_prepare_env "$apiLevel" 一行注释掉就会使用本地已经下载好的依赖
 
 * 6. 将脚本放到 framework 目录下修改权限，执行即可
 

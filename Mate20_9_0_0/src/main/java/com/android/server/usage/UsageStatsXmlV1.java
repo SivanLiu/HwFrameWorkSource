@@ -252,7 +252,7 @@ final class UsageStatsXmlV1 {
         xml.endTag(null, "event");
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0078, code:
+    /* JADX WARNING: Missing block: B:28:0x0078, code skipped:
             if (r5.equals(NON_INTERACTIVE_TAG) != false) goto L_0x0091;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

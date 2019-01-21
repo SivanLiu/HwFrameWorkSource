@@ -368,22 +368,22 @@ public class InstrumentationTestRunner extends Instrumentation implements TestSu
         Looper.prepare();
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0075, code:
+    /* JADX WARNING: Missing block: B:10:0x0075, code skipped:
             if (r12.mCoverage != false) goto L_0x00b0;
      */
-    /* JADX WARNING: Missing block: B:16:0x00ae, code:
+    /* JADX WARNING: Missing block: B:16:0x00ae, code skipped:
             if (r12.mCoverage == false) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:17:0x00b0, code:
+    /* JADX WARNING: Missing block: B:17:0x00b0, code skipped:
             generateCoverageReport();
      */
-    /* JADX WARNING: Missing block: B:18:0x00b3, code:
+    /* JADX WARNING: Missing block: B:18:0x00b3, code skipped:
             r2.close();
             android.util.Log.i("InstrumentationTestRunner", "Add DontKillDeptProc in mResults!");
             r12.mResults.putString("DontKillDeptProc", "true");
             finish(-1, r12.mResults);
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

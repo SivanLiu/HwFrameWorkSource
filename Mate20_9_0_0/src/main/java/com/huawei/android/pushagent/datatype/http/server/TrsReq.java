@@ -2,9 +2,10 @@ package com.huawei.android.pushagent.datatype.http.server;
 
 import android.content.Context;
 import android.os.Build;
-import com.huawei.android.pushagent.model.prefs.b;
-import com.huawei.android.pushagent.utils.d.c;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.model.prefs.g;
+import com.huawei.android.pushagent.utils.a.a;
+import com.huawei.android.pushagent.utils.d;
+import com.huawei.android.pushagent.utils.tools.c;
 
 public class TrsReq {
     private static final String PROTOCOL_VERSION_DEFAULT = "2.0";
@@ -27,29 +28,29 @@ public class TrsReq {
     private String version;
 
     public TrsReq(Context context, String str, String str2) {
-        this.mccmnc = g.fy(context);
-        this.pushDeviceId = g.gi(context);
-        this.deviceIdType = g.gp(context);
-        this.chanMode = b.oq(context).or();
+        this.mccmnc = d.yj(context);
+        this.pushDeviceId = d.yq(context);
+        this.deviceIdType = d.za(context);
+        this.chanMode = g.kp(context).kq();
         this.connId = str2;
         this.belongid = str;
-        this.version = g.gk(context);
+        this.version = d.yv(context);
         this.channel = context.getPackageName();
         this.mode = Build.MODEL;
-        this.emV = g.gq();
+        this.emV = d.zb();
         this.rV = Build.DISPLAY;
         this.agentV = getAgentV(context);
         if (1 == this.chanMode) {
-            this.sn = new c().getDeviceId();
+            this.sn = new a().getDeviceId();
         }
     }
 
     private long getAgentV(Context context) {
-        long co = com.huawei.android.pushagent.utils.tools.b.co(context, "com.huawei.android.pushagent");
-        if (co < 0) {
+        long sk = c.sk(context, "com.huawei.android.pushagent");
+        if (sk < 0) {
             return -1;
         }
-        return co;
+        return sk;
     }
 
     public String getMccmnc() {

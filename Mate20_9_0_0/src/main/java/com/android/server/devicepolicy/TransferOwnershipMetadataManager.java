@@ -128,19 +128,20 @@ class TransferOwnershipMetadataManager {
         serializer.endTag(null, tagName);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0058 A:{Splitter: B:4:0x002c, ExcHandler: java.io.IOException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0058 A:{Splitter: B:4:0x002c, ExcHandler: java.io.IOException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:26:0x0058, code:
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0058 A:{ExcHandler: IOException | IllegalArgumentException | XmlPullParserException (r1_5 'e' java.lang.Exception), Splitter:B:4:0x002c} */
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0058 A:{ExcHandler: IOException | IllegalArgumentException | XmlPullParserException (r1_5 'e' java.lang.Exception), Splitter:B:4:0x002c} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:26:0x0058, code skipped:
             r1 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:27:0x0059, code:
+    /* JADX WARNING: Missing block: B:27:0x0059, code skipped:
             r3 = TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("Caught exception while trying to load the owner transfer params from file ");
             r4.append(r0);
             android.util.Slog.e(r3, r4.toString(), r1);
      */
-    /* JADX WARNING: Missing block: B:28:0x006f, code:
+    /* JADX WARNING: Missing block: B:28:0x006f, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -170,15 +171,13 @@ class TransferOwnershipMetadataManager {
                 th22 = th;
                 th = th3;
             }
-        } catch (Exception e) {
+        } catch (IOException | IllegalArgumentException | XmlPullParserException e) {
+        } catch (Throwable th4) {
+            th22.addSuppressed(th4);
         }
         throw th;
         if (th22 != null) {
-            try {
-                stream.close();
-            } catch (Throwable th4) {
-                th22.addSuppressed(th4);
-            }
+            stream.close();
         } else {
             stream.close();
         }
@@ -197,7 +196,7 @@ class TransferOwnershipMetadataManager {
     /* JADX WARNING: Removed duplicated region for block: B:34:0x007c  */
     /* JADX WARNING: Removed duplicated region for block: B:33:0x0074  */
     /* JADX WARNING: Removed duplicated region for block: B:32:0x006c  */
-    /* JADX WARNING: Missing block: B:29:0x0064, code:
+    /* JADX WARNING: Missing block: B:29:0x0064, code skipped:
             if (r8.equals(TAG_TARGET_COMPONENT) != false) goto L_0x0068;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

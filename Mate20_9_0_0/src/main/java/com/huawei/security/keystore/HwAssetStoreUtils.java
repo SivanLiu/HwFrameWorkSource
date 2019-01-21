@@ -328,26 +328,28 @@ public class HwAssetStoreUtils {
             alias = (String) jsonObject.get("alias");
             stranskeys = (String) jsonObject.get("transkeys");
             parternerpubkey = (String) jsonObject.get("pubkey");
-            if (alias == null || stranskeys == null || parternerpubkey == null) {
-                Log.e(TAG, "cloneInStart get data failed!!");
-                return -1;
+            if (!(alias == null || stranskeys == null)) {
+                if (parternerpubkey != null) {
+                    byte[] transkeys = stranskeys.getBytes(StandardCharsets.UTF_8);
+                    HwKeymasterArguments assetArgs = new HwKeymasterArguments();
+                    assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_CLONE_INDATA, transkeys);
+                    assetArgs.addEnum(HwKeymasterDefs.KM_TAG_ASSETSTORE_OPCODE, 8);
+                    assetArgs.addEnum(HwKeymasterDefs.KM_TAG_ASSETSTORE_ASSETTYPE, assetType);
+                    assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_PUBLICKEY, getPubKey(mContext).getBytes(StandardCharsets.UTF_8));
+                    assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_PUBLICKEY_FORECDH, Base64.decode(parternerpubkey, 0));
+                    assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_ALIAS_FORECDH, alias.getBytes(StandardCharsets.UTF_8));
+                    if (HwKeystoreManager.getInstance().assetHandleReq(assetArgs, new HwKeymasterCertificateChain()) != -1) {
+                        return 0;
+                    }
+                    Log.e(TAG, "cloneInStart failed!!");
+                    return -1;
+                }
             }
+            Log.e(TAG, "cloneInStart get data failed!!");
+            return -1;
         } catch (JSONException e) {
             Log.e(TAG, "cloneInStart json failed JSONException!!");
         }
-        byte[] transkeys = stranskeys.getBytes(StandardCharsets.UTF_8);
-        HwKeymasterArguments assetArgs = new HwKeymasterArguments();
-        assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_CLONE_INDATA, transkeys);
-        assetArgs.addEnum(HwKeymasterDefs.KM_TAG_ASSETSTORE_OPCODE, 8);
-        assetArgs.addEnum(HwKeymasterDefs.KM_TAG_ASSETSTORE_ASSETTYPE, assetType);
-        assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_PUBLICKEY, getPubKey(mContext).getBytes(StandardCharsets.UTF_8));
-        assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_PUBLICKEY_FORECDH, Base64.decode(parternerpubkey, 0));
-        assetArgs.addBytes(HwKeymasterDefs.KM_TAG_ASSETSTORE_ALIAS_FORECDH, alias.getBytes(StandardCharsets.UTF_8));
-        if (HwKeystoreManager.getInstance().assetHandleReq(assetArgs, new HwKeymasterCertificateChain()) != -1) {
-            return 0;
-        }
-        Log.e(TAG, "cloneInStart failed!!");
-        return -1;
     }
 
     public int cloneIn(Context mContext, String row) {

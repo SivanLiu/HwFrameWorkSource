@@ -12,17 +12,28 @@ public class ContentShellCommand extends ShellCommand {
         this.mInterface = service;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x0029 A:{Catch:{ RemoteException -> 0x002e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0024 A:{Catch:{ RemoteException -> 0x002e }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public int onCommand(String cmd) {
         if (cmd == null) {
             return handleDefaultCommands(cmd);
         }
         PrintWriter pw = getOutPrintWriter();
         try {
-            int i = (cmd.hashCode() == -796331115 && cmd.equals("reset-today-stats")) ? 0 : -1;
-            if (i != 0) {
-                return handleDefaultCommands(cmd);
+            int i;
+            if (cmd.hashCode() == -796331115) {
+                if (cmd.equals("reset-today-stats")) {
+                    i = 0;
+                    if (i == 0) {
+                        return handleDefaultCommands(cmd);
+                    }
+                    return runResetTodayStats();
+                }
             }
-            return runResetTodayStats();
+            i = -1;
+            if (i == 0) {
+            }
         } catch (RemoteException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Remote exception: ");

@@ -413,22 +413,22 @@ public class HalDeviceManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
+    /* JADX WARNING: Missing block: B:9:0x0025, code skipped:
             r0 = getAllChipInfo();
      */
-    /* JADX WARNING: Missing block: B:10:0x0029, code:
+    /* JADX WARNING: Missing block: B:10:0x0029, code skipped:
             if (r0 != null) goto L_0x0033;
      */
-    /* JADX WARNING: Missing block: B:11:0x002b, code:
+    /* JADX WARNING: Missing block: B:11:0x002b, code skipped:
             android.util.Log.e(TAG, "registerInterfaceAvailableForRequestListener: no chip info found - but possibly registered pre-started - ignoring");
      */
-    /* JADX WARNING: Missing block: B:12:0x0032, code:
+    /* JADX WARNING: Missing block: B:12:0x0032, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:13:0x0033, code:
+    /* JADX WARNING: Missing block: B:13:0x0033, code skipped:
             dispatchAvailableForRequestListenersForType(r5, r0);
      */
-    /* JADX WARNING: Missing block: B:14:0x0036, code:
+    /* JADX WARNING: Missing block: B:14:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1164,6 +1164,7 @@ public class HalDeviceManager {
                 stringBuilder.append(e);
                 Log.e(str, stringBuilder.toString());
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1244,6 +1245,7 @@ public class HalDeviceManager {
                 stringBuilder.append(e2);
                 Log.e(str, stringBuilder.toString());
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1347,7 +1349,7 @@ public class HalDeviceManager {
         statusOk.value = false;
     }
 
-    /* JADX WARNING: Missing block: B:23:0x005f, code:
+    /* JADX WARNING: Missing block: B:23:0x005f, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1671,6 +1673,17 @@ public class HalDeviceManager {
         return result;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x003d A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x009b A:{SYNTHETIC, Splitter:B:30:0x009b} */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0055 A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00c0 A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x00e8 A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:40:0x00db A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00ce A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x00c1 A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0125 A:{SYNTHETIC, Splitter:B:48:0x0125} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00fd A:{Catch:{ RemoteException -> 0x012d, all -> 0x012b }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private IWifiIface executeChipReconfiguration(IfaceCreationData ifaceCreationData, int ifaceType) {
         if (this.mDbg) {
             String str = TAG;
@@ -1683,62 +1696,93 @@ public class HalDeviceManager {
         }
         synchronized (this.mLock) {
             try {
-                String str2;
-                StringBuilder stringBuilder2;
-                boolean isModeConfigNeeded = (ifaceCreationData.chipInfo.currentModeIdValid && ifaceCreationData.chipInfo.currentModeId == ifaceCreationData.chipModeId) ? false : true;
+                boolean isModeConfigNeeded;
+                Mutable<WifiStatus> statusResp;
+                Mutable<IWifiIface> ifaceResp;
+                if (ifaceCreationData.chipInfo.currentModeIdValid) {
+                    if (ifaceCreationData.chipInfo.currentModeId == ifaceCreationData.chipModeId) {
+                        String str2;
+                        StringBuilder stringBuilder2;
+                        isModeConfigNeeded = false;
+                        if (this.mDbg) {
+                            str2 = TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("isModeConfigNeeded=");
+                            stringBuilder2.append(isModeConfigNeeded);
+                            Log.d(str2, stringBuilder2.toString());
+                        }
+                        if (isModeConfigNeeded) {
+                            for (WifiIfaceInfo ifaceInfo : ifaceCreationData.interfacesToBeRemovedFirst) {
+                                removeIfaceInternal(ifaceInfo.iface);
+                            }
+                        } else {
+                            for (WifiIfaceInfo[] ifaceInfos : ifaceCreationData.chipInfo.ifaces) {
+                                for (WifiIfaceInfo ifaceInfo2 : r4[r6]) {
+                                    removeIfaceInternal(ifaceInfo2.iface);
+                                }
+                            }
+                            WifiStatus status = ifaceCreationData.chipInfo.chip.configureChip(ifaceCreationData.chipModeId);
+                            if (status.code != 0) {
+                                str2 = TAG;
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("executeChipReconfiguration: configureChip error: ");
+                                stringBuilder2.append(statusString(status));
+                                Log.e(str2, stringBuilder2.toString());
+                                return null;
+                            }
+                        }
+                        statusResp = new Mutable();
+                        ifaceResp = new Mutable();
+                        switch (ifaceType) {
+                            case 0:
+                                ifaceCreationData.chipInfo.chip.createStaIface(new -$$Lambda$HalDeviceManager$csull9RuGux3O9fMU2TmHd3K8YE(statusResp, ifaceResp));
+                                break;
+                            case 1:
+                                ifaceCreationData.chipInfo.chip.createApIface(new -$$Lambda$HalDeviceManager$Sk1PB19thsUnVIURe7jAUQxhiGk(statusResp, ifaceResp));
+                                break;
+                            case 2:
+                                ifaceCreationData.chipInfo.chip.createP2pIface(new -$$Lambda$HalDeviceManager$LydIQHqKB4e2ETtZbZ2Ps6wJmZg(statusResp, ifaceResp));
+                                break;
+                            case 3:
+                                ifaceCreationData.chipInfo.chip.createNanIface(new -$$Lambda$HalDeviceManager$rMUl3IrUZdoNc-Vrb1rqn8XExY0(statusResp, ifaceResp));
+                                break;
+                            default:
+                                break;
+                        }
+                        if (((WifiStatus) statusResp.value).code == 0) {
+                            String str3 = TAG;
+                            StringBuilder stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("executeChipReconfiguration: failed to create interface ifaceType=");
+                            stringBuilder3.append(ifaceType);
+                            stringBuilder3.append(": ");
+                            stringBuilder3.append(statusString((WifiStatus) statusResp.value));
+                            Log.e(str3, stringBuilder3.toString());
+                            return null;
+                        }
+                        return (IWifiIface) ifaceResp.value;
+                    }
+                }
+                isModeConfigNeeded = true;
                 if (this.mDbg) {
-                    str2 = TAG;
-                    stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("isModeConfigNeeded=");
-                    stringBuilder2.append(isModeConfigNeeded);
-                    Log.d(str2, stringBuilder2.toString());
                 }
                 if (isModeConfigNeeded) {
-                    for (WifiIfaceInfo[] ifaceInfos : ifaceCreationData.chipInfo.ifaces) {
-                        for (WifiIfaceInfo ifaceInfo : r4[r6]) {
-                            removeIfaceInternal(ifaceInfo.iface);
-                        }
-                    }
-                    WifiStatus status = ifaceCreationData.chipInfo.chip.configureChip(ifaceCreationData.chipModeId);
-                    if (status.code != 0) {
-                        str2 = TAG;
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("executeChipReconfiguration: configureChip error: ");
-                        stringBuilder2.append(statusString(status));
-                        Log.e(str2, stringBuilder2.toString());
-                        return null;
-                    }
                 }
-                for (WifiIfaceInfo ifaceInfo2 : ifaceCreationData.interfacesToBeRemovedFirst) {
-                    removeIfaceInternal(ifaceInfo2.iface);
-                }
-                Mutable<WifiStatus> statusResp = new Mutable();
-                Mutable<IWifiIface> ifaceResp = new Mutable();
+                statusResp = new Mutable();
+                ifaceResp = new Mutable();
                 switch (ifaceType) {
                     case 0:
-                        ifaceCreationData.chipInfo.chip.createStaIface(new -$$Lambda$HalDeviceManager$csull9RuGux3O9fMU2TmHd3K8YE(statusResp, ifaceResp));
                         break;
                     case 1:
-                        ifaceCreationData.chipInfo.chip.createApIface(new -$$Lambda$HalDeviceManager$Sk1PB19thsUnVIURe7jAUQxhiGk(statusResp, ifaceResp));
                         break;
                     case 2:
-                        ifaceCreationData.chipInfo.chip.createP2pIface(new -$$Lambda$HalDeviceManager$LydIQHqKB4e2ETtZbZ2Ps6wJmZg(statusResp, ifaceResp));
                         break;
                     case 3:
-                        ifaceCreationData.chipInfo.chip.createNanIface(new -$$Lambda$HalDeviceManager$rMUl3IrUZdoNc-Vrb1rqn8XExY0(statusResp, ifaceResp));
+                        break;
+                    default:
                         break;
                 }
-                if (((WifiStatus) statusResp.value).code != 0) {
-                    String str3 = TAG;
-                    StringBuilder stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("executeChipReconfiguration: failed to create interface ifaceType=");
-                    stringBuilder3.append(ifaceType);
-                    stringBuilder3.append(": ");
-                    stringBuilder3.append(statusString((WifiStatus) statusResp.value));
-                    Log.e(str3, stringBuilder3.toString());
-                    return null;
+                if (((WifiStatus) statusResp.value).code == 0) {
                 }
-                return (IWifiIface) ifaceResp.value;
             } catch (RemoteException e) {
                 String str4 = TAG;
                 StringBuilder stringBuilder4 = new StringBuilder();
@@ -1746,6 +1790,7 @@ public class HalDeviceManager {
                 stringBuilder4.append(e);
                 Log.e(str4, stringBuilder4.toString());
                 return null;
+            } catch (Throwable th) {
             }
         }
     }

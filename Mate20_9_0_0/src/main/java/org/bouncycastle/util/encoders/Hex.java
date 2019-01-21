@@ -13,11 +13,11 @@ public class Hex {
     }
 
     public static byte[] decode(String str) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             encoder.decode(str, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception decoding Hex string: ");
             stringBuilder.append(e.getMessage());
@@ -26,11 +26,11 @@ public class Hex {
     }
 
     public static byte[] decode(byte[] bArr) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             encoder.decode(bArr, 0, bArr.length, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception decoding Hex data: ");
             stringBuilder.append(e.getMessage());
@@ -51,11 +51,11 @@ public class Hex {
     }
 
     public static byte[] encode(byte[] bArr, int i, int i2) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             encoder.encode(bArr, i, i2, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception encoding Hex string: ");
             stringBuilder.append(e.getMessage());

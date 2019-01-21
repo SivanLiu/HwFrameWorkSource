@@ -128,7 +128,7 @@ public class PKIXCRLStoreSelector<T extends CRL> implements Selector<T> {
             X509CRL x509crl = (X509CRL) crl;
             ASN1Integer aSN1Integer = null;
             try {
-                Object extensionValue = x509crl.getExtensionValue(Extension.deltaCRLIndicator.getId());
+                byte[] extensionValue = x509crl.getExtensionValue(Extension.deltaCRLIndicator.getId());
                 if (extensionValue != null) {
                     aSN1Integer = ASN1Integer.getInstance(ASN1OctetString.getInstance(extensionValue).getOctets());
                 }

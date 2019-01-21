@@ -3,10 +3,15 @@ package com.huawei.security.hccm.param;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.huawei.security.hccm.CredentialException;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 
 public final class CredentialSpec {
@@ -53,16 +58,6 @@ public final class CredentialSpec {
             this.mPassword = Arrays.copyOf(password, password.length);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x001f A:{Splitter: B:1:0x000e, ExcHandler: java.io.IOException (r0_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x001f A:{Splitter: B:1:0x000e, ExcHandler: java.io.IOException (r0_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x001f A:{Splitter: B:1:0x000e, ExcHandler: java.io.IOException (r0_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:4:0x001f, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:6:0x0029, code:
-            throw new com.huawei.security.hccm.CredentialException(r0.getMessage(), r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public Builder(@NonNull Certificate user, @NonNull PrivateKey key) throws CredentialException {
             this.mUsername = null;
             this.mPassword = null;
@@ -73,7 +68,8 @@ public final class CredentialSpec {
                 KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
                 ks.load(null);
                 this.mAlias = ks.getCertificateAlias(user);
-            } catch (Exception e) {
+            } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+                throw new CredentialException(e.getMessage(), e);
             }
         }
 
@@ -81,17 +77,6 @@ public final class CredentialSpec {
             this(chain[0], key);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x0021 A:{Splitter: B:2:0x0011, ExcHandler: java.io.IOException (r0_1 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x0021 A:{Splitter: B:2:0x0011, ExcHandler: java.io.IOException (r0_1 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x0021 A:{Splitter: B:2:0x0011, ExcHandler: java.io.IOException (r0_1 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x0021 A:{Splitter: B:2:0x0011, ExcHandler: java.io.IOException (r0_1 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:4:0x0021, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:6:0x002b, code:
-            throw new com.huawei.security.hccm.CredentialException(r0.getMessage(), r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public Builder(@NonNull int type, @NonNull String alias, @NonNull String keyStoreType) throws CredentialException {
             this.mUsername = null;
             this.mPassword = null;
@@ -105,7 +90,8 @@ public final class CredentialSpec {
                     ks.getCertificateChain(alias);
                     ks.getKey(alias, null);
                     this.mAlias = alias;
-                } catch (Exception e) {
+                } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException e) {
+                    throw new CredentialException(e.getMessage(), e);
                 }
             }
         }

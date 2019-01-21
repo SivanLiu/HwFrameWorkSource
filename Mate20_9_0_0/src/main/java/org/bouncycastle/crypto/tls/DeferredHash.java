@@ -88,7 +88,7 @@ class DeferredHash implements TlsHandshakeHash {
     public TlsHandshakeHash notifyPRFDetermined() {
         int prfAlgorithm = this.context.getSecurityParameters().getPrfAlgorithm();
         if (prfAlgorithm == 0) {
-            Object combinedHash = new CombinedHash();
+            CombinedHash combinedHash = new CombinedHash();
             combinedHash.init(this.context);
             this.buf.updateDigest(combinedHash);
             return combinedHash.notifyPRFDetermined();
@@ -118,7 +118,7 @@ class DeferredHash implements TlsHandshakeHash {
         if (this.buf != null) {
             this.buf.updateDigest(cloneHash);
         }
-        TlsHandshakeHash deferredHash = new DeferredHash(this.prfHashAlgorithm, cloneHash);
+        DeferredHash deferredHash = new DeferredHash(this.prfHashAlgorithm, cloneHash);
         deferredHash.init(this.context);
         return deferredHash;
     }

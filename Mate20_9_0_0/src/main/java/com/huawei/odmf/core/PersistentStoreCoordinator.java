@@ -121,7 +121,7 @@ public final class PersistentStoreCoordinator {
         }
     }
 
-    /* JADX WARNING: Missing block: B:72:?, code:
+    /* JADX WARNING: Missing block: B:72:?, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -434,7 +434,7 @@ public final class PersistentStoreCoordinator {
         return this.objectsCache;
     }
 
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

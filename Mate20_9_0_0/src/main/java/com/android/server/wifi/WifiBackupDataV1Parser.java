@@ -36,7 +36,7 @@ class WifiBackupDataV1Parser implements WifiBackupDataParser {
     private static final int HIGHEST_SUPPORTED_MINOR_VERSION = 0;
     private static final Set<String> IP_CONFIGURATION_MINOR_V0_SUPPORTED_TAGS = new HashSet(Arrays.asList(new String[]{IpConfigurationXmlUtil.XML_TAG_IP_ASSIGNMENT, IpConfigurationXmlUtil.XML_TAG_LINK_ADDRESS, IpConfigurationXmlUtil.XML_TAG_LINK_PREFIX_LENGTH, IpConfigurationXmlUtil.XML_TAG_GATEWAY_ADDRESS, IpConfigurationXmlUtil.XML_TAG_DNS_SERVER_ADDRESSES, IpConfigurationXmlUtil.XML_TAG_PROXY_SETTINGS, IpConfigurationXmlUtil.XML_TAG_PROXY_HOST, IpConfigurationXmlUtil.XML_TAG_PROXY_PORT, IpConfigurationXmlUtil.XML_TAG_PROXY_EXCLUSION_LIST, IpConfigurationXmlUtil.XML_TAG_PROXY_PAC_FILE}));
     private static final String TAG = "WifiBackupDataV1Parser";
-    private static final Set<String> WIFI_CONFIGURATION_MINOR_V0_SUPPORTED_TAGS = new HashSet(Arrays.asList(new String[]{WifiConfigurationXmlUtil.XML_TAG_CONFIG_KEY, WifiConfigurationXmlUtil.XML_TAG_SSID, WifiConfigurationXmlUtil.XML_TAG_BSSID, WifiConfigurationXmlUtil.XML_TAG_PRE_SHARED_KEY, WifiConfigurationXmlUtil.XML_TAG_WEP_KEYS, WifiConfigurationXmlUtil.XML_TAG_WEP_TX_KEY_INDEX, WifiConfigurationXmlUtil.XML_TAG_HIDDEN_SSID, WifiConfigurationXmlUtil.XML_TAG_REQUIRE_PMF, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_KEY_MGMT, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_PROTOCOLS, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_AUTH_ALGOS, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_GROUP_CIPHERS, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_PAIRWISE_CIPHERS, WifiConfigurationXmlUtil.XML_TAG_SHARED}));
+    private static final Set<String> WIFI_CONFIGURATION_MINOR_V0_SUPPORTED_TAGS = new HashSet(Arrays.asList(new String[]{WifiConfigurationXmlUtil.XML_TAG_CONFIG_KEY, WifiConfigurationXmlUtil.XML_TAG_SSID, WifiConfigurationXmlUtil.XML_TAG_ORI_SSID, WifiConfigurationXmlUtil.XML_TAG_BSSID, WifiConfigurationXmlUtil.XML_TAG_PRE_SHARED_KEY, WifiConfigurationXmlUtil.XML_TAG_WEP_KEYS, WifiConfigurationXmlUtil.XML_TAG_WEP_TX_KEY_INDEX, WifiConfigurationXmlUtil.XML_TAG_HIDDEN_SSID, WifiConfigurationXmlUtil.XML_TAG_REQUIRE_PMF, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_KEY_MGMT, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_PROTOCOLS, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_AUTH_ALGOS, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_GROUP_CIPHERS, WifiConfigurationXmlUtil.XML_TAG_ALLOWED_PAIRWISE_CIPHERS, WifiConfigurationXmlUtil.XML_TAG_SHARED}));
 
     /* renamed from: com.android.server.wifi.WifiBackupDataV1Parser$1 */
     static /* synthetic */ class AnonymousClass1 {
@@ -154,8 +154,8 @@ class WifiBackupDataV1Parser implements WifiBackupDataParser {
         }
     }
 
-    /* JADX WARNING: Missing block: B:41:0x00ba, code:
-            if (r7.equals(com.android.server.wifi.util.XmlUtil.WifiConfigurationXmlUtil.XML_TAG_SSID) != false) goto L_0x00df;
+    /* JADX WARNING: Missing block: B:44:0x00c5, code skipped:
+            if (r7.equals(com.android.server.wifi.util.XmlUtil.WifiConfigurationXmlUtil.XML_TAG_SSID) != false) goto L_0x00ea;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static Pair<String, WifiConfiguration> parseWifiConfigurationFromXml(XmlPullParser in, int outerTagDepth, int minorVersion) throws XmlPullParserException, IOException {
@@ -173,39 +173,44 @@ class WifiBackupDataV1Parser implements WifiBackupDataParser {
                 switch (tagName.hashCode()) {
                     case -1819699067:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_SHARED)) {
-                            i = 13;
+                            i = 14;
                             break;
                         }
                     case -1704616680:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_ALLOWED_KEY_MGMT)) {
-                            i = 8;
+                            i = 9;
                             break;
                         }
                     case -181205965:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_ALLOWED_PROTOCOLS)) {
-                            i = 9;
+                            i = 10;
                             break;
                         }
                     case 2554747:
                         break;
                     case 63507133:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_BSSID)) {
+                            i = 3;
+                            break;
+                        }
+                    case 461626209:
+                        if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_ORI_SSID)) {
                             i = 2;
                             break;
                         }
                     case 682791106:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_ALLOWED_PAIRWISE_CIPHERS)) {
-                            i = 12;
+                            i = 13;
                             break;
                         }
                     case 736944625:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_ALLOWED_GROUP_CIPHERS)) {
-                            i = 11;
+                            i = 12;
                             break;
                         }
                     case 797043831:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_PRE_SHARED_KEY)) {
-                            i = 3;
+                            i = 4;
                             break;
                         }
                     case 1199498141:
@@ -215,27 +220,27 @@ class WifiBackupDataV1Parser implements WifiBackupDataParser {
                         }
                     case 1851050768:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_ALLOWED_AUTH_ALGOS)) {
-                            i = 10;
+                            i = 11;
                             break;
                         }
                     case 1905126713:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_WEP_TX_KEY_INDEX)) {
-                            i = 5;
+                            i = 6;
                             break;
                         }
                     case 1955037270:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_WEP_KEYS)) {
-                            i = 4;
+                            i = 5;
                             break;
                         }
                     case 1965854789:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_HIDDEN_SSID)) {
-                            i = 6;
+                            i = 7;
                             break;
                         }
                     case 2143705732:
                         if (tagName.equals(WifiConfigurationXmlUtil.XML_TAG_REQUIRE_PMF)) {
-                            i = 7;
+                            i = 8;
                             break;
                         }
                     default:
@@ -250,39 +255,42 @@ class WifiBackupDataV1Parser implements WifiBackupDataParser {
                         configuration.SSID = value;
                         break;
                     case 2:
-                        configuration.BSSID = value;
+                        configuration.oriSsid = value;
                         break;
                     case 3:
-                        configuration.preSharedKey = value;
+                        configuration.BSSID = value;
                         break;
                     case 4:
-                        populateWepKeysFromXmlValue(value, configuration.wepKeys);
+                        configuration.preSharedKey = value;
                         break;
                     case 5:
-                        configuration.wepTxKeyIndex = ((Integer) value).intValue();
+                        populateWepKeysFromXmlValue(value, configuration.wepKeys);
                         break;
                     case 6:
-                        configuration.hiddenSSID = ((Boolean) value).booleanValue();
+                        configuration.wepTxKeyIndex = ((Integer) value).intValue();
                         break;
                     case 7:
-                        configuration.requirePMF = ((Boolean) value).booleanValue();
+                        configuration.hiddenSSID = ((Boolean) value).booleanValue();
                         break;
                     case 8:
-                        configuration.allowedKeyManagement = BitSet.valueOf((byte[]) value);
+                        configuration.requirePMF = ((Boolean) value).booleanValue();
                         break;
                     case 9:
-                        configuration.allowedProtocols = BitSet.valueOf((byte[]) value);
+                        configuration.allowedKeyManagement = BitSet.valueOf((byte[]) value);
                         break;
                     case 10:
-                        configuration.allowedAuthAlgorithms = BitSet.valueOf((byte[]) value);
+                        configuration.allowedProtocols = BitSet.valueOf((byte[]) value);
                         break;
                     case 11:
-                        configuration.allowedGroupCiphers = BitSet.valueOf((byte[]) value);
+                        configuration.allowedAuthAlgorithms = BitSet.valueOf((byte[]) value);
                         break;
                     case 12:
-                        configuration.allowedPairwiseCiphers = BitSet.valueOf((byte[]) value);
+                        configuration.allowedGroupCiphers = BitSet.valueOf((byte[]) value);
                         break;
                     case 13:
+                        configuration.allowedPairwiseCiphers = BitSet.valueOf((byte[]) value);
+                        break;
+                    case 14:
                         configuration.shared = ((Boolean) value).booleanValue();
                         break;
                     default:

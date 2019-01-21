@@ -127,26 +127,37 @@ public class WifiLockManager {
         return mergedWS;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:12:0x002c A:{Catch:{ all -> 0x0060 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void updateWifiLockWorkSource(IBinder binder, WorkSource ws) {
         this.mContext.enforceCallingOrSelfPermission("android.permission.UPDATE_DEVICE_STATS", null);
         WifiLock wl = findLockByBinder(binder);
         if (wl != null) {
             WorkSource newWorkSource;
-            if (ws == null || ws.isEmpty()) {
-                newWorkSource = new WorkSource(Binder.getCallingUid());
-            } else {
-                newWorkSource = new WorkSource(ws);
+            long ident;
+            if (ws != null) {
+                if (!ws.isEmpty()) {
+                    newWorkSource = new WorkSource(ws);
+                    if (this.mVerboseLoggingEnabled) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("updateWifiLockWakeSource: ");
+                        stringBuilder.append(wl);
+                        stringBuilder.append(", newWorkSource=");
+                        stringBuilder.append(newWorkSource);
+                        Slog.d(str, stringBuilder.toString());
+                    }
+                    ident = Binder.clearCallingIdentity();
+                    this.mBatteryStats.noteFullWifiLockAcquiredFromSource(newWorkSource);
+                    this.mBatteryStats.noteFullWifiLockReleasedFromSource(wl.mWorkSource);
+                    wl.mWorkSource = newWorkSource;
+                    Binder.restoreCallingIdentity(ident);
+                }
             }
+            newWorkSource = new WorkSource(Binder.getCallingUid());
             if (this.mVerboseLoggingEnabled) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("updateWifiLockWakeSource: ");
-                stringBuilder.append(wl);
-                stringBuilder.append(", newWorkSource=");
-                stringBuilder.append(newWorkSource);
-                Slog.d(str, stringBuilder.toString());
             }
-            long ident = Binder.clearCallingIdentity();
+            ident = Binder.clearCallingIdentity();
             try {
                 this.mBatteryStats.noteFullWifiLockAcquiredFromSource(newWorkSource);
                 this.mBatteryStats.noteFullWifiLockReleasedFromSource(wl.mWorkSource);
@@ -232,6 +243,8 @@ public class WifiLockManager {
                 case 3:
                     this.mFullHighPerfLocksAcquired++;
                     break;
+                default:
+                    break;
             }
             lockAdded = true;
             Binder.restoreCallingIdentity(ident);
@@ -283,6 +296,8 @@ public class WifiLockManager {
                     break;
                 case 3:
                     this.mFullHighPerfLocksReleased++;
+                    break;
+                default:
                     break;
             }
             Binder.restoreCallingIdentity(ident);

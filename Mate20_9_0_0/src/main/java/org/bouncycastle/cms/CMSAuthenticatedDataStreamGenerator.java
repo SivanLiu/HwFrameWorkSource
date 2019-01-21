@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -54,7 +53,7 @@ public class CMSAuthenticatedDataStreamGenerator extends CMSAuthenticatedGenerat
                 if (CMSAuthenticatedDataStreamGenerator.this.authGen == null) {
                     CMSAuthenticatedDataStreamGenerator.this.authGen = new DefaultAuthenticatedAttributeTableGenerator();
                 }
-                ASN1Encodable dERSet = new DERSet(CMSAuthenticatedDataStreamGenerator.this.authGen.getAttributes(unmodifiableMap).toASN1EncodableVector());
+                DERSet dERSet = new DERSet(CMSAuthenticatedDataStreamGenerator.this.authGen.getAttributes(unmodifiableMap).toASN1EncodableVector());
                 OutputStream outputStream = this.macCalculator.getOutputStream();
                 outputStream.write(dERSet.getEncoded(ASN1Encoding.DER));
                 outputStream.close();
@@ -126,7 +125,7 @@ public class CMSAuthenticatedDataStreamGenerator extends CMSAuthenticatedGenerat
             bERSequenceGenerator3.addObject(aSN1ObjectIdentifier);
             outputStream = CMSUtils.createBEROctetOutputStream(bERSequenceGenerator3.getRawOutputStream(), 0, false, this.bufferSize);
             return new CmsAuthenticatedDataOutputStream(macCalculator, digestCalculator, aSN1ObjectIdentifier, digestCalculator != null ? new TeeOutputStream(outputStream, digestCalculator.getOutputStream()) : new TeeOutputStream(outputStream, macCalculator.getOutputStream()), bERSequenceGenerator, bERSequenceGenerator2, bERSequenceGenerator3);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new CMSException("exception decoding algorithm parameters.", e);
         }
     }

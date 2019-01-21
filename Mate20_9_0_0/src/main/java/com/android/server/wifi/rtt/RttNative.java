@@ -270,7 +270,7 @@ public class RttNative extends Stub {
                             if (cap != null) {
                                 boolean z2 = config.mustRequestLci && cap.lciSupported;
                                 config.mustRequestLci = z2;
-                                if (!(config.mustRequestLcr && cap.lcrSupported)) {
+                                if (!config.mustRequestLcr || !cap.lcrSupported) {
                                     z = false;
                                 }
                                 config.mustRequestLcr = z;

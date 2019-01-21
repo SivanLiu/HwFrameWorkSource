@@ -684,7 +684,7 @@ public class HwFingerprintService extends FingerprintService {
     }
 
     private void startAuthentication(IBinder token, long opId, int callingUserId, int groupId, IFingerprintServiceReceiver receiver, int flags, boolean restricted, String opPackageName, IAuthenticatorListener listener, String aaid, byte[] nonce) {
-        boolean z;
+        int i;
         String str = opPackageName;
         Class[] paramTypes = new Class[]{Integer.TYPE, String.class};
         Object[] params = new Object[]{Integer.valueOf(groupId), str};
@@ -697,11 +697,11 @@ public class HwFingerprintService extends FingerprintService {
         Log.v(str2, stringBuilder.toString());
         String str3 = str;
         AuthenticationClient client = new HwFIDOAuthenticationClient(this, getContext(), 0, token, receiver, callingUserId, groupId, opId, restricted, str, listener, aaid, nonce);
-        int i;
+        int i2;
         if (((Boolean) invokeParentPrivateFunction(this, "inLockoutMode", null, null)).booleanValue()) {
-            z = true;
+            i = 1;
             Class[] clsArr = new Class[1];
-            i = 0;
+            i2 = 0;
             clsArr[0] = String.class;
             if (!((Boolean) invokeParentPrivateFunction(this, "isKeyguard", clsArr, new Object[]{str3})).booleanValue()) {
                 Log.v(TAG, "In lockout mode; disallowing authentication");
@@ -711,9 +711,9 @@ public class HwFingerprintService extends FingerprintService {
                 return;
             }
         }
-        z = true;
-        i = 0;
-        invokeParentPrivateFunction(this, "startClient", new Class[]{ClientMonitor.class, Boolean.TYPE}, new Object[]{client, Boolean.valueOf(z)});
+        i = 1;
+        i2 = 0;
+        invokeParentPrivateFunction(this, "startClient", new Class[]{ClientMonitor.class, Boolean.TYPE}, new Object[]{client, Boolean.valueOf(i)});
     }
 
     private static Field getAccessibleField(Class targetClass, String variableName) {
@@ -778,7 +778,7 @@ public class HwFingerprintService extends FingerprintService {
     }
 
     private void showDialog(final boolean withConfirm) {
-        Builder builder = new Builder(this.mContext, 33947691).setPositiveButton(withConfirm ? 33686166 : 33686163, new OnClickListener() {
+        Builder builder = new Builder(this.mContext, 33947691).setPositiveButton(withConfirm ? 33686169 : 33686166, new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 HwFingerprintService.mNeedRecreateDialog = false;
                 if (withConfirm) {
@@ -796,7 +796,7 @@ public class HwFingerprintService extends FingerprintService {
                     HwFingerprintService.this.unRegisterPhoneStateReceiver();
                 }
             }
-        }).setTitle(this.mContext.getString(33685797)).setMessage(this.mContext.getString(withConfirm ? 33686165 : 33686164));
+        }).setTitle(this.mContext.getString(33685797)).setMessage(this.mContext.getString(withConfirm ? 33686168 : 33686167));
         if (withConfirm) {
             builder.setNegativeButton(17039360, new OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {

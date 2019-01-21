@@ -56,11 +56,10 @@ public class TestCaseUtil {
                 seen.add(testClass);
                 try {
                     return (Test) suiteMethod.invoke(null, (Object[]) null);
-                } catch (InvocationTargetException e) {
-                } catch (IllegalAccessException e2) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                 }
             }
-        } catch (NoSuchMethodException e3) {
+        } catch (NoSuchMethodException e2) {
         }
         return null;
     }

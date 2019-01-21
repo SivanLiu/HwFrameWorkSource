@@ -1,5 +1,6 @@
 package org.bouncycastle.operator.jcajce;
 
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -78,7 +79,7 @@ public class JceSymmetricKeyWrapper extends SymmetricKeyWrapper {
         try {
             createSymmetricWrapper.init(3, this.wrappingKey, this.random);
             return createSymmetricWrapper.wrap(jceKey);
-        } catch (Throwable e) {
+        } catch (GeneralSecurityException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot wrap key: ");
             stringBuilder.append(e.getMessage());

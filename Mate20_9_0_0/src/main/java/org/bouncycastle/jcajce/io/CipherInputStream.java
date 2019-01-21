@@ -3,6 +3,7 @@ package org.bouncycastle.jcajce.io;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import javax.crypto.Cipher;
 import org.bouncycastle.crypto.io.InvalidCipherTextIOException;
 
@@ -23,7 +24,7 @@ public class CipherInputStream extends FilterInputStream {
         try {
             this.finalized = true;
             return this.cipher.doFinal();
-        } catch (Throwable e) {
+        } catch (GeneralSecurityException e) {
             throw new InvalidCipherTextIOException("Error finalising cipher", e);
         }
     }

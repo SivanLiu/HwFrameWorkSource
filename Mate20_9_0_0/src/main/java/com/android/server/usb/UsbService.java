@@ -31,7 +31,6 @@ import com.android.server.utils.PriorityDump;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.Collections;
 
 public class UsbService extends Stub {
@@ -182,18 +181,21 @@ public class UsbService extends Stub {
         if (this.mHostManager != null) {
             synchronized (this.mLock) {
                 if (deviceName != null) {
-                    int userIdInt = UserHandle.getCallingUserId();
-                    if (isCallerInCurrentUserProfileGroupLocked()) {
-                        fd = this.mHostManager.openDevice(deviceName, getSettingsForUser(userIdInt), packageName, Binder.getCallingUid());
-                    } else {
-                        String str = TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Cannot open ");
-                        stringBuilder.append(deviceName);
-                        stringBuilder.append(" for user ");
-                        stringBuilder.append(userIdInt);
-                        stringBuilder.append(" as user is not active.");
-                        Slog.w(str, stringBuilder.toString());
+                    try {
+                        int userIdInt = UserHandle.getCallingUserId();
+                        if (isCallerInCurrentUserProfileGroupLocked()) {
+                            fd = this.mHostManager.openDevice(deviceName, getSettingsForUser(userIdInt), packageName, Binder.getCallingUid());
+                        } else {
+                            String str = TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Cannot open ");
+                            stringBuilder.append(deviceName);
+                            stringBuilder.append(" for user ");
+                            stringBuilder.append(userIdInt);
+                            stringBuilder.append(" as user is not active.");
+                            Slog.w(str, stringBuilder.toString());
+                        }
+                    } finally {
                     }
                 }
             }
@@ -396,116 +398,116 @@ public class UsbService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:40:0x009e A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00a6 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:42:0x00a4 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x00a2 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x00d3 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00b1 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x00e0 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:63:0x00e7 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x00e5 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x00e3 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00ee A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:40:0x009e A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00a6 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:42:0x00a4 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x00a2 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00b1 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x00d3 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x00e0 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:63:0x00e7 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x00e5 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x00e3 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00ee A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:40:0x009e A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00a6 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:42:0x00a4 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x00a2 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:56:0x00d3 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:46:0x00b1 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x00e0 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:63:0x00e7 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:0x00e5 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x00e3 A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00ee A:{Catch:{ all -> 0x013d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x027a  */
-    /* JADX WARNING: Removed duplicated region for block: B:173:0x0281  */
-    /* JADX WARNING: Removed duplicated region for block: B:172:0x027f  */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0299 A:{SYNTHETIC, Splitter: B:181:0x0299} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0292 A:{SYNTHETIC, Splitter: B:179:0x0292} */
-    /* JADX WARNING: Removed duplicated region for block: B:192:0x02b5 A:{SYNTHETIC, Splitter: B:192:0x02b5} */
-    /* JADX WARNING: Removed duplicated region for block: B:186:0x02a4  */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x02c2  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x02c9  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x02c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:212:0x02fc  */
-    /* JADX WARNING: Removed duplicated region for block: B:206:0x02d2 A:{Catch:{ all -> 0x0302 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x027a  */
-    /* JADX WARNING: Removed duplicated region for block: B:173:0x0281  */
-    /* JADX WARNING: Removed duplicated region for block: B:172:0x027f  */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0292 A:{SYNTHETIC, Splitter: B:179:0x0292} */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0299 A:{SYNTHETIC, Splitter: B:181:0x0299} */
-    /* JADX WARNING: Removed duplicated region for block: B:186:0x02a4  */
-    /* JADX WARNING: Removed duplicated region for block: B:192:0x02b5 A:{SYNTHETIC, Splitter: B:192:0x02b5} */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x02c2  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x02c9  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x02c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:206:0x02d2 A:{Catch:{ all -> 0x0302 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:212:0x02fc  */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0233  */
-    /* JADX WARNING: Removed duplicated region for block: B:145:0x023a  */
-    /* JADX WARNING: Removed duplicated region for block: B:144:0x0238  */
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x0251 A:{SYNTHETIC, Splitter: B:153:0x0251} */
-    /* JADX WARNING: Removed duplicated region for block: B:151:0x024a A:{SYNTHETIC, Splitter: B:151:0x024a} */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x026a A:{SYNTHETIC, Splitter: B:163:0x026a} */
-    /* JADX WARNING: Removed duplicated region for block: B:157:0x0259  */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x027a  */
-    /* JADX WARNING: Removed duplicated region for block: B:173:0x0281  */
-    /* JADX WARNING: Removed duplicated region for block: B:172:0x027f  */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0299 A:{SYNTHETIC, Splitter: B:181:0x0299} */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0292 A:{SYNTHETIC, Splitter: B:179:0x0292} */
-    /* JADX WARNING: Removed duplicated region for block: B:192:0x02b5 A:{SYNTHETIC, Splitter: B:192:0x02b5} */
-    /* JADX WARNING: Removed duplicated region for block: B:186:0x02a4  */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x02c2  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x02c9  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x02c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:212:0x02fc  */
-    /* JADX WARNING: Removed duplicated region for block: B:206:0x02d2 A:{Catch:{ all -> 0x0302 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:141:0x0233  */
-    /* JADX WARNING: Removed duplicated region for block: B:145:0x023a  */
-    /* JADX WARNING: Removed duplicated region for block: B:144:0x0238  */
-    /* JADX WARNING: Removed duplicated region for block: B:151:0x024a A:{SYNTHETIC, Splitter: B:151:0x024a} */
-    /* JADX WARNING: Removed duplicated region for block: B:153:0x0251 A:{SYNTHETIC, Splitter: B:153:0x0251} */
-    /* JADX WARNING: Removed duplicated region for block: B:157:0x0259  */
-    /* JADX WARNING: Removed duplicated region for block: B:163:0x026a A:{SYNTHETIC, Splitter: B:163:0x026a} */
-    /* JADX WARNING: Removed duplicated region for block: B:169:0x027a  */
-    /* JADX WARNING: Removed duplicated region for block: B:173:0x0281  */
-    /* JADX WARNING: Removed duplicated region for block: B:172:0x027f  */
-    /* JADX WARNING: Removed duplicated region for block: B:179:0x0292 A:{SYNTHETIC, Splitter: B:179:0x0292} */
-    /* JADX WARNING: Removed duplicated region for block: B:181:0x0299 A:{SYNTHETIC, Splitter: B:181:0x0299} */
-    /* JADX WARNING: Removed duplicated region for block: B:186:0x02a4  */
-    /* JADX WARNING: Removed duplicated region for block: B:192:0x02b5 A:{SYNTHETIC, Splitter: B:192:0x02b5} */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x02c2  */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x02c9  */
-    /* JADX WARNING: Removed duplicated region for block: B:200:0x02c7  */
-    /* JADX WARNING: Removed duplicated region for block: B:206:0x02d2 A:{Catch:{ all -> 0x0302 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:212:0x02fc  */
-    /* JADX WARNING: Removed duplicated region for block: B:275:0x050a A:{Catch:{ all -> 0x0575 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:269:0x04f9 A:{Catch:{ all -> 0x04f1, all -> 0x0506 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:278:0x0521 A:{Catch:{ all -> 0x0575 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:281:0x0536 A:{Catch:{ all -> 0x0575 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:284:0x0546 A:{Catch:{ all -> 0x0575 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x009e A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00a6 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:43:0x00a4 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00a2 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x00d3 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x00b1 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x00e0 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x00e7 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x00e5 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:63:0x00e3 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ee A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x009e A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00a6 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:43:0x00a4 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00a2 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x00b1 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x00d3 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x00e0 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x00e7 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x00e5 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:63:0x00e3 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ee A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x009e A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00a6 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:43:0x00a4 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00a2 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x00d3 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x00b1 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x00e0 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x00e7 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x00e5 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:63:0x00e3 A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ee A:{Catch:{ all -> 0x013d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x027a  */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x0281  */
+    /* JADX WARNING: Removed duplicated region for block: B:177:0x027f  */
+    /* JADX WARNING: Removed duplicated region for block: B:186:0x0299 A:{SYNTHETIC, Splitter:B:186:0x0299} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x0292 A:{SYNTHETIC, Splitter:B:184:0x0292} */
+    /* JADX WARNING: Removed duplicated region for block: B:197:0x02b5 A:{SYNTHETIC, Splitter:B:197:0x02b5} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x02a4  */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x02c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:206:0x02c9  */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:217:0x02fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:211:0x02d2 A:{Catch:{ all -> 0x0302 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x027a  */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x0281  */
+    /* JADX WARNING: Removed duplicated region for block: B:177:0x027f  */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x0292 A:{SYNTHETIC, Splitter:B:184:0x0292} */
+    /* JADX WARNING: Removed duplicated region for block: B:186:0x0299 A:{SYNTHETIC, Splitter:B:186:0x0299} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x02a4  */
+    /* JADX WARNING: Removed duplicated region for block: B:197:0x02b5 A:{SYNTHETIC, Splitter:B:197:0x02b5} */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x02c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:206:0x02c9  */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:211:0x02d2 A:{Catch:{ all -> 0x0302 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:217:0x02fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:146:0x0233  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x023a  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x0238  */
+    /* JADX WARNING: Removed duplicated region for block: B:158:0x0251 A:{SYNTHETIC, Splitter:B:158:0x0251} */
+    /* JADX WARNING: Removed duplicated region for block: B:156:0x024a A:{SYNTHETIC, Splitter:B:156:0x024a} */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x026a A:{SYNTHETIC, Splitter:B:168:0x026a} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0259  */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x027a  */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x0281  */
+    /* JADX WARNING: Removed duplicated region for block: B:177:0x027f  */
+    /* JADX WARNING: Removed duplicated region for block: B:186:0x0299 A:{SYNTHETIC, Splitter:B:186:0x0299} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x0292 A:{SYNTHETIC, Splitter:B:184:0x0292} */
+    /* JADX WARNING: Removed duplicated region for block: B:197:0x02b5 A:{SYNTHETIC, Splitter:B:197:0x02b5} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x02a4  */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x02c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:206:0x02c9  */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:217:0x02fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:211:0x02d2 A:{Catch:{ all -> 0x0302 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:146:0x0233  */
+    /* JADX WARNING: Removed duplicated region for block: B:150:0x023a  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x0238  */
+    /* JADX WARNING: Removed duplicated region for block: B:156:0x024a A:{SYNTHETIC, Splitter:B:156:0x024a} */
+    /* JADX WARNING: Removed duplicated region for block: B:158:0x0251 A:{SYNTHETIC, Splitter:B:158:0x0251} */
+    /* JADX WARNING: Removed duplicated region for block: B:162:0x0259  */
+    /* JADX WARNING: Removed duplicated region for block: B:168:0x026a A:{SYNTHETIC, Splitter:B:168:0x026a} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x027a  */
+    /* JADX WARNING: Removed duplicated region for block: B:178:0x0281  */
+    /* JADX WARNING: Removed duplicated region for block: B:177:0x027f  */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x0292 A:{SYNTHETIC, Splitter:B:184:0x0292} */
+    /* JADX WARNING: Removed duplicated region for block: B:186:0x0299 A:{SYNTHETIC, Splitter:B:186:0x0299} */
+    /* JADX WARNING: Removed duplicated region for block: B:191:0x02a4  */
+    /* JADX WARNING: Removed duplicated region for block: B:197:0x02b5 A:{SYNTHETIC, Splitter:B:197:0x02b5} */
+    /* JADX WARNING: Removed duplicated region for block: B:202:0x02c2  */
+    /* JADX WARNING: Removed duplicated region for block: B:206:0x02c9  */
+    /* JADX WARNING: Removed duplicated region for block: B:205:0x02c7  */
+    /* JADX WARNING: Removed duplicated region for block: B:211:0x02d2 A:{Catch:{ all -> 0x0302 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:217:0x02fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:282:0x050a A:{Catch:{ all -> 0x0575 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:276:0x04f9 A:{Catch:{ all -> 0x04f1, all -> 0x0506 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:285:0x0521 A:{Catch:{ all -> 0x0575 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:288:0x0536 A:{Catch:{ all -> 0x0575 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:291:0x0546 A:{Catch:{ all -> 0x0575 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
         long ident;
         FileDescriptor fileDescriptor;
         Throwable th;
         FileDescriptor fileDescriptor2 = fd;
-        Writer writer2 = writer;
+        PrintWriter printWriter = writer;
         String[] strArr = args;
-        if (DumpUtils.checkDumpPermission(this.mContext, TAG, writer2)) {
-            IndentingPrintWriter pw = new IndentingPrintWriter(writer2, "  ");
+        if (DumpUtils.checkDumpPermission(this.mContext, TAG, printWriter)) {
+            IndentingPrintWriter pw = new IndentingPrintWriter(printWriter, "  ");
             long ident2 = Binder.clearCallingIdentity();
             try {
                 DualDumpOutputStream dump;
@@ -566,66 +568,70 @@ public class UsbService extends Stub {
                                         hashCode = str2.hashCode();
                                         if (hashCode != -896505829) {
                                             if (hashCode != -440560135) {
-                                                if (hashCode == 3530387 && str2.equals("sink")) {
-                                                    i = 1;
-                                                    switch (i) {
-                                                        case 0:
-                                                            i = 1;
-                                                            break;
-                                                        case 1:
-                                                            i = 2;
-                                                            break;
-                                                        case 2:
-                                                            i = 0;
-                                                            break;
-                                                        default:
-                                                            stringBuilder = new StringBuilder();
-                                                            stringBuilder.append("Invalid power role: ");
-                                                            stringBuilder.append(strArr[2]);
-                                                            pw.println(stringBuilder.toString());
-                                                            Binder.restoreCallingIdentity(ident2);
-                                                            return;
-                                                    }
-                                                    str = strArr[3];
-                                                    hashCode = str.hashCode();
-                                                    if (hashCode == -1335157162) {
-                                                        if (hashCode != 3208616) {
-                                                            if (hashCode == 2063627318 && str.equals("no-data")) {
-                                                                i2 = 2;
-                                                            }
-                                                        } else if (str.equals(WatchlistEventKeys.HOST)) {
-                                                            i2 = 0;
+                                                if (hashCode == 3530387) {
+                                                    if (str2.equals("sink")) {
+                                                        i = 1;
+                                                        switch (i) {
+                                                            case 0:
+                                                                i = 1;
+                                                                break;
+                                                            case 1:
+                                                                i = 2;
+                                                                break;
+                                                            case 2:
+                                                                i = 0;
+                                                                break;
+                                                            default:
+                                                                stringBuilder = new StringBuilder();
+                                                                stringBuilder.append("Invalid power role: ");
+                                                                stringBuilder.append(strArr[2]);
+                                                                pw.println(stringBuilder.toString());
+                                                                Binder.restoreCallingIdentity(ident2);
+                                                                return;
                                                         }
-                                                    } else if (str.equals("device")) {
-                                                        i2 = 1;
+                                                        str = strArr[3];
+                                                        hashCode = str.hashCode();
+                                                        if (hashCode == -1335157162) {
+                                                            if (hashCode != 3208616) {
+                                                                if (hashCode == 2063627318) {
+                                                                    if (str.equals("no-data")) {
+                                                                        i2 = 2;
+                                                                    }
+                                                                }
+                                                            } else if (str.equals(WatchlistEventKeys.HOST)) {
+                                                                i2 = 0;
+                                                            }
+                                                        } else if (str.equals("device")) {
+                                                            i2 = 1;
+                                                        }
+                                                        switch (i2) {
+                                                            case 0:
+                                                                dataRole = 1;
+                                                                break;
+                                                            case 1:
+                                                                dataRole = 2;
+                                                                break;
+                                                            case 2:
+                                                                dataRole = 0;
+                                                                break;
+                                                            default:
+                                                                StringBuilder stringBuilder2 = new StringBuilder();
+                                                                stringBuilder2.append("Invalid data role: ");
+                                                                stringBuilder2.append(strArr[3]);
+                                                                pw.println(stringBuilder2.toString());
+                                                                Binder.restoreCallingIdentity(ident2);
+                                                                return;
+                                                        }
+                                                        if (this.mPortManager != null) {
+                                                            this.mPortManager.setPortRoles(portId, i, dataRole, pw);
+                                                            pw.println();
+                                                            this.mPortManager.dump(new DualDumpOutputStream(new IndentingPrintWriter(pw, "  ")), BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, 0);
+                                                        }
+                                                        fileDescriptor = fileDescriptor2;
+                                                        ident = ident2;
+                                                        Binder.restoreCallingIdentity(ident);
+                                                        return;
                                                     }
-                                                    switch (i2) {
-                                                        case 0:
-                                                            dataRole = 1;
-                                                            break;
-                                                        case 1:
-                                                            dataRole = 2;
-                                                            break;
-                                                        case 2:
-                                                            dataRole = 0;
-                                                            break;
-                                                        default:
-                                                            StringBuilder stringBuilder2 = new StringBuilder();
-                                                            stringBuilder2.append("Invalid data role: ");
-                                                            stringBuilder2.append(strArr[3]);
-                                                            pw.println(stringBuilder2.toString());
-                                                            Binder.restoreCallingIdentity(ident2);
-                                                            return;
-                                                    }
-                                                    if (this.mPortManager != null) {
-                                                        this.mPortManager.setPortRoles(portId, i, dataRole, pw);
-                                                        pw.println();
-                                                        this.mPortManager.dump(new DualDumpOutputStream(new IndentingPrintWriter(pw, "  ")), BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, 0);
-                                                    }
-                                                    fileDescriptor = fileDescriptor2;
-                                                    ident = ident2;
-                                                    Binder.restoreCallingIdentity(ident);
-                                                    return;
                                                 }
                                             } else if (str2.equals("no-power")) {
                                                 i = 2;
@@ -739,8 +745,10 @@ public class UsbService extends Stub {
                                     if (hashCode != 99374) {
                                         if (hashCode != 115711) {
                                             if (hashCode != 3094652) {
-                                                if (hashCode == 3387192 && str.equals("none")) {
-                                                    i2 = 3;
+                                                if (hashCode == 3387192) {
+                                                    if (str.equals("none")) {
+                                                        i2 = 3;
+                                                    }
                                                 }
                                             } else if (str.equals("dual")) {
                                                 i2 = 2;

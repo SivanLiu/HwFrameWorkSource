@@ -640,14 +640,14 @@ final class RemotePrintService implements DeathRecipient {
         Handler.getMain().sendMessage(PooledLambda.obtainMessage(-$$Lambda$RemotePrintService$L2EQSyIHled1ZVO5GCaBXmvtCQQ.INSTANCE, this, printerId));
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0020, code:
+    /* JADX WARNING: Missing block: B:13:0x0020, code skipped:
             if (isBound() != false) goto L_0x0030;
      */
-    /* JADX WARNING: Missing block: B:13:0x0022, code:
+    /* JADX WARNING: Missing block: B:14:0x0022, code skipped:
             ensureBound();
             r3.mPendingCommands.add(new com.android.server.print.RemotePrintService.AnonymousClass10(r3));
      */
-    /* JADX WARNING: Missing block: B:14:0x0030, code:
+    /* JADX WARNING: Missing block: B:15:0x0030, code skipped:
             r0 = LOG_TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("[user: ");
@@ -655,21 +655,24 @@ final class RemotePrintService implements DeathRecipient {
             r1.append("] stopPrinterTracking()");
             android.util.Slog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             r3.mPrintService.stopPrinterStateTracking(r4);
      */
-    /* JADX WARNING: Missing block: B:17:0x0053, code:
+    /* JADX WARNING: Missing block: B:18:0x0053, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:18:0x0054, code:
+    /* JADX WARNING: Missing block: B:19:0x0054, code skipped:
             android.util.Slog.e(LOG_TAG, "Error requesting stop printer tracking.", r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void handleStopPrinterStateTracking(final PrinterId printerId) {
         synchronized (this.mLock) {
-            if (this.mTrackedPrinterList == null || !this.mTrackedPrinterList.remove(printerId)) {
-            } else if (this.mTrackedPrinterList.isEmpty()) {
-                this.mTrackedPrinterList = null;
+            if (this.mTrackedPrinterList != null) {
+                if (this.mTrackedPrinterList.remove(printerId)) {
+                    if (this.mTrackedPrinterList.isEmpty()) {
+                        this.mTrackedPrinterList = null;
+                    }
+                }
             }
         }
     }

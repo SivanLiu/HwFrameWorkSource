@@ -7,7 +7,6 @@ import android.os.RemoteException;
 import android.os.WorkSource;
 import android.util.Log;
 import android.util.PrintWriterPrinter;
-import android.util.Printer;
 import com.android.internal.location.ProviderProperties;
 import com.android.internal.location.ProviderRequest;
 import java.io.FileDescriptor;
@@ -120,7 +119,7 @@ public class MockProvider implements LocationProviderInterface {
         stringBuilder.append("mLocation:");
         pw.println(stringBuilder.toString());
         Location location = this.mLocation;
-        Printer printWriterPrinter = new PrintWriterPrinter(pw);
+        PrintWriterPrinter printWriterPrinter = new PrintWriterPrinter(pw);
         StringBuilder stringBuilder2 = new StringBuilder();
         stringBuilder2.append(prefix);
         stringBuilder2.append("  ");

@@ -93,22 +93,22 @@ public class GroupHelper {
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x007b, code:
+    /* JADX WARNING: Missing block: B:29:0x007b, code skipped:
             if (r1 == false) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:28:0x007d, code:
+    /* JADX WARNING: Missing block: B:30:0x007d, code skipped:
             adjustAutogroupingSummary(r12, r10.getPackageName(), null, false, r13);
      */
-    /* JADX WARNING: Missing block: B:30:0x008d, code:
+    /* JADX WARNING: Missing block: B:32:0x008d, code skipped:
             if (r0.size() <= 0) goto L_0x0093;
      */
-    /* JADX WARNING: Missing block: B:31:0x008f, code:
+    /* JADX WARNING: Missing block: B:33:0x008f, code skipped:
             adjustNotificationBundling(r0, false);
      */
-    /* JADX WARNING: Missing block: B:32:0x0093, code:
+    /* JADX WARNING: Missing block: B:34:0x0093, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:37:0x0097, code:
+    /* JADX WARNING: Missing block: B:39:0x0097, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -117,25 +117,27 @@ public class GroupHelper {
         boolean removeSummary = false;
         synchronized (this.mUngroupedNotifications) {
             Map<String, LinkedHashSet<String>> ungroupedNotificationsByUser = (Map) this.mUngroupedNotifications.get(Integer.valueOf(sbn.getUserId()));
-            if (ungroupedNotificationsByUser == null || ungroupedNotificationsByUser.size() == 0) {
-            } else {
-                String notifyKey = getUnGroupKey(sbn.getPackageName(), notifyType);
-                LinkedHashSet<String> notificationsForPackage = (LinkedHashSet) ungroupedNotificationsByUser.get(notifyKey);
-                if (notificationsForPackage == null || notificationsForPackage.size() == 0) {
-                    return;
-                }
-                if (notificationsForPackage.remove(sbn.getKey()) && !notificationGone) {
-                    notificationsToUnAutogroup.add(sbn.getKey());
-                }
-                if (notificationsForPackage.size() == 0) {
-                    ungroupedNotificationsByUser.remove(notifyKey);
-                    removeSummary = true;
-                }
-                if (notificationsForPackage.size() == 1) {
-                    Iterator<String> linkedSet = notificationsForPackage.iterator();
-                    while (linkedSet.hasNext()) {
-                        if (((String) linkedSet.next()).contains(AUTOGROUP_KEY)) {
-                            removeSummary = true;
+            if (ungroupedNotificationsByUser != null) {
+                if (ungroupedNotificationsByUser.size() != 0) {
+                    String notifyKey = getUnGroupKey(sbn.getPackageName(), notifyType);
+                    LinkedHashSet<String> notificationsForPackage = (LinkedHashSet) ungroupedNotificationsByUser.get(notifyKey);
+                    if (notificationsForPackage != null) {
+                        if (notificationsForPackage.size() != 0) {
+                            if (notificationsForPackage.remove(sbn.getKey()) && !notificationGone) {
+                                notificationsToUnAutogroup.add(sbn.getKey());
+                            }
+                            if (notificationsForPackage.size() == 0) {
+                                ungroupedNotificationsByUser.remove(notifyKey);
+                                removeSummary = true;
+                            }
+                            if (notificationsForPackage.size() == 1) {
+                                Iterator<String> linkedSet = notificationsForPackage.iterator();
+                                while (linkedSet.hasNext()) {
+                                    if (((String) linkedSet.next()).contains(AUTOGROUP_KEY)) {
+                                        removeSummary = true;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

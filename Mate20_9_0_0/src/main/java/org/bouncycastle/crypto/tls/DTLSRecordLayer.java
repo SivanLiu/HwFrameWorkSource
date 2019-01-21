@@ -93,7 +93,7 @@ class DTLSRecordLayer implements DatagramTransport {
             } else if (i3 >= 1 || s2 == (short) 23) {
                 int epoch = this.writeEpoch.getEpoch();
                 long allocateSequenceNumber = this.writeEpoch.allocateSequenceNumber();
-                Object encodePlaintext = this.writeEpoch.getCipher().encodePlaintext(getMacSequenceNumber(epoch, allocateSequenceNumber), s2, bArr, i, i3);
+                byte[] encodePlaintext = this.writeEpoch.getCipher().encodePlaintext(getMacSequenceNumber(epoch, allocateSequenceNumber), s2, bArr, i, i3);
                 byte[] bArr2 = new byte[(encodePlaintext.length + 13)];
                 TlsUtils.writeUint8(s2, bArr2, 0);
                 TlsUtils.writeVersion(this.writeVersion, bArr2, 1);
@@ -173,11 +173,12 @@ class DTLSRecordLayer implements DatagramTransport {
         throw new IllegalStateException();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x0078 A:{Catch:{ IOException -> 0x0148 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x0078 A:{Catch:{ IOException -> 0x0148 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x0077 A:{Catch:{ IOException -> 0x0148 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int receive(byte[] bArr, int i, int i2, int i3) throws IOException {
-        Object decodeCiphertext;
-        Object obj = null;
+        byte[] decodeCiphertext;
+        DTLSHandshakeRetransmit dTLSHandshakeRetransmit = null;
         byte[] bArr2 = null;
         while (true) {
             int min = Math.min(i2, getReceiveLimit()) + 13;
@@ -186,8 +187,8 @@ class DTLSRecordLayer implements DatagramTransport {
             }
             try {
                 if (this.retransmit != null && System.currentTimeMillis() > this.retransmitExpiry) {
-                    this.retransmit = obj;
-                    this.retransmitEpoch = obj;
+                    this.retransmit = dTLSHandshakeRetransmit;
+                    this.retransmitEpoch = dTLSHandshakeRetransmit;
                 }
                 min = receiveRecord(bArr2, 0, min, i3);
                 if (min < 0) {
@@ -195,93 +196,100 @@ class DTLSRecordLayer implements DatagramTransport {
                 }
                 byte[] bArr3;
                 int i4;
-                if (min >= 13 && min == TlsUtils.readUint16(bArr2, 11) + 13) {
-                    short readUint8 = TlsUtils.readUint8(bArr2, 0);
-                    switch (readUint8) {
-                        case (short) 20:
-                        case (short) 21:
-                        case (short) 22:
-                        case (short) 23:
-                        case (short) 24:
-                            DTLSEpoch dTLSEpoch;
-                            DTLSEpoch dTLSEpoch2;
-                            int readUint16 = TlsUtils.readUint16(bArr2, 3);
-                            if (readUint16 == this.readEpoch.getEpoch()) {
-                                dTLSEpoch = this.readEpoch;
-                            } else if (readUint8 == (short) 22 && this.retransmitEpoch != null && readUint16 == this.retransmitEpoch.getEpoch()) {
-                                dTLSEpoch = this.retransmitEpoch;
-                            } else {
-                                dTLSEpoch2 = obj;
-                                if (dTLSEpoch2 != null) {
-                                    long readUint48 = TlsUtils.readUint48(bArr2, 5);
-                                    if (!dTLSEpoch2.getReplayWindow().shouldDiscard(readUint48)) {
-                                        ProtocolVersion readVersion = TlsUtils.readVersion(bArr2, 1);
-                                        if (readVersion.isDTLS() && (this.readVersion == null || this.readVersion.equals(readVersion))) {
-                                            ProtocolVersion protocolVersion = readVersion;
-                                            long j = readUint48;
-                                            bArr3 = bArr2;
-                                            DTLSEpoch dTLSEpoch3 = dTLSEpoch2;
-                                            decodeCiphertext = dTLSEpoch2.getCipher().decodeCiphertext(getMacSequenceNumber(dTLSEpoch2.getEpoch(), readUint48), readUint8, bArr2, 13, min - 13);
-                                            dTLSEpoch3.getReplayWindow().reportAuthenticated(j);
-                                            if (decodeCiphertext.length <= this.plaintextLimit) {
-                                                if (this.readVersion == null) {
-                                                    this.readVersion = protocolVersion;
-                                                }
-                                                switch (readUint8) {
-                                                    case (short) 20:
-                                                        for (int i5 = 0; i5 < decodeCiphertext.length; i5++) {
-                                                            if (TlsUtils.readUint8(decodeCiphertext, i5) == (short) 1 && this.pendingEpoch != null) {
-                                                                this.readEpoch = this.pendingEpoch;
-                                                            }
+                if (min >= 13) {
+                    if (min == TlsUtils.readUint16(bArr2, 11) + 13) {
+                        short readUint8 = TlsUtils.readUint8(bArr2, 0);
+                        switch (readUint8) {
+                            case (short) 20:
+                            case (short) 21:
+                            case (short) 22:
+                            case (short) 23:
+                            case (short) 24:
+                                DTLSEpoch dTLSEpoch;
+                                DTLSEpoch dTLSEpoch2;
+                                int readUint16 = TlsUtils.readUint16(bArr2, 3);
+                                if (readUint16 == this.readEpoch.getEpoch()) {
+                                    dTLSEpoch = this.readEpoch;
+                                } else if (readUint8 == (short) 22 && this.retransmitEpoch != null && readUint16 == this.retransmitEpoch.getEpoch()) {
+                                    dTLSEpoch = this.retransmitEpoch;
+                                } else {
+                                    dTLSEpoch2 = dTLSHandshakeRetransmit;
+                                    if (dTLSEpoch2 == null) {
+                                        long readUint48 = TlsUtils.readUint48(bArr2, 5);
+                                        if (!dTLSEpoch2.getReplayWindow().shouldDiscard(readUint48)) {
+                                            ProtocolVersion readVersion = TlsUtils.readVersion(bArr2, 1);
+                                            if (readVersion.isDTLS()) {
+                                                if (this.readVersion == null || this.readVersion.equals(readVersion)) {
+                                                    ProtocolVersion protocolVersion = readVersion;
+                                                    long j = readUint48;
+                                                    bArr3 = bArr2;
+                                                    DTLSEpoch dTLSEpoch3 = dTLSEpoch2;
+                                                    decodeCiphertext = dTLSEpoch2.getCipher().decodeCiphertext(getMacSequenceNumber(dTLSEpoch2.getEpoch(), readUint48), readUint8, bArr2, 13, min - 13);
+                                                    dTLSEpoch3.getReplayWindow().reportAuthenticated(j);
+                                                    if (decodeCiphertext.length <= this.plaintextLimit) {
+                                                        if (this.readVersion == null) {
+                                                            this.readVersion = protocolVersion;
                                                         }
-                                                        break;
-                                                    case (short) 21:
-                                                        if (decodeCiphertext.length == 2) {
-                                                            short s = (short) decodeCiphertext[0];
-                                                            short s2 = (short) decodeCiphertext[1];
-                                                            this.peer.notifyAlertReceived(s, s2);
-                                                            if (s != (short) 2) {
-                                                                if (s2 == (short) 0) {
-                                                                    closeTransport();
+                                                        switch (readUint8) {
+                                                            case (short) 20:
+                                                                for (int i5 = 0; i5 < decodeCiphertext.length; i5++) {
+                                                                    if (TlsUtils.readUint8(decodeCiphertext, i5) == (short) 1) {
+                                                                        if (this.pendingEpoch != null) {
+                                                                            this.readEpoch = this.pendingEpoch;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                break;
+                                                            case (short) 21:
+                                                                if (decodeCiphertext.length == 2) {
+                                                                    short s = (short) decodeCiphertext[0];
+                                                                    short s2 = (short) decodeCiphertext[1];
+                                                                    this.peer.notifyAlertReceived(s, s2);
+                                                                    if (s != (short) 2) {
+                                                                        if (s2 == (short) 0) {
+                                                                            closeTransport();
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                    failed();
+                                                                    throw new TlsFatalAlert(s2);
+                                                                }
+                                                                break;
+                                                            case (short) 22:
+                                                                if (!this.inHandshake) {
+                                                                    if (this.retransmit != null) {
+                                                                        this.retransmit.receivedHandshakeRecord(readUint16, decodeCiphertext, 0, decodeCiphertext.length);
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                break;
+                                                                break;
+                                                            case (short) 23:
+                                                                if (!this.inHandshake) {
                                                                     break;
                                                                 }
-                                                            }
-                                                            failed();
-                                                            throw new TlsFatalAlert(s2);
-                                                        }
-                                                        break;
-                                                    case (short) 22:
-                                                        if (!this.inHandshake) {
-                                                            if (this.retransmit != null) {
-                                                                this.retransmit.receivedHandshakeRecord(readUint16, decodeCiphertext, 0, decodeCiphertext.length);
                                                                 break;
-                                                            }
+                                                            case (short) 24:
+                                                                break;
+                                                            default:
+                                                                break;
                                                         }
-                                                        break;
-                                                        break;
-                                                    case (short) 23:
-                                                        if (!this.inHandshake) {
-                                                            break;
-                                                        }
-                                                        break;
-                                                    case (short) 24:
-                                                        break;
-                                                    default:
-                                                        break;
+                                                    }
+                                                    bArr2 = bArr;
+                                                    i4 = i;
+                                                    dTLSHandshakeRetransmit = null;
+                                                    continue;
                                                 }
                                             }
-                                            bArr2 = bArr;
-                                            i4 = i;
-                                            obj = null;
-                                            continue;
                                         }
                                     }
                                 }
-                            }
-                            dTLSEpoch2 = dTLSEpoch;
-                            if (dTLSEpoch2 != null) {
-                            }
-                            break;
+                                dTLSEpoch2 = dTLSEpoch;
+                                if (dTLSEpoch2 == null) {
+                                }
+                                break;
+                            default:
+                        }
                     }
                 }
                 i4 = i;
@@ -302,12 +310,12 @@ class DTLSRecordLayer implements DatagramTransport {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x000c in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -323,12 +331,9 @@ class DTLSRecordLayer implements DatagramTransport {
         r1 = this;
         r0 = r1.retransmitEpoch;
         if (r0 == 0) goto L_0x0009;
-    L_0x0004:
         r0 = r1.retransmitEpoch;
-    L_0x0006:
         r1.writeEpoch = r0;
         return;
-    L_0x0009:
         r0 = r1.currentEpoch;
         goto L_0x0006;
         return;

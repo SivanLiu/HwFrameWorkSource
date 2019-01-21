@@ -93,13 +93,13 @@ public class SecP224K1Point extends AbstractFp {
             SecP224K1Field.negate(iArr, iArr);
             Nat224.mul(iArr4, iArr, createExt);
             SecP224K1Field.reduce32(Nat224.addBothTo(create2, create2, iArr), iArr);
-            ECFieldElement secP224K1FieldElement7 = new SecP224K1FieldElement(create3);
-            SecP224K1Field.square(create, secP224K1FieldElement7.x);
-            SecP224K1Field.subtract(secP224K1FieldElement7.x, iArr, secP224K1FieldElement7.x);
-            ECFieldElement secP224K1FieldElement8 = new SecP224K1FieldElement(iArr);
-            SecP224K1Field.subtract(create2, secP224K1FieldElement7.x, secP224K1FieldElement8.x);
-            SecP224K1Field.multiplyAddToExt(secP224K1FieldElement8.x, create, createExt);
-            SecP224K1Field.reduce(createExt, secP224K1FieldElement8.x);
+            secP224K1FieldElement2 = new SecP224K1FieldElement(create3);
+            SecP224K1Field.square(create, secP224K1FieldElement2.x);
+            SecP224K1Field.subtract(secP224K1FieldElement2.x, iArr, secP224K1FieldElement2.x);
+            ECFieldElement secP224K1FieldElement7 = new SecP224K1FieldElement(iArr);
+            SecP224K1Field.subtract(create2, secP224K1FieldElement2.x, secP224K1FieldElement7.x);
+            SecP224K1Field.multiplyAddToExt(secP224K1FieldElement7.x, create, createExt);
+            SecP224K1Field.reduce(createExt, secP224K1FieldElement7.x);
             secP224K1FieldElement = new SecP224K1FieldElement(create4);
             if (!isOne) {
                 SecP224K1Field.multiply(secP224K1FieldElement.x, secP224K1FieldElement5.x, secP224K1FieldElement.x);
@@ -107,7 +107,7 @@ public class SecP224K1Point extends AbstractFp {
             if (!isOne2) {
                 SecP224K1Field.multiply(secP224K1FieldElement.x, secP224K1FieldElement6.x, secP224K1FieldElement.x);
             }
-            return new SecP224K1Point(curve, secP224K1FieldElement7, secP224K1FieldElement8, new ECFieldElement[]{secP224K1FieldElement}, this.withCompression);
+            return new SecP224K1Point(curve, secP224K1FieldElement2, secP224K1FieldElement7, new ECFieldElement[]{secP224K1FieldElement}, this.withCompression);
         }
     }
 

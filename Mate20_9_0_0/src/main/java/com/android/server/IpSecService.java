@@ -435,24 +435,17 @@ public class IpSecService extends Stub {
             this.mSpi = spi;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x001c A:{Splitter: B:0:0x0000, ExcHandler: android.os.ServiceSpecificException (r0_3 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:4:0x001c, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:5:0x001d, code:
-            r1 = com.android.server.IpSecService.TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to delete SPI reservation with ID: ");
-            r2.append(r8.mResourceId);
-            android.util.Log.e(r1, r2.toString(), r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void freeUnderlyingResources() {
             try {
                 if (!this.mOwnedByTransform) {
                     IpSecService.this.mSrvConfig.getNetdInstance().ipSecDeleteSecurityAssociation(this.mResourceId, this.mSourceAddress, this.mDestinationAddress, this.mSpi, 0, 0);
                 }
-            } catch (Exception e) {
+            } catch (RemoteException | ServiceSpecificException e) {
+                String str = IpSecService.TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to delete SPI reservation with ID: ");
+                stringBuilder.append(this.mResourceId);
+                Log.e(str, stringBuilder.toString(), e);
             }
             this.mSpi = 0;
             getResourceTracker().give();
@@ -527,22 +520,15 @@ public class IpSecService extends Stub {
             return this.mSocket;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:3:0x002e A:{Splitter: B:1:0x0006, ExcHandler: android.os.RemoteException (r0_7 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:3:0x002e, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:4:0x002f, code:
-            r1 = com.android.server.IpSecService.TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to delete SA with ID: ");
-            r2.append(r8.mResourceId);
-            android.util.Log.e(r1, r2.toString(), r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void freeUnderlyingResources() {
             try {
                 IpSecService.this.mSrvConfig.getNetdInstance().ipSecDeleteSecurityAssociation(this.mResourceId, this.mConfig.getSourceAddress(), this.mConfig.getDestinationAddress(), this.mSpi.getSpi(), this.mConfig.getMarkValue(), this.mConfig.getMarkMask());
-            } catch (Exception e) {
+            } catch (RemoteException | ServiceSpecificException e) {
+                String str = IpSecService.TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to delete SA with ID: ");
+                stringBuilder.append(this.mResourceId);
+                Log.e(str, stringBuilder.toString(), e);
             }
             getResourceTracker().give();
         }
@@ -588,20 +574,6 @@ public class IpSecService extends Stub {
             this.mOkey = okey;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:12:0x0045 A:{Splitter: B:0:0x0000, ExcHandler: android.os.ServiceSpecificException (r0_4 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:12:0x0045, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:13:0x0046, code:
-            r1 = com.android.server.IpSecService.TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to delete VTI with interface name: ");
-            r2.append(r15.mInterfaceName);
-            r2.append(" and id: ");
-            r2.append(r15.mResourceId);
-            android.util.Log.e(r1, r2.toString(), r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void freeUnderlyingResources() {
             try {
                 IpSecService.this.mSrvConfig.getNetdInstance().removeVirtualTunnelInterface(this.mInterfaceName);
@@ -610,7 +582,14 @@ public class IpSecService extends Stub {
                         IpSecService.this.mSrvConfig.getNetdInstance().ipSecDeleteSecurityPolicy(0, direction, wildcardAddr, wildcardAddr, direction == 0 ? this.mIkey : this.mOkey, -1);
                     }
                 }
-            } catch (Exception e) {
+            } catch (RemoteException | ServiceSpecificException e) {
+                String str = IpSecService.TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to delete VTI with interface name: ");
+                stringBuilder.append(this.mInterfaceName);
+                stringBuilder.append(" and id: ");
+                stringBuilder.append(this.mResourceId);
+                Log.e(str, stringBuilder.toString(), e);
             }
             getResourceTracker().give();
             IpSecService.this.releaseNetId(this.mIkey);
@@ -683,17 +662,23 @@ public class IpSecService extends Stub {
         synchronized (this.mTunnelNetIds) {
             int i = 0;
             while (i < 1024) {
-                int netId = TUN_INTF_NETID_START + this.mNextTunnelNetIdIndex;
-                int i2 = this.mNextTunnelNetIdIndex + 1;
-                this.mNextTunnelNetIdIndex = i2;
-                if (i2 >= 1024) {
-                    this.mNextTunnelNetIdIndex = 0;
-                }
-                if (this.mTunnelNetIds.get(netId)) {
-                    i++;
-                } else {
-                    this.mTunnelNetIds.put(netId, true);
-                    return netId;
+                try {
+                    int netId = TUN_INTF_NETID_START + this.mNextTunnelNetIdIndex;
+                    int i2 = this.mNextTunnelNetIdIndex + 1;
+                    this.mNextTunnelNetIdIndex = i2;
+                    if (i2 >= 1024) {
+                        this.mNextTunnelNetIdIndex = 0;
+                    }
+                    if (this.mTunnelNetIds.get(netId)) {
+                        i++;
+                    } else {
+                        this.mTunnelNetIds.put(netId, true);
+                        return netId;
+                    }
+                } catch (Throwable th) {
+                    while (true) {
+                        throw th;
+                    }
                 }
             }
             throw new IllegalStateException("No free netIds to allocate");
@@ -804,8 +789,8 @@ public class IpSecService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x00b1 A:{SYNTHETIC, Splitter: B:47:0x00b1} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00a8 A:{Catch:{ ServiceSpecificException -> 0x009e, RemoteException -> 0x0095 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x00b1 A:{SYNTHETIC, Splitter:B:48:0x00b1} */
+    /* JADX WARNING: Removed duplicated region for block: B:45:0x00a8 A:{Catch:{ ServiceSpecificException -> 0x009e, RemoteException -> 0x0095 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized IpSecSpiResponse allocateSecurityParameterIndex(String destinationAddress, int requestedSpi, IBinder binder) throws RemoteException {
         ServiceSpecificException e;
@@ -814,67 +799,69 @@ public class IpSecService extends Stub {
         IBinder iBinder = binder;
         synchronized (this) {
             checkInetAddress(destinationAddress);
-            if (i <= 0 || i >= 256) {
-                Preconditions.checkNotNull(iBinder, "Null Binder passed to allocateSecurityParameterIndex");
-                UserRecord userRecord = this.mUserResourceTracker.getUserRecord(Binder.getCallingUid());
-                int i2 = this.mNextResourceId;
-                this.mNextResourceId = i2 + 1;
-                int resourceId = i2;
-                int spi = 0;
-                String str;
-                int spi2;
-                IpSecSpiResponse ipSecSpiResponse;
-                try {
-                    if (userRecord.mSpiQuotaTracker.isAvailable()) {
-                        str = destinationAddress;
-                        try {
-                            spi2 = this.mSrvConfig.getNetdInstance().ipSecAllocateSpi(resourceId, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, str, i);
-                            try {
-                                String str2 = TAG;
-                                StringBuilder stringBuilder = new StringBuilder();
-                                stringBuilder.append("Allocated SPI ");
-                                stringBuilder.append(spi2);
-                                Log.d(str2, stringBuilder.toString());
-                                RefcountedResourceArray refcountedResourceArray = userRecord.mSpiRecords;
-                                SpiRecord spiRecord = r1;
-                                SpiRecord spiRecord2 = new SpiRecord(resourceId, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, str, spi2);
-                                refcountedResourceArray.put(resourceId, new RefcountedResource(spiRecord, iBinder, new RefcountedResource[0]));
-                                ipSecSpiResponse = new IpSecSpiResponse(0, resourceId, spi2);
-                                return ipSecSpiResponse;
-                            } catch (ServiceSpecificException e3) {
-                                e = e3;
-                            } catch (RemoteException e4) {
-                                e2 = e4;
-                                throw e2.rethrowFromSystemServer();
-                            }
-                        } catch (ServiceSpecificException e5) {
-                            e = e5;
-                            spi2 = spi;
-                            if (e.errorCode != OsConstants.ENOENT) {
-                            }
-                        } catch (RemoteException e6) {
-                            e2 = e6;
-                            throw e2.rethrowFromSystemServer();
-                        }
-                    }
-                    IpSecSpiResponse ipSecSpiResponse2 = new IpSecSpiResponse(1, -1, spi);
-                    return ipSecSpiResponse2;
-                } catch (ServiceSpecificException e7) {
-                    e = e7;
-                    str = destinationAddress;
-                    spi2 = spi;
-                    if (e.errorCode != OsConstants.ENOENT) {
-                        ipSecSpiResponse = new IpSecSpiResponse(2, -1, spi2);
-                        return ipSecSpiResponse;
-                    }
-                    throw e;
-                } catch (RemoteException e8) {
-                    e2 = e8;
-                    str = destinationAddress;
-                    throw e2.rethrowFromSystemServer();
+            if (i > 0) {
+                if (i < 256) {
+                    throw new IllegalArgumentException("ESP SPI must not be in the range of 0-255.");
                 }
             }
-            throw new IllegalArgumentException("ESP SPI must not be in the range of 0-255.");
+            Preconditions.checkNotNull(iBinder, "Null Binder passed to allocateSecurityParameterIndex");
+            UserRecord userRecord = this.mUserResourceTracker.getUserRecord(Binder.getCallingUid());
+            int i2 = this.mNextResourceId;
+            this.mNextResourceId = i2 + 1;
+            int resourceId = i2;
+            int spi = 0;
+            String str;
+            int spi2;
+            IpSecSpiResponse ipSecSpiResponse;
+            try {
+                if (userRecord.mSpiQuotaTracker.isAvailable()) {
+                    str = destinationAddress;
+                    try {
+                        spi2 = this.mSrvConfig.getNetdInstance().ipSecAllocateSpi(resourceId, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, str, i);
+                        try {
+                            String str2 = TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Allocated SPI ");
+                            stringBuilder.append(spi2);
+                            Log.d(str2, stringBuilder.toString());
+                            RefcountedResourceArray refcountedResourceArray = userRecord.mSpiRecords;
+                            SpiRecord spiRecord = r1;
+                            SpiRecord spiRecord2 = new SpiRecord(resourceId, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, str, spi2);
+                            refcountedResourceArray.put(resourceId, new RefcountedResource(spiRecord, iBinder, new RefcountedResource[0]));
+                            ipSecSpiResponse = new IpSecSpiResponse(0, resourceId, spi2);
+                            return ipSecSpiResponse;
+                        } catch (ServiceSpecificException e3) {
+                            e = e3;
+                        } catch (RemoteException e4) {
+                            e2 = e4;
+                            throw e2.rethrowFromSystemServer();
+                        }
+                    } catch (ServiceSpecificException e5) {
+                        e = e5;
+                        spi2 = spi;
+                        if (e.errorCode != OsConstants.ENOENT) {
+                        }
+                    } catch (RemoteException e6) {
+                        e2 = e6;
+                        throw e2.rethrowFromSystemServer();
+                    }
+                }
+                IpSecSpiResponse ipSecSpiResponse2 = new IpSecSpiResponse(1, -1, spi);
+                return ipSecSpiResponse2;
+            } catch (ServiceSpecificException e7) {
+                e = e7;
+                str = destinationAddress;
+                spi2 = spi;
+                if (e.errorCode != OsConstants.ENOENT) {
+                    ipSecSpiResponse = new IpSecSpiResponse(2, -1, spi2);
+                    return ipSecSpiResponse;
+                }
+                throw e;
+            } catch (RemoteException e8) {
+                e2 = e8;
+                str = destinationAddress;
+                throw e2.rethrowFromSystemServer();
+            }
         }
     }
 
@@ -912,14 +899,6 @@ public class IpSecService extends Stub {
         throw new IOException("Failed 10 attempts to bind to a port");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0099 A:{Splitter: B:11:0x002c, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* JADX WARNING: Missing block: B:27:?, code:
-            libcore.io.IoUtils.closeQuietly(null);
-     */
-    /* JADX WARNING: Missing block: B:29:0x00a3, code:
-            return new android.net.IpSecUdpEncapResponse(1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized IpSecUdpEncapResponse openUdpEncapsulationSocket(int port, IBinder binder) throws RemoteException {
         if (port == 0 || (port >= 1024 && port <= 65535)) {
             Preconditions.checkNotNull(binder, "Null Binder passed to openUdpEncapsulationSocket");
@@ -947,32 +926,33 @@ public class IpSecService extends Stub {
                     return new IpSecUdpEncapResponse(0, resourceId, port, sockFd);
                 }
                 return new IpSecUdpEncapResponse(1);
-            } catch (IOException e) {
+            } catch (ErrnoException | IOException e) {
+                IoUtils.closeQuietly(null);
+                return new IpSecUdpEncapResponse(1);
             }
-        } else {
-            throw new IllegalArgumentException("Specified port number must be a valid non-reserved UDP port");
         }
+        throw new IllegalArgumentException("Specified port number must be a valid non-reserved UDP port");
     }
 
     public synchronized void closeUdpEncapsulationSocket(int resourceId) throws RemoteException {
         releaseResource(this.mUserResourceTracker.getUserRecord(Binder.getCallingUid()).mEncapSocketRecords, resourceId);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:58:0x0113 A:{Splitter: B:12:0x005d, ExcHandler: all (th java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x0113 A:{ExcHandler: Throwable (th java.lang.Throwable), Splitter:B:12:0x005d} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:58:0x0113, code:
+    /* JADX WARNING: Missing block: B:58:0x0113, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:59:0x0114, code:
+    /* JADX WARNING: Missing block: B:59:0x0114, code skipped:
             r1 = r6;
             r26 = r8;
             r27 = r14;
             r14 = r9;
      */
-    /* JADX WARNING: Missing block: B:63:0x0123, code:
+    /* JADX WARNING: Missing block: B:63:0x0123, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:64:0x0124, code:
+    /* JADX WARNING: Missing block: B:64:0x0124, code skipped:
             r1 = r6;
             r2 = r8;
             r27 = r14;
@@ -1006,6 +986,10 @@ public class IpSecService extends Stub {
                 int okey3 = reserveNetId();
                 String intfName = String.format("%s%d", new Object[]{INetd.IPSEC_INTERFACE_PREFIX, Integer.valueOf(resourceId)});
                 try {
+                    RefcountedResourceArray refcountedResourceArray;
+                    TunnelInterfaceRecord tunnelInterfaceRecord;
+                    Network network2;
+                    TunnelInterfaceRecord tunnelInterfaceRecord2;
                     String intfName2 = intfName;
                     i2 = 0;
                     try {
@@ -1048,47 +1032,15 @@ public class IpSecService extends Stub {
                                 throw t;
                             }
                         }
-                        RefcountedResourceArray refcountedResourceArray = userRecord3.mTunnelInterfaceRecords;
-                        TunnelInterfaceRecord tunnelInterfaceRecord = tunnelInterfaceRecord;
-                        Network network2 = network;
-                        TunnelInterfaceRecord tunnelInterfaceRecord2 = tunnelInterfaceRecord;
+                        refcountedResourceArray = userRecord3.mTunnelInterfaceRecords;
+                        tunnelInterfaceRecord = tunnelInterfaceRecord;
+                        network2 = network;
+                        tunnelInterfaceRecord2 = tunnelInterfaceRecord;
                         RefcountedResource refcountedResource = refcountedResource;
                         okey2 = okey3;
                         userRecord2 = ikey;
-                        try {
-                            tunnelInterfaceRecord = new TunnelInterfaceRecord(resourceId, intfName2, network2, localAddr, remoteAddr, ikey, okey2);
-                            refcountedResourceArray.put(resourceId, new RefcountedResource(tunnelInterfaceRecord2, iBinder, new RefcountedResource[0]));
-                            try {
-                                ipSecTunnelInterfaceResponse = new IpSecTunnelInterfaceResponse(0, resourceId, intfName2);
-                                return ipSecTunnelInterfaceResponse;
-                            } catch (RemoteException e3) {
-                                e = e3;
-                                okey = okey2;
-                                releaseNetId(userRecord2);
-                                releaseNetId(okey);
-                                throw e.rethrowFromSystemServer();
-                            } catch (Throwable th2) {
-                                t = th2;
-                                releaseNetId(userRecord3);
-                                releaseNetId(okey2);
-                                throw t;
-                            }
-                        } catch (RemoteException e4) {
-                            e = e4;
-                            str = intfName2;
-                            okey = okey2;
-                            releaseNetId(userRecord2);
-                            releaseNetId(okey);
-                            throw e.rethrowFromSystemServer();
-                        } catch (Throwable th3) {
-                            t = th3;
-                            str = intfName2;
-                            releaseNetId(userRecord3);
-                            releaseNetId(okey2);
-                            throw t;
-                        }
-                    } catch (RemoteException e5) {
-                        e = e5;
+                    } catch (RemoteException e3) {
+                        e = e3;
                         userRecord = userRecord3;
                         str = intfName2;
                         userRecord2 = ikey;
@@ -1096,12 +1048,44 @@ public class IpSecService extends Stub {
                         releaseNetId(userRecord2);
                         releaseNetId(okey);
                         throw e.rethrowFromSystemServer();
-                    } catch (Throwable th4) {
-                        t = th4;
+                    } catch (Throwable th2) {
+                        t = th2;
                         okey2 = okey3;
                         userRecord = userRecord3;
                         str = intfName2;
                         userRecord3 = ikey;
+                        releaseNetId(userRecord3);
+                        releaseNetId(okey2);
+                        throw t;
+                    }
+                    try {
+                        tunnelInterfaceRecord = new TunnelInterfaceRecord(resourceId, intfName2, network2, localAddr, remoteAddr, ikey, okey2);
+                        refcountedResourceArray.put(resourceId, new RefcountedResource(tunnelInterfaceRecord2, iBinder, new RefcountedResource[0]));
+                        try {
+                            ipSecTunnelInterfaceResponse = new IpSecTunnelInterfaceResponse(0, resourceId, intfName2);
+                            return ipSecTunnelInterfaceResponse;
+                        } catch (RemoteException e4) {
+                            e = e4;
+                            okey = okey2;
+                            releaseNetId(userRecord2);
+                            releaseNetId(okey);
+                            throw e.rethrowFromSystemServer();
+                        } catch (Throwable th3) {
+                            t = th3;
+                            releaseNetId(userRecord3);
+                            releaseNetId(okey2);
+                            throw t;
+                        }
+                    } catch (RemoteException e5) {
+                        e = e5;
+                        str = intfName2;
+                        okey = okey2;
+                        releaseNetId(userRecord2);
+                        releaseNetId(okey);
+                        throw e.rethrowFromSystemServer();
+                    } catch (Throwable th4) {
+                        t = th4;
+                        str = intfName2;
                         releaseNetId(userRecord3);
                         releaseNetId(okey2);
                         throw t;
@@ -1338,6 +1322,8 @@ public class IpSecService extends Stub {
 
     /* JADX WARNING: Removed duplicated region for block: B:44:0x0109  */
     /* JADX WARNING: Removed duplicated region for block: B:42:0x00ff  */
+    /* JADX WARNING: Removed duplicated region for block: B:42:0x00ff  */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x0109  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void applyTunnelModeTransform(int tunnelResourceId, int direction, int transformResourceId, String callingPackage) throws RemoteException {
         ServiceSpecificException e;
@@ -1402,6 +1388,10 @@ public class IpSecService extends Stub {
                                 spiRecord = spiRecord3;
                                 EncapSocketRecord encapSocketRecord = socketRecord3;
                                 ipSecConfig = c2;
+                                if (e.errorCode == OsConstants.EINVAL) {
+                                    throw new IllegalArgumentException(e.toString());
+                                }
+                                throw e;
                             }
                         }
                     } catch (ServiceSpecificException e3) {
@@ -1411,10 +1401,8 @@ public class IpSecService extends Stub {
                         spiRecord = spiRecord2;
                         mark = socketRecord2;
                         ipSecConfig = c;
-                        if (e.errorCode != OsConstants.EINVAL) {
-                            throw new IllegalArgumentException(e.toString());
+                        if (e.errorCode == OsConstants.EINVAL) {
                         }
-                        throw e;
                     }
                 }
                 tunnelInterfaceInfo2 = tunnelInterfaceInfo;
@@ -1429,7 +1417,7 @@ public class IpSecService extends Stub {
                 spiRecord = spiRecord2;
                 ipSecConfig = c;
                 tunnelInterfaceInfo2 = tunnelInterfaceInfo;
-                if (e.errorCode != OsConstants.EINVAL) {
+                if (e.errorCode == OsConstants.EINVAL) {
                 }
             }
         }

@@ -4,11 +4,9 @@ import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.cert.CRLException;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreParameters;
 import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -23,7 +21,7 @@ public class JcaCertStoreBuilder {
     private String type = "Collection";
 
     private CollectionCertStoreParameters convertHolders(JcaX509CertificateConverter jcaX509CertificateConverter, JcaX509CRLConverter jcaX509CRLConverter) throws CertificateException, CRLException {
-        Collection arrayList = new ArrayList(this.certs.size() + this.crls.size());
+        ArrayList arrayList = new ArrayList(this.certs.size() + this.crls.size());
         for (X509CertificateHolder certificate : this.certs) {
             arrayList.add(jcaX509CertificateConverter.getCertificate(certificate));
         }
@@ -54,7 +52,7 @@ public class JcaCertStoreBuilder {
     }
 
     public CertStore build() throws GeneralSecurityException {
-        CertStoreParameters convertHolders = convertHolders(this.certificateConverter, this.crlConverter);
+        CollectionCertStoreParameters convertHolders = convertHolders(this.certificateConverter, this.crlConverter);
         return this.provider instanceof String ? CertStore.getInstance(this.type, convertHolders, (String) this.provider) : this.provider instanceof Provider ? CertStore.getInstance(this.type, convertHolders, (Provider) this.provider) : CertStore.getInstance(this.type, convertHolders);
     }
 

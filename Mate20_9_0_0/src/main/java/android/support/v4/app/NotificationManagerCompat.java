@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.INotificationSideChannel.Stub;
 import android.util.Log;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -460,15 +461,6 @@ public final class NotificationManagerCompat {
         this.mNotificationManager.notify(tag, id, notification);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0082 A:{Splitter: B:7:0x0030, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0082 A:{Splitter: B:7:0x0030, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0082 A:{Splitter: B:7:0x0030, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0082 A:{Splitter: B:7:0x0030, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0082 A:{Splitter: B:7:0x0030, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-    /* JADX WARNING: Missing block: B:13:0x0083, code:
-            return true;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean areNotificationsEnabled() {
         if (VERSION.SDK_INT >= 24) {
             return this.mNotificationManager.areNotificationsEnabled();
@@ -486,7 +478,8 @@ public final class NotificationManagerCompat {
                 z = false;
             }
             return z;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException | RuntimeException | InvocationTargetException e) {
+            return true;
         }
     }
 
@@ -502,17 +495,20 @@ public final class NotificationManagerCompat {
         String enabledNotificationListeners = Secure.getString(context.getContentResolver(), SETTING_ENABLED_NOTIFICATION_LISTENERS);
         synchronized (sEnabledNotificationListenersLock) {
             if (enabledNotificationListeners != null) {
-                if (!enabledNotificationListeners.equals(sEnabledNotificationListeners)) {
-                    String[] components = enabledNotificationListeners.split(":", -1);
-                    Set<String> packageNames = new HashSet(components.length);
-                    for (String component : components) {
-                        ComponentName componentName = ComponentName.unflattenFromString(component);
-                        if (componentName != null) {
-                            packageNames.add(componentName.getPackageName());
+                try {
+                    if (!enabledNotificationListeners.equals(sEnabledNotificationListeners)) {
+                        String[] components = enabledNotificationListeners.split(":", -1);
+                        Set<String> packageNames = new HashSet(components.length);
+                        for (String component : components) {
+                            ComponentName componentName = ComponentName.unflattenFromString(component);
+                            if (componentName != null) {
+                                packageNames.add(componentName.getPackageName());
+                            }
                         }
+                        sEnabledNotificationListenerPackages = packageNames;
+                        sEnabledNotificationListeners = enabledNotificationListeners;
                     }
-                    sEnabledNotificationListenerPackages = packageNames;
-                    sEnabledNotificationListeners = enabledNotificationListeners;
+                } catch (Throwable th) {
                 }
             }
         }

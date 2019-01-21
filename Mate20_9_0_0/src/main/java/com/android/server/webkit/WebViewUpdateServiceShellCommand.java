@@ -47,9 +47,8 @@ class WebViewUpdateServiceShellCommand extends ShellCommand {
                         break;
                     }
                 default:
-                    z = true;
-                    break;
             }
+            z = true;
             switch (z) {
                 case false:
                     return enableFallbackLogic(false);

@@ -127,7 +127,7 @@ public class HidlSupport {
         throw new UnsupportedOperationException();
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001f, code:
+    /* JADX WARNING: Missing block: B:11:0x001f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

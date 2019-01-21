@@ -229,18 +229,6 @@ public class PackageInstallerSession extends Stub {
         return z;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x00b3 A:{Catch:{ PackageManagerException -> 0x00b3, PackageManagerException -> 0x00b3 }, Splitter: B:10:0x00ab, ExcHandler: com.android.server.pm.PackageManagerException (r0_8 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:15:0x00b3, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x00b4, code:
-            r16 = r0;
-            destroyInternal();
-     */
-    /* JADX WARNING: Missing block: B:17:0x00be, code:
-            throw new java.lang.IllegalArgumentException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public PackageInstallerSession(InternalCallback callback, Context context, PackageManagerService pm, Looper looper, int sessionId, int userId, String installerPackageName, int installerUid, SessionParams params, long createdMillis, File stageDir, String stageCid, boolean prepared, boolean sealed) {
         Throwable th;
         long identity;
@@ -287,6 +275,7 @@ public class PackageInstallerSession extends Stub {
                                 PackageInstallerSession.this.dispatchSessionFinished(e.error, completeMsg, null);
                             }
                         }
+                        break;
                     case 2:
                         SomeArgs args = msg.obj;
                         String packageName = args.arg1;
@@ -330,7 +319,11 @@ public class PackageInstallerSession extends Stub {
                 synchronized (this.mLock) {
                     try {
                         sealAndValidateLocked();
-                    } catch (Exception e) {
+                    } catch (PackageManagerException | IOException e) {
+                        Exception exception = e;
+                        destroyInternal();
+                        throw new IllegalArgumentException(e);
+                    } catch (Throwable th2) {
                     }
                 }
             }
@@ -349,14 +342,14 @@ public class PackageInstallerSession extends Stub {
                         return;
                     }
                     return;
-                } catch (Throwable th2) {
-                    th = th2;
+                } catch (Throwable th3) {
+                    th = th3;
                     identity = identity2;
                     Binder.restoreCallingIdentity(identity);
                     throw th;
                 }
-            } catch (Throwable th3) {
-                th = th3;
+            } catch (Throwable th4) {
+                th = th4;
                 boolean z3 = isAdb;
                 identity = identity2;
                 Binder.restoreCallingIdentity(identity);
@@ -555,7 +548,7 @@ public class PackageInstallerSession extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x00f2 A:{SYNTHETIC, Splitter: B:59:0x00f2} */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x00f2 A:{SYNTHETIC, Splitter:B:61:0x00f2} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private ParcelFileDescriptor doWriteInternal(String name, long offsetBytes, long lengthBytes, ParcelFileDescriptor incomingFd) throws IOException {
         RevocableFileDescriptor fd;
@@ -599,57 +592,59 @@ public class PackageInstallerSession extends Stub {
                 FileDescriptor targetFd2;
                 if (incomingFd != null) {
                     int callingUid = Binder.getCallingUid();
-                    if (callingUid == 0 || callingUid == IHwShutdownThread.SHUTDOWN_ANIMATION_WAIT_TIME) {
+                    if (callingUid != 0) {
+                        if (callingUid != IHwShutdownThread.SHUTDOWN_ANIMATION_WAIT_TIME) {
+                            throw new SecurityException("Reverse mode only supported from shell");
+                        }
+                    }
+                    try {
+                        Int64Ref last = new Int64Ref(0);
+                        targetFd2 = targetFd;
                         try {
-                            Int64Ref last = new Int64Ref(0);
-                            targetFd2 = targetFd;
-                            try {
-                                FileUtils.copy(incomingFd.getFileDescriptor(), targetFd, new -$$Lambda$PackageInstallerSession$0Oqu1oanLjaOBEcFPtJVCRQ0lHs(this, last), null, j3);
-                                IoUtils.closeQuietly(targetFd2);
-                                IoUtils.closeQuietly(incomingFd);
-                                synchronized (this.mLock) {
-                                    try {
-                                        if (PackageInstaller.ENABLE_REVOCABLE_FD) {
-                                            this.mFds.remove(fd2);
-                                        } else {
-                                            this.mBridges.remove(bridge2);
-                                        }
-                                    } catch (Throwable th2) {
-                                        th = th2;
-                                        throw th;
-                                    }
-                                }
-                                return null;
-                            } catch (Throwable th3) {
-                                th = th3;
-                                IoUtils.closeQuietly(targetFd2);
-                                IoUtils.closeQuietly(incomingFd);
-                                synchronized (this.mLock) {
-                                    try {
-                                        if (PackageInstaller.ENABLE_REVOCABLE_FD) {
-                                            this.mFds.remove(fd2);
-                                        } else {
-                                            this.mBridges.remove(bridge2);
-                                        }
-                                    } catch (Throwable th4) {
-                                        th = th4;
-                                    }
-                                }
-                                throw th;
-                            }
-                        } catch (Throwable th5) {
-                            th = th5;
-                            targetFd2 = targetFd;
-                            file = target;
-                            j = identity;
+                            FileUtils.copy(incomingFd.getFileDescriptor(), targetFd, new -$$Lambda$PackageInstallerSession$0Oqu1oanLjaOBEcFPtJVCRQ0lHs(this, last), null, j3);
                             IoUtils.closeQuietly(targetFd2);
                             IoUtils.closeQuietly(incomingFd);
                             synchronized (this.mLock) {
+                                try {
+                                    if (PackageInstaller.ENABLE_REVOCABLE_FD) {
+                                        this.mFds.remove(fd2);
+                                    } else {
+                                        this.mBridges.remove(bridge2);
+                                    }
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                    throw th;
+                                }
+                            }
+                            return null;
+                        } catch (Throwable th3) {
+                            th = th3;
+                            IoUtils.closeQuietly(targetFd2);
+                            IoUtils.closeQuietly(incomingFd);
+                            synchronized (this.mLock) {
+                                try {
+                                    if (PackageInstaller.ENABLE_REVOCABLE_FD) {
+                                        this.mFds.remove(fd2);
+                                    } else {
+                                        this.mBridges.remove(bridge2);
+                                    }
+                                } catch (Throwable th4) {
+                                    th = th4;
+                                }
                             }
                             throw th;
                         }
+                    } catch (Throwable th5) {
+                        th = th5;
+                        targetFd2 = targetFd;
+                        file = target;
+                        j = identity;
+                        IoUtils.closeQuietly(targetFd2);
+                        IoUtils.closeQuietly(incomingFd);
+                        synchronized (this.mLock) {
+                        }
+                        throw th;
                     }
-                    throw new SecurityException("Reverse mode only supported from shell");
                 }
                 targetFd2 = targetFd;
                 file = target;
@@ -867,28 +862,32 @@ public class PackageInstallerSession extends Stub {
                     stringBuilder.append("Inherited files: ");
                     stringBuilder.append(this.mResolvedInheritedFiles);
                     Slog.d(str, stringBuilder.toString());
-                    if (!this.mResolvedInheritedFiles.isEmpty() && this.mInheritedFilesBase == null) {
-                        throw new IllegalStateException("mInheritedFilesBase == null");
-                    } else if (isLinkPossible(fromFiles, toDir)) {
+                    if (!this.mResolvedInheritedFiles.isEmpty()) {
+                        if (this.mInheritedFilesBase == null) {
+                            throw new IllegalStateException("mInheritedFilesBase == null");
+                        }
+                    }
+                    if (isLinkPossible(fromFiles, toDir)) {
                         if (!this.mResolvedInstructionSets.isEmpty()) {
                             createOatDirs(this.mResolvedInstructionSets, new File(toDir, "oat"));
                         }
                         if (!this.mResolvedNativeLibPaths.isEmpty()) {
                             for (String libPath : this.mResolvedNativeLibPaths) {
                                 int splitIndex = libPath.lastIndexOf(47);
-                                if (splitIndex < 0 || splitIndex >= libPath.length() - 1) {
-                                    String str2 = TAG;
-                                    StringBuilder stringBuilder2 = new StringBuilder();
-                                    stringBuilder2.append("Skipping native library creation for linking due to invalid path: ");
-                                    stringBuilder2.append(libPath);
-                                    Slog.e(str2, stringBuilder2.toString());
-                                } else {
-                                    File libDir = new File(toDir, libPath.substring(1, splitIndex));
-                                    if (!libDir.exists()) {
-                                        NativeLibraryHelper.createNativeLibrarySubdir(libDir);
+                                if (splitIndex >= 0) {
+                                    if (splitIndex < libPath.length() - 1) {
+                                        File libDir = new File(toDir, libPath.substring(1, splitIndex));
+                                        if (!libDir.exists()) {
+                                            NativeLibraryHelper.createNativeLibrarySubdir(libDir);
+                                        }
+                                        NativeLibraryHelper.createNativeLibrarySubdir(new File(libDir, libPath.substring(splitIndex + 1)));
                                     }
-                                    NativeLibraryHelper.createNativeLibrarySubdir(new File(libDir, libPath.substring(splitIndex + 1)));
                                 }
+                                String str2 = TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Skipping native library creation for linking due to invalid path: ");
+                                stringBuilder2.append(libPath);
+                                Slog.e(str2, stringBuilder2.toString());
                             }
                         }
                         linkFiles(fromFiles, toDir, this.mInheritedFilesBase);
@@ -1453,7 +1452,12 @@ public class PackageInstallerSession extends Stub {
         int activeCount;
         synchronized (this.mLock) {
             if (checkCaller) {
-                assertCallerIsOwnerOrRootLocked();
+                try {
+                    assertCallerIsOwnerOrRootLocked();
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             activeCount = this.mActiveCount.decrementAndGet();
         }
@@ -1579,10 +1583,10 @@ public class PackageInstallerSession extends Stub {
         return new File(sessionsDir, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:37:0x016a, code:
+    /* JADX WARNING: Missing block: B:37:0x016a, code skipped:
             r9.endTag(null, TAG_SESSION);
      */
-    /* JADX WARNING: Missing block: B:38:0x0170, code:
+    /* JADX WARNING: Missing block: B:38:0x0170, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

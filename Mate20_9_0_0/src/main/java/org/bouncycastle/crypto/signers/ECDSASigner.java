@@ -103,7 +103,7 @@ public class ECDSASigner implements ECConstants, DSA {
         return !z ? null : secureRandom != null ? secureRandom : new SecureRandom();
     }
 
-    /* JADX WARNING: Missing block: B:34:0x00b1, code:
+    /* JADX WARNING: Missing block: B:34:0x00b1, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

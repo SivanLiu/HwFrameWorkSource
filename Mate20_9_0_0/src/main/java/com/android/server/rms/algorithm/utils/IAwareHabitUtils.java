@@ -73,20 +73,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004b, code:
+    /* JADX WARNING: Missing block: B:17:0x004b, code skipped:
             if (r7 != null) goto L_0x004d;
      */
-    /* JADX WARNING: Missing block: B:18:0x004d, code:
-            r7.close();
-     */
-    /* JADX WARNING: Missing block: B:23:0x005b, code:
+    /* JADX WARNING: Missing block: B:27:0x0066, code skipped:
             if (r7 == null) goto L_0x0069;
-     */
-    /* JADX WARNING: Missing block: B:26:0x0066, code:
-            if (r7 == null) goto L_0x0069;
-     */
-    /* JADX WARNING: Missing block: B:27:0x0069, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void loadUsageData(ContentResolver resolver, Map<String, Integer> usageCount, int userId) {
@@ -112,6 +103,9 @@ public class IAwareHabitUtils {
                 AwareLog.e(TAG, "Error: loadUsageData ");
             } catch (IllegalStateException e2) {
                 AwareLog.e(TAG, "Error: loadUsageData ");
+                if (c != null) {
+                    c.close();
+                }
             } catch (Throwable th) {
                 if (c != null) {
                     c.close();
@@ -120,20 +114,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:38:0x00b1, code:
+    /* JADX WARNING: Missing block: B:38:0x00b1, code skipped:
             if (r13 != null) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:39:0x00b3, code:
-            r13.close();
-     */
-    /* JADX WARNING: Missing block: B:44:0x00c1, code:
+    /* JADX WARNING: Missing block: B:48:0x00cc, code skipped:
             if (r13 == null) goto L_0x00cf;
-     */
-    /* JADX WARNING: Missing block: B:47:0x00cc, code:
-            if (r13 == null) goto L_0x00cf;
-     */
-    /* JADX WARNING: Missing block: B:48:0x00cf, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void loadAppAssociateInfo(ContentResolver resolver, Map<String, Integer> map, ArrayList<ArrayList<Integer>> data, int userId) {
@@ -177,6 +162,9 @@ public class IAwareHabitUtils {
                 AwareLog.e(TAG, "Error: loadAppAssociateInfo ");
             } catch (IllegalStateException e2) {
                 AwareLog.e(TAG, "Error: loadAppAssociateInfo ");
+                if (c != null) {
+                    c.close();
+                }
             } catch (Throwable th) {
                 if (c != null) {
                     c.close();
@@ -197,20 +185,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0083, code:
+    /* JADX WARNING: Missing block: B:21:0x0083, code skipped:
             if (r12 != null) goto L_0x0085;
      */
-    /* JADX WARNING: Missing block: B:22:0x0085, code:
-            r12.close();
-     */
-    /* JADX WARNING: Missing block: B:27:0x0093, code:
+    /* JADX WARNING: Missing block: B:31:0x009e, code skipped:
             if (r12 == null) goto L_0x00a1;
-     */
-    /* JADX WARNING: Missing block: B:30:0x009e, code:
-            if (r12 == null) goto L_0x00a1;
-     */
-    /* JADX WARNING: Missing block: B:31:0x00a1, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void loadPkgInfo(ContentResolver resolver, Map<String, Integer> map, Map<Integer, String> revertMap, Map<String, Integer> usageCount, Map<String, UsageDistribution> appUsageDistributionMap, int userId) {
@@ -244,6 +223,9 @@ public class IAwareHabitUtils {
                 AwareLog.e(TAG, "Error: loadPkgInfo ");
             } catch (IllegalStateException e2) {
                 AwareLog.e(TAG, "Error: loadPkgInfo ");
+                if (c != null) {
+                    c.close();
+                }
             } catch (Throwable th) {
                 if (c != null) {
                     c.close();
@@ -252,20 +234,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x00b6, code:
+    /* JADX WARNING: Missing block: B:22:0x00b6, code skipped:
             if (r8 != null) goto L_0x00b8;
      */
-    /* JADX WARNING: Missing block: B:23:0x00b8, code:
-            r8.close();
-     */
-    /* JADX WARNING: Missing block: B:28:0x00c6, code:
+    /* JADX WARNING: Missing block: B:32:0x00d1, code skipped:
             if (r8 == null) goto L_0x00d4;
-     */
-    /* JADX WARNING: Missing block: B:31:0x00d1, code:
-            if (r8 == null) goto L_0x00d4;
-     */
-    /* JADX WARNING: Missing block: B:32:0x00d4, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void updatePkgNameTable(Context ctx) {
@@ -304,6 +277,9 @@ public class IAwareHabitUtils {
                     AwareLog.e(TAG, "Error: updatePkgNameTable ");
                 } catch (IllegalStateException e2) {
                     AwareLog.e(TAG, "Error: updatePkgNameTable ");
+                    if (c != null) {
+                        c.close();
+                    }
                 } catch (Throwable th) {
                     if (c != null) {
                         c.close();
@@ -346,20 +322,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0049, code:
+    /* JADX WARNING: Missing block: B:15:0x0049, code skipped:
             if (r7 != null) goto L_0x004b;
      */
-    /* JADX WARNING: Missing block: B:16:0x004b, code:
-            r7.close();
-     */
-    /* JADX WARNING: Missing block: B:21:0x0059, code:
+    /* JADX WARNING: Missing block: B:25:0x0064, code skipped:
             if (r7 == null) goto L_0x0067;
-     */
-    /* JADX WARNING: Missing block: B:24:0x0064, code:
-            if (r7 == null) goto L_0x0067;
-     */
-    /* JADX WARNING: Missing block: B:25:0x0067, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static void loadReInstallPkgFromUserData(ContentResolver resolver, Set<String> set, int userId) {
@@ -383,6 +350,9 @@ public class IAwareHabitUtils {
             AwareLog.e(TAG, "Error: loadReInstallPkgFromUserData ");
         } catch (IllegalStateException e2) {
             AwareLog.e(TAG, "Error: loadReInstallPkgFromUserData ");
+            if (c != null) {
+                c.close();
+            }
         } catch (Throwable th) {
             if (c != null) {
                 c.close();
@@ -410,20 +380,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x00b5, code:
+    /* JADX WARNING: Missing block: B:29:0x00b5, code skipped:
             if (r12 != null) goto L_0x00b7;
      */
-    /* JADX WARNING: Missing block: B:30:0x00b7, code:
-            r12.close();
-     */
-    /* JADX WARNING: Missing block: B:35:0x00c5, code:
+    /* JADX WARNING: Missing block: B:39:0x00d0, code skipped:
             if (r12 == null) goto L_0x00d3;
-     */
-    /* JADX WARNING: Missing block: B:38:0x00d0, code:
-            if (r12 == null) goto L_0x00d3;
-     */
-    /* JADX WARNING: Missing block: B:39:0x00d3, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void loadUserdataInfo(ContentResolver resolver, Map<String, Integer> map, Map<Integer, String> revertMap, List<Entry<Integer, Long>> list, int userId, Map<String, List<Long>> startTimeMap) {
@@ -477,6 +438,9 @@ public class IAwareHabitUtils {
                 AwareLog.e(TAG, "Error: loadUserdataInfo ");
             } catch (IllegalStateException e2) {
                 AwareLog.e(TAG, "Error: loadUserdataInfo ");
+                if (c != null) {
+                    c.close();
+                }
             } catch (Throwable th) {
                 if (c != null) {
                     c.close();
@@ -672,20 +636,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0075, code:
+    /* JADX WARNING: Missing block: B:23:0x0075, code skipped:
             if (r0 != null) goto L_0x0077;
      */
-    /* JADX WARNING: Missing block: B:24:0x0077, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:29:0x0085, code:
+    /* JADX WARNING: Missing block: B:33:0x0090, code skipped:
             if (r0 == null) goto L_0x0093;
-     */
-    /* JADX WARNING: Missing block: B:32:0x0090, code:
-            if (r0 == null) goto L_0x0093;
-     */
-    /* JADX WARNING: Missing block: B:33:0x0093, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void loadHabitProtectList(ContentResolver resolver, List<ProtectApp> protectAppList, int userID) {
@@ -721,6 +676,9 @@ public class IAwareHabitUtils {
                 AwareLog.e(TAG, "Error: loadHabitProtectList ");
             } catch (IllegalStateException e2) {
                 AwareLog.e(TAG, "Error: loadHabitProtectList ");
+                if (cursor != null) {
+                    cursor.close();
+                }
             } catch (Throwable th) {
                 if (cursor != null) {
                     cursor.close();
@@ -809,20 +767,11 @@ public class IAwareHabitUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0073, code:
+    /* JADX WARNING: Missing block: B:23:0x0073, code skipped:
             if (r0 != null) goto L_0x0075;
      */
-    /* JADX WARNING: Missing block: B:24:0x0075, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:29:0x0083, code:
+    /* JADX WARNING: Missing block: B:33:0x008e, code skipped:
             if (r0 == null) goto L_0x0091;
-     */
-    /* JADX WARNING: Missing block: B:32:0x008e, code:
-            if (r0 == null) goto L_0x0091;
-     */
-    /* JADX WARNING: Missing block: B:33:0x0091, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static void loadUnDeletedHabitProtectList(ContentResolver resolver, List<ProtectApp> protectAppList, int userId) {
@@ -857,6 +806,9 @@ public class IAwareHabitUtils {
                 AwareLog.e(TAG, "Error: loadUnDeletedHabitProtectList ");
             } catch (IllegalStateException e2) {
                 AwareLog.e(TAG, "Error: loadUnDeletedHabitProtectList ");
+                if (cursor != null) {
+                    cursor.close();
+                }
             } catch (Throwable th) {
                 if (cursor != null) {
                     cursor.close();

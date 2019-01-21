@@ -859,84 +859,88 @@ public class TaskRecord extends AbsTaskRecord implements TaskWindowContainerList
         return reparent(preferredStack, position, moveStackMode, animate, deferResume, true, reason);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:81:0x00ee A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x00eb A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x00f9 A:{SYNTHETIC, Splitter: B:84:0x00f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x010f A:{SYNTHETIC, Splitter: B:94:0x010f} */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x012e  */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x014f  */
-    /* JADX WARNING: Removed duplicated region for block: B:104:0x0138 A:{SYNTHETIC, Splitter: B:104:0x0138} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x015b  */
-    /* JADX WARNING: Removed duplicated region for block: B:117:0x0159  */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x0176 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:158:0x01d6  */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x01f0  */
-    /* JADX WARNING: Removed duplicated region for block: B:164:0x01e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:171:0x01fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:82:0x00ee A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x00eb A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:85:0x00f9 A:{SYNTHETIC, Splitter:B:85:0x00f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x010f A:{SYNTHETIC, Splitter:B:95:0x010f} */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x012e  */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:113:0x014f  */
+    /* JADX WARNING: Removed duplicated region for block: B:105:0x0138 A:{SYNTHETIC, Splitter:B:105:0x0138} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x015b  */
+    /* JADX WARNING: Removed duplicated region for block: B:118:0x0159  */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0176 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x0175 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x01d6  */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x01f0  */
+    /* JADX WARNING: Removed duplicated region for block: B:166:0x01e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x01fc  */
     /* JADX WARNING: Removed duplicated region for block: B:67:0x00d5  */
     /* JADX WARNING: Removed duplicated region for block: B:66:0x00d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x00e5 A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x00e5 A:{Catch:{ all -> 0x0208 }} */
     /* JADX WARNING: Removed duplicated region for block: B:71:0x00db A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x00eb A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:81:0x00ee A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x00f9 A:{SYNTHETIC, Splitter: B:84:0x00f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x010f A:{SYNTHETIC, Splitter: B:94:0x010f} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x012e  */
-    /* JADX WARNING: Removed duplicated region for block: B:104:0x0138 A:{SYNTHETIC, Splitter: B:104:0x0138} */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x014f  */
-    /* JADX WARNING: Removed duplicated region for block: B:117:0x0159  */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x015b  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0162 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x0176 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:158:0x01d6  */
-    /* JADX WARNING: Removed duplicated region for block: B:164:0x01e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x01f0  */
-    /* JADX WARNING: Removed duplicated region for block: B:171:0x01fc  */
-    /* JADX WARNING: Removed duplicated region for block: B:50:0x00a7 A:{SYNTHETIC, Splitter: B:50:0x00a7} */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x00eb A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:82:0x00ee A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:85:0x00f9 A:{SYNTHETIC, Splitter:B:85:0x00f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x010f A:{SYNTHETIC, Splitter:B:95:0x010f} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x012e  */
+    /* JADX WARNING: Removed duplicated region for block: B:105:0x0138 A:{SYNTHETIC, Splitter:B:105:0x0138} */
+    /* JADX WARNING: Removed duplicated region for block: B:113:0x014f  */
+    /* JADX WARNING: Removed duplicated region for block: B:118:0x0159  */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x015b  */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0162 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x0175 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0176 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x01d6  */
+    /* JADX WARNING: Removed duplicated region for block: B:166:0x01e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x01f0  */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x01fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00a7 A:{SYNTHETIC, Splitter:B:50:0x00a7} */
     /* JADX WARNING: Removed duplicated region for block: B:66:0x00d3  */
     /* JADX WARNING: Removed duplicated region for block: B:67:0x00d5  */
     /* JADX WARNING: Removed duplicated region for block: B:71:0x00db A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x00e5 A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:81:0x00ee A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x00eb A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x00f9 A:{SYNTHETIC, Splitter: B:84:0x00f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x010f A:{SYNTHETIC, Splitter: B:94:0x010f} */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x012e  */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x014f  */
-    /* JADX WARNING: Removed duplicated region for block: B:104:0x0138 A:{SYNTHETIC, Splitter: B:104:0x0138} */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x015b  */
-    /* JADX WARNING: Removed duplicated region for block: B:117:0x0159  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0162 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x0176 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:158:0x01d6  */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x01f0  */
-    /* JADX WARNING: Removed duplicated region for block: B:164:0x01e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:171:0x01fc  */
-    /* JADX WARNING: Removed duplicated region for block: B:41:0x008f A:{SYNTHETIC, Splitter: B:41:0x008f} */
-    /* JADX WARNING: Removed duplicated region for block: B:50:0x00a7 A:{SYNTHETIC, Splitter: B:50:0x00a7} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x00e5 A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:82:0x00ee A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x00eb A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:85:0x00f9 A:{SYNTHETIC, Splitter:B:85:0x00f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x010f A:{SYNTHETIC, Splitter:B:95:0x010f} */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x012e  */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:113:0x014f  */
+    /* JADX WARNING: Removed duplicated region for block: B:105:0x0138 A:{SYNTHETIC, Splitter:B:105:0x0138} */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x015b  */
+    /* JADX WARNING: Removed duplicated region for block: B:118:0x0159  */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0162 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0176 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x0175 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x01d6  */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x01f0  */
+    /* JADX WARNING: Removed duplicated region for block: B:166:0x01e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x01fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x008f A:{SYNTHETIC, Splitter:B:41:0x008f} */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00a7 A:{SYNTHETIC, Splitter:B:50:0x00a7} */
     /* JADX WARNING: Removed duplicated region for block: B:67:0x00d5  */
     /* JADX WARNING: Removed duplicated region for block: B:66:0x00d3  */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x00e5 A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x00e5 A:{Catch:{ all -> 0x0208 }} */
     /* JADX WARNING: Removed duplicated region for block: B:71:0x00db A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x00eb A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:81:0x00ee A:{Catch:{ all -> 0x0208 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x00f9 A:{SYNTHETIC, Splitter: B:84:0x00f9} */
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x010f A:{SYNTHETIC, Splitter: B:94:0x010f} */
-    /* JADX WARNING: Removed duplicated region for block: B:98:0x011c  */
-    /* JADX WARNING: Removed duplicated region for block: B:102:0x012e  */
-    /* JADX WARNING: Removed duplicated region for block: B:104:0x0138 A:{SYNTHETIC, Splitter: B:104:0x0138} */
-    /* JADX WARNING: Removed duplicated region for block: B:112:0x014f  */
-    /* JADX WARNING: Removed duplicated region for block: B:117:0x0159  */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x015b  */
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0162 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:128:0x0176 A:{Catch:{ all -> 0x01ff }} */
-    /* JADX WARNING: Removed duplicated region for block: B:158:0x01d6  */
-    /* JADX WARNING: Removed duplicated region for block: B:164:0x01e2  */
-    /* JADX WARNING: Removed duplicated region for block: B:168:0x01f0  */
-    /* JADX WARNING: Removed duplicated region for block: B:171:0x01fc  */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x00eb A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:82:0x00ee A:{Catch:{ all -> 0x0208 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:85:0x00f9 A:{SYNTHETIC, Splitter:B:85:0x00f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x010f A:{SYNTHETIC, Splitter:B:95:0x010f} */
+    /* JADX WARNING: Removed duplicated region for block: B:99:0x011c  */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x012e  */
+    /* JADX WARNING: Removed duplicated region for block: B:105:0x0138 A:{SYNTHETIC, Splitter:B:105:0x0138} */
+    /* JADX WARNING: Removed duplicated region for block: B:113:0x014f  */
+    /* JADX WARNING: Removed duplicated region for block: B:118:0x0159  */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x015b  */
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0162 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x0175 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0176 A:{Catch:{ all -> 0x01ff }} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x01d6  */
+    /* JADX WARNING: Removed duplicated region for block: B:166:0x01e2  */
+    /* JADX WARNING: Removed duplicated region for block: B:170:0x01f0  */
+    /* JADX WARNING: Removed duplicated region for block: B:173:0x01fc  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     boolean reparent(ActivityStack preferredStack, int position, int moveStackMode, boolean animate, boolean deferResume, boolean schedulePictureInPictureModeChange, String reason) {
         ActivityRecord r;
@@ -1006,105 +1010,109 @@ public class TaskRecord extends AbsTaskRecord implements TaskWindowContainerList
                                                 this.mWindowContainerController.reparent(toStack.getWindowContainerController(), i, i2 != 0);
                                                 if (i2 == 0) {
                                                     i5 = 1;
-                                                    if (!(i2 == 1 && (wasFocused || wasFront))) {
-                                                        z3 = false;
-                                                        moveStackToFront = z3;
-                                                        sourceStack.removeTask(this, str, moveStackToFront ? 2 : i5);
-                                                        toStack.addTask(this, i, false, str);
-                                                        if (schedulePictureInPictureModeChange) {
-                                                            try {
-                                                                supervisor.scheduleUpdatePictureInPictureModeIfNeeded(this, sourceStack);
-                                                            } catch (Throwable th2) {
-                                                                th = th2;
+                                                    if (i2 == 1) {
+                                                        if (!wasFocused) {
+                                                            if (wasFront) {
                                                             }
                                                         }
-                                                        if (this.voiceSession != null) {
-                                                            try {
-                                                                this.voiceSession.taskStarted(this.intent, this.taskId);
-                                                            } catch (RemoteException e) {
-                                                            }
-                                                        }
-                                                        if (r != null) {
-                                                            activityStack2 = toStack;
-                                                            i3 = i;
-                                                            position2 = true;
-                                                            activityStack3 = sourceStack;
-                                                            try {
-                                                                toStack.moveToFrontAndResumeStateIfNeeded(r, moveStackToFront, topActivity3, toStackWindowingMode3, str);
-                                                            } catch (Throwable th3) {
-                                                                th = th3;
-                                                            }
-                                                        } else {
-                                                            activityStack2 = toStack;
-                                                            ActivityRecord activityRecord2 = r;
-                                                            activityStack3 = sourceStack;
-                                                            position2 = true;
-                                                        }
-                                                        if (z) {
-                                                            toStack = topActivity;
-                                                        } else {
-                                                            try {
-                                                                toStack = topActivity;
-                                                                try {
-                                                                    this.mService.mStackSupervisor.mNoAnimActivities.add(toStack);
-                                                                } catch (Throwable th4) {
-                                                                    th = th4;
-                                                                }
-                                                            } catch (Throwable th5) {
-                                                                th = th5;
-                                                                configurationContainer = topActivity;
-                                                                z4 = toStackWindowingMode;
-                                                                activityStack = preferredStack;
-                                                                windowManager.continueSurfaceLayout();
-                                                                throw th;
-                                                            }
-                                                        }
-                                                        activityStack2.prepareFreezingTaskBounds();
-                                                        z4 = toStackWindowingMode;
-                                                        z3 = z4 ? position2 : false;
-                                                        configBounds = getOverrideBounds();
-                                                        if ((z4 != position2 || z4) && !Objects.equals(configBounds, activityStack2.getOverrideBounds())) {
-                                                            overrideBounds = activityStack2.getOverrideBounds();
-                                                            if (mightReplaceWindow) {
-                                                                position2 = false;
-                                                            }
-                                                            kept = resize(overrideBounds, 0, position2, z2);
-                                                        } else if (z4) {
-                                                            Rect bounds = getLaunchBounds();
-                                                            if (bounds == null) {
-                                                                this.mService.mStackSupervisor.getLaunchParamsController().layoutTask(this, null);
-                                                                bounds = configBounds;
-                                                            }
-                                                            kept = resize(bounds, 2, !mightReplaceWindow, z2);
-                                                        } else if (z3 || z4) {
-                                                            if (z3) {
-                                                                z = true;
-                                                                if (i2 == 1 && !str.contains("swapDockedAndFullscreenStack")) {
-                                                                    this.mService.mStackSupervisor.moveRecentsStackToFront(str);
-                                                                }
-                                                            } else {
-                                                                z = true;
-                                                            }
-                                                            kept = resize(activityStack2.getOverrideBounds(), 0, !mightReplaceWindow ? z : false, z2);
-                                                        }
-                                                        windowManager.continueSurfaceLayout();
-                                                        if (mightReplaceWindow) {
-                                                            windowManager.scheduleClearWillReplaceWindows(toStack.appToken, !kept);
-                                                        }
-                                                        if (z2) {
-                                                            i = 0;
-                                                        } else {
-                                                            i = 0;
-                                                            supervisor.ensureActivitiesVisibleLocked(null, 0, !mightReplaceWindow);
-                                                            supervisor.resumeFocusedStackTopActivityLocked();
-                                                        }
-                                                        activityStack = preferredStack;
-                                                        supervisor.handleNonResizableTaskIfNeeded(this, preferredStack.getWindowingMode(), i, activityStack2);
-                                                        if (activityStack == activityStack2) {
-                                                            i = 1;
-                                                        }
-                                                        return i;
                                                     }
+                                                    z3 = false;
+                                                    moveStackToFront = z3;
+                                                    sourceStack.removeTask(this, str, moveStackToFront ? 2 : i5);
+                                                    toStack.addTask(this, i, false, str);
+                                                    if (schedulePictureInPictureModeChange) {
+                                                        try {
+                                                            supervisor.scheduleUpdatePictureInPictureModeIfNeeded(this, sourceStack);
+                                                        } catch (Throwable th2) {
+                                                            th = th2;
+                                                        }
+                                                    }
+                                                    if (this.voiceSession != null) {
+                                                        try {
+                                                            this.voiceSession.taskStarted(this.intent, this.taskId);
+                                                        } catch (RemoteException e) {
+                                                        }
+                                                    }
+                                                    if (r != null) {
+                                                        activityStack2 = toStack;
+                                                        i3 = i;
+                                                        position2 = true;
+                                                        activityStack3 = sourceStack;
+                                                        try {
+                                                            toStack.moveToFrontAndResumeStateIfNeeded(r, moveStackToFront, topActivity3, toStackWindowingMode3, str);
+                                                        } catch (Throwable th3) {
+                                                            th = th3;
+                                                        }
+                                                    } else {
+                                                        activityStack2 = toStack;
+                                                        ActivityRecord activityRecord2 = r;
+                                                        activityStack3 = sourceStack;
+                                                        position2 = true;
+                                                    }
+                                                    if (z) {
+                                                        toStack = topActivity;
+                                                    } else {
+                                                        try {
+                                                            toStack = topActivity;
+                                                            try {
+                                                                this.mService.mStackSupervisor.mNoAnimActivities.add(toStack);
+                                                            } catch (Throwable th4) {
+                                                                th = th4;
+                                                            }
+                                                        } catch (Throwable th5) {
+                                                            th = th5;
+                                                            configurationContainer = topActivity;
+                                                            z4 = toStackWindowingMode;
+                                                            activityStack = preferredStack;
+                                                            windowManager.continueSurfaceLayout();
+                                                            throw th;
+                                                        }
+                                                    }
+                                                    activityStack2.prepareFreezingTaskBounds();
+                                                    z4 = toStackWindowingMode;
+                                                    z3 = z4 ? position2 : false;
+                                                    configBounds = getOverrideBounds();
+                                                    if ((z4 != position2 || z4) && !Objects.equals(configBounds, activityStack2.getOverrideBounds())) {
+                                                        overrideBounds = activityStack2.getOverrideBounds();
+                                                        if (mightReplaceWindow) {
+                                                            position2 = false;
+                                                        }
+                                                        kept = resize(overrideBounds, 0, position2, z2);
+                                                    } else if (z4) {
+                                                        Rect bounds = getLaunchBounds();
+                                                        if (bounds == null) {
+                                                            this.mService.mStackSupervisor.getLaunchParamsController().layoutTask(this, null);
+                                                            bounds = configBounds;
+                                                        }
+                                                        kept = resize(bounds, 2, !mightReplaceWindow, z2);
+                                                    } else if (z3 || z4) {
+                                                        if (z3) {
+                                                            z = true;
+                                                            if (i2 == 1 && !str.contains("swapDockedAndFullscreenStack")) {
+                                                                this.mService.mStackSupervisor.moveRecentsStackToFront(str);
+                                                            }
+                                                        } else {
+                                                            z = true;
+                                                        }
+                                                        kept = resize(activityStack2.getOverrideBounds(), 0, !mightReplaceWindow ? z : false, z2);
+                                                    }
+                                                    windowManager.continueSurfaceLayout();
+                                                    if (mightReplaceWindow) {
+                                                        windowManager.scheduleClearWillReplaceWindows(toStack.appToken, !kept);
+                                                    }
+                                                    if (z2) {
+                                                        i = 0;
+                                                    } else {
+                                                        i = 0;
+                                                        supervisor.ensureActivitiesVisibleLocked(null, 0, !mightReplaceWindow);
+                                                        supervisor.resumeFocusedStackTopActivityLocked();
+                                                    }
+                                                    activityStack = preferredStack;
+                                                    supervisor.handleNonResizableTaskIfNeeded(this, preferredStack.getWindowingMode(), i, activityStack2);
+                                                    if (activityStack == activityStack2) {
+                                                        i = 1;
+                                                    }
+                                                    return i;
                                                 }
                                                 i5 = 1;
                                                 z3 = i5;
@@ -2248,7 +2256,7 @@ public class TaskRecord extends AbsTaskRecord implements TaskWindowContainerList
         }
         onOverrideConfigurationChanged(newConfig);
         updateHwOverrideConfiguration(bounds);
-        return this.mTmpConfig.equals(newConfig) ^ true;
+        return this.mTmpConfig.equals(newConfig) ^ 1;
     }
 
     void onActivityStateChanged(ActivityRecord record, ActivityState state, String reason) {

@@ -956,64 +956,64 @@ public class HwWindowManagerService extends WindowManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x004a, code:
+    /* JADX WARNING: Missing block: B:24:0x004a, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:40:0x007d, code:
+    /* JADX WARNING: Missing block: B:40:0x007d, code skipped:
             if (r1.size() <= 0) goto L_0x00a2;
      */
-    /* JADX WARNING: Missing block: B:41:0x007f, code:
+    /* JADX WARNING: Missing block: B:41:0x007f, code skipped:
             r2 = r1.size() - 1;
      */
-    /* JADX WARNING: Missing block: B:42:0x0084, code:
+    /* JADX WARNING: Missing block: B:42:0x0084, code skipped:
             if (r2 < 0) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:43:0x0086, code:
+    /* JADX WARNING: Missing block: B:43:0x0086, code skipped:
             r3 = ((java.lang.Integer) r1.get(r2)).intValue();
      */
-    /* JADX WARNING: Missing block: B:44:0x0090, code:
+    /* JADX WARNING: Missing block: B:44:0x0090, code skipped:
             if (r3 < 0) goto L_0x009f;
      */
-    /* JADX WARNING: Missing block: B:45:0x0092, code:
+    /* JADX WARNING: Missing block: B:45:0x0092, code skipped:
             r7.mHandler.sendMessage(r7.mHandler.obtainMessage(104, r3, 0));
      */
-    /* JADX WARNING: Missing block: B:46:0x009f, code:
+    /* JADX WARNING: Missing block: B:46:0x009f, code skipped:
             r2 = r2 - 1;
      */
-    /* JADX WARNING: Missing block: B:48:0x00a6, code:
+    /* JADX WARNING: Missing block: B:48:0x00a6, code skipped:
             if (android.util.HwPCUtils.isValidExtDisplayId(r8) == false) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:50:0x00ae, code:
+    /* JADX WARNING: Missing block: B:50:0x00ae, code skipped:
             if (r10.equals("handleTapOutsideTask-1-1") == false) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:51:0x00b0, code:
+    /* JADX WARNING: Missing block: B:51:0x00b0, code skipped:
             setPCLauncherFocused(true);
      */
-    /* JADX WARNING: Missing block: B:53:0x00b7, code:
+    /* JADX WARNING: Missing block: B:53:0x00b7, code skipped:
             if (r0 == getPCLauncherFocused()) goto L_0x00d4;
      */
-    /* JADX WARNING: Missing block: B:55:0x00bf, code:
+    /* JADX WARNING: Missing block: B:55:0x00bf, code skipped:
             if (r10.equals("handleTapOutsideTaskXY") != false) goto L_0x00d4;
      */
-    /* JADX WARNING: Missing block: B:56:0x00c1, code:
+    /* JADX WARNING: Missing block: B:56:0x00c1, code skipped:
             r2 = r7.mWindowMap;
      */
-    /* JADX WARNING: Missing block: B:57:0x00c3, code:
+    /* JADX WARNING: Missing block: B:57:0x00c3, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:59:?, code:
+    /* JADX WARNING: Missing block: B:59:?, code skipped:
             r3 = r7.mRoot.getDisplayContent(r8);
      */
-    /* JADX WARNING: Missing block: B:60:0x00ca, code:
+    /* JADX WARNING: Missing block: B:60:0x00ca, code skipped:
             if (r3 == null) goto L_0x00cf;
      */
-    /* JADX WARNING: Missing block: B:61:0x00cc, code:
+    /* JADX WARNING: Missing block: B:61:0x00cc, code skipped:
             r3.layoutAndAssignWindowLayersIfNeeded();
      */
-    /* JADX WARNING: Missing block: B:62:0x00cf, code:
+    /* JADX WARNING: Missing block: B:62:0x00cf, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:66:0x00d4, code:
+    /* JADX WARNING: Missing block: B:67:0x00d4, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1047,7 +1047,7 @@ public class HwWindowManagerService extends WindowManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0019, code:
+    /* JADX WARNING: Missing block: B:12:0x0019, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1234,10 +1234,10 @@ public class HwWindowManagerService extends WindowManagerService {
         sendDisplayStateBroadcast(false, displayId);
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0086, code:
+    /* JADX WARNING: Missing block: B:23:0x0086, code skipped:
             super.addWindowToken(r6, r7, r8);
      */
-    /* JADX WARNING: Missing block: B:24:0x0089, code:
+    /* JADX WARNING: Missing block: B:24:0x0089, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1396,8 +1396,10 @@ public class HwWindowManagerService extends WindowManagerService {
                     this.mSecureScreenShot.add(win);
                 }
             } else if (this.mSecureScreenShot.contains(win)) {
-                winAnimator.mSurfaceController.setSecureScreenShot(false);
                 this.mSecureScreenShot.remove(win);
+                if (this.mSecureScreenShot.size() == 0) {
+                    winAnimator.mSurfaceController.setSecureScreenShot(false);
+                }
             }
             if ((win.mAttrs.hwFlags & 8192) != 0) {
                 if (!this.mSecureScreenRecords.contains(win)) {
@@ -1405,8 +1407,10 @@ public class HwWindowManagerService extends WindowManagerService {
                     this.mSecureScreenRecords.add(win);
                 }
             } else if (this.mSecureScreenRecords.contains(win)) {
-                winAnimator.mSurfaceController.setSecureScreenRecord(false);
                 this.mSecureScreenRecords.remove(win);
+                if (this.mSecureScreenRecords.size() == 0) {
+                    winAnimator.mSurfaceController.setSecureScreenRecord(false);
+                }
             }
         }
     }
@@ -1526,6 +1530,33 @@ public class HwWindowManagerService extends WindowManagerService {
             if (this.mPCHoldWindow == null || !this.mPCHoldWindow.isVisibleLw() || (this.mPCHoldWindow.mAttrs.flags & 128) == 0) {
                 this.mPCHoldWindow = null;
                 this.mPCHoldingScreenWakeLock.release();
+            }
+        }
+    }
+
+    public ArrayList<WindowState> getSecureScreenWindow() {
+        ArrayList<WindowState> secureScreenWindow = new ArrayList();
+        secureScreenWindow.addAll(this.mSecureScreenRecords);
+        secureScreenWindow.addAll(this.mSecureScreenShot);
+        return secureScreenWindow;
+    }
+
+    public void removeSecureScreenWindow(WindowState win) {
+        if (win != null) {
+            WindowStateAnimator winAnimator = win.mWinAnimator;
+            if (winAnimator != null && winAnimator.mSurfaceController != null) {
+                if (this.mSecureScreenRecords.contains(win)) {
+                    this.mSecureScreenRecords.remove(win);
+                    if (this.mSecureScreenRecords.size() == 0) {
+                        winAnimator.mSurfaceController.setSecureScreenRecord(false);
+                    }
+                }
+                if (this.mSecureScreenShot.contains(win)) {
+                    this.mSecureScreenShot.remove(win);
+                    if (this.mSecureScreenShot.size() == 0) {
+                        winAnimator.mSurfaceController.setSecureScreenShot(false);
+                    }
+                }
             }
         }
     }

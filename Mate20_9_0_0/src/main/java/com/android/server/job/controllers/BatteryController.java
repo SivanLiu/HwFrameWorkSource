@@ -42,7 +42,7 @@ public final class BatteryController extends StateController {
             BatteryController.this.mContext.registerReceiver(this, filter);
             BatteryManagerInternal batteryManagerInternal = (BatteryManagerInternal) LocalServices.getService(BatteryManagerInternal.class);
             boolean z = true;
-            this.mBatteryHealthy = batteryManagerInternal.getBatteryLevelLow() ^ true;
+            this.mBatteryHealthy = batteryManagerInternal.getBatteryLevelLow() ^ 1;
             this.mCharging = batteryManagerInternal.isPowered(7);
             BatteryManager batteryManager = (BatteryManager) BatteryController.this.mContext.getSystemService("batterymanager");
             if (batteryManager != null) {

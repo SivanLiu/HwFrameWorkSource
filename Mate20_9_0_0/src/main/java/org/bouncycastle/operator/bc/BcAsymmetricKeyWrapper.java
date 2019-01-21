@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.operator.AsymmetricKeyWrapper;
@@ -32,7 +33,7 @@ public abstract class BcAsymmetricKeyWrapper extends AsymmetricKeyWrapper {
             byte[] keyBytes = OperatorUtils.getKeyBytes(genericKey);
             createAsymmetricWrapper.init(true, cipherParameters);
             return createAsymmetricWrapper.processBlock(keyBytes, 0, keyBytes.length);
-        } catch (Throwable e) {
+        } catch (InvalidCipherTextException e) {
             throw new OperatorException("unable to encrypt contents key", e);
         }
     }

@@ -519,7 +519,7 @@ public class HwDualSensorEventListenerImpl {
             this.mStaProbLUT[3][2] = 90;
             this.mStaProbLUT[3][3] = 50;
             this.mStaProbLUT[3][4] = 20;
-            this.mStaProbLUT[4][0] = false;
+            this.mStaProbLUT[4][0] = 0;
             this.mStaProbLUT[4][1] = 20;
             this.mStaProbLUT[4][2] = 90;
             this.mStaProbLUT[4][3] = 20;
@@ -1247,7 +1247,7 @@ public class HwDualSensorEventListenerImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0042, code:
+    /* JADX WARNING: Missing block: B:15:0x0042, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1811,6 +1811,8 @@ public class HwDualSensorEventListenerImpl {
                         }
                         backSensorParamLoadStarted = false;
                         break;
+                        break;
+                    default:
                         break;
                 }
             }

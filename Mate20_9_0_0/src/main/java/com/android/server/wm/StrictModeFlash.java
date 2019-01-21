@@ -37,8 +37,7 @@ class StrictModeFlash {
             Canvas c = null;
             try {
                 c = this.mSurface.lockCanvas(new Rect(0, 0, dw, dh));
-            } catch (IllegalArgumentException e) {
-            } catch (OutOfResourcesException e2) {
+            } catch (OutOfResourcesException | IllegalArgumentException e) {
             }
             if (c != null) {
                 c.save();

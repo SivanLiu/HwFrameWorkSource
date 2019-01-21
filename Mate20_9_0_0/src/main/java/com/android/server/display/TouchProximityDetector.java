@@ -118,7 +118,7 @@ class TouchProximityDetector {
                     stateChanged = true;
                 }
                 if (stateChanged) {
-                    this.mIsCovered = true ^ this.mIsCovered;
+                    this.mIsCovered = 1 ^ this.mIsCovered;
                     if (this.mIsCovered) {
                         TouchProximityDetector.this.setCurrentLuxInvalid();
                     }
@@ -237,12 +237,13 @@ class TouchProximityDetector {
             this.mXThreshold90 = this.mYThreshold0;
             this.mXThreshold270 = (int) (((float) this.mYMaxPixels) * data.touchProximityYNearbyRatio);
             this.mYThreshold180 = this.mXThreshold270;
-            if (this.mYMaxPixels <= 0 || this.mYThreshold0 <= 0 || this.mXThreshold270 >= this.mYMaxPixels) {
-                Slog.e(TAG, "init the threeshold failed, invalid parameter value");
-                this.mInited = false;
-            } else {
-                this.mInited = true;
+            if (this.mYMaxPixels > 0 && this.mYThreshold0 > 0) {
+                if (this.mXThreshold270 < this.mYMaxPixels) {
+                    this.mInited = true;
+                }
             }
+            Slog.e(TAG, "init the threeshold failed, invalid parameter value");
+            this.mInited = false;
         } catch (RemoteException e) {
             Slog.e(TAG, "getStableDisplaySize failed ");
         }
@@ -277,7 +278,7 @@ class TouchProximityDetector {
         if (!this.mInited) {
             return true;
         }
-        continueInvalidPrint(this.mCurrentLuxValid ^ true);
+        continueInvalidPrint(this.mCurrentLuxValid ^ 1);
         return this.mCurrentLuxValid;
     }
 

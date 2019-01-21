@@ -7,17 +7,16 @@ import android.database.Cursor;
 import android.database.CursorWindow;
 import android.database.SQLException;
 import android.database.StaleDataException;
-import com.huawei.hwsqlite.SQLiteAccessPermException;
-import com.huawei.hwsqlite.SQLiteCantOpenDatabaseException;
-import com.huawei.hwsqlite.SQLiteDatabaseCorruptException;
-import com.huawei.hwsqlite.SQLiteDiskIOException;
-import com.huawei.hwsqlite.SQLiteException;
-import com.huawei.hwsqlite.SQLiteFullException;
+import android.database.sqlite.SQLiteAccessPermException;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteDiskIOException;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteFullException;
 import com.huawei.odmf.database.AndroidSQLiteDatabase;
 import com.huawei.odmf.database.DataBase;
 import com.huawei.odmf.database.ODMFSQLiteDatabase;
 import com.huawei.odmf.database.Statement;
-import com.huawei.odmf.exception.ODMFException;
 import com.huawei.odmf.exception.ODMFIllegalArgumentException;
 import com.huawei.odmf.exception.ODMFIllegalStateException;
 import com.huawei.odmf.exception.ODMFNullPointerException;
@@ -46,6 +45,7 @@ import com.huawei.odmf.user.api.ObjectContext;
 import com.huawei.odmf.utils.CursorUtils;
 import com.huawei.odmf.utils.LOG;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,6 @@ class AndroidSqlPersistentStore extends PersistentStore {
     }
 
     AndroidSqlPersistentStore(Context context, String modelFile, String uriString, Configuration configuration, byte[] key) {
-        ODMFException e;
         super(configuration.getPath(), configuration.getDatabaseType(), configuration.getStorageMode(), uriString);
         this.statementLock = new Object();
         try {
@@ -83,17 +82,14 @@ class AndroidSqlPersistentStore extends PersistentStore {
             }
             init(databaseName, key, configuration.isThrowException(), configuration.isDetectDelete());
             this.uriString = uriString;
-        } catch (ODMFIllegalArgumentException e2) {
-            e = e2;
-            LOG.logE("Create AndroidSqlPersistentStore failed : parser objectModel failed.");
-            throw new ODMFRuntimeException("Xml parser failed : " + e.getMessage());
-        } catch (ODMFXmlParserException e3) {
-            e = e3;
+        } catch (ODMFIllegalArgumentException | ODMFXmlParserException e) {
             LOG.logE("Create AndroidSqlPersistentStore failed : parser objectModel failed.");
             throw new ODMFRuntimeException("Xml parser failed : " + e.getMessage());
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:24:0x0087=Splitter:B:24:0x0087, B:42:0x00ca=Splitter:B:42:0x00ca} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void init(String databasePath, byte[] key, boolean throwException, boolean detectDelete) {
         SQLException e;
         int i;
@@ -120,51 +116,51 @@ class AndroidSqlPersistentStore extends PersistentStore {
                     key[i] = (byte) 0;
                 }
             }
-        } catch (SQLException e2) {
+        } catch (SQLiteDatabaseCorruptException e2) {
             e = e2;
             LOG.logE("Init database failed : A sqliteDatabase corrupt exception occurred when initializing database.");
             throw new ODMFSQLiteDatabaseCorruptException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e3) {
+        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
             e = e3;
             LOG.logE("Init database failed : A sqliteDatabase corrupt exception occurred when initializing database.");
             throw new ODMFSQLiteDatabaseCorruptException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLException e22) {
+        } catch (SQLiteDiskIOException e22) {
             e = e22;
             LOG.logE("Init database failed : A disk io exception occurred when initializing database.");
             throw new ODMFSQLiteDiskIOException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e4) {
+        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e4) {
             e = e4;
             LOG.logE("Init database failed : A disk io exception occurred when initializing database.");
             throw new ODMFSQLiteDiskIOException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLException e222) {
+        } catch (SQLiteFullException e222) {
             e = e222;
             LOG.logE("Init database failed : A disk full exception occurred when initializing database.");
             throw new ODMFSQLiteFullException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e5) {
+        } catch (com.huawei.hwsqlite.SQLiteFullException e5) {
             e = e5;
             LOG.logE("Init database failed : A disk full exception occurred when initializing database.");
             throw new ODMFSQLiteFullException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLException e2222) {
+        } catch (SQLiteAccessPermException e2222) {
             e = e2222;
             LOG.logE("Init database failed : An access permission exception occurred when initializing database.");
             throw new ODMFSQLiteAccessPermException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e6) {
+        } catch (com.huawei.hwsqlite.SQLiteAccessPermException e6) {
             e = e6;
             LOG.logE("Init database failed : An access permission exception occurred when initializing database.");
             throw new ODMFSQLiteAccessPermException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLException e22222) {
+        } catch (SQLiteCantOpenDatabaseException e22222) {
             e = e22222;
             LOG.logE("Init database failed : An cant open exception occurred when initializing database.");
             throw new ODMFSQLiteCantOpenDatabaseException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e7) {
+        } catch (com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e7) {
             e = e7;
             LOG.logE("Init database failed : An cant open exception occurred when initializing database.");
             throw new ODMFSQLiteCantOpenDatabaseException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLException e222222) {
+        } catch (SQLiteException e222222) {
             e = e222222;
             LOG.logE("Init database failed : A SQLite exception occurred when initializing database.");
             throw new ODMFRuntimeException("Init database failed : " + e.getMessage(), e);
-        } catch (SQLiteException e8) {
+        } catch (com.huawei.hwsqlite.SQLiteException e8) {
             e = e8;
             LOG.logE("Init database failed : A SQLite exception occurred when initializing database.");
             throw new ODMFRuntimeException("Init database failed : " + e.getMessage(), e);
@@ -195,7 +191,6 @@ class AndroidSqlPersistentStore extends PersistentStore {
     }
 
     private void initHelper(ObjectModel model) {
-        ReflectiveOperationException e;
         if (model == null) {
             LOG.logE("Execute initHelper failed : the objectModel is null.");
             throw new ODMFIllegalArgumentException("Execute initHelper failed : the model is null");
@@ -211,19 +206,11 @@ class AndroidSqlPersistentStore extends PersistentStore {
                 AEntityHelper helper = (AEntityHelper) Class.forName(key + "Helper").getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
                 helper.setEntity((Entity) entry.getValue());
                 this.helperMap.put(key, helper);
-            } catch (ClassNotFoundException e2) {
-                e = e2;
-            } catch (NoSuchMethodException e3) {
-                e = e3;
-            } catch (InvocationTargetException e4) {
-                e = e4;
-            } catch (IllegalAccessException e5) {
-                e = e5;
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                LOG.logE("Execute initHelper failed : An exception occurred when use reflection to get helper class.");
+                throw new ODMFRuntimeException("Execute initHelper failed : " + e.getMessage());
             }
         }
-        return;
-        LOG.logE("Execute initHelper failed : An exception occurred when use reflection to get helper class.");
-        throw new ODMFRuntimeException("Execute initHelper failed : " + e.getMessage());
     }
 
     private void overwriteJoinClause(FetchRequest fetchRequest) {
@@ -353,51 +340,51 @@ class AndroidSqlPersistentStore extends PersistentStore {
         } catch (IllegalArgumentException e4) {
             LOG.logE("Execute FetchRequest failed : A IllegalArgumentException occurred when query");
             throw new ODMFRuntimeException("Execute FetchRequest failed : " + e4.getMessage(), e4);
-        } catch (SQLException e5) {
+        } catch (SQLiteDatabaseCorruptException e5) {
             e = e5;
             LOG.logE("Execute FetchRequest failed : A SQLiteDatabaseCorruptException occurred when query");
             throw new ODMFSQLiteDatabaseCorruptException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e6) {
+        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e6) {
             e = e6;
             LOG.logE("Execute FetchRequest failed : A SQLiteDatabaseCorruptException occurred when query");
             throw new ODMFSQLiteDatabaseCorruptException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLException e52) {
+        } catch (SQLiteDiskIOException e52) {
             e = e52;
             LOG.logE("Execute FetchRequest failed : A SQLiteDiskIOException occurred when query");
             throw new ODMFSQLiteDiskIOException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e7) {
+        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e7) {
             e = e7;
             LOG.logE("Execute FetchRequest failed : A SQLiteDiskIOException occurred when query");
             throw new ODMFSQLiteDiskIOException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLException e522) {
+        } catch (SQLiteFullException e522) {
             e = e522;
             LOG.logE("Execute FetchRequest failed : A SQLiteFullException occurred when query");
             throw new ODMFSQLiteFullException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e8) {
+        } catch (com.huawei.hwsqlite.SQLiteFullException e8) {
             e = e8;
             LOG.logE("Execute FetchRequest failed : A SQLiteFullException occurred when query");
             throw new ODMFSQLiteFullException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLException e5222) {
+        } catch (SQLiteAccessPermException e5222) {
             e = e5222;
             LOG.logE("Execute FetchRequest failed : A SQLiteAccessPermException occurred when query");
             throw new ODMFSQLiteAccessPermException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e9) {
+        } catch (com.huawei.hwsqlite.SQLiteAccessPermException e9) {
             e = e9;
             LOG.logE("Execute FetchRequest failed : A SQLiteAccessPermException occurred when query");
             throw new ODMFSQLiteAccessPermException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLException e52222) {
+        } catch (SQLiteCantOpenDatabaseException e52222) {
             e = e52222;
             LOG.logE("Execute FetchRequest failed : A SQLiteCantOpenDatabaseException occurred when query");
             throw new ODMFSQLiteCantOpenDatabaseException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e10) {
+        } catch (com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e10) {
             e = e10;
             LOG.logE("Execute FetchRequest failed : A SQLiteCantOpenDatabaseException occurred when query");
             throw new ODMFSQLiteCantOpenDatabaseException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLException e522222) {
+        } catch (SQLiteException e522222) {
             e = e522222;
             LOG.logE("Execute FetchRequest failed : A SQLiteException occurred when query");
             throw new ODMFRuntimeException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteException e11) {
+        } catch (com.huawei.hwsqlite.SQLiteException e11) {
             e = e11;
             LOG.logE("Execute FetchRequest failed : A SQLiteException occurred when query");
             throw new ODMFRuntimeException("Execute FetchRequest failed : " + e.getMessage(), e);
@@ -464,7 +451,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
                 cursor.close();
             }
             return results;
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute FetchRequestGetObjectID failed : A SQLiteException occurred when query");
             throw new ODMFRuntimeException("Execute FetchRequestGetObjectID failed : " + e.getMessage());
         } catch (StaleDataException e2) {
@@ -477,6 +464,8 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:24:0x009e=Splitter:B:24:0x009e, B:33:0x00de=Splitter:B:33:0x00de} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<Object> executeFetchRequestWithAggregateFunction(FetchRequest request) {
         SQLException e;
         if (request == null) {
@@ -508,27 +497,27 @@ class AndroidSqlPersistentStore extends PersistentStore {
                     cursor.close();
                 }
                 return result;
-            } catch (SQLException e2) {
+            } catch (SQLiteDatabaseCorruptException e2) {
                 e = e2;
                 LOG.logE("Execute fetchRequest with aggregateFunction failed : " + e.getMessage());
                 throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
-            } catch (SQLiteDatabaseCorruptException e3) {
+            } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
                 e = e3;
                 LOG.logE("Execute fetchRequest with aggregateFunction failed : " + e.getMessage());
                 throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
-            } catch (SQLException e22) {
+            } catch (SQLiteDiskIOException e22) {
                 e = e22;
                 LOG.logE("End Transaction failed : " + e.getMessage());
                 throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
-            } catch (SQLiteDiskIOException e4) {
+            } catch (com.huawei.hwsqlite.SQLiteDiskIOException e4) {
                 e = e4;
                 LOG.logE("End Transaction failed : " + e.getMessage());
                 throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
-            } catch (SQLException e222) {
+            } catch (SQLiteException e222) {
                 e = e222;
                 LOG.logE("Execute fetchRequest With aggregateFunction failed : A SQLiteException occurred when query.");
                 throw new ODMFRuntimeException("Execute fetchRequest With aggregateFunction failed : " + e.getMessage(), e);
-            } catch (SQLiteException e5) {
+            } catch (com.huawei.hwsqlite.SQLiteException e5) {
                 e = e5;
                 LOG.logE("Execute fetchRequest With aggregateFunction failed : A SQLiteException occurred when query.");
                 throw new ODMFRuntimeException("Execute fetchRequest With aggregateFunction failed : " + e.getMessage(), e);
@@ -541,7 +530,6 @@ class AndroidSqlPersistentStore extends PersistentStore {
     }
 
     protected Cursor executeFetchRequestGetCursor(FetchRequest request) {
-        SQLException e;
         if (request == null) {
             LOG.logE("Execute FetchRequestGetCursor failed : The parameter request is null.");
             throw new ODMFIllegalArgumentException("Execute FetchRequestGetCursor failed : The parameter request is null");
@@ -555,66 +543,36 @@ class AndroidSqlPersistentStore extends PersistentStore {
         overwriteJoinClause(request);
         try {
             return DatabaseQueryService.commonquery(this.db, tableName + request.getJoinClause().toString(), request);
-        } catch (StaleDataException e2) {
+        } catch (StaleDataException e) {
             LOG.logE("Execute FetchRequest failed : A StaleDataException occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e2.getMessage(), e2);
-        } catch (IllegalStateException e3) {
+            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e.getMessage(), e);
+        } catch (IllegalStateException e2) {
             LOG.logE("Execute FetchRequest failed : A IllegalStateException occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e3.getMessage(), e3);
-        } catch (IllegalArgumentException e4) {
+            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e2.getMessage(), e2);
+        } catch (IllegalArgumentException e3) {
             LOG.logE("Execute FetchRequest failed : A IllegalArgumentException occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e4.getMessage(), e4);
-        } catch (android.database.sqlite.SQLiteDatabaseCorruptException e5) {
-            e = e5;
+            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e3.getMessage(), e3);
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e4) {
             LOG.logE("Execute FetchRequest failed : A SQLiteDatabaseCorruptException occurred when query");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e6) {
-            e = e6;
-            LOG.logE("Execute FetchRequest failed : A SQLiteDatabaseCorruptException occurred when query");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteDiskIOException e7) {
-            e = e7;
+            throw new ODMFSQLiteDatabaseCorruptException("Execute FetchRequest failed : " + e4.getMessage(), e4);
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e42) {
             LOG.logE("Execute FetchRequest failed : A SQLiteDiskIOException occurred when query");
-            throw new ODMFSQLiteDiskIOException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e8) {
-            e = e8;
-            LOG.logE("Execute FetchRequest failed : A SQLiteDiskIOException occurred when query");
-            throw new ODMFSQLiteDiskIOException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteFullException e9) {
-            e = e9;
+            throw new ODMFSQLiteDiskIOException("Execute FetchRequest failed : " + e42.getMessage(), e42);
+        } catch (SQLiteFullException | com.huawei.hwsqlite.SQLiteFullException e422) {
             LOG.logE("Execute FetchRequest failed : A SQLiteFullException occurred when query");
-            throw new ODMFSQLiteFullException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e10) {
-            e = e10;
-            LOG.logE("Execute FetchRequest failed : A SQLiteFullException occurred when query");
-            throw new ODMFSQLiteFullException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteAccessPermException e11) {
-            e = e11;
+            throw new ODMFSQLiteFullException("Execute FetchRequest failed : " + e422.getMessage(), e422);
+        } catch (SQLiteAccessPermException | com.huawei.hwsqlite.SQLiteAccessPermException e4222) {
             LOG.logE("Execute FetchRequest failed : A SQLiteAccessPermException occurred when query");
-            throw new ODMFSQLiteAccessPermException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e12) {
-            e = e12;
-            LOG.logE("Execute FetchRequest failed : A SQLiteAccessPermException occurred when query");
-            throw new ODMFSQLiteAccessPermException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteCantOpenDatabaseException e13) {
-            e = e13;
+            throw new ODMFSQLiteAccessPermException("Execute FetchRequest failed : " + e4222.getMessage(), e4222);
+        } catch (SQLiteCantOpenDatabaseException | com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e42222) {
             LOG.logE("Execute FetchRequest failed : A SQLiteCantOpenDatabaseException occurred when query");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e14) {
-            e = e14;
-            LOG.logE("Execute FetchRequest failed : A SQLiteCantOpenDatabaseException occurred when query");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteException e15) {
-            e = e15;
+            throw new ODMFSQLiteCantOpenDatabaseException("Execute FetchRequest failed : " + e42222.getMessage(), e42222);
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e422222) {
             LOG.logE("Execute FetchRequest failed : A SQLiteException occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteException e16) {
-            e = e16;
-            LOG.logE("Execute FetchRequest failed : A SQLiteException occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e.getMessage(), e);
-        } catch (Exception e17) {
+            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e422222.getMessage(), e422222);
+        } catch (Exception e5) {
             LOG.logE("Execute FetchRequest failed : A unknown exception occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e17.getMessage(), e17);
+            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e5.getMessage(), e5);
         }
     }
 
@@ -747,8 +705,6 @@ class AndroidSqlPersistentStore extends PersistentStore {
     }
 
     protected void executeSaveRequest(SaveRequest request) {
-        SQLException e;
-        RuntimeException e2;
         if (request == null) {
             LOG.logE("Execute SaveRequest failed : The parameter request is null");
             throw new ODMFIllegalArgumentException("The parameter request is null");
@@ -757,64 +713,30 @@ class AndroidSqlPersistentStore extends PersistentStore {
             executeInsert(request.getInsertedObjects());
             executeUpdate(request.getUpdatedObjects());
             executeDelete(request.getDeletedObjects());
-        } catch (NullPointerException e3) {
+        } catch (NullPointerException e) {
             LOG.logE("Execute SaveRequest failed : A NullPointerException occurred when save");
-            throw new ODMFNullPointerException("Execute SaveRequest failed : A NullPointerException occurred when save, the object in a relationship may not inserted yet, or the entityName in the class not match it in the xml,or some condition else.", e3);
-        } catch (android.database.sqlite.SQLiteDatabaseCorruptException e4) {
-            e = e4;
+            throw new ODMFNullPointerException("Execute SaveRequest failed : A NullPointerException occurred when save, the object in a relationship may not inserted yet, or the entityName in the class not match it in the xml,or some condition else.", e);
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e2) {
             LOG.logE("Execute SaveRequest failed : A SQLiteDatabaseCorruptException occurred when save");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e5) {
-            e = e5;
-            LOG.logE("Execute SaveRequest failed : A SQLiteDatabaseCorruptException occurred when save");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteDiskIOException e6) {
-            e = e6;
+            throw new ODMFSQLiteDatabaseCorruptException("Execute SaveRequest failed : " + e2.getMessage(), e2);
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e22) {
             LOG.logE("Execute SaveRequest failed : A SQLiteDiskIOException occurred when save");
-            throw new ODMFSQLiteDiskIOException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e7) {
-            e = e7;
-            LOG.logE("Execute SaveRequest failed : A SQLiteDiskIOException occurred when save");
-            throw new ODMFSQLiteDiskIOException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteFullException e8) {
-            e = e8;
+            throw new ODMFSQLiteDiskIOException("Execute SaveRequest failed : " + e22.getMessage(), e22);
+        } catch (SQLiteFullException | com.huawei.hwsqlite.SQLiteFullException e222) {
             LOG.logE("Execute SaveRequest failed : A SQLiteFullException occurred when save");
-            throw new ODMFSQLiteFullException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e9) {
-            e = e9;
-            LOG.logE("Execute SaveRequest failed : A SQLiteFullException occurred when save");
-            throw new ODMFSQLiteFullException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteAccessPermException e10) {
-            e = e10;
+            throw new ODMFSQLiteFullException("Execute SaveRequest failed : " + e222.getMessage(), e222);
+        } catch (SQLiteAccessPermException | com.huawei.hwsqlite.SQLiteAccessPermException e2222) {
             LOG.logE("Execute SaveRequest failed : A SQLiteAccessPermException occurred when save");
-            throw new ODMFSQLiteAccessPermException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e11) {
-            e = e11;
-            LOG.logE("Execute SaveRequest failed : A SQLiteAccessPermException occurred when save");
-            throw new ODMFSQLiteAccessPermException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteCantOpenDatabaseException e12) {
-            e = e12;
+            throw new ODMFSQLiteAccessPermException("Execute SaveRequest failed : " + e2222.getMessage(), e2222);
+        } catch (SQLiteCantOpenDatabaseException | com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e22222) {
             LOG.logE("Execute SaveRequest failed : A SQLiteCantOpenDatabaseException occurred when save");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e13) {
-            e = e13;
-            LOG.logE("Execute SaveRequest failed : A SQLiteCantOpenDatabaseException occurred when save");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute SaveRequest failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteException e14) {
-            e2 = e14;
+            throw new ODMFSQLiteCantOpenDatabaseException("Execute SaveRequest failed : " + e22222.getMessage(), e22222);
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException | IllegalArgumentException e3) {
             LOG.logE("Execute SaveRequest failed : A SQLiteException occurred when save");
-            throw new ODMFRuntimeException("Execute SaveRequest failed : " + e2.getMessage());
-        } catch (IllegalArgumentException e15) {
-            e2 = e15;
-            LOG.logE("Execute SaveRequest failed : A SQLiteException occurred when save");
-            throw new ODMFRuntimeException("Execute SaveRequest failed : " + e2.getMessage());
-        } catch (SQLiteException e16) {
-            e2 = e16;
-            LOG.logE("Execute SaveRequest failed : A SQLiteException occurred when save");
-            throw new ODMFRuntimeException("Execute SaveRequest failed : " + e2.getMessage());
-        } catch (Exception e17) {
+            throw new ODMFRuntimeException("Execute SaveRequest failed : " + e3.getMessage());
+        } catch (Exception e4) {
             LOG.logE("Execute FetchRequest failed : A unknown exception occurred when query");
-            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e17.getMessage(), e17);
+            throw new ODMFRuntimeException("Execute FetchRequest failed : " + e4.getMessage(), e4);
         }
     }
 
@@ -923,31 +845,31 @@ class AndroidSqlPersistentStore extends PersistentStore {
                 cursor.close();
             }
             this.db.endTransaction(false);
-        } catch (SQLException e2) {
+        } catch (SQLiteDatabaseCorruptException e2) {
             e = e2;
             hasCorruptException = true;
             LOG.logE("Execute deleteEntityData failed : A SQLiteDatabaseCorruptException occurred : " + e.getMessage());
             throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e3) {
+        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
             e = e3;
             hasCorruptException = true;
             LOG.logE("Execute deleteEntityData failed : A SQLiteDatabaseCorruptException occurred : " + e.getMessage());
             throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLException e22) {
+        } catch (SQLiteDiskIOException e22) {
             e = e22;
             hasCorruptException = true;
             LOG.logE("Execute deleteEntityData failed : A SQLiteDiskIOException occurred : " + e.getMessage());
             throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e4) {
+        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e4) {
             e = e4;
             hasCorruptException = true;
             LOG.logE("Execute deleteEntityData failed : A SQLiteDiskIOException occurred : " + e.getMessage());
             throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLException e222) {
+        } catch (SQLiteException e222) {
             e = e222;
             LOG.logE("Execute deleteEntityData failed : " + e.getMessage());
             throw new ODMFRuntimeException("Execute deleteEntityData failed : " + e.getMessage());
-        } catch (SQLiteException e5) {
+        } catch (com.huawei.hwsqlite.SQLiteException e5) {
             e = e5;
             LOG.logE("Execute deleteEntityData failed : " + e.getMessage());
             throw new ODMFRuntimeException("Execute deleteEntityData failed : " + e.getMessage());
@@ -989,6 +911,8 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:13:0x0036=Splitter:B:13:0x0036, B:38:0x00a8=Splitter:B:38:0x00a8} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected List<ObjectId> getRelationshipObjectId(ObjectId objectId, Relationship relationship) {
         SQLException e;
         Entity relatedEntity = relationship.getRelatedEntity();
@@ -1018,23 +942,23 @@ class AndroidSqlPersistentStore extends PersistentStore {
             }
             LOG.logE("Execute getRelationshipObjectId failed : The relevant object not found.");
             throw new ODMFRelatedObjectNotFoundException("Execute getRelationshipObjectId failed : The relevant object not found.");
-        } catch (SQLException e2) {
+        } catch (SQLiteDatabaseCorruptException e2) {
             e = e2;
             LOG.logE("Execute getRelationshipObjectId failed : A SQLiteException occurred when try to get related ObjectId.");
             throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e3) {
+        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
             e = e3;
             LOG.logE("Execute getRelationshipObjectId failed : A SQLiteException occurred when try to get related ObjectId.");
             throw new ODMFSQLiteDatabaseCorruptException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLException e22) {
+        } catch (SQLiteDiskIOException e22) {
             e = e22;
             LOG.logE("Execute getRelationshipObjectId failed : A SQLiteException occurred when try to get related ObjectId.");
             throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e4) {
+        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e4) {
             e = e4;
             LOG.logE("Execute getRelationshipObjectId failed : A SQLiteException occurred when try to get related ObjectId.");
             throw new ODMFSQLiteDiskIOException("End Transaction failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteException e5) {
+        } catch (SQLiteException e5) {
             LOG.logE("Execute getRelationshipObjectId failed : A SQLiteException occurred when try to get related ObjectId.");
             throw new ODMFRuntimeException("Execute getRelationshipObjectId failed : " + e5.getMessage());
         } catch (Throwable th) {
@@ -1045,28 +969,17 @@ class AndroidSqlPersistentStore extends PersistentStore {
     }
 
     protected void close() {
-        SQLException e;
         try {
             this.databaseHelper.close();
-        } catch (android.database.sqlite.SQLiteDatabaseCorruptException e2) {
-            e = e2;
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e) {
             LOG.logE("Close database failed : A SQLiteDatabaseCorruptException occurred when close.");
             throw new ODMFSQLiteDatabaseCorruptException("Close database failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e3) {
-            e = e3;
-            LOG.logE("Close database failed : A SQLiteDatabaseCorruptException occurred when close.");
-            throw new ODMFSQLiteDatabaseCorruptException("Close database failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteDiskIOException e4) {
-            e = e4;
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e2) {
             LOG.logE("Close database failed : A SQLiteDiskIOException occurred when close.");
-            throw new ODMFSQLiteDiskIOException("Close database failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e5) {
-            e = e5;
-            LOG.logE("Close database failed : A SQLiteDiskIOException occurred when close.");
-            throw new ODMFSQLiteDiskIOException("Close database failed : " + e.getMessage(), e);
-        } catch (RuntimeException e6) {
+            throw new ODMFSQLiteDiskIOException("Close database failed : " + e2.getMessage(), e2);
+        } catch (RuntimeException e3) {
             LOG.logE("Close database failed : A RuntimeException occurred when close.");
-            throw new ODMFRuntimeException("Close database failed : " + e6.getMessage(), e6);
+            throw new ODMFRuntimeException("Close database failed : " + e3.getMessage(), e3);
         }
     }
 
@@ -1077,7 +990,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
         try {
             this.databaseHelper.addTable(this.db, entity);
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute createTable Failed : A SQLiteException occurred when createTable");
             throw new ODMFRuntimeException("Execute createTable Failed : " + e.getMessage());
         }
@@ -1090,7 +1003,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
         try {
             this.databaseHelper.dropTable(this.db, entityName);
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute dropTable Failed : A SQLiteException occurred when dropTable");
             throw new ODMFRuntimeException("Execute dropTable Failed : " + e.getMessage());
         }
@@ -1103,7 +1016,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
         try {
             this.databaseHelper.alterTableName(this.db, oldName, newName);
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute renameTable Failed : A SQLiteException occurred when renameTable");
             throw new ODMFRuntimeException("Execute renameTable Failed : " + e.getMessage());
         }
@@ -1116,7 +1029,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
         try {
             this.databaseHelper.alterTableAddColumn(this.db, entity.getTableName(), attribute);
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute addColumn Failed : A SQLiteException occurred when addColumn");
             throw new ODMFRuntimeException("Execute addColumn Failed : " + e.getMessage());
         }
@@ -1129,7 +1042,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
         try {
             this.databaseHelper.alterTableAddRelationship(this.db, entity.getTableName(), relationship);
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute addRelationship Failed : A SQLiteException occurred when addRelationship");
             throw new ODMFRuntimeException("Execute addRelationship Failed : " + e.getMessage());
         }
@@ -1260,193 +1173,100 @@ class AndroidSqlPersistentStore extends PersistentStore {
     }
 
     protected Cursor executeRawQuerySQL(String sql) {
-        SQLException e;
         if (sql == null) {
             LOG.logE("Execute RawQuerySQL Failed : The sql is null.");
             throw new ODMFIllegalArgumentException("Execute RawQuerySQL Failed : The sql is null.");
         }
         try {
             return this.db.rawSelect(sql, null, null, false);
-        } catch (IllegalStateException e2) {
+        } catch (IllegalStateException e) {
             LOG.logE("Execute rawQuerySQL failed : A IllegalStateException occurred when execute rawQuerySQL.");
-            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e2.getMessage(), e2);
-        } catch (android.database.sqlite.SQLiteDatabaseCorruptException e3) {
-            e = e3;
-            LOG.logE("Execute rawQuerySQL failed : A sqliteDatabase occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e4) {
-            e = e4;
-            LOG.logE("Execute rawQuerySQL failed : A sqliteDatabase occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteDiskIOException e5) {
-            e = e5;
-            LOG.logE("Execute rawQuerySQL failed : A disk io exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteDiskIOException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e6) {
-            e = e6;
-            LOG.logE("Execute rawQuerySQL failed : A disk io exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteDiskIOException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteFullException e7) {
-            e = e7;
-            LOG.logE("Execute rawQuerySQL failed : A disk full exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteFullException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e8) {
-            e = e8;
-            LOG.logE("Execute rawQuerySQL failed : A disk full exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteFullException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteAccessPermException e9) {
-            e = e9;
-            LOG.logE("Execute rawQuerySQL failed : An access permission exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteAccessPermException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e10) {
-            e = e10;
-            LOG.logE("Execute rawQuerySQL failed : An access permission exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteAccessPermException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteCantOpenDatabaseException e11) {
-            e = e11;
-            LOG.logE("Execute rawQuerySQL failed : An cant open exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e12) {
-            e = e12;
-            LOG.logE("Execute rawQuerySQL failed : An cant open exception occurred when execute rawQuerySQL.");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteException e13) {
-            e = e13;
-            LOG.logE("Execute rawQuerySQL failed : A SQLite exception occurred when execute rawQuerySQL.");
             throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (SQLiteException e14) {
-            e = e14;
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e2) {
+            LOG.logE("Execute rawQuerySQL failed : A sqliteDatabase occurred when execute rawQuerySQL.");
+            throw new ODMFSQLiteDatabaseCorruptException("Execute rawQuerySQL failed : " + e2.getMessage(), e2);
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e22) {
+            LOG.logE("Execute rawQuerySQL failed : A disk io exception occurred when execute rawQuerySQL.");
+            throw new ODMFSQLiteDiskIOException("Execute rawQuerySQL failed : " + e22.getMessage(), e22);
+        } catch (SQLiteFullException | com.huawei.hwsqlite.SQLiteFullException e222) {
+            LOG.logE("Execute rawQuerySQL failed : A disk full exception occurred when execute rawQuerySQL.");
+            throw new ODMFSQLiteFullException("Execute rawQuerySQL failed : " + e222.getMessage(), e222);
+        } catch (SQLiteAccessPermException | com.huawei.hwsqlite.SQLiteAccessPermException e2222) {
+            LOG.logE("Execute rawQuerySQL failed : An access permission exception occurred when execute rawQuerySQL.");
+            throw new ODMFSQLiteAccessPermException("Execute rawQuerySQL failed : " + e2222.getMessage(), e2222);
+        } catch (SQLiteCantOpenDatabaseException | com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e22222) {
+            LOG.logE("Execute rawQuerySQL failed : An cant open exception occurred when execute rawQuerySQL.");
+            throw new ODMFSQLiteCantOpenDatabaseException("Execute rawQuerySQL failed : " + e22222.getMessage(), e22222);
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e222222) {
             LOG.logE("Execute rawQuerySQL failed : A SQLite exception occurred when execute rawQuerySQL.");
-            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e.getMessage(), e);
-        } catch (Exception e15) {
+            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e222222.getMessage(), e222222);
+        } catch (Exception e3) {
             LOG.logE("Execute rawQuerySQL failed : A unknown exception occurred when execute rawQuerySQL.");
-            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e15.getMessage(), e15);
+            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e3.getMessage(), e3);
         }
     }
 
     protected Cursor query(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
-        SQLException e;
         try {
             return DatabaseQueryService.query(this.db, distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        } catch (IllegalStateException e2) {
+        } catch (IllegalStateException e) {
             LOG.logE("Execute query failed : A IllegalStateException occurred when execute query.");
-            throw new ODMFRuntimeException("Execute query failed : " + e2.getMessage(), e2);
-        } catch (android.database.sqlite.SQLiteDatabaseCorruptException e3) {
-            e = e3;
-            LOG.logE("Execute query failed : A sqliteDatabase corrupt exception occurred when execute query.");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute query failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e4) {
-            e = e4;
-            LOG.logE("Execute query failed : A sqliteDatabase corrupt exception occurred when execute query.");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute query failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteDiskIOException e5) {
-            e = e5;
-            LOG.logE("Execute query failed : A disk io exception occurred when execute query.");
-            throw new ODMFSQLiteDiskIOException("Execute query failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e6) {
-            e = e6;
-            LOG.logE("Execute query failed : A disk io exception occurred when execute query.");
-            throw new ODMFSQLiteDiskIOException("Execute query failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteFullException e7) {
-            e = e7;
-            LOG.logE("Execute query failed : A disk full exception occurred when execute query.");
-            throw new ODMFSQLiteFullException("Execute query failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e8) {
-            e = e8;
-            LOG.logE("Execute query failed : A disk full exception occurred when execute query.");
-            throw new ODMFSQLiteFullException("Execute query failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteAccessPermException e9) {
-            e = e9;
-            LOG.logE("Execute query failed : An access permission exception occurred when execute query.");
-            throw new ODMFSQLiteAccessPermException("Execute query failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e10) {
-            e = e10;
-            LOG.logE("Execute query failed : An access permission exception occurred when execute query.");
-            throw new ODMFSQLiteAccessPermException("Execute query failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteCantOpenDatabaseException e11) {
-            e = e11;
-            LOG.logE("Execute query failed : An cant open exception occurred when execute query.");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute query failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e12) {
-            e = e12;
-            LOG.logE("Execute query failed : An cant open exception occurred when execute query.");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute query failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteException e13) {
-            e = e13;
-            LOG.logE("Execute query failed : A SQLite exception occurred when execute query.");
             throw new ODMFRuntimeException("Execute query failed : " + e.getMessage(), e);
-        } catch (SQLiteException e14) {
-            e = e14;
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e2) {
+            LOG.logE("Execute query failed : A sqliteDatabase corrupt exception occurred when execute query.");
+            throw new ODMFSQLiteDatabaseCorruptException("Execute query failed : " + e2.getMessage(), e2);
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e22) {
+            LOG.logE("Execute query failed : A disk io exception occurred when execute query.");
+            throw new ODMFSQLiteDiskIOException("Execute query failed : " + e22.getMessage(), e22);
+        } catch (SQLiteFullException | com.huawei.hwsqlite.SQLiteFullException e222) {
+            LOG.logE("Execute query failed : A disk full exception occurred when execute query.");
+            throw new ODMFSQLiteFullException("Execute query failed : " + e222.getMessage(), e222);
+        } catch (SQLiteAccessPermException | com.huawei.hwsqlite.SQLiteAccessPermException e2222) {
+            LOG.logE("Execute query failed : An access permission exception occurred when execute query.");
+            throw new ODMFSQLiteAccessPermException("Execute query failed : " + e2222.getMessage(), e2222);
+        } catch (SQLiteCantOpenDatabaseException | com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e22222) {
+            LOG.logE("Execute query failed : An cant open exception occurred when execute query.");
+            throw new ODMFSQLiteCantOpenDatabaseException("Execute query failed : " + e22222.getMessage(), e22222);
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e222222) {
             LOG.logE("Execute query failed : A SQLite exception occurred when execute query.");
-            throw new ODMFRuntimeException("Execute query failed : " + e.getMessage(), e);
-        } catch (Exception e15) {
+            throw new ODMFRuntimeException("Execute query failed : " + e222222.getMessage(), e222222);
+        } catch (Exception e3) {
             LOG.logE("Execute query failed : A unknown exception occurred when execute query.");
-            throw new ODMFRuntimeException("Execute query failed : " + e15.getMessage(), e15);
+            throw new ODMFRuntimeException("Execute query failed : " + e3.getMessage(), e3);
         }
     }
 
     protected void executeRawSQL(String sql) {
-        SQLException e;
         if (sql == null) {
             LOG.logE("Execute RawSQL Failed : The sql is null.");
             throw new ODMFIllegalArgumentException("Execute RawSQL Failed : The sql is null.");
         }
         try {
             this.db.execSQL(sql);
-        } catch (IllegalStateException e2) {
+        } catch (IllegalStateException e) {
             LOG.logE("Execute rawSQL failed : A IllegalStateException occurred when execute rawSQL.");
-            throw new ODMFRuntimeException("Execute rawSQL failed : " + e2.getMessage(), e2);
-        } catch (android.database.sqlite.SQLiteDatabaseCorruptException e3) {
-            e = e3;
-            LOG.logE("Execute rawSQL failed : A sqliteDatabase corrupt exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (SQLiteDatabaseCorruptException e4) {
-            e = e4;
-            LOG.logE("Execute rawSQL failed : A sqliteDatabase corrupt exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteDatabaseCorruptException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteDiskIOException e5) {
-            e = e5;
-            LOG.logE("Execute rawSQL failed: A disk io exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteDiskIOException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e6) {
-            e = e6;
-            LOG.logE("Execute rawSQL failed: A disk io exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteDiskIOException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteFullException e7) {
-            e = e7;
-            LOG.logE("Execute rawSQL failed : A disk full exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteFullException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (SQLiteFullException e8) {
-            e = e8;
-            LOG.logE("Execute rawSQL failed : A disk full exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteFullException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteAccessPermException e9) {
-            e = e9;
-            LOG.logE("Execute rawSQL failed : An access permission exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteAccessPermException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (SQLiteAccessPermException e10) {
-            e = e10;
-            LOG.logE("Execute rawSQL failed : An access permission exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteAccessPermException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteCantOpenDatabaseException e11) {
-            e = e11;
-            LOG.logE("Execute rawSQL failed : An cant open exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (SQLiteCantOpenDatabaseException e12) {
-            e = e12;
-            LOG.logE("Execute rawSQL failed : An cant open exception occurred when execute rawSQL.");
-            throw new ODMFSQLiteCantOpenDatabaseException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (android.database.sqlite.SQLiteException e13) {
-            e = e13;
-            LOG.logE("Execute rawSQL failed : A SQLite exception occurred when execute rawSQL.");
             throw new ODMFRuntimeException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (SQLiteException e14) {
-            e = e14;
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e2) {
+            LOG.logE("Execute rawSQL failed : A sqliteDatabase corrupt exception occurred when execute rawSQL.");
+            throw new ODMFSQLiteDatabaseCorruptException("Execute rawSQL failed : " + e2.getMessage(), e2);
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e22) {
+            LOG.logE("Execute rawSQL failed: A disk io exception occurred when execute rawSQL.");
+            throw new ODMFSQLiteDiskIOException("Execute rawSQL failed : " + e22.getMessage(), e22);
+        } catch (SQLiteFullException | com.huawei.hwsqlite.SQLiteFullException e222) {
+            LOG.logE("Execute rawSQL failed : A disk full exception occurred when execute rawSQL.");
+            throw new ODMFSQLiteFullException("Execute rawSQL failed : " + e222.getMessage(), e222);
+        } catch (SQLiteAccessPermException | com.huawei.hwsqlite.SQLiteAccessPermException e2222) {
+            LOG.logE("Execute rawSQL failed : An access permission exception occurred when execute rawSQL.");
+            throw new ODMFSQLiteAccessPermException("Execute rawSQL failed : " + e2222.getMessage(), e2222);
+        } catch (SQLiteCantOpenDatabaseException | com.huawei.hwsqlite.SQLiteCantOpenDatabaseException e22222) {
+            LOG.logE("Execute rawSQL failed : An cant open exception occurred when execute rawSQL.");
+            throw new ODMFSQLiteCantOpenDatabaseException("Execute rawSQL failed : " + e22222.getMessage(), e22222);
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e222222) {
             LOG.logE("Execute rawSQL failed : A SQLite exception occurred when execute rawSQL.");
-            throw new ODMFRuntimeException("Execute rawSQL failed : " + e.getMessage(), e);
-        } catch (Exception e15) {
+            throw new ODMFRuntimeException("Execute rawSQL failed : " + e222222.getMessage(), e222222);
+        } catch (Exception e3) {
             LOG.logE("Execute rawSQL failed : A unknown exception occurred when execute rawSQL.");
-            throw new ODMFRuntimeException("Execute rawSQL failed : " + e15.getMessage(), e15);
+            throw new ODMFRuntimeException("Execute rawSQL failed : " + e3.getMessage(), e3);
         }
     }
 
@@ -1465,7 +1285,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
         }
         try {
             this.db.insertOrThrow(tableName, null, values);
-        } catch (android.database.sqlite.SQLiteException e) {
+        } catch (SQLiteException e) {
             LOG.logE("Execute insertData Failed : A SQLiteException occurred when insertData.");
             throw new ODMFRuntimeException("Execute insertData Failed : " + e.getMessage());
         }
@@ -1493,7 +1313,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
             if (cursor != null) {
                 cursor.close();
             }
-        } catch (Exception e2) {
+        } catch (IOException e2) {
             e = e2;
             try {
                 LOG.logE("Execute exportDatabase Failed : A exception occurred when export database.");
@@ -1504,7 +1324,7 @@ class AndroidSqlPersistentStore extends PersistentStore {
                     cursor.close();
                 }
             }
-        } catch (Exception e22) {
+        } catch (SQLException e22) {
             e = e22;
             LOG.logE("Execute exportDatabase Failed : A exception occurred when export database.");
             throw new ODMFRuntimeException("Execute exportDatabase Failed : " + e.toString());

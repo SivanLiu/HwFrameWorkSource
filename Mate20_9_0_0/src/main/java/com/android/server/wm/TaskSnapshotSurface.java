@@ -162,10 +162,10 @@ class TaskSnapshotSurface implements StartingSurface {
         }
     }
 
-    /* JADX WARNING: Missing block: B:56:0x0197, code:
+    /* JADX WARNING: Missing block: B:56:0x0197, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:59:0x01a6, code:
+    /* JADX WARNING: Missing block: B:59:0x01a6, code skipped:
             r54 = r4;
             r51 = r7;
             r56 = r8;
@@ -173,23 +173,23 @@ class TaskSnapshotSurface implements StartingSurface {
             r58 = r11;
             r59 = r13;
      */
-    /* JADX WARNING: Missing block: B:61:?, code:
+    /* JADX WARNING: Missing block: B:61:?, code skipped:
             r0 = r13.addToDisplay(r14, r14.mSeq, r15, 8, r62.getDisplayContent().getDisplayId(), r11, r9, r9, r9, r12, null);
      */
-    /* JADX WARNING: Missing block: B:62:0x01c3, code:
+    /* JADX WARNING: Missing block: B:62:0x01c3, code skipped:
             if (r0 >= null) goto L_0x01ec;
      */
-    /* JADX WARNING: Missing block: B:63:0x01c5, code:
+    /* JADX WARNING: Missing block: B:63:0x01c5, code skipped:
             r2 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("Failed to add snapshot starting window res=");
             r3.append(r0);
             android.util.Slog.w(r2, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:64:0x01db, code:
+    /* JADX WARNING: Missing block: B:64:0x01db, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:67:0x01e0, code:
+    /* JADX WARNING: Missing block: B:67:0x01e0, code skipped:
             r54 = r4;
             r51 = r7;
             r56 = r8;
@@ -479,10 +479,10 @@ class TaskSnapshotSurface implements StartingSurface {
         this.mOrientationOnCreation = currentOrientation;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002d, code:
+    /* JADX WARNING: Missing block: B:12:0x002d, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             r9.mSession.remove(r9.mWindow);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

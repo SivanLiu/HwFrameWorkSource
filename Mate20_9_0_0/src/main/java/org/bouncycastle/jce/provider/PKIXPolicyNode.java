@@ -36,11 +36,11 @@ public class PKIXPolicyNode implements PolicyNode {
     }
 
     public PKIXPolicyNode copy() {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (String str : this.expectedPolicies) {
             hashSet.add(new String(str));
         }
-        Set hashSet2 = new HashSet();
+        HashSet hashSet2 = new HashSet();
         for (String str2 : this.policyQualifiers) {
             hashSet2.add(new String(str2));
         }

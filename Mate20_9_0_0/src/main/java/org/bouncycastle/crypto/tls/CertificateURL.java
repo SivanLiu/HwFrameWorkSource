@@ -41,7 +41,7 @@ public class CertificateURL {
         if (CertChainType.isValid(readUint8)) {
             int readUint16 = TlsUtils.readUint16(inputStream);
             if (readUint16 >= 1) {
-                InputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint16, inputStream));
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint16, inputStream));
                 Vector vector = new Vector();
                 while (byteArrayInputStream.available() > 0) {
                     vector.addElement(URLAndHash.parse(tlsContext, byteArrayInputStream));
@@ -55,7 +55,7 @@ public class CertificateURL {
 
     public void encode(OutputStream outputStream) throws IOException {
         TlsUtils.writeUint8(this.type, outputStream);
-        OutputStream listBuffer16 = new ListBuffer16();
+        ListBuffer16 listBuffer16 = new ListBuffer16();
         for (int i = 0; i < this.urlAndHashList.size(); i++) {
             ((URLAndHash) this.urlAndHashList.elementAt(i)).encode(listBuffer16);
         }

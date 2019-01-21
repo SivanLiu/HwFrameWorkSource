@@ -1,0 +1,96 @@
+package sun.security.provider.certpath;
+
+import java.security.cert.CertPathValidatorException;
+import java.security.cert.CertSelector;
+import java.security.cert.Certificate;
+import java.security.cert.PKIXCertPathChecker;
+import java.security.cert.PKIXReason;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import sun.security.util.Debug;
+import sun.security.x509.PKIXExtensions;
+
+class KeyChecker extends PKIXCertPathChecker {
+    private static final int KEY_CERT_SIGN = 5;
+    private static final Debug debug = Debug.getInstance("certpath");
+    private final int certPathLen;
+    private int remainingCerts;
+    private Set<String> supportedExts;
+    private final CertSelector targetConstraints;
+
+    KeyChecker(int certPathLen, CertSelector targetCertSel) {
+        this.certPathLen = certPathLen;
+        this.targetConstraints = targetCertSel;
+    }
+
+    public void init(boolean forward) throws CertPathValidatorException {
+        if (forward) {
+            throw new CertPathValidatorException("forward checking not supported");
+        }
+        this.remainingCerts = this.certPathLen;
+    }
+
+    public boolean isForwardCheckingSupported() {
+        return false;
+    }
+
+    public Set<String> getSupportedExtensions() {
+        if (this.supportedExts == null) {
+            this.supportedExts = new HashSet(3);
+            this.supportedExts.add(PKIXExtensions.KeyUsage_Id.toString());
+            this.supportedExts.add(PKIXExtensions.ExtendedKeyUsage_Id.toString());
+            this.supportedExts.add(PKIXExtensions.SubjectAlternativeName_Id.toString());
+            this.supportedExts = Collections.unmodifiableSet(this.supportedExts);
+        }
+        return this.supportedExts;
+    }
+
+    public void check(Certificate cert, Collection<String> unresCritExts) throws CertPathValidatorException {
+        X509Certificate currCert = (X509Certificate) cert;
+        this.remainingCerts--;
+        if (this.remainingCerts != 0) {
+            verifyCAKeyUsage(currCert);
+        } else if (!(this.targetConstraints == null || this.targetConstraints.match(currCert))) {
+            throw new CertPathValidatorException("target certificate constraints check failed");
+        }
+        if (unresCritExts != null && !unresCritExts.isEmpty()) {
+            unresCritExts.remove(PKIXExtensions.KeyUsage_Id.toString());
+            unresCritExts.remove(PKIXExtensions.ExtendedKeyUsage_Id.toString());
+            unresCritExts.remove(PKIXExtensions.SubjectAlternativeName_Id.toString());
+        }
+    }
+
+    static void verifyCAKeyUsage(X509Certificate cert) throws CertPathValidatorException {
+        String msg = "CA key usage";
+        if (debug != null) {
+            Debug debug = debug;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("KeyChecker.verifyCAKeyUsage() ---checking ");
+            stringBuilder.append(msg);
+            stringBuilder.append("...");
+            debug.println(stringBuilder.toString());
+        }
+        boolean[] keyUsageBits = cert.getKeyUsage();
+        if (keyUsageBits != null) {
+            StringBuilder stringBuilder2;
+            if (keyUsageBits[5]) {
+                if (debug != null) {
+                    Debug debug2 = debug;
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("KeyChecker.verifyCAKeyUsage() ");
+                    stringBuilder2.append(msg);
+                    stringBuilder2.append(" verified.");
+                    debug2.println(stringBuilder2.toString());
+                }
+                return;
+            }
+            stringBuilder2 = new StringBuilder();
+            stringBuilder2.append(msg);
+            stringBuilder2.append(" check failed: keyCertSign bit is not set");
+            throw new CertPathValidatorException(stringBuilder2.toString(), null, null, -1, PKIXReason.INVALID_KEY_USAGE);
+        }
+    }
+}

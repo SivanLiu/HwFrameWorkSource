@@ -132,8 +132,6 @@ public class HwUniversalKeyStoreCryptoOperationStreamer {
                         } catch (IOException e2) {
                             throw new ProviderException("Failed to buffer output", e2);
                         }
-                    } else {
-                        continue;
                     }
                 }
             } else {

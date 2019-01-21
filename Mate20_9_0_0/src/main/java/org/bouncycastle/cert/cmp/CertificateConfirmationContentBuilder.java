@@ -13,6 +13,7 @@ import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 
 public class CertificateConfirmationContentBuilder {
     private List acceptedCerts;
@@ -48,7 +49,7 @@ public class CertificateConfirmationContentBuilder {
                     CMPUtil.derEncodeToStream(x509CertificateHolder.toASN1Structure(), digestCalculator.getOutputStream());
                     aSN1EncodableVector.add(new CertStatus(digestCalculator.getDigest(), bigInteger));
                     i++;
-                } catch (Throwable e) {
+                } catch (OperatorCreationException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("unable to create digest: ");
                     stringBuilder.append(e.getMessage());

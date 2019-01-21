@@ -1,5 +1,6 @@
 package org.bouncycastle.cms.jcajce;
 
+import java.io.IOException;
 import java.security.AlgorithmParameters;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
@@ -63,7 +64,7 @@ class CMSUtils {
     static ASN1Encodable extractParameters(AlgorithmParameters algorithmParameters) throws CMSException {
         try {
             return AlgorithmParametersUtils.extractParameters(algorithmParameters);
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot extract parameters: ");
             stringBuilder.append(e.getMessage());
@@ -76,7 +77,7 @@ class CMSUtils {
     }
 
     static byte[] getSubjectKeyId(X509Certificate x509Certificate) {
-        Object extensionValue = x509Certificate.getExtensionValue(Extension.subjectKeyIdentifier.getId());
+        byte[] extensionValue = x509Certificate.getExtensionValue(Extension.subjectKeyIdentifier.getId());
         return extensionValue != null ? ASN1OctetString.getInstance(ASN1OctetString.getInstance(extensionValue).getOctets()).getOctets() : null;
     }
 
@@ -99,7 +100,7 @@ class CMSUtils {
     static void loadParameters(AlgorithmParameters algorithmParameters, ASN1Encodable aSN1Encodable) throws CMSException {
         try {
             AlgorithmParametersUtils.loadParameters(algorithmParameters, aSN1Encodable);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new CMSException("error encoding algorithm parameters.", e);
         }
     }

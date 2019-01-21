@@ -65,108 +65,108 @@ public class Searchables {
         this.mPm = AppGlobals.getPackageManager();
     }
 
-    /* JADX WARNING: Missing block: B:11:0x002b, code:
+    /* JADX WARNING: Missing block: B:11:0x002b, code skipped:
             r2 = null;
      */
-    /* JADX WARNING: Missing block: B:14:0x0036, code:
+    /* JADX WARNING: Missing block: B:14:0x0036, code skipped:
             r2 = r11.mPm.getActivityInfo(r12, 128, r11.mUserId);
      */
-    /* JADX WARNING: Missing block: B:15:0x0038, code:
+    /* JADX WARNING: Missing block: B:15:0x0038, code skipped:
             if (r2 != null) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:16:0x003a, code:
+    /* JADX WARNING: Missing block: B:16:0x003a, code skipped:
             android.util.Log.v(LOG_TAG, "getted activity info is null");
      */
-    /* JADX WARNING: Missing block: B:17:0x0041, code:
+    /* JADX WARNING: Missing block: B:17:0x0041, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:18:0x0042, code:
+    /* JADX WARNING: Missing block: B:18:0x0042, code skipped:
             r3 = null;
             r4 = r2.metaData;
      */
-    /* JADX WARNING: Missing block: B:19:0x0045, code:
+    /* JADX WARNING: Missing block: B:19:0x0045, code skipped:
             if (r4 == null) goto L_0x004d;
      */
-    /* JADX WARNING: Missing block: B:20:0x0047, code:
+    /* JADX WARNING: Missing block: B:20:0x0047, code skipped:
             r3 = r4.getString(MD_LABEL_DEFAULT_SEARCHABLE);
      */
-    /* JADX WARNING: Missing block: B:21:0x004d, code:
+    /* JADX WARNING: Missing block: B:21:0x004d, code skipped:
             if (r3 != null) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:22:0x004f, code:
+    /* JADX WARNING: Missing block: B:22:0x004f, code skipped:
             r4 = r2.applicationInfo.metaData;
      */
-    /* JADX WARNING: Missing block: B:23:0x0053, code:
+    /* JADX WARNING: Missing block: B:23:0x0053, code skipped:
             if (r4 == null) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:24:0x0055, code:
+    /* JADX WARNING: Missing block: B:24:0x0055, code skipped:
             r3 = r4.getString(MD_LABEL_DEFAULT_SEARCHABLE);
      */
-    /* JADX WARNING: Missing block: B:25:0x005b, code:
+    /* JADX WARNING: Missing block: B:25:0x005b, code skipped:
             if (r3 == null) goto L_0x00c0;
      */
-    /* JADX WARNING: Missing block: B:27:0x0063, code:
+    /* JADX WARNING: Missing block: B:27:0x0063, code skipped:
             if (r3.equals(MD_SEARCHABLE_SYSTEM_SEARCH) == false) goto L_0x0066;
      */
-    /* JADX WARNING: Missing block: B:28:0x0065, code:
+    /* JADX WARNING: Missing block: B:28:0x0065, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:29:0x0066, code:
+    /* JADX WARNING: Missing block: B:29:0x0066, code skipped:
             r5 = r12.getPackageName();
      */
-    /* JADX WARNING: Missing block: B:30:0x0071, code:
+    /* JADX WARNING: Missing block: B:30:0x0071, code skipped:
             if (r3.charAt(0) != '.') goto L_0x0088;
      */
-    /* JADX WARNING: Missing block: B:31:0x0073, code:
+    /* JADX WARNING: Missing block: B:31:0x0073, code skipped:
             r7 = new java.lang.StringBuilder();
             r7.append(r5);
             r7.append(r3);
             r6 = new android.content.ComponentName(r5, r7.toString());
      */
-    /* JADX WARNING: Missing block: B:32:0x0088, code:
+    /* JADX WARNING: Missing block: B:32:0x0088, code skipped:
             r6 = new android.content.ComponentName(r5, r3);
      */
-    /* JADX WARNING: Missing block: B:33:0x008d, code:
+    /* JADX WARNING: Missing block: B:33:0x008d, code skipped:
             monitor-enter(r11);
      */
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
             r0 = (android.app.SearchableInfo) r11.mSearchablesMap.get(r6);
      */
-    /* JADX WARNING: Missing block: B:36:0x0097, code:
+    /* JADX WARNING: Missing block: B:36:0x0097, code skipped:
             if (r0 == null) goto L_0x009e;
      */
-    /* JADX WARNING: Missing block: B:37:0x0099, code:
+    /* JADX WARNING: Missing block: B:37:0x0099, code skipped:
             r11.mSearchablesMap.put(r12, r0);
      */
-    /* JADX WARNING: Missing block: B:38:0x009e, code:
+    /* JADX WARNING: Missing block: B:38:0x009e, code skipped:
             monitor-exit(r11);
      */
-    /* JADX WARNING: Missing block: B:39:0x009f, code:
+    /* JADX WARNING: Missing block: B:39:0x009f, code skipped:
             if (r0 == null) goto L_0x00c0;
      */
-    /* JADX WARNING: Missing block: B:41:0x00b9, code:
+    /* JADX WARNING: Missing block: B:41:0x00b9, code skipped:
             if (((android.content.pm.PackageManagerInternal) com.android.server.LocalServices.getService(android.content.pm.PackageManagerInternal.class)).canAccessComponent(android.os.Binder.getCallingUid(), r0.getSearchActivity(), android.os.UserHandle.getCallingUserId()) == false) goto L_0x00bc;
      */
-    /* JADX WARNING: Missing block: B:42:0x00bb, code:
+    /* JADX WARNING: Missing block: B:42:0x00bb, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:43:0x00bc, code:
+    /* JADX WARNING: Missing block: B:43:0x00bc, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:48:0x00c0, code:
+    /* JADX WARNING: Missing block: B:48:0x00c0, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:49:0x00c1, code:
+    /* JADX WARNING: Missing block: B:49:0x00c1, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:50:0x00c2, code:
+    /* JADX WARNING: Missing block: B:50:0x00c2, code skipped:
             r4 = LOG_TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Error getting activity info ");
             r5.append(r3);
             android.util.Log.e(r4, r5.toString());
      */
-    /* JADX WARNING: Missing block: B:51:0x00d8, code:
+    /* JADX WARNING: Missing block: B:51:0x00d8, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -182,6 +182,9 @@ public class Searchables {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x00eb A:{Catch:{ all -> 0x0159 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x0140 A:{SYNTHETIC} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void updateSearchableList() {
         Throwable th;
         HashMap<ComponentName, SearchableInfo> newSearchablesMap = new HashMap();
@@ -193,115 +196,135 @@ public class Searchables {
         long ident = Binder.clearCallingIdentity();
         Intent intent2;
         try {
-            int count;
-            int ii;
+            Intent intent3;
+            List<ResolveInfo> list;
+            List intent4;
+            ComponentName newGlobalSearchActivity;
+            ComponentName newWebSearchActivity;
             Intent onlineSearchIntent;
             List<ResolveInfo> onlineSearchInfoList;
+            int online_search_count;
+            int i2;
+            Intent onlineSearchIntent2;
+            List<ResolveInfo> onlineSearchInfoList2;
             List<ResolveInfo> searchList;
             List<ResolveInfo> searchList2 = queryIntentActivities(intent, 268435584);
             Intent webSearchIntent = new Intent("android.intent.action.WEB_SEARCH");
             List<ResolveInfo> webSearchInfoList = queryIntentActivities(webSearchIntent, 268435584);
-            Intent intent3;
-            List<ResolveInfo> list;
-            if (searchList2 != null || webSearchInfoList != null) {
-                int search_count = searchList2 == null ? 0 : searchList2.size();
-                count = search_count + (webSearchInfoList == null ? 0 : webSearchInfoList.size());
-                int ii2 = 0;
-                while (true) {
-                    ii = ii2;
-                    if (ii >= count) {
-                        intent3 = webSearchIntent;
-                        list = webSearchInfoList;
-                        break;
-                    }
-                    ResolveInfo resolveInfo;
-                    if (ii < search_count) {
-                        try {
-                            resolveInfo = (ResolveInfo) searchList2.get(ii);
-                            intent2 = intent;
-                        } catch (Throwable th2) {
-                            th = th2;
-                            intent2 = intent;
-                        }
-                    } else {
-                        intent2 = intent;
-                        try {
-                            resolveInfo = (ResolveInfo) webSearchInfoList.get(ii - search_count);
-                        } catch (Throwable th3) {
-                            th = th3;
-                        }
-                    }
-                    ResolveInfo intent4 = resolveInfo;
+            if (searchList2 == null) {
+                if (webSearchInfoList == null) {
+                    intent2 = intent;
                     intent3 = webSearchIntent;
-                    ActivityInfo ai = intent4.activityInfo;
-                    ResolveInfo info = intent4;
                     list = webSearchInfoList;
-                    int search_count2 = search_count;
-                    if (newSearchablesMap.get(new ComponentName(ai.packageName, ai.name)) == null) {
-                        intent = SearchableInfo.getActivityMetaData(this.mContext, ai, this.mUserId);
-                        if (intent != null) {
-                            newSearchablesList.add(intent);
-                            newSearchablesMap.put(intent.getSearchActivity(), intent);
-                            if (intent.shouldIncludeInGlobalSearch()) {
-                                newSearchablesInGlobalSearchList.add(intent);
+                    intent4 = findGlobalSearchActivities();
+                    newGlobalSearchActivity = findGlobalSearchActivity(intent4);
+                    newWebSearchActivity = findWebSearchActivity(newGlobalSearchActivity);
+                    onlineSearchIntent = new Intent("huawei.intent.action.ONLINESEARCH");
+                    onlineSearchInfoList = queryIntentActivities(onlineSearchIntent, 128);
+                    if (onlineSearchInfoList != null) {
+                        online_search_count = onlineSearchInfoList.size();
+                        int i22 = 0;
+                        while (true) {
+                            i2 = i22;
+                            if (i2 >= online_search_count) {
+                                break;
                             }
+                            int online_search_count2 = online_search_count;
+                            onlineSearchIntent2 = onlineSearchIntent;
+                            ResolveInfo info2 = (ResolveInfo) onlineSearchInfoList.get(i2);
+                            ActivityInfo ai2 = info2.activityInfo;
+                            onlineSearchInfoList2 = onlineSearchInfoList;
+                            searchList = searchList2;
+                            if (newOnlineSearchablesMap.get(new ComponentName(ai2.packageName, ai2.name)) == null) {
+                                SearchableInfo searchable_online = SearchableInfo.getActivityMetaDataOnline(this.mContext, ai2, this.mUserId);
+                                if (searchable_online != null) {
+                                    newOnlineSearchablesInGlobalSearchList.add(searchable_online);
+                                    newOnlineSearchablesMap.put(searchable_online.getSearchActivity(), searchable_online);
+                                }
+                            }
+                            i22 = i2 + 1;
+                            online_search_count = online_search_count2;
+                            onlineSearchIntent = onlineSearchIntent2;
+                            onlineSearchInfoList = onlineSearchInfoList2;
+                            searchList2 = searchList;
                         }
                     }
-                    ii2 = ii + 1;
-                    intent = intent2;
-                    webSearchIntent = intent3;
-                    webSearchInfoList = list;
-                    search_count = search_count2;
-                }
-            } else {
-                intent2 = intent;
-                intent3 = webSearchIntent;
-                list = webSearchInfoList;
-            }
-            List intent5 = findGlobalSearchActivities();
-            ComponentName newGlobalSearchActivity = findGlobalSearchActivity(intent5);
-            ComponentName newWebSearchActivity = findWebSearchActivity(newGlobalSearchActivity);
-            Intent onlineSearchIntent2 = new Intent("huawei.intent.action.ONLINESEARCH");
-            List<ResolveInfo> onlineSearchInfoList2 = queryIntentActivities(onlineSearchIntent2, 128);
-            if (onlineSearchInfoList2 != null) {
-                ii = onlineSearchInfoList2.size();
-                int i2 = 0;
-                while (true) {
-                    count = i2;
-                    if (count >= ii) {
-                        break;
-                    }
-                    int online_search_count = ii;
-                    onlineSearchIntent = onlineSearchIntent2;
-                    ResolveInfo info2 = (ResolveInfo) onlineSearchInfoList2.get(count);
-                    ActivityInfo ai2 = info2.activityInfo;
-                    onlineSearchInfoList = onlineSearchInfoList2;
                     searchList = searchList2;
-                    if (newOnlineSearchablesMap.get(new ComponentName(ai2.packageName, ai2.name)) == null) {
-                        SearchableInfo searchable_online = SearchableInfo.getActivityMetaDataOnline(this.mContext, ai2, this.mUserId);
-                        if (searchable_online != null) {
-                            newOnlineSearchablesInGlobalSearchList.add(searchable_online);
-                            newOnlineSearchablesMap.put(searchable_online.getSearchActivity(), searchable_online);
-                        }
-                    }
-                    i2 = count + 1;
-                    ii = online_search_count;
                     onlineSearchIntent2 = onlineSearchIntent;
                     onlineSearchInfoList2 = onlineSearchInfoList;
-                    searchList2 = searchList;
+                    synchronized (this) {
+                        this.mSearchablesMap = newSearchablesMap;
+                        this.mSearchablesList = newSearchablesList;
+                        this.mSearchablesInGlobalSearchList = newSearchablesInGlobalSearchList;
+                        this.mOnlineSearchablesInGlobalSearchList = newOnlineSearchablesInGlobalSearchList;
+                        this.mGlobalSearchActivities = intent4;
+                        this.mCurrentGlobalSearchActivity = newGlobalSearchActivity;
+                        this.mWebSearchActivity = newWebSearchActivity;
+                    }
+                    Binder.restoreCallingIdentity(ident);
                 }
             }
+            int search_count = searchList2 == null ? 0 : searchList2.size();
+            i2 = search_count + (webSearchInfoList == null ? 0 : webSearchInfoList.size());
+            int ii = 0;
+            while (true) {
+                online_search_count = ii;
+                if (online_search_count >= i2) {
+                    break;
+                }
+                ResolveInfo resolveInfo;
+                if (online_search_count < search_count) {
+                    try {
+                        resolveInfo = (ResolveInfo) searchList2.get(online_search_count);
+                        intent2 = intent;
+                    } catch (Throwable th2) {
+                        th = th2;
+                        intent2 = intent;
+                        Binder.restoreCallingIdentity(ident);
+                        throw th;
+                    }
+                }
+                intent2 = intent;
+                try {
+                    resolveInfo = (ResolveInfo) webSearchInfoList.get(online_search_count - search_count);
+                } catch (Throwable th3) {
+                    th = th3;
+                }
+                ResolveInfo intent5 = resolveInfo;
+                intent3 = webSearchIntent;
+                ActivityInfo ai = intent5.activityInfo;
+                ResolveInfo info = intent5;
+                list = webSearchInfoList;
+                int search_count2 = search_count;
+                if (newSearchablesMap.get(new ComponentName(ai.packageName, ai.name)) == null) {
+                    intent = SearchableInfo.getActivityMetaData(this.mContext, ai, this.mUserId);
+                    if (intent != null) {
+                        newSearchablesList.add(intent);
+                        newSearchablesMap.put(intent.getSearchActivity(), intent);
+                        if (intent.shouldIncludeInGlobalSearch()) {
+                            newSearchablesInGlobalSearchList.add(intent);
+                        }
+                    }
+                }
+                ii = online_search_count + 1;
+                intent = intent2;
+                webSearchIntent = intent3;
+                webSearchInfoList = list;
+                search_count = search_count2;
+            }
+            intent3 = webSearchIntent;
+            list = webSearchInfoList;
+            intent4 = findGlobalSearchActivities();
+            newGlobalSearchActivity = findGlobalSearchActivity(intent4);
+            newWebSearchActivity = findWebSearchActivity(newGlobalSearchActivity);
+            onlineSearchIntent = new Intent("huawei.intent.action.ONLINESEARCH");
+            onlineSearchInfoList = queryIntentActivities(onlineSearchIntent, 128);
+            if (onlineSearchInfoList != null) {
+            }
             searchList = searchList2;
-            onlineSearchIntent = onlineSearchIntent2;
-            onlineSearchInfoList = onlineSearchInfoList2;
+            onlineSearchIntent2 = onlineSearchIntent;
+            onlineSearchInfoList2 = onlineSearchInfoList;
             synchronized (this) {
-                this.mSearchablesMap = newSearchablesMap;
-                this.mSearchablesList = newSearchablesList;
-                this.mSearchablesInGlobalSearchList = newSearchablesInGlobalSearchList;
-                this.mOnlineSearchablesInGlobalSearchList = newOnlineSearchablesInGlobalSearchList;
-                this.mGlobalSearchActivities = intent5;
-                this.mCurrentGlobalSearchActivity = newGlobalSearchActivity;
-                this.mWebSearchActivity = newWebSearchActivity;
             }
             Binder.restoreCallingIdentity(ident);
         } catch (Throwable th4) {

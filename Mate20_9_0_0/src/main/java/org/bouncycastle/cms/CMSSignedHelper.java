@@ -1,7 +1,6 @@
 package org.bouncycastle.cms;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -125,7 +124,7 @@ class CMSSignedHelper {
         if (aSN1Set == null) {
             return new CollectionStore(new ArrayList());
         }
-        Collection arrayList = new ArrayList(aSN1Set.size());
+        ArrayList arrayList = new ArrayList(aSN1Set.size());
         Enumeration objects = aSN1Set.getObjects();
         while (objects.hasMoreElements()) {
             ASN1Primitive toASN1Primitive = ((ASN1Encodable) objects.nextElement()).toASN1Primitive();
@@ -140,7 +139,7 @@ class CMSSignedHelper {
         if (aSN1Set == null) {
             return new CollectionStore(new ArrayList());
         }
-        Collection arrayList = new ArrayList(aSN1Set.size());
+        ArrayList arrayList = new ArrayList(aSN1Set.size());
         Enumeration objects = aSN1Set.getObjects();
         while (objects.hasMoreElements()) {
             ASN1Primitive toASN1Primitive = ((ASN1Encodable) objects.nextElement()).toASN1Primitive();
@@ -155,7 +154,7 @@ class CMSSignedHelper {
         if (aSN1Set == null) {
             return new CollectionStore(new ArrayList());
         }
-        Collection arrayList = new ArrayList(aSN1Set.size());
+        ArrayList arrayList = new ArrayList(aSN1Set.size());
         Enumeration objects = aSN1Set.getObjects();
         while (objects.hasMoreElements()) {
             ASN1Primitive toASN1Primitive = ((ASN1Encodable) objects.nextElement()).toASN1Primitive();
@@ -175,7 +174,7 @@ class CMSSignedHelper {
         if (aSN1Set == null) {
             return new CollectionStore(new ArrayList());
         }
-        Collection arrayList = new ArrayList(aSN1Set.size());
+        ArrayList arrayList = new ArrayList(aSN1Set.size());
         Enumeration objects = aSN1Set.getObjects();
         while (objects.hasMoreElements()) {
             ASN1Primitive toASN1Primitive = ((ASN1Encodable) objects.nextElement()).toASN1Primitive();

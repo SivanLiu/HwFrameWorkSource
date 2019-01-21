@@ -17,9 +17,9 @@ public class BEROctetStringGenerator extends BERGenerator {
 
         public void close() throws IOException {
             if (this._off != 0) {
-                Object obj = new byte[this._off];
-                System.arraycopy(this._buf, 0, obj, 0, this._off);
-                DEROctetString.encode(this._derOut, obj);
+                byte[] bArr = new byte[this._off];
+                System.arraycopy(this._buf, 0, bArr, 0, this._off);
+                DEROctetString.encode(this._derOut, bArr);
             }
             BEROctetStringGenerator.this.writeBEREnd();
         }

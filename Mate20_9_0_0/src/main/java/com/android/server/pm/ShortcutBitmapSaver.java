@@ -14,6 +14,7 @@ import com.android.internal.annotations.GuardedBy;
 import com.android.internal.util.Preconditions;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Deque;
 import java.util.concurrent.CountDownLatch;
@@ -91,18 +92,6 @@ public class ShortcutBitmapSaver {
         shortcut.clearFlags(2572);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00b2 A:{Splitter: B:5:0x0028, ExcHandler: java.io.IOException (r3_14 'e' java.lang.Throwable)} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x00b2 A:{Splitter: B:5:0x0028, ExcHandler: java.io.IOException (r3_14 'e' java.lang.Throwable)} */
-    /* JADX WARNING: Missing block: B:53:0x00b2, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:55:?, code:
-            android.util.Slog.wtf(TAG, "Unable to write bitmap to file", r3);
-     */
-    /* JADX WARNING: Missing block: B:57:0x00be, code:
-            android.os.StrictMode.setThreadPolicy(r2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void saveBitmapLocked(ShortcutInfo shortcut, int maxDimension, CompressFormat format, int quality) {
         Icon icon = shortcut.getIcon();
         Preconditions.checkNotNull(icon);
@@ -149,7 +138,12 @@ public class ShortcutBitmapSaver {
                     shrunk.recycle();
                 }
             }
-        } catch (Throwable e) {
+        } catch (IOException | OutOfMemoryError | RuntimeException e) {
+            try {
+                Slog.wtf(TAG, "Unable to write bitmap to file", e);
+            } finally {
+                StrictMode.setThreadPolicy(oldPolicy);
+            }
         }
     }
 
@@ -158,96 +152,95 @@ public class ShortcutBitmapSaver {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0078 A:{PHI: r0 , Splitter: B:28:0x0044, ExcHandler: java.io.IOException (r3_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:9:0x0011, code:
+    /* JADX WARNING: Missing block: B:9:0x0011, code skipped:
             if (r1 == null) goto L_0x001f;
      */
-    /* JADX WARNING: Missing block: B:11:0x0017, code:
+    /* JADX WARNING: Missing block: B:11:0x0017, code skipped:
             if (r1.getBitmapPath() != null) goto L_0x001c;
      */
-    /* JADX WARNING: Missing block: B:12:0x0019, code:
+    /* JADX WARNING: Missing block: B:12:0x0019, code skipped:
             removeIcon(r1);
      */
-    /* JADX WARNING: Missing block: B:13:0x001c, code:
+    /* JADX WARNING: Missing block: B:13:0x001c, code skipped:
             r1.clearFlags(2048);
      */
-    /* JADX WARNING: Missing block: B:14:0x001f, code:
+    /* JADX WARNING: Missing block: B:14:0x001f, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             r1 = r4.shortcut;
      */
-    /* JADX WARNING: Missing block: B:21:0x0031, code:
+    /* JADX WARNING: Missing block: B:21:0x0031, code skipped:
             if (r1.isIconPendingSave() != false) goto L_0x0044;
      */
-    /* JADX WARNING: Missing block: B:22:0x0034, code:
+    /* JADX WARNING: Missing block: B:22:0x0034, code skipped:
             if (r1 == null) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:24:0x003a, code:
+    /* JADX WARNING: Missing block: B:24:0x003a, code skipped:
             if (r1.getBitmapPath() != null) goto L_0x003f;
      */
-    /* JADX WARNING: Missing block: B:25:0x003c, code:
+    /* JADX WARNING: Missing block: B:25:0x003c, code skipped:
             removeIcon(r1);
      */
-    /* JADX WARNING: Missing block: B:26:0x003f, code:
+    /* JADX WARNING: Missing block: B:26:0x003f, code skipped:
             r1.clearFlags(2048);
      */
-    /* JADX WARNING: Missing block: B:27:0x0042, code:
+    /* JADX WARNING: Missing block: B:27:0x0042, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:29:?, code:
+    /* JADX WARNING: Missing block: B:29:?, code skipped:
             r3 = r8.mService.openIconFileForWrite(r1.getUserId(), r1);
      */
-    /* JADX WARNING: Missing block: B:30:0x0052, code:
+    /* JADX WARNING: Missing block: B:30:0x0052, code skipped:
             r0 = r3.getFile();
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r3.write(r4.bytes);
      */
-    /* JADX WARNING: Missing block: B:34:?, code:
+    /* JADX WARNING: Missing block: B:34:?, code skipped:
             libcore.io.IoUtils.closeQuietly(r3);
             r1.setBitmapPath(r0.getAbsolutePath());
      */
-    /* JADX WARNING: Missing block: B:35:0x0064, code:
+    /* JADX WARNING: Missing block: B:35:0x0064, code skipped:
             if (r1 == null) goto L_0x0072;
      */
-    /* JADX WARNING: Missing block: B:37:0x006a, code:
+    /* JADX WARNING: Missing block: B:37:0x006a, code skipped:
             if (r1.getBitmapPath() != null) goto L_0x006f;
      */
-    /* JADX WARNING: Missing block: B:38:0x006c, code:
+    /* JADX WARNING: Missing block: B:38:0x006c, code skipped:
             removeIcon(r1);
      */
-    /* JADX WARNING: Missing block: B:39:0x006f, code:
+    /* JADX WARNING: Missing block: B:39:0x006f, code skipped:
             r1.clearFlags(2048);
      */
-    /* JADX WARNING: Missing block: B:40:0x0072, code:
+    /* JADX WARNING: Missing block: B:40:0x0072, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:43:?, code:
+    /* JADX WARNING: Missing block: B:43:?, code skipped:
             libcore.io.IoUtils.closeQuietly(r3);
      */
-    /* JADX WARNING: Missing block: B:45:0x0078, code:
+    /* JADX WARNING: Missing block: B:45:0x0078, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:47:?, code:
+    /* JADX WARNING: Missing block: B:47:?, code skipped:
             android.util.Slog.e(TAG, "Unable to write bitmap to file", r3);
      */
-    /* JADX WARNING: Missing block: B:51:0x0088, code:
+    /* JADX WARNING: Missing block: B:51:0x0088, code skipped:
             r0.delete();
      */
-    /* JADX WARNING: Missing block: B:52:0x008c, code:
+    /* JADX WARNING: Missing block: B:52:0x008c, code skipped:
             if (r1 != null) goto L_0x008e;
      */
-    /* JADX WARNING: Missing block: B:54:0x0092, code:
+    /* JADX WARNING: Missing block: B:54:0x0092, code skipped:
             if (r1.getBitmapPath() == null) goto L_0x0094;
      */
-    /* JADX WARNING: Missing block: B:55:0x0094, code:
+    /* JADX WARNING: Missing block: B:55:0x0094, code skipped:
             removeIcon(r1);
      */
-    /* JADX WARNING: Missing block: B:56:0x0097, code:
+    /* JADX WARNING: Missing block: B:56:0x0097, code skipped:
             r1.clearFlags(2048);
      */
-    /* JADX WARNING: Missing block: B:57:0x009a, code:
+    /* JADX WARNING: Missing block: B:57:0x009a, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

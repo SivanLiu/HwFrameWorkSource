@@ -273,7 +273,7 @@ public class MagnificationController implements Callback {
         return this.mCurrentMagnificationSpec.scale > 1.0f;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0035, code:
+    /* JADX WARNING: Missing block: B:14:0x0035, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -600,6 +600,11 @@ public class MagnificationController implements Callback {
                     scrollY = (float) (top - magnifFrameInScreenCoords.top);
                 } else if (bottom > magnifFrameInScreenCoords.bottom) {
                     scrollY = (float) (bottom - magnifFrameInScreenCoords.bottom);
+                } else {
+                    scrollX = scrollY;
+                    scrollY = getScale();
+                    offsetMagnifiedRegion(scrollX2 * scrollY, scrollX * scrollY, -1);
+                    return;
                 }
                 scrollX = scrollY;
                 scrollY = getScale();

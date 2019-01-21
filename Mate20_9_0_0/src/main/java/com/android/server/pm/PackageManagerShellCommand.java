@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageParser;
 import android.content.pm.PackageParser.PackageLite;
+import android.content.pm.PackageParser.PackageParserException;
 import android.content.pm.ParceledListSlice;
 import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PermissionInfo;
@@ -53,9 +54,9 @@ import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.text.TextUtils;
-import android.util.AndroidException;
 import android.util.ArraySet;
 import android.util.PrintWriterPrinter;
 import com.android.internal.content.PackageHelper;
@@ -515,9 +516,8 @@ class PackageManagerShellCommand extends ShellCommand {
                         break;
                     }
                 default:
-                    i = -1;
-                    break;
             }
+            i = -1;
             String nextArg;
             switch (i) {
                 case 0:
@@ -718,24 +718,6 @@ class PackageManagerShellCommand extends ShellCommand {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Splitter: B:6:0x001b, ExcHandler: android.content.pm.PackageParser.PackageParserException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:12:0x004a, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:14:?, code:
-            r2 = getErrPrintWriter();
-            r3 = new java.lang.StringBuilder();
-            r3.append("Error: Failed to parse APK file: ");
-            r3.append(r14);
-            r2.println(r3.toString());
-            r3 = new java.lang.StringBuilder();
-            r3.append("Error: Failed to parse APK file: ");
-            r3.append(r14);
-     */
-    /* JADX WARNING: Missing block: B:15:0x0079, code:
-            throw new java.lang.IllegalArgumentException(r3.toString(), r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void setParamsSize(InstallParams params, String inPath) {
         if (params.sessionParams.sizeBytes == -1 && !STDIN_PATH.equals(inPath)) {
             ParcelFileDescriptor fd = openFileForSystem(inPath, "r");
@@ -746,7 +728,16 @@ class PackageManagerShellCommand extends ShellCommand {
                         fd.close();
                     } catch (IOException e) {
                     }
-                } catch (Exception e2) {
+                } catch (PackageParserException | IOException e2) {
+                    PrintWriter errPrintWriter = getErrPrintWriter();
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Error: Failed to parse APK file: ");
+                    stringBuilder.append(inPath);
+                    errPrintWriter.println(stringBuilder.toString());
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Error: Failed to parse APK file: ");
+                    stringBuilder.append(inPath);
+                    throw new IllegalArgumentException(stringBuilder.toString(), e2);
                 } catch (Throwable th) {
                     try {
                         fd.close();
@@ -754,15 +745,15 @@ class PackageManagerShellCommand extends ShellCommand {
                     }
                 }
             } else {
-                PrintWriter errPrintWriter = getErrPrintWriter();
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Error: Can't open file: ");
-                stringBuilder.append(inPath);
-                errPrintWriter.println(stringBuilder.toString());
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Error: Can't open file: ");
-                stringBuilder.append(inPath);
-                throw new IllegalArgumentException(stringBuilder.toString());
+                PrintWriter errPrintWriter2 = getErrPrintWriter();
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Error: Can't open file: ");
+                stringBuilder2.append(inPath);
+                errPrintWriter2.println(stringBuilder2.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Error: Can't open file: ");
+                stringBuilder2.append(inPath);
+                throw new IllegalArgumentException(stringBuilder2.toString());
             }
         }
     }
@@ -806,67 +797,67 @@ class PackageManagerShellCommand extends ShellCommand {
             pw.println("Error: didn't specify type of data to list");
             return -1;
         }
-        boolean z;
+        int i;
         switch (type.hashCode()) {
             case -997447790:
                 if (type.equals("permission-groups")) {
-                    z = true;
+                    i = 5;
                     break;
                 }
             case -807062458:
                 if (type.equals("package")) {
-                    z = true;
+                    i = 3;
                     break;
                 }
             case -290659267:
                 if (type.equals("features")) {
-                    z = false;
+                    i = 0;
                     break;
                 }
             case 111578632:
                 if (type.equals(SoundModelContract.KEY_USERS)) {
-                    z = true;
+                    i = 7;
                     break;
                 }
             case 544550766:
                 if (type.equals("instrumentation")) {
-                    z = true;
+                    i = 1;
                     break;
                 }
             case 750867693:
                 if (type.equals("packages")) {
-                    z = true;
+                    i = 4;
                     break;
                 }
             case 812757657:
                 if (type.equals("libraries")) {
-                    z = true;
+                    i = 2;
                     break;
                 }
             case 1133704324:
                 if (type.equals("permissions")) {
-                    z = true;
+                    i = 6;
                     break;
                 }
             default:
-                z = true;
+                i = -1;
                 break;
         }
-        switch (z) {
-            case false:
+        switch (i) {
+            case 0:
                 return runListFeatures();
-            case true:
+            case 1:
                 return runListInstrumentation();
-            case true:
+            case 2:
                 return runListLibraries();
-            case true:
-            case true:
+            case 3:
+            case 4:
                 return runListPackages(false);
-            case true:
+            case 5:
                 return runListPermissionGroups();
-            case true:
+            case 6:
                 return runListPermissions();
-            case true:
+            case 7:
                 ServiceManager.getService("user").shellCommand(getInFileDescriptor(), getOutFileDescriptor(), getErrFileDescriptor(), new String[]{"list"}, getShellCallback(), adoptResultReceiver());
                 return 0;
             default:
@@ -917,6 +908,9 @@ class PackageManagerShellCommand extends ShellCommand {
         return 0;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0044  */
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0025 A:{Catch:{ RuntimeException -> 0x009f }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private int runListInstrumentation() throws RemoteException {
         PrintWriter pw = getOutPrintWriter();
         boolean showSourceDir = false;
@@ -927,39 +921,47 @@ class PackageManagerShellCommand extends ShellCommand {
                 String opt = nextArg;
                 int i;
                 if (nextArg != null) {
-                    i = (opt.hashCode() == 1497 && opt.equals("-f")) ? 0 : -1;
-                    if (i == 0) {
-                        showSourceDir = true;
-                    } else if (opt.charAt(0) != '-') {
-                        targetPackage = opt;
-                    } else {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Error: Unknown option: ");
-                        stringBuilder.append(opt);
-                        pw.println(stringBuilder.toString());
-                        return -1;
+                    if (opt.hashCode() == 1497) {
+                        if (opt.equals("-f")) {
+                            i = 0;
+                            if (i != 0) {
+                                showSourceDir = true;
+                            } else if (opt.charAt(0) != '-') {
+                                targetPackage = opt;
+                            } else {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("Error: Unknown option: ");
+                                stringBuilder.append(opt);
+                                pw.println(stringBuilder.toString());
+                                return -1;
+                            }
+                        }
                     }
+                    i = -1;
+                    if (i != 0) {
+                    }
+                } else {
+                    List<InstrumentationInfo> list = this.mInterface.queryInstrumentation(targetPackage, 0).getList();
+                    Collections.sort(list, new Comparator<InstrumentationInfo>() {
+                        public int compare(InstrumentationInfo o1, InstrumentationInfo o2) {
+                            return o1.targetPackage.compareTo(o2.targetPackage);
+                        }
+                    });
+                    i = list != null ? list.size() : 0;
+                    for (int p = 0; p < i; p++) {
+                        InstrumentationInfo ii = (InstrumentationInfo) list.get(p);
+                        pw.print("instrumentation:");
+                        if (showSourceDir) {
+                            pw.print(ii.sourceDir);
+                            pw.print("=");
+                        }
+                        pw.print(new ComponentName(ii.packageName, ii.name).flattenToShortString());
+                        pw.print(" (target=");
+                        pw.print(ii.targetPackage);
+                        pw.println(")");
+                    }
+                    return 0;
                 }
-                List<InstrumentationInfo> list = this.mInterface.queryInstrumentation(targetPackage, 0).getList();
-                Collections.sort(list, new Comparator<InstrumentationInfo>() {
-                    public int compare(InstrumentationInfo o1, InstrumentationInfo o2) {
-                        return o1.targetPackage.compareTo(o2.targetPackage);
-                    }
-                });
-                i = list != null ? list.size() : 0;
-                for (int p = 0; p < i; p++) {
-                    InstrumentationInfo ii = (InstrumentationInfo) list.get(p);
-                    pw.print("instrumentation:");
-                    if (showSourceDir) {
-                        pw.print(ii.sourceDir);
-                        pw.print("=");
-                    }
-                    pw.print(new ComponentName(ii.packageName, ii.name).flattenToShortString());
-                    pw.print(" (target=");
-                    pw.print(ii.targetPackage);
-                    pw.println(")");
-                }
-                return 0;
             } catch (RuntimeException ex) {
                 StringBuilder stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("Error: ");
@@ -1000,130 +1002,131 @@ class PackageManagerShellCommand extends ShellCommand {
         return 0;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x00db A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:74:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:73:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:143:0x010b A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:72:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:70:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
-    /* JADX WARNING: Missing block: B:89:0x015c, code:
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x00db A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:78:0x0109 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x0107 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:76:0x0105 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:75:0x0103 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:74:0x0102 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:73:0x0100 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:72:0x00fe A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x00fb A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x00f9 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x00f5 A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x00ea A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x00de A:{Catch:{ RuntimeException -> 0x0122 }} */
+    /* JADX WARNING: Missing block: B:91:0x015c, code skipped:
             if (r3.packageName.contains(r0) == false) goto L_0x015f;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int runListPackages(boolean showSourceDir) throws RemoteException {
         RuntimeException ex;
         int i;
+        StringBuilder stringBuilder;
         PackageManagerShellCommand packageManagerShellCommand = this;
         PrintWriter pw = getOutPrintWriter();
         boolean showVersionCode = false;
@@ -1174,6 +1177,7 @@ class PackageManagerShellCommand extends ShellCommand {
                                                                         obj = 2;
                                                                         break;
                                                                     }
+                                                                default:
                                                             }
                                                         } else if (nextOption.equals("--user")) {
                                                             obj = 10;
@@ -1215,10 +1219,10 @@ class PackageManagerShellCommand extends ShellCommand {
                                                                     uid = Integer.parseInt(getNextArgRequired());
                                                                     break;
                                                                 default:
-                                                                    StringBuilder stringBuilder = new StringBuilder();
-                                                                    stringBuilder.append("Error: Unknown option: ");
-                                                                    stringBuilder.append(nextOption);
-                                                                    pw.println(stringBuilder.toString());
+                                                                    StringBuilder stringBuilder2 = new StringBuilder();
+                                                                    stringBuilder2.append("Error: Unknown option: ");
+                                                                    stringBuilder2.append(nextOption);
+                                                                    pw.println(stringBuilder2.toString());
                                                                     return -1;
                                                             }
                                                             userId = userId2;
@@ -1513,10 +1517,10 @@ class PackageManagerShellCommand extends ShellCommand {
                         ex = e;
                         i = getFlags;
                         i2 = userId2;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("Error: ");
-                        stringBuilder2.append(ex.toString());
-                        pw.println(stringBuilder2.toString());
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Error: ");
+                        stringBuilder.append(ex.toString());
+                        pw.println(stringBuilder.toString());
                         return -1;
                     }
                 }
@@ -1598,6 +1602,11 @@ class PackageManagerShellCommand extends ShellCommand {
                 ex = e2;
                 i = getFlags;
                 i2 = userId2;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Error: ");
+                stringBuilder.append(ex.toString());
+                pw.println(stringBuilder.toString());
+                return -1;
             }
         }
     }
@@ -1618,6 +1627,7 @@ class PackageManagerShellCommand extends ShellCommand {
         PrintWriter pw = getOutPrintWriter();
         boolean groups = false;
         boolean userOnly = false;
+        boolean summary = false;
         boolean labels = false;
         boolean dangerousOnly = false;
         while (true) {
@@ -1625,6 +1635,7 @@ class PackageManagerShellCommand extends ShellCommand {
             String opt = nextOption;
             int hashCode;
             if (nextOption != null) {
+                boolean labels2;
                 int i = -1;
                 hashCode = opt.hashCode();
                 if (hashCode != 1495) {
@@ -1658,12 +1669,15 @@ class PackageManagerShellCommand extends ShellCommand {
                         dangerousOnly = true;
                         continue;
                     case 1:
+                        labels2 = true;
                         break;
                     case 2:
                         groups = true;
                         continue;
                     case 3:
                         groups = true;
+                        labels2 = true;
+                        summary = true;
                         break;
                     case 4:
                         userOnly = true;
@@ -1675,7 +1689,7 @@ class PackageManagerShellCommand extends ShellCommand {
                         pw.println(stringBuilder.toString());
                         return 1;
                 }
-                labels = true;
+                labels = labels2;
             } else {
                 PackageManagerShellCommand packageManagerShellCommand;
                 ArrayList<String> groupList = new ArrayList();
@@ -1694,20 +1708,20 @@ class PackageManagerShellCommand extends ShellCommand {
                 if (dangerousOnly) {
                     pw.println("Dangerous Permissions:");
                     pw.println(BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
-                    packageManagerShellCommand.doListPermissions(groupList, groups, labels, false, 1, 1);
+                    packageManagerShellCommand.doListPermissions(groupList, groups, labels, summary, 1, 1);
                     if (userOnly) {
                         pw.println("Normal Permissions:");
                         pw.println(BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
-                        doListPermissions(groupList, groups, labels, false, 0, 0);
+                        doListPermissions(groupList, groups, labels, summary, 0, 0);
                     }
                 } else if (userOnly) {
                     pw.println("Dangerous and Normal Permissions:");
                     pw.println(BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
-                    doListPermissions(groupList, groups, labels, false, 0, 1);
+                    doListPermissions(groupList, groups, labels, summary, 0, 1);
                 } else {
                     pw.println("All Permissions:");
                     pw.println(BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
-                    doListPermissions(groupList, groups, labels, false, -10000, 10000);
+                    doListPermissions(groupList, groups, labels, summary, -10000, 10000);
                 }
                 return 0;
             }
@@ -1803,26 +1817,30 @@ class PackageManagerShellCommand extends ShellCommand {
             try {
                 List<ResolveInfo> result = this.mInterface.queryIntentActivities(intent, intent.getType(), 0, this.mTargetUser).getList();
                 PrintWriter pw = getOutPrintWriter();
-                PrintWriterPrinter pr;
-                int i;
-                if (result == null || result.size() <= 0) {
-                    pw.println("No activities found");
-                } else if (this.mComponents) {
-                    pr = new PrintWriterPrinter(pw);
-                    for (i = 0; i < result.size(); i++) {
-                        printResolveInfo(pr, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
-                    }
-                } else {
-                    pw.print(result.size());
-                    pw.println(" activities found:");
-                    pr = new PrintWriterPrinter(pw);
-                    for (i = 0; i < result.size(); i++) {
-                        pw.print("  Activity #");
-                        pw.print(i);
-                        pw.println(":");
-                        printResolveInfo(pr, "    ", (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                if (result != null) {
+                    if (result.size() > 0) {
+                        PrintWriterPrinter pr;
+                        int i;
+                        if (this.mComponents) {
+                            pr = new PrintWriterPrinter(pw);
+                            for (i = 0; i < result.size(); i++) {
+                                printResolveInfo(pr, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                            }
+                        } else {
+                            pw.print(result.size());
+                            pw.println(" activities found:");
+                            pr = new PrintWriterPrinter(pw);
+                            for (i = 0; i < result.size(); i++) {
+                                pw.print("  Activity #");
+                                pw.print(i);
+                                pw.println(":");
+                                printResolveInfo(pr, "    ", (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                            }
+                        }
+                        return 0;
                     }
                 }
+                pw.println("No activities found");
                 return 0;
             } catch (RemoteException e) {
                 throw new RuntimeException("Failed calling service", e);
@@ -1838,26 +1856,30 @@ class PackageManagerShellCommand extends ShellCommand {
             try {
                 List<ResolveInfo> result = this.mInterface.queryIntentServices(intent, intent.getType(), 0, this.mTargetUser).getList();
                 PrintWriter pw = getOutPrintWriter();
-                PrintWriterPrinter pr;
-                int i;
-                if (result == null || result.size() <= 0) {
-                    pw.println("No services found");
-                } else if (this.mComponents) {
-                    pr = new PrintWriterPrinter(pw);
-                    for (i = 0; i < result.size(); i++) {
-                        printResolveInfo(pr, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
-                    }
-                } else {
-                    pw.print(result.size());
-                    pw.println(" services found:");
-                    pr = new PrintWriterPrinter(pw);
-                    for (i = 0; i < result.size(); i++) {
-                        pw.print("  Service #");
-                        pw.print(i);
-                        pw.println(":");
-                        printResolveInfo(pr, "    ", (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                if (result != null) {
+                    if (result.size() > 0) {
+                        PrintWriterPrinter pr;
+                        int i;
+                        if (this.mComponents) {
+                            pr = new PrintWriterPrinter(pw);
+                            for (i = 0; i < result.size(); i++) {
+                                printResolveInfo(pr, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                            }
+                        } else {
+                            pw.print(result.size());
+                            pw.println(" services found:");
+                            pr = new PrintWriterPrinter(pw);
+                            for (i = 0; i < result.size(); i++) {
+                                pw.print("  Service #");
+                                pw.print(i);
+                                pw.println(":");
+                                printResolveInfo(pr, "    ", (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                            }
+                        }
+                        return 0;
                     }
                 }
+                pw.println("No services found");
                 return 0;
             } catch (RemoteException e) {
                 throw new RuntimeException("Failed calling service", e);
@@ -1873,26 +1895,30 @@ class PackageManagerShellCommand extends ShellCommand {
             try {
                 List<ResolveInfo> result = this.mInterface.queryIntentReceivers(intent, intent.getType(), 0, this.mTargetUser).getList();
                 PrintWriter pw = getOutPrintWriter();
-                PrintWriterPrinter pr;
-                int i;
-                if (result == null || result.size() <= 0) {
-                    pw.println("No receivers found");
-                } else if (this.mComponents) {
-                    pr = new PrintWriterPrinter(pw);
-                    for (i = 0; i < result.size(); i++) {
-                        printResolveInfo(pr, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
-                    }
-                } else {
-                    pw.print(result.size());
-                    pw.println(" receivers found:");
-                    pr = new PrintWriterPrinter(pw);
-                    for (i = 0; i < result.size(); i++) {
-                        pw.print("  Receiver #");
-                        pw.print(i);
-                        pw.println(":");
-                        printResolveInfo(pr, "    ", (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                if (result != null) {
+                    if (result.size() > 0) {
+                        PrintWriterPrinter pr;
+                        int i;
+                        if (this.mComponents) {
+                            pr = new PrintWriterPrinter(pw);
+                            for (i = 0; i < result.size(); i++) {
+                                printResolveInfo(pr, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS, (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                            }
+                        } else {
+                            pw.print(result.size());
+                            pw.println(" receivers found:");
+                            pr = new PrintWriterPrinter(pw);
+                            for (i = 0; i < result.size(); i++) {
+                                pw.print("  Receiver #");
+                                pw.print(i);
+                                pw.println(":");
+                                printResolveInfo(pr, "    ", (ResolveInfo) result.get(i), this.mBrief, this.mComponents);
+                            }
+                        }
+                        return 0;
                     }
                 }
+                pw.println("No receivers found");
                 return 0;
             } catch (RemoteException e) {
                 throw new RuntimeException("Failed calling service", e);
@@ -2018,17 +2044,6 @@ class PackageManagerShellCommand extends ShellCommand {
         return 1;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:40:0x00ca A:{Splitter: B:33:0x0088, ExcHandler: android.os.RemoteException (r2_5 'e' android.util.AndroidException)} */
-    /* JADX WARNING: Missing block: B:40:0x00ca, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:41:0x00cb, code:
-            r0.println(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:42:0x00d2, code:
-            return 1;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private int runInstallExisting() throws RemoteException {
         PrintWriter pw = getOutPrintWriter();
         int userId = 0;
@@ -2094,7 +2109,9 @@ class PackageManagerShellCommand extends ShellCommand {
                 stringBuilder2.append(nextOption);
                 stringBuilder2.append(" doesn't exist");
                 throw new NameNotFoundException(stringBuilder2.toString());
-            } catch (AndroidException e) {
+            } catch (NameNotFoundException | RemoteException e) {
+                pw.println(e.toString());
+                return 1;
             }
         }
     }
@@ -2294,6 +2311,7 @@ class PackageManagerShellCommand extends ShellCommand {
         String compilationReason = null;
         String checkProfilesRaw = null;
         boolean secondaryDex = false;
+        String split = null;
         while (true) {
             String nextOption = getNextOption();
             String opt = nextOption;
@@ -2395,7 +2413,7 @@ class PackageManagerShellCommand extends ShellCommand {
                                                             continue;
                                                             continue;
                                                         case 8:
-                                                            String nextArgRequired = getNextArgRequired();
+                                                            split = getNextArgRequired();
                                                             continue;
                                                             continue;
                                                             continue;
@@ -2664,10 +2682,10 @@ class PackageManagerShellCommand extends ShellCommand {
                 } else if (compilerFilter == null && compilationReason == null) {
                     pw.println("Cannot run without any of compilation filter (\"-m\") and compilation reason (\"-r\") at the same time");
                     return 1;
-                } else if (allPackages && null != null) {
+                } else if (allPackages && split != null) {
                     pw.println("-a cannot be specified together with --split");
                     return 1;
-                } else if (!secondaryDex || null == null) {
+                } else if (!secondaryDex || split == null) {
                     String targetCompilerFilter;
                     StringBuilder stringBuilder2;
                     List<String> packageNames;
@@ -2759,7 +2777,7 @@ class PackageManagerShellCommand extends ShellCommand {
                             failedPackages2 = failedPackages4;
                             allPackages = true;
                             opt2 = opt;
-                            result = iPackageManager.performDexOptMode(compilerFilter, checkProfiles, targetCompilerFilter, forceCompilation, true, null);
+                            result = iPackageManager.performDexOptMode(compilerFilter, checkProfiles, targetCompilerFilter, forceCompilation, true, split);
                         }
                         if (!result) {
                             failedPackages2.add(compilerFilter);
@@ -2837,21 +2855,6 @@ class PackageManagerShellCommand extends ShellCommand {
         return 0;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:76:0x0146 A:{Splitter: B:40:0x00d0, ExcHandler: java.io.IOException (r0_38 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:76:0x0146, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:77:0x0147, code:
-            r4 = new java.lang.StringBuilder();
-            r4.append("Error when reading the profile fd: ");
-            r4.append(r0.getMessage());
-            r2.println(r4.toString());
-            r0.printStackTrace(r2);
-     */
-    /* JADX WARNING: Missing block: B:78:0x0163, code:
-            return -1;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private int runSnapshotProfile() throws RemoteException {
         OutputStream outStream;
         Throwable th;
@@ -2951,13 +2954,18 @@ class PackageManagerShellCommand extends ShellCommand {
                             } catch (Throwable th3) {
                                 th2 = th3;
                             }
-                        } catch (Exception e) {
+                        } catch (ErrnoException | IOException e) {
+                            StringBuilder stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append("Error when reading the profile fd: ");
+                            stringBuilder4.append(e.getMessage());
+                            pw.println(stringBuilder4.toString());
+                            e.printStackTrace(pw);
+                            return -1;
                         } catch (Throwable th22) {
                         }
-                    } else {
-                        pw.println("Error: callback not called");
-                        return callback2.mErrCode;
                     }
+                    pw.println("Error: callback not called");
+                    return callback2.mErrCode;
                 }
                 pw.println("Error: Runtime profiling is not enabled");
                 return -1;
@@ -2988,28 +2996,28 @@ class PackageManagerShellCommand extends ShellCommand {
         while (true) {
             String nextOption = getNextOption();
             String opt = nextOption;
-            boolean z = true;
+            int i = -1;
             if (nextOption != null) {
                 int hashCode = opt.hashCode();
                 if (hashCode != 1502) {
                     if (hashCode != 1333469547) {
                         if (hashCode == 1884113221 && opt.equals("--versionCode")) {
-                            z = true;
+                            i = 2;
                         }
                     } else if (opt.equals("--user")) {
-                        z = true;
+                        i = 1;
                     }
                 } else if (opt.equals("-k")) {
-                    z = false;
+                    i = 0;
                 }
-                switch (z) {
-                    case false:
+                switch (i) {
+                    case 0:
                         flags |= 1;
                         break;
-                    case true:
+                    case 1:
                         userId = UserHandle.parseUserArg(getNextArgRequired());
                         break;
-                    case true:
+                    case 2:
                         versionCode = Long.parseLong(getNextArgRequired());
                         break;
                     default:
@@ -3217,28 +3225,12 @@ class PackageManagerShellCommand extends ShellCommand {
         return 0;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x0136 A:{Splitter: B:60:0x0103, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:66:0x0134 A:{Splitter: B:63:0x010e, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* JADX WARNING: Missing block: B:6:0x002d, code:
+    /* JADX WARNING: Missing block: B:6:0x002d, code skipped:
             if (r13.equals("--user") != false) goto L_0x0077;
-     */
-    /* JADX WARNING: Missing block: B:66:0x0134, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:67:0x0136, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:68:0x0137, code:
-            r15 = r11;
-     */
-    /* JADX WARNING: Missing block: B:69:0x0138, code:
-            r2.println(r0.toString());
-     */
-    /* JADX WARNING: Missing block: B:70:0x0140, code:
-            return 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int runSuspend(boolean suspendedState) {
+        Exception e;
         PrintWriter pw = getOutPrintWriter();
         String dialogMessage = null;
         PersistableBundle appExtras = new PersistableBundle();
@@ -3333,8 +3325,9 @@ class PackageManagerShellCommand extends ShellCommand {
                 pw.println("Error: package name not specified");
                 return 1;
             }
+            String packageName2;
             try {
-                String packageName2 = packageName;
+                packageName2 = packageName;
                 try {
                     this.mInterface.setPackagesSuspendedAsUser(new String[]{packageName}, suspendedState, appExtras, launcherExtras, dialogMessage, Binder.getCallingUid() == 0 ? "root" : "com.android.shell", userId);
                     stringBuilder = new StringBuilder();
@@ -3344,9 +3337,16 @@ class PackageManagerShellCommand extends ShellCommand {
                     stringBuilder.append(this.mInterface.isPackageSuspendedForUser(packageName2, userId));
                     pw.println(stringBuilder.toString());
                     return 0;
-                } catch (RemoteException e) {
+                } catch (RemoteException | IllegalArgumentException e2) {
+                    e = e2;
+                    pw.println(e.toString());
+                    return 1;
                 }
-            } catch (RemoteException e2) {
+            } catch (RemoteException | IllegalArgumentException e3) {
+                e = e3;
+                packageName2 = packageName;
+                pw.println(e.toString());
+                return 1;
             }
         }
     }
@@ -3959,7 +3959,7 @@ class PackageManagerShellCommand extends ShellCommand {
                     break;
                 case 1509:
                     if (opt.equals("-r")) {
-                        i = true;
+                        i = 1;
                         break;
                     }
                     break;
@@ -4408,25 +4408,18 @@ class PackageManagerShellCommand extends ShellCommand {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x001e A:{Splitter: B:4:0x0016, ExcHandler: java.lang.IllegalStateException (r3_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x001e, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:?, code:
-            r4 = new java.lang.StringBuilder();
-            r4.append("Warning [Could not validate the dex paths: ");
-            r4.append(r3.getMessage());
-            r4.append("]");
-            r0.println(r4.toString());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private int doCommitSession(int sessionId, boolean logSuccess) throws RemoteException {
         PrintWriter pw = getOutPrintWriter();
         Session session = null;
         try {
             session = new Session(this.mInterface.getPackageInstaller().openSession(sessionId));
             DexMetadataHelper.validateDexPaths(session.getNames());
-        } catch (Exception e) {
+        } catch (IOException | IllegalStateException e) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Warning [Could not validate the dex paths: ");
+            stringBuilder.append(e.getMessage());
+            stringBuilder.append("]");
+            pw.println(stringBuilder.toString());
         } catch (Throwable th) {
             IoUtils.closeQuietly(session);
         }
@@ -4435,11 +4428,11 @@ class PackageManagerShellCommand extends ShellCommand {
         Intent result = receiver.getResult();
         int status = result.getIntExtra("android.content.pm.extra.STATUS", 1);
         if (status != 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Failure [");
-            stringBuilder.append(result.getStringExtra("android.content.pm.extra.STATUS_MESSAGE"));
-            stringBuilder.append("]");
-            pw.println(stringBuilder.toString());
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Failure [");
+            stringBuilder2.append(result.getStringExtra("android.content.pm.extra.STATUS_MESSAGE"));
+            stringBuilder2.append("]");
+            pw.println(stringBuilder2.toString());
         } else if (logSuccess) {
             pw.println("Success");
         }

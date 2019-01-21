@@ -6,9 +6,11 @@ import com.android.server.pm.auth.HwCertification;
 import com.android.server.pm.auth.HwCertification.CertificationData;
 import com.android.server.pm.auth.util.HwAuthLogger;
 import com.android.server.pm.auth.util.Utils;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,266 +96,164 @@ public class HwCertificationProcessor {
         }
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.pm.auth.processor.HwCertificationProcessor.readCert(java.lang.String, com.android.server.pm.auth.HwCertification):boolean, dom blocks: [B:9:0x0015, B:81:0x00f2]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public synchronized boolean readCert(java.lang.String r13, com.android.server.pm.auth.HwCertification r14) {
-        /*
-        r12 = this;
-        monitor-enter(r12);
-        r0 = r12.mAvailableTagList;	 Catch:{ all -> 0x0177 }
-        r0.clear();	 Catch:{ all -> 0x0177 }
-        r0 = 0;
-        r1 = 0;
-        r2 = 0;
-        r3 = 0;
-        r4 = r3;
-        r5 = r12.readCertFileFromApk(r13, r14);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r1 = r5;
-        if (r1 != 0) goto L_0x0035;
-        if (r1 == 0) goto L_0x0022;
-    L_0x0015:
-        r1.close();	 Catch:{ IOException -> 0x0019 }
-        goto L_0x0022;
-    L_0x0019:
-        r5 = move-exception;
-        r6 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r7 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r6, r7);	 Catch:{ all -> 0x0177 }
-        goto L_0x0023;
-    L_0x0023:
-        if (r2 == 0) goto L_0x0032;
-    L_0x0025:
-        r2.close();	 Catch:{ IOException -> 0x0029 }
-        goto L_0x0032;
-    L_0x0029:
-        r5 = move-exception;
-        r6 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r7 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r6, r7);	 Catch:{ all -> 0x0177 }
-        goto L_0x0033;
-    L_0x0033:
-        monitor-exit(r12);
-        return r3;
-    L_0x0035:
-        r5 = new java.io.BufferedReader;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r6 = new java.io.InputStreamReader;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r7 = "UTF-8";	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r6.<init>(r1, r7);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r5.<init>(r6);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r2 = r5;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-    L_0x0042:
-        r5 = r2.readLine();	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r0 = r5;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        if (r5 == 0) goto L_0x00c8;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-    L_0x0049:
-        r5 = r0;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r6 = ":";	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r6 = r5.split(r6);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r7 = r6[r3];	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r7 = r7.trim();	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r8 = com.android.server.pm.auth.HwCertification.isHwCertKeyContainsTag(r7);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        if (r8 == 0) goto L_0x00c6;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-    L_0x005c:
-        r8 = mProcessorMap;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r8 = r8.get(r7);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r8 = (com.android.server.pm.auth.processor.IProcessor) r8;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        if (r8 != 0) goto L_0x008f;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-    L_0x0066:
-        r9 = "HwCertificationManager";	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r10 = "HC_RC error process is null";	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r9, r10);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        if (r1 == 0) goto L_0x007d;
-    L_0x0070:
-        r1.close();	 Catch:{ IOException -> 0x0074 }
-        goto L_0x007d;
-    L_0x0074:
-        r9 = move-exception;
-        r10 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r11 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r10, r11);	 Catch:{ all -> 0x0177 }
-        goto L_0x007e;
-        r2.close();	 Catch:{ IOException -> 0x0083 }
-        goto L_0x008c;
-    L_0x0083:
-        r9 = move-exception;
-        r10 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r11 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r10, r11);	 Catch:{ all -> 0x0177 }
-        goto L_0x008d;
-    L_0x008d:
-        monitor-exit(r12);
-        return r3;
-    L_0x008f:
-        r9 = r14.mCertificationData;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r9 = r12.readCert(r8, r0, r9);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r4 = r9;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        if (r4 != 0) goto L_0x00c1;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-    L_0x0098:
-        r9 = "HwCertificationManager";	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r10 = "HC_RC error line mismatch";	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r9, r10);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        if (r1 == 0) goto L_0x00af;
-    L_0x00a2:
-        r1.close();	 Catch:{ IOException -> 0x00a6 }
-        goto L_0x00af;
-    L_0x00a6:
-        r9 = move-exception;
-        r10 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r11 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r10, r11);	 Catch:{ all -> 0x0177 }
-        goto L_0x00b0;
-        r2.close();	 Catch:{ IOException -> 0x00b5 }
-        goto L_0x00be;
-    L_0x00b5:
-        r9 = move-exception;
-        r10 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r11 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r10, r11);	 Catch:{ all -> 0x0177 }
-        goto L_0x00bf;
-    L_0x00bf:
-        monitor-exit(r12);
-        return r3;
-    L_0x00c1:
-        r9 = r12.mAvailableTagList;	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-        r9.add(r7);	 Catch:{ RuntimeException -> 0x011c, Exception -> 0x00f1 }
-    L_0x00c6:
-        goto L_0x0042;
-    L_0x00c8:
-        if (r1 == 0) goto L_0x00d7;
-    L_0x00ca:
-        r1.close();	 Catch:{ IOException -> 0x00ce }
-        goto L_0x00d7;
-    L_0x00ce:
-        r3 = move-exception;
-        r5 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r6 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r5, r6);	 Catch:{ all -> 0x0177 }
-        goto L_0x00d8;
-        r2.close();	 Catch:{ IOException -> 0x00dd }
-        goto L_0x00e6;
-    L_0x00dd:
-        r3 = move-exception;
-        r5 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r6 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r5, r6);	 Catch:{ all -> 0x0177 }
-        goto L_0x00e7;	 Catch:{ all -> 0x0177 }
-    L_0x00e7:
-        r3 = r12.mZipFile;	 Catch:{ all -> 0x0177 }
-        r14.setZipFile(r3);	 Catch:{ all -> 0x0177 }
-        r3 = 1;
-        monitor-exit(r12);
-        return r3;
-    L_0x00ef:
-        r3 = move-exception;
-        goto L_0x0156;
-    L_0x00f1:
-        r5 = move-exception;
-        r6 = "HwCertificationManager";	 Catch:{ all -> 0x00ef }
-        r7 = "HC_RC error throw exception";	 Catch:{ all -> 0x00ef }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r6, r7);	 Catch:{ all -> 0x00ef }
-        if (r1 == 0) goto L_0x0109;
-    L_0x00fc:
-        r1.close();	 Catch:{ IOException -> 0x0100 }
-        goto L_0x0109;
-    L_0x0100:
-        r6 = move-exception;
-        r7 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r8 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r7, r8);	 Catch:{ all -> 0x0177 }
-        goto L_0x010a;
-    L_0x010a:
-        if (r2 == 0) goto L_0x0119;
-    L_0x010c:
-        r2.close();	 Catch:{ IOException -> 0x0110 }
-        goto L_0x0119;
-    L_0x0110:
-        r6 = move-exception;
-        r7 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r8 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r7, r8);	 Catch:{ all -> 0x0177 }
-        goto L_0x011a;
-    L_0x011a:
-        monitor-exit(r12);
-        return r3;
-    L_0x011c:
-        r5 = move-exception;
-        r6 = "HwCertificationManager";	 Catch:{ all -> 0x00ef }
-        r7 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00ef }
-        r7.<init>();	 Catch:{ all -> 0x00ef }
-        r8 = "HC_RC error runtimeException : ";	 Catch:{ all -> 0x00ef }
-        r7.append(r8);	 Catch:{ all -> 0x00ef }
-        r7.append(r5);	 Catch:{ all -> 0x00ef }
-        r7 = r7.toString();	 Catch:{ all -> 0x00ef }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r6, r7);	 Catch:{ all -> 0x00ef }
-        if (r1 == 0) goto L_0x0143;
-    L_0x0136:
-        r1.close();	 Catch:{ IOException -> 0x013a }
-        goto L_0x0143;
-    L_0x013a:
-        r6 = move-exception;
-        r7 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r8 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r7, r8);	 Catch:{ all -> 0x0177 }
-        goto L_0x0144;
-    L_0x0144:
-        if (r2 == 0) goto L_0x0153;
-    L_0x0146:
-        r2.close();	 Catch:{ IOException -> 0x014a }
-        goto L_0x0153;
-    L_0x014a:
-        r6 = move-exception;
-        r7 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r8 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r7, r8);	 Catch:{ all -> 0x0177 }
-        goto L_0x0154;
-    L_0x0154:
-        monitor-exit(r12);
-        return r3;
-        if (r1 == 0) goto L_0x0166;
-    L_0x0159:
-        r1.close();	 Catch:{ IOException -> 0x015d }
-        goto L_0x0166;
-    L_0x015d:
-        r5 = move-exception;
-        r6 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r7 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r6, r7);	 Catch:{ all -> 0x0177 }
-        goto L_0x0167;
-    L_0x0167:
-        if (r2 == 0) goto L_0x0176;
-    L_0x0169:
-        r2.close();	 Catch:{ IOException -> 0x016d }
-        goto L_0x0176;
-    L_0x016d:
-        r5 = move-exception;
-        r6 = "HwCertificationManager";	 Catch:{ all -> 0x0177 }
-        r7 = "read cert error : close stream failed!";	 Catch:{ all -> 0x0177 }
-        com.android.server.pm.auth.util.HwAuthLogger.e(r6, r7);	 Catch:{ all -> 0x0177 }
-    L_0x0176:
-        throw r3;	 Catch:{ all -> 0x0177 }
-    L_0x0177:
-        r13 = move-exception;
-        monitor-exit(r12);
-        throw r13;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.auth.processor.HwCertificationProcessor.readCert(java.lang.String, com.android.server.pm.auth.HwCertification):boolean");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:9:0x0015, B:82:0x00f2] */
+    /* JADX WARNING: Missing block: B:13:?, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+     */
+    /* JADX WARNING: Missing block: B:30:0x0066, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "HC_RC error process is null");
+     */
+    /* JADX WARNING: Missing block: B:31:0x006e, code skipped:
+            if (r1 == null) goto L_0x007f;
+     */
+    /* JADX WARNING: Missing block: B:33:?, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:36:?, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+     */
+    /* JADX WARNING: Missing block: B:47:0x0098, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "HC_RC error line mismatch");
+     */
+    /* JADX WARNING: Missing block: B:48:0x00a0, code skipped:
+            if (r1 == null) goto L_0x00b1;
+     */
+    /* JADX WARNING: Missing block: B:50:?, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:53:?, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+     */
+    /* JADX WARNING: Missing block: B:64:0x00c8, code skipped:
+            if (r1 == null) goto L_0x00d9;
+     */
+    /* JADX WARNING: Missing block: B:66:?, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:69:?, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+     */
+    /* JADX WARNING: Missing block: B:115:0x0157, code skipped:
+            if (r1 != null) goto L_0x0159;
+     */
+    /* JADX WARNING: Missing block: B:117:?, code skipped:
+            r1.close();
+     */
+    /* JADX WARNING: Missing block: B:120:?, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+     */
+    /* JADX WARNING: Missing block: B:121:0x0167, code skipped:
+            if (r2 != null) goto L_0x0169;
+     */
+    /* JADX WARNING: Missing block: B:123:?, code skipped:
+            r2.close();
+     */
+    /* JADX WARNING: Missing block: B:126:?, code skipped:
+            com.android.server.pm.auth.util.HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public synchronized boolean readCert(String apkPath, HwCertification cert) {
+        BufferedReader br;
+        this.mAvailableTagList.clear();
+        InputStream input = null;
+        br = null;
+        boolean readResult = false;
+        try {
+            input = readCertFileFromApk(apkPath, cert);
+            if (input != null) {
+                br = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+                while (true) {
+                    String readLine = br.readLine();
+                    String line = readLine;
+                    if (readLine == null) {
+                        break;
+                    }
+                    String keyTag = line.split(":")[0].trim();
+                    if (HwCertification.isHwCertKeyContainsTag(keyTag)) {
+                        IProcessor processor = (IProcessor) mProcessorMap.get(keyTag);
+                        if (processor == null) {
+                            break;
+                        } else if (!readCert(processor, line, cert.mCertificationData)) {
+                            break;
+                        } else {
+                            this.mAvailableTagList.add(keyTag);
+                        }
+                    }
+                }
+            } else {
+                if (input != null) {
+                    input.close();
+                }
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+                    }
+                }
+            }
+        } catch (RuntimeException e2) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("HC_RC error runtimeException : ");
+            stringBuilder.append(e2);
+            HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e3) {
+                    HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+                }
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e4) {
+                    HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+                }
+            }
+            return false;
+        } catch (Exception e5) {
+            HwAuthLogger.e("HwCertificationManager", "HC_RC error throw exception");
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e6) {
+                    HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+                }
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e7) {
+                    HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+                }
+            }
+            return false;
+        }
+        cert.setZipFile(this.mZipFile);
+        return true;
+        return false;
+        try {
+            br.close();
+        } catch (IOException e8) {
+            HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+        }
+        return false;
+        return false;
+        try {
+            br.close();
+        } catch (IOException e9) {
+            HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+        }
+        cert.setZipFile(this.mZipFile);
+        return true;
+        return false;
+        try {
+            br.close();
+        } catch (IOException e10) {
+            HwAuthLogger.e("HwCertificationManager", "read cert error : close stream failed!");
+        }
+        return false;
     }
 
     private boolean readCert(IProcessor processor, String line, CertificationData rawCert) {

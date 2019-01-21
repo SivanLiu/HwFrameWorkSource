@@ -56,6 +56,7 @@ import android.os.Parcel;
 import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.ServiceSpecificException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserHandle;
@@ -352,7 +353,7 @@ public class HwConnectivityService extends ConnectivityService {
                     if (netInfo.getState() == State.CONNECTED) {
                         HwConnectivityService.this.isConnected = true;
                     } else if (netInfo.getState() == State.DISCONNECTED && netInfo.getDetailedState() == DetailedState.DISCONNECTED && HwConnectivityService.this.isConnected) {
-                        Toast.makeText(context, 33686195, 1).show();
+                        Toast.makeText(context, 33686198, 1).show();
                         HwConnectivityService.this.isConnected = false;
                     }
                 }
@@ -533,7 +534,7 @@ public class HwConnectivityService extends ConnectivityService {
                 extras.putInt("DnsDelayOverThresCnt", this.mDnsDelayOverThresCnt);
                 extras.putInt("PrivDnsDisableCnt", this.backoffCnt);
                 extras.putString("DnsAddr", this.mAssignedServers);
-                extras.putBoolean("PrivDns", true ^ this.mBypassPrivateDns);
+                extras.putBoolean("PrivDns", 1 ^ this.mBypassPrivateDns);
                 intent.putExtras(extras);
                 this.mContext.sendBroadcast(intent, CHR_BROADCAST_PERMISSION);
             }
@@ -1399,7 +1400,12 @@ public class HwConnectivityService extends ConnectivityService {
     private boolean isConnectedOrConnectingOrSuspended(NetworkInfo info) {
         boolean z;
         synchronized (this) {
-            z = info.getState() == State.CONNECTED || info.getState() == State.CONNECTING || info.getState() == State.SUSPENDED;
+            if (!(info.getState() == State.CONNECTED || info.getState() == State.CONNECTING)) {
+                if (info.getState() != State.SUSPENDED) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
@@ -1409,13 +1415,13 @@ public class HwConnectivityService extends ConnectivityService {
         buider.setTitle(33685962);
         buider.setMessage(33685963);
         buider.setIcon(17301543);
-        buider.setPositiveButton(17040145, new OnClickListener() {
+        buider.setPositiveButton(17040146, new OnClickListener() {
             public void onClick(DialogInterface dialoginterface, int i) {
                 HwTelephonyManagerInner.getDefault().setDataRoamingEnabledWithoutPromp(true);
                 Toast.makeText(HwConnectivityService.this.mContext, 33685965, 1).show();
             }
         });
-        buider.setNegativeButton(17040144, new OnClickListener() {
+        buider.setNegativeButton(17040145, new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(HwConnectivityService.this.mContext, 33685966, 1).show();
             }
@@ -1443,7 +1449,7 @@ public class HwConnectivityService extends ConnectivityService {
         }
         final CheckBox finalBox = checkBox;
         buider.setIcon(17301543);
-        buider.setPositiveButton(17040145, new OnClickListener() {
+        buider.setPositiveButton(17040146, new OnClickListener() {
             public void onClick(DialogInterface dialoginterface, int i) {
                 HwTelephonyManagerInner.getDefault().setDataEnabledWithoutPromp(true);
                 if (!TextUtils.isEmpty(HwConnectivityService.this.mSimChangeAlertDataConnect)) {
@@ -1459,7 +1465,7 @@ public class HwConnectivityService extends ConnectivityService {
                 HwConnectivityService.this.mShowWarningRoamingToPdp = false;
             }
         });
-        buider.setNegativeButton(17040144, new OnClickListener() {
+        buider.setNegativeButton(17040145, new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 HwConnectivityService.connectivityServiceUtils.getContext(HwConnectivityService.this).sendBroadcast(new Intent(HwConnectivityService.DISABEL_DATA_SERVICE_ACTION));
                 HwTelephonyManagerInner.getDefault().setDataEnabledWithoutPromp(false);
@@ -1619,8 +1625,8 @@ public class HwConnectivityService extends ConnectivityService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:29:0x00ef A:{Catch:{ ActivityNotFoundException -> 0x01a1 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x00ee A:{RETURN, Catch:{ ActivityNotFoundException -> 0x01a1 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x00ef A:{Catch:{ ActivityNotFoundException -> 0x01a1 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x00ee A:{RETURN, Catch:{ ActivityNotFoundException -> 0x01a1 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean startBrowserForWifiPortal(Notification notification, String ssid) {
         if (shouldDisablePortalCheck(ssid)) {
@@ -2081,17 +2087,19 @@ public class HwConnectivityService extends ConnectivityService {
         NetworkInfo activeNetworkInfo = super.getActiveNetworkInfo();
         Network[] networks = super.getAllNetworks();
         int i = 0;
-        if (activeNetworkInfo != null) {
-            if (activeNetworkInfo.getType() == 1) {
+        if (activeNetworkInfo != null && activeNetwork != null) {
+            NetworkCapabilities anc = super.getNetworkCapabilities(activeNetwork);
+            boolean activeVpn = anc != null && anc.hasTransport(4);
+            if (!activeVpn && activeNetworkInfo.getType() == 1) {
                 return activeNetwork;
             }
-            if (activeNetworkInfo.getType() == 1) {
+            if (!activeVpn && activeNetworkInfo.getType() == 1) {
                 return null;
             }
             while (i < networks.length) {
                 if (!(activeNetwork == null || networks[i].netId == activeNetwork.netId)) {
                     NetworkCapabilities nc = super.getNetworkCapabilities(networks[i]);
-                    if (nc != null && nc.hasTransport(1)) {
+                    if (!(nc == null || !nc.hasTransport(1) || nc.hasTransport(4))) {
                         return networks[i];
                     }
                 }
@@ -2663,18 +2671,8 @@ public class HwConnectivityService extends ConnectivityService {
         context.registerReceiver(this.mVerizonWifiDisconnectReceiver, filter);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x00e9 A:{ExcHandler: android.os.ServiceSpecificException (r4_5 'e' java.lang.Exception), Splitter: B:23:0x00b1, Catch:{ Exception -> 0x010a }} */
-    /* JADX WARNING: Missing block: B:28:0x00e9, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:29:0x00ea, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("Failed to add addr : ");
-            r5.append(r4);
-            loge(r5.toString());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void updateDefaultNetworkRouting(NetworkAgentInfo oldDefaultNet, NetworkAgentInfo newDefaultNet) {
+        StringBuilder stringBuilder;
         if (newDefaultNet == null || newDefaultNet.linkProperties == null || newDefaultNet.networkInfo == null) {
             log("invalid new defautl net");
             return;
@@ -2683,38 +2681,42 @@ public class HwConnectivityService extends ConnectivityService {
             String oldIface = oldDefaultNet.linkProperties.getInterfaceName();
             if (oldIface != null) {
                 try {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Remove oldIface ");
-                    stringBuilder.append(oldIface);
-                    stringBuilder.append(" from network ");
-                    stringBuilder.append(oldDefaultNet.network.netId);
-                    log(stringBuilder.toString());
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Remove oldIface ");
+                    stringBuilder2.append(oldIface);
+                    stringBuilder2.append(" from network ");
+                    stringBuilder2.append(oldDefaultNet.network.netId);
+                    log(stringBuilder2.toString());
                     this.mNetd.removeInterfaceFromNetwork(oldIface, oldDefaultNet.network.netId);
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Clear oldIface ");
-                    stringBuilder.append(oldIface);
-                    stringBuilder.append(" addresses");
-                    log(stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Clear oldIface ");
+                    stringBuilder2.append(oldIface);
+                    stringBuilder2.append(" addresses");
+                    log(stringBuilder2.toString());
                     this.mNetd.clearInterfaceAddresses(oldIface);
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("recovery oldIface ");
-                    stringBuilder.append(oldIface);
-                    stringBuilder.append(" addresses, immediately");
-                    log(stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("recovery oldIface ");
+                    stringBuilder2.append(oldIface);
+                    stringBuilder2.append(" addresses, immediately");
+                    log(stringBuilder2.toString());
                     for (LinkAddress oldAddr : oldDefaultNet.linkProperties.getLinkAddresses()) {
                         String oldAddrString = oldAddr.getAddress().getHostAddress();
                         try {
-                            StringBuilder stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("add addr_x:  to interface: ");
-                            stringBuilder2.append(oldIface);
-                            log(stringBuilder2.toString());
-                            this.mNetd.getNetdService().interfaceAddAddress(oldIface, oldAddrString, oldAddr.getPrefixLength());
-                        } catch (Exception e) {
-                        } catch (Exception e2) {
                             StringBuilder stringBuilder3 = new StringBuilder();
-                            stringBuilder3.append("Failed to add addr : ");
-                            stringBuilder3.append(e2);
-                            loge(stringBuilder3.toString());
+                            stringBuilder3.append("add addr_x:  to interface: ");
+                            stringBuilder3.append(oldIface);
+                            log(stringBuilder3.toString());
+                            this.mNetd.getNetdService().interfaceAddAddress(oldIface, oldAddrString, oldAddr.getPrefixLength());
+                        } catch (RemoteException | ServiceSpecificException e) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed to add addr : ");
+                            stringBuilder.append(e);
+                            loge(stringBuilder.toString());
+                        } catch (Exception e2) {
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("Failed to add addr : ");
+                            stringBuilder.append(e2);
+                            loge(stringBuilder.toString());
                         }
                     }
                     log("refresh linkproperties for recovery oldIface");

@@ -1,7 +1,7 @@
 package org.bouncycastle.crypto.engines;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import org.bouncycastle.crypto.BasicAgreement;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -57,37 +57,36 @@ public class IESEngine {
             byte[] bArr2;
             byte[] bArr3;
             int i3;
-            Object obj;
-            Object obj2;
+            byte[] bArr4;
             if (this.cipher == null) {
-                obj = new byte[((i2 - this.V.length) - this.mac.getMacSize())];
-                bArr2 = new byte[(this.param.getMacKeySize() / 8)];
-                obj2 = new byte[(obj.length + bArr2.length)];
-                this.kdf.generateBytes(obj2, 0, obj2.length);
+                bArr2 = new byte[((i2 - this.V.length) - this.mac.getMacSize())];
+                bArr3 = new byte[(this.param.getMacKeySize() / 8)];
+                bArr4 = new byte[(bArr2.length + bArr3.length)];
+                this.kdf.generateBytes(bArr4, 0, bArr4.length);
                 if (this.V.length != 0) {
-                    System.arraycopy(obj2, 0, bArr2, 0, bArr2.length);
-                    System.arraycopy(obj2, bArr2.length, obj, 0, obj.length);
+                    System.arraycopy(bArr4, 0, bArr3, 0, bArr3.length);
+                    System.arraycopy(bArr4, bArr3.length, bArr2, 0, bArr2.length);
                 } else {
-                    System.arraycopy(obj2, 0, obj, 0, obj.length);
-                    System.arraycopy(obj2, obj.length, bArr2, 0, bArr2.length);
+                    System.arraycopy(bArr4, 0, bArr2, 0, bArr2.length);
+                    System.arraycopy(bArr4, bArr2.length, bArr3, 0, bArr3.length);
                 }
-                byte[] bArr4 = new byte[obj.length];
-                for (int i4 = 0; i4 != obj.length; i4++) {
-                    bArr4[i4] = (byte) (bArr[(this.V.length + i) + i4] ^ obj[i4]);
+                bArr4 = new byte[bArr2.length];
+                for (int i4 = 0; i4 != bArr2.length; i4++) {
+                    bArr4[i4] = (byte) (bArr[(this.V.length + i) + i4] ^ bArr2[i4]);
                 }
-                bArr3 = bArr4;
+                bArr2 = bArr4;
                 i3 = 0;
             } else {
-                obj = new byte[(((IESWithCipherParameters) this.param).getCipherKeySize() / 8)];
-                bArr2 = new byte[(this.param.getMacKeySize() / 8)];
-                obj2 = new byte[(obj.length + bArr2.length)];
-                this.kdf.generateBytes(obj2, 0, obj2.length);
-                System.arraycopy(obj2, 0, obj, 0, obj.length);
-                System.arraycopy(obj2, obj.length, bArr2, 0, bArr2.length);
-                CipherParameters keyParameter = new KeyParameter(obj);
+                bArr2 = new byte[(((IESWithCipherParameters) this.param).getCipherKeySize() / 8)];
+                bArr3 = new byte[(this.param.getMacKeySize() / 8)];
+                bArr4 = new byte[(bArr2.length + bArr3.length)];
+                this.kdf.generateBytes(bArr4, 0, bArr4.length);
+                System.arraycopy(bArr4, 0, bArr2, 0, bArr2.length);
+                System.arraycopy(bArr4, bArr2.length, bArr3, 0, bArr3.length);
+                KeyParameter keyParameter = new KeyParameter(bArr2);
                 this.cipher.init(false, this.IV != null ? new ParametersWithIV(keyParameter, this.IV) : keyParameter);
-                bArr3 = new byte[this.cipher.getOutputSize((i2 - this.V.length) - this.mac.getMacSize())];
-                i3 = this.cipher.processBytes(bArr, i + this.V.length, (i2 - this.V.length) - this.mac.getMacSize(), bArr3, 0);
+                bArr2 = new byte[this.cipher.getOutputSize((i2 - this.V.length) - this.mac.getMacSize())];
+                i3 = this.cipher.processBytes(bArr, i + this.V.length, (i2 - this.V.length) - this.mac.getMacSize(), bArr2, 0);
             }
             byte[] encodingV = this.param.getEncodingV();
             byte[] bArr5 = null;
@@ -97,7 +96,7 @@ public class IESEngine {
             int i5 = i + i2;
             byte[] copyOfRange = Arrays.copyOfRange(bArr, i5 - this.mac.getMacSize(), i5);
             byte[] bArr6 = new byte[copyOfRange.length];
-            this.mac.init(new KeyParameter(bArr2));
+            this.mac.init(new KeyParameter(bArr3));
             this.mac.update(bArr, i + this.V.length, (i2 - this.V.length) - bArr6.length);
             if (encodingV != null) {
                 this.mac.update(encodingV, 0, encodingV.length);
@@ -107,7 +106,7 @@ public class IESEngine {
             }
             this.mac.doFinal(bArr6, 0);
             if (Arrays.constantTimeAreEqual(copyOfRange, bArr6)) {
-                return this.cipher == null ? bArr3 : Arrays.copyOfRange(bArr3, 0, i3 + this.cipher.doFinal(bArr3, i3));
+                return this.cipher == null ? bArr2 : Arrays.copyOfRange(bArr2, 0, i3 + this.cipher.doFinal(bArr2, i3));
             } else {
                 throw new InvalidCipherTextException("invalid MAC");
             }
@@ -116,77 +115,77 @@ public class IESEngine {
     }
 
     private byte[] encryptBlock(byte[] bArr, int i, int i2) throws InvalidCipherTextException {
-        Object obj;
         byte[] bArr2;
-        Object obj2;
+        byte[] bArr3;
+        byte[] bArr4;
         if (this.cipher == null) {
-            obj = new byte[i2];
-            bArr2 = new byte[(this.param.getMacKeySize() / 8)];
-            obj2 = new byte[(obj.length + bArr2.length)];
-            this.kdf.generateBytes(obj2, 0, obj2.length);
+            bArr2 = new byte[i2];
+            bArr3 = new byte[(this.param.getMacKeySize() / 8)];
+            bArr4 = new byte[(bArr2.length + bArr3.length)];
+            this.kdf.generateBytes(bArr4, 0, bArr4.length);
             if (this.V.length != 0) {
-                System.arraycopy(obj2, 0, bArr2, 0, bArr2.length);
-                System.arraycopy(obj2, bArr2.length, obj, 0, obj.length);
+                System.arraycopy(bArr4, 0, bArr3, 0, bArr3.length);
+                System.arraycopy(bArr4, bArr3.length, bArr2, 0, bArr2.length);
             } else {
-                System.arraycopy(obj2, 0, obj, 0, obj.length);
-                System.arraycopy(obj2, i2, bArr2, 0, bArr2.length);
+                System.arraycopy(bArr4, 0, bArr2, 0, bArr2.length);
+                System.arraycopy(bArr4, i2, bArr3, 0, bArr3.length);
             }
-            obj2 = new byte[i2];
+            bArr4 = new byte[i2];
             for (int i3 = 0; i3 != i2; i3++) {
-                obj2[i3] = (byte) (bArr[i + i3] ^ obj[i3]);
+                bArr4[i3] = (byte) (bArr[i + i3] ^ bArr2[i3]);
             }
-            obj = obj2;
+            bArr2 = bArr4;
         } else {
             BufferedBlockCipher bufferedBlockCipher;
             CipherParameters parametersWithIV;
-            obj = new byte[(((IESWithCipherParameters) this.param).getCipherKeySize() / 8)];
-            bArr2 = new byte[(this.param.getMacKeySize() / 8)];
-            obj2 = new byte[(obj.length + bArr2.length)];
-            this.kdf.generateBytes(obj2, 0, obj2.length);
-            System.arraycopy(obj2, 0, obj, 0, obj.length);
-            System.arraycopy(obj2, obj.length, bArr2, 0, bArr2.length);
+            bArr2 = new byte[(((IESWithCipherParameters) this.param).getCipherKeySize() / 8)];
+            bArr3 = new byte[(this.param.getMacKeySize() / 8)];
+            bArr4 = new byte[(bArr2.length + bArr3.length)];
+            this.kdf.generateBytes(bArr4, 0, bArr4.length);
+            System.arraycopy(bArr4, 0, bArr2, 0, bArr2.length);
+            System.arraycopy(bArr4, bArr2.length, bArr3, 0, bArr3.length);
             if (this.IV != null) {
                 bufferedBlockCipher = this.cipher;
-                parametersWithIV = new ParametersWithIV(new KeyParameter(obj), this.IV);
+                parametersWithIV = new ParametersWithIV(new KeyParameter(bArr2), this.IV);
             } else {
                 bufferedBlockCipher = this.cipher;
-                parametersWithIV = new KeyParameter(obj);
+                parametersWithIV = new KeyParameter(bArr2);
             }
             bufferedBlockCipher.init(true, parametersWithIV);
-            obj = new byte[this.cipher.getOutputSize(i2)];
-            int processBytes = this.cipher.processBytes(bArr, i, i2, obj, 0);
-            i2 = processBytes + this.cipher.doFinal(obj, processBytes);
+            bArr2 = new byte[this.cipher.getOutputSize(i2)];
+            int processBytes = this.cipher.processBytes(bArr, i, i2, bArr2, 0);
+            i2 = processBytes + this.cipher.doFinal(bArr2, processBytes);
         }
         bArr = this.param.getEncodingV();
-        byte[] bArr3 = null;
+        byte[] bArr5 = null;
         if (this.V.length != 0) {
-            bArr3 = getLengthTag(bArr);
+            bArr5 = getLengthTag(bArr);
         }
-        obj2 = new byte[this.mac.getMacSize()];
-        this.mac.init(new KeyParameter(bArr2));
-        this.mac.update(obj, 0, obj.length);
+        bArr4 = new byte[this.mac.getMacSize()];
+        this.mac.init(new KeyParameter(bArr3));
+        this.mac.update(bArr2, 0, bArr2.length);
         if (bArr != null) {
             this.mac.update(bArr, 0, bArr.length);
         }
         if (this.V.length != 0) {
-            this.mac.update(bArr3, 0, bArr3.length);
+            this.mac.update(bArr5, 0, bArr5.length);
         }
-        this.mac.doFinal(obj2, 0);
-        Object obj3 = new byte[((this.V.length + i2) + obj2.length)];
-        System.arraycopy(this.V, 0, obj3, 0, this.V.length);
-        System.arraycopy(obj, 0, obj3, this.V.length, i2);
-        System.arraycopy(obj2, 0, obj3, this.V.length + i2, obj2.length);
-        return obj3;
+        this.mac.doFinal(bArr4, 0);
+        bArr = new byte[((this.V.length + i2) + bArr4.length)];
+        System.arraycopy(this.V, 0, bArr, 0, this.V.length);
+        System.arraycopy(bArr2, 0, bArr, this.V.length, i2);
+        System.arraycopy(bArr4, 0, bArr, this.V.length + i2, bArr4.length);
+        return bArr;
     }
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0019 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -198,16 +197,13 @@ public class IESEngine {
         r1 = this;
         r0 = r2 instanceof org.bouncycastle.crypto.params.ParametersWithIV;
         if (r0 == 0) goto L_0x0015;
-    L_0x0004:
         r2 = (org.bouncycastle.crypto.params.ParametersWithIV) r2;
         r0 = r2.getIV();
         r1.IV = r0;
         r2 = r2.getParameters();
-    L_0x0010:
         r2 = (org.bouncycastle.crypto.params.IESParameters) r2;
         r1.param = r2;
         return;
-    L_0x0015:
         r0 = 0;
         r1.IV = r0;
         goto L_0x0010;
@@ -283,16 +279,16 @@ public class IESEngine {
             return bArr;
         }
         if (this.keyParser != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr, i, i2);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr, i, i2);
             try {
                 this.pubParam = this.keyParser.readKey(byteArrayInputStream);
                 encodedPublicKey = Arrays.copyOfRange(bArr, i, (i2 - byteArrayInputStream.available()) + i);
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to recover ephemeral public key: ");
                 stringBuilder.append(e.getMessage());
                 throw new InvalidCipherTextException(stringBuilder.toString(), e);
-            } catch (Throwable e2) {
+            } catch (IllegalArgumentException e2) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to recover ephemeral public key: ");
                 stringBuilder.append(e2.getMessage());

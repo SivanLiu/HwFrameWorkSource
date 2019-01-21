@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.bluetooth.BluetoothActivityEnergyInfo;
 import android.common.HwFrameworkFactory;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.util.NetworkConstants;
 import android.net.wifi.WifiActivityEnergyInfo;
 import android.os.BatteryStats.Uid;
@@ -12,6 +14,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
+import android.os.ParcelFormatException;
 import android.os.PowerManagerInternal;
 import android.os.PowerManagerInternal.LowPowerModeListener;
 import android.os.PowerSaveState;
@@ -19,6 +22,7 @@ import android.os.Process;
 import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.os.UserHandle;
 import android.os.UserManagerInternal;
 import android.os.WorkSource;
 import android.os.connectivity.CellularBatteryStats;
@@ -35,16 +39,21 @@ import android.util.Slog;
 import android.util.StatsLog;
 import com.android.internal.app.IBatteryStats;
 import com.android.internal.app.IBatteryStats.Stub;
+import com.android.internal.os.AtomicFile;
+import com.android.internal.os.BatteryStatsHelper;
 import com.android.internal.os.BatteryStatsImpl;
 import com.android.internal.os.BatteryStatsImpl.PlatformIdleStateCallback;
 import com.android.internal.os.BatteryStatsImpl.UserInfoProvider;
 import com.android.internal.os.PowerProfile;
 import com.android.internal.os.RpmStats;
+import com.android.internal.util.DumpUtils;
 import com.android.server.HwServiceFactory;
 import com.android.server.LocalServices;
+import com.android.server.utils.PriorityDump;
 import com.huawei.pgmng.log.LogPower;
 import huawei.android.security.IHwBehaviorCollectManager.BehaviorId;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
@@ -52,6 +61,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
@@ -162,904 +172,6 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
     private native int getSubsystemLowPowerStats(ByteBuffer byteBuffer);
 
     private static native int nativeWaitWakeup(ByteBuffer byteBuffer);
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    protected void dump(java.io.FileDescriptor r34, java.io.PrintWriter r35, java.lang.String[] r36) {
-        /*
-        r33 = this;
-        r1 = r33;
-        r9 = r35;
-        r10 = r36;
-        r0 = r1.mContext;
-        r2 = "BatteryStatsService";
-        r0 = com.android.internal.util.DumpUtils.checkDumpAndUsageStatsPermission(r0, r2, r9);
-        if (r0 != 0) goto L_0x0011;
-    L_0x0010:
-        return;
-    L_0x0011:
-        r0 = 0;
-        r2 = 0;
-        r3 = 0;
-        r4 = 0;
-        r5 = 0;
-        r6 = 0;
-        r7 = -1;
-        r11 = -1;
-        if (r10 == 0) goto L_0x020b;
-    L_0x001c:
-        r14 = r7;
-        r7 = r6;
-        r6 = r4;
-        r4 = r3;
-        r3 = r2;
-        r2 = r0;
-        r0 = 0;
-    L_0x0023:
-        r8 = r0;
-        r0 = r10.length;
-        if (r8 >= r0) goto L_0x0201;
-    L_0x0027:
-        r13 = r10[r8];
-        r0 = "--checkin";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0035;
-    L_0x0031:
-        r3 = 1;
-        r6 = 1;
-        goto L_0x01a6;
-    L_0x0035:
-        r0 = "--history";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0041;
-    L_0x003d:
-        r2 = r2 | 8;
-        goto L_0x01a6;
-    L_0x0041:
-        r0 = "--history-start";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0062;
-    L_0x0049:
-        r2 = r2 | 8;
-        r8 = r8 + 1;
-        r0 = r10.length;
-        if (r8 < r0) goto L_0x0059;
-    L_0x0050:
-        r0 = "Missing time argument for --history-since";
-        r9.println(r0);
-        r1.dumpHelp(r9);
-        return;
-    L_0x0059:
-        r0 = r10[r8];
-        r14 = java.lang.Long.parseLong(r0);
-        r7 = 1;
-        goto L_0x01a6;
-    L_0x0062:
-        r0 = "-c";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x006f;
-    L_0x006a:
-        r3 = 1;
-        r2 = r2 | 16;
-        goto L_0x01a6;
-    L_0x006f:
-        r0 = "--proto";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x007a;
-    L_0x0077:
-        r4 = 1;
-        goto L_0x01a6;
-    L_0x007a:
-        r0 = "--charged";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0086;
-    L_0x0082:
-        r2 = r2 | 2;
-        goto L_0x01a6;
-    L_0x0086:
-        r0 = "--daily";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0092;
-    L_0x008e:
-        r2 = r2 | 4;
-        goto L_0x01a6;
-    L_0x0092:
-        r0 = "--reset";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x00bf;
-    L_0x009a:
-        r12 = r1.mStats;
-        monitor-enter(r12);
-        r0 = r1.mStats;	 Catch:{ all -> 0x00b8 }
-        r0.resetAllStatsCmdLocked();	 Catch:{ all -> 0x00b8 }
-        r0 = "Battery stats reset.";	 Catch:{ all -> 0x00b8 }
-        r9.println(r0);	 Catch:{ all -> 0x00b8 }
-        r5 = 1;	 Catch:{ all -> 0x00b8 }
-        monitor-exit(r12);	 Catch:{ all -> 0x00b8 }
-        r0 = r1.mWorker;
-        r12 = "dump";
-        r19 = r3;
-        r3 = 31;
-        r0.scheduleSync(r12, r3);
-    L_0x00b4:
-        r3 = r19;
-        goto L_0x01a6;
-    L_0x00b8:
-        r0 = move-exception;
-        r19 = r3;
-    L_0x00bb:
-        monitor-exit(r12);	 Catch:{ all -> 0x00bd }
-        throw r0;
-    L_0x00bd:
-        r0 = move-exception;
-        goto L_0x00bb;
-    L_0x00bf:
-        r19 = r3;
-        r0 = "--write";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x00e3;
-    L_0x00c9:
-        r0 = "dump";
-        r3 = 31;
-        r1.syncStats(r0, r3);
-        r3 = r1.mStats;
-        monitor-enter(r3);
-        r0 = r1.mStats;
-        r0.writeSyncLocked();
-        r0 = "Battery stats written.";
-        r9.println(r0);
-        r5 = 1;
-        monitor-exit(r3);
-        goto L_0x00b4;
-    L_0x00e0:
-        r0 = move-exception;
-        monitor-exit(r3);
-        throw r0;
-    L_0x00e3:
-        r0 = "--new-daily";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x00fe;
-    L_0x00eb:
-        r3 = r1.mStats;
-        monitor-enter(r3);
-        r0 = r1.mStats;
-        r0.recordDailyStatsLocked();
-        r0 = "New daily stats written.";
-        r9.println(r0);
-        r5 = 1;
-        monitor-exit(r3);
-        goto L_0x00b4;
-    L_0x00fb:
-        r0 = move-exception;
-        monitor-exit(r3);
-        throw r0;
-    L_0x00fe:
-        r0 = "--read-daily";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0119;
-    L_0x0106:
-        r3 = r1.mStats;
-        monitor-enter(r3);
-        r0 = r1.mStats;
-        r0.readDailyStatsLocked();
-        r0 = "Last daily stats read.";
-        r9.println(r0);
-        r5 = 1;
-        monitor-exit(r3);
-        goto L_0x00b4;
-    L_0x0116:
-        r0 = move-exception;
-        monitor-exit(r3);
-        throw r0;
-    L_0x0119:
-        r0 = "--enable";
-        r0 = r0.equals(r13);
-        if (r0 != 0) goto L_0x01e2;
-    L_0x0121:
-        r0 = "enable";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x012b;
-    L_0x0129:
-        goto L_0x01e2;
-    L_0x012b:
-        r0 = "--disable";
-        r0 = r0.equals(r13);
-        if (r0 != 0) goto L_0x01c3;
-    L_0x0133:
-        r0 = "disable";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x013d;
-    L_0x013b:
-        goto L_0x01c3;
-    L_0x013d:
-        r0 = "-h";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0149;
-    L_0x0145:
-        r1.dumpHelp(r9);
-        return;
-    L_0x0149:
-        r0 = "--settings";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0155;
-    L_0x0151:
-        r1.dumpSettings(r9);
-        return;
-    L_0x0155:
-        r0 = "--cpu";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x0161;
-    L_0x015d:
-        r1.dumpCpuStats(r9);
-        return;
-    L_0x0161:
-        r0 = "-a";
-        r0 = r0.equals(r13);
-        if (r0 == 0) goto L_0x016d;
-    L_0x0169:
-        r2 = r2 | 32;
-        goto L_0x00b4;
-    L_0x016d:
-        r0 = r13.length();
-        if (r0 <= 0) goto L_0x0194;
-    L_0x0173:
-        r0 = 0;
-        r3 = r13.charAt(r0);
-        r0 = 45;
-        if (r3 != r0) goto L_0x0194;
-    L_0x017c:
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r3 = "Unknown option: ";
-        r0.append(r3);
-        r0.append(r13);
-        r0 = r0.toString();
-        r9.println(r0);
-        r1.dumpHelp(r9);
-        return;
-    L_0x0194:
-        r0 = r1.mContext;	 Catch:{ NameNotFoundException -> 0x01aa }
-        r0 = r0.getPackageManager();	 Catch:{ NameNotFoundException -> 0x01aa }
-        r3 = android.os.UserHandle.getCallingUserId();	 Catch:{ NameNotFoundException -> 0x01aa }
-        r0 = r0.getPackageUidAsUser(r13, r3);	 Catch:{ NameNotFoundException -> 0x01aa }
-        r11 = r0;
-        goto L_0x00b4;
-    L_0x01a6:
-        r0 = 1;
-        r0 = r0 + r8;
-        goto L_0x0023;
-    L_0x01aa:
-        r0 = move-exception;
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r12 = "Unknown package: ";
-        r3.append(r12);
-        r3.append(r13);
-        r3 = r3.toString();
-        r9.println(r3);
-        r1.dumpHelp(r9);
-        return;
-    L_0x01c3:
-        r0 = 0;
-        r0 = r1.doEnableOrDisable(r9, r8, r10, r0);
-        if (r0 >= 0) goto L_0x01cb;
-    L_0x01ca:
-        return;
-    L_0x01cb:
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r8 = "Disabled: ";
-        r3.append(r8);
-        r8 = r10[r0];
-        r3.append(r8);
-        r3 = r3.toString();
-        r9.println(r3);
-        return;
-    L_0x01e2:
-        r0 = 1;
-        r0 = r1.doEnableOrDisable(r9, r8, r10, r0);
-        if (r0 >= 0) goto L_0x01ea;
-    L_0x01e9:
-        return;
-    L_0x01ea:
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r8 = "Enabled: ";
-        r3.append(r8);
-        r8 = r10[r0];
-        r3.append(r8);
-        r3 = r3.toString();
-        r9.println(r3);
-        return;
-    L_0x0201:
-        r19 = r3;
-        r12 = r4;
-        r13 = r6;
-        r27 = r14;
-        r14 = r7;
-        r15 = r11;
-        r11 = r5;
-        goto L_0x0215;
-    L_0x020b:
-        r19 = r2;
-        r12 = r3;
-        r13 = r4;
-        r14 = r6;
-        r27 = r7;
-        r15 = r11;
-        r2 = r0;
-        r11 = r5;
-    L_0x0215:
-        if (r11 == 0) goto L_0x0218;
-    L_0x0217:
-        return;
-    L_0x0218:
-        r3 = android.os.Binder.clearCallingIdentity();
-        r7 = r3;
-        r0 = r1.mContext;	 Catch:{ all -> 0x03fc }
-        r0 = com.android.internal.os.BatteryStatsHelper.checkWifiOnly(r0);	 Catch:{ all -> 0x03fc }
-        if (r0 == 0) goto L_0x0228;	 Catch:{ all -> 0x03fc }
-    L_0x0225:
-        r0 = r2 | 64;	 Catch:{ all -> 0x03fc }
-        r2 = r0;	 Catch:{ all -> 0x03fc }
-    L_0x0228:
-        r0 = "dump";	 Catch:{ all -> 0x03fc }
-        r3 = 31;	 Catch:{ all -> 0x03fc }
-        r1.syncStats(r0, r3);	 Catch:{ all -> 0x03fc }
-        android.os.Binder.restoreCallingIdentity(r7);
-        if (r15 < 0) goto L_0x0240;
-    L_0x0235:
-        r0 = r2 & 10;
-        if (r0 != 0) goto L_0x0240;
-    L_0x0239:
-        r0 = r2 | 2;
-        r0 = r0 & -17;
-        r17 = r0;
-        goto L_0x0242;
-    L_0x0240:
-        r17 = r2;
-    L_0x0242:
-        r0 = 4325376; // 0x420000 float:6.061143E-39 double:2.1370197E-317;
-        if (r12 == 0) goto L_0x0304;
-    L_0x0246:
-        r3 = r1.mContext;
-        r3 = r3.getPackageManager();
-        r3 = r3.getInstalledApplications(r0);
-        if (r13 == 0) goto L_0x02da;
-    L_0x0252:
-        r0 = r1.mStats;
-        r4 = r0.mCheckinFile;
-        monitor-enter(r4);
-        r0 = r1.mStats;	 Catch:{ all -> 0x02d3 }
-        r0 = r0.mCheckinFile;	 Catch:{ all -> 0x02d3 }
-        r0 = r0.exists();	 Catch:{ all -> 0x02d3 }
-        if (r0 == 0) goto L_0x02cf;
-    L_0x0261:
-        r0 = r1.mStats;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r0 = r0.mCheckinFile;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r0 = r0.readFully();	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        if (r0 == 0) goto L_0x02aa;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-    L_0x026b:
-        r5 = android.os.Parcel.obtain();	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r6 = r0.length;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r2 = 0;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r5.unmarshall(r0, r2, r6);	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r5.setDataPosition(r2);	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r2 = new com.android.internal.os.BatteryStatsImpl;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r6 = r1.mStats;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r6 = r6.mHandler;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r29 = r0;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r0 = r1.mUserManagerUserInfoProvider;	 Catch:{ IOException -> 0x02ad, IOException -> 0x02ad }
-        r30 = r7;
-        r7 = 0;
-        r2.<init>(r7, r6, r7, r0);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r0 = r2;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r0.readSummaryFromParcel(r5);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r5.recycle();	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r2 = r1.mContext;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r20 = r0;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r21 = r2;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r22 = r34;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r23 = r3;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r24 = r17;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r25 = r27;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r20.dumpProtoLocked(r21, r22, r23, r24, r25);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r2 = r1.mStats;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r2 = r2.mCheckinFile;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r2.delete();	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        monitor-exit(r4);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        return;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02a8:
-        r0 = move-exception;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        goto L_0x02b0;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02aa:
-        r30 = r7;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        goto L_0x02d1;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02ad:
-        r0 = move-exception;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r30 = r7;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02b0:
-        r2 = "BatteryStatsService";	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r5 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r5.<init>();	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r6 = "Failure reading checkin file ";	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r5.append(r6);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r6 = r1.mStats;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r6 = r6.mCheckinFile;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r6 = r6.getBaseFile();	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r5.append(r6);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r5 = r5.toString();	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        android.util.Slog.w(r2, r5, r0);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        goto L_0x02d1;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02cf:
-        r30 = r7;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02d1:
-        monitor-exit(r4);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        goto L_0x02dc;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02d3:
-        r0 = move-exception;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        r30 = r7;	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-    L_0x02d6:
-        monitor-exit(r4);	 Catch:{ IOException -> 0x02a8, IOException -> 0x02a8, all -> 0x02d8 }
-        throw r0;
-    L_0x02d8:
-        r0 = move-exception;
-        goto L_0x02d6;
-    L_0x02da:
-        r30 = r7;
-    L_0x02dc:
-        r2 = r1.mStats;
-        monitor-enter(r2);
-        r0 = r1.mStats;
-        r4 = r1.mContext;
-        r20 = r0;
-        r21 = r4;
-        r22 = r34;
-        r23 = r3;
-        r24 = r17;
-        r25 = r27;
-        r20.dumpProtoLocked(r21, r22, r23, r24, r25);
-        if (r14 == 0) goto L_0x02f9;
-    L_0x02f4:
-        r0 = r1.mStats;
-        r0.writeAsyncLocked();
-    L_0x02f9:
-        monitor-exit(r2);
-        r32 = r11;
-        r10 = r30;
-        goto L_0x03f4;
-    L_0x0301:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x0304:
-        r30 = r7;
-        if (r19 == 0) goto L_0x03d6;
-    L_0x0308:
-        r2 = r1.mContext;
-        r2 = r2.getPackageManager();
-        r18 = r2.getInstalledApplications(r0);
-        if (r13 == 0) goto L_0x03af;
-    L_0x0314:
-        r0 = r1.mStats;
-        r7 = r0.mCheckinFile;
-        monitor-enter(r7);
-        r0 = r1.mStats;	 Catch:{ all -> 0x03a4 }
-        r0 = r0.mCheckinFile;	 Catch:{ all -> 0x03a4 }
-        r0 = r0.exists();	 Catch:{ all -> 0x03a4 }
-        if (r0 == 0) goto L_0x039c;
-    L_0x0323:
-        r0 = r1.mStats;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r0 = r0.mCheckinFile;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r0 = r0.readFully();	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        if (r0 == 0) goto L_0x036f;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-    L_0x032d:
-        r2 = android.os.Parcel.obtain();	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r8 = r2;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r2 = r0.length;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r3 = 0;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r8.unmarshall(r0, r3, r2);	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r8.setDataPosition(r3);	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r2 = new com.android.internal.os.BatteryStatsImpl;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r3 = r1.mStats;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r3 = r3.mHandler;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r4 = r1.mUserManagerUserInfoProvider;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r5 = 0;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r2.<init>(r5, r3, r5, r4);	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r6 = r2;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r6.readSummaryFromParcel(r8);	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r8.recycle();	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r3 = r1.mContext;	 Catch:{ IOException -> 0x0376, IOException -> 0x0376 }
-        r2 = r6;
-        r4 = r9;
-        r5 = r18;
-        r16 = r6;
-        r6 = r17;
-        r20 = r7;
-        r21 = r8;
-        r32 = r11;
-        r10 = r30;
-        r7 = r27;
-        r2.dumpCheckinLocked(r3, r4, r5, r6, r7);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r2 = r1.mStats;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r2 = r2.mCheckinFile;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r2.delete();	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        monitor-exit(r20);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        return;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x036d:
-        r0 = move-exception;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        goto L_0x037d;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x036f:
-        r20 = r7;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r32 = r11;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r10 = r30;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        goto L_0x03a2;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x0376:
-        r0 = move-exception;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r20 = r7;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r32 = r11;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r10 = r30;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x037d:
-        r2 = "BatteryStatsService";	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r3 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r3.<init>();	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r4 = "Failure reading checkin file ";	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r3.append(r4);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r4 = r1.mStats;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r4 = r4.mCheckinFile;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r4 = r4.getBaseFile();	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r3.append(r4);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r3 = r3.toString();	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        android.util.Slog.w(r2, r3, r0);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        goto L_0x03a2;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x039c:
-        r20 = r7;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r32 = r11;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r10 = r30;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x03a2:
-        monitor-exit(r20);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        goto L_0x03b3;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x03a4:
-        r0 = move-exception;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r20 = r7;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r32 = r11;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        r10 = r30;	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-    L_0x03ab:
-        monitor-exit(r20);	 Catch:{ IOException -> 0x036d, IOException -> 0x036d, all -> 0x03ad }
-        throw r0;
-    L_0x03ad:
-        r0 = move-exception;
-        goto L_0x03ab;
-    L_0x03af:
-        r32 = r11;
-        r10 = r30;
-    L_0x03b3:
-        r7 = r1.mStats;
-        monitor-enter(r7);
-        r2 = r1.mStats;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        r3 = r1.mContext;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        r4 = r9;
-        r5 = r18;
-        r6 = r17;
-        r16 = r7;
-        r7 = r27;
-        r2.dumpCheckinLocked(r3, r4, r5, r6, r7);	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        if (r14 == 0) goto L_0x03cd;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-    L_0x03c8:
-        r0 = r1.mStats;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        r0.writeAsyncLocked();	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-    L_0x03cd:
-        monitor-exit(r16);	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        goto L_0x03f4;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-    L_0x03cf:
-        r0 = move-exception;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        r16 = r7;	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-    L_0x03d2:
-        monitor-exit(r16);	 Catch:{ all -> 0x03cf, all -> 0x03d4 }
-        throw r0;
-    L_0x03d4:
-        r0 = move-exception;
-        goto L_0x03d2;
-    L_0x03d6:
-        r32 = r11;
-        r10 = r30;
-        r7 = r1.mStats;
-        monitor-enter(r7);
-        r2 = r1.mStats;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-        r3 = r1.mContext;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-        r4 = r9;
-        r5 = r17;
-        r6 = r15;
-        r16 = r7;
-        r7 = r27;
-        r2.dumpLocked(r3, r4, r5, r6, r7);	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-        if (r14 == 0) goto L_0x03f3;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-    L_0x03ee:
-        r0 = r1.mStats;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-        r0.writeAsyncLocked();	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-    L_0x03f3:
-        monitor-exit(r16);	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-    L_0x03f4:
-        return;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-    L_0x03f5:
-        r0 = move-exception;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-        r16 = r7;	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-    L_0x03f8:
-        monitor-exit(r16);	 Catch:{ all -> 0x03f5, all -> 0x03fa }
-        throw r0;
-    L_0x03fa:
-        r0 = move-exception;
-        goto L_0x03f8;
-    L_0x03fc:
-        r0 = move-exception;
-        r32 = r11;
-        r10 = r7;
-        android.os.Binder.restoreCallingIdentity(r10);
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.BatteryStatsService.dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void noteChangeWakelockFromSource(android.os.WorkSource r16, int r17, java.lang.String r18, java.lang.String r19, int r20, android.os.WorkSource r21, int r22, java.lang.String r23, java.lang.String r24, int r25, boolean r26) {
-        /*
-        r15 = this;
-        r1 = r15;
-        r1.enforceCallingPermission();
-        r2 = r1.mStats;
-        monitor-enter(r2);
-        r3 = r1.mStats;	 Catch:{ all -> 0x0053 }
-        r4 = r16;	 Catch:{ all -> 0x0053 }
-        r5 = r17;	 Catch:{ all -> 0x0053 }
-        r6 = r18;	 Catch:{ all -> 0x0053 }
-        r7 = r19;	 Catch:{ all -> 0x0053 }
-        r8 = r20;	 Catch:{ all -> 0x0053 }
-        r9 = r21;	 Catch:{ all -> 0x0053 }
-        r10 = r22;	 Catch:{ all -> 0x0053 }
-        r11 = r23;	 Catch:{ all -> 0x0053 }
-        r12 = r24;	 Catch:{ all -> 0x0053 }
-        r13 = r25;	 Catch:{ all -> 0x0053 }
-        r14 = r26;	 Catch:{ all -> 0x0053 }
-        r3.noteChangeWakelockFromSourceLocked(r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14);	 Catch:{ all -> 0x0053 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0053 }
-        r0 = r1.misBetaUser;
-        if (r0 == 0) goto L_0x004a;
-    L_0x0027:
-        r0 = r1.mPowerInfoService;
-        if (r0 == 0) goto L_0x004a;
-    L_0x002b:
-        r2 = r1.mPowerInfoService;
-        monitor-enter(r2);
-        r0 = r1.mPowerInfoService;	 Catch:{ all -> 0x003f, all -> 0x003d }
-        r3 = r17;
-        r4 = r18;
-        r5 = r22;
-        r6 = r23;
-        r0.notePowerInfoChangeWakeLock(r4, r3, r6, r5);	 Catch:{ all -> 0x003f, all -> 0x003d }
-        monitor-exit(r2);	 Catch:{ all -> 0x003f, all -> 0x003d }
-        goto L_0x0052;	 Catch:{ all -> 0x003f, all -> 0x003d }
-    L_0x003d:
-        r0 = move-exception;	 Catch:{ all -> 0x003f, all -> 0x003d }
-        goto L_0x0048;	 Catch:{ all -> 0x003f, all -> 0x003d }
-    L_0x003f:
-        r0 = move-exception;	 Catch:{ all -> 0x003f, all -> 0x003d }
-        r3 = r17;	 Catch:{ all -> 0x003f, all -> 0x003d }
-        r4 = r18;	 Catch:{ all -> 0x003f, all -> 0x003d }
-        r5 = r22;	 Catch:{ all -> 0x003f, all -> 0x003d }
-        r6 = r23;	 Catch:{ all -> 0x003f, all -> 0x003d }
-    L_0x0048:
-        monitor-exit(r2);	 Catch:{ all -> 0x003f, all -> 0x003d }
-        throw r0;
-    L_0x004a:
-        r3 = r17;
-        r4 = r18;
-        r5 = r22;
-        r6 = r23;
-    L_0x0052:
-        return;
-    L_0x0053:
-        r0 = move-exception;
-        r3 = r17;
-        r4 = r18;
-        r5 = r22;
-        r6 = r23;
-    L_0x005c:
-        monitor-exit(r2);	 Catch:{ all -> 0x005e }
-        throw r0;
-    L_0x005e:
-        r0 = move-exception;
-        goto L_0x005c;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.BatteryStatsService.noteChangeWakelockFromSource(android.os.WorkSource, int, java.lang.String, java.lang.String, int, android.os.WorkSource, int, java.lang.String, java.lang.String, int, boolean):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void noteStartWakelock(int r16, int r17, java.lang.String r18, java.lang.String r19, int r20, boolean r21) {
-        /*
-        r15 = this;
-        r1 = r15;
-        r1.enforceCallingPermission();
-        r2 = r1.mStats;
-        monitor-enter(r2);
-        r3 = r1.mStats;	 Catch:{ all -> 0x0046 }
-        r6 = 0;	 Catch:{ all -> 0x0046 }
-        r11 = android.os.SystemClock.elapsedRealtime();	 Catch:{ all -> 0x0046 }
-        r13 = android.os.SystemClock.uptimeMillis();	 Catch:{ all -> 0x0046 }
-        r4 = r16;	 Catch:{ all -> 0x0046 }
-        r5 = r17;	 Catch:{ all -> 0x0046 }
-        r7 = r18;	 Catch:{ all -> 0x0046 }
-        r8 = r19;	 Catch:{ all -> 0x0046 }
-        r9 = r20;	 Catch:{ all -> 0x0046 }
-        r10 = r21;	 Catch:{ all -> 0x0046 }
-        r3.noteStartWakeLocked(r4, r5, r6, r7, r8, r9, r10, r11, r13);	 Catch:{ all -> 0x0046 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0046 }
-        r0 = r1.misBetaUser;
-        if (r0 == 0) goto L_0x0041;
-    L_0x0026:
-        r0 = r1.mPowerInfoService;
-        if (r0 == 0) goto L_0x0041;
-    L_0x002a:
-        r2 = r1.mPowerInfoService;
-        monitor-enter(r2);
-        r0 = r1.mPowerInfoService;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        r3 = r17;
-        r4 = r18;
-        r0.notePowerInfoAcquireWakeLock(r4, r3);	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        monitor-exit(r2);	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        goto L_0x0045;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-    L_0x0038:
-        r0 = move-exception;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        goto L_0x003f;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-    L_0x003a:
-        r0 = move-exception;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        r3 = r17;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        r4 = r18;	 Catch:{ all -> 0x003a, all -> 0x0038 }
-    L_0x003f:
-        monitor-exit(r2);	 Catch:{ all -> 0x003a, all -> 0x0038 }
-        throw r0;
-    L_0x0041:
-        r3 = r17;
-        r4 = r18;
-    L_0x0045:
-        return;
-    L_0x0046:
-        r0 = move-exception;
-        r3 = r17;
-        r4 = r18;
-    L_0x004b:
-        monitor-exit(r2);	 Catch:{ all -> 0x004d }
-        throw r0;
-    L_0x004d:
-        r0 = move-exception;
-        goto L_0x004b;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.BatteryStatsService.noteStartWakelock(int, int, java.lang.String, java.lang.String, int, boolean):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void noteStopWakelock(int r15, int r16, java.lang.String r17, java.lang.String r18, int r19) {
-        /*
-        r14 = this;
-        r1 = r14;
-        r1.enforceCallingPermission();
-        r2 = r1.mStats;
-        monitor-enter(r2);
-        r3 = r1.mStats;	 Catch:{ all -> 0x0043 }
-        r6 = 0;	 Catch:{ all -> 0x0043 }
-        r10 = android.os.SystemClock.elapsedRealtime();	 Catch:{ all -> 0x0043 }
-        r12 = android.os.SystemClock.uptimeMillis();	 Catch:{ all -> 0x0043 }
-        r4 = r15;	 Catch:{ all -> 0x0043 }
-        r5 = r16;	 Catch:{ all -> 0x0043 }
-        r7 = r17;	 Catch:{ all -> 0x0043 }
-        r8 = r18;	 Catch:{ all -> 0x0043 }
-        r9 = r19;	 Catch:{ all -> 0x0043 }
-        r3.noteStopWakeLocked(r4, r5, r6, r7, r8, r9, r10, r12);	 Catch:{ all -> 0x0043 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0043 }
-        r0 = r1.misBetaUser;
-        if (r0 == 0) goto L_0x003e;
-    L_0x0023:
-        r0 = r1.mPowerInfoService;
-        if (r0 == 0) goto L_0x003e;
-    L_0x0027:
-        r2 = r1.mPowerInfoService;
-        monitor-enter(r2);
-        r0 = r1.mPowerInfoService;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        r3 = r16;
-        r4 = r17;
-        r0.notePowerInfoReleaseWakeLock(r4, r3);	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        goto L_0x0042;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-    L_0x0035:
-        r0 = move-exception;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        goto L_0x003c;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-    L_0x0037:
-        r0 = move-exception;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        r3 = r16;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        r4 = r17;	 Catch:{ all -> 0x0037, all -> 0x0035 }
-    L_0x003c:
-        monitor-exit(r2);	 Catch:{ all -> 0x0037, all -> 0x0035 }
-        throw r0;
-    L_0x003e:
-        r3 = r16;
-        r4 = r17;
-    L_0x0042:
-        return;
-    L_0x0043:
-        r0 = move-exception;
-        r3 = r16;
-        r4 = r17;
-    L_0x0048:
-        monitor-exit(r2);	 Catch:{ all -> 0x004a }
-        throw r0;
-    L_0x004a:
-        r0 = move-exception;
-        goto L_0x0048;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.am.BatteryStatsService.noteStopWakelock(int, int, java.lang.String, java.lang.String, int):void");
-    }
 
     public void fillLowPowerStats(RpmStats rpmStats) {
         getLowPowerStats(rpmStats);
@@ -1391,6 +503,86 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
         }
     }
 
+    /* JADX WARNING: Missing block: B:28:0x004d, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public void noteStartWakelock(int uid, int pid, String name, String historyName, int type, boolean unimportantForLogging) {
+        int i;
+        String str;
+        Throwable th;
+        enforceCallingPermission();
+        IHwPowerInfoService iHwPowerInfoService = this.mStats;
+        synchronized (iHwPowerInfoService) {
+            try {
+                i = this.mStats;
+                str = uid;
+                i.noteStartWakeLocked(str, pid, null, name, historyName, type, unimportantForLogging, SystemClock.elapsedRealtime(), SystemClock.uptimeMillis());
+            } finally {
+                i = pid;
+                str = name;
+                while (true) {
+                }
+            }
+        }
+        if (!this.misBetaUser || this.mPowerInfoService == null) {
+            i = pid;
+            str = name;
+            return;
+        }
+        iHwPowerInfoService = this.mPowerInfoService;
+        synchronized (iHwPowerInfoService) {
+            try {
+                IHwPowerInfoService th2 = this.mPowerInfoService;
+                th2.notePowerInfoAcquireWakeLock(str, i);
+                return;
+            } catch (Throwable th3) {
+                th = th3;
+            }
+        }
+        throw th;
+    }
+
+    /* JADX WARNING: Missing block: B:28:0x004a, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public void noteStopWakelock(int uid, int pid, String name, String historyName, int type) {
+        int i;
+        String str;
+        Throwable th;
+        enforceCallingPermission();
+        IHwPowerInfoService iHwPowerInfoService = this.mStats;
+        synchronized (iHwPowerInfoService) {
+            try {
+                i = this.mStats;
+                str = uid;
+                i.noteStopWakeLocked(str, pid, null, name, historyName, type, SystemClock.elapsedRealtime(), SystemClock.uptimeMillis());
+            } finally {
+                i = pid;
+                str = name;
+                while (true) {
+                }
+            }
+        }
+        if (!this.misBetaUser || this.mPowerInfoService == null) {
+            i = pid;
+            str = name;
+            return;
+        }
+        iHwPowerInfoService = this.mPowerInfoService;
+        synchronized (iHwPowerInfoService) {
+            try {
+                IHwPowerInfoService th2 = this.mPowerInfoService;
+                th2.notePowerInfoReleaseWakeLock(str, i);
+                return;
+            } catch (Throwable th3) {
+                th = th3;
+            }
+        }
+        throw th;
+    }
+
     public void noteStartWakelockFromSource(WorkSource ws, int pid, String name, String historyName, int type, boolean unimportantForLogging) {
         enforceCallingPermission();
         synchronized (this.mStats) {
@@ -1401,6 +593,54 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
                 this.mPowerInfoService.notePowerInfoAcquireWakeLock(name, pid);
             }
         }
+    }
+
+    /* JADX WARNING: Missing block: B:28:0x005e, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public void noteChangeWakelockFromSource(WorkSource ws, int pid, String name, String historyName, int type, WorkSource newWs, int newPid, String newName, String newHistoryName, int newType, boolean newUnimportantForLogging) {
+        int i;
+        String str;
+        int i2;
+        String str2;
+        Throwable th;
+        enforceCallingPermission();
+        IHwPowerInfoService iHwPowerInfoService = this.mStats;
+        synchronized (iHwPowerInfoService) {
+            try {
+                i = this.mStats;
+                str = ws;
+                i2 = pid;
+                str2 = name;
+                i.noteChangeWakelockFromSourceLocked(str, i2, str2, historyName, type, newWs, newPid, newName, newHistoryName, newType, newUnimportantForLogging);
+            } finally {
+                i = pid;
+                str = name;
+                i2 = newPid;
+                str2 = newName;
+                while (true) {
+                }
+            }
+        }
+        if (!this.misBetaUser || this.mPowerInfoService == null) {
+            i = pid;
+            str = name;
+            i2 = newPid;
+            str2 = newName;
+            return;
+        }
+        iHwPowerInfoService = this.mPowerInfoService;
+        synchronized (iHwPowerInfoService) {
+            try {
+                IHwPowerInfoService th2 = this.mPowerInfoService;
+                th2.notePowerInfoChangeWakeLock(str, i, str2, i2);
+                return;
+            } catch (Throwable th3) {
+                th = th3;
+            }
+        }
+        throw th;
     }
 
     public void noteStopWakelockFromSource(WorkSource ws, int pid, String name, String historyName, int type) {
@@ -1737,13 +977,21 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
         synchronized (this.mStats) {
             if (this.mStats.isOnBattery()) {
                 String type;
-                if (powerState == 3 || powerState == 2) {
-                    type = "active";
-                } else {
-                    type = "inactive";
+                BatteryExternalStatsWorker batteryExternalStatsWorker;
+                StringBuilder stringBuilder;
+                if (powerState != 3) {
+                    if (powerState != 2) {
+                        type = "inactive";
+                        batteryExternalStatsWorker = this.mWorker;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("wifi-data: ");
+                        stringBuilder.append(type);
+                        batteryExternalStatsWorker.scheduleSync(stringBuilder.toString(), 2);
+                    }
                 }
-                BatteryExternalStatsWorker batteryExternalStatsWorker = this.mWorker;
-                StringBuilder stringBuilder = new StringBuilder();
+                type = "active";
+                batteryExternalStatsWorker = this.mWorker;
+                stringBuilder = new StringBuilder();
                 stringBuilder.append("wifi-data: ");
                 stringBuilder.append(type);
                 batteryExternalStatsWorker.scheduleSync(stringBuilder.toString(), 2);
@@ -2000,7 +1248,7 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
         this.mWorker.scheduleRunnable(new -$$Lambda$BatteryStatsService$ZxbqtJ7ozYmzYFkkNV3m_QRd0Sk(this, plugType, status, health, level, temp, volt, chargeUAh, chargeFullUAh));
     }
 
-    /* JADX WARNING: Missing block: B:25:0x004b, code:
+    /* JADX WARNING: Missing block: B:27:0x004b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2040,7 +1288,7 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0037, code:
+    /* JADX WARNING: Missing block: B:25:0x0037, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2162,6 +1410,377 @@ public final class BatteryStatsService extends Stub implements LowPowerModeListe
             return -1;
         }
         return i;
+    }
+
+    /* JADX WARNING: Removed duplicated region for block: B:224:0x03b6 A:{SYNTHETIC, Splitter:B:224:0x03b6} */
+    /* JADX WARNING: Removed duplicated region for block: B:224:0x03b6 A:{SYNTHETIC, Splitter:B:224:0x03b6} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x02df A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:179:0x02df A:{SYNTHETIC} */
+    /* JADX WARNING: Missing block: B:41:0x00b4, code skipped:
+            r3 = r19;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    protected void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
+        long ident;
+        Exception e;
+        String str;
+        StringBuilder stringBuilder;
+        boolean z;
+        long j;
+        Throwable th;
+        StringBuilder stringBuilder2;
+        BatteryStatsService batteryStatsService = this;
+        PrintWriter printWriter = pw;
+        String[] strArr = args;
+        if (DumpUtils.checkDumpAndUsageStatsPermission(batteryStatsService.mContext, TAG, printWriter)) {
+            long historyStart;
+            int useCheckinFormat;
+            boolean useCheckinFormat2;
+            boolean toProto;
+            boolean isRealCheckin;
+            long historyStart2;
+            boolean writeData;
+            int reqUid;
+            boolean noOutput;
+            boolean noOutput2 = false;
+            int reqUid2 = -1;
+            if (strArr != null) {
+                long historyStart3 = -1;
+                historyStart = 0;
+                boolean writeData2 = false;
+                boolean isRealCheckin2 = false;
+                boolean toProto2 = false;
+                useCheckinFormat = false;
+                int i = 0;
+                loop0:
+                while (true) {
+                    int i2 = i;
+                    if (i2 >= strArr.length) {
+                        useCheckinFormat2 = toProto2;
+                        toProto = isRealCheckin2;
+                        isRealCheckin = writeData2;
+                        historyStart2 = historyStart3;
+                        writeData = historyStart;
+                        reqUid = reqUid2;
+                        noOutput = noOutput2;
+                        break loop0;
+                    }
+                    String arg = strArr[i2];
+                    if ("--checkin".equals(arg)) {
+                        toProto2 = true;
+                        writeData2 = true;
+                    } else if ("--history".equals(arg)) {
+                        useCheckinFormat |= 8;
+                    } else if ("--history-start".equals(arg)) {
+                        useCheckinFormat |= 8;
+                        i2++;
+                        if (i2 >= strArr.length) {
+                            printWriter.println("Missing time argument for --history-since");
+                            batteryStatsService.dumpHelp(printWriter);
+                            return;
+                        }
+                        historyStart3 = Long.parseLong(strArr[i2]);
+                        historyStart = 1;
+                    } else if ("-c".equals(arg)) {
+                        toProto2 = true;
+                        useCheckinFormat |= 16;
+                    } else if (PriorityDump.PROTO_ARG.equals(arg)) {
+                        isRealCheckin2 = true;
+                    } else if ("--charged".equals(arg)) {
+                        useCheckinFormat |= 2;
+                    } else if ("--daily".equals(arg)) {
+                        useCheckinFormat |= 4;
+                    } else if ("--reset".equals(arg)) {
+                        synchronized (batteryStatsService.mStats) {
+                            try {
+                                batteryStatsService.mStats.resetAllStatsCmdLocked();
+                                printWriter.println("Battery stats reset.");
+                                noOutput2 = true;
+                            } finally {
+                                useCheckinFormat2 = toProto2;
+                                while (true) {
+                                }
+                                i = 1 + i2;
+                            }
+                        }
+                        BatteryExternalStatsWorker batteryExternalStatsWorker = batteryStatsService.mWorker;
+                        String str2 = "dump";
+                    } else {
+                        useCheckinFormat2 = toProto2;
+                        if ("--write".equals(arg)) {
+                            batteryStatsService.syncStats("dump", true);
+                            synchronized (batteryStatsService.mStats) {
+                                batteryStatsService.mStats.writeSyncLocked();
+                                printWriter.println("Battery stats written.");
+                                noOutput2 = true;
+                            }
+                        } else if ("--new-daily".equals(arg)) {
+                            synchronized (batteryStatsService.mStats) {
+                                batteryStatsService.mStats.recordDailyStatsLocked();
+                                printWriter.println("New daily stats written.");
+                                noOutput2 = true;
+                            }
+                        } else if ("--read-daily".equals(arg)) {
+                            synchronized (batteryStatsService.mStats) {
+                                batteryStatsService.mStats.readDailyStatsLocked();
+                                printWriter.println("Last daily stats read.");
+                                noOutput2 = true;
+                            }
+                        } else if ("--enable".equals(arg) || "enable".equals(arg)) {
+                            i = batteryStatsService.doEnableOrDisable(printWriter, i2, strArr, 1);
+                            if (i >= 0) {
+                                toProto2 = new StringBuilder();
+                                toProto2.append("Enabled: ");
+                                toProto2.append(strArr[i]);
+                                printWriter.println(toProto2.toString());
+                                return;
+                            }
+                            return;
+                        } else if ("--disable".equals(arg) || "disable".equals(arg)) {
+                            i = batteryStatsService.doEnableOrDisable(printWriter, i2, strArr, 0);
+                            if (i >= 0) {
+                                toProto2 = new StringBuilder();
+                                toProto2.append("Disabled: ");
+                                toProto2.append(strArr[i]);
+                                printWriter.println(toProto2.toString());
+                                return;
+                            }
+                            return;
+                        } else if ("-h".equals(arg)) {
+                            batteryStatsService.dumpHelp(printWriter);
+                            return;
+                        } else if ("--settings".equals(arg)) {
+                            batteryStatsService.dumpSettings(printWriter);
+                            return;
+                        } else if ("--cpu".equals(arg)) {
+                            batteryStatsService.dumpCpuStats(printWriter);
+                            return;
+                        } else if ("-a".equals(arg)) {
+                            useCheckinFormat |= 32;
+                        } else if (arg.length() <= 0 || !arg.charAt(0)) {
+                            try {
+                                reqUid2 = batteryStatsService.mContext.getPackageManager().getPackageUidAsUser(arg, UserHandle.getCallingUserId());
+                            } catch (NameNotFoundException e2) {
+                                toProto2 = new StringBuilder();
+                                toProto2.append("Unknown package: ");
+                                toProto2.append(arg);
+                                printWriter.println(toProto2.toString());
+                                batteryStatsService.dumpHelp(printWriter);
+                                return;
+                            }
+                        } else {
+                            StringBuilder stringBuilder3 = new StringBuilder();
+                            stringBuilder3.append("Unknown option: ");
+                            stringBuilder3.append(arg);
+                            printWriter.println(stringBuilder3.toString());
+                            batteryStatsService.dumpHelp(printWriter);
+                            return;
+                        }
+                    }
+                    i = 1 + i2;
+                }
+            } else {
+                useCheckinFormat2 = false;
+                toProto = false;
+                isRealCheckin = false;
+                writeData = false;
+                historyStart2 = -1;
+                reqUid = -1;
+                useCheckinFormat = 0;
+                noOutput = false;
+            }
+            if (!noOutput) {
+                historyStart = Binder.clearCallingIdentity();
+                try {
+                    int flags;
+                    if (BatteryStatsHelper.checkWifiOnly(batteryStatsService.mContext)) {
+                        useCheckinFormat |= 64;
+                    }
+                    batteryStatsService.syncStats("dump", 31);
+                    Binder.restoreCallingIdentity(historyStart);
+                    if (reqUid < 0 || (useCheckinFormat & 10) != 0) {
+                        flags = useCheckinFormat;
+                    } else {
+                        flags = (useCheckinFormat | 2) & -17;
+                    }
+                    byte[] raw;
+                    if (toProto) {
+                        List<ApplicationInfo> apps = batteryStatsService.mContext.getPackageManager().getInstalledApplications(4325376);
+                        if (isRealCheckin) {
+                            synchronized (batteryStatsService.mStats.mCheckinFile) {
+                                try {
+                                    if (batteryStatsService.mStats.mCheckinFile.exists()) {
+                                        try {
+                                            raw = batteryStatsService.mStats.mCheckinFile.readFully();
+                                            if (raw != null) {
+                                                Parcel in = Parcel.obtain();
+                                                in.unmarshall(raw, 0, raw.length);
+                                                in.setDataPosition(0);
+                                                ident = historyStart;
+                                                try {
+                                                    BatteryStatsImpl checkinStats = new BatteryStatsImpl(null, batteryStatsService.mStats.mHandler, null, batteryStatsService.mUserManagerUserInfoProvider);
+                                                    checkinStats.readSummaryFromParcel(in);
+                                                    in.recycle();
+                                                    checkinStats.dumpProtoLocked(batteryStatsService.mContext, fd, apps, flags, historyStart2);
+                                                    batteryStatsService.mStats.mCheckinFile.delete();
+                                                    return;
+                                                } catch (ParcelFormatException | IOException e3) {
+                                                    e = e3;
+                                                    str = TAG;
+                                                    stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("Failure reading checkin file ");
+                                                    stringBuilder.append(batteryStatsService.mStats.mCheckinFile.getBaseFile());
+                                                    Slog.w(str, stringBuilder.toString(), e);
+                                                    synchronized (batteryStatsService.mStats) {
+                                                    }
+                                                    z = noOutput;
+                                                    j = ident;
+                                                } catch (Throwable th2) {
+                                                    th = th2;
+                                                    throw th;
+                                                }
+                                            }
+                                            ident = historyStart;
+                                        } catch (ParcelFormatException | IOException e4) {
+                                            e = e4;
+                                            ident = historyStart;
+                                            str = TAG;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Failure reading checkin file ");
+                                            stringBuilder.append(batteryStatsService.mStats.mCheckinFile.getBaseFile());
+                                            Slog.w(str, stringBuilder.toString(), e);
+                                            synchronized (batteryStatsService.mStats) {
+                                            }
+                                            z = noOutput;
+                                            j = ident;
+                                        }
+                                    }
+                                    ident = historyStart;
+                                } catch (Throwable th3) {
+                                    th = th3;
+                                    ident = historyStart;
+                                    throw th;
+                                }
+                            }
+                        }
+                        ident = historyStart;
+                        synchronized (batteryStatsService.mStats) {
+                            batteryStatsService.mStats.dumpProtoLocked(batteryStatsService.mContext, fd, apps, flags, historyStart2);
+                            if (writeData) {
+                                batteryStatsService.mStats.writeAsyncLocked();
+                            }
+                        }
+                        z = noOutput;
+                        j = ident;
+                    } else {
+                        ident = historyStart;
+                        BatteryStatsImpl batteryStatsImpl;
+                        BatteryStatsImpl batteryStatsImpl2;
+                        if (useCheckinFormat2) {
+                            List<ApplicationInfo> apps2 = batteryStatsService.mContext.getPackageManager().getInstalledApplications(4325376);
+                            if (isRealCheckin) {
+                                AtomicFile atomicFile = batteryStatsService.mStats.mCheckinFile;
+                                synchronized (atomicFile) {
+                                    AtomicFile atomicFile2;
+                                    try {
+                                        if (batteryStatsService.mStats.mCheckinFile.exists()) {
+                                            try {
+                                                raw = batteryStatsService.mStats.mCheckinFile.readFully();
+                                                if (raw != null) {
+                                                    Parcel in2 = Parcel.obtain();
+                                                    in2.unmarshall(raw, 0, raw.length);
+                                                    in2.setDataPosition(0);
+                                                    BatteryStatsImpl checkinStats2 = new BatteryStatsImpl(null, batteryStatsService.mStats.mHandler, null, batteryStatsService.mUserManagerUserInfoProvider);
+                                                    checkinStats2.readSummaryFromParcel(in2);
+                                                    in2.recycle();
+                                                    batteryStatsImpl = checkinStats2;
+                                                    atomicFile2 = atomicFile;
+                                                    try {
+                                                        checkinStats2.dumpCheckinLocked(batteryStatsService.mContext, printWriter, apps2, flags, historyStart2);
+                                                        batteryStatsService.mStats.mCheckinFile.delete();
+                                                        return;
+                                                    } catch (ParcelFormatException | IOException e5) {
+                                                        e = e5;
+                                                        str = TAG;
+                                                        stringBuilder2 = new StringBuilder();
+                                                        stringBuilder2.append("Failure reading checkin file ");
+                                                        stringBuilder2.append(batteryStatsService.mStats.mCheckinFile.getBaseFile());
+                                                        Slog.w(str, stringBuilder2.toString(), e);
+                                                        batteryStatsImpl2 = batteryStatsService.mStats;
+                                                        synchronized (batteryStatsImpl2) {
+                                                        }
+                                                    } catch (Throwable th4) {
+                                                        th = th4;
+                                                        throw th;
+                                                    }
+                                                }
+                                                atomicFile2 = atomicFile;
+                                                z = noOutput;
+                                                j = ident;
+                                            } catch (ParcelFormatException | IOException e6) {
+                                                e = e6;
+                                                atomicFile2 = atomicFile;
+                                                z = noOutput;
+                                                j = ident;
+                                                str = TAG;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("Failure reading checkin file ");
+                                                stringBuilder2.append(batteryStatsService.mStats.mCheckinFile.getBaseFile());
+                                                Slog.w(str, stringBuilder2.toString(), e);
+                                                batteryStatsImpl2 = batteryStatsService.mStats;
+                                                synchronized (batteryStatsImpl2) {
+                                                }
+                                            }
+                                        } else {
+                                            atomicFile2 = atomicFile;
+                                            z = noOutput;
+                                            j = ident;
+                                        }
+                                    } catch (Throwable th5) {
+                                        th = th5;
+                                        atomicFile2 = atomicFile;
+                                        z = noOutput;
+                                        j = ident;
+                                        throw th;
+                                    }
+                                }
+                            }
+                            j = ident;
+                            batteryStatsImpl2 = batteryStatsService.mStats;
+                            synchronized (batteryStatsImpl2) {
+                                try {
+                                    batteryStatsImpl = batteryStatsImpl2;
+                                    batteryStatsService.mStats.dumpCheckinLocked(batteryStatsService.mContext, printWriter, apps2, flags, historyStart2);
+                                    if (writeData) {
+                                        batteryStatsService.mStats.writeAsyncLocked();
+                                    }
+                                } catch (Throwable th6) {
+                                    th = th6;
+                                    throw th;
+                                }
+                            }
+                        }
+                        j = ident;
+                        batteryStatsImpl2 = batteryStatsService.mStats;
+                        synchronized (batteryStatsImpl2) {
+                            try {
+                                batteryStatsImpl = batteryStatsImpl2;
+                                batteryStatsService.mStats.dumpLocked(batteryStatsService.mContext, printWriter, flags, reqUid, historyStart2);
+                                if (writeData) {
+                                    batteryStatsService.mStats.writeAsyncLocked();
+                                }
+                            } catch (Throwable th7) {
+                                th = th7;
+                                throw th;
+                            }
+                        }
+                    }
+                } catch (Throwable th8) {
+                    z = noOutput;
+                    Binder.restoreCallingIdentity(historyStart);
+                }
+            }
+        }
     }
 
     public CellularBatteryStats getCellularBatteryStats() {

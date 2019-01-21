@@ -63,6 +63,7 @@ import com.android.server.usb.descriptors.UsbTerminalTypes;
 import java.io.File;
 import java.io.PrintWriter;
 import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -503,11 +504,6 @@ public class AppStandbyController {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:18:0x0050 A:{Splitter: B:10:0x0021, ExcHandler: java.lang.NumberFormatException (e java.lang.NumberFormatException)} */
-        /* JADX WARNING: Missing block: B:19:0x0051, code:
-            return r7;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         long[] parseLongArray(String values, long[] defaults) {
             if (values == null || values.isEmpty()) {
                 return defaults;
@@ -520,13 +516,16 @@ public class AppStandbyController {
             int i = 0;
             while (i < AppStandbyController.THRESHOLD_BUCKETS.length) {
                 try {
-                    if (thresholds[i].startsWith("P") || thresholds[i].startsWith("p")) {
-                        array[i] = Duration.parse(thresholds[i]).toMillis();
-                    } else {
-                        array[i] = Long.parseLong(thresholds[i]);
+                    if (!thresholds[i].startsWith("P")) {
+                        if (!thresholds[i].startsWith("p")) {
+                            array[i] = Long.parseLong(thresholds[i]);
+                            i++;
+                        }
                     }
+                    array[i] = Duration.parse(thresholds[i]).toMillis();
                     i++;
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | DateTimeParseException e) {
+                    return defaults;
                 }
             }
             return array;
@@ -570,92 +569,6 @@ public class AppStandbyController {
                 AppStandbyController.sStandbyUpdatePool.add(this);
             }
         }
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    void forceIdleState(java.lang.String r20, int r21, boolean r22) {
-        /*
-        r19 = this;
-        r15 = r19;
-        r0 = r15.mAppIdleEnabled;
-        if (r0 != 0) goto L_0x0007;
-    L_0x0006:
-        return;
-    L_0x0007:
-        r16 = r19.getAppId(r20);
-        if (r16 >= 0) goto L_0x000e;
-    L_0x000d:
-        return;
-    L_0x000e:
-        r0 = r15.mInjector;
-        r17 = r0.elapsedRealtime();
-        r1 = r15;
-        r2 = r20;
-        r3 = r16;
-        r4 = r21;
-        r5 = r17;
-        r14 = r1.isAppIdleFiltered(r2, r3, r4, r5);
-        r7 = r15.mAppIdleLock;
-        monitor-enter(r7);
-        r1 = r15.mAppIdleHistory;	 Catch:{ all -> 0x0059 }
-        r2 = r20;	 Catch:{ all -> 0x0059 }
-        r3 = r21;	 Catch:{ all -> 0x0059 }
-        r4 = r22;	 Catch:{ all -> 0x0059 }
-        r5 = r17;	 Catch:{ all -> 0x0059 }
-        r12 = r1.setIdle(r2, r3, r4, r5);	 Catch:{ all -> 0x0059 }
-        monitor-exit(r7);	 Catch:{ all -> 0x0059 }
-        r1 = r15;
-        r2 = r20;
-        r3 = r16;
-        r4 = r21;
-        r5 = r17;
-        r0 = r1.isAppIdleFiltered(r2, r3, r4, r5);
-        if (r14 == r0) goto L_0x0057;
-    L_0x0042:
-        r13 = 1024; // 0x400 float:1.435E-42 double:5.06E-321;
-        r1 = 0;
-        r7 = r15;
-        r8 = r20;
-        r9 = r21;
-        r10 = r17;
-        r2 = r14;
-        r14 = r1;
-        r7.maybeInformListeners(r8, r9, r10, r12, r13, r14);
-        if (r0 != 0) goto L_0x0058;
-    L_0x0053:
-        r19.notifyBatteryStats(r20, r21, r22);
-        goto L_0x0058;
-    L_0x0057:
-        r2 = r14;
-    L_0x0058:
-        return;
-    L_0x0059:
-        r0 = move-exception;
-        r2 = r14;
-    L_0x005b:
-        monitor-exit(r7);	 Catch:{ all -> 0x005d }
-        throw r0;
-    L_0x005d:
-        r0 = move-exception;
-        goto L_0x005b;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.usage.AppStandbyController.forceIdleState(java.lang.String, int, boolean):void");
     }
 
     AppStandbyController(Context context, Looper looper) {
@@ -912,8 +825,10 @@ public class AppStandbyController {
             return true;
         }
         synchronized (this.mAppIdleLock) {
-            if (!(this.mAppIdleTempParoled || this.mChargingStable)) {
-                z = false;
+            if (!this.mAppIdleTempParoled) {
+                if (!this.mChargingStable) {
+                    z = false;
+                }
             }
         }
         return z;
@@ -998,6 +913,8 @@ public class AppStandbyController {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x00bf A:{Catch:{ all -> 0x00ea, all -> 0x00ef }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void checkAndUpdateStandbyState(String packageName, int userId, int uid, long elapsedRealtime) {
         int uid2;
         Throwable th;
@@ -1050,14 +967,15 @@ public class AppStandbyController {
                         } else if (newBucket4 < 20 || app.bucketWorkingSetTimeoutTime <= elapsedTimeAdjusted) {
                             reason2 = reason;
                             newBucket2 = newBucket4;
-                            if (oldBucket >= newBucket2 || predictionLate) {
-                                newBucket3 = newBucket2;
-                                this.mAppIdleHistory.setAppStandbyBucket(str, i, j, newBucket3, reason2);
-                                obj2 = obj;
-                                maybeInformListeners(str, i, j, newBucket3, reason2, false);
-                            } else {
-                                obj2 = obj;
+                            if (oldBucket >= newBucket2) {
+                                if (!predictionLate) {
+                                    obj2 = obj;
+                                }
                             }
+                            newBucket3 = newBucket2;
+                            this.mAppIdleHistory.setAppStandbyBucket(str, i, j, newBucket3, reason2);
+                            obj2 = obj;
+                            maybeInformListeners(str, i, j, newBucket3, reason2, false);
                         } else {
                             newBucket = 20;
                             if (20 == oldBucket) {
@@ -1130,11 +1048,6 @@ public class AppStandbyController {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x001a A:{Splitter: B:0:0x0000, ExcHandler: android.content.pm.PackageManager.NameNotFoundException (e android.content.pm.PackageManager$NameNotFoundException)} */
-    /* JADX WARNING: Missing block: B:6:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void notifyBatteryStats(String packageName, int userId, boolean idle) {
         try {
             int uid = this.mPackageManager.getPackageUidAsUser(packageName, 8192, userId);
@@ -1143,14 +1056,14 @@ public class AppStandbyController {
             } else {
                 this.mInjector.noteEvent(16, packageName, uid);
             }
-        } catch (NameNotFoundException e) {
+        } catch (NameNotFoundException | RemoteException e) {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0021, code:
+    /* JADX WARNING: Missing block: B:11:0x0021, code skipped:
             setAppIdleParoled(r1);
      */
-    /* JADX WARNING: Missing block: B:12:0x0024, code:
+    /* JADX WARNING: Missing block: B:12:0x0024, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1167,7 +1080,7 @@ public class AppStandbyController {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x0105 A:{Catch:{ all -> 0x010d, all -> 0x0113 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:46:0x0105 A:{Catch:{ all -> 0x010d, all -> 0x0113 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void reportEvent(Event event, long elapsedRealtime, int userId) {
         Throwable th;
@@ -1180,62 +1093,63 @@ public class AppStandbyController {
                 int i2;
                 Object obj2;
                 try {
+                    int prevBucket;
+                    long nextCheckTime;
+                    boolean userStartedInteracting;
                     boolean previouslyIdle = this.mAppIdleHistory.isIdle(event2.mPackage, i, j);
-                    if (event2.mEventType == 1 || event2.mEventType == 2 || event2.mEventType == 6 || event2.mEventType == 7 || event2.mEventType == 10 || event2.mEventType == 14 || event2.mEventType == 13) {
-                        int prevBucket;
-                        long nextCheckTime;
-                        boolean userStartedInteracting;
-                        AppUsageHistory appHistory = this.mAppIdleHistory.getAppUsageHistory(event2.mPackage, i, j);
-                        int prevBucket2 = appHistory.currentBucket;
-                        int prevBucketReason = appHistory.bucketingReason;
-                        int subReason = usageEventToSubReason(event2.mEventType);
-                        int reason = 768 | subReason;
-                        int i3;
-                        int i4;
-                        if (event2.mEventType == 10) {
-                            i3 = 768;
-                            prevBucket = prevBucket2;
-                            i4 = 10;
-                        } else if (event2.mEventType == 14) {
+                    if (!(event2.mEventType == 1 || event2.mEventType == 2 || event2.mEventType == 6 || event2.mEventType == 7 || event2.mEventType == 10 || event2.mEventType == 14)) {
+                        if (event2.mEventType != 13) {
+                            i2 = i;
+                            obj2 = obj;
+                        }
+                    }
+                    AppUsageHistory appHistory = this.mAppIdleHistory.getAppUsageHistory(event2.mPackage, i, j);
+                    int prevBucket2 = appHistory.currentBucket;
+                    int prevBucketReason = appHistory.bucketingReason;
+                    int subReason = usageEventToSubReason(event2.mEventType);
+                    int reason = 768 | subReason;
+                    int i3;
+                    int i4;
+                    if (event2.mEventType == 10) {
+                        i3 = 768;
+                        prevBucket = prevBucket2;
+                        i4 = 10;
+                    } else if (event2.mEventType == 14) {
+                        i3 = 768;
+                        prevBucket = prevBucket2;
+                        i4 = 10;
+                    } else {
+                        if (event2.mEventType == 6) {
+                            this.mAppIdleHistory.reportUsage(appHistory, event2.mPackage, 10, subReason, 0, j + this.mSystemInteractionTimeoutMillis);
+                            nextCheckTime = this.mSystemInteractionTimeoutMillis;
                             i3 = 768;
                             prevBucket = prevBucket2;
                             i4 = 10;
                         } else {
-                            if (event2.mEventType == 6) {
-                                this.mAppIdleHistory.reportUsage(appHistory, event2.mPackage, 10, subReason, 0, j + this.mSystemInteractionTimeoutMillis);
-                                nextCheckTime = this.mSystemInteractionTimeoutMillis;
-                                i3 = 768;
-                                prevBucket = prevBucket2;
-                                i4 = 10;
-                            } else {
-                                i3 = 768;
-                                prevBucket = prevBucket2;
-                                i4 = 10;
-                                this.mAppIdleHistory.reportUsage(appHistory, event2.mPackage, 10, subReason, j, j + this.mStrongUsageTimeoutMillis);
-                                nextCheckTime = this.mStrongUsageTimeoutMillis;
-                            }
-                            this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(11, i, -1, event2.mPackage), nextCheckTime);
-                            userStartedInteracting = (appHistory.currentBucket == 10 || prevBucket == appHistory.currentBucket || (prevBucketReason & JobPackageTracker.EVENT_STOP_REASON_MASK) == 768) ? false : true;
-                            i2 = i;
-                            obj2 = obj;
-                            maybeInformListeners(event2.mPackage, i, j, appHistory.currentBucket, reason, userStartedInteracting);
-                            if (previouslyIdle) {
-                                notifyBatteryStats(event2.mPackage, i2, false);
-                            }
+                            i3 = 768;
+                            prevBucket = prevBucket2;
+                            i4 = 10;
+                            this.mAppIdleHistory.reportUsage(appHistory, event2.mPackage, 10, subReason, j, j + this.mStrongUsageTimeoutMillis);
+                            nextCheckTime = this.mStrongUsageTimeoutMillis;
                         }
-                        this.mAppIdleHistory.reportUsage(appHistory, event2.mPackage, 20, subReason, 0, j + this.mNotificationSeenTimeoutMillis);
-                        nextCheckTime = this.mNotificationSeenTimeoutMillis;
                         this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(11, i, -1, event2.mPackage), nextCheckTime);
-                        if (appHistory.currentBucket == 10) {
-                        }
+                        userStartedInteracting = (appHistory.currentBucket == 10 || prevBucket == appHistory.currentBucket || (prevBucketReason & JobPackageTracker.EVENT_STOP_REASON_MASK) == 768) ? false : true;
                         i2 = i;
                         obj2 = obj;
                         maybeInformListeners(event2.mPackage, i, j, appHistory.currentBucket, reason, userStartedInteracting);
                         if (previouslyIdle) {
+                            notifyBatteryStats(event2.mPackage, i2, false);
                         }
-                    } else {
-                        i2 = i;
-                        obj2 = obj;
+                    }
+                    this.mAppIdleHistory.reportUsage(appHistory, event2.mPackage, 20, subReason, 0, j + this.mNotificationSeenTimeoutMillis);
+                    nextCheckTime = this.mNotificationSeenTimeoutMillis;
+                    this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(11, i, -1, event2.mPackage), nextCheckTime);
+                    if (appHistory.currentBucket == 10) {
+                    }
+                    i2 = i;
+                    obj2 = obj;
+                    maybeInformListeners(event2.mPackage, i, j, appHistory.currentBucket, reason, userStartedInteracting);
+                    if (previouslyIdle) {
                     }
                 } catch (Throwable th2) {
                     th = th2;
@@ -1265,6 +1179,74 @@ public class AppStandbyController {
                 return 0;
         }
     }
+
+    void forceIdleState(String packageName, int userId, boolean idle) {
+        if (this.mAppIdleEnabled) {
+            int appId = getAppId(packageName);
+            if (appId >= 0) {
+                int standbyBucket;
+                long elapsedRealtime = this.mInjector.elapsedRealtime();
+                AppStandbyController appStandbyController = this;
+                boolean previouslyIdle = appStandbyController.isAppIdleFiltered(packageName, appId, userId, elapsedRealtime);
+                synchronized (this.mAppIdleLock) {
+                    try {
+                        appStandbyController = this.mAppIdleHistory;
+                        standbyBucket = appStandbyController.setIdle(packageName, userId, idle, elapsedRealtime);
+                    } finally {
+                        previouslyIdle = 
+/*
+Method generation error in method: com.android.server.usage.AppStandbyController.forceIdleState(java.lang.String, int, boolean):void, dex: 
+jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r14_1 'previouslyIdle' boolean) = (r14_0 'previouslyIdle' boolean), (r15_0 'this' boolean A:{THIS}) in method: com.android.server.usage.AppStandbyController.forceIdleState(java.lang.String, int, boolean):void, dex: 
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:230)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:67)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
+	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
+	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
+	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
+	at jadx.core.codegen.ClassGen.addClassCode(ClassGen.java:111)
+	at jadx.core.codegen.ClassGen.makeClass(ClassGen.java:77)
+	at jadx.core.codegen.CodeGen.visit(CodeGen.java:10)
+	at jadx.core.ProcessClass.process(ProcessClass.java:38)
+	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
+	at jadx.api.JavaClass.decompile(JavaClass.java:62)
+	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
+Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only in fallback mode
+	at jadx.core.codegen.InsnGen.fallbackOnlyInsn(InsnGen.java:539)
+	at jadx.core.codegen.InsnGen.makeInsnBody(InsnGen.java:511)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:222)
+	... 42 more
+
+*/
 
     public void setLastJobRunTime(String packageName, int userId, long elapsedRealtime) {
         synchronized (this.mAppIdleLock) {
@@ -1441,7 +1423,7 @@ public class AppStandbyController {
     }
 
     public List<AppStandbyInfo> getAppStandbyBuckets(int userId) {
-        List appStandbyBuckets;
+        ArrayList appStandbyBuckets;
         synchronized (this.mAppIdleLock) {
             appStandbyBuckets = this.mAppIdleHistory.getAppStandbyBuckets(userId, this.mAppIdleEnabled);
         }
@@ -1553,7 +1535,10 @@ public class AppStandbyController {
     public void setActiveAdminApps(Set<String> adminPkgs, int userId) {
         synchronized (this.mActiveAdminApps) {
             if (adminPkgs == null) {
-                this.mActiveAdminApps.remove(userId);
+                try {
+                    this.mActiveAdminApps.remove(userId);
+                } catch (Throwable th) {
+                }
             } else {
                 this.mActiveAdminApps.put(userId, adminPkgs);
             }
@@ -1571,7 +1556,7 @@ public class AppStandbyController {
     }
 
     Set<String> getActiveAdminAppsForTest(int userId) {
-        Set<String> set;
+        Set set;
         synchronized (this.mActiveAdminApps) {
             set = (Set) this.mActiveAdminApps.get(userId);
         }
@@ -1579,7 +1564,7 @@ public class AppStandbyController {
     }
 
     private boolean isDeviceProvisioningPackage(String packageName) {
-        String deviceProvisioningPackage = this.mContext.getResources().getString(17039793);
+        String deviceProvisioningPackage = this.mContext.getResources().getString(17039794);
         return deviceProvisioningPackage != null && deviceProvisioningPackage.equals(packageName);
     }
 

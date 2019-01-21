@@ -56,8 +56,8 @@ class MtpNotificationManager {
 
     void showNotification(UsbDevice device) {
         Resources resources = this.mContext.getResources();
-        String title = resources.getString(17041281, new Object[]{device.getProductName()});
-        Builder builder = new Builder(this.mContext, SystemNotificationChannels.USB).setContentTitle(title).setContentText(resources.getString(17041280)).setSmallIcon(17303514).setCategory("sys");
+        String title = resources.getString(17041282, new Object[]{device.getProductName()});
+        Builder builder = new Builder(this.mContext, SystemNotificationChannels.USB).setContentTitle(title).setContentText(resources.getString(17041281)).setSmallIcon(17303514).setCategory("sys");
         Intent intent = new Intent(ACTION_OPEN_IN_APPS);
         intent.putExtra("device", device);
         intent.addFlags(1342177280);

@@ -188,20 +188,20 @@ public class SecT571Field {
     }
 
     public static long[] precompMultiplicand(long[] jArr) {
-        Object obj = new long[288];
+        long[] jArr2 = new long[288];
         int i = 0;
-        System.arraycopy(jArr, 0, obj, 9, 9);
+        System.arraycopy(jArr, 0, jArr2, 9, 9);
         int i2 = 7;
         while (i2 > 0) {
             int i3 = i + 18;
-            Nat.shiftUpBit64(9, obj, i3 >>> 1, 0, obj, i3);
-            reduce5(obj, i3);
-            add(obj, 9, obj, i3, obj, i3 + 9);
+            Nat.shiftUpBit64(9, jArr2, i3 >>> 1, 0, jArr2, i3);
+            reduce5(jArr2, i3);
+            add(jArr2, 9, jArr2, i3, jArr2, i3 + 9);
             i2--;
             i = i3;
         }
-        Nat.shiftUpBits64(CipherSuite.TLS_DHE_PSK_WITH_AES_128_CBC_SHA, obj, 0, 4, 0, obj, CipherSuite.TLS_DHE_PSK_WITH_AES_128_CBC_SHA);
-        return obj;
+        Nat.shiftUpBits64(CipherSuite.TLS_DHE_PSK_WITH_AES_128_CBC_SHA, jArr2, 0, 4, 0, jArr2, CipherSuite.TLS_DHE_PSK_WITH_AES_128_CBC_SHA);
+        return jArr2;
     }
 
     public static void reduce(long[] jArr, long[] jArr2) {

@@ -5,6 +5,7 @@ import android.net.util.ConnectivityPacketSummary;
 import android.net.util.InterfaceParams;
 import android.net.util.PacketReader;
 import android.os.Handler;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.PacketSocketAddress;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 import android.util.LocalLog;
 import android.util.Log;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import libcore.util.HexEncoding;
 
 public class ConnectivityPacketTracker {
@@ -35,18 +37,6 @@ public class ConnectivityPacketTracker {
             this.mInterface = ifParams;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:4:0x0022 A:{PHI: r1 , Splitter: B:1:0x0002, ExcHandler: android.system.ErrnoException (r2_4 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:4:0x0022, code:
-            r2 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:5:0x0023, code:
-            logError("Failed to create packet tracking socket: ", r2);
-            android.net.util.PacketReader.closeFd(r1);
-     */
-        /* JADX WARNING: Missing block: B:6:0x002b, code:
-            return null;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         protected FileDescriptor createFd() {
             FileDescriptor s = null;
             try {
@@ -54,7 +44,10 @@ public class ConnectivityPacketTracker {
                 NetworkUtils.attachControlPacketFilter(s, OsConstants.ARPHRD_ETHER);
                 Os.bind(s, new PacketSocketAddress((short) OsConstants.ETH_P_ALL, this.mInterface.index));
                 return s;
-            } catch (Exception e) {
+            } catch (ErrnoException | IOException e) {
+                logError("Failed to create packet tracking socket: ", e);
+                PacketReader.closeFd(s);
+                return null;
             }
         }
 

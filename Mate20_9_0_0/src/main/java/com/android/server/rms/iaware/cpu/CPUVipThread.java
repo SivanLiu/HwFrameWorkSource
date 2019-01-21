@@ -46,14 +46,17 @@ public class CPUVipThread {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0036, code:
+    /* JADX WARNING: Missing block: B:21:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void setAppVipThread(int pid, List<Integer> threads, boolean isSet) {
         if (isSet) {
-            this.mCurThreads = threads;
-            this.mCurPid = pid;
+            try {
+                this.mCurThreads = threads;
+                this.mCurPid = pid;
+            } catch (Throwable th) {
+            }
         }
         if (!this.mVipEnable.get()) {
             return;

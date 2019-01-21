@@ -54,20 +54,20 @@ public class ElGamalEngine implements AsymmetricBlockCipher {
         if (this.key != null) {
             if (i2 <= (this.forEncryption ? ((this.bitSize - 1) + 7) / 8 : getInputBlockSize())) {
                 BigInteger p = this.key.getParameters().getP();
-                Object obj;
-                Object obj2;
+                byte[] bArr2;
+                byte[] bArr3;
                 if (this.key instanceof ElGamalPrivateKeyParameters) {
                     i2 /= 2;
-                    obj = new byte[i2];
-                    obj2 = new byte[i2];
-                    System.arraycopy(bArr, i, obj, 0, obj.length);
-                    System.arraycopy(bArr, i + obj.length, obj2, 0, obj2.length);
-                    return BigIntegers.asUnsignedByteArray(new BigInteger(1, obj).modPow(p.subtract(ONE).subtract(((ElGamalPrivateKeyParameters) this.key).getX()), p).multiply(new BigInteger(1, obj2)).mod(p));
+                    bArr2 = new byte[i2];
+                    bArr3 = new byte[i2];
+                    System.arraycopy(bArr, i, bArr2, 0, bArr2.length);
+                    System.arraycopy(bArr, i + bArr2.length, bArr3, 0, bArr3.length);
+                    return BigIntegers.asUnsignedByteArray(new BigInteger(1, bArr2).modPow(p.subtract(ONE).subtract(((ElGamalPrivateKeyParameters) this.key).getX()), p).multiply(new BigInteger(1, bArr3)).mod(p));
                 }
                 if (!(i == 0 && i2 == bArr.length)) {
-                    obj = new byte[i2];
-                    System.arraycopy(bArr, i, obj, 0, i2);
-                    bArr = obj;
+                    bArr2 = new byte[i2];
+                    System.arraycopy(bArr, i, bArr2, 0, i2);
+                    bArr = bArr2;
                 }
                 BigInteger bigInteger = new BigInteger(1, bArr);
                 if (bigInteger.compareTo(p) < 0) {
@@ -82,20 +82,20 @@ public class ElGamalEngine implements AsymmetricBlockCipher {
                     }
                     BigInteger modPow = this.key.getParameters().getG().modPow(bigInteger2, p);
                     BigInteger mod = bigInteger.multiply(elGamalPublicKeyParameters.getY().modPow(bigInteger2, p)).mod(p);
-                    Object toByteArray = modPow.toByteArray();
-                    Object toByteArray2 = mod.toByteArray();
-                    obj2 = new byte[getOutputBlockSize()];
-                    if (toByteArray.length > obj2.length / 2) {
-                        System.arraycopy(toByteArray, 1, obj2, (obj2.length / 2) - (toByteArray.length - 1), toByteArray.length - 1);
+                    byte[] toByteArray = modPow.toByteArray();
+                    bArr = mod.toByteArray();
+                    bArr3 = new byte[getOutputBlockSize()];
+                    if (toByteArray.length > bArr3.length / 2) {
+                        System.arraycopy(toByteArray, 1, bArr3, (bArr3.length / 2) - (toByteArray.length - 1), toByteArray.length - 1);
                     } else {
-                        System.arraycopy(toByteArray, 0, obj2, (obj2.length / 2) - toByteArray.length, toByteArray.length);
+                        System.arraycopy(toByteArray, 0, bArr3, (bArr3.length / 2) - toByteArray.length, toByteArray.length);
                     }
-                    if (toByteArray2.length > obj2.length / 2) {
-                        System.arraycopy(toByteArray2, 1, obj2, obj2.length - (toByteArray2.length - 1), toByteArray2.length - 1);
-                        return obj2;
+                    if (bArr.length > bArr3.length / 2) {
+                        System.arraycopy(bArr, 1, bArr3, bArr3.length - (bArr.length - 1), bArr.length - 1);
+                        return bArr3;
                     }
-                    System.arraycopy(toByteArray2, 0, obj2, obj2.length - toByteArray2.length, toByteArray2.length);
-                    return obj2;
+                    System.arraycopy(bArr, 0, bArr3, bArr3.length - bArr.length, bArr.length);
+                    return bArr3;
                 }
                 throw new DataLengthException("input too large for ElGamal cipher.\n");
             }

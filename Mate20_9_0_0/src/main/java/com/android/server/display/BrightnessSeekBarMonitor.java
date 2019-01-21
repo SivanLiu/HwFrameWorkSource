@@ -367,7 +367,7 @@ class BrightnessSeekBarMonitor implements MonitorModule {
         seekBarMovementUploader();
     }
 
-    /* JADX WARNING: Missing block: B:11:0x003c, code:
+    /* JADX WARNING: Missing block: B:11:0x003c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -409,7 +409,7 @@ class BrightnessSeekBarMonitor implements MonitorModule {
         this.mTempManualBrightnessPackageNameLast = packageName;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x003f, code:
+    /* JADX WARNING: Missing block: B:13:0x003f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -453,7 +453,7 @@ class BrightnessSeekBarMonitor implements MonitorModule {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0067, code:
+    /* JADX WARNING: Missing block: B:14:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

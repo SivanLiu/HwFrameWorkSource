@@ -236,15 +236,15 @@ public class GMSSRootCalc {
                 return;
             }
             Object obj = new byte[this.mdLength];
-            Object obj2 = new byte[(this.mdLength << 1)];
+            byte[] bArr2 = new byte[(this.mdLength << 1)];
             System.arraycopy(bArr, 0, obj, 0, this.mdLength);
             int i = 0;
             while (this.tailStack.size() > 0 && i == ((Integer) this.heightOfNodes.lastElement()).intValue()) {
-                System.arraycopy(this.tailStack.lastElement(), 0, obj2, 0, this.mdLength);
+                System.arraycopy(this.tailStack.lastElement(), 0, bArr2, 0, this.mdLength);
                 this.tailStack.removeElementAt(this.tailStack.size() - 1);
                 this.heightOfNodes.removeElementAt(this.heightOfNodes.size() - 1);
-                System.arraycopy(obj, 0, obj2, this.mdLength, this.mdLength);
-                this.messDigestTree.update(obj2, 0, obj2.length);
+                System.arraycopy(obj, 0, bArr2, this.mdLength, this.mdLength);
+                this.messDigestTree.update(bArr2, 0, bArr2.length);
                 obj = new byte[this.messDigestTree.getDigestSize()];
                 this.messDigestTree.doFinal(obj, 0);
                 i++;

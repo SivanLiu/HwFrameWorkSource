@@ -6,6 +6,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -77,15 +78,15 @@ public abstract class BaseCipherSpi extends CipherSpi {
 
     protected Key engineUnwrap(byte[] bArr, String str, int i) throws InvalidKeyException {
         try {
-            Object engineDoFinal = this.wrapEngine == null ? engineDoFinal(bArr, 0, bArr.length) : this.wrapEngine.unwrap(bArr, 0, bArr.length);
+            bArr = this.wrapEngine == null ? engineDoFinal(bArr, 0, bArr.length) : this.wrapEngine.unwrap(bArr, 0, bArr.length);
             if (i == 3) {
-                return new SecretKeySpec(engineDoFinal, str);
+                return new SecretKeySpec(bArr, str);
             }
             StringBuilder stringBuilder;
             if (str.equals("") && i == 2) {
                 try {
-                    PrivateKeyInfo instance = PrivateKeyInfo.getInstance(engineDoFinal);
-                    Key privateKey = BouncyCastleProvider.getPrivateKey(instance);
+                    PrivateKeyInfo instance = PrivateKeyInfo.getInstance(bArr);
+                    PrivateKey privateKey = BouncyCastleProvider.getPrivateKey(instance);
                     if (privateKey != null) {
                         return privateKey;
                     }
@@ -101,10 +102,10 @@ public abstract class BaseCipherSpi extends CipherSpi {
             try {
                 KeyFactory createKeyFactory = this.helper.createKeyFactory(str);
                 if (i == 1) {
-                    return createKeyFactory.generatePublic(new X509EncodedKeySpec(engineDoFinal));
+                    return createKeyFactory.generatePublic(new X509EncodedKeySpec(bArr));
                 }
                 if (i == 2) {
-                    return createKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(engineDoFinal));
+                    return createKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(bArr));
                 }
                 StringBuilder stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("Unknown key type ");
@@ -128,7 +129,7 @@ public abstract class BaseCipherSpi extends CipherSpi {
             }
         } catch (InvalidCipherTextException e5) {
             throw new InvalidKeyException(e5.getMessage());
-        } catch (final BadPaddingException e6) {
+        } catch (BadPaddingException e6) {
             throw new InvalidKeyException("unable to unwrap") {
                 public synchronized Throwable getCause() {
                     return e6;

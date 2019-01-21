@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -74,7 +73,7 @@ public class ESTService {
     }
 
     private String annotateRequest(byte[] bArr) {
-        Writer stringWriter = new StringWriter();
+        StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         int i = 0;
         do {
@@ -133,7 +132,7 @@ public class ESTService {
         while (str.endsWith("/") && str.length() > 0) {
             try {
                 str = str.substring(0, str.length() - 1);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 if (e instanceof IllegalArgumentException) {
                     throw ((IllegalArgumentException) e);
                 }
@@ -156,7 +155,7 @@ public class ESTService {
         throw new IllegalArgumentException("Server contains path, must only be <dnsname/ipaddress>:port, a path of '/.well-known/est/<label>' will be added arbitrarily.");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x0195 A:{SYNTHETIC, Splitter: B:59:0x0195} */
+    /* JADX WARNING: Removed duplicated region for block: B:59:0x0195 A:{SYNTHETIC, Splitter:B:59:0x0195} */
     /* JADX WARNING: Removed duplicated region for block: B:55:0x0188 A:{Catch:{ all -> 0x0192 }} */
     /* JADX WARNING: Removed duplicated region for block: B:53:0x0185 A:{Catch:{ all -> 0x0192 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -261,18 +260,17 @@ public class ESTService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:22:0x00a2 A:{SYNTHETIC, Splitter: B:22:0x00a2} */
-    /* JADX WARNING: Removed duplicated region for block: B:33:0x00c0  */
-    /* JADX WARNING: Removed duplicated region for block: B:27:0x00ab  */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0117 A:{SYNTHETIC, Splitter: B:53:0x0117} */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x010a A:{Catch:{ all -> 0x0114 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:47:0x0107 A:{Catch:{ all -> 0x0114 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:23:0x00a2 A:{SYNTHETIC, Splitter:B:23:0x00a2} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x00c0  */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x00ab  */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0117 A:{SYNTHETIC, Splitter:B:54:0x0117} */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x010a A:{Catch:{ all -> 0x0114 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x0107 A:{Catch:{ all -> 0x0114 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public CSRRequestResponse getCSRAttributes() throws ESTException {
         Throwable th;
         if (this.clientProvider.isTrusted()) {
             ESTResponse doRequest;
-            Throwable e;
             try {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(this.server);
@@ -284,13 +282,16 @@ public class ESTService {
                 StringBuilder stringBuilder2;
                 try {
                     CSRAttributesResponse cSRAttributesResponse;
+                    Exception e;
                     int statusCode = doRequest.getStatusCode();
                     if (statusCode != DisplayText.DISPLAY_TEXT_MAXIMUM_SIZE) {
-                        if (!(statusCode == 204 || statusCode == 404)) {
-                            stringBuilder2 = new StringBuilder();
-                            stringBuilder2.append("CSR Attribute request: ");
-                            stringBuilder2.append(build.getURL().toString());
-                            throw new ESTException(stringBuilder2.toString(), null, doRequest.getStatusCode(), doRequest.getInputStream());
+                        if (statusCode != 204) {
+                            if (statusCode != 404) {
+                                stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("CSR Attribute request: ");
+                                stringBuilder2.append(build.getURL().toString());
+                                throw new ESTException(stringBuilder2.toString(), null, doRequest.getStatusCode(), doRequest.getInputStream());
+                            }
                         }
                     } else if (doRequest.getContentLength() != null && doRequest.getContentLength().longValue() > 0) {
                         cSRAttributesResponse = new CSRAttributesResponse(CsrAttrs.getInstance((ASN1Sequence) new ASN1InputStream(doRequest.getInputStream()).readObject()));
@@ -328,13 +329,13 @@ public class ESTService {
                         throw th;
                     }
                 }
-            } catch (Throwable e3) {
+            } catch (Throwable th4) {
                 doRequest = null;
-                th = e3;
+                th = th4;
                 if (doRequest != null) {
                     try {
                         doRequest.close();
-                    } catch (Exception e4) {
+                    } catch (Exception e3) {
                     }
                 }
                 throw th;

@@ -113,9 +113,9 @@ class PEMUtilities {
                 key = rC2Parameters;
             } else if (str2.startsWith("AES-")) {
                 if (bArr5.length > 8) {
-                    Object obj = new byte[8];
-                    System.arraycopy(bArr5, 0, obj, 0, 8);
-                    bArr5 = obj;
+                    byte[] bArr6 = new byte[8];
+                    System.arraycopy(bArr5, 0, bArr6, 0, 8);
+                    bArr5 = bArr6;
                 }
                 if (!str2.startsWith("AES-128-")) {
                     if (str2.startsWith("AES-192-")) {
@@ -142,7 +142,7 @@ class PEMUtilities {
         if (pKCS7Padding == null) {
             try {
                 bufferedBlockCipher = new BufferedBlockCipher(cBCBlockCipher);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new EncryptionException("exception using cipher - please check password and data.", e);
             }
         }
@@ -153,19 +153,19 @@ class PEMUtilities {
         } else {
             bufferedBlockCipher2.init(z2, new ParametersWithIV(key, bArr3));
         }
-        Object obj2 = new byte[bufferedBlockCipher2.getOutputSize(bArr4.length)];
-        int processBytes = bufferedBlockCipher2.processBytes(bArr4, 0, bArr4.length, obj2, 0);
-        processBytes += bufferedBlockCipher2.doFinal(obj2, processBytes);
-        if (processBytes == obj2.length) {
-            return obj2;
+        bArr3 = new byte[bufferedBlockCipher2.getOutputSize(bArr4.length)];
+        int processBytes = bufferedBlockCipher2.processBytes(bArr4, 0, bArr4.length, bArr3, 0);
+        processBytes += bufferedBlockCipher2.doFinal(bArr3, processBytes);
+        if (processBytes == bArr3.length) {
+            return bArr3;
         }
-        Object obj3 = new byte[processBytes];
-        System.arraycopy(obj2, 0, obj3, 0, processBytes);
-        return obj3;
+        bArr4 = new byte[processBytes];
+        System.arraycopy(bArr3, 0, bArr4, 0, processBytes);
+        return bArr4;
     }
 
     public static KeyParameter generateSecretKeyForPKCS5Scheme2(String str, char[] cArr, byte[] bArr, int i) {
-        PBEParametersGenerator pKCS5S2ParametersGenerator = new PKCS5S2ParametersGenerator(new SHA1Digest());
+        PKCS5S2ParametersGenerator pKCS5S2ParametersGenerator = new PKCS5S2ParametersGenerator(new SHA1Digest());
         pKCS5S2ParametersGenerator.init(PBEParametersGenerator.PKCS5PasswordToBytes(cArr), bArr, i);
         return (KeyParameter) pKCS5S2ParametersGenerator.generateDerivedParameters(getKeySize(str));
     }
@@ -175,13 +175,13 @@ class PEMUtilities {
     }
 
     private static KeyParameter getKey(char[] cArr, int i, byte[] bArr, boolean z) throws PEMException {
-        PBEParametersGenerator openSSLPBEParametersGenerator = new OpenSSLPBEParametersGenerator();
+        OpenSSLPBEParametersGenerator openSSLPBEParametersGenerator = new OpenSSLPBEParametersGenerator();
         openSSLPBEParametersGenerator.init(PBEParametersGenerator.PKCS5PasswordToBytes(cArr), bArr, 1);
         KeyParameter keyParameter = (KeyParameter) openSSLPBEParametersGenerator.generateDerivedParameters(i * 8);
         if (!z || keyParameter.getKey().length != 24) {
             return keyParameter;
         }
-        Object key = keyParameter.getKey();
+        byte[] key = keyParameter.getKey();
         System.arraycopy(key, 0, key, 16, 8);
         return new KeyParameter(key);
     }

@@ -49,6 +49,7 @@ import com.android.server.UiThread;
 import com.android.server.gesture.GestureNavConst;
 import com.android.server.pc.HwPCDataReporter;
 import com.android.server.pm.HwPackageManagerService;
+import com.android.server.wm.HwStartWindowRecord;
 import huawei.com.android.server.fingerprint.FingerViewController;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,7 +110,7 @@ public final class HwActivityStarter extends ActivityStarter {
                 public void run() {
                     Context context = HwActivityStarter.this.mService.mUiContext;
                     if (context != null) {
-                        Toast toast = Toast.makeText(context, context.getString(33686101), 0);
+                        Toast toast = Toast.makeText(context, context.getString(33686103), 0);
                         LayoutParams windowParams = toast.getWindowParams();
                         windowParams.privateFlags |= 16;
                         toast.show();
@@ -130,16 +131,20 @@ public final class HwActivityStarter extends ActivityStarter {
                 Log.w(TAG, "forbid launching browser because frp is restricted");
                 return 0;
             }
+            if (activityInfo != null) {
+                HwStartWindowRecord.getInstance().setStartFromMainAction(Integer.valueOf(activityInfo.applicationInfo.uid), "android.intent.action.MAIN".equals(intent2.getAction()));
+            }
             int startResult = super.startActivity(caller, intent, ephemeralIntent, resolvedType, aInfo, rInfo, voiceSession, voiceInteractor, resultTo, resultWho, requestCode, callingPid, callingUid, callingPackage, realCallingPid, realCallingUid, startFlags, options, ignoreTargetSecurity, componentSpecified, outActivity, inTask, reason, allowPendingRemoteAnimationRegistryLookup);
             try {
                 if (ActivityManager.isStartResultSuccessful(startResult) && HwPCUtils.isPcCastModeInServer() && !HwPCUtils.enabledInPad()) {
                     while (i < activityRecordArr.length) {
                         ActivityRecord r = activityRecordArr[i];
-                        if (r.getWindowingMode() == 1 || (r.getActivityType() == 2 && r.fullscreen)) {
-                            HwPCUtils.getHwPCManager().setScreenPower(true);
-                            break;
+                        if (r.getWindowingMode() != 1) {
+                            if (r.getActivityType() != 2 || !r.fullscreen) {
+                                i++;
+                            }
                         }
-                        i++;
+                        HwPCUtils.getHwPCManager().setScreenPower(true);
                     }
                 }
             } catch (Exception e) {
@@ -173,12 +178,12 @@ public final class HwActivityStarter extends ActivityStarter {
         return mdmDisabnled;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:211:0x03a2  */
-    /* JADX WARNING: Removed duplicated region for block: B:211:0x03a2  */
-    /* JADX WARNING: Removed duplicated region for block: B:211:0x03a2  */
-    /* JADX WARNING: Removed duplicated region for block: B:211:0x03a2  */
-    /* JADX WARNING: Removed duplicated region for block: B:202:0x036c  */
-    /* JADX WARNING: Missing block: B:41:?, code:
+    /* JADX WARNING: Removed duplicated region for block: B:212:0x03a2  */
+    /* JADX WARNING: Removed duplicated region for block: B:212:0x03a2  */
+    /* JADX WARNING: Removed duplicated region for block: B:212:0x03a2  */
+    /* JADX WARNING: Removed duplicated region for block: B:212:0x03a2  */
+    /* JADX WARNING: Removed duplicated region for block: B:203:0x036c  */
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             r0 = new java.lang.StringBuilder();
             r0.append("startActivityMayWait, callerApp: ");
             r0.append(r8);
@@ -190,113 +195,113 @@ public final class HwActivityStarter extends ActivityStarter {
             r0.append(android.os.Binder.getCallingUid());
             android.util.Flog.i(101, r0.toString());
      */
-    /* JADX WARNING: Missing block: B:42:0x00cb, code:
+    /* JADX WARNING: Missing block: B:42:0x00cb, code skipped:
             if (r10 != 0) goto L_0x0108;
      */
-    /* JADX WARNING: Missing block: B:44:0x00d1, code:
+    /* JADX WARNING: Missing block: B:44:0x00d1, code skipped:
             if (r35.getComponent() == null) goto L_0x0108;
      */
-    /* JADX WARNING: Missing block: B:46:0x00df, code:
+    /* JADX WARNING: Missing block: B:46:0x00df, code skipped:
             if (com.android.server.pm.HwPackageManagerService.isSupportCloneAppInCust(r35.getComponent().getPackageName()) != false) goto L_0x0108;
      */
-    /* JADX WARNING: Missing block: B:47:0x00e1, code:
+    /* JADX WARNING: Missing block: B:47:0x00e1, code skipped:
             r0 = super.startActivityMayWait(r32, r33, r34, r35, r36, r37, r38, r39, r40, r41, r42, r43, r44, r45, r46, r47, r48, r49, r50, r51);
      */
-    /* JADX WARNING: Missing block: B:49:0x00e7, code:
+    /* JADX WARNING: Missing block: B:49:0x00e7, code skipped:
             if (com.android.server.am.ActivityManagerDebugConfig.DEBUG_HW_ACTIVITY == false) goto L_0x00ec;
      */
-    /* JADX WARNING: Missing block: B:50:0x00e9, code:
+    /* JADX WARNING: Missing block: B:50:0x00e9, code skipped:
             android.os.Trace.traceEnd(64);
      */
-    /* JADX WARNING: Missing block: B:51:0x00ec, code:
+    /* JADX WARNING: Missing block: B:51:0x00ec, code skipped:
             r1 = new java.lang.StringBuilder();
             r1.append("startActivityMayWait cost ");
             r1.append(android.os.SystemClock.uptimeMillis() - r22);
             android.util.Flog.i(101, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:52:0x0107, code:
+    /* JADX WARNING: Missing block: B:52:0x0107, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:55:0x010c, code:
+    /* JADX WARNING: Missing block: B:55:0x010c, code skipped:
             r6 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:57:?, code:
+    /* JADX WARNING: Missing block: B:57:?, code skipped:
             r5 = new java.util.HashMap();
             r4 = r10;
      */
-    /* JADX WARNING: Missing block: B:58:0x011b, code:
+    /* JADX WARNING: Missing block: B:58:0x011b, code skipped:
             if ((r35.getHwFlags() & 1024) == 0) goto L_0x011f;
      */
-    /* JADX WARNING: Missing block: B:59:0x011d, code:
+    /* JADX WARNING: Missing block: B:59:0x011d, code skipped:
             r0 = 1;
      */
-    /* JADX WARNING: Missing block: B:60:0x011f, code:
+    /* JADX WARNING: Missing block: B:60:0x011f, code skipped:
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:61:0x0120, code:
+    /* JADX WARNING: Missing block: B:61:0x0120, code skipped:
             r16 = r0;
             r2 = r36;
      */
-    /* JADX WARNING: Missing block: B:62:0x012a, code:
+    /* JADX WARNING: Missing block: B:62:0x012a, code skipped:
             r1 = r15.mSupervisor.resolveIntent(r9, r2, r10);
      */
-    /* JADX WARNING: Missing block: B:63:0x012e, code:
+    /* JADX WARNING: Missing block: B:63:0x012e, code skipped:
             if (r1 != null) goto L_0x01f0;
      */
-    /* JADX WARNING: Missing block: B:65:?, code:
+    /* JADX WARNING: Missing block: B:65:?, code skipped:
             r0 = r15.mService.mUserController.mInjector.getUserManagerInternal().getUserInfo(r10);
      */
-    /* JADX WARNING: Missing block: B:66:0x013e, code:
+    /* JADX WARNING: Missing block: B:66:0x013e, code skipped:
             if (r0 == null) goto L_0x01d8;
      */
-    /* JADX WARNING: Missing block: B:68:0x0144, code:
+    /* JADX WARNING: Missing block: B:68:0x0144, code skipped:
             if (r0.isClonedProfile() == false) goto L_0x01d8;
      */
-    /* JADX WARNING: Missing block: B:70:0x014a, code:
+    /* JADX WARNING: Missing block: B:70:0x014a, code skipped:
             if (android.os.storage.StorageManager.isUserKeyUnlocked(r48) != false) goto L_0x019d;
      */
-    /* JADX WARNING: Missing block: B:72:0x0152, code:
+    /* JADX WARNING: Missing block: B:72:0x0152, code skipped:
             if (android.os.storage.StorageManager.isUserKeyUnlocked(r0.profileGroupId) == false) goto L_0x019d;
      */
-    /* JADX WARNING: Missing block: B:74:0x015a, code:
+    /* JADX WARNING: Missing block: B:74:0x015a, code skipped:
             if (r15.mService.mUserController.mHaveTryCloneProUserUnlock == false) goto L_0x0164;
      */
-    /* JADX WARNING: Missing block: B:75:0x015c, code:
+    /* JADX WARNING: Missing block: B:75:0x015c, code skipped:
             showErrorDialogToRemoveUser(r15.mService.mContext, r10);
      */
-    /* JADX WARNING: Missing block: B:78:?, code:
+    /* JADX WARNING: Missing block: B:78:?, code skipped:
             android.util.Slog.i(TAG, "Wait for CloneProfile user unLock, return!");
      */
-    /* JADX WARNING: Missing block: B:80:?, code:
+    /* JADX WARNING: Missing block: B:80:?, code skipped:
             android.os.Binder.restoreCallingIdentity(r6);
      */
-    /* JADX WARNING: Missing block: B:82:0x0171, code:
+    /* JADX WARNING: Missing block: B:82:0x0171, code skipped:
             if (com.android.server.am.ActivityManagerDebugConfig.DEBUG_HW_ACTIVITY == false) goto L_0x0176;
      */
-    /* JADX WARNING: Missing block: B:83:0x0173, code:
+    /* JADX WARNING: Missing block: B:83:0x0173, code skipped:
             android.os.Trace.traceEnd(64);
      */
-    /* JADX WARNING: Missing block: B:84:0x0176, code:
+    /* JADX WARNING: Missing block: B:84:0x0176, code skipped:
             r3 = new java.lang.StringBuilder();
             r3.append("startActivityMayWait cost ");
             r3.append(android.os.SystemClock.uptimeMillis() - r22);
             android.util.Flog.i(101, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:85:0x0194, code:
+    /* JADX WARNING: Missing block: B:85:0x0194, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:86:0x0195, code:
+    /* JADX WARNING: Missing block: B:86:0x0195, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:87:0x0196, code:
+    /* JADX WARNING: Missing block: B:87:0x0196, code skipped:
             r25 = r2;
             r1 = 64;
             r3 = 101;
      */
-    /* JADX WARNING: Missing block: B:89:?, code:
+    /* JADX WARNING: Missing block: B:89:?, code skipped:
             r3 = r0.profileGroupId;
      */
-    /* JADX WARNING: Missing block: B:91:?, code:
+    /* JADX WARNING: Missing block: B:91:?, code skipped:
             r10 = new java.lang.StringBuilder();
             r10.append("startActivityMayWait forward intent from clone user ");
             r10.append(r0.id);
@@ -304,40 +309,40 @@ public final class HwActivityStarter extends ActivityStarter {
             r10.append(r3);
             r10.append(" because clone user has non target apps to respond.");
      */
-    /* JADX WARNING: Missing block: B:92:0x01c0, code:
+    /* JADX WARNING: Missing block: B:92:0x01c0, code skipped:
             r12 = 101;
      */
-    /* JADX WARNING: Missing block: B:94:?, code:
+    /* JADX WARNING: Missing block: B:94:?, code skipped:
             android.util.Flog.i(101, r10.toString());
      */
-    /* JADX WARNING: Missing block: B:95:0x01c5, code:
+    /* JADX WARNING: Missing block: B:95:0x01c5, code skipped:
             r10 = r3;
      */
-    /* JADX WARNING: Missing block: B:96:0x01c7, code:
+    /* JADX WARNING: Missing block: B:96:0x01c7, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:97:0x01c8, code:
+    /* JADX WARNING: Missing block: B:97:0x01c8, code skipped:
             r1 = r2;
             r10 = r3;
      */
-    /* JADX WARNING: Missing block: B:98:0x01cb, code:
+    /* JADX WARNING: Missing block: B:98:0x01cb, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:99:0x01cc, code:
+    /* JADX WARNING: Missing block: B:99:0x01cc, code skipped:
             r1 = r2;
             r10 = r3;
      */
-    /* JADX WARNING: Missing block: B:100:0x01cf, code:
+    /* JADX WARNING: Missing block: B:100:0x01cf, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:101:0x01d0, code:
+    /* JADX WARNING: Missing block: B:101:0x01d0, code skipped:
             r1 = r2;
      */
-    /* JADX WARNING: Missing block: B:102:0x01d1, code:
+    /* JADX WARNING: Missing block: B:102:0x01d1, code skipped:
             r2 = r6;
             r17 = r8;
      */
-    /* JADX WARNING: Missing block: B:104:0x01d8, code:
+    /* JADX WARNING: Missing block: B:104:0x01d8, code skipped:
             r13 = r4;
             r14 = r5;
             r28 = r6;
@@ -347,24 +352,24 @@ public final class HwActivityStarter extends ActivityStarter {
             r2 = r1;
             r1 = r30;
      */
-    /* JADX WARNING: Missing block: B:105:0x01e8, code:
+    /* JADX WARNING: Missing block: B:105:0x01e8, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:106:0x01e9, code:
+    /* JADX WARNING: Missing block: B:106:0x01e9, code skipped:
             r1 = r2;
      */
-    /* JADX WARNING: Missing block: B:107:0x01ea, code:
+    /* JADX WARNING: Missing block: B:107:0x01ea, code skipped:
             r2 = r6;
             r17 = r8;
             r8 = r12;
      */
-    /* JADX WARNING: Missing block: B:108:0x01f0, code:
+    /* JADX WARNING: Missing block: B:108:0x01f0, code skipped:
             if (r8 != null) goto L_0x0200;
      */
-    /* JADX WARNING: Missing block: B:109:0x01f2, code:
+    /* JADX WARNING: Missing block: B:109:0x01f2, code skipped:
             if (r16 == false) goto L_0x01f5;
      */
-    /* JADX WARNING: Missing block: B:110:0x01f5, code:
+    /* JADX WARNING: Missing block: B:110:0x01f5, code skipped:
             r2 = r1;
             r13 = r4;
             r14 = r5;
@@ -372,19 +377,19 @@ public final class HwActivityStarter extends ActivityStarter {
             r17 = r8;
             r8 = 101;
      */
-    /* JADX WARNING: Missing block: B:113:0x0202, code:
+    /* JADX WARNING: Missing block: B:113:0x0202, code skipped:
             if (r1.activityInfo == null) goto L_0x02d1;
      */
-    /* JADX WARNING: Missing block: B:115:0x0205, code:
+    /* JADX WARNING: Missing block: B:115:0x0205, code skipped:
             if (r8 != null) goto L_0x0209;
      */
-    /* JADX WARNING: Missing block: B:116:0x0207, code:
+    /* JADX WARNING: Missing block: B:116:0x0207, code skipped:
             r12 = null;
      */
-    /* JADX WARNING: Missing block: B:118:?, code:
+    /* JADX WARNING: Missing block: B:118:?, code skipped:
             r12 = r8.info.packageName;
      */
-    /* JADX WARNING: Missing block: B:119:0x020d, code:
+    /* JADX WARNING: Missing block: B:119:0x020d, code skipped:
             r27 = r1;
             r2 = r12;
             r12 = 1;
@@ -393,74 +398,74 @@ public final class HwActivityStarter extends ActivityStarter {
             r28 = r6;
             r17 = r8;
      */
-    /* JADX WARNING: Missing block: B:122:0x0225, code:
+    /* JADX WARNING: Missing block: B:122:0x0225, code skipped:
             if (shouldDisplayClonedAppToChoose(r2, r9, r36, r27, r10, r14, r16) == null) goto L_0x029d;
      */
-    /* JADX WARNING: Missing block: B:123:0x0227, code:
+    /* JADX WARNING: Missing block: B:123:0x0227, code skipped:
             r9.addHwFlags(2);
             r2 = r27;
             r9.setComponent(new android.content.ComponentName(r2.activityInfo.packageName, r2.activityInfo.name));
      */
-    /* JADX WARNING: Missing block: B:124:0x023d, code:
+    /* JADX WARNING: Missing block: B:124:0x023d, code skipped:
             r1 = null;
      */
-    /* JADX WARNING: Missing block: B:126:?, code:
+    /* JADX WARNING: Missing block: B:126:?, code skipped:
             standardizeIntentUriForClone(r9, r13);
-            r1 = android.content.Intent.createChooser(r9, r15.mService.mContext.getResources().getText(17041358));
+            r1 = android.content.Intent.createChooser(r9, r15.mService.mContext.getResources().getText(17041359));
             r1.setFlags(r35.getFlags() & -536870913);
      */
-    /* JADX WARNING: Missing block: B:127:0x0260, code:
+    /* JADX WARNING: Missing block: B:127:0x0260, code skipped:
             r8 = 101;
      */
-    /* JADX WARNING: Missing block: B:128:0x0264, code:
+    /* JADX WARNING: Missing block: B:128:0x0264, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:129:0x0265, code:
+    /* JADX WARNING: Missing block: B:129:0x0265, code skipped:
             r1 = r36;
             r2 = r28;
      */
-    /* JADX WARNING: Missing block: B:130:0x026b, code:
+    /* JADX WARNING: Missing block: B:130:0x026b, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:132:?, code:
+    /* JADX WARNING: Missing block: B:132:?, code skipped:
             r3 = new java.lang.StringBuilder();
             r3.append("startActivityMayWait, fail to create chooser for ");
             r3.append(r9);
      */
-    /* JADX WARNING: Missing block: B:133:0x027e, code:
+    /* JADX WARNING: Missing block: B:133:0x027e, code skipped:
             r8 = 101;
      */
-    /* JADX WARNING: Missing block: B:135:?, code:
+    /* JADX WARNING: Missing block: B:135:?, code skipped:
             android.util.Flog.e(101, r3.toString(), r0);
      */
-    /* JADX WARNING: Missing block: B:145:0x029d, code:
+    /* JADX WARNING: Missing block: B:145:0x029d, code skipped:
             r2 = r27;
             r8 = 101;
      */
-    /* JADX WARNING: Missing block: B:147:?, code:
+    /* JADX WARNING: Missing block: B:147:?, code skipped:
             r9.setHwFlags(r35.getHwFlags() & -3);
      */
-    /* JADX WARNING: Missing block: B:148:0x02aa, code:
+    /* JADX WARNING: Missing block: B:148:0x02aa, code skipped:
             r1 = r36;
      */
-    /* JADX WARNING: Missing block: B:153:0x02c0, code:
+    /* JADX WARNING: Missing block: B:153:0x02c0, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:154:0x02c2, code:
+    /* JADX WARNING: Missing block: B:155:0x02c2, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:156:0x02c5, code:
+    /* JADX WARNING: Missing block: B:157:0x02c5, code skipped:
             r1 = r36;
      */
-    /* JADX WARNING: Missing block: B:157:0x02c8, code:
+    /* JADX WARNING: Missing block: B:158:0x02c8, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:158:0x02c9, code:
+    /* JADX WARNING: Missing block: B:159:0x02c9, code skipped:
             r17 = r8;
             r1 = r36;
             r2 = r6;
      */
-    /* JADX WARNING: Missing block: B:159:0x02d1, code:
+    /* JADX WARNING: Missing block: B:160:0x02d1, code skipped:
             r2 = r1;
             r13 = r4;
             r14 = r5;
@@ -468,43 +473,43 @@ public final class HwActivityStarter extends ActivityStarter {
             r17 = r8;
             r8 = 101;
      */
-    /* JADX WARNING: Missing block: B:160:0x02da, code:
+    /* JADX WARNING: Missing block: B:161:0x02da, code skipped:
             r1 = r36;
      */
-    /* JADX WARNING: Missing block: B:163:0x02e8, code:
+    /* JADX WARNING: Missing block: B:164:0x02e8, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:170:0x02fd, code:
+    /* JADX WARNING: Missing block: B:171:0x02fd, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:171:0x02fe, code:
+    /* JADX WARNING: Missing block: B:172:0x02fe, code skipped:
             r2 = r6;
             r17 = r8;
      */
-    /* JADX WARNING: Missing block: B:172:0x0304, code:
+    /* JADX WARNING: Missing block: B:173:0x0304, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:173:0x0305, code:
+    /* JADX WARNING: Missing block: B:174:0x0305, code skipped:
             r2 = r6;
             r17 = r8;
             r8 = 101;
      */
-    /* JADX WARNING: Missing block: B:174:0x0309, code:
+    /* JADX WARNING: Missing block: B:175:0x0309, code skipped:
             r1 = r36;
      */
-    /* JADX WARNING: Missing block: B:177:0x030f, code:
+    /* JADX WARNING: Missing block: B:178:0x030f, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:178:0x0310, code:
+    /* JADX WARNING: Missing block: B:179:0x0310, code skipped:
             r25 = r1;
      */
-    /* JADX WARNING: Missing block: B:189:0x0322, code:
+    /* JADX WARNING: Missing block: B:190:0x0322, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:190:0x0323, code:
+    /* JADX WARNING: Missing block: B:191:0x0323, code skipped:
             r25 = r36;
      */
-    /* JADX WARNING: Missing block: B:191:0x0325, code:
+    /* JADX WARNING: Missing block: B:192:0x0325, code skipped:
             r3 = r8;
             r1 = 64;
      */
@@ -689,10 +694,10 @@ public final class HwActivityStarter extends ActivityStarter {
         }
     }
 
-    /* JADX WARNING: Missing block: B:61:0x010f, code:
+    /* JADX WARNING: Missing block: B:61:0x010f, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:62:0x0110, code:
+    /* JADX WARNING: Missing block: B:62:0x0110, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -743,7 +748,7 @@ public final class HwActivityStarter extends ActivityStarter {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0059, code:
+    /* JADX WARNING: Missing block: B:25:0x0059, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1050,29 +1055,31 @@ public final class HwActivityStarter extends ActivityStarter {
             int count = list.size();
             for (int i = 0; i < count; i++) {
                 ResolveInfo info = (ResolveInfo) list.get(i);
-                if (!(info.activityInfo == null || info.activityInfo.getComponentName() == null || info.activityInfo.packageName == null || !info.handleAllWebDataURI)) {
-                    boolean z = true;
-                    String str;
-                    StringBuilder stringBuilder;
-                    if (specPkg.contains(aInfo.packageName) && info.activityInfo.getComponentName().equals(aInfo.getComponentName())) {
-                        str = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("skip launch aInfo:");
-                        stringBuilder.append(aInfo);
-                        stringBuilder.append(" because browser info:");
-                        stringBuilder.append(info);
-                        Log.w(str, stringBuilder.toString());
-                        Binder.restoreCallingIdentity(origId);
-                        return z;
-                    } else if (!specPkg.contains(aInfo.packageName) && info.activityInfo.packageName.equals(aInfo.packageName)) {
-                        str = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("skip launch aInfo:");
-                        stringBuilder.append(aInfo);
-                        stringBuilder.append(" because browser app:");
-                        stringBuilder.append(aInfo.packageName);
-                        Log.w(str, stringBuilder.toString());
-                        return z;
+                if (!(info.activityInfo == null || info.activityInfo.getComponentName() == null || info.activityInfo.packageName == null)) {
+                    if (info.handleAllWebDataURI) {
+                        boolean z = true;
+                        String str;
+                        StringBuilder stringBuilder;
+                        if (specPkg.contains(aInfo.packageName) && info.activityInfo.getComponentName().equals(aInfo.getComponentName())) {
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("skip launch aInfo:");
+                            stringBuilder.append(aInfo);
+                            stringBuilder.append(" because browser info:");
+                            stringBuilder.append(info);
+                            Log.w(str, stringBuilder.toString());
+                            Binder.restoreCallingIdentity(origId);
+                            return z;
+                        } else if (!specPkg.contains(aInfo.packageName) && info.activityInfo.packageName.equals(aInfo.packageName)) {
+                            str = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("skip launch aInfo:");
+                            stringBuilder.append(aInfo);
+                            stringBuilder.append(" because browser app:");
+                            stringBuilder.append(aInfo.packageName);
+                            Log.w(str, stringBuilder.toString());
+                            return z;
+                        }
                     }
                 }
             }

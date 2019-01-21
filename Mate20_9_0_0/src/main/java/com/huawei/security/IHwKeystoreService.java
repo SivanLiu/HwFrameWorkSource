@@ -21,6 +21,7 @@ public interface IHwKeystoreService extends IInterface {
         static final int TRANSACTION_attestDeviceIds = 13;
         static final int TRANSACTION_attestKey = 9;
         static final int TRANSACTION_begin = 5;
+        static final int TRANSACTION_contains = 17;
         static final int TRANSACTION_del = 1;
         static final int TRANSACTION_exportKey = 4;
         static final int TRANSACTION_exportTrustCert = 15;
@@ -460,6 +461,22 @@ public interface IHwKeystoreService extends IInterface {
                     _data.recycle();
                 }
             }
+
+            public int contains(String alias) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    _data.writeString(alias);
+                    this.mRemote.transact(Stub.TRANSACTION_contains, _data, _reply, 0);
+                    _reply.readException();
+                    int _result = _reply.readInt();
+                    return _result;
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
         }
 
         public Stub() {
@@ -703,6 +720,12 @@ public interface IHwKeystoreService extends IInterface {
                         reply.writeNoException();
                         parcel2.writeInt(_result);
                         return true;
+                    case TRANSACTION_contains /*17*/:
+                        parcel.enforceInterface(descriptor);
+                        _result3 = contains(data.readString());
+                        reply.writeNoException();
+                        parcel2.writeInt(_result3);
+                        return true;
                     default:
                         return super.onTransact(code, data, reply, flags);
                 }
@@ -721,6 +744,8 @@ public interface IHwKeystoreService extends IInterface {
     int attestKey(String str, int i, HwKeymasterArguments hwKeymasterArguments, HwKeymasterCertificateChain hwKeymasterCertificateChain) throws RemoteException;
 
     HwOperationResult begin(IBinder iBinder, String str, int i, boolean z, HwKeymasterArguments hwKeymasterArguments, byte[] bArr, int i2) throws RemoteException;
+
+    int contains(String str) throws RemoteException;
 
     int del(String str, int i) throws RemoteException;
 

@@ -188,73 +188,73 @@ class NameServiceClient implements Runnable {
         tryClose();
     }
 
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             r5 = java.lang.System.currentTimeMillis();
      */
-    /* JADX WARNING: Missing block: B:18:0x0064, code:
+    /* JADX WARNING: Missing block: B:19:0x0064, code skipped:
             if (r15 <= 0) goto L_0x00a0;
      */
-    /* JADX WARNING: Missing block: B:19:0x0066, code:
+    /* JADX WARNING: Missing block: B:20:0x0066, code skipped:
             r14.wait((long) r15);
      */
-    /* JADX WARNING: Missing block: B:20:0x006c, code:
+    /* JADX WARNING: Missing block: B:21:0x006c, code skipped:
             if (r14.received == false) goto L_0x0094;
      */
-    /* JADX WARNING: Missing block: B:22:0x0072, code:
+    /* JADX WARNING: Missing block: B:23:0x0072, code skipped:
             if (r13.questionType != r14.recordType) goto L_0x0094;
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             r12.responseTable.remove(r3);
      */
-    /* JADX WARNING: Missing block: B:32:0x007f, code:
+    /* JADX WARNING: Missing block: B:33:0x007f, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:45:?, code:
+    /* JADX WARNING: Missing block: B:46:?, code skipped:
             r14.received = false;
      */
-    /* JADX WARNING: Missing block: B:46:0x009b, code:
+    /* JADX WARNING: Missing block: B:47:0x009b, code skipped:
             r15 = (int) (((long) r15) - (java.lang.System.currentTimeMillis() - r5));
      */
-    /* JADX WARNING: Missing block: B:48:?, code:
+    /* JADX WARNING: Missing block: B:49:?, code skipped:
             r12.responseTable.remove(r3);
             r8 = r12.LOCK;
      */
-    /* JADX WARNING: Missing block: B:49:0x00a7, code:
+    /* JADX WARNING: Missing block: B:50:0x00a7, code skipped:
             monitor-enter(r8);
      */
-    /* JADX WARNING: Missing block: B:52:0x00ae, code:
+    /* JADX WARNING: Missing block: B:53:0x00ae, code skipped:
             if (jcifs.netbios.NbtAddress.isWINS(r13.addr) != false) goto L_0x00b3;
      */
-    /* JADX WARNING: Missing block: B:53:0x00b0, code:
+    /* JADX WARNING: Missing block: B:54:0x00b0, code skipped:
             monitor-exit(r8);
      */
-    /* JADX WARNING: Missing block: B:58:0x00b9, code:
+    /* JADX WARNING: Missing block: B:59:0x00b9, code skipped:
             if (r13.addr != jcifs.netbios.NbtAddress.getWINSAddress()) goto L_0x00be;
      */
-    /* JADX WARNING: Missing block: B:59:0x00bb, code:
+    /* JADX WARNING: Missing block: B:60:0x00bb, code skipped:
             jcifs.netbios.NbtAddress.switchWINS();
      */
-    /* JADX WARNING: Missing block: B:60:0x00be, code:
+    /* JADX WARNING: Missing block: B:61:0x00be, code skipped:
             r13.addr = jcifs.netbios.NbtAddress.getWINSAddress();
      */
-    /* JADX WARNING: Missing block: B:61:0x00c4, code:
+    /* JADX WARNING: Missing block: B:62:0x00c4, code skipped:
             monitor-exit(r8);
      */
-    /* JADX WARNING: Missing block: B:77:?, code:
+    /* JADX WARNING: Missing block: B:76:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void send(NameServicePacket request, NameServicePacket response, int timeout) throws IOException {
         Throwable th;
-        Integer nid = null;
         int max = NbtAddress.NBNS.length;
         if (max == 0) {
             max = 1;
         }
         synchronized (response) {
+            int max2 = max;
+            Integer nid = null;
             while (true) {
-                int max2 = max;
-                Integer nid2 = nid;
+                Integer nid2;
                 max = max2 - 1;
                 if (max2 <= 0) {
                     break;
@@ -263,12 +263,12 @@ class NameServiceClient implements Runnable {
                     synchronized (this.LOCK) {
                         try {
                             request.nameTrnId = getNextNameTrnId();
-                            nid = new Integer(request.nameTrnId);
+                            nid2 = new Integer(request.nameTrnId);
                             try {
                                 this.out.setAddress(request.addr);
                                 this.out.setLength(request.writeWireFormat(this.snd_buf, 0));
                                 response.received = false;
-                                this.responseTable.put(nid, response);
+                                this.responseTable.put(nid2, response);
                                 ensureOpen(timeout + 1000);
                                 this.socket.send(this.out);
                                 LogStream logStream = log;
@@ -282,25 +282,28 @@ class NameServiceClient implements Runnable {
                             }
                         } catch (Throwable th3) {
                             th = th3;
-                            nid = nid2;
+                            nid2 = nid;
+                            throw th;
                         }
                     }
                 } catch (InterruptedException e) {
                     InterruptedException ie = e;
-                    nid = nid2;
+                    nid2 = nid;
                     try {
                         throw new IOException(ie.getMessage());
                     } catch (Throwable th4) {
                         th = th4;
-                        this.responseTable.remove(nid);
+                        this.responseTable.remove(nid2);
                         throw th;
                     }
                 } catch (Throwable th5) {
                     th = th5;
-                    nid = nid2;
-                    this.responseTable.remove(nid);
+                    nid2 = nid;
+                    this.responseTable.remove(nid2);
                     throw th;
                 }
+                max2 = max;
+                nid = nid2;
             }
         }
     }

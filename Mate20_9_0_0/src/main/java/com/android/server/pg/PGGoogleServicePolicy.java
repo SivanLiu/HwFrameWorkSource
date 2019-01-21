@@ -55,7 +55,7 @@ public class PGGoogleServicePolicy {
     private Context mContext;
     private boolean mEnabled = true;
     private int mGmsUid = -1;
-    private boolean mIsGoogleServerConnectedOK = (IS_CHINA_MARKET.booleanValue() ^ true);
+    private boolean mIsGoogleServerConnectedOK = (IS_CHINA_MARKET.booleanValue() ^ 1);
     private Handler mWakeLockHandler;
     private Runnable mWakelockMonitor = new Runnable() {
         public void run() {
@@ -72,23 +72,23 @@ public class PGGoogleServicePolicy {
                     }
                     LogPower.push(HdmiCecKeycode.UI_SOUND_PRESENTATION_TREBLE_NEUTRAL, PGGoogleServicePolicy.this.mIsGoogleServerConnectedOK ? "1" : "0");
                     HwServiceFactory.reportGoogleConn(PGGoogleServicePolicy.this.mIsGoogleServerConnectedOK);
+                    PGGoogleServicePolicy.this.mWakeLockHandler.removeCallbacks(PGGoogleServicePolicy.this.mWakelockMonitor);
+                    if (PGGoogleServicePolicy.this.isShangHaiTimeZone() || PGGoogleServicePolicy.this.mIsGoogleServerConnectedOK) {
+                        PGGoogleServicePolicy.this.mWakeLockHandler.postDelayed(PGGoogleServicePolicy.this.mWakelockMonitor, 1800000);
+                        return;
+                    }
+                    PGGoogleServicePolicy.this.mWakeLockHandler.postDelayed(PGGoogleServicePolicy.this.mWakelockMonitor, PGGoogleServicePolicy.this.mCheckDuration);
+                    String str = PGGoogleServicePolicy.TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("retry after ");
+                    stringBuilder.append(PGGoogleServicePolicy.this.mCheckDuration);
+                    Log.d(str, stringBuilder.toString());
+                    PGGoogleServicePolicy.access$330(PGGoogleServicePolicy.this, 2);
+                    if (PGGoogleServicePolicy.this.mCheckDuration >= 1800000) {
+                        PGGoogleServicePolicy.this.mCheckDuration = 1800000;
+                    }
                 }
             }.start();
-            PGGoogleServicePolicy.this.mWakeLockHandler.removeCallbacks(PGGoogleServicePolicy.this.mWakelockMonitor);
-            if (PGGoogleServicePolicy.this.isShangHaiTimeZone() || PGGoogleServicePolicy.this.mIsGoogleServerConnectedOK) {
-                PGGoogleServicePolicy.this.mWakeLockHandler.postDelayed(PGGoogleServicePolicy.this.mWakelockMonitor, 1800000);
-                return;
-            }
-            PGGoogleServicePolicy.this.mWakeLockHandler.postDelayed(PGGoogleServicePolicy.this.mWakelockMonitor, PGGoogleServicePolicy.this.mCheckDuration);
-            String str = PGGoogleServicePolicy.TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("retry after ");
-            stringBuilder.append(PGGoogleServicePolicy.this.mCheckDuration);
-            Log.d(str, stringBuilder.toString());
-            PGGoogleServicePolicy.access$330(PGGoogleServicePolicy.this, 2);
-            if (PGGoogleServicePolicy.this.mCheckDuration >= 1800000) {
-                PGGoogleServicePolicy.this.mCheckDuration = 1800000;
-            }
         }
     };
 
@@ -112,10 +112,12 @@ public class PGGoogleServicePolicy {
     }
 
     public void onSystemReady() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.intent.action.BOOT_COMPLETED");
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        this.mContext.registerReceiver(this.mBroadcastReceiver, filter, null, null);
+        if (IS_CHINA_MARKET.booleanValue()) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("android.intent.action.BOOT_COMPLETED");
+            filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+            this.mContext.registerReceiver(this.mBroadcastReceiver, filter, null, null);
+        }
     }
 
     private boolean isShangHaiTimeZone() {

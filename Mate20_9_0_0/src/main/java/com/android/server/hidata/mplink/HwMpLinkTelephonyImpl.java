@@ -106,6 +106,17 @@ public class HwMpLinkTelephonyImpl {
         return isMobileEnable;
     }
 
+    public void closeMobileDataIfOpened() {
+        String str = TAG;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("closeMobileDataIfOpened dealMobileDataRef:");
+        stringBuilder.append(this.dealMobileDataRef);
+        MpLinkCommonUtils.logD(str, stringBuilder.toString());
+        if (this.dealMobileDataRef > 0) {
+            mplinkSetMobileData(false);
+        }
+    }
+
     public int mplinkSetMobileData(boolean enable) {
         int ret = -1;
         String str = TAG;

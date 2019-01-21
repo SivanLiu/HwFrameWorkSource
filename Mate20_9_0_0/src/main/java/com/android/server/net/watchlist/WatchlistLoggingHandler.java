@@ -21,6 +21,8 @@ import com.android.internal.util.ArrayUtils;
 import com.android.internal.util.HexDump;
 import com.android.server.net.watchlist.WatchlistReportDbHelper.AggregatedResult;
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -104,18 +106,20 @@ class WatchlistLoggingHandler extends Handler {
         boolean z = false;
         try {
             String[] packageNames = this.mPm.getPackagesForUid(uid);
-            if (packageNames == null || packageNames.length == 0) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Couldn't find package: ");
-                stringBuilder.append(packageNames);
-                Slog.e(str, stringBuilder.toString());
-                return false;
+            if (packageNames != null) {
+                if (packageNames.length != 0) {
+                    if ((this.mPm.getApplicationInfo(packageNames[0], 0).flags & 256) != 0) {
+                        z = true;
+                    }
+                    return z;
+                }
             }
-            if ((this.mPm.getApplicationInfo(packageNames[0], 0).flags & 256) != 0) {
-                z = true;
-            }
-            return z;
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Couldn't find package: ");
+            stringBuilder.append(packageNames);
+            Slog.e(str, stringBuilder.toString());
+            return false;
         } catch (NameNotFoundException e) {
             return false;
         }
@@ -269,18 +273,6 @@ class WatchlistLoggingHandler extends Handler {
         return (byte[]) this.mCachedUidDigestMap.computeIfAbsent(Integer.valueOf(uid), new -$$Lambda$WatchlistLoggingHandler$GBD0dX6RhipHIkM0Z_B5jLlwfHQ(this, uid));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0051 A:{Splitter: B:5:0x001b, ExcHandler: android.content.pm.PackageManager.NameNotFoundException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0051 A:{Splitter: B:5:0x001b, ExcHandler: android.content.pm.PackageManager.NameNotFoundException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x0051, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0052, code:
-            android.util.Slog.e(TAG, "Should not happen", r2);
-     */
-    /* JADX WARNING: Missing block: B:13:0x0059, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static /* synthetic */ byte[] lambda$getDigestFromUid$0(WatchlistLoggingHandler watchlistLoggingHandler, int uid, Integer key) {
         String[] packageNames = watchlistLoggingHandler.mPm.getPackagesForUid(key.intValue());
         int userId = UserHandle.getUserId(uid);
@@ -300,7 +292,9 @@ class WatchlistLoggingHandler extends Handler {
                     stringBuilder.append(packageName);
                     Slog.w(str, stringBuilder.toString());
                     i++;
-                } catch (Exception e) {
+                } catch (NameNotFoundException | IOException | NoSuchAlgorithmException e) {
+                    Slog.e(TAG, "Should not happen", e);
+                    return null;
                 }
             }
         }

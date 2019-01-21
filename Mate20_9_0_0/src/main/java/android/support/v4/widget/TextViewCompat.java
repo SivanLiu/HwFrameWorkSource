@@ -38,6 +38,7 @@ import android.widget.TextView;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,18 +94,6 @@ public final class TextViewCompat {
             this.mCallback.onDestroyActionMode(mode);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:27:0x00b2 A:{Splitter: B:7:0x0035, ExcHandler: java.lang.NoSuchMethodException (e java.lang.NoSuchMethodException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:27:0x00b2 A:{Splitter: B:7:0x0035, ExcHandler: java.lang.NoSuchMethodException (e java.lang.NoSuchMethodException)} */
-        /* JADX WARNING: Removed duplicated region for block: B:5:0x002d A:{Splitter: B:3:0x0012, ExcHandler: java.lang.ClassNotFoundException (e java.lang.ClassNotFoundException)} */
-        /* JADX WARNING: Missing block: B:6:0x002e, code:
-            r9.mMenuBuilderClass = null;
-            r9.mMenuBuilderRemoveItemAtMethod = null;
-            r9.mCanUseMenuBuilderReferences = false;
-     */
-        /* JADX WARNING: Missing block: B:28:0x00b3, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         private void recomputeProcessTextMenuItems(Menu menu) {
             Context context = this.mTextView.getContext();
             PackageManager packageManager = context.getPackageManager();
@@ -114,7 +103,10 @@ public final class TextViewCompat {
                     this.mMenuBuilderClass = Class.forName("com.android.internal.view.menu.MenuBuilder");
                     this.mMenuBuilderRemoveItemAtMethod = this.mMenuBuilderClass.getDeclaredMethod("removeItemAt", new Class[]{Integer.TYPE});
                     this.mCanUseMenuBuilderReferences = true;
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | NoSuchMethodException e) {
+                    this.mMenuBuilderClass = null;
+                    this.mMenuBuilderRemoveItemAtMethod = null;
+                    this.mCanUseMenuBuilderReferences = false;
                 }
             }
             try {
@@ -136,7 +128,7 @@ public final class TextViewCompat {
                     ResolveInfo info = (ResolveInfo) supportedActivities.get(i);
                     menu.add(0, 0, 100 + i, info.loadLabel(packageManager)).setIntent(createProcessTextIntentForResolveInfo(info, this.mTextView)).setShowAsAction(1);
                 }
-            } catch (NoSuchMethodException e2) {
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e2) {
             }
         }
 

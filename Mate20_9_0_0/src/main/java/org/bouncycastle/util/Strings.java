@@ -247,7 +247,7 @@ public final class Strings {
     }
 
     public static byte[] toUTF8ByteArray(char[] cArr) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             toUTF8ByteArray(cArr, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();

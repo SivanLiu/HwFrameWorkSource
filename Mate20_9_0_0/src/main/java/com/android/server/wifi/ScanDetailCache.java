@@ -2,7 +2,7 @@ package com.android.server.wifi;
 
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
-import com.android.server.wifi.hotspot2.AnqpCache;
+import com.android.server.wifi.hotspot2.ANQPData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -132,8 +132,8 @@ public class ScanDetailCache {
                 if (now_ms > scanDetail.getSeen() && scanDetail.getSeen() > 0) {
                     ageMilli2 = milli % 1000;
                     ageSec = (milli / 1000) % 60;
-                    ageMilli = (milli / AnqpCache.CACHE_SWEEP_INTERVAL_MILLISECONDS) % 60;
-                    ageDay = (milli / 3600000) % 24;
+                    ageMilli = (milli / 60000) % 60;
+                    ageDay = (milli / ANQPData.DATA_LIFETIME_MILLISECONDS) % 24;
                     ageDay2 = milli / 86400000;
                 }
                 ArrayList<ScanDetail> list2 = list;

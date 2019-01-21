@@ -220,6 +220,8 @@ public abstract class AsyncHttpResponseHandlerX implements ResponseHandlerInterf
                                 sendProgressMessage(count, (int) (contentLength <= 0 ? 1 : contentLength));
                             } catch (Throwable th2) {
                                 th = th2;
+                                AsyncHttpClientX.silentCloseInputStream(instream);
+                                throw th;
                             }
                         }
                     }

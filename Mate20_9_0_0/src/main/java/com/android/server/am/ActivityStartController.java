@@ -260,6 +260,9 @@ public class ActivityStartController {
                                     } catch (Throwable th5) {
                                         th = th5;
                                         str = reason;
+                                        origId2 = origId;
+                                        ActivityManagerService.resetPriorityAfterLockedSection();
+                                        throw th;
                                     }
                                 }
                                 i++;

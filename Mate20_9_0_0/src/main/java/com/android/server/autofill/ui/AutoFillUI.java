@@ -159,7 +159,7 @@ public final class AutoFillUI {
             final AutoFillUiCallback autoFillUiCallback2 = autoFillUiCallback;
             final FillResponse fillResponse = response;
             final AutofillId autofillId = focusedId;
-            Callback anonymousClass1 = new Callback() {
+            AnonymousClass1 anonymousClass1 = new Callback() {
                 public void onResponsePicked(FillResponse response) {
                     logMaker.setType(3);
                     AutoFillUI.this.hideFillUiUiThread(autoFillUiCallback2, true);

@@ -168,7 +168,7 @@ final class Notifier {
         this.mScreenOffIntent.addFlags(1478492160);
         this.mScreenBrightnessBoostIntent = new Intent("android.os.action.SCREEN_BRIGHTNESS_BOOST_CHANGED");
         this.mScreenBrightnessBoostIntent.addFlags(1342177280);
-        this.mSuspendWhenScreenOffDueToProximityConfig = context.getResources().getBoolean(17957044);
+        this.mSuspendWhenScreenOffDueToProximityConfig = context.getResources().getBoolean(17957045);
         try {
             this.mBatteryStats.noteInteractive(true);
         } catch (RemoteException e) {
@@ -594,19 +594,19 @@ final class Notifier {
         }
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0049, code:
+    /* JADX WARNING: Missing block: B:32:0x0049, code skipped:
             android.util.EventLog.writeEvent(com.android.server.EventLogTags.POWER_SCREEN_BROADCAST_SEND, 1);
      */
-    /* JADX WARNING: Missing block: B:31:0x004e, code:
+    /* JADX WARNING: Missing block: B:33:0x004e, code skipped:
             if (r1 != 1) goto L_0x0054;
      */
-    /* JADX WARNING: Missing block: B:32:0x0050, code:
+    /* JADX WARNING: Missing block: B:34:0x0050, code skipped:
             sendWakeUpBroadcast();
      */
-    /* JADX WARNING: Missing block: B:33:0x0054, code:
+    /* JADX WARNING: Missing block: B:35:0x0054, code skipped:
             sendGoToSleepBroadcast();
      */
-    /* JADX WARNING: Missing block: B:34:0x0057, code:
+    /* JADX WARNING: Missing block: B:36:0x0057, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -616,19 +616,23 @@ final class Notifier {
                 this.mPendingWakeUpBroadcast = false;
                 this.mBroadcastedInteractiveState = 1;
             } else if (this.mBroadcastedInteractiveState == 1) {
-                if (this.mPendingWakeUpBroadcast || this.mPendingGoToSleepBroadcast || this.mPendingInteractiveState == 2) {
-                    this.mPendingGoToSleepBroadcast = false;
-                    this.mBroadcastedInteractiveState = 2;
-                } else {
-                    finishPendingBroadcastLocked();
-                    return;
+                if (!(this.mPendingWakeUpBroadcast || this.mPendingGoToSleepBroadcast)) {
+                    if (this.mPendingInteractiveState != 2) {
+                        finishPendingBroadcastLocked();
+                        return;
+                    }
                 }
-            } else if (this.mPendingWakeUpBroadcast || this.mPendingGoToSleepBroadcast || this.mPendingInteractiveState == 1) {
+                this.mPendingGoToSleepBroadcast = false;
+                this.mBroadcastedInteractiveState = 2;
+            } else {
+                if (!(this.mPendingWakeUpBroadcast || this.mPendingGoToSleepBroadcast)) {
+                    if (this.mPendingInteractiveState != 1) {
+                        finishPendingBroadcastLocked();
+                        return;
+                    }
+                }
                 this.mPendingWakeUpBroadcast = false;
                 this.mBroadcastedInteractiveState = 1;
-            } else {
-                finishPendingBroadcastLocked();
-                return;
             }
             this.mBroadcastStartTime = SystemClock.uptimeMillis();
             int powerState = this.mBroadcastedInteractiveState;

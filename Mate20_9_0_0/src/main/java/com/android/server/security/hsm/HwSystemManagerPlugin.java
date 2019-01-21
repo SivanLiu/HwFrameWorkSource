@@ -14,7 +14,7 @@ import java.util.Set;
 public class HwSystemManagerPlugin extends Stub implements IHwSecurityPlugin {
     public static final Creator CREATOR = new Creator() {
         public IHwSecurityPlugin createPlugin(Context context) {
-            IHwSecurityPlugin access$100;
+            HwSystemManagerPlugin access$100;
             synchronized (HwSystemManagerPlugin.serviceLock) {
                 if (HwSystemManagerPlugin.sInstance == null) {
                     HwSystemManagerPlugin.sInstance = new HwSystemManagerPlugin(context, null);
@@ -68,10 +68,10 @@ public class HwSystemManagerPlugin extends Stub implements IHwSecurityPlugin {
         return this;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0027, code:
+    /* JADX WARNING: Missing block: B:21:0x0027, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:21:0x0029, code:
+    /* JADX WARNING: Missing block: B:23:0x0029, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -79,11 +79,17 @@ public class HwSystemManagerPlugin extends Stub implements IHwSecurityPlugin {
         checkPermission(PERMISSION);
         synchronized (sStartComponetBlackList) {
             if (callerPackage == null) {
-                return false;
-            } else if (type == 1 || type == 3) {
-            } else if (!sStartComponetBlackList.contains(callerPackage) || callerPackage.equals(calleePackage)) {
-            } else {
-                return true;
+                try {
+                    return false;
+                } catch (Throwable th) {
+                }
+            } else if (type != 1) {
+                if (type != 3) {
+                    if (!sStartComponetBlackList.contains(callerPackage) || callerPackage.equals(calleePackage)) {
+                    } else {
+                        return true;
+                    }
+                }
             }
         }
     }
@@ -93,7 +99,7 @@ public class HwSystemManagerPlugin extends Stub implements IHwSecurityPlugin {
         return HwAddViewManager.getInstance(this.mContext).updateAddViewData(data, operation);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001e, code:
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -101,9 +107,10 @@ public class HwSystemManagerPlugin extends Stub implements IHwSecurityPlugin {
         checkPermission(PERMISSION);
         synchronized (sStartComponetBlackList) {
             sStartComponetBlackList.clear();
-            if (pkgs == null || pkgs.isEmpty()) {
-            } else {
-                sStartComponetBlackList.addAll(pkgs);
+            if (pkgs != null) {
+                if (!pkgs.isEmpty()) {
+                    sStartComponetBlackList.addAll(pkgs);
+                }
             }
         }
     }

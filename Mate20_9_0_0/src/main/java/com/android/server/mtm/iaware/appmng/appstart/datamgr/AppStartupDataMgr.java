@@ -135,30 +135,30 @@ public class AppStartupDataMgr {
         return UserHandle.getAppId(applicationInfo.uid) < 10000 || AppStartupUtil.isSystemUnRemovablePkg(applicationInfo);
     }
 
-    /* JADX WARNING: Missing block: B:3:0x0027, code:
+    /* JADX WARNING: Missing block: B:3:0x0027, code skipped:
             r18 = r0;
             r17 = r1;
      */
-    /* JADX WARNING: Missing block: B:28:0x0068, code:
+    /* JADX WARNING: Missing block: B:28:0x0068, code skipped:
             r18 = r0;
             r17 = r1;
             r4 = 2;
      */
-    /* JADX WARNING: Missing block: B:37:0x009b, code:
-            if (r17 == false) goto L_0x00e2;
+    /* JADX WARNING: Missing block: B:37:0x009b, code skipped:
+            if (r17 == false) goto L_0x00e3;
      */
-    /* JADX WARNING: Missing block: B:38:0x009d, code:
+    /* JADX WARNING: Missing block: B:38:0x009d, code skipped:
             r19 = r4;
             r20 = 1;
             r21 = r6;
      */
-    /* JADX WARNING: Missing block: B:39:0x00b3, code:
-            if (isTargetAndCallerSameApp(r9, r25, r11, r12, r28, r29, r30) == false) goto L_0x00e6;
+    /* JADX WARNING: Missing block: B:39:0x00b3, code skipped:
+            if (isTargetAndCallerSameApp(r9, r25, r11, r12, r28, r29, r30) == false) goto L_0x00e7;
      */
-    /* JADX WARNING: Missing block: B:41:0x00b7, code:
-            if (r8.DEBUG_DATAMGR == false) goto L_0x00e1;
+    /* JADX WARNING: Missing block: B:41:0x00b7, code skipped:
+            if (r8.DEBUG_DATAMGR == false) goto L_0x00e2;
      */
-    /* JADX WARNING: Missing block: B:42:0x00b9, code:
+    /* JADX WARNING: Missing block: B:42:0x00b9, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("same app ");
@@ -169,32 +169,32 @@ public class AppStartupDataMgr {
             r1.append(r12);
             android.rms.iaware.AwareLog.i(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:43:0x00e1, code:
+    /* JADX WARNING: Missing block: B:43:0x00e2, code skipped:
             return r20;
      */
-    /* JADX WARNING: Missing block: B:44:0x00e2, code:
+    /* JADX WARNING: Missing block: B:44:0x00e3, code skipped:
             r19 = r4;
             r21 = r6;
      */
-    /* JADX WARNING: Missing block: B:45:0x00e6, code:
-            if (r18 == false) goto L_0x00ef;
+    /* JADX WARNING: Missing block: B:45:0x00e7, code skipped:
+            if (r18 == false) goto L_0x00f0;
      */
-    /* JADX WARNING: Missing block: B:47:0x00ec, code:
-            if (isSpecialCaller(r11) == false) goto L_0x00ef;
+    /* JADX WARNING: Missing block: B:47:0x00ed, code skipped:
+            if (isSpecialCaller(r11) == false) goto L_0x00f0;
      */
-    /* JADX WARNING: Missing block: B:48:0x00ee, code:
+    /* JADX WARNING: Missing block: B:48:0x00ef, code skipped:
             return r19;
      */
-    /* JADX WARNING: Missing block: B:50:0x00f5, code:
-            if (com.android.server.mtm.iaware.appmng.appstart.comm.AppStartupUtil.isCtsPackage(r9.packageName) != false) goto L_0x00ff;
+    /* JADX WARNING: Missing block: B:50:0x00f6, code skipped:
+            if (com.android.server.mtm.iaware.appmng.appstart.comm.AppStartupUtil.isCtsPackage(r9.packageName) != false) goto L_0x0100;
      */
-    /* JADX WARNING: Missing block: B:52:0x00fb, code:
-            if (isCtsCaller(r12) == false) goto L_0x00fe;
+    /* JADX WARNING: Missing block: B:52:0x00fc, code skipped:
+            if (isCtsCaller(r12) == false) goto L_0x00ff;
      */
-    /* JADX WARNING: Missing block: B:53:0x00fe, code:
+    /* JADX WARNING: Missing block: B:53:0x00ff, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:54:0x00ff, code:
+    /* JADX WARNING: Missing block: B:54:0x0100, code skipped:
             return r19;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

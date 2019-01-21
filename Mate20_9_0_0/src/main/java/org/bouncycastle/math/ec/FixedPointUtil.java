@@ -18,7 +18,7 @@ public class FixedPointUtil {
         ECCurve curve = eCPoint.getCurve();
         int i = getCombSize(curve) > 257 ? 6 : 5;
         int i2 = 1 << i;
-        Object fixedPointPreCompInfo = getFixedPointPreCompInfo(curve.getPreCompInfo(eCPoint, PRECOMP_NAME));
+        FixedPointPreCompInfo fixedPointPreCompInfo = getFixedPointPreCompInfo(curve.getPreCompInfo(eCPoint, PRECOMP_NAME));
         ECPoint[] preComp = fixedPointPreCompInfo.getPreComp();
         if (preComp == null || preComp.length < i2) {
             int i3;

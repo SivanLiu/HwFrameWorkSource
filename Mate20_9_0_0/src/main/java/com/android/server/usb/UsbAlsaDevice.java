@@ -119,8 +119,8 @@ public final class UsbAlsaDevice {
         this.mSelected = false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x0038 A:{Catch:{ RemoteException -> 0x0027 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x007b A:{Catch:{ RemoteException -> 0x0027 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x0038 A:{Catch:{ RemoteException -> 0x0027 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x007b A:{Catch:{ RemoteException -> 0x0027 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void updateWiredDeviceConnectionState(boolean enable) {
         if (this.mSelected) {

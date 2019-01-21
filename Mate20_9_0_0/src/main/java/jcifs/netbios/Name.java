@@ -115,9 +115,8 @@ public class Name {
         }
         try {
             StringBuffer sb = new StringBuffer(new String(src, srcIndex2, n, OEM_ENCODING));
-            srcIndex = srcIndex2 + n;
+            srcIndex2 += n;
             while (true) {
-                srcIndex2 = srcIndex;
                 srcIndex = srcIndex2 + 1;
                 try {
                     n = src[srcIndex2] & 255;
@@ -125,7 +124,7 @@ public class Name {
                         break;
                     }
                     sb.append('.').append(new String(src, srcIndex, n, OEM_ENCODING));
-                    srcIndex += n;
+                    srcIndex2 = srcIndex + n;
                 } catch (UnsupportedEncodingException e) {
                 }
             }

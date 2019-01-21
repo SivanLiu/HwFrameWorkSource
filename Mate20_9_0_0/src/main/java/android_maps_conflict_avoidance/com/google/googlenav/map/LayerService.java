@@ -164,7 +164,7 @@ public class LayerService implements OutOfMemoryHandler {
         StaticUtil.removeOutOfMemoryHandler(this);
     }
 
-    /* JADX WARNING: Missing block: B:19:0x004b, code:
+    /* JADX WARNING: Missing block: B:19:0x004b, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

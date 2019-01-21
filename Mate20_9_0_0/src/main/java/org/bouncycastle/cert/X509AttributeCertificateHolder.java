@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROutputStream;
@@ -18,6 +17,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.AttCertValidityPeriod;
 import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.AttributeCertificate;
+import org.bouncycastle.asn1.x509.AttributeCertificateInfo;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.operator.ContentVerifier;
@@ -47,12 +47,12 @@ public class X509AttributeCertificateHolder implements Encodable, Serializable {
         StringBuilder stringBuilder;
         try {
             return AttributeCertificate.getInstance(CertUtils.parseNonEmptyASN1(bArr));
-        } catch (Throwable e) {
+        } catch (ClassCastException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());
             throw new CertIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IllegalArgumentException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e2.getMessage());
@@ -91,7 +91,7 @@ public class X509AttributeCertificateHolder implements Encodable, Serializable {
 
     public Attribute[] getAttributes(ASN1ObjectIdentifier aSN1ObjectIdentifier) {
         ASN1Sequence attributes = this.attrCert.getAcinfo().getAttributes();
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (int i = 0; i != attributes.size(); i++) {
             Attribute instance = Attribute.getInstance(attributes.getObjectAt(i));
             if (instance.getAttrType().equals(aSN1ObjectIdentifier)) {
@@ -170,7 +170,7 @@ public class X509AttributeCertificateHolder implements Encodable, Serializable {
     }
 
     public boolean isSignatureValid(ContentVerifierProvider contentVerifierProvider) throws CertException {
-        ASN1Encodable acinfo = this.attrCert.getAcinfo();
+        AttributeCertificateInfo acinfo = this.attrCert.getAcinfo();
         if (CertUtils.isAlgIdEqual(acinfo.getSignature(), this.attrCert.getSignatureAlgorithm())) {
             try {
                 ContentVerifier contentVerifier = contentVerifierProvider.get(acinfo.getSignature());
@@ -178,7 +178,7 @@ public class X509AttributeCertificateHolder implements Encodable, Serializable {
                 new DEROutputStream(outputStream).writeObject(acinfo);
                 outputStream.close();
                 return contentVerifier.verify(getSignature());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to process signature: ");
                 stringBuilder.append(e.getMessage());

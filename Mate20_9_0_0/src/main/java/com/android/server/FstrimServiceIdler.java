@@ -41,25 +41,25 @@ public class FstrimServiceIdler extends JobService {
     private JobParameters mJobParams;
     private boolean mStarted;
 
-    /* JADX WARNING: Missing block: B:56:0x00b4, code:
+    /* JADX WARNING: Missing block: B:56:0x00b4, code skipped:
             if (PRE_FSTRIM_JOB_ID != r0) goto L_0x00bb;
      */
-    /* JADX WARNING: Missing block: B:57:0x00b6, code:
+    /* JADX WARNING: Missing block: B:57:0x00b6, code skipped:
             mFstrimJobId = FSTRIM_JOB_ID;
      */
-    /* JADX WARNING: Missing block: B:58:0x00bb, code:
+    /* JADX WARNING: Missing block: B:58:0x00bb, code skipped:
             mFstrimJobId = IMMED_FSTRIM_JOB_ID;
      */
-    /* JADX WARNING: Missing block: B:60:0x00c1, code:
+    /* JADX WARNING: Missing block: B:60:0x00c1, code skipped:
             if (mScreenOn != false) goto L_0x00c6;
      */
-    /* JADX WARNING: Missing block: B:61:0x00c3, code:
+    /* JADX WARNING: Missing block: B:61:0x00c3, code skipped:
             scheduleFstrim(r8);
      */
-    /* JADX WARNING: Missing block: B:62:0x00c6, code:
+    /* JADX WARNING: Missing block: B:62:0x00c6, code skipped:
             jobFinished(r8.mJobParams, false);
      */
-    /* JADX WARNING: Missing block: B:63:0x00cb, code:
+    /* JADX WARNING: Missing block: B:63:0x00cb, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -3,6 +3,8 @@ package com.android.server.usb;
 import android.content.ComponentName;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
@@ -28,6 +30,8 @@ import java.util.LinkedList;
 
 public class UsbHostManager {
     private static final boolean DEBUG;
+    private static final int HUAWEI_STORAGE_PID = 15168;
+    private static final int HUAWEI_STORAGE_VID = 4817;
     private static final int LINUX_FOUNDATION_VID = 7531;
     private static final int MAX_CONNECT_RECORDS = 32;
     protected static final String SUW_FRP_STATE = "hw_suw_frp_state";
@@ -392,10 +396,36 @@ public class UsbHostManager {
         return Secure.getIntForUser(context.getContentResolver(), SUW_FRP_STATE, 0, 0) == 1;
     }
 
-    /* JADX WARNING: Missing block: B:51:0x0102, code:
-            if (DEBUG == false) goto L_0x011f;
+    private void updateHuaweiStorageExtraInfo(UsbDevice device) {
+        if (device.getProductId() == HUAWEI_STORAGE_PID && device.getVendorId() == HUAWEI_STORAGE_VID) {
+            UsbDeviceConnection connection = ((UsbManager) this.mContext.getSystemService("usb")).openDevice(device);
+            if (connection == null) {
+                Slog.w(TAG, "The USB Connection is NULL, return !");
+                return;
+            }
+            int inquire;
+            byte[] sStringBuffer = new byte[256];
+            if (connection.controlTransfer(HdmiCecKeycode.UI_SOUND_PRESENTATION_TREBLE_STEP_PLUS, 7, 0, 0, sStringBuffer, 1, 0) >= 0) {
+                inquire = sStringBuffer[0] & 255;
+            } else {
+                inquire = -1;
+            }
+            connection.close();
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("setBackupSubProductId, inquire = ");
+            stringBuilder.append(inquire);
+            Slog.d(str, stringBuilder.toString());
+            device.setBackupSubProductId(inquire);
+            return;
+        }
+        Slog.w(TAG, "No huawei Backup device, return !");
+    }
+
+    /* JADX WARNING: Missing block: B:51:0x0105, code skipped:
+            if (DEBUG == false) goto L_0x0122;
      */
-    /* JADX WARNING: Missing block: B:52:0x0104, code:
+    /* JADX WARNING: Missing block: B:52:0x0107, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("beginUsbDeviceAdded(");
@@ -403,7 +433,7 @@ public class UsbHostManager {
             r2.append(") end");
             android.util.Slog.d(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:54:0x0120, code:
+    /* JADX WARNING: Missing block: B:54:0x0123, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -452,6 +482,7 @@ public class UsbHostManager {
                         addConnectionRecord(deviceAddress, 2, parser.getRawDescriptors());
                     } else {
                         this.mDevices.put(deviceAddress, newDevice);
+                        updateHuaweiStorageExtraInfo(newDevice);
                         String str3 = TAG;
                         StringBuilder stringBuilder3 = new StringBuilder();
                         stringBuilder3.append("Added device ");

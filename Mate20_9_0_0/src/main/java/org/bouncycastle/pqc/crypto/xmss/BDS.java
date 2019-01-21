@@ -191,7 +191,7 @@ public final class BDS implements Serializable {
     }
 
     protected List<XMSSNode> getAuthenticationPath() {
-        List<XMSSNode> arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (XMSSNode clone : this.authenticationPath) {
             arrayList.add(clone.clone());
         }

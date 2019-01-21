@@ -270,7 +270,7 @@ public class BroadcastExFeature extends RFeature {
     }
 
     public static ArrayMap<String, ArraySet<String>> getBrFilterBlackApp() {
-        ArrayMap<String, ArraySet<String>> arrayMap;
+        ArrayMap arrayMap;
         synchronized (mBrFilterBlackApp) {
             arrayMap = new ArrayMap(mBrFilterBlackApp);
         }
@@ -289,7 +289,7 @@ public class BroadcastExFeature extends RFeature {
     }
 
     public static ArrayMap<String, ArraySet<String>> getBrFilterWhiteApp() {
-        ArrayMap<String, ArraySet<String>> arrayMap;
+        ArrayMap arrayMap;
         synchronized (mBrFilterWhiteApp) {
             arrayMap = new ArrayMap(mBrFilterWhiteApp);
         }

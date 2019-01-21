@@ -113,10 +113,13 @@ public class DisplayDriverCommunicator {
                     break;
                 }
                 char c = (char) intC;
-                if (c == 10 || sb.length() >= 100) {
+                if (c == 10) {
                     break;
+                } else if (sb.length() >= 100) {
+                    break;
+                } else {
+                    sb.append(c);
                 }
-                sb.append(c);
             }
             String keyboardStatus = sb.toString();
             String str = TAG;

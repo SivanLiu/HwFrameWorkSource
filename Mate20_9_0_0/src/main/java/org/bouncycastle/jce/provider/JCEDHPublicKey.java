@@ -39,12 +39,12 @@ public class JCEDHPublicKey implements DHPublicKey {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:19:0x009d in {7, 10, 12, 14, 17, 18, 22} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -68,16 +68,12 @@ public class JCEDHPublicKey implements DHPublicKey {
         r1 = org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.dhKeyAgreement;
         r1 = r4.equals(r1);
         if (r1 != 0) goto L_0x006f;
-    L_0x002d:
         r1 = r3.isPKCSParam(r0);
         if (r1 == 0) goto L_0x0034;
-    L_0x0033:
         goto L_0x006f;
-    L_0x0034:
         r1 = org.bouncycastle.asn1.x9.X9ObjectIdentifiers.dhpublicnumber;
         r1 = r4.equals(r1);
         if (r1 == 0) goto L_0x0058;
-    L_0x003c:
         r4 = org.bouncycastle.asn1.x9.DHDomainParameters.getInstance(r0);
         r0 = new javax.crypto.spec.DHParameterSpec;
         r1 = r4.getP();
@@ -85,10 +81,8 @@ public class JCEDHPublicKey implements DHPublicKey {
         r4 = r4.getG();
         r4 = r4.getValue();
         r0.<init>(r1, r4);
-    L_0x0055:
         r3.dhSpec = r0;
         return;
-    L_0x0058:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -98,11 +92,9 @@ public class JCEDHPublicKey implements DHPublicKey {
         r4 = r1.toString();
         r0.<init>(r4);
         throw r0;
-    L_0x006f:
         r4 = org.bouncycastle.asn1.pkcs.DHParameter.getInstance(r0);
         r0 = r4.getL();
         if (r0 == 0) goto L_0x008f;
-    L_0x0079:
         r0 = new javax.crypto.spec.DHParameterSpec;
         r1 = r4.getP();
         r2 = r4.getG();
@@ -110,14 +102,12 @@ public class JCEDHPublicKey implements DHPublicKey {
         r4 = r4.intValue();
         r0.<init>(r1, r2, r4);
         goto L_0x0055;
-    L_0x008f:
         r0 = new javax.crypto.spec.DHParameterSpec;
         r1 = r4.getP();
         r4 = r4.getG();
         r0.<init>(r1, r4);
         goto L_0x0055;
         return;
-    L_0x009e:
         r4 = move-exception;
         r4 = new java.lang.IllegalArgumentException;
         r0 = "invalid info structure in DH public key";

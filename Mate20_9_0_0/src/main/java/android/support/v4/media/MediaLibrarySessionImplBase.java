@@ -206,10 +206,12 @@ class MediaLibrarySessionImplBase extends MediaSession2ImplBase implements Suppo
     private boolean isSubscribed(ControllerInfo controller, String parentId) {
         synchronized (this.mLock) {
             Set<String> subscriptions = (Set) this.mSubscriptions.get(controller);
-            if (subscriptions == null || !subscriptions.contains(parentId)) {
-                return false;
+            if (subscriptions != null) {
+                if (subscriptions.contains(parentId)) {
+                    return true;
+                }
             }
-            return true;
+            return false;
         }
     }
 

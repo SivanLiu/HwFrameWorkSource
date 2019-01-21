@@ -830,12 +830,11 @@ public class SmartHeartBeat extends SmartHeartBeatDummy {
             Slog.d(TAG, "setAlarmsAdjust ...");
         }
         synchronized (mLock) {
-            Iterator<String> it = pkgList.iterator();
-            while (it.hasNext()) {
-                Iterator<String> it2;
-                String pkg = (String) it.next();
+            Iterator<String> it;
+            for (Iterator<String> it2 = pkgList.iterator(); it2.hasNext(); it2 = it) {
+                String pkg = (String) it2.next();
                 if (!z) {
-                    it2 = it;
+                    it = it2;
                     str = pkg;
                     if (list2 != null) {
                         this.mDataMap.adjustPackageForActions.removeAdjustPkg(str, list2);
@@ -851,11 +850,11 @@ public class SmartHeartBeat extends SmartHeartBeatDummy {
                     Slog.d(TAG, "setAlarmsAdjust interval must be greater than 0.");
                     return;
                 } else if (list2 != null) {
-                    it2 = it;
+                    it = it2;
                     str = pkg;
                     this.mDataMap.adjustPackageForActions.putAdjustPkg(pkg, list2, j, i2);
                 } else {
-                    it2 = it;
+                    it = it2;
                     str = pkg;
                     if (i == 0 || 1 == i) {
                         this.mDataMap.wakeupAdjustPkgsMap.putAdjustPkg(str, j, i2);
@@ -864,7 +863,6 @@ public class SmartHeartBeat extends SmartHeartBeatDummy {
                         this.mDataMap.noneWakeupAdjustPkgsMap.putAdjustPkg(str, j, i2);
                     }
                 }
-                it = it2;
             }
             Message msg = this.mHandler.obtainMessage();
             msg.what = 102;
@@ -882,13 +880,13 @@ public class SmartHeartBeat extends SmartHeartBeatDummy {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0050, code:
+    /* JADX WARNING: Missing block: B:14:0x0050, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:24:0x00ac, code:
+    /* JADX WARNING: Missing block: B:25:0x00ac, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:35:0x010d, code:
+    /* JADX WARNING: Missing block: B:36:0x010d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

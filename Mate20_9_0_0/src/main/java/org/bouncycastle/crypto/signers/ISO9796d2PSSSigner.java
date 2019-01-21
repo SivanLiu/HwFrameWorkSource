@@ -46,12 +46,12 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0021 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -68,19 +68,14 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
         r0.hLen = r1;
         r0.saltLength = r3;
         if (r4 == 0) goto L_0x0016;
-    L_0x0011:
         r1 = 188; // 0xbc float:2.63E-43 double:9.3E-322;
-    L_0x0013:
         r0.trailer = r1;
         return;
-    L_0x0016:
         r1 = org.bouncycastle.crypto.signers.ISOTrailers.getTrailer(r2);
         if (r1 == 0) goto L_0x0022;
-    L_0x001c:
         r1 = r1.intValue();
         goto L_0x0013;
         return;
-    L_0x0022:
         r1 = new java.lang.IllegalArgumentException;
         r3 = new java.lang.StringBuilder;
         r3.<init>();
@@ -130,31 +125,30 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
     }
 
     private byte[] maskGeneratorFunction1(byte[] bArr, int i, int i2, int i3) {
-        Object obj = new byte[i3];
-        Object obj2 = new byte[this.hLen];
-        byte[] bArr2 = new byte[4];
+        byte[] bArr2 = new byte[i3];
+        byte[] bArr3 = new byte[this.hLen];
+        byte[] bArr4 = new byte[4];
         this.digest.reset();
         int i4 = 0;
         while (i4 < i3 / this.hLen) {
-            ItoOSP(i4, bArr2);
+            ItoOSP(i4, bArr4);
             this.digest.update(bArr, i, i2);
-            this.digest.update(bArr2, 0, bArr2.length);
-            this.digest.doFinal(obj2, 0);
-            System.arraycopy(obj2, 0, obj, this.hLen * i4, this.hLen);
+            this.digest.update(bArr4, 0, bArr4.length);
+            this.digest.doFinal(bArr3, 0);
+            System.arraycopy(bArr3, 0, bArr2, this.hLen * i4, this.hLen);
             i4++;
         }
         if (this.hLen * i4 < i3) {
-            ItoOSP(i4, bArr2);
+            ItoOSP(i4, bArr4);
             this.digest.update(bArr, i, i2);
-            this.digest.update(bArr2, 0, bArr2.length);
-            this.digest.doFinal(obj2, 0);
-            System.arraycopy(obj2, 0, obj, this.hLen * i4, obj.length - (i4 * this.hLen));
+            this.digest.update(bArr4, 0, bArr4.length);
+            this.digest.doFinal(bArr3, 0);
+            System.arraycopy(bArr3, 0, bArr2, this.hLen * i4, bArr2.length - (i4 * this.hLen));
         }
-        return obj;
+        return bArr2;
     }
 
     public byte[] generateSignature() throws CryptoException {
-        Object obj;
         byte[] bArr = new byte[this.digest.getDigestSize()];
         this.digest.doFinal(bArr, 0);
         byte[] bArr2 = new byte[8];
@@ -163,27 +157,27 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
         this.digest.update(this.mBuf, 0, this.messageLength);
         this.digest.update(bArr, 0, bArr.length);
         if (this.standardSalt != null) {
-            obj = this.standardSalt;
+            bArr = this.standardSalt;
         } else {
-            obj = new byte[this.saltLength];
-            this.random.nextBytes(obj);
+            bArr = new byte[this.saltLength];
+            this.random.nextBytes(bArr);
         }
-        this.digest.update(obj, 0, obj.length);
-        Object obj2 = new byte[this.digest.getDigestSize()];
-        this.digest.doFinal(obj2, 0);
+        this.digest.update(bArr, 0, bArr.length);
+        bArr2 = new byte[this.digest.getDigestSize()];
+        this.digest.doFinal(bArr2, 0);
         boolean z = true;
         int i = this.trailer == 188 ? 1 : 2;
-        int length = ((((this.block.length - this.messageLength) - obj.length) - this.hLen) - i) - 1;
+        int length = ((((this.block.length - this.messageLength) - bArr.length) - this.hLen) - i) - 1;
         this.block[length] = (byte) 1;
         length++;
         System.arraycopy(this.mBuf, 0, this.block, length, this.messageLength);
-        System.arraycopy(obj, 0, this.block, length + this.messageLength, obj.length);
-        bArr = maskGeneratorFunction1(obj2, 0, obj2.length, (this.block.length - this.hLen) - i);
+        System.arraycopy(bArr, 0, this.block, length + this.messageLength, bArr.length);
+        bArr = maskGeneratorFunction1(bArr2, 0, bArr2.length, (this.block.length - this.hLen) - i);
         for (length = 0; length != bArr.length; length++) {
             byte[] bArr3 = this.block;
             bArr3[length] = (byte) (bArr3[length] ^ bArr[length]);
         }
-        System.arraycopy(obj2, 0, this.block, (this.block.length - this.hLen) - i, this.hLen);
+        System.arraycopy(bArr2, 0, this.block, (this.block.length - this.hLen) - i, this.hLen);
         if (this.trailer == 188) {
             this.block[this.block.length - 1] = PSSSigner.TRAILER_IMPLICIT;
         } else {
@@ -219,44 +213,44 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
     /* JADX WARNING: Removed duplicated region for block: B:19:0x007b  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void init(boolean z, CipherParameters cipherParameters) {
-        Object obj;
+        CipherParameters cipherParameters2;
         SecureRandom random;
         int i = this.saltLength;
         if (cipherParameters instanceof ParametersWithRandom) {
             ParametersWithRandom parametersWithRandom = (ParametersWithRandom) cipherParameters;
-            obj = (RSAKeyParameters) parametersWithRandom.getParameters();
+            cipherParameters2 = (RSAKeyParameters) parametersWithRandom.getParameters();
             if (z) {
                 random = parametersWithRandom.getRandom();
             }
-            this.cipher.init(z, obj);
-            this.keyBits = obj.getModulus().bitLength();
+            this.cipher.init(z, cipherParameters2);
+            this.keyBits = cipherParameters2.getModulus().bitLength();
             this.block = new byte[((this.keyBits + 7) / 8)];
             this.mBuf = new byte[(this.trailer == 188 ? (((this.block.length - this.digest.getDigestSize()) - i) - 1) - 1 : (((this.block.length - this.digest.getDigestSize()) - i) - 1) - 2)];
             reset();
         }
         if (cipherParameters instanceof ParametersWithSalt) {
             ParametersWithSalt parametersWithSalt = (ParametersWithSalt) cipherParameters;
-            obj = (RSAKeyParameters) parametersWithSalt.getParameters();
+            cipherParameters2 = (RSAKeyParameters) parametersWithSalt.getParameters();
             this.standardSalt = parametersWithSalt.getSalt();
             i = this.standardSalt.length;
             if (this.standardSalt.length != this.saltLength) {
                 throw new IllegalArgumentException("Fixed salt is of wrong length");
             }
         }
-        obj = (RSAKeyParameters) cipherParameters;
+        cipherParameters2 = (RSAKeyParameters) cipherParameters;
         if (z) {
             random = new SecureRandom();
         }
-        this.cipher.init(z, obj);
-        this.keyBits = obj.getModulus().bitLength();
+        this.cipher.init(z, cipherParameters2);
+        this.keyBits = cipherParameters2.getModulus().bitLength();
         this.block = new byte[((this.keyBits + 7) / 8)];
         if (this.trailer == 188) {
         }
         this.mBuf = new byte[(this.trailer == 188 ? (((this.block.length - this.digest.getDigestSize()) - i) - 1) - 1 : (((this.block.length - this.digest.getDigestSize()) - i) - 1) - 2)];
         reset();
         this.random = random;
-        this.cipher.init(z, obj);
-        this.keyBits = obj.getModulus().bitLength();
+        this.cipher.init(z, cipherParameters2);
+        this.keyBits = cipherParameters2.getModulus().bitLength();
         this.block = new byte[((this.keyBits + 7) / 8)];
         if (this.trailer == 188) {
         }
@@ -307,13 +301,14 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
     }
 
     public void updateWithRecoveredMessage(byte[] bArr) throws InvalidCipherTextException {
+        byte[] bArr2;
         int intValue;
-        Object processBlock = this.cipher.processBlock(bArr, 0, bArr.length);
+        byte[] processBlock = this.cipher.processBlock(bArr, 0, bArr.length);
         if (processBlock.length < (this.keyBits + 7) / 8) {
-            Object obj = new byte[((this.keyBits + 7) / 8)];
-            System.arraycopy(processBlock, 0, obj, obj.length - processBlock.length, processBlock.length);
+            bArr2 = new byte[((this.keyBits + 7) / 8)];
+            System.arraycopy(processBlock, 0, bArr2, bArr2.length - processBlock.length, processBlock.length);
             clearBlock(processBlock);
-            processBlock = obj;
+            processBlock = bArr2;
         }
         boolean z = true;
         int i = 2;
@@ -334,9 +329,9 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
             throw new IllegalArgumentException("unrecognised hash in signature");
         }
         this.digest.doFinal(new byte[this.hLen], 0);
-        byte[] maskGeneratorFunction1 = maskGeneratorFunction1(processBlock, (processBlock.length - this.hLen) - i, this.hLen, (processBlock.length - this.hLen) - i);
-        for (intValue = 0; intValue != maskGeneratorFunction1.length; intValue++) {
-            processBlock[intValue] = (byte) (processBlock[intValue] ^ maskGeneratorFunction1[intValue]);
+        bArr2 = maskGeneratorFunction1(processBlock, (processBlock.length - this.hLen) - i, this.hLen, (processBlock.length - this.hLen) - i);
+        for (intValue = 0; intValue != bArr2.length; intValue++) {
+            processBlock[intValue] = (byte) (processBlock[intValue] ^ bArr2[intValue]);
         }
         processBlock[0] = (byte) (processBlock[0] & CertificateBody.profileType);
         intValue = 0;
@@ -351,7 +346,7 @@ public class ISO9796d2PSSSigner implements SignerWithRecovery {
             z = false;
         }
         this.fullMessage = z;
-        this.recoveredMessage = new byte[((maskGeneratorFunction1.length - intValue) - this.saltLength)];
+        this.recoveredMessage = new byte[((bArr2.length - intValue) - this.saltLength)];
         System.arraycopy(processBlock, intValue, this.recoveredMessage, 0, this.recoveredMessage.length);
         System.arraycopy(this.recoveredMessage, 0, this.mBuf, 0, this.recoveredMessage.length);
         this.preSig = bArr;

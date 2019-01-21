@@ -59,7 +59,7 @@ public class TimeStampResponseGenerator {
         if (set == null) {
             return set;
         }
-        Set hashSet = new HashSet(set.size());
+        HashSet hashSet = new HashSet(set.size());
         for (Object next : set) {
             if (next instanceof String) {
                 hashSet.add(new ASN1ObjectIdentifier((String) next));
@@ -134,7 +134,7 @@ public class TimeStampResponseGenerator {
                 }
             } catch (TSPException e2) {
                 throw e2;
-            } catch (Throwable e3) {
+            } catch (Exception e3) {
                 throw new TSPException("Timestamp token received cannot be converted to ContentInfo", e3);
             }
         }

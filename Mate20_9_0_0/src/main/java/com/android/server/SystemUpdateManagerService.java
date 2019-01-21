@@ -154,23 +154,6 @@ public class SystemUpdateManagerService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0035 A:{PHI: r1 , Splitter: B:1:0x0002, ExcHandler: java.io.IOException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0035, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0036, code:
-            android.util.Slog.e(TAG, "Failed to save the info file:", r0);
-     */
-    /* JADX WARNING: Missing block: B:6:0x003d, code:
-            if (r1 != null) goto L_0x003f;
-     */
-    /* JADX WARNING: Missing block: B:7:0x003f, code:
-            r5.mFile.failWrite(r1);
-     */
-    /* JADX WARNING: Missing block: B:9:0x0045, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean writeInfoFileLocked(PersistableBundle outBundle) {
         FileOutputStream fos = null;
         try {
@@ -184,7 +167,12 @@ public class SystemUpdateManagerService extends Stub {
             out.endDocument();
             this.mFile.finishWrite(fos);
             return true;
-        } catch (Exception e) {
+        } catch (IOException | XmlPullParserException e) {
+            Slog.e(TAG, "Failed to save the info file:", e);
+            if (fos != null) {
+                this.mFile.failWrite(fos);
+            }
+            return false;
         }
     }
 

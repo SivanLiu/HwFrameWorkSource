@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertPath;
@@ -44,7 +43,7 @@ public class PKIXCertPath extends CertPath {
     private final JcaJceHelper helper = new BCJcaJceHelper();
 
     static {
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         arrayList.add("PkiPath");
         arrayList.add("PEM");
         arrayList.add("PKCS7");
@@ -55,34 +54,37 @@ public class PKIXCertPath extends CertPath {
         super("X.509");
         StringBuilder stringBuilder;
         try {
-            if (str.equalsIgnoreCase("PkiPath")) {
-                ASN1Primitive readObject = new ASN1InputStream(inputStream).readObject();
-                if (readObject instanceof ASN1Sequence) {
-                    Enumeration objects = ((ASN1Sequence) readObject).getObjects();
-                    this.certificates = new ArrayList();
-                    CertificateFactory createCertificateFactory = this.helper.createCertificateFactory("X.509");
-                    while (objects.hasMoreElements()) {
-                        this.certificates.add(0, createCertificateFactory.generateCertificate(new ByteArrayInputStream(((ASN1Encodable) objects.nextElement()).toASN1Primitive().getEncoded(ASN1Encoding.DER))));
+            if (!str.equalsIgnoreCase("PkiPath")) {
+                if (!str.equalsIgnoreCase("PKCS7")) {
+                    if (!str.equalsIgnoreCase("PEM")) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("unsupported encoding: ");
+                        stringBuilder.append(str);
+                        throw new CertificateException(stringBuilder.toString());
                     }
-                } else {
-                    throw new CertificateException("input stream does not contain a ASN1 SEQUENCE while reading PkiPath encoded data to load CertPath");
                 }
-            } else if (str.equalsIgnoreCase("PKCS7") || str.equalsIgnoreCase("PEM")) {
-                InputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
                 this.certificates = new ArrayList();
-                CertificateFactory createCertificateFactory2 = this.helper.createCertificateFactory("X.509");
+                CertificateFactory createCertificateFactory = this.helper.createCertificateFactory("X.509");
                 while (true) {
-                    Certificate generateCertificate = createCertificateFactory2.generateCertificate(bufferedInputStream);
+                    Certificate generateCertificate = createCertificateFactory.generateCertificate(bufferedInputStream);
                     if (generateCertificate == null) {
                         break;
                     }
                     this.certificates.add(generateCertificate);
                 }
             } else {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("unsupported encoding: ");
-                stringBuilder.append(str);
-                throw new CertificateException(stringBuilder.toString());
+                ASN1Primitive readObject = new ASN1InputStream(inputStream).readObject();
+                if (readObject instanceof ASN1Sequence) {
+                    Enumeration objects = ((ASN1Sequence) readObject).getObjects();
+                    this.certificates = new ArrayList();
+                    CertificateFactory createCertificateFactory2 = this.helper.createCertificateFactory("X.509");
+                    while (objects.hasMoreElements()) {
+                        this.certificates.add(0, createCertificateFactory2.generateCertificate(new ByteArrayInputStream(((ASN1Encodable) objects.nextElement()).toASN1Primitive().getEncoded(ASN1Encoding.DER))));
+                    }
+                } else {
+                    throw new CertificateException("input stream does not contain a ASN1 SEQUENCE while reading PkiPath encoded data to load CertPath");
+                }
             }
             this.certificates = sortCerts(this.certificates);
         } catch (IOException e) {
@@ -120,8 +122,8 @@ public class PKIXCertPath extends CertPath {
         if (i != 0) {
             return list;
         }
-        List arrayList = new ArrayList(list.size());
-        List arrayList2 = new ArrayList(list);
+        ArrayList arrayList = new ArrayList(list.size());
+        ArrayList arrayList2 = new ArrayList(list);
         for (int i2 = 0; i2 < list.size(); i2++) {
             int i3;
             X509Certificate x509Certificate = (X509Certificate) list.get(i2);
@@ -212,7 +214,7 @@ public class PKIXCertPath extends CertPath {
             }
             return toDEREncoded(new ContentInfo(PKCSObjectIdentifiers.signedData, new SignedData(new ASN1Integer(1), new DERSet(), contentInfo, new DERSet(aSN1EncodableVector), null, new DERSet())));
         } else if (str.equalsIgnoreCase("PEM")) {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             PemWriter pemWriter = new PemWriter(new OutputStreamWriter(byteArrayOutputStream));
             while (i != this.certificates.size()) {
                 try {

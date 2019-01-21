@@ -54,7 +54,7 @@ public class PKCS12PfxPduBuilder {
                 macData = new MacDataGenerator(pKCS12MacCalculatorBuilder).build(cArr, encoded);
             }
             return new PKCS12PfxPdu(new Pfx(contentInfo, macData));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to encode AuthenticatedSafe: ");
             stringBuilder.append(e.getMessage());

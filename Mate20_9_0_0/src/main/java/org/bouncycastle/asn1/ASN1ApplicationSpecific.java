@@ -67,10 +67,10 @@ public abstract class ASN1ApplicationSpecific extends ASN1Primitive {
             }
         }
         i2 = 1;
-        Object obj = new byte[((bArr.length - i2) + 1)];
-        System.arraycopy(bArr, i2, obj, 1, obj.length - 1);
-        obj[0] = (byte) i;
-        return obj;
+        byte[] bArr2 = new byte[((bArr.length - i2) + 1)];
+        System.arraycopy(bArr, i2, bArr2, 1, bArr2.length - 1);
+        bArr2[0] = (byte) i;
+        return bArr2;
     }
 
     boolean asn1Equals(ASN1Primitive aSN1Primitive) {

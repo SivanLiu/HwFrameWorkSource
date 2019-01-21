@@ -23,20 +23,11 @@ public class IdentifyResultDAO {
         TAG = stringBuilder.toString();
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0057, code:
+    /* JADX WARNING: Missing block: B:7:0x0057, code skipped:
             if (r2 != null) goto L_0x0059;
      */
-    /* JADX WARNING: Missing block: B:8:0x0059, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x007a, code:
+    /* JADX WARNING: Missing block: B:17:0x009b, code skipped:
             if (r2 == null) goto L_0x009e;
-     */
-    /* JADX WARNING: Missing block: B:16:0x009b, code:
-            if (r2 == null) goto L_0x009e;
-     */
-    /* JADX WARNING: Missing block: B:17:0x009e, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<IdentifyResult> findAll() {
@@ -69,6 +60,10 @@ public class IdentifyResultDAO {
             stringBuilder.append("findAll Exception: ");
             stringBuilder.append(e2.getMessage());
             Log.e(str, stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return identifyResultList;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -76,20 +71,11 @@ public class IdentifyResultDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x001e, code:
+    /* JADX WARNING: Missing block: B:7:0x001e, code skipped:
             if (r1 != null) goto L_0x0020;
      */
-    /* JADX WARNING: Missing block: B:8:0x0020, code:
-            r1.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x0041, code:
+    /* JADX WARNING: Missing block: B:17:0x0062, code skipped:
             if (r1 == null) goto L_0x0065;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0062, code:
-            if (r1 == null) goto L_0x0065;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0065, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int findAllCount() {
@@ -116,6 +102,10 @@ public class IdentifyResultDAO {
             stringBuilder.append("findAll Exception: ");
             stringBuilder.append(e2.getMessage());
             Log.e(str, stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return allCnt;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -160,20 +150,11 @@ public class IdentifyResultDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0079, code:
+    /* JADX WARNING: Missing block: B:17:0x0079, code skipped:
             if (r3 != null) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:18:0x007b, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:23:0x009c, code:
+    /* JADX WARNING: Missing block: B:27:0x00ba, code skipped:
             if (r3 == null) goto L_0x00bd;
-     */
-    /* JADX WARNING: Missing block: B:26:0x00ba, code:
-            if (r3 == null) goto L_0x00bd;
-     */
-    /* JADX WARNING: Missing block: B:27:0x00bd, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<IdentifyResult> findBySsid(String ssid, boolean isMainAp) {
@@ -211,6 +192,10 @@ public class IdentifyResultDAO {
                 stringBuilder.append("findBySsid Exception: ");
                 stringBuilder.append(e2.getMessage());
                 Log.e(str, stringBuilder.toString());
+                if (cursor != null) {
+                    cursor.close();
+                }
+                return identifyResultList;
             } catch (Throwable th) {
                 if (cursor != null) {
                     cursor.close();

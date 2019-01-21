@@ -5,6 +5,7 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.RestrictTo.Scope;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @RequiresApi(28)
@@ -15,19 +16,12 @@ public class TypefaceCompatApi28Impl extends TypefaceCompatApi26Impl {
     private static final int RESOLVE_BY_FONT_TABLE = -1;
     private static final String TAG = "TypefaceCompatApi28Impl";
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x002d A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalAccessException (r0_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:3:0x002d, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0033, code:
-            throw new java.lang.RuntimeException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected Typeface createFromFamiliesWithDefault(Object family) {
         try {
             Array.set(Array.newInstance(this.mFontFamily, 1), 0, family);
             return (Typeface) this.mCreateFromFamiliesWithDefault.invoke(null, new Object[]{familyArray, DEFAULT_FAMILY, Integer.valueOf(-1), Integer.valueOf(-1)});
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 

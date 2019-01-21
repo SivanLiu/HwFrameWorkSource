@@ -15,12 +15,12 @@ public class ASN1Boolean extends ASN1Primitive {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:11:0x0020 in {4, 6, 9, 10, 13} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -38,28 +38,21 @@ public class ASN1Boolean extends ASN1Primitive {
         r0 = r3.length;
         r1 = 1;
         if (r0 != r1) goto L_0x0021;
-    L_0x0007:
         r0 = 0;
         r1 = r3[r0];
         if (r1 != 0) goto L_0x0011;
-    L_0x000c:
         r3 = FALSE_VALUE;
-    L_0x000e:
         r2.value = r3;
         return;
-    L_0x0011:
         r0 = r3[r0];
         r1 = 255; // 0xff float:3.57E-43 double:1.26E-321;
         r0 = r0 & r1;
         if (r0 != r1) goto L_0x001b;
-    L_0x0018:
         r3 = TRUE_VALUE;
         goto L_0x000e;
-    L_0x001b:
         r3 = org.bouncycastle.util.Arrays.clone(r3);
         goto L_0x000e;
         return;
-    L_0x0021:
         r3 = new java.lang.IllegalArgumentException;
         r0 = "byte value should have 1 byte in it";
         r3.<init>(r0);

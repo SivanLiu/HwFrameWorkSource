@@ -127,32 +127,35 @@ final class AutofillManagerServiceImpl {
                 while (true) {
                     numSessionsToRemove2 = i;
                     if (numSessionsToRemove2 < i2) {
-                        Session sessionToRemove = (Session) AutofillManagerServiceImpl.this.mSessions.get(sessionsToRemove2.keyAt(numSessionsToRemove2));
-                        if (sessionToRemove != null && sessionsToRemove2.valueAt(numSessionsToRemove2) == sessionToRemove.getActivityTokenLocked()) {
-                            String str;
-                            StringBuilder stringBuilder;
-                            if (!sessionToRemove.isSavingLocked()) {
-                                if (Helper.sDebug) {
+                        try {
+                            Session sessionToRemove = (Session) AutofillManagerServiceImpl.this.mSessions.get(sessionsToRemove2.keyAt(numSessionsToRemove2));
+                            if (sessionToRemove != null && sessionsToRemove2.valueAt(numSessionsToRemove2) == sessionToRemove.getActivityTokenLocked()) {
+                                String str;
+                                StringBuilder stringBuilder;
+                                if (!sessionToRemove.isSavingLocked()) {
+                                    if (Helper.sDebug) {
+                                        str = AutofillManagerServiceImpl.TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Prune session ");
+                                        stringBuilder.append(sessionToRemove.id);
+                                        stringBuilder.append(" (");
+                                        stringBuilder.append(sessionToRemove.getActivityTokenLocked());
+                                        stringBuilder.append(")");
+                                        Slog.i(str, stringBuilder.toString());
+                                    }
+                                    sessionToRemove.removeSelfLocked();
+                                } else if (Helper.sVerbose) {
                                     str = AutofillManagerServiceImpl.TAG;
                                     stringBuilder = new StringBuilder();
-                                    stringBuilder.append("Prune session ");
+                                    stringBuilder.append("Session ");
                                     stringBuilder.append(sessionToRemove.id);
-                                    stringBuilder.append(" (");
-                                    stringBuilder.append(sessionToRemove.getActivityTokenLocked());
-                                    stringBuilder.append(")");
-                                    Slog.i(str, stringBuilder.toString());
+                                    stringBuilder.append(" is saving");
+                                    Slog.v(str, stringBuilder.toString());
                                 }
-                                sessionToRemove.removeSelfLocked();
-                            } else if (Helper.sVerbose) {
-                                str = AutofillManagerServiceImpl.TAG;
-                                stringBuilder = new StringBuilder();
-                                stringBuilder.append("Session ");
-                                stringBuilder.append(sessionToRemove.id);
-                                stringBuilder.append(" is saving");
-                                Slog.v(str, stringBuilder.toString());
                             }
+                            i = numSessionsToRemove2 + 1;
+                        } finally {
                         }
-                        i = numSessionsToRemove2 + 1;
                     }
                 }
             }
@@ -232,39 +235,26 @@ final class AutofillManagerServiceImpl {
         return Secure.getStringForUser(this.mContext.getContentResolver(), "autofill_service", this.mUserId);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:9:0x0083 A:{Splitter: B:5:0x005a, ExcHandler: java.lang.RuntimeException (r4_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:9:0x0083, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:10:0x0084, code:
-            r6 = TAG;
-            r7 = new java.lang.StringBuilder();
-            r7.append("Error getting service info for '");
-            r7.append(r3);
-            r7.append("': ");
-            r7.append(r4);
-            android.util.Slog.e(r6, r7.toString());
-            r2 = null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mLock")
     void updateLocked(boolean disabled) {
+        String str;
+        StringBuilder stringBuilder;
         Exception e;
         boolean wasEnabled = isEnabledLocked();
         if (Helper.sVerbose) {
-            String str = TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("updateLocked(u=");
-            stringBuilder.append(this.mUserId);
-            stringBuilder.append("): wasEnabled=");
-            stringBuilder.append(wasEnabled);
-            stringBuilder.append(", mSetupComplete= ");
-            stringBuilder.append(this.mSetupComplete);
-            stringBuilder.append(", disabled=");
-            stringBuilder.append(disabled);
-            stringBuilder.append(", mDisabled=");
-            stringBuilder.append(this.mDisabled);
-            Slog.v(str, stringBuilder.toString());
+            String str2 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("updateLocked(u=");
+            stringBuilder2.append(this.mUserId);
+            stringBuilder2.append("): wasEnabled=");
+            stringBuilder2.append(wasEnabled);
+            stringBuilder2.append(", mSetupComplete= ");
+            stringBuilder2.append(this.mSetupComplete);
+            stringBuilder2.append(", disabled=");
+            stringBuilder2.append(disabled);
+            stringBuilder2.append(", mDisabled=");
+            stringBuilder2.append(this.mDisabled);
+            Slog.v(str2, stringBuilder2.toString());
         }
         this.mSetupComplete = isSetupCompletedLocked();
         this.mDisabled = disabled;
@@ -276,27 +266,34 @@ final class AutofillManagerServiceImpl {
                 serviceComponent = ComponentName.unflattenFromString(componentName);
                 serviceInfo = AppGlobals.getPackageManager().getServiceInfo(serviceComponent, 0, this.mUserId);
                 if (serviceInfo == null) {
-                    String str2 = TAG;
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    stringBuilder2.append("Bad AutofillService name: ");
-                    stringBuilder2.append(componentName);
-                    Slog.e(str2, stringBuilder2.toString());
+                    String str3 = TAG;
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("Bad AutofillService name: ");
+                    stringBuilder3.append(componentName);
+                    Slog.e(str3, stringBuilder3.toString());
                 }
-            } catch (Exception e2) {
+            } catch (RemoteException | RuntimeException e2) {
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Error getting service info for '");
+                stringBuilder.append(componentName);
+                stringBuilder.append("': ");
+                stringBuilder.append(e2);
+                Slog.e(str, stringBuilder.toString());
+                serviceInfo = null;
             }
         }
-        StringBuilder stringBuilder3;
         if (serviceInfo != null) {
             try {
                 this.mInfo = new AutofillServiceInfo(this.mContext, serviceComponent, this.mUserId);
                 if (Helper.sDebug) {
-                    String str3 = TAG;
-                    stringBuilder3 = new StringBuilder();
-                    stringBuilder3.append("Set component for user ");
-                    stringBuilder3.append(this.mUserId);
-                    stringBuilder3.append(" as ");
-                    stringBuilder3.append(this.mInfo);
-                    Slog.d(str3, stringBuilder3.toString());
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Set component for user ");
+                    stringBuilder.append(this.mUserId);
+                    stringBuilder.append(" as ");
+                    stringBuilder.append(this.mInfo);
+                    Slog.d(str, stringBuilder.toString());
                 }
             } catch (Exception e3) {
                 String str4 = TAG;
@@ -312,13 +309,13 @@ final class AutofillManagerServiceImpl {
             this.mInfo = null;
             if (Helper.sDebug) {
                 e3 = TAG;
-                stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("Reset component for user ");
-                stringBuilder3.append(this.mUserId);
-                stringBuilder3.append(" (");
-                stringBuilder3.append(componentName);
-                stringBuilder3.append(")");
-                Slog.d(e3, stringBuilder3.toString());
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Reset component for user ");
+                stringBuilder.append(this.mUserId);
+                stringBuilder.append(" (");
+                stringBuilder.append(componentName);
+                stringBuilder.append(")");
+                Slog.d(e3, stringBuilder.toString());
             }
         }
         boolean isEnabled = isEnabledLocked();
@@ -714,10 +711,10 @@ final class AutofillManagerServiceImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0049, code:
+    /* JADX WARNING: Missing block: B:16:0x0049, code skipped:
             if (com.android.server.autofill.Helper.sDebug == false) goto L_0x0071;
      */
-    /* JADX WARNING: Missing block: B:17:0x004b, code:
+    /* JADX WARNING: Missing block: B:17:0x004b, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("No pending Save UI for token ");
@@ -726,7 +723,7 @@ final class AutofillManagerServiceImpl {
             r1.append(android.util.DebugUtils.flagsToString(android.view.autofill.AutofillManager.class, "PENDING_UI_OPERATION_", r6));
             android.util.Slog.d(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:18:0x0071, code:
+    /* JADX WARNING: Missing block: B:18:0x0071, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -842,7 +839,7 @@ final class AutofillManagerServiceImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002c, code:
+    /* JADX WARNING: Missing block: B:10:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -863,7 +860,7 @@ final class AutofillManagerServiceImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002d, code:
+    /* JADX WARNING: Missing block: B:10:0x002d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -884,7 +881,7 @@ final class AutofillManagerServiceImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002c, code:
+    /* JADX WARNING: Missing block: B:10:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -905,7 +902,7 @@ final class AutofillManagerServiceImpl {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002d, code:
+    /* JADX WARNING: Missing block: B:10:0x002d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1022,7 +1019,7 @@ final class AutofillManagerServiceImpl {
         ArrayList<String> arrayList6 = selectedDatasets;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0015, code:
+    /* JADX WARNING: Missing block: B:12:0x0015, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1112,7 +1109,7 @@ final class AutofillManagerServiceImpl {
         printWriter.println(getComponentNameFromSettings());
         printWriter.print(str);
         printWriter.print("Default component: ");
-        printWriter.println(this.mContext.getString(17039783));
+        printWriter.println(this.mContext.getString(17039784));
         printWriter.print(str);
         printWriter.print("Disabled: ");
         printWriter.println(this.mDisabled);
@@ -1295,82 +1292,82 @@ final class AutofillManagerServiceImpl {
         return null;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0010, code:
+    /* JADX WARNING: Missing block: B:9:0x0010, code skipped:
             r3 = 0;
      */
-    /* JADX WARNING: Missing block: B:10:0x0012, code:
+    /* JADX WARNING: Missing block: B:10:0x0012, code skipped:
             if (r3 >= r2) goto L_0x0058;
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r4 = (android.view.autofill.IAutoFillManagerClient) r1.getBroadcastItem(r3);
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             r5 = r9.mLock;
      */
-    /* JADX WARNING: Missing block: B:15:0x001c, code:
+    /* JADX WARNING: Missing block: B:15:0x001c, code skipped:
             monitor-enter(r5);
      */
-    /* JADX WARNING: Missing block: B:16:0x001d, code:
+    /* JADX WARNING: Missing block: B:16:0x001d, code skipped:
             if (r10 != false) goto L_0x002a;
      */
-    /* JADX WARNING: Missing block: B:19:0x0023, code:
+    /* JADX WARNING: Missing block: B:19:0x0023, code skipped:
             if (isClientSessionDestroyedLocked(r4) == false) goto L_0x0026;
      */
-    /* JADX WARNING: Missing block: B:20:0x0026, code:
+    /* JADX WARNING: Missing block: B:21:0x0026, code skipped:
             r6 = false;
      */
-    /* JADX WARNING: Missing block: B:22:0x002a, code:
+    /* JADX WARNING: Missing block: B:24:0x002a, code skipped:
             r6 = true;
      */
-    /* JADX WARNING: Missing block: B:23:0x002b, code:
+    /* JADX WARNING: Missing block: B:25:0x002b, code skipped:
             r7 = isEnabledLocked();
      */
-    /* JADX WARNING: Missing block: B:24:0x002f, code:
+    /* JADX WARNING: Missing block: B:26:0x002f, code skipped:
             monitor-exit(r5);
      */
-    /* JADX WARNING: Missing block: B:25:0x0030, code:
+    /* JADX WARNING: Missing block: B:27:0x0030, code skipped:
             r5 = 0;
      */
-    /* JADX WARNING: Missing block: B:26:0x0031, code:
+    /* JADX WARNING: Missing block: B:28:0x0031, code skipped:
             if (r7 == false) goto L_0x0035;
      */
-    /* JADX WARNING: Missing block: B:27:0x0033, code:
+    /* JADX WARNING: Missing block: B:29:0x0033, code skipped:
             r5 = 0 | 1;
      */
-    /* JADX WARNING: Missing block: B:28:0x0035, code:
+    /* JADX WARNING: Missing block: B:30:0x0035, code skipped:
             if (r6 == false) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:29:0x0037, code:
+    /* JADX WARNING: Missing block: B:31:0x0037, code skipped:
             r5 = r5 | 2;
      */
-    /* JADX WARNING: Missing block: B:30:0x0039, code:
+    /* JADX WARNING: Missing block: B:32:0x0039, code skipped:
             if (r10 == false) goto L_0x003d;
      */
-    /* JADX WARNING: Missing block: B:31:0x003b, code:
+    /* JADX WARNING: Missing block: B:33:0x003b, code skipped:
             r5 = r5 | 4;
      */
-    /* JADX WARNING: Missing block: B:34:0x003f, code:
+    /* JADX WARNING: Missing block: B:36:0x003f, code skipped:
             if (com.android.server.autofill.Helper.sDebug == false) goto L_0x0043;
      */
-    /* JADX WARNING: Missing block: B:35:0x0041, code:
+    /* JADX WARNING: Missing block: B:37:0x0041, code skipped:
             r5 = r5 | 8;
      */
-    /* JADX WARNING: Missing block: B:37:0x0045, code:
+    /* JADX WARNING: Missing block: B:39:0x0045, code skipped:
             if (com.android.server.autofill.Helper.sVerbose == false) goto L_0x0049;
      */
-    /* JADX WARNING: Missing block: B:38:0x0047, code:
+    /* JADX WARNING: Missing block: B:40:0x0047, code skipped:
             r5 = r5 | 16;
      */
-    /* JADX WARNING: Missing block: B:39:0x0049, code:
+    /* JADX WARNING: Missing block: B:41:0x0049, code skipped:
             r4.setState(r5);
      */
-    /* JADX WARNING: Missing block: B:47:0x0054, code:
+    /* JADX WARNING: Missing block: B:49:0x0054, code skipped:
             r1.finishBroadcast();
      */
-    /* JADX WARNING: Missing block: B:49:0x0058, code:
+    /* JADX WARNING: Missing block: B:51:0x0058, code skipped:
             r1.finishBroadcast();
      */
-    /* JADX WARNING: Missing block: B:50:0x005c, code:
+    /* JADX WARNING: Missing block: B:52:0x005c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

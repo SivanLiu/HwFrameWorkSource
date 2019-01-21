@@ -639,9 +639,10 @@ public class StatusBarManagerService extends Stub {
             this.mMenuVisible = menuVisible;
             this.mHandler.post(new Runnable() {
                 public void run() {
-                    if (StatusBarManagerService.this.mBar != null) {
+                    IStatusBar bar = StatusBarManagerService.this.mBar;
+                    if (bar != null) {
                         try {
-                            StatusBarManagerService.this.mBar.topAppWindowChanged(menuVisible);
+                            bar.topAppWindowChanged(menuVisible);
                         } catch (RemoteException e) {
                         }
                     }
@@ -663,9 +664,10 @@ public class StatusBarManagerService extends Stub {
             final boolean z = showImeSwitcher;
             this.mHandler.post(new Runnable() {
                 public void run() {
-                    if (StatusBarManagerService.this.mBar != null) {
+                    IStatusBar bar = StatusBarManagerService.this.mBar;
+                    if (bar != null) {
                         try {
-                            StatusBarManagerService.this.mBar.setImeWindowStatus(iBinder, i, i2, z);
+                            bar.setImeWindowStatus(iBinder, i, i2, z);
                         } catch (RemoteException e) {
                         }
                     }
@@ -710,9 +712,10 @@ public class StatusBarManagerService extends Stub {
             final Rect rect4 = rect2;
             this.mHandler.post(new Runnable() {
                 public void run() {
-                    if (StatusBarManagerService.this.mBar != null) {
+                    IStatusBar bar = StatusBarManagerService.this.mBar;
+                    if (bar != null) {
                         try {
-                            StatusBarManagerService.this.mBar.setSystemUiVisibility(i4, i5, i6, i7, rect3, rect4);
+                            bar.setSystemUiVisibility(i4, i5, i6, i7, rect3, rect4);
                         } catch (Exception ex) {
                             String str = StatusBarManagerService.TAG;
                             StringBuilder stringBuilder = new StringBuilder();

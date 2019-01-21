@@ -51,7 +51,7 @@ public class JceKTSKeyWrapper extends AsymmetricKeyWrapper {
         try {
             createAsymmetricWrapper.init(3, this.publicKey, new Builder(this.symmetricWrappingAlg, this.keySizeInBits, new DEROtherInfo.Builder(JceSymmetricKeyWrapper.determineKeyEncAlg(this.symmetricWrappingAlg, this.keySizeInBits), this.partyUInfo, this.partyVInfo).build().getEncoded()).build(), this.random);
             return createAsymmetricWrapper.wrap(OperatorUtils.getJceKey(genericKey));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Unable to wrap contents key: ");
             stringBuilder.append(e.getMessage());

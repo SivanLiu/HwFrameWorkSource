@@ -776,7 +776,7 @@ public class HwWifiConnectivityMonitor extends StateMachine {
         }
     }
 
-    /* JADX WARNING: Missing block: B:58:0x00f3, code:
+    /* JADX WARNING: Missing block: B:58:0x00f3, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -836,10 +836,10 @@ public class HwWifiConnectivityMonitor extends StateMachine {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0045, code:
+    /* JADX WARNING: Missing block: B:15:0x0045, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:16:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -847,11 +847,14 @@ public class HwWifiConnectivityMonitor extends StateMachine {
         if (uid > 0 && dnsFailCount > 0) {
             StringBuilder stringBuilder;
             if (dnsFailCount > 5) {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("ENTER: notifyTopUidDnsInfo, dnsFailCount = ");
-                stringBuilder.append(dnsFailCount);
-                LOGD(stringBuilder.toString());
-                sendMessage(112, uid, 2);
+                try {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("ENTER: notifyTopUidDnsInfo, dnsFailCount = ");
+                    stringBuilder.append(dnsFailCount);
+                    LOGD(stringBuilder.toString());
+                    sendMessage(112, uid, 2);
+                } catch (Throwable th) {
+                }
             } else if (dnsFailCount >= 3) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("ENTER: notifyTopUidDnsInfo, dnsFailCount = ");

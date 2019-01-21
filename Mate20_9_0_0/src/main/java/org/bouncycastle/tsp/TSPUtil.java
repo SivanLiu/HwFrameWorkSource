@@ -1,5 +1,6 @@
 package org.bouncycastle.tsp;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +77,7 @@ public class TSPUtil {
     static void addExtension(ExtensionsGenerator extensionsGenerator, ASN1ObjectIdentifier aSN1ObjectIdentifier, boolean z, ASN1Encodable aSN1Encodable) throws TSPIOException {
         try {
             extensionsGenerator.addExtension(aSN1ObjectIdentifier, z, aSN1Encodable);
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode extension: ");
             stringBuilder.append(e.getMessage());
@@ -97,7 +98,7 @@ public class TSPUtil {
     }
 
     public static Collection getSignatureTimestamps(SignerInformation signerInformation, DigestCalculatorProvider digestCalculatorProvider) throws TSPValidationException {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         AttributeTable unsignedAttributes = signerInformation.getUnsignedAttributes();
         if (unsignedAttributes != null) {
             ASN1EncodableVector all = unsignedAttributes.getAll(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);

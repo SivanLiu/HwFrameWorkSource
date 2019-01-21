@@ -159,20 +159,20 @@ public class SICBlockCipher extends StreamBlockCipher implements SkippingStreamC
     }
 
     public long getPosition() {
-        Object obj = new byte[this.counter.length];
-        System.arraycopy(this.counter, 0, obj, 0, obj.length);
-        int length = obj.length - 1;
+        byte[] bArr = new byte[this.counter.length];
+        System.arraycopy(this.counter, 0, bArr, 0, bArr.length);
+        int length = bArr.length - 1;
         while (length >= 1) {
-            int i = length < this.IV.length ? (obj[length] & 255) - (this.IV[length] & 255) : obj[length] & 255;
+            int i = length < this.IV.length ? (bArr[length] & 255) - (this.IV[length] & 255) : bArr[length] & 255;
             if (i < 0) {
                 int i2 = length - 1;
-                obj[i2] = (byte) (obj[i2] - 1);
+                bArr[i2] = (byte) (bArr[i2] - 1);
                 i += 256;
             }
-            obj[length] = (byte) i;
+            bArr[length] = (byte) i;
             length--;
         }
-        return (Pack.bigEndianToLong(obj, obj.length - 8) * ((long) this.blockSize)) + ((long) this.byteCount);
+        return (Pack.bigEndianToLong(bArr, bArr.length - 8) * ((long) this.blockSize)) + ((long) this.byteCount);
     }
 
     public void init(boolean z, CipherParameters cipherParameters) throws IllegalArgumentException {

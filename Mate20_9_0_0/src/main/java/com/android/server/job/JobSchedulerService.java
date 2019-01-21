@@ -125,11 +125,6 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
     private final BatteryController mBatteryController;
     IBatteryStats mBatteryStats;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        /* JADX WARNING: Removed duplicated region for block: B:25:0x00a1 A:{Splitter: B:16:0x0065, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-        /* JADX WARNING: Missing block: B:88:?, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onReceive(Context context, Intent intent) {
             String str;
             String action = intent.getAction();
@@ -189,11 +184,11 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
                                     return;
                                 }
                                 return;
-                            } catch (RemoteException e) {
+                            } catch (RemoteException | IllegalArgumentException e) {
+                                return;
                             }
-                        } else {
-                            i++;
                         }
+                        i++;
                     }
                 }
             } else if ("android.intent.action.PACKAGE_REMOVED".equals(action)) {
@@ -568,7 +563,7 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
             super(looper);
         }
 
-        /* JADX WARNING: Missing block: B:68:0x00e9, code:
+        /* JADX WARNING: Missing block: B:73:0x00e9, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -580,13 +575,13 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
                     switch (message.what) {
                         case 0:
                             JobStatus runNow = message.obj;
-                            if (runNow != null && JobSchedulerService.this.isReadyToBeExecutedLocked(runNow)) {
+                            if (runNow == null || !JobSchedulerService.this.isReadyToBeExecutedLocked(runNow)) {
+                                JobSchedulerService.this.queueReadyJobsForExecutionLocked();
+                                needRemoveCheckJobMsg = true;
+                            } else {
                                 JobSchedulerService.this.mJobPackageTracker.notePending(runNow);
                                 JobSchedulerService.addOrderedItem(JobSchedulerService.this.mPendingJobs, runNow, JobSchedulerService.mEnqueueTimeComparator);
-                                break;
                             }
-                            JobSchedulerService.this.queueReadyJobsForExecutionLocked();
-                            needRemoveCheckJobMsg = true;
                             break;
                         case 1:
                             if (JobSchedulerService.this.mReportedActive) {
@@ -616,11 +611,13 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
                             synchronized (JobSchedulerService.this.mLock) {
                                 JobSchedulerService.this.mDeviceIdleJobsController.setUidActiveLocked(uid, false);
                             }
+                            break;
                         case 6:
                             uid = message.arg1;
                             synchronized (JobSchedulerService.this.mLock) {
                                 JobSchedulerService.this.mDeviceIdleJobsController.setUidActiveLocked(uid, true);
                             }
+                            break;
                         case 7:
                             uid = message.arg1;
                             if (message.arg2 != 0) {
@@ -629,6 +626,9 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
                             synchronized (JobSchedulerService.this.mLock) {
                                 JobSchedulerService.this.mDeviceIdleJobsController.setUidActiveLocked(uid, false);
                             }
+                            break;
+                        default:
+                            break;
                     }
                     JobSchedulerService.this.maybeRunPendingJobsLocked();
                     if (needRemoveCheckJobMsg) {
@@ -1274,7 +1274,7 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
         return this.mAppStateTracker.isUidActiveSynced(uid);
     }
 
-    /* JADX WARNING: Missing block: B:39:0x010b, code:
+    /* JADX WARNING: Missing block: B:40:0x010b, code skipped:
             return 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1313,34 +1313,36 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
                         stringBuilder2.append(jobStatus.toShortString());
                         Slog.d(str3, stringBuilder2.toString());
                     }
-                    if (str != null || this.mJobs.countJobsForUid(i) <= 100) {
-                        jobStatus.prepareLocked(ActivityManager.getService());
-                        if (toCancel != null) {
-                            cancelJobImplLocked(toCancel, jobStatus, "job rescheduled by app");
+                    if (str == null) {
+                        if (this.mJobs.countJobsForUid(i) > 100) {
+                            str3 = TAG;
+                            stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Too many jobs for uid ");
+                            stringBuilder2.append(i);
+                            Slog.w(str3, stringBuilder2.toString());
+                            throw new IllegalStateException("Apps may not schedule more than 100 distinct jobs");
                         }
-                        if (jobWorkItem != null) {
-                            jobStatus.enqueueWorkLocked(ActivityManager.getService(), jobWorkItem);
-                        }
-                        startTrackingJobLocked(jobStatus, toCancel);
-                        JobStatus jobStatus2 = jobStatus;
-                        StatsLog.write_non_chained(8, i, null, jobStatus.getBatteryName(), 2, null);
-                        if (isReadyToBeExecutedLocked(jobStatus2)) {
-                            this.mJobPackageTracker.notePending(jobStatus2);
-                            addOrderedItem(this.mPendingJobs, jobStatus2, mEnqueueTimeComparator);
-                            maybeRunPendingJobsLocked();
-                        }
-                    } else {
-                        str3 = TAG;
-                        stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("Too many jobs for uid ");
-                        stringBuilder2.append(i);
-                        Slog.w(str3, stringBuilder2.toString());
-                        throw new IllegalStateException("Apps may not schedule more than 100 distinct jobs");
                     }
+                    jobStatus.prepareLocked(ActivityManager.getService());
+                    if (toCancel != null) {
+                        cancelJobImplLocked(toCancel, jobStatus, "job rescheduled by app");
+                    }
+                    if (jobWorkItem != null) {
+                        jobStatus.enqueueWorkLocked(ActivityManager.getService(), jobWorkItem);
+                    }
+                    startTrackingJobLocked(jobStatus, toCancel);
+                    JobStatus jobStatus2 = jobStatus;
+                    StatsLog.write_non_chained(8, i, null, jobStatus.getBatteryName(), 2, null);
+                    if (isReadyToBeExecutedLocked(jobStatus2)) {
+                        this.mJobPackageTracker.notePending(jobStatus2);
+                        addOrderedItem(this.mPendingJobs, jobStatus2, mEnqueueTimeComparator);
+                        maybeRunPendingJobsLocked();
+                    }
+                } else {
+                    toCancel.enqueueWorkLocked(ActivityManager.getService(), jobWorkItem);
+                    toCancel.maybeAddForegroundExemption(this.mIsUidActivePredicate);
+                    return 1;
                 }
-                toCancel.enqueueWorkLocked(ActivityManager.getService(), jobWorkItem);
-                toCancel.maybeAddForegroundExemption(this.mIsUidActivePredicate);
-                return 1;
             } catch (Throwable th2) {
                 th = th2;
                 throw th;
@@ -1463,7 +1465,10 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
     void updateUidState(int uid, int procState) {
         synchronized (this.mLock) {
             if (procState == 2) {
-                this.mUidPriorityOverride.put(uid, 40);
+                try {
+                    this.mUidPriorityOverride.put(uid, 40);
+                } catch (Throwable th) {
+                }
             } else if (procState <= 4) {
                 this.mUidPriorityOverride.put(uid, 30);
             } else {
@@ -2210,31 +2215,31 @@ public class JobSchedulerService extends AbsJobSchedulerService implements State
 Method generation error in method: com.android.server.job.JobSchedulerService.assignJobsToContextsLocked():void, dex: 
 jadx.core.utils.exceptions.CodegenException: Error generate insn: PHI: (r10_4 'i2' int) = (r10_0 'i2' int), (r10_8 'i2' int) binds: {(r10_0 'i2' int)=B:25:0x007f, (r10_8 'i2' int)=B:62:0x0118} in method: com.android.server.job.JobSchedulerService.assignJobsToContextsLocked():void, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:183)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:218)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:173)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:185)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:220)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:175)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -2900,135 +2905,8 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
         return filterUidFinal == -1 || UserHandle.getAppId(js.getUid()) == filterUidFinal || UserHandle.getAppId(js.getSourceUid()) == filterUidFinal;
     }
 
-    /* JADX WARNING: Missing block: B:88:?, code:
-            r1.mJobPackageTracker.dump(r10, 1146756268040L, r15);
-            r1.mJobPackageTracker.dumpHistory(r10, 1146756268039L, r15);
-            r0 = r1.mPendingJobs.iterator();
-     */
-    /* JADX WARNING: Missing block: B:90:0x026c, code:
-            if (r0.hasNext() == false) goto L_0x02c1;
-     */
-    /* JADX WARNING: Missing block: B:92:?, code:
-            r2 = (com.android.server.job.controllers.JobStatus) r0.next();
-            r8 = r10.start(2246267895817L);
-            r2.writeToShortProto(r10, 1146756268033L);
-     */
-    /* JADX WARNING: Missing block: B:93:0x0286, code:
-            r24 = r15;
-            r14 = 1146756268033L;
-            r14 = r8;
-     */
-    /* JADX WARNING: Missing block: B:95:?, code:
-            r2.dump(r10, 1146756268034L, false, r12);
-            r3 = evaluateJobPriorityLocked(r2);
-     */
-    /* JADX WARNING: Missing block: B:96:0x029c, code:
-            if (r3 == 0) goto L_0x02a6;
-     */
-    /* JADX WARNING: Missing block: B:97:0x029e, code:
-            r10.write(1172526071811L, r3);
-     */
-    /* JADX WARNING: Missing block: B:98:0x02a6, code:
-            r10.write(1112396529668L, r21 - r2.madePending);
-            r10.end(r14);
-            r15 = r24;
-     */
-    /* JADX WARNING: Missing block: B:99:0x02ba, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:100:0x02bb, code:
-            r24 = r15;
-            r2 = r30;
-     */
-    /* JADX WARNING: Missing block: B:101:0x02c1, code:
-            r24 = r15;
-            r0 = r1.mActiveServices.iterator();
-     */
-    /* JADX WARNING: Missing block: B:103:0x02cd, code:
-            if (r0.hasNext() == false) goto L_0x0395;
-     */
-    /* JADX WARNING: Missing block: B:104:0x02cf, code:
-            r2 = (com.android.server.job.JobServiceContext) r0.next();
-            r14 = r10.start(2246267895818L);
-            r8 = r2.getRunningJobLocked();
-     */
-    /* JADX WARNING: Missing block: B:105:0x02e4, code:
-            if (r8 != null) goto L_0x031a;
-     */
-    /* JADX WARNING: Missing block: B:106:0x02e6, code:
-            r3 = r10.start(1146756268033L);
-            r25 = r14;
-            r10.write(1112396529665L, r12 - r2.mStoppedTime);
-     */
-    /* JADX WARNING: Missing block: B:107:0x0300, code:
-            if (r2.mStoppedReason == null) goto L_0x030c;
-     */
-    /* JADX WARNING: Missing block: B:108:0x0302, code:
-            r10.write(1138166333442L, r2.mStoppedReason);
-     */
-    /* JADX WARNING: Missing block: B:109:0x030c, code:
-            r10.end(r3);
-            r27 = r0;
-            r0 = r8;
-     */
-    /* JADX WARNING: Missing block: B:110:0x031a, code:
-            r25 = r14;
-            r14 = r10.start(1146756268034L);
-            r8.writeToShortProto(r10, 1146756268033L);
-            r10.write(1112396529666L, r12 - r2.getExecutionStartTimeElapsed());
-            r10.write(1112396529667L, r2.getTimeoutElapsed() - r12);
-            r27 = r0;
-            r0 = r8;
-            r8.dump(r10, 1146756268036L, false, r12);
-            r3 = evaluateJobPriorityLocked(r2.getRunningJobLocked());
-     */
-    /* JADX WARNING: Missing block: B:111:0x0365, code:
-            if (r3 == 0) goto L_0x036f;
-     */
-    /* JADX WARNING: Missing block: B:112:0x0367, code:
-            r10.write(1172526071813L, r3);
-     */
-    /* JADX WARNING: Missing block: B:113:0x036f, code:
-            r10.write(1112396529670L, r21 - r0.madeActive);
-            r10.write(1112396529671L, r0.madeActive - r0.madePending);
-            r10.end(r14);
-     */
-    /* JADX WARNING: Missing block: B:114:0x038b, code:
-            r10.end(r25);
-     */
-    /* JADX WARNING: Missing block: B:115:0x0390, code:
-            r0 = r27;
-     */
-    /* JADX WARNING: Missing block: B:117:0x0398, code:
-            if (r30 != -1) goto L_0x03b8;
-     */
-    /* JADX WARNING: Missing block: B:120:?, code:
-            r10.write(1133871366155L, r1.mReadyToRock);
-            r10.write(1133871366156L, r1.mReportedActive);
-            r10.write(1120986464269L, r1.mMaxActiveJobs);
-     */
-    /* JADX WARNING: Missing block: B:121:0x03b8, code:
-            monitor-exit(r17);
-     */
-    /* JADX WARNING: Missing block: B:122:0x03b9, code:
-            r10.flush();
-     */
-    /* JADX WARNING: Missing block: B:123:0x03bc, code:
-            return;
-     */
-    /* JADX WARNING: Missing block: B:124:0x03bd, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:125:0x03be, code:
-            r2 = r30;
-     */
-    /* JADX WARNING: Missing block: B:135:0x03d9, code:
-            r0 = th;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     void dumpInternalProto(FileDescriptor fd, int filterUid) {
         Throwable th;
-        int i;
         ProtoOutputStream proto = new ProtoOutputStream(fd);
         int filterUidFinal = UserHandle.getAppId(filterUid);
         long nowElapsed = sElapsedRealtimeClock.millis();
@@ -3036,11 +2914,13 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
         Predicate<JobStatus> predicate = new -$$Lambda$JobSchedulerService$rARZcsrvtM2sYbF4SrEE2BXDQ3U(filterUidFinal);
         Object obj = this.mLock;
         synchronized (obj) {
-            int i2;
+            int i;
             Object obj2;
+            int i2;
             long j;
             try {
                 long rjToken;
+                JobStatus job;
                 int filterUidFinal2;
                 this.mConstants.dump(proto, 1146756268033L);
                 proto.write(1120986464270L, this.mHeartbeat);
@@ -3061,11 +2941,12 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
                         i4++;
                     } catch (Throwable th2) {
                         th = th2;
-                        i2 = filterUid;
+                        i = filterUid;
                         obj2 = obj;
-                        i = filterUidFinal;
+                        i2 = filterUidFinal;
                         j = nowUptime;
                         filterUidFinal = predicate;
+                        throw th;
                     }
                 }
                 if (this.mJobs.size() > 0) {
@@ -3074,34 +2955,34 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
                         sortJobs(jobs);
                         Iterator it = jobs.iterator();
                         while (it.hasNext()) {
-                            JobStatus job = (JobStatus) it.next();
+                            JobStatus job2 = (JobStatus) it.next();
                             rjToken = proto.start(2246267895811L);
                             j = nowUptime;
                             Predicate predicate2;
                             try {
-                                job.writeToShortProto(proto, 1146756268033L);
-                                if (predicate2.test(job)) {
+                                job2.writeToShortProto(proto, 1146756268033L);
+                                if (predicate2.test(job2)) {
                                     nowUptime = rjToken;
                                     Iterator it2 = it;
-                                    JobStatus job2 = job;
+                                    job = job2;
                                     List<JobStatus> jobs2 = jobs;
                                     obj2 = obj;
                                     filterUidFinal2 = filterUidFinal;
                                     Predicate<JobStatus> predicate3 = predicate2;
                                     try {
-                                        job.dump(proto, 1146756268034L, true, nowElapsed);
-                                        proto.write(1133871366147L, job2.isReady());
-                                        proto.write(1133871366148L, ArrayUtils.contains(this.mStartedUsers, job2.getUserId()));
-                                        proto.write(1133871366149L, this.mPendingJobs.contains(job2));
-                                        proto.write(1133871366150L, isCurrentlyActiveLocked(job2));
-                                        proto.write(1133871366151L, this.mBackingUpUids.indexOfKey(job2.getSourceUid()) >= 0);
+                                        job2.dump(proto, 1146756268034L, true, nowElapsed);
+                                        proto.write(1133871366147L, job.isReady());
+                                        proto.write(1133871366148L, ArrayUtils.contains(this.mStartedUsers, job.getUserId()));
+                                        proto.write(1133871366149L, this.mPendingJobs.contains(job));
+                                        proto.write(1133871366150L, isCurrentlyActiveLocked(job));
+                                        proto.write(1133871366151L, this.mBackingUpUids.indexOfKey(job.getSourceUid()) >= 0);
                                         boolean componentPresent = false;
                                         try {
-                                            componentPresent = AppGlobals.getPackageManager().getServiceInfo(job2.getServiceComponent(), 268435456, job2.getUserId()) != null;
+                                            componentPresent = AppGlobals.getPackageManager().getServiceInfo(job.getServiceComponent(), 268435456, job.getUserId()) != null;
                                         } catch (RemoteException e) {
                                         }
                                         proto.write(1133871366152L, componentPresent);
-                                        proto.write(1112396529673L, heartbeatWhenJobsLastRun(job2));
+                                        proto.write(1112396529673L, heartbeatWhenJobsLastRun(job));
                                         proto.end(nowUptime);
                                         predicate2 = predicate3;
                                         jobs = jobs2;
@@ -3112,19 +2993,20 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
                                         FileDescriptor fileDescriptor = fd;
                                     } catch (Throwable th3) {
                                         th = th3;
-                                        i2 = filterUid;
-                                        i = filterUidFinal2;
+                                        i = filterUid;
+                                        i2 = filterUidFinal2;
+                                        throw th;
                                     }
-                                } else {
-                                    nowUptime = j;
                                 }
+                                nowUptime = j;
                             } catch (Throwable th4) {
                                 th = th4;
                                 obj2 = obj;
                                 filterUidFinal2 = filterUidFinal;
                                 filterUidFinal = predicate2;
-                                i2 = filterUid;
-                                i = filterUidFinal2;
+                                i = filterUid;
+                                i2 = filterUidFinal2;
+                                throw th;
                             }
                         }
                     } catch (Throwable th5) {
@@ -3133,8 +3015,8 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
                         filterUidFinal2 = filterUidFinal;
                         j = nowUptime;
                         filterUidFinal = predicate;
-                        i2 = filterUid;
-                        i = filterUidFinal2;
+                        i = filterUid;
+                        i2 = filterUidFinal2;
                         throw th;
                     }
                 }
@@ -3150,31 +3032,32 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
                     int i5 = 0;
                     while (i5 < this.mUidPriorityOverride.size()) {
                         try {
-                            i2 = this.mUidPriorityOverride.keyAt(i5);
+                            i = this.mUidPriorityOverride.keyAt(i5);
                             filterUidFinal3 = filterUidFinal2;
                             if (filterUidFinal3 != -1) {
                                 try {
-                                    if (filterUidFinal3 != UserHandle.getAppId(i2)) {
+                                    if (filterUidFinal3 != UserHandle.getAppId(i)) {
                                         i5++;
                                         filterUidFinal2 = filterUidFinal3;
                                     }
                                 } catch (Throwable th6) {
                                     th = th6;
-                                    i2 = filterUid;
-                                    i = filterUidFinal3;
+                                    i = filterUid;
+                                    i2 = filterUidFinal3;
                                     throw th;
                                 }
                             }
                             rjToken = proto.start(2246267895813L);
-                            proto.write(1120986464257L, i2);
+                            proto.write(1120986464257L, i);
                             proto.write(1172526071810L, this.mUidPriorityOverride.valueAt(i5));
                             proto.end(rjToken);
                             i5++;
                             filterUidFinal2 = filterUidFinal3;
                         } catch (Throwable th7) {
                             th = th7;
-                            i2 = filterUid;
-                            i = filterUidFinal2;
+                            i = filterUid;
+                            i2 = filterUidFinal2;
+                            throw th;
                         }
                     }
                     filterUidFinal3 = filterUidFinal2;
@@ -3184,27 +3067,104 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
                             if (i5 >= this.mBackingUpUids.size()) {
                                 break;
                             }
-                            i2 = this.mBackingUpUids.keyAt(i5);
-                            if (filterUidFinal3 == -1 || filterUidFinal3 == UserHandle.getAppId(i2)) {
-                                proto.write(2220498092038L, i2);
+                            i = this.mBackingUpUids.keyAt(i5);
+                            if (filterUidFinal3 == -1 || filterUidFinal3 == UserHandle.getAppId(i)) {
+                                proto.write(2220498092038L, i);
                             }
                             i3 = i5 + 1;
                         } catch (Throwable th8) {
                             th = th8;
-                            i2 = filterUid;
-                            i = filterUidFinal3;
+                            i = filterUid;
+                            i2 = filterUidFinal3;
+                            throw th;
                         }
                     }
-                } catch (Throwable th9) {
-                    th = th9;
-                    i2 = filterUid;
-                    i = filterUidFinal2;
+                    this.mJobPackageTracker.dump(proto, 1146756268040L, filterUidFinal3);
+                    this.mJobPackageTracker.dumpHistory(proto, 1146756268039L, filterUidFinal3);
+                    Iterator it3 = this.mPendingJobs.iterator();
+                    while (it3.hasNext()) {
+                        try {
+                            job = (JobStatus) it3.next();
+                            long pjToken = proto.start(2246267895817L);
+                            job.writeToShortProto(proto, 1146756268033L);
+                            i2 = filterUidFinal3;
+                            nowUptime = 1146756268033L;
+                            nowUptime = pjToken;
+                            job.dump(proto, 1146756268034L, false, nowElapsed);
+                            length = evaluateJobPriorityLocked(job);
+                            if (length != 0) {
+                                proto.write(1172526071811L, length);
+                            }
+                            proto.write(1112396529668L, j - job.madePending);
+                            proto.end(nowUptime);
+                            filterUidFinal3 = i2;
+                        } catch (Throwable th9) {
+                            th = th9;
+                            i = filterUid;
+                            throw th;
+                        }
+                    }
+                    i2 = filterUidFinal3;
+                    it3 = this.mActiveServices.iterator();
+                    while (it3.hasNext()) {
+                        long ajToken;
+                        Iterator it4;
+                        JobServiceContext jsc = (JobServiceContext) it3.next();
+                        nowUptime = proto.start(2246267895818L);
+                        JobStatus job3 = jsc.getRunningJobLocked();
+                        JobStatus jobStatus;
+                        if (job3 == null) {
+                            rjToken = proto.start(1146756268033L);
+                            ajToken = nowUptime;
+                            proto.write(1112396529665L, nowElapsed - jsc.mStoppedTime);
+                            if (jsc.mStoppedReason != null) {
+                                proto.write(1138166333442L, jsc.mStoppedReason);
+                            }
+                            proto.end(rjToken);
+                            it4 = it3;
+                            jobStatus = job3;
+                        } else {
+                            ajToken = nowUptime;
+                            nowUptime = proto.start(1146756268034L);
+                            job3.writeToShortProto(proto, 1146756268033L);
+                            proto.write(1112396529666L, nowElapsed - jsc.getExecutionStartTimeElapsed());
+                            proto.write(1112396529667L, jsc.getTimeoutElapsed() - nowElapsed);
+                            it4 = it3;
+                            jobStatus = job3;
+                            job3.dump(proto, 1146756268036L, false, nowElapsed);
+                            length = evaluateJobPriorityLocked(jsc.getRunningJobLocked());
+                            if (length != 0) {
+                                proto.write(1172526071813L, length);
+                            }
+                            proto.write(1112396529670L, j - jobStatus.madeActive);
+                            proto.write(1112396529671L, jobStatus.madeActive - jobStatus.madePending);
+                            proto.end(nowUptime);
+                        }
+                        proto.end(ajToken);
+                        it3 = it4;
+                    }
+                    if (filterUid == -1) {
+                        try {
+                            proto.write(1133871366155L, this.mReadyToRock);
+                            proto.write(1133871366156L, this.mReportedActive);
+                            proto.write(1120986464269L, this.mMaxActiveJobs);
+                        } catch (Throwable th10) {
+                            th = th10;
+                            throw th;
+                        }
+                    }
+                    proto.flush();
+                } catch (Throwable th11) {
+                    th = th11;
+                    i = filterUid;
+                    i2 = filterUidFinal2;
+                    throw th;
                 }
-            } catch (Throwable th10) {
-                th = th10;
-                i2 = filterUid;
+            } catch (Throwable th12) {
+                th = th12;
+                i = filterUid;
                 obj2 = obj;
-                i = filterUidFinal;
+                i2 = filterUidFinal;
                 j = nowUptime;
                 throw th;
             }

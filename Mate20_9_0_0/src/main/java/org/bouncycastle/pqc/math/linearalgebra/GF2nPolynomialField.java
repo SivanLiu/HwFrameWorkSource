@@ -185,11 +185,11 @@ public class GF2nPolynomialField extends GF2nField {
                 return;
             }
             int i;
-            GFElement randomRoot;
+            GF2nElement randomRoot;
             GF2nONBElement[] gF2nONBElementArr;
-            Object obj = new GF2Polynomial[this.mDegree];
+            GF2Polynomial[] gF2PolynomialArr = new GF2Polynomial[this.mDegree];
             for (i = 0; i < this.mDegree; i++) {
-                obj[i] = new GF2Polynomial(this.mDegree);
+                gF2PolynomialArr[i] = new GF2Polynomial(this.mDegree);
             }
             do {
                 randomRoot = gF2nField.getRandomRoot(this.fieldPolynomial);
@@ -210,7 +210,7 @@ public class GF2nPolynomialField extends GF2nField {
                 for (i3 = 0; i3 < this.mDegree; i3++) {
                     for (i = 0; i < this.mDegree; i++) {
                         if (gF2nONBElementArr[i3].testBit((this.mDegree - i) - 1)) {
-                            obj[(this.mDegree - i) - 1].setBit((this.mDegree - i3) - 1);
+                            gF2PolynomialArr[(this.mDegree - i) - 1].setBit((this.mDegree - i3) - 1);
                         }
                     }
                 }
@@ -218,15 +218,15 @@ public class GF2nPolynomialField extends GF2nField {
                 for (i3 = 0; i3 < this.mDegree; i3++) {
                     for (i = 0; i < this.mDegree; i++) {
                         if (gF2nONBElementArr[i3].testBit(i)) {
-                            obj[(this.mDegree - i) - 1].setBit((this.mDegree - i3) - 1);
+                            gF2PolynomialArr[(this.mDegree - i) - 1].setBit((this.mDegree - i3) - 1);
                         }
                     }
                 }
             }
             this.fields.addElement(gF2nField);
-            this.matrices.addElement(obj);
+            this.matrices.addElement(gF2PolynomialArr);
             gF2nField.fields.addElement(this);
-            gF2nField.matrices.addElement(invertMatrix(obj));
+            gF2nField.matrices.addElement(invertMatrix(gF2PolynomialArr));
             return;
         }
         throw new IllegalArgumentException("GF2nPolynomialField.computeCOBMatrix: B1 has a different degree and thus cannot be coverted to!");
@@ -246,9 +246,9 @@ public class GF2nPolynomialField extends GF2nField {
 
     public int[] getPc() throws RuntimeException {
         if (this.isPentanomial) {
-            Object obj = new int[3];
-            System.arraycopy(this.pc, 0, obj, 0, 3);
-            return obj;
+            int[] iArr = new int[3];
+            System.arraycopy(this.pc, 0, iArr, 0, 3);
+            return iArr;
         }
         throw new RuntimeException();
     }
@@ -260,7 +260,7 @@ public class GF2nPolynomialField extends GF2nField {
             int degree;
             int degree2;
             while (true) {
-                GF2nElement gF2nPolynomialElement = new GF2nPolynomialElement(this, this.random);
+                GF2nPolynomialElement gF2nPolynomialElement = new GF2nPolynomialElement(this, this.random);
                 GF2nPolynomial gF2nPolynomial2 = new GF2nPolynomial(2, GF2nPolynomialElement.ZERO(this));
                 gF2nPolynomial2.set(1, gF2nPolynomialElement);
                 GF2nPolynomial gF2nPolynomial3 = new GF2nPolynomial(gF2nPolynomial2);

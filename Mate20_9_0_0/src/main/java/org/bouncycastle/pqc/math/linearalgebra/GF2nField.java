@@ -45,7 +45,7 @@ public abstract class GF2nField {
                 return new GF2nPolynomialElement((GF2nPolynomialField) gF2nField, gF2Polynomial2);
             }
             if (gF2nField instanceof GF2nONBField) {
-                GF2nElement gF2nONBElement = new GF2nONBElement((GF2nONBField) gF2nField, gF2Polynomial2.toFlexiBigInt());
+                GF2nONBElement gF2nONBElement = new GF2nONBElement((GF2nONBField) gF2nField, gF2Polynomial2.toFlexiBigInt());
                 gF2nONBElement.reverseOrder();
                 return gF2nONBElement;
             }

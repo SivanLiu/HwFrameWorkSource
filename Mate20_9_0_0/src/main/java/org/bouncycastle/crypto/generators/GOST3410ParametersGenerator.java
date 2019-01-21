@@ -38,10 +38,10 @@ public class GOST3410ParametersGenerator {
         int i6 = 0;
         int i7 = i6;
         while (obj2[i6] >= 17) {
-            Object obj3 = new int[(obj2.length + 1)];
-            System.arraycopy(obj2, 0, obj3, 0, obj2.length);
-            obj2 = new int[obj3.length];
-            System.arraycopy(obj3, 0, obj2, 0, obj3.length);
+            int[] iArr = new int[(obj2.length + 1)];
+            System.arraycopy(obj2, 0, iArr, 0, obj2.length);
+            obj2 = new int[iArr.length];
+            System.arraycopy(iArr, 0, obj2, 0, iArr.length);
             i7 = i6 + 1;
             obj2[i7] = obj2[i6] / 2;
             i6 = i7;
@@ -50,29 +50,29 @@ public class GOST3410ParametersGenerator {
         int i8 = 16;
         bigIntegerArr2[i7] = new BigInteger("8003", 16);
         int i9 = i7 - 1;
-        Object obj4 = obj;
+        Object obj3 = obj;
         int i10 = 0;
         while (i10 < i7) {
-            Object obj5;
+            Object obj4;
             BigInteger bigInteger4;
             int i11 = obj2[i9] / i8;
             while (true) {
                 int i12;
-                Object obj6 = new BigInteger[obj4.length];
-                System.arraycopy(obj4, i4, obj6, i4, obj4.length);
-                obj5 = new BigInteger[(i11 + 1)];
-                System.arraycopy(obj6, i4, obj5, i4, obj6.length);
+                BigInteger[] bigIntegerArr3 = new BigInteger[obj3.length];
+                System.arraycopy(obj3, i4, bigIntegerArr3, i4, obj3.length);
+                obj4 = new BigInteger[(i11 + 1)];
+                System.arraycopy(bigIntegerArr3, i4, obj4, i4, bigIntegerArr3.length);
                 int i13 = i4;
                 while (i13 < i11) {
                     int i14 = i13 + 1;
-                    obj5[i14] = obj5[i13].multiply(bigInteger2).add(bigInteger).mod(TWO.pow(i8));
+                    obj4[i14] = obj4[i13].multiply(bigInteger2).add(bigInteger).mod(TWO.pow(i8));
                     i13 = i14;
                 }
                 BigInteger bigInteger5 = new BigInteger("0");
                 for (i13 = i4; i13 < i11; i13++) {
-                    bigInteger5 = bigInteger5.add(obj5[i13].multiply(TWO.pow(i8 * i13)));
+                    bigInteger5 = bigInteger5.add(obj4[i13].multiply(TWO.pow(i8 * i13)));
                 }
-                obj5[0] = obj5[i11];
+                obj4[0] = obj4[i11];
                 int i15 = i9 + 1;
                 bigInteger4 = bigInteger;
                 bigInteger = TWO.pow(obj2[i9] - 1).divide(bigIntegerArr2[i15]).add(TWO.pow(obj2[i9] - 1).multiply(bigInteger5).divide(bigIntegerArr2[i15].multiply(TWO.pow(16 * i11))));
@@ -95,7 +95,7 @@ public class GOST3410ParametersGenerator {
                     }
                 }
                 i15 = 1;
-                obj4 = obj5;
+                obj3 = obj4;
                 bigInteger = bigInteger4;
                 i11 = i12;
                 i4 = 0;
@@ -105,16 +105,16 @@ public class GOST3410ParametersGenerator {
             if (i9 < 0) {
                 bigIntegerArr[0] = bigIntegerArr2[0];
                 bigIntegerArr[1] = bigIntegerArr2[1];
-                bigInteger = obj5[0];
+                bigInteger = obj4[0];
                 break;
             }
             i10++;
-            obj4 = obj5;
+            obj3 = obj4;
             bigInteger = bigInteger4;
             i4 = 0;
             i8 = 16;
         }
-        bigInteger = obj4[i4];
+        bigInteger = obj3[i4];
         return bigInteger.intValue();
     }
 
@@ -143,10 +143,10 @@ public class GOST3410ParametersGenerator {
         int i3 = 0;
         int i4 = i3;
         while (obj2[i3] >= 33) {
-            Object obj3 = new int[(obj2.length + 1)];
-            System.arraycopy(obj2, 0, obj3, 0, obj2.length);
-            obj2 = new int[obj3.length];
-            System.arraycopy(obj3, 0, obj2, 0, obj3.length);
+            int[] iArr = new int[(obj2.length + 1)];
+            System.arraycopy(obj2, 0, iArr, 0, obj2.length);
+            obj2 = new int[iArr.length];
+            System.arraycopy(iArr, 0, obj2, 0, iArr.length);
             i4 = i3 + 1;
             obj2[i4] = obj2[i3] / 2;
             i3 = i4;
@@ -154,30 +154,30 @@ public class GOST3410ParametersGenerator {
         BigInteger[] bigIntegerArr2 = new BigInteger[(i4 + 1)];
         bigIntegerArr2[i4] = new BigInteger("8000000B", 16);
         int i5 = i4 - 1;
-        Object obj4 = obj;
+        Object obj3 = obj;
         int i6 = 0;
         while (i6 < i4) {
-            Object obj5;
+            Object obj4;
             BigInteger bigInteger4;
             BigInteger bigInteger5;
             int i7 = 32;
             int i8 = obj2[i5] / 32;
             while (true) {
-                Object obj6 = new BigInteger[obj4.length];
-                System.arraycopy(obj4, i2, obj6, i2, obj4.length);
-                obj5 = new BigInteger[(i8 + 1)];
-                System.arraycopy(obj6, i2, obj5, i2, obj6.length);
+                BigInteger[] bigIntegerArr3 = new BigInteger[obj3.length];
+                System.arraycopy(obj3, i2, bigIntegerArr3, i2, obj3.length);
+                obj4 = new BigInteger[(i8 + 1)];
+                System.arraycopy(bigIntegerArr3, i2, obj4, i2, bigIntegerArr3.length);
                 int i9 = i2;
                 while (i9 < i8) {
                     int i10 = i9 + 1;
-                    obj5[i10] = obj5[i9].multiply(bigInteger2).add(bigInteger).mod(TWO.pow(i7));
+                    obj4[i10] = obj4[i9].multiply(bigInteger2).add(bigInteger).mod(TWO.pow(i7));
                     i9 = i10;
                 }
                 BigInteger bigInteger6 = new BigInteger("0");
                 for (i9 = i2; i9 < i8; i9++) {
-                    bigInteger6 = bigInteger6.add(obj5[i9].multiply(TWO.pow(i7 * i9)));
+                    bigInteger6 = bigInteger6.add(obj4[i9].multiply(TWO.pow(i7 * i9)));
                 }
-                obj5[0] = obj5[i8];
+                obj4[0] = obj4[i8];
                 int i11 = i5 + 1;
                 bigInteger4 = bigInteger;
                 bigInteger = TWO.pow(obj2[i5] - 1).divide(bigIntegerArr2[i11]).add(TWO.pow(obj2[i5] - 1).multiply(bigInteger6).divide(bigIntegerArr2[i11].multiply(TWO.pow(32 * i8))));
@@ -200,7 +200,7 @@ public class GOST3410ParametersGenerator {
                     }
                 }
                 int i12 = 1;
-                obj4 = obj5;
+                obj3 = obj4;
                 bigInteger = bigInteger4;
                 bigInteger2 = bigInteger5;
                 i2 = 0;
@@ -210,16 +210,16 @@ public class GOST3410ParametersGenerator {
             if (i5 < 0) {
                 bigIntegerArr[0] = bigIntegerArr2[0];
                 bigIntegerArr[1] = bigIntegerArr2[1];
-                bigInteger = obj5[0];
+                bigInteger = obj4[0];
                 break;
             }
             i6++;
-            obj4 = obj5;
+            obj3 = obj4;
             bigInteger = bigInteger4;
             bigInteger2 = bigInteger5;
             i2 = 0;
         }
-        bigInteger = obj4[i2];
+        bigInteger = obj3[i2];
         return bigInteger.longValue();
     }
 

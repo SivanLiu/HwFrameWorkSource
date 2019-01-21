@@ -143,8 +143,10 @@ public class HwTrustCertificateStore {
             int i = 0;
             while (true) {
                 byte[] data = (byte[]) bytes.get(i);
-                if (data == null || data.length == 0) {
-                    Log.e(TAG, "data is null");
+                if (data == null) {
+                    break;
+                } else if (data.length == 0) {
+                    break;
                 } else {
                     int i2 = i + 1;
                     certs[i] = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(data));

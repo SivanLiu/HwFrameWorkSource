@@ -31,7 +31,7 @@ class WindowTracing {
         this.mTraceFile = file;
     }
 
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -171,12 +171,12 @@ class WindowTracing {
         return windowTracing;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x002f A:{Catch:{ IOException -> 0x004d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0036 A:{Catch:{ IOException -> 0x004d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0032 A:{Catch:{ IOException -> 0x004d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x002f A:{Catch:{ IOException -> 0x004d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0036 A:{Catch:{ IOException -> 0x004d }} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0032 A:{Catch:{ IOException -> 0x004d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x002f A:{Catch:{ IOException -> 0x004d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0036 A:{Catch:{ IOException -> 0x004d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0032 A:{Catch:{ IOException -> 0x004d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x002f A:{Catch:{ IOException -> 0x004d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0036 A:{Catch:{ IOException -> 0x004d }} */
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0032 A:{Catch:{ IOException -> 0x004d }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int onShellCommand(ShellCommand shell, String cmd) {
         PrintWriter pw = shell.getOutPrintWriter();
@@ -194,21 +194,23 @@ class WindowTracing {
                             break;
                     }
                 }
-            } else if (hashCode == 109757538 && cmd.equals("start")) {
-                hashCode = 0;
-                switch (hashCode) {
-                    case 0:
-                        startTrace(pw);
-                        return 0;
-                    case 1:
-                        stopTrace(pw);
-                        return 0;
-                    default:
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Unknown command: ");
-                        stringBuilder.append(cmd);
-                        pw.println(stringBuilder.toString());
-                        return -1;
+            } else if (hashCode == 109757538) {
+                if (cmd.equals("start")) {
+                    hashCode = 0;
+                    switch (hashCode) {
+                        case 0:
+                            startTrace(pw);
+                            return 0;
+                        case 1:
+                            stopTrace(pw);
+                            return 0;
+                        default:
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Unknown command: ");
+                            stringBuilder.append(cmd);
+                            pw.println(stringBuilder.toString());
+                            return -1;
+                    }
                 }
             }
             hashCode = -1;

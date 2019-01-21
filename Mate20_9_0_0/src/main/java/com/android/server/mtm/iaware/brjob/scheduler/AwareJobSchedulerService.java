@@ -287,7 +287,7 @@ public class AwareJobSchedulerService implements AwareStateChangedListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -315,7 +315,7 @@ public class AwareJobSchedulerService implements AwareStateChangedListener {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

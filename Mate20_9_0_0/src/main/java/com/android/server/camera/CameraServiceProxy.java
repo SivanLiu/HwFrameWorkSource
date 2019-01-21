@@ -250,6 +250,9 @@ public class CameraServiceProxy extends SystemService implements Callback, Death
                 break;
             case 5:
                 Slog.v(TAG, "MSG_OPEN_CAMERA");
+                if (this.hwcsp != null) {
+                    this.hwcsp.unRegesiterService();
+                }
                 this.hwcsp = HwServiceFactory.getHwCameraServiceProxy(this.mContext);
                 this.hwcsp.regesiterService();
                 break;
@@ -323,7 +326,7 @@ public class CameraServiceProxy extends SystemService implements Callback, Death
                         subtype = 2;
                         break;
                     default:
-                        break;
+                        continue;
                 }
                 this.mLogger.write(new LogMaker(1032).setType(4).setSubtype(subtype).setLatency(e.getDuration()).addTaggedData(1322, Integer.valueOf(e.mAPILevel)).setPackageName(e.mClientName));
             }
@@ -355,17 +358,17 @@ public class CameraServiceProxy extends SystemService implements Callback, Death
         return handles;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0014, code:
+    /* JADX WARNING: Missing block: B:11:0x0014, code skipped:
             if (r7 > 0) goto L_0x0017;
      */
-    /* JADX WARNING: Missing block: B:12:0x0016, code:
+    /* JADX WARNING: Missing block: B:12:0x0016, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:13:0x0017, code:
+    /* JADX WARNING: Missing block: B:13:0x0017, code skipped:
             android.util.Slog.i(TAG, "Could not notify camera service of user switch, retrying...");
             r6.mHandler.sendMessageDelayed(r6.mHandler.obtainMessage(1, r7 - 1, 0, null), 20);
      */
-    /* JADX WARNING: Missing block: B:14:0x002f, code:
+    /* JADX WARNING: Missing block: B:14:0x002f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -498,6 +501,8 @@ public class CameraServiceProxy extends SystemService implements Callback, Death
                             break;
                         }
                     }
+                    break;
+                default:
                     break;
             }
             boolean isEmpty = this.mActiveCameraUsage.isEmpty();

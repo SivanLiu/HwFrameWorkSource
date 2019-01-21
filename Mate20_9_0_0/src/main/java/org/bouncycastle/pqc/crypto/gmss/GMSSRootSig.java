@@ -197,8 +197,8 @@ public class GMSSRootSig {
         this.messDigestOTS.update(bArr3, 0, bArr3.length);
         this.hash = new byte[this.messDigestOTS.getDigestSize()];
         this.messDigestOTS.doFinal(this.hash, 0);
-        Object obj = new byte[this.mdsize];
-        System.arraycopy(this.hash, 0, obj, 0, this.mdsize);
+        bArr3 = new byte[this.mdsize];
+        System.arraycopy(this.hash, 0, bArr3, 0, this.mdsize);
         int log = getLog((this.messagesize << this.w) + 1);
         int i2;
         int i3;
@@ -213,8 +213,8 @@ public class GMSSRootSig {
             while (i3 < this.mdsize) {
                 i5 = i4;
                 for (i4 = 0; i4 < i2; i4++) {
-                    i5 += obj[i3] & this.k;
-                    obj[i3] = (byte) (obj[i3] >>> this.w);
+                    i5 += bArr3[i3] & this.k;
+                    bArr3[i3] = (byte) (bArr3[i3] >>> this.w);
                 }
                 i3++;
                 i4 = i5;
@@ -235,7 +235,7 @@ public class GMSSRootSig {
                 int i9 = i5;
                 long j = 0;
                 for (i5 = i; i5 < this.w; i5++) {
-                    j ^= (long) ((obj[i9] & 255) << (i5 << 3));
+                    j ^= (long) ((bArr3[i9] & 255) << (i5 << 3));
                     i9++;
                 }
                 i7 = i;
@@ -253,7 +253,7 @@ public class GMSSRootSig {
             i = this.mdsize % this.w;
             long j2 = 0;
             for (i3 = 0; i3 < i; i3++) {
-                j2 ^= (long) ((obj[i5] & 255) << (i3 << 3));
+                j2 ^= (long) ((bArr3[i5] & 255) << (i3 << 3));
                 i5++;
             }
             i6 = i << 3;
@@ -277,7 +277,7 @@ public class GMSSRootSig {
                 long j3 = 0;
                 int i12 = 0;
                 for (i7 = i >>> 3; i7 < ((i + 7) >>> 3); i7++) {
-                    j3 ^= (long) ((obj[i7] & 255) << (i12 << 3));
+                    j3 ^= (long) ((bArr3[i7] & 255) << (i12 << 3));
                     i12++;
                 }
                 i3 = (int) (((long) i3) + ((j3 >>> i11) & ((long) this.k)));
@@ -288,7 +288,7 @@ public class GMSSRootSig {
                 i2 = 0;
                 long j4 = 0;
                 while (i7 < this.mdsize) {
-                    j4 ^= (long) ((obj[i7] & 255) << (i2 << 3));
+                    j4 ^= (long) ((bArr3[i7] & 255) << (i2 << 3));
                     i2++;
                     i7++;
                 }

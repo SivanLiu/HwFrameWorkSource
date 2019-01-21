@@ -1,344 +1,312 @@
 package com.huawei.android.pushagent.model.flowcontrol;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
-import com.huawei.android.pushagent.PushService;
-import com.huawei.android.pushagent.datatype.exception.PushException.ErrorType;
-import com.huawei.android.pushagent.model.b.f;
-import com.huawei.android.pushagent.model.prefs.k;
-import com.huawei.android.pushagent.model.prefs.l;
-import com.huawei.android.pushagent.utils.f.c;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
+import com.huawei.android.pushagent.model.flowcontrol.a.b;
+import com.huawei.android.pushagent.model.prefs.e;
+import com.huawei.android.pushagent.utils.d;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class a {
-    private static long hu = 300000;
-    private static long hv = 600000;
-    private static long hw = 1800000;
-    private static int hx = 4;
-    private static String hz = "00:00";
-    private static String ia = "06:00";
-    private static long ib = 300000;
-    private static long ic = 600000;
-    private static a id = null;
-    private static final /* synthetic */ int[] ie = null;
-    private ArrayList<b> ht = new ArrayList();
-    private int hy = 0;
+    private static a eg = null;
+    private Context ef = null;
+    private List<com.huawei.android.pushagent.model.flowcontrol.a.a> eh = new LinkedList();
+    private List<com.huawei.android.pushagent.model.flowcontrol.a.a> ei = new LinkedList();
+    private List<com.huawei.android.pushagent.model.flowcontrol.a.a> ej = new LinkedList();
+    private List<com.huawei.android.pushagent.model.flowcontrol.a.a> ek = new LinkedList();
+    private List<com.huawei.android.pushagent.model.flowcontrol.a.a> el = new LinkedList();
+    private List<com.huawei.android.pushagent.model.flowcontrol.a.a> em = new LinkedList();
 
-    private static /* synthetic */ int[] aal() {
-        if (ie != null) {
-            return ie;
+    private a(Context context) {
+        this.ef = context;
+        nv();
+        if (this.eh.size() == 0 && this.ei.size() == 0 && this.ej.size() == 0 && this.ek.size() == 0 && this.el.size() == 0 && this.em.size() == 0) {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "Connect Control is not set, begin to config it");
+            nr();
         }
-        int[] iArr = new int[ReconnectMgr$RECONNECTEVENT.values().length];
-        try {
-            iArr[ReconnectMgr$RECONNECTEVENT.NETWORK_CHANGE.ordinal()] = 1;
-        } catch (NoSuchFieldError e) {
-        }
-        try {
-            iArr[ReconnectMgr$RECONNECTEVENT.SOCKET_CLOSE.ordinal()] = 2;
-        } catch (NoSuchFieldError e2) {
-        }
-        try {
-            iArr[ReconnectMgr$RECONNECTEVENT.SOCKET_CONNECTED.ordinal()] = 3;
-        } catch (NoSuchFieldError e3) {
-        }
-        try {
-            iArr[ReconnectMgr$RECONNECTEVENT.SOCKET_REG_SUCCESS.ordinal()] = 4;
-        } catch (NoSuchFieldError e4) {
-        }
-        try {
-            iArr[ReconnectMgr$RECONNECTEVENT.TRS_QUERIED.ordinal()] = 5;
-        } catch (NoSuchFieldError e5) {
-        }
-        ie = iArr;
-        return iArr;
     }
 
-    private a() {
+    public static synchronized boolean nk(Context context) {
+        synchronized (a.class) {
+            eg = ns(context);
+            if (eg == null) {
+                com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "cannot get ConnectControlMgr instance, may be system err!!");
+                return false;
+            }
+            boolean nq = eg.nq();
+            return nq;
+        }
     }
 
-    public static synchronized a zx(Context context) {
+    public static synchronized boolean ni(Context context, int i) {
+        synchronized (a.class) {
+            eg = ns(context);
+            if (eg == null) {
+                com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "cannot get ConnectControlMgr instance, may be system err!!");
+                return false;
+            }
+            boolean np = eg.np(i);
+            return np;
+        }
+    }
+
+    public static synchronized a ns(Context context) {
         a aVar;
         synchronized (a.class) {
-            if (id == null) {
-                id = new a();
+            if (eg == null) {
+                eg = new a(context);
             }
-            if (id.ht.isEmpty()) {
-                id.aae(context);
-            }
-            aVar = id;
+            aVar = eg;
         }
         return aVar;
     }
 
-    private void aae(Context context) {
-        int i;
-        int size;
-        aaf(context);
-        String oi = com.huawei.android.pushagent.model.prefs.a.of(context).oi();
-        if (!TextUtils.isEmpty(oi)) {
-            c.er("PushLog3413", "connectPushSvrInfos is " + oi);
-            for (String str : oi.split("\\|")) {
-                b bVar = new b();
-                if (bVar.aap(str)) {
-                    this.ht.add(bVar);
-                }
-            }
-        }
-        Collections.sort(this.ht);
-        if (this.ht.size() > hx) {
-            Collection arrayList = new ArrayList();
-            size = this.ht.size() - hx;
-            for (i = 0; i < size; i++) {
-                arrayList.add((b) this.ht.get(i));
-            }
-            this.ht.removeAll(arrayList);
+    public static void nj(Context context) {
+        eg = ns(context);
+        if (eg != null && (eg.nu() ^ 1) != 0) {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "TRS cfg change, need reload");
+            eg.nr();
         }
     }
 
-    private void aai(Context context, boolean z) {
-        c.er("PushLog3413", "save connection info " + z);
-        long currentTimeMillis = System.currentTimeMillis();
-        long j = aad() ? hw : hv;
-        Collection arrayList = new ArrayList();
-        for (b bVar : this.ht) {
-            if (currentTimeMillis < bVar.aan() || currentTimeMillis - bVar.aan() > j) {
-                arrayList.add(bVar);
-            }
+    private boolean nt(List<com.huawei.android.pushagent.model.flowcontrol.a.a> list, List<com.huawei.android.pushagent.model.flowcontrol.a.a> list2) {
+        if (list == null && list2 == null) {
+            return true;
         }
-        if (!arrayList.isEmpty()) {
-            c.er("PushLog3413", "some connection info is expired:" + arrayList.size());
-            this.ht.removeAll(arrayList);
-        }
-        b bVar2 = new b();
-        bVar2.aaq(z);
-        bVar2.aar(System.currentTimeMillis());
-        if (this.ht.size() < hx) {
-            this.ht.add(bVar2);
-        } else {
-            this.ht.remove(0);
-            this.ht.add(bVar2);
-        }
-        String str = "|";
-        StringBuffer stringBuffer = new StringBuffer();
-        for (b bVar22 : this.ht) {
-            stringBuffer.append(bVar22.toString());
-            stringBuffer.append(str);
-        }
-        stringBuffer.deleteCharAt(stringBuffer.length() - 1);
-        com.huawei.android.pushagent.model.prefs.a.of(context).on(stringBuffer.toString());
-    }
-
-    private void aak(Context context) {
-        if (!aab(context)) {
-            c.er("PushLog3413", "It is not bad network mode, do nothing");
-        } else if (this.ht.isEmpty()) {
-            aaj(context, false);
-        } else {
-            b bVar = (b) this.ht.get(this.ht.size() - 1);
-            if (bVar.aao()) {
-                c.er("PushLog3413", "last connection is success");
-                long currentTimeMillis = System.currentTimeMillis();
-                long aan = bVar.aan();
-                if (currentTimeMillis - aan > hu || currentTimeMillis < aan) {
-                    c.er("PushLog3413", hu + " has passed since last connect");
-                    aaj(context, false);
-                } else {
-                    c.er("PushLog3413", "connection keep too short , still in bad network mode");
-                }
-            } else {
-                c.er("PushLog3413", "last connection result is false , still in bad network mode");
-            }
-        }
-    }
-
-    public long zz(Context context) {
-        long zy = zy(context);
-        long zw = zw(context);
-        if (zy > 0 && zy >= zw) {
-            com.huawei.android.pushagent.a.a.hq(44, String.valueOf(zy));
-        } else if (zw > 0 && zy < zw) {
-            com.huawei.android.pushagent.a.a.hq(45, String.valueOf(zw));
-        }
-        return Math.max(zy, zw);
-    }
-
-    private long zy(Context context) {
-        if (this.ht.isEmpty()) {
-            c.er("PushLog3413", "first connection, return 0");
-            return 0;
-        }
-        long sf;
-        switch (this.hy) {
-            case 0:
-                sf = k.rh(context).sf() * 1000;
-                break;
-            case 1:
-                sf = k.rh(context).sg() * 1000;
-                break;
-            case 2:
-                sf = k.rh(context).sh() * 1000;
-                break;
-            case 3:
-                sf = k.rh(context).si() * 1000;
-                break;
-            case 4:
-                sf = k.rh(context).sj() * 1000;
-                break;
-            case 5:
-                sf = k.rh(context).sk() * 1000;
-                break;
-            case 6:
-                sf = k.rh(context).sl() * 1000;
-                break;
-            default:
-                sf = k.rh(context).sm() * 1000;
-                break;
-        }
-        if (((long) this.hy) == k.rh(context).sn()) {
-            f.yc(context).ye();
-            c.ep("PushLog3413", "reconnect pushserver failed " + this.hy + " times, set force query TRS at next connect.");
-        }
-        long currentTimeMillis = System.currentTimeMillis();
-        long aas = ((b) this.ht.get(this.ht.size() - 1)).im;
-        if (currentTimeMillis < aas) {
-            c.er("PushLog3413", "now is less than last connect time");
-            aas = 0;
-        } else {
-            aas = Math.max((aas + sf) - currentTimeMillis, 0);
-        }
-        c.ep("PushLog3413", "reconnect pushserver failed, the next reconnect time is:" + this.hy + " after " + aas + " ms");
-        return aas;
-    }
-
-    private long zw(Context context) {
-        if (aac()) {
-            aaj(context, true);
-        }
-        boolean aab = aab(context);
-        c.er("PushLog3413", "bad network mode is " + aab);
-        if (!aab || this.ht.isEmpty()) {
-            return 0;
-        }
-        long currentTimeMillis = System.currentTimeMillis();
-        long aas = ((b) this.ht.get(this.ht.size() - 1)).im;
-        long j = aad() ? ic : ib;
-        if (currentTimeMillis < aas) {
-            c.er("PushLog3413", "now is less than last connect time");
-            j = 0;
-        } else {
-            j = Math.max((j + aas) - currentTimeMillis, 0);
-        }
-        c.er("PushLog3413", "It is in bad network mode, connect limit interval is " + j);
-        return j;
-    }
-
-    private boolean aab(Context context) {
-        return l.ul(context).up();
-    }
-
-    private void aaj(Context context, boolean z) {
-        c.er("PushLog3413", "set bad network mode " + z);
-        l.ul(context).uq(z);
-    }
-
-    private boolean aad() {
-        try {
-            String format = new SimpleDateFormat("HH:mm").format(new Date());
-            if (format.compareTo(hz) > 0 && format.compareTo(ia) < 0) {
-                c.er("PushLog3413", "It is in Idle period.");
-                return true;
-            }
-        } catch (RuntimeException e) {
-            c.er("PushLog3413", "format idle perild time RuntimeException.");
-        } catch (Exception e2) {
-            c.er("PushLog3413", "format idle perild time exception.");
-        }
-        return false;
-    }
-
-    private boolean aac() {
-        long currentTimeMillis = System.currentTimeMillis();
-        long j = aad() ? hw : hv;
-        int i = 0;
-        for (b bVar : this.ht) {
-            if (currentTimeMillis > bVar.aan() && currentTimeMillis - bVar.aan() < j) {
-                i++;
-            }
-            i = i;
-        }
-        c.ep("PushLog3413", "The connect range limit is: " + hx + " times in " + j + ", " + "current count is:" + i);
-        if (i < hx) {
+        if (list == null || list2 == null || list.size() != list2.size()) {
             return false;
+        }
+        for (com.huawei.android.pushagent.model.flowcontrol.a.a aVar : list) {
+            boolean z;
+            for (com.huawei.android.pushagent.model.flowcontrol.a.a nf : list2) {
+                if (aVar.nf(nf)) {
+                    z = true;
+                    continue;
+                    break;
+                }
+            }
+            z = false;
+            continue;
+            if (!z) {
+                return false;
+            }
         }
         return true;
     }
 
-    private void zv() {
-        this.hy = 0;
-    }
-
-    private void aaa() {
-        this.hy++;
-    }
-
-    public void aag(Context context, ReconnectMgr$RECONNECTEVENT reconnectMgr$RECONNECTEVENT, Bundle bundle) {
-        c.er("PushLog3413", "receive reconnectevent:" + reconnectMgr$RECONNECTEVENT);
-        switch (aal()[reconnectMgr$RECONNECTEVENT.ordinal()]) {
-            case 1:
-                zv();
-                return;
-            case 2:
-                ErrorType errorType = ErrorType.Err_unKnown;
-                aak(context);
-                if (bundle.containsKey("errorType")) {
-                    if (ErrorType.Err_Connect == ((ErrorType) bundle.getSerializable("errorType"))) {
-                        aai(context, false);
-                        com.huawei.android.pushagent.a.a.hx(54);
-                    } else {
-                        c.er("PushLog3413", "socket close not caused by connect error, do not need save connection info");
-                    }
-                } else {
-                    c.er("PushLog3413", "socket close not caused by pushException");
+    private boolean nu() {
+        LinkedList linkedList = new LinkedList();
+        linkedList.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gg()));
+        linkedList.add(new b(3600000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gh()));
+        if (nt(linkedList, this.eh)) {
+            linkedList = new LinkedList();
+            linkedList.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gr()));
+            if (nt(linkedList, this.ei)) {
+                LinkedList linkedList2 = new LinkedList();
+                for (Entry entry : com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gi().entrySet()) {
+                    linkedList2.add(new b(((Long) entry.getKey()).longValue() * 1000, ((Long) entry.getValue()).longValue()));
                 }
-                aaa();
-                PushService.abr(new Intent("com.huawei.action.CONNECT_PUSHSRV"));
-                return;
-            case 3:
-                aai(context, true);
-                return;
-            case 4:
-                zv();
-                return;
-            case 5:
-                zv();
-                return;
-            default:
-                return;
+                if (nt(linkedList2, this.ej)) {
+                    linkedList = new LinkedList();
+                    linkedList.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).hz()));
+                    linkedList.add(new b(3600000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).ia()));
+                    if (nt(linkedList, this.ek)) {
+                        linkedList = new LinkedList();
+                        linkedList.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).ic()));
+                        if (nt(linkedList, this.el)) {
+                            linkedList2 = new LinkedList();
+                            for (Entry entry2 : com.huawei.android.pushagent.model.prefs.a.ff(this.ef).ib().entrySet()) {
+                                linkedList2.add(new b(((Long) entry2.getKey()).longValue() * 1000, ((Long) entry2.getValue()).longValue()));
+                            }
+                            if (nt(linkedList2, this.em)) {
+                                com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "cur control is equal trs cfg");
+                                return true;
+                            }
+                            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "wifiVolumeControl cfg is change!!");
+                            return false;
+                        }
+                        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "wifiTrsFlowControl cfg is change!!");
+                        return false;
+                    }
+                    com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "wifiTrsFirstFlowControl cfg is change!");
+                    return false;
+                }
+                com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "flowcControl cfg is change!!");
+                return false;
+            }
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "trsFlowControl cfg is change!!");
+            return false;
+        }
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "trsFirstFlowControl cfg is change!");
+        return false;
+    }
+
+    private boolean nr() {
+        this.eh.clear();
+        this.eh.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gg()));
+        this.eh.add(new b(3600000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gh()));
+        this.ei.clear();
+        this.ei.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gr()));
+        this.ej.clear();
+        for (Entry entry : com.huawei.android.pushagent.model.prefs.a.ff(this.ef).gi().entrySet()) {
+            this.ej.add(new b(((Long) entry.getKey()).longValue() * 1000, ((Long) entry.getValue()).longValue()));
+        }
+        this.ek.clear();
+        this.ek.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).hz()));
+        this.ek.add(new b(3600000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).ia()));
+        this.el.clear();
+        this.el.add(new b(86400000, com.huawei.android.pushagent.model.prefs.a.ff(this.ef).ic()));
+        this.em.clear();
+        for (Entry entry2 : com.huawei.android.pushagent.model.prefs.a.ff(this.ef).ib().entrySet()) {
+            this.em.add(new b(((Long) entry2.getKey()).longValue() * 1000, ((Long) entry2.getValue()).longValue()));
+        }
+        nx();
+        return true;
+    }
+
+    private boolean nq() {
+        if (1 == d.yh(this.ef)) {
+            return no(this.ek, this.el);
+        }
+        return no(this.eh, this.ei);
+    }
+
+    private boolean np(int i) {
+        if (1 == d.yh(this.ef)) {
+            return nn(this.em);
+        }
+        return nn(this.ej);
+    }
+
+    private boolean nm(List<com.huawei.android.pushagent.model.flowcontrol.a.a> list, long j) {
+        if (list == null || list.size() == 0) {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "there is no volome control");
+            return true;
+        }
+        for (com.huawei.android.pushagent.model.flowcontrol.a.a ne : list) {
+            if (!ne.ne(j)) {
+                com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "push connect time exceed volum");
+                return false;
+            }
+        }
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "check control flow pass");
+        return true;
+    }
+
+    /* JADX WARNING: Missing block: B:7:0x000c, code skipped:
+            return true;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private synchronized boolean nl(List<com.huawei.android.pushagent.model.flowcontrol.a.a> list, long j) {
+        if (list != null) {
+            if (list.size() != 0) {
+                for (com.huawei.android.pushagent.model.flowcontrol.a.a aVar : list) {
+                    if (!aVar.nd(j)) {
+                        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", " control info:" + aVar);
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
     }
 
-    private void aaf(Context context) {
-        hx = k.rh(context).so();
-        hv = k.rh(context).sp();
-        hw = k.rh(context).sq();
-        hu = k.rh(context).sr();
-        ib = k.rh(context).ss();
-        ic = k.rh(context).st();
-        hz = k.rh(context).su();
-        ia = k.rh(context).sv();
+    private boolean nx() {
+        try {
+            com.huawei.android.pushagent.utils.b.b bVar = new com.huawei.android.pushagent.utils.b.b(this.ef, "PushConnectControl");
+            if (ny(bVar, this.ek, "wifiTrsFirstFlowControlData") && ny(bVar, this.el, "wifiTrsFlowControlData") && ny(bVar, this.em, "wifiVolumeControlData") && ny(bVar, this.eh, "trsFirstFlowControlData") && ny(bVar, this.ei, "trsFlowControlData") && ny(bVar, this.ej, "volumeControlData")) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", e.toString(), e);
+            return false;
+        }
     }
 
-    public void aah(Context context) {
-        c.ep("PushLog3413", "enter resetReconnectConfig");
-        aaf(context);
-        this.ht.clear();
-        aaj(context, false);
-        com.huawei.android.pushagent.model.prefs.a.of(context).om();
+    private boolean nv() {
+        try {
+            com.huawei.android.pushagent.utils.b.b bVar = new com.huawei.android.pushagent.utils.b.b(this.ef, "PushConnectControl");
+            nw(bVar, this.eh, "trsFirstFlowControlData");
+            nw(bVar, this.ei, "trsFlowControlData");
+            nw(bVar, this.ej, "volumeControlData");
+            nw(bVar, this.ek, "wifiTrsFirstFlowControlData");
+            nw(bVar, this.el, "wifiTrsFlowControlData");
+            nw(bVar, this.em, "wifiVolumeControlData");
+            return true;
+        } catch (Exception e) {
+            com.huawei.android.pushagent.utils.b.a.sw("PushLog3414", e.toString(), e);
+            return false;
+        }
+    }
+
+    private boolean nw(com.huawei.android.pushagent.utils.b.b bVar, List<com.huawei.android.pushagent.model.flowcontrol.a.a> list, String str) {
+        int i = 0;
+        String str2 = "\\|";
+        list.clear();
+        String tg = bVar.tg(str);
+        if (TextUtils.isEmpty(tg)) {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", str + " is not set");
+        } else {
+            com.huawei.android.pushagent.utils.b.a.st("PushLog3414", str + "=" + tg);
+            String[] split = tg.split(str2);
+            if (split == null || split.length == 0) {
+                com.huawei.android.pushagent.utils.b.a.su("PushLog3414", str + " len 0, maybe system err");
+                return false;
+            }
+            int length = split.length;
+            while (i < length) {
+                String str3 = split[i];
+                b bVar2 = new b();
+                if (bVar2.nh(str3)) {
+                    list.add(bVar2);
+                }
+                i++;
+            }
+        }
+        return true;
+    }
+
+    private boolean ny(com.huawei.android.pushagent.utils.b.b bVar, List<com.huawei.android.pushagent.model.flowcontrol.a.a> list, String str) {
+        String str2 = "|";
+        StringBuffer stringBuffer = new StringBuffer();
+        for (com.huawei.android.pushagent.model.flowcontrol.a.a ng : list) {
+            stringBuffer.append(ng.ng()).append(str2);
+        }
+        if (bVar.tm(str, stringBuffer.toString())) {
+            return true;
+        }
+        com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "save " + str + " failed!!");
+        return false;
+    }
+
+    private boolean no(List<com.huawei.android.pushagent.model.flowcontrol.a.a> list, List<com.huawei.android.pushagent.model.flowcontrol.a.a> list2) {
+        if (0 == e.jj(this.ef).jp()) {
+            if (nm(list, 1)) {
+                nl(list, 1);
+            } else {
+                com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "trsFirstFlowControl not allowed to pass!!");
+                return false;
+            }
+        } else if (nm(list2, 1)) {
+            nl(list2, 1);
+        } else {
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "trsFlowControl not allowed to pass!!");
+            return false;
+        }
+        nx();
+        return true;
+    }
+
+    private boolean nn(List<com.huawei.android.pushagent.model.flowcontrol.a.a> list) {
+        if (nm(list, 1)) {
+            nl(list, 1);
+            nx();
+            return true;
+        }
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "volumeControl not allow to pass!!");
+        return false;
     }
 }

@@ -156,86 +156,83 @@ public class DefaultRequestDirector implements RequestDirector {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x00a8 A:{Splitter: B:8:0x0044, ExcHandler: org.apache.http.HttpException (e org.apache.http.HttpException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:29:0x009a A:{Splitter: B:8:0x0044, ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:82:0x016b A:{Splitter: B:75:0x0156, ExcHandler: org.apache.http.HttpException (e org.apache.http.HttpException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x0165 A:{Splitter: B:75:0x0156, ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:222:0x025e A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:105:0x01ef A:{Catch:{ HttpException -> 0x02e7, IOException -> 0x02e2, RuntimeException -> 0x02dd }} */
-    /* JADX WARNING: Removed duplicated region for block: B:82:0x016b A:{Splitter: B:75:0x0156, ExcHandler: org.apache.http.HttpException (e org.apache.http.HttpException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:80:0x0165 A:{Splitter: B:75:0x0156, ExcHandler: java.lang.RuntimeException (e java.lang.RuntimeException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x016b A:{ExcHandler: HttpException (e org.apache.http.HttpException), Splitter:B:75:0x0156} */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x0165 A:{ExcHandler: RuntimeException (e java.lang.RuntimeException), Splitter:B:75:0x0156} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x00a8 A:{ExcHandler: HttpException (e org.apache.http.HttpException), Splitter:B:8:0x0044} */
+    /* JADX WARNING: Removed duplicated region for block: B:29:0x009a A:{ExcHandler: RuntimeException (e java.lang.RuntimeException), Splitter:B:8:0x0044} */
+    /* JADX WARNING: Removed duplicated region for block: B:194:0x025e A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:107:0x01ef A:{Catch:{ HttpException -> 0x02e7, IOException -> 0x02e2, RuntimeException -> 0x02dd }} */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x016b A:{ExcHandler: HttpException (e org.apache.http.HttpException), Splitter:B:75:0x0156} */
+    /* JADX WARNING: Removed duplicated region for block: B:81:0x0165 A:{ExcHandler: RuntimeException (e java.lang.RuntimeException), Splitter:B:75:0x0156} */
     /* JADX WARNING: Failed to process nested try/catch */
     /* JADX WARNING: Failed to process nested try/catch */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:29:0x009a, code:
+    /* JADX WARNING: Missing block: B:29:0x009a, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:30:0x009b, code:
+    /* JADX WARNING: Missing block: B:30:0x009b, code skipped:
             r21 = r3;
      */
-    /* JADX WARNING: Missing block: B:31:0x009d, code:
+    /* JADX WARNING: Missing block: B:31:0x009d, code skipped:
             r23 = r5;
      */
-    /* JADX WARNING: Missing block: B:34:0x00a4, code:
-            r23 = r5;
-     */
-    /* JADX WARNING: Missing block: B:35:0x00a8, code:
+    /* JADX WARNING: Missing block: B:35:0x00a8, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:36:0x00a9, code:
+    /* JADX WARNING: Missing block: B:36:0x00a9, code skipped:
             r21 = r3;
      */
-    /* JADX WARNING: Missing block: B:37:0x00ab, code:
+    /* JADX WARNING: Missing block: B:37:0x00ab, code skipped:
             r23 = r5;
      */
-    /* JADX WARNING: Missing block: B:80:0x0165, code:
+    /* JADX WARNING: Missing block: B:81:0x0165, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:81:0x0168, code:
+    /* JADX WARNING: Missing block: B:82:0x0168, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:82:0x016b, code:
+    /* JADX WARNING: Missing block: B:83:0x016b, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:100:0x01d8, code:
+    /* JADX WARNING: Missing block: B:102:0x01d8, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:101:0x01d9, code:
+    /* JADX WARNING: Missing block: B:103:0x01d9, code skipped:
             r22 = r4;
      */
-    /* JADX WARNING: Missing block: B:106:0x01f5, code:
+    /* JADX WARNING: Missing block: B:108:0x01f5, code skipped:
             if (r1.log.isInfoEnabled() != false) goto L_0x01f7;
      */
-    /* JADX WARNING: Missing block: B:107:0x01f7, code:
+    /* JADX WARNING: Missing block: B:109:0x01f7, code skipped:
             r3 = r1.log;
             r4 = new java.lang.StringBuilder();
      */
-    /* JADX WARNING: Missing block: B:108:0x01fe, code:
+    /* JADX WARNING: Missing block: B:110:0x01fe, code skipped:
             r23 = r5;
      */
-    /* JADX WARNING: Missing block: B:110:?, code:
+    /* JADX WARNING: Missing block: B:112:?, code skipped:
             r4.append("I/O exception (");
             r4.append(r0.getClass().getName());
             r4.append(") caught when processing request: ");
             r4.append(r0.getMessage());
             r3.info(r4.toString());
      */
-    /* JADX WARNING: Missing block: B:111:0x0224, code:
+    /* JADX WARNING: Missing block: B:113:0x0224, code skipped:
             r23 = r5;
      */
-    /* JADX WARNING: Missing block: B:113:0x022c, code:
+    /* JADX WARNING: Missing block: B:115:0x022c, code skipped:
             if (r1.log.isDebugEnabled() != false) goto L_0x022e;
      */
-    /* JADX WARNING: Missing block: B:114:0x022e, code:
+    /* JADX WARNING: Missing block: B:116:0x022e, code skipped:
             r1.log.debug(r0.getMessage(), r0);
      */
-    /* JADX WARNING: Missing block: B:115:0x0237, code:
+    /* JADX WARNING: Missing block: B:117:0x0237, code skipped:
             r1.log.info("Retrying request");
      */
-    /* JADX WARNING: Missing block: B:116:0x0243, code:
+    /* JADX WARNING: Missing block: B:118:0x0243, code skipped:
             if (r15.getHopCount() == 1) goto L_0x0245;
      */
-    /* JADX WARNING: Missing block: B:117:0x0245, code:
+    /* JADX WARNING: Missing block: B:119:0x0245, code skipped:
             r1.log.debug("Reopening the direct connection.");
             r1.managedConn.open(r15, r2, r1.params);
             r3 = 1;
@@ -243,87 +240,87 @@ public class DefaultRequestDirector implements RequestDirector {
             r4 = r22;
             r5 = r23;
      */
-    /* JADX WARNING: Missing block: B:118:0x025d, code:
+    /* JADX WARNING: Missing block: B:120:0x025d, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:119:0x025e, code:
+    /* JADX WARNING: Missing block: B:121:0x025e, code skipped:
             r23 = r5;
      */
-    /* JADX WARNING: Missing block: B:120:0x0260, code:
+    /* JADX WARNING: Missing block: B:122:0x0260, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:121:0x0261, code:
+    /* JADX WARNING: Missing block: B:123:0x0261, code skipped:
             r22 = r4;
             r23 = r5;
             r11.setParams(r1.params);
             r1.requestExec.postProcess(r11, r1.httpProcessor, r2);
             r10 = r1.reuseStrategy.keepAlive(r11, r2);
      */
-    /* JADX WARNING: Missing block: B:122:0x0278, code:
+    /* JADX WARNING: Missing block: B:124:0x0278, code skipped:
             if (r10 == false) goto L_0x0287;
      */
-    /* JADX WARNING: Missing block: B:123:0x027a, code:
+    /* JADX WARNING: Missing block: B:125:0x027a, code skipped:
             r1.managedConn.setIdleDuration(r1.keepAliveStrategy.getKeepAliveDuration(r11, r2), java.util.concurrent.TimeUnit.MILLISECONDS);
      */
-    /* JADX WARNING: Missing block: B:124:0x0287, code:
+    /* JADX WARNING: Missing block: B:126:0x0287, code skipped:
             r0 = handleResponse(r6, r11, r2);
      */
-    /* JADX WARNING: Missing block: B:125:0x028b, code:
+    /* JADX WARNING: Missing block: B:127:0x028b, code skipped:
             if (r0 != null) goto L_0x0290;
      */
-    /* JADX WARNING: Missing block: B:126:0x028d, code:
+    /* JADX WARNING: Missing block: B:128:0x028d, code skipped:
             r12 = true;
      */
-    /* JADX WARNING: Missing block: B:127:0x0290, code:
+    /* JADX WARNING: Missing block: B:129:0x0290, code skipped:
             if (r10 == false) goto L_0x02a8;
      */
-    /* JADX WARNING: Missing block: B:128:0x0292, code:
+    /* JADX WARNING: Missing block: B:130:0x0292, code skipped:
             r1.log.debug("Connection kept alive");
             r3 = r11.getEntity();
      */
-    /* JADX WARNING: Missing block: B:129:0x029d, code:
+    /* JADX WARNING: Missing block: B:131:0x029d, code skipped:
             if (r3 == null) goto L_0x02a2;
      */
-    /* JADX WARNING: Missing block: B:130:0x029f, code:
+    /* JADX WARNING: Missing block: B:132:0x029f, code skipped:
             r3.consumeContent();
      */
-    /* JADX WARNING: Missing block: B:131:0x02a2, code:
+    /* JADX WARNING: Missing block: B:133:0x02a2, code skipped:
             r1.managedConn.markReusable();
      */
-    /* JADX WARNING: Missing block: B:132:0x02a8, code:
+    /* JADX WARNING: Missing block: B:134:0x02a8, code skipped:
             r1.managedConn.close();
      */
-    /* JADX WARNING: Missing block: B:134:0x02b9, code:
+    /* JADX WARNING: Missing block: B:136:0x02b9, code skipped:
             if (r0.getRoute().equals(r6.getRoute()) != false) goto L_0x02be;
      */
-    /* JADX WARNING: Missing block: B:135:0x02bb, code:
+    /* JADX WARNING: Missing block: B:137:0x02bb, code skipped:
             releaseConnection();
      */
-    /* JADX WARNING: Missing block: B:136:0x02be, code:
+    /* JADX WARNING: Missing block: B:138:0x02be, code skipped:
             r6 = r0;
      */
-    /* JADX WARNING: Missing block: B:137:0x02c0, code:
+    /* JADX WARNING: Missing block: B:139:0x02c0, code skipped:
             r3 = r1.userTokenHandler.getUserToken(r2);
             r2.setAttribute(org.apache.http.client.protocol.ClientContext.USER_TOKEN, r3);
      */
-    /* JADX WARNING: Missing block: B:138:0x02cd, code:
+    /* JADX WARNING: Missing block: B:140:0x02cd, code skipped:
             if (r1.managedConn == null) goto L_0x02d4;
      */
-    /* JADX WARNING: Missing block: B:139:0x02cf, code:
+    /* JADX WARNING: Missing block: B:141:0x02cf, code skipped:
             r1.managedConn.setState(r3);
      */
-    /* JADX WARNING: Missing block: B:140:0x02d4, code:
+    /* JADX WARNING: Missing block: B:142:0x02d4, code skipped:
             r4 = r17;
             r3 = r21;
             r5 = r23;
      */
-    /* JADX WARNING: Missing block: B:171:0x035f, code:
+    /* JADX WARNING: Missing block: B:174:0x035f, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:172:0x0361, code:
+    /* JADX WARNING: Missing block: B:176:0x0361, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:173:0x0363, code:
+    /* JADX WARNING: Missing block: B:178:0x0363, code skipped:
             r0 = e;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -361,16 +358,22 @@ public class DefaultRequestDirector implements RequestDirector {
                         origWrapper = origWrapper2;
                         httpRequest = orig;
                         httpRoute = origRoute;
+                        abortConnection();
+                        throw ex;
                     } catch (IOException e2) {
                         ex = e2;
                         origWrapper = origWrapper2;
                         httpRequest = orig;
                         httpRoute = origRoute;
+                        abortConnection();
+                        throw ex;
                     } catch (RuntimeException e3) {
                         ex2 = e3;
                         origWrapper = origWrapper2;
                         httpRequest = orig;
                         httpRoute = origRoute;
+                        abortConnection();
+                        throw ex2;
                     }
                     ClientConnectionRequest connRequest;
                     try {
@@ -398,6 +401,8 @@ public class DefaultRequestDirector implements RequestDirector {
                     } catch (IOException e5) {
                         ex = e5;
                         httpRequest = orig;
+                        abortConnection();
+                        throw ex;
                     } catch (RuntimeException e6) {
                     }
                 } else {
@@ -468,17 +473,18 @@ public class DefaultRequestDirector implements RequestDirector {
                                 } else {
                                     proxy2 = proxy;
                                 }
-                                if (route.isSecure() || isCleartextTrafficPermitted(route.getTargetHost().getHostName())) {
-                                    response = this.requestExec.execute(wrapper, this.managedConn, httpContext);
-                                    retrying = false;
-                                    proxy = proxy2;
-                                    i = 1;
-                                } else {
-                                    stringBuilder = new StringBuilder();
-                                    stringBuilder.append("Cleartext traffic not permitted: ");
-                                    stringBuilder.append(route.getTargetHost());
-                                    throw new IOException(stringBuilder.toString());
+                                if (!route.isSecure()) {
+                                    if (!isCleartextTrafficPermitted(route.getTargetHost().getHostName())) {
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Cleartext traffic not permitted: ");
+                                        stringBuilder.append(route.getTargetHost());
+                                        throw new IOException(stringBuilder.toString());
+                                    }
                                 }
+                                response = this.requestExec.execute(wrapper, this.managedConn, httpContext);
+                                retrying = false;
+                                proxy = proxy2;
+                                i = 1;
                             }
                         } catch (HttpException e10) {
                             ex = e10;
@@ -509,42 +515,56 @@ public class DefaultRequestDirector implements RequestDirector {
                     ex = e13;
                     httpRequest = orig;
                     httpRoute = origRoute;
+                    abortConnection();
+                    throw ex;
                 } catch (IOException e14) {
                     ex = e14;
                     httpRequest = orig;
                     httpRoute = origRoute;
+                    abortConnection();
+                    throw ex;
                 } catch (RuntimeException e15) {
                     ex2 = e15;
                     httpRequest = orig;
                     httpRoute = origRoute;
+                    abortConnection();
+                    throw ex2;
                 }
             } catch (HttpException e16) {
                 ex = e16;
                 httpRequest = orig;
                 origWrapper = origWrapper2;
                 httpRoute = origRoute;
+                abortConnection();
+                throw ex;
             } catch (IOException e17) {
                 ex = e17;
                 httpRequest = orig;
                 origWrapper = origWrapper2;
                 httpRoute = origRoute;
+                abortConnection();
+                throw ex;
             } catch (RuntimeException e18) {
                 ex2 = e18;
                 httpRequest = orig;
                 origWrapper = origWrapper2;
                 httpRoute = origRoute;
+                abortConnection();
+                throw ex2;
             }
         }
         origWrapper = origWrapper2;
         httpRoute = origRoute;
-        if (response == null || response.getEntity() == null || !response.getEntity().isStreaming()) {
-            if (reuse) {
-                this.managedConn.markReusable();
+        if (!(response == null || response.getEntity() == null)) {
+            if (response.getEntity().isStreaming()) {
+                response.setEntity(new BasicManagedEntity(response.getEntity(), this.managedConn, reuse));
+                return response;
             }
-            releaseConnection();
-        } else {
-            response.setEntity(new BasicManagedEntity(response.getEntity(), this.managedConn, reuse));
         }
+        if (reuse) {
+            this.managedConn.markReusable();
+        }
+        releaseConnection();
         return response;
     }
 

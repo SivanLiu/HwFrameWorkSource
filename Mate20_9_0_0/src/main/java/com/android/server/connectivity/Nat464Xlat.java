@@ -73,37 +73,32 @@ public class Nat464Xlat extends BaseNetworkObserver {
         return this.mState == State.STOPPING;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x000c A:{Splitter: B:2:0x0006, ExcHandler: android.os.RemoteException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x000c, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x000d, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Error starting clatd on ");
-            r2.append(r5);
-            android.util.Slog.e(r1, r2.toString(), r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void enterStartingState(String baseIface) {
+        String str;
+        StringBuilder stringBuilder;
         try {
             this.mNMService.registerObserver(this);
             try {
                 this.mNMService.startClatd(baseIface);
-            } catch (Exception e) {
+            } catch (RemoteException | IllegalStateException e) {
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Error starting clatd on ");
+                stringBuilder.append(baseIface);
+                Slog.e(str, stringBuilder.toString(), e);
             }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(CLAT_PREFIX);
-            stringBuilder.append(baseIface);
-            this.mIface = stringBuilder.toString();
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append(CLAT_PREFIX);
+            stringBuilder2.append(baseIface);
+            this.mIface = stringBuilder2.toString();
             this.mBaseIface = baseIface;
             this.mState = State.STARTING;
         } catch (RemoteException e2) {
-            String str = TAG;
-            StringBuilder stringBuilder2 = new StringBuilder();
-            stringBuilder2.append("startClat: Can't register interface observer for clat on ");
-            stringBuilder2.append(this.mNetwork.name());
-            Slog.e(str, stringBuilder2.toString());
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("startClat: Can't register interface observer for clat on ");
+            stringBuilder.append(this.mNetwork.name());
+            Slog.e(str, stringBuilder.toString());
         }
     }
 
@@ -111,42 +106,28 @@ public class Nat464Xlat extends BaseNetworkObserver {
         this.mState = State.RUNNING;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x0008 A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:2:0x0008, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:3:0x0009, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Error stopping clatd on ");
-            r2.append(r4.mBaseIface);
-            android.util.Slog.e(r1, r2.toString(), r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void enterStoppingState() {
         try {
             this.mNMService.stopClatd(this.mBaseIface);
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Error stopping clatd on ");
+            stringBuilder.append(this.mBaseIface);
+            Slog.e(str, stringBuilder.toString(), e);
         }
         this.mState = State.STOPPING;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x0006 A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:2:0x0006, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:3:0x0007, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Error unregistering clatd observer on ");
-            r2.append(r4.mBaseIface);
-            android.util.Slog.e(r1, r2.toString(), r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void enterIdleState() {
         try {
             this.mNMService.unregisterObserver(this);
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Error unregistering clatd observer on ");
+            stringBuilder.append(this.mBaseIface);
+            Slog.e(str, stringBuilder.toString(), e);
         }
         this.mIface = null;
         this.mBaseIface = null;
@@ -212,25 +193,16 @@ public class Nat464Xlat extends BaseNetworkObserver {
         return stacked;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000b A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:3:0x000b, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:4:0x000c, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Error getting link properties: ");
-            r2.append(r0);
-            android.util.Slog.e(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:5:0x0023, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private LinkAddress getLinkAddress(String iface) {
         try {
             return this.mNMService.getInterfaceConfig(iface).getLinkAddress();
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalStateException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Error getting link properties: ");
+            stringBuilder.append(e);
+            Slog.e(str, stringBuilder.toString());
+            return null;
         }
     }
 

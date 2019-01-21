@@ -4,7 +4,7 @@ import com.huawei.android.pushagent.datatype.http.metadata.TokenApplyReqMeta;
 import java.util.List;
 
 public class TokenApplyReq {
-    private int agentVersion = 3413;
+    private int agentVersion = 3414;
     private List<TokenApplyReqMeta> apps;
     private int chanMode;
     private String connId;

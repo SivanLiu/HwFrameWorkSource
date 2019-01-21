@@ -1490,7 +1490,7 @@ class AppWindowToken extends WindowToken implements AppFreezeListener {
                 adapter = this.mService.mAppTransition.getRemoteAnimationController().createAnimationAdapter(this, this.mTmpPoint, this.mTmpRect);
             }
             if (adapter != null) {
-                startAnimation(getPendingTransaction(), adapter, true ^ isVisible());
+                startAnimation(getPendingTransaction(), adapter, 1 ^ isVisible());
                 if (adapter.getShowWallpaper()) {
                     DisplayContent displayContent = this.mDisplayContent;
                     displayContent.pendingLayoutChanges |= 4;
@@ -2067,7 +2067,7 @@ class AppWindowToken extends WindowToken implements AppFreezeListener {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0037, code:
+    /* JADX WARNING: Missing block: B:11:0x0037, code skipped:
             if (r1.contains("com.huawei.android.launcher/.newsimpleui.NewSimpleLauncher") != false) goto L_0x0039;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

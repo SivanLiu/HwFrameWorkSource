@@ -30,7 +30,7 @@ public class KeyFactorySpi extends BaseKeyFactorySpi {
         }
         try {
             return new BCDHPublicKey((DHPublicKeySpec) keySpec);
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             throw new ExtendedInvalidKeySpecException(e.getMessage(), e);
         }
     }

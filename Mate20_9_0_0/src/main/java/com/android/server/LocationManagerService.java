@@ -332,24 +332,27 @@ public class LocationManagerService extends AbsLocationManagerService {
                             }
                         }
                     }
+                    break;
                 case 5:
                     List<String> pkgList = msg.obj;
                     int type = msg.arg1;
                     LocationManagerService.this.mHwQuickTTFFMonitor;
-                    if (type == 3) {
-                        LocationManagerService.this.mHwQuickTTFFMonitor.updateAccWhiteList(pkgList);
-                        break;
-                    }
-                    LocationManagerService.this.mHwQuickTTFFMonitor;
-                    if (type == 4) {
+                    if (type != 3) {
+                        LocationManagerService.this.mHwQuickTTFFMonitor;
+                        if (type != 4) {
+                            if (type == 1) {
+                                synchronized (LocationManagerService.this.mLock) {
+                                    LocationManagerService.this.updateBackgroundThrottlingWhitelistLocked();
+                                    LocationManagerService.this.updateProvidersLocked();
+                                }
+                                break;
+                            }
+                        }
                         LocationManagerService.this.mHwQuickTTFFMonitor.updateDisableList(pkgList);
                         break;
-                    } else if (type == 1) {
-                        synchronized (LocationManagerService.this.mLock) {
-                            LocationManagerService.this.updateBackgroundThrottlingWhitelistLocked();
-                            LocationManagerService.this.updateProvidersLocked();
-                        }
                     }
+                    LocationManagerService.this.mHwQuickTTFFMonitor.updateAccWhiteList(pkgList);
+                    break;
                     break;
                 case 6:
                     ArrayList<String> providers = msg.obj;
@@ -359,6 +362,7 @@ public class LocationManagerService extends AbsLocationManagerService {
                             LocationManagerService.this.applyRequirementsLocked((String) it3.next());
                         }
                     }
+                    break;
                 default:
                     if (!LocationManagerService.this.hwLocationHandleMessage(msg)) {
                         Log.e(LocationManagerService.TAG, "receive unexpected message");
@@ -966,20 +970,22 @@ public class LocationManagerService extends AbsLocationManagerService {
                     stringBuilder2.append(" is now ");
                     stringBuilder2.append(foreground ? "foreground" : "background)");
                     Log.d(provider, stringBuilder2.toString());
-                    if (foreground || isThrottlingExemptLocked((Identity) entry2.getValue())) {
-                        this.mGnssMeasurementsProvider.addListener(Stub.asInterface((IBinder) entry2.getKey()));
-                    } else {
-                        this.mGnssMeasurementsProvider.removeListener(Stub.asInterface((IBinder) entry2.getKey()));
+                    if (!foreground) {
+                        if (!isThrottlingExemptLocked((Identity) entry2.getValue())) {
+                            this.mGnssMeasurementsProvider.removeListener(Stub.asInterface((IBinder) entry2.getKey()));
+                        }
                     }
+                    this.mGnssMeasurementsProvider.addListener(Stub.asInterface((IBinder) entry2.getKey()));
                 }
             }
             for (Entry<IBinder, Identity> entry22 : this.mGnssNavigationMessageListeners.entrySet()) {
                 if (((Identity) entry22.getValue()).mUid == uid) {
-                    if (foreground || isThrottlingExemptLocked((Identity) entry22.getValue())) {
-                        this.mGnssNavigationMessageProvider.addListener(IGnssNavigationMessageListener.Stub.asInterface((IBinder) entry22.getKey()));
-                    } else {
-                        this.mGnssNavigationMessageProvider.removeListener(IGnssNavigationMessageListener.Stub.asInterface((IBinder) entry22.getKey()));
+                    if (!foreground) {
+                        if (!isThrottlingExemptLocked((Identity) entry22.getValue())) {
+                            this.mGnssNavigationMessageProvider.removeListener(IGnssNavigationMessageListener.Stub.asInterface((IBinder) entry22.getKey()));
+                        }
                     }
+                    this.mGnssNavigationMessageProvider.addListener(IGnssNavigationMessageListener.Stub.asInterface((IBinder) entry22.getKey()));
                 }
             }
         }
@@ -1106,7 +1112,7 @@ public class LocationManagerService extends AbsLocationManagerService {
             providerPackageNames.addAll(Arrays.asList(pkgs));
         }
         ensureFallbackFusedProviderPresentLocked(providerPackageNames);
-        LocationProviderProxy networkProvider = HwServiceFactory.locationProviderProxyCreateAndBind(this.mContext, "network", NETWORK_LOCATION_SERVICE_ACTION, 17956962, 17039832, 17236014, this.mLocationHandler);
+        LocationProviderProxy networkProvider = HwServiceFactory.locationProviderProxyCreateAndBind(this.mContext, "network", NETWORK_LOCATION_SERVICE_ACTION, 17956962, 17039833, 17236014, this.mLocationHandler);
         if (networkProvider != null) {
             this.mRealProviders.put("network", networkProvider);
             this.mProxyProviders.add(networkProvider);
@@ -1114,7 +1120,7 @@ public class LocationManagerService extends AbsLocationManagerService {
         } else {
             Slog.w(TAG, "no network location provider found");
         }
-        LocationProviderProxy fusedLocationProvider = LocationProviderProxy.createAndBind(this.mContext, "fused", FUSED_LOCATION_SERVICE_ACTION, 17956953, 17039807, 17236014, this.mLocationHandler);
+        LocationProviderProxy fusedLocationProvider = LocationProviderProxy.createAndBind(this.mContext, "fused", FUSED_LOCATION_SERVICE_ACTION, 17956953, 17039808, 17236014, this.mLocationHandler);
         if (fusedLocationProvider != null) {
             addProviderLocked(fusedLocationProvider);
             this.mProxyProviders.add(fusedLocationProvider);
@@ -1123,12 +1129,12 @@ public class LocationManagerService extends AbsLocationManagerService {
         } else {
             Slog.e(TAG, "no fused location provider found", new IllegalStateException("Location service needs a fused location provider"));
         }
-        this.mGeocodeProvider = HwServiceFactory.geocoderProxyCreateAndBind(this.mContext, 17956954, 17039808, 17236014, this.mLocationHandler);
+        this.mGeocodeProvider = HwServiceFactory.geocoderProxyCreateAndBind(this.mContext, 17956954, 17039809, 17236014, this.mLocationHandler);
         if (this.mGeocodeProvider == null) {
             Slog.e(TAG, "no geocoder provider found");
         }
         checkGeoFencerEnabled(this.mPackageManager);
-        if (GeofenceProxy.createAndBind(this.mContext, 17956955, 17039809, 17236014, this.mLocationHandler, this.mGpsGeofenceProxy, null) == null) {
+        if (GeofenceProxy.createAndBind(this.mContext, 17956955, 17039810, 17236014, this.mLocationHandler, this.mGpsGeofenceProxy, null) == null) {
             Slog.d(TAG, "Unable to bind FLP Geofence proxy.");
         }
         this.mLocalLocationProvider = HwServiceFactory.getHwLocalLocationProvider(this.mContext, this);
@@ -2561,7 +2567,7 @@ public class LocationManagerService extends AbsLocationManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0070, code:
+    /* JADX WARNING: Missing block: B:18:0x0070, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2684,29 +2690,29 @@ public class LocationManagerService extends AbsLocationManagerService {
         return p.getProperties();
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001f, code:
+    /* JADX WARNING: Missing block: B:10:0x001f, code skipped:
             if ((r1 instanceof com.android.server.location.LocationProviderProxy) == false) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:11:0x0021, code:
+    /* JADX WARNING: Missing block: B:11:0x0021, code skipped:
             r0 = ((com.android.server.location.LocationProviderProxy) r1).getConnectedPackageName();
             r2 = r0;
      */
-    /* JADX WARNING: Missing block: B:12:0x0029, code:
+    /* JADX WARNING: Missing block: B:12:0x0029, code skipped:
             if (r0 == null) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:13:0x002b, code:
+    /* JADX WARNING: Missing block: B:13:0x002b, code skipped:
             r3 = r0.split(";");
      */
-    /* JADX WARNING: Missing block: B:14:0x0033, code:
+    /* JADX WARNING: Missing block: B:14:0x0033, code skipped:
             if (r3.length < 2) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:15:0x0035, code:
+    /* JADX WARNING: Missing block: B:15:0x0035, code skipped:
             r2 = r3[0];
      */
-    /* JADX WARNING: Missing block: B:16:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:17:0x0039, code:
+    /* JADX WARNING: Missing block: B:17:0x0039, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2731,9 +2737,13 @@ public class LocationManagerService extends AbsLocationManagerService {
             }
             List<String> providerList = Arrays.asList(allowedProviders.split(","));
             for (String provider : ((HashMap) this.mRealProviders.clone()).keySet()) {
-                if (!provider.equals("passive") && !provider.equals("fused") && providerList.contains(provider)) {
-                    Binder.restoreCallingIdentity(identity);
-                    return true;
+                if (!provider.equals("passive")) {
+                    if (!provider.equals("fused")) {
+                        if (providerList.contains(provider)) {
+                            Binder.restoreCallingIdentity(identity);
+                            return true;
+                        }
+                    }
                 }
             }
             Binder.restoreCallingIdentity(identity);
@@ -3280,7 +3290,7 @@ public class LocationManagerService extends AbsLocationManagerService {
         return containsKey;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0046, code:
+    /* JADX WARNING: Missing block: B:22:0x0046, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3537,7 +3547,7 @@ public class LocationManagerService extends AbsLocationManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002a, code:
+    /* JADX WARNING: Missing block: B:14:0x002a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

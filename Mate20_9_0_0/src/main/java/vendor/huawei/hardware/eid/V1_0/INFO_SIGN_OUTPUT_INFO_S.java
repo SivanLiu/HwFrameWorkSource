@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public final class INFO_SIGN_OUTPUT_INFO_S {
     public int infoLen;
-    public final byte[] signInfo = new byte[BUFF_LEN_E.OUTPUT_MAX_TRANSPOT_LEN];
+    public final byte[] signInfo = new byte[163840];
 
     public final boolean equals(Object otherObject) {
         if (this == otherObject) {
@@ -60,7 +60,7 @@ public final class INFO_SIGN_OUTPUT_INFO_S {
 
     public final void readEmbeddedFromParcel(HwParcel parcel, HwBlob _hidl_blob, long _hidl_offset) {
         this.infoLen = _hidl_blob.getInt32(0 + _hidl_offset);
-        _hidl_blob.copyToInt8Array(4 + _hidl_offset, this.signInfo, BUFF_LEN_E.OUTPUT_MAX_TRANSPOT_LEN);
+        _hidl_blob.copyToInt8Array(4 + _hidl_offset, this.signInfo, 163840);
     }
 
     public final void writeToParcel(HwParcel parcel) {

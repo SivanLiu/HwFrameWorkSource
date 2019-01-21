@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -58,7 +57,7 @@ public class X509V2AttributeCertificate implements X509AttributeCertificate {
         if (extensions == null) {
             return null;
         }
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         Enumeration oids = extensions.oids();
         while (oids.hasMoreElements()) {
             ASN1ObjectIdentifier aSN1ObjectIdentifier = (ASN1ObjectIdentifier) oids.nextElement();
@@ -126,7 +125,7 @@ public class X509V2AttributeCertificate implements X509AttributeCertificate {
 
     public X509Attribute[] getAttributes(String str) {
         ASN1Sequence attributes = this.cert.getAcinfo().getAttributes();
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (int i = 0; i != attributes.size(); i++) {
             X509Attribute x509Attribute = new X509Attribute(attributes.getObjectAt(i));
             if (x509Attribute.getOID().equals(str)) {

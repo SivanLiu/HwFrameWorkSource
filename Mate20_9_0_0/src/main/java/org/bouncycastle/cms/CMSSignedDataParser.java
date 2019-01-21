@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -52,12 +51,12 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:31:0x0096 in {10, 12, 18, 19, 23, 24, 26, 28, 30, 34} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -81,23 +80,18 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
         r7 = r7.getDigestAlgorithms();	 Catch:{ IOException -> 0x0097 }
         r0 = new java.util.HashSet;	 Catch:{ IOException -> 0x0097 }
         r0.<init>();	 Catch:{ IOException -> 0x0097 }
-    L_0x0025:
         r1 = r7.readObject();	 Catch:{ IOException -> 0x0097 }
         if (r1 == 0) goto L_0x0044;	 Catch:{ IOException -> 0x0097 }
-    L_0x002b:
         r1 = org.bouncycastle.asn1.x509.AlgorithmIdentifier.getInstance(r1);	 Catch:{ IOException -> 0x0097 }
         r0.add(r1);	 Catch:{ IOException -> 0x0097 }
         r2 = r5.get(r1);	 Catch:{ OperatorCreationException -> 0x0042 }
         if (r2 == 0) goto L_0x0025;	 Catch:{ OperatorCreationException -> 0x0042 }
-    L_0x0038:
         r3 = r4.digests;	 Catch:{ OperatorCreationException -> 0x0042 }
         r1 = r1.getAlgorithm();	 Catch:{ OperatorCreationException -> 0x0042 }
         r3.put(r1, r2);	 Catch:{ OperatorCreationException -> 0x0042 }
         goto L_0x0025;
-    L_0x0042:
         r1 = move-exception;
         goto L_0x0025;
-    L_0x0044:
         r5 = java.util.Collections.unmodifiableSet(r0);	 Catch:{ IOException -> 0x0097 }
         r4.digestAlgorithms = r5;	 Catch:{ IOException -> 0x0097 }
         r5 = r4._signedData;	 Catch:{ IOException -> 0x0097 }
@@ -106,7 +100,6 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
         r7 = r5.getContent(r7);	 Catch:{ IOException -> 0x0097 }
         r0 = r7 instanceof org.bouncycastle.asn1.ASN1OctetStringParser;	 Catch:{ IOException -> 0x0097 }
         if (r0 == 0) goto L_0x0073;	 Catch:{ IOException -> 0x0097 }
-    L_0x0059:
         r7 = (org.bouncycastle.asn1.ASN1OctetStringParser) r7;	 Catch:{ IOException -> 0x0097 }
         r0 = new org.bouncycastle.cms.CMSTypedStream;	 Catch:{ IOException -> 0x0097 }
         r1 = r5.getContentType();	 Catch:{ IOException -> 0x0097 }
@@ -114,37 +107,26 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
         r0.<init>(r1, r7);	 Catch:{ IOException -> 0x0097 }
         r7 = r4._signedContent;	 Catch:{ IOException -> 0x0097 }
         if (r7 != 0) goto L_0x006f;	 Catch:{ IOException -> 0x0097 }
-    L_0x006c:
         r4._signedContent = r0;	 Catch:{ IOException -> 0x0097 }
         goto L_0x0086;	 Catch:{ IOException -> 0x0097 }
-    L_0x006f:
         r0.drain();	 Catch:{ IOException -> 0x0097 }
         goto L_0x0086;	 Catch:{ IOException -> 0x0097 }
-    L_0x0073:
         if (r7 == 0) goto L_0x0086;	 Catch:{ IOException -> 0x0097 }
-    L_0x0075:
         r0 = new org.bouncycastle.cms.PKCS7TypedStream;	 Catch:{ IOException -> 0x0097 }
         r1 = r5.getContentType();	 Catch:{ IOException -> 0x0097 }
         r0.<init>(r1, r7);	 Catch:{ IOException -> 0x0097 }
         r7 = r4._signedContent;	 Catch:{ IOException -> 0x0097 }
         if (r7 != 0) goto L_0x0083;	 Catch:{ IOException -> 0x0097 }
-    L_0x0082:
         goto L_0x006c;	 Catch:{ IOException -> 0x0097 }
-    L_0x0083:
         r0.drain();	 Catch:{ IOException -> 0x0097 }
-    L_0x0086:
         if (r6 != 0) goto L_0x008f;	 Catch:{ IOException -> 0x0097 }
-    L_0x0088:
         r5 = r5.getContentType();	 Catch:{ IOException -> 0x0097 }
-    L_0x008c:
         r4._signedContentType = r5;	 Catch:{ IOException -> 0x0097 }
         return;	 Catch:{ IOException -> 0x0097 }
-    L_0x008f:
         r5 = r4._signedContent;	 Catch:{ IOException -> 0x0097 }
         r5 = r5.getContentType();	 Catch:{ IOException -> 0x0097 }
         goto L_0x008c;
         return;
-    L_0x0097:
         r5 = move-exception;
         r6 = new org.bouncycastle.cms.CMSException;
         r7 = new java.lang.StringBuilder;
@@ -191,14 +173,14 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
             try {
                 this._certSet = getASN1Set(this._signedData.getCertificates());
                 this._crlSet = getASN1Set(this._signedData.getCrls());
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new CMSException("problem parsing cert/crl sets", e);
             }
         }
     }
 
     public static OutputStream replaceCertificatesAndCRLs(InputStream inputStream, Store store, Store store2, Store store3, OutputStream outputStream) throws CMSException, IOException {
-        ASN1Encodable createBerSetFromList;
+        ASN1Set createBerSetFromList;
         SignedDataParser instance = SignedDataParser.getInstance(new ContentInfoParser((ASN1SequenceParser) new ASN1StreamParser(inputStream).readObject()).getContent(16));
         BERSequenceGenerator bERSequenceGenerator = new BERSequenceGenerator(outputStream);
         bERSequenceGenerator.addObject(CMSObjectIdentifiers.signedData);
@@ -213,7 +195,7 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
         getASN1Set(instance.getCertificates());
         getASN1Set(instance.getCrls());
         if (!(store == null && store3 == null)) {
-            List arrayList = new ArrayList();
+            ArrayList arrayList = new ArrayList();
             if (store != null) {
                 arrayList.addAll(CMSUtils.getCertificatesFromStore(store));
             }
@@ -241,7 +223,7 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
         SignedDataParser instance = SignedDataParser.getInstance(new ContentInfoParser((ASN1SequenceParser) new ASN1StreamParser(inputStream).readObject()).getContent(16));
         BERSequenceGenerator bERSequenceGenerator = new BERSequenceGenerator(outputStream);
         bERSequenceGenerator.addObject(CMSObjectIdentifiers.signedData);
-        ASN1Generator bERSequenceGenerator2 = new BERSequenceGenerator(bERSequenceGenerator.getRawOutputStream(), 0, true);
+        BERSequenceGenerator bERSequenceGenerator2 = new BERSequenceGenerator(bERSequenceGenerator.getRawOutputStream(), 0, true);
         bERSequenceGenerator2.addObject(instance.getVersion());
         instance.getDigestAlgorithms().toASN1Primitive();
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
@@ -267,7 +249,7 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
     }
 
     private static void writeSetToGeneratorTagged(ASN1Generator aSN1Generator, ASN1SetParser aSN1SetParser, int i) throws IOException {
-        ASN1Encodable aSN1Set = getASN1Set(aSN1SetParser);
+        ASN1Set aSN1Set = getASN1Set(aSN1SetParser);
         if (aSN1Set != null) {
             OutputStream rawOutputStream;
             byte[] encoded;
@@ -321,7 +303,7 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
         if (this._signerInfoStore == null) {
             populateCertCrlSets();
             Collection arrayList = new ArrayList();
-            Map hashMap = new HashMap();
+            HashMap hashMap = new HashMap();
             for (Object next : this.digests.keySet()) {
                 hashMap.put(next, ((DigestCalculator) this.digests.get(next)).getDigest());
             }
@@ -336,7 +318,7 @@ public class CMSSignedDataParser extends CMSContentInfoParser {
                     arrayList.add(new SignerInformation(instance, this._signedContentType, null, (byte[]) hashMap.get(instance.getDigestAlgorithm().getAlgorithm())));
                 }
                 this._signerInfoStore = new SignerInformationStore(arrayList);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("io exception: ");
                 stringBuilder.append(e.getMessage());

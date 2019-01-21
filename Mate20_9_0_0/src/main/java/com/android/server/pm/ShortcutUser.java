@@ -267,15 +267,18 @@ class ShortcutUser {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00b5 A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x00a7 A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x009e A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00b5 A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x00a7 A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x009e A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00b5 A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x00a7 A:{Catch:{ RuntimeException -> 0x00c5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x009e A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009d A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00b5 A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x00a7 A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009e A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009d A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00b5 A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x00a7 A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009e A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x009d A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00b5 A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x00a7 A:{Catch:{ RuntimeException -> 0x00c5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x009e A:{Catch:{ RuntimeException -> 0x00c5 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static ShortcutUser loadFromXml(ShortcutService s, XmlPullParser parser, int userId, boolean fromBackup) throws IOException, XmlPullParserException, InvalidFileFormatException {
         ShortcutService shortcutService = s;
@@ -312,6 +315,8 @@ class ShortcutUser {
                                         break;
                                     case 2:
                                         break;
+                                    default:
+                                        break;
                                 }
                             }
                         } else if (next == -1146595445) {
@@ -324,30 +329,36 @@ class ShortcutUser {
                                         break;
                                     case 2:
                                         break;
+                                    default:
+                                        break;
                                 }
                             }
-                        } else if (next == -807062458 && tag.equals("package")) {
-                            obj = 1;
-                            switch (obj) {
-                                case null:
-                                    ret.mLastKnownLauncher = ShortcutService.parseComponentNameAttribute(xmlPullParser, ATTR_VALUE);
-                                    continue;
-                                    continue;
-                                    continue;
-                                    continue;
-                                case 1:
-                                    ShortcutPackage shortcuts = ShortcutPackage.loadFromXml(shortcutService, ret, xmlPullParser, z);
-                                    ret.mPackages.put(shortcuts.getPackageName(), shortcuts);
-                                    continue;
-                                    continue;
-                                    continue;
-                                    continue;
-                                case 2:
-                                    ret.addLauncher(ShortcutLauncher.loadFromXml(xmlPullParser, ret, i, z));
-                                    continue;
-                                    continue;
-                                    continue;
-                                    continue;
+                        } else if (next == -807062458) {
+                            if (tag.equals("package")) {
+                                obj = 1;
+                                switch (obj) {
+                                    case null:
+                                        ret.mLastKnownLauncher = ShortcutService.parseComponentNameAttribute(xmlPullParser, ATTR_VALUE);
+                                        continue;
+                                        continue;
+                                        continue;
+                                        continue;
+                                    case 1:
+                                        ShortcutPackage shortcuts = ShortcutPackage.loadFromXml(shortcutService, ret, xmlPullParser, z);
+                                        ret.mPackages.put(shortcuts.getPackageName(), shortcuts);
+                                        continue;
+                                        continue;
+                                        continue;
+                                        continue;
+                                    case 2:
+                                        ret.addLauncher(ShortcutLauncher.loadFromXml(xmlPullParser, ret, i, z));
+                                        continue;
+                                        continue;
+                                        continue;
+                                        continue;
+                                    default:
+                                        break;
+                                }
                             }
                         }
                         obj = -1;
@@ -357,6 +368,8 @@ class ShortcutUser {
                             case 1:
                                 break;
                             case 2:
+                                break;
+                            default:
                                 break;
                         }
                     }

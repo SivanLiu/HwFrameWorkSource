@@ -78,8 +78,8 @@ public class WifiNetworkNotifier {
         intent.addFlags(268435456);
         PendingIntent pi = PendingIntent.getActivityAsUser(this.mContext, 0, intent, 0, null, UserHandle.CURRENT);
         Resources resource = Resources.getSystem();
-        CharSequence title = resource.getText(33686197);
-        CharSequence message = resource.getText(33686196);
+        CharSequence title = resource.getText(33686200);
+        CharSequence message = resource.getText(33686199);
         Builder builder = new Builder(this.mContext, SystemNotificationChannels.NETWORK_AVAILABLE);
         builder.setWhen(0).setSmallIcon(17303481).setContentTitle(title).setContentText(message).setStyle(new BigTextStyle().bigText(message)).setContentIntent(pi).setAutoCancel(true);
         if (this.mNetworkNotification == null) {

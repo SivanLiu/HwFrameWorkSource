@@ -75,12 +75,12 @@ public class X9Curve extends ASN1Object implements X9ObjectIdentifiers {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0018 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -93,20 +93,15 @@ public class X9Curve extends ASN1Object implements X9ObjectIdentifiers {
         r0 = r2.curve;
         r0 = org.bouncycastle.math.ec.ECAlgorithms.isFpCurve(r0);
         if (r0 == 0) goto L_0x000d;
-    L_0x0008:
         r0 = prime_field;
-    L_0x000a:
         r2.fieldIdentifier = r0;
         return;
-    L_0x000d:
         r0 = r2.curve;
         r0 = org.bouncycastle.math.ec.ECAlgorithms.isF2mCurve(r0);
         if (r0 == 0) goto L_0x0019;
-    L_0x0015:
         r0 = characteristic_two_field;
         goto L_0x000a;
         return;
-    L_0x0019:
         r0 = new java.lang.IllegalArgumentException;
         r1 = "This type of ECCurve is not implemented";
         r0.<init>(r1);

@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.crmf.jcajce;
 
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.Provider;
 import javax.crypto.Mac;
@@ -24,7 +25,7 @@ public class JcePKMACValuesCalculator implements PKMACValuesCalculator {
         try {
             this.mac.init(new SecretKeySpec(bArr, this.mac.getAlgorithm()));
             return this.mac.doFinal(bArr2);
-        } catch (Throwable e) {
+        } catch (GeneralSecurityException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("failure in setup: ");
             stringBuilder.append(e.getMessage());

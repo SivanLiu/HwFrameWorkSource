@@ -69,11 +69,11 @@ public class TlsServerProtocol extends TlsProtocol {
         return this.tlsServer;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0024, code:
+    /* JADX WARNING: Missing block: B:10:0x0024, code skipped:
             notifyClientCertificate(org.bouncycastle.crypto.tls.Certificate.EMPTY_CHAIN);
             r2.connection_state = (short) 10;
      */
-    /* JADX WARNING: Missing block: B:11:0x002b, code:
+    /* JADX WARNING: Missing block: B:11:0x002b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -293,7 +293,7 @@ public class TlsServerProtocol extends TlsProtocol {
                 return;
             } catch (TlsFatalAlert e) {
                 throw e;
-            } catch (Throwable e2) {
+            } catch (Exception e2) {
                 throw new TlsFatalAlert((short) 51, e2);
             }
         }
@@ -362,20 +362,20 @@ public class TlsServerProtocol extends TlsProtocol {
     }
 
     protected void sendCertificateRequestMessage(CertificateRequest certificateRequest) throws IOException {
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 13);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 13);
         certificateRequest.encode(handshakeMessage);
         handshakeMessage.writeToRecordStream();
     }
 
     protected void sendCertificateStatusMessage(CertificateStatus certificateStatus) throws IOException {
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 22);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 22);
         certificateStatus.encode(handshakeMessage);
         handshakeMessage.writeToRecordStream();
     }
 
     protected void sendNewSessionTicketMessage(NewSessionTicket newSessionTicket) throws IOException {
         if (newSessionTicket != null) {
-            OutputStream handshakeMessage = new HandshakeMessage(this, (short) 4);
+            HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 4);
             newSessionTicket.encode(handshakeMessage);
             handshakeMessage.writeToRecordStream();
             return;

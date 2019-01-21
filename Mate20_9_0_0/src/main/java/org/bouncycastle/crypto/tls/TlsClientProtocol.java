@@ -75,112 +75,112 @@ public class TlsClientProtocol extends TlsProtocol {
         return this.tlsClient;
     }
 
-    /* JADX WARNING: Missing block: B:39:0x0080, code:
+    /* JADX WARNING: Missing block: B:39:0x0080, code skipped:
             r7.keyExchange.skipServerCredentials();
             r7.authentication = null;
      */
-    /* JADX WARNING: Missing block: B:40:0x0087, code:
+    /* JADX WARNING: Missing block: B:40:0x0087, code skipped:
             r7.keyExchange.skipServerKeyExchange();
      */
-    /* JADX WARNING: Missing block: B:41:0x008c, code:
+    /* JADX WARNING: Missing block: B:41:0x008c, code skipped:
             org.bouncycastle.crypto.tls.TlsProtocol.assertEmpty(r9);
             r7.connection_state = (short) 8;
             r7.recordStream.getHandshakeHash().sealHashAlgorithms();
             r8 = r7.tlsClient.getClientSupplementalData();
      */
-    /* JADX WARNING: Missing block: B:42:0x00a2, code:
+    /* JADX WARNING: Missing block: B:42:0x00a2, code skipped:
             if (r8 == null) goto L_0x00a7;
      */
-    /* JADX WARNING: Missing block: B:43:0x00a4, code:
+    /* JADX WARNING: Missing block: B:43:0x00a4, code skipped:
             sendSupplementalDataMessage(r8);
      */
-    /* JADX WARNING: Missing block: B:44:0x00a7, code:
+    /* JADX WARNING: Missing block: B:44:0x00a7, code skipped:
             r7.connection_state = (short) 9;
      */
-    /* JADX WARNING: Missing block: B:45:0x00ad, code:
+    /* JADX WARNING: Missing block: B:45:0x00ad, code skipped:
             if (r7.certificateRequest != null) goto L_0x00b6;
      */
-    /* JADX WARNING: Missing block: B:46:0x00af, code:
+    /* JADX WARNING: Missing block: B:46:0x00af, code skipped:
             r7.keyExchange.skipClientCredentials();
             r8 = null;
      */
-    /* JADX WARNING: Missing block: B:47:0x00b6, code:
+    /* JADX WARNING: Missing block: B:47:0x00b6, code skipped:
             r8 = r7.authentication.getClientCredentials(r7.certificateRequest);
      */
-    /* JADX WARNING: Missing block: B:48:0x00be, code:
+    /* JADX WARNING: Missing block: B:48:0x00be, code skipped:
             if (r8 != null) goto L_0x00cb;
      */
-    /* JADX WARNING: Missing block: B:49:0x00c0, code:
+    /* JADX WARNING: Missing block: B:49:0x00c0, code skipped:
             r7.keyExchange.skipClientCredentials();
             r9 = org.bouncycastle.crypto.tls.Certificate.EMPTY_CHAIN;
      */
-    /* JADX WARNING: Missing block: B:50:0x00c7, code:
+    /* JADX WARNING: Missing block: B:50:0x00c7, code skipped:
             sendCertificateMessage(r9);
      */
-    /* JADX WARNING: Missing block: B:51:0x00cb, code:
+    /* JADX WARNING: Missing block: B:51:0x00cb, code skipped:
             r7.keyExchange.processClientCredentials(r8);
             r9 = r8.getCertificate();
      */
-    /* JADX WARNING: Missing block: B:52:0x00d5, code:
+    /* JADX WARNING: Missing block: B:52:0x00d5, code skipped:
             r7.connection_state = (short) 10;
             sendClientKeyExchangeMessage();
             r7.connection_state = (short) 11;
      */
-    /* JADX WARNING: Missing block: B:53:0x00e6, code:
+    /* JADX WARNING: Missing block: B:53:0x00e6, code skipped:
             if (org.bouncycastle.crypto.tls.TlsUtils.isSSL(getContext()) == false) goto L_0x00f1;
      */
-    /* JADX WARNING: Missing block: B:54:0x00e8, code:
+    /* JADX WARNING: Missing block: B:54:0x00e8, code skipped:
             org.bouncycastle.crypto.tls.TlsProtocol.establishMasterSecret(getContext(), r7.keyExchange);
      */
-    /* JADX WARNING: Missing block: B:55:0x00f1, code:
+    /* JADX WARNING: Missing block: B:55:0x00f1, code skipped:
             r9 = r7.recordStream.prepareToFinish();
             r7.securityParameters.sessionHash = org.bouncycastle.crypto.tls.TlsProtocol.getCurrentPRFHash(getContext(), r9, null);
      */
-    /* JADX WARNING: Missing block: B:56:0x010b, code:
+    /* JADX WARNING: Missing block: B:56:0x010b, code skipped:
             if (org.bouncycastle.crypto.tls.TlsUtils.isSSL(getContext()) != false) goto L_0x0116;
      */
-    /* JADX WARNING: Missing block: B:57:0x010d, code:
+    /* JADX WARNING: Missing block: B:57:0x010d, code skipped:
             org.bouncycastle.crypto.tls.TlsProtocol.establishMasterSecret(getContext(), r7.keyExchange);
      */
-    /* JADX WARNING: Missing block: B:58:0x0116, code:
+    /* JADX WARNING: Missing block: B:58:0x0116, code skipped:
             r7.recordStream.setPendingConnectionState(getPeer().getCompression(), getPeer().getCipher());
      */
-    /* JADX WARNING: Missing block: B:59:0x012b, code:
+    /* JADX WARNING: Missing block: B:59:0x012b, code skipped:
             if (r8 == null) goto L_0x015c;
      */
-    /* JADX WARNING: Missing block: B:61:0x012f, code:
+    /* JADX WARNING: Missing block: B:61:0x012f, code skipped:
             if ((r8 instanceof org.bouncycastle.crypto.tls.TlsSignerCredentials) == false) goto L_0x015c;
      */
-    /* JADX WARNING: Missing block: B:62:0x0131, code:
+    /* JADX WARNING: Missing block: B:62:0x0131, code skipped:
             r8 = (org.bouncycastle.crypto.tls.TlsSignerCredentials) r8;
             r0 = org.bouncycastle.crypto.tls.TlsUtils.getSignatureAndHashAlgorithm(getContext(), r8);
      */
-    /* JADX WARNING: Missing block: B:63:0x013b, code:
+    /* JADX WARNING: Missing block: B:63:0x013b, code skipped:
             if (r0 != null) goto L_0x0144;
      */
-    /* JADX WARNING: Missing block: B:64:0x013d, code:
+    /* JADX WARNING: Missing block: B:64:0x013d, code skipped:
             r9 = r7.securityParameters.getSessionHash();
      */
-    /* JADX WARNING: Missing block: B:65:0x0144, code:
+    /* JADX WARNING: Missing block: B:65:0x0144, code skipped:
             r9 = r9.getFinalHash(r0.getHash());
      */
-    /* JADX WARNING: Missing block: B:66:0x014c, code:
+    /* JADX WARNING: Missing block: B:66:0x014c, code skipped:
             sendCertificateVerifyMessage(new org.bouncycastle.crypto.tls.DigitallySigned(r0, r8.generateCertificateSignature(r9)));
             r7.connection_state = (short) 12;
      */
-    /* JADX WARNING: Missing block: B:67:0x015c, code:
+    /* JADX WARNING: Missing block: B:67:0x015c, code skipped:
             sendChangeCipherSpecMessage();
             sendFinishedMessage();
             r7.connection_state = (short) 13;
      */
-    /* JADX WARNING: Missing block: B:68:0x0164, code:
+    /* JADX WARNING: Missing block: B:68:0x0164, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:84:0x01b4, code:
+    /* JADX WARNING: Missing block: B:84:0x01b4, code skipped:
             r7.keyExchange.skipServerCredentials();
             r7.authentication = null;
      */
-    /* JADX WARNING: Missing block: B:85:0x01bb, code:
+    /* JADX WARNING: Missing block: B:85:0x01bb, code skipped:
             r7.keyExchange.processServerKeyExchange(r9);
             org.bouncycastle.crypto.tls.TlsProtocol.assertEmpty(r9);
             r8 = (short) 6;
@@ -449,7 +449,7 @@ public class TlsClientProtocol extends TlsProtocol {
     }
 
     protected void sendCertificateVerifyMessage(DigitallySigned digitallySigned) throws IOException {
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 15);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 15);
         digitallySigned.encode(handshakeMessage);
         handshakeMessage.writeToRecordStream();
     }
@@ -475,7 +475,7 @@ public class TlsClientProtocol extends TlsProtocol {
             bArr = TlsUtils.EMPTY_BYTES;
         }
         this.clientExtensions = this.tlsClient.getClientExtensions();
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 1);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 1);
         TlsUtils.writeVersion(clientVersion, handshakeMessage);
         handshakeMessage.write(this.securityParameters.getClientRandom());
         TlsUtils.writeOpaque8(bArr, handshakeMessage);
@@ -495,7 +495,7 @@ public class TlsClientProtocol extends TlsProtocol {
     }
 
     protected void sendClientKeyExchangeMessage() throws IOException {
-        OutputStream handshakeMessage = new HandshakeMessage(this, (short) 16);
+        HandshakeMessage handshakeMessage = new HandshakeMessage(this, (short) 16);
         this.keyExchange.generateClientKeyExchange(handshakeMessage);
         handshakeMessage.writeToRecordStream();
     }

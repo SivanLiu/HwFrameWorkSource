@@ -4,15 +4,16 @@ import java.io.InputStream;
 import java.net.Socket;
 
 public interface c {
-    void nb();
+    void di();
 
-    InputStream nc();
+    InputStream dj();
 
-    Socket ng();
+    Socket dn();
 
-    boolean nh();
+    /* renamed from: do */
+    boolean m0do();
 
-    boolean ni(Socket socket);
+    boolean dp(Socket socket);
 
-    boolean nl(byte[] bArr);
+    boolean ds(byte[] bArr);
 }

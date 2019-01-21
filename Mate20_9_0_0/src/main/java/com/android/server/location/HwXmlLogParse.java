@@ -285,8 +285,10 @@ public class HwXmlLogParse {
 
     private static void createStartTag(String tag) {
         try {
-            if (mXmlSerializer != null && !TextUtils.isEmpty(tag)) {
-                mXmlSerializer.startTag(null, tag);
+            if (mXmlSerializer != null) {
+                if (!TextUtils.isEmpty(tag)) {
+                    mXmlSerializer.startTag(null, tag);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "create start tag fail.");
@@ -295,9 +297,11 @@ public class HwXmlLogParse {
 
     private static void createStartTagHasAttr(String tag, String attr, String value) {
         try {
-            if (mXmlSerializer != null && !TextUtils.isEmpty(attr) && !TextUtils.isEmpty(value)) {
-                mXmlSerializer.startTag(null, tag);
-                mXmlSerializer.attribute(null, attr, value);
+            if (!(mXmlSerializer == null || TextUtils.isEmpty(attr))) {
+                if (!TextUtils.isEmpty(value)) {
+                    mXmlSerializer.startTag(null, tag);
+                    mXmlSerializer.attribute(null, attr, value);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "create start tag fail.");
@@ -306,8 +310,10 @@ public class HwXmlLogParse {
 
     private static void createEndTag(String tag) {
         try {
-            if (mXmlSerializer != null && !TextUtils.isEmpty(tag)) {
-                mXmlSerializer.endTag(null, tag);
+            if (mXmlSerializer != null) {
+                if (!TextUtils.isEmpty(tag)) {
+                    mXmlSerializer.endTag(null, tag);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "create end tag fail.");
@@ -316,13 +322,15 @@ public class HwXmlLogParse {
 
     private static void createNode(String tag, String[] attrs, String[] values) {
         try {
-            if (mXmlSerializer != null && attrs != null && values != null) {
-                mXmlSerializer.startTag(null, tag);
-                int len = attrs.length;
-                for (int i = 0; i < len; i++) {
-                    mXmlSerializer.attribute(null, attrs[i], values[i]);
+            if (!(mXmlSerializer == null || attrs == null)) {
+                if (values != null) {
+                    mXmlSerializer.startTag(null, tag);
+                    int len = attrs.length;
+                    for (int i = 0; i < len; i++) {
+                        mXmlSerializer.attribute(null, attrs[i], values[i]);
+                    }
+                    mXmlSerializer.endTag(null, tag);
                 }
-                mXmlSerializer.endTag(null, tag);
             }
         } catch (IOException e) {
             Log.e(TAG, "create node fail.");

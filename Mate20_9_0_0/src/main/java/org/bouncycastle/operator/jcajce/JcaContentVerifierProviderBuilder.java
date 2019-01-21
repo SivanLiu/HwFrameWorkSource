@@ -2,10 +2,12 @@ package org.bouncycastle.operator.jcajce;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -39,7 +41,7 @@ public class JcaContentVerifierProviderBuilder {
         public void write(int i) throws IOException {
             try {
                 this.sig.update((byte) i);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -50,7 +52,7 @@ public class JcaContentVerifierProviderBuilder {
         public void write(byte[] bArr) throws IOException {
             try {
                 this.sig.update(bArr);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -61,7 +63,7 @@ public class JcaContentVerifierProviderBuilder {
         public void write(byte[] bArr, int i, int i2) throws IOException {
             try {
                 this.sig.update(bArr, i, i2);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -93,7 +95,7 @@ public class JcaContentVerifierProviderBuilder {
         public boolean verify(byte[] bArr) {
             try {
                 return this.stream.verify(bArr);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception obtaining signature: ");
                 stringBuilder.append(e.getMessage());
@@ -132,7 +134,7 @@ public class JcaContentVerifierProviderBuilder {
                 } catch (Exception e) {
                     return verify;
                 }
-            } catch (Throwable e2) {
+            } catch (SignatureException e2) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception obtaining raw signature: ");
                 stringBuilder.append(e2.getMessage());
@@ -165,7 +167,7 @@ public class JcaContentVerifierProviderBuilder {
             Signature createSignature = this.helper.createSignature(algorithmIdentifier);
             createSignature.initVerify(publicKey);
             return new SignatureOutputStream(createSignature);
-        } catch (Throwable e) {
+        } catch (GeneralSecurityException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception on setup: ");
             stringBuilder.append(e);
@@ -193,7 +195,7 @@ public class JcaContentVerifierProviderBuilder {
 
     public ContentVerifierProvider build(final X509Certificate x509Certificate) throws OperatorCreationException {
         try {
-            final X509CertificateHolder jcaX509CertificateHolder = new JcaX509CertificateHolder(x509Certificate);
+            final JcaX509CertificateHolder jcaX509CertificateHolder = new JcaX509CertificateHolder(x509Certificate);
             return new ContentVerifierProvider() {
                 private SignatureOutputStream stream;
 
@@ -204,7 +206,7 @@ public class JcaContentVerifierProviderBuilder {
                         this.stream = new SignatureOutputStream(createSignature);
                         createSignature = JcaContentVerifierProviderBuilder.this.createRawSig(algorithmIdentifier, x509Certificate.getPublicKey());
                         return createSignature != null ? new RawSigVerifier(algorithmIdentifier, this.stream, createSignature) : new SigVerifier(algorithmIdentifier, this.stream);
-                    } catch (Throwable e) {
+                    } catch (GeneralSecurityException e) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("exception on setup: ");
                         stringBuilder.append(e);
@@ -220,7 +222,7 @@ public class JcaContentVerifierProviderBuilder {
                     return true;
                 }
             };
-        } catch (Throwable e) {
+        } catch (CertificateEncodingException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot process certificate: ");
             stringBuilder.append(e.getMessage());

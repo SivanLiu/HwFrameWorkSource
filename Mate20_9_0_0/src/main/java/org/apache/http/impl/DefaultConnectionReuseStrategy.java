@@ -53,7 +53,7 @@ public class DefaultConnectionReuseStrategy implements ConnectionReuseStrategy {
                     return false;
                 }
             }
-            return ver.lessEquals(HttpVersion.HTTP_1_0) ^ true;
+            return ver.lessEquals(HttpVersion.HTTP_1_0) ^ 1;
         } else {
             throw new IllegalArgumentException("HTTP context may not be null.");
         }

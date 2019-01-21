@@ -426,61 +426,11 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0055, code:
+    /* JADX WARNING: Missing block: B:8:0x0055, code skipped:
             if (r2 != null) goto L_0x0057;
      */
-    /* JADX WARNING: Missing block: B:9:0x0057, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0077, code:
+    /* JADX WARNING: Missing block: B:18:0x0093, code skipped:
             if (r2 == null) goto L_0x0096;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0093, code:
-            if (r2 == null) goto L_0x0096;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0096, code:
-            if (r3 == null) goto L_0x00f9;
-     */
-    /* JADX WARNING: Missing block: B:19:0x0098, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundBaseBySpaceNetwork, Date:");
-            r5.append(r4);
-            r5.append(", FreqLoc:");
-            r5.append(r8.curFreqLoc);
-            r5.append(", SPACEID:");
-            r5.append(r9);
-            r5.append(", SPACEIDMAIN:");
-            r5.append(r10);
-            r5.append(", modelVer:");
-            r5.append(r8.modelVerAllAp);
-            r5.append(com.android.server.hidata.wavemapping.cons.Constant.RESULT_SEPERATE);
-            r5.append(r8.modelVerMainAp);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r5.toString());
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundBaseBySpaceNetwork, netId:");
-            r5.append(r3);
-            r5.append(", ScrbId:");
-            r5.append(r8.ScrbId_print);
-            com.android.server.hidata.wavemapping.util.LogUtil.v(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:20:0x00f9, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundBaseBySpaceNetwork, NO DATA, sql:");
-            r5.append(r0);
-            r5.append(", FreqLoc:");
-            r5.append(r8.curFreqLoc);
-            r5.append(", SPACEID:");
-            r5.append(r9);
-            r5.append(", SPACEIDMAIN:");
-            r5.append(r10);
-            r5.append(", modelVer:");
-            r5.append(r8.modelVerAllAp);
-            r5.append(com.android.server.hidata.wavemapping.cons.Constant.RESULT_SEPERATE);
-            r5.append(r8.modelVerMainAp);
-            com.android.server.hidata.wavemapping.util.LogUtil.d(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x013b, code:
-            return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public String networkIdFoundBaseBySpaceNetwork(String spaceid_allAp, String spaceid_mainAp, String networkid, String networkname, String networkfreq) {
@@ -509,6 +459,48 @@ public class SpaceUserDAO {
             stringBuilder.append("networkIdFoundBaseBySpaceNetwork Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2;
+            if (netId != null) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("networkIdFoundBaseBySpaceNetwork, Date:");
+                stringBuilder2.append(date);
+                stringBuilder2.append(", FreqLoc:");
+                stringBuilder2.append(this.curFreqLoc);
+                stringBuilder2.append(", SPACEID:");
+                stringBuilder2.append(spaceid_allAp);
+                stringBuilder2.append(", SPACEIDMAIN:");
+                stringBuilder2.append(spaceid_mainAp);
+                stringBuilder2.append(", modelVer:");
+                stringBuilder2.append(this.modelVerAllAp);
+                stringBuilder2.append(Constant.RESULT_SEPERATE);
+                stringBuilder2.append(this.modelVerMainAp);
+                LogUtil.i(stringBuilder2.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("networkIdFoundBaseBySpaceNetwork, netId:");
+                stringBuilder2.append(netId);
+                stringBuilder2.append(", ScrbId:");
+                stringBuilder2.append(this.ScrbId_print);
+                LogUtil.v(stringBuilder2.toString());
+            } else {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("networkIdFoundBaseBySpaceNetwork, NO DATA, sql:");
+                stringBuilder2.append(sql);
+                stringBuilder2.append(", FreqLoc:");
+                stringBuilder2.append(this.curFreqLoc);
+                stringBuilder2.append(", SPACEID:");
+                stringBuilder2.append(spaceid_allAp);
+                stringBuilder2.append(", SPACEIDMAIN:");
+                stringBuilder2.append(spaceid_mainAp);
+                stringBuilder2.append(", modelVer:");
+                stringBuilder2.append(this.modelVerAllAp);
+                stringBuilder2.append(Constant.RESULT_SEPERATE);
+                stringBuilder2.append(this.modelVerMainAp);
+                LogUtil.d(stringBuilder2.toString());
+            }
+            return netId;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -516,65 +508,11 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0069, code:
+    /* JADX WARNING: Missing block: B:8:0x0069, code skipped:
             if (r2 != null) goto L_0x006b;
      */
-    /* JADX WARNING: Missing block: B:9:0x006b, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x008b, code:
+    /* JADX WARNING: Missing block: B:18:0x00a7, code skipped:
             if (r2 == null) goto L_0x00aa;
-     */
-    /* JADX WARNING: Missing block: B:17:0x00a7, code:
-            if (r2 == null) goto L_0x00aa;
-     */
-    /* JADX WARNING: Missing block: B:18:0x00aa, code:
-            if (r3 == null) goto L_0x011d;
-     */
-    /* JADX WARNING: Missing block: B:19:0x00ac, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundAppSpaceNetwork, appName");
-            r5.append(r9);
-            r5.append(", Date:");
-            r5.append(r4);
-            r5.append(", FreqLoc:");
-            r5.append(r8.curFreqLoc);
-            r5.append(", SPACEID:");
-            r5.append(r10);
-            r5.append(", SPACEIDMAIN:");
-            r5.append(r11);
-            r5.append(", modelVer:");
-            r5.append(r8.modelVerAllAp);
-            r5.append(com.android.server.hidata.wavemapping.cons.Constant.RESULT_SEPERATE);
-            r5.append(r8.modelVerMainAp);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r5.toString());
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundAppSpaceNetwork, appName");
-            r5.append(r9);
-            r5.append(", netId:");
-            r5.append(r3);
-            r5.append(", ScrbId:");
-            r5.append(r8.ScrbId_print);
-            com.android.server.hidata.wavemapping.util.LogUtil.v(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:20:0x011d, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundAppSpaceNetwork, NO DATA, sql:");
-            r5.append(r0);
-            r5.append(", FreqLoc:");
-            r5.append(r8.curFreqLoc);
-            r5.append(", SPACEID:");
-            r5.append(r10);
-            r5.append(", SPACEIDMAIN:");
-            r5.append(r11);
-            r5.append(", modelVer:");
-            r5.append(r8.modelVerAllAp);
-            r5.append(com.android.server.hidata.wavemapping.cons.Constant.RESULT_SEPERATE);
-            r5.append(r8.modelVerMainAp);
-            com.android.server.hidata.wavemapping.util.LogUtil.d(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:21:0x015f, code:
-            return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public String networkIdFoundAppSpaceNetwork(String appName, String spaceid_allAp, String spaceid_mainAp, String networkid, String networkname, String networkfreq) {
@@ -607,6 +545,52 @@ public class SpaceUserDAO {
             stringBuilder.append("networkIdFoundAppSpaceNetwork Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2;
+            if (netId != null) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("networkIdFoundAppSpaceNetwork, appName");
+                stringBuilder2.append(appName);
+                stringBuilder2.append(", Date:");
+                stringBuilder2.append(date);
+                stringBuilder2.append(", FreqLoc:");
+                stringBuilder2.append(this.curFreqLoc);
+                stringBuilder2.append(", SPACEID:");
+                stringBuilder2.append(spaceid_allAp);
+                stringBuilder2.append(", SPACEIDMAIN:");
+                stringBuilder2.append(spaceid_mainAp);
+                stringBuilder2.append(", modelVer:");
+                stringBuilder2.append(this.modelVerAllAp);
+                stringBuilder2.append(Constant.RESULT_SEPERATE);
+                stringBuilder2.append(this.modelVerMainAp);
+                LogUtil.i(stringBuilder2.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("networkIdFoundAppSpaceNetwork, appName");
+                stringBuilder2.append(appName);
+                stringBuilder2.append(", netId:");
+                stringBuilder2.append(netId);
+                stringBuilder2.append(", ScrbId:");
+                stringBuilder2.append(this.ScrbId_print);
+                LogUtil.v(stringBuilder2.toString());
+            } else {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("networkIdFoundAppSpaceNetwork, NO DATA, sql:");
+                stringBuilder2.append(sql);
+                stringBuilder2.append(", FreqLoc:");
+                stringBuilder2.append(this.curFreqLoc);
+                stringBuilder2.append(", SPACEID:");
+                stringBuilder2.append(spaceid_allAp);
+                stringBuilder2.append(", SPACEIDMAIN:");
+                stringBuilder2.append(spaceid_mainAp);
+                stringBuilder2.append(", modelVer:");
+                stringBuilder2.append(this.modelVerAllAp);
+                stringBuilder2.append(Constant.RESULT_SEPERATE);
+                stringBuilder2.append(this.modelVerMainAp);
+                LogUtil.d(stringBuilder2.toString());
+            }
+            return netId;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -676,30 +660,35 @@ public class SpaceUserDAO {
         return sql_title.toString();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:95:0x03ad  */
-    /* JADX WARNING: Removed duplicated region for block: B:95:0x03ad  */
-    /* JADX WARNING: Removed duplicated region for block: B:95:0x03ad  */
-    /* JADX WARNING: Missing block: B:79:0x034e, code:
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:88:0x0383 A:{Catch:{ IllegalArgumentException -> 0x0384, Exception -> 0x035f, all -> 0x0354, all -> 0x03aa }} */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x03ad  */
+    /* JADX WARNING: Missing block: B:79:0x034e, code skipped:
             if (r13 != null) goto L_0x0350;
      */
-    /* JADX WARNING: Missing block: B:80:0x0350, code:
-            r13.close();
-     */
-    /* JADX WARNING: Missing block: B:87:0x0381, code:
+    /* JADX WARNING: Missing block: B:92:0x03a6, code skipped:
             if (r13 == null) goto L_0x03a9;
-     */
-    /* JADX WARNING: Missing block: B:91:0x03a6, code:
-            if (r13 == null) goto L_0x03a9;
-     */
-    /* JADX WARNING: Missing block: B:92:0x03a9, code:
-            return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<String, SpaceExpInfo> findAllByTwoSpaces(String spaceid_allAp, String spaceid_mainAp) {
         IllegalArgumentException e;
+        HashMap<String, SpaceExpInfo> spaceInfoHashMap;
+        StringBuilder stringBuilder;
         Exception e2;
         Throwable th;
-        StringBuilder stringBuilder;
         String sql_common = "SPACEUSER_BASE.SPACEID,SPACEUSER_BASE.SPACEIDMAIN,SPACEUSER_BASE.NETWORKID,SPACEUSER_BASE.NETWORKNAME,SPACEUSER_BASE.NETWORKFREQ,SPACEUSER_BASE.NW_TYPE,";
         String sql_base = "SIGNAL_VALUE,USER_PREF_OPT_IN,USER_PREF_OPT_OUT,USER_PREF_STAY,USER_PREF_TOTAL_COUNT,POWER_CONSUMPTION,DURATION_CONNECTED";
         String sql_app_title = getAllAppTitleString();
@@ -717,7 +706,7 @@ public class SpaceUserDAO {
         String sql = stringBuilder2.toString();
         String[] args = new String[]{this.ScrbId, this.curFreqLoc, spaceid_allAp, spaceid_mainAp, this.modelVerAllAp, this.modelVerMainAp};
         Cursor cursor = null;
-        HashMap<String, SpaceExpInfo> spaceInfoHashMap = new HashMap();
+        HashMap<String, SpaceExpInfo> spaceInfoHashMap2 = new HashMap();
         String appName = "";
         stringBuilder2 = new StringBuilder();
         stringBuilder2.append(" findAllByTwoSpaces: sql_comm=SELECT ");
@@ -748,7 +737,6 @@ public class SpaceUserDAO {
         String sql_app_title2;
         String str;
         String str2;
-        HashMap<String, SpaceExpInfo> spaceInfoHashMap2;
         try {
             cursor = this.db.rawQuery(sql, args);
             while (cursor.moveToNext()) {
@@ -766,19 +754,35 @@ public class SpaceUserDAO {
                     sql_app_title2 = sql_app_title;
                     str = sql_app_join;
                     str2 = sql_condition;
-                    spaceInfoHashMap2 = spaceInfoHashMap;
+                    spaceInfoHashMap = spaceInfoHashMap2;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
                 } catch (Exception e4) {
                     e2 = e4;
                     sql_app_title2 = sql_app_title;
                     str = sql_app_join;
                     str2 = sql_condition;
-                    spaceInfoHashMap2 = spaceInfoHashMap;
+                    spaceInfoHashMap = spaceInfoHashMap2;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAllByTwoSpaces Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    return spaceInfoHashMap;
                 } catch (Throwable th2) {
                     th = th2;
                     sql_app_title2 = sql_app_title;
                     str = sql_app_join;
                     str2 = sql_condition;
-                    spaceInfoHashMap2 = spaceInfoHashMap;
+                    spaceInfoHashMap = spaceInfoHashMap2;
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    throw th;
                 }
                 try {
                     String mAppMap;
@@ -797,10 +801,26 @@ public class SpaceUserDAO {
                                 sql_base = sql_base.toString();
                             } catch (IllegalArgumentException e5) {
                                 e = e5;
+                                spaceInfoHashMap = spaceInfoHashMap2;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
+                                stringBuilder.append(e.getMessage());
+                                LogUtil.e(stringBuilder.toString());
                             } catch (Exception e6) {
                                 e2 = e6;
+                                spaceInfoHashMap = spaceInfoHashMap2;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("findAllByTwoSpaces Exception: ");
+                                stringBuilder.append(e2.getMessage());
+                                LogUtil.e(stringBuilder.toString());
+                                if (cursor != null) {
+                                }
+                                return spaceInfoHashMap;
                             } catch (Throwable th3) {
                                 th = th3;
+                                if (cursor != null) {
+                                }
+                                throw th;
                             }
                             try {
                                 StringBuilder stringBuilder3 = new StringBuilder();
@@ -828,7 +848,7 @@ public class SpaceUserDAO {
                             } catch (IllegalArgumentException e7) {
                                 e = e7;
                                 appName = sql_base;
-                                spaceInfoHashMap2 = spaceInfoHashMap;
+                                spaceInfoHashMap = spaceInfoHashMap2;
                                 stringBuilder = new StringBuilder();
                                 stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
                                 stringBuilder.append(e.getMessage());
@@ -836,16 +856,18 @@ public class SpaceUserDAO {
                             } catch (Exception e8) {
                                 e2 = e8;
                                 appName = sql_base;
-                                spaceInfoHashMap2 = spaceInfoHashMap;
+                                spaceInfoHashMap = spaceInfoHashMap2;
                                 stringBuilder = new StringBuilder();
                                 stringBuilder.append("findAllByTwoSpaces Exception: ");
                                 stringBuilder.append(e2.getMessage());
                                 LogUtil.e(stringBuilder.toString());
+                                if (cursor != null) {
+                                }
+                                return spaceInfoHashMap;
                             } catch (Throwable th4) {
                                 th = th4;
                                 appName = sql_base;
                                 if (cursor != null) {
-                                    cursor.close();
                                 }
                                 throw th;
                             }
@@ -853,75 +875,128 @@ public class SpaceUserDAO {
                             e = e9;
                             str = sql_app_join;
                             str2 = sql_condition;
-                            spaceInfoHashMap2 = spaceInfoHashMap;
+                            spaceInfoHashMap = spaceInfoHashMap2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
                         } catch (Exception e10) {
                             e2 = e10;
                             str = sql_app_join;
                             str2 = sql_condition;
-                            spaceInfoHashMap2 = spaceInfoHashMap;
+                            spaceInfoHashMap = spaceInfoHashMap2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAllByTwoSpaces Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                            if (cursor != null) {
+                            }
+                            return spaceInfoHashMap;
                         } catch (Throwable th5) {
                             th = th5;
                             str = sql_app_join;
                             str2 = sql_condition;
-                            spaceInfoHashMap2 = spaceInfoHashMap;
+                            spaceInfoHashMap = spaceInfoHashMap2;
+                            if (cursor != null) {
+                            }
+                            throw th;
                         }
                     }
                     mAppMap = sql_base;
                     str = sql_app_join;
                     try {
                         str2 = sql_condition;
+                    } catch (IllegalArgumentException e11) {
+                        e = e11;
+                        str2 = sql_condition;
+                        spaceInfoHashMap = spaceInfoHashMap2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e12) {
+                        e2 = e12;
+                        str2 = sql_condition;
+                        spaceInfoHashMap = spaceInfoHashMap2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAllByTwoSpaces Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                        if (cursor != null) {
+                        }
+                        return spaceInfoHashMap;
+                    } catch (Throwable th6) {
+                        th = th6;
+                        str2 = sql_condition;
+                        spaceInfoHashMap = spaceInfoHashMap2;
+                        if (cursor != null) {
+                        }
+                        throw th;
+                    }
+                    try {
+                        String spaceInfo = new SpaceExpInfo(spaceId, spaceIdmain, cursor.getString(cursor.getColumnIndexOrThrow("NETWORKID")), cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME")), cursor.getString(cursor.getColumnIndexOrThrow("NETWORKFREQ")), qoe_app_poor, qoe_app_good, duration_app, 0, 0, 0, cursor.getInt(cursor.getColumnIndexOrThrow("SIGNAL_VALUE")), (long) cursor.getInt(cursor.getColumnIndexOrThrow("POWER_CONSUMPTION")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_OPT_IN")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_OPT_OUT")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_STAY")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_TOTAL_COUNT")), cursor.getLong(cursor.getColumnIndexOrThrow("DURATION_CONNECTED")), cursor.getInt(cursor.getColumnIndexOrThrow("NW_TYPE")));
+                        sql_base = new StringBuilder();
+                        sql_base.append(" findAllByTwoSpaces:SPACEID:");
+                        sql_base.append(spaceInfo.getSpaceID());
+                        sql_base.append(",SPACEIDMAIN:");
+                        sql_base.append(spaceInfo.getSpaceIDMain());
+                        sql_base.append(",FreqLoc:");
+                        sql_base.append(this.curFreqLoc);
+                        sql_base.append(spaceInfo.toString());
+                        LogUtil.i(sql_base.toString());
+                        spaceInfoHashMap = spaceInfoHashMap2;
                         try {
-                            String spaceInfo = new SpaceExpInfo(spaceId, spaceIdmain, cursor.getString(cursor.getColumnIndexOrThrow("NETWORKID")), cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME")), cursor.getString(cursor.getColumnIndexOrThrow("NETWORKFREQ")), qoe_app_poor, qoe_app_good, duration_app, 0, 0, 0, cursor.getInt(cursor.getColumnIndexOrThrow("SIGNAL_VALUE")), (long) cursor.getInt(cursor.getColumnIndexOrThrow("POWER_CONSUMPTION")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_OPT_IN")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_OPT_OUT")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_STAY")), cursor.getInt(cursor.getColumnIndexOrThrow("USER_PREF_TOTAL_COUNT")), cursor.getLong(cursor.getColumnIndexOrThrow("DURATION_CONNECTED")), cursor.getInt(cursor.getColumnIndexOrThrow("NW_TYPE")));
-                            sql_base = new StringBuilder();
-                            sql_base.append(" findAllByTwoSpaces:SPACEID:");
-                            sql_base.append(spaceInfo.getSpaceID());
-                            sql_base.append(",SPACEIDMAIN:");
-                            sql_base.append(spaceInfo.getSpaceIDMain());
-                            sql_base.append(",FreqLoc:");
-                            sql_base.append(this.curFreqLoc);
-                            sql_base.append(spaceInfo.toString());
-                            LogUtil.i(sql_base.toString());
+                            spaceInfoHashMap.put(spaceInfo.getNetworkId(), spaceInfo);
                             spaceInfoHashMap2 = spaceInfoHashMap;
-                            try {
-                                spaceInfoHashMap2.put(spaceInfo.getNetworkId(), spaceInfo);
-                                spaceInfoHashMap = spaceInfoHashMap2;
-                                sql_base = sql_base2;
-                                sql_app_title = sql_app_title2;
-                                sql_app_join = str;
-                                sql_condition = str2;
-                            } catch (IllegalArgumentException e11) {
-                                e = e11;
-                            } catch (Exception e12) {
-                                e2 = e12;
-                            }
+                            sql_base = sql_base2;
+                            sql_app_title = sql_app_title2;
+                            sql_app_join = str;
+                            sql_condition = str2;
                         } catch (IllegalArgumentException e13) {
                             e = e13;
-                            spaceInfoHashMap2 = spaceInfoHashMap;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
                         } catch (Exception e14) {
                             e2 = e14;
-                            spaceInfoHashMap2 = spaceInfoHashMap;
-                        } catch (Throwable th6) {
-                            th = th6;
-                            spaceInfoHashMap2 = spaceInfoHashMap;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAllByTwoSpaces Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                            if (cursor != null) {
+                            }
+                            return spaceInfoHashMap;
                         }
                     } catch (IllegalArgumentException e15) {
                         e = e15;
-                        str2 = sql_condition;
-                        spaceInfoHashMap2 = spaceInfoHashMap;
+                        spaceInfoHashMap = spaceInfoHashMap2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
                     } catch (Exception e16) {
                         e2 = e16;
-                        str2 = sql_condition;
-                        spaceInfoHashMap2 = spaceInfoHashMap;
+                        spaceInfoHashMap = spaceInfoHashMap2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAllByTwoSpaces Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                        if (cursor != null) {
+                        }
+                        return spaceInfoHashMap;
                     } catch (Throwable th7) {
                         th = th7;
-                        str2 = sql_condition;
-                        spaceInfoHashMap2 = spaceInfoHashMap;
+                        spaceInfoHashMap = spaceInfoHashMap2;
+                        if (cursor != null) {
+                        }
+                        throw th;
                     }
                 } catch (IllegalArgumentException e17) {
                     e = e17;
                     str = sql_app_join;
                     str2 = sql_condition;
-                    spaceInfoHashMap2 = spaceInfoHashMap;
+                    spaceInfoHashMap = spaceInfoHashMap2;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
                     stringBuilder.append(e.getMessage());
@@ -930,16 +1005,19 @@ public class SpaceUserDAO {
                     e2 = e18;
                     str = sql_app_join;
                     str2 = sql_condition;
-                    spaceInfoHashMap2 = spaceInfoHashMap;
+                    spaceInfoHashMap = spaceInfoHashMap2;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("findAllByTwoSpaces Exception: ");
                     stringBuilder.append(e2.getMessage());
                     LogUtil.e(stringBuilder.toString());
+                    if (cursor != null) {
+                    }
+                    return spaceInfoHashMap;
                 } catch (Throwable th8) {
                     th = th8;
                     str = sql_app_join;
                     str2 = sql_condition;
-                    spaceInfoHashMap2 = spaceInfoHashMap;
+                    spaceInfoHashMap = spaceInfoHashMap2;
                     if (cursor != null) {
                     }
                     throw th;
@@ -948,14 +1026,14 @@ public class SpaceUserDAO {
             sql_app_title2 = sql_app_title;
             str = sql_app_join;
             str2 = sql_condition;
-            spaceInfoHashMap2 = spaceInfoHashMap;
+            spaceInfoHashMap = spaceInfoHashMap2;
         } catch (IllegalArgumentException e19) {
             e = e19;
             sql_base2 = sql_base;
             sql_app_title2 = sql_app_title;
             str = sql_app_join;
             str2 = sql_condition;
-            spaceInfoHashMap2 = spaceInfoHashMap;
+            spaceInfoHashMap = spaceInfoHashMap2;
             stringBuilder = new StringBuilder();
             stringBuilder.append("findAllByTwoSpaces IllegalArgumentException: ");
             stringBuilder.append(e.getMessage());
@@ -966,11 +1044,14 @@ public class SpaceUserDAO {
             sql_app_title2 = sql_app_title;
             str = sql_app_join;
             str2 = sql_condition;
-            spaceInfoHashMap2 = spaceInfoHashMap;
+            spaceInfoHashMap = spaceInfoHashMap2;
             stringBuilder = new StringBuilder();
             stringBuilder.append("findAllByTwoSpaces Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+            }
+            return spaceInfoHashMap;
         } catch (Throwable th9) {
             th = th9;
             if (cursor != null) {
@@ -979,51 +1060,16 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x003a, code:
+    /* JADX WARNING: Missing block: B:8:0x003a, code skipped:
             if (r3 != null) goto L_0x003c;
      */
-    /* JADX WARNING: Missing block: B:9:0x003c, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x005c, code:
+    /* JADX WARNING: Missing block: B:18:0x0078, code skipped:
             if (r3 == null) goto L_0x007b;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0078, code:
-            if (r3 == null) goto L_0x007b;
-     */
-    /* JADX WARNING: Missing block: B:19:0x007d, code:
-            if (30 >= r6) goto L_0x00cf;
-     */
-    /* JADX WARNING: Missing block: B:20:0x007f, code:
-            com.android.server.hidata.wavemapping.util.LogUtil.i("deleteOldRecords: current records exceed (30) days");
-     */
-    /* JADX WARNING: Missing block: B:22:?, code:
-            r11.db.execSQL("DELETE FROM SPACEUSER_BASE WHERE SCRBID = ? AND FREQLOCNAME = ? AND UPDATE_DATE <= ?", new java.lang.String[]{r11.ScrbId, r11.curFreqLoc, r7});
-     */
-    /* JADX WARNING: Missing block: B:23:0x009a, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:24:0x009b, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundBaseBySpaceNetwork Exception: ");
-            r5.append(r4.getMessage());
-            com.android.server.hidata.wavemapping.util.LogUtil.e(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:25:0x00b4, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:26:0x00b5, code:
-            r5 = new java.lang.StringBuilder();
-            r5.append("networkIdFoundBaseBySpaceNetwork IllegalArgumentException: ");
-            r5.append(r4.getMessage());
-            com.android.server.hidata.wavemapping.util.LogUtil.e(r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:27:0x00cf, code:
-            com.android.server.hidata.wavemapping.util.LogUtil.i("deleteOldRecords: keep data");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void deleteOldRecords() {
         StringBuilder stringBuilder;
+        StringBuilder stringBuilder2;
         String sql = "SELECT COUNT(DISTINCT UPDATE_DATE) RECORDCNT, MIN(UPDATE_DATE) EXPDATE FROM SPACEUSER_BASE WHERE SCRBID = ? AND FREQLOCNAME = ?";
         String[] args = new String[]{this.ScrbId, this.curFreqLoc};
         Cursor cursor = null;
@@ -1046,6 +1092,27 @@ public class SpaceUserDAO {
                 stringBuilder.append("networkIdFoundBaseBySpaceNetwork Exception: ");
                 stringBuilder.append(e2.getMessage());
                 LogUtil.e(stringBuilder.toString());
+                if (cursor != null) {
+                    cursor.close();
+                }
+                if (30 < recordsCnt) {
+                    LogUtil.i("deleteOldRecords: current records exceed (30) days");
+                    try {
+                        this.db.execSQL("DELETE FROM SPACEUSER_BASE WHERE SCRBID = ? AND FREQLOCNAME = ? AND UPDATE_DATE <= ?", new String[]{this.ScrbId, this.curFreqLoc, expireDate});
+                    } catch (IllegalArgumentException e3) {
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("networkIdFoundBaseBySpaceNetwork IllegalArgumentException: ");
+                        stringBuilder2.append(e3.getMessage());
+                        LogUtil.e(stringBuilder2.toString());
+                    } catch (Exception e4) {
+                        stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("networkIdFoundBaseBySpaceNetwork Exception: ");
+                        stringBuilder2.append(e4.getMessage());
+                        LogUtil.e(stringBuilder2.toString());
+                    }
+                } else {
+                    LogUtil.i("deleteOldRecords: keep data");
+                }
             } catch (Throwable th) {
                 if (cursor != null) {
                     cursor.close();
@@ -1054,28 +1121,28 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:67:0x02ac  */
-    /* JADX WARNING: Missing block: B:51:0x024a, code:
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0281 A:{Catch:{ IllegalArgumentException -> 0x0282, Exception -> 0x025c, all -> 0x0250, all -> 0x02a9 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x02ac  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0281 A:{Catch:{ IllegalArgumentException -> 0x0282, Exception -> 0x025c, all -> 0x0250, all -> 0x02a9 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x02ac  */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x02ac  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0281 A:{Catch:{ IllegalArgumentException -> 0x0282, Exception -> 0x025c, all -> 0x0250, all -> 0x02a9 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x02ac  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0281 A:{Catch:{ IllegalArgumentException -> 0x0282, Exception -> 0x025c, all -> 0x0250, all -> 0x02a9 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:68:0x02ac  */
+    /* JADX WARNING: Removed duplicated region for block: B:60:0x0281 A:{Catch:{ IllegalArgumentException -> 0x0282, Exception -> 0x025c, all -> 0x0250, all -> 0x02a9 }} */
+    /* JADX WARNING: Missing block: B:51:0x024a, code skipped:
             if (r15 != null) goto L_0x024c;
      */
-    /* JADX WARNING: Missing block: B:52:0x024c, code:
-            r15.close();
-     */
-    /* JADX WARNING: Missing block: B:59:0x027f, code:
-            if (r15 == null) goto L_0x02a8;
-     */
-    /* JADX WARNING: Missing block: B:63:0x02a5, code:
-            if (r15 == null) goto L_0x02a8;
-     */
-    /* JADX WARNING: Missing block: B:64:0x02a8, code:
-            return r14;
+    /* JADX WARNING: Missing block: B:64:0x02a5, code skipped:
+            if (r15 != null) goto L_0x024c;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<String, List> findAppQoEgroupBySpace(String appName, String spaceid_allAp, String spaceid_mainAp) {
         IllegalArgumentException e;
+        StringBuilder stringBuilder;
         Exception e2;
         Throwable th;
-        StringBuilder stringBuilder;
         String str = spaceid_allAp;
         String str2 = spaceid_mainAp;
         String title_idCount = "COUNT(\"NETWORKID\")";
@@ -1129,10 +1196,12 @@ public class SpaceUserDAO {
         String title_freqCount2;
         String title_duration2;
         String title_poor2;
-        String title_good2;
+        String str3;
         try {
             cursor = this.db.rawQuery(sql, args);
             while (cursor.moveToNext()) {
+                int appGood;
+                int appPoor;
                 List appQoe = new ArrayList();
                 int networktype = cursor.getInt(cursor.getColumnIndexOrThrow("NW_TYPE"));
                 int netIdCnt = cursor.getInt(cursor.getColumnIndexOrThrow(title_idCount));
@@ -1142,124 +1211,193 @@ public class SpaceUserDAO {
                     title_idCount = cursor.getInt(cursor.getColumnIndexOrThrow(title_duration));
                     title_freqCount2 = title_freqCount;
                     try {
-                        int appGood = cursor.getInt(cursor.getColumnIndexOrThrow(title_good));
+                        appGood = cursor.getInt(cursor.getColumnIndexOrThrow(title_good));
                         title_duration2 = title_duration;
                         try {
-                            int appPoor = cursor.getInt(cursor.getColumnIndexOrThrow(title_poor));
+                            appPoor = cursor.getInt(cursor.getColumnIndexOrThrow(title_poor));
                             title_poor2 = title_poor;
-                            try {
-                                int days = cursor.getInt(cursor.getColumnIndexOrThrow(title_dayCount));
-                                title_good2 = title_good;
-                                try {
-                                    appQoe.add(Integer.valueOf(networktype));
-                                    appQoe.add(Integer.valueOf(netIdCnt));
-                                    appQoe.add(Integer.valueOf(netFreqCnt));
-                                    appQoe.add(Integer.valueOf(title_idCount));
-                                    appQoe.add(Integer.valueOf(appGood));
-                                    appQoe.add(Integer.valueOf(appPoor));
-                                    appQoe.add(Integer.valueOf(0));
-                                    appQoe.add(Integer.valueOf(0));
-                                    appQoe.add(Integer.valueOf(days));
-                                    str = cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME"));
-                                    results.put(str, appQoe);
-                                    StringBuilder stringBuilder3 = new StringBuilder();
-                                    stringBuilder3.append(" networkname:");
-                                    stringBuilder3.append(str);
-                                    stringBuilder3.append(",type:");
-                                    stringBuilder3.append(networktype);
-                                    stringBuilder3.append(", appDuration:");
-                                    stringBuilder3.append(title_idCount);
-                                    stringBuilder3.append(",appPoor:");
-                                    stringBuilder3.append(appPoor);
-                                    stringBuilder3.append(",appGood:");
-                                    stringBuilder3.append(appGood);
-                                    stringBuilder3.append(", modelVer:");
-                                    stringBuilder3.append(this.modelVerAllAp);
-                                    stringBuilder3.append(Constant.RESULT_SEPERATE);
-                                    stringBuilder3.append(this.modelVerMainAp);
-                                    LogUtil.i(stringBuilder3.toString());
-                                    title_idCount = title_idCount2;
-                                    title_freqCount = title_freqCount2;
-                                    title_duration = title_duration2;
-                                    title_poor = title_poor2;
-                                    title_good = title_good2;
-                                    str = spaceid_allAp;
-                                    str2 = spaceid_mainAp;
-                                } catch (IllegalArgumentException e3) {
-                                    e = e3;
-                                } catch (Exception e4) {
-                                    e2 = e4;
-                                }
-                            } catch (IllegalArgumentException e5) {
-                                e = e5;
-                                title_good2 = title_good;
-                            } catch (Exception e6) {
-                                e2 = e6;
-                                title_good2 = title_good;
-                            } catch (Throwable th2) {
-                                th = th2;
-                                title_good2 = title_good;
+                        } catch (IllegalArgumentException e3) {
+                            e = e3;
+                            title_poor2 = title_poor;
+                            str3 = title_good;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoEgroupBySpace IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e4) {
+                            e2 = e4;
+                            title_poor2 = title_poor;
+                            str3 = title_good;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoEgroupBySpace Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                            if (cursor != null) {
+                                cursor.close();
                             }
-                        } catch (IllegalArgumentException e7) {
-                            e = e7;
+                            return results;
+                        } catch (Throwable th2) {
+                            th = th2;
                             title_poor2 = title_poor;
-                            title_good2 = title_good;
-                        } catch (Exception e8) {
-                            e2 = e8;
-                            title_poor2 = title_poor;
-                            title_good2 = title_good;
-                        } catch (Throwable th3) {
-                            th = th3;
-                            title_poor2 = title_poor;
-                            title_good2 = title_good;
+                            str3 = title_good;
+                            if (cursor != null) {
+                                cursor.close();
+                            }
+                            throw th;
                         }
+                    } catch (IllegalArgumentException e5) {
+                        e = e5;
+                        title_duration2 = title_duration;
+                        title_poor2 = title_poor;
+                        str3 = title_good;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoEgroupBySpace IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e6) {
+                        e2 = e6;
+                        title_duration2 = title_duration;
+                        title_poor2 = title_poor;
+                        str3 = title_good;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoEgroupBySpace Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                        if (cursor != null) {
+                        }
+                        return results;
+                    } catch (Throwable th3) {
+                        th = th3;
+                        title_duration2 = title_duration;
+                        title_poor2 = title_poor;
+                        str3 = title_good;
+                        if (cursor != null) {
+                        }
+                        throw th;
+                    }
+                } catch (IllegalArgumentException e7) {
+                    e = e7;
+                    title_freqCount2 = title_freqCount;
+                    title_duration2 = title_duration;
+                    title_poor2 = title_poor;
+                    str3 = title_good;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoEgroupBySpace IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Exception e8) {
+                    e2 = e8;
+                    title_freqCount2 = title_freqCount;
+                    title_duration2 = title_duration;
+                    title_poor2 = title_poor;
+                    str3 = title_good;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoEgroupBySpace Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                    if (cursor != null) {
+                    }
+                    return results;
+                } catch (Throwable th4) {
+                    th = th4;
+                    title_freqCount2 = title_freqCount;
+                    title_duration2 = title_duration;
+                    title_poor2 = title_poor;
+                    str3 = title_good;
+                    if (cursor != null) {
+                    }
+                    throw th;
+                }
+                try {
+                    int days = cursor.getInt(cursor.getColumnIndexOrThrow(title_dayCount));
+                    str3 = title_good;
+                    try {
+                        appQoe.add(Integer.valueOf(networktype));
+                        appQoe.add(Integer.valueOf(netIdCnt));
+                        appQoe.add(Integer.valueOf(netFreqCnt));
+                        appQoe.add(Integer.valueOf(title_idCount));
+                        appQoe.add(Integer.valueOf(appGood));
+                        appQoe.add(Integer.valueOf(appPoor));
+                        appQoe.add(Integer.valueOf(0));
+                        appQoe.add(Integer.valueOf(0));
+                        appQoe.add(Integer.valueOf(days));
+                        str = cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME"));
+                        results.put(str, appQoe);
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append(" networkname:");
+                        stringBuilder3.append(str);
+                        stringBuilder3.append(",type:");
+                        stringBuilder3.append(networktype);
+                        stringBuilder3.append(", appDuration:");
+                        stringBuilder3.append(title_idCount);
+                        stringBuilder3.append(",appPoor:");
+                        stringBuilder3.append(appPoor);
+                        stringBuilder3.append(",appGood:");
+                        stringBuilder3.append(appGood);
+                        stringBuilder3.append(", modelVer:");
+                        stringBuilder3.append(this.modelVerAllAp);
+                        stringBuilder3.append(Constant.RESULT_SEPERATE);
+                        stringBuilder3.append(this.modelVerMainAp);
+                        LogUtil.i(stringBuilder3.toString());
+                        title_idCount = title_idCount2;
+                        title_freqCount = title_freqCount2;
+                        title_duration = title_duration2;
+                        title_poor = title_poor2;
+                        title_good = str3;
+                        str = spaceid_allAp;
+                        str2 = spaceid_mainAp;
                     } catch (IllegalArgumentException e9) {
                         e = e9;
-                        title_duration2 = title_duration;
-                        title_poor2 = title_poor;
-                        title_good2 = title_good;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoEgroupBySpace IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
                     } catch (Exception e10) {
                         e2 = e10;
-                        title_duration2 = title_duration;
-                        title_poor2 = title_poor;
-                        title_good2 = title_good;
-                    } catch (Throwable th4) {
-                        th = th4;
-                        title_duration2 = title_duration;
-                        title_poor2 = title_poor;
-                        title_good2 = title_good;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoEgroupBySpace Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                        if (cursor != null) {
+                        }
+                        return results;
                     }
                 } catch (IllegalArgumentException e11) {
                     e = e11;
-                    title_freqCount2 = title_freqCount;
-                    title_duration2 = title_duration;
-                    title_poor2 = title_poor;
-                    title_good2 = title_good;
+                    str3 = title_good;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoEgroupBySpace IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
                 } catch (Exception e12) {
                     e2 = e12;
-                    title_freqCount2 = title_freqCount;
-                    title_duration2 = title_duration;
-                    title_poor2 = title_poor;
-                    title_good2 = title_good;
+                    str3 = title_good;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoEgroupBySpace Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                    if (cursor != null) {
+                    }
+                    return results;
                 } catch (Throwable th5) {
                     th = th5;
-                    title_freqCount2 = title_freqCount;
-                    title_duration2 = title_duration;
-                    title_poor2 = title_poor;
-                    title_good2 = title_good;
+                    str3 = title_good;
+                    if (cursor != null) {
+                    }
+                    throw th;
                 }
             }
             title_freqCount2 = title_freqCount;
             title_duration2 = title_duration;
             title_poor2 = title_poor;
-            title_good2 = title_good;
+            str3 = title_good;
         } catch (IllegalArgumentException e13) {
             e = e13;
             title_idCount2 = title_idCount;
             title_freqCount2 = title_freqCount;
             title_duration2 = title_duration;
             title_poor2 = title_poor;
-            title_good2 = title_good;
+            str3 = title_good;
             stringBuilder = new StringBuilder();
             stringBuilder.append("findAppQoEgroupBySpace IllegalArgumentException: ");
             stringBuilder.append(e.getMessage());
@@ -1270,11 +1408,14 @@ public class SpaceUserDAO {
             title_freqCount2 = title_freqCount;
             title_duration2 = title_duration;
             title_poor2 = title_poor;
-            title_good2 = title_good;
+            str3 = title_good;
             stringBuilder = new StringBuilder();
             stringBuilder.append("findAppQoEgroupBySpace Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+            }
+            return results;
         } catch (Throwable th6) {
             th = th6;
             if (cursor != null) {
@@ -1283,20 +1424,11 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0113, code:
+    /* JADX WARNING: Missing block: B:9:0x0113, code skipped:
             if (r7 != null) goto L_0x0115;
      */
-    /* JADX WARNING: Missing block: B:10:0x0115, code:
-            r7.close();
-     */
-    /* JADX WARNING: Missing block: B:15:0x0134, code:
+    /* JADX WARNING: Missing block: B:19:0x0150, code skipped:
             if (r7 == null) goto L_0x0153;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0150, code:
-            if (r7 == null) goto L_0x0153;
-     */
-    /* JADX WARNING: Missing block: B:19:0x0153, code:
-            return r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<String, Bundle> findUserPrefByTwoSpaces(String spaceid_allAp, String spaceid_mainAp) {
@@ -1362,6 +1494,10 @@ public class SpaceUserDAO {
             stringBuilder.append("findUserPrefByTwoSpaces Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return results;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -1369,20 +1505,11 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x00f8, code:
+    /* JADX WARNING: Missing block: B:9:0x00f8, code skipped:
             if (r3 != null) goto L_0x00fa;
      */
-    /* JADX WARNING: Missing block: B:10:0x00fa, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:15:0x0119, code:
+    /* JADX WARNING: Missing block: B:19:0x0135, code skipped:
             if (r3 == null) goto L_0x0138;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0135, code:
-            if (r3 == null) goto L_0x0138;
-     */
-    /* JADX WARNING: Missing block: B:19:0x0138, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<String, Bundle> findUserPrefByAllApSpaces(String spaceid_allAp) {
@@ -1444,6 +1571,10 @@ public class SpaceUserDAO {
             stringBuilder.append("findUserPrefByTwoSpaces Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return results;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -1476,22 +1607,31 @@ public class SpaceUserDAO {
         return coverage4G;
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:97:0x0340=Splitter:B:97:0x0340, B:103:0x0367=Splitter:B:103:0x0367} */
     /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
-    /* JADX WARNING: Missing block: B:99:0x0358, code:
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Removed duplicated region for block: B:110:0x0388  */
+    /* JADX WARNING: Missing block: B:99:0x0358, code skipped:
             if (r7 == null) goto L_0x0382;
      */
-    /* JADX WARNING: Missing block: B:100:0x035a, code:
+    /* JADX WARNING: Missing block: B:100:0x035a, code skipped:
             r7.close();
      */
-    /* JADX WARNING: Missing block: B:105:0x037f, code:
+    /* JADX WARNING: Missing block: B:105:0x037f, code skipped:
             if (r7 == null) goto L_0x0382;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<Integer, Bundle> findAppQoERecByFreqLoc(String freqlocation) {
         IllegalArgumentException e;
+        StringBuilder stringBuilder;
         Exception e2;
         Throwable th;
-        StringBuilder stringBuilder;
         String str = freqlocation;
         String sql = "";
         int count = 0;
@@ -1547,228 +1687,337 @@ public class SpaceUserDAO {
         LogUtil.i(stringBuilder3.toString());
         count = 0;
         HashMap<Integer, Float> mAppMap2;
-        ArrayList<String> argList2;
-        String sql3;
-        String[] args2;
-        int count2;
+        int i;
+        ArrayList<String> arrayList;
+        String str2;
+        String[] strArr;
         try {
             Cursor cursor2;
             Cursor cursor3;
             cursor = this.db.rawQuery(sql2, args);
             while (cursor.moveToNext()) {
+                String modelVerAllap;
+                String modelVerMainap;
+                int nwidcnt;
+                String networkname;
+                short nwfreqcnt;
+                int nwType;
+                short rec;
+                int app;
+                long duration;
+                int poorcount;
+                int goodcount;
+                Bundle statistics;
                 try {
                     count++;
                     try {
                         sql = cursor.getString(cursor.getColumnIndexOrThrow("SPACEID"));
-                        String modelVerAllap = cursor.getString(cursor.getColumnIndexOrThrow("MODEL_VER_ALLAP"));
+                        modelVerAllap = cursor.getString(cursor.getColumnIndexOrThrow("MODEL_VER_ALLAP"));
                         appTableName = cursor.getString(cursor.getColumnIndexOrThrow("SPACEIDMAIN"));
-                        String modelVerMainap = cursor.getString(cursor.getColumnIndexOrThrow("MODEL_VER_MAINAP"));
-                        int nwidcnt = cursor.getInt(cursor.getColumnIndexOrThrow("NWIDCNT"));
-                        String networkname = cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME"));
-                        short nwfreqcnt = cursor.getShort(cursor.getColumnIndexOrThrow("NWFREQCNT"));
-                        int nwType = cursor.getInt(cursor.getColumnIndexOrThrow("NW_TYPE"));
-                        short rec = cursor.getShort(cursor.getColumnIndexOrThrow("REC"));
+                        modelVerMainap = cursor.getString(cursor.getColumnIndexOrThrow("MODEL_VER_MAINAP"));
+                        nwidcnt = cursor.getInt(cursor.getColumnIndexOrThrow("NWIDCNT"));
+                        networkname = cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME"));
+                        nwfreqcnt = cursor.getShort(cursor.getColumnIndexOrThrow("NWFREQCNT"));
+                        nwType = cursor.getInt(cursor.getColumnIndexOrThrow("NW_TYPE"));
+                        rec = cursor.getShort(cursor.getColumnIndexOrThrow("REC"));
                         mAppMap2 = mAppMap;
+                    } catch (IllegalArgumentException e3) {
+                        e = e3;
+                        i = count;
+                        mAppMap2 = mAppMap;
+                        arrayList = argList;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e4) {
+                        e2 = e4;
+                        i = count;
+                        mAppMap2 = mAppMap;
+                        arrayList = argList;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
                         try {
-                            int app = cursor.getInt(cursor.getColumnIndexOrThrow("NAME"));
-                            argList2 = argList;
-                            try {
-                                long duration = cursor.getLong(cursor.getColumnIndexOrThrow("SUM(DURATION)"));
-                                int poorcount = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(POORCOUNT)"));
-                                sql3 = sql2;
-                                try {
-                                    int goodcount = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(GOODCOUNT)"));
-                                    args2 = args;
-                                    try {
-                                        Bundle statistics = new Bundle();
-                                        cursor2 = cursor;
-                                        try {
-                                            statistics.putString("spaceid", sql);
-                                            statistics.putString("modelVerAllap", modelVerAllap);
-                                            statistics.putString("spaceidmain", appTableName);
-                                            statistics.putString("modelVerMainap", modelVerMainap);
-                                            statistics.putInt("nwidcnt", nwidcnt);
-                                            statistics.putString("networkname", networkname);
-                                            statistics.putShort("nwfreqcnt", nwfreqcnt);
-                                            statistics.putInt("nwType", nwType);
-                                            statistics.putShort("rec", rec);
-                                            long duration2 = duration;
-                                            statistics.putLong("duration", duration2);
-                                            statistics.putInt("app", app);
-                                            statistics.putInt("poorcount", poorcount);
-                                            statistics.putInt("goodcount", goodcount);
-                                            results.put(Integer.valueOf(count), statistics);
-                                            StringBuilder stringBuilder4 = new StringBuilder();
-                                            count2 = count;
-                                            try {
-                                                stringBuilder4.append(" networkname:");
-                                                stringBuilder4.append(networkname);
-                                                stringBuilder4.append(",app:");
-                                                stringBuilder4.append(app);
-                                                stringBuilder4.append(",poorcount:");
-                                                stringBuilder4.append(poorcount);
-                                                stringBuilder4.append(",goodcount:");
-                                                stringBuilder4.append(goodcount);
-                                                stringBuilder4.append(",duration:");
-                                                stringBuilder4.append(duration2);
-                                                stringBuilder4.append(",spaceid:");
-                                                stringBuilder4.append(sql);
-                                                LogUtil.i(stringBuilder4.toString());
-                                                mAppMap = mAppMap2;
-                                                argList = argList2;
-                                                sql2 = sql3;
-                                                args = args2;
-                                                cursor = cursor2;
-                                                count = count2;
-                                                str = freqlocation;
-                                            } catch (IllegalArgumentException e3) {
-                                                e = e3;
-                                                cursor = cursor2;
-                                                count = count2;
-                                            } catch (Exception e4) {
-                                                e2 = e4;
-                                                cursor = cursor2;
-                                                count = count2;
-                                            } catch (Throwable th2) {
-                                                th = th2;
-                                                cursor = cursor2;
-                                            }
-                                        } catch (IllegalArgumentException e5) {
-                                            e = e5;
-                                            count2 = count;
-                                            cursor = cursor2;
-                                        } catch (Exception e6) {
-                                            e2 = e6;
-                                            count2 = count;
-                                            cursor = cursor2;
-                                        } catch (Throwable th3) {
-                                            th = th3;
-                                            count2 = count;
-                                            cursor = cursor2;
-                                        }
-                                    } catch (IllegalArgumentException e7) {
-                                        e = e7;
-                                        count2 = count;
-                                        cursor2 = cursor;
-                                    } catch (Exception e8) {
-                                        e2 = e8;
-                                        count2 = count;
-                                        cursor2 = cursor;
-                                    } catch (Throwable th4) {
-                                        th = th4;
-                                        count2 = count;
-                                        cursor2 = cursor;
-                                    }
-                                } catch (IllegalArgumentException e9) {
-                                    e = e9;
-                                    count2 = count;
-                                    cursor2 = cursor;
-                                    args2 = args;
-                                } catch (Exception e10) {
-                                    e2 = e10;
-                                    count2 = count;
-                                    cursor2 = cursor;
-                                    args2 = args;
-                                } catch (Throwable th5) {
-                                    th = th5;
-                                    count2 = count;
-                                    cursor2 = cursor;
-                                    args2 = args;
-                                }
-                            } catch (IllegalArgumentException e11) {
-                                e = e11;
-                                count2 = count;
-                                cursor2 = cursor;
-                                sql3 = sql2;
-                                args2 = args;
-                            } catch (Exception e12) {
-                                e2 = e12;
-                                count2 = count;
-                                cursor2 = cursor;
-                                sql3 = sql2;
-                                args2 = args;
-                            } catch (Throwable th6) {
-                                th = th6;
-                                count2 = count;
-                                cursor2 = cursor;
-                                sql3 = sql2;
-                                args2 = args;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th2) {
+                            th = th2;
+                            i = count;
+                            if (cursor != null) {
                             }
-                        } catch (IllegalArgumentException e13) {
-                            e = e13;
-                            count2 = count;
-                            argList2 = argList;
-                            cursor2 = cursor;
-                            sql3 = sql2;
-                            args2 = args;
-                        } catch (Exception e14) {
-                            e2 = e14;
-                            count2 = count;
-                            argList2 = argList;
-                            cursor2 = cursor;
-                            sql3 = sql2;
-                            args2 = args;
-                        } catch (Throwable th7) {
-                            th = th7;
-                            count2 = count;
-                            argList2 = argList;
-                            cursor2 = cursor;
-                            sql3 = sql2;
-                            args2 = args;
+                            throw th;
                         }
+                    } catch (Throwable th3) {
+                        th = th3;
+                        i = count;
+                        mAppMap2 = mAppMap;
+                        arrayList = argList;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        if (cursor != null) {
+                        }
+                        throw th;
+                    }
+                    try {
+                        app = cursor.getInt(cursor.getColumnIndexOrThrow("NAME"));
+                        arrayList = argList;
+                    } catch (IllegalArgumentException e5) {
+                        e = e5;
+                        i = count;
+                        arrayList = argList;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e6) {
+                        e2 = e6;
+                        i = count;
+                        arrayList = argList;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Throwable th4) {
+                        th = th4;
+                        i = count;
+                        arrayList = argList;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        if (cursor != null) {
+                        }
+                        throw th;
+                    }
+                    try {
+                        duration = cursor.getLong(cursor.getColumnIndexOrThrow("SUM(DURATION)"));
+                        poorcount = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(POORCOUNT)"));
+                        str2 = sql2;
+                        try {
+                            goodcount = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(GOODCOUNT)"));
+                            strArr = args;
+                        } catch (IllegalArgumentException e7) {
+                            e = e7;
+                            i = count;
+                            cursor2 = cursor;
+                            strArr = args;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e8) {
+                            e2 = e8;
+                            i = count;
+                            cursor2 = cursor;
+                            strArr = args;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th5) {
+                            th = th5;
+                            i = count;
+                            cursor2 = cursor;
+                            strArr = args;
+                            if (cursor != null) {
+                            }
+                            throw th;
+                        }
+                        try {
+                            statistics = new Bundle();
+                            cursor2 = cursor;
+                        } catch (IllegalArgumentException e9) {
+                            e = e9;
+                            i = count;
+                            cursor2 = cursor;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e10) {
+                            e2 = e10;
+                            i = count;
+                            cursor2 = cursor;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th6) {
+                            th = th6;
+                            i = count;
+                            cursor2 = cursor;
+                            if (cursor != null) {
+                            }
+                            throw th;
+                        }
+                    } catch (IllegalArgumentException e11) {
+                        e = e11;
+                        i = count;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e12) {
+                        e2 = e12;
+                        i = count;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Throwable th7) {
+                        th = th7;
+                        i = count;
+                        cursor2 = cursor;
+                        str2 = sql2;
+                        strArr = args;
+                        if (cursor != null) {
+                        }
+                        throw th;
+                    }
+                } catch (IllegalArgumentException e13) {
+                    e = e13;
+                    mAppMap2 = mAppMap;
+                    arrayList = argList;
+                    cursor3 = cursor;
+                    str2 = sql2;
+                    strArr = args;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Exception e14) {
+                    e2 = e14;
+                    mAppMap2 = mAppMap;
+                    arrayList = argList;
+                    cursor3 = cursor;
+                    str2 = sql2;
+                    strArr = args;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Throwable th8) {
+                    th = th8;
+                    mAppMap2 = mAppMap;
+                    arrayList = argList;
+                    cursor3 = cursor;
+                    str2 = sql2;
+                    strArr = args;
+                    i = count;
+                    if (cursor != null) {
+                    }
+                    throw th;
+                }
+                try {
+                    statistics.putString("spaceid", sql);
+                    statistics.putString("modelVerAllap", modelVerAllap);
+                    statistics.putString("spaceidmain", appTableName);
+                    statistics.putString("modelVerMainap", modelVerMainap);
+                    statistics.putInt("nwidcnt", nwidcnt);
+                    statistics.putString("networkname", networkname);
+                    statistics.putShort("nwfreqcnt", nwfreqcnt);
+                    statistics.putInt("nwType", nwType);
+                    statistics.putShort("rec", rec);
+                    long duration2 = duration;
+                    statistics.putLong("duration", duration2);
+                    statistics.putInt("app", app);
+                    statistics.putInt("poorcount", poorcount);
+                    statistics.putInt("goodcount", goodcount);
+                    results.put(Integer.valueOf(count), statistics);
+                    StringBuilder stringBuilder4 = new StringBuilder();
+                    i = count;
+                    try {
+                        stringBuilder4.append(" networkname:");
+                        stringBuilder4.append(networkname);
+                        stringBuilder4.append(",app:");
+                        stringBuilder4.append(app);
+                        stringBuilder4.append(",poorcount:");
+                        stringBuilder4.append(poorcount);
+                        stringBuilder4.append(",goodcount:");
+                        stringBuilder4.append(goodcount);
+                        stringBuilder4.append(",duration:");
+                        stringBuilder4.append(duration2);
+                        stringBuilder4.append(",spaceid:");
+                        stringBuilder4.append(sql);
+                        LogUtil.i(stringBuilder4.toString());
+                        mAppMap = mAppMap2;
+                        argList = arrayList;
+                        sql2 = str2;
+                        args = strArr;
+                        cursor = cursor2;
+                        count = i;
+                        str = freqlocation;
                     } catch (IllegalArgumentException e15) {
                         e = e15;
-                        count2 = count;
-                        mAppMap2 = mAppMap;
-                        argList2 = argList;
-                        cursor2 = cursor;
-                        sql3 = sql2;
-                        args2 = args;
+                        cursor = cursor2;
+                        count = i;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
                     } catch (Exception e16) {
                         e2 = e16;
-                        count2 = count;
-                        mAppMap2 = mAppMap;
-                        argList2 = argList;
-                        cursor2 = cursor;
-                        sql3 = sql2;
-                        args2 = args;
-                    } catch (Throwable th8) {
-                        th = th8;
-                        count2 = count;
-                        mAppMap2 = mAppMap;
-                        argList2 = argList;
-                        cursor2 = cursor;
-                        sql3 = sql2;
-                        args2 = args;
+                        cursor = cursor2;
+                        count = i;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Throwable th9) {
+                        th = th9;
+                        cursor = cursor2;
+                        if (cursor != null) {
+                        }
+                        throw th;
                     }
                 } catch (IllegalArgumentException e17) {
                     e = e17;
-                    mAppMap2 = mAppMap;
-                    argList2 = argList;
-                    cursor3 = cursor;
-                    sql3 = sql2;
-                    args2 = args;
+                    i = count;
+                    cursor = cursor2;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
                 } catch (Exception e18) {
                     e2 = e18;
-                    mAppMap2 = mAppMap;
-                    argList2 = argList;
-                    cursor3 = cursor;
-                    sql3 = sql2;
-                    args2 = args;
-                } catch (Throwable th9) {
-                    th = th9;
-                    mAppMap2 = mAppMap;
-                    argList2 = argList;
-                    cursor3 = cursor;
-                    sql3 = sql2;
-                    args2 = args;
-                    count2 = count;
+                    i = count;
+                    cursor = cursor2;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Throwable th10) {
+                    th = th10;
+                    i = count;
+                    cursor = cursor2;
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    throw th;
                 }
             }
-            argList2 = argList;
+            arrayList = argList;
             cursor2 = cursor;
-            sql3 = sql2;
-            args2 = args;
+            str2 = sql2;
+            strArr = args;
             if (cursor2 != null) {
                 cursor3 = cursor2;
                 cursor3.close();
@@ -1779,9 +2028,9 @@ public class SpaceUserDAO {
         } catch (IllegalArgumentException e19) {
             e = e19;
             mAppMap2 = mAppMap;
-            argList2 = argList;
-            sql3 = sql2;
-            args2 = args;
+            arrayList = argList;
+            str2 = sql2;
+            strArr = args;
             stringBuilder = new StringBuilder();
             stringBuilder.append("findAppQoERecByFreqLoc IllegalArgumentException: ");
             stringBuilder.append(e.getMessage());
@@ -1789,52 +2038,52 @@ public class SpaceUserDAO {
         } catch (Exception e20) {
             e2 = e20;
             mAppMap2 = mAppMap;
-            argList2 = argList;
-            sql3 = sql2;
-            args2 = args;
-            try {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
-                stringBuilder.append(e2.getMessage());
-                LogUtil.e(stringBuilder.toString());
-            } catch (Throwable th10) {
-                th = th10;
-                count2 = count;
-                if (cursor != null) {
-                }
-                throw th;
-            }
+            arrayList = argList;
+            str2 = sql2;
+            strArr = args;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("findAppQoERecByFreqLoc Exception: ");
+            stringBuilder.append(e2.getMessage());
+            LogUtil.e(stringBuilder.toString());
         } catch (Throwable th11) {
             th = th11;
             mAppMap2 = mAppMap;
-            argList2 = argList;
-            sql3 = sql2;
-            args2 = args;
-            count2 = 0;
+            arrayList = argList;
+            str2 = sql2;
+            strArr = args;
+            i = 0;
             if (cursor != null) {
-                cursor.close();
             }
             throw th;
         }
         return results;
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:79:0x0288=Splitter:B:79:0x0288, B:85:0x02ac=Splitter:B:85:0x02ac} */
     /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
-    /* JADX WARNING: Missing block: B:81:0x02a0, code:
-            if (r7 == null) goto L_0x02c7;
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x02cb  */
+    /* JADX WARNING: Missing block: B:81:0x02a0, code skipped:
+            if (r7 != null) goto L_0x02a2;
      */
-    /* JADX WARNING: Missing block: B:82:0x02a2, code:
+    /* JADX WARNING: Missing block: B:82:0x02a2, code skipped:
             r7.close();
      */
-    /* JADX WARNING: Missing block: B:87:0x02c4, code:
-            if (r7 == null) goto L_0x02c7;
+    /* JADX WARNING: Missing block: B:87:0x02c4, code skipped:
+            if (r7 != null) goto L_0x02a2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public HashMap<Integer, Bundle> findUserExpRecByFreqLoc(String freqlocation) {
         IllegalArgumentException e;
+        Cursor cursor;
+        StringBuilder stringBuilder;
         Exception e2;
         Throwable th;
-        StringBuilder stringBuilder;
         String str = freqlocation;
         String sql = "SELECT SPACEID, MODEL_VER_ALLAP, SPACEIDMAIN, MODEL_VER_MAINAP, COUNT(DISTINCT NETWORKID) NWIDCNT, NETWORKNAME, COUNT(DISTINCT NETWORKFREQ) NWFREQCNT, NW_TYPE, COUNT(DISTINCT UPDATE_DATE) REC,SUM(DURATION_CONNECTED), SUM(DATA_RX), SUM(DATA_TX), SUM(SIGNAL_VALUE*DURATION_CONNECTED)/SUM(DURATION_CONNECTED) AVG_SIGNAL, SUM(USER_PREF_OPT_IN), SUM(USER_PREF_OPT_OUT), SUM(USER_PREF_STAY), SUM(POWER_CONSUMPTION) FROM SPACEUSER_BASE WHERE SCRBID = ? AND FREQLOCNAME = ? AND (SPACEID != 0 OR SPACEIDMAIN != 0) GROUP BY NETWORKNAME, SPACEID, MODEL_VER_ALLAP, SPACEIDMAIN, MODEL_VER_MAINAP, NW_TYPE ORDER BY SUM(DURATION_CONNECTED) DESC";
         StringBuilder stringBuilder2 = new StringBuilder();
@@ -1846,7 +2095,7 @@ public class SpaceUserDAO {
         String[] args = new String[]{this.ScrbId, str};
         int count = 0;
         HashMap<Integer, Bundle> results = new HashMap();
-        Cursor cursor = null;
+        Cursor cursor2 = null;
         if (this.db == null) {
             return results;
         }
@@ -1854,195 +2103,297 @@ public class SpaceUserDAO {
         String sql2;
         String[] args2;
         try {
-            Cursor cursor2;
             Cursor cursor3;
-            cursor = this.db.rawQuery(sql, args);
-            while (cursor.moveToNext()) {
+            cursor2 = this.db.rawQuery(sql, args);
+            while (cursor2.moveToNext()) {
+                String networkname;
+                int nwType;
+                int user_pref_opt_in;
+                int user_pref_opt_out;
+                int user_pref_stay;
+                Bundle statistics;
+                long duration_connected;
                 try {
+                    String spaceid;
+                    String modelVerAllap;
+                    String spaceidmain;
+                    String modelVerMainap;
+                    int nwidcnt;
+                    short nwfreqcnt;
+                    short rec;
+                    long duration_connected2;
+                    long datarx;
+                    long datatx;
+                    short avgSignal;
+                    HashMap<Integer, Bundle> results3;
                     count++;
                     try {
-                        String spaceid = cursor.getString(cursor.getColumnIndexOrThrow("SPACEID"));
-                        String modelVerAllap = cursor.getString(cursor.getColumnIndexOrThrow("MODEL_VER_ALLAP"));
-                        String spaceidmain = cursor.getString(cursor.getColumnIndexOrThrow("SPACEIDMAIN"));
-                        String modelVerMainap = cursor.getString(cursor.getColumnIndexOrThrow("MODEL_VER_MAINAP"));
-                        int nwidcnt = cursor.getInt(cursor.getColumnIndexOrThrow("NWIDCNT"));
-                        String networkname = cursor.getString(cursor.getColumnIndexOrThrow("NETWORKNAME"));
-                        short nwfreqcnt = cursor.getShort(cursor.getColumnIndexOrThrow("NWFREQCNT"));
-                        int nwType = cursor.getInt(cursor.getColumnIndexOrThrow("NW_TYPE"));
-                        short rec = cursor.getShort(cursor.getColumnIndexOrThrow("REC"));
-                        long duration_connected = cursor.getLong(cursor.getColumnIndexOrThrow("SUM(DURATION_CONNECTED)"));
-                        long datarx = cursor.getLong(cursor.getColumnIndexOrThrow("SUM(DATA_RX)"));
-                        long datatx = cursor.getLong(cursor.getColumnIndexOrThrow("SUM(DATA_TX)"));
-                        short avgSignal = cursor.getShort(cursor.getColumnIndexOrThrow("AVG_SIGNAL"));
-                        int user_pref_opt_in = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(USER_PREF_OPT_IN)"));
+                        spaceid = cursor2.getString(cursor2.getColumnIndexOrThrow("SPACEID"));
+                        modelVerAllap = cursor2.getString(cursor2.getColumnIndexOrThrow("MODEL_VER_ALLAP"));
+                        spaceidmain = cursor2.getString(cursor2.getColumnIndexOrThrow("SPACEIDMAIN"));
+                        modelVerMainap = cursor2.getString(cursor2.getColumnIndexOrThrow("MODEL_VER_MAINAP"));
+                        nwidcnt = cursor2.getInt(cursor2.getColumnIndexOrThrow("NWIDCNT"));
+                        networkname = cursor2.getString(cursor2.getColumnIndexOrThrow("NETWORKNAME"));
+                        nwfreqcnt = cursor2.getShort(cursor2.getColumnIndexOrThrow("NWFREQCNT"));
+                        nwType = cursor2.getInt(cursor2.getColumnIndexOrThrow("NW_TYPE"));
+                        rec = cursor2.getShort(cursor2.getColumnIndexOrThrow("REC"));
+                        duration_connected2 = cursor2.getLong(cursor2.getColumnIndexOrThrow("SUM(DURATION_CONNECTED)"));
+                        datarx = cursor2.getLong(cursor2.getColumnIndexOrThrow("SUM(DATA_RX)"));
+                        datatx = cursor2.getLong(cursor2.getColumnIndexOrThrow("SUM(DATA_TX)"));
+                        avgSignal = cursor2.getShort(cursor2.getColumnIndexOrThrow("AVG_SIGNAL"));
+                        user_pref_opt_in = cursor2.getInt(cursor2.getColumnIndexOrThrow("SUM(USER_PREF_OPT_IN)"));
                         sql2 = sql;
                         try {
-                            int user_pref_opt_out = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(USER_PREF_OPT_OUT)"));
+                            user_pref_opt_out = cursor2.getInt(cursor2.getColumnIndexOrThrow("SUM(USER_PREF_OPT_OUT)"));
                             args2 = args;
+                        } catch (IllegalArgumentException e3) {
+                            e = e3;
+                            args2 = args;
+                            results2 = results;
+                            cursor = cursor2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e4) {
+                            e2 = e4;
+                            args2 = args;
+                            results2 = results;
+                            cursor = cursor2;
                             try {
-                                int user_pref_stay = cursor.getInt(cursor.getColumnIndexOrThrow("SUM(USER_PREF_STAY)"));
-                                HashMap<Integer, Bundle> results3 = results;
-                                try {
-                                    long powerconsumption = cursor.getLong(cursor.getColumnIndexOrThrow("SUM(POWER_CONSUMPTION)"));
-                                    Bundle statistics = new Bundle();
-                                    cursor2 = cursor;
-                                    try {
-                                        statistics.putString("spaceid", spaceid);
-                                        statistics.putString("modelVerAllap", modelVerAllap);
-                                        statistics.putString("spaceidmain", spaceidmain);
-                                        statistics.putString("modelVerMainap", modelVerMainap);
-                                        statistics.putInt("nwidcnt", nwidcnt);
-                                        statistics.putString("networkname", networkname);
-                                        statistics.putShort("nwfreqcnt", nwfreqcnt);
-                                        statistics.putInt("nwType", nwType);
-                                        statistics.putShort("rec", rec);
-                                        long duration_connected2 = duration_connected;
-                                        statistics.putLong("duration_connected", duration_connected2);
-                                        long datarx2 = datarx;
-                                        statistics.putLong("datarx", datarx2);
-                                        statistics.putLong("datatx", datatx);
-                                        statistics.putShort("avgSignal", avgSignal);
-                                        statistics.putInt("user_pref_opt_in", user_pref_opt_in);
-                                        statistics.putInt("user_pref_opt_out", user_pref_opt_out);
-                                        statistics.putInt("user_pref_stay", user_pref_stay);
-                                        long powerconsumption2 = powerconsumption;
-                                        statistics.putLong("powerconsumption", powerconsumption2);
-                                        results2 = results3;
-                                        try {
-                                            results2.put(Integer.valueOf(count), statistics);
-                                            stringBuilder2 = new StringBuilder();
-                                            stringBuilder2.append(" networkname:");
-                                            stringBuilder2.append(networkname);
-                                            stringBuilder2.append(",type:");
-                                            stringBuilder2.append(nwType);
-                                            stringBuilder2.append(",user_pref_opt_in:");
-                                            stringBuilder2.append(user_pref_opt_in);
-                                            stringBuilder2.append(",user_pref_opt_out:");
-                                            stringBuilder2.append(user_pref_opt_out);
-                                            stringBuilder2.append(",user_pref_stay:");
-                                            stringBuilder2.append(user_pref_stay);
-                                            stringBuilder2.append(",duration_connected:");
-                                            stringBuilder2.append(duration_connected2);
-                                            LogUtil.i(stringBuilder2.toString());
-                                            results = results2;
-                                            sql = sql2;
-                                            args = args2;
-                                            cursor = cursor2;
-                                            str = freqlocation;
-                                        } catch (IllegalArgumentException e3) {
-                                            e = e3;
-                                            cursor = cursor2;
-                                        } catch (Exception e4) {
-                                            e2 = e4;
-                                            cursor = cursor2;
-                                        } catch (Throwable th2) {
-                                            th = th2;
-                                            cursor = cursor2;
-                                        }
-                                    } catch (IllegalArgumentException e5) {
-                                        e = e5;
-                                        results2 = results3;
-                                        cursor = cursor2;
-                                    } catch (Exception e6) {
-                                        e2 = e6;
-                                        results2 = results3;
-                                        cursor = cursor2;
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        results2 = results3;
-                                        cursor = cursor2;
-                                    }
-                                } catch (IllegalArgumentException e7) {
-                                    e = e7;
-                                    cursor2 = cursor;
-                                    results2 = results3;
-                                } catch (Exception e8) {
-                                    e2 = e8;
-                                    cursor2 = cursor;
-                                    results2 = results3;
-                                } catch (Throwable th4) {
-                                    th = th4;
-                                    cursor2 = cursor;
-                                    results2 = results3;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                                stringBuilder.append(e2.getMessage());
+                                LogUtil.e(stringBuilder.toString());
+                            } catch (Throwable th2) {
+                                th = th2;
+                                if (cursor2 != null) {
                                 }
-                            } catch (IllegalArgumentException e9) {
-                                e = e9;
-                                results2 = results;
-                                cursor2 = cursor;
-                            } catch (Exception e10) {
-                                e2 = e10;
-                                results2 = results;
-                                cursor2 = cursor;
-                            } catch (Throwable th5) {
-                                th = th5;
-                                results2 = results;
-                                cursor2 = cursor;
+                                throw th;
                             }
-                        } catch (IllegalArgumentException e11) {
-                            e = e11;
+                        } catch (Throwable th3) {
+                            th = th3;
                             args2 = args;
                             results2 = results;
-                            cursor2 = cursor;
-                        } catch (Exception e12) {
-                            e2 = e12;
-                            args2 = args;
+                            cursor = cursor2;
+                            if (cursor2 != null) {
+                            }
+                            throw th;
+                        }
+                        try {
+                            user_pref_stay = cursor2.getInt(cursor2.getColumnIndexOrThrow("SUM(USER_PREF_STAY)"));
+                            results3 = results;
+                        } catch (IllegalArgumentException e5) {
+                            e = e5;
                             results2 = results;
+                            cursor = cursor2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e6) {
+                            e2 = e6;
+                            results2 = results;
+                            cursor = cursor2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th4) {
+                            th = th4;
+                            results2 = results;
+                            cursor = cursor2;
+                            if (cursor2 != null) {
+                            }
+                            throw th;
+                        }
+                    } catch (IllegalArgumentException e7) {
+                        e = e7;
+                        sql2 = sql;
+                        args2 = args;
+                        results2 = results;
+                        cursor = cursor2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e8) {
+                        e2 = e8;
+                        sql2 = sql;
+                        args2 = args;
+                        results2 = results;
+                        cursor = cursor2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Throwable th5) {
+                        th = th5;
+                        sql2 = sql;
+                        args2 = args;
+                        results2 = results;
+                        cursor = cursor2;
+                        if (cursor2 != null) {
+                        }
+                        throw th;
+                    }
+                    try {
+                        long powerconsumption = cursor2.getLong(cursor2.getColumnIndexOrThrow("SUM(POWER_CONSUMPTION)"));
+                        statistics = new Bundle();
+                        cursor = cursor2;
+                        try {
+                            statistics.putString("spaceid", spaceid);
+                            statistics.putString("modelVerAllap", modelVerAllap);
+                            statistics.putString("spaceidmain", spaceidmain);
+                            statistics.putString("modelVerMainap", modelVerMainap);
+                            statistics.putInt("nwidcnt", nwidcnt);
+                            statistics.putString("networkname", networkname);
+                            statistics.putShort("nwfreqcnt", nwfreqcnt);
+                            statistics.putInt("nwType", nwType);
+                            statistics.putShort("rec", rec);
+                            duration_connected = duration_connected2;
+                            statistics.putLong("duration_connected", duration_connected);
+                            long datarx2 = datarx;
+                            statistics.putLong("datarx", datarx2);
+                            statistics.putLong("datatx", datatx);
+                            statistics.putShort("avgSignal", avgSignal);
+                            statistics.putInt("user_pref_opt_in", user_pref_opt_in);
+                            statistics.putInt("user_pref_opt_out", user_pref_opt_out);
+                            statistics.putInt("user_pref_stay", user_pref_stay);
+                            long powerconsumption2 = powerconsumption;
+                            statistics.putLong("powerconsumption", powerconsumption2);
+                            results2 = results3;
+                        } catch (IllegalArgumentException e9) {
+                            e = e9;
+                            results2 = results3;
                             cursor2 = cursor;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e10) {
+                            e2 = e10;
+                            results2 = results3;
+                            cursor2 = cursor;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
                         } catch (Throwable th6) {
                             th = th6;
-                            args2 = args;
-                            results2 = results;
+                            results2 = results3;
                             cursor2 = cursor;
+                            if (cursor2 != null) {
+                            }
+                            throw th;
                         }
-                    } catch (IllegalArgumentException e13) {
-                        e = e13;
-                        sql2 = sql;
-                        args2 = args;
-                        results2 = results;
-                        cursor2 = cursor;
-                    } catch (Exception e14) {
-                        e2 = e14;
-                        sql2 = sql;
-                        args2 = args;
-                        results2 = results;
-                        cursor2 = cursor;
+                    } catch (IllegalArgumentException e11) {
+                        e = e11;
+                        cursor = cursor2;
+                        results2 = results3;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e12) {
+                        e2 = e12;
+                        cursor = cursor2;
+                        results2 = results3;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
                     } catch (Throwable th7) {
                         th = th7;
-                        sql2 = sql;
-                        args2 = args;
-                        results2 = results;
-                        cursor2 = cursor;
+                        cursor = cursor2;
+                        results2 = results3;
+                        if (cursor2 != null) {
+                        }
+                        throw th;
                     }
-                } catch (IllegalArgumentException e15) {
-                    e = e15;
+                } catch (IllegalArgumentException e13) {
+                    e = e13;
                     sql2 = sql;
                     args2 = args;
                     results2 = results;
-                    cursor3 = cursor;
-                } catch (Exception e16) {
-                    e2 = e16;
+                    cursor3 = cursor2;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Exception e14) {
+                    e2 = e14;
                     sql2 = sql;
                     args2 = args;
                     results2 = results;
-                    cursor3 = cursor;
+                    cursor3 = cursor2;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
                 } catch (Throwable th8) {
                     th = th8;
                     sql2 = sql;
                     args2 = args;
                     results2 = results;
-                    cursor3 = cursor;
+                    cursor3 = cursor2;
+                    if (cursor2 != null) {
+                    }
+                    throw th;
+                }
+                try {
+                    results2.put(Integer.valueOf(count), statistics);
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append(" networkname:");
+                    stringBuilder2.append(networkname);
+                    stringBuilder2.append(",type:");
+                    stringBuilder2.append(nwType);
+                    stringBuilder2.append(",user_pref_opt_in:");
+                    stringBuilder2.append(user_pref_opt_in);
+                    stringBuilder2.append(",user_pref_opt_out:");
+                    stringBuilder2.append(user_pref_opt_out);
+                    stringBuilder2.append(",user_pref_stay:");
+                    stringBuilder2.append(user_pref_stay);
+                    stringBuilder2.append(",duration_connected:");
+                    stringBuilder2.append(duration_connected);
+                    LogUtil.i(stringBuilder2.toString());
+                    results = results2;
+                    sql = sql2;
+                    args = args2;
+                    cursor2 = cursor;
+                    str = freqlocation;
+                } catch (IllegalArgumentException e15) {
+                    e = e15;
+                    cursor2 = cursor;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findUserPrefByFreqLoc IllegalArgumentException: ");
+                    stringBuilder.append(e.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Exception e16) {
+                    e2 = e16;
+                    cursor2 = cursor;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+                    stringBuilder.append(e2.getMessage());
+                    LogUtil.e(stringBuilder.toString());
+                } catch (Throwable th9) {
+                    th = th9;
+                    cursor2 = cursor;
+                    if (cursor2 != null) {
+                    }
+                    throw th;
                 }
             }
             args2 = args;
             results2 = results;
-            cursor2 = cursor;
-            if (cursor2 != null) {
-                cursor3 = cursor2;
+            cursor = cursor2;
+            if (cursor != null) {
+                cursor3 = cursor;
                 cursor3.close();
             } else {
-                cursor3 = cursor2;
+                cursor3 = cursor;
             }
-            cursor = cursor3;
+            cursor2 = cursor3;
         } catch (IllegalArgumentException e17) {
             e = e17;
             sql2 = sql;
@@ -2057,44 +2408,28 @@ public class SpaceUserDAO {
             sql2 = sql;
             args2 = args;
             results2 = results;
-            try {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("findUserPrefByFreqLoc Exception: ");
-                stringBuilder.append(e2.getMessage());
-                LogUtil.e(stringBuilder.toString());
-            } catch (Throwable th9) {
-                th = th9;
-                if (cursor != null) {
-                }
-                throw th;
-            }
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("findUserPrefByFreqLoc Exception: ");
+            stringBuilder.append(e2.getMessage());
+            LogUtil.e(stringBuilder.toString());
         } catch (Throwable th10) {
             th = th10;
             sql2 = sql;
             args2 = args;
             results2 = results;
-            if (cursor != null) {
-                cursor.close();
+            if (cursor2 != null) {
+                cursor2.close();
             }
             throw th;
         }
         return results2;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x00d6, code:
+    /* JADX WARNING: Missing block: B:9:0x00d6, code skipped:
             if (r8 != null) goto L_0x00d8;
      */
-    /* JADX WARNING: Missing block: B:10:0x00d8, code:
-            r8.close();
-     */
-    /* JADX WARNING: Missing block: B:15:0x00f7, code:
+    /* JADX WARNING: Missing block: B:19:0x0113, code skipped:
             if (r8 == null) goto L_0x0116;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0113, code:
-            if (r8 == null) goto L_0x0116;
-     */
-    /* JADX WARNING: Missing block: B:19:0x0116, code:
-            return r7;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public Bundle getUerPrefTotalCountDurationByAllApSpaces(String freqlocation, String spaceid, String modelVerAllAp) {
@@ -2150,6 +2485,10 @@ public class SpaceUserDAO {
             stringBuilder2.append("getUerPrefTotalCountDurationByAllApSpaces Exception: ");
             stringBuilder2.append(e2.getMessage());
             LogUtil.e(stringBuilder2.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return results;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -2157,20 +2496,11 @@ public class SpaceUserDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x00a8, code:
+    /* JADX WARNING: Missing block: B:9:0x00a8, code skipped:
             if (r1 != null) goto L_0x00aa;
      */
-    /* JADX WARNING: Missing block: B:10:0x00aa, code:
-            r1.close();
-     */
-    /* JADX WARNING: Missing block: B:15:0x00c9, code:
+    /* JADX WARNING: Missing block: B:19:0x00e5, code skipped:
             if (r1 == null) goto L_0x00e8;
-     */
-    /* JADX WARNING: Missing block: B:18:0x00e5, code:
-            if (r1 == null) goto L_0x00e8;
-     */
-    /* JADX WARNING: Missing block: B:19:0x00e8, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private Bundle queryCoverage(String sql, String[] args) {
@@ -2218,6 +2548,10 @@ public class SpaceUserDAO {
             stringBuilder.append("query4gCoverage Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return results;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();

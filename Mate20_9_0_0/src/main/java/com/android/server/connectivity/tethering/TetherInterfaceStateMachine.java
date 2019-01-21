@@ -591,17 +591,6 @@ public class TetherInterfaceStateMachine extends StateMachine {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x00ad A:{Splitter: B:28:0x00a7, ExcHandler: android.os.ServiceSpecificException (e android.os.ServiceSpecificException)} */
-    /* JADX WARNING: Missing block: B:31:0x00ae, code:
-            r7.mLog.e("Failed to update local DNS caching server");
-     */
-    /* JADX WARNING: Missing block: B:32:0x00b5, code:
-            if (r9 != null) goto L_0x00b7;
-     */
-    /* JADX WARNING: Missing block: B:33:0x00b7, code:
-            r9.clear();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void configureLocalIPv6Dns(HashSet<Inet6Address> deprecatedDnses, HashSet<Inet6Address> newDnses) {
         if (this.mNetd == null) {
             if (newDnses != null) {
@@ -645,7 +634,11 @@ public class TetherInterfaceStateMachine extends StateMachine {
         }
         try {
             this.mNetd.tetherApplyDnsInterfaces();
-        } catch (ServiceSpecificException e) {
+        } catch (RemoteException | ServiceSpecificException e) {
+            this.mLog.e("Failed to update local DNS caching server");
+            if (newDnses != null) {
+                newDnses.clear();
+            }
         }
     }
 

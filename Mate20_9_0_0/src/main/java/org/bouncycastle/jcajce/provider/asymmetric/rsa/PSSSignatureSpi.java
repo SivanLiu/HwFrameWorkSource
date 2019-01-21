@@ -50,7 +50,7 @@ public class PSSSignatureSpi extends SignatureSpi {
         }
 
         public int doFinal(byte[] bArr, int i) {
-            Object toByteArray = this.bOut.toByteArray();
+            byte[] toByteArray = this.bOut.toByteArray();
             if (this.oddTime) {
                 System.arraycopy(toByteArray, 0, bArr, i, toByteArray.length);
             } else {
@@ -195,12 +195,12 @@ public class PSSSignatureSpi extends SignatureSpi {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0011 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -212,14 +212,11 @@ public class PSSSignatureSpi extends SignatureSpi {
         r2 = this;
         r0 = r2.isRaw;
         if (r0 == 0) goto L_0x000e;
-    L_0x0004:
         r0 = new org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi$NullPssDigest;
         r1 = r2.mgfDigest;
         r0.<init>(r1);
-    L_0x000b:
         r2.contentDigest = r0;
         return;
-    L_0x000e:
         r0 = r2.mgfDigest;
         goto L_0x000b;
         return;

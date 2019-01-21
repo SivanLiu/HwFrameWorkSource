@@ -38,7 +38,7 @@ public class HwIntelligenceWiFiManager {
     }
 
     public static synchronized List<ScanResult> getWiFiProScanResultList() {
-        List<ScanResult> list;
+        List list;
         synchronized (HwIntelligenceWiFiManager.class) {
             list = mScanList;
         }

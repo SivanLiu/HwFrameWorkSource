@@ -2,6 +2,7 @@ package org.bouncycastle.crypto.tls;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 import org.bouncycastle.crypto.engines.RSABlindedEngine;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
@@ -23,7 +24,7 @@ public class TlsRSAUtils {
             }
             TlsUtils.writeOpaque16(processBlock, outputStream);
             return bArr;
-        } catch (Throwable e) {
+        } catch (InvalidCipherTextException e) {
             throw new TlsFatalAlert((short) 80, e);
         }
     }

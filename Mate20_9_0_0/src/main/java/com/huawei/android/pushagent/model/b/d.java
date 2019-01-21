@@ -1,48 +1,45 @@
 package com.huawei.android.pushagent.model.b;
 
+import android.content.Context;
 import android.text.TextUtils;
-import com.huawei.android.pushagent.a.a;
-import com.huawei.android.pushagent.utils.f.c;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.huawei.android.pushagent.datatype.http.server.TokenDelReq;
+import com.huawei.android.pushagent.datatype.http.server.TokenDelRsp;
+import com.huawei.android.pushagent.model.prefs.a;
+import org.json.JSONException;
 
-public class d {
-    private static d gz = new d();
-    private Map<String, Integer> gy = new HashMap();
+public class d extends b<TokenDelRsp> {
+    private TokenDelReq ea;
 
-    private d() {
+    public d(Context context, TokenDelReq tokenDelReq) {
+        super(context);
+        this.ea = tokenDelReq;
     }
 
-    public static d xw() {
-        return gz;
+    protected String mx() {
+        String na = b.na("pushtrs.push.hicloud.com", a.ff(mz()).getBelongId());
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("https://").append(na).append("/PushTokenServer/v4/pushtoken/cancel");
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "url:" + stringBuffer.toString());
+        return stringBuffer.toString();
     }
 
-    public void xy(String str) {
-        if (!TextUtils.isEmpty(str)) {
-            int i = 0;
-            if (this.gy.containsKey(str)) {
-                i = ((Integer) this.gy.get(str)).intValue();
-            }
-            this.gy.put(str, Integer.valueOf(i + 1));
-            c.er("PushLog3413", "reportEvent cacheTokenApplyTimesList:" + this.gy);
+    protected int mv() {
+        return 5222;
+    }
+
+    protected String mw() {
+        try {
+            return com.huawei.android.pushagent.utils.d.a.uh(this.ea);
+        } catch (JSONException e) {
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "fail to get reqContent");
+            return null;
         }
     }
 
-    public void xx() {
-        int i = 20;
-        int size = this.gy.size();
-        if (size <= 20) {
-            i = size;
+    protected TokenDelRsp my(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
         }
-        Iterator it = this.gy.entrySet().iterator();
-        while (it.hasNext() && i > 0) {
-            int i2 = i - 1;
-            Entry entry = (Entry) it.next();
-            a.hq(61, a.hr((String) entry.getKey(), String.valueOf(entry.getValue())));
-            it.remove();
-            i = i2;
-        }
+        return (TokenDelRsp) com.huawei.android.pushagent.utils.d.a.ui(str, TokenDelRsp.class, new Class[0]);
     }
 }

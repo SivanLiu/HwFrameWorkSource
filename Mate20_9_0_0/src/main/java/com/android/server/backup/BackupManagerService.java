@@ -1,9 +1,10 @@
 package com.android.server.backup;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.AppGlobals;
 import android.app.IActivityManager;
 import android.app.IBackupAgent;
-import android.app.IBackupAgent.Stub;
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
 import android.app.backup.IBackupManager;
@@ -26,6 +27,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.ContentObserver;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -36,14 +38,18 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.PowerSaveState;
 import android.os.RemoteException;
+import android.os.SELinux;
+import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.os.UserHandle;
 import android.os.storage.IStorageManager;
+import android.os.storage.IStorageManager.Stub;
 import android.provider.Settings.Global;
 import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.util.ArraySet;
+import android.util.AtomicFile;
 import android.util.EventLog;
 import android.util.Pair;
 import android.util.Slog;
@@ -64,6 +70,9 @@ import com.android.server.backup.internal.ClearDataObserver;
 import com.android.server.backup.internal.OnTaskFinishedListener;
 import com.android.server.backup.internal.Operation;
 import com.android.server.backup.internal.PerformInitializeTask;
+import com.android.server.backup.internal.ProvisionedObserver;
+import com.android.server.backup.internal.RunBackupReceiver;
+import com.android.server.backup.internal.RunInitializeReceiver;
 import com.android.server.backup.params.AdbBackupParams;
 import com.android.server.backup.params.AdbParams;
 import com.android.server.backup.params.AdbRestoreParams;
@@ -82,7 +91,9 @@ import com.android.server.backup.utils.SparseArrayUtils;
 import com.android.server.job.JobSchedulerShellCommand;
 import com.google.android.collect.Sets;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -93,6 +104,7 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -102,6 +114,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -150,57 +163,207 @@ public class BackupManagerService implements BackupManagerServiceInterface {
     static Trampoline sInstance;
     private ActiveRestoreSession mActiveRestoreSession;
     private IActivityManager mActivityManager;
-    private final SparseArray<AdbParams> mAdbBackupRestoreConfirmations;
-    private final Object mAgentConnectLock;
+    private final SparseArray<AdbParams> mAdbBackupRestoreConfirmations = new SparseArray();
+    private final Object mAgentConnectLock = new Object();
     private final BackupAgentTimeoutParameters mAgentTimeoutParameters;
     private AlarmManager mAlarmManager;
-    private Set<String> mAncestralPackages;
-    private long mAncestralToken;
+    private Set<String> mAncestralPackages = null;
+    private long mAncestralToken = 0;
     private boolean mAutoRestore;
     private BackupHandler mBackupHandler;
     private IBackupManager mBackupManagerBinder;
-    private final SparseArray<HashSet<String>> mBackupParticipants;
+    private final SparseArray<HashSet<String>> mBackupParticipants = new SparseArray();
     private final BackupPasswordManager mBackupPasswordManager;
     private BackupPolicyEnforcer mBackupPolicyEnforcer;
     private volatile boolean mBackupRunning;
-    private final List<String> mBackupTrace;
+    private final List<String> mBackupTrace = new ArrayList();
     private File mBaseStateDir;
-    private BroadcastReceiver mBroadcastReceiver;
-    private final Object mClearDataLock;
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        /* JADX WARNING: Missing block: B:40:0x00b5, code skipped:
+            r11 = java.lang.System.currentTimeMillis();
+            r13 = r7.length;
+            r14 = 0;
+     */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
+        public void onReceive(Context context, Intent intent) {
+            boolean changed;
+            String str;
+            Throwable th;
+            Intent intent2 = intent;
+            String action = intent.getAction();
+            boolean replacing = false;
+            boolean replacing2 = false;
+            boolean added = false;
+            Bundle extras = intent.getExtras();
+            String[] pkgList = null;
+            int i = 0;
+            if ("android.intent.action.PACKAGE_ADDED".equals(action) || "android.intent.action.PACKAGE_REMOVED".equals(action) || "android.intent.action.PACKAGE_CHANGED".equals(action)) {
+                changed = intent.getData();
+                if (changed) {
+                    String pkgName = changed.getSchemeSpecificPart();
+                    if (pkgName != null) {
+                        pkgList = new String[]{pkgName};
+                    }
+                    added = "android.intent.action.PACKAGE_CHANGED".equals(action);
+                    if (added) {
+                        BackupManagerService.this.mBackupHandler.post(new -$$Lambda$BackupManagerService$2$k3_lOimiIJDhWdG7_SCrtoKbtjY(this, pkgName, intent2.getStringArrayExtra("android.intent.extra.changed_component_name_list")));
+                        return;
+                    }
+                    replacing2 = "android.intent.action.PACKAGE_ADDED".equals(action);
+                    replacing = extras.getBoolean("android.intent.extra.REPLACING", false);
+                } else {
+                    return;
+                }
+            } else if ("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE".equals(action)) {
+                replacing2 = true;
+                pkgList = intent2.getStringArrayExtra("android.intent.extra.changed_package_list");
+            } else if ("android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE".equals(action)) {
+                replacing2 = false;
+                pkgList = intent2.getStringArrayExtra("android.intent.extra.changed_package_list");
+            }
+            changed = added;
+            added = replacing2;
+            replacing2 = replacing;
+            if (pkgList == null) {
+            } else if (pkgList.length == 0) {
+                str = action;
+            } else {
+                int uid = extras.getInt("android.intent.extra.UID");
+                if (added) {
+                    synchronized (BackupManagerService.this.mBackupParticipants) {
+                        if (replacing2) {
+                            try {
+                                BackupManagerService.this.removePackageParticipantsLocked(pkgList, uid);
+                            } catch (Throwable th2) {
+                                th = th2;
+                                str = action;
+                            }
+                        }
+                        try {
+                            BackupManagerService.this.addPackageParticipantsLocked(pkgList);
+                        } catch (Throwable th3) {
+                            th = th3;
+                            str = action;
+                            while (true) {
+                                try {
+                                    break;
+                                } catch (Throwable th4) {
+                                    th = th4;
+                                }
+                            }
+                            throw th;
+                        }
+                    }
+                }
+                if (!replacing2) {
+                    synchronized (BackupManagerService.this.mBackupParticipants) {
+                        BackupManagerService.this.removePackageParticipantsLocked(pkgList, uid);
+                    }
+                }
+                for (String action2 : pkgList) {
+                    BackupManagerService.this.mBackupHandler.post(new -$$Lambda$BackupManagerService$2$PXK_S3ijBAkFZ4wQtjneIECynPo(this, action2));
+                }
+            }
+            return;
+            int i2;
+            while (i2 < r13) {
+                String packageName = pkgList[i2];
+                try {
+                    PackageInfo app = BackupManagerService.this.mPackageManager.getPackageInfo(packageName, i);
+                    if (AppBackupUtils.appGetsFullBackup(app) && AppBackupUtils.appIsEligibleForBackup(app.applicationInfo, BackupManagerService.this.mPackageManager)) {
+                        BackupManagerService.this.enqueueFullBackup(packageName, now);
+                        str = action2;
+                        try {
+                            BackupManagerService.this.scheduleNextFullBackupJob(0);
+                        } catch (NameNotFoundException e) {
+                        }
+                    } else {
+                        str = action2;
+                        synchronized (BackupManagerService.this.mQueueLock) {
+                            BackupManagerService.this.dequeueFullBackupLocked(packageName);
+                        }
+                        BackupManagerService.this.writeFullBackupScheduleAsync();
+                    }
+                    BackupManagerService.this.mBackupHandler.post(new -$$Lambda$BackupManagerService$2$8WilE3DKM3p1qJhvhqvZiHtD9hI(this, packageName));
+                } catch (NameNotFoundException e2) {
+                    str = action2;
+                    String str2 = BackupManagerService.TAG;
+                    action2 = new StringBuilder();
+                    action2.append("Can't resolve new app ");
+                    action2.append(packageName);
+                    Slog.w(str2, action2.toString());
+                    i2++;
+                    action2 = str;
+                    intent2 = intent;
+                    i = 0;
+                }
+                i2++;
+                action2 = str;
+                intent2 = intent;
+                i = 0;
+            }
+            BackupManagerService.this.dataChangedImpl(BackupManagerService.PACKAGE_MANAGER_SENTINEL);
+        }
+    };
+    private final Object mClearDataLock = new Object();
     private volatile boolean mClearingData;
     private IBackupAgent mConnectedAgent;
     private volatile boolean mConnecting;
     private BackupManagerConstants mConstants;
     private Context mContext;
-    private final Object mCurrentOpLock;
+    private final Object mCurrentOpLock = new Object();
     @GuardedBy("mCurrentOpLock")
-    private final SparseArray<Operation> mCurrentOperations;
-    private long mCurrentToken;
+    private final SparseArray<Operation> mCurrentOperations = new SparseArray();
+    private long mCurrentToken = 0;
     private File mDataDir;
     private boolean mEnabled;
     @GuardedBy("mQueueLock")
     private ArrayList<FullBackupEntry> mFullBackupQueue;
     private File mFullBackupScheduleFile;
-    private Runnable mFullBackupScheduleWriter;
+    private Runnable mFullBackupScheduleWriter = new Runnable() {
+        public void run() {
+            synchronized (BackupManagerService.this.mQueueLock) {
+                try {
+                    ByteArrayOutputStream bufStream = new ByteArrayOutputStream(4096);
+                    DataOutputStream bufOut = new DataOutputStream(bufStream);
+                    bufOut.writeInt(1);
+                    int N = BackupManagerService.this.mFullBackupQueue.size();
+                    bufOut.writeInt(N);
+                    for (int i = 0; i < N; i++) {
+                        FullBackupEntry entry = (FullBackupEntry) BackupManagerService.this.mFullBackupQueue.get(i);
+                        bufOut.writeUTF(entry.packageName);
+                        bufOut.writeLong(entry.lastBackup);
+                    }
+                    bufOut.flush();
+                    AtomicFile af = new AtomicFile(BackupManagerService.this.mFullBackupScheduleFile);
+                    FileOutputStream out = af.startWrite();
+                    out.write(bufStream.toByteArray());
+                    af.finishWrite(out);
+                } catch (Exception e) {
+                    Slog.e(BackupManagerService.TAG, "Unable to write backup schedule!", e);
+                }
+            }
+        }
+    };
     @GuardedBy("mPendingRestores")
     private boolean mIsRestoreInProgress;
     private DataChangedJournal mJournal;
     private File mJournalDir;
     private volatile long mLastBackupPass;
-    final AtomicInteger mNextToken;
+    final AtomicInteger mNextToken = new AtomicInteger();
     private PackageManager mPackageManager;
     private IPackageManager mPackageManagerBinder;
-    private HashMap<String, BackupRequest> mPendingBackups;
-    private final ArraySet<String> mPendingInits;
+    private HashMap<String, BackupRequest> mPendingBackups = new HashMap();
+    private final ArraySet<String> mPendingInits = new ArraySet();
     @GuardedBy("mPendingRestores")
-    private final Queue<PerformUnifiedRestoreTask> mPendingRestores;
+    private final Queue<PerformUnifiedRestoreTask> mPendingRestores = new ArrayDeque();
     private PowerManager mPowerManager;
     private ProcessedPackagesJournal mProcessedPackagesJournal;
     private boolean mProvisioned;
     private ContentObserver mProvisionedObserver;
-    private final Object mQueueLock;
+    private final Object mQueueLock = new Object();
     private final long mRegisterTransportsRequestedTime;
-    private final SecureRandom mRng;
+    private final SecureRandom mRng = new SecureRandom();
     private PendingIntent mRunBackupIntent;
     private BroadcastReceiver mRunBackupReceiver;
     private PendingIntent mRunInitIntent;
@@ -209,7 +372,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
     private PerformFullTransportBackupTask mRunningFullBackupTask;
     private IStorageManager mStorageManager;
     private File mTokenFile;
-    private final Random mTokenGenerator;
+    private final Random mTokenGenerator = new Random();
     private final TransportManager mTransportManager;
     private WakeLock mWakelock;
 
@@ -228,260 +391,6 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                 BackupManagerService.sInstance.unlockSystemUser();
             }
         }
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        */
-    @com.android.internal.annotations.VisibleForTesting
-    BackupManagerService(android.content.Context r16, com.android.server.backup.Trampoline r17, android.os.HandlerThread r18, java.io.File r19, java.io.File r20, com.android.server.backup.TransportManager r21) {
-        /*
-        r15 = this;
-        r1 = r15;
-        r2 = r16;
-        r1.<init>();
-        r0 = new android.util.SparseArray;
-        r0.<init>();
-        r1.mBackupParticipants = r0;
-        r0 = new java.util.HashMap;
-        r0.<init>();
-        r1.mPendingBackups = r0;
-        r0 = new java.lang.Object;
-        r0.<init>();
-        r1.mQueueLock = r0;
-        r0 = new java.lang.Object;
-        r0.<init>();
-        r1.mAgentConnectLock = r0;
-        r0 = new java.util.ArrayList;
-        r0.<init>();
-        r1.mBackupTrace = r0;
-        r0 = new java.lang.Object;
-        r0.<init>();
-        r1.mClearDataLock = r0;
-        r0 = new java.util.ArrayDeque;
-        r0.<init>();
-        r1.mPendingRestores = r0;
-        r0 = new android.util.SparseArray;
-        r0.<init>();
-        r1.mCurrentOperations = r0;
-        r0 = new java.lang.Object;
-        r0.<init>();
-        r1.mCurrentOpLock = r0;
-        r0 = new java.util.Random;
-        r0.<init>();
-        r1.mTokenGenerator = r0;
-        r0 = new java.util.concurrent.atomic.AtomicInteger;
-        r0.<init>();
-        r1.mNextToken = r0;
-        r0 = new android.util.SparseArray;
-        r0.<init>();
-        r1.mAdbBackupRestoreConfirmations = r0;
-        r0 = new java.security.SecureRandom;
-        r0.<init>();
-        r1.mRng = r0;
-        r0 = 0;
-        r1.mAncestralPackages = r0;
-        r3 = 0;
-        r1.mAncestralToken = r3;
-        r1.mCurrentToken = r3;
-        r3 = new android.util.ArraySet;
-        r3.<init>();
-        r1.mPendingInits = r3;
-        r3 = new com.android.server.backup.BackupManagerService$1;
-        r3.<init>();
-        r1.mFullBackupScheduleWriter = r3;
-        r3 = new com.android.server.backup.BackupManagerService$2;
-        r3.<init>();
-        r1.mBroadcastReceiver = r3;
-        r1.mContext = r2;
-        r3 = r16.getPackageManager();
-        r1.mPackageManager = r3;
-        r3 = android.app.AppGlobals.getPackageManager();
-        r1.mPackageManagerBinder = r3;
-        r3 = android.app.ActivityManager.getService();
-        r1.mActivityManager = r3;
-        r3 = "alarm";
-        r3 = r2.getSystemService(r3);
-        r3 = (android.app.AlarmManager) r3;
-        r1.mAlarmManager = r3;
-        r3 = "power";
-        r3 = r2.getSystemService(r3);
-        r3 = (android.os.PowerManager) r3;
-        r1.mPowerManager = r3;
-        r3 = "mount";
-        r3 = android.os.ServiceManager.getService(r3);
-        r3 = android.os.storage.IStorageManager.Stub.asInterface(r3);
-        r1.mStorageManager = r3;
-        r3 = r17.asBinder();
-        r3 = com.android.server.backup.Trampoline.asInterface(r3);
-        r1.mBackupManagerBinder = r3;
-        r3 = new com.android.server.backup.BackupAgentTimeoutParameters;
-        r4 = android.os.Handler.getMain();
-        r5 = r1.mContext;
-        r5 = r5.getContentResolver();
-        r3.<init>(r4, r5);
-        r1.mAgentTimeoutParameters = r3;
-        r3 = r1.mAgentTimeoutParameters;
-        r3.start();
-        r3 = new com.android.server.backup.internal.BackupHandler;
-        r4 = r18.getLooper();
-        r3.<init>(r1, r4);
-        r1.mBackupHandler = r3;
-        r3 = r16.getContentResolver();
-        r4 = "device_provisioned";
-        r5 = 0;
-        r4 = android.provider.Settings.Global.getInt(r3, r4, r5);
-        r6 = 1;
-        if (r4 == 0) goto L_0x00f0;
-    L_0x00ee:
-        r4 = r6;
-        goto L_0x00f1;
-    L_0x00f0:
-        r4 = r5;
-    L_0x00f1:
-        r1.mProvisioned = r4;
-        r4 = "backup_auto_restore";
-        r4 = android.provider.Settings.Secure.getInt(r3, r4, r6);
-        if (r4 == 0) goto L_0x00fd;
-    L_0x00fb:
-        r4 = r6;
-        goto L_0x00fe;
-    L_0x00fd:
-        r4 = r5;
-    L_0x00fe:
-        r1.mAutoRestore = r4;
-        r4 = new com.android.server.backup.internal.ProvisionedObserver;
-        r7 = r1.mBackupHandler;
-        r4.<init>(r1, r7);
-        r1.mProvisionedObserver = r4;
-        r4 = "device_provisioned";
-        r4 = android.provider.Settings.Global.getUriFor(r4);
-        r7 = r1.mProvisionedObserver;
-        r3.registerContentObserver(r4, r5, r7);
-        r4 = r19;
-        r1.mBaseStateDir = r4;
-        r7 = r1.mBaseStateDir;
-        r7.mkdirs();
-        r7 = r1.mBaseStateDir;
-        r7 = android.os.SELinux.restorecon(r7);
-        if (r7 != 0) goto L_0x013d;
-    L_0x0125:
-        r7 = "BackupManagerService";
-        r8 = new java.lang.StringBuilder;
-        r8.<init>();
-        r9 = "SELinux restorecon failed on ";
-        r8.append(r9);
-        r9 = r1.mBaseStateDir;
-        r8.append(r9);
-        r8 = r8.toString();
-        android.util.Slog.e(r7, r8);
-    L_0x013d:
-        r7 = r20;
-        r1.mDataDir = r7;
-        r8 = new com.android.server.backup.BackupPasswordManager;
-        r9 = r1.mContext;
-        r10 = r1.mBaseStateDir;
-        r11 = r1.mRng;
-        r8.<init>(r9, r10, r11);
-        r1.mBackupPasswordManager = r8;
-        r8 = new com.android.server.backup.internal.RunBackupReceiver;
-        r8.<init>(r1);
-        r1.mRunBackupReceiver = r8;
-        r8 = new android.content.IntentFilter;
-        r8.<init>();
-        r9 = "android.app.backup.intent.RUN";
-        r8.addAction(r9);
-        r9 = r1.mRunBackupReceiver;
-        r10 = "android.permission.BACKUP";
-        r2.registerReceiver(r9, r8, r10, r0);
-        r9 = new com.android.server.backup.internal.RunInitializeReceiver;
-        r9.<init>(r1);
-        r1.mRunInitReceiver = r9;
-        r9 = new android.content.IntentFilter;
-        r9.<init>();
-        r8 = r9;
-        r9 = "android.app.backup.intent.INIT";
-        r8.addAction(r9);
-        r9 = r1.mRunInitReceiver;
-        r10 = "android.permission.BACKUP";
-        r2.registerReceiver(r9, r8, r10, r0);
-        r9 = new android.content.Intent;
-        r10 = "android.app.backup.intent.RUN";
-        r9.<init>(r10);
-        r10 = 1073741824; // 0x40000000 float:2.0 double:5.304989477E-315;
-        r9.addFlags(r10);
-        r11 = android.app.PendingIntent.getBroadcast(r2, r5, r9, r5);
-        r1.mRunBackupIntent = r11;
-        r11 = new android.content.Intent;
-        r12 = "android.app.backup.intent.INIT";
-        r11.<init>(r12);
-        r11.addFlags(r10);
-        r5 = android.app.PendingIntent.getBroadcast(r2, r5, r11, r5);
-        r1.mRunInitIntent = r5;
-        r5 = new java.io.File;
-        r10 = r1.mBaseStateDir;
-        r12 = "pending";
-        r5.<init>(r10, r12);
-        r1.mJournalDir = r5;
-        r5 = r1.mJournalDir;
-        r5.mkdirs();
-        r1.mJournal = r0;
-        r5 = new com.android.server.backup.BackupManagerConstants;
-        r10 = r1.mBackupHandler;
-        r12 = r1.mContext;
-        r12 = r12.getContentResolver();
-        r5.<init>(r10, r12);
-        r1.mConstants = r5;
-        r5 = r1.mConstants;
-        r5.start();
-        r5 = new java.io.File;
-        r10 = r1.mBaseStateDir;
-        r12 = "fb-schedule";
-        r5.<init>(r10, r12);
-        r1.mFullBackupScheduleFile = r5;
-        r1.initPackageTracking();
-        r5 = r1.mBackupParticipants;
-        monitor-enter(r5);
-        r1.addPackageParticipantsLocked(r0);	 Catch:{ all -> 0x021e }
-        monitor-exit(r5);	 Catch:{ all -> 0x021e }
-        r10 = r21;
-        r1.mTransportManager = r10;
-        r0 = r1.mTransportManager;
-        r5 = new com.android.server.backup.-$$Lambda$BackupManagerService$QlgHuOXOPKAZpwyUhPFAintPnqM;
-        r5.<init>(r1);
-        r0.setOnTransportRegisteredListener(r5);
-        r12 = android.os.SystemClock.elapsedRealtime();
-        r1.mRegisterTransportsRequestedTime = r12;
-        r0 = r1.mBackupHandler;
-        r5 = r1.mTransportManager;
-        java.util.Objects.requireNonNull(r5);
-        r12 = new com.android.server.backup.-$$Lambda$pM_c5tVAGDtxjxLF_ONtACWWq6Q;
-        r12.<init>(r5);
-        r13 = 3000; // 0xbb8 float:4.204E-42 double:1.482E-320;
-        r0.postDelayed(r12, r13);
-        r0 = r1.mBackupHandler;
-        r5 = new com.android.server.backup.-$$Lambda$BackupManagerService$7naKh6MW6ryzdPxgJfM5jV1nHp4;
-        r5.<init>(r1);
-        r0.postDelayed(r5, r13);
-        r0 = r1.mPowerManager;
-        r5 = "*backup*";
-        r0 = r0.newWakeLock(r6, r5);
-        r1.mWakelock = r0;
-        r0 = new com.android.server.backup.BackupPolicyEnforcer;
-        r0.<init>(r2);
-        r1.mBackupPolicyEnforcer = r0;
-        return;
-    L_0x021e:
-        r0 = move-exception;
-        r10 = r21;
-    L_0x0221:
-        monitor-exit(r5);	 Catch:{ all -> 0x0223 }
-        throw r0;
-    L_0x0223:
-        r0 = move-exception;
-        goto L_0x0221;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.backup.BackupManagerService.<init>(android.content.Context, com.android.server.backup.Trampoline, android.os.HandlerThread, java.io.File, java.io.File, com.android.server.backup.TransportManager):void");
     }
 
     static Trampoline getInstance() {
@@ -806,6 +715,79 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         return new BackupManagerService(context, parent, backupThread, new File(Environment.getDataDirectory(), HealthServiceWrapper.INSTANCE_HEALTHD), new File(Environment.getDownloadCacheDirectory(), "backup_stage"), new TransportManager(context, transportWhitelist, transport));
     }
 
+    @VisibleForTesting
+    BackupManagerService(Context context, Trampoline parent, HandlerThread backupThread, File baseStateDir, File dataDir, TransportManager transportManager) {
+        Context context2 = context;
+        this.mContext = context2;
+        this.mPackageManager = context.getPackageManager();
+        this.mPackageManagerBinder = AppGlobals.getPackageManager();
+        this.mActivityManager = ActivityManager.getService();
+        this.mAlarmManager = (AlarmManager) context2.getSystemService("alarm");
+        this.mPowerManager = (PowerManager) context2.getSystemService("power");
+        this.mStorageManager = Stub.asInterface(ServiceManager.getService("mount"));
+        this.mBackupManagerBinder = Trampoline.asInterface(parent.asBinder());
+        this.mAgentTimeoutParameters = new BackupAgentTimeoutParameters(Handler.getMain(), this.mContext.getContentResolver());
+        this.mAgentTimeoutParameters.start();
+        this.mBackupHandler = new BackupHandler(this, backupThread.getLooper());
+        ContentResolver resolver = context.getContentResolver();
+        this.mProvisioned = Global.getInt(resolver, "device_provisioned", 0) != 0;
+        this.mAutoRestore = Secure.getInt(resolver, "backup_auto_restore", 1) != 0;
+        this.mProvisionedObserver = new ProvisionedObserver(this, this.mBackupHandler);
+        resolver.registerContentObserver(Global.getUriFor("device_provisioned"), false, this.mProvisionedObserver);
+        this.mBaseStateDir = baseStateDir;
+        this.mBaseStateDir.mkdirs();
+        if (!SELinux.restorecon(this.mBaseStateDir)) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("SELinux restorecon failed on ");
+            stringBuilder.append(this.mBaseStateDir);
+            Slog.e(str, stringBuilder.toString());
+        }
+        this.mDataDir = dataDir;
+        this.mBackupPasswordManager = new BackupPasswordManager(this.mContext, this.mBaseStateDir, this.mRng);
+        this.mRunBackupReceiver = new RunBackupReceiver(this);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(RUN_BACKUP_ACTION);
+        context2.registerReceiver(this.mRunBackupReceiver, filter, "android.permission.BACKUP", null);
+        this.mRunInitReceiver = new RunInitializeReceiver(this);
+        filter = new IntentFilter();
+        filter.addAction(RUN_INITIALIZE_ACTION);
+        context2.registerReceiver(this.mRunInitReceiver, filter, "android.permission.BACKUP", null);
+        Intent backupIntent = new Intent(RUN_BACKUP_ACTION);
+        backupIntent.addFlags(1073741824);
+        this.mRunBackupIntent = PendingIntent.getBroadcast(context2, 0, backupIntent, 0);
+        Intent initIntent = new Intent(RUN_INITIALIZE_ACTION);
+        initIntent.addFlags(1073741824);
+        this.mRunInitIntent = PendingIntent.getBroadcast(context2, 0, initIntent, 0);
+        this.mJournalDir = new File(this.mBaseStateDir, "pending");
+        this.mJournalDir.mkdirs();
+        this.mJournal = null;
+        this.mConstants = new BackupManagerConstants(this.mBackupHandler, this.mContext.getContentResolver());
+        this.mConstants.start();
+        TransportManager transportManager2 = this.mBaseStateDir;
+        this.mFullBackupScheduleFile = new File(transportManager2, "fb-schedule");
+        initPackageTracking();
+        synchronized (this.mBackupParticipants) {
+            try {
+                addPackageParticipantsLocked(null);
+            } finally {
+                transportManager2 = transportManager;
+                while (true) {
+                }
+            }
+        }
+        this.mTransportManager = transportManager2;
+        this.mTransportManager.setOnTransportRegisteredListener(new -$$Lambda$BackupManagerService$QlgHuOXOPKAZpwyUhPFAintPnqM(this));
+        this.mRegisterTransportsRequestedTime = SystemClock.elapsedRealtime();
+        BackupHandler backupHandler = this.mBackupHandler;
+        TransportManager transportManager3 = this.mTransportManager;
+        Objects.requireNonNull(transportManager3);
+        backupHandler.postDelayed(new -$$Lambda$pM_c5tVAGDtxjxLF_ONtACWWq6Q(transportManager3), INITIALIZATION_DELAY_MILLIS);
+        this.mBackupHandler.postDelayed(new -$$Lambda$BackupManagerService$7naKh6MW6ryzdPxgJfM5jV1nHp4(this), INITIALIZATION_DELAY_MILLIS);
+        this.mWakelock = this.mPowerManager.newWakeLock(1, "*backup*");
+        this.mBackupPolicyEnforcer = new BackupPolicyEnforcer(context2);
+    }
+
     private void initPackageTracking() {
         this.mTokenFile = new File(this.mBaseStateDir, "ancestral");
         DataInputStream tokenStream;
@@ -860,96 +842,16 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         x1.close();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:82:0x0148 A:{PHI: r8 , Splitter: B:11:0x0029, ExcHandler: all (th java.lang.Throwable)} */
-    /* JADX WARNING: Removed duplicated region for block: B:50:0x00f2 A:{PHI: r2 , Splitter: B:27:0x0068, ExcHandler: all (th java.lang.Throwable)} */
     /* JADX WARNING: Failed to process nested try/catch */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:50:0x00f2, code:
+    /* JADX WARNING: Missing block: B:105:0x0162, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:51:0x00f3, code:
-            r5 = null;
-            r8 = null;
-     */
-    /* JADX WARNING: Missing block: B:52:0x00f6, code:
-            r21 = r11;
-            r22 = r12;
-     */
-    /* JADX WARNING: Missing block: B:54:?, code:
-            r0 = r4.iterator();
-     */
-    /* JADX WARNING: Missing block: B:56:0x0102, code:
-            if (r0.hasNext() == false) goto L_0x0130;
-     */
-    /* JADX WARNING: Missing block: B:58:?, code:
-            r5 = (android.content.pm.PackageInfo) r0.next();
-     */
-    /* JADX WARNING: Missing block: B:59:0x010e, code:
-            if (com.android.server.backup.utils.AppBackupUtils.appGetsFullBackup(r5) == false) goto L_0x012f;
-     */
-    /* JADX WARNING: Missing block: B:61:0x0118, code:
-            if (com.android.server.backup.utils.AppBackupUtils.appIsEligibleForBackup(r5.applicationInfo, r1.mPackageManager) == false) goto L_0x012f;
-     */
-    /* JADX WARNING: Missing block: B:63:0x0120, code:
-            if (r13.contains(r5.packageName) != false) goto L_0x012f;
-     */
-    /* JADX WARNING: Missing block: B:64:0x0122, code:
-            r3.add(new com.android.server.backup.fullbackup.FullBackupEntry(r5.packageName, 0));
-     */
-    /* JADX WARNING: Missing block: B:65:0x012e, code:
-            r2 = true;
-     */
-    /* JADX WARNING: Missing block: B:68:?, code:
-            java.util.Collections.sort(r3);
-     */
-    /* JADX WARNING: Missing block: B:69:0x0133, code:
-            r5 = null;
-     */
-    /* JADX WARNING: Missing block: B:71:?, code:
-            $closeResource(null, r10);
-     */
-    /* JADX WARNING: Missing block: B:73:?, code:
-            $closeResource(null, r9);
-     */
-    /* JADX WARNING: Missing block: B:75:?, code:
-            $closeResource(null, r7);
-     */
-    /* JADX WARNING: Missing block: B:76:0x013e, code:
+    /* JADX WARNING: Missing block: B:106:0x0164, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:77:0x013f, code:
-            r5 = null;
-            r8 = null;
-     */
-    /* JADX WARNING: Missing block: B:78:0x0142, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:79:0x0143, code:
-            r5 = null;
-     */
-    /* JADX WARNING: Missing block: B:82:0x0148, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:83:0x0149, code:
+    /* JADX WARNING: Missing block: B:107:0x0165, code skipped:
             r5 = r8;
-     */
-    /* JADX WARNING: Missing block: B:84:0x014a, code:
-            r8 = r0;
-     */
-    /* JADX WARNING: Missing block: B:86:?, code:
-            throw r8;
-     */
-    /* JADX WARNING: Missing block: B:87:0x014c, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:91:0x0151, code:
-            r0 = th;
-     */
-    /* JADX WARNING: Missing block: B:92:0x0152, code:
-            r8 = r5;
-     */
-    /* JADX WARNING: Missing block: B:93:0x0154, code:
-            r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private ArrayList<FullBackupEntry> readFullBackupSchedule() {
@@ -973,82 +875,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                         DataInputStream in = new DataInputStream(bufStream);
                         try {
                             int version2 = in.readInt();
-                            if (version2 == 1) {
-                                int N2 = in.readInt();
-                                schedule = new ArrayList(N2);
-                                HashSet<String> foundApps = new HashSet(N2);
-                                int i = 0;
-                                int i2 = 0;
-                                while (true) {
-                                    int i3 = i2;
-                                    if (i3 >= N2) {
-                                        break;
-                                    }
-                                    try {
-                                        long lastBackup = in.readLong();
-                                        String pkgName = in.readUTF();
-                                        foundApps.add(pkgName);
-                                        try {
-                                            PackageInfo pkg = this.mPackageManager.getPackageInfo(pkgName, i);
-                                            if (AppBackupUtils.appGetsFullBackup(pkg) && AppBackupUtils.appIsEligibleForBackup(pkg.applicationInfo, this.mPackageManager)) {
-                                                version = version2;
-                                                N = N2;
-                                                try {
-                                                    schedule.add(new FullBackupEntry(pkgName, lastBackup));
-                                                } catch (NameNotFoundException e) {
-                                                    str = TAG;
-                                                    stringBuilder = new StringBuilder();
-                                                    stringBuilder.append("Package ");
-                                                    stringBuilder.append(pkgName);
-                                                    stringBuilder.append(" not installed; dropping from full backup");
-                                                    Slog.i(str, stringBuilder.toString());
-                                                    i2 = i3 + 1;
-                                                    version2 = version;
-                                                    N2 = N;
-                                                    th3 = null;
-                                                    i = 0;
-                                                }
-                                                i2 = i3 + 1;
-                                                version2 = version;
-                                                N2 = N;
-                                                th3 = null;
-                                                i = 0;
-                                            } else {
-                                                version = version2;
-                                                N = N2;
-                                                version2 = lastBackup;
-                                                str = TAG;
-                                                stringBuilder = new StringBuilder();
-                                                stringBuilder.append("Package ");
-                                                stringBuilder.append(pkgName);
-                                                stringBuilder.append(" no longer eligible for full backup");
-                                                Slog.i(str, stringBuilder.toString());
-                                                i2 = i3 + 1;
-                                                version2 = version;
-                                                N2 = N;
-                                                th3 = null;
-                                                i = 0;
-                                            }
-                                        } catch (NameNotFoundException e2) {
-                                            version = version2;
-                                            N = N2;
-                                            version2 = lastBackup;
-                                            str = TAG;
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("Package ");
-                                            stringBuilder.append(pkgName);
-                                            stringBuilder.append(" not installed; dropping from full backup");
-                                            Slog.i(str, stringBuilder.toString());
-                                            i2 = i3 + 1;
-                                            version2 = version;
-                                            N2 = N;
-                                            th3 = null;
-                                            i = 0;
-                                        }
-                                    } catch (Throwable th4) {
-                                    }
-                                }
-                            } else {
+                            if (version2 != 1) {
                                 String str2 = TAG;
                                 StringBuilder stringBuilder2 = new StringBuilder();
                                 stringBuilder2.append("Unknown backup schedule version ");
@@ -1059,21 +886,127 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                                 $closeResource(null, fstream);
                                 return null;
                             }
-                        } catch (Throwable th5) {
-                            th = th5;
+                            int N2 = in.readInt();
+                            schedule = new ArrayList(N2);
+                            HashSet<String> foundApps = new HashSet(N2);
+                            int i = 0;
+                            int i2 = 0;
+                            while (true) {
+                                int i3 = i2;
+                                if (i3 >= N2) {
+                                    break;
+                                }
+                                try {
+                                    long lastBackup = in.readLong();
+                                    String pkgName = in.readUTF();
+                                    foundApps.add(pkgName);
+                                    try {
+                                        PackageInfo pkg = this.mPackageManager.getPackageInfo(pkgName, i);
+                                        if (AppBackupUtils.appGetsFullBackup(pkg) && AppBackupUtils.appIsEligibleForBackup(pkg.applicationInfo, this.mPackageManager)) {
+                                            version = version2;
+                                            N = N2;
+                                            try {
+                                                schedule.add(new FullBackupEntry(pkgName, lastBackup));
+                                            } catch (NameNotFoundException e) {
+                                                str = TAG;
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Package ");
+                                                stringBuilder.append(pkgName);
+                                                stringBuilder.append(" not installed; dropping from full backup");
+                                                Slog.i(str, stringBuilder.toString());
+                                                i2 = i3 + 1;
+                                                version2 = version;
+                                                N2 = N;
+                                                th3 = null;
+                                                i = 0;
+                                            }
+                                            i2 = i3 + 1;
+                                            version2 = version;
+                                            N2 = N;
+                                            th3 = null;
+                                            i = 0;
+                                        } else {
+                                            version = version2;
+                                            N = N2;
+                                            version2 = lastBackup;
+                                            str = TAG;
+                                            stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Package ");
+                                            stringBuilder.append(pkgName);
+                                            stringBuilder.append(" no longer eligible for full backup");
+                                            Slog.i(str, stringBuilder.toString());
+                                            i2 = i3 + 1;
+                                            version2 = version;
+                                            N2 = N;
+                                            th3 = null;
+                                            i = 0;
+                                        }
+                                    } catch (NameNotFoundException e2) {
+                                        version = version2;
+                                        N = N2;
+                                        version2 = lastBackup;
+                                        str = TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Package ");
+                                        stringBuilder.append(pkgName);
+                                        stringBuilder.append(" not installed; dropping from full backup");
+                                        Slog.i(str, stringBuilder.toString());
+                                        i2 = i3 + 1;
+                                        version2 = version;
+                                        N2 = N;
+                                        th3 = null;
+                                        i = 0;
+                                    }
+                                } catch (Throwable th4) {
+                                    th = th4;
+                                    th2 = null;
+                                    th3 = null;
+                                    $closeResource(th3, in);
+                                    throw th;
+                                }
+                            }
+                            version = version2;
+                            N = N2;
+                            try {
+                                for (PackageInfo app : apps) {
+                                    if (AppBackupUtils.appGetsFullBackup(app) && AppBackupUtils.appIsEligibleForBackup(app.applicationInfo, this.mPackageManager) && !foundApps.contains(app.packageName)) {
+                                        schedule.add(new FullBackupEntry(app.packageName, 0));
+                                        changed = true;
+                                    }
+                                }
+                                Collections.sort(schedule);
+                                th2 = null;
+                            } catch (Throwable th5) {
+                                th = th5;
+                                th2 = null;
+                                th3 = null;
+                                $closeResource(th3, in);
+                                throw th;
+                            }
+                            try {
+                                $closeResource(null, in);
+                                $closeResource(null, bufStream);
+                                $closeResource(null, fstream);
+                            } catch (Throwable th6) {
+                                th = th6;
+                                th3 = th2;
+                                $closeResource(th3, bufStream);
+                                throw th;
+                            }
+                        } catch (Throwable th7) {
+                            th = th7;
                             th2 = null;
                             $closeResource(th3, in);
                             throw th;
                         }
-                    } catch (Throwable th6) {
-                        th = th6;
+                    } catch (Throwable th8) {
+                        th = th8;
                         th2 = null;
                         $closeResource(th3, bufStream);
                         throw th;
                     }
-                } catch (Throwable th7) {
-                    th = th7;
-                    th2 = th3;
+                } catch (Throwable th9) {
+                    th3 = th9;
                 }
             } catch (Exception e3) {
                 Slog.e(TAG, "Unable to read backup schedule", e3);
@@ -1084,9 +1017,9 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         if (schedule == null) {
             changed = true;
             schedule = new ArrayList(apps.size());
-            for (PackageInfo info : apps) {
-                if (AppBackupUtils.appGetsFullBackup(info) && AppBackupUtils.appIsEligibleForBackup(info.applicationInfo, this.mPackageManager)) {
-                    schedule.add(new FullBackupEntry(info.packageName, 0));
+            for (PackageInfo app2 : apps) {
+                if (AppBackupUtils.appGetsFullBackup(app2) && AppBackupUtils.appIsEligibleForBackup(app2.applicationInfo, this.mPackageManager)) {
+                    schedule.add(new FullBackupEntry(app2.packageName, 0));
                 }
             }
         }
@@ -1095,7 +1028,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         }
         return schedule;
         $closeResource(th2, fstream);
-        throw th;
+        throw th9;
     }
 
     private void writeFullBackupScheduleAsync() {
@@ -1265,19 +1198,17 @@ public class BackupManagerService implements BackupManagerServiceInterface {
 
     private List<PackageInfo> allAgentPackages() {
         List<PackageInfo> packages = this.mPackageManager.getInstalledPackages(134217728);
-        int a = packages.size() - 1;
-        while (a >= 0) {
+        for (int a = packages.size() - 1; a >= 0; a--) {
             PackageInfo pkg = (PackageInfo) packages.get(a);
             try {
                 ApplicationInfo app = pkg.applicationInfo;
-                if ((app.flags & 32768) == 0 || app.backupAgentName == null || (app.flags & 67108864) != 0) {
-                    packages.remove(a);
-                    a--;
-                } else {
-                    app = this.mPackageManager.getApplicationInfo(pkg.packageName, 1024);
-                    pkg.applicationInfo.sharedLibraryFiles = app.sharedLibraryFiles;
-                    a--;
+                if (!((app.flags & 32768) == 0 || app.backupAgentName == null)) {
+                    if ((app.flags & 67108864) == 0) {
+                        app = this.mPackageManager.getApplicationInfo(pkg.packageName, 1024);
+                        pkg.applicationInfo.sharedLibraryFiles = app.sharedLibraryFiles;
+                    }
                 }
+                packages.remove(a);
             } catch (NameNotFoundException e) {
                 packages.remove(a);
             }
@@ -1566,7 +1497,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:13:?, code skipped:
             r0 = r1.state;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1668,7 +1599,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x004b, code:
+    /* JADX WARNING: Missing block: B:15:0x004b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1751,43 +1682,43 @@ public class BackupManagerService implements BackupManagerServiceInterface {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:104:0x017a  */
-    /* JADX WARNING: Removed duplicated region for block: B:77:0x00f4 A:{SYNTHETIC, Splitter: B:77:0x00f4} */
+    /* JADX WARNING: Removed duplicated region for block: B:77:0x00f4 A:{SYNTHETIC, Splitter:B:77:0x00f4} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:120:0x01ae  */
     /* JADX WARNING: Removed duplicated region for block: B:119:0x01ac  */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:119:0x01ac  */
     /* JADX WARNING: Removed duplicated region for block: B:120:0x01ae  */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:120:0x01ae  */
     /* JADX WARNING: Removed duplicated region for block: B:119:0x01ac  */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:119:0x01ac  */
     /* JADX WARNING: Removed duplicated region for block: B:120:0x01ae  */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:120:0x01ae  */
     /* JADX WARNING: Removed duplicated region for block: B:119:0x01ac  */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
     /* JADX WARNING: Removed duplicated region for block: B:156:0x028b A:{LOOP_END, LOOP:0: B:26:0x0062->B:156:0x028b} */
-    /* JADX WARNING: Removed duplicated region for block: B:180:0x01dc A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:174:0x01dc A:{SYNTHETIC} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean beginFullBackup(FullBackupJob scheduledJob) {
         long fullBackupInterval;
@@ -1972,6 +1903,8 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                                                         } catch (NameNotFoundException e9) {
                                                             runBackup = runBackup3;
                                                             str = transportName;
+                                                            if (this.mFullBackupQueue.size() <= 1) {
+                                                            }
                                                             runBackup2 = this.mFullBackupQueue.size() <= 1;
                                                             if (headBusy2) {
                                                             }
@@ -1986,8 +1919,6 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                                                 } catch (NameNotFoundException e11) {
                                                     runBackup = runBackup3;
                                                     str = transportName;
-                                                    if (this.mFullBackupQueue.size() <= 1) {
-                                                    }
                                                     runBackup2 = this.mFullBackupQueue.size() <= 1;
                                                     if (headBusy2) {
                                                     }
@@ -2020,6 +1951,10 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                                             obj = obj2;
                                             powerSaveState = result;
                                             j = keyValueBackupInterval;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw th;
                                         }
                                     } catch (Throwable th5) {
                                         th = th5;
@@ -2028,6 +1963,10 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                                         powerSaveState = result;
                                         j = keyValueBackupInterval;
                                         entry = entry;
+                                        while (true) {
+                                            break;
+                                        }
+                                        throw th;
                                     }
                                 } catch (Throwable th6) {
                                     th = th6;
@@ -2036,10 +1975,13 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                                     obj = obj2;
                                     powerSaveState = result;
                                     j = keyValueBackupInterval;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
                                 }
-                            } else {
-                                latency4 = latency2;
                             }
+                            latency4 = latency2;
                             if (headBusy2) {
                                 entry2 = entry;
                                 latency3 = latency4;
@@ -2052,6 +1994,10 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                             obj = obj2;
                             powerSaveState = result;
                             j = keyValueBackupInterval;
+                            while (true) {
+                                break;
+                            }
+                            throw th;
                         }
                     }
                     Slog.i(TAG, "Backup queue empty; doing nothing");
@@ -2194,7 +2140,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
     }
 
     private HashSet<String> dataChangedTargets(String packageName) {
-        HashSet<String> hashSet;
+        HashSet hashSet;
         if (this.mContext.checkPermission("android.permission.BACKUP", Binder.getCallingPid(), Binder.getCallingUid()) == -1) {
             synchronized (this.mBackupParticipants) {
                 hashSet = (HashSet) this.mBackupParticipants.get(Binder.getCallingUid());
@@ -2305,6 +2251,8 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         }
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void backupNow() {
         this.mContext.enforceCallingOrSelfPermission("android.permission.BACKUP", "backupNow");
         if (this.mPowerManager.getPowerSaveState(5).batterySaverEnabled) {
@@ -2492,6 +2440,8 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                             } catch (Throwable th2) {
                                 th = th2;
                                 now = oldId2;
+                                Binder.restoreCallingIdentity(now);
+                                throw th;
                             }
                         }
                         Binder.restoreCallingIdentity(oldId2);
@@ -2702,24 +2652,6 @@ public class BackupManagerService implements BackupManagerServiceInterface {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0039 A:{Splitter: B:1:0x001a, ExcHandler: java.io.IOException (r4_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0039, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:18:0x003a, code:
-            r5 = TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("Unable to record backup enable state; reverting to disabled: ");
-            r6.append(r4.getMessage());
-            android.util.Slog.e(r5, r6.toString());
-            android.provider.Settings.Secure.putStringForUser(sInstance.mContext.getContentResolver(), BACKUP_ENABLE_FILE, null, r10);
-            r1.delete();
-            r2.delete();
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static void writeBackupEnableState(boolean enable, int userId) {
         Throwable th;
         Throwable th2;
@@ -2741,7 +2673,15 @@ public class BackupManagerService implements BackupManagerServiceInterface {
             }
             $closeResource(th22, fout);
             throw th;
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Unable to record backup enable state; reverting to disabled: ");
+            stringBuilder.append(e.getMessage());
+            Slog.e(str, stringBuilder.toString());
+            Secure.putStringForUser(sInstance.mContext.getContentResolver(), BACKUP_ENABLE_FILE, null, userId);
+            enableFile.delete();
+            stage.delete();
         }
     }
 
@@ -3106,7 +3046,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
                 stringBuilder.append(" agent=");
                 stringBuilder.append(agentBinder);
                 Slog.d(str, stringBuilder.toString());
-                this.mConnectedAgent = Stub.asInterface(agentBinder);
+                this.mConnectedAgent = IBackupAgent.Stub.asInterface(agentBinder);
                 this.mConnecting = false;
             } else {
                 str = TAG;

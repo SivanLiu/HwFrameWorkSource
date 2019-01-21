@@ -18,4 +18,10 @@ public final class HwPowerManagerServiceEx implements IHwPowerManagerServiceEx {
         }
         return this.mIPowerInner.getPowerMonitor().isAwarePreventScreenOn(pkgName, tag);
     }
+
+    public void requestNoUserActivityNotification(int timeout) {
+        if (this.mIPowerInner != null) {
+            this.mIPowerInner.sendNoUserActivityNotification(timeout * 1000);
+        }
+    }
 }

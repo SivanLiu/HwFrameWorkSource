@@ -324,6 +324,8 @@ public class HwSoftApManager extends SoftApManager {
 
     /* JADX WARNING: Removed duplicated region for block: B:31:0x009c  */
     /* JADX WARNING: Removed duplicated region for block: B:23:0x004f  */
+    /* JADX WARNING: Removed duplicated region for block: B:23:0x004f  */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x009c  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private int[] getAllowed5GChannels(WifiNative wifiNative) {
         int[] allowedChannels = wifiNative.getChannelsForBand(2);
@@ -350,13 +352,16 @@ public class HwSoftApManager extends SoftApManager {
                         } catch (Exception e) {
                             counter3 = e;
                             counter = counter2;
+                            counter3.printStackTrace();
+                            if (counter == 0) {
+                            }
                         }
                     }
                     counter3++;
                 } catch (Exception e2) {
                     counter3 = e2;
                     counter3.printStackTrace();
-                    if (counter != 0) {
+                    if (counter == 0) {
                     }
                 }
             }
@@ -365,7 +370,7 @@ public class HwSoftApManager extends SoftApManager {
         }
         StringBuilder stringBuilder;
         String str;
-        if (counter != 0) {
+        if (counter == 0) {
             Log.d(TAG, "5G counter is 0");
             if (DBG) {
                 StringBuilder sb = new StringBuilder();

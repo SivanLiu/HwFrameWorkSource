@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.IBinder.DeathRecipient;
@@ -362,15 +363,6 @@ public final class TextClassificationManagerService extends Stub {
         Slog.d(str, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0016 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalArgumentException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0016 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalArgumentException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0016, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x0020, code:
-            throw new android.os.RemoteException(r0.getMessage());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static void validateInput(String packageName, Context context) throws RemoteException {
         try {
             boolean z = false;
@@ -378,7 +370,8 @@ public final class TextClassificationManagerService extends Stub {
                 z = true;
             }
             Preconditions.checkArgument(z);
-        } catch (Exception e) {
+        } catch (NameNotFoundException | IllegalArgumentException | NullPointerException e) {
+            throw new RemoteException(e.getMessage());
         }
     }
 }

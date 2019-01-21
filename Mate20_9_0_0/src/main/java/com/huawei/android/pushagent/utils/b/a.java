@@ -1,61 +1,102 @@
 package com.huawei.android.pushagent.utils.b;
 
+import android.content.Context;
 import android.text.TextUtils;
-import java.util.List;
+import android.util.Log;
 
 public class a {
-    final String c;
-    final String d;
-    final List<String> e;
-    final int f;
-    final List<String> g;
-    final String h;
+    private static a gr = null;
+    private static String gs = "";
 
-    a(b bVar) {
-        this.h = bVar.n;
-        this.d = bVar.j;
-        this.f = bVar.l;
-        this.e = bVar.k;
-        this.g = bVar.m;
-        this.c = bVar.i;
+    private a() {
     }
 
-    public String ah() {
-        int i;
-        int i2 = 0;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(this.h).append("://").append(this.d);
-        if (this.f > 0) {
-            stringBuilder.append(':').append(this.f);
-        }
-        stringBuilder.append('/');
-        if (this.e != null) {
-            int size = this.e.size();
-            for (i = 0; i < size; i++) {
-                stringBuilder.append((String) this.e.get(i)).append('/');
+    private static synchronized a sz() {
+        a aVar;
+        synchronized (a.class) {
+            if (gr == null) {
+                gr = new a();
             }
+            aVar = gr;
         }
-        ag(stringBuilder, '/');
-        if (this.g != null) {
-            i = this.g.size();
-            if (i > 0) {
-                stringBuilder.append('?');
-                while (i2 < i) {
-                    stringBuilder.append((String) this.g.get(i2)).append('&');
-                    i2++;
+        return aVar;
+    }
+
+    public static void tb(Context context) {
+        if (gr == null) {
+            sz();
+        }
+        if (TextUtils.isEmpty(gs)) {
+            String packageName = context.getPackageName();
+            if (packageName != null) {
+                String[] split = packageName.split("\\.");
+                if (split != null && split.length > 0) {
+                    gs = split[split.length - 1];
                 }
-                ag(stringBuilder, '&');
             }
         }
-        if (!TextUtils.isEmpty(this.c)) {
-            stringBuilder.append('#').append(this.c);
-        }
-        return stringBuilder.toString();
     }
 
-    private static void ag(StringBuilder stringBuilder, char c) {
-        if (stringBuilder != null && stringBuilder.lastIndexOf(String.valueOf(c)) == stringBuilder.length() - 1) {
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+    public static void st(String str, String str2) {
+        sz().te(3, str, str2, null, 2);
+    }
+
+    public static void sy(String str, String str2, Throwable th) {
+        sz().te(3, str, str2, th, 2);
+    }
+
+    public static void sv(String str, String str2) {
+        sz().te(4, str, str2, null, 2);
+    }
+
+    public static void sx(String str, String str2) {
+        sz().te(5, str, str2, null, 2);
+    }
+
+    public static void td(String str, String str2, Throwable th) {
+        sz().te(5, str, str2, th, 2);
+    }
+
+    public static void su(String str, String str2) {
+        sz().te(6, str, str2, null, 2);
+    }
+
+    public static void sw(String str, String str2, Throwable th) {
+        sz().te(6, str, str2, th, 2);
+    }
+
+    public static String ta(Throwable th) {
+        return Log.getStackTraceString(th);
+    }
+
+    private synchronized void te(int i, String str, String str2, Throwable th, int i2) {
+        try {
+            if (tc(i)) {
+                String str3 = "[" + Thread.currentThread().getName() + "-" + Thread.currentThread().getId() + "]" + str2;
+                StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+                if (stackTrace.length > i2) {
+                    str3 = str3 + "(" + gs + "/" + stackTrace[i2].getFileName() + ":" + stackTrace[i2].getLineNumber() + ")";
+                } else {
+                    str3 = str3 + "(" + gs + "/unknown source)";
+                }
+                if (th != null) {
+                    str3 = str3 + 10 + ta(th);
+                }
+                Log.println(i, str, str3);
+            } else {
+                return;
+            }
+        } catch (Exception e) {
+            Log.e("PushLog3414", "call writeLog cause:" + e.toString(), e);
+        }
+        return;
+    }
+
+    private static boolean tc(int i) {
+        try {
+            return Log.isLoggable("hwpush", i);
+        } catch (Exception e) {
+            return false;
         }
     }
 }

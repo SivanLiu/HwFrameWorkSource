@@ -1,11 +1,11 @@
 package com.huawei.android.pushagent.model.flowcontrol.a;
 
 public interface a {
-    boolean zq(long j);
+    boolean nd(long j);
 
-    boolean zr(long j);
+    boolean ne(long j);
 
-    boolean zs(a aVar);
+    boolean nf(a aVar);
 
-    String zt();
+    String ng();
 }

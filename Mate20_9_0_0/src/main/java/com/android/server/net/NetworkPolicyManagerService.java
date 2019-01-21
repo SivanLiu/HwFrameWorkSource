@@ -440,17 +440,23 @@ public class NetworkPolicyManagerService extends Stub {
             this();
         }
 
+        /* JADX WARNING: Removed duplicated region for block: B:11:0x001c  */
+        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void resetUserState(int userId) {
             synchronized (NetworkPolicyManagerService.this.mUidRulesFirstLock) {
                 boolean z = false;
                 boolean changed = NetworkPolicyManagerService.this.removeUserStateUL(userId, false);
-                if (NetworkPolicyManagerService.this.addDefaultRestrictBackgroundWhitelistUidsUL(userId) || changed) {
-                    z = true;
-                }
-                if (z) {
-                    synchronized (NetworkPolicyManagerService.this.mNetworkPoliciesSecondLock) {
-                        NetworkPolicyManagerService.this.writePolicyAL();
+                if (!NetworkPolicyManagerService.this.addDefaultRestrictBackgroundWhitelistUidsUL(userId)) {
+                    if (!changed) {
+                        if (z) {
+                            synchronized (NetworkPolicyManagerService.this.mNetworkPoliciesSecondLock) {
+                                NetworkPolicyManagerService.this.writePolicyAL();
+                            }
+                        }
                     }
+                }
+                z = true;
+                if (z) {
                 }
             }
         }
@@ -1328,8 +1334,8 @@ public class NetworkPolicyManagerService extends Stub {
                 case 34:
                     if (isNeedShowWarning()) {
                         int i2;
-                        title = res.getText(17039886);
-                        body = res.getString(17039885, new Object[]{Formatter.formatFileSize(this.mContext, j)});
+                        title = res.getText(17039887);
+                        body = res.getString(17039886, new Object[]{Formatter.formatFileSize(this.mContext, j)});
                         builder.setSmallIcon(17301624);
                         bmp1 = BitmapFactory.decodeResource(res, 33751681);
                         if (bmp1 != null) {
@@ -1359,14 +1365,14 @@ public class NetworkPolicyManagerService extends Stub {
                 case 35:
                     i = networkPolicy.template.getMatchRule();
                     if (i == 1) {
-                        title2 = res.getText(17039879);
+                        title2 = res.getText(17039880);
                     } else if (i == 4) {
-                        title2 = res.getText(17039888);
+                        title2 = res.getText(17039889);
                     } else {
                         return;
                     }
                     title = title2;
-                    body = res.getText(17039876);
+                    body = res.getText(17039877);
                     builder.setOngoing(true);
                     bmp1 = BitmapFactory.decodeResource(res, 33751679);
                     if (bmp1 != null) {
@@ -1378,14 +1384,14 @@ public class NetworkPolicyManagerService extends Stub {
                 case 36:
                     int matchRule = networkPolicy.template.getMatchRule();
                     if (matchRule == 1) {
-                        title = res.getText(17039878);
+                        title = res.getText(17039879);
                     } else if (matchRule == 4) {
-                        title = res.getText(17039887);
+                        title = res.getText(17039888);
                     } else {
                         return;
                     }
                     long overBytes = j - networkPolicy.limitBytes;
-                    body = res.getString(17039877, new Object[]{Formatter.formatFileSize(this.mContext, overBytes)});
+                    body = res.getString(17039878, new Object[]{Formatter.formatFileSize(this.mContext, overBytes)});
                     builder.setOngoing(true);
                     builder.setSmallIcon(17301624);
                     Bitmap bmp3 = BitmapFactory.decodeResource(res, 33751681);
@@ -1404,11 +1410,11 @@ public class NetworkPolicyManagerService extends Stub {
                     return;
             }
         }
-        title = res.getText(17039882);
+        title = res.getText(17039883);
         if (applicationInfo != null) {
-            title2 = res.getString(17039880, new Object[]{applicationInfo.loadLabel(this.mContext.getPackageManager())});
+            title2 = res.getString(17039881, new Object[]{applicationInfo.loadLabel(this.mContext.getPackageManager())});
         } else {
-            title2 = res.getString(17039881);
+            title2 = res.getString(17039882);
         }
         body = title2;
         builder.setSmallIcon(17301624);
@@ -1575,13 +1581,13 @@ public class NetworkPolicyManagerService extends Stub {
         this.mHandler.obtainMessage(18, enabled, 0, template).sendToTarget();
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0047, code:
+    /* JADX WARNING: Missing block: B:17:0x0047, code skipped:
             r3 = (android.telephony.TelephonyManager) r1.mContext.getSystemService(android.telephony.TelephonyManager.class);
      */
-    /* JADX WARNING: Missing block: B:19:0x0056, code:
+    /* JADX WARNING: Missing block: B:19:0x0056, code skipped:
             if (r0 >= r2.size()) goto L_0x0071;
      */
-    /* JADX WARNING: Missing block: B:20:0x0058, code:
+    /* JADX WARNING: Missing block: B:20:0x0058, code skipped:
             r3.setPolicyDataEnabled(r17, r2.get(r0));
             r0 = r0 + 1;
      */
@@ -2039,18 +2045,18 @@ public class NetworkPolicyManagerService extends Stub {
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:50:0x0130 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x0126 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x013e A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0135 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:57:0x014b A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x011a A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:42:0x0112 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x0126 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:50:0x0130 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:53:0x0135 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x013e A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:57:0x014b A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:51:0x0130 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x0126 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x013e A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0135 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x014b A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x011a A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:43:0x0112 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x0126 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:51:0x0130 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0135 A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x013e A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:58:0x014b A:{Catch:{ FileNotFoundException -> 0x038c, Exception -> 0x0382, all -> 0x0380 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void readPolicyAL() {
         if (LOGV) {
@@ -2075,6 +2081,7 @@ public class NetworkPolicyManagerService extends Stub {
             in.setInput(fis, StandardCharsets.UTF_8.name());
             SparseBooleanArray whitelistedRestrictBackground = new SparseBooleanArray();
             int version = 1;
+            boolean insideWhitelist = false;
             while (true) {
                 next = in.next();
                 int type = next;
@@ -2082,16 +2089,15 @@ public class NetworkPolicyManagerService extends Stub {
                 if (next == 1) {
                     break;
                 }
+                boolean z2;
                 String tag = in.getName();
                 if (type != 2) {
                     i = version;
-                    if (type == 3) {
-                        str = TAG_WHITELIST.equals(tag);
-                        if (str != null) {
-                            str = null;
-                        }
+                    if (type == 3 && TAG_WHITELIST.equals(tag)) {
+                        z2 = false;
                     }
                     version = i;
+                    str = null;
                 } else if (TAG_POLICY_LIST.equals(tag)) {
                     boolean oldValue = this.mRestrictBackground;
                     version = XmlUtils.readIntAttribute(in, ATTR_VERSION);
@@ -2099,6 +2105,7 @@ public class NetworkPolicyManagerService extends Stub {
                         z = false;
                     }
                     this.mLoadedRestrictBackground = z;
+                    str = null;
                 } else {
                     String networkId;
                     long lastLimitSnooze;
@@ -2106,6 +2113,7 @@ public class NetworkPolicyManagerService extends Stub {
                         RecurrenceRule cycleRule;
                         long lastLimitSnooze2;
                         boolean metered;
+                        NetworkTemplate template;
                         int networkTemplate = XmlUtils.readIntAttribute(in, ATTR_NETWORK_TEMPLATE);
                         String subscriberId = in.getAttributeValue(str, ATTR_SUBSCRIBER_ID);
                         if (version >= 9) {
@@ -2150,9 +2158,9 @@ public class NetworkPolicyManagerService extends Stub {
                                 } else {
                                     inferred = false;
                                 }
-                                str = new NetworkTemplate(networkTemplate, subscriberId, networkId);
-                                if (str.isPersistable()) {
-                                    this.mNetworkPolicy.put(str, new NetworkPolicy(str, cycleRule, warningBytes, limitBytes, lastWarningSnooze, lastLimitSnooze2, metered, inferred));
+                                template = new NetworkTemplate(networkTemplate, subscriberId, networkId);
+                                if (template.isPersistable()) {
+                                    this.mNetworkPolicy.put(template, new NetworkPolicy(template, cycleRule, warningBytes, limitBytes, lastWarningSnooze, lastLimitSnooze2, metered, inferred));
                                 }
                                 i = version;
                             } else {
@@ -2163,8 +2171,8 @@ public class NetworkPolicyManagerService extends Stub {
                             }
                             if (version >= 7) {
                             }
-                            str = new NetworkTemplate(networkTemplate, subscriberId, networkId);
-                            if (str.isPersistable()) {
+                            template = new NetworkTemplate(networkTemplate, subscriberId, networkId);
+                            if (template.isPersistable()) {
                             }
                             i = version;
                         }
@@ -2176,8 +2184,8 @@ public class NetworkPolicyManagerService extends Stub {
                         }
                         if (version >= 7) {
                         }
-                        str = new NetworkTemplate(networkTemplate, subscriberId, networkId);
-                        if (str.isPersistable()) {
+                        template = new NetworkTemplate(networkTemplate, subscriberId, networkId);
+                        if (template.isPersistable()) {
                         }
                         i = version;
                     } else {
@@ -2209,28 +2217,27 @@ public class NetworkPolicyManagerService extends Stub {
                             }
                             subId = XmlUtils.readIntAttribute(in, ATTR_SUB_ID);
                             this.mSubscriptionPlans.put(subId, (SubscriptionPlan[]) ArrayUtils.appendElement(SubscriptionPlan.class, (SubscriptionPlan[]) this.mSubscriptionPlans.get(subId), builder.build()));
-                            str = XmlUtils.readStringAttribute(in, ATTR_OWNER_PACKAGE);
-                            this.mSubscriptionPlansOwner.put(subId, str);
+                            this.mSubscriptionPlansOwner.put(subId, XmlUtils.readStringAttribute(in, ATTR_OWNER_PACKAGE));
                         } else {
                             i = version;
                             String str3;
                             if (TAG_UID_POLICY.equals(tag)) {
-                                str = XmlUtils.readIntAttribute(in, "uid");
+                                cycleDay = XmlUtils.readIntAttribute(in, "uid");
                                 subId = XmlUtils.readIntAttribute(in, ATTR_POLICY);
-                                if (UserHandle.isApp(str)) {
-                                    setUidPolicyUncheckedUL(str, subId, false);
+                                if (UserHandle.isApp(cycleDay)) {
+                                    setUidPolicyUncheckedUL(cycleDay, subId, false);
                                 } else {
                                     str3 = TAG;
                                     StringBuilder stringBuilder2 = new StringBuilder();
                                     stringBuilder2.append("unable to apply policy to UID ");
-                                    stringBuilder2.append(str);
+                                    stringBuilder2.append(cycleDay);
                                     stringBuilder2.append("; ignoring");
                                     Slog.w(str3, stringBuilder2.toString());
                                 }
                             } else if (TAG_APP_POLICY.equals(tag)) {
-                                str = XmlUtils.readIntAttribute(in, ATTR_APP_ID);
+                                cycleDay = XmlUtils.readIntAttribute(in, ATTR_APP_ID);
                                 subId = XmlUtils.readIntAttribute(in, ATTR_POLICY);
-                                uid = UserHandle.getUid(0, str);
+                                uid = UserHandle.getUid(0, cycleDay);
                                 if (UserHandle.isApp(uid)) {
                                     setUidPolicyUncheckedUL(uid, subId, false);
                                 } else {
@@ -2242,23 +2249,20 @@ public class NetworkPolicyManagerService extends Stub {
                                     Slog.w(str3, stringBuilder.toString());
                                 }
                             } else if (TAG_WHITELIST.equals(tag)) {
-                                str = true;
-                            } else if (!TAG_RESTRICT_BACKGROUND.equals(tag) || null == null) {
-                                str = TAG_REVOKED_RESTRICT_BACKGROUND.equals(tag);
-                                if (!(str == null || null == null)) {
-                                    str = XmlUtils.readIntAttribute(in, "uid");
-                                    this.mRestrictBackgroundWhitelistRevokedUids.put(str, true);
-                                }
-                            } else {
-                                str = XmlUtils.readIntAttribute(in, "uid");
-                                whitelistedRestrictBackground.append(str, true);
+                                z2 = true;
+                            } else if (TAG_RESTRICT_BACKGROUND.equals(tag) && insideWhitelist) {
+                                whitelistedRestrictBackground.append(XmlUtils.readIntAttribute(in, "uid"), true);
+                            } else if (TAG_REVOKED_RESTRICT_BACKGROUND.equals(tag) && insideWhitelist) {
+                                this.mRestrictBackgroundWhitelistRevokedUids.put(XmlUtils.readIntAttribute(in, "uid"), true);
                             }
                         }
                     }
                     version = i;
+                    str = null;
                 }
-                boolean insideWhitelist = str;
+                insideWhitelist = z2;
                 version = i;
+                str = null;
             }
             i = version;
             cycleDay = whitelistedRestrictBackground.size();
@@ -2822,7 +2826,7 @@ public class NetworkPolicyManagerService extends Stub {
         this.mHandler.obtainMessage(6, this.mRestrictBackground, 0).sendToTarget();
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0036, code:
+    /* JADX WARNING: Missing block: B:18:0x0036, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2856,19 +2860,19 @@ public class NetworkPolicyManagerService extends Stub {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x002d, code:
+    /* JADX WARNING: Missing block: B:15:0x002d, code skipped:
             if (r5 == false) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             com.android.server.EventLogTags.writeDeviceIdleOnPhase("net");
      */
-    /* JADX WARNING: Missing block: B:18:0x0036, code:
+    /* JADX WARNING: Missing block: B:18:0x0036, code skipped:
             com.android.server.EventLogTags.writeDeviceIdleOffPhase("net");
      */
-    /* JADX WARNING: Missing block: B:19:0x003c, code:
+    /* JADX WARNING: Missing block: B:19:0x003c, code skipped:
             android.os.Trace.traceEnd(2097152);
      */
-    /* JADX WARNING: Missing block: B:20:0x0040, code:
+    /* JADX WARNING: Missing block: B:20:0x0040, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2963,18 +2967,20 @@ public class NetworkPolicyManagerService extends Stub {
         if (TextUtils.isEmpty(fake)) {
             synchronized (this.mNetworkPoliciesSecondLock) {
                 String ownerPackage = (String) this.mSubscriptionPlansOwner.get(i);
-                if (Objects.equals(ownerPackage, str) || UserHandle.getCallingAppId() == 1000) {
-                    SubscriptionPlan[] subscriptionPlanArr = (SubscriptionPlan[]) this.mSubscriptionPlans.get(i);
-                    return subscriptionPlanArr;
+                if (!Objects.equals(ownerPackage, str)) {
+                    if (UserHandle.getCallingAppId() != 1000) {
+                        String str2 = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Not returning plans because caller ");
+                        stringBuilder.append(str);
+                        stringBuilder.append(" doesn't match owner ");
+                        stringBuilder.append(ownerPackage);
+                        Log.w(str2, stringBuilder.toString());
+                        return null;
+                    }
                 }
-                String str2 = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Not returning plans because caller ");
-                stringBuilder.append(str);
-                stringBuilder.append(" doesn't match owner ");
-                stringBuilder.append(ownerPackage);
-                Log.w(str2, stringBuilder.toString());
-                return null;
+                SubscriptionPlan[] subscriptionPlanArr = (SubscriptionPlan[]) this.mSubscriptionPlans.get(i);
+                return subscriptionPlanArr;
             }
         }
         List<SubscriptionPlan> plans = new ArrayList();
@@ -3454,12 +3460,7 @@ public class NetworkPolicyManagerService extends Stub {
             SparseIntArray uidRules = this.mUidFirewallStandbyRules;
             uidRules.clear();
             List<UserInfo> users = this.mUserManager.getUsers();
-            int ui = users.size();
-            while (true) {
-                ui--;
-                if (ui < 0) {
-                    break;
-                }
+            for (int ui = users.size() - 1; ui >= 0; ui--) {
                 for (int uid : this.mUsageStats.getIdleUidsForUser(((UserInfo) users.get(ui)).id)) {
                     if (!this.mPowerSaveTempWhitelistAppIds.get(UserHandle.getAppId(uid), false) && hasInternetPermissions(uid)) {
                         uidRules.put(uid, 2);
@@ -4286,7 +4287,7 @@ public class NetworkPolicyManagerService extends Stub {
 
     private static Intent buildNetworkOverLimitIntent(Resources res, NetworkTemplate template) {
         Intent intent = new Intent();
-        intent.setComponent(ComponentName.unflattenFromString(res.getString(17039833)));
+        intent.setComponent(ComponentName.unflattenFromString(res.getString(17039834)));
         intent.addFlags(268435456);
         intent.putExtra("android.net.NETWORK_TEMPLATE", template);
         return intent;

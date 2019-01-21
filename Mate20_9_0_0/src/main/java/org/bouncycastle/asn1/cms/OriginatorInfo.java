@@ -13,13 +13,13 @@ public class OriginatorInfo extends ASN1Object {
     private ASN1Set certs;
     private ASN1Set crls;
 
-    /* JADX WARNING: Missing block: B:5:0x0026, code:
+    /* JADX WARNING: Missing block: B:5:0x0026, code skipped:
             r3.crls = org.bouncycastle.asn1.ASN1Set.getInstance(r4, false);
      */
-    /* JADX WARNING: Missing block: B:6:0x002c, code:
+    /* JADX WARNING: Missing block: B:6:0x002c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:12:0x005b, code:
+    /* JADX WARNING: Missing block: B:12:0x005b, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -583,7 +583,7 @@ public class SecurityProfileService implements IHwSecurityPlugin {
             long curTime = System.currentTimeMillis();
             if (curTime < this.blackToastTime || curTime - this.blackToastTime > 3500) {
                 this.blackToastTime = curTime;
-                String text = this.mContext.getResources().getString(33686189);
+                String text = this.mContext.getResources().getString(33686192);
                 if (text != null) {
                     showToast(text);
                 }

@@ -77,15 +77,15 @@ public final class IntegerFunctions {
 Method generation error in method: org.bouncycastle.pqc.math.linearalgebra.IntegerFunctions.ceilLog256(int):int, dex: 
 jadx.core.utils.exceptions.CodegenException: Error generate insn: PHI: (r1_3 'i' int) = (r1_0 'i' int), (r1_2 'i' int) binds: {(r1_0 'i' int)=B:3:0x0004, (r1_2 'i' int)=B:4:0x0006} in method: org.bouncycastle.pqc.math.linearalgebra.IntegerFunctions.ceilLog256(int):int, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:183)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:185)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -118,15 +118,15 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
 Method generation error in method: org.bouncycastle.pqc.math.linearalgebra.IntegerFunctions.ceilLog256(long):int, dex: 
 jadx.core.utils.exceptions.CodegenException: Error generate insn: PHI: (r4_3 'j' long) = (r4_0 'j' long), (r4_2 'j' long) binds: {(r4_0 'j' long)=B:4:0x0008, (r4_2 'j' long)=B:5:0x000a} in method: org.bouncycastle.pqc.math.linearalgebra.IntegerFunctions.ceilLog256(long):int, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
-	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:183)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:61)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeLoop(RegionGen.java:185)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -240,13 +240,13 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
     }
 
     public static byte[] integerToOctets(BigInteger bigInteger) {
-        Object toByteArray = bigInteger.abs().toByteArray();
+        byte[] toByteArray = bigInteger.abs().toByteArray();
         if ((bigInteger.bitLength() & 7) != 0) {
             return toByteArray;
         }
-        Object obj = new byte[(bigInteger.bitLength() >> 3)];
-        System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[(bigInteger.bitLength() >> 3)];
+        System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+        return bArr;
     }
 
     public static boolean isIncreasing(int[] iArr) {
@@ -286,7 +286,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
         return i3;
     }
 
-    /* JADX WARNING: Missing block: B:45:0x005f, code:
+    /* JADX WARNING: Missing block: B:45:0x005f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -497,7 +497,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
 
     /* JADX WARNING: Removed duplicated region for block: B:12:0x0030  */
     /* JADX WARNING: Removed duplicated region for block: B:12:0x0030  */
-    /* JADX WARNING: Missing block: B:35:0x00a0, code:
+    /* JADX WARNING: Missing block: B:35:0x00a0, code skipped:
             if ((r0 % 41) != 0) goto L_0x00a5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -562,7 +562,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
         	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:49)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -1809,10 +1809,10 @@ Caused by: jadx.core.utils.exceptions.CodegenException: PHI can be used only in 
     }
 
     public static BigInteger octetsToInteger(byte[] bArr, int i, int i2) {
-        Object obj = new byte[(i2 + 1)];
-        obj[0] = null;
-        System.arraycopy(bArr, i, obj, 1, i2);
-        return new BigInteger(obj);
+        byte[] bArr2 = new byte[(i2 + 1)];
+        bArr2[0] = (byte) 0;
+        System.arraycopy(bArr, i, bArr2, 1, i2);
+        return new BigInteger(bArr2);
     }
 
     public static int order(int i, int i2) {

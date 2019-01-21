@@ -137,17 +137,6 @@ public class ManagedApplicationService {
         return true;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0010 A:{Splitter: B:8:0x000c, ExcHandler: java.lang.RuntimeException (r0_1 'ex' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:11:0x0011, code:
-            android.util.Slog.e(r4.TAG, "Received exception from user service: ", r0);
-     */
-    /* JADX WARNING: Missing block: B:19:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void sendEvent(PendingEvent event) {
         IInterface iface;
         synchronized (this.mLock) {
@@ -159,7 +148,8 @@ public class ManagedApplicationService {
         if (iface != null) {
             try {
                 event.runEvent(iface);
-            } catch (Exception ex) {
+            } catch (RemoteException | RuntimeException ex) {
+                Slog.e(this.TAG, "Received exception from user service: ", ex);
             }
         }
     }
@@ -205,25 +195,21 @@ public class ManagedApplicationService {
                     }
                 }
 
-                /* JADX WARNING: Removed duplicated region for block: B:20:0x00b5 A:{Splitter: B:18:0x00b1, ExcHandler: java.lang.RuntimeException (r4_3 'ex' java.lang.Exception)} */
-                /* JADX WARNING: Missing block: B:16:0x00ad, code:
+                /* JADX WARNING: Missing block: B:16:0x00ad, code skipped:
             if (r2 == null) goto L_0x00c6;
      */
-                /* JADX WARNING: Missing block: B:17:0x00af, code:
+                /* JADX WARNING: Missing block: B:17:0x00af, code skipped:
             if (r3 == null) goto L_0x00c6;
      */
-                /* JADX WARNING: Missing block: B:19:?, code:
+                /* JADX WARNING: Missing block: B:19:?, code skipped:
             r3.runEvent(r2);
      */
-                /* JADX WARNING: Missing block: B:20:0x00b5, code:
+                /* JADX WARNING: Missing block: B:20:0x00b5, code skipped:
             r4 = move-exception;
      */
-                /* JADX WARNING: Missing block: B:21:0x00b6, code:
+                /* JADX WARNING: Missing block: B:21:0x00b6, code skipped:
             android.util.Slog.e(com.android.server.utils.ManagedApplicationService.access$000(r8.this$0), "Received exception from user service: ", r4);
             com.android.server.utils.ManagedApplicationService.access$500(r8.this$0);
-     */
-                /* JADX WARNING: Missing block: B:22:0x00c6, code:
-            return;
      */
                 /* Code decompiled incorrectly, please refer to instructions dump. */
                 public void onServiceConnected(ComponentName componentName, IBinder iBinder) {

@@ -37,7 +37,7 @@ public class PKCS7TypedStream extends CMSTypedStream {
     public InputStream getContentStream() {
         try {
             return getContentStream(this.content);
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to convert content to stream: ");
             stringBuilder.append(e.getMessage());

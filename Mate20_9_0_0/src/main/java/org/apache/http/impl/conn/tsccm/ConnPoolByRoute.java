@@ -199,8 +199,10 @@ public class ConnPoolByRoute extends AbstractConnPool {
                     boolean success = waitingThread.await(deadline);
                     rospl.removeThread(waitingThread);
                     this.waitingThreads.remove(waitingThread);
-                    if (!(success || deadline == null || deadline.getTime() > System.currentTimeMillis())) {
-                        throw new ConnectionPoolTimeoutException("Timeout waiting for connection");
+                    if (!(success || deadline == null)) {
+                        if (deadline.getTime() <= System.currentTimeMillis()) {
+                            throw new ConnectionPoolTimeoutException("Timeout waiting for connection");
+                        }
                     }
                 } else {
                     deleteLeastUsedEntry();
@@ -392,7 +394,7 @@ public class ConnPoolByRoute extends AbstractConnPool {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x006f A:{Catch:{ all -> 0x003b }} */
+    /* JADX WARNING: Removed duplicated region for block: B:21:0x006f A:{Catch:{ all -> 0x003b }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void notifyWaitingThread(RouteSpecificPool rospl) {
         WaitingThread waitingThread = null;

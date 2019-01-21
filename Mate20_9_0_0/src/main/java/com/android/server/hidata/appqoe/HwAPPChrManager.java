@@ -107,6 +107,8 @@ public class HwAPPChrManager {
                 case 21:
                     result.hicsNum++;
                     break;
+                default:
+                    break;
             }
             setStatisInfo(result);
         }

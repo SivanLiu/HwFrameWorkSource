@@ -4,19 +4,20 @@ public interface IVoldListener extends IInterface {
 
     public static abstract class Stub extends Binder implements IVoldListener {
         private static final String DESCRIPTOR = "android.os.IVoldListener";
-        static final int TRANSACTION_onCryptsdMessage = 14;
+        static final int TRANSACTION_onCheckVolumeCompleted = 7;
+        static final int TRANSACTION_onCryptsdMessage = 15;
         static final int TRANSACTION_onDiskCreated = 1;
         static final int TRANSACTION_onDiskDestroyed = 4;
         static final int TRANSACTION_onDiskMetadataChanged = 3;
         static final int TRANSACTION_onDiskScanned = 2;
-        static final int TRANSACTION_onLockedDiskAdd = 11;
-        static final int TRANSACTION_onLockedDiskRemove = 12;
-        static final int TRANSACTION_onSdHealthReport = 13;
+        static final int TRANSACTION_onLockedDiskAdd = 12;
+        static final int TRANSACTION_onLockedDiskRemove = 13;
+        static final int TRANSACTION_onSdHealthReport = 14;
         static final int TRANSACTION_onVolumeCreated = 5;
-        static final int TRANSACTION_onVolumeDestroyed = 10;
-        static final int TRANSACTION_onVolumeInternalPathChanged = 9;
-        static final int TRANSACTION_onVolumeMetadataChanged = 7;
-        static final int TRANSACTION_onVolumePathChanged = 8;
+        static final int TRANSACTION_onVolumeDestroyed = 11;
+        static final int TRANSACTION_onVolumeInternalPathChanged = 10;
+        static final int TRANSACTION_onVolumeMetadataChanged = 8;
+        static final int TRANSACTION_onVolumePathChanged = 9;
         static final int TRANSACTION_onVolumeStateChanged = 6;
 
         private static class Proxy implements IVoldListener {
@@ -108,6 +109,20 @@ public interface IVoldListener extends IInterface {
                 }
             }
 
+            public void onCheckVolumeCompleted(String volId, String diskId, String partGuid, int isSucc) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
+                    _data.writeString(volId);
+                    _data.writeString(diskId);
+                    _data.writeString(partGuid);
+                    _data.writeInt(isSucc);
+                    this.mRemote.transact(7, _data, null, 1);
+                } finally {
+                    _data.recycle();
+                }
+            }
+
             public void onVolumeMetadataChanged(String volId, String fsType, String fsUuid, String fsLabel) throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 try {
@@ -116,7 +131,7 @@ public interface IVoldListener extends IInterface {
                     _data.writeString(fsType);
                     _data.writeString(fsUuid);
                     _data.writeString(fsLabel);
-                    this.mRemote.transact(7, _data, null, 1);
+                    this.mRemote.transact(8, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -128,7 +143,7 @@ public interface IVoldListener extends IInterface {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
                     _data.writeString(volId);
                     _data.writeString(path);
-                    this.mRemote.transact(8, _data, null, 1);
+                    this.mRemote.transact(9, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -140,7 +155,7 @@ public interface IVoldListener extends IInterface {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
                     _data.writeString(volId);
                     _data.writeString(internalPath);
-                    this.mRemote.transact(9, _data, null, 1);
+                    this.mRemote.transact(10, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -151,7 +166,7 @@ public interface IVoldListener extends IInterface {
                 try {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
                     _data.writeString(volId);
-                    this.mRemote.transact(10, _data, null, 1);
+                    this.mRemote.transact(11, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -161,7 +176,7 @@ public interface IVoldListener extends IInterface {
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    this.mRemote.transact(11, _data, null, 1);
+                    this.mRemote.transact(12, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -171,7 +186,7 @@ public interface IVoldListener extends IInterface {
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    this.mRemote.transact(12, _data, null, 1);
+                    this.mRemote.transact(13, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -183,7 +198,7 @@ public interface IVoldListener extends IInterface {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
                     _data.writeString(volId);
                     _data.writeInt(newState);
-                    this.mRemote.transact(13, _data, null, 1);
+                    this.mRemote.transact(14, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -194,7 +209,7 @@ public interface IVoldListener extends IInterface {
                 try {
                     _data.writeInterfaceToken(Stub.DESCRIPTOR);
                     _data.writeString(message);
-                    this.mRemote.transact(14, _data, null, 1);
+                    this.mRemote.transact(15, _data, null, 1);
                 } finally {
                     _data.recycle();
                 }
@@ -252,33 +267,37 @@ public interface IVoldListener extends IInterface {
                         return true;
                     case 7:
                         parcel.enforceInterface(descriptor);
-                        onVolumeMetadataChanged(data.readString(), data.readString(), data.readString(), data.readString());
+                        onCheckVolumeCompleted(data.readString(), data.readString(), data.readString(), data.readInt());
                         return true;
                     case 8:
                         parcel.enforceInterface(descriptor);
-                        onVolumePathChanged(data.readString(), data.readString());
+                        onVolumeMetadataChanged(data.readString(), data.readString(), data.readString(), data.readString());
                         return true;
                     case 9:
                         parcel.enforceInterface(descriptor);
-                        onVolumeInternalPathChanged(data.readString(), data.readString());
+                        onVolumePathChanged(data.readString(), data.readString());
                         return true;
                     case 10:
                         parcel.enforceInterface(descriptor);
-                        onVolumeDestroyed(data.readString());
+                        onVolumeInternalPathChanged(data.readString(), data.readString());
                         return true;
                     case 11:
                         parcel.enforceInterface(descriptor);
-                        onLockedDiskAdd();
+                        onVolumeDestroyed(data.readString());
                         return true;
                     case 12:
                         parcel.enforceInterface(descriptor);
-                        onLockedDiskRemove();
+                        onLockedDiskAdd();
                         return true;
                     case 13:
                         parcel.enforceInterface(descriptor);
-                        onSdHealthReport(data.readString(), data.readInt());
+                        onLockedDiskRemove();
                         return true;
                     case 14:
+                        parcel.enforceInterface(descriptor);
+                        onSdHealthReport(data.readString(), data.readInt());
+                        return true;
+                    case 15:
                         parcel.enforceInterface(descriptor);
                         onCryptsdMessage(data.readString());
                         return true;
@@ -290,6 +309,8 @@ public interface IVoldListener extends IInterface {
             return true;
         }
     }
+
+    void onCheckVolumeCompleted(String str, String str2, String str3, int i) throws RemoteException;
 
     void onCryptsdMessage(String str) throws RemoteException;
 

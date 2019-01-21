@@ -136,11 +136,11 @@ public class KGCMBlockCipher implements AEADBlockCipher {
                 reset();
                 return processBytes + this.macSize;
             } else {
-                Object obj = new byte[this.macSize];
-                System.arraycopy(this.data.getBuffer(), size - this.macSize, obj, 0, this.macSize);
-                Object obj2 = new byte[this.macSize];
-                System.arraycopy(this.macBlock, 0, obj2, 0, this.macSize);
-                if (Arrays.constantTimeAreEqual(obj, obj2)) {
+                byte[] bArr3 = new byte[this.macSize];
+                System.arraycopy(this.data.getBuffer(), size - this.macSize, bArr3, 0, this.macSize);
+                byte[] bArr4 = new byte[this.macSize];
+                System.arraycopy(this.macBlock, 0, bArr4, 0, this.macSize);
+                if (Arrays.constantTimeAreEqual(bArr3, bArr4)) {
                     reset();
                     return processBytes;
                 }
@@ -158,9 +158,9 @@ public class KGCMBlockCipher implements AEADBlockCipher {
     }
 
     public byte[] getMac() {
-        Object obj = new byte[this.macSize];
-        System.arraycopy(this.macBlock, 0, obj, 0, this.macSize);
-        return obj;
+        byte[] bArr = new byte[this.macSize];
+        System.arraycopy(this.macBlock, 0, bArr, 0, this.macSize);
+        return bArr;
     }
 
     public int getOutputSize(int i) {
@@ -179,7 +179,7 @@ public class KGCMBlockCipher implements AEADBlockCipher {
     public void init(boolean z, CipherParameters cipherParameters) throws IllegalArgumentException {
         CipherParameters key;
         this.forEncryption = z;
-        Object nonce;
+        byte[] nonce;
         int length;
         if (cipherParameters instanceof AEADParameters) {
             AEADParameters aEADParameters = (AEADParameters) cipherParameters;

@@ -118,26 +118,28 @@ public class SchedLevelBoost {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0031, code:
+    /* JADX WARNING: Missing block: B:18:0x0031, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:0x0033, code:
+    /* JADX WARNING: Missing block: B:20:0x0033, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void removeFgProc(int pid, int uid) {
         synchronized (this.mFgAppMap) {
             AppInfo info = (AppInfo) this.mFgAppMap.get(pid);
-            if (info != null && pid == info.pid && uid == info.uid) {
-                this.mFgAppMap.remove(pid);
-                if (info.isWhiteList && this.mIsScreenOn.get() && !isLastWhiteList()) {
-                    exitSchedLevelBoost();
+            if (info != null && pid == info.pid) {
+                if (uid == info.uid) {
+                    this.mFgAppMap.remove(pid);
+                    if (info.isWhiteList && this.mIsScreenOn.get() && !isLastWhiteList()) {
+                        exitSchedLevelBoost();
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0027, code:
+    /* JADX WARNING: Missing block: B:14:0x0027, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -161,8 +163,10 @@ public class SchedLevelBoost {
             int size = this.mFgAppMap.size();
             for (int i = 0; i < size; i++) {
                 AppInfo info = (AppInfo) this.mFgAppMap.valueAt(i);
-                if (info != null && info.isWhiteList) {
-                    return true;
+                if (info != null) {
+                    if (info.isWhiteList) {
+                        return true;
+                    }
                 }
             }
             return false;

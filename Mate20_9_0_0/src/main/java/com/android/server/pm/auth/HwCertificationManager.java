@@ -72,7 +72,7 @@ public class HwCertificationManager {
         new Thread(this.mWriteStateRunnable).start();
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0028, code:
+    /* JADX WARNING: Missing block: B:9:0x0028, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -160,10 +160,10 @@ public class HwCertificationManager {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x006a, code:
+    /* JADX WARNING: Missing block: B:20:0x006a, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:31:0x00ac, code:
+    /* JADX WARNING: Missing block: B:31:0x00ac, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -337,8 +337,8 @@ public class HwCertificationManager {
     private void onPackageRemoved(String packageName) {
         synchronized (this.mLock) {
             if (packageName != null) {
-                if (this.mCertMap.containsKey(packageName)) {
-                    try {
+                try {
+                    if (this.mCertMap.containsKey(packageName)) {
                         StringBuilder stringBuilder;
                         if (Utils.isPackageInstalled(packageName, mContext)) {
                             stringBuilder = new StringBuilder();
@@ -357,15 +357,16 @@ public class HwCertificationManager {
                             stringBuilder.append(",remove from the cert list xml");
                             HwAuthLogger.i("HwCertificationManager", stringBuilder.toString());
                         }
-                    } catch (Exception ex) {
-                        HwAuthLogger.e("HwCertificationManager", "onPackageRemoved error!", ex);
                     }
+                } catch (Exception ex) {
+                    HwAuthLogger.e("HwCertificationManager", "onPackageRemoved error!", ex);
+                } catch (Throwable th) {
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x005b, code:
+    /* JADX WARNING: Missing block: B:19:0x005b, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

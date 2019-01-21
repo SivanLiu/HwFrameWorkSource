@@ -247,9 +247,9 @@ public final class HwPCVAssistAppStarter {
                             case 99:
                                 obj.put("errorCode", 0);
                                 if (errCode == 98) {
-                                    responseStr = this.mContext.getString(33686136);
+                                    responseStr = this.mContext.getString(33686138);
                                 } else {
-                                    responseStr = this.mContext.getString(33686134);
+                                    responseStr = this.mContext.getString(33686136);
                                 }
                                 responseStr = String.format(responseStr, new Object[]{cmd.extra});
                                 obj.put("responseText", responseStr);
@@ -258,8 +258,8 @@ public final class HwPCVAssistAppStarter {
                             default:
                                 if (!ActivityManager.isStartResultSuccessful(errCode)) {
                                     obj.put("errorCode", 1);
-                                    obj.put("responseText", this.mContext.getString(33686131));
-                                    obj.put("ttsText", this.mContext.getString(33686131));
+                                    obj.put("responseText", this.mContext.getString(33686133));
+                                    obj.put("ttsText", this.mContext.getString(33686133));
                                     break;
                                 }
                                 genJsonReplyForNormalResultSuccess(obj);
@@ -270,7 +270,7 @@ public final class HwPCVAssistAppStarter {
             switch (errCode) {
                 case RESULT_APP_START_SUCC_SEARCH_IN_MARKET /*-43*/:
                     obj.put("errorCode", 0);
-                    responseStr = this.mContext.getString(33686141);
+                    responseStr = this.mContext.getString(33686143);
                     obj.put("responseText", responseStr);
                     obj.put("ttsText", responseStr);
                     break;
@@ -278,9 +278,9 @@ public final class HwPCVAssistAppStarter {
                 case RESULT_APP_START_SUCC_IN_PHONE /*-41*/:
                     obj.put("errorCode", 0);
                     if (errCode == RESULT_APP_START_SUCC_IN_PHONE) {
-                        responseStr = this.mContext.getString(33686155);
+                        responseStr = this.mContext.getString(33686157);
                     } else {
-                        responseStr = this.mContext.getString(33686156);
+                        responseStr = this.mContext.getString(33686158);
                     }
                     responseStr = String.format(responseStr, new Object[]{cmd.extra});
                     String str2 = TAG;
@@ -293,8 +293,8 @@ public final class HwPCVAssistAppStarter {
                     break;
                 default:
                     obj.put("errorCode", 1);
-                    obj.put("responseText", this.mContext.getString(33686131));
-                    obj.put("ttsText", this.mContext.getString(33686131));
+                    obj.put("responseText", this.mContext.getString(33686133));
+                    obj.put("ttsText", this.mContext.getString(33686133));
                     break;
             }
         } catch (JSONException e) {

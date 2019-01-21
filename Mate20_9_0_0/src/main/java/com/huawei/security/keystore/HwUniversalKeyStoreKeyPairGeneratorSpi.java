@@ -128,14 +128,6 @@ public class HwUniversalKeyStoreKeyPairGeneratorSpi extends KeyPairGeneratorSpi 
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x00a1 A:{ExcHandler: java.lang.IllegalArgumentException (r3_22 'e' java.lang.RuntimeException), Splitter: B:14:0x0057} */
-    /* JADX WARNING: Missing block: B:23:0x00a1, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:26:0x00a7, code:
-            throw new java.security.InvalidAlgorithmParameterException(r3);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void initialize(AlgorithmParameterSpec params, SecureRandom random) throws InvalidAlgorithmParameterException {
         resetAll();
         Log.e(TAG, "HwUniversalKeyStoreKeyPairGeneratorSpi initialize");
@@ -182,7 +174,8 @@ public class HwUniversalKeyStoreKeyPairGeneratorSpi extends KeyPairGeneratorSpi 
                     return;
                 }
                 throw new InvalidAlgorithmParameterException("KeyStore entry alias not provided");
-            } catch (RuntimeException e) {
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                throw new InvalidAlgorithmParameterException(e);
             } catch (Throwable th) {
                 if (!false) {
                     resetAll();
@@ -422,18 +415,11 @@ public class HwUniversalKeyStoreKeyPairGeneratorSpi extends KeyPairGeneratorSpi 
         return getAttestationChainBytes(privateKeyAlias, keyPair, args);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x001a A:{ExcHandler: java.io.IOException (r0_4 'e' java.lang.Exception), Splitter: B:0:0x0000} */
-    /* JADX WARNING: Missing block: B:6:0x001a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x0022, code:
-            throw new java.security.ProviderException("Failed to generate self-signed certificate", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private byte[] generateSelfSignedCertificateBytes(KeyPair keyPair) throws ProviderException {
         try {
             return generateSelfSignedCertificate(keyPair.getPrivate(), keyPair.getPublic()).getEncoded();
-        } catch (Exception e) {
+        } catch (IOException | CertificateParsingException e) {
+            throw new ProviderException("Failed to generate self-signed certificate", e);
         } catch (CertificateEncodingException e2) {
             throw new ProviderException("Failed to obtain encoded form of self-signed certificate", e2);
         }
@@ -463,19 +449,19 @@ public class HwUniversalKeyStoreKeyPairGeneratorSpi extends KeyPairGeneratorSpi 
         return certGen.generate(privateKey);
     }
 
-    /* JADX WARNING: Missing block: B:17:0x00e1, code:
+    /* JADX WARNING: Missing block: B:17:0x00e1, code skipped:
             if (r5 != null) goto L_0x00e3;
      */
-    /* JADX WARNING: Missing block: B:19:?, code:
+    /* JADX WARNING: Missing block: B:19:?, code skipped:
             r4.close();
      */
-    /* JADX WARNING: Missing block: B:20:0x00e7, code:
+    /* JADX WARNING: Missing block: B:20:0x00e7, code skipped:
             r7 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:21:0x00e8, code:
+    /* JADX WARNING: Missing block: B:21:0x00e8, code skipped:
             r5.addSuppressed(r7);
      */
-    /* JADX WARNING: Missing block: B:22:0x00ec, code:
+    /* JADX WARNING: Missing block: B:22:0x00ec, code skipped:
             r4.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -1144,10 +1144,10 @@ public class TaskStack extends AbsTaskStack implements BoundsAnimationTarget {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0013, code:
+    /* JADX WARNING: Missing block: B:10:0x0013, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r2.mService.mActivityManager.resizePinnedStack(r3, r4);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1249,7 +1249,7 @@ public class TaskStack extends AbsTaskStack implements BoundsAnimationTarget {
         if (!homeTask.isVisible() || homeApp == null) {
             return true;
         }
-        return true ^ homeApp.allDrawn;
+        return 1 ^ homeApp.allDrawn;
     }
 
     public boolean deferScheduleMultiWindowModeChanged() {

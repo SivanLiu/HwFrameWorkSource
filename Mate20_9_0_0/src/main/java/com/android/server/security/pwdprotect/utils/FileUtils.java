@@ -45,16 +45,16 @@ public class FileUtils {
         return readFile(PasswordIvsCache.FILE_E_PIN2, 7);
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0034, code:
+    /* JADX WARNING: Missing block: B:9:0x0034, code skipped:
             if (r6 == -1) goto L_0x00ba;
      */
-    /* JADX WARNING: Missing block: B:11:0x0041, code:
+    /* JADX WARNING: Missing block: B:12:0x0041, code skipped:
             if (r8 == -1) goto L_0x00ba;
      */
-    /* JADX WARNING: Missing block: B:14:0x004f, code:
+    /* JADX WARNING: Missing block: B:15:0x004f, code skipped:
             if (r6 == -1) goto L_0x00ba;
      */
-    /* JADX WARNING: Missing block: B:33:0x00b2, code:
+    /* JADX WARNING: Missing block: B:34:0x00b2, code skipped:
             if (r6 == -1) goto L_0x00ba;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -136,6 +136,8 @@ public class FileUtils {
                         baos.write(buf, 0, i - 32);
                         break;
                     }
+                default:
+                    break;
             }
             byte[] buffer2 = baos.toByteArray();
             return buffer2;

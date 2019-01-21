@@ -25,18 +25,19 @@ public class HighResThumbnailLoader implements TaskCallbacks {
             while (true) {
                 Task next = null;
                 synchronized (HighResThumbnailLoader.this.mLoadQueue) {
-                    if (!HighResThumbnailLoader.this.mLoading || HighResThumbnailLoader.this.mLoadQueue.isEmpty()) {
-                        try {
-                            HighResThumbnailLoader.this.mLoaderIdling = true;
-                            HighResThumbnailLoader.this.mLoadQueue.wait();
-                            HighResThumbnailLoader.this.mLoaderIdling = false;
-                        } catch (InterruptedException e) {
+                    if (HighResThumbnailLoader.this.mLoading) {
+                        if (!HighResThumbnailLoader.this.mLoadQueue.isEmpty()) {
+                            next = (Task) HighResThumbnailLoader.this.mLoadQueue.poll();
+                            if (next != null) {
+                                HighResThumbnailLoader.this.mLoadingTasks.add(next);
+                            }
                         }
-                    } else {
-                        next = (Task) HighResThumbnailLoader.this.mLoadQueue.poll();
-                        if (next != null) {
-                            HighResThumbnailLoader.this.mLoadingTasks.add(next);
-                        }
+                    }
+                    try {
+                        HighResThumbnailLoader.this.mLoaderIdling = true;
+                        HighResThumbnailLoader.this.mLoadQueue.wait();
+                        HighResThumbnailLoader.this.mLoaderIdling = false;
+                    } catch (InterruptedException e) {
                     }
                 }
                 if (next != null) {

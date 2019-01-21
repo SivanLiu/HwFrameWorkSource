@@ -17,11 +17,13 @@ import com.android.internal.util.IndentingPrintWriter;
 import java.io.Closeable;
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -218,24 +220,6 @@ public class NetworkDiagnostics {
         }
 
         /* JADX WARNING: Removed duplicated region for block: B:25:0x0108  */
-        /* JADX WARNING: Removed duplicated region for block: B:28:0x0122 A:{Splitter: B:4:0x0014, ExcHandler: android.system.ErrnoException (r0_6 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:21:0x00f5 A:{Splitter: B:10:0x00a1, ExcHandler: android.system.ErrnoException (r6_13 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:19:0x00f3 A:{Splitter: B:13:0x00ab, ExcHandler: android.system.ErrnoException (e android.system.ErrnoException)} */
-        /* JADX WARNING: Missing block: B:21:0x00f5, code:
-            r6 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:22:0x00f6, code:
-            r12.mMeasurement.recordFailure(r6.toString());
-     */
-        /* JADX WARNING: Missing block: B:28:0x0122, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:29:0x0123, code:
-            r12.mMeasurement.recordFailure(r0.toString());
-     */
-        /* JADX WARNING: Missing block: B:30:0x012c, code:
-            return;
-     */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             if (this.mMeasurement.finishTime > 0) {
@@ -286,9 +270,10 @@ public class NetworkDiagnostics {
                             stringBuilder4.append(count);
                             stringBuilder4.append(rcodeStr);
                             measurement3.recordSuccess(stringBuilder4.toString());
-                        } catch (ErrnoException e) {
+                        } catch (ErrnoException | InterruptedIOException e) {
                         }
-                    } catch (Exception e2) {
+                    } catch (ErrnoException | InterruptedIOException e2) {
+                        this.mMeasurement.recordFailure(e2.toString());
                     }
                     if (this.mMeasurement.finishTime == 0) {
                         Measurement measurement4 = this.mMeasurement;
@@ -302,7 +287,8 @@ public class NetworkDiagnostics {
                 if (this.mMeasurement.finishTime == 0) {
                 }
                 close();
-            } catch (Exception e3) {
+            } catch (ErrnoException | IOException e3) {
+                this.mMeasurement.recordFailure(e3.toString());
             }
         }
 
@@ -343,25 +329,6 @@ public class NetworkDiagnostics {
             this(null, target, measurement);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:24:0x00dd A:{Splitter: B:4:0x0014, ExcHandler: android.system.ErrnoException (r0_6 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:17:0x00b0 A:{Splitter: B:10:0x0085, ExcHandler: android.system.ErrnoException (r4_5 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:15:0x00ae A:{Splitter: B:13:0x008e, ExcHandler: android.system.ErrnoException (e android.system.ErrnoException)} */
-        /* JADX WARNING: Missing block: B:17:0x00b0, code:
-            r4 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:18:0x00b1, code:
-            r13.mMeasurement.recordFailure(r4.toString());
-     */
-        /* JADX WARNING: Missing block: B:24:0x00dd, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:25:0x00de, code:
-            r13.mMeasurement.recordFailure(r0.toString());
-     */
-        /* JADX WARNING: Missing block: B:26:0x00e7, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             if (this.mMeasurement.finishTime > 0) {
                 NetworkDiagnostics.this.mCountDownLatch.countDown();
@@ -392,9 +359,10 @@ public class NetworkDiagnostics {
                             stringBuilder2.append(count);
                             measurement2.recordSuccess(stringBuilder2.toString());
                             break;
-                        } catch (ErrnoException e) {
+                        } catch (ErrnoException | InterruptedIOException e) {
                         }
-                    } catch (Exception e2) {
+                    } catch (ErrnoException | InterruptedIOException e2) {
+                        this.mMeasurement.recordFailure(e2.toString());
                     }
                 }
                 if (this.mMeasurement.finishTime == 0) {
@@ -405,7 +373,8 @@ public class NetworkDiagnostics {
                     measurement3.recordFailure(stringBuilder3.toString());
                 }
                 close();
-            } catch (Exception e3) {
+            } catch (ErrnoException | IOException e3) {
+                this.mMeasurement.recordFailure(e3.toString());
             }
         }
     }
@@ -455,15 +424,11 @@ public class NetworkDiagnostics {
         this.mDescription = stringBuilder.toString();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x000d A:{Splitter: B:0:0x0000, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Missing block: B:5:0x000f, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static Integer getInterfaceIndex(String ifname) {
         try {
             return Integer.valueOf(NetworkInterface.getByName(ifname).getIndex());
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | SocketException e) {
+            return null;
         }
     }
 

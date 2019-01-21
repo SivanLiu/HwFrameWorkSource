@@ -328,9 +328,9 @@ public class KCCMBlockCipher implements AEADBlockCipher {
                 System.arraycopy(bArr2, i6 - this.macSize, this.buffer, 0, this.macSize);
                 CalculateMac(bArr2, 0, i6 - this.macSize);
                 System.arraycopy(this.macBlock, 0, this.mac, 0, this.macSize);
-                Object obj = new byte[this.macSize];
-                System.arraycopy(this.buffer, 0, obj, 0, this.macSize);
-                if (Arrays.constantTimeAreEqual(this.mac, obj)) {
+                bArr = new byte[this.macSize];
+                System.arraycopy(this.buffer, 0, bArr, 0, this.macSize);
+                if (Arrays.constantTimeAreEqual(this.mac, bArr)) {
                     reset();
                     return i2 - this.macSize;
                 }

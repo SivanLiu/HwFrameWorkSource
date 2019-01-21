@@ -2,73 +2,43 @@ package com.huawei.android.pushagent.model.b;
 
 import android.content.Context;
 import android.text.TextUtils;
-import com.huawei.android.pushagent.model.prefs.b;
-import com.huawei.android.pushagent.model.prefs.e;
-import com.huawei.android.pushagent.model.prefs.h;
-import com.huawei.android.pushagent.model.prefs.j;
-import com.huawei.android.pushagent.model.prefs.m;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
-import java.io.UnsupportedEncodingException;
+import com.huawei.android.pushagent.datatype.http.server.TokenApplyReq;
+import com.huawei.android.pushagent.datatype.http.server.TokenApplyRsp;
+import org.json.JSONException;
 
-public class a {
-    private static final byte[] gq = new byte[0];
-    private static a gr = null;
+public class a extends b<TokenApplyRsp> {
+    private TokenApplyReq dy;
 
-    public static void xc(Context context) {
-        Iterable<String> pq = e.pn(context).pq();
-        if (pq.size() > 0) {
-            for (String str : pq) {
-                if (!g.gc(context, g.fu(str), g.fv(str))) {
-                    m.vg(context).vh(e.pn(context).pp(str), str);
-                    e.pn(context).pr(str);
-                }
-            }
+    public a(Context context, TokenApplyReq tokenApplyReq) {
+        super(context);
+        this.dy = tokenApplyReq;
+    }
+
+    protected String mx() {
+        String na = b.na("pushtrs.push.hicloud.com", com.huawei.android.pushagent.model.prefs.a.ff(mz()).getBelongId());
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("https://").append(na).append("/PushTokenServer/v4/pushtoken/apply");
+        com.huawei.android.pushagent.utils.b.a.st("PushLog3414", "url:" + stringBuffer.toString());
+        return stringBuffer.toString();
+    }
+
+    protected int mv() {
+        return 5222;
+    }
+
+    protected String mw() {
+        try {
+            return com.huawei.android.pushagent.utils.d.a.uh(this.dy);
+        } catch (JSONException e) {
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", "fail to get reqContent");
+            return null;
         }
     }
 
-    public static boolean xa(Context context, String str, String str2) {
-        if (TextUtils.isEmpty(e.pn(context).pp(g.fs(str, str2)))) {
-            return false;
+    protected TokenApplyRsp my(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
         }
-        return true;
-    }
-
-    public static boolean wy(Context context, String str, String str2) {
-        int or = b.oq(context).or();
-        String fs = g.fs(str, str2);
-        if (1 == or) {
-            if (j.rb(context).rc(fs) || (TextUtils.isEmpty(e.pn(context).pp(fs)) ^ 1) != 0) {
-                return true;
-            }
-        } else if (!TextUtils.isEmpty(e.pn(context).ps(fs))) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean xb(Context context, String str, String str2, byte[] bArr) {
-        int or = b.oq(context).or();
-        String fs = g.fs(str, str2);
-        if (1 == or) {
-            return true;
-        }
-        if (bArr != null) {
-            try {
-                if (new String(bArr, "UTF-8").equals(e.pn(context).ps(fs))) {
-                    return true;
-                }
-            } catch (UnsupportedEncodingException e) {
-                c.eq("PushLog3413", "server token parse string failed");
-            }
-        }
-        return false;
-    }
-
-    public static boolean wz(Context context) {
-        if (e.pn(context).pt() || (m.vg(context).vi() ^ 1) == 0 || (h.qr(context).qu() ^ 1) == 0 || (j.rb(context).rd() ^ 1) == 0) {
-            return true;
-        }
-        return false;
+        return (TokenApplyRsp) com.huawei.android.pushagent.utils.d.a.ui(str, TokenApplyRsp.class, new Class[0]);
     }
 }

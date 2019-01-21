@@ -366,16 +366,18 @@ public class HwQoEContentAware {
 
     private synchronized String getForegroundActivity() {
         List<RunningTaskInfo> runningTaskInfos = this.mActivityManager.getRunningTasks(1);
-        if (runningTaskInfos == null || runningTaskInfos.isEmpty()) {
-            logD("running task is null, ams is abnormal!!!");
-            return null;
+        if (runningTaskInfos != null) {
+            if (!runningTaskInfos.isEmpty()) {
+                RunningTaskInfo mRunningTask = (RunningTaskInfo) runningTaskInfos.get(0);
+                if (mRunningTask == null) {
+                    logD("failed to get RunningTaskInfo");
+                    return null;
+                }
+                return mRunningTask.topActivity.getPackageName();
+            }
         }
-        RunningTaskInfo mRunningTask = (RunningTaskInfo) runningTaskInfos.get(0);
-        if (mRunningTask == null) {
-            logD("failed to get RunningTaskInfo");
-            return null;
-        }
-        return mRunningTask.topActivity.getPackageName();
+        logD("running task is null, ams is abnormal!!!");
+        return null;
     }
 
     public void queryForegroundAppType() {

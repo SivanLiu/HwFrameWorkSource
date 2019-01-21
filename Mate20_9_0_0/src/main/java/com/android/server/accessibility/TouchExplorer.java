@@ -588,7 +588,7 @@ class TouchExplorer extends BaseEventStreamTransformation implements Listener {
         super.onMotionEvent(event, rawEvent, policyFlags);
     }
 
-    /* JADX WARNING: Missing block: B:14:0x003b, code:
+    /* JADX WARNING: Missing block: B:14:0x003b, code skipped:
             if (r0 != 32768) goto L_0x0060;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

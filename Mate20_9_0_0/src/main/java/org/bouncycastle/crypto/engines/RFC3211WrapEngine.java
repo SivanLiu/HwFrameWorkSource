@@ -47,33 +47,33 @@ public class RFC3211WrapEngine implements Wrapper {
         int blockSize = this.engine.getBlockSize();
         if (i2 >= 2 * blockSize) {
             int i3;
-            Object obj = new byte[i2];
-            Object obj2 = new byte[blockSize];
+            byte[] bArr2 = new byte[i2];
+            byte[] bArr3 = new byte[blockSize];
             int i4 = 0;
-            System.arraycopy(bArr, i, obj, 0, i2);
-            System.arraycopy(bArr, i, obj2, 0, obj2.length);
-            this.engine.init(false, new ParametersWithIV(this.param.getParameters(), obj2));
-            for (i3 = blockSize; i3 < obj.length; i3 += blockSize) {
-                this.engine.processBlock(obj, i3, obj, i3);
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            System.arraycopy(bArr, i, bArr3, 0, bArr3.length);
+            this.engine.init(false, new ParametersWithIV(this.param.getParameters(), bArr3));
+            for (i3 = blockSize; i3 < bArr2.length; i3 += blockSize) {
+                this.engine.processBlock(bArr2, i3, bArr2, i3);
             }
-            System.arraycopy(obj, obj.length - obj2.length, obj2, 0, obj2.length);
-            this.engine.init(false, new ParametersWithIV(this.param.getParameters(), obj2));
-            this.engine.processBlock(obj, 0, obj, 0);
+            System.arraycopy(bArr2, bArr2.length - bArr3.length, bArr3, 0, bArr3.length);
+            this.engine.init(false, new ParametersWithIV(this.param.getParameters(), bArr3));
+            this.engine.processBlock(bArr2, 0, bArr2, 0);
             this.engine.init(false, this.param);
-            for (i3 = 0; i3 < obj.length; i3 += blockSize) {
-                this.engine.processBlock(obj, i3, obj, i3);
+            for (i3 = 0; i3 < bArr2.length; i3 += blockSize) {
+                this.engine.processBlock(bArr2, i3, bArr2, i3);
             }
-            if ((obj[0] & 255) <= obj.length - 4) {
-                Object obj3 = new byte[(obj[0] & 255)];
-                System.arraycopy(obj, 4, obj3, 0, obj[0]);
+            if ((bArr2[0] & 255) <= bArr2.length - 4) {
+                bArr = new byte[(bArr2[0] & 255)];
+                System.arraycopy(bArr2, 4, bArr, 0, bArr2[0]);
                 i = 0;
                 while (i4 != 3) {
                     i2 = 1 + i4;
-                    i |= ((byte) (~obj[i2])) ^ obj3[i4];
+                    i |= ((byte) (~bArr2[i2])) ^ bArr[i4];
                     i4 = i2;
                 }
                 if (i == 0) {
-                    return obj3;
+                    return bArr;
                 }
                 throw new InvalidCipherTextException("wrapped key fails checksum");
             }
@@ -91,24 +91,24 @@ public class RFC3211WrapEngine implements Wrapper {
             if (i3 >= i4) {
                 i4 = i3 % blockSize == 0 ? i3 : ((i3 / blockSize) + 1) * blockSize;
             }
-            Object obj = new byte[i4];
+            byte[] bArr2 = new byte[i4];
             int i5 = 0;
-            obj[0] = (byte) i2;
-            obj[1] = (byte) (~bArr[i]);
-            obj[2] = (byte) (~bArr[i + 1]);
-            obj[3] = (byte) (~bArr[i + 2]);
-            System.arraycopy(bArr, i, obj, 4, i2);
-            Object obj2 = new byte[(obj.length - i3)];
-            this.rand.nextBytes(obj2);
-            System.arraycopy(obj2, 0, obj, i3, obj2.length);
-            for (int i6 = 0; i6 < obj.length; i6 += blockSize) {
-                this.engine.processBlock(obj, i6, obj, i6);
+            bArr2[0] = (byte) i2;
+            bArr2[1] = (byte) (~bArr[i]);
+            bArr2[2] = (byte) (~bArr[i + 1]);
+            bArr2[3] = (byte) (~bArr[i + 2]);
+            System.arraycopy(bArr, i, bArr2, 4, i2);
+            bArr = new byte[(bArr2.length - i3)];
+            this.rand.nextBytes(bArr);
+            System.arraycopy(bArr, 0, bArr2, i3, bArr.length);
+            for (int i6 = 0; i6 < bArr2.length; i6 += blockSize) {
+                this.engine.processBlock(bArr2, i6, bArr2, i6);
             }
-            while (i5 < obj.length) {
-                this.engine.processBlock(obj, i5, obj, i5);
+            while (i5 < bArr2.length) {
+                this.engine.processBlock(bArr2, i5, bArr2, i5);
                 i5 += blockSize;
             }
-            return obj;
+            return bArr2;
         }
         throw new IllegalStateException("not set for wrapping");
     }

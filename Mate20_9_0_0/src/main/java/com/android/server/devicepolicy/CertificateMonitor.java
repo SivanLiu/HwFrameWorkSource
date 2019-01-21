@@ -20,6 +20,7 @@ import com.android.internal.notification.SystemNotificationChannels;
 import com.android.server.pm.DumpState;
 import huawei.cust.HwCustUtils;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -54,17 +55,6 @@ public class CertificateMonitor {
         this.mInjector.mContext.registerReceiverAsUser(this.mRootCaReceiver, UserHandle.ALL, filter, null, this.mHandler);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x004f A:{Splitter: B:1:0x0001, ExcHandler: java.security.cert.CertificateException (r1_2 'ce' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:28:0x004f, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:29:0x0050, code:
-            android.util.Log.e(LOG_TAG, "Problem converting cert", r1);
-     */
-    /* JADX WARNING: Missing block: B:30:0x0057, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public String installCaCert(UserHandle userHandle, byte[] certBuffer) {
         Throwable th;
         Throwable th2;
@@ -95,7 +85,9 @@ public class CertificateMonitor {
                 Thread.currentThread().interrupt();
                 return null;
             }
-        } catch (Exception ce) {
+        } catch (IOException | CertificateException ce) {
+            Log.e(LOG_TAG, "Problem converting cert", ce);
+            return null;
         }
     }
 
@@ -140,7 +132,7 @@ public class CertificateMonitor {
         try {
             KeyChainConnection conn = this.mInjector.keyChainBindAsUser(userHandle);
             try {
-                List<String> list = conn.getService().getUserCaAliases().getList();
+                List list = conn.getService().getUserCaAliases().getList();
                 if (conn != null) {
                     $closeResource(null, conn);
                 }
@@ -166,17 +158,6 @@ public class CertificateMonitor {
         this.mHandler.post(new -$$Lambda$CertificateMonitor$nzwzuvk_fK7AIlili6jDKrKWLJM(this, userId));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x005b A:{Splitter: B:3:0x0011, ExcHandler: android.os.RemoteException (r0_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:15:0x005b, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:16:0x005c, code:
-            android.util.Log.e(LOG_TAG, "Could not retrieve certificates from KeyChain service", r0);
-     */
-    /* JADX WARNING: Missing block: B:17:0x0063, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void updateInstalledCertificates(UserHandle userHandle) {
         if (this.mInjector.getUserManager().isUserUnlocked(userHandle.getIdentifier())) {
             try {
@@ -192,7 +173,8 @@ public class CertificateMonitor {
                     }
                 }
                 this.mInjector.getNotificationManager().cancelAsUser(LOG_TAG, 33, userHandle);
-            } catch (Exception e) {
+            } catch (RemoteException | RuntimeException e) {
+                Log.e(LOG_TAG, "Could not retrieve certificates from KeyChain service", e);
             }
         }
     }
@@ -214,13 +196,13 @@ public class CertificateMonitor {
             Resources resources = this.mInjector.getResources();
             int parentUserId2 = userHandle.getIdentifier();
             if (this.mService.getProfileOwner(userHandle.getIdentifier()) != null) {
-                contentText = resources.getString(17041168, new Object[]{this.mService.getProfileOwnerName(userHandle.getIdentifier())});
+                contentText = resources.getString(17041169, new Object[]{this.mService.getProfileOwnerName(userHandle.getIdentifier())});
                 smallIconId = 17303513;
                 parentUserId2 = this.mService.getProfileParentId(userHandle.getIdentifier());
                 this.notAllowedApp = this.mService.getProfileOwnerName(userHandle.getIdentifier());
             } else if (this.mService.getDeviceOwnerUserId() == userHandle.getIdentifier()) {
                 contentText = this.mService.getDeviceOwnerName();
-                String contentText3 = resources.getString(17041168, new Object[]{this.mService.getDeviceOwnerName()});
+                String contentText3 = resources.getString(17041169, new Object[]{this.mService.getDeviceOwnerName()});
                 this.notAllowedApp = this.mService.getDeviceOwnerName();
                 parentUserId = parentUserId2;
                 contentText2 = contentText3;
@@ -236,7 +218,7 @@ public class CertificateMonitor {
                 }
                 return new Builder(userContext, SystemNotificationChannels.SECURITY).setSmallIcon(smallIconId2).setContentTitle(resources.getQuantityText(18153500, i)).setContentText(contentText2).setContentIntent(this.mInjector.pendingIntentGetActivityAsUser(userContext, 0, dialogIntent, 134217728, null, UserHandle.of(parentUserId))).setShowWhen(false).setColor(17170784).build();
             } else {
-                contentText = resources.getString(17041167);
+                contentText = resources.getString(17041168);
                 smallIconId = 17301642;
             }
             parentUserId = parentUserId2;

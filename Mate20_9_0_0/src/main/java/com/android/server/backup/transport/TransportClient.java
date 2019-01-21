@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class TransportClient {
     private static final int LOG_BUFFER_SIZE = 5;
@@ -177,6 +178,8 @@ public class TransportClient {
                     log(3, caller, "Async connect: reusing transport");
                     notifyListener(listener, this.mTransport, caller);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -190,6 +193,9 @@ public class TransportClient {
             stringBuilder.append(")");
             log(3, caller, stringBuilder.toString());
             switch (this.mState) {
+                case 0:
+                case 1:
+                    break;
                 case 2:
                     setStateLocked(1, null);
                     this.mContext.unbindService(this.mConnection);
@@ -198,6 +204,8 @@ public class TransportClient {
                 case 3:
                     setStateLocked(1, null);
                     this.mContext.unbindService(this.mConnection);
+                    break;
+                default:
                     break;
             }
         }
@@ -210,24 +218,8 @@ public class TransportClient {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0069 A:{Splitter: B:14:0x0041, ExcHandler: java.lang.InterruptedException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:17:0x0069, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:18:0x006a, code:
-            r2 = r1.getClass().getSimpleName();
-            r9 = new java.lang.StringBuilder();
-            r9.append(r2);
-            r9.append(" while waiting for transport: ");
-            r9.append(r1.getMessage());
-            log(6, r15, r9.toString());
-     */
-    /* JADX WARNING: Missing block: B:19:0x008e, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public IBackupTransport connect(String caller) {
-        Preconditions.checkState(Looper.getMainLooper().isCurrentThread() ^ true, "Can't call connect() on main thread");
+        Preconditions.checkState(Looper.getMainLooper().isCurrentThread() ^ 1, "Can't call connect() on main thread");
         IBackupTransport transport = this.mTransport;
         if (transport != null) {
             log(3, caller, "Sync connect: reusing transport");
@@ -248,7 +240,14 @@ public class TransportClient {
                 this.mTransportStats.registerConnectionTime(this.mTransportComponent, SystemClock.elapsedRealtime() - requestTime);
                 log(3, caller, String.format(Locale.US, "Connect took %d ms", new Object[]{Long.valueOf(time)}));
                 return transport;
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException e) {
+                String error = e.getClass().getSimpleName();
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(error);
+                stringBuilder.append(" while waiting for transport: ");
+                stringBuilder.append(e.getMessage());
+                log(6, caller, stringBuilder.toString());
+                return null;
             }
         }
     }
@@ -331,6 +330,8 @@ public class TransportClient {
             checkStateIntegrityLocked();
             log(6, "Binding died: client UNUSABLE");
             switch (this.mState) {
+                case 0:
+                    break;
                 case 1:
                     log(6, "Unexpected state transition IDLE => UNUSABLE");
                     setStateLocked(0, null);
@@ -343,6 +344,8 @@ public class TransportClient {
                 case 3:
                     setStateLocked(0, null);
                     this.mContext.unbindService(this.mConnection);
+                    break;
+                default:
                     break;
             }
         }
@@ -493,7 +496,7 @@ public class TransportClient {
     }
 
     List<String> getLogBuffer() {
-        List<String> unmodifiableList;
+        List unmodifiableList;
         synchronized (this.mLogBufferLock) {
             unmodifiableList = Collections.unmodifiableList(this.mLogBuffer);
         }

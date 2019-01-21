@@ -49,6 +49,7 @@ import com.android.server.SystemService;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -529,22 +530,13 @@ public class CompanionDeviceManagerService extends SystemService implements Deat
         return readAllAssociations(userId, null);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x0097 A:{Splitter: B:48:0x008c, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:57:0x009c A:{Splitter: B:5:0x0018, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Missing block: B:54:0x0097, code:
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:30:0x0073=Splitter:B:30:0x0073, B:58:0x009d=Splitter:B:58:0x009d} */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x0097 A:{ExcHandler: IOException | XmlPullParserException (e java.lang.Throwable), Splitter:B:48:0x008c} */
+    /* JADX WARNING: Missing block: B:54:0x0097, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:55:0x0098, code:
+    /* JADX WARNING: Missing block: B:55:0x0098, code skipped:
             r4 = r8;
-     */
-    /* JADX WARNING: Missing block: B:57:0x009c, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:59:?, code:
-            android.util.Slog.e(LOG_TAG, "Error while reading associations file", r0);
-     */
-    /* JADX WARNING: Missing block: B:61:0x00a5, code:
-            return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private Set<Association> readAllAssociations(int userId, String packageFilter) {
@@ -598,7 +590,10 @@ public class CompanionDeviceManagerService extends SystemService implements Deat
                     th2 = th4;
                     throw th2;
                 }
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e) {
+                Exception e2 = e;
+                Slog.e(LOG_TAG, "Error while reading associations file", e2);
+                return null;
             }
         }
         throw th;
@@ -610,7 +605,7 @@ public class CompanionDeviceManagerService extends SystemService implements Deat
                 } catch (Throwable th22) {
                     try {
                         result3.addSuppressed(th22);
-                    } catch (XmlPullParserException e2) {
+                    } catch (IOException | XmlPullParserException e3) {
                     } catch (Throwable th5) {
                         th22 = th5;
                         result = result4;

@@ -90,159 +90,159 @@ public class DeviceTelephonyPlugin extends DevicePolicyPlugin {
         if (!checkCallingPermission(who, policyName)) {
             return false;
         }
+        int i = -1;
         boolean z = true;
-        boolean z2 = true;
         switch (policyName.hashCode()) {
             case -1888907677:
                 if (policyName.equals("outgoing_week_limit")) {
-                    z = true;
+                    i = 8;
                     break;
                 }
                 break;
             case -1155809047:
                 if (policyName.equals("outgoing_month_limit")) {
-                    z = true;
+                    i = 9;
                     break;
                 }
                 break;
             case -1032552593:
                 if (policyName.equals(DISABLE_DATA)) {
-                    z = true;
+                    i = 1;
                     break;
                 }
                 break;
             case -1032175905:
                 if (policyName.equals(DISABLE_PUSH)) {
-                    z = true;
+                    i = 4;
                     break;
                 }
                 break;
             case -1032082848:
                 if (policyName.equals("disable-sync")) {
-                    z = true;
+                    i = 3;
                     break;
                 }
                 break;
             case -822171362:
                 if (policyName.equals(INCOMING_SMS_RESTRICTION_PATTERN)) {
-                    z = true;
+                    i = 14;
                     break;
                 }
                 break;
             case -808925998:
                 if (policyName.equals(SET_PIN_LOCK)) {
-                    z = true;
+                    i = 5;
                     break;
                 }
                 break;
             case 34406113:
                 if (policyName.equals(INCOMING_SMS_EXCEPTION_PATTERN)) {
-                    z = true;
+                    i = 13;
                     break;
                 }
                 break;
             case 115663941:
                 if (policyName.equals("outgoing_day_limit")) {
-                    z = true;
+                    i = 7;
                     break;
                 }
                 break;
             case 650237273:
                 if (policyName.equals(DISABLE_AIR_PLANE_MODE)) {
-                    z = true;
+                    i = 2;
                     break;
                 }
                 break;
             case 890761828:
                 if (policyName.equals(OUTGOING_SMS_RESTRICTION_PATTERN)) {
-                    z = true;
+                    i = 16;
                     break;
                 }
                 break;
             case 1195673727:
                 if (policyName.equals("incoming_day_limit")) {
-                    z = true;
+                    i = 10;
                     break;
                 }
                 break;
             case 1352180187:
                 if (policyName.equals(DISABLE_SUB)) {
-                    z = false;
+                    i = 0;
                     break;
                 }
                 break;
             case 1526624617:
                 if (policyName.equals("incoming_week_limit")) {
-                    z = true;
+                    i = 11;
                     break;
                 }
                 break;
             case 1582555559:
                 if (policyName.equals(OUTGOING_SMS_EXCEPTION_PATTERN)) {
-                    z = true;
+                    i = 15;
                     break;
                 }
                 break;
             case 1646476963:
                 if (policyName.equals("incoming_month_limit")) {
-                    z = true;
+                    i = 12;
                     break;
                 }
                 break;
             case 1684123142:
                 if (policyName.equals(CHANGE_PIN_CODE)) {
-                    z = true;
+                    i = 6;
                     break;
                 }
                 break;
         }
+        boolean disablesub;
         String str;
         Intent intentDisableData4G;
         StringBuilder stringBuilder;
         String str2;
-        int subId;
         String str3;
-        switch (z) {
-            case false:
-                z = policyData.getBoolean("value");
+        switch (i) {
+            case 0:
+                disablesub = policyData.getBoolean("value");
                 str = TAG;
                 StringBuilder stringBuilder2 = new StringBuilder();
                 stringBuilder2.append("disablesub: ");
-                stringBuilder2.append(z);
+                stringBuilder2.append(disablesub);
                 HwLog.i(str, stringBuilder2.toString());
                 Intent intentDisableSub = new Intent(HwEmailMDMPlugin.DEVICE_POLICY_ACTION_POLICY_CHANGED);
                 intentDisableSub.putExtra("action_tag", TAG_ACTION_DISABLE_SUB);
                 intentDisableSub.putExtra("subId", 1);
-                intentDisableSub.putExtra("subState", z);
+                intentDisableSub.putExtra("subState", disablesub);
                 this.mContext.sendBroadcast(intentDisableSub);
                 result = true;
                 break;
-            case true:
-                z = policyData.getBoolean("value");
+            case 1:
+                disablesub = policyData.getBoolean("value");
                 intentDisableData4G = new Intent(HwEmailMDMPlugin.DEVICE_POLICY_ACTION_POLICY_CHANGED);
                 intentDisableData4G.putExtra("action_tag", TAG_ACTION_DISABLE_DATA_4G);
                 intentDisableData4G.putExtra("subId", 0);
-                intentDisableData4G.putExtra("dataState", z);
+                intentDisableData4G.putExtra("dataState", disablesub);
                 this.mContext.sendBroadcast(intentDisableData4G);
                 result = true;
                 break;
-            case true:
-                z = policyData.getBoolean("value");
+            case 2:
+                disablesub = policyData.getBoolean("value");
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("disableAirPlane: ");
-                stringBuilder.append(z);
+                stringBuilder.append(disablesub);
                 HwLog.i(str, stringBuilder.toString());
                 if (Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) == 0) {
-                    z2 = false;
+                    z = false;
                 }
-                boolean isAirplaneModeOn = z2;
+                boolean isAirplaneModeOn = z;
                 str2 = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("isAirplaneModeOn: ");
                 stringBuilder.append(isAirplaneModeOn);
                 HwLog.i(str2, stringBuilder.toString());
-                if (z && isAirplaneModeOn) {
+                if (disablesub && isAirplaneModeOn) {
                     ConnectivityManager connectivityManager = (ConnectivityManager) this.mContext.getSystemService("connectivity");
                     long ident = Binder.clearCallingIdentity();
                     try {
@@ -254,56 +254,56 @@ public class DeviceTelephonyPlugin extends DevicePolicyPlugin {
                 intentDisableData4G = new Intent(HwEmailMDMPlugin.DEVICE_POLICY_ACTION_POLICY_CHANGED);
                 intentDisableData4G.setPackage("com.android.settings");
                 intentDisableData4G.putExtra("action_tag", TAG_ACTION_DISABLE_AIR_PLANE_MODE);
-                intentDisableData4G.putExtra("airPlaneState", z);
+                intentDisableData4G.putExtra("airPlaneState", disablesub);
                 this.mContext.sendBroadcast(intentDisableData4G);
                 result = true;
                 break;
-            case true:
-            case true:
+            case 3:
+            case 4:
                 result = true;
                 break;
-            case true:
-                subId = policyData.getInt("slotId");
+            case 5:
+                i = policyData.getInt("slotId");
                 str = policyData.getString("password");
-                z2 = policyData.getBoolean("pinLockState");
+                z = policyData.getBoolean("pinLockState");
                 if (HwTelephonyManagerInner.getDefault() != null) {
                     str3 = TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("setPinLock---- enablePinLock: ");
-                    stringBuilder.append(z2);
+                    stringBuilder.append(z);
                     stringBuilder.append("  subId: ");
-                    stringBuilder.append(subId);
+                    stringBuilder.append(i);
                     HwLog.i(str3, stringBuilder.toString());
-                    result = HwTelephonyManagerInner.getDefault().setPinLockEnabled(z2, str, subId);
+                    result = HwTelephonyManagerInner.getDefault().setPinLockEnabled(z, str, i);
                     break;
                 }
                 break;
-            case true:
-                subId = policyData.getInt("slotId");
+            case 6:
+                i = policyData.getInt("slotId");
                 str = policyData.getString("oldPinCode");
                 str2 = policyData.getString("newPinCode");
                 if (HwTelephonyManagerInner.getDefault() != null) {
                     str3 = TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("changePinLock----changPinId: ");
-                    stringBuilder.append(subId);
+                    stringBuilder.append(i);
                     HwLog.i(str3, stringBuilder.toString());
-                    result = HwTelephonyManagerInner.getDefault().changeSimPinCode(str, str2, subId);
+                    result = HwTelephonyManagerInner.getDefault().changeSimPinCode(str, str2, i);
                     break;
                 }
                 break;
-            case true:
-            case true:
-            case true:
-            case true:
-            case true:
-            case true:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
                 result = true;
                 break;
-            case true:
-            case true:
-            case true:
-            case true:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
                 result = true;
                 break;
         }

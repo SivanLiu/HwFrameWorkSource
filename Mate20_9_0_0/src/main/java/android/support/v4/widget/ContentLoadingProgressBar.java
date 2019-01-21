@@ -64,12 +64,15 @@ public class ContentLoadingProgressBar extends ProgressBar {
         removeCallbacks(this.mDelayedShow);
         this.mPostedShow = false;
         long diff = System.currentTimeMillis() - this.mStartTime;
-        if (diff >= 500 || this.mStartTime == -1) {
-            setVisibility(8);
-        } else if (!this.mPostedHide) {
-            postDelayed(this.mDelayedHide, 500 - diff);
-            this.mPostedHide = true;
+        if (diff < 500) {
+            if (this.mStartTime != -1) {
+                if (!this.mPostedHide) {
+                    postDelayed(this.mDelayedHide, 500 - diff);
+                    this.mPostedHide = true;
+                }
+            }
         }
+        setVisibility(8);
     }
 
     public synchronized void show() {

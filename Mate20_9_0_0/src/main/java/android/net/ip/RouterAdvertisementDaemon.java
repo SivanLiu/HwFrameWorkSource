@@ -6,6 +6,7 @@ import android.net.NetworkUtils;
 import android.net.TrafficStats;
 import android.net.util.InterfaceParams;
 import android.net.util.NetworkConstants;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructTimeval;
@@ -17,6 +18,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -151,16 +153,16 @@ public class RouterAdvertisementDaemon {
             interrupt();
         }
 
-        /* JADX WARNING: Missing block: B:11:0x002b, code:
+        /* JADX WARNING: Missing block: B:11:0x002b, code skipped:
             if (r4.mUrgentAnnouncements.getAndDecrement() > 0) goto L_0x003a;
      */
-        /* JADX WARNING: Missing block: B:12:0x002d, code:
+        /* JADX WARNING: Missing block: B:12:0x002d, code skipped:
             if (r0 == false) goto L_0x0030;
      */
-        /* JADX WARNING: Missing block: B:14:0x0039, code:
+        /* JADX WARNING: Missing block: B:14:0x0039, code skipped:
             return 300 + r4.mRandom.nextInt(300);
      */
-        /* JADX WARNING: Missing block: B:16:0x003b, code:
+        /* JADX WARNING: Missing block: B:16:0x003b, code skipped:
             return 3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -229,28 +231,20 @@ public class RouterAdvertisementDaemon {
             this.mSolication = new byte[1280];
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:9:0x0034 A:{Splitter: B:2:0x0008, ExcHandler: android.system.ErrnoException (r0_6 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:9:0x0034, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:11:0x003b, code:
-            if (android.net.ip.RouterAdvertisementDaemon.access$300(r7.this$0) != false) goto L_0x003d;
-     */
-        /* JADX WARNING: Missing block: B:12:0x003d, code:
-            r1 = android.net.ip.RouterAdvertisementDaemon.access$600();
-            r2 = new java.lang.StringBuilder();
-            r2.append("recvfrom error: ");
-            r2.append(r0);
-            android.util.Log.e(r1, r2.toString());
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
             while (RouterAdvertisementDaemon.this.isSocketValid()) {
                 try {
                     if (Os.recvfrom(RouterAdvertisementDaemon.this.mSocket, this.mSolication, 0, this.mSolication.length, 0, this.solicitor) >= 1 && this.mSolication[0] == RouterAdvertisementDaemon.ICMPV6_ND_ROUTER_SOLICIT) {
                         RouterAdvertisementDaemon.this.maybeSendRA(this.solicitor);
                     }
-                } catch (Exception e) {
+                } catch (ErrnoException | SocketException e) {
+                    if (RouterAdvertisementDaemon.this.isSocketValid()) {
+                        String access$600 = RouterAdvertisementDaemon.TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("recvfrom error: ");
+                        stringBuilder.append(e);
+                        Log.e(access$600, stringBuilder.toString());
+                    }
                 }
             }
         }
@@ -265,8 +259,13 @@ public class RouterAdvertisementDaemon {
     public void buildNewRa(RaParams deprecatedParams, RaParams newParams) {
         synchronized (this.mLock) {
             if (deprecatedParams != null) {
-                this.mDeprecatedInfoTracker.putPrefixes(deprecatedParams.prefixes);
-                this.mDeprecatedInfoTracker.putDnses(deprecatedParams.dnses);
+                try {
+                    this.mDeprecatedInfoTracker.putPrefixes(deprecatedParams.prefixes);
+                    this.mDeprecatedInfoTracker.putDnses(deprecatedParams.dnses);
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             }
             if (newParams != null) {
                 this.mDeprecatedInfoTracker.removePrefixes(newParams.prefixes);
@@ -444,24 +443,6 @@ public class RouterAdvertisementDaemon {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0046 A:{Splitter: B:1:0x0008, ExcHandler: android.system.ErrnoException (r2_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0046, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:?, code:
-            r3 = TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("Failed to create RA daemon socket: ");
-            r4.append(r2);
-            android.util.Log.e(r3, r4.toString());
-     */
-    /* JADX WARNING: Missing block: B:9:0x005d, code:
-            android.net.TrafficStats.setThreadStatsTag(r1);
-     */
-    /* JADX WARNING: Missing block: B:10:0x0061, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean createSocket() {
         int oldTag = TrafficStats.getAndSetThreadStatsTag(-189);
         try {
@@ -472,7 +453,14 @@ public class RouterAdvertisementDaemon {
             NetworkUtils.setupRaSocket(this.mSocket, this.mInterface.index);
             TrafficStats.setThreadStatsTag(oldTag);
             return true;
-        } catch (Exception e) {
+        } catch (ErrnoException | IOException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed to create RA daemon socket: ");
+            stringBuilder.append(e);
+            Log.e(str, stringBuilder.toString());
+            TrafficStats.setThreadStatsTag(oldTag);
+            return false;
         } catch (Throwable th) {
             TrafficStats.setThreadStatsTag(oldTag);
             throw th;
@@ -506,28 +494,14 @@ public class RouterAdvertisementDaemon {
         return z;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x0044 A:{Splitter: B:4:0x000a, ExcHandler: android.system.ErrnoException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             r0 = TAG;
             r1 = new java.lang.StringBuilder();
             r1.append("RA sendto ");
             r1.append(r8.getAddress().getHostAddress());
             android.util.Log.d(r0, r1.toString());
      */
-    /* JADX WARNING: Missing block: B:21:0x0044, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0049, code:
-            if (isSocketValid() != false) goto L_0x004b;
-     */
-    /* JADX WARNING: Missing block: B:24:0x004b, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("sendto error: ");
-            r2.append(r0);
-            android.util.Log.e(r1, r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:25:0x0062, code:
+    /* JADX WARNING: Missing block: B:25:0x0062, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -543,7 +517,14 @@ public class RouterAdvertisementDaemon {
                 }
                 Os.sendto(this.mSocket, this.mRA, 0, this.mRaLength, 0, dest2);
             }
-        } catch (Exception e) {
+        } catch (ErrnoException | SocketException e) {
+            if (isSocketValid()) {
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("sendto error: ");
+                stringBuilder.append(e);
+                Log.e(str, stringBuilder.toString());
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ public class ExtendedKeyUsage extends ASN1Object {
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
         Enumeration elements = vector.elements();
         while (elements.hasMoreElements()) {
-            ASN1Encodable instance = KeyPurposeId.getInstance(elements.nextElement());
+            KeyPurposeId instance = KeyPurposeId.getInstance(elements.nextElement());
             aSN1EncodableVector.add(instance);
             this.usageTable.put(instance, instance);
         }

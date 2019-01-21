@@ -35,13 +35,13 @@ public class X509CertPairParser extends X509StreamParserSpi {
             }
             this.currentStream.reset();
             return readDERCrossCertificatePair(this.currentStream);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new StreamParsingException(e.toString(), e);
         }
     }
 
     public Collection engineReadAll() throws StreamParsingException {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         while (true) {
             X509CertificatePair x509CertificatePair = (X509CertificatePair) engineRead();
             if (x509CertificatePair == null) {

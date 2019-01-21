@@ -103,7 +103,7 @@ public class ActiveRestoreSession extends Stub {
         wakelock.release();
     }
 
-    /* JADX WARNING: Missing block: B:42:0x00b2, code:
+    /* JADX WARNING: Missing block: B:42:0x00b2, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -162,7 +162,7 @@ public class ActiveRestoreSession extends Stub {
         }
     }
 
-    /* JADX WARNING: Missing block: B:59:0x011e, code:
+    /* JADX WARNING: Missing block: B:59:0x011e, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -257,7 +257,7 @@ public class ActiveRestoreSession extends Stub {
         return RestoreParams.createForRestoreSome(transportClient, observer, monitor, token, packages, packages.length > 1, listener);
     }
 
-    /* JADX WARNING: Missing block: B:42:0x0136, code:
+    /* JADX WARNING: Missing block: B:43:0x0136, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -286,16 +286,19 @@ public class ActiveRestoreSession extends Stub {
             } else if (this.mPackageName == null || this.mPackageName.equals(str)) {
                 try {
                     PackageInfo app = this.mBackupManagerService.getPackageManager().getPackageInfo(str, 0);
-                    if (this.mBackupManagerService.getContext().checkPermission("android.permission.BACKUP", Binder.getCallingPid(), Binder.getCallingUid()) == -1 && app.applicationInfo.uid != Binder.getCallingUid()) {
-                        str2 = TAG;
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.append("restorePackage: bad packageName=");
-                        stringBuilder.append(str);
-                        stringBuilder.append(" or calling uid=");
-                        stringBuilder.append(Binder.getCallingUid());
-                        Slog.w(str2, stringBuilder.toString());
-                        throw new SecurityException("No permission to restore other packages");
-                    } else if (this.mTransportManager.isTransportRegistered(this.mTransportName)) {
+                    if (this.mBackupManagerService.getContext().checkPermission("android.permission.BACKUP", Binder.getCallingPid(), Binder.getCallingUid()) == -1) {
+                        if (app.applicationInfo.uid != Binder.getCallingUid()) {
+                            str2 = TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("restorePackage: bad packageName=");
+                            stringBuilder.append(str);
+                            stringBuilder.append(" or calling uid=");
+                            stringBuilder.append(Binder.getCallingUid());
+                            Slog.w(str2, stringBuilder.toString());
+                            throw new SecurityException("No permission to restore other packages");
+                        }
+                    }
+                    if (this.mTransportManager.isTransportRegistered(this.mTransportName)) {
                         long oldId = Binder.clearCallingIdentity();
                         try {
                             long availableRestoreToken = this.mBackupManagerService.getAvailableRestoreToken(str);

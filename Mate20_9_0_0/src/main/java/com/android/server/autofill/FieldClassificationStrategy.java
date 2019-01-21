@@ -8,10 +8,14 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.Resources;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.RemoteCallback;
 import android.os.RemoteException;
+import android.os.UserHandle;
 import android.service.autofill.IAutofillFieldClassificationService;
+import android.service.autofill.IAutofillFieldClassificationService.Stub;
 import android.util.Log;
 import android.util.Slog;
 import android.view.autofill.AutofillValue;
@@ -101,136 +105,153 @@ final class FieldClassificationStrategy {
         }
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.autofill.FieldClassificationStrategy.connectAndRun(com.android.server.autofill.FieldClassificationStrategy$Command):void, dom blocks: [B:5:0x0007, B:33:0x0093]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void connectAndRun(com.android.server.autofill.FieldClassificationStrategy.Command r10) {
-        /*
-        r9 = this;
-        r0 = r9.mLock;
-        monitor-enter(r0);
-        r1 = r9.mRemoteService;	 Catch:{ all -> 0x00b6 }
-        if (r1 == 0) goto L_0x0032;
-    L_0x0007:
-        r1 = com.android.server.autofill.Helper.sVerbose;	 Catch:{ RemoteException -> 0x0019 }
-        if (r1 == 0) goto L_0x0013;	 Catch:{ RemoteException -> 0x0019 }
-    L_0x000b:
-        r1 = "FieldClassificationStrategy";	 Catch:{ RemoteException -> 0x0019 }
-        r2 = "running command right away";	 Catch:{ RemoteException -> 0x0019 }
-        android.util.Slog.v(r1, r2);	 Catch:{ RemoteException -> 0x0019 }
-    L_0x0013:
-        r1 = r9.mRemoteService;	 Catch:{ RemoteException -> 0x0019 }
-        r10.run(r1);	 Catch:{ RemoteException -> 0x0019 }
-        goto L_0x0030;
-    L_0x0019:
-        r1 = move-exception;
-        r2 = "FieldClassificationStrategy";	 Catch:{ all -> 0x00b6 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00b6 }
-        r3.<init>();	 Catch:{ all -> 0x00b6 }
-        r4 = "exception calling service: ";	 Catch:{ all -> 0x00b6 }
-        r3.append(r4);	 Catch:{ all -> 0x00b6 }
-        r3.append(r1);	 Catch:{ all -> 0x00b6 }
-        r3 = r3.toString();	 Catch:{ all -> 0x00b6 }
-        android.util.Slog.w(r2, r3);	 Catch:{ all -> 0x00b6 }
-    L_0x0030:
-        monitor-exit(r0);	 Catch:{ all -> 0x00b6 }
-        return;	 Catch:{ all -> 0x00b6 }
-    L_0x0032:
-        r1 = com.android.server.autofill.Helper.sDebug;	 Catch:{ all -> 0x00b6 }
-        if (r1 == 0) goto L_0x003e;	 Catch:{ all -> 0x00b6 }
-    L_0x0036:
-        r1 = "FieldClassificationStrategy";	 Catch:{ all -> 0x00b6 }
-        r2 = "service is null; queuing command";	 Catch:{ all -> 0x00b6 }
-        android.util.Slog.d(r1, r2);	 Catch:{ all -> 0x00b6 }
-    L_0x003e:
-        r1 = r9.mQueuedCommands;	 Catch:{ all -> 0x00b6 }
-        r2 = 1;	 Catch:{ all -> 0x00b6 }
-        if (r1 != 0) goto L_0x004a;	 Catch:{ all -> 0x00b6 }
-    L_0x0043:
-        r1 = new java.util.ArrayList;	 Catch:{ all -> 0x00b6 }
-        r1.<init>(r2);	 Catch:{ all -> 0x00b6 }
-        r9.mQueuedCommands = r1;	 Catch:{ all -> 0x00b6 }
-    L_0x004a:
-        r1 = r9.mQueuedCommands;	 Catch:{ all -> 0x00b6 }
-        r1.add(r10);	 Catch:{ all -> 0x00b6 }
-        r1 = r9.mServiceConnection;	 Catch:{ all -> 0x00b6 }
-        if (r1 == 0) goto L_0x0055;	 Catch:{ all -> 0x00b6 }
-    L_0x0053:
-        monitor-exit(r0);	 Catch:{ all -> 0x00b6 }
-        return;	 Catch:{ all -> 0x00b6 }
-    L_0x0055:
-        r1 = com.android.server.autofill.Helper.sVerbose;	 Catch:{ all -> 0x00b6 }
-        if (r1 == 0) goto L_0x0060;	 Catch:{ all -> 0x00b6 }
-    L_0x0059:
-        r1 = "FieldClassificationStrategy";	 Catch:{ all -> 0x00b6 }
-        r3 = "creating connection";	 Catch:{ all -> 0x00b6 }
-        android.util.Slog.v(r1, r3);	 Catch:{ all -> 0x00b6 }
-    L_0x0060:
-        r1 = new com.android.server.autofill.FieldClassificationStrategy$1;	 Catch:{ all -> 0x00b6 }
-        r1.<init>();	 Catch:{ all -> 0x00b6 }
-        r9.mServiceConnection = r1;	 Catch:{ all -> 0x00b6 }
-        r1 = r9.getServiceComponentName();	 Catch:{ all -> 0x00b6 }
-        r3 = com.android.server.autofill.Helper.sVerbose;	 Catch:{ all -> 0x00b6 }
-        if (r3 == 0) goto L_0x0085;	 Catch:{ all -> 0x00b6 }
-    L_0x006f:
-        r3 = "FieldClassificationStrategy";	 Catch:{ all -> 0x00b6 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x00b6 }
-        r4.<init>();	 Catch:{ all -> 0x00b6 }
-        r5 = "binding to: ";	 Catch:{ all -> 0x00b6 }
-        r4.append(r5);	 Catch:{ all -> 0x00b6 }
-        r4.append(r1);	 Catch:{ all -> 0x00b6 }
-        r4 = r4.toString();	 Catch:{ all -> 0x00b6 }
-        android.util.Slog.v(r3, r4);	 Catch:{ all -> 0x00b6 }
-    L_0x0085:
-        if (r1 == 0) goto L_0x00b4;	 Catch:{ all -> 0x00b6 }
-    L_0x0087:
-        r3 = new android.content.Intent;	 Catch:{ all -> 0x00b6 }
-        r3.<init>();	 Catch:{ all -> 0x00b6 }
-        r3.setComponent(r1);	 Catch:{ all -> 0x00b6 }
-        r4 = android.os.Binder.clearCallingIdentity();	 Catch:{ all -> 0x00b6 }
-        r6 = r9.mContext;	 Catch:{ all -> 0x00af }
-        r7 = r9.mServiceConnection;	 Catch:{ all -> 0x00af }
-        r8 = r9.mUserId;	 Catch:{ all -> 0x00af }
-        r8 = android.os.UserHandle.of(r8);	 Catch:{ all -> 0x00af }
-        r6.bindServiceAsUser(r3, r7, r2, r8);	 Catch:{ all -> 0x00af }
-        r2 = com.android.server.autofill.Helper.sVerbose;	 Catch:{ all -> 0x00af }
-        if (r2 == 0) goto L_0x00ab;	 Catch:{ all -> 0x00af }
-    L_0x00a4:
-        r2 = "FieldClassificationStrategy";	 Catch:{ all -> 0x00af }
-        r6 = "bound";	 Catch:{ all -> 0x00af }
-        android.util.Slog.v(r2, r6);	 Catch:{ all -> 0x00af }
-    L_0x00ab:
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x00b6 }
-        goto L_0x00b4;	 Catch:{ all -> 0x00b6 }
-    L_0x00af:
-        r2 = move-exception;	 Catch:{ all -> 0x00b6 }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x00b6 }
-        throw r2;	 Catch:{ all -> 0x00b6 }
-    L_0x00b4:
-        monitor-exit(r0);	 Catch:{ all -> 0x00b6 }
-        return;	 Catch:{ all -> 0x00b6 }
-    L_0x00b6:
-        r1 = move-exception;	 Catch:{ all -> 0x00b6 }
-        monitor-exit(r0);	 Catch:{ all -> 0x00b6 }
-        throw r1;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.autofill.FieldClassificationStrategy.connectAndRun(com.android.server.autofill.FieldClassificationStrategy$Command):void");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:5:0x0007, B:33:0x0093] */
+    /* JADX WARNING: Missing block: B:10:0x0019, code skipped:
+            r1 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
+            r2 = TAG;
+            r3 = new java.lang.StringBuilder();
+            r3.append("exception calling service: ");
+            r3.append(r1);
+            android.util.Slog.w(r2, r3.toString());
+     */
+    /* JADX WARNING: Missing block: B:40:0x00b0, code skipped:
+            android.os.Binder.restoreCallingIdentity(r4);
+     */
+    /* JADX WARNING: Missing block: B:43:0x00b5, code skipped:
+            return;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void connectAndRun(Command command) {
+        synchronized (this.mLock) {
+            if (this.mRemoteService != null) {
+                if (Helper.sVerbose) {
+                    Slog.v(TAG, "running command right away");
+                }
+                command.run(this.mRemoteService);
+            } else {
+                if (Helper.sDebug) {
+                    Slog.d(TAG, "service is null; queuing command");
+                }
+                if (this.mQueuedCommands == null) {
+                    this.mQueuedCommands = new ArrayList(1);
+                }
+                this.mQueuedCommands.add(command);
+                if (this.mServiceConnection != null) {
+                    return;
+                }
+                if (Helper.sVerbose) {
+                    Slog.v(TAG, "creating connection");
+                }
+                this.mServiceConnection = new ServiceConnection() {
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+                        if (Helper.sVerbose) {
+                            String str = FieldClassificationStrategy.TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("onServiceConnected(): ");
+                            stringBuilder.append(name);
+                            Slog.v(str, stringBuilder.toString());
+                        }
+                        synchronized (FieldClassificationStrategy.this.mLock) {
+                            FieldClassificationStrategy.this.mRemoteService = Stub.asInterface(service);
+                            if (FieldClassificationStrategy.this.mQueuedCommands != null) {
+                                int size = FieldClassificationStrategy.this.mQueuedCommands.size();
+                                if (Helper.sDebug) {
+                                    String str2 = FieldClassificationStrategy.TAG;
+                                    StringBuilder stringBuilder2 = new StringBuilder();
+                                    stringBuilder2.append("running ");
+                                    stringBuilder2.append(size);
+                                    stringBuilder2.append(" queued commands");
+                                    Slog.d(str2, stringBuilder2.toString());
+                                }
+                                for (int i = 0; i < size; i++) {
+                                    Command queuedCommand = (Command) FieldClassificationStrategy.this.mQueuedCommands.get(i);
+                                    try {
+                                        if (Helper.sVerbose) {
+                                            String str3 = FieldClassificationStrategy.TAG;
+                                            StringBuilder stringBuilder3 = new StringBuilder();
+                                            stringBuilder3.append("running queued command #");
+                                            stringBuilder3.append(i);
+                                            Slog.v(str3, stringBuilder3.toString());
+                                        }
+                                        queuedCommand.run(FieldClassificationStrategy.this.mRemoteService);
+                                    } catch (RemoteException e) {
+                                        String str4 = FieldClassificationStrategy.TAG;
+                                        StringBuilder stringBuilder4 = new StringBuilder();
+                                        stringBuilder4.append("exception calling ");
+                                        stringBuilder4.append(name);
+                                        stringBuilder4.append(": ");
+                                        stringBuilder4.append(e);
+                                        Slog.w(str4, stringBuilder4.toString());
+                                    }
+                                }
+                                FieldClassificationStrategy.this.mQueuedCommands = null;
+                            } else if (Helper.sDebug) {
+                                Slog.d(FieldClassificationStrategy.TAG, "no queued commands");
+                            }
+                        }
+                    }
+
+                    public void onServiceDisconnected(ComponentName name) {
+                        if (Helper.sVerbose) {
+                            String str = FieldClassificationStrategy.TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("onServiceDisconnected(): ");
+                            stringBuilder.append(name);
+                            Slog.v(str, stringBuilder.toString());
+                        }
+                        synchronized (FieldClassificationStrategy.this.mLock) {
+                            FieldClassificationStrategy.this.mRemoteService = null;
+                        }
+                    }
+
+                    public void onBindingDied(ComponentName name) {
+                        if (Helper.sVerbose) {
+                            String str = FieldClassificationStrategy.TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("onBindingDied(): ");
+                            stringBuilder.append(name);
+                            Slog.v(str, stringBuilder.toString());
+                        }
+                        synchronized (FieldClassificationStrategy.this.mLock) {
+                            FieldClassificationStrategy.this.mRemoteService = null;
+                        }
+                    }
+
+                    public void onNullBinding(ComponentName name) {
+                        if (Helper.sVerbose) {
+                            String str = FieldClassificationStrategy.TAG;
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("onNullBinding(): ");
+                            stringBuilder.append(name);
+                            Slog.v(str, stringBuilder.toString());
+                        }
+                        synchronized (FieldClassificationStrategy.this.mLock) {
+                            FieldClassificationStrategy.this.mRemoteService = null;
+                        }
+                    }
+                };
+                ComponentName component = getServiceComponentName();
+                if (Helper.sVerbose) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("binding to: ");
+                    stringBuilder.append(component);
+                    Slog.v(str, stringBuilder.toString());
+                }
+                if (component != null) {
+                    Intent intent = new Intent();
+                    intent.setComponent(component);
+                    long token = Binder.clearCallingIdentity();
+                    this.mContext.bindServiceAsUser(intent, this.mServiceConnection, 1, UserHandle.of(this.mUserId));
+                    if (Helper.sVerbose) {
+                        Slog.v(TAG, "bound");
+                    }
+                    Binder.restoreCallingIdentity(token);
+                }
+            }
+        }
     }
 
     String[] getAvailableAlgorithms() {

@@ -26,7 +26,7 @@ public class KeyFactorySpi extends BaseKeyFactorySpi {
         if (keySpec instanceof PKCS8EncodedKeySpec) {
             try {
                 return generatePrivate(PrivateKeyInfo.getInstance(((PKCS8EncodedKeySpec) keySpec).getEncoded()));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 try {
                     return new BCRSAPrivateCrtKey(RSAPrivateKey.getInstance(((PKCS8EncodedKeySpec) keySpec).getEncoded()));
                 } catch (Exception e2) {

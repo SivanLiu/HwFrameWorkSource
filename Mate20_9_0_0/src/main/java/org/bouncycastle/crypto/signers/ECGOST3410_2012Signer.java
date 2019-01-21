@@ -64,7 +64,7 @@ public class ECGOST3410_2012Signer implements DSA {
         this.key = eCKeyParameters;
     }
 
-    /* JADX WARNING: Missing block: B:19:0x008a, code:
+    /* JADX WARNING: Missing block: B:19:0x008a, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

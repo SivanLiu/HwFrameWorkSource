@@ -1,14 +1,19 @@
 package org.bouncycastle.jce.provider;
 
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Principal;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
+import java.security.cert.CertPathBuilderException;
 import java.security.cert.CertPathBuilderResult;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertPathValidatorResult;
-import java.security.cert.CertSelector;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CertSelector;
@@ -72,6 +77,7 @@ class RFC3281CertPathUtilities {
     }
 
     private static void checkCRL(DistributionPoint distributionPoint, X509AttributeCertificate x509AttributeCertificate, PKIXExtendedParameters pKIXExtendedParameters, Date date, X509Certificate x509Certificate, CertStatus certStatus, ReasonsMask reasonsMask, List list, JcaJceHelper jcaJceHelper) throws AnnotatedException {
+        Iterator it;
         DistributionPoint distributionPoint2 = distributionPoint;
         X509AttributeCertificate x509AttributeCertificate2 = x509AttributeCertificate;
         PKIXExtendedParameters pKIXExtendedParameters2 = pKIXExtendedParameters;
@@ -81,51 +87,51 @@ class RFC3281CertPathUtilities {
         if (x509AttributeCertificate2.getExtensionValue(X509Extensions.NoRevAvail.getId()) == null) {
             Date date3 = new Date(System.currentTimeMillis());
             if (date.getTime() <= date3.getTime()) {
-                Iterator it = CertPathValidatorUtilities.getCompleteCRLs(distributionPoint2, x509AttributeCertificate2, date3, pKIXExtendedParameters2).iterator();
+                Iterator it2 = CertPathValidatorUtilities.getCompleteCRLs(distributionPoint2, x509AttributeCertificate2, date3, pKIXExtendedParameters2).iterator();
                 int i = 1;
                 int i2 = 0;
                 AnnotatedException annotatedException = null;
-                while (it.hasNext() && certStatus.getCertStatus() == 11 && !reasonsMask.isAllReasons()) {
-                    Iterator it2;
+                while (it2.hasNext() && certStatus.getCertStatus() == 11 && !reasonsMask.isAllReasons()) {
                     int i3;
                     try {
-                        X509CRL x509crl = (X509CRL) it.next();
+                        X509CRL x509crl = (X509CRL) it2.next();
                         ReasonsMask processCRLD = RFC3280CertPathUtilities.processCRLD(x509crl, distributionPoint2);
                         if (processCRLD.hasNewReasons(reasonsMask2)) {
                             ReasonsMask reasonsMask3 = processCRLD;
-                            it2 = it;
+                            it = it2;
                             i3 = i;
                             try {
                                 X509CRL x509crl2 = x509crl;
                                 X509CRL processCRLH = pKIXExtendedParameters.isUseDeltasEnabled() ? RFC3280CertPathUtilities.processCRLH(CertPathValidatorUtilities.getDeltaCRLs(date3, x509crl2, pKIXExtendedParameters.getCertStores(), pKIXExtendedParameters.getCRLStores()), RFC3280CertPathUtilities.processCRLG(x509crl2, RFC3280CertPathUtilities.processCRLF(x509crl, x509AttributeCertificate2, null, null, pKIXExtendedParameters2, list, jcaJceHelper))) : null;
-                                if (pKIXExtendedParameters.getValidityModel() == i3 || x509AttributeCertificate.getNotAfter().getTime() >= x509crl2.getThisUpdate().getTime()) {
-                                    RFC3280CertPathUtilities.processCRLB1(distributionPoint2, x509AttributeCertificate2, x509crl2);
-                                    RFC3280CertPathUtilities.processCRLB2(distributionPoint2, x509AttributeCertificate2, x509crl2);
-                                    RFC3280CertPathUtilities.processCRLC(processCRLH, x509crl2, pKIXExtendedParameters2);
-                                    RFC3280CertPathUtilities.processCRLI(date2, processCRLH, x509AttributeCertificate2, certStatus2, pKIXExtendedParameters2);
-                                    RFC3280CertPathUtilities.processCRLJ(date2, x509crl2, x509AttributeCertificate2, certStatus2);
-                                    if (certStatus.getCertStatus() == 8) {
-                                        certStatus2.setCertStatus(11);
+                                if (pKIXExtendedParameters.getValidityModel() != i3) {
+                                    if (x509AttributeCertificate.getNotAfter().getTime() < x509crl2.getThisUpdate().getTime()) {
+                                        throw new AnnotatedException("No valid CRL for current time found.");
                                     }
-                                    reasonsMask2.addReasons(reasonsMask3);
-                                    i = i3;
-                                    i2 = i;
-                                    it = it2;
-                                } else {
-                                    throw new AnnotatedException("No valid CRL for current time found.");
                                 }
+                                RFC3280CertPathUtilities.processCRLB1(distributionPoint2, x509AttributeCertificate2, x509crl2);
+                                RFC3280CertPathUtilities.processCRLB2(distributionPoint2, x509AttributeCertificate2, x509crl2);
+                                RFC3280CertPathUtilities.processCRLC(processCRLH, x509crl2, pKIXExtendedParameters2);
+                                RFC3280CertPathUtilities.processCRLI(date2, processCRLH, x509AttributeCertificate2, certStatus2, pKIXExtendedParameters2);
+                                RFC3280CertPathUtilities.processCRLJ(date2, x509crl2, x509AttributeCertificate2, certStatus2);
+                                if (certStatus.getCertStatus() == 8) {
+                                    certStatus2.setCertStatus(11);
+                                }
+                                reasonsMask2.addReasons(reasonsMask3);
+                                i = i3;
+                                i2 = i;
                             } catch (AnnotatedException e) {
                                 annotatedException = e;
                                 i = i3;
-                                it = it2;
+                                it2 = it;
                             }
+                            it2 = it;
                         }
                     } catch (AnnotatedException e2) {
                         annotatedException = e2;
-                        it2 = it;
+                        it = it2;
                         i3 = i;
                         i = i3;
-                        it = it2;
+                        it2 = it;
                     }
                 }
                 if (i2 == 0) {
@@ -137,8 +143,10 @@ class RFC3281CertPathUtilities {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x0173  */
-    /* JADX WARNING: Removed duplicated region for block: B:54:0x0116  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x0173  */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0116  */
+    /* JADX WARNING: Removed duplicated region for block: B:55:0x0116  */
+    /* JADX WARNING: Removed duplicated region for block: B:69:0x0173  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected static void checkCRLs(X509AttributeCertificate x509AttributeCertificate, PKIXExtendedParameters pKIXExtendedParameters, X509Certificate x509Certificate, Date date, List list, JcaJceHelper jcaJceHelper) throws CertPathValidatorException {
         int i;
@@ -150,7 +158,7 @@ class RFC3281CertPathUtilities {
         if (x509AttributeCertificate2.getExtensionValue(NO_REV_AVAIL) == null) {
             try {
                 CRLDistPoint instance = CRLDistPoint.getInstance(CertPathValidatorUtilities.getExtensionValue(x509AttributeCertificate2, CRL_DISTRIBUTION_POINTS));
-                List arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 try {
                     int i2;
                     int i3;
@@ -183,40 +191,45 @@ class RFC3281CertPathUtilities {
                                         i = 1;
                                     } catch (AnnotatedException e2) {
                                         e = e2;
+                                        e = new AnnotatedException("No valid CRL for distribution point found.", e);
+                                        try {
+                                            checkCRL(new DistributionPoint(new DistributionPointName(i2, new GeneralNames(new GeneralName(4, new ASN1InputStream(((X500Principal) x509AttributeCertificate.getIssuer().getPrincipals()[i2]).getEncoded()).readObject()))), null, null), x509AttributeCertificate2, (PKIXExtendedParameters) build.clone(), date, x509Certificate, certStatus, reasonsMask, list, jcaJceHelper);
+                                            i = 1;
+                                        } catch (Exception e3) {
+                                            throw new AnnotatedException("Issuer from certificate for CRL could not be reencoded.", e3);
+                                        } catch (AnnotatedException e4) {
+                                            e = new AnnotatedException("No valid CRL for distribution point found.", e4);
+                                        }
+                                        if (i == 0) {
+                                        }
                                     }
-                                } catch (AnnotatedException e3) {
-                                    e = e3;
+                                } catch (AnnotatedException e5) {
+                                    e = e5;
                                     i2 = i5;
                                     i3 = i4;
                                     e = new AnnotatedException("No valid CRL for distribution point found.", e);
-                                    try {
-                                        checkCRL(new DistributionPoint(new DistributionPointName(i2, new GeneralNames(new GeneralName(4, new ASN1InputStream(((X500Principal) x509AttributeCertificate.getIssuer().getPrincipals()[i2]).getEncoded()).readObject()))), null, null), x509AttributeCertificate2, (PKIXExtendedParameters) build.clone(), date, x509Certificate, certStatus, reasonsMask, list, jcaJceHelper);
-                                        i = 1;
-                                    } catch (Throwable e4) {
-                                        throw new AnnotatedException("Issuer from certificate for CRL could not be reencoded.", e4);
-                                    } catch (Throwable e42) {
-                                        e42 = new AnnotatedException("No valid CRL for distribution point found.", e42);
-                                    }
-                                    if (i != 0) {
+                                    checkCRL(new DistributionPoint(new DistributionPointName(i2, new GeneralNames(new GeneralName(4, new ASN1InputStream(((X500Principal) x509AttributeCertificate.getIssuer().getPrincipals()[i2]).getEncoded()).readObject()))), null, null), x509AttributeCertificate2, (PKIXExtendedParameters) build.clone(), date, x509Certificate, certStatus, reasonsMask, list, jcaJceHelper);
+                                    i = 1;
+                                    if (i == 0) {
                                     }
                                 }
                             }
                             i2 = i5;
                             i3 = i4;
-                        } catch (Throwable e422) {
-                            throw new ExtCertPathValidatorException("Distribution points could not be read.", e422);
+                        } catch (Exception e6) {
+                            throw new ExtCertPathValidatorException("Distribution points could not be read.", e6);
                         }
                     }
                     i2 = 0;
                     i3 = 11;
                     i = i2;
-                    e422 = null;
+                    e6 = null;
                     if (certStatus.getCertStatus() == i3 && !reasonsMask.isAllReasons()) {
                         checkCRL(new DistributionPoint(new DistributionPointName(i2, new GeneralNames(new GeneralName(4, new ASN1InputStream(((X500Principal) x509AttributeCertificate.getIssuer().getPrincipals()[i2]).getEncoded()).readObject()))), null, null), x509AttributeCertificate2, (PKIXExtendedParameters) build.clone(), date, x509Certificate, certStatus, reasonsMask, list, jcaJceHelper);
                         i = 1;
                     }
-                    if (i != 0) {
-                        throw new ExtCertPathValidatorException("No valid CRL found.", e422);
+                    if (i == 0) {
+                        throw new ExtCertPathValidatorException("No valid CRL found.", e6);
                     } else if (certStatus.getCertStatus() == i3) {
                         if (!reasonsMask.isAllReasons() && certStatus.getCertStatus() == i3) {
                             certStatus.setCertStatus(12);
@@ -235,11 +248,11 @@ class RFC3281CertPathUtilities {
                         stringBuilder3.append(RFC3280CertPathUtilities.crlReasons[certStatus.getCertStatus()]);
                         throw new CertPathValidatorException(stringBuilder3.toString());
                     }
-                } catch (Throwable e4222) {
-                    throw new CertPathValidatorException("No additional CRL locations could be decoded from CRL distribution point extension.", e4222);
+                } catch (AnnotatedException e42) {
+                    throw new CertPathValidatorException("No additional CRL locations could be decoded from CRL distribution point extension.", e42);
                 }
-            } catch (Throwable e42222) {
-                throw new CertPathValidatorException("CRL distribution point extension could not be read.", e42222);
+            } catch (AnnotatedException e422) {
+                throw new CertPathValidatorException("CRL distribution point extension could not be read.", e422);
             }
         } else if (x509AttributeCertificate2.getExtensionValue(CRL_DISTRIBUTION_POINTS) != null || x509AttributeCertificate2.getExtensionValue(AUTHORITY_INFO_ACCESS) != null) {
             throw new CertPathValidatorException("No rev avail extension is set, but also an AC revocation pointer.");
@@ -247,11 +260,10 @@ class RFC3281CertPathUtilities {
     }
 
     protected static CertPath processAttrCert1(X509AttributeCertificate x509AttributeCertificate, PKIXExtendedParameters pKIXExtendedParameters) throws CertPathValidatorException {
-        CertSelector x509CertSelector;
-        Set<X509Certificate> hashSet = new HashSet();
+        HashSet<X509Certificate> hashSet = new HashSet();
         int i = 0;
         if (x509AttributeCertificate.getHolder().getIssuer() != null) {
-            x509CertSelector = new X509CertSelector();
+            X509CertSelector x509CertSelector = new X509CertSelector();
             x509CertSelector.setSerialNumber(x509AttributeCertificate.getHolder().getSerialNumber());
             Principal[] issuer = x509AttributeCertificate.getHolder().getIssuer();
             int i2 = 0;
@@ -262,9 +274,9 @@ class RFC3281CertPathUtilities {
                     }
                     hashSet.addAll(CertPathValidatorUtilities.findCertificates(new PKIXCertStoreSelector.Builder(x509CertSelector).build(), pKIXExtendedParameters.getCertStores()));
                     i2++;
-                } catch (Throwable e) {
+                } catch (AnnotatedException e) {
                     throw new ExtCertPathValidatorException("Public key certificate for attribute certificate cannot be searched.", e);
-                } catch (Throwable e2) {
+                } catch (IOException e2) {
                     throw new ExtCertPathValidatorException("Unable to encode X500 principal.", e2);
                 }
             }
@@ -273,19 +285,19 @@ class RFC3281CertPathUtilities {
             }
         }
         if (x509AttributeCertificate.getHolder().getEntityNames() != null) {
-            x509CertSelector = new X509CertStoreSelector();
+            X509CertStoreSelector x509CertStoreSelector = new X509CertStoreSelector();
             Principal[] entityNames = x509AttributeCertificate.getHolder().getEntityNames();
             while (i < entityNames.length) {
                 try {
                     if (entityNames[i] instanceof X500Principal) {
-                        x509CertSelector.setIssuer(((X500Principal) entityNames[i]).getEncoded());
+                        x509CertStoreSelector.setIssuer(((X500Principal) entityNames[i]).getEncoded());
                     }
-                    hashSet.addAll(CertPathValidatorUtilities.findCertificates(new PKIXCertStoreSelector.Builder(x509CertSelector).build(), pKIXExtendedParameters.getCertStores()));
+                    hashSet.addAll(CertPathValidatorUtilities.findCertificates(new PKIXCertStoreSelector.Builder(x509CertStoreSelector).build(), pKIXExtendedParameters.getCertStores()));
                     i++;
-                } catch (Throwable e22) {
-                    throw new ExtCertPathValidatorException("Public key certificate for attribute certificate cannot be searched.", e22);
-                } catch (Throwable e222) {
-                    throw new ExtCertPathValidatorException("Unable to encode X500 principal.", e222);
+                } catch (AnnotatedException e3) {
+                    throw new ExtCertPathValidatorException("Public key certificate for attribute certificate cannot be searched.", e3);
+                } catch (IOException e22) {
+                    throw new ExtCertPathValidatorException("Unable to encode X500 principal.", e22);
                 }
             }
             if (hashSet.isEmpty()) {
@@ -296,21 +308,21 @@ class RFC3281CertPathUtilities {
         ExtCertPathValidatorException extCertPathValidatorException = null;
         CertPathBuilderResult certPathBuilderResult = null;
         for (X509Certificate certificate : hashSet) {
-            CertSelector x509CertStoreSelector = new X509CertStoreSelector();
-            x509CertStoreSelector.setCertificate(certificate);
-            builder.setTargetConstraints(new PKIXCertStoreSelector.Builder(x509CertStoreSelector).build());
+            X509CertStoreSelector x509CertStoreSelector2 = new X509CertStoreSelector();
+            x509CertStoreSelector2.setCertificate(certificate);
+            builder.setTargetConstraints(new PKIXCertStoreSelector.Builder(x509CertStoreSelector2).build());
             try {
                 try {
                     certPathBuilderResult = CertPathBuilder.getInstance("PKIX", "BC").build(new PKIXExtendedBuilderParameters.Builder(builder.build()).build());
-                } catch (Throwable e3) {
-                    extCertPathValidatorException = new ExtCertPathValidatorException("Certification path for public key certificate of attribute certificate could not be build.", e3);
-                } catch (InvalidAlgorithmParameterException e4) {
-                    throw new RuntimeException(e4.getMessage());
+                } catch (CertPathBuilderException e4) {
+                    extCertPathValidatorException = new ExtCertPathValidatorException("Certification path for public key certificate of attribute certificate could not be build.", e4);
+                } catch (InvalidAlgorithmParameterException e5) {
+                    throw new RuntimeException(e5.getMessage());
                 }
-            } catch (Throwable e2222) {
-                throw new ExtCertPathValidatorException("Support class could not be created.", e2222);
-            } catch (Throwable e22222) {
-                throw new ExtCertPathValidatorException("Support class could not be created.", e22222);
+            } catch (NoSuchProviderException e6) {
+                throw new ExtCertPathValidatorException("Support class could not be created.", e6);
+            } catch (NoSuchAlgorithmException e7) {
+                throw new ExtCertPathValidatorException("Support class could not be created.", e7);
             }
         }
         if (extCertPathValidatorException == null) {
@@ -323,15 +335,15 @@ class RFC3281CertPathUtilities {
         try {
             try {
                 return CertPathValidator.getInstance("PKIX", "BC").validate(certPath, pKIXExtendedParameters);
-            } catch (Throwable e) {
+            } catch (CertPathValidatorException e) {
                 throw new ExtCertPathValidatorException("Certification path for issuer certificate of attribute certificate could not be validated.", e);
             } catch (InvalidAlgorithmParameterException e2) {
                 throw new RuntimeException(e2.getMessage());
             }
-        } catch (Throwable e3) {
+        } catch (NoSuchProviderException e3) {
             throw new ExtCertPathValidatorException("Support class could not be created.", e3);
-        } catch (Throwable e32) {
-            throw new ExtCertPathValidatorException("Support class could not be created.", e32);
+        } catch (NoSuchAlgorithmException e4) {
+            throw new ExtCertPathValidatorException("Support class could not be created.", e4);
         }
     }
 
@@ -358,21 +370,21 @@ class RFC3281CertPathUtilities {
     protected static void processAttrCert5(X509AttributeCertificate x509AttributeCertificate, PKIXExtendedParameters pKIXExtendedParameters) throws CertPathValidatorException {
         try {
             x509AttributeCertificate.checkValidity(CertPathValidatorUtilities.getValidDate(pKIXExtendedParameters));
-        } catch (Throwable e) {
+        } catch (CertificateExpiredException e) {
             throw new ExtCertPathValidatorException("Attribute certificate is not valid.", e);
-        } catch (Throwable e2) {
+        } catch (CertificateNotYetValidException e2) {
             throw new ExtCertPathValidatorException("Attribute certificate is not valid.", e2);
         }
     }
 
     protected static void processAttrCert7(X509AttributeCertificate x509AttributeCertificate, CertPath certPath, CertPath certPath2, PKIXExtendedParameters pKIXExtendedParameters, Set set) throws CertPathValidatorException {
-        Object criticalExtensionOIDs = x509AttributeCertificate.getCriticalExtensionOIDs();
+        Set criticalExtensionOIDs = x509AttributeCertificate.getCriticalExtensionOIDs();
         if (criticalExtensionOIDs.contains(TARGET_INFORMATION)) {
             try {
                 TargetInformation.getInstance(CertPathValidatorUtilities.getExtensionValue(x509AttributeCertificate, TARGET_INFORMATION));
-            } catch (Throwable e) {
+            } catch (AnnotatedException e) {
                 throw new ExtCertPathValidatorException("Target information extension could not be read.", e);
-            } catch (Throwable e2) {
+            } catch (IllegalArgumentException e2) {
                 throw new ExtCertPathValidatorException("Target information extension could not be read.", e2);
             }
         }

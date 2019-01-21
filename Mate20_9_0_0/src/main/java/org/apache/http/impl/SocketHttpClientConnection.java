@@ -115,7 +115,7 @@ public class SocketHttpClientConnection extends AbstractHttpClientConnection imp
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0011 A:{Splitter: B:4:0x000b, ExcHandler: java.lang.UnsupportedOperationException (e java.lang.UnsupportedOperationException)} */
+    /* JADX WARNING: Removed duplicated region for block: B:6:0x0011 A:{ExcHandler: IOException | UnsupportedOperationException (e java.lang.Throwable), Splitter:B:4:0x000b} */
     /* JADX WARNING: Failed to process nested try/catch */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void close() throws IOException {
@@ -124,10 +124,10 @@ public class SocketHttpClientConnection extends AbstractHttpClientConnection imp
             doFlush();
             try {
                 this.socket.shutdownOutput();
-                this.socket.shutdownInput();
             } catch (IOException e) {
-            } catch (UnsupportedOperationException e2) {
+            } catch (IOException | UnsupportedOperationException e2) {
             }
+            this.socket.shutdownInput();
             this.socket.close();
         }
     }

@@ -21,7 +21,7 @@ public class ExtendedPKIXBuilderParameters extends ExtendedPKIXParameters {
 
     public static ExtendedPKIXParameters getInstance(PKIXParameters pKIXParameters) {
         try {
-            ExtendedPKIXParameters extendedPKIXBuilderParameters = new ExtendedPKIXBuilderParameters(pKIXParameters.getTrustAnchors(), X509CertStoreSelector.getInstance((X509CertSelector) pKIXParameters.getTargetCertConstraints()));
+            ExtendedPKIXBuilderParameters extendedPKIXBuilderParameters = new ExtendedPKIXBuilderParameters(pKIXParameters.getTrustAnchors(), X509CertStoreSelector.getInstance((X509CertSelector) pKIXParameters.getTargetCertConstraints()));
             extendedPKIXBuilderParameters.setParams(pKIXParameters);
             return extendedPKIXBuilderParameters;
         } catch (Exception e) {

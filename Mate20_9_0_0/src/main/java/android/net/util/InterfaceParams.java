@@ -4,6 +4,7 @@ import android.net.MacAddress;
 import android.text.TextUtils;
 import com.android.internal.util.Preconditions;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 
 public class InterfaceParams {
     public final int defaultMtu;
@@ -11,11 +12,6 @@ public class InterfaceParams {
     public final MacAddress macAddr;
     public final String name;
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x001a A:{Splitter: B:4:0x000c, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Missing block: B:8:0x001b, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static InterfaceParams getByName(String name) {
         NetworkInterface netif = getNetworkInterfaceByName(name);
         if (netif == null) {
@@ -23,7 +19,8 @@ public class InterfaceParams {
         }
         try {
             return new InterfaceParams(name, netif.getIndex(), getMacAddress(netif), netif.getMTU());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | SocketException e) {
+            return null;
         }
     }
 
@@ -33,7 +30,7 @@ public class InterfaceParams {
 
     public InterfaceParams(String name, int index, MacAddress macAddr, int defaultMtu) {
         boolean z = true;
-        Preconditions.checkArgument(TextUtils.isEmpty(name) ^ true, "impossible interface name");
+        Preconditions.checkArgument(TextUtils.isEmpty(name) ^ 1, "impossible interface name");
         if (index <= 0) {
             z = false;
         }
@@ -52,28 +49,19 @@ public class InterfaceParams {
         return String.format("%s/%d/%s/%d", new Object[]{this.name, Integer.valueOf(this.index), this.macAddr, Integer.valueOf(this.defaultMtu)});
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0005 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Missing block: B:5:0x0007, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static NetworkInterface getNetworkInterfaceByName(String name) {
         try {
             return NetworkInterface.getByName(name);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | SocketException e) {
+            return null;
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0009 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0009 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.IllegalArgumentException (e java.lang.IllegalArgumentException)} */
-    /* JADX WARNING: Missing block: B:5:0x000b, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static MacAddress getMacAddress(NetworkInterface netif) {
         try {
             return MacAddress.fromBytes(netif.getHardwareAddress());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException | SocketException e) {
+            return null;
         }
     }
 }

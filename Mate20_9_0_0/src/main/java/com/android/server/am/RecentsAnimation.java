@@ -42,7 +42,7 @@ class RecentsAnimation implements RecentsAnimationCallbacks, OnStackOrderChanged
     /* JADX WARNING: Removed duplicated region for block: B:18:0x0064  */
     /* JADX WARNING: Removed duplicated region for block: B:22:0x006b  */
     /* JADX WARNING: Removed duplicated region for block: B:41:0x0103 A:{Catch:{ Exception -> 0x0129, all -> 0x0124 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:32:0x009f A:{SYNTHETIC, Splitter: B:32:0x009f} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x009f A:{SYNTHETIC, Splitter:B:32:0x009f} */
     /* JADX WARNING: Removed duplicated region for block: B:52:0x012f A:{Catch:{ Exception -> 0x0129, all -> 0x0124 }} */
     /* JADX WARNING: Removed duplicated region for block: B:43:0x0107 A:{Catch:{ Exception -> 0x0129, all -> 0x0124 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */

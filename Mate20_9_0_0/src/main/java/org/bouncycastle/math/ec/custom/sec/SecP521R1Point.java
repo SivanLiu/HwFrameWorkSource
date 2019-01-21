@@ -91,15 +91,15 @@ public class SecP521R1Point extends AbstractFp {
             SecP521R1Field.multiply(create3, create5, iArr);
             SecP521R1Field.multiply(create3, iArr3, create3);
             SecP521R1Field.multiply(iArr4, iArr, create);
-            ECFieldElement secP521R1FieldElement7 = new SecP521R1FieldElement(create4);
-            SecP521R1Field.square(create2, secP521R1FieldElement7.x);
-            SecP521R1Field.add(secP521R1FieldElement7.x, iArr, secP521R1FieldElement7.x);
-            SecP521R1Field.subtract(secP521R1FieldElement7.x, create3, secP521R1FieldElement7.x);
-            SecP521R1Field.subtract(secP521R1FieldElement7.x, create3, secP521R1FieldElement7.x);
-            ECFieldElement secP521R1FieldElement8 = new SecP521R1FieldElement(iArr);
-            SecP521R1Field.subtract(create3, secP521R1FieldElement7.x, secP521R1FieldElement8.x);
-            SecP521R1Field.multiply(secP521R1FieldElement8.x, create2, create2);
-            SecP521R1Field.subtract(create2, create, secP521R1FieldElement8.x);
+            secP521R1FieldElement = new SecP521R1FieldElement(create4);
+            SecP521R1Field.square(create2, secP521R1FieldElement.x);
+            SecP521R1Field.add(secP521R1FieldElement.x, iArr, secP521R1FieldElement.x);
+            SecP521R1Field.subtract(secP521R1FieldElement.x, create3, secP521R1FieldElement.x);
+            SecP521R1Field.subtract(secP521R1FieldElement.x, create3, secP521R1FieldElement.x);
+            secP521R1FieldElement2 = new SecP521R1FieldElement(iArr);
+            SecP521R1Field.subtract(create3, secP521R1FieldElement.x, secP521R1FieldElement2.x);
+            SecP521R1Field.multiply(secP521R1FieldElement2.x, create2, create2);
+            SecP521R1Field.subtract(create2, create, secP521R1FieldElement2.x);
             secP521R1FieldElement3 = new SecP521R1FieldElement(create5);
             if (!isOne) {
                 SecP521R1Field.multiply(secP521R1FieldElement3.x, secP521R1FieldElement5.x, secP521R1FieldElement3.x);
@@ -107,7 +107,7 @@ public class SecP521R1Point extends AbstractFp {
             if (!isOne2) {
                 SecP521R1Field.multiply(secP521R1FieldElement3.x, secP521R1FieldElement6.x, secP521R1FieldElement3.x);
             }
-            return new SecP521R1Point(curve, secP521R1FieldElement7, secP521R1FieldElement8, new ECFieldElement[]{secP521R1FieldElement3}, this.withCompression);
+            return new SecP521R1Point(curve, secP521R1FieldElement, secP521R1FieldElement2, new ECFieldElement[]{secP521R1FieldElement3}, this.withCompression);
         }
     }
 

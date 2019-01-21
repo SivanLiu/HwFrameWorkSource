@@ -233,25 +233,25 @@ public final class ProcessStatsService extends Stub {
         this.mLastWriteTime = SystemClock.uptimeMillis();
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0019, code:
+    /* JADX WARNING: Missing block: B:9:0x0019, code skipped:
             r4 = android.os.SystemClock.uptimeMillis();
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r0 = r2.startWrite();
             r0.write(r1.marshall());
             r0.flush();
             r2.finishWrite(r0);
             com.android.internal.logging.EventLogTags.writeCommitSysConfigFile("procstats", (android.os.SystemClock.uptimeMillis() - r4) + r9);
      */
-    /* JADX WARNING: Missing block: B:13:0x003f, code:
+    /* JADX WARNING: Missing block: B:13:0x003f, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             android.util.Slog.w(TAG, "Error writing process statistics", r3);
             r2.failWrite(r0);
      */
-    /* JADX WARNING: Missing block: B:18:0x0057, code:
+    /* JADX WARNING: Missing block: B:18:0x0057, code skipped:
             r1.recycle();
             trimHistoricStatesWriteLocked();
             r8.mWriteLock.unlock();
@@ -652,24 +652,24 @@ public final class ProcessStatsService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:515:0x07d2 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:507:0x07d2 A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:383:0x0794 A:{Catch:{ Throwable -> 0x07b4 }} */
-    /* JADX WARNING: Missing block: B:120:0x02c3, code:
+    /* JADX WARNING: Missing block: B:120:0x02c3, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:430:0x084f, code:
+    /* JADX WARNING: Missing block: B:430:0x084f, code skipped:
             com.android.server.am.ActivityManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:431:0x0852, code:
+    /* JADX WARNING: Missing block: B:431:0x0852, code skipped:
             if (r33 != false) goto L_0x0883;
      */
-    /* JADX WARNING: Missing block: B:432:0x0854, code:
+    /* JADX WARNING: Missing block: B:432:0x0854, code skipped:
             if (r29 == false) goto L_0x0859;
      */
-    /* JADX WARNING: Missing block: B:433:0x0856, code:
+    /* JADX WARNING: Missing block: B:433:0x0856, code skipped:
             r44.println();
      */
-    /* JADX WARNING: Missing block: B:434:0x0859, code:
+    /* JADX WARNING: Missing block: B:434:0x0859, code skipped:
             r14.println("AGGREGATED OVER LAST 24 HOURS:");
             r1 = r13;
             r2 = r14;
@@ -686,7 +686,7 @@ public final class ProcessStatsService extends Stub {
             r14.println("AGGREGATED OVER LAST 3 HOURS:");
             dumpAggregatedStats(r2, 3, r5, r7, r8, r9, r10, r11, r12);
      */
-    /* JADX WARNING: Missing block: B:435:0x0883, code:
+    /* JADX WARNING: Missing block: B:435:0x0883, code skipped:
             r35 = r12;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -954,135 +954,136 @@ public final class ProcessStatsService extends Stub {
                                         } catch (Throwable th3) {
                                             th = th3;
                                             dumpDetails = dumpFullDetails2;
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                            throw th;
                                         }
                                     }
+                                }
+                                dumpDetails = dumpFullDetails2;
+                                if ("--clear".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            this.mProcessStats.resetSafely();
+                                            this.mAm.requestPssAllProcsLocked(SystemClock.uptimeMillis(), true, false);
+                                            files = getCommittedFiles(0, true, true);
+                                            if (files != null) {
+                                                for (isCsv2 = false; isCsv2 < files.size(); isCsv2++) {
+                                                    new File((String) files.get(isCsv2)).delete();
+                                                }
+                                            }
+                                            printWriter.println("All process stats cleared.");
+                                            quit = true;
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                } else if ("--write".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            writeStateSyncLocked();
+                                            printWriter.println("Process stats written.");
+                                            quit = true;
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                } else if ("--read".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            readLocked(this.mProcessStats, this.mFile);
+                                            printWriter.println("Process stats read.");
+                                            quit = true;
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                } else if ("--start-testing".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            this.mAm.setTestPssMode(true);
+                                            printWriter.println("Started high frequency sampling.");
+                                            quit = true;
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                } else if ("--stop-testing".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            this.mAm.setTestPssMode(false);
+                                            printWriter.println("Stopped high frequency sampling.");
+                                            quit = true;
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                } else if ("--pretend-screen-on".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            this.mInjectedScreenState = Boolean.valueOf(true);
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                    quit = true;
+                                } else if ("--pretend-screen-off".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            this.mInjectedScreenState = Boolean.valueOf(false);
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                    quit = true;
+                                } else if ("--stop-pretend-screen".equals(arg)) {
+                                    synchronized (this.mAm) {
+                                        try {
+                                            ActivityManagerService.boostPriorityForLockedSection();
+                                            this.mInjectedScreenState = null;
+                                        } finally {
+                                            while (true) {
+                                            }
+                                            ActivityManagerService.resetPriorityAfterLockedSection();
+                                        }
+                                    }
+                                    quit = true;
+                                } else if ("-h".equals(arg)) {
+                                    dumpHelp(pw);
+                                    return;
+                                } else if ("-a".equals(arg)) {
+                                    dumpFullDetails2 = true;
+                                    dumpAll = true;
+                                } else if (arg.length() <= 0 || !arg.charAt(false)) {
+                                    reqPackage2 = arg;
+                                    dumpFullDetails2 = true;
                                 } else {
-                                    dumpDetails = dumpFullDetails2;
-                                    if ("--clear".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                this.mProcessStats.resetSafely();
-                                                this.mAm.requestPssAllProcsLocked(SystemClock.uptimeMillis(), true, false);
-                                                files = getCommittedFiles(0, true, true);
-                                                if (files != null) {
-                                                    for (isCsv2 = false; isCsv2 < files.size(); isCsv2++) {
-                                                        new File((String) files.get(isCsv2)).delete();
-                                                    }
-                                                }
-                                                printWriter.println("All process stats cleared.");
-                                                quit = true;
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                    } else if ("--write".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                writeStateSyncLocked();
-                                                printWriter.println("Process stats written.");
-                                                quit = true;
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                    } else if ("--read".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                readLocked(this.mProcessStats, this.mFile);
-                                                printWriter.println("Process stats read.");
-                                                quit = true;
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                    } else if ("--start-testing".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                this.mAm.setTestPssMode(true);
-                                                printWriter.println("Started high frequency sampling.");
-                                                quit = true;
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                    } else if ("--stop-testing".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                this.mAm.setTestPssMode(false);
-                                                printWriter.println("Stopped high frequency sampling.");
-                                                quit = true;
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                    } else if ("--pretend-screen-on".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                this.mInjectedScreenState = Boolean.valueOf(true);
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                        quit = true;
-                                    } else if ("--pretend-screen-off".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                this.mInjectedScreenState = Boolean.valueOf(false);
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                        quit = true;
-                                    } else if ("--stop-pretend-screen".equals(arg)) {
-                                        synchronized (this.mAm) {
-                                            try {
-                                                ActivityManagerService.boostPriorityForLockedSection();
-                                                this.mInjectedScreenState = null;
-                                            } finally {
-                                                while (true) {
-                                                }
-                                                ActivityManagerService.resetPriorityAfterLockedSection();
-                                            }
-                                        }
-                                        quit = true;
-                                    } else if ("-h".equals(arg)) {
-                                        dumpHelp(pw);
-                                        return;
-                                    } else if ("-a".equals(arg)) {
-                                        dumpFullDetails2 = true;
-                                        dumpAll = true;
-                                    } else if (arg.length() <= 0 || !arg.charAt(false)) {
-                                        reqPackage2 = arg;
-                                        dumpFullDetails2 = true;
-                                    } else {
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        stringBuilder.append("Unknown option: ");
-                                        stringBuilder.append(arg);
-                                        printWriter.println(stringBuilder.toString());
-                                        dumpHelp(pw);
-                                        return;
-                                    }
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    stringBuilder.append("Unknown option: ");
+                                    stringBuilder.append(arg);
+                                    printWriter.println(stringBuilder.toString());
+                                    dumpHelp(pw);
+                                    return;
                                 }
                                 isCompact = csvMemStats2;
                                 isCsv2 = isCompact2;
@@ -1321,6 +1322,8 @@ public final class ProcessStatsService extends Stub {
                                                         str = reqPackage3;
                                                         i5 = aggregateHours3;
                                                         isCompact = checkedIn;
+                                                        this.mWriteLock.unlock();
+                                                        throw th;
                                                     }
                                                 }
                                                 printWriter.println(":");
@@ -1362,6 +1365,8 @@ public final class ProcessStatsService extends Stub {
                                                 str = reqPackage3;
                                                 i5 = aggregateHours3;
                                                 isCompact = checkedIn;
+                                                this.mWriteLock.unlock();
+                                                throw th;
                                             }
                                         }
                                         reqPackage3 = reqPackage;

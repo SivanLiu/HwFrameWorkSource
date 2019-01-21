@@ -82,6 +82,9 @@ public class HwTouchWeightService {
             if (in != null) {
                 in.close();
             }
+            resetTimeOut();
+            Log.i("touch weight", "HwTouchWeightService getTouchWeightValue null");
+            return null;
         } catch (IOException e3) {
             if (in != null) {
                 try {
@@ -89,6 +92,9 @@ public class HwTouchWeightService {
                 } catch (IOException e4) {
                 }
             }
+            resetTimeOut();
+            Log.i("touch weight", "HwTouchWeightService getTouchWeightValue null");
+            return null;
         } catch (Throwable th) {
             if (in != null) {
                 try {
@@ -97,9 +103,6 @@ public class HwTouchWeightService {
                 }
             }
         }
-        resetTimeOut();
-        Log.i("touch weight", "HwTouchWeightService getTouchWeightValue null");
-        return null;
         return val;
     }
 

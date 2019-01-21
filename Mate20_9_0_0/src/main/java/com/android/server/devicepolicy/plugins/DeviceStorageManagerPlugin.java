@@ -142,13 +142,13 @@ public class DeviceStorageManagerPlugin extends DevicePolicyPlugin {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x003a, code:
+    /* JADX WARNING: Missing block: B:22:0x003a, code skipped:
             if (r7.getBoolean("value") == false) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:22:0x003c, code:
+    /* JADX WARNING: Missing block: B:23:0x003c, code skipped:
             r5.mHandler.sendEmptyMessage(0);
      */
-    /* JADX WARNING: Missing block: B:23:0x0042, code:
+    /* JADX WARNING: Missing block: B:24:0x0042, code skipped:
             r5.mHandler.sendEmptyMessage(1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -156,22 +156,24 @@ public class DeviceStorageManagerPlugin extends DevicePolicyPlugin {
         if (!changed) {
             return true;
         }
-        boolean z = true;
+        int i = -1;
         if (policyName.hashCode() == -1002053434 && policyName.equals("disable-sdwriting")) {
-            z = false;
+            i = 0;
         }
-        if (!z) {
+        if (i == 0) {
             synchronized (mLock) {
-                if (mUnfinishedBusiness || isExternalSdcardDecryptingOrEncrypting() || isExternalSdcardNotStable()) {
-                    return false;
+                if (!(mUnfinishedBusiness || isExternalSdcardDecryptingOrEncrypting())) {
+                    if (!isExternalSdcardNotStable()) {
+                        mUnfinishedBusiness = true;
+                    }
                 }
-                mUnfinishedBusiness = true;
+                return false;
             }
         }
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0033, code:
+    /* JADX WARNING: Missing block: B:21:0x0033, code skipped:
             r5.mHandler.sendEmptyMessage(1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -185,10 +187,12 @@ public class DeviceStorageManagerPlugin extends DevicePolicyPlugin {
         }
         if (!z) {
             synchronized (mLock) {
-                if (mUnfinishedBusiness || isExternalSdcardDecryptingOrEncrypting() || isExternalSdcardNotStable()) {
-                    return false;
+                if (!(mUnfinishedBusiness || isExternalSdcardDecryptingOrEncrypting())) {
+                    if (!isExternalSdcardNotStable()) {
+                        mUnfinishedBusiness = true;
+                    }
                 }
-                mUnfinishedBusiness = true;
+                return false;
             }
         }
         return true;

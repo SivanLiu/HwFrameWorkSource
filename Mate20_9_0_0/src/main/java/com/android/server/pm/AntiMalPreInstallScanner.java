@@ -444,7 +444,7 @@ public class AntiMalPreInstallScanner {
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x0032 A:{SYNTHETIC, Splitter: B:14:0x0032} */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x0032 A:{SYNTHETIC, Splitter:B:14:0x0032} */
     /* JADX WARNING: Removed duplicated region for block: B:11:0x0026 A:{Catch:{ Exception -> 0x00c8 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean parsePackagelist(File whitelist) {
@@ -479,23 +479,31 @@ public class AntiMalPreInstallScanner {
                             if (next == i || (type == 3 && parser.getDepth() <= outerDepth)) {
                                 break;
                             }
-                            if (!(type == 3 || type == 4 || !parser.getName().equals("package"))) {
-                                String packageName = parser.getAttributeValue(str2, "name");
-                                String path = parser.getAttributeValue(str2, HwSecDiagnoseConstant.ANTIMAL_APK_PATH);
-                                String sign = parser.getAttributeValue(str2, "ss");
-                                String version = parser.getAttributeValue(str2, "version");
-                                if (!(TextUtils.isEmpty(packageName) || TextUtils.isEmpty(path) || TextUtils.isEmpty(sign) || !isPreinstallApkDir(path))) {
-                                    ApkBasicInfo pbi = new ApkBasicInfo(packageName, path, sign.split(","), version);
-                                    this.mApkInfoList.put(packageName, pbi);
-                                    ArrayList<ApkBasicInfo> plist;
-                                    if (this.mSysApkWhitelist.get(packageName) == null) {
-                                        plist = new ArrayList();
-                                        plist.add(pbi);
-                                        this.mSysApkWhitelist.put(packageName, plist);
-                                    } else {
-                                        plist = (ArrayList) this.mSysApkWhitelist.get(packageName);
-                                        plist.add(pbi);
-                                        this.mSysApkWhitelist.put(packageName, plist);
+                            if (type != 3) {
+                                if (type != 4) {
+                                    if (parser.getName().equals("package")) {
+                                        String packageName = parser.getAttributeValue(str2, "name");
+                                        String path = parser.getAttributeValue(str2, HwSecDiagnoseConstant.ANTIMAL_APK_PATH);
+                                        String sign = parser.getAttributeValue(str2, "ss");
+                                        String version = parser.getAttributeValue(str2, "version");
+                                        if (!(TextUtils.isEmpty(packageName) || TextUtils.isEmpty(path))) {
+                                            if (!TextUtils.isEmpty(sign)) {
+                                                if (isPreinstallApkDir(path)) {
+                                                    ApkBasicInfo pbi = new ApkBasicInfo(packageName, path, sign.split(","), version);
+                                                    this.mApkInfoList.put(packageName, pbi);
+                                                    ArrayList<ApkBasicInfo> plist;
+                                                    if (this.mSysApkWhitelist.get(packageName) == null) {
+                                                        plist = new ArrayList();
+                                                        plist.add(pbi);
+                                                        this.mSysApkWhitelist.put(packageName, plist);
+                                                    } else {
+                                                        plist = (ArrayList) this.mSysApkWhitelist.get(packageName);
+                                                        plist.add(pbi);
+                                                        this.mSysApkWhitelist.put(packageName, plist);
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

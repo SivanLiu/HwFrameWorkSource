@@ -47,9 +47,9 @@ public class CertificatePolicies extends ASN1Object {
     }
 
     public PolicyInformation[] getPolicyInformation() {
-        Object obj = new PolicyInformation[this.policyInformation.length];
-        System.arraycopy(this.policyInformation, 0, obj, 0, this.policyInformation.length);
-        return obj;
+        PolicyInformation[] policyInformationArr = new PolicyInformation[this.policyInformation.length];
+        System.arraycopy(this.policyInformation, 0, policyInformationArr, 0, this.policyInformation.length);
+        return policyInformationArr;
     }
 
     public ASN1Primitive toASN1Primitive() {

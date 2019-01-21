@@ -39,7 +39,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.IPowerManager;
-import android.os.IPowerManager.Stub;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -65,6 +64,7 @@ import android.util.SparseArray;
 import android.util.Xml;
 import com.android.internal.net.VpnProfile;
 import com.android.internal.telephony.ITelephony;
+import com.android.internal.telephony.ITelephony.Stub;
 import com.android.internal.util.FastXmlSerializer;
 import com.android.internal.util.JournaledFile;
 import com.android.internal.util.XmlUtils;
@@ -316,10 +316,10 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:78:?, code:
+    /* JADX WARNING: Missing block: B:78:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -478,10 +478,10 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:32:0x0071, code:
+    /* JADX WARNING: Missing block: B:33:0x0071, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:34:0x0073, code:
+    /* JADX WARNING: Missing block: B:35:0x0073, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -499,11 +499,14 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
         synchronized (getLockObject()) {
             DeviceVisitorPolicyData policy = getVisitorUserData(userHandle);
-            if (policy.mActivePasswordQuality < getPasswordQuality(null, userHandle, parent) || policy.mActivePasswordLength < getPasswordMinimumLength(null, userHandle, parent)) {
-            } else if (policy.mActivePasswordQuality != 393216) {
-                return true;
-            } else if (policy.mActivePasswordUpperCase >= getPasswordMinimumUpperCase(null, userHandle, parent) && policy.mActivePasswordLowerCase >= getPasswordMinimumLowerCase(null, userHandle, parent) && policy.mActivePasswordLetters >= getPasswordMinimumLetters(null, userHandle, parent) && policy.mActivePasswordNumeric >= getPasswordMinimumNumeric(null, userHandle, parent) && policy.mActivePasswordSymbols >= getPasswordMinimumSymbols(null, userHandle, parent) && policy.mActivePasswordNonLetter >= getPasswordMinimumNonLetter(null, userHandle, parent)) {
-                z = true;
+            if (policy.mActivePasswordQuality >= getPasswordQuality(null, userHandle, parent)) {
+                if (policy.mActivePasswordLength >= getPasswordMinimumLength(null, userHandle, parent)) {
+                    if (policy.mActivePasswordQuality != 393216) {
+                        return true;
+                    } else if (policy.mActivePasswordUpperCase >= getPasswordMinimumUpperCase(null, userHandle, parent) && policy.mActivePasswordLowerCase >= getPasswordMinimumLowerCase(null, userHandle, parent) && policy.mActivePasswordLetters >= getPasswordMinimumLetters(null, userHandle, parent) && policy.mActivePasswordNumeric >= getPasswordMinimumNumeric(null, userHandle, parent) && policy.mActivePasswordSymbols >= getPasswordMinimumSymbols(null, userHandle, parent) && policy.mActivePasswordNonLetter >= getPasswordMinimumNonLetter(null, userHandle, parent)) {
+                        z = true;
+                    }
+                }
             }
         }
     }
@@ -557,19 +560,19 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x001c, code:
-            return r3;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean getAllowSimplePassword(ComponentName who, int userHandle) {
+        boolean z;
         if (!this.mHasFeature || !isSimplePwdOpen) {
             return true;
         }
         synchronized (getLockObject()) {
             boolean mode = true;
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
-                boolean z = admin != null ? admin.allowSimplePassword : true;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
+                    z = admin != null ? admin.allowSimplePassword : true;
+                } finally {
+                }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
                 int N = policy.mAdminList.size();
@@ -587,6 +590,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 return mode;
             }
         }
+        return z;
     }
 
     void saveCurrentPwdStatus(boolean isCurrentPwdSimple, int userHandle) {
@@ -685,16 +689,16 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x003d, code:
+    /* JADX WARNING: Missing block: B:15:0x003d, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:0x0050, code:
+    /* JADX WARNING: Missing block: B:22:0x0050, code skipped:
             if (r7.mHwAdminCache == null) goto L_0x005c;
      */
-    /* JADX WARNING: Missing block: B:23:0x0052, code:
+    /* JADX WARNING: Missing block: B:23:0x0052, code skipped:
             r7.mHwAdminCache.syncHwAdminCache(0, isWifiDisabled(null, r10));
      */
-    /* JADX WARNING: Missing block: B:24:0x005c, code:
+    /* JADX WARNING: Missing block: B:24:0x005c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -726,55 +730,63 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isWifiDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableWifi;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableWifi) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableWifi;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableWifi) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
     public boolean isBluetoothDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableBluetooth;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableBluetooth) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableBluetooth;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableBluetooth) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x003f, code:
+    /* JADX WARNING: Missing block: B:15:0x003f, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:22:0x0052, code:
+    /* JADX WARNING: Missing block: B:22:0x0052, code skipped:
             if (r7.mHwAdminCache == null) goto L_0x0060;
      */
-    /* JADX WARNING: Missing block: B:23:0x0054, code:
+    /* JADX WARNING: Missing block: B:23:0x0054, code skipped:
             r7.mHwAdminCache.syncHwAdminCache(8, isBluetoothDisabled(null, r10));
      */
-    /* JADX WARNING: Missing block: B:24:0x0060, code:
+    /* JADX WARNING: Missing block: B:24:0x0060, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -817,7 +829,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -825,9 +837,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableWifiAp;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableWifiAp;
+                    }
+                } catch (Throwable th) {
                 }
             } else if (this.mUserManager.hasUserRestriction("no_config_tethering", new UserHandle(userHandle))) {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -869,7 +884,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -877,9 +892,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin ap = getHwActiveAdmin(who, userHandle);
-                if (ap != null) {
-                    z = ap.disableUSBData;
+                try {
+                    HwActiveAdmin ap = getHwActiveAdmin(who, userHandle);
+                    if (ap != null) {
+                        z = ap.disableUSBData;
+                    }
+                } catch (Throwable th) {
                 }
             } else if (this.mUserManager.hasUserRestriction("no_usb_file_transfer", new UserHandle(userHandle))) {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -914,7 +932,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -922,9 +940,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableExternalStorage;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableExternalStorage;
+                    }
+                } catch (Throwable th) {
                 }
             } else if (this.mUserManager.hasUserRestriction("no_physical_media", new UserHandle(userHandle))) {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -973,7 +994,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -981,9 +1002,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableNFC;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableNFC;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1013,7 +1037,11 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                     saveSettingsLocked(userHandle);
                 }
                 if (disabled) {
-                    TelephonyManager.from(this.mContext).setDataEnabled(disabled ^ 1);
+                    try {
+                        Stub.asInterface(ServiceManager.checkService("phone")).disableDataConnectivity();
+                    } catch (RemoteException e) {
+                        HwLog.e(TAG, "Can not calling the remote function to set data enabled!");
+                    }
                 }
             } else {
                 throw new IllegalArgumentException("ComponentName is null");
@@ -1021,7 +1049,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1029,9 +1057,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableDataConnectivity;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableDataConnectivity;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1067,7 +1098,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1075,9 +1106,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableVoice;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableVoice;
+                    }
+                } catch (Throwable th) {
                 }
             } else if (this.mUserManager.hasUserRestriction("no_outgoing_calls", new UserHandle(userHandle))) {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1112,7 +1146,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1120,9 +1154,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableSMS;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableSMS;
+                    }
+                } catch (Throwable th) {
                 }
             } else if (this.mUserManager.hasUserRestriction("no_sms", new UserHandle(userHandle))) {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1143,7 +1180,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0036, code:
+    /* JADX WARNING: Missing block: B:15:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1208,7 +1245,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1216,9 +1253,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableStatusBarExpandPanel;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableStatusBarExpandPanel;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1252,7 +1292,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                                     HwDevicePolicyManagerService.this.mErrorDialog.dismiss();
                                     HwDevicePolicyManagerService.this.mErrorDialog = null;
                                 }
-                                HwDevicePolicyManagerService.this.mErrorDialog = new Builder(HwDevicePolicyManagerService.this.mContext, 33947691).setMessage(33686011).setPositiveButton(33686121, new OnClickListener() {
+                                HwDevicePolicyManagerService.this.mErrorDialog = new Builder(HwDevicePolicyManagerService.this.mContext, 33947691).setMessage(33686011).setPositiveButton(33686123, new OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         HwDevicePolicyManagerService.this.mErrorDialog.dismiss();
                                     }
@@ -1393,7 +1433,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0012, code:
+    /* JADX WARNING: Missing block: B:9:0x0012, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1401,9 +1441,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         synchronized (getLockObject()) {
             boolean z = false;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableInstallSource;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableInstallSource;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1422,15 +1465,24 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
+    /* JADX WARNING: Missing block: B:11:0x001d, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getInstallPackageSourceWhiteList(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                List<String> list = (admin.installSourceWhitelist == null || admin.installSourceWhitelist.isEmpty()) ? null : admin.installSourceWhitelist;
+                try {
+                    List<String> list;
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.installSourceWhitelist != null) {
+                        if (!admin.installSourceWhitelist.isEmpty()) {
+                            list = admin.installSourceWhitelist;
+                        }
+                    }
+                    list = null;
+                } finally {
+                }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
                 ArrayList<String> whiteList = new ArrayList();
@@ -1535,20 +1587,23 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         Slog.d(str, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
-            return r1;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getPersistentApp(ComponentName who, int userHandle) {
+        List<String> list;
         synchronized (getLockObject()) {
-            List<String> list = null;
+            list = null;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (!(admin.persistentAppList == null || admin.persistentAppList.isEmpty())) {
-                    list = admin.persistentAppList;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.persistentAppList != null) {
+                        if (!admin.persistentAppList.isEmpty()) {
+                            list = admin.persistentAppList;
+                        }
+                    }
+                } finally {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1565,6 +1620,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 }
             }
         }
+        return list;
     }
 
     public void addDisallowedRunningApp(ComponentName who, List<String> packageNames, int userHandle) {
@@ -1634,20 +1690,23 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
-            return r1;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getDisallowedRunningApp(ComponentName who, int userHandle) {
+        List<String> list;
         synchronized (getLockObject()) {
-            List<String> list = null;
+            list = null;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (!(admin.disallowedRunningAppList == null || admin.disallowedRunningAppList.isEmpty())) {
-                    list = admin.disallowedRunningAppList;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.disallowedRunningAppList != null) {
+                        if (!admin.disallowedRunningAppList.isEmpty()) {
+                            list = admin.disallowedRunningAppList;
+                        }
+                    }
+                } finally {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1664,6 +1723,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 }
             }
         }
+        return list;
     }
 
     public void addInstallPackageWhiteList(ComponentName who, List<String> packageNames, int userHandle) {
@@ -1729,20 +1789,23 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
-            return r1;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getInstallPackageWhiteList(ComponentName who, int userHandle) {
+        List<String> list;
         synchronized (getLockObject()) {
-            List<String> list = null;
+            list = null;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (!(admin.installPackageWhitelist == null || admin.installPackageWhitelist.isEmpty())) {
-                    list = admin.installPackageWhitelist;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.installPackageWhitelist != null) {
+                        if (!admin.installPackageWhitelist.isEmpty()) {
+                            list = admin.installPackageWhitelist;
+                        }
+                    }
+                } finally {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1759,6 +1822,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 }
             }
         }
+        return list;
     }
 
     public void addDisallowedUninstallPackages(ComponentName who, List<String> packageNames, int userHandle) {
@@ -1825,20 +1889,23 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
-            return r1;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getDisallowedUninstallPackageList(ComponentName who, int userHandle) {
+        List<String> list;
         synchronized (getLockObject()) {
-            List<String> list = null;
+            list = null;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (!(admin.disallowedUninstallPackageList == null || admin.disallowedUninstallPackageList.isEmpty())) {
-                    list = admin.disallowedUninstallPackageList;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.disallowedUninstallPackageList != null) {
+                        if (!admin.disallowedUninstallPackageList.isEmpty()) {
+                            list = admin.disallowedUninstallPackageList;
+                        }
+                    }
+                } finally {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1855,6 +1922,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 }
             }
         }
+        return list;
     }
 
     public void addDisabledDeactivateMdmPackages(ComponentName who, List<String> packageNames, int userHandle) {
@@ -1921,20 +1989,23 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
-            return r1;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getDisabledDeactivateMdmPackageList(ComponentName who, int userHandle) {
+        List<String> list;
         synchronized (getLockObject()) {
-            List<String> list = null;
+            list = null;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (!(admin.disabledDeactiveMdmPackagesList == null || admin.disabledDeactiveMdmPackagesList.isEmpty())) {
-                    list = admin.disabledDeactiveMdmPackagesList;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.disabledDeactiveMdmPackagesList != null) {
+                        if (!admin.disabledDeactiveMdmPackagesList.isEmpty()) {
+                            list = admin.disabledDeactiveMdmPackagesList;
+                        }
+                    }
+                } finally {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -1951,6 +2022,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 }
             }
         }
+        return list;
     }
 
     public void killApplicationProcess(ComponentName who, String packageName, int userHandle) {
@@ -2011,7 +2083,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 getHwActiveAdmin(who, userHandle);
                 long callingId = Binder.clearCallingIdentity();
                 try {
-                    IPowerManager power = Stub.asInterface(ServiceManager.getService("power"));
+                    IPowerManager power = IPowerManager.Stub.asInterface(ServiceManager.getService("power"));
                     if (power == null) {
                         Binder.restoreCallingIdentity(callingId);
                         return;
@@ -2075,7 +2147,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0044, code:
+    /* JADX WARNING: Missing block: B:23:0x0044, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2089,38 +2161,41 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
         synchronized (getLockObject()) {
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (admin.mailProviderlist == null) {
-                    return null;
-                }
-                boolean matched = false;
-                Bundle retProvider = null;
-                for (Bundle provider : admin.mailProviderlist) {
-                    matched = HwDevicePolicyManagerServiceUtil.matchProvider(domain, provider.getString("domain"));
-                    if (matched) {
-                        retProvider = provider;
-                        break;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.mailProviderlist == null) {
+                        return null;
                     }
-                }
-                if (matched) {
-                    bundle = retProvider;
-                }
-            } else {
-                DevicePolicyData policy = getUserData(userHandle);
-                int N = policy.mAdminList.size();
-                for (int i = 0; i < N; i++) {
-                    ActiveAdmin admin2 = (ActiveAdmin) policy.mAdminList.get(i);
-                    if (!(admin2.mHwActiveAdmin == null || admin2.mHwActiveAdmin.mailProviderlist == null)) {
-                        for (Bundle provider2 : admin2.mHwActiveAdmin.mailProviderlist) {
-                            if (HwDevicePolicyManagerServiceUtil.matchProvider(domain, provider2.getString("domain"))) {
-                                return provider2;
-                            }
+                    boolean matched = false;
+                    Bundle retProvider = null;
+                    for (Bundle provider : admin.mailProviderlist) {
+                        matched = HwDevicePolicyManagerServiceUtil.matchProvider(domain, provider.getString("domain"));
+                        if (matched) {
+                            retProvider = provider;
+                            break;
                         }
-                        continue;
                     }
+                    if (matched) {
+                        bundle = retProvider;
+                    }
+                } catch (Throwable th) {
+                    throw th;
                 }
-                return null;
             }
+            DevicePolicyData policy = getUserData(userHandle);
+            int N = policy.mAdminList.size();
+            for (int i = 0; i < N; i++) {
+                ActiveAdmin admin2 = (ActiveAdmin) policy.mAdminList.get(i);
+                if (!(admin2.mHwActiveAdmin == null || admin2.mHwActiveAdmin.mailProviderlist == null)) {
+                    for (Bundle provider2 : admin2.mHwActiveAdmin.mailProviderlist) {
+                        if (HwDevicePolicyManagerServiceUtil.matchProvider(domain, provider2.getString("domain"))) {
+                            return provider2;
+                        }
+                    }
+                    continue;
+                }
+            }
+            return null;
         }
     }
 
@@ -2130,10 +2205,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
             if (who != null) {
                 getHwActiveAdmin(who, userHandle);
                 String currentState = SystemProperties.get("persist.sys.root.status");
-                if (TextUtils.isEmpty(currentState) || !"0".equals(currentState)) {
-                    return true;
+                if (!TextUtils.isEmpty(currentState)) {
+                    if ("0".equals(currentState)) {
+                        return false;
+                    }
                 }
-                return false;
+                return true;
             }
             throw new IllegalArgumentException("ComponentName is null");
         }
@@ -2161,21 +2238,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isSafeModeDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableSafeMode;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableSafeMode) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableSafeMode;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableSafeMode) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2208,21 +2289,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isAdbDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableAdb;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableAdb) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableAdb;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableAdb) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2265,21 +2350,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isUSBOtgDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableUSBOtg;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableUSBOtg) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableUSBOtg;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableUSBOtg) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2308,21 +2397,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isGPSDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableGPS;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableGPS) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableGPS;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableGPS) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2378,21 +2471,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isTaskButtonDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableTaskKey;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableTaskKey) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableTaskKey;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableTaskKey) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2418,21 +2515,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isHomeButtonDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableHomeKey;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableHomeKey) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableHomeKey;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableHomeKey) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2458,21 +2559,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isBackButtonDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableBackKey;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableBackKey) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableBackKey;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableBackKey) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2491,10 +2596,6 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0075, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void setCustomSettingsMenu(ComponentName who, List<String> menusToDelete, int userHandle) {
         enforceHwCrossUserPermission(userHandle);
         this.mContext.enforceCallingOrSelfPermission("com.huawei.permission.sec.MDM_DEVICE_MANAGER", "does not have device_manager MDM permission!");
@@ -2518,6 +2619,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                                 }
                             }
                             Global.putStringForUser(this.mContext.getContentResolver(), SETTINGS_MENUS_REMOVE, newMenus.toString(), userHandle);
+                            return;
                         }
                     } finally {
                         Binder.restoreCallingIdentity(callingId);
@@ -2579,21 +2681,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isChangeLauncherDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdmin(who, userHandle).disableChangeLauncher;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableChangeLauncher) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdmin(who, userHandle).disableChangeLauncher;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableChangeLauncher) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -2777,20 +2883,23 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException("addrlist invalid");
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
-            return r1;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> getNetworkAccessWhitelist(ComponentName who, int userHandle) {
+        List<String> list;
         synchronized (getLockObject()) {
-            List<String> list = null;
+            list = null;
             if (who != null) {
-                HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
-                if (!(admin.networkAccessWhitelist == null || admin.networkAccessWhitelist.isEmpty())) {
-                    list = admin.networkAccessWhitelist;
+                try {
+                    HwActiveAdmin admin = getHwActiveAdmin(who, userHandle);
+                    if (admin.networkAccessWhitelist != null) {
+                        if (!admin.networkAccessWhitelist.isEmpty()) {
+                            list = admin.networkAccessWhitelist;
+                        }
+                    }
+                } finally {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -2807,6 +2916,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                 }
             }
         }
+        return list;
     }
 
     private void setNetworkAccessWhitelist(List<String> whitelist) {
@@ -3046,8 +3156,10 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                     if (hasExternalSdcard && !dafaultIsSdcard) {
                         Log.w(TAG, "call doUnMount");
                         StorageUtils.doUnMount(this.mContext);
-                    } else if (hasExternalSdcard && dafaultIsSdcard && StorageUtils.isSwitchPrimaryVolumeSupported()) {
-                        throw new IllegalStateException("could not disable sdcard when it is primary card.");
+                    } else if (hasExternalSdcard && dafaultIsSdcard) {
+                        if (StorageUtils.isSwitchPrimaryVolumeSupported()) {
+                            throw new IllegalStateException("could not disable sdcard when it is primary card.");
+                        }
                     }
                 } else if ("no_usb_file_transfer".equals(key)) {
                     if (disable) {
@@ -3488,21 +3600,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isSDCardDecryptionDisabled(ComponentName who, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                boolean z = getHwActiveAdminUncheckedLocked(who, userHandle).disableDecryptSDCard;
-                return z;
-            }
-            DevicePolicyData policy = getUserData(userHandle);
-            int N = policy.mAdminList.size();
-            int i = 0;
-            while (i < N) {
-                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
-                if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableDecryptSDCard) {
-                    i++;
-                } else {
-                    return true;
+                try {
+                    boolean z = getHwActiveAdminUncheckedLocked(who, userHandle).disableDecryptSDCard;
+                    return z;
+                } catch (Throwable th) {
                 }
+            } else {
+                DevicePolicyData policy = getUserData(userHandle);
+                int N = policy.mAdminList.size();
+                int i = 0;
+                while (i < N) {
+                    ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i);
+                    if (admin.mHwActiveAdmin == null || !admin.mHwActiveAdmin.disableDecryptSDCard) {
+                        i++;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
             }
-            return false;
         }
     }
 
@@ -3602,25 +3718,25 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:94:0x024f, code:
+    /* JADX WARNING: Missing block: B:95:0x024f, code skipped:
             if (r6 != 1) goto L_0x025b;
      */
-    /* JADX WARNING: Missing block: B:95:0x0251, code:
+    /* JADX WARNING: Missing block: B:96:0x0251, code skipped:
             r1.mHwAdminCache.syncHwAdminCache(r3, getPolicy(null, r3, r5));
      */
-    /* JADX WARNING: Missing block: B:96:0x025b, code:
+    /* JADX WARNING: Missing block: B:97:0x025b, code skipped:
             if (r22 == false) goto L_0x0261;
      */
-    /* JADX WARNING: Missing block: B:97:0x025d, code:
+    /* JADX WARNING: Missing block: B:98:0x025d, code skipped:
             if (r6 != 1) goto L_0x0261;
      */
-    /* JADX WARNING: Missing block: B:98:0x025f, code:
+    /* JADX WARNING: Missing block: B:99:0x025f, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:99:0x0261, code:
+    /* JADX WARNING: Missing block: B:100:0x0261, code skipped:
             r21.onSetPolicyCompleted(r2, r3, r0);
      */
-    /* JADX WARNING: Missing block: B:100:0x0266, code:
+    /* JADX WARNING: Missing block: B:101:0x0266, code skipped:
             return r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3906,15 +4022,20 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         HwLog.d(str, stringBuilder.toString());
         Bundle resultBundle = null;
         synchronized (getLockObject()) {
-            if (who != null) {
+            if (who == null) {
+                try {
+                    if (USER_ISOLATION_POLICY_LIST.contains(policyName)) {
+                        resultBundle = combinePoliciesAsUser(policyName, userHandle).combineAllAttributes();
+                    } else if (globalPolicyItems.get(policyName) != null) {
+                        resultBundle = ((PolicyItem) globalPolicyItems.get(policyName)).combineAllAttributes();
+                    }
+                } finally {
+                }
+            } else {
                 PolicyItem item = (PolicyItem) getHwActiveAdminUncheckedLocked(who, userHandle).adminPolicyItems.get(policyName);
                 if (item != null) {
                     resultBundle = item.combineAllAttributes();
                 }
-            } else if (USER_ISOLATION_POLICY_LIST.contains(policyName)) {
-                resultBundle = combinePoliciesAsUser(policyName, userHandle).combineAllAttributes();
-            } else if (globalPolicyItems.get(policyName) != null) {
-                resultBundle = ((PolicyItem) globalPolicyItems.get(policyName)).combineAllAttributes();
             }
             notifyOnGetPolicy(plugin, who, policyName, resultBundle);
         }
@@ -3925,28 +4046,28 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         plugin.onGetPolicy(who, policyName, policyData);
     }
 
-    /* JADX WARNING: Missing block: B:66:0x0188, code:
+    /* JADX WARNING: Missing block: B:66:0x0188, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:67:0x0189, code:
+    /* JADX WARNING: Missing block: B:67:0x0189, code skipped:
             if (r6 != 1) goto L_0x0195;
      */
-    /* JADX WARNING: Missing block: B:68:0x018b, code:
+    /* JADX WARNING: Missing block: B:68:0x018b, code skipped:
             r1.mHwAdminCache.syncHwAdminCache(r3, getPolicy(null, r3, r5));
      */
-    /* JADX WARNING: Missing block: B:69:0x0195, code:
+    /* JADX WARNING: Missing block: B:69:0x0195, code skipped:
             if (r22 == false) goto L_0x019a;
      */
-    /* JADX WARNING: Missing block: B:70:0x0197, code:
+    /* JADX WARNING: Missing block: B:70:0x0197, code skipped:
             if (r6 != 1) goto L_0x019a;
      */
-    /* JADX WARNING: Missing block: B:71:0x019a, code:
+    /* JADX WARNING: Missing block: B:71:0x019a, code skipped:
             r0 = false;
      */
-    /* JADX WARNING: Missing block: B:72:0x019b, code:
+    /* JADX WARNING: Missing block: B:72:0x019b, code skipped:
             r21.onRemovePolicyCompleted(r2, r3, r0);
      */
-    /* JADX WARNING: Missing block: B:73:0x01a0, code:
+    /* JADX WARNING: Missing block: B:73:0x01a0, code skipped:
             return r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4473,21 +4594,14 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         throw new IllegalArgumentException("ComponentName is null");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x00b9 A:{PHI: r4 , ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException), Splitter: B:9:0x0064} */
-    /* JADX WARNING: Missing block: B:38:?, code:
-            com.android.server.devicepolicy.HwLog.e(TAG, "XmlPullParserException | IOException");
-     */
-    /* JADX WARNING: Missing block: B:40:?, code:
+    /* JADX WARNING: Missing block: B:40:?, code skipped:
             libcore.io.IoUtils.closeQuietly(r4);
      */
-    /* JADX WARNING: Missing block: B:42:0x00c6, code:
+    /* JADX WARNING: Missing block: B:42:0x00c6, code skipped:
             com.android.server.devicepolicy.HwLog.d(TAG, "Can't find HwPolicy");
      */
-    /* JADX WARNING: Missing block: B:43:0x00cd, code:
+    /* JADX WARNING: Missing block: B:43:0x00cd, code skipped:
             return false;
-     */
-    /* JADX WARNING: Missing block: B:45:?, code:
-            libcore.io.IoUtils.closeQuietly(r4);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean hasHwPolicy(int userHandle) {
@@ -4544,7 +4658,12 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
                     }
                     break;
                 }
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e) {
+                try {
+                    HwLog.e(TAG, "XmlPullParserException | IOException");
+                } catch (Throwable th) {
+                    IoUtils.closeQuietly(stream);
+                }
             }
         }
     }
@@ -4567,7 +4686,11 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:68:0x014b, code:
+    /* JADX WARNING: Removed duplicated region for block: B:56:0x010d  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x010a A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x0032  */
+    /* JADX WARNING: Removed duplicated region for block: B:11:0x0029  */
+    /* JADX WARNING: Missing block: B:71:0x014b, code skipped:
             return 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4578,83 +4701,100 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         enforceHwCrossUserPermission(i);
         this.mContext.enforceCallingOrSelfPermission(MDM_VPN_PERMISSION, "NEED MDM_VPN PERMISSION");
         synchronized (getLockObject()) {
+            boolean paraIsNull;
             KeyStore mKeyStore = KeyStore.getInstance();
-            boolean paraIsNull = componentName == null || bundle == null;
-            if (paraIsNull) {
-                Log.e(TAG, "Bundle para is null or componentName is null!");
-                return -1;
-            } else if (isValidVpnConfig(bundle)) {
-                VpnProfile profile = getProfile(bundle);
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("VPN_");
-                stringBuilder.append(profile.key);
-                if (mKeyStore.put(stringBuilder.toString(), profile.encode(), -1, 0)) {
-                    Bundle speProvider;
-                    String key = bundle.getString("key");
-                    DevicePolicyData policy = getUserData(i);
-                    int N = policy.mAdminList.size();
-                    int i2 = 0;
-                    while (i2 < N) {
-                        KeyStore mKeyStore2;
-                        ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i2);
-                        if (admin.mHwActiveAdmin == null || admin.mHwActiveAdmin.vpnProviderlist == null) {
-                            mKeyStore2 = mKeyStore;
-                        } else {
-                            speProvider = null;
-                            Iterator it = admin.mHwActiveAdmin.vpnProviderlist.iterator();
-                            while (it.hasNext()) {
-                                mKeyStore2 = mKeyStore;
-                                Iterator it2 = it;
-                                Bundle provider = (Bundle) it.next();
-                                if (key.equals(provider.getString("key"))) {
-                                    speProvider = provider;
-                                    break;
+            if (componentName != null) {
+                if (bundle != null) {
+                    paraIsNull = false;
+                    if (!paraIsNull) {
+                        Log.e(TAG, "Bundle para is null or componentName is null!");
+                        return -1;
+                    } else if (isValidVpnConfig(bundle)) {
+                        VpnProfile profile = getProfile(bundle);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("VPN_");
+                        stringBuilder.append(profile.key);
+                        if (mKeyStore.put(stringBuilder.toString(), profile.encode(), -1, 0)) {
+                            Bundle speProvider;
+                            String key = bundle.getString("key");
+                            DevicePolicyData policy = getUserData(i);
+                            int N = policy.mAdminList.size();
+                            int i2 = 0;
+                            while (i2 < N) {
+                                KeyStore mKeyStore2;
+                                ActiveAdmin admin = (ActiveAdmin) policy.mAdminList.get(i2);
+                                if (admin.mHwActiveAdmin == null || admin.mHwActiveAdmin.vpnProviderlist == null) {
+                                    mKeyStore2 = mKeyStore;
+                                } else {
+                                    speProvider = null;
+                                    Iterator it = admin.mHwActiveAdmin.vpnProviderlist.iterator();
+                                    while (it.hasNext()) {
+                                        mKeyStore2 = mKeyStore;
+                                        Iterator it2 = it;
+                                        Bundle provider = (Bundle) it.next();
+                                        if (key.equals(provider.getString("key"))) {
+                                            speProvider = provider;
+                                            break;
+                                        }
+                                        mKeyStore = mKeyStore2;
+                                        it = it2;
+                                    }
+                                    mKeyStore2 = mKeyStore;
+                                    if (speProvider != null) {
+                                        admin.mHwActiveAdmin.vpnProviderlist.remove(speProvider);
+                                        saveSettingsLocked(i);
+                                    }
                                 }
+                                i2++;
                                 mKeyStore = mKeyStore2;
-                                it = it2;
                             }
-                            mKeyStore2 = mKeyStore;
-                            if (speProvider != null) {
-                                admin.mHwActiveAdmin.vpnProviderlist.remove(speProvider);
+                            HwActiveAdmin ap = getHwActiveAdmin(componentName, i);
+                            if (ap.vpnProviderlist != null) {
+                                boolean isAlready = false;
+                                speProvider = null;
+                                for (Bundle provider2 : ap.vpnProviderlist) {
+                                    boolean paraIsNotNull;
+                                    if (provider2 != null) {
+                                        if (!isEmpty(provider2.getString("key"))) {
+                                            paraIsNotNull = false;
+                                            if (paraIsNotNull) {
+                                                if (key.equals(provider2.getString("key"))) {
+                                                    isAlready = true;
+                                                    speProvider = provider2;
+                                                    break;
+                                                }
+                                            }
+                                            paraIsNotNull = who;
+                                        }
+                                    }
+                                    paraIsNotNull = true;
+                                    if (paraIsNotNull) {
+                                    }
+                                    paraIsNotNull = who;
+                                }
+                                boolean z = isAlready && speProvider != null;
+                                if (z) {
+                                    ap.vpnProviderlist.remove(speProvider);
+                                }
+                                ap.vpnProviderlist.add(bundle);
+                                saveSettingsLocked(i);
+                            } else {
+                                ap.vpnProviderlist = new ArrayList();
+                                ap.vpnProviderlist.add(bundle);
                                 saveSettingsLocked(i);
                             }
+                        } else {
+                            Log.e(TAG, "Set vpn failed, check the config.");
+                            return -1;
                         }
-                        i2++;
-                        mKeyStore = mKeyStore2;
-                    }
-                    HwActiveAdmin ap = getHwActiveAdmin(componentName, i);
-                    if (ap.vpnProviderlist != null) {
-                        boolean isAlready = false;
-                        speProvider = null;
-                        for (Bundle provider2 : ap.vpnProviderlist) {
-                            boolean paraIsNotNull = provider2 == null || isEmpty(provider2.getString("key"));
-                            if (!paraIsNotNull) {
-                                if (key.equals(provider2.getString("key"))) {
-                                    isAlready = true;
-                                    speProvider = provider2;
-                                    break;
-                                }
-                            }
-                            paraIsNotNull = who;
-                        }
-                        boolean z = isAlready && speProvider != null;
-                        if (z) {
-                            ap.vpnProviderlist.remove(speProvider);
-                        }
-                        ap.vpnProviderlist.add(bundle);
-                        saveSettingsLocked(i);
                     } else {
-                        ap.vpnProviderlist = new ArrayList();
-                        ap.vpnProviderlist.add(bundle);
-                        saveSettingsLocked(i);
+                        Log.e(TAG, "This Config isn't valid vpnConfig");
+                        return -1;
                     }
-                } else {
-                    Log.e(TAG, "Set vpn failed, check the config.");
-                    return -1;
                 }
-            } else {
-                Log.e(TAG, "This Config isn't valid vpnConfig");
-                return -1;
+            }
+            paraIsNull = true;
+            if (!paraIsNull) {
             }
         }
     }
@@ -4716,16 +4856,20 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
         synchronized (getLockObject()) {
             if (who != null) {
-                HwActiveAdmin hwAdmin = getHwActiveAdmin(who, userHandle);
-                if (hwAdmin.vpnProviderlist == null) {
-                    return null;
-                }
-                for (Bundle provider : hwAdmin.vpnProviderlist) {
-                    if (key.equals(provider.getString("key"))) {
-                        return provider;
+                try {
+                    HwActiveAdmin hwAdmin = getHwActiveAdmin(who, userHandle);
+                    if (hwAdmin.vpnProviderlist == null) {
+                        return null;
                     }
+                    for (Bundle provider : hwAdmin.vpnProviderlist) {
+                        if (key.equals(provider.getString("key"))) {
+                            return provider;
+                        }
+                    }
+                    return null;
+                } catch (Throwable th) {
+                    throw th;
                 }
-                return null;
             }
             DevicePolicyData policy = getUserData(userHandle);
             int N = policy.mAdminList.size();
@@ -4822,7 +4966,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         return profile;
     }
 
-    /* JADX WARNING: Missing block: B:23:0x007c, code:
+    /* JADX WARNING: Missing block: B:23:0x007c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4833,10 +4977,10 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         switch (Integer.parseInt(para.getString(HwSecDiagnoseConstant.ANTIMAL_APK_TYPE))) {
             case 2:
             case 4:
-                return isEmpty(para.getString("ipsecSecret")) ^ true;
+                return isEmpty(para.getString("ipsecSecret")) ^ 1;
             case 3:
             case 5:
-                return isEmpty(para.getString("ipsecUserCert")) ^ true;
+                return isEmpty(para.getString("ipsecUserCert")) ^ 1;
             default:
                 return true;
         }
@@ -4916,10 +5060,13 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
     public boolean isAccountDisabled(ComponentName who, String accountType, int userHandle) {
         synchronized (getLockObject()) {
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
-                if (admin != null) {
-                    boolean contains = admin.accountTypesWithManagementDisabled.contains(accountType);
-                    return contains;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
+                    if (admin != null) {
+                        boolean contains = admin.accountTypesWithManagementDisabled.contains(accountType);
+                        return contains;
+                    }
+                } catch (Throwable th) {
                 }
             }
             DevicePolicyData policy = getUserData(userHandle);
@@ -4933,82 +5080,82 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
+    /* JADX WARNING: Missing block: B:9:0x0025, code skipped:
             r9 = false;
      */
-    /* JADX WARNING: Missing block: B:10:0x0028, code:
+    /* JADX WARNING: Missing block: B:10:0x0028, code skipped:
             if (r3 != 0) goto L_0x0034;
      */
-    /* JADX WARNING: Missing block: B:13:?, code:
+    /* JADX WARNING: Missing block: B:13:?, code skipped:
             r9 = com.android.server.devicepolicy.CertInstallHelper.installPkcs12Cert(r22, r4, r5, r6);
      */
-    /* JADX WARNING: Missing block: B:15:0x0034, code:
+    /* JADX WARNING: Missing block: B:16:0x0034, code skipped:
             r10 = r22;
      */
-    /* JADX WARNING: Missing block: B:16:0x0036, code:
+    /* JADX WARNING: Missing block: B:17:0x0036, code skipped:
             if (r3 != 1) goto L_0x009d;
      */
-    /* JADX WARNING: Missing block: B:18:0x003c, code:
+    /* JADX WARNING: Missing block: B:19:0x003c, code skipped:
             r9 = com.android.server.devicepolicy.CertInstallHelper.installX509Cert(r4, r5, r6);
      */
-    /* JADX WARNING: Missing block: B:19:0x003e, code:
+    /* JADX WARNING: Missing block: B:20:0x003e, code skipped:
             if (r24 == false) goto L_0x009c;
      */
-    /* JADX WARNING: Missing block: B:20:0x0040, code:
+    /* JADX WARNING: Missing block: B:21:0x0040, code skipped:
             r12 = r1.mInjector.binderGetCallingUid();
             r13 = r1.mInjector.binderClearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r7 = android.security.KeyChain.bindAsUser(r1.mContext, android.os.UserHandle.getUserHandleForUid(r12));
      */
-    /* JADX WARNING: Missing block: B:24:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             r7.getService().setGrant(r12, r5, true);
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             r7.close();
      */
-    /* JADX WARNING: Missing block: B:27:0x0061, code:
+    /* JADX WARNING: Missing block: B:28:0x0061, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r13);
      */
-    /* JADX WARNING: Missing block: B:28:0x0067, code:
+    /* JADX WARNING: Missing block: B:29:0x0067, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:30:0x006a, code:
+    /* JADX WARNING: Missing block: B:31:0x006a, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:32:?, code:
+    /* JADX WARNING: Missing block: B:33:?, code skipped:
             r16 = r0;
             com.android.server.devicepolicy.HwLog.e(TAG, "set grant certificate");
      */
-    /* JADX WARNING: Missing block: B:34:?, code:
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
             r7.close();
      */
-    /* JADX WARNING: Missing block: B:35:0x0079, code:
+    /* JADX WARNING: Missing block: B:36:0x0079, code skipped:
             r7.close();
      */
-    /* JADX WARNING: Missing block: B:40:?, code:
+    /* JADX WARNING: Missing block: B:41:?, code skipped:
             com.android.server.devicepolicy.HwLog.w(TAG, "Interrupted while set granting certificate");
             java.lang.Thread.currentThread().interrupt();
      */
-    /* JADX WARNING: Missing block: B:41:0x008e, code:
+    /* JADX WARNING: Missing block: B:42:0x008e, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r13);
      */
-    /* JADX WARNING: Missing block: B:42:0x0095, code:
+    /* JADX WARNING: Missing block: B:43:0x0095, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:43:0x0096, code:
+    /* JADX WARNING: Missing block: B:44:0x0096, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r13);
      */
-    /* JADX WARNING: Missing block: B:45:0x009c, code:
+    /* JADX WARNING: Missing block: B:46:0x009c, code skipped:
             return r9;
      */
-    /* JADX WARNING: Missing block: B:48:0x00a5, code:
+    /* JADX WARNING: Missing block: B:49:0x00a5, code skipped:
             throw new java.lang.IllegalArgumentException("the type of the installed cert is not illegal");
      */
-    /* JADX WARNING: Missing block: B:49:0x00a6, code:
+    /* JADX WARNING: Missing block: B:50:0x00a6, code skipped:
             com.android.server.devicepolicy.HwLog.e(TAG, "throw error when install cert");
      */
-    /* JADX WARNING: Missing block: B:50:0x00b0, code:
+    /* JADX WARNING: Missing block: B:51:0x00b0, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -5178,7 +5325,7 @@ public class HwDevicePolicyManagerService extends DevicePolicyManagerService imp
             synchronized (getLockObject()) {
                 getHwActiveAdmin(who, userHandle);
             }
-            ITelephony phone = ITelephony.Stub.asInterface(ServiceManager.checkService("phone"));
+            ITelephony phone = Stub.asInterface(ServiceManager.checkService("phone"));
             if (on) {
                 try {
                     phone.enableDataConnectivity();

@@ -59,6 +59,8 @@ class WebViewUpdater {
         this.mSystemInterface = systemInterface;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x006d A:{Catch:{ WebViewPackageMissingException -> 0x0073 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void packageStateChanged(String packageName, int changedState) {
         boolean updateWebView;
         WebViewProviderInfo[] webViewPackages = this.mSystemInterface.getWebViewPackages();
@@ -91,13 +93,19 @@ class WebViewUpdater {
                             Slog.e(str, stringBuilder.toString());
                         }
                     }
-                    if (provider.packageName.equals(newPackage.packageName) || provider.packageName.equals(oldProviderName) || this.mCurrentWebViewPackage == null) {
-                        z = true;
+                    if (!(provider.packageName.equals(newPackage.packageName) || provider.packageName.equals(oldProviderName))) {
+                        if (this.mCurrentWebViewPackage != null) {
+                            updateWebView = z;
+                            removedOrChangedOldPackage = provider.packageName.equals(oldProviderName);
+                            if (updateWebView) {
+                                onWebViewProviderChanged(newPackage);
+                            }
+                        }
                     }
+                    z = true;
                     updateWebView = z;
                     removedOrChangedOldPackage = provider.packageName.equals(oldProviderName);
                     if (updateWebView) {
-                        onWebViewProviderChanged(newPackage);
                     }
                 }
             } else {

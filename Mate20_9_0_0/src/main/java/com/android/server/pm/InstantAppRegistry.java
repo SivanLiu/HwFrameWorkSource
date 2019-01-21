@@ -216,22 +216,22 @@ class InstantAppRegistry {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             r0 = new java.io.FileOutputStream(r7);
      */
-    /* JADX WARNING: Missing block: B:23:?, code:
+    /* JADX WARNING: Missing block: B:24:?, code skipped:
             r0.write(r5, 0, r5.length);
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             $closeResource(null, r0);
      */
-    /* JADX WARNING: Missing block: B:31:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             $closeResource(r1, r0);
      */
-    /* JADX WARNING: Missing block: B:33:0x004f, code:
+    /* JADX WARNING: Missing block: B:34:0x004f, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:34:0x0050, code:
+    /* JADX WARNING: Missing block: B:35:0x0050, code skipped:
             r1 = LOG_TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("Error writing instant app cookie file: ");
@@ -246,9 +246,11 @@ class InstantAppRegistry {
                 if (cookieFile.exists() && !cookieFile.delete()) {
                     Slog.e(LOG_TAG, "Cannot delete instant app cookie file");
                 }
-                if (cookie == null || cookie.length <= 0) {
-                    return;
+                if (cookie != null) {
+                    if (cookie.length <= 0) {
+                    }
                 }
+                return;
             }
             Slog.e(LOG_TAG, "Cannot create instant app cookie directory");
         }
@@ -434,7 +436,7 @@ class InstantAppRegistry {
         return instantGrantList.get(instantAppId);
     }
 
-    /* JADX WARNING: Missing block: B:29:0x0070, code:
+    /* JADX WARNING: Missing block: B:29:0x0070, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -639,140 +641,146 @@ class InstantAppRegistry {
         }
     }
 
-    /* JADX WARNING: Missing block: B:43:0x00b8, code:
+    /* JADX WARNING: Missing block: B:45:0x00b8, code skipped:
             r4 = r0;
      */
-    /* JADX WARNING: Missing block: B:44:0x00b9, code:
+    /* JADX WARNING: Missing block: B:46:0x00b9, code skipped:
             if (r13 == null) goto L_0x00e7;
      */
-    /* JADX WARNING: Missing block: B:45:0x00bb, code:
+    /* JADX WARNING: Missing block: B:47:0x00bb, code skipped:
             r0 = r13.size();
             r6 = 0;
      */
-    /* JADX WARNING: Missing block: B:46:0x00c0, code:
+    /* JADX WARNING: Missing block: B:48:0x00c0, code skipped:
             if (r6 >= r0) goto L_0x00e7;
      */
-    /* JADX WARNING: Missing block: B:48:0x00d9, code:
+    /* JADX WARNING: Missing block: B:50:0x00d9, code skipped:
             if (r1.mService.deletePackageX((java.lang.String) r13.get(r6), -1, 0, 2) != 1) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:50:0x00e1, code:
+    /* JADX WARNING: Missing block: B:52:0x00e1, code skipped:
             if (r5.getUsableSpace() < r30) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:51:0x00e3, code:
+    /* JADX WARNING: Missing block: B:53:0x00e3, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:52:0x00e4, code:
+    /* JADX WARNING: Missing block: B:54:0x00e4, code skipped:
             r6 = r6 + 1;
      */
-    /* JADX WARNING: Missing block: B:53:0x00e7, code:
+    /* JADX WARNING: Missing block: B:55:0x00e7, code skipped:
             r6 = r1.mService.mPackages;
      */
-    /* JADX WARNING: Missing block: B:54:0x00eb, code:
+    /* JADX WARNING: Missing block: B:56:0x00eb, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:56:?, code:
+    /* JADX WARNING: Missing block: B:58:?, code skipped:
             r0 = com.android.server.pm.UserManagerService.getInstance().getUserIds();
             r7 = r0.length;
             r8 = 0;
      */
-    /* JADX WARNING: Missing block: B:57:0x00f6, code:
+    /* JADX WARNING: Missing block: B:59:0x00f6, code skipped:
             if (r8 >= r7) goto L_0x017e;
      */
-    /* JADX WARNING: Missing block: B:58:0x00f8, code:
+    /* JADX WARNING: Missing block: B:60:0x00f8, code skipped:
             r9 = r0[r8];
             r1.removeUninstalledInstantAppStateLPw(new com.android.server.pm.-$$Lambda$InstantAppRegistry$BuKCbLr_MGBazMPl54-pWTuGHYY(r2), r9);
             r10 = getInstantApplicationsDir(r9);
      */
-    /* JADX WARNING: Missing block: B:59:0x010a, code:
+    /* JADX WARNING: Missing block: B:61:0x010a, code skipped:
             if (r10.exists() != false) goto L_0x0115;
      */
-    /* JADX WARNING: Missing block: B:60:0x010d, code:
+    /* JADX WARNING: Missing block: B:63:0x010d, code skipped:
             r25 = r0;
+            r27 = r4;
+            r28 = r7;
      */
-    /* JADX WARNING: Missing block: B:61:0x0115, code:
+    /* JADX WARNING: Missing block: B:64:0x0115, code skipped:
             r11 = r10.listFiles();
      */
-    /* JADX WARNING: Missing block: B:62:0x0119, code:
+    /* JADX WARNING: Missing block: B:65:0x0119, code skipped:
             if (r11 != null) goto L_0x011c;
      */
-    /* JADX WARNING: Missing block: B:63:0x011c, code:
+    /* JADX WARNING: Missing block: B:67:0x011c, code skipped:
             r12 = r11.length;
             r25 = r0;
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:64:0x0120, code:
-            if (r0 >= r12) goto L_0x0172;
+    /* JADX WARNING: Missing block: B:68:0x0120, code skipped:
+            if (r0 >= r12) goto L_0x016d;
      */
-    /* JADX WARNING: Missing block: B:65:0x0122, code:
+    /* JADX WARNING: Missing block: B:69:0x0122, code skipped:
             r1 = r11[r0];
      */
-    /* JADX WARNING: Missing block: B:66:0x012c, code:
+    /* JADX WARNING: Missing block: B:70:0x012c, code skipped:
             if (r1.isDirectory() != false) goto L_0x0135;
      */
-    /* JADX WARNING: Missing block: B:67:0x012e, code:
+    /* JADX WARNING: Missing block: B:71:0x012e, code skipped:
             r27 = r4;
             r28 = r7;
      */
-    /* JADX WARNING: Missing block: B:69:0x0135, code:
+    /* JADX WARNING: Missing block: B:73:0x0135, code skipped:
             r27 = r4;
      */
-    /* JADX WARNING: Missing block: B:71:?, code:
+    /* JADX WARNING: Missing block: B:75:?, code skipped:
             r28 = r7;
             r4 = new java.io.File(r1, INSTANT_APP_METADATA_FILE);
      */
-    /* JADX WARNING: Missing block: B:72:0x0145, code:
+    /* JADX WARNING: Missing block: B:76:0x0145, code skipped:
             if (r4.exists() != false) goto L_0x0148;
      */
-    /* JADX WARNING: Missing block: B:74:0x0154, code:
+    /* JADX WARNING: Missing block: B:79:0x0154, code skipped:
             if ((java.lang.System.currentTimeMillis() - r4.lastModified()) <= r2) goto L_0x0133;
      */
-    /* JADX WARNING: Missing block: B:75:0x0156, code:
+    /* JADX WARNING: Missing block: B:80:0x0156, code skipped:
             deleteDir(r1);
      */
-    /* JADX WARNING: Missing block: B:76:0x015f, code:
+    /* JADX WARNING: Missing block: B:81:0x015f, code skipped:
             if (r5.getUsableSpace() < r30) goto L_0x0133;
      */
-    /* JADX WARNING: Missing block: B:77:0x0161, code:
+    /* JADX WARNING: Missing block: B:82:0x0161, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:79:0x0163, code:
+    /* JADX WARNING: Missing block: B:84:0x0163, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:80:0x0164, code:
+    /* JADX WARNING: Missing block: B:85:0x0164, code skipped:
             r0 = r0 + 1;
             r4 = r27;
             r7 = r28;
             r1 = r29;
      */
-    /* JADX WARNING: Missing block: B:81:0x0172, code:
+    /* JADX WARNING: Missing block: B:86:0x016d, code skipped:
+            r27 = r4;
+            r28 = r7;
+     */
+    /* JADX WARNING: Missing block: B:87:0x0172, code skipped:
             r8 = r8 + 1;
             r0 = r25;
-            r4 = r4;
-            r7 = r7;
+            r4 = r27;
+            r7 = r28;
             r1 = r29;
      */
-    /* JADX WARNING: Missing block: B:82:0x017e, code:
+    /* JADX WARNING: Missing block: B:88:0x017e, code skipped:
             r27 = r4;
      */
-    /* JADX WARNING: Missing block: B:83:0x0180, code:
+    /* JADX WARNING: Missing block: B:89:0x0180, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:85:0x0182, code:
+    /* JADX WARNING: Missing block: B:91:0x0182, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:86:0x0183, code:
+    /* JADX WARNING: Missing block: B:92:0x0183, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:87:0x0184, code:
+    /* JADX WARNING: Missing block: B:93:0x0184, code skipped:
             r27 = r4;
      */
-    /* JADX WARNING: Missing block: B:88:0x0186, code:
+    /* JADX WARNING: Missing block: B:94:0x0186, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:89:0x0187, code:
+    /* JADX WARNING: Missing block: B:95:0x0187, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:90:0x0188, code:
+    /* JADX WARNING: Missing block: B:96:0x0188, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -798,34 +806,42 @@ class InstantAppRegistry {
                 while (i < packageCount) {
                     try {
                         Package pkg = (Package) instantAppRegistry.mService.mPackages.valueAt(i);
-                        if (now - pkg.getLatestPackageUseTimeInMills() >= maxInstalledCacheDuration && (pkg.mExtras instanceof PackageSetting)) {
-                            PackageSetting ps = pkg.mExtras;
-                            boolean installedOnlyAsInstantApp = false;
-                            storage2 = storage;
-                            try {
-                                now2 = now;
-                                for (int userId : allUsers) {
-                                    if (ps.getInstalled(userId)) {
-                                        if (!ps.getInstantApp(userId)) {
-                                            installedOnlyAsInstantApp = false;
-                                            break;
+                        if (now - pkg.getLatestPackageUseTimeInMills() >= maxInstalledCacheDuration) {
+                            if (pkg.mExtras instanceof PackageSetting) {
+                                PackageSetting ps = pkg.mExtras;
+                                boolean installedOnlyAsInstantApp = false;
+                                storage2 = storage;
+                                try {
+                                    now2 = now;
+                                    for (int userId : allUsers) {
+                                        if (ps.getInstalled(userId)) {
+                                            if (!ps.getInstantApp(userId)) {
+                                                installedOnlyAsInstantApp = false;
+                                                break;
+                                            }
+                                            installedOnlyAsInstantApp = true;
                                         }
-                                        installedOnlyAsInstantApp = true;
                                     }
-                                }
-                                if (installedOnlyAsInstantApp) {
-                                    if (packagesToDelete == null) {
-                                        packagesToDelete = new ArrayList();
+                                    if (installedOnlyAsInstantApp) {
+                                        if (packagesToDelete == null) {
+                                            packagesToDelete = new ArrayList();
+                                        }
+                                        packagesToDelete.add(pkg.packageName);
                                     }
-                                    packagesToDelete.add(pkg.packageName);
+                                    i++;
+                                    storage = storage2;
+                                    now = now2;
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw th;
                                 }
-                            } catch (Throwable th2) {
-                                th = th2;
                             }
-                        } else {
-                            storage2 = storage;
-                            now2 = now;
                         }
+                        storage2 = storage;
+                        now2 = now;
                         i++;
                         storage = storage2;
                         now = now2;
@@ -835,11 +851,7 @@ class InstantAppRegistry {
                         now2 = now;
                         list = packagesToDelete;
                         while (true) {
-                            try {
-                                break;
-                            } catch (Throwable th4) {
-                                th = th4;
-                            }
+                            break;
                         }
                         throw th;
                     }
@@ -849,8 +861,8 @@ class InstantAppRegistry {
                 if (packagesToDelete != null) {
                     packagesToDelete.sort(new -$$Lambda$InstantAppRegistry$UOn4sUy4zBQuofxUbY8RBYhkNSE(instantAppRegistry));
                 }
-            } catch (Throwable th5) {
-                th = th5;
+            } catch (Throwable th4) {
+                th = th4;
                 storage2 = storage;
                 now2 = now;
                 while (true) {
@@ -1011,19 +1023,6 @@ class InstantAppRegistry {
         return uninstalledAppStates;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x003b A:{Splitter: B:6:0x001f, ExcHandler: org.xmlpull.v1.XmlPullParserException (r5_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x003b, code:
-            r5 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            r7 = new java.lang.StringBuilder();
-            r7.append("Failed parsing instant metadata file: ");
-            r7.append(r9);
-     */
-    /* JADX WARNING: Missing block: B:14:0x0052, code:
-            throw new java.lang.IllegalStateException(r7.toString(), r5);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static UninstalledInstantAppState parseMetadataFile(File metadataFile) {
         if (!metadataFile.exists()) {
             return null;
@@ -1039,7 +1038,11 @@ class InstantAppRegistry {
                 UninstalledInstantAppState uninstalledInstantAppState = new UninstalledInstantAppState(parseMetadata(parser, packageName), timestamp);
                 IoUtils.closeQuietly(in);
                 return uninstalledInstantAppState;
-            } catch (Exception e) {
+            } catch (IOException | XmlPullParserException e) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed parsing instant metadata file: ");
+                stringBuilder.append(metadataFile);
+                throw new IllegalStateException(stringBuilder.toString(), e);
             } catch (Throwable th) {
                 IoUtils.closeQuietly(in);
             }

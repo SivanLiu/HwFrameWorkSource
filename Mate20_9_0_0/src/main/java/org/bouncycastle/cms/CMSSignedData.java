@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -108,9 +107,9 @@ public class CMSSignedData implements Encodable {
     private SignedData getSignedData() throws CMSException {
         try {
             return SignedData.getInstance(this.contentInfo.getContent());
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             throw new CMSException("Malformed content.", e);
-        } catch (Exception e2) {
+        } catch (IllegalArgumentException e2) {
             throw new CMSException("Malformed content.", e2);
         }
     }
@@ -122,7 +121,7 @@ public class CMSSignedData implements Encodable {
         ASN1Set aSN1Set2;
         CMSSignedData cMSSignedData2 = new CMSSignedData(cMSSignedData);
         if (!(store == null && store2 == null)) {
-            List arrayList = new ArrayList();
+            ArrayList arrayList = new ArrayList();
             if (store != null) {
                 arrayList.addAll(CMSUtils.getCertificatesFromStore(store));
             }
@@ -165,8 +164,8 @@ public class CMSSignedData implements Encodable {
             aSN1EncodableVector.add(CMSSignedHelper.INSTANCE.fixAlgID(signerInformation.getDigestAlgorithmID()));
             aSN1EncodableVector2.add(signerInformation.toASN1Structure());
         }
-        ASN1Encodable dERSet = new DERSet(aSN1EncodableVector);
-        ASN1Encodable dERSet2 = new DERSet(aSN1EncodableVector2);
+        DERSet dERSet = new DERSet(aSN1EncodableVector);
+        DERSet dERSet2 = new DERSet(aSN1EncodableVector2);
         ASN1Sequence aSN1Sequence = (ASN1Sequence) cMSSignedData.signedData.toASN1Primitive();
         aSN1EncodableVector2 = new ASN1EncodableVector();
         aSN1EncodableVector2.add(aSN1Sequence.getObjectAt(0));
@@ -205,7 +204,7 @@ public class CMSSignedData implements Encodable {
     }
 
     public Set<AlgorithmIdentifier> getDigestAlgorithmIDs() {
-        Set hashSet = new HashSet(this.signedData.getDigestAlgorithms().size());
+        HashSet hashSet = new HashSet(this.signedData.getDigestAlgorithms().size());
         Enumeration objects = this.signedData.getDigestAlgorithms().getObjects();
         while (objects.hasMoreElements()) {
             hashSet.add(AlgorithmIdentifier.getInstance(objects.nextElement()));
@@ -290,7 +289,7 @@ public class CMSSignedData implements Encodable {
                     }
                     continue;
                 }
-            } catch (Exception e) {
+            } catch (OperatorCreationException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("failure in verifier provider: ");
                 stringBuilder.append(e.getMessage());

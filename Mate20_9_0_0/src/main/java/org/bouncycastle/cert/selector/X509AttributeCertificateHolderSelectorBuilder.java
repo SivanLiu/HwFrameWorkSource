@@ -25,7 +25,7 @@ public class X509AttributeCertificateHolderSelectorBuilder {
         if (collection == null || collection.isEmpty()) {
             return new HashSet();
         }
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (Object instance : collection) {
             hashSet.add(GeneralName.getInstance(instance));
         }

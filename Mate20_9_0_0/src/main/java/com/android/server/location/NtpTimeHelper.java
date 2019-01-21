@@ -86,7 +86,7 @@ class NtpTimeHelper {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002c, code:
+    /* JADX WARNING: Missing block: B:14:0x002c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

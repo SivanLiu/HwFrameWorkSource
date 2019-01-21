@@ -975,7 +975,7 @@ public class HwDualBandStateMachine extends StateMachine {
             Log.e(str, stringBuilder.toString());
         }
 
-        /* JADX WARNING: Missing block: B:18:0x009b, code:
+        /* JADX WARNING: Missing block: B:18:0x009b, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

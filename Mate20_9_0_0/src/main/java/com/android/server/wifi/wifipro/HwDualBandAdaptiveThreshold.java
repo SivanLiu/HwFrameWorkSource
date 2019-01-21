@@ -27,7 +27,7 @@ public class HwDualBandAdaptiveThreshold {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0049, code:
+    /* JADX WARNING: Missing block: B:20:0x0049, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

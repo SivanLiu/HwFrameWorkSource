@@ -1301,10 +1301,12 @@ public class DisplayEngineService extends Stub implements LightSensorCallbacks {
     private String getCurrentTopAppName() {
         try {
             List<RunningTaskInfo> runningTasks = ((ActivityManager) this.mContext.getSystemService("activity")).getRunningTasks(1);
-            if (runningTasks == null || runningTasks.isEmpty()) {
-                return null;
+            if (runningTasks != null) {
+                if (!runningTasks.isEmpty()) {
+                    return ((RunningTaskInfo) runningTasks.get(0)).topActivity.getPackageName();
+                }
             }
-            return ((RunningTaskInfo) runningTasks.get(0)).topActivity.getPackageName();
+            return null;
         } catch (SecurityException e) {
             String str = TAG;
             StringBuilder stringBuilder = new StringBuilder();
@@ -1432,19 +1434,19 @@ public class DisplayEngineService extends Stub implements LightSensorCallbacks {
         DElog.d(str, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0046, code:
+    /* JADX WARNING: Missing block: B:20:0x0046, code skipped:
             if (r2 == null) goto L_0x0054;
      */
-    /* JADX WARNING: Missing block: B:21:0x0048, code:
+    /* JADX WARNING: Missing block: B:21:0x0048, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:23:0x004d, code:
+    /* JADX WARNING: Missing block: B:23:0x004d, code skipped:
             if (r2 == null) goto L_0x0054;
      */
-    /* JADX WARNING: Missing block: B:25:0x0051, code:
+    /* JADX WARNING: Missing block: B:25:0x0051, code skipped:
             if (r2 == null) goto L_0x0054;
      */
-    /* JADX WARNING: Missing block: B:26:0x0054, code:
+    /* JADX WARNING: Missing block: B:26:0x0054, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1477,7 +1479,7 @@ public class DisplayEngineService extends Stub implements LightSensorCallbacks {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x00fc A:{Catch:{ XmlPullParserException -> 0x014c, IOException -> 0x0134, NumberFormatException -> 0x011c, Exception -> 0x0104 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x00fc A:{Catch:{ XmlPullParserException -> 0x014c, IOException -> 0x0134, NumberFormatException -> 0x011c, Exception -> 0x0104 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean getConfigFromXML(InputStream inStream) {
         String str;
@@ -1540,6 +1542,8 @@ public class DisplayEngineService extends Stub implements LightSensorCallbacks {
                             configGroupLoadStarted = false;
                             break;
                         }
+                    default:
+                        break;
                 }
                 if (loadFinished) {
                     if (loadFinished) {

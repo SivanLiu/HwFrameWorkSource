@@ -30,30 +30,21 @@ public class HwArpClient {
     }
 
     public boolean doSlowArpTest(Inet4Address requestedAddress) {
-        return doArp(3, 800, requestedAddress, false);
+        return doArp(3, DEFAULT_SLOW_PING_TIMEOUT_MS, requestedAddress, false);
     }
 
     public boolean doGatewayArpTest(Inet4Address requestedAddress) {
-        return doArp(3, 800, requestedAddress, true);
+        return doArp(3, DEFAULT_SLOW_PING_TIMEOUT_MS, requestedAddress, true);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0041, code:
+    /* JADX WARNING: Missing block: B:11:0x0041, code skipped:
             if (r0 != null) goto L_0x0043;
      */
-    /* JADX WARNING: Missing block: B:12:0x0043, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:15:0x004a, code:
+    /* JADX WARNING: Missing block: B:15:0x004a, code skipped:
             if (r0 == null) goto L_0x0081;
      */
-    /* JADX WARNING: Missing block: B:19:0x0064, code:
+    /* JADX WARNING: Missing block: B:23:0x007e, code skipped:
             if (r0 == null) goto L_0x0081;
-     */
-    /* JADX WARNING: Missing block: B:22:0x007e, code:
-            if (r0 == null) goto L_0x0081;
-     */
-    /* JADX WARNING: Missing block: B:23:0x0081, code:
-            return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean doArp(int arpNum, int timeout, Inet4Address requestedAddress, boolean fillSenderIp) {
@@ -91,6 +82,10 @@ public class HwArpClient {
             stringBuilder.append("exception in ARP test:");
             stringBuilder.append(ae);
             Log.e(str, stringBuilder.toString());
+            if (peer != null) {
+                peer.close();
+            }
+            return false;
         } catch (Exception e) {
         } catch (Throwable th) {
             if (peer != null) {

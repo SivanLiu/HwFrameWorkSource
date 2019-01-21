@@ -274,21 +274,21 @@ public class SecT571R1Point extends AbstractF2m {
             if (Nat576.isZero64(create643)) {
                 return new SecT571R1Point(curve, new SecT571FieldElement(create643), SecT571R1Curve.SecT571R1_B_SQRT, this.withCompression);
             }
-            ECFieldElement secT571FieldElement6 = new SecT571FieldElement();
-            SecT571Field.square(create643, secT571FieldElement6.x);
-            SecT571Field.multiply(secT571FieldElement6.x, create64, secT571FieldElement6.x);
-            SecT571FieldElement secT571FieldElement7 = new SecT571FieldElement(create64);
-            SecT571Field.multiply(create643, create642, secT571FieldElement7.x);
-            SecT571Field.multiplyPrecomp(secT571FieldElement7.x, precompMultiplicand, secT571FieldElement7.x);
-            ECFieldElement secT571FieldElement8 = new SecT571FieldElement(create642);
-            SecT571Field.add(create643, create642, secT571FieldElement8.x);
-            SecT571Field.square(secT571FieldElement8.x, secT571FieldElement8.x);
+            secT571FieldElement2 = new SecT571FieldElement();
+            SecT571Field.square(create643, secT571FieldElement2.x);
+            SecT571Field.multiply(secT571FieldElement2.x, create64, secT571FieldElement2.x);
+            SecT571FieldElement secT571FieldElement6 = new SecT571FieldElement(create64);
+            SecT571Field.multiply(create643, create642, secT571FieldElement6.x);
+            SecT571Field.multiplyPrecomp(secT571FieldElement6.x, precompMultiplicand, secT571FieldElement6.x);
+            ECFieldElement secT571FieldElement7 = new SecT571FieldElement(create642);
+            SecT571Field.add(create643, create642, secT571FieldElement7.x);
+            SecT571Field.square(secT571FieldElement7.x, secT571FieldElement7.x);
             Nat.zero64(18, createExt64);
-            SecT571Field.multiplyAddToExt(secT571FieldElement8.x, create644, createExt64);
+            SecT571Field.multiplyAddToExt(secT571FieldElement7.x, create644, createExt64);
             SecT571Field.addOne(secT571FieldElement5.x, create644);
-            SecT571Field.multiplyAddToExt(create644, secT571FieldElement7.x, createExt64);
-            SecT571Field.reduce(createExt64, secT571FieldElement8.x);
-            return new SecT571R1Point(curve, secT571FieldElement6, secT571FieldElement8, new ECFieldElement[]{secT571FieldElement7}, this.withCompression);
+            SecT571Field.multiplyAddToExt(create644, secT571FieldElement6.x, createExt64);
+            SecT571Field.reduce(createExt64, secT571FieldElement7.x);
+            return new SecT571R1Point(curve, secT571FieldElement2, secT571FieldElement7, new ECFieldElement[]{secT571FieldElement6}, this.withCompression);
         }
     }
 }

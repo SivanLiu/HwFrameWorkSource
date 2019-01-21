@@ -257,7 +257,7 @@ class DragState {
         this.mNotifiedWindows.clear();
         this.mDragInProgress = true;
         this.mSourceUserId = UserHandle.getUserId(this.mUid);
-        this.mCrossProfileCopyAllowed = true ^ ((UserManagerInternal) LocalServices.getService(UserManagerInternal.class)).getUserRestriction(this.mSourceUserId, "no_cross_profile_copy_paste");
+        this.mCrossProfileCopyAllowed = 1 ^ ((UserManagerInternal) LocalServices.getService(UserManagerInternal.class)).getUserRestriction(this.mSourceUserId, "no_cross_profile_copy_paste");
         this.mDisplayContent.forAllWindows((Consumer) new -$$Lambda$DragState$-yUFIMrhYYccZ0gwd6eVcpAE93o(this, touchX, touchY), false);
     }
 
@@ -413,19 +413,19 @@ class DragState {
         this.mTargetWindow = touchedWin2;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x008e, code:
+    /* JADX WARNING: Missing block: B:24:0x008e, code skipped:
             if (r11 != r13.mSession.mPid) goto L_0x0090;
      */
-    /* JADX WARNING: Missing block: B:25:0x0090, code:
+    /* JADX WARNING: Missing block: B:25:0x0090, code skipped:
             r2.recycle();
      */
-    /* JADX WARNING: Missing block: B:31:0x00b4, code:
+    /* JADX WARNING: Missing block: B:31:0x00b4, code skipped:
             if (r11 == r13.mSession.mPid) goto L_0x00b7;
      */
-    /* JADX WARNING: Missing block: B:32:0x00b7, code:
+    /* JADX WARNING: Missing block: B:32:0x00b7, code skipped:
             r1.mToken = r14;
      */
-    /* JADX WARNING: Missing block: B:33:0x00b9, code:
+    /* JADX WARNING: Missing block: B:33:0x00b9, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

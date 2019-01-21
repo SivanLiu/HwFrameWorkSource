@@ -24,7 +24,7 @@ class MacDataGenerator {
             DigestInfo digestInfo = new DigestInfo(this.builder.getDigestAlgorithmIdentifier(), build.getMac());
             PKCS12PBEParams instance = PKCS12PBEParams.getInstance(algorithmIdentifier.getParameters());
             return new MacData(digestInfo, instance.getIV(), instance.getIterations().intValue());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to process data: ");
             stringBuilder.append(e.getMessage());

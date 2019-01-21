@@ -792,7 +792,7 @@ public class PolicyStruct {
         }
     }
 
-    /* JADX WARNING: Missing block: B:35:0x00a3, code:
+    /* JADX WARNING: Missing block: B:35:0x00a3, code skipped:
             if (r4.hasLeafItems() == false) goto L_0x00ab;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

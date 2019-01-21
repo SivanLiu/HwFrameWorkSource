@@ -140,7 +140,7 @@ public abstract class CursorAdapter extends BaseAdapter implements Filterable, C
         return this.mCursor;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001c, code:
+    /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

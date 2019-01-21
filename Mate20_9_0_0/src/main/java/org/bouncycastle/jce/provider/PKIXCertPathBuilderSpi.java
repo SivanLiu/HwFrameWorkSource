@@ -6,6 +6,7 @@ import java.security.cert.CertPathBuilderException;
 import java.security.cert.CertPathBuilderResult;
 import java.security.cert.CertPathBuilderSpi;
 import java.security.cert.CertPathParameters;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.PKIXCertPathValidatorResult;
@@ -48,10 +49,10 @@ public class PKIXCertPathBuilderSpi extends CertPathBuilderSpi {
                     PKIXCertPathValidatorResult pKIXCertPathValidatorResult = (PKIXCertPathValidatorResult) pKIXCertPathValidatorSpi.engineValidate(engineGenerateCertPath, pKIXExtendedBuilderParameters);
                     return new PKIXCertPathBuilderResult(engineGenerateCertPath, pKIXCertPathValidatorResult.getTrustAnchor(), pKIXCertPathValidatorResult.getPolicyTree(), pKIXCertPathValidatorResult.getPublicKey());
                 }
-                List arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 arrayList.addAll(pKIXExtendedBuilderParameters.getBaseParameters().getCertificateStores());
                 arrayList.addAll(CertPathValidatorUtilities.getAdditionalStoresFromAltNames(x509Certificate.getExtensionValue(Extension.issuerAlternativeName.getId()), pKIXExtendedBuilderParameters.getBaseParameters().getNamedCertificateStoreMap()));
-                Collection hashSet = new HashSet();
+                HashSet hashSet = new HashSet();
                 hashSet.addAll(CertPathValidatorUtilities.findIssuerCerts(x509Certificate, pKIXExtendedBuilderParameters.getBaseParameters().getCertStores(), arrayList));
                 if (hashSet.isEmpty()) {
                     throw new AnnotatedException("No issuer certificate for certificate in certification path found.");
@@ -64,16 +65,16 @@ public class PKIXCertPathBuilderSpi extends CertPathBuilderSpi {
                     list.remove(x509Certificate);
                 }
                 return certPathBuilderResult;
-            } catch (Throwable e) {
+            } catch (CertificateParsingException e) {
                 throw new AnnotatedException("No additional X.509 stores can be added from certificate locations.", e);
-            } catch (Throwable e2) {
+            } catch (AnnotatedException e2) {
                 throw new AnnotatedException("Cannot find issuer certificate for certificate in certification path.", e2);
-            } catch (Throwable e22) {
-                throw new AnnotatedException("Certification path could not be constructed from certificate list.", e22);
-            } catch (Throwable e222) {
-                throw new AnnotatedException("Certification path could not be validated.", e222);
             } catch (Exception e3) {
-                this.certPathException = e3;
+                throw new AnnotatedException("Certification path could not be constructed from certificate list.", e3);
+            } catch (Exception e32) {
+                throw new AnnotatedException("Certification path could not be validated.", e32);
+            } catch (AnnotatedException e22) {
+                this.certPathException = e22;
             }
         } catch (Exception e4) {
             throw new RuntimeException("Exception creating support classes.");
@@ -110,7 +111,7 @@ public class PKIXCertPathBuilderSpi extends CertPathBuilderSpi {
             stringBuilder.append(".");
             throw new InvalidAlgorithmParameterException(stringBuilder.toString());
         }
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         PKIXCertStoreSelector targetConstraints = build.getBaseParameters().getTargetConstraints();
         try {
             Collection findCertificates = CertPathValidatorUtilities.findCertificates(targetConstraints, build.getBaseParameters().getCertificateStores());
@@ -133,7 +134,7 @@ public class PKIXCertPathBuilderSpi extends CertPathBuilderSpi {
             } else {
                 throw new CertPathBuilderException("Possible certificate chain could not be validated.", this.certPathException);
             }
-        } catch (Throwable e) {
+        } catch (AnnotatedException e) {
             throw new ExtCertPathBuilderException("Error finding target certificate.", e);
         }
     }

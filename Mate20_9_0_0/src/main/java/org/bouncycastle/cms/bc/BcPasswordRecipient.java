@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.pkcs.PBKDF2Params;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.PasswordRecipient;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.Wrapper;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
@@ -39,7 +40,7 @@ public abstract class BcPasswordRecipient implements PasswordRecipient {
         createRFC3211Wrapper.init(false, new ParametersWithIV(new KeyParameter(bArr), ASN1OctetString.getInstance(algorithmIdentifier.getParameters()).getOctets()));
         try {
             return new KeyParameter(createRFC3211Wrapper.unwrap(bArr2, 0, bArr2.length));
-        } catch (Exception e) {
+        } catch (InvalidCipherTextException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to unwrap key: ");
             stringBuilder.append(e.getMessage());

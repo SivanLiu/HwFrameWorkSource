@@ -87,27 +87,27 @@ public class PSSSigner implements Signer {
     }
 
     private byte[] maskGeneratorFunction1(byte[] bArr, int i, int i2, int i3) {
-        Object obj = new byte[i3];
-        Object obj2 = new byte[this.mgfhLen];
-        byte[] bArr2 = new byte[4];
+        byte[] bArr2 = new byte[i3];
+        byte[] bArr3 = new byte[this.mgfhLen];
+        byte[] bArr4 = new byte[4];
         this.mgfDigest.reset();
         int i4 = 0;
         while (i4 < i3 / this.mgfhLen) {
-            ItoOSP(i4, bArr2);
+            ItoOSP(i4, bArr4);
             this.mgfDigest.update(bArr, i, i2);
-            this.mgfDigest.update(bArr2, 0, bArr2.length);
-            this.mgfDigest.doFinal(obj2, 0);
-            System.arraycopy(obj2, 0, obj, this.mgfhLen * i4, this.mgfhLen);
+            this.mgfDigest.update(bArr4, 0, bArr4.length);
+            this.mgfDigest.doFinal(bArr3, 0);
+            System.arraycopy(bArr3, 0, bArr2, this.mgfhLen * i4, this.mgfhLen);
             i4++;
         }
         if (this.mgfhLen * i4 < i3) {
-            ItoOSP(i4, bArr2);
+            ItoOSP(i4, bArr4);
             this.mgfDigest.update(bArr, i, i2);
-            this.mgfDigest.update(bArr2, 0, bArr2.length);
-            this.mgfDigest.doFinal(obj2, 0);
-            System.arraycopy(obj2, 0, obj, this.mgfhLen * i4, obj.length - (i4 * this.mgfhLen));
+            this.mgfDigest.update(bArr4, 0, bArr4.length);
+            this.mgfDigest.doFinal(bArr3, 0);
+            System.arraycopy(bArr3, 0, bArr2, this.mgfhLen * i4, bArr2.length - (i4 * this.mgfhLen));
         }
-        return obj;
+        return bArr2;
     }
 
     public byte[] generateSignature() throws CryptoException, DataLengthException {
@@ -118,23 +118,23 @@ public class PSSSigner implements Signer {
             }
             System.arraycopy(this.salt, 0, this.mDash, this.mDash.length - this.sLen, this.sLen);
         }
-        Object obj = new byte[this.hLen];
+        byte[] bArr = new byte[this.hLen];
         this.contentDigest.update(this.mDash, 0, this.mDash.length);
-        this.contentDigest.doFinal(obj, 0);
+        this.contentDigest.doFinal(bArr, 0);
         this.block[(((this.block.length - this.sLen) - 1) - this.hLen) - 1] = (byte) 1;
         System.arraycopy(this.salt, 0, this.block, ((this.block.length - this.sLen) - this.hLen) - 1, this.sLen);
-        byte[] maskGeneratorFunction1 = maskGeneratorFunction1(obj, 0, obj.length, (this.block.length - this.hLen) - 1);
+        byte[] maskGeneratorFunction1 = maskGeneratorFunction1(bArr, 0, bArr.length, (this.block.length - this.hLen) - 1);
         for (int i = 0; i != maskGeneratorFunction1.length; i++) {
-            byte[] bArr = this.block;
-            bArr[i] = (byte) (bArr[i] ^ maskGeneratorFunction1[i]);
+            byte[] bArr2 = this.block;
+            bArr2[i] = (byte) (bArr2[i] ^ maskGeneratorFunction1[i]);
         }
         maskGeneratorFunction1 = this.block;
         maskGeneratorFunction1[0] = (byte) (maskGeneratorFunction1[0] & (255 >> ((this.block.length * 8) - this.emBits)));
-        System.arraycopy(obj, 0, this.block, (this.block.length - this.hLen) - 1, this.hLen);
+        System.arraycopy(bArr, 0, this.block, (this.block.length - this.hLen) - 1, this.hLen);
         this.block[this.block.length - 1] = this.trailer;
-        byte[] processBlock = this.cipher.processBlock(this.block, 0, this.block.length);
+        bArr = this.cipher.processBlock(this.block, 0, this.block.length);
         clearBlock(this.block);
-        return processBlock;
+        return bArr;
     }
 
     public void init(boolean z, CipherParameters cipherParameters) {
@@ -181,8 +181,8 @@ public class PSSSigner implements Signer {
     public boolean verifySignature(byte[] bArr) {
         this.contentDigest.doFinal(this.mDash, (this.mDash.length - this.hLen) - this.sLen);
         try {
-            Object processBlock = this.cipher.processBlock(bArr, 0, bArr.length);
-            System.arraycopy(processBlock, 0, this.block, this.block.length - processBlock.length, processBlock.length);
+            bArr = this.cipher.processBlock(bArr, 0, bArr.length);
+            System.arraycopy(bArr, 0, this.block, this.block.length - bArr.length, bArr.length);
             if (this.block[this.block.length - 1] == this.trailer) {
                 int i;
                 int i2;

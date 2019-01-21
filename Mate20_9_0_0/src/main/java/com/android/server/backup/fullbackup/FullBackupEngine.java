@@ -180,25 +180,8 @@ public class FullBackupEngine {
                         stringBuilder.append(this.mPkg.packageName);
                         Slog.e(str, stringBuilder.toString());
                     }
-                    try {
-                        this.mOutput.flush();
-                        if (pipes2 != null) {
-                            if (pipes2[0] != null) {
-                                pipes2[0].close();
-                            }
-                            if (pipes2[1] != null) {
-                                pipes2[1].close();
-                            }
-                        }
-                    } catch (IOException e2) {
-                        Slog.w(BackupManagerService.TAG, "Error bringing down backup stack");
-                        e = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
-                        result = e;
-                        tearDown();
-                        return result;
-                    }
-                } catch (IOException e3) {
-                    e = e3;
+                } catch (IOException e2) {
+                    e = e2;
                     pipes = pipes2;
                     try {
                         str = BackupManagerService.TAG;
@@ -213,7 +196,7 @@ public class FullBackupEngine {
                             if (pipes != null) {
                             }
                             result = -1003;
-                        } catch (IOException e4) {
+                        } catch (IOException e3) {
                             Slog.w(BackupManagerService.TAG, "Error bringing down backup stack");
                             e = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
                             result = e;
@@ -236,7 +219,7 @@ public class FullBackupEngine {
                                     pipes2[1].close();
                                 }
                             }
-                        } catch (IOException e5) {
+                        } catch (IOException e4) {
                             Slog.w(BackupManagerService.TAG, "Error bringing down backup stack");
                         }
                         throw th2;
@@ -248,6 +231,23 @@ public class FullBackupEngine {
                     if (pipes2 != null) {
                     }
                     throw th2;
+                }
+                try {
+                    this.mOutput.flush();
+                    if (pipes2 != null) {
+                        if (pipes2[0] != null) {
+                            pipes2[0].close();
+                        }
+                        if (pipes2[1] != null) {
+                            pipes2[1].close();
+                        }
+                    }
+                } catch (IOException e5) {
+                    Slog.w(BackupManagerService.TAG, "Error bringing down backup stack");
+                    e = JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE;
+                    result = e;
+                    tearDown();
+                    return result;
                 }
             } catch (IOException e6) {
                 e = e6;

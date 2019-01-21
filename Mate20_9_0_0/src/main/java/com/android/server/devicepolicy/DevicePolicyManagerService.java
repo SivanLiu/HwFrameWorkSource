@@ -414,7 +414,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
 
         ActiveAdmin getParentActiveAdmin() {
-            Preconditions.checkState(this.isParent ^ true);
+            Preconditions.checkState(this.isParent ^ 1);
             if (this.parentAdmin == null) {
                 this.parentAdmin = new ActiveAdmin(this.info, true);
             }
@@ -804,7 +804,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                                 Log.w(DevicePolicyManagerService.LOG_TAG, "Missing text when loading long support message");
                             }
                         } else if (TAG_PARENT_ADMIN.equals(tag)) {
-                            Preconditions.checkState(this.isParent ^ true);
+                            Preconditions.checkState(this.isParent ^ 1);
                             this.parentAdmin = new ActiveAdmin(this.info, true);
                             this.parentAdmin.readFromXml(parser);
                         } else if (TAG_ORGANIZATION_COLOR.equals(tag)) {
@@ -1491,22 +1491,24 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         public List<String> getCrossProfileWidgetProviders(int profileId) {
             synchronized (DevicePolicyManagerService.this.getLockObject()) {
                 if (DevicePolicyManagerService.this.mOwners == null) {
-                    List<String> emptyList = Collections.emptyList();
+                    List emptyList = Collections.emptyList();
                     return emptyList;
                 }
                 ComponentName ownerComponent = DevicePolicyManagerService.this.mOwners.getProfileOwnerComponent(profileId);
                 if (ownerComponent == null) {
-                    List<String> emptyList2 = Collections.emptyList();
+                    List emptyList2 = Collections.emptyList();
                     return emptyList2;
                 }
+                List list;
                 ActiveAdmin admin = (ActiveAdmin) DevicePolicyManagerService.this.getUserDataUnchecked(profileId).mAdminMap.get(ownerComponent);
-                List<String> emptyList3;
-                if (admin == null || admin.crossProfileWidgetProviders == null || admin.crossProfileWidgetProviders.isEmpty()) {
-                    emptyList3 = Collections.emptyList();
-                    return emptyList3;
+                if (!(admin == null || admin.crossProfileWidgetProviders == null)) {
+                    if (!admin.crossProfileWidgetProviders.isEmpty()) {
+                        list = admin.crossProfileWidgetProviders;
+                        return list;
+                    }
                 }
-                emptyList3 = admin.crossProfileWidgetProviders;
-                return emptyList3;
+                list = Collections.emptyList();
+                return list;
             }
         }
 
@@ -1628,7 +1630,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                             Log.e(DevicePolicyManagerService.LOG_TAG, "appLabel is inexplicably null");
                             return null;
                         }
-                        CharSequence string = ActivityThread.currentActivityThread().getSystemUiContext().getResources().getString(17040953, new Object[]{appLabel});
+                        String string = ActivityThread.currentActivityThread().getSystemUiContext().getResources().getString(17040954, new Object[]{appLabel});
                         return string;
                     } catch (NameNotFoundException e) {
                         Log.e(DevicePolicyManagerService.LOG_TAG, "getPackageInfo error", e);
@@ -1724,7 +1726,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 this.mService = iwms.getInstance(context);
                 return;
             }
-            String dpmsClassName = context.getResources().getString(17039795);
+            String dpmsClassName = context.getResources().getString(17039796);
             if (TextUtils.isEmpty(dpmsClassName)) {
                 dpmsClassName = DevicePolicyManagerService.class.getName();
             }
@@ -1844,15 +1846,13 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:5:0x0009, code:
-            if (r3.equals(r4) != false) goto L_0x000e;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean isRemovedPackage(String changedPackage, String targetPackage, int userHandle) {
         boolean z = false;
         if (targetPackage != null) {
             if (changedPackage != null) {
                 try {
+                    if (changedPackage.equals(targetPackage)) {
+                    }
                 } catch (RemoteException e) {
                     return false;
                 }
@@ -2068,25 +2068,28 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
     void removeUserData(int userHandle) {
         synchronized (getLockObject()) {
             if (userHandle == 0) {
-                Slog.w(LOG_TAG, "Tried to remove device policy file for user 0! Ignoring.");
-                return;
+                try {
+                    Slog.w(LOG_TAG, "Tried to remove device policy file for user 0! Ignoring.");
+                } catch (Throwable th) {
+                }
+            } else {
+                this.mPolicyCache.onUserRemoved(userHandle);
+                this.mOwners.removeProfileOwner(userHandle);
+                this.mOwners.writeProfileOwner(userHandle);
+                if (((DevicePolicyData) this.mUserData.get(userHandle)) != null) {
+                    this.mUserData.remove(userHandle);
+                }
+                if (this.mUserPasswordMetrics.get(userHandle) != null) {
+                    this.mUserPasswordMetrics.remove(userHandle);
+                }
+                File policyFile = new File(this.mInjector.environmentGetUserSystemDirectory(userHandle), DEVICE_POLICIES_XML);
+                policyFile.delete();
+                String str = LOG_TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Removed device policy file ");
+                stringBuilder.append(policyFile.getAbsolutePath());
+                Slog.i(str, stringBuilder.toString());
             }
-            this.mPolicyCache.onUserRemoved(userHandle);
-            this.mOwners.removeProfileOwner(userHandle);
-            this.mOwners.writeProfileOwner(userHandle);
-            if (((DevicePolicyData) this.mUserData.get(userHandle)) != null) {
-                this.mUserData.remove(userHandle);
-            }
-            if (this.mUserPasswordMetrics.get(userHandle) != null) {
-                this.mUserPasswordMetrics.remove(userHandle);
-            }
-            File policyFile = new File(this.mInjector.environmentGetUserSystemDirectory(userHandle), DEVICE_POLICIES_XML);
-            policyFile.delete();
-            String str = LOG_TAG;
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Removed device policy file ");
-            stringBuilder.append(policyFile.getAbsolutePath());
-            Slog.i(str, stringBuilder.toString());
         }
     }
 
@@ -2553,23 +2556,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x005b A:{Splitter: B:17:0x0053, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_8 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:20:0x005b, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:21:0x005c, code:
-            r3 = LOG_TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("Bad device admin requested for user=");
-            r4.append(r8);
-            r4.append(": ");
-            r4.append(r7);
-            android.util.Slog.w(r3, r4.toString(), r2);
-     */
-    /* JADX WARNING: Missing block: B:22:0x007a, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public DeviceAdminInfo findAdmin(ComponentName adminName, int userHandle, boolean throwForMissingPermission) {
         if (!this.mHasFeature) {
             return null;
@@ -2595,14 +2581,21 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             }
             try {
                 return new DeviceAdminInfo(this.mContext, ai);
-            } catch (Exception e2) {
+            } catch (IOException | XmlPullParserException e2) {
+                String str = LOG_TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Bad device admin requested for user=");
+                stringBuilder.append(userHandle);
+                stringBuilder.append(": ");
+                stringBuilder.append(adminName);
+                Slog.w(str, stringBuilder.toString(), e2);
+                return null;
             }
-        } else {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Unknown admin: ");
-            stringBuilder.append(adminName);
-            throw new IllegalArgumentException(stringBuilder.toString());
         }
+        StringBuilder stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("Unknown admin: ");
+        stringBuilder2.append(adminName);
+        throw new IllegalArgumentException(stringBuilder2.toString());
     }
 
     private File getPolicyFileDirectory(int userId) {
@@ -2625,20 +2618,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return new JournaledFile(file, new File(stringBuilder.toString()));
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x0319 A:{Splitter: B:1:0x000a, ExcHandler: org.xmlpull.v1.XmlPullParserException (r2_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:94:0x0319, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:95:0x031a, code:
-            android.util.Slog.w(LOG_TAG, "failed writing file", r2);
-     */
-    /* JADX WARNING: Missing block: B:96:0x0321, code:
-            if (r3 != null) goto L_0x0323;
-     */
-    /* JADX WARNING: Missing block: B:98:?, code:
-            r3.close();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     void saveSettingsLocked(int userHandle) {
         DevicePolicyData policy = getUserData(userHandle);
         JournaledFile journal = makeJournaledFile(userHandle);
@@ -2787,10 +2766,16 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             stream.close();
             journal.commit();
             sendChangedNotification(userHandle);
-            return;
-        } catch (Exception e) {
+        } catch (IOException | XmlPullParserException e) {
+            Slog.w(LOG_TAG, "failed writing file", e);
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e2) {
+                }
+            }
+            journal.rollback();
         }
-        journal.rollback();
     }
 
     private void sendChangedNotification(int userHandle) {
@@ -2804,80 +2789,54 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x042b A:{Splitter: B:21:0x0059, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x042b A:{Splitter: B:21:0x0059, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x042b A:{Splitter: B:21:0x0059, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:201:0x042b A:{Splitter: B:21:0x0059, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:205:0x0437 A:{Splitter: B:1:0x0011, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:205:0x0437 A:{Splitter: B:1:0x0011, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:205:0x0437 A:{Splitter: B:1:0x0011, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:205:0x0437 A:{Splitter: B:1:0x0011, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0400 A:{Catch:{ FileNotFoundException -> 0x0427, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423 }, Splitter: B:50:0x00b1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0400 A:{Catch:{ FileNotFoundException -> 0x0427, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423 }, Splitter: B:50:0x00b1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0400 A:{Catch:{ FileNotFoundException -> 0x0427, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423 }, Splitter: B:50:0x00b1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:191:0x0400 A:{Catch:{ FileNotFoundException -> 0x0427, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423, NullPointerException -> 0x0423 }, Splitter: B:50:0x00b1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:55:0x00c3 A:{Splitter: B:53:0x00bc, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:55:0x00c3 A:{Splitter: B:53:0x00bc, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:55:0x00c3 A:{Splitter: B:53:0x00bc, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:55:0x00c3 A:{Splitter: B:53:0x00bc, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x0423 A:{PHI: r8 r18 , Splitter: B:63:0x00e1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x0423 A:{PHI: r8 r18 , Splitter: B:63:0x00e1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x0423 A:{PHI: r8 r18 , Splitter: B:63:0x00e1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:197:0x0423 A:{PHI: r8 r18 , Splitter: B:63:0x00e1, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x004f A:{Splitter: B:15:0x0048, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x004f A:{Splitter: B:15:0x0048, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x004f A:{Splitter: B:15:0x0048, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x004f A:{Splitter: B:15:0x0048, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-    /* JADX WARNING: Missing block: B:17:0x004f, code:
+    /* JADX WARNING: Removed duplicated region for block: B:213:0x0457 A:{SYNTHETIC, Splitter:B:213:0x0457} */
+    /* JADX WARNING: Removed duplicated region for block: B:218:0x046b  */
+    /* JADX WARNING: Removed duplicated region for block: B:230:? A:{SYNTHETIC, RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:221:0x0487  */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Removed duplicated region for block: B:199:0x0423 A:{PHI: r8 r18 , ExcHandler: IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException (e java.lang.Throwable), Splitter:B:63:0x00e1} */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Failed to process nested try/catch */
+    /* JADX WARNING: Missing block: B:104:0x01b0, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:18:0x0050, code:
-            r16 = r4;
-     */
-    /* JADX WARNING: Missing block: B:55:0x00c3, code:
+    /* JADX WARNING: Missing block: B:107:0x01b7, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:191:0x0400, code:
+    /* JADX WARNING: Missing block: B:108:0x01b8, code skipped:
+            r21 = r5;
+     */
+    /* JADX WARNING: Missing block: B:109:0x01bb, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:192:0x0401, code:
-            r18 = r5;
+    /* JADX WARNING: Missing block: B:110:0x01bc, code skipped:
+            r20 = r4;
+            r21 = r5;
      */
-    /* JADX WARNING: Missing block: B:197:0x0423, code:
+    /* JADX WARNING: Missing block: B:199:0x0423, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:198:0x0424, code:
+    /* JADX WARNING: Missing block: B:200:0x0424, code skipped:
             r5 = r18;
-     */
-    /* JADX WARNING: Missing block: B:201:0x042b, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:202:0x042c, code:
-            r16 = r4;
-            r18 = r5;
-     */
-    /* JADX WARNING: Missing block: B:205:0x0437, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:206:0x0438, code:
-            r16 = r4;
-     */
-    /* JADX WARNING: Missing block: B:207:0x043a, code:
-            r4 = LOG_TAG;
-            r7 = new java.lang.StringBuilder();
-            r7.append("failed parsing ");
-            r7.append(r6);
-            android.util.Slog.w(r4, r7.toString(), r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadSettingsLocked(DevicePolicyData policy, int userHandle) {
         JournaledFile journaledFile;
-        FileInputStream stream;
-        int type;
-        int outerDepth;
-        String deviceProvisioningConfigApplied;
-        RuntimeException e;
+        Exception e;
+        String str;
         StringBuilder stringBuilder;
+        FileInputStream stream;
         DevicePolicyData devicePolicyData = policy;
         int i = userHandle;
         JournaledFile journal = makeJournaledFile(i);
@@ -2887,14 +2846,21 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         try {
             stream2 = new FileInputStream(file);
             try {
-                int type2;
+                int type;
                 String tag;
+                String deviceProvisioningConfigApplied;
+                int outerDepth;
+                int type2;
+                int outerDepth2;
+                String deviceProvisioningConfigApplied2;
+                String name;
+                StringBuilder stringBuilder2;
                 XmlPullParser parser = Xml.newPullParser();
                 parser.setInput(stream2, StandardCharsets.UTF_8.name());
                 while (true) {
                     int next = parser.next();
-                    type2 = next;
-                    if (next == 1 || type2 == 2) {
+                    type = next;
+                    if (next == 1 || type == 2) {
                         tag = parser.getName();
                     }
                 }
@@ -2906,7 +2872,14 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                             devicePolicyData.mRestrictionsProvider = ComponentName.unflattenFromString(permissionProvider);
                         } catch (FileNotFoundException e2) {
                             journaledFile = journal;
-                        } catch (NullPointerException e3) {
+                        } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e3) {
+                            e = e3;
+                            journaledFile = journal;
+                            str = LOG_TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("failed parsing ");
+                            stringBuilder.append(file);
+                            Slog.w(str, stringBuilder.toString(), e);
                         }
                     }
                     String userSetupComplete = parser.getAttributeValue(null, ATTR_SETUP_COMPLETE);
@@ -2921,9 +2894,9 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                             devicePolicyData.mPaired = true;
                         }
                     }
-                    String deviceProvisioningConfigApplied2 = parser.getAttributeValue(null, ATTR_DEVICE_PROVISIONING_CONFIG_APPLIED);
-                    if (deviceProvisioningConfigApplied2 != null) {
-                        if (Boolean.toString(true).equals(deviceProvisioningConfigApplied2)) {
+                    deviceProvisioningConfigApplied = parser.getAttributeValue(null, ATTR_DEVICE_PROVISIONING_CONFIG_APPLIED);
+                    if (deviceProvisioningConfigApplied != null) {
+                        if (Boolean.toString(true).equals(deviceProvisioningConfigApplied)) {
                             devicePolicyData.mDeviceProvisioningConfigApplied = true;
                         }
                     }
@@ -2933,26 +2906,32 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                     }
                     try {
                         List<String> scopes;
-                        String journal2 = parser.getAttributeValue(null, ATTR_PERMISSION_POLICY);
-                        if (!TextUtils.isEmpty(journal2)) {
+                        str = parser.getAttributeValue(null, ATTR_PERMISSION_POLICY);
+                        if (!TextUtils.isEmpty(str)) {
                             try {
-                                devicePolicyData.mPermissionPolicy = Integer.parseInt(journal2);
+                                devicePolicyData.mPermissionPolicy = Integer.parseInt(str);
                             } catch (FileNotFoundException e4) {
-                            } catch (NullPointerException e5) {
+                            } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e5) {
+                                e = e5;
+                                str = LOG_TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("failed parsing ");
+                                stringBuilder.append(file);
+                                Slog.w(str, stringBuilder.toString(), e);
                             }
                         }
-                        String permissionPolicy = journal2;
-                        journal2 = parser.getAttributeValue(null, ATTR_DELEGATED_CERT_INSTALLER);
-                        if (journal2 != null) {
-                            scopes = (List) devicePolicyData.mDelegationMap.get(journal2);
+                        String permissionPolicy = str;
+                        str = parser.getAttributeValue(null, ATTR_DELEGATED_CERT_INSTALLER);
+                        if (str != null) {
+                            scopes = (List) devicePolicyData.mDelegationMap.get(str);
                             if (scopes == null) {
                                 stream = stream2;
                                 try {
                                     scopes = new ArrayList();
-                                    devicePolicyData.mDelegationMap.put(journal2, scopes);
+                                    devicePolicyData.mDelegationMap.put(str, scopes);
                                 } catch (FileNotFoundException e6) {
                                     stream2 = stream;
-                                } catch (NullPointerException e7) {
+                                } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e7) {
                                 }
                             } else {
                                 stream = stream2;
@@ -2969,11 +2948,11 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                             scopes = (List) devicePolicyData.mDelegationMap.get(appRestrictionsDelegate);
                             String certDelegate;
                             if (scopes == null) {
-                                certDelegate = journal2;
+                                certDelegate = str;
                                 scopes = new ArrayList();
                                 devicePolicyData.mDelegationMap.put(appRestrictionsDelegate, scopes);
                             } else {
-                                certDelegate = journal2;
+                                certDelegate = str;
                             }
                             if (scopes.contains("delegation-app-restrictions") == null) {
                                 scopes.add("delegation-app-restrictions");
@@ -2981,159 +2960,131 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                             }
                         }
                         journal = parser.next();
-                        int outerDepth2 = parser.getDepth();
+                        outerDepth = parser.getDepth();
                         devicePolicyData.mLockTaskPackages.clear();
                         devicePolicyData.mAdminList.clear();
                         devicePolicyData.mAdminMap.clear();
                         devicePolicyData.mAffiliationIds.clear();
                         devicePolicyData.mOwnerInstalledCaCerts.clear();
                         while (true) {
-                            type2 = parser.next();
-                            journal = type2;
-                            if (type2 == 1 || (journal == 3 && parser.getDepth() <= outerDepth2)) {
+                            type = parser.next();
+                            journal = type;
+                            if (type == 1 || (journal == 3 && parser.getDepth() <= outerDepth)) {
                                 stream2 = stream;
                             } else {
                                 if (journal == 3) {
-                                    type = journal;
-                                    outerDepth = outerDepth2;
-                                    deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
+                                    type2 = journal;
+                                    outerDepth2 = outerDepth;
+                                    deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
                                 } else if (journal == 4) {
-                                    type = journal;
-                                    outerDepth = outerDepth2;
-                                    deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
+                                    type2 = journal;
+                                    outerDepth2 = outerDepth;
+                                    deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
                                 } else {
-                                    type2 = parser.getName();
-                                    if ("admin".equals(type2)) {
-                                        String name = parser.getAttributeValue(null, "name");
-                                        try {
-                                            type = journal;
-                                            try {
-                                                DeviceAdminInfo dai = findAdmin(ComponentName.unflattenFromString(name), i, null);
-                                                if (dai != null) {
-                                                    outerDepth = outerDepth2;
-                                                    try {
-                                                        journal = new ActiveAdmin(dai, 0);
-                                                        journal.readFromXml(parser);
-                                                        devicePolicyData.mAdminMap.put(journal.info.getComponent(), journal);
-                                                    } catch (RuntimeException e8) {
-                                                        e = e8;
-                                                    }
-                                                } else {
-                                                    outerDepth = outerDepth2;
-                                                }
-                                                deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
-                                            } catch (RuntimeException e9) {
-                                                e = e9;
-                                                outerDepth = outerDepth2;
-                                                journal = LOG_TAG;
-                                                stringBuilder = new StringBuilder();
-                                                deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
-                                                stringBuilder.append("Failed loading admin ");
-                                                stringBuilder.append(name);
-                                                Slog.w(journal, stringBuilder.toString(), e);
-                                                tag = type2;
-                                                journal = type;
-                                                outerDepth2 = outerDepth;
-                                                deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
-                                            }
-                                        } catch (RuntimeException e10) {
-                                            e = e10;
-                                            type = journal;
-                                            outerDepth = outerDepth2;
-                                            journal = LOG_TAG;
-                                            stringBuilder = new StringBuilder();
-                                            deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
-                                            stringBuilder.append("Failed loading admin ");
-                                            stringBuilder.append(name);
-                                            Slog.w(journal, stringBuilder.toString(), e);
-                                            tag = type2;
-                                            journal = type;
+                                    type = parser.getName();
+                                    if ("admin".equals(type)) {
+                                        name = parser.getAttributeValue(null, "name");
+                                        type2 = journal;
+                                        DeviceAdminInfo dai = findAdmin(ComponentName.unflattenFromString(name), i, null);
+                                        if (dai != null) {
                                             outerDepth2 = outerDepth;
-                                            deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
+                                            journal = new ActiveAdmin(dai, 0);
+                                            journal.readFromXml(parser);
+                                            devicePolicyData.mAdminMap.put(journal.info.getComponent(), journal);
+                                        } else {
+                                            outerDepth2 = outerDepth;
                                         }
+                                        deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
                                     } else {
-                                        type = journal;
-                                        outerDepth = outerDepth2;
-                                        deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
-                                        if ("delegation".equals(type2)) {
+                                        type2 = journal;
+                                        outerDepth2 = outerDepth;
+                                        deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
+                                        if ("delegation".equals(type)) {
                                             tag = parser.getAttributeValue(null, "delegatePackage");
-                                            journal2 = parser.getAttributeValue(null, "scope");
+                                            str = parser.getAttributeValue(null, "scope");
                                             List<String> scopes2 = (List) devicePolicyData.mDelegationMap.get(tag);
                                             if (scopes2 == null) {
                                                 scopes2 = new ArrayList();
                                                 devicePolicyData.mDelegationMap.put(tag, scopes2);
                                             }
-                                            if (!scopes2.contains(journal2)) {
-                                                scopes2.add(journal2);
+                                            if (!scopes2.contains(str)) {
+                                                scopes2.add(str);
                                             }
-                                        } else if ("failed-password-attempts".equals(type2)) {
+                                        } else if ("failed-password-attempts".equals(type)) {
                                             devicePolicyData.mFailedPasswordAttempts = Integer.parseInt(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if ("password-owner".equals(type2)) {
+                                        } else if ("password-owner".equals(type)) {
                                             devicePolicyData.mPasswordOwner = Integer.parseInt(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if (TAG_ACCEPTED_CA_CERTIFICATES.equals(type2)) {
+                                        } else if (TAG_ACCEPTED_CA_CERTIFICATES.equals(type)) {
                                             devicePolicyData.mAcceptedCaCertificates.add(parser.getAttributeValue(null, "name"));
-                                        } else if (TAG_LOCK_TASK_COMPONENTS.equals(type2)) {
+                                        } else if (TAG_LOCK_TASK_COMPONENTS.equals(type)) {
                                             devicePolicyData.mLockTaskPackages.add(parser.getAttributeValue(null, "name"));
-                                        } else if (TAG_LOCK_TASK_FEATURES.equals(type2)) {
+                                        } else if (TAG_LOCK_TASK_FEATURES.equals(type)) {
                                             devicePolicyData.mLockTaskFeatures = Integer.parseInt(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if (TAG_STATUS_BAR.equals(type2)) {
+                                        } else if (TAG_STATUS_BAR.equals(type)) {
                                             devicePolicyData.mStatusBarDisabled = Boolean.parseBoolean(parser.getAttributeValue(null, ATTR_DISABLED));
-                                        } else if (DO_NOT_ASK_CREDENTIALS_ON_BOOT_XML.equals(type2)) {
+                                        } else if (DO_NOT_ASK_CREDENTIALS_ON_BOOT_XML.equals(type)) {
                                             devicePolicyData.doNotAskCredentialsOnBoot = true;
-                                        } else if (TAG_AFFILIATION_ID.equals(type2)) {
+                                        } else if (TAG_AFFILIATION_ID.equals(type)) {
                                             devicePolicyData.mAffiliationIds.add(parser.getAttributeValue(null, ATTR_ID));
-                                        } else if (TAG_LAST_SECURITY_LOG_RETRIEVAL.equals(type2)) {
+                                        } else if (TAG_LAST_SECURITY_LOG_RETRIEVAL.equals(type)) {
                                             devicePolicyData.mLastSecurityLogRetrievalTime = Long.parseLong(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if (TAG_LAST_BUG_REPORT_REQUEST.equals(type2)) {
+                                        } else if (TAG_LAST_BUG_REPORT_REQUEST.equals(type)) {
                                             devicePolicyData.mLastBugReportRequestTime = Long.parseLong(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if (TAG_LAST_NETWORK_LOG_RETRIEVAL.equals(type2)) {
+                                        } else if (TAG_LAST_NETWORK_LOG_RETRIEVAL.equals(type)) {
                                             devicePolicyData.mLastNetworkLogsRetrievalTime = Long.parseLong(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if (TAG_ADMIN_BROADCAST_PENDING.equals(type2)) {
+                                        } else if (TAG_ADMIN_BROADCAST_PENDING.equals(type)) {
                                             devicePolicyData.mAdminBroadcastPending = Boolean.toString(true).equals(parser.getAttributeValue(null, ATTR_VALUE));
-                                        } else if (TAG_INITIALIZATION_BUNDLE.equals(type2)) {
+                                        } else if (TAG_INITIALIZATION_BUNDLE.equals(type)) {
                                             devicePolicyData.mInitBundle = PersistableBundle.restoreFromXml(parser);
                                         } else {
-                                            if ("active-password".equals(type2)) {
+                                            if ("active-password".equals(type)) {
                                                 needsRewrite = true;
-                                            } else if (TAG_PASSWORD_VALIDITY.equals(type2)) {
+                                            } else if (TAG_PASSWORD_VALIDITY.equals(type)) {
                                                 if (!this.mInjector.storageManagerIsFileBasedEncryptionEnabled()) {
                                                     devicePolicyData.mPasswordValidAtLastCheckpoint = Boolean.parseBoolean(parser.getAttributeValue(null, ATTR_VALUE));
                                                 }
-                                            } else if (TAG_PASSWORD_TOKEN_HANDLE.equals(type2)) {
+                                            } else if (TAG_PASSWORD_TOKEN_HANDLE.equals(type)) {
                                                 devicePolicyData.mPasswordTokenHandle = Long.parseLong(parser.getAttributeValue(null, ATTR_VALUE));
-                                            } else if (TAG_CURRENT_INPUT_METHOD_SET.equals(type2)) {
+                                            } else if (TAG_CURRENT_INPUT_METHOD_SET.equals(type)) {
                                                 devicePolicyData.mCurrentInputMethodSet = true;
-                                            } else if (TAG_OWNER_INSTALLED_CA_CERT.equals(type2)) {
+                                            } else if (TAG_OWNER_INSTALLED_CA_CERT.equals(type)) {
                                                 devicePolicyData.mOwnerInstalledCaCerts.add(parser.getAttributeValue(null, ATTR_ALIAS));
-                                            } else if (mHwCustDevicePolicyManagerService != null && mHwCustDevicePolicyManagerService.isForbiddenSimplePwdFeatureEnable() && "is-currentpwd-simple".equals(type2)) {
+                                            } else if (mHwCustDevicePolicyManagerService != null && mHwCustDevicePolicyManagerService.isForbiddenSimplePwdFeatureEnable() && "is-currentpwd-simple".equals(type)) {
                                                 devicePolicyData.mIsCurrentPwdSimple = Boolean.parseBoolean(parser.getAttributeValue(null, ATTR_VALUE));
                                             } else {
                                                 tag = LOG_TAG;
-                                                StringBuilder stringBuilder2 = new StringBuilder();
-                                                stringBuilder2.append("Unknown tag: ");
-                                                stringBuilder2.append(type2);
-                                                Slog.w(tag, stringBuilder2.toString());
+                                                stringBuilder = new StringBuilder();
+                                                stringBuilder.append("Unknown tag: ");
+                                                stringBuilder.append(type);
+                                                Slog.w(tag, stringBuilder.toString());
                                                 XmlUtils.skipCurrentTag(parser);
                                             }
-                                            tag = type2;
+                                            tag = type;
                                         }
                                     }
-                                    tag = type2;
+                                    tag = type;
                                 }
-                                journal = type;
-                                outerDepth2 = outerDepth;
-                                deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
+                                journal = type2;
+                                outerDepth = outerDepth2;
+                                deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
                             }
                         }
                         stream2 = stream;
-                    } catch (FileNotFoundException e11) {
+                    } catch (FileNotFoundException e8) {
                         stream = stream2;
-                    } catch (NullPointerException e12) {
+                    } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e9) {
+                        e = e9;
+                        stream = stream2;
+                        str = LOG_TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("failed parsing ");
+                        stringBuilder.append(file);
+                        Slog.w(str, stringBuilder.toString(), e);
                     }
                     if (stream2 != null) {
                         try {
                             stream2.close();
-                        } catch (IOException e13) {
+                        } catch (IOException e10) {
                         }
                     }
                     devicePolicyData.mAdminList.addAll(devicePolicyData.mAdminMap.values());
@@ -3145,25 +3096,50 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                     syncHwDeviceSettingsLocked(devicePolicyData.mUserHandle);
                     updateLockTaskPackagesLocked(devicePolicyData.mLockTaskPackages, i);
                     updateLockTaskFeaturesLocked(devicePolicyData.mLockTaskFeatures, i);
-                    if (devicePolicyData.mStatusBarDisabled) {
+                    if (!devicePolicyData.mStatusBarDisabled) {
                         setStatusBarDisabledInternal(devicePolicyData.mStatusBarDisabled, i);
                         return;
                     }
                     return;
                 }
                 stream = stream2;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Settings do not start with policies tag: found ");
-                stringBuilder.append(tag);
-                throw new XmlPullParserException(stringBuilder.toString());
-            } catch (FileNotFoundException e14) {
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Settings do not start with policies tag: found ");
+                stringBuilder2.append(tag);
+                throw new XmlPullParserException(stringBuilder2.toString());
+                journal = LOG_TAG;
+                stringBuilder2 = new StringBuilder();
+                deviceProvisioningConfigApplied2 = deviceProvisioningConfigApplied;
+                stringBuilder2.append("Failed loading admin ");
+                stringBuilder2.append(name);
+                Slog.w(journal, stringBuilder2.toString(), e);
+                tag = type;
+                journal = type2;
+                outerDepth = outerDepth2;
+                deviceProvisioningConfigApplied = deviceProvisioningConfigApplied2;
+            } catch (FileNotFoundException e11) {
                 journaledFile = journal;
                 stream = stream2;
-            } catch (NullPointerException e15) {
+            } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e12) {
+                e = e12;
+                journaledFile = journal;
+                stream = stream2;
+                str = LOG_TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("failed parsing ");
+                stringBuilder.append(file);
+                Slog.w(str, stringBuilder.toString(), e);
             }
-        } catch (FileNotFoundException e16) {
+        } catch (FileNotFoundException e13) {
             journaledFile = journal;
-        } catch (NullPointerException e17) {
+        } catch (IOException | IndexOutOfBoundsException | NullPointerException | NumberFormatException | XmlPullParserException e14) {
+            e = e14;
+            journaledFile = journal;
+            str = LOG_TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("failed parsing ");
+            stringBuilder.append(file);
+            Slog.w(str, stringBuilder.toString(), e);
         }
     }
 
@@ -3301,16 +3277,16 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0016, code:
+    /* JADX WARNING: Missing block: B:9:0x0016, code skipped:
             if (r1 == 0) goto L_0x002a;
      */
-    /* JADX WARNING: Missing block: B:11:?, code:
+    /* JADX WARNING: Missing block: B:11:?, code skipped:
             r4.mInjector.getIActivityManager().startUserInBackground(r1);
      */
-    /* JADX WARNING: Missing block: B:12:0x0022, code:
+    /* JADX WARNING: Missing block: B:12:0x0022, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:13:0x0023, code:
+    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
             android.util.Slog.w(LOG_TAG, "Exception starting user", r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3409,11 +3385,11 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         if (!this.mHasFeature) {
             return Collections.emptySet();
         }
-        Set set;
+        ArraySet arraySet;
         synchronized (getLockObject()) {
-            set = getUserData(userHandle.getIdentifier()).mAcceptedCaCertificates;
+            arraySet = getUserData(userHandle.getIdentifier()).mAcceptedCaCertificates;
         }
-        return set;
+        return arraySet;
     }
 
     public void setActiveAdmin(ComponentName adminReceiver, boolean refreshing, int userHandle) {
@@ -3436,51 +3412,52 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 checkActiveAdminPrecondition(componentName, info, policy);
                 long ident = this.mInjector.binderClearCallingIdentity();
                 try {
+                    boolean z;
                     ActiveAdmin existingAdmin = getActiveAdminUncheckedLocked(componentName, i);
-                    if (refreshing || existingAdmin == null) {
-                        boolean z;
-                        int i2 = 0;
-                        ActiveAdmin newAdmin = new ActiveAdmin(info, false);
+                    if (!refreshing) {
                         if (existingAdmin != null) {
-                            z = existingAdmin.testOnlyAdmin;
-                        } else {
-                            z = isPackageTestOnly(adminReceiver.getPackageName(), i);
-                        }
-                        newAdmin.testOnlyAdmin = z;
-                        policy.mAdminMap.put(componentName, newAdmin);
-                        int replaceIndex = -1;
-                        int N = policy.mAdminList.size();
-                        while (i2 < N) {
-                            if (((ActiveAdmin) policy.mAdminList.get(i2)).info.getComponent().equals(componentName)) {
-                                replaceIndex = i2;
-                                break;
-                            }
-                            i2++;
-                        }
-                        if (replaceIndex == -1) {
-                            policy.mAdminList.add(newAdmin);
-                            enableIfNecessary(info.getPackageName(), i);
-                            this.mUsageStatsManagerInternal.onActiveAdminAdded(adminReceiver.getPackageName(), i);
-                        } else {
-                            policy.mAdminList.set(replaceIndex, newAdmin);
-                        }
-                        saveSettingsLocked(i);
-                        try {
-                            sendAdminCommandLocked(newAdmin, "android.app.action.DEVICE_ADMIN_ENABLED", onEnableData, null);
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("setActiveAdmin(");
-                            stringBuilder.append(componentName);
-                            stringBuilder.append("), by user ");
-                            stringBuilder.append(i);
-                            Flog.i(305, stringBuilder.toString());
-                            this.mInjector.binderRestoreCallingIdentity(ident);
-                            return;
-                        } catch (Throwable th2) {
-                            th = th2;
-                            throw th;
+                            throw new IllegalArgumentException("Admin is already added");
                         }
                     }
-                    throw new IllegalArgumentException("Admin is already added");
+                    int i2 = 0;
+                    ActiveAdmin newAdmin = new ActiveAdmin(info, false);
+                    if (existingAdmin != null) {
+                        z = existingAdmin.testOnlyAdmin;
+                    } else {
+                        z = isPackageTestOnly(adminReceiver.getPackageName(), i);
+                    }
+                    newAdmin.testOnlyAdmin = z;
+                    policy.mAdminMap.put(componentName, newAdmin);
+                    int replaceIndex = -1;
+                    int N = policy.mAdminList.size();
+                    while (i2 < N) {
+                        if (((ActiveAdmin) policy.mAdminList.get(i2)).info.getComponent().equals(componentName)) {
+                            replaceIndex = i2;
+                            break;
+                        }
+                        i2++;
+                    }
+                    if (replaceIndex == -1) {
+                        policy.mAdminList.add(newAdmin);
+                        enableIfNecessary(info.getPackageName(), i);
+                        this.mUsageStatsManagerInternal.onActiveAdminAdded(adminReceiver.getPackageName(), i);
+                    } else {
+                        policy.mAdminList.set(replaceIndex, newAdmin);
+                    }
+                    saveSettingsLocked(i);
+                    try {
+                        sendAdminCommandLocked(newAdmin, "android.app.action.DEVICE_ADMIN_ENABLED", onEnableData, null);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("setActiveAdmin(");
+                        stringBuilder.append(componentName);
+                        stringBuilder.append("), by user ");
+                        stringBuilder.append(i);
+                        Flog.i(305, stringBuilder.toString());
+                        this.mInjector.binderRestoreCallingIdentity(ident);
+                    } catch (Throwable th2) {
+                        th = th2;
+                        throw th;
+                    }
                 } catch (Throwable th3) {
                     th = th3;
                     bundle = onEnableData;
@@ -3755,10 +3732,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0055, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void removeActiveAdmin(ComponentName adminReceiver, int userHandle) {
         HwFrameworkFactory.getHwBehaviorCollectManager().sendBehavior(BehaviorId.DEVICE_POLICY_REMOVEACTIVEADMIN);
         if (this.mHasFeature) {
@@ -3767,24 +3740,28 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             synchronized (getLockObject()) {
                 ActiveAdmin admin = getActiveAdminUncheckedLocked(adminReceiver, userHandle);
                 if (admin == null) {
-                } else if (isDeviceOwner(adminReceiver, userHandle) || isProfileOwner(adminReceiver, userHandle)) {
-                    String str = LOG_TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Device/profile owner cannot be removed: component=");
-                    stringBuilder.append(adminReceiver);
-                    Slog.e(str, stringBuilder.toString());
-                } else {
-                    if (admin.getUid() != this.mInjector.binderGetCallingUid()) {
-                        this.mContext.enforceCallingOrSelfPermission("android.permission.MANAGE_DEVICE_ADMINS", null);
-                    }
-                    long ident = this.mInjector.binderClearCallingIdentity();
-                    try {
-                        notifyPlugins(adminReceiver, userHandle);
-                        removeActiveAdminLocked(adminReceiver, userHandle);
-                    } finally {
-                        this.mInjector.binderRestoreCallingIdentity(ident);
+                    return;
+                }
+                if (!isDeviceOwner(adminReceiver, userHandle)) {
+                    if (!isProfileOwner(adminReceiver, userHandle)) {
+                        if (admin.getUid() != this.mInjector.binderGetCallingUid()) {
+                            this.mContext.enforceCallingOrSelfPermission("android.permission.MANAGE_DEVICE_ADMINS", null);
+                        }
+                        long ident = this.mInjector.binderClearCallingIdentity();
+                        try {
+                            notifyPlugins(adminReceiver, userHandle);
+                            removeActiveAdminLocked(adminReceiver, userHandle);
+                            return;
+                        } finally {
+                            this.mInjector.binderRestoreCallingIdentity(ident);
+                        }
                     }
                 }
+                String str = LOG_TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Device/profile owner cannot be removed: component=");
+                stringBuilder.append(adminReceiver);
+                Slog.e(str, stringBuilder.toString());
             }
         }
     }
@@ -3822,12 +3799,9 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         saveSettingsLocked(credentialOwner);
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
-            return r3;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public int getPasswordQuality(ComponentName who, int userHandle, boolean parent) {
-        int i = 0;
+        int i;
+        int i2 = 0;
         if (!this.mHasFeature) {
             return 0;
         }
@@ -3835,21 +3809,25 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         synchronized (getLockObject()) {
             int mode = 0;
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
-                int i2 = admin != null ? admin.minimumPasswordMetrics.quality : 0;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
+                    i = admin != null ? admin.minimumPasswordMetrics.quality : 0;
+                } finally {
+                }
             } else {
                 List<ActiveAdmin> admins = getActiveAdminsForLockscreenPoliciesLocked(userHandle, parent);
                 int N = admins.size();
-                while (i < N) {
-                    ActiveAdmin admin2 = (ActiveAdmin) admins.get(i);
+                while (i2 < N) {
+                    ActiveAdmin admin2 = (ActiveAdmin) admins.get(i2);
                     if (mode < admin2.minimumPasswordMetrics.quality) {
                         mode = admin2.minimumPasswordMetrics.quality;
                     }
-                    i++;
+                    i2++;
                 }
                 return mode;
             }
         }
+        return i;
     }
 
     private List<ActiveAdmin> getActiveAdminsForLockscreenPoliciesLocked(int userHandle, boolean parent) {
@@ -3958,11 +3936,8 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
-            return r5;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public long getPasswordExpirationTimeout(ComponentName who, int userHandle, boolean parent) {
+        long j;
         if (!this.mHasFeature) {
             return 0;
         }
@@ -3970,8 +3945,11 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         synchronized (getLockObject()) {
             long timeout = 0;
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
-                long j = admin != null ? admin.passwordExpirationTimeout : 0;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
+                    j = admin != null ? admin.passwordExpirationTimeout : 0;
+                } finally {
+                }
             } else {
                 List<ActiveAdmin> admins = getActiveAdminsForLockscreenPoliciesLocked(userHandle, parent);
                 int N = admins.size();
@@ -3984,6 +3962,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 return timeout;
             }
         }
+        return j;
     }
 
     public boolean addCrossProfileWidgetProvider(ComponentName admin, String packageName) {
@@ -4008,16 +3987,16 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002f, code:
+    /* JADX WARNING: Missing block: B:13:0x002f, code skipped:
             if (r1 == null) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:13:0x0031, code:
+    /* JADX WARNING: Missing block: B:14:0x0031, code skipped:
             com.android.server.devicepolicy.DevicePolicyManagerService.LocalService.access$2200(r7.mLocalService, r0, r1);
      */
-    /* JADX WARNING: Missing block: B:14:0x0037, code:
+    /* JADX WARNING: Missing block: B:15:0x0037, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:15:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4026,29 +4005,33 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         List<String> changedProviders = null;
         synchronized (getLockObject()) {
             ActiveAdmin activeAdmin = getActiveAdminForCallerLocked(admin, -1);
-            if (activeAdmin.crossProfileWidgetProviders == null || activeAdmin.crossProfileWidgetProviders.isEmpty()) {
-                return false;
+            if (activeAdmin.crossProfileWidgetProviders != null) {
+                if (!activeAdmin.crossProfileWidgetProviders.isEmpty()) {
+                    List<String> providers = activeAdmin.crossProfileWidgetProviders;
+                    if (providers.remove(packageName)) {
+                        changedProviders = new ArrayList(providers);
+                        saveSettingsLocked(userId);
+                    }
+                }
             }
-            List<String> providers = activeAdmin.crossProfileWidgetProviders;
-            if (providers.remove(packageName)) {
-                changedProviders = new ArrayList(providers);
-                saveSettingsLocked(userId);
-            }
+            return false;
         }
     }
 
     public List<String> getCrossProfileWidgetProviders(ComponentName admin) {
         synchronized (getLockObject()) {
             ActiveAdmin activeAdmin = getActiveAdminForCallerLocked(admin, -1);
-            if (activeAdmin.crossProfileWidgetProviders == null || activeAdmin.crossProfileWidgetProviders.isEmpty()) {
-                return null;
-            } else if (this.mInjector.binderIsCallingUidMyUid()) {
-                List arrayList = new ArrayList(activeAdmin.crossProfileWidgetProviders);
-                return arrayList;
-            } else {
-                List<String> list = activeAdmin.crossProfileWidgetProviders;
-                return list;
+            if (activeAdmin.crossProfileWidgetProviders != null) {
+                if (!activeAdmin.crossProfileWidgetProviders.isEmpty()) {
+                    if (this.mInjector.binderIsCallingUidMyUid()) {
+                        ArrayList arrayList = new ArrayList(activeAdmin.crossProfileWidgetProviders);
+                        return arrayList;
+                    }
+                    List list = activeAdmin.crossProfileWidgetProviders;
+                    return list;
+                }
             }
+            return null;
         }
     }
 
@@ -4201,7 +4184,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return getStrictestPasswordRequirement(who, userHandle, parent, -$$Lambda$DevicePolicyManagerService$8nvbMteplUbtaSMuw4DWJ-MQa4g.INSTANCE, 393216);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0022, code:
+    /* JADX WARNING: Missing block: B:11:0x0022, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4213,9 +4196,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         enforceFullCrossUsersPermission(userHandle);
         synchronized (getLockObject()) {
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
-                if (admin != null) {
-                    i = ((Integer) getter.apply(admin)).intValue();
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
+                    if (admin != null) {
+                        i = ((Integer) getter.apply(admin)).intValue();
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 int maxValue = 0;
@@ -4259,7 +4245,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         int userId = this.mInjector.userHandleGetCallingUserId();
         enforceProfileOrDeviceOwner(admin);
         enforceManagedProfile(userId, "query unified challenge status");
-        return true ^ isSeparateProfileChallengeEnabled(userId);
+        return 1 ^ isSeparateProfileChallengeEnabled(userId);
     }
 
     public boolean isProfileActivePasswordSufficientForParent(int userHandle) {
@@ -4351,7 +4337,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         synchronized (getLockObject()) {
             ActiveAdmin admin;
             if (who != null) {
-                admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
+                try {
+                    admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
+                } catch (Throwable th) {
+                }
             } else {
                 admin = getAdminWithMinimumFailedPasswordsForWipeLocked(userHandle, parent);
             }
@@ -4484,181 +4473,181 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:65:0x01ba, code:
+    /* JADX WARNING: Missing block: B:65:0x01ba, code skipped:
             r13 = r0;
             r14 = getUserData(r12);
      */
-    /* JADX WARNING: Missing block: B:66:0x01c1, code:
+    /* JADX WARNING: Missing block: B:66:0x01c1, code skipped:
             if (r14.mPasswordOwner < 0) goto L_0x01d1;
      */
-    /* JADX WARNING: Missing block: B:68:0x01c5, code:
+    /* JADX WARNING: Missing block: B:68:0x01c5, code skipped:
             if (r14.mPasswordOwner == r11) goto L_0x01d1;
      */
-    /* JADX WARNING: Missing block: B:69:0x01c7, code:
+    /* JADX WARNING: Missing block: B:69:0x01c7, code skipped:
             android.util.Slog.w(LOG_TAG, "resetPassword: already set by another uid and not entered by user");
      */
-    /* JADX WARNING: Missing block: B:70:0x01d0, code:
+    /* JADX WARNING: Missing block: B:70:0x01d0, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:71:0x01d1, code:
+    /* JADX WARNING: Missing block: B:71:0x01d1, code skipped:
             r15 = isCallerDeviceOwner(r11);
             r16 = true;
      */
-    /* JADX WARNING: Missing block: B:72:0x01da, code:
+    /* JADX WARNING: Missing block: B:72:0x01da, code skipped:
             if ((r25 & 2) == 0) goto L_0x01df;
      */
-    /* JADX WARNING: Missing block: B:73:0x01dc, code:
+    /* JADX WARNING: Missing block: B:73:0x01dc, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:74:0x01df, code:
+    /* JADX WARNING: Missing block: B:74:0x01df, code skipped:
             r2 = false;
      */
-    /* JADX WARNING: Missing block: B:75:0x01e0, code:
+    /* JADX WARNING: Missing block: B:75:0x01e0, code skipped:
             r17 = r2;
      */
-    /* JADX WARNING: Missing block: B:76:0x01e2, code:
+    /* JADX WARNING: Missing block: B:76:0x01e2, code skipped:
             if (r15 == false) goto L_0x01e9;
      */
-    /* JADX WARNING: Missing block: B:77:0x01e4, code:
+    /* JADX WARNING: Missing block: B:77:0x01e4, code skipped:
             if (r17 == false) goto L_0x01e9;
      */
-    /* JADX WARNING: Missing block: B:78:0x01e6, code:
+    /* JADX WARNING: Missing block: B:78:0x01e6, code skipped:
             setDoNotAskCredentialsOnBoot();
      */
-    /* JADX WARNING: Missing block: B:79:0x01e9, code:
+    /* JADX WARNING: Missing block: B:79:0x01e9, code skipped:
             r8 = r1.mInjector.binderClearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:80:0x01f2, code:
+    /* JADX WARNING: Missing block: B:80:0x01f2, code skipped:
             if (r24 != null) goto L_0x020e;
      */
-    /* JADX WARNING: Missing block: B:83:0x01f8, code:
+    /* JADX WARNING: Missing block: B:83:0x01f8, code skipped:
             if (android.text.TextUtils.isEmpty(r21) != false) goto L_0x0200;
      */
-    /* JADX WARNING: Missing block: B:84:0x01fa, code:
+    /* JADX WARNING: Missing block: B:84:0x01fa, code skipped:
             r1.mLockPatternUtils.saveLockPassword(r10, null, r13, r12);
      */
-    /* JADX WARNING: Missing block: B:85:0x0200, code:
+    /* JADX WARNING: Missing block: B:85:0x0200, code skipped:
             r1.mLockPatternUtils.clearLock(null, r12);
      */
-    /* JADX WARNING: Missing block: B:86:0x0205, code:
+    /* JADX WARNING: Missing block: B:86:0x0205, code skipped:
             r2 = true;
             r0 = -1;
             r18 = r8;
      */
-    /* JADX WARNING: Missing block: B:87:0x020a, code:
+    /* JADX WARNING: Missing block: B:87:0x020a, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:88:0x020b, code:
+    /* JADX WARNING: Missing block: B:88:0x020b, code skipped:
             r5 = r8;
      */
-    /* JADX WARNING: Missing block: B:90:?, code:
+    /* JADX WARNING: Missing block: B:90:?, code skipped:
             r2 = r1.mLockPatternUtils;
      */
-    /* JADX WARNING: Missing block: B:91:0x0214, code:
+    /* JADX WARNING: Missing block: B:91:0x0214, code skipped:
             if (android.text.TextUtils.isEmpty(r21) == false) goto L_0x0218;
      */
-    /* JADX WARNING: Missing block: B:92:0x0216, code:
+    /* JADX WARNING: Missing block: B:92:0x0216, code skipped:
             r4 = -1;
      */
-    /* JADX WARNING: Missing block: B:93:0x0218, code:
+    /* JADX WARNING: Missing block: B:93:0x0218, code skipped:
             r4 = 2;
      */
-    /* JADX WARNING: Missing block: B:94:0x021a, code:
+    /* JADX WARNING: Missing block: B:94:0x021a, code skipped:
             r0 = -1;
             r18 = r8;
      */
-    /* JADX WARNING: Missing block: B:96:?, code:
+    /* JADX WARNING: Missing block: B:96:?, code skipped:
             r2 = r2.setLockCredentialWithToken(r10, r4, r13, r22, r24, r12);
      */
-    /* JADX WARNING: Missing block: B:98:0x022a, code:
+    /* JADX WARNING: Missing block: B:98:0x022a, code skipped:
             if ((r25 & 1) == 0) goto L_0x022d;
      */
-    /* JADX WARNING: Missing block: B:99:0x022d, code:
+    /* JADX WARNING: Missing block: B:99:0x022d, code skipped:
             r16 = false;
      */
-    /* JADX WARNING: Missing block: B:100:0x022f, code:
+    /* JADX WARNING: Missing block: B:100:0x022f, code skipped:
             r3 = r16;
      */
-    /* JADX WARNING: Missing block: B:101:0x0231, code:
+    /* JADX WARNING: Missing block: B:101:0x0231, code skipped:
             if (r3 == false) goto L_0x023e;
      */
-    /* JADX WARNING: Missing block: B:103:?, code:
+    /* JADX WARNING: Missing block: B:103:?, code skipped:
             r1.mLockPatternUtils.requireStrongAuth(2, r0);
      */
-    /* JADX WARNING: Missing block: B:104:0x023a, code:
+    /* JADX WARNING: Missing block: B:104:0x023a, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:105:0x023b, code:
+    /* JADX WARNING: Missing block: B:105:0x023b, code skipped:
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:107:?, code:
+    /* JADX WARNING: Missing block: B:107:?, code skipped:
             r4 = getLockObject();
      */
-    /* JADX WARNING: Missing block: B:108:0x0242, code:
+    /* JADX WARNING: Missing block: B:108:0x0242, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:109:0x0243, code:
+    /* JADX WARNING: Missing block: B:109:0x0243, code skipped:
             if (r3 == false) goto L_0x0247;
      */
-    /* JADX WARNING: Missing block: B:110:0x0245, code:
+    /* JADX WARNING: Missing block: B:110:0x0245, code skipped:
             r0 = r11;
      */
-    /* JADX WARNING: Missing block: B:113:0x0249, code:
+    /* JADX WARNING: Missing block: B:113:0x0249, code skipped:
             if (r14.mPasswordOwner == r0) goto L_0x0255;
      */
-    /* JADX WARNING: Missing block: B:115:?, code:
+    /* JADX WARNING: Missing block: B:115:?, code skipped:
             r14.mPasswordOwner = r0;
             saveSettingsLocked(r12);
      */
-    /* JADX WARNING: Missing block: B:116:0x0251, code:
+    /* JADX WARNING: Missing block: B:116:0x0251, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:117:0x0252, code:
+    /* JADX WARNING: Missing block: B:117:0x0252, code skipped:
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:119:?, code:
+    /* JADX WARNING: Missing block: B:119:?, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:120:0x0256, code:
+    /* JADX WARNING: Missing block: B:120:0x0256, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r18);
      */
-    /* JADX WARNING: Missing block: B:121:0x025f, code:
+    /* JADX WARNING: Missing block: B:121:0x025f, code skipped:
             return r2;
      */
-    /* JADX WARNING: Missing block: B:122:0x0260, code:
+    /* JADX WARNING: Missing block: B:122:0x0260, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:123:0x0261, code:
+    /* JADX WARNING: Missing block: B:123:0x0261, code skipped:
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:125:?, code:
+    /* JADX WARNING: Missing block: B:125:?, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:127:?, code:
+    /* JADX WARNING: Missing block: B:127:?, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:128:0x0265, code:
+    /* JADX WARNING: Missing block: B:128:0x0265, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:129:0x0267, code:
+    /* JADX WARNING: Missing block: B:129:0x0267, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:131:0x0269, code:
+    /* JADX WARNING: Missing block: B:131:0x0269, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:132:0x026a, code:
+    /* JADX WARNING: Missing block: B:132:0x026a, code skipped:
             r5 = r18;
      */
-    /* JADX WARNING: Missing block: B:133:0x026d, code:
+    /* JADX WARNING: Missing block: B:133:0x026d, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:134:0x026e, code:
+    /* JADX WARNING: Missing block: B:134:0x026e, code skipped:
             r5 = r8;
      */
-    /* JADX WARNING: Missing block: B:135:0x026f, code:
+    /* JADX WARNING: Missing block: B:135:0x026f, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r5);
      */
-    /* JADX WARNING: Missing block: B:136:0x0274, code:
+    /* JADX WARNING: Missing block: B:136:0x0274, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4863,10 +4852,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001b, code:
+    /* JADX WARNING: Missing block: B:11:0x001b, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:17:0x0032, code:
+    /* JADX WARNING: Missing block: B:19:0x0032, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4878,9 +4867,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         enforceFullCrossUsersPermission(userHandle);
         synchronized (getLockObject()) {
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
-                if (admin != null) {
-                    j = admin.maximumTimeToUnlock;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle, parent);
+                    if (admin != null) {
+                        j = admin.maximumTimeToUnlock;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 long timeMs = getMaximumTimeToLockPolicyFromAdmins(getActiveAdminsForLockscreenPoliciesLocked(userHandle, parent));
@@ -4923,7 +4915,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x001e, code:
+    /* JADX WARNING: Missing block: B:13:0x001e, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4935,9 +4927,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         synchronized (getLockObject()) {
             long j = 0;
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userId, parent);
-                if (admin != null) {
-                    j = admin.strongAuthUnlockTimeout;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userId, parent);
+                    if (admin != null) {
+                        j = admin.strongAuthUnlockTimeout;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 List<ActiveAdmin> admins = getActiveAdminsForLockscreenPoliciesLocked(userId, parent);
@@ -5323,22 +5318,22 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return attestationUtilsFlags;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:91:0x0139 A:{SYNTHETIC, Splitter: B:91:0x0139} */
-    /* JADX WARNING: Removed duplicated region for block: B:84:0x0130 A:{Splitter: B:25:0x0066, ExcHandler: all (r0_22 'th' java.lang.Throwable)} */
-    /* JADX WARNING: Removed duplicated region for block: B:91:0x0139 A:{SYNTHETIC, Splitter: B:91:0x0139} */
-    /* JADX WARNING: Removed duplicated region for block: B:91:0x0139 A:{SYNTHETIC, Splitter: B:91:0x0139} */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x0139 A:{SYNTHETIC, Splitter:B:91:0x0139} */
+    /* JADX WARNING: Removed duplicated region for block: B:84:0x0130 A:{ExcHandler: Throwable (r0_22 'th' java.lang.Throwable), Splitter:B:25:0x0066} */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x0139 A:{SYNTHETIC, Splitter:B:91:0x0139} */
+    /* JADX WARNING: Removed duplicated region for block: B:91:0x0139 A:{SYNTHETIC, Splitter:B:91:0x0139} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:82:0x012b, code:
+    /* JADX WARNING: Missing block: B:82:0x012b, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:83:0x012c, code:
+    /* JADX WARNING: Missing block: B:83:0x012c, code skipped:
             r19 = r4;
             r2 = null;
      */
-    /* JADX WARNING: Missing block: B:84:0x0130, code:
+    /* JADX WARNING: Missing block: B:84:0x0130, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:85:0x0131, code:
+    /* JADX WARNING: Missing block: B:85:0x0131, code skipped:
             r19 = r4;
             r14 = r0;
      */
@@ -5620,26 +5615,27 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         int userId = this.mInjector.userHandleGetCallingUserId();
         synchronized (getLockObject()) {
             getActiveAdminForCallerLocked(who, -1);
-            if (!shouldCheckIfDelegatePackageIsInstalled(delegatePackage, getTargetSdk(who.getPackageName(), userId), scopes2) || isPackageInstalledForUser(delegatePackage, userId)) {
-                DevicePolicyData policy = getUserData(userId);
-                if (scopes2.isEmpty()) {
-                    policy.mDelegationMap.remove(delegatePackage);
-                } else {
-                    policy.mDelegationMap.put(delegatePackage, new ArrayList(scopes2));
+            if (shouldCheckIfDelegatePackageIsInstalled(delegatePackage, getTargetSdk(who.getPackageName(), userId), scopes2)) {
+                if (!isPackageInstalledForUser(delegatePackage, userId)) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Package ");
+                    stringBuilder.append(delegatePackage);
+                    stringBuilder.append(" is not installed on the current user");
+                    throw new IllegalArgumentException(stringBuilder.toString());
                 }
-                Intent intent = new Intent("android.app.action.APPLICATION_DELEGATION_SCOPES_CHANGED");
-                intent.addFlags(1073741824);
-                intent.setPackage(delegatePackage);
-                intent.putStringArrayListExtra("android.app.extra.DELEGATION_SCOPES", scopes2);
-                this.mContext.sendBroadcastAsUser(intent, UserHandle.of(userId));
-                saveSettingsLocked(userId);
-            } else {
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Package ");
-                stringBuilder.append(delegatePackage);
-                stringBuilder.append(" is not installed on the current user");
-                throw new IllegalArgumentException(stringBuilder.toString());
             }
+            DevicePolicyData policy = getUserData(userId);
+            if (scopes2.isEmpty()) {
+                policy.mDelegationMap.remove(delegatePackage);
+            } else {
+                policy.mDelegationMap.put(delegatePackage, new ArrayList(scopes2));
+            }
+            Intent intent = new Intent("android.app.action.APPLICATION_DELEGATION_SCOPES_CHANGED");
+            intent.addFlags(1073741824);
+            intent.setPackage(delegatePackage);
+            intent.putStringArrayListExtra("android.app.extra.DELEGATION_SCOPES", scopes2);
+            this.mContext.sendBroadcastAsUser(intent, UserHandle.of(userId));
+            saveSettingsLocked(userId);
         }
     }
 
@@ -5864,6 +5860,9 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x006e A:{SYNTHETIC, Splitter:B:34:0x006e} */
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0025 A:{Catch:{ all -> 0x000f }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void wipeDataNoLock(ComponentName admin, int flags, String internalReason, String wipeReasonForUser, int userId) {
         String restriction;
         wtfIfInLock();
@@ -5878,8 +5877,31 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             restriction = "no_remove_managed_profile";
         } else {
             restriction = "no_remove_user";
-        }
-        if (isAdminAffectedByRestriction(admin, restriction, userId)) {
+            if (isAdminAffectedByRestriction(admin, restriction, userId)) {
+                monitorFactoryReset(admin.flattenToShortString(), internalReason);
+                if ((flags & 2) != 0) {
+                    if (isDeviceOwner(admin, userId)) {
+                        PersistentDataBlockManager manager = (PersistentDataBlockManager) this.mContext.getSystemService("persistent_data_block");
+                        if (manager != null) {
+                            manager.wipe();
+                        }
+                    } else {
+                        throw new SecurityException("Only device owner admins can set WIPE_RESET_PROTECTION_DATA");
+                    }
+                }
+                if (userId == 0) {
+                    boolean z = false;
+                    boolean z2 = (flags & 1) != 0;
+                    if ((flags & 4) != 0) {
+                        z = true;
+                    }
+                    forceWipeDeviceNoLock(z2, internalReason, z);
+                } else {
+                    forceWipeUser(userId, wipeReasonForUser);
+                }
+                this.mInjector.binderRestoreCallingIdentity(ident);
+                return;
+            }
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Cannot wipe data. ");
             stringBuilder.append(restriction);
@@ -5887,32 +5909,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             stringBuilder.append(userId);
             throw new SecurityException(stringBuilder.toString());
         }
-        monitorFactoryReset(admin.flattenToShortString(), internalReason);
-        if ((flags & 2) != 0) {
-            if (isDeviceOwner(admin, userId)) {
-                PersistentDataBlockManager manager = (PersistentDataBlockManager) this.mContext.getSystemService("persistent_data_block");
-                if (manager != null) {
-                    manager.wipe();
-                }
-            } else {
-                throw new SecurityException("Only device owner admins can set WIPE_RESET_PROTECTION_DATA");
-            }
+        if (isAdminAffectedByRestriction(admin, restriction, userId)) {
         }
-        if (userId == 0) {
-            boolean z = false;
-            boolean z2 = (flags & 1) != 0;
-            if ((flags & 4) != 0) {
-                z = true;
-            }
-            forceWipeDeviceNoLock(z2, internalReason, z);
-        } else {
-            forceWipeUser(userId, wipeReasonForUser);
-        }
-        this.mInjector.binderRestoreCallingIdentity(ident);
     }
 
     private void sendWipeProfileNotification(String wipeReasonForUser) {
-        this.mInjector.getNotificationManager().notify(NetworkAgentInfo.EVENT_NETWORK_LINGER_COMPLETE, new Notification.Builder(this.mContext, SystemNotificationChannels.DEVICE_ADMIN).setSmallIcon(17301642).setContentTitle(this.mContext.getString(17041423)).setContentText(wipeReasonForUser).setColor(this.mContext.getColor(17170784)).setStyle(new BigTextStyle().bigText(wipeReasonForUser)).build());
+        this.mInjector.getNotificationManager().notify(NetworkAgentInfo.EVENT_NETWORK_LINGER_COMPLETE, new Notification.Builder(this.mContext, SystemNotificationChannels.DEVICE_ADMIN).setSmallIcon(17301642).setContentTitle(this.mContext.getString(17041424)).setContentText(wipeReasonForUser).setColor(this.mContext.getColor(17170784)).setStyle(new BigTextStyle().bigText(wipeReasonForUser)).build());
     }
 
     private void clearWipeProfileNotification() {
@@ -6090,7 +6092,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 String reason = stringBuilder3.toString();
                 monitorFactoryReset(strictestAdmin2.info.getComponent().flattenToShortString(), reason);
                 try {
-                    String wipeReasonForUser = this.mContext.getString(17041427);
+                    String wipeReasonForUser = this.mContext.getString(17041428);
                     boolean isCustWipeData = false;
                     if (i2 == 0 && mHwCustRecoverySystem != null) {
                         try {
@@ -6207,10 +6209,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x008c, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public ComponentName setGlobalProxy(ComponentName who, String proxySpec, String exclusionList) {
         if (!this.mHasFeature) {
             return null;
@@ -6245,6 +6243,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             long origId = this.mInjector.binderClearCallingIdentity();
             try {
                 resetGlobalProxyLocked(policy);
+                return null;
             } finally {
                 this.mInjector.binderRestoreCallingIdentity(origId);
             }
@@ -6326,7 +6325,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         Slog.e(str, stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0074, code:
+    /* JADX WARNING: Missing block: B:27:0x0074, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6339,39 +6338,43 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         int userHandle = UserHandle.getCallingUserId();
         synchronized (getLockObject()) {
             if (userHandle != 0) {
-                String str = LOG_TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Only owner/system user is allowed to set storage encryption. User ");
-                stringBuilder.append(UserHandle.getCallingUserId());
-                stringBuilder.append(" is not permitted.");
-                Slog.w(str, stringBuilder.toString());
-                return 0;
-            }
-            ActiveAdmin ap = getActiveAdminForCallerLocked(who, 7);
-            if (isEncryptionSupported()) {
-                if (ap.encryptionRequested != encrypt) {
-                    ap.encryptionRequested = encrypt;
-                    saveSettingsLocked(userHandle);
-                }
-                DevicePolicyData policy = getUserData(0);
-                boolean newRequested = false;
-                while (i < policy.mAdminList.size()) {
-                    newRequested |= ((ActiveAdmin) policy.mAdminList.get(i)).encryptionRequested;
-                    i++;
-                }
-                setEncryptionRequested(newRequested);
-                if (newRequested) {
-                    i = 3;
-                } else {
-                    i = 1;
+                try {
+                    String str = LOG_TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Only owner/system user is allowed to set storage encryption. User ");
+                    stringBuilder.append(UserHandle.getCallingUserId());
+                    stringBuilder.append(" is not permitted.");
+                    Slog.w(str, stringBuilder.toString());
+                    return 0;
+                } catch (Throwable th) {
                 }
             } else {
-                return 0;
+                ActiveAdmin ap = getActiveAdminForCallerLocked(who, 7);
+                if (isEncryptionSupported()) {
+                    if (ap.encryptionRequested != encrypt) {
+                        ap.encryptionRequested = encrypt;
+                        saveSettingsLocked(userHandle);
+                    }
+                    DevicePolicyData policy = getUserData(0);
+                    boolean newRequested = false;
+                    while (i < policy.mAdminList.size()) {
+                        newRequested |= ((ActiveAdmin) policy.mAdminList.get(i)).encryptionRequested;
+                        i++;
+                    }
+                    setEncryptionRequested(newRequested);
+                    if (newRequested) {
+                        i = 3;
+                    } else {
+                        i = 1;
+                    }
+                } else {
+                    return 0;
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001a, code:
+    /* JADX WARNING: Missing block: B:11:0x001a, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6383,9 +6386,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         enforceFullCrossUsersPermission(userHandle);
         synchronized (getLockObject()) {
             if (who != null) {
-                ActiveAdmin ap = getActiveAdminUncheckedLocked(who, userHandle);
-                if (ap != null) {
-                    z = ap.encryptionRequested;
+                try {
+                    ActiveAdmin ap = getActiveAdminUncheckedLocked(who, userHandle);
+                    if (ap != null) {
+                        z = ap.encryptionRequested;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -6461,7 +6467,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0017, code:
+    /* JADX WARNING: Missing block: B:11:0x0017, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6472,9 +6478,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
         synchronized (getLockObject()) {
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableScreenCapture;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableScreenCapture;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 DevicePolicyData policy = getUserData(userHandle);
@@ -6812,7 +6821,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return getCameraDisabled(who, userHandle, true);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0017, code:
+    /* JADX WARNING: Missing block: B:11:0x0017, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6823,9 +6832,12 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
         synchronized (getLockObject()) {
             if (who != null) {
-                ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
-                if (admin != null) {
-                    z = admin.disableCamera;
+                try {
+                    ActiveAdmin admin = getActiveAdminUncheckedLocked(who, userHandle);
+                    if (admin != null) {
+                        z = admin.disableCamera;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 if (mergeDeviceOwnerRestriction) {
@@ -6879,10 +6891,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:24:0x0044 A:{Catch:{ all -> 0x0077 }} */
-    /* JADX WARNING: Missing block: B:13:0x0020, code:
+    /* JADX WARNING: Missing block: B:13:0x0020, code skipped:
             r12.mInjector.binderRestoreCallingIdentity(r2);
      */
-    /* JADX WARNING: Missing block: B:14:0x0025, code:
+    /* JADX WARNING: Missing block: B:14:0x0025, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -6911,16 +6923,15 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                             N = admins.size();
                             which = 0;
                             for (i2 = 0; i2 < N; i2++) {
-                                int i3;
                                 ActiveAdmin admin2 = (ActiveAdmin) admins.get(i2);
                                 int userId = admin2.getUserHandle().getIdentifier();
                                 boolean isRequestedUser = !parent && userId == userHandle;
-                                if (isRequestedUser || !isManagedProfile(userId)) {
-                                    i3 = admin2.disabledKeyguardFeatures;
-                                } else {
-                                    i3 = admin2.disabledKeyguardFeatures & 432;
+                                if (!isRequestedUser) {
+                                    if (isManagedProfile(userId)) {
+                                        which |= admin2.disabledKeyguardFeatures & 432;
+                                    }
                                 }
-                                which |= i3;
+                                which |= admin2.disabledKeyguardFeatures;
                             }
                             this.mInjector.binderRestoreCallingIdentity(ident);
                             return which;
@@ -6957,7 +6968,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         if (!this.mHasFeature) {
             return null;
         }
-        List<String> keepUninstalledPackagesLocked;
+        List keepUninstalledPackagesLocked;
         synchronized (getLockObject()) {
             enforceCanManageScope(who, callerPackage, -2, "delegation-keep-uninstalled-packages");
             keepUninstalledPackagesLocked = getKeepUninstalledPackagesLocked();
@@ -7161,9 +7172,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 stringBuilder.append(",mIsMDMDeviceOwnerAPI=");
                 stringBuilder.append(this.mIsMDMDeviceOwnerAPI);
                 Slog.w(str, stringBuilder.toString());
-                if (uid == callingUid || this.mIsMDMDeviceOwnerAPI) {
-                } else {
-                    throw new SecurityException("Invalid packageName");
+                if (uid != callingUid) {
+                    if (!this.mIsMDMDeviceOwnerAPI) {
+                        throw new SecurityException("Invalid packageName");
+                    }
                 }
             }
             synchronized (getLockObject()) {
@@ -7457,10 +7469,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         throw new IllegalStateException(stringBuilder.toString());
     }
 
-    /* JADX WARNING: Missing block: B:17:0x006a, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void setProfileEnabled(ComponentName who) {
         if (this.mHasFeature) {
             Preconditions.checkNotNull(who, "ComponentName is null");
@@ -7967,10 +7975,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0047, code:
+    /* JADX WARNING: Missing block: B:21:0x0047, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:47:0x00c6, code:
+    /* JADX WARNING: Missing block: B:48:0x00c6, code skipped:
             return r16;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -7991,48 +7999,50 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                     return null;
                 }
                 TrustAgentInfo trustAgentInfo = (TrustAgentInfo) ap.trustAgentInfos.get(componentName2);
-                if (trustAgentInfo == null || trustAgentInfo.options == null) {
-                } else {
-                    List<PersistableBundle> result = new ArrayList();
-                    result.add(trustAgentInfo.options);
-                    return result;
-                }
-            }
-            List<ActiveAdmin> admins = getActiveAdminsForLockscreenPoliciesLocked(i, z);
-            boolean allAdminsHaveOptions = true;
-            int N = admins.size();
-            List<PersistableBundle> result2 = null;
-            int i2 = 0;
-            while (i2 < N) {
-                String componentName3;
-                ActiveAdmin active = (ActiveAdmin) admins.get(i2);
-                boolean disablesTrust = (active.disabledKeyguardFeatures & 16) != 0;
-                TrustAgentInfo info = (TrustAgentInfo) active.trustAgentInfos.get(componentName2);
-                if (info == null || info.options == null || info.options.isEmpty()) {
-                    componentName3 = componentName2;
-                    if (disablesTrust) {
-                        allAdminsHaveOptions = false;
-                        break;
+                if (trustAgentInfo != null) {
+                    if (trustAgentInfo.options != null) {
+                        List<PersistableBundle> result = new ArrayList();
+                        result.add(trustAgentInfo.options);
+                        return result;
                     }
-                } else if (disablesTrust) {
-                    if (result2 == null) {
-                        result2 = new ArrayList();
-                    }
-                    result2.add(info.options);
-                    componentName3 = componentName2;
-                } else {
-                    String str = LOG_TAG;
-                    componentName3 = componentName2;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Ignoring admin ");
-                    stringBuilder.append(active.info);
-                    stringBuilder.append(" because it has trust options but doesn't declare KEYGUARD_DISABLE_TRUST_AGENTS");
-                    Log.w(str, stringBuilder.toString());
                 }
-                i2++;
-                componentName2 = componentName3;
+            } else {
+                List<ActiveAdmin> admins = getActiveAdminsForLockscreenPoliciesLocked(i, z);
+                boolean allAdminsHaveOptions = true;
+                int N = admins.size();
+                List<PersistableBundle> result2 = null;
+                int i2 = 0;
+                while (i2 < N) {
+                    String componentName3;
+                    ActiveAdmin active = (ActiveAdmin) admins.get(i2);
+                    boolean disablesTrust = (active.disabledKeyguardFeatures & 16) != 0;
+                    TrustAgentInfo info = (TrustAgentInfo) active.trustAgentInfos.get(componentName2);
+                    if (info == null || info.options == null || info.options.isEmpty()) {
+                        componentName3 = componentName2;
+                        if (disablesTrust) {
+                            allAdminsHaveOptions = false;
+                            break;
+                        }
+                    } else if (disablesTrust) {
+                        if (result2 == null) {
+                            result2 = new ArrayList();
+                        }
+                        result2.add(info.options);
+                        componentName3 = componentName2;
+                    } else {
+                        String str = LOG_TAG;
+                        componentName3 = componentName2;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Ignoring admin ");
+                        stringBuilder.append(active.info);
+                        stringBuilder.append(" because it has trust options but doesn't declare KEYGUARD_DISABLE_TRUST_AGENTS");
+                        Log.w(str, stringBuilder.toString());
+                    }
+                    i2++;
+                    componentName2 = componentName3;
+                }
+                List<PersistableBundle> list = allAdminsHaveOptions ? result2 : null;
             }
-            List<PersistableBundle> list = allAdminsHaveOptions ? result2 : null;
         }
     }
 
@@ -8440,7 +8450,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         if (!this.mHasFeature) {
             return null;
         }
-        List<String> list;
+        List list;
         Preconditions.checkNotNull(who, "ComponentName is null");
         synchronized (getLockObject()) {
             list = getActiveAdminForCallerLocked(who, -1).permittedNotificationListeners;
@@ -8448,7 +8458,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return list;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002f, code:
+    /* JADX WARNING: Missing block: B:17:0x002f, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8460,14 +8470,16 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         if (isCallerWithSystemUid()) {
             synchronized (getLockObject()) {
                 ActiveAdmin profileOwner = getProfileOwnerAdminLocked(userId);
-                if (profileOwner == null || profileOwner.permittedNotificationListeners == null) {
-                } else {
-                    boolean checkPackagesInPermittedListOrSystem = checkPackagesInPermittedListOrSystem(Collections.singletonList(packageName), profileOwner.permittedNotificationListeners, userId);
-                    return checkPackagesInPermittedListOrSystem;
+                if (profileOwner != null) {
+                    if (profileOwner.permittedNotificationListeners != null) {
+                        boolean checkPackagesInPermittedListOrSystem = checkPackagesInPermittedListOrSystem(Collections.singletonList(packageName), profileOwner.permittedNotificationListeners, userId);
+                        return checkPackagesInPermittedListOrSystem;
+                    }
                 }
             }
+        } else {
+            throw new SecurityException("Only the system can query if a notification listener service is permitted");
         }
-        throw new SecurityException("Only the system can query if a notification listener service is permitted");
     }
 
     private void maybeSendAdminEnabledBroadcastLocked(int userHandle) {
@@ -8487,69 +8499,69 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:79:0x0114, code:
+    /* JADX WARNING: Missing block: B:79:0x0114, code skipped:
             if (r9 != null) goto L_0x0124;
      */
-    /* JADX WARNING: Missing block: B:81:0x0118, code:
+    /* JADX WARNING: Missing block: B:81:0x0118, code skipped:
             if (r4 >= 28) goto L_0x011b;
      */
-    /* JADX WARNING: Missing block: B:82:0x011a, code:
+    /* JADX WARNING: Missing block: B:82:0x011a, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:84:0x0123, code:
+    /* JADX WARNING: Missing block: B:84:0x0123, code skipped:
             throw new android.os.ServiceSpecificException(1, "failed to create user");
      */
-    /* JADX WARNING: Missing block: B:85:0x0124, code:
+    /* JADX WARNING: Missing block: B:85:0x0124, code skipped:
             r5 = r9.getIdentifier();
             r1.mContext.sendBroadcastAsUser(new android.content.Intent("android.app.action.MANAGED_USER_CREATED").putExtra("android.intent.extra.user_handle", r5).putExtra("android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED", r8).setPackage(getManagedProvisioningPackage(r1.mContext)).addFlags(268435456), android.os.UserHandle.SYSTEM);
             r11 = r1.mInjector.binderClearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:88:0x015c, code:
+    /* JADX WARNING: Missing block: B:88:0x015c, code skipped:
             r13 = r22.getPackageName();
      */
-    /* JADX WARNING: Missing block: B:91:0x0163, code:
+    /* JADX WARNING: Missing block: B:91:0x0163, code skipped:
             if (r1.mIPackageManager.isPackageAvailable(r13, r5) != false) goto L_0x016e;
      */
-    /* JADX WARNING: Missing block: B:92:0x0165, code:
+    /* JADX WARNING: Missing block: B:92:0x0165, code skipped:
             r1.mIPackageManager.installExistingPackageAsUser(r13, r5, 0, 1);
      */
-    /* JADX WARNING: Missing block: B:105:0x019a, code:
+    /* JADX WARNING: Missing block: B:105:0x019a, code skipped:
             if ((r26 & 1) == 0) goto L_0x01a9;
      */
-    /* JADX WARNING: Missing block: B:107:?, code:
+    /* JADX WARNING: Missing block: B:107:?, code skipped:
             android.provider.Settings.Secure.putIntForUser(r1.mContext.getContentResolver(), "user_setup_complete", 1, r5);
      */
-    /* JADX WARNING: Missing block: B:108:0x01a9, code:
+    /* JADX WARNING: Missing block: B:108:0x01a9, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r11);
      */
-    /* JADX WARNING: Missing block: B:109:0x01af, code:
+    /* JADX WARNING: Missing block: B:109:0x01af, code skipped:
             return r9;
      */
-    /* JADX WARNING: Missing block: B:117:0x01b7, code:
+    /* JADX WARNING: Missing block: B:117:0x01b7, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:118:0x01b9, code:
+    /* JADX WARNING: Missing block: B:118:0x01b9, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:120:?, code:
+    /* JADX WARNING: Missing block: B:120:?, code skipped:
             r1.mUserManager.removeUser(r5);
      */
-    /* JADX WARNING: Missing block: B:122:0x01c1, code:
+    /* JADX WARNING: Missing block: B:122:0x01c1, code skipped:
             if (r4 < 28) goto L_0x01c3;
      */
-    /* JADX WARNING: Missing block: B:123:0x01c3, code:
+    /* JADX WARNING: Missing block: B:123:0x01c3, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r11);
      */
-    /* JADX WARNING: Missing block: B:124:0x01c9, code:
+    /* JADX WARNING: Missing block: B:124:0x01c9, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:127:0x01d4, code:
+    /* JADX WARNING: Missing block: B:127:0x01d4, code skipped:
             throw new android.os.ServiceSpecificException(1, r0.getMessage());
      */
-    /* JADX WARNING: Missing block: B:128:0x01d5, code:
+    /* JADX WARNING: Missing block: B:128:0x01d5, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r11);
      */
-    /* JADX WARNING: Missing block: B:129:0x01da, code:
+    /* JADX WARNING: Missing block: B:129:0x01da, code skipped:
             throw r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -8750,16 +8762,16 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             return false;
         }
         if (userRestrictionSource == 2) {
-            return isDeviceOwner(admin, userId) ^ true;
+            return isDeviceOwner(admin, userId) ^ 1;
         }
         if (userRestrictionSource != 4) {
             return true;
         }
-        return isProfileOwner(admin, userId) ^ true;
+        return isProfileOwner(admin, userId) ^ 1;
     }
 
     public boolean switchUser(ComponentName who, UserHandle userHandle) {
-        boolean z;
+        boolean switchUser;
         Preconditions.checkNotNull(who, "ComponentName is null");
         synchronized (getLockObject()) {
             getActiveAdminForCallerLocked(who, -2);
@@ -8771,18 +8783,17 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 } catch (RemoteException e2) {
                     try {
                         Log.e(LOG_TAG, "Couldn't switch user", e2);
-                        z = false;
-                    } finally {
-                        z = this.mInjector;
-                        z.binderRestoreCallingIdentity(id);
+                        this.mInjector.binderRestoreCallingIdentity(id);
+                        return false;
+                    } catch (Throwable th) {
+                        this.mInjector.binderRestoreCallingIdentity(id);
                     }
-                    return z;
                 }
             }
-            z = this.mInjector.getIActivityManager().switchUser(e2);
+            switchUser = this.mInjector.getIActivityManager().switchUser(e2);
             this.mInjector.binderRestoreCallingIdentity(id);
         }
-        return z;
+        return switchUser;
     }
 
     public int startUserInBackground(ComponentName who, UserHandle userHandle) {
@@ -9127,23 +9138,23 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
 
     public void enableSystemApp(ComponentName who, String callerPackage, String packageName) {
         synchronized (getLockObject()) {
+            Injector re;
             enforceCanManageScope(who, callerPackage, -1, "delegation-enable-system-app");
             boolean isDemo = isCurrentUserDemo();
             int userId = UserHandle.getCallingUserId();
             long id = this.mInjector.binderClearCallingIdentity();
-            Injector re;
             try {
                 int parentUserId = getProfileParentId(userId);
-                if (isDemo || isSystemApp(this.mIPackageManager, packageName, parentUserId)) {
-                    this.mIPackageManager.installExistingPackageAsUser(packageName, userId, 0, 1);
-                    if (isDemo) {
-                        this.mIPackageManager.setApplicationEnabledSetting(packageName, 1, 1, userId, LOG_TAG);
+                if (!isDemo) {
+                    if (!isSystemApp(this.mIPackageManager, packageName, parentUserId)) {
+                        throw new IllegalArgumentException("Only system apps can be enabled this way.");
                     }
-                    re = this.mInjector;
-                    re.binderRestoreCallingIdentity(id);
-                } else {
-                    throw new IllegalArgumentException("Only system apps can be enabled this way.");
                 }
+                this.mIPackageManager.installExistingPackageAsUser(packageName, userId, 0, 1);
+                if (isDemo) {
+                    this.mIPackageManager.setApplicationEnabledSetting(packageName, 1, 1, userId, LOG_TAG);
+                }
+                re = this.mInjector;
             } catch (RemoteException re2) {
                 try {
                     String str = LOG_TAG;
@@ -9156,6 +9167,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                     this.mInjector.binderRestoreCallingIdentity(id);
                 }
             }
+            re.binderRestoreCallingIdentity(id);
         }
     }
 
@@ -9327,18 +9339,18 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         int userId = UserHandle.getCallingUserId();
         synchronized (getLockObject()) {
             if (who != null) {
-                getActiveAdminForCallerLocked(who, -1);
+                try {
+                    getActiveAdminForCallerLocked(who, -1);
+                } catch (Throwable th) {
+                }
             }
             long id = this.mInjector.binderClearCallingIdentity();
             try {
                 blockUninstallForUser = this.mIPackageManager.getBlockUninstallForUser(packageName, userId);
                 this.mInjector.binderRestoreCallingIdentity(id);
             } catch (RemoteException re) {
-                try {
-                    Slog.e(LOG_TAG, "Failed to getBlockUninstallForUser", re);
-                } finally {
-                    this.mInjector.binderRestoreCallingIdentity(id);
-                }
+                Slog.e(LOG_TAG, "Failed to getBlockUninstallForUser", re);
+                this.mInjector.binderRestoreCallingIdentity(id);
                 return false;
             }
         }
@@ -9622,10 +9634,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         throw new SecurityException("notifyLockTaskModeChanged can only be called by system");
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0087, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void setGlobalSetting(ComponentName who, String setting, String value) {
         Preconditions.checkNotNull(who, "ComponentName is null");
         synchronized (getLockObject()) {
@@ -9636,22 +9644,25 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 stringBuilder.append("Global setting no longer supported: ");
                 stringBuilder.append(setting);
                 Log.i(str, stringBuilder.toString());
-            } else if (GLOBAL_SETTINGS_WHITELIST.contains(setting) || UserManager.isDeviceInDemoMode(this.mContext)) {
-                long timeMs;
-                if ("stay_on_while_plugged_in".equals(setting)) {
-                    timeMs = getMaximumTimeToLock(who, this.mInjector.userHandleGetCallingUserId(), false);
-                    if (timeMs > 0 && timeMs < JobStatus.NO_LATEST_RUNTIME) {
-                        return;
-                    }
+                return;
+            }
+            long timeMs;
+            if (!GLOBAL_SETTINGS_WHITELIST.contains(setting)) {
+                if (!UserManager.isDeviceInDemoMode(this.mContext)) {
+                    throw new SecurityException(String.format("Permission denial: device owners cannot update %1$s", new Object[]{setting}));
                 }
-                timeMs = this.mInjector.binderClearCallingIdentity();
-                try {
-                    this.mInjector.settingsGlobalPutString(setting, value);
-                } finally {
-                    this.mInjector.binderRestoreCallingIdentity(timeMs);
+            }
+            if ("stay_on_while_plugged_in".equals(setting)) {
+                timeMs = getMaximumTimeToLock(who, this.mInjector.userHandleGetCallingUserId(), false);
+                if (timeMs > 0 && timeMs < JobStatus.NO_LATEST_RUNTIME) {
+                    return;
                 }
-            } else {
-                throw new SecurityException(String.format("Permission denial: device owners cannot update %1$s", new Object[]{setting}));
+            }
+            timeMs = this.mInjector.binderClearCallingIdentity();
+            try {
+                this.mInjector.settingsGlobalPutString(setting, value);
+            } finally {
+                this.mInjector.binderRestoreCallingIdentity(timeMs);
             }
         }
     }
@@ -9689,171 +9700,69 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return true;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.devicepolicy.DevicePolicyManagerService.setSecureSetting(android.content.ComponentName, java.lang.String, java.lang.String):void, dom blocks: [B:25:0x009d, B:38:0x00dc]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void setSecureSetting(android.content.ComponentName r8, java.lang.String r9, java.lang.String r10) {
-        /*
-        r7 = this;
-        r0 = "ComponentName is null";
-        com.android.internal.util.Preconditions.checkNotNull(r8, r0);
-        r0 = r7.mInjector;
-        r0 = r0.userHandleGetCallingUserId();
-        r1 = r7.getLockObject();
-        monitor-enter(r1);
-        r2 = -1;
-        r7.getActiveAdminForCallerLocked(r8, r2);	 Catch:{ all -> 0x0114 }
-        r2 = r7.isDeviceOwner(r8, r0);	 Catch:{ all -> 0x0114 }
-        r3 = 0;	 Catch:{ all -> 0x0114 }
-        r4 = 1;	 Catch:{ all -> 0x0114 }
-        if (r2 == 0) goto L_0x003b;	 Catch:{ all -> 0x0114 }
-    L_0x001c:
-        r2 = SECURE_SETTINGS_DEVICEOWNER_WHITELIST;	 Catch:{ all -> 0x0114 }
-        r2 = r2.contains(r9);	 Catch:{ all -> 0x0114 }
-        if (r2 != 0) goto L_0x005a;	 Catch:{ all -> 0x0114 }
-    L_0x0024:
-        r2 = r7.isCurrentUserDemo();	 Catch:{ all -> 0x0114 }
-        if (r2 == 0) goto L_0x002b;	 Catch:{ all -> 0x0114 }
-    L_0x002a:
-        goto L_0x005a;	 Catch:{ all -> 0x0114 }
-    L_0x002b:
-        r2 = new java.lang.SecurityException;	 Catch:{ all -> 0x0114 }
-        r5 = "Permission denial: Device owners cannot update %1$s";	 Catch:{ all -> 0x0114 }
-        r4 = new java.lang.Object[r4];	 Catch:{ all -> 0x0114 }
-        r4[r3] = r9;	 Catch:{ all -> 0x0114 }
-        r3 = java.lang.String.format(r5, r4);	 Catch:{ all -> 0x0114 }
-        r2.<init>(r3);	 Catch:{ all -> 0x0114 }
-        throw r2;	 Catch:{ all -> 0x0114 }
-    L_0x003b:
-        r2 = SECURE_SETTINGS_WHITELIST;	 Catch:{ all -> 0x0114 }
-        r2 = r2.contains(r9);	 Catch:{ all -> 0x0114 }
-        if (r2 != 0) goto L_0x005a;	 Catch:{ all -> 0x0114 }
-    L_0x0043:
-        r2 = r7.isCurrentUserDemo();	 Catch:{ all -> 0x0114 }
-        if (r2 == 0) goto L_0x004a;	 Catch:{ all -> 0x0114 }
-    L_0x0049:
-        goto L_0x005a;	 Catch:{ all -> 0x0114 }
-    L_0x004a:
-        r2 = new java.lang.SecurityException;	 Catch:{ all -> 0x0114 }
-        r5 = "Permission denial: Profile owners cannot update %1$s";	 Catch:{ all -> 0x0114 }
-        r4 = new java.lang.Object[r4];	 Catch:{ all -> 0x0114 }
-        r4[r3] = r9;	 Catch:{ all -> 0x0114 }
-        r3 = java.lang.String.format(r5, r4);	 Catch:{ all -> 0x0114 }
-        r2.<init>(r3);	 Catch:{ all -> 0x0114 }
-        throw r2;	 Catch:{ all -> 0x0114 }
-    L_0x005a:
-        r2 = "install_non_market_apps";	 Catch:{ all -> 0x0114 }
-        r2 = r9.equals(r2);	 Catch:{ all -> 0x0114 }
-        if (r2 == 0) goto L_0x00d6;	 Catch:{ all -> 0x0114 }
-    L_0x0062:
-        r2 = r8.getPackageName();	 Catch:{ all -> 0x0114 }
-        r2 = r7.getTargetSdk(r2, r0);	 Catch:{ all -> 0x0114 }
-        r5 = 26;	 Catch:{ all -> 0x0114 }
-        if (r2 >= r5) goto L_0x00ce;	 Catch:{ all -> 0x0114 }
-    L_0x006e:
-        r2 = r7.mUserManager;	 Catch:{ all -> 0x0114 }
-        r2 = r2.isManagedProfile(r0);	 Catch:{ all -> 0x0114 }
-        if (r2 != 0) goto L_0x009d;	 Catch:{ all -> 0x0114 }
-    L_0x0076:
-        r2 = "DevicePolicyManager";	 Catch:{ all -> 0x0114 }
-        r3 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0114 }
-        r3.<init>();	 Catch:{ all -> 0x0114 }
-        r4 = "Ignoring setSecureSetting request for ";	 Catch:{ all -> 0x0114 }
-        r3.append(r4);	 Catch:{ all -> 0x0114 }
-        r3.append(r9);	 Catch:{ all -> 0x0114 }
-        r4 = ". User restriction ";	 Catch:{ all -> 0x0114 }
-        r3.append(r4);	 Catch:{ all -> 0x0114 }
-        r4 = "no_install_unknown_sources";	 Catch:{ all -> 0x0114 }
-        r3.append(r4);	 Catch:{ all -> 0x0114 }
-        r4 = " should be used instead.";	 Catch:{ all -> 0x0114 }
-        r3.append(r4);	 Catch:{ all -> 0x0114 }
-        r3 = r3.toString();	 Catch:{ all -> 0x0114 }
-        android.util.Slog.e(r2, r3);	 Catch:{ all -> 0x0114 }
-        goto L_0x00cc;
-    L_0x009d:
-        r2 = "no_install_unknown_sources";	 Catch:{ NumberFormatException -> 0x00ad }
-        r5 = java.lang.Integer.parseInt(r10);	 Catch:{ NumberFormatException -> 0x00ad }
-        if (r5 != 0) goto L_0x00a8;	 Catch:{ NumberFormatException -> 0x00ad }
-    L_0x00a6:
-        r3 = r4;	 Catch:{ NumberFormatException -> 0x00ad }
-        goto L_0x00a9;	 Catch:{ NumberFormatException -> 0x00ad }
-    L_0x00a9:
-        r7.setUserRestriction(r8, r2, r3);	 Catch:{ NumberFormatException -> 0x00ad }
-        goto L_0x00cc;
-    L_0x00ad:
-        r2 = move-exception;
-        r3 = "DevicePolicyManager";	 Catch:{ all -> 0x0114 }
-        r4 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0114 }
-        r4.<init>();	 Catch:{ all -> 0x0114 }
-        r5 = "Invalid value: ";	 Catch:{ all -> 0x0114 }
-        r4.append(r5);	 Catch:{ all -> 0x0114 }
-        r4.append(r10);	 Catch:{ all -> 0x0114 }
-        r5 = " for setting ";	 Catch:{ all -> 0x0114 }
-        r4.append(r5);	 Catch:{ all -> 0x0114 }
-        r4.append(r9);	 Catch:{ all -> 0x0114 }
-        r4 = r4.toString();	 Catch:{ all -> 0x0114 }
-        android.util.Slog.e(r3, r4);	 Catch:{ all -> 0x0114 }
-    L_0x00cc:
-        monitor-exit(r1);	 Catch:{ all -> 0x0114 }
-        return;	 Catch:{ all -> 0x0114 }
-    L_0x00ce:
-        r2 = new java.lang.UnsupportedOperationException;	 Catch:{ all -> 0x0114 }
-        r3 = "install_non_market_apps is deprecated. Please use the user restriction no_install_unknown_sources instead.";	 Catch:{ all -> 0x0114 }
-        r2.<init>(r3);	 Catch:{ all -> 0x0114 }
-        throw r2;	 Catch:{ all -> 0x0114 }
-    L_0x00d6:
-        r2 = r7.mInjector;	 Catch:{ all -> 0x0114 }
-        r2 = r2.binderClearCallingIdentity();	 Catch:{ all -> 0x0114 }
-        r5 = "default_input_method";	 Catch:{ all -> 0x010d }
-        r5 = r5.equals(r9);	 Catch:{ all -> 0x010d }
-        if (r5 == 0) goto L_0x0100;	 Catch:{ all -> 0x010d }
-    L_0x00e4:
-        r5 = r7.mInjector;	 Catch:{ all -> 0x010d }
-        r6 = "default_input_method";	 Catch:{ all -> 0x010d }
-        r5 = r5.settingsSecureGetStringForUser(r6, r0);	 Catch:{ all -> 0x010d }
-        r6 = android.text.TextUtils.equals(r5, r10);	 Catch:{ all -> 0x010d }
-        if (r6 != 0) goto L_0x00f7;	 Catch:{ all -> 0x010d }
-    L_0x00f2:
-        r6 = r7.mSetupContentObserver;	 Catch:{ all -> 0x010d }
-        r6.addPendingChangeByOwnerLocked(r0);	 Catch:{ all -> 0x010d }
-    L_0x00f7:
-        r6 = r7.getUserData(r0);	 Catch:{ all -> 0x010d }
-        r6.mCurrentInputMethodSet = r4;	 Catch:{ all -> 0x010d }
-        r7.saveSettingsLocked(r0);	 Catch:{ all -> 0x010d }
-    L_0x0100:
-        r4 = r7.mInjector;	 Catch:{ all -> 0x010d }
-        r4.settingsSecurePutStringForUser(r9, r10, r0);	 Catch:{ all -> 0x010d }
-        r4 = r7.mInjector;	 Catch:{ all -> 0x0114 }
-        r4.binderRestoreCallingIdentity(r2);	 Catch:{ all -> 0x0114 }
-        monitor-exit(r1);	 Catch:{ all -> 0x0114 }
-        return;	 Catch:{ all -> 0x0114 }
-    L_0x010d:
-        r4 = move-exception;	 Catch:{ all -> 0x0114 }
-        r5 = r7.mInjector;	 Catch:{ all -> 0x0114 }
-        r5.binderRestoreCallingIdentity(r2);	 Catch:{ all -> 0x0114 }
-        throw r4;	 Catch:{ all -> 0x0114 }
-    L_0x0114:
-        r2 = move-exception;	 Catch:{ all -> 0x0114 }
-        monitor-exit(r1);	 Catch:{ all -> 0x0114 }
-        throw r2;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.devicepolicy.DevicePolicyManagerService.setSecureSetting(android.content.ComponentName, java.lang.String, java.lang.String):void");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:27:0x009d, B:41:0x00dc] */
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
+            r3 = LOG_TAG;
+            r4 = new java.lang.StringBuilder();
+            r4.append("Invalid value: ");
+            r4.append(r10);
+            r4.append(" for setting ");
+            r4.append(r9);
+            android.util.Slog.e(r3, r4.toString());
+     */
+    /* JADX WARNING: Missing block: B:54:0x010e, code skipped:
+            r7.mInjector.binderRestoreCallingIdentity(r2);
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public void setSecureSetting(ComponentName who, String setting, String value) {
+        Preconditions.checkNotNull(who, "ComponentName is null");
+        int callingUserId = this.mInjector.userHandleGetCallingUserId();
+        synchronized (getLockObject()) {
+            getActiveAdminForCallerLocked(who, -1);
+            boolean z = false;
+            if (isDeviceOwner(who, callingUserId)) {
+                if (!SECURE_SETTINGS_DEVICEOWNER_WHITELIST.contains(setting)) {
+                    if (!isCurrentUserDemo()) {
+                        throw new SecurityException(String.format("Permission denial: Device owners cannot update %1$s", new Object[]{setting}));
+                    }
+                }
+            } else if (!SECURE_SETTINGS_WHITELIST.contains(setting)) {
+                if (!isCurrentUserDemo()) {
+                    throw new SecurityException(String.format("Permission denial: Profile owners cannot update %1$s", new Object[]{setting}));
+                }
+            }
+            String str;
+            if (!setting.equals("install_non_market_apps")) {
+                long id = this.mInjector.binderClearCallingIdentity();
+                if ("default_input_method".equals(setting)) {
+                    if (!TextUtils.equals(this.mInjector.settingsSecureGetStringForUser("default_input_method", callingUserId), value)) {
+                        this.mSetupContentObserver.addPendingChangeByOwnerLocked(callingUserId);
+                    }
+                    getUserData(callingUserId).mCurrentInputMethodSet = true;
+                    saveSettingsLocked(callingUserId);
+                }
+                this.mInjector.settingsSecurePutStringForUser(setting, value, callingUserId);
+                this.mInjector.binderRestoreCallingIdentity(id);
+                return;
+            } else if (getTargetSdk(who.getPackageName(), callingUserId) >= 26) {
+                throw new UnsupportedOperationException("install_non_market_apps is deprecated. Please use the user restriction no_install_unknown_sources instead.");
+            } else if (this.mUserManager.isManagedProfile(callingUserId)) {
+                str = "no_install_unknown_sources";
+                if (Integer.parseInt(value) == 0) {
+                    z = true;
+                }
+                setUserRestriction(who, str, z);
+            } else {
+                str = LOG_TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Ignoring setSecureSetting request for ");
+                stringBuilder.append(setting);
+                stringBuilder.append(". User restriction ");
+                stringBuilder.append("no_install_unknown_sources");
+                stringBuilder.append(" should be used instead.");
+                Slog.e(str, stringBuilder.toString());
+            }
+        }
     }
 
     public void setMasterVolumeMuted(ComponentName who, boolean on) {
@@ -9923,7 +9832,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:28:0x004d, code:
+    /* JADX WARNING: Missing block: B:28:0x004d, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10074,7 +9983,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         this.mContext.sendBroadcastAsUser(new Intent("android.app.action.SYSTEM_UPDATE_POLICY_CHANGED"), UserHandle.SYSTEM);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001e, code:
+    /* JADX WARNING: Missing block: B:11:0x001e, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10093,7 +10002,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return (date.isBefore((ChronoLocalDate) range.first) || date.isAfter((ChronoLocalDate) range.second)) ? false : true;
     }
 
-    /* JADX WARNING: Missing block: B:34:0x008d, code:
+    /* JADX WARNING: Missing block: B:36:0x008d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10109,13 +10018,20 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             if (currentPeriod == null) {
                 return;
             }
+            boolean changed;
             Pair<LocalDate, LocalDate> record = this.mOwners.getSystemUpdateFreezePeriodRecord();
             LocalDate start = record.first;
             LocalDate end = record.second;
-            boolean changed = (end == null || start == null) ? this.mOwners.setSystemUpdateFreezePeriodRecord(now, now) : now.equals(end.plusDays(1)) ? this.mOwners.setSystemUpdateFreezePeriodRecord(start, now) : now.isAfter(end.plusDays(1)) ? (withinRange(currentPeriod, start) && withinRange(currentPeriod, end)) ? this.mOwners.setSystemUpdateFreezePeriodRecord(start, now) : this.mOwners.setSystemUpdateFreezePeriodRecord(now, now) : now.isBefore(start) ? this.mOwners.setSystemUpdateFreezePeriodRecord(now, now) : false;
-            if (changed && saveIfChanged) {
-                this.mOwners.writeDeviceOwner();
+            if (end != null) {
+                if (start != null) {
+                    changed = now.equals(end.plusDays(1)) ? this.mOwners.setSystemUpdateFreezePeriodRecord(start, now) : now.isAfter(end.plusDays(1)) ? (withinRange(currentPeriod, start) && withinRange(currentPeriod, end)) ? this.mOwners.setSystemUpdateFreezePeriodRecord(start, now) : this.mOwners.setSystemUpdateFreezePeriodRecord(now, now) : now.isBefore(start) ? this.mOwners.setSystemUpdateFreezePeriodRecord(now, now) : false;
+                    if (changed && saveIfChanged) {
+                        this.mOwners.writeDeviceOwner();
+                    }
+                }
             }
+            changed = this.mOwners.setSystemUpdateFreezePeriodRecord(now, now);
+            this.mOwners.writeDeviceOwner();
         }
     }
 
@@ -10219,10 +10135,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return i;
     }
 
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r13);
      */
-    /* JADX WARNING: Missing block: B:37:0x0098, code:
+    /* JADX WARNING: Missing block: B:37:0x0098, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10293,7 +10209,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x003d, code:
+    /* JADX WARNING: Missing block: B:14:0x003d, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10759,7 +10675,15 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             synchronized (getLockObject()) {
                 ActiveAdmin admin = getActiveAdminForCallerLocked(who, -1);
                 if (!TextUtils.equals(admin.organizationName, text)) {
-                    String charSequence = (text == null || text.length() == 0) ? null : text.toString();
+                    String charSequence;
+                    if (text != null) {
+                        if (text.length() != 0) {
+                            charSequence = text.toString();
+                            admin.organizationName = charSequence;
+                            saveSettingsLocked(userHandle);
+                        }
+                    }
+                    charSequence = null;
                     admin.organizationName = charSequence;
                     saveSettingsLocked(userHandle);
                 }
@@ -10771,13 +10695,13 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         if (!this.mHasFeature) {
             return null;
         }
-        CharSequence charSequence;
+        String str;
         Preconditions.checkNotNull(who, "ComponentName is null");
         enforceManagedProfile(this.mInjector.userHandleGetCallingUserId(), "get organization name");
         synchronized (getLockObject()) {
-            charSequence = getActiveAdminForCallerLocked(who, -1).organizationName;
+            str = getActiveAdminForCallerLocked(who, -1).organizationName;
         }
-        return charSequence;
+        return str;
     }
 
     public CharSequence getDeviceOwnerOrganizationName() {
@@ -10867,7 +10791,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return arrayList;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0027, code:
+    /* JADX WARNING: Missing block: B:16:0x0027, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -10938,7 +10862,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         if (!this.mHasFeature) {
             return Collections.emptyList();
         }
-        List arrayList;
+        ArrayList arrayList;
         Preconditions.checkNotNull(admin);
         synchronized (getLockObject()) {
             getActiveAdminForCallerLocked(admin, -1);
@@ -11004,7 +10928,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0031, code:
+    /* JADX WARNING: Missing block: B:16:0x0031, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11059,7 +10983,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
         Preconditions.checkNotNull(admin);
         ensureDeviceOwnerAndAllUsersAffiliated(admin);
-        if (!this.mContext.getResources().getBoolean(17957038) || !this.mInjector.securityLogGetLoggingEnabledProperty()) {
+        if (!this.mContext.getResources().getBoolean(17957039) || !this.mInjector.securityLogGetLoggingEnabledProperty()) {
             return null;
         }
         recordSecurityLogRetrievalTime();
@@ -11195,13 +11119,13 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0029, code:
+    /* JADX WARNING: Missing block: B:11:0x0029, code skipped:
             if (r5.mInjector.getIPackageManager().getPackageInfo(r6, 0, r7) != null) goto L_0x0035;
      */
-    /* JADX WARNING: Missing block: B:12:0x002b, code:
+    /* JADX WARNING: Missing block: B:12:0x002b, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:14:0x002e, code:
+    /* JADX WARNING: Missing block: B:14:0x002e, code skipped:
             android.util.Log.e(LOG_TAG, "Failure talking to PackageManager while getting package info");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11339,6 +11263,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 }
             } catch (RemoteException e) {
                 throw new IllegalStateException("Failed requesting backup service state.", e);
+            } catch (Throwable th) {
             }
         }
         return z;
@@ -11514,7 +11439,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return targetUsers;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0033, code:
+    /* JADX WARNING: Missing block: B:11:0x0033, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11525,55 +11450,55 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x003b, code:
+    /* JADX WARNING: Missing block: B:10:0x003b, code skipped:
             wtfIfInLock();
             r6 = r1.mInjector.binderClearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r8 = android.accounts.AccountManager.get(r1.mContext);
             r9 = r8.getAccountsAsUser(r2);
      */
-    /* JADX WARNING: Missing block: B:14:0x0052, code:
+    /* JADX WARNING: Missing block: B:14:0x0052, code skipped:
             if (r9.length != 0) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:15:0x0054, code:
+    /* JADX WARNING: Missing block: B:15:0x0054, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r6);
      */
-    /* JADX WARNING: Missing block: B:16:0x005a, code:
+    /* JADX WARNING: Missing block: B:16:0x005a, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             r11 = getLockObject();
      */
-    /* JADX WARNING: Missing block: B:19:0x005f, code:
+    /* JADX WARNING: Missing block: B:19:0x005f, code skipped:
             monitor-enter(r11);
      */
-    /* JADX WARNING: Missing block: B:20:0x0060, code:
+    /* JADX WARNING: Missing block: B:20:0x0060, code skipped:
             if (r3 == null) goto L_0x00e9;
      */
-    /* JADX WARNING: Missing block: B:23:0x0066, code:
+    /* JADX WARNING: Missing block: B:23:0x0066, code skipped:
             if (isAdminTestOnlyLocked(r3, r2) != false) goto L_0x006a;
      */
-    /* JADX WARNING: Missing block: B:24:0x006a, code:
+    /* JADX WARNING: Missing block: B:25:0x006a, code skipped:
             monitor-exit(r11);
      */
-    /* JADX WARNING: Missing block: B:26:?, code:
+    /* JADX WARNING: Missing block: B:27:?, code skipped:
             r0 = new java.lang.String[]{"android.account.DEVICE_OR_PROFILE_OWNER_ALLOWED"};
             r11 = new java.lang.String[]{"android.account.DEVICE_OR_PROFILE_OWNER_DISALLOWED"};
             r12 = true;
             r13 = r9.length;
             r14 = 0;
      */
-    /* JADX WARNING: Missing block: B:27:0x007a, code:
+    /* JADX WARNING: Missing block: B:28:0x007a, code skipped:
             if (r14 >= r13) goto L_0x00c8;
      */
-    /* JADX WARNING: Missing block: B:28:0x007c, code:
+    /* JADX WARNING: Missing block: B:29:0x007c, code skipped:
             r15 = r9[r14];
      */
-    /* JADX WARNING: Missing block: B:29:0x0082, code:
+    /* JADX WARNING: Missing block: B:30:0x0082, code skipped:
             if (hasAccountFeatures(r8, r15, r11) == false) goto L_0x00a1;
      */
-    /* JADX WARNING: Missing block: B:30:0x0084, code:
+    /* JADX WARNING: Missing block: B:31:0x0084, code skipped:
             r13 = LOG_TAG;
             r14 = new java.lang.StringBuilder();
             r14.append(r15);
@@ -11582,10 +11507,10 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             android.util.Log.e(r13, r14.toString());
             r12 = false;
      */
-    /* JADX WARNING: Missing block: B:32:0x00a5, code:
+    /* JADX WARNING: Missing block: B:33:0x00a5, code skipped:
             if (hasAccountFeatures(r8, r15, r0) != false) goto L_0x00c4;
      */
-    /* JADX WARNING: Missing block: B:33:0x00a7, code:
+    /* JADX WARNING: Missing block: B:34:0x00a7, code skipped:
             r5 = LOG_TAG;
             r13 = new java.lang.StringBuilder();
             r13.append(r15);
@@ -11594,46 +11519,46 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             android.util.Log.e(r5, r13.toString());
             r12 = false;
      */
-    /* JADX WARNING: Missing block: B:34:0x00c4, code:
+    /* JADX WARNING: Missing block: B:35:0x00c4, code skipped:
             r14 = r14 + 1;
      */
-    /* JADX WARNING: Missing block: B:35:0x00c8, code:
+    /* JADX WARNING: Missing block: B:36:0x00c8, code skipped:
             if (r12 == false) goto L_0x00d2;
      */
-    /* JADX WARNING: Missing block: B:36:0x00ca, code:
+    /* JADX WARNING: Missing block: B:37:0x00ca, code skipped:
             android.util.Log.w(LOG_TAG, "All accounts are compatible");
      */
-    /* JADX WARNING: Missing block: B:37:0x00d2, code:
+    /* JADX WARNING: Missing block: B:38:0x00d2, code skipped:
             android.util.Log.e(LOG_TAG, "Found incompatible accounts");
      */
-    /* JADX WARNING: Missing block: B:38:0x00d9, code:
+    /* JADX WARNING: Missing block: B:39:0x00d9, code skipped:
             if (r12 != false) goto L_0x00de;
      */
-    /* JADX WARNING: Missing block: B:39:0x00db, code:
+    /* JADX WARNING: Missing block: B:40:0x00db, code skipped:
             r17 = true;
      */
-    /* JADX WARNING: Missing block: B:40:0x00de, code:
+    /* JADX WARNING: Missing block: B:41:0x00de, code skipped:
             r17 = false;
      */
-    /* JADX WARNING: Missing block: B:41:0x00e1, code:
+    /* JADX WARNING: Missing block: B:42:0x00e1, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r6);
      */
-    /* JADX WARNING: Missing block: B:42:0x00e6, code:
+    /* JADX WARNING: Missing block: B:43:0x00e6, code skipped:
             return r17;
      */
-    /* JADX WARNING: Missing block: B:45:?, code:
+    /* JADX WARNING: Missing block: B:46:?, code skipped:
             android.util.Log.w(LOG_TAG, "Non test-only owner can't be installed with existing accounts.");
      */
-    /* JADX WARNING: Missing block: B:46:0x00f0, code:
+    /* JADX WARNING: Missing block: B:47:0x00f0, code skipped:
             monitor-exit(r11);
      */
-    /* JADX WARNING: Missing block: B:47:0x00f1, code:
+    /* JADX WARNING: Missing block: B:48:0x00f1, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r6);
      */
-    /* JADX WARNING: Missing block: B:48:0x00f7, code:
+    /* JADX WARNING: Missing block: B:49:0x00f7, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:54:0x00fb, code:
+    /* JADX WARNING: Missing block: B:55:0x00fb, code skipped:
             r1.mInjector.binderRestoreCallingIdentity(r6);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11765,7 +11690,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return deviceOwner != null && deviceOwner.isNetworkLoggingEnabled;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0039, code:
+    /* JADX WARNING: Missing block: B:18:0x0039, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11776,21 +11701,22 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         Preconditions.checkNotNull(admin);
         ensureDeviceOwnerAndAllUsersAffiliated(admin);
         synchronized (getLockObject()) {
-            if (this.mNetworkLogger == null || !isNetworkLoggingEnabledInternalLocked()) {
-            } else {
-                long currentTime = System.currentTimeMillis();
-                DevicePolicyData policyData = getUserData(0);
-                if (currentTime > policyData.mLastNetworkLogsRetrievalTime) {
-                    policyData.mLastNetworkLogsRetrievalTime = currentTime;
-                    saveSettingsLocked(0);
+            if (this.mNetworkLogger != null) {
+                if (isNetworkLoggingEnabledInternalLocked()) {
+                    long currentTime = System.currentTimeMillis();
+                    DevicePolicyData policyData = getUserData(0);
+                    if (currentTime > policyData.mLastNetworkLogsRetrievalTime) {
+                        policyData.mLastNetworkLogsRetrievalTime = currentTime;
+                        saveSettingsLocked(0);
+                    }
+                    List retrieveLogs = this.mNetworkLogger.retrieveLogs(batchToken);
+                    return retrieveLogs;
                 }
-                List<NetworkEvent> retrieveLogs = this.mNetworkLogger.retrieveLogs(batchToken);
-                return retrieveLogs;
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x00af, code:
+    /* JADX WARNING: Missing block: B:16:0x00af, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11807,7 +11733,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                 }
                 Intent intent = new Intent("android.app.action.SHOW_DEVICE_MONITORING_DIALOG");
                 intent.setPackage("com.android.systemui");
-                this.mInjector.getNotificationManager().notify(1002, new Notification.Builder(this.mContext, SystemNotificationChannels.DEVICE_ADMIN).setSmallIcon(17302398).setContentTitle(this.mContext.getString(17040548)).setContentText(this.mContext.getString(17040547)).setTicker(this.mContext.getString(17040548)).setShowWhen(true).setContentIntent(PendingIntent.getBroadcastAsUser(this.mContext, 0, intent, 0, UserHandle.CURRENT)).setStyle(new BigTextStyle().bigText(this.mContext.getString(17040547))).build());
+                this.mInjector.getNotificationManager().notify(1002, new Notification.Builder(this.mContext, SystemNotificationChannels.DEVICE_ADMIN).setSmallIcon(17302398).setContentTitle(this.mContext.getString(17040549)).setContentText(this.mContext.getString(17040548)).setTicker(this.mContext.getString(17040549)).setShowWhen(true).setContentIntent(PendingIntent.getBroadcastAsUser(this.mContext, 0, intent, 0, UserHandle.CURRENT)).setStyle(new BigTextStyle().bigText(this.mContext.getString(17040548))).build());
                 saveSettingsLocked(this.mOwners.getDeviceOwnerUserId());
             }
         }
@@ -11890,7 +11816,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x003b, code:
+    /* JADX WARNING: Missing block: B:13:0x003b, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -11917,7 +11843,7 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x002f, code:
+    /* JADX WARNING: Missing block: B:10:0x002f, code skipped:
             return r5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -12189,22 +12115,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         this.mTransferOwnershipMetadataManager.deleteMetadataFile();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x004b A:{Splitter: B:7:0x0026, ExcHandler: java.io.IOException (r4_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x004b A:{Splitter: B:7:0x0026, ExcHandler: java.io.IOException (r4_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:26:0x004b, code:
-            r4 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:28:?, code:
-            r5 = LOG_TAG;
-            r6 = new java.lang.StringBuilder();
-            r6.append("Caught exception while trying to load the owner transfer parameters from file ");
-            r6.append(r2);
-            android.util.Slog.e(r5, r6.toString(), r4);
-     */
-    /* JADX WARNING: Missing block: B:30:0x0063, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public PersistableBundle getTransferOwnershipBundle() {
         FileInputStream stream;
         Throwable th;
@@ -12228,11 +12138,16 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
                         th22 = th;
                         th = th3;
                     }
-                } catch (Exception e) {
+                } catch (IOException | IllegalArgumentException | XmlPullParserException e) {
+                    String str = LOG_TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Caught exception while trying to load the owner transfer parameters from file ");
+                    stringBuilder.append(bundleFile);
+                    Slog.e(str, stringBuilder.toString(), e);
+                    return null;
                 }
-            } else {
-                return null;
             }
+            return null;
         }
         $closeResource(th22, stream);
         throw th;
@@ -12408,23 +12323,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x0046 A:{PHI: r3 , Splitter: B:1:0x0015, ExcHandler: java.io.IOException (r2_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:3:0x0046, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:4:0x0047, code:
-            r4 = LOG_TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("Caught exception while trying to save the owner transfer parameters to file ");
-            r5.append(r0);
-            android.util.Slog.e(r4, r5.toString(), r2);
-            r0.delete();
-            r1.failWrite(r3);
-     */
-    /* JADX WARNING: Missing block: B:5:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     void saveTransferOwnershipBundleLocked(PersistableBundle bundle, int userId) {
         File parametersFile = new File(this.mInjector.environmentGetUserSystemDirectory(userId), TRANSFER_OWNERSHIP_PARAMETERS_XML);
@@ -12440,7 +12338,14 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             serializer.endTag(null, TAG_TRANSFER_OWNERSHIP_BUNDLE);
             serializer.endDocument();
             atomicFile.finishWrite(stream);
-        } catch (Exception e) {
+        } catch (IOException | XmlPullParserException e) {
+            String str = LOG_TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Caught exception while trying to save the owner transfer parameters to file ");
+            stringBuilder.append(parametersFile);
+            Slog.e(str, stringBuilder.toString(), e);
+            parametersFile.delete();
+            atomicFile.failWrite(stream);
         }
     }
 
@@ -12448,20 +12353,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
         new File(this.mInjector.environmentGetUserSystemDirectory(userId), TRANSFER_OWNERSHIP_PARAMETERS_XML).delete();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x0016 A:{Splitter: B:1:0x0005, ExcHandler: java.io.IOException (r3_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:7:0x0016, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.w(LOG_TAG, "Failed requesting data wipe", r3);
-     */
-    /* JADX WARNING: Missing block: B:10:0x001e, code:
-            if (r1 != false) goto L_?;
-     */
-    /* JADX WARNING: Missing block: B:16:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void clearWipeDataFactoryLowlevel(String reason, boolean wipeEuicc) {
         boolean success = false;
         try {
@@ -12469,7 +12360,11 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
             if (true) {
                 return;
             }
-        } catch (Exception e) {
+        } catch (IOException | SecurityException e) {
+            Slog.w(LOG_TAG, "Failed requesting data wipe", e);
+            if (success) {
+                return;
+            }
         } catch (Throwable th) {
             if (!success) {
                 SecurityLog.writeEvent(210023, new Object[0]);
@@ -12486,6 +12381,6 @@ public class DevicePolicyManagerService extends AbsDevicePolicyManagerService {
     }
 
     private static String getManagedProvisioningPackage(Context context) {
-        return context.getResources().getString(17039826);
+        return context.getResources().getString(17039827);
     }
 }

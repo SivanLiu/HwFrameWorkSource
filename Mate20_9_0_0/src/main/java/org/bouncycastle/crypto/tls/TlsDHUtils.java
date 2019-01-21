@@ -202,7 +202,7 @@ public class TlsDHUtils {
 
     public static short[] readNegotiatedDHEGroupsClientExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             short readUint8 = TlsUtils.readUint8(byteArrayInputStream);
             if (readUint8 >= (short) 1) {
                 short[] readUint8Array = TlsUtils.readUint8Array(readUint8, byteArrayInputStream);

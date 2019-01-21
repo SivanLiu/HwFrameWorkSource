@@ -84,14 +84,14 @@ public class WindowAnimator {
         this.mDisplayContentsAnimators.delete(displayId);
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0015, code:
+    /* JADX WARNING: Missing block: B:10:0x0015, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
             r1 = r12.mService.mWindowMap;
      */
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
+    /* JADX WARNING: Missing block: B:11:0x001c, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:13:?, code:
+    /* JADX WARNING: Missing block: B:13:?, code skipped:
             com.android.server.wm.WindowManagerService.boostPriorityForLockedSection();
             r12.mCurrentTime = r13 / 1000000;
             r12.mBulkUpdateParams = 8;
@@ -99,191 +99,191 @@ public class WindowAnimator {
             r12.mIsLazying = false;
             r12.mService.openSurfaceTransaction();
      */
-    /* JADX WARNING: Missing block: B:16:?, code:
+    /* JADX WARNING: Missing block: B:16:?, code skipped:
             r3 = r12.mService.mAccessibilityController;
             r4 = r12.mDisplayContentsAnimators.size();
             r5 = 0;
      */
-    /* JADX WARNING: Missing block: B:17:0x0041, code:
+    /* JADX WARNING: Missing block: B:17:0x0041, code skipped:
             if (r5 >= r4) goto L_0x009a;
      */
-    /* JADX WARNING: Missing block: B:18:0x0043, code:
+    /* JADX WARNING: Missing block: B:18:0x0043, code skipped:
             r7 = r12.mService.mRoot.getDisplayContent(r12.mDisplayContentsAnimators.keyAt(r5));
             r8 = (com.android.server.wm.WindowAnimator.DisplayContentsAnimator) r12.mDisplayContentsAnimators.valueAt(r5);
             r9 = r8.mScreenRotationAnimation;
      */
-    /* JADX WARNING: Missing block: B:19:0x005b, code:
+    /* JADX WARNING: Missing block: B:19:0x005b, code skipped:
             if (r9 == null) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:21:0x0061, code:
+    /* JADX WARNING: Missing block: B:21:0x0061, code skipped:
             if (r9.isAnimating() == false) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:23:0x0069, code:
+    /* JADX WARNING: Missing block: B:23:0x0069, code skipped:
             if (r9.stepAnimationLocked(r12.mCurrentTime) == false) goto L_0x006f;
      */
-    /* JADX WARNING: Missing block: B:24:0x006b, code:
+    /* JADX WARNING: Missing block: B:24:0x006b, code skipped:
             setAnimating(true);
      */
-    /* JADX WARNING: Missing block: B:25:0x006f, code:
+    /* JADX WARNING: Missing block: B:25:0x006f, code skipped:
             r12.mBulkUpdateParams |= 1;
             r9.kill();
             r8.mScreenRotationAnimation = null;
      */
-    /* JADX WARNING: Missing block: B:26:0x007a, code:
+    /* JADX WARNING: Missing block: B:26:0x007a, code skipped:
             if (r3 == null) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:28:0x007e, code:
+    /* JADX WARNING: Missing block: B:28:0x007e, code skipped:
             if (r7.isDefaultDisplay == false) goto L_0x0089;
      */
-    /* JADX WARNING: Missing block: B:29:0x0080, code:
+    /* JADX WARNING: Missing block: B:29:0x0080, code skipped:
             r3.onRotationChangedLocked(r12.mService.getDefaultDisplayContentLocked());
      */
-    /* JADX WARNING: Missing block: B:30:0x0089, code:
+    /* JADX WARNING: Missing block: B:30:0x0089, code skipped:
             r12.mAnimTransactionSequence++;
             r7.updateWindowsForAnimator(r12);
             r7.updateWallpaperForAnimator(r12);
             r7.prepareSurfaces();
             r5 = r5 + 1;
      */
-    /* JADX WARNING: Missing block: B:31:0x009a, code:
+    /* JADX WARNING: Missing block: B:31:0x009a, code skipped:
             r5 = 0;
      */
-    /* JADX WARNING: Missing block: B:32:0x009b, code:
+    /* JADX WARNING: Missing block: B:32:0x009b, code skipped:
             if (r5 >= r4) goto L_0x00e7;
      */
-    /* JADX WARNING: Missing block: B:33:0x009d, code:
+    /* JADX WARNING: Missing block: B:33:0x009d, code skipped:
             r6 = r12.mDisplayContentsAnimators.keyAt(r5);
             r7 = r12.mService.mRoot.getDisplayContent(r6);
             r7.checkAppWindowsReadyToShow();
             r8 = ((com.android.server.wm.WindowAnimator.DisplayContentsAnimator) r12.mDisplayContentsAnimators.valueAt(r5)).mScreenRotationAnimation;
      */
-    /* JADX WARNING: Missing block: B:34:0x00b8, code:
+    /* JADX WARNING: Missing block: B:34:0x00b8, code skipped:
             if (r8 == null) goto L_0x00bf;
      */
-    /* JADX WARNING: Missing block: B:35:0x00ba, code:
+    /* JADX WARNING: Missing block: B:35:0x00ba, code skipped:
             r8.updateSurfaces(r12.mTransaction);
      */
-    /* JADX WARNING: Missing block: B:36:0x00bf, code:
+    /* JADX WARNING: Missing block: B:36:0x00bf, code skipped:
             orAnimating(r7.getDockedDividerController().animate(r12.mCurrentTime));
             updateBlurLayers(r6);
      */
-    /* JADX WARNING: Missing block: B:37:0x00cf, code:
+    /* JADX WARNING: Missing block: B:37:0x00cf, code skipped:
             if (r3 == null) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:39:0x00d3, code:
+    /* JADX WARNING: Missing block: B:39:0x00d3, code skipped:
             if (r7.isDefaultDisplay != false) goto L_0x00e1;
      */
-    /* JADX WARNING: Missing block: B:41:0x00d9, code:
+    /* JADX WARNING: Missing block: B:41:0x00d9, code skipped:
             if (android.util.HwPCUtils.enabledInPad() == false) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:43:0x00df, code:
+    /* JADX WARNING: Missing block: B:43:0x00df, code skipped:
             if (android.util.HwPCUtils.isPcCastModeInServer() == false) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:44:0x00e1, code:
+    /* JADX WARNING: Missing block: B:44:0x00e1, code skipped:
             r3.drawMagnifiedRegionBorderIfNeededLocked();
      */
-    /* JADX WARNING: Missing block: B:45:0x00e4, code:
+    /* JADX WARNING: Missing block: B:45:0x00e4, code skipped:
             r5 = r5 + 1;
      */
-    /* JADX WARNING: Missing block: B:47:0x00e9, code:
+    /* JADX WARNING: Missing block: B:47:0x00e9, code skipped:
             if (r12.mAnimating != false) goto L_0x00f2;
      */
-    /* JADX WARNING: Missing block: B:49:0x00ed, code:
+    /* JADX WARNING: Missing block: B:49:0x00ed, code skipped:
             if (r12.mIsLazying != false) goto L_0x00f2;
      */
-    /* JADX WARNING: Missing block: B:50:0x00ef, code:
+    /* JADX WARNING: Missing block: B:50:0x00ef, code skipped:
             cancelAnimation();
      */
-    /* JADX WARNING: Missing block: B:52:0x00f6, code:
+    /* JADX WARNING: Missing block: B:52:0x00f6, code skipped:
             if (r12.mService.mWatermark == null) goto L_0x00ff;
      */
-    /* JADX WARNING: Missing block: B:53:0x00f8, code:
+    /* JADX WARNING: Missing block: B:53:0x00f8, code skipped:
             r12.mService.mWatermark.drawIfNeeded();
      */
-    /* JADX WARNING: Missing block: B:54:0x00ff, code:
+    /* JADX WARNING: Missing block: B:54:0x00ff, code skipped:
             android.view.SurfaceControl.mergeToGlobalTransaction(r12.mTransaction);
      */
-    /* JADX WARNING: Missing block: B:56:?, code:
+    /* JADX WARNING: Missing block: B:56:?, code skipped:
             r3 = r12.mService;
             r4 = "WindowAnimator";
      */
-    /* JADX WARNING: Missing block: B:58:0x010c, code:
+    /* JADX WARNING: Missing block: B:58:0x010c, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:60:?, code:
+    /* JADX WARNING: Missing block: B:60:?, code skipped:
             android.util.Slog.wtf(TAG, "Unhandled exception in Window Manager", r3);
      */
-    /* JADX WARNING: Missing block: B:62:?, code:
+    /* JADX WARNING: Missing block: B:62:?, code skipped:
             r3 = r12.mService;
             r4 = "WindowAnimator";
      */
-    /* JADX WARNING: Missing block: B:63:0x0118, code:
+    /* JADX WARNING: Missing block: B:63:0x0118, code skipped:
             r3.closeSurfaceTransaction(r4);
             r3 = r12.mService.mRoot.hasPendingLayoutChanges(r12);
             r4 = false;
      */
-    /* JADX WARNING: Missing block: B:64:0x0127, code:
+    /* JADX WARNING: Missing block: B:64:0x0127, code skipped:
             if (r12.mBulkUpdateParams != 0) goto L_0x0129;
      */
-    /* JADX WARNING: Missing block: B:65:0x0129, code:
+    /* JADX WARNING: Missing block: B:65:0x0129, code skipped:
             r4 = r12.mService.mRoot.copyAnimToLayoutParams();
      */
-    /* JADX WARNING: Missing block: B:68:0x0136, code:
+    /* JADX WARNING: Missing block: B:68:0x0136, code skipped:
             r12.mService.mWindowPlacerLocked.requestTraversal();
      */
-    /* JADX WARNING: Missing block: B:69:0x013d, code:
+    /* JADX WARNING: Missing block: B:69:0x013d, code skipped:
             r5 = r12.mService.mRoot.isSelfOrChildAnimating();
      */
-    /* JADX WARNING: Missing block: B:73:0x014d, code:
+    /* JADX WARNING: Missing block: B:73:0x014d, code skipped:
             r12.mService.mTaskSnapshotController.setPersisterPaused(true);
      */
-    /* JADX WARNING: Missing block: B:74:0x0158, code:
+    /* JADX WARNING: Missing block: B:74:0x0158, code skipped:
             if (android.util.Jlog.isPerfTest() != false) goto L_0x015a;
      */
-    /* JADX WARNING: Missing block: B:75:0x015a, code:
+    /* JADX WARNING: Missing block: B:75:0x015a, code skipped:
             android.util.Jlog.i(3052, android.util.Jlog.getMessage("WindowAnimator", "animate", "ANIMATE_BEGIN"));
      */
-    /* JADX WARNING: Missing block: B:76:0x0169, code:
+    /* JADX WARNING: Missing block: B:76:0x0169, code skipped:
             android.os.Trace.asyncTraceBegin(32, "animating", 0);
      */
-    /* JADX WARNING: Missing block: B:80:0x0174, code:
+    /* JADX WARNING: Missing block: B:80:0x0174, code skipped:
             r12.mService.mWindowPlacerLocked.requestTraversal();
             r12.mService.mTaskSnapshotController.setPersisterPaused(false);
             android.os.Trace.asyncTraceEnd(32, "animating", 0);
      */
-    /* JADX WARNING: Missing block: B:81:0x018b, code:
+    /* JADX WARNING: Missing block: B:81:0x018b, code skipped:
             if (android.util.Jlog.isPerfTest() != false) goto L_0x018d;
      */
-    /* JADX WARNING: Missing block: B:82:0x018d, code:
+    /* JADX WARNING: Missing block: B:82:0x018d, code skipped:
             android.util.Jlog.i(3055, android.util.Jlog.getMessage("WindowAnimator", "animate", "ANIMATE_END"));
      */
-    /* JADX WARNING: Missing block: B:83:0x019c, code:
+    /* JADX WARNING: Missing block: B:83:0x019c, code skipped:
             r12.mLastRootAnimating = r5;
      */
-    /* JADX WARNING: Missing block: B:84:0x01a0, code:
+    /* JADX WARNING: Missing block: B:84:0x01a0, code skipped:
             if (r12.mRemoveReplacedWindows != false) goto L_0x01a2;
      */
-    /* JADX WARNING: Missing block: B:85:0x01a2, code:
+    /* JADX WARNING: Missing block: B:85:0x01a2, code skipped:
             r12.mService.mRoot.removeReplacedWindows();
             r12.mRemoveReplacedWindows = false;
      */
-    /* JADX WARNING: Missing block: B:86:0x01ab, code:
+    /* JADX WARNING: Missing block: B:86:0x01ab, code skipped:
             r12.mService.destroyPreservedSurfaceLocked();
             executeAfterPrepareSurfacesRunnables();
      */
-    /* JADX WARNING: Missing block: B:87:0x01b3, code:
+    /* JADX WARNING: Missing block: B:87:0x01b3, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:88:0x01b4, code:
+    /* JADX WARNING: Missing block: B:88:0x01b4, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:89:0x01b7, code:
+    /* JADX WARNING: Missing block: B:89:0x01b7, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:91:?, code:
+    /* JADX WARNING: Missing block: B:91:?, code skipped:
             r12.mService.closeSurfaceTransaction("WindowAnimator");
      */
-    /* JADX WARNING: Missing block: B:94:0x01c2, code:
+    /* JADX WARNING: Missing block: B:94:0x01c2, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

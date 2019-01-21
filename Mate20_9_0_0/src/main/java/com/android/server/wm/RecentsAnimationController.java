@@ -64,25 +64,25 @@ public class RecentsAnimationController implements DeathRecipient {
             }
         }
 
-        /* JADX WARNING: Missing block: B:13:?, code:
+        /* JADX WARNING: Missing block: B:13:?, code skipped:
             r2 = com.android.server.wm.RecentsAnimationController.access$500(r5.this$0);
      */
-        /* JADX WARNING: Missing block: B:14:0x004a, code:
+        /* JADX WARNING: Missing block: B:14:0x004a, code skipped:
             if (r6 == false) goto L_0x004f;
      */
-        /* JADX WARNING: Missing block: B:15:0x004c, code:
+        /* JADX WARNING: Missing block: B:15:0x004c, code skipped:
             r4 = 1;
      */
-        /* JADX WARNING: Missing block: B:16:0x004f, code:
+        /* JADX WARNING: Missing block: B:16:0x004f, code skipped:
             r4 = 2;
      */
-        /* JADX WARNING: Missing block: B:17:0x0050, code:
+        /* JADX WARNING: Missing block: B:17:0x0050, code skipped:
             r2.onAnimationFinished(r4, true);
      */
-        /* JADX WARNING: Missing block: B:18:0x0053, code:
+        /* JADX WARNING: Missing block: B:18:0x0053, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
-        /* JADX WARNING: Missing block: B:19:0x0057, code:
+        /* JADX WARNING: Missing block: B:19:0x0057, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -393,7 +393,7 @@ public class RecentsAnimationController implements DeathRecipient {
                 } else {
                     minimizedHomeBounds = this.mMinimizedHomeBounds;
                 }
-                if (!(this.mTargetAppToken == null || this.mTargetAppToken.findMainWindow() == null)) {
+                if (this.mTargetAppToken != null && this.mTargetAppToken.findMainWindow() != null) {
                     contentInsets = this.mTargetAppToken.findMainWindow().mContentInsets;
                 }
                 this.mRunner.onAnimationStart(this.mController, appTargets, contentInsets, minimizedHomeBounds);

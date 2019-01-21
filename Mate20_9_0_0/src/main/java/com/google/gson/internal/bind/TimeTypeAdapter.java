@@ -11,6 +11,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.sql.Time;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public final class TimeTypeAdapter extends TypeAdapter<Time> {
@@ -28,7 +29,7 @@ public final class TimeTypeAdapter extends TypeAdapter<Time> {
         }
         try {
             return new Time(this.format.parse(in.nextString()).getTime());
-        } catch (Throwable e) {
+        } catch (ParseException e) {
             throw new JsonSyntaxException(e);
         }
     }

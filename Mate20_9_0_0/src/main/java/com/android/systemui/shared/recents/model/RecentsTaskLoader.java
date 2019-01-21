@@ -147,7 +147,7 @@ public class RecentsTaskLoader {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x001b, code:
+    /* JADX WARNING: Missing block: B:14:0x001b, code skipped:
             if (r4 != 80) goto L_0x0085;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -221,7 +221,7 @@ public class RecentsTaskLoader {
         return this.mIconLoader.getAndInvalidateIfModified(taskKey, td, loadIfNotCached);
     }
 
-    /* JADX WARNING: Missing block: B:21:0x003d, code:
+    /* JADX WARNING: Missing block: B:21:0x003d, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

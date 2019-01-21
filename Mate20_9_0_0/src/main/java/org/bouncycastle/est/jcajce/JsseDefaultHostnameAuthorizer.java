@@ -23,7 +23,7 @@ public class JsseDefaultHostnameAuthorizer implements JsseHostnameAuthorizer {
         this.knownSuffixes = set;
     }
 
-    /* JADX WARNING: Missing block: B:35:0x00c1, code:
+    /* JADX WARNING: Missing block: B:35:0x00c1, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -62,7 +62,7 @@ public class JsseDefaultHostnameAuthorizer implements JsseHostnameAuthorizer {
     public boolean verified(String str, SSLSession sSLSession) throws IOException {
         try {
             return verify(str, (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(new ByteArrayInputStream(sSLSession.getPeerCertificates()[0].getEncoded())));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (e instanceof ESTException) {
                 throw ((ESTException) e);
             }
@@ -102,7 +102,7 @@ public class JsseDefaultHostnameAuthorizer implements JsseHostnameAuthorizer {
                 }
                 return false;
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ESTException(e.getMessage(), e);
         }
     }

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.List;
 import org.bouncycastle.util.encoders.Base64;
 
 public class PemReader extends BufferedReader {
@@ -22,7 +21,7 @@ public class PemReader extends BufferedReader {
         stringBuilder.append(str);
         String stringBuilder2 = stringBuilder.toString();
         StringBuffer stringBuffer = new StringBuffer();
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         while (true) {
             readLine = readLine();
             if (readLine == null) {

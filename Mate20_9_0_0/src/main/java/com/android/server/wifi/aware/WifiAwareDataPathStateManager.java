@@ -213,17 +213,19 @@ public class WifiAwareDataPathStateManager {
                         peerInstanceId = peerInfo.mInstanceId;
                         try {
                             peerMac = peerInfo.mMac;
-                            if (peerMac == null || peerMac.length != 6) {
-                                str3 = WifiAwareDataPathStateManager.TAG;
-                                stringBuilder4 = new StringBuilder();
-                                stringBuilder4.append("processNetworkSpecifier: networkSpecifier=");
-                                stringBuilder4.append(wifiAwareNetworkSpecifier);
-                                stringBuilder4.append(" -- invalid peer MAC address");
-                                Log.e(str3, stringBuilder4.toString());
-                                return null;
+                            if (peerMac != null) {
+                                if (peerMac.length == 6) {
+                                    pubSubId = pubSubId2;
+                                }
                             }
-                            pubSubId = pubSubId2;
-                        } catch (int pubSubId3) {
+                            str3 = WifiAwareDataPathStateManager.TAG;
+                            stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append("processNetworkSpecifier: networkSpecifier=");
+                            stringBuilder4.append(wifiAwareNetworkSpecifier);
+                            stringBuilder4.append(" -- invalid peer MAC address");
+                            Log.e(str3, stringBuilder4.toString());
+                            return null;
+                        } catch (IllegalArgumentException pubSubId3) {
                             String str4 = WifiAwareDataPathStateManager.TAG;
                             StringBuilder stringBuilder5 = new StringBuilder();
                             stringBuilder5.append("processNetworkSpecifier: networkSpecifier=");

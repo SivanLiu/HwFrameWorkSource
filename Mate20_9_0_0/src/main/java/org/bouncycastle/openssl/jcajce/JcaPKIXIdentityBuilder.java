@@ -11,7 +11,6 @@ import java.security.Provider;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.List;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -69,7 +68,7 @@ public class JcaPKIXIdentityBuilder {
         }
         PrivateKey privateKey = jcaPEMKeyConverter.getPrivateKey(privateKeyInfo);
         PEMParser pEMParser = new PEMParser(new InputStreamReader(inputStream2));
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         while (true) {
             Object readObject2 = pEMParser.readObject();
             if (readObject2 == null) {

@@ -137,18 +137,19 @@ public class SyncLogger {
             return SyncJobService.jobParametersToString(params);
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0028, code:
+        /* JADX WARNING: Missing block: B:14:0x0028, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void dumpAll(PrintWriter pw) {
             synchronized (this.mLock) {
                 String[] files = this.mLogPath.list();
-                if (files == null || files.length == 0) {
-                } else {
-                    Arrays.sort(files);
-                    for (String file : files) {
-                        dumpFile(pw, new File(this.mLogPath, file));
+                if (files != null) {
+                    if (files.length != 0) {
+                        Arrays.sort(files);
+                        for (String file : files) {
+                            dumpFile(pw, new File(this.mLogPath, file));
+                        }
                     }
                 }
             }
@@ -184,15 +185,26 @@ public class SyncLogger {
     SyncLogger() {
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0030  */
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x0028  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static synchronized SyncLogger getInstance() {
         SyncLogger syncLogger;
         synchronized (SyncLogger.class) {
             if (sInstance == null) {
-                boolean enable = Build.IS_DEBUGGABLE || "1".equals(SystemProperties.get("debug.synclog")) || Log.isLoggable(TAG, 2);
+                boolean enable;
+                if (!(Build.IS_DEBUGGABLE || "1".equals(SystemProperties.get("debug.synclog")))) {
+                    if (!Log.isLoggable(TAG, 2)) {
+                        enable = false;
+                        if (enable) {
+                            sInstance = new SyncLogger();
+                        } else {
+                            sInstance = new RotatingFileLogger();
+                        }
+                    }
+                }
+                enable = true;
                 if (enable) {
-                    sInstance = new RotatingFileLogger();
-                } else {
-                    sInstance = new SyncLogger();
                 }
             }
             syncLogger = sInstance;

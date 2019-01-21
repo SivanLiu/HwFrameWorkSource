@@ -20,20 +20,11 @@ public class DatabaseDBDao {
         TAG = stringBuilder.toString();
     }
 
-    /* JADX WARNING: Missing block: B:7:0x004d, code:
+    /* JADX WARNING: Missing block: B:7:0x004d, code skipped:
             if (r1 != null) goto L_0x004f;
      */
-    /* JADX WARNING: Missing block: B:8:0x004f, code:
-            r1.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x006a, code:
+    /* JADX WARNING: Missing block: B:17:0x0082, code skipped:
             if (r1 == null) goto L_0x0085;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0082, code:
-            if (r1 == null) goto L_0x0085;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0085, code:
-            return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<String> findTableName(String key) {
@@ -64,6 +55,10 @@ public class DatabaseDBDao {
             stringBuilder.append("findTableName Exception: ");
             stringBuilder.append(e2);
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return tables;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -75,11 +70,11 @@ public class DatabaseDBDao {
         StringBuilder stringBuilder;
         try {
             String sql = this.CREATE_TEMP_STD_DATA_TABLE_NAME;
-            CharSequence charSequence = Constant.TEMP_STD_DATA_TABLE_NAME;
+            String str = Constant.TEMP_STD_DATA_TABLE_NAME;
             StringBuilder stringBuilder2 = new StringBuilder();
             stringBuilder2.append(location);
             stringBuilder2.append(Constant.TEMP_STD_DATA_TABLE_NAME);
-            sql = sql.replace(charSequence, stringBuilder2.toString());
+            sql = sql.replace(str, stringBuilder2.toString());
             stringBuilder = new StringBuilder();
             stringBuilder.append("createTempStdDataTable:");
             stringBuilder.append(sql);

@@ -78,15 +78,15 @@ final class Conversions {
             } else {
                 i4 = i6;
             }
-            Object obj = new byte[(i5 + 1)];
-            if (bArr.length < obj.length) {
-                System.arraycopy(bArr, 0, obj, 0, bArr.length);
-                for (length = bArr.length; length < obj.length; length++) {
-                    obj[length] = null;
+            byte[] bArr2 = new byte[(i5 + 1)];
+            if (bArr.length < bArr2.length) {
+                System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+                for (length = bArr.length; length < bArr2.length; length++) {
+                    bArr2[length] = (byte) 0;
                 }
             } else {
-                System.arraycopy(bArr, 0, obj, 0, i5);
-                obj[i5] = (byte) (bArr[i5] & ((1 << i4) - 1));
+                System.arraycopy(bArr, 0, bArr2, 0, i5);
+                bArr2[i5] = (byte) (bArr[i5] & ((1 << i4) - 1));
             }
             i4 = i2;
             BigInteger bigInteger = ZERO;
@@ -94,24 +94,24 @@ final class Conversions {
             for (i2 = 0; i2 < i; i2++) {
                 binomial = binomial.multiply(new BigInteger(Integer.toString(length - i4))).divide(new BigInteger(Integer.toString(length)));
                 length--;
-                if (((byte) (obj[i2 >>> 3] & (1 << (i2 & 7)))) != (byte) 0) {
+                if (((byte) (bArr2[i2 >>> 3] & (1 << (i2 & 7)))) != (byte) 0) {
                     bigInteger = bigInteger.add(binomial);
                     i4--;
                     binomial = length == i4 ? ONE : binomial.multiply(new BigInteger(Integer.toString(i4 + 1))).divide(new BigInteger(Integer.toString(length - i4)));
                 }
             }
-            Object obj2 = new byte[(i3 + 1)];
-            Object toByteArray = bigInteger.toByteArray();
-            if (toByteArray.length < obj2.length) {
-                System.arraycopy(toByteArray, 0, obj2, 0, toByteArray.length);
-                for (i2 = toByteArray.length; i2 < obj2.length; i2++) {
-                    obj2[i2] = null;
+            byte[] bArr3 = new byte[(i3 + 1)];
+            byte[] toByteArray = bigInteger.toByteArray();
+            if (toByteArray.length < bArr3.length) {
+                System.arraycopy(toByteArray, 0, bArr3, 0, toByteArray.length);
+                for (i2 = toByteArray.length; i2 < bArr3.length; i2++) {
+                    bArr3[i2] = (byte) 0;
                 }
             } else {
-                System.arraycopy(toByteArray, 0, obj2, 0, i3);
-                obj2[i3] = (byte) (toByteArray[i3] & ((1 << bitLength) - 1));
+                System.arraycopy(toByteArray, 0, bArr3, 0, i3);
+                bArr3[i3] = (byte) (toByteArray[i3] & ((1 << bitLength) - 1));
             }
-            return obj2;
+            return bArr3;
         }
         throw new IllegalArgumentException("n < t");
     }

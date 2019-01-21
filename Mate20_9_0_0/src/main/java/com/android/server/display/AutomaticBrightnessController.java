@@ -968,7 +968,7 @@ public class AutomaticBrightnessController {
         } else if (this.mLightSensorEnabled) {
             this.mLightSensorEnabled = false;
             this.mFirstAutoBrightness = false;
-            this.mAmbientLuxValid = this.mResetAmbientLuxAfterWarmUpConfig ^ true;
+            this.mAmbientLuxValid = this.mResetAmbientLuxAfterWarmUpConfig ^ 1;
             this.mRecentLightSamples = 0;
             this.mAmbientLightRingBuffer.clear();
             clearFilterAlgoParas();

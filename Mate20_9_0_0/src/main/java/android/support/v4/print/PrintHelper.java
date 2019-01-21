@@ -139,13 +139,13 @@ public final class PrintHelper {
                         }
                     }
 
-                    /* JADX WARNING: Missing block: B:11:0x0020, code:
+                    /* JADX WARNING: Missing block: B:11:0x0020, code skipped:
             if (r1 == null) goto L_0x0050;
      */
-                    /* JADX WARNING: Missing block: B:13:0x002a, code:
+                    /* JADX WARNING: Missing block: B:13:0x002a, code skipped:
             if (r1.isPortrait() == android.support.v4.print.PrintHelper.access$600(r12)) goto L_0x0050;
      */
-                    /* JADX WARNING: Missing block: B:14:0x002c, code:
+                    /* JADX WARNING: Missing block: B:14:0x002c, code skipped:
             r2 = new android.graphics.Matrix();
             r2.postRotate(90.0f);
             r12 = android.graphics.Bitmap.createBitmap(r12, 0, 0, r12.getWidth(), r12.getHeight(), r2, true);

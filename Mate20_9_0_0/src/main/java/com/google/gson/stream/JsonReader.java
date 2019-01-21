@@ -398,7 +398,7 @@ public class JsonReader implements Closeable {
         return peeking;
     }
 
-    /* JADX WARNING: Missing block: B:82:0x00ff, code:
+    /* JADX WARNING: Missing block: B:82:0x00ff, code skipped:
             r8 = r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

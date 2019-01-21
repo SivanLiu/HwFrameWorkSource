@@ -20,6 +20,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
+import android.hardware.usb.UsbManager;
 import android.net.INetworkPolicyManager;
 import android.net.INetworkStatsService;
 import android.net.IpPrefix;
@@ -104,7 +105,7 @@ public class Tethering extends BaseNetworkObserver {
     private static final int NOTIFICATION_TYPE_USB = 1;
     private static final int NOTIFICATION_TYPE_WIFI = 0;
     private static final String TAG = "Tethering";
-    private static final ComponentName TETHER_SERVICE = ComponentName.unflattenFromString(Resources.getSystem().getString(17039851));
+    private static final ComponentName TETHER_SERVICE = ComponentName.unflattenFromString(Resources.getSystem().getString(17039852));
     private static final boolean VDBG = HWFLOW;
     private static final int WAIT_SLEEP_TIME = 100;
     private static final Class[] messageClasses = new Class[]{Tethering.class, TetherMasterSM.class, TetherInterfaceStateMachine.class};
@@ -183,7 +184,7 @@ public class Tethering extends BaseNetworkObserver {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:17:0x006d  */
+        /* JADX WARNING: Removed duplicated region for block: B:18:0x006d A:{Catch:{ all -> 0x0051 }} */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private void handleUsbAction(Intent intent) {
             boolean z = false;
@@ -194,24 +195,27 @@ public class Tethering extends BaseNetworkObserver {
             synchronized (Tethering.this.mPublicSync) {
                 Tethering tethering;
                 if (!usbConnected) {
-                    if (Tethering.this.mRndisEnabled) {
-                        Tethering.this.tetherMatchingInterfaces(1, 1);
-                        tethering = Tethering.this;
-                        if (usbConfigured && rndisEnabled) {
-                            z = true;
+                    try {
+                        if (Tethering.this.mRndisEnabled) {
+                            Tethering.this.tetherMatchingInterfaces(1, 1);
+                            tethering = Tethering.this;
+                            if (usbConfigured && rndisEnabled) {
+                                z = true;
+                            }
+                            tethering.mRndisEnabled = z;
+                            if (Tethering.DBG) {
+                                String str = Tethering.TAG;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append("StateReceiver onReceive action synchronized: usbConnected = ");
+                                stringBuilder.append(usbConnected);
+                                stringBuilder.append(", mRndisEnabled = ");
+                                stringBuilder.append(Tethering.this.mRndisEnabled);
+                                stringBuilder.append(", mUsbTetherRequested = ");
+                                stringBuilder.append(Tethering.this.mUsbTetherRequested);
+                                Log.d(str, stringBuilder.toString());
+                            }
                         }
-                        tethering.mRndisEnabled = z;
-                        if (Tethering.DBG) {
-                            String str = Tethering.TAG;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("StateReceiver onReceive action synchronized: usbConnected = ");
-                            stringBuilder.append(usbConnected);
-                            stringBuilder.append(", mRndisEnabled = ");
-                            stringBuilder.append(Tethering.this.mRndisEnabled);
-                            stringBuilder.append(", mUsbTetherRequested = ");
-                            stringBuilder.append(Tethering.this.mUsbTetherRequested);
-                            Log.d(str, stringBuilder.toString());
-                        }
+                    } finally {
                     }
                 }
                 if (usbConfigured && rndisEnabled) {
@@ -528,7 +532,7 @@ public class Tethering extends BaseNetworkObserver {
                             return true;
                         }
                         TetherMasterSM.this.chooseUpstreamType(this.mTryCell);
-                        this.mTryCell ^= true;
+                        this.mTryCell ^= 1;
                         return true;
                     case TetherMasterSM.EVENT_UPSTREAM_CALLBACK /*327685*/:
                         updateUpstreamWanted();
@@ -981,7 +985,10 @@ public class Tethering extends BaseNetworkObserver {
         }
         synchronized (this.mPublicSync) {
             if (up) {
-                maybeTrackNewInterfaceLocked(iface);
+                try {
+                    maybeTrackNewInterfaceLocked(iface);
+                } catch (Throwable th) {
+                }
             } else if (ifaceNameToType(iface) == 2) {
                 stopTrackingInterfaceLocked(iface);
             } else if (VDBG) {
@@ -1060,7 +1067,7 @@ public class Tethering extends BaseNetworkObserver {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0063, code:
+    /* JADX WARNING: Missing block: B:21:0x0063, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1389,7 +1396,7 @@ public class Tethering extends BaseNetworkObserver {
         }
     }
 
-    /* JADX WARNING: Missing block: B:66:0x0107, code:
+    /* JADX WARNING: Missing block: B:66:0x0107, code skipped:
             r0 = new android.content.Intent("android.net.conn.TETHER_STATE_CHANGED");
             r0.addFlags(620756992);
             r0.putStringArrayListExtra("availableArray", r4);
@@ -1405,10 +1412,10 @@ public class Tethering extends BaseNetworkObserver {
             r0.putExtra("broadcastId", r2);
             r1.mContext.sendStickyBroadcastAsUser(r0, android.os.UserHandle.ALL);
      */
-    /* JADX WARNING: Missing block: B:67:0x0152, code:
+    /* JADX WARNING: Missing block: B:67:0x0152, code skipped:
             if (DBG == false) goto L_0x01a7;
      */
-    /* JADX WARNING: Missing block: B:68:0x0154, code:
+    /* JADX WARNING: Missing block: B:68:0x0154, code skipped:
             r13 = TAG;
             r15 = new java.lang.Object[8];
             r20 = r0;
@@ -1421,32 +1428,32 @@ public class Tethering extends BaseNetworkObserver {
             r15[7] = android.text.TextUtils.join(",", r7);
             android.util.Log.d(r13, java.lang.String.format("sendTetherStateChangedBroadcast %s=[%s] %s=[%s] %s=[%s] %s=[%s]", r15));
      */
-    /* JADX WARNING: Missing block: B:69:0x01a7, code:
+    /* JADX WARNING: Missing block: B:69:0x01a7, code skipped:
             r20 = r0;
      */
-    /* JADX WARNING: Missing block: B:70:0x01a9, code:
+    /* JADX WARNING: Missing block: B:70:0x01a9, code skipped:
             r1.mHwNotificationTethering.setTetheringNumber(r8);
      */
-    /* JADX WARNING: Missing block: B:71:0x01ae, code:
+    /* JADX WARNING: Missing block: B:71:0x01ae, code skipped:
             if (r9 != false) goto L_0x01bb;
      */
-    /* JADX WARNING: Missing block: B:72:0x01b0, code:
+    /* JADX WARNING: Missing block: B:72:0x01b0, code skipped:
             if (r10 != false) goto L_0x01bb;
      */
-    /* JADX WARNING: Missing block: B:73:0x01b2, code:
+    /* JADX WARNING: Missing block: B:73:0x01b2, code skipped:
             if (r11 != false) goto L_0x01bb;
      */
-    /* JADX WARNING: Missing block: B:74:0x01b4, code:
+    /* JADX WARNING: Missing block: B:74:0x01b4, code skipped:
             if (r18 == false) goto L_0x01b7;
      */
-    /* JADX WARNING: Missing block: B:75:0x01b7, code:
+    /* JADX WARNING: Missing block: B:75:0x01b7, code skipped:
             clearTetheredNotification();
      */
-    /* JADX WARNING: Missing block: B:76:0x01bb, code:
+    /* JADX WARNING: Missing block: B:76:0x01bb, code skipped:
             r1.mNotificationType = r1.mHwNotificationTethering.getNotificationType(r8);
             showTetheredNotification(r1.mHwNotificationTethering.getNotificationIcon(r1.mNotificationType));
      */
-    /* JADX WARNING: Missing block: B:77:0x01cf, code:
+    /* JADX WARNING: Missing block: B:77:0x01cf, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1501,41 +1508,41 @@ public class Tethering extends BaseNetworkObserver {
                                     p2pTethered = p2pTethered2;
                                 } catch (Throwable th2) {
                                     th = th2;
+                                    throw th;
                                 }
-                            } else {
-                                p2pTethered = p2pTethered2;
-                                if (tetherState.lastState) {
-                                    try {
-                                        availableList.add(iface);
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        p2pTethered2 = p2pTethered;
-                                        throw th;
-                                    }
-                                } else if (tetherState.lastState == 3) {
-                                    localOnlyList.add(iface);
-                                } else if (tetherState.lastState == 2) {
-                                    if (cfg.isUsb(iface)) {
-                                        usbTethered = true;
-                                        tetheringNumbers.add("usb");
-                                    } else if (cfg.isWifi(iface)) {
-                                        wifiTethered = true;
-                                        tetheringNumbers.add("wifi");
-                                    } else if (cfg.isBluetooth(iface)) {
-                                        bluetoothTethered = true;
-                                        tetheringNumbers.add("bluetooth");
-                                    } else if (HwServiceFactory.getHwConnectivityManager().isP2pTether(iface)) {
-                                        p2pTethered2 = true;
-                                        tetheringNumbers.add("p2p");
-                                        tetherList.add(iface);
-                                        waitRetry2++;
-                                        waitRetry = waitRetry3;
-                                    }
+                            }
+                            p2pTethered = p2pTethered2;
+                            if (tetherState.lastState) {
+                                try {
+                                    availableList.add(iface);
+                                } catch (Throwable th3) {
+                                    th = th3;
                                     p2pTethered2 = p2pTethered;
+                                    throw th;
+                                }
+                            } else if (tetherState.lastState == 3) {
+                                localOnlyList.add(iface);
+                            } else if (tetherState.lastState == 2) {
+                                if (cfg.isUsb(iface)) {
+                                    usbTethered = true;
+                                    tetheringNumbers.add("usb");
+                                } else if (cfg.isWifi(iface)) {
+                                    wifiTethered = true;
+                                    tetheringNumbers.add("wifi");
+                                } else if (cfg.isBluetooth(iface)) {
+                                    bluetoothTethered = true;
+                                    tetheringNumbers.add("bluetooth");
+                                } else if (HwServiceFactory.getHwConnectivityManager().isP2pTether(iface)) {
+                                    p2pTethered2 = true;
+                                    tetheringNumbers.add("p2p");
                                     tetherList.add(iface);
                                     waitRetry2++;
                                     waitRetry = waitRetry3;
                                 }
+                                p2pTethered2 = p2pTethered;
+                                tetherList.add(iface);
+                                waitRetry2++;
+                                waitRetry = waitRetry3;
                             }
                             p2pTethered2 = p2pTethered;
                             waitRetry2++;
@@ -1543,6 +1550,7 @@ public class Tethering extends BaseNetworkObserver {
                         } catch (Throwable th4) {
                             th = th4;
                             p2pTethered = p2pTethered2;
+                            throw th;
                         }
                     } catch (Throwable th5) {
                         th = th5;
@@ -1794,103 +1802,47 @@ public class Tethering extends BaseNetworkObserver {
         return copy(this.mConfig.tetherableBluetoothRegexs);
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.connectivity.Tethering.setUsbTethering(boolean):int, dom blocks: [B:12:0x003b, B:22:0x0063]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public int setUsbTethering(boolean r8) {
-        /*
-        r7 = this;
-        r0 = VDBG;
-        if (r0 == 0) goto L_0x0020;
-    L_0x0004:
-        r0 = "Tethering";
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "setUsbTethering(";
-        r1.append(r2);
-        r1.append(r8);
-        r2 = ")";
-        r1.append(r2);
-        r1 = r1.toString();
-        android.util.Log.d(r0, r1);
-    L_0x0020:
-        r0 = r7.mContext;
-        r1 = "usb";
-        r0 = r0.getSystemService(r1);
-        r0 = (android.hardware.usb.UsbManager) r0;
-        r1 = r7.mPublicSync;
-        monitor-enter(r1);
-        r2 = 0;
-        r3 = 1;
-        if (r8 == 0) goto L_0x005f;
-    L_0x0032:
-        r4 = r7.mRndisEnabled;	 Catch:{ all -> 0x005d }
-        if (r4 == 0) goto L_0x0048;	 Catch:{ all -> 0x005d }
-    L_0x0036:
-        r4 = android.os.Binder.clearCallingIdentity();	 Catch:{ all -> 0x005d }
-        r6 = 2;
-        r7.tetherMatchingInterfaces(r6, r3);	 Catch:{ all -> 0x0043 }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x005d }
-        goto L_0x007d;	 Catch:{ all -> 0x005d }
-    L_0x0043:
-        r2 = move-exception;	 Catch:{ all -> 0x005d }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x005d }
-        throw r2;	 Catch:{ all -> 0x005d }
-    L_0x0048:
-        r7.mUsbTetherRequested = r3;	 Catch:{ all -> 0x005d }
-        r4 = com.android.server.HwServiceFactory.getHwConnectivityManager();	 Catch:{ all -> 0x005d }
-        r5 = r7.mContext;	 Catch:{ all -> 0x005d }
-        r3 = r4.setUsbFunctionForTethering(r5, r0, r3);	 Catch:{ all -> 0x005d }
-        if (r3 != 0) goto L_0x007d;	 Catch:{ all -> 0x005d }
-    L_0x0056:
-        r3 = "rndis";	 Catch:{ all -> 0x005d }
-        r0.setCurrentFunction(r3, r2);	 Catch:{ all -> 0x005d }
-        goto L_0x007d;	 Catch:{ all -> 0x005d }
-    L_0x005d:
-        r2 = move-exception;	 Catch:{ all -> 0x005d }
-        goto L_0x0084;	 Catch:{ all -> 0x005d }
-    L_0x005f:
-        r4 = android.os.Binder.clearCallingIdentity();	 Catch:{ all -> 0x005d }
-        r7.tetherMatchingInterfaces(r3, r3);	 Catch:{ all -> 0x007f }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x005d }
-        r3 = r7.mRndisEnabled;	 Catch:{ all -> 0x005d }
-        if (r3 == 0) goto L_0x0072;	 Catch:{ all -> 0x005d }
-    L_0x006e:
-        r3 = 0;	 Catch:{ all -> 0x005d }
-        r0.setCurrentFunction(r3, r2);	 Catch:{ all -> 0x005d }
-    L_0x0072:
-        r3 = com.android.server.HwServiceFactory.getHwConnectivityManager();	 Catch:{ all -> 0x005d }
-        r6 = r7.mContext;	 Catch:{ all -> 0x005d }
-        r3.setUsbFunctionForTethering(r6, r0, r2);	 Catch:{ all -> 0x005d }
-        r7.mUsbTetherRequested = r2;	 Catch:{ all -> 0x005d }
-    L_0x007d:
-        monitor-exit(r1);	 Catch:{ all -> 0x005d }
-        return r2;	 Catch:{ all -> 0x005d }
-    L_0x007f:
-        r2 = move-exception;	 Catch:{ all -> 0x005d }
-        android.os.Binder.restoreCallingIdentity(r4);	 Catch:{ all -> 0x005d }
-        throw r2;	 Catch:{ all -> 0x005d }
-    L_0x0084:
-        monitor-exit(r1);	 Catch:{ all -> 0x005d }
-        throw r2;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.connectivity.Tethering.setUsbTethering(boolean):int");
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:7:0x0032, B:12:0x003b, B:25:0x0063] */
+    /* JADX WARNING: Missing block: B:17:0x0044, code skipped:
+            android.os.Binder.restoreCallingIdentity(r4);
+     */
+    /* JADX WARNING: Missing block: B:35:0x0080, code skipped:
+            android.os.Binder.restoreCallingIdentity(r4);
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public int setUsbTethering(boolean enable) {
+        if (VDBG) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("setUsbTethering(");
+            stringBuilder.append(enable);
+            stringBuilder.append(")");
+            Log.d(str, stringBuilder.toString());
+        }
+        UsbManager usbManager = (UsbManager) this.mContext.getSystemService("usb");
+        synchronized (this.mPublicSync) {
+            long ident;
+            if (!enable) {
+                ident = Binder.clearCallingIdentity();
+                tetherMatchingInterfaces(1, 1);
+                Binder.restoreCallingIdentity(ident);
+                if (this.mRndisEnabled) {
+                    usbManager.setCurrentFunction(null, false);
+                }
+                HwServiceFactory.getHwConnectivityManager().setUsbFunctionForTethering(this.mContext, usbManager, false);
+                this.mUsbTetherRequested = false;
+            } else if (this.mRndisEnabled) {
+                ident = Binder.clearCallingIdentity();
+                tetherMatchingInterfaces(2, 1);
+                Binder.restoreCallingIdentity(ident);
+            } else {
+                this.mUsbTetherRequested = true;
+                if (!HwServiceFactory.getHwConnectivityManager().setUsbFunctionForTethering(this.mContext, usbManager, true)) {
+                    usbManager.setCurrentFunction("rndis", false);
+                }
+            }
+        }
+        return 0;
     }
 
     public String[] getTetheredIfaces() {

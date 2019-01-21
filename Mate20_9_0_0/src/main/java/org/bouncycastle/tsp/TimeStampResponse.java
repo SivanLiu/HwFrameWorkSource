@@ -28,12 +28,12 @@ public class TimeStampResponse {
         try {
             this.resp = TimeStampResp.getInstance(dLSequence);
             this.timeStampToken = new TimeStampToken(ContentInfo.getInstance(dLSequence.getObjectAt(1)));
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed timestamp response: ");
             stringBuilder.append(e);
             throw new TSPException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (ClassCastException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed timestamp response: ");
             stringBuilder.append(e2);
@@ -56,12 +56,12 @@ public class TimeStampResponse {
         StringBuilder stringBuilder;
         try {
             return TimeStampResp.getInstance(new ASN1InputStream(inputStream).readObject());
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed timestamp response: ");
             stringBuilder.append(e);
             throw new TSPException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (ClassCastException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed timestamp response: ");
             stringBuilder.append(e2);

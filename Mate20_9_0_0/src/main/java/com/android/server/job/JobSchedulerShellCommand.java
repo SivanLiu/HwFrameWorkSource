@@ -99,9 +99,8 @@ public final class JobSchedulerShellCommand extends ShellCommand {
                     break;
                 }
             default:
-                i = -1;
-                break;
         }
+        i = -1;
         switch (i) {
             case 0:
                 return runJob(pw);
@@ -298,7 +297,7 @@ public final class JobSchedulerShellCommand extends ShellCommand {
 
     /* JADX WARNING: Removed duplicated region for block: B:40:0x0037 A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:16:0x0053 A:{LOOP_END, LOOP:0: B:1:0x0009->B:16:0x0053} */
-    /* JADX WARNING: Missing block: B:11:0x0030, code:
+    /* JADX WARNING: Missing block: B:11:0x0030, code skipped:
             if (r4.equals("-u") != false) goto L_0x0034;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -381,7 +380,7 @@ public final class JobSchedulerShellCommand extends ShellCommand {
 
     /* JADX WARNING: Removed duplicated region for block: B:35:0x0035 A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:16:0x004f A:{LOOP_END, LOOP:1: B:1:0x0007->B:16:0x004f} */
-    /* JADX WARNING: Missing block: B:8:0x0024, code:
+    /* JADX WARNING: Missing block: B:8:0x0024, code skipped:
             if (r8.equals("--user") == false) goto L_0x0031;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

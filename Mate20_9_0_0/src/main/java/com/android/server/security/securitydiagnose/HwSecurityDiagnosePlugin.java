@@ -38,7 +38,7 @@ public class HwSecurityDiagnosePlugin extends Stub implements IHwSecurityPlugin 
     private static final boolean CHINA_RELEASE_VERSION = "CN".equalsIgnoreCase(SystemProperties.get(WifiProCommonUtils.KEY_PROP_LOCALE, ""));
     public static final Creator CREATOR = new Creator() {
         public IHwSecurityPlugin createPlugin(Context contxt) {
-            IHwSecurityPlugin access$100;
+            HwSecurityDiagnosePlugin access$100;
             synchronized (HwSecurityDiagnosePlugin.mLock) {
                 if (HwSecurityDiagnosePlugin.mInstance == null) {
                     HwSecurityDiagnosePlugin.mInstance = new HwSecurityDiagnosePlugin(contxt, null);

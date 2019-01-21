@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import com.android.server.LocalServices;
+import com.android.server.policy.WindowManagerPolicy;
 import com.huawei.android.os.HwVibrator;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,14 +100,13 @@ public class GestureUtils {
         }
         long now = SystemClock.uptimeMillis();
         int[] actions = new int[]{0, 1};
-        int effectFlag = mSupportEffectVb ? 0 : 64;
         int i2 = 0;
         while (true) {
             int i3 = i2;
             if (i3 < actions.length) {
                 int i4 = i3;
                 int[] actions2 = actions;
-                InputManager.getInstance().injectInputEvent(new KeyEvent(now, now, actions[i3], i, 0, 0, -1, 0, 8 | effectFlag, 257), 0);
+                InputManager.getInstance().injectInputEvent(new KeyEvent(now, now, actions[i3], i, 0, 0, -1, 0, 8, 257), 0);
                 i2 = i4 + 1;
                 int i5 = 0;
                 actions = actions2;
@@ -320,7 +320,7 @@ public class GestureUtils {
                     stringBuilder.append("removeWindowView fail.");
                     stringBuilder.append(e);
                     Log.e(str, stringBuilder.toString());
-                } catch (IllegalArgumentException e2) {
+                } catch (Exception e2) {
                     str = GestureNavConst.TAG_GESTURE_UTILS;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("removeWindowView fail.");
@@ -366,11 +366,18 @@ public class GestureUtils {
         return SystemProperties.getBoolean("sys.super_power_save", false);
     }
 
-    public static boolean playHwEffectForBackIfNeed(Context context) {
-        if (!mSupportEffectVb || !isHapticFedbackEnabled(context)) {
+    public static boolean performHapticFeedbackIfNeed(Context context) {
+        if (!isHapticFedbackEnabled(context)) {
             return false;
         }
-        HwVibrator.setHwVibrator(Process.myUid(), "android", "haptic.virtual_navigation.click_back");
+        if (mSupportEffectVb) {
+            HwVibrator.setHwVibrator(Process.myUid(), "android", "haptic.virtual_navigation.click_back");
+        } else {
+            WindowManagerPolicy policy = (WindowManagerPolicy) LocalServices.getService(WindowManagerPolicy.class);
+            if (policy != null) {
+                policy.performHapticFeedbackLw(null, 1, false);
+            }
+        }
         return true;
     }
 

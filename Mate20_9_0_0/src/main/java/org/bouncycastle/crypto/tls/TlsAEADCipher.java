@@ -87,17 +87,17 @@ public class TlsAEADCipher implements TlsCipher {
         int i4 = i2;
         if (getPlaintextLimit(i4) >= 0) {
             byte[] bArr2;
-            Object obj = new byte[(this.decryptImplicitNonce.length + this.record_iv_length)];
+            byte[] bArr3 = new byte[(this.decryptImplicitNonce.length + this.record_iv_length)];
             switch (this.nonceMode) {
                 case 1:
-                    System.arraycopy(this.decryptImplicitNonce, 0, obj, 0, this.decryptImplicitNonce.length);
+                    System.arraycopy(this.decryptImplicitNonce, 0, bArr3, 0, this.decryptImplicitNonce.length);
                     bArr2 = bArr;
-                    System.arraycopy(bArr2, i3, obj, obj.length - this.record_iv_length, this.record_iv_length);
+                    System.arraycopy(bArr2, i3, bArr3, bArr3.length - this.record_iv_length, this.record_iv_length);
                     break;
                 case 2:
-                    TlsUtils.writeUint64(j2, obj, obj.length - 8);
+                    TlsUtils.writeUint64(j2, bArr3, bArr3.length - 8);
                     for (int i5 = 0; i5 < this.decryptImplicitNonce.length; i5++) {
-                        obj[i5] = (byte) (obj[i5] ^ this.decryptImplicitNonce[i5]);
+                        bArr3[i5] = (byte) (bArr3[i5] ^ this.decryptImplicitNonce[i5]);
                     }
                     bArr2 = bArr;
                     break;
@@ -107,15 +107,15 @@ public class TlsAEADCipher implements TlsCipher {
             int i6 = i3 + this.record_iv_length;
             int i7 = i4 - this.record_iv_length;
             i3 = this.decryptCipher.getOutputSize(i7);
-            byte[] bArr3 = new byte[i3];
+            byte[] bArr4 = new byte[i3];
             try {
-                this.decryptCipher.init(false, new AEADParameters(null, 8 * this.macSize, obj, getAdditionalData(j2, s, i3)));
-                int processBytes = 0 + this.decryptCipher.processBytes(bArr2, i6, i7, bArr3, 0);
-                if (processBytes + this.decryptCipher.doFinal(bArr3, processBytes) == bArr3.length) {
-                    return bArr3;
+                this.decryptCipher.init(false, new AEADParameters(null, 8 * this.macSize, bArr3, getAdditionalData(j2, s, i3)));
+                int processBytes = 0 + this.decryptCipher.processBytes(bArr2, i6, i7, bArr4, 0);
+                if (processBytes + this.decryptCipher.doFinal(bArr4, processBytes) == bArr4.length) {
+                    return bArr4;
                 }
                 throw new TlsFatalAlert((short) 80);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new TlsFatalAlert((short) 20, e);
             }
         }
@@ -125,34 +125,34 @@ public class TlsAEADCipher implements TlsCipher {
     public byte[] encodePlaintext(long j, short s, byte[] bArr, int i, int i2) throws IOException {
         long j2 = j;
         int i3 = i2;
-        Object obj = new byte[(this.encryptImplicitNonce.length + this.record_iv_length)];
+        byte[] bArr2 = new byte[(this.encryptImplicitNonce.length + this.record_iv_length)];
         switch (this.nonceMode) {
             case 1:
-                System.arraycopy(this.encryptImplicitNonce, 0, obj, 0, this.encryptImplicitNonce.length);
-                TlsUtils.writeUint64(j2, obj, this.encryptImplicitNonce.length);
+                System.arraycopy(this.encryptImplicitNonce, 0, bArr2, 0, this.encryptImplicitNonce.length);
+                TlsUtils.writeUint64(j2, bArr2, this.encryptImplicitNonce.length);
                 break;
             case 2:
-                TlsUtils.writeUint64(j2, obj, obj.length - 8);
+                TlsUtils.writeUint64(j2, bArr2, bArr2.length - 8);
                 for (int i4 = 0; i4 < this.encryptImplicitNonce.length; i4++) {
-                    obj[i4] = (byte) (obj[i4] ^ this.encryptImplicitNonce[i4]);
+                    bArr2[i4] = (byte) (bArr2[i4] ^ this.encryptImplicitNonce[i4]);
                 }
                 break;
             default:
                 throw new TlsFatalAlert((short) 80);
         }
-        Object obj2 = new byte[(this.record_iv_length + this.encryptCipher.getOutputSize(i3))];
+        byte[] bArr3 = new byte[(this.record_iv_length + this.encryptCipher.getOutputSize(i3))];
         if (this.record_iv_length != 0) {
-            System.arraycopy(obj, obj.length - this.record_iv_length, obj2, 0, this.record_iv_length);
+            System.arraycopy(bArr2, bArr2.length - this.record_iv_length, bArr3, 0, this.record_iv_length);
         }
         int i5 = this.record_iv_length;
         try {
-            this.encryptCipher.init(true, new AEADParameters(null, 8 * this.macSize, obj, getAdditionalData(j2, s, i3)));
-            i5 += this.encryptCipher.processBytes(bArr, i, i3, obj2, i5);
-            if (i5 + this.encryptCipher.doFinal(obj2, i5) == obj2.length) {
-                return obj2;
+            this.encryptCipher.init(true, new AEADParameters(null, 8 * this.macSize, bArr2, getAdditionalData(j2, s, i3)));
+            i5 += this.encryptCipher.processBytes(bArr, i, i3, bArr3, i5);
+            if (i5 + this.encryptCipher.doFinal(bArr3, i5) == bArr3.length) {
+                return bArr3;
             }
             throw new TlsFatalAlert((short) 80);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new TlsFatalAlert((short) 80, e);
         }
     }

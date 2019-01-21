@@ -99,7 +99,7 @@ public class ProtoBuf {
 
     /* JADX WARNING: Removed duplicated region for block: B:59:0x0153  */
     /* JADX WARNING: Removed duplicated region for block: B:58:0x0152 A:{RETURN} */
-    /* JADX WARNING: Missing block: B:45:0x0115, code:
+    /* JADX WARNING: Missing block: B:45:0x0115, code skipped:
             r9 = r22;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -310,7 +310,7 @@ public class ProtoBuf {
         return totalSize;
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0054, code:
+    /* JADX WARNING: Missing block: B:8:0x0054, code skipped:
             r9 = r17;
             r10 = r18;
      */

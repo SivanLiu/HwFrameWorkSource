@@ -72,6 +72,8 @@ public class HelperDatabaseManager {
         }).start();
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static boolean getCoordinatorServiceFlag(Context context) {
         DataServiceProxy dataServiceProxy;
         try {

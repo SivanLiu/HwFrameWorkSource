@@ -23,11 +23,11 @@ public class RC2WrapEngine implements Wrapper {
     private SecureRandom sr;
 
     private byte[] calculateCMSKeyChecksum(byte[] bArr) {
-        Object obj = new byte[8];
+        byte[] bArr2 = new byte[8];
         this.sha1.update(bArr, 0, bArr.length);
         this.sha1.doFinal(this.digest, 0);
-        System.arraycopy(this.digest, 0, obj, 0, 8);
-        return obj;
+        System.arraycopy(this.digest, 0, bArr2, 0, 8);
+        return bArr2;
     }
 
     private boolean checkCMSKeyChecksum(byte[] bArr, byte[] bArr2) {
@@ -76,45 +76,45 @@ public class RC2WrapEngine implements Wrapper {
             throw new InvalidCipherTextException("Null pointer as ciphertext");
         } else if (i2 % this.engine.getBlockSize() == 0) {
             this.engine.init(false, new ParametersWithIV(this.param, IV2));
-            Object obj = new byte[i2];
-            System.arraycopy(bArr, i, obj, 0, i2);
-            for (int i3 = 0; i3 < obj.length / this.engine.getBlockSize(); i3++) {
+            byte[] bArr2 = new byte[i2];
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            for (int i3 = 0; i3 < bArr2.length / this.engine.getBlockSize(); i3++) {
                 i = this.engine.getBlockSize() * i3;
-                this.engine.processBlock(obj, i, obj, i);
+                this.engine.processBlock(bArr2, i, bArr2, i);
             }
-            Object obj2 = new byte[obj.length];
+            bArr = new byte[bArr2.length];
             i = 0;
-            while (i < obj.length) {
+            while (i < bArr2.length) {
                 int i4 = i + 1;
-                obj2[i] = obj[obj.length - i4];
+                bArr[i] = bArr2[bArr2.length - i4];
                 i = i4;
             }
             this.iv = new byte[8];
-            Object obj3 = new byte[(obj2.length - 8)];
-            System.arraycopy(obj2, 0, this.iv, 0, 8);
-            System.arraycopy(obj2, 8, obj3, 0, obj2.length - 8);
+            byte[] bArr3 = new byte[(bArr.length - 8)];
+            System.arraycopy(bArr, 0, this.iv, 0, 8);
+            System.arraycopy(bArr, 8, bArr3, 0, bArr.length - 8);
             this.paramPlusIV = new ParametersWithIV(this.param, this.iv);
             this.engine.init(false, this.paramPlusIV);
-            obj2 = new byte[obj3.length];
-            System.arraycopy(obj3, 0, obj2, 0, obj3.length);
-            for (i2 = 0; i2 < obj2.length / this.engine.getBlockSize(); i2++) {
+            bArr = new byte[bArr3.length];
+            System.arraycopy(bArr3, 0, bArr, 0, bArr3.length);
+            for (i2 = 0; i2 < bArr.length / this.engine.getBlockSize(); i2++) {
                 int blockSize = this.engine.getBlockSize() * i2;
-                this.engine.processBlock(obj2, blockSize, obj2, blockSize);
+                this.engine.processBlock(bArr, blockSize, bArr, blockSize);
             }
-            obj3 = new byte[(obj2.length - 8)];
-            obj = new byte[8];
-            System.arraycopy(obj2, 0, obj3, 0, obj2.length - 8);
-            System.arraycopy(obj2, obj2.length - 8, obj, 0, 8);
-            if (!checkCMSKeyChecksum(obj3, obj)) {
+            bArr3 = new byte[(bArr.length - 8)];
+            bArr2 = new byte[8];
+            System.arraycopy(bArr, 0, bArr3, 0, bArr.length - 8);
+            System.arraycopy(bArr, bArr.length - 8, bArr2, 0, 8);
+            if (!checkCMSKeyChecksum(bArr3, bArr2)) {
                 throw new InvalidCipherTextException("Checksum inside ciphertext is corrupted");
-            } else if (obj3.length - ((obj3[0] & 255) + 1) <= 7) {
-                obj2 = new byte[obj3[0]];
-                System.arraycopy(obj3, 1, obj2, 0, obj2.length);
-                return obj2;
+            } else if (bArr3.length - ((bArr3[0] & 255) + 1) <= 7) {
+                bArr = new byte[bArr3[0]];
+                System.arraycopy(bArr3, 1, bArr, 0, bArr.length);
+                return bArr;
             } else {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("too many pad bytes (");
-                stringBuilder.append(obj3.length - ((obj3[0] & 255) + 1));
+                stringBuilder.append(bArr3.length - ((bArr3[0] & 255) + 1));
                 stringBuilder.append(")");
                 throw new InvalidCipherTextException(stringBuilder.toString());
             }
@@ -130,36 +130,36 @@ public class RC2WrapEngine implements Wrapper {
         if (this.forWrapping) {
             int i3 = i2 + 1;
             int i4 = i3 % 8;
-            Object obj = new byte[(i4 != 0 ? (8 - i4) + i3 : i3)];
+            byte[] bArr2 = new byte[(i4 != 0 ? (8 - i4) + i3 : i3)];
             int i5 = 0;
-            obj[0] = (byte) i2;
-            System.arraycopy(bArr, i, obj, 1, i2);
-            Object obj2 = new byte[((obj.length - i2) - 1)];
-            if (obj2.length > 0) {
-                this.sr.nextBytes(obj2);
-                System.arraycopy(obj2, 0, obj, i3, obj2.length);
+            bArr2[0] = (byte) i2;
+            System.arraycopy(bArr, i, bArr2, 1, i2);
+            bArr = new byte[((bArr2.length - i2) - 1)];
+            if (bArr.length > 0) {
+                this.sr.nextBytes(bArr);
+                System.arraycopy(bArr, 0, bArr2, i3, bArr.length);
             }
-            obj2 = calculateCMSKeyChecksum(obj);
-            Object obj3 = new byte[(obj.length + obj2.length)];
-            System.arraycopy(obj, 0, obj3, 0, obj.length);
-            System.arraycopy(obj2, 0, obj3, obj.length, obj2.length);
-            obj2 = new byte[obj3.length];
-            System.arraycopy(obj3, 0, obj2, 0, obj3.length);
-            i2 = obj3.length / this.engine.getBlockSize();
-            if (obj3.length % this.engine.getBlockSize() == 0) {
+            bArr = calculateCMSKeyChecksum(bArr2);
+            byte[] bArr3 = new byte[(bArr2.length + bArr.length)];
+            System.arraycopy(bArr2, 0, bArr3, 0, bArr2.length);
+            System.arraycopy(bArr, 0, bArr3, bArr2.length, bArr.length);
+            bArr = new byte[bArr3.length];
+            System.arraycopy(bArr3, 0, bArr, 0, bArr3.length);
+            i2 = bArr3.length / this.engine.getBlockSize();
+            if (bArr3.length % this.engine.getBlockSize() == 0) {
                 this.engine.init(true, this.paramPlusIV);
                 for (i = 0; i < i2; i++) {
                     i3 = this.engine.getBlockSize() * i;
-                    this.engine.processBlock(obj2, i3, obj2, i3);
+                    this.engine.processBlock(bArr, i3, bArr, i3);
                 }
-                obj3 = new byte[(this.iv.length + obj2.length)];
-                System.arraycopy(this.iv, 0, obj3, 0, this.iv.length);
-                System.arraycopy(obj2, 0, obj3, this.iv.length, obj2.length);
-                bArr = new byte[obj3.length];
+                bArr3 = new byte[(this.iv.length + bArr.length)];
+                System.arraycopy(this.iv, 0, bArr3, 0, this.iv.length);
+                System.arraycopy(bArr, 0, bArr3, this.iv.length, bArr.length);
+                bArr = new byte[bArr3.length];
                 i3 = 0;
-                while (i3 < obj3.length) {
+                while (i3 < bArr3.length) {
                     int i6 = i3 + 1;
-                    bArr[i3] = obj3[obj3.length - i6];
+                    bArr[i3] = bArr3[bArr3.length - i6];
                     i3 = i6;
                 }
                 this.engine.init(true, new ParametersWithIV(this.param, IV2));

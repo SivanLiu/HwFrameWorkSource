@@ -39,15 +39,17 @@ public class MediaResourceMonitorService extends SystemService {
                 String[] pkgNames = getPackageNamesFromPid(pid);
                 if (pkgNames != null) {
                     int[] userIds = ((UserManager) MediaResourceMonitorService.this.getContext().getSystemService("user")).getEnabledProfileIds(ActivityManager.getCurrentUser());
-                    if (userIds == null || userIds.length == 0) {
-                        Binder.restoreCallingIdentity(identity);
-                        return;
-                    }
-                    Intent intent = new Intent("android.intent.action.MEDIA_RESOURCE_GRANTED");
-                    intent.putExtra("android.intent.extra.PACKAGES", pkgNames);
-                    intent.putExtra("android.intent.extra.MEDIA_RESOURCE_TYPE", type);
-                    for (int userId : userIds) {
-                        MediaResourceMonitorService.this.getContext().sendBroadcastAsUser(intent, UserHandle.of(userId), "android.permission.RECEIVE_MEDIA_RESOURCE_USAGE");
+                    if (userIds != null) {
+                        if (userIds.length != 0) {
+                            Intent intent = new Intent("android.intent.action.MEDIA_RESOURCE_GRANTED");
+                            intent.putExtra("android.intent.extra.PACKAGES", pkgNames);
+                            intent.putExtra("android.intent.extra.MEDIA_RESOURCE_TYPE", type);
+                            for (int userId : userIds) {
+                                MediaResourceMonitorService.this.getContext().sendBroadcastAsUser(intent, UserHandle.of(userId), "android.permission.RECEIVE_MEDIA_RESOURCE_USAGE");
+                            }
+                            Binder.restoreCallingIdentity(identity);
+                            return;
+                        }
                     }
                     Binder.restoreCallingIdentity(identity);
                 }

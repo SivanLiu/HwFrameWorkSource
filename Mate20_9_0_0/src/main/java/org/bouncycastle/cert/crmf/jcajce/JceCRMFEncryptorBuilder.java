@@ -2,6 +2,7 @@ package org.bouncycastle.cert.crmf.jcajce;
 
 import java.io.OutputStream;
 import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;
@@ -54,7 +55,7 @@ public class JceCRMFEncryptorBuilder {
                     generateParameters = this.cipher.getParameters();
                 }
                 this.algorithmIdentifier = JceCRMFEncryptorBuilder.this.helper.getAlgorithmIdentifier(aSN1ObjectIdentifier, generateParameters);
-            } catch (Throwable e) {
+            } catch (GeneralSecurityException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to initialize cipher: ");
                 stringBuilder.append(e.getMessage());

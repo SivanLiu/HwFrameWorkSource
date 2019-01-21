@@ -523,7 +523,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         if (result != null) {
             return result;
         }
-        Set entrySet = new EntrySet();
+        EntrySet entrySet = new EntrySet();
         this.entrySet = entrySet;
         return entrySet;
     }
@@ -533,7 +533,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         if (result != null) {
             return result;
         }
-        Set keySet = new KeySet();
+        KeySet keySet = new KeySet();
         this.keySet = keySet;
         return keySet;
     }

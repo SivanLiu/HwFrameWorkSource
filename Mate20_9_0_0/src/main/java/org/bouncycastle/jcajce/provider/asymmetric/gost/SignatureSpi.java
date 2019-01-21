@@ -81,21 +81,21 @@ public class SignatureSpi extends java.security.SignatureSpi implements PKCSObje
         byte[] bArr = new byte[this.digest.getDigestSize()];
         this.digest.doFinal(bArr, 0);
         try {
-            Object obj = new byte[64];
+            byte[] bArr2 = new byte[64];
             BigInteger[] generateSignature = this.signer.generateSignature(bArr);
-            Object toByteArray = generateSignature[0].toByteArray();
-            Object toByteArray2 = generateSignature[1].toByteArray();
-            if (toByteArray2[0] != (byte) 0) {
-                System.arraycopy(toByteArray2, 0, obj, 32 - toByteArray2.length, toByteArray2.length);
+            byte[] toByteArray = generateSignature[0].toByteArray();
+            bArr = generateSignature[1].toByteArray();
+            if (bArr[0] != (byte) 0) {
+                System.arraycopy(bArr, 0, bArr2, 32 - bArr.length, bArr.length);
             } else {
-                System.arraycopy(toByteArray2, 1, obj, 32 - (toByteArray2.length - 1), toByteArray2.length - 1);
+                System.arraycopy(bArr, 1, bArr2, 32 - (bArr.length - 1), bArr.length - 1);
             }
             if (toByteArray[0] != (byte) 0) {
-                System.arraycopy(toByteArray, 0, obj, 64 - toByteArray.length, toByteArray.length);
-                return obj;
+                System.arraycopy(toByteArray, 0, bArr2, 64 - toByteArray.length, toByteArray.length);
+                return bArr2;
             }
-            System.arraycopy(toByteArray, 1, obj, 64 - (toByteArray.length - 1), toByteArray.length - 1);
-            return obj;
+            System.arraycopy(toByteArray, 1, bArr2, 64 - (toByteArray.length - 1), toByteArray.length - 1);
+            return bArr2;
         } catch (Exception e) {
             throw new SignatureException(e.toString());
         }
@@ -113,10 +113,10 @@ public class SignatureSpi extends java.security.SignatureSpi implements PKCSObje
         byte[] bArr2 = new byte[this.digest.getDigestSize()];
         this.digest.doFinal(bArr2, 0);
         try {
-            Object obj = new byte[32];
+            byte[] bArr3 = new byte[32];
             System.arraycopy(bArr, 0, new byte[32], 0, 32);
-            System.arraycopy(bArr, 32, obj, 0, 32);
-            BigInteger[] bigIntegerArr = new BigInteger[]{new BigInteger(1, obj), new BigInteger(1, r4)};
+            System.arraycopy(bArr, 32, bArr3, 0, 32);
+            BigInteger[] bigIntegerArr = new BigInteger[]{new BigInteger(1, bArr3), new BigInteger(1, r4)};
             return this.signer.verifySignature(bArr2, bigIntegerArr[0], bigIntegerArr[1]);
         } catch (Exception e) {
             throw new SignatureException("error decoding signature bytes.");

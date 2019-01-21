@@ -53,12 +53,11 @@ class AwareUserHabitRadar {
                     }
                 }
                 this.mStatisticsData.add(new StatisticsData(APPMNG_FEATURE_ID, 1, subtype, 1, exetime, effect, this.mStartTime, now));
-                return;
             } catch (Throwable th2) {
                 th = th2;
+                throw th;
             }
         }
-        throw th;
     }
 
     private void clearArrayList() {

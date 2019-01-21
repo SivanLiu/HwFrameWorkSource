@@ -187,7 +187,7 @@ public final class TvInputManagerService extends SystemService {
                 int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), Binder.getCallingUid(), userId, "getTvContentRatingSystemList");
                 long identity = Binder.clearCallingIdentity();
                 try {
-                    List<TvContentRatingSystemInfo> access$1500;
+                    List access$1500;
                     synchronized (TvInputManagerService.this.mLock) {
                         access$1500 = TvInputManagerService.this.getOrCreateUserStateLocked(resolvedUserId).contentRatingSystemList;
                     }
@@ -397,13 +397,13 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:52:0x011c, code:
+        /* JADX WARNING: Missing block: B:52:0x011c, code skipped:
             android.os.Binder.restoreCallingIdentity(r23);
      */
-        /* JADX WARNING: Missing block: B:53:0x0122, code:
+        /* JADX WARNING: Missing block: B:53:0x0122, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:62:0x012d, code:
+        /* JADX WARNING: Missing block: B:62:0x012d, code skipped:
             r0 = th;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -531,10 +531,10 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:19:0x0055, code:
+        /* JADX WARNING: Missing block: B:19:0x0055, code skipped:
             android.os.Binder.restoreCallingIdentity(r2);
      */
-        /* JADX WARNING: Missing block: B:20:0x0059, code:
+        /* JADX WARNING: Missing block: B:20:0x0059, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -567,14 +567,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:10:0x0044 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:10:0x0044, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:12:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in setSurface", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setSurface(IBinder sessionToken, Surface surface, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "setSurface");
@@ -588,7 +580,8 @@ public final class TvInputManagerService extends SystemService {
                         } else {
                             TvInputManagerService.this.getSessionLocked(sessionState.hardwareSessionToken, 1000, resolvedUserId).setSurface(surface);
                         }
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in setSurface", e);
                     }
                 }
                 if (surface != null) {
@@ -603,14 +596,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:9:0x0042 A:{Splitter: B:4:0x001b, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:9:0x0042, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:11:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in dispatchSurfaceChanged", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void dispatchSurfaceChanged(IBinder sessionToken, int format, int width, int height, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "dispatchSurfaceChanged");
@@ -623,7 +608,8 @@ public final class TvInputManagerService extends SystemService {
                         if (sessionState.hardwareSessionToken != null) {
                             TvInputManagerService.this.getSessionLocked(sessionState.hardwareSessionToken, 1000, resolvedUserId).dispatchSurfaceChanged(format, width, height);
                         }
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in dispatchSurfaceChanged", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -632,14 +618,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:12:0x004e A:{Splitter: B:4:0x001f, ExcHandler: android.os.RemoteException (r7_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:12:0x004e, code:
-            r7 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:14:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in setVolume", r7);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setVolume(IBinder sessionToken, float volume, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "setVolume");
@@ -657,7 +635,8 @@ public final class TvInputManagerService extends SystemService {
                             }
                             access$5400.setVolume(f);
                         }
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in setVolume", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -666,20 +645,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:21:0x0082 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_6 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:21:0x0082, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:23:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in tune", r5);
-     */
-        /* JADX WARNING: Missing block: B:25:0x008b, code:
-            android.os.Binder.restoreCallingIdentity(r2);
-     */
-        /* JADX WARNING: Missing block: B:26:0x008f, code:
-            return;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void tune(IBinder sessionToken, Uri channelUri, Bundle params, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "tune");
@@ -704,22 +669,16 @@ public final class TvInputManagerService extends SystemService {
                         args.arg4 = params;
                         args.arg5 = sessionToken;
                         TvInputManagerService.this.mWatchLogHandler.obtainMessage(1, args).sendToTarget();
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in tune", e);
                     }
                 }
+                Binder.restoreCallingIdentity(identity);
             } catch (Throwable th) {
                 Binder.restoreCallingIdentity(identity);
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x002b A:{Splitter: B:4:0x001f, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x002b, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in unblockContent", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void unblockContent(IBinder sessionToken, String unblockedRating, int userId) {
             ensureParentalControlsPermission();
             int callingUid = Binder.getCallingUid();
@@ -729,7 +688,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).unblockContent(unblockedRating);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in unblockContent", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -738,14 +698,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in setCaptionEnabled", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setCaptionEnabled(IBinder sessionToken, boolean enabled, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "setCaptionEnabled");
@@ -754,7 +706,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).setCaptionEnabled(enabled);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in setCaptionEnabled", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -763,14 +716,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in selectTrack", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void selectTrack(IBinder sessionToken, int type, String trackId, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "selectTrack");
@@ -779,7 +724,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).selectTrack(type, trackId);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in selectTrack", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -788,14 +734,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in appPrivateCommand", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void sendAppPrivateCommand(IBinder sessionToken, String command, Bundle data, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "sendAppPrivateCommand");
@@ -804,7 +742,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).appPrivateCommand(command, data);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in appPrivateCommand", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -813,14 +752,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0027 A:{Splitter: B:4:0x001b, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0027, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in createOverlayView", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void createOverlayView(IBinder sessionToken, IBinder windowToken, Rect frame, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "createOverlayView");
@@ -829,7 +760,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).createOverlayView(windowToken, frame);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in createOverlayView", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -838,14 +770,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in relayoutOverlayView", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void relayoutOverlayView(IBinder sessionToken, Rect frame, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "relayoutOverlayView");
@@ -854,7 +778,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).relayoutOverlayView(frame);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in relayoutOverlayView", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -863,14 +788,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in removeOverlayView", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void removeOverlayView(IBinder sessionToken, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "removeOverlayView");
@@ -879,7 +796,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).removeOverlayView();
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in removeOverlayView", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -888,14 +806,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in timeShiftPlay", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void timeShiftPlay(IBinder sessionToken, Uri recordedProgramUri, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "timeShiftPlay");
@@ -904,7 +814,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).timeShiftPlay(recordedProgramUri);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in timeShiftPlay", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -913,14 +824,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in timeShiftPause", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void timeShiftPause(IBinder sessionToken, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "timeShiftPause");
@@ -929,7 +832,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).timeShiftPause();
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in timeShiftPause", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -938,14 +842,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in timeShiftResume", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void timeShiftResume(IBinder sessionToken, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "timeShiftResume");
@@ -954,7 +850,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).timeShiftResume();
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in timeShiftResume", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -963,14 +860,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in timeShiftSeekTo", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void timeShiftSeekTo(IBinder sessionToken, long timeMs, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "timeShiftSeekTo");
@@ -979,7 +868,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).timeShiftSeekTo(timeMs);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in timeShiftSeekTo", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -988,14 +878,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in timeShiftSetPlaybackParams", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void timeShiftSetPlaybackParams(IBinder sessionToken, PlaybackParams params, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "timeShiftSetPlaybackParams");
@@ -1004,7 +886,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).timeShiftSetPlaybackParams(params);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in timeShiftSetPlaybackParams", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -1013,14 +896,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in timeShiftEnablePositionTracking", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void timeShiftEnablePositionTracking(IBinder sessionToken, boolean enable, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "timeShiftEnablePositionTracking");
@@ -1029,7 +904,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).timeShiftEnablePositionTracking(enable);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in timeShiftEnablePositionTracking", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -1038,14 +914,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in startRecording", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void startRecording(IBinder sessionToken, Uri programUri, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "startRecording");
@@ -1054,7 +922,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).startRecording(programUri);
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in startRecording", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -1063,14 +932,6 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:7:0x0028 A:{Splitter: B:4:0x001c, ExcHandler: android.os.RemoteException (r5_2 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:7:0x0028, code:
-            r5 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:9:?, code:
-            android.util.Slog.e(com.android.server.tv.TvInputManagerService.TAG, "error in stopRecording", r5);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public void stopRecording(IBinder sessionToken, int userId) {
             int callingUid = Binder.getCallingUid();
             int resolvedUserId = TvInputManagerService.this.resolveCallingUserId(Binder.getCallingPid(), callingUid, userId, "stopRecording");
@@ -1079,7 +940,8 @@ public final class TvInputManagerService extends SystemService {
                 synchronized (TvInputManagerService.this.mLock) {
                     try {
                         TvInputManagerService.this.getSessionLocked(sessionToken, callingUid, resolvedUserId).stopRecording();
-                    } catch (Exception e) {
+                    } catch (RemoteException | SessionNotFoundException e) {
+                        Slog.e(TvInputManagerService.TAG, "error in stopRecording", e);
                     }
                 }
                 Binder.restoreCallingIdentity(identity);
@@ -1330,25 +1192,25 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:25:?, code:
+        /* JADX WARNING: Missing block: B:25:?, code skipped:
             r2 = com.android.server.tv.TvInputManagerService.access$5600(r11.this$0);
      */
-        /* JADX WARNING: Missing block: B:26:0x0091, code:
+        /* JADX WARNING: Missing block: B:26:0x0091, code skipped:
             if (r10 == null) goto L_0x0095;
      */
-        /* JADX WARNING: Missing block: B:27:0x0093, code:
+        /* JADX WARNING: Missing block: B:27:0x0093, code skipped:
             r3 = r10;
      */
-        /* JADX WARNING: Missing block: B:28:0x0095, code:
+        /* JADX WARNING: Missing block: B:28:0x0095, code skipped:
             r3 = r12;
      */
-        /* JADX WARNING: Missing block: B:29:0x0096, code:
+        /* JADX WARNING: Missing block: B:29:0x0096, code skipped:
             r2 = r2.captureFrame(r3, r13, r14, r8, r9);
      */
-        /* JADX WARNING: Missing block: B:30:0x009e, code:
+        /* JADX WARNING: Missing block: B:30:0x009e, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
-        /* JADX WARNING: Missing block: B:31:0x00a1, code:
+        /* JADX WARNING: Missing block: B:31:0x00a1, code skipped:
             return r2;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1401,10 +1263,10 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:18:0x0062, code:
+        /* JADX WARNING: Missing block: B:18:0x0062, code skipped:
             android.os.Binder.restoreCallingIdentity(r0);
      */
-        /* JADX WARNING: Missing block: B:19:0x0065, code:
+        /* JADX WARNING: Missing block: B:19:0x0065, code skipped:
             return true;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1679,7 +1541,7 @@ public final class TvInputManagerService extends SystemService {
             this.mUserId = userId;
         }
 
-        /* JADX WARNING: Missing block: B:54:0x0126, code:
+        /* JADX WARNING: Missing block: B:54:0x0126, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1884,7 +1746,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1901,7 +1763,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1918,7 +1780,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1935,7 +1797,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1952,7 +1814,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1969,7 +1831,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1986,7 +1848,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2003,7 +1865,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0037, code:
+        /* JADX WARNING: Missing block: B:15:0x0037, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2020,7 +1882,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2037,7 +1899,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2054,7 +1916,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2071,7 +1933,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2088,7 +1950,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2105,7 +1967,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2122,7 +1984,7 @@ public final class TvInputManagerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:15:0x0033, code:
+        /* JADX WARNING: Missing block: B:15:0x0033, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2871,26 +2733,19 @@ public final class TvInputManagerService extends SystemService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x002a A:{Splitter: B:1:0x0002, ExcHandler: android.os.RemoteException (r2_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:8:0x0022, code:
+    /* JADX WARNING: Missing block: B:8:0x0022, code skipped:
             if (r1 != null) goto L_0x0024;
      */
-    /* JADX WARNING: Missing block: B:9:0x0024, code:
+    /* JADX WARNING: Missing block: B:9:0x0024, code skipped:
             com.android.server.tv.TvInputManagerService.SessionState.access$1702(r1, null);
      */
-    /* JADX WARNING: Missing block: B:11:0x002a, code:
-            r2 = move-exception;
+    /* JADX WARNING: Missing block: B:14:0x0032, code skipped:
+            if (r1 == null) goto L_0x0035;
      */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            android.util.Slog.e(TAG, "error in releaseSession", r2);
-     */
-    /* JADX WARNING: Missing block: B:14:0x0032, code:
-            if (r1 != null) goto L_0x0024;
-     */
-    /* JADX WARNING: Missing block: B:15:0x0035, code:
+    /* JADX WARNING: Missing block: B:15:0x0035, code skipped:
             removeSessionStateLocked(r6, r8);
      */
-    /* JADX WARNING: Missing block: B:16:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2904,7 +2759,8 @@ public final class TvInputManagerService extends SystemService {
                 }
                 sessionState.session.release();
             }
-        } catch (Exception e) {
+        } catch (RemoteException | SessionNotFoundException e) {
+            Slog.e(TAG, "error in releaseSession", e);
         } catch (Throwable th) {
             if (sessionState != null) {
                 sessionState.session = null;
@@ -2938,14 +2794,6 @@ public final class TvInputManagerService extends SystemService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x002c A:{Splitter: B:0:0x0000, ExcHandler: android.os.RemoteException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:8:0x002c, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:9:0x002d, code:
-            android.util.Slog.e(TAG, "error in setMain", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void setMainLocked(IBinder sessionToken, boolean isMain, int callingUid, int userId) {
         try {
             SessionState sessionState = getSessionStateLocked(sessionToken, callingUid, userId);
@@ -2955,7 +2803,8 @@ public final class TvInputManagerService extends SystemService {
             if (getServiceStateLocked(sessionState.componentName, userId).isHardware) {
                 getSessionLocked(sessionState).setMain(isMain);
             }
-        } catch (Exception e) {
+        } catch (RemoteException | SessionNotFoundException e) {
+            Slog.e(TAG, "error in setMain", e);
         }
     }
 
@@ -3028,7 +2877,7 @@ public final class TvInputManagerService extends SystemService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x003f, code:
+    /* JADX WARNING: Missing block: B:8:0x003f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

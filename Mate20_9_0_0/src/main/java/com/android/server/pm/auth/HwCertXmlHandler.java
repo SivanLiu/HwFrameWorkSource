@@ -25,10 +25,12 @@ public class HwCertXmlHandler {
     public static final String TAG_HWCERT = "hwcerts";
     public static final String TAG_VALUE = "value";
 
-    /* JADX WARNING: Missing block: B:51:?, code:
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x0095 A:{Catch:{ RuntimeException -> 0x00de, Exception -> 0x00d2 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x0094 A:{Catch:{ RuntimeException -> 0x00de, Exception -> 0x00d2 }} */
+    /* JADX WARNING: Missing block: B:53:?, code skipped:
             closeStream(r0, r1);
      */
-    /* JADX WARNING: Missing block: B:56:0x00e9, code:
+    /* JADX WARNING: Missing block: B:58:0x00e9, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -60,21 +62,29 @@ public class HwCertXmlHandler {
                         int next2 = parser.next();
                         type = next2;
                         if (next2 != 1 && (type != 3 || parser.getDepth() > outerDepth)) {
-                            boolean shouldSkip = type == 3 || type == 4;
-                            if (!shouldSkip) {
-                                tag = parser.getName();
-                                if (TAG_CERT.equals(tag)) {
-                                    HwCertification cert = processCertTag(parser);
-                                    if (!(cert == null || cert.getPackageName() == null)) {
-                                        certs.put(cert.getPackageName(), cert);
+                            boolean shouldSkip;
+                            if (type != 3) {
+                                if (type != 4) {
+                                    shouldSkip = false;
+                                    if (shouldSkip) {
+                                        tag = parser.getName();
+                                        if (TAG_CERT.equals(tag)) {
+                                            HwCertification cert = processCertTag(parser);
+                                            if (!(cert == null || cert.getPackageName() == null)) {
+                                                certs.put(cert.getPackageName(), cert);
+                                            }
+                                        } else {
+                                            StringBuilder stringBuilder = new StringBuilder();
+                                            stringBuilder.append("readHwCertXml:unknow tag:");
+                                            stringBuilder.append(tag);
+                                            HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
+                                            XmlUtils.skipCurrentTag(parser);
+                                        }
                                     }
-                                } else {
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    stringBuilder.append("readHwCertXml:unknow tag:");
-                                    stringBuilder.append(tag);
-                                    HwAuthLogger.e("HwCertificationManager", stringBuilder.toString());
-                                    XmlUtils.skipCurrentTag(parser);
                                 }
+                            }
+                            shouldSkip = true;
+                            if (shouldSkip) {
                             }
                         }
                         break;

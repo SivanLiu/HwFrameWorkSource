@@ -31,7 +31,7 @@ public class PKIXAttrCertPathValidatorSpi extends CertPathValidatorSpi {
             Set hashSet = new HashSet();
             Set hashSet2 = new HashSet();
             Set hashSet3 = new HashSet();
-            Set hashSet4 = new HashSet();
+            HashSet hashSet4 = new HashSet();
             if (certPathParameters instanceof PKIXParameters) {
                 Builder builder = new Builder((PKIXParameters) certPathParameters);
                 if (z) {
@@ -63,7 +63,7 @@ public class PKIXAttrCertPathValidatorSpi extends CertPathValidatorSpi {
                 try {
                     RFC3281CertPathUtilities.checkCRLs(attributeCert, pKIXExtendedParameters, x509Certificate, CertPathValidatorUtilities.getValidCertDateFromValidityModel(pKIXExtendedParameters, null, -1), certPath.getCertificates(), this.helper);
                     return processAttrCert2;
-                } catch (Throwable e) {
+                } catch (AnnotatedException e) {
                     throw new ExtCertPathValidatorException("Could not get validity date from attribute certificate.", e);
                 }
             }

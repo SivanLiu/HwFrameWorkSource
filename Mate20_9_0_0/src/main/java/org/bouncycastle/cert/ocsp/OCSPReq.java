@@ -2,10 +2,10 @@ package org.bouncycastle.cert.ocsp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1Exception;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OutputStream;
@@ -35,21 +35,21 @@ public class OCSPReq {
                 return;
             }
             throw new CertIOException("malformed request: no request data found");
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed request: ");
             stringBuilder.append(e.getMessage());
             throw new CertIOException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (ClassCastException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed request: ");
             stringBuilder.append(e2.getMessage());
             throw new CertIOException(stringBuilder.toString(), e2);
-        } catch (Throwable e22) {
+        } catch (ASN1Exception e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("malformed request: ");
-            stringBuilder.append(e22.getMessage());
-            throw new CertIOException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new CertIOException(stringBuilder.toString(), e3);
         }
     }
 
@@ -82,7 +82,7 @@ public class OCSPReq {
     }
 
     public byte[] getEncoded() throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         new ASN1OutputStream(byteArrayOutputStream).writeObject(this.req);
         return byteArrayOutputStream.toByteArray();
     }
@@ -134,7 +134,7 @@ public class OCSPReq {
                 ContentVerifier contentVerifier = contentVerifierProvider.get(this.req.getOptionalSignature().getSignatureAlgorithm());
                 contentVerifier.getOutputStream().write(this.req.getTbsRequest().getEncoded(ASN1Encoding.DER));
                 return contentVerifier.verify(getSignature());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception processing signature: ");
                 stringBuilder.append(e);

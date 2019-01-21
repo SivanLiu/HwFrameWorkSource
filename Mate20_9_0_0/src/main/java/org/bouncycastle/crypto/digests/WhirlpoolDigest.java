@@ -111,7 +111,7 @@ public final class WhirlpoolDigest implements ExtendedDigest, Memoable {
     }
 
     private void finish() {
-        Object copyBitLength = copyBitLength();
+        byte[] copyBitLength = copyBitLength();
         byte[] bArr = this._buffer;
         int i = this._bufferPos;
         this._bufferPos = i + 1;

@@ -467,7 +467,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
             int userId = UserHandle.getUserId(callingUid);
             long token = Binder.clearCallingIdentity();
             try {
-                ParceledListSlice<BrightnessChangeEvent> brightnessEvents;
+                ParceledListSlice brightnessEvents;
                 synchronized (DisplayManagerService.this.mSyncRoot) {
                     brightnessEvents = DisplayManagerService.this.mDisplayPowerController.getBrightnessEvents(userId, hasUsageStats);
                 }
@@ -483,7 +483,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
             int userId = UserHandle.getUserId(Binder.getCallingUid());
             long token = Binder.clearCallingIdentity();
             try {
-                ParceledListSlice<AmbientBrightnessDayStats> ambientBrightnessStats;
+                ParceledListSlice ambientBrightnessStats;
                 synchronized (DisplayManagerService.this.mSyncRoot) {
                     ambientBrightnessStats = DisplayManagerService.this.mDisplayPowerController.getAmbientBrightnessStats(userId);
                 }
@@ -1100,21 +1100,23 @@ public final class DisplayManagerService extends SystemService implements IHwDis
             synchronized (this.mSyncRoot) {
                 long timeout = SystemClock.uptimeMillis() + this.mInjector.getDefaultDisplayDelayTimeout();
                 while (true) {
-                    if (this.mLogicalDisplays.get(0) == null || this.mVirtualDisplayAdapter == null) {
-                        long delay = timeout - SystemClock.uptimeMillis();
-                        if (delay > 0) {
-                            try {
-                                this.mSyncRoot.wait(delay);
-                            } catch (InterruptedException e) {
-                            }
-                        } else {
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("Timeout waiting for default display to be initialized. DefaultDisplay=");
-                            stringBuilder.append(this.mLogicalDisplays.get(0));
-                            stringBuilder.append(", mVirtualDisplayAdapter=");
-                            stringBuilder.append(this.mVirtualDisplayAdapter);
-                            throw new RuntimeException(stringBuilder.toString());
+                    if (this.mLogicalDisplays.get(0) != null) {
+                        if (this.mVirtualDisplayAdapter != null) {
                         }
+                    }
+                    long delay = timeout - SystemClock.uptimeMillis();
+                    if (delay > 0) {
+                        try {
+                            this.mSyncRoot.wait(delay);
+                        } catch (InterruptedException e) {
+                        }
+                    } else {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Timeout waiting for default display to be initialized. DefaultDisplay=");
+                        stringBuilder.append(this.mLogicalDisplays.get(0));
+                        stringBuilder.append(", mVirtualDisplayAdapter=");
+                        stringBuilder.append(this.mVirtualDisplayAdapter);
+                        throw new RuntimeException(stringBuilder.toString());
                     }
                 }
             }
@@ -1224,16 +1226,16 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0010, code:
+    /* JADX WARNING: Missing block: B:9:0x0010, code skipped:
             r0 = r2.mDisplayTransactionListeners.iterator();
      */
-    /* JADX WARNING: Missing block: B:11:0x001a, code:
+    /* JADX WARNING: Missing block: B:11:0x001a, code skipped:
             if (r0.hasNext() == false) goto L_0x0026;
      */
-    /* JADX WARNING: Missing block: B:12:0x001c, code:
+    /* JADX WARNING: Missing block: B:12:0x001c, code skipped:
             ((android.hardware.display.DisplayManagerInternal.DisplayTransactionListener) r0.next()).onDisplayTransaction();
      */
-    /* JADX WARNING: Missing block: B:13:0x0026, code:
+    /* JADX WARNING: Missing block: B:13:0x0026, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1247,23 +1249,23 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x00a4, code:
+    /* JADX WARNING: Missing block: B:39:0x00a4, code skipped:
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:42:0x00ab, code:
+    /* JADX WARNING: Missing block: B:42:0x00ab, code skipped:
             if (r2 >= r6.mTempDisplayStateWorkQueue.size()) goto L_0x00bb;
      */
-    /* JADX WARNING: Missing block: B:43:0x00ad, code:
+    /* JADX WARNING: Missing block: B:43:0x00ad, code skipped:
             ((java.lang.Runnable) r6.mTempDisplayStateWorkQueue.get(r2)).run();
             r2 = r2 + 1;
      */
-    /* JADX WARNING: Missing block: B:44:0x00bb, code:
+    /* JADX WARNING: Missing block: B:44:0x00bb, code skipped:
             android.os.Trace.traceEnd(131072);
      */
-    /* JADX WARNING: Missing block: B:46:?, code:
+    /* JADX WARNING: Missing block: B:46:?, code skipped:
             r6.mTempDisplayStateWorkQueue.clear();
      */
-    /* JADX WARNING: Missing block: B:48:0x00c5, code:
+    /* JADX WARNING: Missing block: B:48:0x00c5, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1323,7 +1325,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001e, code:
+    /* JADX WARNING: Missing block: B:10:0x001e, code skipped:
             return r2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1590,7 +1592,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0015, code:
+    /* JADX WARNING: Missing block: B:11:0x0015, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1691,7 +1693,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         scheduleTraversalLocked(false);
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0097, code:
+    /* JADX WARNING: Missing block: B:25:0x0097, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1961,7 +1963,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0038, code:
+    /* JADX WARNING: Missing block: B:18:0x0038, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1985,7 +1987,7 @@ public final class DisplayManagerService extends SystemService implements IHwDis
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0023, code:
+    /* JADX WARNING: Missing block: B:13:0x0023, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

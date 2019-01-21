@@ -26,7 +26,7 @@ public class AgingService extends ModelBaseService {
     private byte AG_CHECK_RET_CODE_6 = (byte) -6;
     private byte AG_CHECK_SUCC_RET_CODE = (byte) 1;
 
-    /* JADX WARNING: Missing block: B:16:0x008a, code:
+    /* JADX WARNING: Missing block: B:16:0x008a, code skipped:
             return r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -218,7 +218,7 @@ public class AgingService extends ModelBaseService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x00b0, code:
+    /* JADX WARNING: Missing block: B:21:0x00b0, code skipped:
             return r7;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

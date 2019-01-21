@@ -36,7 +36,7 @@ public class WrongPasswordNotifier {
     private void showNotification(String ssid) {
         Intent intent = new Intent("android.settings.WIFI_SETTINGS");
         intent.putExtra("wifi_start_connect_ssid", NativeUtil.removeEnclosingQuotes(ssid));
-        this.mNotificationManager.notify(42, this.mFrameworkFacade.makeNotificationBuilder(this.mContext, SystemNotificationChannels.NETWORK_ALERTS).setAutoCancel(true).setTimeoutAfter(CANCEL_TIMEOUT_MILLISECONDS).setSmallIcon(17303481).setContentTitle(this.mContext.getString(17041390)).setContentText(ssid).setContentIntent(this.mFrameworkFacade.getActivity(this.mContext, 0, intent, 134217728)).setColor(this.mContext.getResources().getColor(17170784)).build());
+        this.mNotificationManager.notify(42, this.mFrameworkFacade.makeNotificationBuilder(this.mContext, SystemNotificationChannels.NETWORK_ALERTS).setAutoCancel(true).setTimeoutAfter(CANCEL_TIMEOUT_MILLISECONDS).setSmallIcon(17303481).setContentTitle(this.mContext.getString(17041391)).setContentText(ssid).setContentIntent(this.mFrameworkFacade.getActivity(this.mContext, 0, intent, 134217728)).setColor(this.mContext.getResources().getColor(17170784)).build());
     }
 
     private void dismissNotification() {

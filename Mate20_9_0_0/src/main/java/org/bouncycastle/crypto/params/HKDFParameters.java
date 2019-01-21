@@ -11,12 +11,12 @@ public class HKDFParameters implements DerivationParameters {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:15:0x0028 in {6, 7, 8, 11, 13, 14, 17} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -32,35 +32,25 @@ public class HKDFParameters implements DerivationParameters {
         r0 = this;
         r0.<init>();
         if (r1 == 0) goto L_0x0029;
-    L_0x0005:
         r1 = org.bouncycastle.util.Arrays.clone(r1);
         r0.ikm = r1;
         r0.skipExpand = r2;
         if (r3 == 0) goto L_0x0018;
-    L_0x000f:
         r1 = r3.length;
         if (r1 != 0) goto L_0x0013;
-    L_0x0012:
         goto L_0x0018;
-    L_0x0013:
         r1 = org.bouncycastle.util.Arrays.clone(r3);
         goto L_0x0019;
-    L_0x0018:
         r1 = 0;
-    L_0x0019:
         r0.salt = r1;
         if (r4 != 0) goto L_0x0023;
-    L_0x001d:
         r1 = 0;
         r1 = new byte[r1];
-    L_0x0020:
         r0.info = r1;
         return;
-    L_0x0023:
         r1 = org.bouncycastle.util.Arrays.clone(r4);
         goto L_0x0020;
         return;
-    L_0x0029:
         r1 = new java.lang.IllegalArgumentException;
         r2 = "IKM (input keying material) should not be null";
         r1.<init>(r2);

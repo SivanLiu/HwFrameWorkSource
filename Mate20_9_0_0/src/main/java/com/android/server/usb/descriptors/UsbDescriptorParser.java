@@ -340,7 +340,7 @@ public final class UsbDescriptorParser {
     }
 
     public boolean hasAudioInterface() {
-        return true ^ getInterfaceDescriptorsForClass(1).isEmpty();
+        return 1 ^ getInterfaceDescriptorsForClass(1).isEmpty();
     }
 
     public boolean hasHIDInterface() {

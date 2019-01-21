@@ -253,7 +253,7 @@ public class HwAttestationService extends Stub {
             }
             try {
                 br.close();
-            } catch (File file2) {
+            } catch (IOException file2) {
                 Log.e(TAG, "IOException in HwAttestationService.readEMMCID()", file2);
             }
             if (sb != null) {

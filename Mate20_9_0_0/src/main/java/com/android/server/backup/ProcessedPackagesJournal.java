@@ -79,7 +79,7 @@ final class ProcessedPackagesJournal {
     }
 
     Set<String> getPackagesCopy() {
-        Set hashSet;
+        HashSet hashSet;
         synchronized (this.mProcessedPackages) {
             hashSet = new HashSet(this.mProcessedPackages);
         }

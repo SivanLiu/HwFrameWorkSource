@@ -1,51 +1,31 @@
 package com.huawei.android.pushagent.datatype.a;
 
 public class b {
-    private byte[] cd;
-    private String ce;
-    private int cf;
-    private int cg;
-    private String ch;
-    private byte[] ci;
+    private long h;
+    private String i;
+    private String pkgName;
 
-    /* JADX WARNING: Missing block: B:4:0x0009, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
-    public b(int i, String str, byte[] bArr, byte[] bArr2, int i2, String str2) {
-        if (bArr != null && bArr.length != 0 && bArr2 != null && bArr2.length != 0) {
-            this.cf = i;
-            this.ch = str;
-            this.ci = new byte[bArr.length];
-            System.arraycopy(bArr, 0, this.ci, 0, bArr.length);
-            this.cd = new byte[bArr2.length];
-            System.arraycopy(bArr2, 0, this.cd, 0, bArr2.length);
-            this.cg = i2;
-            this.ce = str2;
-        }
+    public String ao() {
+        return this.i;
     }
 
-    public String kj() {
-        return this.ch;
+    public void ar(String str) {
+        this.i = str;
     }
 
-    public byte[] getToken() {
-        return this.ci;
+    public String ap() {
+        return this.pkgName;
     }
 
-    public byte[] kf() {
-        return this.cd;
+    public void setPkgName(String str) {
+        this.pkgName = str;
     }
 
-    public int ki() {
-        return this.cg;
+    public long an() {
+        return this.h;
     }
 
-    public String kg() {
-        return this.ce;
-    }
-
-    public int kh() {
-        return this.cf;
+    public void aq(long j) {
+        this.h = j;
     }
 }

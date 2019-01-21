@@ -81,8 +81,8 @@ public class ProcessInfoCollector {
             info = (ProcessInfo) this.mProcMap.remove(Integer.valueOf(pid));
             this.mAwareProcMap.remove(Integer.valueOf(pid));
         }
-        if (info != null) {
-            HwStartWindowRecord.getInstance().removeStartWindowApp(info.mProcessName);
+        if (info != null && info.mProcessName != null && info.mPackageName != null && !info.mPackageName.isEmpty() && info.mProcessName.equals(info.mPackageName.get(0))) {
+            HwStartWindowRecord.getInstance().removeStartWindowApp(Integer.valueOf(info.mAppUid));
         }
     }
 
@@ -283,13 +283,13 @@ public class ProcessInfoCollector {
         return procList;
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0081, code:
+    /* JADX WARNING: Missing block: B:24:0x0081, code skipped:
             if (r1 != false) goto L_0x0086;
      */
-    /* JADX WARNING: Missing block: B:25:0x0083, code:
+    /* JADX WARNING: Missing block: B:25:0x0083, code skipped:
             reportToRms(r0);
      */
-    /* JADX WARNING: Missing block: B:26:0x0086, code:
+    /* JADX WARNING: Missing block: B:26:0x0086, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -455,7 +455,7 @@ public class ProcessInfoCollector {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x004c, code:
+    /* JADX WARNING: Missing block: B:15:0x004c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

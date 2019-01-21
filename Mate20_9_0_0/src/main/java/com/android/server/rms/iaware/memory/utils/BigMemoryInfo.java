@@ -27,21 +27,25 @@ public class BigMemoryInfo {
 
     public boolean isBigMemoryApp(String appName) {
         synchronized (this) {
-            if (this.memoryRequestMap == null || appName == null || this.memoryRequestMap.isEmpty()) {
-                return false;
+            if (!(this.memoryRequestMap == null || appName == null)) {
+                if (!this.memoryRequestMap.isEmpty()) {
+                    boolean containsKey = this.memoryRequestMap.containsKey(appName);
+                    return containsKey;
+                }
             }
-            boolean containsKey = this.memoryRequestMap.containsKey(appName);
-            return containsKey;
+            return false;
         }
     }
 
     public long getAppLaunchRequestMemory(String appName) {
         synchronized (this) {
-            if (this.memoryRequestMap == null || appName == null || this.memoryRequestMap.isEmpty() || !this.memoryRequestMap.containsKey(appName)) {
-                return 0;
+            if (!(this.memoryRequestMap == null || appName == null || this.memoryRequestMap.isEmpty())) {
+                if (this.memoryRequestMap.containsKey(appName)) {
+                    long longValue = ((Long) this.memoryRequestMap.get(appName)).longValue();
+                    return longValue;
+                }
             }
-            long longValue = ((Long) this.memoryRequestMap.get(appName)).longValue();
-            return longValue;
+            return 0;
         }
     }
 
@@ -62,12 +66,15 @@ public class BigMemoryInfo {
         AwareLog.d(str, stringBuilder.toString());
         synchronized (this) {
             if (appName == null) {
-                return;
+                try {
+                } catch (Throwable th) {
+                }
+            } else {
+                if (this.memoryRequestMap == null) {
+                    this.memoryRequestMap = new ArrayMap();
+                }
+                this.memoryRequestMap.put(appName, Long.valueOf(launchRequestMem));
             }
-            if (this.memoryRequestMap == null) {
-                this.memoryRequestMap = new ArrayMap();
-            }
-            this.memoryRequestMap.put(appName, Long.valueOf(launchRequestMem));
         }
     }
 

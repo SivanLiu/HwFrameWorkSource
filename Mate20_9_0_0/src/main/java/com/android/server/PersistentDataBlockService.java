@@ -104,14 +104,16 @@ public class PersistentDataBlockService extends SystemService {
                         synchronized (PersistentDataBlockService.this.mLock) {
                             inputStream.skip((PersistentDataBlockService.this.getBlockDeviceSize() - 1) - 1000);
                             int length = inputStream.readInt();
-                            if (length <= 0 || length > PersistentDataBlockService.MAX_FRP_CREDENTIAL_HANDLE_SIZE) {
-                                IoUtils.closeQuietly(inputStream);
-                                return null;
+                            if (length > 0) {
+                                if (length <= PersistentDataBlockService.MAX_FRP_CREDENTIAL_HANDLE_SIZE) {
+                                    byte[] bytes = new byte[length];
+                                    inputStream.readFully(bytes);
+                                    IoUtils.closeQuietly(inputStream);
+                                    return bytes;
+                                }
                             }
-                            byte[] bytes = new byte[length];
-                            inputStream.readFully(bytes);
                             IoUtils.closeQuietly(inputStream);
-                            return bytes;
+                            return null;
                         }
                     } catch (IOException e) {
                         try {
@@ -187,22 +189,22 @@ public class PersistentDataBlockService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:16:?, code:
+        /* JADX WARNING: Missing block: B:16:?, code skipped:
             r2.close();
      */
-        /* JADX WARNING: Missing block: B:18:0x0044, code:
+        /* JADX WARNING: Missing block: B:18:0x0044, code skipped:
             android.util.Slog.e(com.android.server.PersistentDataBlockService.access$000(), "failed to close OutputStream");
      */
-        /* JADX WARNING: Missing block: B:26:?, code:
+        /* JADX WARNING: Missing block: B:26:?, code skipped:
             r2.close();
      */
-        /* JADX WARNING: Missing block: B:28:0x007c, code:
+        /* JADX WARNING: Missing block: B:28:0x007c, code skipped:
             android.util.Slog.e(com.android.server.PersistentDataBlockService.access$000(), "failed to close OutputStream");
      */
-        /* JADX WARNING: Missing block: B:33:?, code:
+        /* JADX WARNING: Missing block: B:33:?, code skipped:
             r2.close();
      */
-        /* JADX WARNING: Missing block: B:35:0x008c, code:
+        /* JADX WARNING: Missing block: B:35:0x008c, code skipped:
             android.util.Slog.e(com.android.server.PersistentDataBlockService.access$000(), "failed to close OutputStream");
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -378,7 +380,7 @@ public class PersistentDataBlockService extends SystemService {
     }
 
     private int getAllowedUid(int userHandle) {
-        String allowedPackage = this.mContext.getResources().getString(17039837);
+        String allowedPackage = this.mContext.getResources().getString(17039838);
         try {
             return this.mContext.getPackageManager().getPackageUidAsUser(allowedPackage, DumpState.DUMP_DEXOPT, userHandle);
         } catch (NameNotFoundException e) {
@@ -393,7 +395,7 @@ public class PersistentDataBlockService extends SystemService {
 
     public void onStart() {
         SystemServerInitThreadPool systemServerInitThreadPool = SystemServerInitThreadPool.get();
-        Runnable -__lambda_persistentdatablockservice_ezl9oyat2enl7kfsr2nkubjxidk = new -$$Lambda$PersistentDataBlockService$EZl9OYaT2eNL7kfSr2nKUBjxidk(this);
+        -$$Lambda$PersistentDataBlockService$EZl9OYaT2eNL7kfSr2nKUBjxidk -__lambda_persistentdatablockservice_ezl9oyat2enl7kfsr2nkubjxidk = new -$$Lambda$PersistentDataBlockService$EZl9OYaT2eNL7kfSr2nKUBjxidk(this);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(TAG);
         stringBuilder.append(".onStart");
@@ -498,12 +500,14 @@ public class PersistentDataBlockService extends SystemService {
         byte[] storedDigest = new byte[32];
         synchronized (this.mLock) {
             byte[] digest = computeDigestLocked(storedDigest);
-            if (digest == null || !Arrays.equals(storedDigest, digest)) {
-                Slog.i(TAG, "Formatting FRP partition...");
-                formatPartitionLocked(false);
-                return false;
+            if (digest != null) {
+                if (Arrays.equals(storedDigest, digest)) {
+                    return true;
+                }
             }
-            return true;
+            Slog.i(TAG, "Formatting FRP partition...");
+            formatPartitionLocked(false);
+            return false;
         }
     }
 
@@ -530,8 +534,8 @@ public class PersistentDataBlockService extends SystemService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x0042 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x003e A:{Catch:{ IOException -> 0x0029, all -> 0x0027 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x0042 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:19:0x003e A:{Catch:{ IOException -> 0x0029, all -> 0x0027 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private byte[] computeDigestLocked(byte[] storedDigest) {
         try {
@@ -560,8 +564,9 @@ public class PersistentDataBlockService extends SystemService {
                         }
                     } catch (IOException e2) {
                         Slog.e(TAG, "failed to read partition", e2);
+                        IoUtils.closeQuietly(inputStream);
                         return null;
-                    } finally {
+                    } catch (Throwable th) {
                         IoUtils.closeQuietly(inputStream);
                     }
                 }

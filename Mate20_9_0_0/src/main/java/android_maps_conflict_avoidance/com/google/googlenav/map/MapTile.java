@@ -156,6 +156,8 @@ public class MapTile {
                 }
             } else {
                 createdImage = Config.getInstance().getImageFactory().createImage(imageData, 0, imageData.length);
+                setImage(createdImage, 0, isRecyclable);
+                this.hasScaledImage = false;
             }
             setImage(createdImage, 0, isRecyclable);
             this.hasScaledImage = false;
@@ -265,7 +267,12 @@ public class MapTile {
         synchronized (this) {
             GoogleImage returnValue2;
             if (accessTime == Long.MIN_VALUE) {
-                this.lastAccessTime = Config.getInstance().getClock().currentTimeMillis();
+                try {
+                    this.lastAccessTime = Config.getInstance().getClock().currentTimeMillis();
+                } catch (Throwable th) {
+                    while (true) {
+                    }
+                }
             } else {
                 this.lastAccessTime = accessTime;
             }

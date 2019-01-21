@@ -1,31 +1,37 @@
 package com.huawei.android.pushagent.datatype.a;
 
 public class c {
-    private long cj;
-    private String ck;
-    private String pkgName;
+    private String j;
+    private int k;
+    private boolean l;
 
-    public String km() {
-        return this.ck;
+    public c(String str, int i, boolean z) {
+        this.j = str;
+        this.k = i;
+        this.l = z;
     }
 
-    public void kk(String str) {
-        this.ck = str;
+    public String toString() {
+        return new StringBuffer().append("ip:").append(this.j).append(" port:").append(this.k).append(" useProxy:").append(this.l).toString();
     }
 
-    public String ko() {
-        return this.pkgName;
+    public String au() {
+        return this.j;
     }
 
-    public void setPkgName(String str) {
-        this.pkgName = str;
+    public void as(String str) {
+        this.j = str;
     }
 
-    public long kn() {
-        return this.cj;
+    public int av() {
+        return this.k;
     }
 
-    public void kl(long j) {
-        this.cj = j;
+    public void at(int i) {
+        this.k = i;
+    }
+
+    public boolean aw() {
+        return this.l;
     }
 }

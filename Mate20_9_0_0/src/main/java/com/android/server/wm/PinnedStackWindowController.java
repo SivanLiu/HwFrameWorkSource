@@ -15,34 +15,38 @@ public class PinnedStackWindowController extends StackWindowController {
         super(stackId, listener, displayId, onTop, outBounds, service);
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:16:0x002a=Splitter:B:16:0x002a, B:36:0x005a=Splitter:B:36:0x005a} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public Rect getPictureInPictureBounds(float aspectRatio, Rect stackBounds) {
         Rect rect;
         synchronized (this.mWindowMap) {
             try {
                 WindowManagerService.boostPriorityForLockedSection();
                 rect = null;
-                if (!this.mService.mSupportsPictureInPicture || this.mContainer == null) {
-                    WindowManagerService.resetPriorityAfterLockedSection();
-                    return null;
-                } else if (HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer()) {
-                    HwPCUtils.log(TAG, "ignore getPictureInPictureBounds in pad pc mode");
-                } else {
-                    DisplayContent displayContent = ((TaskStack) this.mContainer).getDisplayContent();
-                    if (displayContent == null) {
+                if (this.mService.mSupportsPictureInPicture) {
+                    if (this.mContainer != null) {
+                        if (HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer()) {
+                            HwPCUtils.log(TAG, "ignore getPictureInPictureBounds in pad pc mode");
+                            WindowManagerService.resetPriorityAfterLockedSection();
+                            return null;
+                        }
+                        DisplayContent displayContent = ((TaskStack) this.mContainer).getDisplayContent();
+                        if (displayContent == null) {
+                            WindowManagerService.resetPriorityAfterLockedSection();
+                            return null;
+                        }
+                        rect = displayContent.getPinnedStackController();
+                        if (stackBounds == null) {
+                            stackBounds = rect.getDefaultOrLastSavedBounds();
+                        }
+                        if (rect.isValidPictureInPictureAspectRatio(aspectRatio)) {
+                            Rect transformBoundsToAspectRatio = rect.transformBoundsToAspectRatio(stackBounds, aspectRatio, true);
+                            WindowManagerService.resetPriorityAfterLockedSection();
+                            return transformBoundsToAspectRatio;
+                        }
                         WindowManagerService.resetPriorityAfterLockedSection();
-                        return null;
+                        return stackBounds;
                     }
-                    rect = displayContent.getPinnedStackController();
-                    if (stackBounds == null) {
-                        stackBounds = rect.getDefaultOrLastSavedBounds();
-                    }
-                    if (rect.isValidPictureInPictureAspectRatio(aspectRatio)) {
-                        Rect transformBoundsToAspectRatio = rect.transformBoundsToAspectRatio(stackBounds, aspectRatio, true);
-                        WindowManagerService.resetPriorityAfterLockedSection();
-                        return transformBoundsToAspectRatio;
-                    }
-                    WindowManagerService.resetPriorityAfterLockedSection();
-                    return stackBounds;
                 }
             } finally {
                 while (true) {
@@ -173,10 +177,11 @@ public class PinnedStackWindowController extends StackWindowController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0076, code:
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:16:0x0029=Splitter:B:16:0x0029, B:30:0x007a=Splitter:B:30:0x007a} */
+    /* JADX WARNING: Missing block: B:28:0x0076, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:27:0x0079, code:
+    /* JADX WARNING: Missing block: B:29:0x0079, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -184,26 +189,29 @@ public class PinnedStackWindowController extends StackWindowController {
         synchronized (this.mWindowMap) {
             try {
                 WindowManagerService.boostPriorityForLockedSection();
-                if (!this.mService.mSupportsPictureInPicture || this.mContainer == null) {
-                    WindowManagerService.resetPriorityAfterLockedSection();
-                } else if (HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer()) {
-                    HwPCUtils.log(TAG, "ignore setPictureInPictureActions in pad pc mode");
-                } else {
-                    PinnedStackController pinnedStackController = ((TaskStack) this.mContainer).getDisplayContent().getPinnedStackController();
-                    if (Float.compare(aspectRatio, pinnedStackController.getAspectRatio()) != 0) {
-                        float f;
-                        ((TaskStack) this.mContainer).getAnimationOrCurrentBounds(this.mTmpFromBounds);
-                        this.mTmpToBounds.set(this.mTmpFromBounds);
-                        getPictureInPictureBounds(aspectRatio, this.mTmpToBounds);
-                        if (!this.mTmpToBounds.equals(this.mTmpFromBounds)) {
-                            animateResizePinnedStack(this.mTmpToBounds, null, -1, false);
+                if (this.mService.mSupportsPictureInPicture) {
+                    if (this.mContainer != null) {
+                        if (HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer()) {
+                            HwPCUtils.log(TAG, "ignore setPictureInPictureActions in pad pc mode");
+                            WindowManagerService.resetPriorityAfterLockedSection();
+                            return;
                         }
-                        if (pinnedStackController.isValidPictureInPictureAspectRatio(aspectRatio)) {
-                            f = aspectRatio;
-                        } else {
-                            f = -1.0f;
+                        PinnedStackController pinnedStackController = ((TaskStack) this.mContainer).getDisplayContent().getPinnedStackController();
+                        if (Float.compare(aspectRatio, pinnedStackController.getAspectRatio()) != 0) {
+                            float f;
+                            ((TaskStack) this.mContainer).getAnimationOrCurrentBounds(this.mTmpFromBounds);
+                            this.mTmpToBounds.set(this.mTmpFromBounds);
+                            getPictureInPictureBounds(aspectRatio, this.mTmpToBounds);
+                            if (!this.mTmpToBounds.equals(this.mTmpFromBounds)) {
+                                animateResizePinnedStack(this.mTmpToBounds, null, -1, false);
+                            }
+                            if (pinnedStackController.isValidPictureInPictureAspectRatio(aspectRatio)) {
+                                f = aspectRatio;
+                            } else {
+                                f = -1.0f;
+                            }
+                            pinnedStackController.setAspectRatio(f);
                         }
-                        pinnedStackController.setAspectRatio(f);
                     }
                 }
             } finally {
@@ -214,17 +222,22 @@ public class PinnedStackWindowController extends StackWindowController {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:16:0x0029=Splitter:B:16:0x0029, B:21:0x003d=Splitter:B:21:0x003d} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void setPictureInPictureActions(List<RemoteAction> actions) {
         synchronized (this.mWindowMap) {
             try {
                 WindowManagerService.boostPriorityForLockedSection();
-                if (!this.mService.mSupportsPictureInPicture || this.mContainer == null) {
-                    WindowManagerService.resetPriorityAfterLockedSection();
-                } else if (HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer()) {
-                    HwPCUtils.log(TAG, "ignore getPictureInPictureActions in pad pc mode");
-                } else {
-                    ((TaskStack) this.mContainer).getDisplayContent().getPinnedStackController().setActions(actions);
-                    WindowManagerService.resetPriorityAfterLockedSection();
+                if (this.mService.mSupportsPictureInPicture) {
+                    if (this.mContainer != null) {
+                        if (HwPCUtils.enabledInPad() && HwPCUtils.isPcCastModeInServer()) {
+                            HwPCUtils.log(TAG, "ignore getPictureInPictureActions in pad pc mode");
+                            WindowManagerService.resetPriorityAfterLockedSection();
+                            return;
+                        }
+                        ((TaskStack) this.mContainer).getDisplayContent().getPinnedStackController().setActions(actions);
+                        WindowManagerService.resetPriorityAfterLockedSection();
+                    }
                 }
             } finally {
                 while (true) {

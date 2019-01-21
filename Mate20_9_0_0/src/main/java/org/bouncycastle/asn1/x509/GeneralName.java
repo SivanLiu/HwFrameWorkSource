@@ -145,7 +145,7 @@ public class GeneralName extends ASN1Object implements ASN1Choice {
 
     private int[] parseIPv6(String str) {
         StringTokenizer stringTokenizer = new StringTokenizer(str, ":", true);
-        Object obj = new int[8];
+        int[] iArr = new int[8];
         if (str.charAt(0) == ':' && str.charAt(1) == ':') {
             stringTokenizer.nextToken();
         }
@@ -155,13 +155,13 @@ public class GeneralName extends ASN1Object implements ASN1Choice {
             String nextToken = stringTokenizer.nextToken();
             if (nextToken.equals(":")) {
                 i = i2 + 1;
-                obj[i2] = null;
+                iArr[i2] = 0;
                 int i3 = i;
                 i = i2;
                 i2 = i3;
             } else if (nextToken.indexOf(46) < 0) {
                 int i4 = i2 + 1;
-                obj[i2] = Integer.parseInt(nextToken, 16);
+                iArr[i2] = Integer.parseInt(nextToken, 16);
                 if (stringTokenizer.hasMoreTokens()) {
                     stringTokenizer.nextToken();
                 }
@@ -169,20 +169,20 @@ public class GeneralName extends ASN1Object implements ASN1Choice {
             } else {
                 StringTokenizer stringTokenizer2 = new StringTokenizer(nextToken, ".");
                 int i5 = i2 + 1;
-                obj[i2] = (Integer.parseInt(stringTokenizer2.nextToken()) << 8) | Integer.parseInt(stringTokenizer2.nextToken());
+                iArr[i2] = (Integer.parseInt(stringTokenizer2.nextToken()) << 8) | Integer.parseInt(stringTokenizer2.nextToken());
                 i2 = i5 + 1;
-                obj[i5] = Integer.parseInt(stringTokenizer2.nextToken()) | (Integer.parseInt(stringTokenizer2.nextToken()) << 8);
+                iArr[i5] = Integer.parseInt(stringTokenizer2.nextToken()) | (Integer.parseInt(stringTokenizer2.nextToken()) << 8);
             }
         }
-        if (i2 != obj.length) {
+        if (i2 != iArr.length) {
             i2 -= i;
-            System.arraycopy(obj, i, obj, obj.length - i2, i2);
-            while (i != obj.length - i2) {
-                obj[i] = null;
+            System.arraycopy(iArr, i, iArr, iArr.length - i2, i2);
+            while (i != iArr.length - i2) {
+                iArr[i] = 0;
                 i++;
             }
         }
-        return obj;
+        return iArr;
     }
 
     private int[] parseMask(String str) {

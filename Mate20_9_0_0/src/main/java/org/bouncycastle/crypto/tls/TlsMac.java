@@ -1,6 +1,5 @@
 package org.bouncycastle.crypto.tls;
 
-import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.digests.LongDigest;
@@ -19,7 +18,7 @@ public class TlsMac {
     public TlsMac(TlsContext tlsContext, Digest digest, byte[] bArr, int i, int i2) {
         int i3;
         this.context = tlsContext;
-        CipherParameters keyParameter = new KeyParameter(bArr, i, i2);
+        KeyParameter keyParameter = new KeyParameter(bArr, i, i2);
         this.secret = Arrays.clone(keyParameter.getKey());
         if (digest instanceof LongDigest) {
             this.digestBlockSize = 128;

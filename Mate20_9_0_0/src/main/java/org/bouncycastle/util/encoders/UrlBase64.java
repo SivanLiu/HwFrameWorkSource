@@ -16,11 +16,11 @@ public class UrlBase64 {
     }
 
     public static byte[] decode(String str) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             encoder.decode(str, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception decoding URL safe base64 string: ");
             stringBuilder.append(e.getMessage());
@@ -29,11 +29,11 @@ public class UrlBase64 {
     }
 
     public static byte[] decode(byte[] bArr) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             encoder.decode(bArr, 0, bArr.length, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception decoding URL safe base64 string: ");
             stringBuilder.append(e.getMessage());
@@ -46,11 +46,11 @@ public class UrlBase64 {
     }
 
     public static byte[] encode(byte[] bArr) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             encoder.encode(bArr, 0, bArr.length, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception encoding URL safe base64 data: ");
             stringBuilder.append(e.getMessage());

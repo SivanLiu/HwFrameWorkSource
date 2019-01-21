@@ -1,5 +1,6 @@
 package org.bouncycastle.tsp.cms;
 
+import java.io.IOException;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.cms.Attributes;
@@ -34,7 +35,7 @@ class MetaDataUtil {
         if (this.metaData != null && this.metaData.isHashProtected()) {
             try {
                 digestCalculator.getOutputStream().write(this.metaData.getEncoded(ASN1Encoding.DER));
-            } catch (Exception e) {
+            } catch (IOException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to initialise calculator from metaData: ");
                 stringBuilder.append(e.getMessage());

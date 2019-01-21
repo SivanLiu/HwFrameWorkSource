@@ -12,7 +12,7 @@ abstract class RequestArcAction extends HdmiCecFeatureAction {
         this.mAvrAddress = avrAddress;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x003b, code:
+    /* JADX WARNING: Missing block: B:16:0x003b, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

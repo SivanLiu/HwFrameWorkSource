@@ -17,7 +17,7 @@ class DerUtil {
     static byte[] toByteArray(ASN1Primitive aSN1Primitive) {
         try {
             return aSN1Primitive.getEncoded();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Cannot get encoding: ");
             stringBuilder.append(e.getMessage());

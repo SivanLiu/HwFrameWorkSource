@@ -5,6 +5,7 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.util.Pair;
+import android.util.Slog;
 import android.util.apk.ApkSignatureVerifier;
 import android.util.apk.ByteBufferFactory;
 import android.util.apk.SignatureNotFoundException;
@@ -100,57 +101,44 @@ public abstract class VerityUtils {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0049 A:{PHI: r0 , Splitter: B:1:0x0001, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0049 A:{PHI: r0 , Splitter: B:1:0x0001, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0049 A:{PHI: r0 , Splitter: B:1:0x0001, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0049 A:{PHI: r0 , Splitter: B:1:0x0001, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0049 A:{PHI: r0 , Splitter: B:1:0x0001, ExcHandler: java.io.IOException (r1_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:23:0x0049, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:25:?, code:
-            android.util.Slog.e(TAG, "Failed to set up apk verity: ", r1);
-            r2 = com.android.server.security.VerityUtils.SetupResult.failed();
-     */
-    /* JADX WARNING: Missing block: B:26:0x0055, code:
-            if (r0 != null) goto L_0x0057;
-     */
-    /* JADX WARNING: Missing block: B:27:0x0057, code:
-            r0.close();
-     */
-    /* JADX WARNING: Missing block: B:28:0x005a, code:
-            return r2;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static SetupResult generateApkVeritySetupData(String apkPath) {
         SharedMemory shm = null;
+        SetupResult skipped;
         try {
             byte[] signedRootHash = ApkSignatureVerifier.getVerityRootHash(apkPath);
             if (signedRootHash == null) {
-                SetupResult skipped = SetupResult.skipped();
+                skipped = SetupResult.skipped();
                 if (shm != null) {
                     shm.close();
                 }
                 return skipped;
             }
+            SetupResult ok;
             Pair<SharedMemory, Integer> result = generateApkVerityIntoSharedMemory(apkPath, signedRootHash);
             shm = (SharedMemory) result.first;
             int contentSize = ((Integer) result.second).intValue();
             FileDescriptor rfd = shm.getFileDescriptor();
-            SetupResult failed;
-            if (rfd == null || !rfd.valid()) {
-                failed = SetupResult.failed();
-                if (shm != null) {
-                    shm.close();
+            if (rfd != null) {
+                if (rfd.valid()) {
+                    ok = SetupResult.ok(Os.dup(rfd), contentSize);
+                    if (shm != null) {
+                        shm.close();
+                    }
+                    return ok;
                 }
-                return failed;
             }
-            failed = SetupResult.ok(Os.dup(rfd), contentSize);
+            ok = SetupResult.failed();
             if (shm != null) {
                 shm.close();
             }
-            return failed;
-        } catch (Exception e) {
+            return ok;
+        } catch (ErrnoException | SignatureNotFoundException | IOException | SecurityException | DigestException | NoSuchAlgorithmException e) {
+            Slog.e(TAG, "Failed to set up apk verity: ", e);
+            skipped = SetupResult.failed();
+            if (shm != null) {
+                shm.close();
+            }
+            return skipped;
         } catch (Throwable th) {
             if (shm != null) {
                 shm.close();

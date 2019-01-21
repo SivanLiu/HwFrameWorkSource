@@ -33,12 +33,12 @@ public class X931Signer implements Signer {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0019 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -56,19 +56,14 @@ public class X931Signer implements Signer {
         r1.cipher = r2;
         r1.digest = r3;
         if (r4 == 0) goto L_0x000e;
-    L_0x0009:
         r2 = 188; // 0xbc float:2.63E-43 double:9.3E-322;
-    L_0x000b:
         r1.trailer = r2;
         return;
-    L_0x000e:
         r2 = org.bouncycastle.crypto.signers.ISOTrailers.getTrailer(r3);
         if (r2 == 0) goto L_0x001a;
-    L_0x0014:
         r2 = r2.intValue();
         goto L_0x000b;
         return;
-    L_0x001a:
         r2 = new java.lang.IllegalArgumentException;
         r4 = new java.lang.StringBuilder;
         r4.<init>();
@@ -136,7 +131,7 @@ public class X931Signer implements Signer {
         this.digest.update(bArr, i, i2);
     }
 
-    /* JADX WARNING: Missing block: B:6:0x002d, code:
+    /* JADX WARNING: Missing block: B:6:0x002d, code skipped:
             if ((r4.intValue() & 15) == 12) goto L_0x002f;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

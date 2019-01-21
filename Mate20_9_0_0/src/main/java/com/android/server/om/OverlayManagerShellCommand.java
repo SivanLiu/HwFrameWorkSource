@@ -52,9 +52,8 @@ final class OverlayManagerShellCommand extends ShellCommand {
                         break;
                     }
                 default:
-                    z = true;
-                    break;
             }
+            z = true;
             switch (z) {
                 case false:
                     return runList();
@@ -204,20 +203,20 @@ final class OverlayManagerShellCommand extends ShellCommand {
             String nextOption = getNextOption();
             String opt = nextOption;
             if (nextOption != null) {
-                boolean z = true;
+                int i = -1;
                 int hashCode = opt.hashCode();
                 if (hashCode != 66265758) {
                     if (hashCode == 1333469547 && opt.equals("--user")) {
-                        z = false;
+                        i = 0;
                     }
                 } else if (opt.equals("--category")) {
-                    z = true;
+                    i = 1;
                 }
-                switch (z) {
-                    case false:
+                switch (i) {
+                    case 0:
                         userId = UserHandle.parseUserArg(getNextArgRequired());
                         break;
-                    case true:
+                    case 1:
                         inCategory = true;
                         break;
                     default:

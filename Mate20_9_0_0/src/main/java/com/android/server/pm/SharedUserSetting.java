@@ -3,6 +3,7 @@ package com.android.server.pm;
 import android.content.pm.PackageParser.Package;
 import android.util.ArraySet;
 import android.util.proto.ProtoOutputStream;
+import com.android.server.pm.permission.PermissionsState;
 import com.android.server.slice.SliceClientPermissions.SliceAuthority;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +18,14 @@ public final class SharedUserSetting extends SettingBase {
     int uidFlags;
     int uidPrivateFlags;
     int userId;
+
+    public /* bridge */ /* synthetic */ void copyFrom(SettingBase settingBase) {
+        super.copyFrom(settingBase);
+    }
+
+    public /* bridge */ /* synthetic */ PermissionsState getPermissionsState() {
+        return super.getPermissionsState();
+    }
 
     SharedUserSetting(String _name, int _pkgFlags, int _pkgPrivateFlags) {
         super(_pkgFlags, _pkgPrivateFlags);

@@ -2,6 +2,7 @@ package org.bouncycastle.operator.jcajce;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -37,7 +38,7 @@ public class JcaContentSignerBuilder {
         public void write(int i) throws IOException {
             try {
                 this.sig.update((byte) i);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -48,7 +49,7 @@ public class JcaContentSignerBuilder {
         public void write(byte[] bArr) throws IOException {
             try {
                 this.sig.update(bArr);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -59,7 +60,7 @@ public class JcaContentSignerBuilder {
         public void write(byte[] bArr, int i, int i2) throws IOException {
             try {
                 this.sig.update(bArr, i, i2);
-            } catch (Throwable e) {
+            } catch (SignatureException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("exception in content signer: ");
                 stringBuilder.append(e.getMessage());
@@ -96,7 +97,7 @@ public class JcaContentSignerBuilder {
                 public byte[] getSignature() {
                     try {
                         return this.stream.getSignature();
-                    } catch (Throwable e) {
+                    } catch (SignatureException e) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("exception obtaining signature: ");
                         stringBuilder.append(e.getMessage());
@@ -104,7 +105,7 @@ public class JcaContentSignerBuilder {
                     }
                 }
             };
-        } catch (Throwable e) {
+        } catch (GeneralSecurityException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create signer: ");
             stringBuilder.append(e.getMessage());

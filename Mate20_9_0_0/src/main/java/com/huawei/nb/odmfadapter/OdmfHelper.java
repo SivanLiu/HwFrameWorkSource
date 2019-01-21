@@ -38,7 +38,7 @@ public class OdmfHelper {
                 object.setState(4);
                 object.setObjectContext(this.objectContext);
                 results.add(object);
-            } catch (ReflectiveOperationException e) {
+            } catch (InstantiationException e) {
                 try {
                     DSLog.e("Failed to read entity %s from cursor.", entityName);
                     return null;
@@ -76,7 +76,7 @@ public class OdmfHelper {
                 object.setState(4);
                 object.setObjectContext(this.objectContext);
                 results.add(object);
-            } catch (ReflectiveOperationException e) {
+            } catch (InstantiationException e) {
                 try {
                     DSLog.e("Failed to read entity %s from cursor.", entityName);
                     return null;

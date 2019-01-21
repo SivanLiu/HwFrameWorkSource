@@ -151,6 +151,7 @@ class NotificationCompatJellybean {
             } catch (IllegalAccessException e) {
                 Log.e(TAG, "Unable to access notification actions", e);
                 sActionsAccessFailed = true;
+            } catch (Throwable th) {
             }
         }
         return null;
@@ -192,7 +193,7 @@ class NotificationCompatJellybean {
             Log.e(TAG, "Unable to access notification actions", e2);
             sActionsAccessFailed = true;
         }
-        return true ^ sActionsAccessFailed;
+        return 1 ^ sActionsAccessFailed;
     }
 
     static Action getActionFromBundle(Bundle bundle) {

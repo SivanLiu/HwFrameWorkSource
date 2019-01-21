@@ -31,7 +31,7 @@ import java.util.Iterator;
 final class SingleHandAdapter {
     static final boolean DEBUG = false;
     private static final float INITIAL_SCALE = 0.75f;
-    private static final boolean IS_NOTCH_PROP = (SystemProperties.get("ro.config.hw_notch_size", "").equals("") ^ true);
+    private static final boolean IS_NOTCH_PROP = (SystemProperties.get("ro.config.hw_notch_size", "").equals("") ^ 1);
     public static final String KEY_SINGLE_HAND_SCREEN_ZOOM = "single_hand_screen_zoom";
     private static final int MSG_CLEAR_WALLPAPER = 1;
     private static final int MSG_ENTER_SINGLEHAND_TIMEOUT = 2;
@@ -259,7 +259,7 @@ final class SingleHandAdapter {
         }
     }
 
-    /* JADX WARNING: Missing block: B:29:0x00c5, code:
+    /* JADX WARNING: Missing block: B:29:0x00c5, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

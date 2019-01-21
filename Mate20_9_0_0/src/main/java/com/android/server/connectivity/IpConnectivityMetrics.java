@@ -86,7 +86,7 @@ public final class IpConnectivityMetrics extends SystemService {
         /* JADX WARNING: Removed duplicated region for block: B:36:0x007c  */
         /* JADX WARNING: Removed duplicated region for block: B:30:0x0069 A:{SKIP} */
         /* JADX WARNING: Removed duplicated region for block: B:28:0x0063  */
-        /* JADX WARNING: Missing block: B:19:0x0042, code:
+        /* JADX WARNING: Missing block: B:19:0x0042, code skipped:
             if (r0.equals(CMD_FLUSH) != false) goto L_0x0051;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -336,7 +336,7 @@ public final class IpConnectivityMetrics extends SystemService {
     }
 
     private List<ConnectivityMetricsEvent> getEvents() {
-        List<ConnectivityMetricsEvent> asList;
+        List asList;
         synchronized (this.mLock) {
             asList = Arrays.asList((ConnectivityMetricsEvent[]) this.mEventLog.toArray());
         }

@@ -136,7 +136,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
                         this.e = e;
                         notify();
                         return;
-                    } catch (Throwable x) {
+                    } catch (Exception x) {
                         this.e = new SmbException("WriterThread", x);
                         notify();
                         return;
@@ -298,7 +298,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
                             dr.map.put(dr.key, dr);
                         }
                         se = null;
-                    } catch (Throwable ioe) {
+                    } catch (IOException ioe) {
                         if (ioe instanceof SmbException) {
                             se = (SmbException) ioe;
                         } else {
@@ -452,11 +452,11 @@ public class SmbFile extends URLConnection implements SmbConstants {
     void connect0() throws SmbException {
         try {
             connect();
-        } catch (Throwable uhe) {
+        } catch (UnknownHostException uhe) {
             throw new SmbException("Failed to connect to server", uhe);
         } catch (SmbException se) {
             throw se;
-        } catch (Throwable ioe) {
+        } catch (IOException ioe) {
             throw new SmbException("Failed to connect to server", ioe);
         }
     }
@@ -802,7 +802,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
                         }
                     }
                     this.type = 4;
-                } catch (Throwable uhe) {
+                } catch (UnknownHostException uhe) {
                     throw new SmbException(this.url.toString(), uhe);
                 }
             }
@@ -1029,9 +1029,9 @@ public class SmbFile extends URLConnection implements SmbConstants {
             } else {
                 doFindFirstNext(list, files, wildcard, searchAttributes, fnf, ff);
             }
-        } catch (Throwable uhe) {
+        } catch (UnknownHostException uhe) {
             throw new SmbException(this.url.toString(), uhe);
-        } catch (Throwable mue) {
+        } catch (MalformedURLException mue) {
             throw new SmbException(this.url.toString(), mue);
         }
     }
@@ -1082,7 +1082,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
                         }
                     }
                     break loop1;
-                } catch (Throwable ioe3) {
+                } catch (IOException ioe3) {
                     logStream = log;
                     if (LogStream.level >= 3) {
                         ioe3.printStackTrace(log);
@@ -1213,7 +1213,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
         } while (more);
     }
 
-    /* JADX WARNING: Missing block: B:16:0x00c0, code:
+    /* JADX WARNING: Missing block: B:16:0x00c0, code skipped:
             if (r16 != HASH_DOT_DOT) goto L_0x00d5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1296,13 +1296,13 @@ public class SmbFile extends URLConnection implements SmbConstants {
         throw new SmbException("Invalid operation for workgroups, servers, or shares");
     }
 
-    /* JADX WARNING: Missing block: B:85:0x0210, code:
+    /* JADX WARNING: Missing block: B:85:0x0210, code skipped:
             if (r18 != 1) goto L_0x021c;
      */
-    /* JADX WARNING: Missing block: B:86:0x0212, code:
+    /* JADX WARNING: Missing block: B:86:0x0212, code skipped:
             r18 = 0;
      */
-    /* JADX WARNING: Missing block: B:90:0x021c, code:
+    /* JADX WARNING: Missing block: B:90:0x021c, code skipped:
             r18 = 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1337,9 +1337,9 @@ public class SmbFile extends URLConnection implements SmbConstants {
                 try {
                     files[i].copyTo0(new SmbFile(dest, files[i].getName(), files[i].type, files[i].attributes, files[i].createTime, files[i].lastModified, files[i].size), b, bsize, w, req, resp);
                     i++;
-                } catch (Throwable uhe) {
+                } catch (UnknownHostException uhe) {
                     throw new SmbException(this.url.toString(), uhe);
-                } catch (Throwable mue) {
+                } catch (MalformedURLException mue) {
                     throw new SmbException(this.url.toString(), mue);
                 }
             }
@@ -1348,7 +1348,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
         open(1, 0, 128, 0);
         try {
             dest.open(82, 258, this.attributes, 0);
-        } catch (Throwable ie) {
+        } catch (InterruptedException ie) {
             throw new SmbException(dest.url.toString(), ie);
         } catch (SmbAuthException sae) {
             if ((dest.attributes & 1) != 0) {
@@ -1357,7 +1357,7 @@ public class SmbFile extends URLConnection implements SmbConstants {
             } else {
                 throw sae;
             }
-        } catch (Throwable se2) {
+        } catch (SmbException se2) {
             try {
                 if (ignoreCopyToException) {
                     LogStream logStream = log;

@@ -143,10 +143,10 @@ public final class TextDirectionHeuristicsCompat {
         }
     }
 
-    /* JADX WARNING: Missing block: B:5:0x0009, code:
+    /* JADX WARNING: Missing block: B:5:0x0009, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:7:0x000b, code:
+    /* JADX WARNING: Missing block: B:7:0x000b, code skipped:
             return 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

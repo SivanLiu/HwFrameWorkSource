@@ -126,7 +126,7 @@ public class NtlmContext {
                     this.isEstablished = true;
                     this.state++;
                     break;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     throw new SmbException(e.getMessage(), e);
                 }
             default:

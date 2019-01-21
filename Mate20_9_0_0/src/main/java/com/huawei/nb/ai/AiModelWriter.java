@@ -3,6 +3,7 @@ package com.huawei.nb.ai;
 import com.huawei.nb.efs.EfsException;
 import com.huawei.nb.efs.EfsRwChannel;
 import com.huawei.nb.utils.logger.DSLog;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 public class AiModelWriter {
@@ -36,7 +37,7 @@ public class AiModelWriter {
             }
             closeEfsRwChange(channel);
             return true;
-        } catch (Throwable e2) {
+        } catch (UnsatisfiedLinkError e2) {
             e = e2;
             try {
                 DSLog.e("Failed to write AI model %s, error: %s.", filePath, e.getMessage());
@@ -51,7 +52,7 @@ public class AiModelWriter {
                 }
                 closeEfsRwChange(channel);
             }
-        } catch (Throwable e22) {
+        } catch (EfsException e22) {
             e = e22;
             DSLog.e("Failed to write AI model %s, error: %s.", filePath, e.getMessage());
             if (key != null) {
@@ -61,10 +62,10 @@ public class AiModelWriter {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x0075 A:{SYNTHETIC, Splitter: B:28:0x0075} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0075 A:{SYNTHETIC, Splitter:B:28:0x0075} */
     /* JADX WARNING: Removed duplicated region for block: B:26:0x0062 A:{Catch:{ all -> 0x0078 }} */
     /* JADX WARNING: Removed duplicated region for block: B:26:0x0062 A:{Catch:{ all -> 0x0078 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x0075 A:{SYNTHETIC, Splitter: B:28:0x0075} */
+    /* JADX WARNING: Removed duplicated region for block: B:28:0x0075 A:{SYNTHETIC, Splitter:B:28:0x0075} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static boolean changeStorageMode(String filePath, String key, int type) {
         Throwable e;
@@ -98,7 +99,7 @@ public class AiModelWriter {
             channel.endTransaction(true);
             closeEfsRwChange(channel);
             return true;
-        } catch (Throwable e2) {
+        } catch (UnsupportedEncodingException e2) {
             e = e2;
             try {
                 str = "Failed to change AI model %s to %s mode, error: %s.";
@@ -111,7 +112,7 @@ public class AiModelWriter {
             } finally {
                 closeEfsRwChange(null);
             }
-        } catch (Throwable e22) {
+        } catch (UnsatisfiedLinkError e22) {
             e = e22;
             str = "Failed to change AI model %s to %s mode, error: %s.";
             objArr = new Object[3];
@@ -122,7 +123,7 @@ public class AiModelWriter {
             objArr[2] = e.getMessage();
             DSLog.e(str, objArr);
             return false;
-        } catch (Throwable e222) {
+        } catch (EfsException e222) {
             e = e222;
             str = "Failed to change AI model %s to %s mode, error: %s.";
             objArr = new Object[3];

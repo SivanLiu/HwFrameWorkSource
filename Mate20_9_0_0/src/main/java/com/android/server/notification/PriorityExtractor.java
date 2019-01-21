@@ -10,7 +10,7 @@ public class PriorityExtractor implements NotificationSignalExtractor {
     public void initialize(Context ctx, NotificationUsageStats usageStats) {
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0020, code:
+    /* JADX WARNING: Missing block: B:13:0x0020, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

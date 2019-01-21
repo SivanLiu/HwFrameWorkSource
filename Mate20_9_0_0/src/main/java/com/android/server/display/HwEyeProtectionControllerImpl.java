@@ -856,19 +856,19 @@ public class HwEyeProtectionControllerImpl extends HwEyeProtectionController {
         }
     }
 
-    /* JADX WARNING: Missing block: B:31:0x00da, code:
+    /* JADX WARNING: Missing block: B:31:0x00da, code skipped:
             if (r1 == null) goto L_0x00e8;
      */
-    /* JADX WARNING: Missing block: B:32:0x00dc, code:
+    /* JADX WARNING: Missing block: B:32:0x00dc, code skipped:
             r1.close();
      */
-    /* JADX WARNING: Missing block: B:34:0x00e1, code:
+    /* JADX WARNING: Missing block: B:34:0x00e1, code skipped:
             if (r1 == null) goto L_0x00e8;
      */
-    /* JADX WARNING: Missing block: B:36:0x00e5, code:
+    /* JADX WARNING: Missing block: B:36:0x00e5, code skipped:
             if (r1 == null) goto L_0x00e8;
      */
-    /* JADX WARNING: Missing block: B:37:0x00e8, code:
+    /* JADX WARNING: Missing block: B:37:0x00e8, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -929,7 +929,7 @@ public class HwEyeProtectionControllerImpl extends HwEyeProtectionController {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:68:0x01c1 A:{Catch:{ XmlPullParserException -> 0x01cf, IOException -> 0x01cd, NumberFormatException -> 0x01cb, Exception -> 0x01c9 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:70:0x01c1 A:{Catch:{ IOException | Exception | NumberFormatException | XmlPullParserException -> 0x01c9 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean getConfigFromXML(InputStream inStream) {
         boolean configGroupLoadStarted = false;
@@ -1038,6 +1038,8 @@ public class HwEyeProtectionControllerImpl extends HwEyeProtectionController {
                             return false;
                         }
                         break;
+                    default:
+                        break;
                 }
                 if (loadFinished) {
                     if (loadFinished) {
@@ -1050,10 +1052,7 @@ public class HwEyeProtectionControllerImpl extends HwEyeProtectionController {
             }
             if (loadFinished) {
             }
-        } catch (XmlPullParserException e) {
-        } catch (IOException e2) {
-        } catch (NumberFormatException e3) {
-        } catch (Exception e4) {
+        } catch (IOException | Exception | NumberFormatException | XmlPullParserException e) {
         }
         Slog.e(TAG, "getConfigFromeXML false!");
         return false;

@@ -353,7 +353,7 @@ public class SyncStorageEngine {
         sSyncStorageEngine = this;
         this.mLogger = SyncLogger.getInstance();
         this.mCal = Calendar.getInstance(TimeZone.getTimeZone("GMT+0"));
-        this.mDefaultMasterSyncAutomatically = this.mContext.getResources().getBoolean(17957050);
+        this.mDefaultMasterSyncAutomatically = this.mContext.getResources().getBoolean(17957051);
         File syncDir = new File(new File(dataDir, "system"), "sync");
         syncDir.mkdirs();
         maybeDeleteLegacyPendingInfoLocked(syncDir);
@@ -472,7 +472,7 @@ public class SyncStorageEngine {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001b, code:
+    /* JADX WARNING: Missing block: B:11:0x001b, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -480,9 +480,12 @@ public class SyncStorageEngine {
         synchronized (this.mAuthorities) {
             boolean z = false;
             if (account != null) {
-                AuthorityInfo authority = getAuthorityLocked(new EndPoint(account, providerName, userId), "getSyncAutomatically");
-                if (authority != null && authority.enabled) {
-                    z = true;
+                try {
+                    AuthorityInfo authority = getAuthorityLocked(new EndPoint(account, providerName, userId), "getSyncAutomatically");
+                    if (authority != null && authority.enabled) {
+                        z = true;
+                    }
+                } catch (Throwable th) {
                 }
             } else {
                 int i = this.mAuthorities.size();
@@ -498,20 +501,20 @@ public class SyncStorageEngine {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x00ac, code:
+    /* JADX WARNING: Missing block: B:12:0x00ac, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:28:0x00e7, code:
+    /* JADX WARNING: Missing block: B:28:0x00e7, code skipped:
             if (r12 == false) goto L_0x00f8;
      */
-    /* JADX WARNING: Missing block: B:29:0x00e9, code:
+    /* JADX WARNING: Missing block: B:29:0x00e9, code skipped:
             requestSync(r9, r10, -6, r11, new android.os.Bundle(), r19);
      */
-    /* JADX WARNING: Missing block: B:30:0x00f8, code:
+    /* JADX WARNING: Missing block: B:30:0x00f8, code skipped:
             reportChange(1);
             queueBackup();
      */
-    /* JADX WARNING: Missing block: B:31:0x00fe, code:
+    /* JADX WARNING: Missing block: B:31:0x00fe, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -564,23 +567,27 @@ public class SyncStorageEngine {
         synchronized (this.mAuthorities) {
             int i;
             if (account != null) {
-                AuthorityInfo authority = getAuthorityLocked(new EndPoint(account, providerName, userId), "get authority syncable");
-                if (authority == null) {
-                    return -1;
-                }
-                i = authority.syncable;
-                return i;
-            }
-            int i2 = this.mAuthorities.size();
-            while (i2 > 0) {
-                i2--;
-                AuthorityInfo authorityInfo = (AuthorityInfo) this.mAuthorities.valueAt(i2);
-                if (authorityInfo.target != null && authorityInfo.target.provider.equals(providerName)) {
-                    i = authorityInfo.syncable;
+                try {
+                    AuthorityInfo authority = getAuthorityLocked(new EndPoint(account, providerName, userId), "get authority syncable");
+                    if (authority == null) {
+                        return -1;
+                    }
+                    i = authority.syncable;
                     return i;
+                } catch (Throwable th) {
                 }
+            } else {
+                int i2 = this.mAuthorities.size();
+                while (i2 > 0) {
+                    i2--;
+                    AuthorityInfo authorityInfo = (AuthorityInfo) this.mAuthorities.valueAt(i2);
+                    if (authorityInfo.target != null && authorityInfo.target.provider.equals(providerName)) {
+                        i = authorityInfo.syncable;
+                        return i;
+                    }
+                }
+                return -1;
             }
-            return -1;
         }
     }
 
@@ -588,22 +595,22 @@ public class SyncStorageEngine {
         setSyncableStateForEndPoint(new EndPoint(account, providerName, userId), syncable, callingUid);
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0087, code:
+    /* JADX WARNING: Missing block: B:16:0x0087, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:0x008e, code:
+    /* JADX WARNING: Missing block: B:19:0x008e, code skipped:
             r0 = r4;
      */
-    /* JADX WARNING: Missing block: B:20:0x008f, code:
+    /* JADX WARNING: Missing block: B:20:0x008f, code skipped:
             if (r10 != 1) goto L_0x009a;
      */
-    /* JADX WARNING: Missing block: B:21:0x0091, code:
+    /* JADX WARNING: Missing block: B:21:0x0091, code skipped:
             requestSync(r0, -5, new android.os.Bundle(), 0);
      */
-    /* JADX WARNING: Missing block: B:22:0x009a, code:
+    /* JADX WARNING: Missing block: B:22:0x009a, code skipped:
             reportChange(1);
      */
-    /* JADX WARNING: Missing block: B:23:0x009d, code:
+    /* JADX WARNING: Missing block: B:23:0x009d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -639,7 +646,7 @@ public class SyncStorageEngine {
         synchronized (this.mAuthorities) {
             AuthorityInfo authority = getAuthorityLocked(info, "getBackoff");
             if (authority != null) {
-                Pair<Long, Long> create = Pair.create(Long.valueOf(authority.backoffTime), Long.valueOf(authority.backoffDelay));
+                Pair create = Pair.create(Long.valueOf(authority.backoffTime), Long.valueOf(authority.backoffDelay));
                 return create;
             }
             return null;
@@ -664,20 +671,22 @@ public class SyncStorageEngine {
         }
         synchronized (this.mAuthorities) {
             boolean changed2 = true;
-            if (endPoint.account == null || endPoint.provider == null) {
-                i = 1;
-                changed2 = setBackoffLocked(endPoint.account, endPoint.userId, endPoint.provider, j, j2);
-            } else {
-                AuthorityInfo authorityInfo = getOrCreateAuthorityLocked(endPoint, -1, true);
-                if (authorityInfo.backoffTime == j && authorityInfo.backoffDelay == j2) {
-                    i = 1;
-                    changed2 = false;
-                } else {
-                    authorityInfo.backoffTime = j;
-                    authorityInfo.backoffDelay = j2;
-                    i = 1;
+            if (endPoint.account != null) {
+                if (endPoint.provider != null) {
+                    AuthorityInfo authorityInfo = getOrCreateAuthorityLocked(endPoint, -1, true);
+                    if (authorityInfo.backoffTime == j && authorityInfo.backoffDelay == j2) {
+                        i = 1;
+                        changed2 = false;
+                    } else {
+                        authorityInfo.backoffTime = j;
+                        authorityInfo.backoffDelay = j2;
+                        i = 1;
+                    }
+                    changed = changed2;
                 }
             }
+            i = 1;
+            changed2 = setBackoffLocked(endPoint.account, endPoint.userId, endPoint.provider, j, j2);
             changed = changed2;
         }
         if (changed) {
@@ -786,18 +795,18 @@ public class SyncStorageEngine {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x005e, code:
+    /* JADX WARNING: Missing block: B:11:0x005e, code skipped:
             if (r14 == false) goto L_0x006f;
      */
-    /* JADX WARNING: Missing block: B:12:0x0060, code:
+    /* JADX WARNING: Missing block: B:12:0x0060, code skipped:
             requestSync(null, r9, -7, null, new android.os.Bundle(), r16);
      */
-    /* JADX WARNING: Missing block: B:13:0x006f, code:
+    /* JADX WARNING: Missing block: B:13:0x006f, code skipped:
             reportChange(1);
             r8.mContext.sendBroadcast(android.content.ContentResolver.ACTION_SYNC_CONN_STATUS_CHANGED);
             queueBackup();
      */
-    /* JADX WARNING: Missing block: B:14:0x007c, code:
+    /* JADX WARNING: Missing block: B:14:0x007c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -967,11 +976,11 @@ public class SyncStorageEngine {
         reportChange(4);
     }
 
-    /* JADX WARNING: Missing block: B:22:0x00a2, code:
+    /* JADX WARNING: Missing block: B:22:0x00a2, code skipped:
             r0 = r4;
             reportChange(8);
      */
-    /* JADX WARNING: Missing block: B:23:0x00a8, code:
+    /* JADX WARNING: Missing block: B:23:0x00a8, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1016,17 +1025,17 @@ public class SyncStorageEngine {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:42:0x017f A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:36:0x0161 A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:51:0x020a A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x023e A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:59:0x023a A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:65:0x025b A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Removed duplicated region for block: B:64:0x0257 A:{Catch:{ all -> 0x027e }} */
-    /* JADX WARNING: Missing block: B:69:0x0273, code:
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x017f A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x0161 A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:53:0x020a A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:62:0x023e A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x023a A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:67:0x025b A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:0x0257 A:{Catch:{ all -> 0x027e }} */
+    /* JADX WARNING: Missing block: B:71:0x0273, code skipped:
             reportChange(8);
      */
-    /* JADX WARNING: Missing block: B:70:0x0278, code:
+    /* JADX WARNING: Missing block: B:72:0x0278, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1119,6 +1128,8 @@ public class SyncStorageEngine {
                             stats2.numSourceFeed++;
                             stats2 = status.todayStats;
                             stats2.numSourceFeed++;
+                            break;
+                        default:
                             break;
                     }
                     boolean writeStatisticsNow2 = false;
@@ -1242,7 +1253,7 @@ public class SyncStorageEngine {
     }
 
     private List<SyncInfo> getCurrentSyncs(int userId) {
-        List<SyncInfo> currentSyncsLocked;
+        List currentSyncsLocked;
         synchronized (this.mAuthorities) {
             currentSyncsLocked = getCurrentSyncsLocked(userId);
         }
@@ -1278,7 +1289,7 @@ public class SyncStorageEngine {
     }
 
     public Pair<AuthorityInfo, SyncStatusInfo> getCopyOfAuthorityWithSyncStatus(EndPoint info) {
-        Pair<AuthorityInfo, SyncStatusInfo> createCopyPairOfAuthorityWithSyncStatusLocked;
+        Pair createCopyPairOfAuthorityWithSyncStatusLocked;
         synchronized (this.mAuthorities) {
             createCopyPairOfAuthorityWithSyncStatusLocked = createCopyPairOfAuthorityWithSyncStatusLocked(getOrCreateAuthorityLocked(info, -1, true));
         }
@@ -1311,8 +1322,12 @@ public class SyncStorageEngine {
             for (int i = 0; i < N; i++) {
                 SyncStatusInfo cur = (SyncStatusInfo) this.mSyncStatus.valueAt(i);
                 AuthorityInfo ainfo = (AuthorityInfo) this.mAuthorities.get(cur.authorityId);
-                if (ainfo != null && ainfo.target.matchesSpec(info) && cur.pending) {
-                    return true;
+                if (ainfo != null) {
+                    if (ainfo.target.matchesSpec(info)) {
+                        if (cur.pending) {
+                            return true;
+                        }
+                    }
                 }
             }
             return false;
@@ -1479,11 +1494,14 @@ public class SyncStorageEngine {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x0195 A:{LOOP_END, LOOP:1: B:63:0x0107->B:94:0x0195} */
-    /* JADX WARNING: Removed duplicated region for block: B:134:0x019a A:{SYNTHETIC, EDGE_INSN: B:134:0x019a->B:95:0x019a ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:134:0x019a A:{SYNTHETIC, EDGE_INSN: B:134:0x019a->B:95:0x019a ?: BREAK  } */
-    /* JADX WARNING: Removed duplicated region for block: B:94:0x0195 A:{LOOP_END, LOOP:1: B:63:0x0107->B:94:0x0195} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x0069 A:{SYNTHETIC, Splitter: B:18:0x0069} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x0195 A:{LOOP_END, LOOP:1: B:64:0x0107->B:95:0x0195} */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x019a A:{SYNTHETIC, EDGE_INSN: B:135:0x019a->B:96:0x019a ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x019a A:{SYNTHETIC, EDGE_INSN: B:135:0x019a->B:96:0x019a ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x0195 A:{LOOP_END, LOOP:1: B:64:0x0107->B:95:0x0195} */
+    /* JADX WARNING: Removed duplicated region for block: B:65:0x0109 A:{Catch:{ XmlPullParserException -> 0x01d9, IOException -> 0x01b4, all -> 0x01b0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:95:0x0195 A:{LOOP_END, LOOP:1: B:64:0x0107->B:95:0x0195} */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x019a A:{SYNTHETIC, EDGE_INSN: B:135:0x019a->B:96:0x019a ?: BREAK  , EDGE_INSN: B:135:0x019a->B:96:0x019a ?: BREAK  } */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0069 A:{SYNTHETIC, Splitter:B:18:0x0069} */
     /* JADX WARNING: Removed duplicated region for block: B:11:0x0050 A:{Catch:{ XmlPullParserException -> 0x01d9, IOException -> 0x01b4, all -> 0x01b0 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void readAccountInfoLocked() {
@@ -1519,9 +1537,14 @@ public class SyncStorageEngine {
                     return;
                 } else {
                     if ("accounts".equals(parser.getName())) {
+                        boolean z;
+                        AuthorityInfo authority;
+                        PeriodicSync periodicSync;
+                        AccountAuthorityValidator validator;
+                        int i2;
                         String listen = parser.getAttributeValue(null, XML_ATTR_LISTEN_FOR_TICKLES);
                         String versionString = parser.getAttributeValue(null, "version");
-                        int i2 = 0;
+                        int i3 = 0;
                         if (versionString == null) {
                             eventType2 = 0;
                         } else {
@@ -1561,60 +1584,79 @@ public class SyncStorageEngine {
                             this.mSyncRandomOffset = new Random(System.currentTimeMillis()).nextInt(86400);
                         }
                         SparseArray sparseArray = this.mMasterSyncAutomatically;
-                        boolean z = listen == null || Boolean.parseBoolean(listen);
-                        sparseArray.put(0, Boolean.valueOf(z));
-                        eventType2 = parser.next();
-                        AuthorityInfo authority = null;
-                        PeriodicSync periodicSync = null;
-                        AccountAuthorityValidator validator = new AccountAuthorityValidator(this.mContext);
-                        while (true) {
-                            int i3;
-                            if (eventType2 == i) {
-                                String tagName = parser.getName();
-                                if (parser.getDepth() == i) {
-                                    if ("authority".equals(tagName)) {
-                                        authority = parseAuthority(parser, version, validator);
-                                        periodicSync = null;
-                                        if (authority == null) {
-                                            Object[] objArr = new Object[3];
-                                            objArr[i2] = "26513719";
-                                            objArr[1] = Integer.valueOf(-1);
-                                            i3 = 2;
-                                            objArr[2] = "Malformed authority";
-                                            EventLog.writeEvent(1397638484, objArr);
-                                        } else if (authority.ident > highestAuthorityId) {
-                                            highestAuthorityId = authority.ident;
-                                        }
-                                    } else {
-                                        i3 = i;
-                                        if (XML_TAG_LISTEN_FOR_TICKLES.equals(tagName)) {
-                                            parseListenForTickles(parser);
+                        if (listen != null) {
+                            if (!Boolean.parseBoolean(listen)) {
+                                z = false;
+                                sparseArray.put(0, Boolean.valueOf(z));
+                                eventType2 = parser.next();
+                                authority = null;
+                                periodicSync = null;
+                                validator = new AccountAuthorityValidator(this.mContext);
+                                while (true) {
+                                    if (eventType2 == i) {
+                                        String tagName = parser.getName();
+                                        if (parser.getDepth() == i) {
+                                            if ("authority".equals(tagName)) {
+                                                authority = parseAuthority(parser, version, validator);
+                                                periodicSync = null;
+                                                if (authority == null) {
+                                                    Object[] objArr = new Object[3];
+                                                    objArr[i3] = "26513719";
+                                                    objArr[1] = Integer.valueOf(-1);
+                                                    i2 = 2;
+                                                    objArr[2] = "Malformed authority";
+                                                    EventLog.writeEvent(1397638484, objArr);
+                                                } else if (authority.ident > highestAuthorityId) {
+                                                    highestAuthorityId = authority.ident;
+                                                }
+                                            } else {
+                                                i2 = i;
+                                                if (XML_TAG_LISTEN_FOR_TICKLES.equals(tagName)) {
+                                                    parseListenForTickles(parser);
+                                                }
+                                            }
+                                            eventType2 = parser.next();
+                                            if (eventType2 != 1) {
+                                                break;
+                                            }
+                                            i = i2;
+                                            i3 = 0;
+                                        } else {
+                                            i2 = i;
+                                            if (parser.getDepth() == 3) {
+                                                if ("periodicSync".equals(tagName) && authority != null) {
+                                                    periodicSync = parsePeriodicSync(parser, authority);
+                                                }
+                                            } else if (parser.getDepth() == 4 && periodicSync != null && "extra".equals(tagName)) {
+                                                parseExtra(parser, periodicSync.extras);
+                                            }
+                                            eventType2 = parser.next();
+                                            if (eventType2 != 1) {
+                                            }
                                         }
                                     }
+                                    i2 = i;
                                     eventType2 = parser.next();
-                                    if (eventType2 == 1) {
-                                        break;
-                                    }
-                                    i = i3;
-                                    i2 = 0;
-                                } else {
-                                    i3 = i;
-                                    if (parser.getDepth() == 3) {
-                                        if ("periodicSync".equals(tagName) && authority != null) {
-                                            periodicSync = parsePeriodicSync(parser, authority);
-                                        }
-                                    } else if (parser.getDepth() == 4 && periodicSync != null && "extra".equals(tagName)) {
-                                        parseExtra(parser, periodicSync.extras);
-                                    }
-                                    eventType2 = parser.next();
-                                    if (eventType2 == 1) {
+                                    if (eventType2 != 1) {
                                     }
                                 }
                             }
-                            i3 = i;
-                            eventType2 = parser.next();
-                            if (eventType2 == 1) {
+                        }
+                        z = true;
+                        sparseArray.put(0, Boolean.valueOf(z));
+                        eventType2 = parser.next();
+                        authority = null;
+                        periodicSync = null;
+                        validator = new AccountAuthorityValidator(this.mContext);
+                        while (true) {
+                            if (eventType2 == i) {
                             }
+                            i2 = i;
+                            eventType2 = parser.next();
+                            if (eventType2 != 1) {
+                            }
+                            i = i2;
+                            i3 = 0;
                         }
                     }
                     this.mNextAuthorityId = Math.max(highestAuthorityId + 1, this.mNextAuthorityId);
@@ -2203,10 +2245,16 @@ public class SyncStorageEngine {
                 int index2 = index;
                 index = in.readInt();
                 int token = index;
-                if (index == 0) {
-                    return;
-                }
-                if (token == 101 || token == 100) {
+                if (index != 0) {
+                    if (token != 101) {
+                        if (token != 100) {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("Unknown stats token: ");
+                            stringBuilder.append(token);
+                            Slog.w("SyncManager", stringBuilder.toString());
+                            return;
+                        }
+                    }
                     index = in.readInt();
                     if (token == 100) {
                         index = (index - 2009) + 14245;
@@ -2222,10 +2270,6 @@ public class SyncStorageEngine {
                     }
                     index = index2;
                 } else {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Unknown stats token: ");
-                    stringBuilder.append(token);
-                    Slog.w("SyncManager", stringBuilder.toString());
                     return;
                 }
             }

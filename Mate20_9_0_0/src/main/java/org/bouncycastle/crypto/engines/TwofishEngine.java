@@ -88,14 +88,18 @@ public final class TwofishEngine implements BlockCipher {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:9:0x0150 in {2, 3, 5, 6, 7, 8} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
+        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
+        	at java.lang.Iterable.forEach(Iterable.java:75)
+        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
+        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
         	at jadx.api.JavaClass.decompile(JavaClass.java:62)
         	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
@@ -124,9 +128,7 @@ public final class TwofishEngine implements BlockCipher {
             case 3: goto L_0x00a0;
             default: goto L_0x0022;
         };
-    L_0x0022:
         return r3;
-    L_0x0023:
         r12 = r10.gMDS0;
         r6 = P;
         r6 = r6[r3];
@@ -161,10 +163,8 @@ public final class TwofishEngine implements BlockCipher {
         r1 = r10.b3(r4);
         r11 = r11 ^ r1;
         r11 = r0[r11];
-    L_0x0069:
         r3 = r12 ^ r11;
         return r3;
-    L_0x006c:
         r8 = P;
         r8 = r8[r5];
         r0 = r8[r0];
@@ -189,7 +189,6 @@ public final class TwofishEngine implements BlockCipher {
         r11 = r11 & 255;
         r12 = r10.b3(r12);
         r11 = r11 ^ r12;
-    L_0x00a0:
         r12 = P;
         r12 = r12[r5];
         r12 = r12[r0];
@@ -214,7 +213,6 @@ public final class TwofishEngine implements BlockCipher {
         r11 = r11 & 255;
         r12 = r10.b3(r7);
         r11 = r11 ^ r12;
-    L_0x00d4:
         r12 = r10.gMDS0;
         r7 = P;
         r7 = r7[r3];

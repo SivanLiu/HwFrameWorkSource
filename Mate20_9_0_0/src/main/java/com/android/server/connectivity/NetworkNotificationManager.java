@@ -81,7 +81,7 @@ public class NetworkNotificationManager {
         try {
             return r.getStringArray(17236064)[transportType];
         } catch (IndexOutOfBoundsException e) {
-            return r.getString(17040552);
+            return r.getString(17040553);
         }
     }
 
@@ -138,30 +138,30 @@ public class NetworkNotificationManager {
         int icon = getIcon(transportType2);
         CharSequence details;
         if (notificationType == NotificationType.NO_INTERNET && transportType2 == 1) {
-            title = r.getString(17041396, new Object[]{Integer.valueOf(0)});
-            details = r.getString(17041397);
+            title = r.getString(17041397, new Object[]{Integer.valueOf(0)});
+            details = r.getString(17041398);
         } else if (notificationType == NotificationType.LOST_INTERNET && transportType2 == 1) {
-            title = r.getString(17041396, new Object[]{Integer.valueOf(0)});
-            details = r.getString(17041397);
+            title = r.getString(17041397, new Object[]{Integer.valueOf(0)});
+            details = r.getString(17041398);
         } else {
             if (notificationType == NotificationType.SIGN_IN) {
                 switch (transportType2) {
                     case 0:
                         z = false;
-                        title = r.getString(17040545, new Object[]{Integer.valueOf(0)});
+                        title = r.getString(17040546, new Object[]{Integer.valueOf(0)});
                         details = this.mTelephonyManager.getNetworkOperatorName();
                         break;
                     case 1:
-                        title = r.getString(17041386, new Object[]{Integer.valueOf(0)});
-                        details = r.getString(17040546, new Object[]{WifiInfo.removeDoubleQuotes(networkAgentInfo.networkCapabilities.getSSID())});
+                        title = r.getString(17041387, new Object[]{Integer.valueOf(0)});
+                        details = r.getString(17040547, new Object[]{WifiInfo.removeDoubleQuotes(networkAgentInfo.networkCapabilities.getSSID())});
                         this.mConnectivityService = (ConnectivityService) ServiceManager.getService("connectivity");
                         CharSequence title3 = title;
                         this.mConnectivityService.startBrowserForWifiPortal(new Notification(), extraInfo);
                         title = title3;
                         break;
                     default:
-                        title = r.getString(17040545, new Object[]{Integer.valueOf(0)});
-                        details = r.getString(17040546, new Object[]{name});
+                        title = r.getString(17040546, new Object[]{Integer.valueOf(0)});
+                        details = r.getString(17040547, new Object[]{name});
                         break;
                 }
             } else if (notificationType == NotificationType.NETWORK_SWITCH) {
@@ -169,9 +169,9 @@ public class NetworkNotificationManager {
                 title2 = new Object[1];
                 z = false;
                 title2[0] = getTransportName(getFirstTransportType(switchToNai));
-                title2 = r.getString(17040549, title2);
+                title2 = r.getString(17040550, title2);
                 String str = fromTransport;
-                details = r.getString(17040550, new Object[]{toTransport, fromTransport});
+                details = r.getString(17040551, new Object[]{toTransport, fromTransport});
                 title = title2;
             } else {
                 String str2 = name;
@@ -259,7 +259,7 @@ public class NetworkNotificationManager {
     public void showToast(NetworkAgentInfo fromNai, NetworkAgentInfo toNai) {
         String fromTransport = getTransportName(getFirstTransportType(fromNai));
         String toTransport = getTransportName(getFirstTransportType(toNai));
-        Toast.makeText(this.mContext, this.mContext.getResources().getString(17040551, new Object[]{fromTransport, toTransport}), 1).show();
+        Toast.makeText(this.mContext, this.mContext.getResources().getString(17040552, new Object[]{fromTransport, toTransport}), 1).show();
     }
 
     @VisibleForTesting

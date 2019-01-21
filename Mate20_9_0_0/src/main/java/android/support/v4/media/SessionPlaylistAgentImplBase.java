@@ -91,7 +91,7 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         private MyPlayerEventCallback() {
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0035, code:
+        /* JADX WARNING: Missing block: B:12:0x0035, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -149,7 +149,7 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
 
     @Nullable
     public List<MediaItem2> getPlaylist() {
-        List<MediaItem2> unmodifiableList;
+        List unmodifiableList;
         synchronized (this.mLock) {
             unmodifiableList = Collections.unmodifiableList(this.mPlaylist);
         }
@@ -239,10 +239,10 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         throw new IllegalArgumentException("item shouldn't be null");
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0052, code:
+    /* JADX WARNING: Missing block: B:13:0x0052, code skipped:
             notifyPlaylistChanged();
      */
-    /* JADX WARNING: Missing block: B:14:0x0055, code:
+    /* JADX WARNING: Missing block: B:14:0x0055, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -269,26 +269,27 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002d, code:
+    /* JADX WARNING: Missing block: B:17:0x002d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void skipToPlaylistItem(@NonNull MediaItem2 item) {
         if (item != null) {
             synchronized (this.mLock) {
-                if (!hasValidItem() || item.equals(this.mCurrent.mediaItem)) {
-                } else {
-                    int shuffledIdx = this.mShuffledList.indexOf(item);
-                    if (shuffledIdx < 0) {
-                        return;
+                if (hasValidItem()) {
+                    if (!item.equals(this.mCurrent.mediaItem)) {
+                        int shuffledIdx = this.mShuffledList.indexOf(item);
+                        if (shuffledIdx < 0) {
+                            return;
+                        }
+                        this.mCurrent = new PlayItem(this, shuffledIdx);
+                        updateCurrentIfNeededLocked();
                     }
-                    this.mCurrent = new PlayItem(this, shuffledIdx);
-                    updateCurrentIfNeededLocked();
-                    return;
                 }
             }
+        } else {
+            throw new IllegalArgumentException("item shouldn't be null");
         }
-        throw new IllegalArgumentException("item shouldn't be null");
     }
 
     public void skipToPreviousItem() {
@@ -304,19 +305,20 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0025, code:
+    /* JADX WARNING: Missing block: B:15:0x0025, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void skipToNextItem() {
         synchronized (this.mLock) {
-            if (!hasValidItem() || this.mCurrent == this.mEopPlayItem) {
-            } else {
-                PlayItem next = getNextValidPlayItemLocked(this.mCurrent.shuffledIdx, 1);
-                if (next != this.mEopPlayItem) {
-                    this.mCurrent = next;
+            if (hasValidItem()) {
+                if (this.mCurrent != this.mEopPlayItem) {
+                    PlayItem next = getNextValidPlayItemLocked(this.mCurrent.shuffledIdx, 1);
+                    if (next != this.mEopPlayItem) {
+                        this.mCurrent = next;
+                    }
+                    updateCurrentIfNeededLocked();
                 }
-                updateCurrentIfNeededLocked();
             }
         }
     }
@@ -329,10 +331,10 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         return i;
     }
 
-    /* JADX WARNING: Missing block: B:22:0x003e, code:
+    /* JADX WARNING: Missing block: B:23:0x003e, code skipped:
             notifyRepeatModeChanged();
      */
-    /* JADX WARNING: Missing block: B:23:0x0041, code:
+    /* JADX WARNING: Missing block: B:24:0x0041, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -358,6 +360,8 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
                             updatePlayerDataSourceLocked();
                             break;
                         }
+                        break;
+                    default:
                         break;
                 }
                 this.mPlayer.loopCurrent(false);
@@ -481,7 +485,7 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x002d, code:
+    /* JADX WARNING: Missing block: B:11:0x002d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

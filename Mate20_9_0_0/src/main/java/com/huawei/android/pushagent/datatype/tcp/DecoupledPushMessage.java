@@ -1,10 +1,9 @@
 package com.huawei.android.pushagent.datatype.tcp;
 
-import com.huawei.android.pushagent.datatype.a.d;
 import com.huawei.android.pushagent.datatype.tcp.base.PushMessage;
-import com.huawei.android.pushagent.utils.a.f;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.utils.b.a;
+import com.huawei.android.pushagent.utils.d;
+import com.huawei.android.pushagent.utils.e.c;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,59 +18,59 @@ public class DecoupledPushMessage extends PushMessage {
         super(b);
     }
 
-    public byte[] is() {
+    public byte[] b() {
         if (this.payload == null) {
-            c.eq("PushLog3413", "encode error, payload is null");
+            a.su("PushLog3414", "encode error, payload is null");
             return new byte[0];
         }
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byteArrayOutputStream.write(it());
+            byteArrayOutputStream.write(c());
             byte[] bytes = this.payload.toString().getBytes("UTF-8");
-            byteArrayOutputStream.write(g.gd(bytes.length + 6));
+            byteArrayOutputStream.write(d.zr(bytes.length + 6));
             byteArrayOutputStream.write(2);
-            byteArrayOutputStream.write(g.gd(bytes.length));
+            byteArrayOutputStream.write(d.zr(bytes.length));
             byteArrayOutputStream.write(bytes);
             return byteArrayOutputStream.toByteArray();
         } catch (UnsupportedEncodingException e) {
-            c.eq("PushLog3413", "unsupported encoding type");
+            a.su("PushLog3414", "unsupported encoding type");
         } catch (IOException e2) {
-            c.eq("PushLog3413", "io exception");
+            a.su("PushLog3414", "io exception");
         }
         return new byte[0];
     }
 
-    public PushMessage jc(InputStream inputStream) {
-        d iy = iy(inputStream);
-        byte b = iy.kp(1)[0];
-        if (!iz(b)) {
+    public PushMessage a(InputStream inputStream) {
+        com.huawei.android.pushagent.datatype.a.d e = e(inputStream);
+        byte b = e.ax(1)[0];
+        if (!h(b)) {
             return null;
         }
-        this.payload = ja(b, iy);
-        jo(this.payload);
+        this.payload = f(b, e);
+        t(this.payload);
         return this;
     }
 
-    private void jo(JSONObject jSONObject) {
-        c.ep("PushLog3413", "parse decoupled msg payload.");
+    private void t(JSONObject jSONObject) {
+        a.sv("PushLog3414", "parse decoupled msg payload.");
         if (jSONObject != null && jSONObject.has("cmdid")) {
             try {
                 this.mSubCmdId = (byte) jSONObject.getInt("cmdid");
             } catch (Exception e) {
-                c.eq("PushLog3413", "parse decoupled msg payload exception");
+                a.su("PushLog3414", "parse decoupled msg payload exception");
             }
         }
     }
 
     public String toString() {
-        return "payload is" + f.u(this.payload);
+        return "payload is" + c.wi(this.payload);
     }
 
-    public JSONObject jn() {
+    public JSONObject s() {
         return this.payload;
     }
 
-    public void jm(JSONObject jSONObject) {
+    public void r(JSONObject jSONObject) {
         this.payload = jSONObject;
     }
 }

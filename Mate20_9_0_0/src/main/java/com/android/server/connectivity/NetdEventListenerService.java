@@ -248,13 +248,15 @@ public class NetdEventListenerService extends Stub {
     }
 
     public synchronized void onTcpSocketStatsEvent(int[] networkIds, int[] sentPackets, int[] lostPackets, int[] rttsUs, int[] sentAckDiffsMs) {
-        if (networkIds.length == sentPackets.length && networkIds.length == lostPackets.length && networkIds.length == rttsUs.length && networkIds.length == sentAckDiffsMs.length) {
-            long timestamp = System.currentTimeMillis();
-            for (int i = 0; i < networkIds.length; i++) {
-                int netId = networkIds[i];
-                getMetricsForNetwork(timestamp, netId).addTcpStatsResult(sentPackets[i], lostPackets[i], rttsUs[i], sentAckDiffsMs[i]);
+        if (networkIds.length == sentPackets.length && networkIds.length == lostPackets.length && networkIds.length == rttsUs.length) {
+            if (networkIds.length == sentAckDiffsMs.length) {
+                long timestamp = System.currentTimeMillis();
+                for (int i = 0; i < networkIds.length; i++) {
+                    int netId = networkIds[i];
+                    getMetricsForNetwork(timestamp, netId).addTcpStatsResult(sentPackets[i], lostPackets[i], rttsUs[i], sentAckDiffsMs[i]);
+                }
+                return;
             }
-            return;
         }
         Log.e(TAG, "Mismatched lengths of TCP socket stats data arrays");
     }

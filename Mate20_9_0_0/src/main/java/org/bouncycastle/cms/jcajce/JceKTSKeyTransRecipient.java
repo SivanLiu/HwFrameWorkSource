@@ -14,6 +14,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.KeyTransRecipient;
 import org.bouncycastle.cms.KeyTransRecipientId;
+import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.util.encoders.Hex;
 
 public abstract class JceKTSKeyTransRecipient implements KeyTransRecipient {
@@ -42,7 +43,7 @@ public abstract class JceKTSKeyTransRecipient implements KeyTransRecipient {
                 this.helper.keySizeCheck(algorithmIdentifier2, jceKey);
             }
             return jceKey;
-        } catch (Exception e) {
+        } catch (OperatorException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception unwrapping key: ");
             stringBuilder.append(e.getMessage());

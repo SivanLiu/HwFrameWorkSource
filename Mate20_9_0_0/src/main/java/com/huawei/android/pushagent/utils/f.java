@@ -1,7 +1,7 @@
 package com.huawei.android.pushagent.utils;
 
 public abstract class f {
-    public static String fp(Object obj) {
+    public static String zv(Object obj) {
         if (obj instanceof String) {
             return (String) obj;
         }
@@ -11,7 +11,7 @@ public abstract class f {
         return null;
     }
 
-    public static String fo(String str) {
+    public static String zu(String str) {
         if (str == null) {
             return null;
         }

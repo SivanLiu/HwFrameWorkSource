@@ -1,10 +1,9 @@
 package com.huawei.android.pushagent.datatype.tcp.base;
 
 import com.huawei.android.pushagent.datatype.a.d;
+import com.huawei.android.pushagent.utils.b.a;
+import com.huawei.android.pushagent.utils.b.c;
 import com.huawei.android.pushagent.utils.e;
-import com.huawei.android.pushagent.utils.f.b;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -15,80 +14,80 @@ public abstract class PushMessage implements IPushMessage {
     protected byte mCmdId = (byte) -1;
     protected byte mSubCmdId = (byte) -1;
 
-    public abstract byte[] is();
+    public abstract PushMessage a(InputStream inputStream);
 
-    public abstract PushMessage jc(InputStream inputStream);
+    public abstract byte[] b();
 
     public abstract String toString();
 
-    public String iw() {
-        return b.el(new byte[]{this.mCmdId});
+    public String d() {
+        return c.tr(new byte[]{this.mCmdId});
     }
 
     public PushMessage(byte b) {
-        jb(b);
+        j(b);
     }
 
-    public byte it() {
+    public byte c() {
         return this.mCmdId;
     }
 
-    public void jb(byte b) {
+    public void j(byte b) {
         this.mCmdId = b;
     }
 
-    public byte iu() {
+    public byte g() {
         return this.mSubCmdId;
     }
 
-    public void ix(byte b) {
+    public void k(byte b) {
         this.mSubCmdId = b;
     }
 
-    public d iy(InputStream inputStream) {
+    public d e(InputStream inputStream) {
         byte[] bArr = new byte[2];
-        jd(inputStream, bArr);
-        int gx = g.gx(bArr);
-        c.er("PushLog3413", "msg total lenth is: " + gx);
-        bArr = new byte[((gx - 1) - 2)];
-        jd(inputStream, bArr);
+        i(inputStream, bArr);
+        int yg = com.huawei.android.pushagent.utils.d.yg(bArr);
+        a.st("PushLog3414", "msg total lenth is: " + yg);
+        bArr = new byte[((yg - 1) - 2)];
+        i(inputStream, bArr);
         return new d(bArr);
     }
 
-    public JSONObject ja(byte b, d dVar) {
+    public JSONObject f(byte b, d dVar) {
         if ((b & 2) == 2) {
             try {
-                byte[] kp = dVar.kp(g.gx(dVar.kp(2)));
-                if (kp == null || kp.length == 0) {
+                byte[] ax = dVar.ax(com.huawei.android.pushagent.utils.d.yg(dVar.ax(2)));
+                if (ax == null || ax.length == 0) {
                     return null;
                 }
                 if ((b & 1) == 1) {
-                    kp = e.fn(kp);
+                    ax = e.zt(ax);
                 }
-                return new JSONObject(new String(kp, "UTF-8"));
+                return new JSONObject(new String(ax, "UTF-8"));
             } catch (JSONException e) {
-                c.eq("PushLog3413", "fail to parser payload");
+                a.su("PushLog3414", "fail to parser payload");
             } catch (UnsupportedEncodingException e2) {
-                c.eq("PushLog3413", "unsupported encoding type");
+                a.su("PushLog3414", "unsupported encoding type");
             } catch (ArrayIndexOutOfBoundsException e3) {
-                c.eq("PushLog3413", "fail to parser payload, array out of bounds");
+                a.su("PushLog3414", "fail to parser payload, array out of bounds");
             }
         }
         return null;
     }
 
-    public boolean iz(byte b) {
+    public boolean h(byte b) {
         boolean z = false;
         if ((b & 12) == 0) {
             z = true;
         }
         if (!z) {
-            c.eq("PushLog3413", "tlv is not support in current version");
+            a.su("PushLog3414", "tlv is not support in current version");
         }
         return z;
     }
 
-    public static void jd(InputStream inputStream, byte[] bArr) {
+    public static void i(InputStream inputStream, byte[] bArr) {
         int i = 0;
         while (i < bArr.length) {
             int read = inputStream.read(bArr, i, bArr.length - i);

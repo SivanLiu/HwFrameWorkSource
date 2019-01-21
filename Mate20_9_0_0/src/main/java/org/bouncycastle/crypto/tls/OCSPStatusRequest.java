@@ -24,7 +24,7 @@ public class OCSPStatusRequest {
         Vector vector = new Vector();
         int readUint16 = TlsUtils.readUint16(inputStream);
         if (readUint16 > 0) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint16, inputStream));
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readFully(readUint16, inputStream));
             do {
                 vector.addElement(ResponderID.getInstance(TlsUtils.readDERObject(TlsUtils.readOpaque16(byteArrayInputStream))));
             } while (byteArrayInputStream.available() > 0);
@@ -41,7 +41,7 @@ public class OCSPStatusRequest {
         if (this.responderIDList == null || this.responderIDList.isEmpty()) {
             TlsUtils.writeUint16(0, outputStream);
         } else {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             for (int i = 0; i < this.responderIDList.size(); i++) {
                 TlsUtils.writeOpaque16(((ResponderID) this.responderIDList.elementAt(i)).getEncoded(ASN1Encoding.DER), byteArrayOutputStream);
             }

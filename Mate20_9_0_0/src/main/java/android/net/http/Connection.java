@@ -3,11 +3,15 @@ package android.net.http;
 import android.content.Context;
 import android.os.SystemClock;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
+import javax.net.ssl.SSLHandshakeException;
 import org.apache.http.HttpConnection;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpVersion;
+import org.apache.http.ParseException;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -104,13 +108,13 @@ abstract class Connection {
                                         req.mEventHandler.certificate(this.mCertificate);
                                         try {
                                             req.sendRequest(this.mHttpClientConnection);
-                                        } catch (Exception e2) {
+                                        } catch (HttpException e2) {
                                             exception = e2;
                                             error = -1;
-                                        } catch (Exception e22) {
+                                        } catch (IOException e22) {
                                             exception = e22;
                                             error = -7;
-                                        } catch (Exception e222) {
+                                        } catch (IllegalStateException e222) {
                                             exception = e222;
                                             error = -7;
                                         }
@@ -154,13 +158,13 @@ abstract class Connection {
                                 req = (Request) pipe.removeFirst();
                                 try {
                                     req.readResponse(this.mHttpClientConnection);
-                                } catch (Exception e3) {
+                                } catch (ParseException e3) {
                                     exception = e3;
                                     error = -7;
-                                } catch (Exception e32) {
+                                } catch (IOException e32) {
                                     exception = e32;
                                     error = -7;
-                                } catch (Exception e322) {
+                                } catch (IllegalStateException e322) {
                                     exception = e322;
                                     error = -7;
                                 }
@@ -240,21 +244,21 @@ abstract class Connection {
             }
             req.mFailCount = 2;
             return false;
-        } catch (Exception e) {
+        } catch (UnknownHostException e) {
             error = -2;
             exception = e;
-        } catch (Exception e2) {
+        } catch (IllegalArgumentException e2) {
             error = -6;
             req.mFailCount = 2;
             exception = e2;
         } catch (SSLConnectionClosedByUserException e3) {
             req.mFailCount = 2;
             return false;
-        } catch (Exception e22) {
+        } catch (SSLHandshakeException e22) {
             req.mFailCount = 2;
             error = -11;
             exception = e22;
-        } catch (Exception e222) {
+        } catch (IOException e222) {
             error = -6;
             exception = e222;
         }
@@ -324,7 +328,7 @@ abstract class Connection {
         return this.mHttpContext;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x002c, code:
+    /* JADX WARNING: Missing block: B:12:0x002c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -339,7 +343,7 @@ abstract class Connection {
         if (connType == 2) {
             return true;
         }
-        return ver.lessEquals(HttpVersion.HTTP_1_0) ^ true;
+        return ver.lessEquals(HttpVersion.HTTP_1_0) ^ 1;
     }
 
     void setCanPersist(HttpEntity entity, ProtocolVersion ver, int connType) {

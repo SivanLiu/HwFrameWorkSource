@@ -77,8 +77,8 @@ public class HostapdHal {
     }
 
     public HostapdHal(Context context) {
-        this.mEnableAcs = context.getResources().getBoolean(17957085);
-        this.mEnableIeee80211AC = context.getResources().getBoolean(17957086);
+        this.mEnableAcs = context.getResources().getBoolean(17957086);
+        this.mEnableIeee80211AC = context.getResources().getBoolean(17957087);
     }
 
     void enableVerboseLogging(boolean enable) {
@@ -182,6 +182,7 @@ public class HostapdHal {
                 stringBuilder.append(e);
                 Log.e(str, stringBuilder.toString());
                 return false;
+            } catch (Throwable th) {
             }
         }
     }

@@ -117,7 +117,7 @@ public class ANQPMatcher {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0027, code:
+    /* JADX WARNING: Missing block: B:15:0x0027, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

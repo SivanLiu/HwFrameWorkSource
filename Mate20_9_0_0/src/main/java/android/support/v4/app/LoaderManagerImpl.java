@@ -367,10 +367,16 @@ class LoaderManagerImpl extends LoaderManager {
         try {
             this.mLoaderViewModel.startCreatingLoader();
             Loader<D> loader = callback.onCreateLoader(id, args);
-            StringBuilder stringBuilder;
-            if (loader == null) {
-                throw new IllegalArgumentException("Object returned from onCreateLoader must not be null");
-            } else if (!loader.getClass().isMemberClass() || Modifier.isStatic(loader.getClass().getModifiers())) {
+            if (loader != null) {
+                StringBuilder stringBuilder;
+                if (loader.getClass().isMemberClass()) {
+                    if (!Modifier.isStatic(loader.getClass().getModifiers())) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Object returned from onCreateLoader must not be a non-static inner member class: ");
+                        stringBuilder.append(loader);
+                        throw new IllegalArgumentException(stringBuilder.toString());
+                    }
+                }
                 info = new LoaderInfo(id, args, loader, priorLoader);
                 if (DEBUG) {
                     String str = TAG;
@@ -381,12 +387,8 @@ class LoaderManagerImpl extends LoaderManager {
                 }
                 this.mLoaderViewModel.putLoader(id, info);
                 return info.setCallback(this.mLifecycleOwner, callback);
-            } else {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Object returned from onCreateLoader must not be a non-static inner member class: ");
-                stringBuilder.append(loader);
-                throw new IllegalArgumentException(stringBuilder.toString());
             }
+            throw new IllegalArgumentException("Object returned from onCreateLoader must not be null");
         } finally {
             this.mLoaderViewModel.finishCreatingLoader();
         }

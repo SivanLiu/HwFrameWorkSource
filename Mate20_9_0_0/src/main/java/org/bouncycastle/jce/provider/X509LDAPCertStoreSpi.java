@@ -16,8 +16,6 @@ import java.security.cert.X509CertSelector;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import javax.naming.NamingEnumeration;
@@ -55,38 +53,41 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
     }
 
     private Set certSubjectSerialSearch(X509CertSelector x509CertSelector, String[] strArr, String str, String str2) throws CertStoreException {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         StringBuilder stringBuilder;
         try {
             Collection search;
-            if (x509CertSelector.getSubjectAsBytes() == null && x509CertSelector.getSubjectAsString() == null && x509CertSelector.getCertificate() == null) {
-                search = search(str, "*", strArr);
-            } else {
-                String str3;
-                String str4 = null;
-                if (x509CertSelector.getCertificate() != null) {
-                    String name = x509CertSelector.getCertificate().getSubjectX500Principal().getName("RFC1779");
-                    str4 = x509CertSelector.getCertificate().getSerialNumber().toString();
-                    str3 = name;
-                } else {
-                    str3 = x509CertSelector.getSubjectAsBytes() != null ? new X500Principal(x509CertSelector.getSubjectAsBytes()).getName("RFC1779") : x509CertSelector.getSubjectAsString();
-                }
-                str3 = parseDN(str3, str2);
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("*");
-                stringBuilder2.append(str3);
-                stringBuilder2.append("*");
-                hashSet.addAll(search(str, stringBuilder2.toString(), strArr));
-                if (str4 == null || this.params.getSearchForSerialNumberIn() == null) {
+            String str3;
+            if (x509CertSelector.getSubjectAsBytes() == null && x509CertSelector.getSubjectAsString() == null) {
+                if (x509CertSelector.getCertificate() == null) {
+                    search = search(str, "*", strArr);
+                    hashSet.addAll(search);
                     return hashSet;
                 }
-                str3 = this.params.getSearchForSerialNumberIn();
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("*");
-                stringBuilder.append(str4);
-                stringBuilder.append("*");
-                search = search(str3, stringBuilder.toString(), strArr);
             }
+            String str4 = null;
+            if (x509CertSelector.getCertificate() != null) {
+                String name = x509CertSelector.getCertificate().getSubjectX500Principal().getName("RFC1779");
+                str4 = x509CertSelector.getCertificate().getSerialNumber().toString();
+                str3 = name;
+            } else {
+                str3 = x509CertSelector.getSubjectAsBytes() != null ? new X500Principal(x509CertSelector.getSubjectAsBytes()).getName("RFC1779") : x509CertSelector.getSubjectAsString();
+            }
+            str3 = parseDN(str3, str2);
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("*");
+            stringBuilder2.append(str3);
+            stringBuilder2.append("*");
+            hashSet.addAll(search(str, stringBuilder2.toString(), strArr));
+            if (str4 == null || this.params.getSearchForSerialNumberIn() == null) {
+                return hashSet;
+            }
+            str3 = this.params.getSearchForSerialNumberIn();
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("*");
+            stringBuilder.append(str4);
+            stringBuilder.append("*");
+            search = search(str3, stringBuilder.toString(), strArr);
             hashSet.addAll(search);
             return hashSet;
         } catch (IOException e) {
@@ -98,7 +99,7 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
     }
 
     private DirContext connectLDAP() throws NamingException {
-        Hashtable properties = new Properties();
+        Properties properties = new Properties();
         properties.setProperty("java.naming.factory.initial", LDAP_PROVIDER);
         properties.setProperty("java.naming.batchsize", "0");
         properties.setProperty("java.naming.provider.url", this.params.getLdapURL());
@@ -157,7 +158,7 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
         return str.endsWith("\"") ? str.substring(0, str.length() - 1) : str;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:38:0x00db A:{SYNTHETIC, Splitter: B:38:0x00db} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x00db A:{SYNTHETIC, Splitter:B:38:0x00db} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private Set search(String str, String str2, String[] strArr) throws CertStoreException {
         Object e;
@@ -172,7 +173,7 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
         if (str == null) {
             str2 = null;
         }
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         try {
             DirContext connectLDAP = connectLDAP();
             try {
@@ -250,9 +251,9 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
         String[] strArr = new String[]{this.params.getCertificateRevocationListAttribute()};
         if (cRLSelector instanceof X509CRLSelector) {
             X509CRLSelector x509CRLSelector = (X509CRLSelector) cRLSelector;
-            Collection hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             String ldapCertificateRevocationListAttributeName = this.params.getLdapCertificateRevocationListAttributeName();
-            Set<byte[]> hashSet2 = new HashSet();
+            HashSet<byte[]> hashSet2 = new HashSet();
             if (x509CRLSelector.getIssuerNames() != null) {
                 for (Object next : x509CRLSelector.getIssuerNames()) {
                     String certificateRevocationListIssuerAttributeName;
@@ -294,12 +295,10 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
         throw new CertStoreException("selector is not a X509CRLSelector");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x0078 A:{Splitter: B:13:0x0045, ExcHandler: java.io.IOException (e java.io.IOException)} */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public Collection engineGetCertificates(CertSelector certSelector) throws CertStoreException {
         if (certSelector instanceof X509CertSelector) {
             X509CertSelector x509CertSelector = (X509CertSelector) certSelector;
-            Collection hashSet = new HashSet();
+            HashSet hashSet = new HashSet();
             Set<byte[]> endCertificates = getEndCertificates(x509CertSelector);
             endCertificates.addAll(getCACertificates(x509CertSelector));
             endCertificates.addAll(getCrossCertificates(x509CertSelector));
@@ -308,7 +307,7 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
                 for (byte[] bArr : endCertificates) {
                     if (bArr != null) {
                         if (bArr.length != 0) {
-                            List<byte[]> arrayList = new ArrayList();
+                            ArrayList<byte[]> arrayList = new ArrayList();
                             arrayList.add(bArr);
                             try {
                                 CertificatePair instance2 = CertificatePair.getInstance(new ASN1InputStream(bArr).readObject());
@@ -319,7 +318,7 @@ public class X509LDAPCertStoreSpi extends CertStoreSpi {
                                 if (instance2.getReverse() != null) {
                                     arrayList.add(instance2.getReverse().getEncoded());
                                 }
-                            } catch (IOException e) {
+                            } catch (IOException | IllegalArgumentException e) {
                             }
                             for (byte[] byteArrayInputStream : arrayList) {
                                 try {

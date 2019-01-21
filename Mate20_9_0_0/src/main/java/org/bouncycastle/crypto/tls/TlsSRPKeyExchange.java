@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Vector;
 import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.agreement.srp.SRP6Client;
@@ -92,7 +93,7 @@ public class TlsSRPKeyExchange extends AbstractTlsKeyExchange {
     public byte[] generatePremasterSecret() throws IOException {
         try {
             return BigIntegers.asUnsignedByteArray(this.srpServer != null ? this.srpServer.calculateSecret(this.srpPeerCredentials) : this.srpClient.calculateSecret(this.srpPeerCredentials));
-        } catch (Throwable e) {
+        } catch (CryptoException e) {
             throw new TlsFatalAlert((short) 47, e);
         }
     }
@@ -100,7 +101,7 @@ public class TlsSRPKeyExchange extends AbstractTlsKeyExchange {
     public byte[] generateServerKeyExchange() throws IOException {
         this.srpServer.init(this.srpGroup, this.srpVerifier, TlsUtils.createHash((short) 2), this.context.getSecureRandom());
         ServerSRPParams serverSRPParams = new ServerSRPParams(this.srpGroup.getN(), this.srpGroup.getG(), this.srpSalt, this.srpServer.generateServerCredentials());
-        OutputStream digestInputBuffer = new DigestInputBuffer();
+        DigestInputBuffer digestInputBuffer = new DigestInputBuffer();
         serverSRPParams.encode(digestInputBuffer);
         if (this.serverCredentials != null) {
             SignatureAndHashAlgorithm signatureAndHashAlgorithm = TlsUtils.getSignatureAndHashAlgorithm(this.context, this.serverCredentials);
@@ -138,7 +139,7 @@ public class TlsSRPKeyExchange extends AbstractTlsKeyExchange {
         try {
             this.srpPeerCredentials = SRP6Util.validatePublicValue(this.srpGroup.getN(), TlsSRPUtils.readSRPParameter(inputStream));
             this.context.getSecurityParameters().srpIdentity = Arrays.clone(this.identity);
-        } catch (Throwable e) {
+        } catch (CryptoException e) {
             throw new TlsFatalAlert((short) 47, e);
         }
     }
@@ -158,7 +159,7 @@ public class TlsSRPKeyExchange extends AbstractTlsKeyExchange {
                     return;
                 }
                 throw new TlsFatalAlert((short) 46);
-            } catch (Throwable e) {
+            } catch (RuntimeException e) {
                 throw new TlsFatalAlert((short) 43, e);
             }
         }
@@ -199,7 +200,7 @@ public class TlsSRPKeyExchange extends AbstractTlsKeyExchange {
                 this.srpPeerCredentials = SRP6Util.validatePublicValue(this.srpGroup.getN(), parse.getB());
                 this.srpClient.init(this.srpGroup, TlsUtils.createHash((short) 2), this.context.getSecureRandom());
                 return;
-            } catch (Throwable e) {
+            } catch (CryptoException e) {
                 throw new TlsFatalAlert((short) 47, e);
             }
         }

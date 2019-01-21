@@ -75,7 +75,7 @@ public class ServiceWatcher implements ServiceConnection {
     private final PackageManager mPm;
     private int mRetryCount;
     Runnable mRetryRunnable = new Runnable() {
-        /* JADX WARNING: Missing block: B:12:0x006e, code:
+        /* JADX WARNING: Missing block: B:12:0x006e, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -351,7 +351,7 @@ public class ServiceWatcher implements ServiceConnection {
         this.mContext.bindServiceAsUser(intent, this, 1073741829, new UserHandle(userId));
     }
 
-    /* JADX WARNING: Missing block: B:23:0x0067, code:
+    /* JADX WARNING: Missing block: B:23:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

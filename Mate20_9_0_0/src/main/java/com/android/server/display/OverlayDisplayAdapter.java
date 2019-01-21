@@ -79,14 +79,14 @@ final class OverlayDisplayAdapter extends DisplayAdapter {
         public abstract void onModeChangedLocked(int i);
 
         public OverlayDisplayDevice(OverlayDisplayAdapter overlayDisplayAdapter, IBinder displayToken, String name, List<OverlayMode> modes, int activeMode, int defaultMode, float refreshRate, long presentationDeadlineNanos, boolean secure, int state, SurfaceTexture surfaceTexture, int number) {
-            DisplayAdapter displayAdapter = overlayDisplayAdapter;
+            OverlayDisplayAdapter overlayDisplayAdapter2 = overlayDisplayAdapter;
             List<OverlayMode> list = modes;
             float f = refreshRate;
-            this.this$0 = displayAdapter;
+            this.this$0 = overlayDisplayAdapter2;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(OverlayDisplayAdapter.UNIQUE_ID_PREFIX);
             stringBuilder.append(number);
-            super(displayAdapter, displayToken, stringBuilder.toString());
+            super(overlayDisplayAdapter2, displayToken, stringBuilder.toString());
             this.mName = name;
             this.mRefreshRate = f;
             this.mDisplayPresentationDeadlineNanos = presentationDeadlineNanos;
@@ -457,7 +457,7 @@ final class OverlayDisplayAdapter extends DisplayAdapter {
                     if (!arrayList.isEmpty()) {
                         width = count + 1;
                         number = width;
-                        modeString2 = getContext().getResources().getString(17039945, new Object[]{Integer.valueOf(number)});
+                        modeString2 = getContext().getResources().getString(17039946, new Object[]{Integer.valueOf(number)});
                         int gravity = chooseOverlayGravity(number);
                         boolean secure = flagString != null && flagString.contains(",secure");
                         String str = TAG;

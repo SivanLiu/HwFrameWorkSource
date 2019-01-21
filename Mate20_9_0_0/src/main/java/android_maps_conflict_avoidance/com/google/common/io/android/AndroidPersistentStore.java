@@ -58,7 +58,7 @@ public class AndroidPersistentStore extends BasePersistentStore implements Persi
                 data = new byte[0];
             } catch (FileNotFoundException e) {
                 throw new PersistentStoreException(e.getMessage(), -1);
-            } catch (FileNotFoundException e2) {
+            } catch (IOException e2) {
                 throw new PersistentStoreException(e2.getMessage(), -1);
             }
         }

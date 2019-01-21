@@ -47,64 +47,20 @@ public class AwareHSMListHandler {
             }
         }
 
-        /* JADX WARNING: Missing block: B:19:0x009d, code:
+        /* JADX WARNING: Removed duplicated region for block: B:58:0x0138 A:{SYNTHETIC} */
+        /* JADX WARNING: Removed duplicated region for block: B:63:0x0152 A:{SYNTHETIC} */
+        /* JADX WARNING: Missing block: B:19:0x009d, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:37:0x00dc, code:
+        /* JADX WARNING: Missing block: B:37:0x00dc, code skipped:
             if (r0 != null) goto L_0x00de;
      */
-        /* JADX WARNING: Missing block: B:39:?, code:
-            r0.close();
-     */
-        /* JADX WARNING: Missing block: B:44:0x00ed, code:
+        /* JADX WARNING: Missing block: B:52:0x0103, code skipped:
             if (r0 == null) goto L_0x0106;
-     */
-        /* JADX WARNING: Missing block: B:47:0x00f8, code:
-            if (r0 == null) goto L_0x0106;
-     */
-        /* JADX WARNING: Missing block: B:50:0x0103, code:
-            if (r0 == null) goto L_0x0106;
-     */
-        /* JADX WARNING: Missing block: B:52:?, code:
-            r2 = com.android.server.rms.algorithm.AwareHSMListHandler.TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("get protect Set ");
-            r5.append(com.android.server.rms.algorithm.AwareHSMListHandler.access$200(r11.this$0));
-            r5.append(", and unprotected Set ");
-            r5.append(com.android.server.rms.algorithm.AwareHSMListHandler.access$300(r11.this$0));
-            android.rms.iaware.AwareLog.d(r2, r5.toString());
-     */
-        /* JADX WARNING: Missing block: B:54:0x0131, code:
-            r2 = com.android.server.rms.algorithm.AwareHSMListHandler.access$500(r11.this$0);
-     */
-        /* JADX WARNING: Missing block: B:55:0x0137, code:
-            monitor-enter(r2);
-     */
-        /* JADX WARNING: Missing block: B:57:?, code:
-            com.android.server.rms.algorithm.AwareHSMListHandler.access$500(r11.this$0).clear();
-            com.android.server.rms.algorithm.AwareHSMListHandler.access$500(r11.this$0).addAll(r8);
-     */
-        /* JADX WARNING: Missing block: B:58:0x014a, code:
-            monitor-exit(r2);
-     */
-        /* JADX WARNING: Missing block: B:59:0x014b, code:
-            r3 = com.android.server.rms.algorithm.AwareHSMListHandler.access$600(r11.this$0);
-     */
-        /* JADX WARNING: Missing block: B:60:0x0151, code:
-            monitor-enter(r3);
-     */
-        /* JADX WARNING: Missing block: B:62:?, code:
-            com.android.server.rms.algorithm.AwareHSMListHandler.access$600(r11.this$0).clear();
-            com.android.server.rms.algorithm.AwareHSMListHandler.access$600(r11.this$0).addAll(r9);
-     */
-        /* JADX WARNING: Missing block: B:63:0x0164, code:
-            monitor-exit(r3);
-     */
-        /* JADX WARNING: Missing block: B:64:0x0165, code:
-            return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private void updateProtectInfoFromDB() {
+            StringBuilder stringBuilder;
             AwareLog.d(AwareHSMListHandler.TAG, "Get HSM list from DB.");
             if (AwareHSMListHandler.this.mContext != null) {
                 Cursor cursor = null;
@@ -116,18 +72,18 @@ public class AwareHSMListHandler {
                         AwareHSMListHandler.this.mProtectAppSet.clear();
                         AwareHSMListHandler.this.mUnProtectAppSet.clear();
                         String str = AwareHSMListHandler.TAG;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append("Updating HSM data with userid ");
-                        stringBuilder.append(AwareHSMListHandler.this.mCurUserId);
-                        AwareLog.d(str, stringBuilder.toString());
-                        String[] projection = new String[]{"pkg_name", "is_checked", "userchanged"};
                         StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(AwareHSMListHandler.SMCS_AUTHORITY_URI);
+                        stringBuilder2.append("Updating HSM data with userid ");
                         stringBuilder2.append(AwareHSMListHandler.this.mCurUserId);
-                        stringBuilder2.append("@");
-                        stringBuilder2.append(AwareHSMListHandler.ST_PROTECTED_PKGS_TABLE);
+                        AwareLog.d(str, stringBuilder2.toString());
+                        String[] projection = new String[]{"pkg_name", "is_checked", "userchanged"};
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append(AwareHSMListHandler.SMCS_AUTHORITY_URI);
+                        stringBuilder3.append(AwareHSMListHandler.this.mCurUserId);
+                        stringBuilder3.append("@");
+                        stringBuilder3.append(AwareHSMListHandler.ST_PROTECTED_PKGS_TABLE);
                         try {
-                            cursor = resolver.query(Uri.parse(stringBuilder2.toString()), projection, null, null, null);
+                            cursor = resolver.query(Uri.parse(stringBuilder3.toString()), projection, null, null, null);
                             if (cursor != null) {
                                 while (cursor.moveToNext()) {
                                     str = cursor.getString(null);
@@ -155,9 +111,41 @@ public class AwareHSMListHandler {
                             AwareLog.e(AwareHSMListHandler.TAG, "Exception when getProtectAppFromDB.");
                         } catch (IllegalStateException e2) {
                             AwareLog.e(AwareHSMListHandler.TAG, "IllegalStateException: load HSM protectlist failed!");
+                            if (cursor != null) {
+                                cursor.close();
+                            }
+                            str = AwareHSMListHandler.TAG;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("get protect Set ");
+                            stringBuilder.append(AwareHSMListHandler.this.mProtectAppSet);
+                            stringBuilder.append(", and unprotected Set ");
+                            stringBuilder.append(AwareHSMListHandler.this.mUnProtectAppSet);
+                            AwareLog.d(str, stringBuilder.toString());
+                            synchronized (AwareHSMListHandler.this.mAllProtectAppSet) {
+                                AwareHSMListHandler.this.mAllProtectAppSet.clear();
+                                AwareHSMListHandler.this.mAllProtectAppSet.addAll(allProtectAppSet);
+                            }
+                            synchronized (AwareHSMListHandler.this.mAllUnProtectAppSet) {
+                                AwareHSMListHandler.this.mAllUnProtectAppSet.clear();
+                                AwareHSMListHandler.this.mAllUnProtectAppSet.addAll(allUnProtectAppSet);
+                            }
                         } catch (SQLiteException e3) {
                             try {
                                 AwareLog.e(AwareHSMListHandler.TAG, "Error: load HSM protectlist failed!");
+                                if (cursor != null) {
+                                    cursor.close();
+                                }
+                                str = AwareHSMListHandler.TAG;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("get protect Set ");
+                                stringBuilder.append(AwareHSMListHandler.this.mProtectAppSet);
+                                stringBuilder.append(", and unprotected Set ");
+                                stringBuilder.append(AwareHSMListHandler.this.mUnProtectAppSet);
+                                AwareLog.d(str, stringBuilder.toString());
+                                synchronized (AwareHSMListHandler.this.mAllProtectAppSet) {
+                                }
+                                synchronized (AwareHSMListHandler.this.mAllUnProtectAppSet) {
+                                }
                             } catch (Throwable th) {
                                 if (cursor != null) {
                                     cursor.close();

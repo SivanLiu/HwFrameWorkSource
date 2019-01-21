@@ -174,7 +174,7 @@ public class PGPCFBBlockCipher implements BlockCipher {
         this.forEncryption = z;
         if (cipherParameters instanceof ParametersWithIV) {
             ParametersWithIV parametersWithIV = (ParametersWithIV) cipherParameters;
-            Object iv = parametersWithIV.getIV();
+            byte[] iv = parametersWithIV.getIV();
             if (iv.length < this.IV.length) {
                 System.arraycopy(iv, 0, this.IV, this.IV.length - iv.length, iv.length);
                 for (int i = 0; i < this.IV.length - iv.length; i++) {

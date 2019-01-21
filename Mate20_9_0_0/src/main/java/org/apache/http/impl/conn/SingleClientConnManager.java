@@ -148,19 +148,19 @@ public class SingleClientConnManager implements ClientConnectionManager {
         throw new IllegalArgumentException("Route may not be null.");
     }
 
-    /* JADX WARNING: Missing block: B:29:0x0082, code:
+    /* JADX WARNING: Missing block: B:29:0x0082, code skipped:
             if (r12 > 0) goto L_0x00a6;
      */
-    /* JADX WARNING: Missing block: B:37:0x00a4, code:
+    /* JADX WARNING: Missing block: B:37:0x00a4, code skipped:
             if (r12 <= 0) goto L_0x00b0;
      */
-    /* JADX WARNING: Missing block: B:38:0x00a6, code:
+    /* JADX WARNING: Missing block: B:38:0x00a6, code skipped:
             r10.connectionExpiresTime = r14.toMillis(r12) + r10.lastReleaseTime;
      */
-    /* JADX WARNING: Missing block: B:39:0x00b0, code:
+    /* JADX WARNING: Missing block: B:39:0x00b0, code skipped:
             r10.connectionExpiresTime = Long.MAX_VALUE;
      */
-    /* JADX WARNING: Missing block: B:40:0x00b3, code:
+    /* JADX WARNING: Missing block: B:40:0x00b3, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -48,6 +48,13 @@ public final class ObexHelper {
     private ObexHelper() {
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x00cc A:{Catch:{ UnsupportedEncodingException -> 0x0185, UnsupportedEncodingException -> 0x0175, Exception -> 0x006a, IOException -> 0x01a5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x0177  */
+    /* JADX WARNING: Removed duplicated region for block: B:54:0x00f9 A:{SYNTHETIC, Splitter:B:54:0x00f9} */
+    /* JADX WARNING: Removed duplicated region for block: B:53:0x00ec A:{Catch:{ UnsupportedEncodingException -> 0x0185, UnsupportedEncodingException -> 0x0175, Exception -> 0x006a, IOException -> 0x01a5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:52:0x00e1 A:{Catch:{ UnsupportedEncodingException -> 0x0185, UnsupportedEncodingException -> 0x0175, Exception -> 0x006a, IOException -> 0x01a5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:51:0x00d6 A:{Catch:{ UnsupportedEncodingException -> 0x0185, UnsupportedEncodingException -> 0x0175, Exception -> 0x006a, IOException -> 0x01a5 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static byte[] updateHeaderSet(HeaderSet header, byte[] headerArray) throws IOException {
         byte[] bArr = headerArray;
         byte[] body = null;
@@ -75,55 +82,75 @@ public final class ObexHelper {
                         stringBuilder.append(length);
                         Log.e(str, stringBuilder.toString());
                     } else {
+                        boolean trimTail2;
                         length -= 3;
                         value = new byte[length];
                         System.arraycopy(bArr, index, value, 0, length);
-                        if (length == 0 || (length > 0 && value[length - 1] != (byte) 0)) {
-                            trimTail = false;
+                        if (length != 0) {
+                            if (length > 0 && value[length - 1] != (byte) 0) {
+                            }
+                            trimTail2 = trimTail;
+                            switch (headerID) {
+                                case HeaderSet.TYPE /*66*/:
+                                    if (!trimTail2) {
+                                        headerImpl2.setHeader(headerID, new String(value, 0, value.length, "ISO8859_1"));
+                                        break;
+                                    }
+                                    headerImpl2.setHeader(headerID, new String(value, 0, value.length - 1, "ISO8859_1"));
+                                    break;
+                                case HeaderSet.TIME_ISO_8601 /*68*/:
+                                    String dateString = new String(value, "ISO8859_1");
+                                    Calendar temp = Calendar.getInstance();
+                                    if (dateString.length() == 16 && dateString.charAt(15) == 'Z') {
+                                        temp.setTimeZone(TimeZone.getTimeZone("UTC"));
+                                    }
+                                    temp.set(1, Integer.parseInt(dateString.substring(0, 4)));
+                                    temp.set(2, Integer.parseInt(dateString.substring(4, 6)));
+                                    temp.set(5, Integer.parseInt(dateString.substring(6, 8)));
+                                    temp.set(11, Integer.parseInt(dateString.substring(9, 11)));
+                                    temp.set(12, Integer.parseInt(dateString.substring(11, 13)));
+                                    temp.set(13, Integer.parseInt(dateString.substring(13, 15)));
+                                    headerImpl2.setHeader(68, temp);
+                                    break;
+                                case HeaderSet.BODY /*72*/:
+                                case HeaderSet.END_OF_BODY /*73*/:
+                                    body = new byte[(length + 1)];
+                                    body[0] = (byte) headerID;
+                                    System.arraycopy(bArr, index, body, 1, length);
+                                    break;
+                                case HeaderSet.AUTH_CHALLENGE /*77*/:
+                                    headerImpl2.mAuthChall = new byte[length];
+                                    System.arraycopy(bArr, index, headerImpl2.mAuthChall, 0, length);
+                                    break;
+                                case HeaderSet.AUTH_RESPONSE /*78*/:
+                                    headerImpl2.mAuthResp = new byte[length];
+                                    System.arraycopy(bArr, index, headerImpl2.mAuthResp, 0, length);
+                                    break;
+                                default:
+                                    if ((headerID & 192) != 0) {
+                                        headerImpl2.setHeader(headerID, value);
+                                        break;
+                                    }
+                                    headerImpl2.setHeader(headerID, convertToUnicode(value, true));
+                                    break;
+                            }
+                            index += length;
                         }
-                        boolean trimTail2 = trimTail;
+                        trimTail = false;
+                        trimTail2 = trimTail;
                         switch (headerID) {
                             case HeaderSet.TYPE /*66*/:
-                                if (!trimTail2) {
-                                    headerImpl2.setHeader(headerID, new String(value, 0, value.length, "ISO8859_1"));
-                                    break;
-                                }
-                                headerImpl2.setHeader(headerID, new String(value, 0, value.length - 1, "ISO8859_1"));
                                 break;
                             case HeaderSet.TIME_ISO_8601 /*68*/:
-                                String dateString = new String(value, "ISO8859_1");
-                                Calendar temp = Calendar.getInstance();
-                                if (dateString.length() == 16 && dateString.charAt(15) == 'Z') {
-                                    temp.setTimeZone(TimeZone.getTimeZone("UTC"));
-                                }
-                                temp.set(1, Integer.parseInt(dateString.substring(0, 4)));
-                                temp.set(2, Integer.parseInt(dateString.substring(4, 6)));
-                                temp.set(5, Integer.parseInt(dateString.substring(6, 8)));
-                                temp.set(11, Integer.parseInt(dateString.substring(9, 11)));
-                                temp.set(12, Integer.parseInt(dateString.substring(11, 13)));
-                                temp.set(13, Integer.parseInt(dateString.substring(13, 15)));
-                                headerImpl2.setHeader(68, temp);
                                 break;
                             case HeaderSet.BODY /*72*/:
                             case HeaderSet.END_OF_BODY /*73*/:
-                                body = new byte[(length + 1)];
-                                body[0] = (byte) headerID;
-                                System.arraycopy(bArr, index, body, 1, length);
                                 break;
                             case HeaderSet.AUTH_CHALLENGE /*77*/:
-                                headerImpl2.mAuthChall = new byte[length];
-                                System.arraycopy(bArr, index, headerImpl2.mAuthChall, 0, length);
                                 break;
                             case HeaderSet.AUTH_RESPONSE /*78*/:
-                                headerImpl2.mAuthResp = new byte[length];
-                                System.arraycopy(bArr, index, headerImpl2.mAuthResp, 0, length);
                                 break;
                             default:
-                                if ((headerID & 192) != 0) {
-                                    headerImpl2.setHeader(headerID, value);
-                                    break;
-                                }
-                                headerImpl2.setHeader(headerID, convertToUnicode(value, true));
                                 break;
                         }
                         index += length;

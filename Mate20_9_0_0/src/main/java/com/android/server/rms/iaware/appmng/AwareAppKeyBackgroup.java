@@ -316,196 +316,6 @@ public class AwareAppKeyBackgroup {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public boolean checkAudioOutInstant(int r16, int r17, java.util.List<java.lang.String> r18) {
-        /*
-        r15 = this;
-        r1 = r15;
-        r0 = r1.mIsInitialized;
-        r0 = r0.get();
-        r2 = 0;
-        if (r0 == 0) goto L_0x00db;
-    L_0x000a:
-        if (r18 == 0) goto L_0x00db;
-    L_0x000c:
-        r0 = r18.isEmpty();
-        if (r0 == 0) goto L_0x0014;
-    L_0x0012:
-        goto L_0x00db;
-    L_0x0014:
-        r3 = 0;
-        r4 = 0;
-        r5 = 0;
-        r6 = 0;
-        monitor-enter(r15);
-        r0 = r1.mSceneUidArray;	 Catch:{ all -> 0x00d2 }
-        r0 = r0.isEmpty();	 Catch:{ all -> 0x00d2 }
-        if (r0 == 0) goto L_0x0023;	 Catch:{ all -> 0x00d2 }
-    L_0x0021:
-        monitor-exit(r15);	 Catch:{ all -> 0x00d2 }
-        return r2;	 Catch:{ all -> 0x00d2 }
-    L_0x0023:
-        r0 = r1.mSceneUidArray;	 Catch:{ all -> 0x00d2 }
-        r7 = 2;	 Catch:{ all -> 0x00d2 }
-        r0 = r0.get(r7);	 Catch:{ all -> 0x00d2 }
-        r0 = (android.util.ArraySet) r0;	 Catch:{ all -> 0x00d2 }
-        r8 = java.lang.Integer.valueOf(r17);	 Catch:{ all -> 0x00d2 }
-        r0 = r0.contains(r8);	 Catch:{ all -> 0x00d2 }
-        if (r0 == 0) goto L_0x0038;	 Catch:{ all -> 0x00d2 }
-    L_0x0036:
-        r0 = 1;	 Catch:{ all -> 0x00d2 }
-        r3 = r0;	 Catch:{ all -> 0x00d2 }
-    L_0x0038:
-        r0 = r1.mScenePidArray;	 Catch:{ all -> 0x00d2 }
-        r0 = r0.get(r7);	 Catch:{ all -> 0x00d2 }
-        r0 = (android.util.ArraySet) r0;	 Catch:{ all -> 0x00d2 }
-        r8 = java.lang.Integer.valueOf(r16);	 Catch:{ all -> 0x00d2 }
-        r0 = r0.contains(r8);	 Catch:{ all -> 0x00d2 }
-        if (r0 == 0) goto L_0x004c;	 Catch:{ all -> 0x00d2 }
-    L_0x004a:
-        r0 = 1;	 Catch:{ all -> 0x00d2 }
-        r4 = r0;	 Catch:{ all -> 0x00d2 }
-    L_0x004c:
-        monitor-exit(r15);	 Catch:{ all -> 0x00d2 }
-        r0 = 1;
-        if (r3 != 0) goto L_0x005a;
-    L_0x0050:
-        if (r4 == 0) goto L_0x0053;
-    L_0x0052:
-        goto L_0x005a;
-    L_0x0053:
-        r14 = r16;
-        r13 = r17;
-    L_0x0057:
-        r7 = r5;
-        r9 = r6;
-        goto L_0x00ab;
-    L_0x005a:
-        r8 = r1.mStateEventDecayInfos;
-        monitor-enter(r8);
-        r9 = r1.mStateEventDecayInfos;	 Catch:{ all -> 0x00c9 }
-        r9 = r9.iterator();	 Catch:{ all -> 0x00c9 }
-    L_0x0063:
-        r10 = r9.hasNext();	 Catch:{ all -> 0x00c9 }
-        if (r10 == 0) goto L_0x009d;	 Catch:{ all -> 0x00c9 }
-    L_0x0069:
-        r10 = r9.next();	 Catch:{ all -> 0x00c9 }
-        r10 = (com.android.server.rms.iaware.appmng.AwareAppKeyBackgroup.DecayInfo) r10;	 Catch:{ all -> 0x00c9 }
-        r11 = r10.getStateType();	 Catch:{ all -> 0x00c9 }
-        if (r11 != r7) goto L_0x0098;	 Catch:{ all -> 0x00c9 }
-    L_0x0075:
-        r11 = r10.getEventType();	 Catch:{ all -> 0x00c9 }
-        if (r11 == r7) goto L_0x007c;	 Catch:{ all -> 0x00c9 }
-    L_0x007b:
-        goto L_0x0098;	 Catch:{ all -> 0x00c9 }
-    L_0x007c:
-        r11 = r10.getUid();	 Catch:{ all -> 0x00c9 }
-        r12 = r10.getPid();	 Catch:{ all -> 0x00c9 }
-        r13 = r17;
-        if (r11 != r13) goto L_0x008d;
-    L_0x0088:
-        r5 = 1;
-        r14 = -1;
-        if (r12 != r14) goto L_0x008d;
-    L_0x008c:
-        r6 = 1;
-    L_0x008d:
-        r14 = r16;
-        if (r12 != r14) goto L_0x0092;
-    L_0x0091:
-        r6 = 1;
-    L_0x0092:
-        if (r5 == 0) goto L_0x0063;
-    L_0x0094:
-        if (r6 == 0) goto L_0x0063;
-    L_0x0096:
-        goto L_0x00a1;
-    L_0x0097:
-        goto L_0x0063;
-    L_0x0098:
-        r14 = r16;
-        r13 = r17;
-        goto L_0x0063;
-    L_0x009d:
-        r14 = r16;
-        r13 = r17;
-    L_0x00a1:
-        monitor-exit(r8);	 Catch:{ all -> 0x00d0 }
-        if (r3 == 0) goto L_0x00a6;
-    L_0x00a4:
-        if (r5 == 0) goto L_0x00aa;
-    L_0x00a6:
-        if (r4 == 0) goto L_0x0057;
-    L_0x00a8:
-        if (r6 != 0) goto L_0x0057;
-    L_0x00aa:
-        return r0;
-    L_0x00ab:
-        r10 = r1.isInCalling();
-        r11 = r1.mAudioCacheUids;
-        monitor-enter(r11);
-        if (r10 == 0) goto L_0x00c4;
-    L_0x00b4:
-        if (r7 != 0) goto L_0x00c2;
-    L_0x00b6:
-        r5 = r1.mAudioCacheUids;
-        r6 = java.lang.Integer.valueOf(r17);
-        r5 = r5.contains(r6);
-        if (r5 == 0) goto L_0x00c4;
-    L_0x00c2:
-        monitor-exit(r11);
-        return r0;
-    L_0x00c4:
-        monitor-exit(r11);
-        return r2;
-    L_0x00c6:
-        r0 = move-exception;
-        monitor-exit(r11);
-        throw r0;
-    L_0x00c9:
-        r0 = move-exception;
-        r14 = r16;
-        r13 = r17;
-    L_0x00ce:
-        monitor-exit(r8);	 Catch:{ all -> 0x00d0 }
-        throw r0;
-    L_0x00d0:
-        r0 = move-exception;
-        goto L_0x00ce;
-    L_0x00d2:
-        r0 = move-exception;
-        r14 = r16;
-        r13 = r17;
-    L_0x00d7:
-        monitor-exit(r15);	 Catch:{ all -> 0x00d9 }
-        throw r0;
-    L_0x00d9:
-        r0 = move-exception;
-        goto L_0x00d7;
-    L_0x00db:
-        r14 = r16;
-        r13 = r17;
-        return r2;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.rms.iaware.appmng.AwareAppKeyBackgroup.checkAudioOutInstant(int, int, java.util.List):boolean");
-    }
-
     private static String stateToString(int state) {
         if (state < 0 || state >= STATE_SIZE) {
             return "STATE_NULL";
@@ -1246,7 +1056,10 @@ public class AwareAppKeyBackgroup {
         boolean iscalling = isInCalling();
         synchronized (this.mAudioCacheUids) {
             if (iscalling) {
-                this.mAudioCacheUids.add(Integer.valueOf(uid));
+                try {
+                    this.mAudioCacheUids.add(Integer.valueOf(uid));
+                } catch (Throwable th) {
+                }
             } else {
                 this.mAudioCacheUids.clear();
             }
@@ -1375,49 +1188,49 @@ public class AwareAppKeyBackgroup {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x001d, code:
+    /* JADX WARNING: Missing block: B:12:0x001d, code skipped:
             monitor-enter(r4);
      */
-    /* JADX WARNING: Missing block: B:15:0x0028, code:
+    /* JADX WARNING: Missing block: B:15:0x0028, code skipped:
             if (r4.mKeyBackgroupPids.contains(java.lang.Integer.valueOf(r5)) == false) goto L_0x0030;
      */
-    /* JADX WARNING: Missing block: B:16:0x002a, code:
+    /* JADX WARNING: Missing block: B:16:0x002a, code skipped:
             r0 = getKeyBackgroupTypeByPidLocked(r5);
      */
-    /* JADX WARNING: Missing block: B:17:0x002e, code:
+    /* JADX WARNING: Missing block: B:17:0x002e, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:18:0x002f, code:
+    /* JADX WARNING: Missing block: B:18:0x002f, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:20:0x003a, code:
+    /* JADX WARNING: Missing block: B:20:0x003a, code skipped:
             if (r4.mKeyBackgroupUids.contains(java.lang.Integer.valueOf(r6)) == false) goto L_0x0042;
      */
-    /* JADX WARNING: Missing block: B:21:0x003c, code:
+    /* JADX WARNING: Missing block: B:21:0x003c, code skipped:
             r0 = getKeyBackgroupTypeByUidLocked(r6);
      */
-    /* JADX WARNING: Missing block: B:22:0x0040, code:
+    /* JADX WARNING: Missing block: B:22:0x0040, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:23:0x0041, code:
+    /* JADX WARNING: Missing block: B:23:0x0041, code skipped:
             return r0;
      */
-    /* JADX WARNING: Missing block: B:24:0x0042, code:
+    /* JADX WARNING: Missing block: B:24:0x0042, code skipped:
             if (r7 != null) goto L_0x0046;
      */
-    /* JADX WARNING: Missing block: B:25:0x0044, code:
+    /* JADX WARNING: Missing block: B:25:0x0044, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:26:0x0045, code:
+    /* JADX WARNING: Missing block: B:26:0x0045, code skipped:
             return -1;
      */
-    /* JADX WARNING: Missing block: B:27:0x0046, code:
+    /* JADX WARNING: Missing block: B:27:0x0046, code skipped:
             r0 = getKeyBackgroupTypeByPkgsLocked(r7);
      */
-    /* JADX WARNING: Missing block: B:28:0x004a, code:
+    /* JADX WARNING: Missing block: B:28:0x004a, code skipped:
             monitor-exit(r4);
      */
-    /* JADX WARNING: Missing block: B:29:0x004b, code:
+    /* JADX WARNING: Missing block: B:29:0x004b, code skipped:
             return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1442,74 +1255,74 @@ public class AwareAppKeyBackgroup {
         return checkIsKeyBackgroupInternal(pid, uid);
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0022, code:
+    /* JADX WARNING: Missing block: B:15:0x0022, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:17:0x0029, code:
+    /* JADX WARNING: Missing block: B:18:0x0029, code skipped:
             if (r6.mSceneUidArray.isEmpty() == false) goto L_0x002d;
      */
-    /* JADX WARNING: Missing block: B:18:0x002b, code:
+    /* JADX WARNING: Missing block: B:19:0x002b, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:19:0x002c, code:
+    /* JADX WARNING: Missing block: B:20:0x002c, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:21:0x003d, code:
+    /* JADX WARNING: Missing block: B:22:0x003d, code skipped:
             if (((android.util.ArraySet) r6.mSceneUidArray.get(r7)).contains(java.lang.Integer.valueOf(r9)) == false) goto L_0x0041;
      */
-    /* JADX WARNING: Missing block: B:22:0x003f, code:
+    /* JADX WARNING: Missing block: B:23:0x003f, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:23:0x0040, code:
+    /* JADX WARNING: Missing block: B:24:0x0040, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:25:0x0051, code:
+    /* JADX WARNING: Missing block: B:26:0x0051, code skipped:
             if (((android.util.ArraySet) r6.mScenePidArray.get(r7)).contains(java.lang.Integer.valueOf(r8)) == false) goto L_0x0055;
      */
-    /* JADX WARNING: Missing block: B:26:0x0053, code:
+    /* JADX WARNING: Missing block: B:27:0x0053, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:27:0x0054, code:
+    /* JADX WARNING: Missing block: B:28:0x0054, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:28:0x0055, code:
+    /* JADX WARNING: Missing block: B:29:0x0055, code skipped:
             if (r10 == null) goto L_0x0084;
      */
-    /* JADX WARNING: Missing block: B:30:0x005b, code:
+    /* JADX WARNING: Missing block: B:31:0x005b, code skipped:
             if (r10.isEmpty() == false) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:31:0x005e, code:
+    /* JADX WARNING: Missing block: B:33:0x005e, code skipped:
             r0 = (android.util.ArraySet) r6.mScenePkgArray.get(r7);
             r2 = r10.iterator();
      */
-    /* JADX WARNING: Missing block: B:33:0x006e, code:
+    /* JADX WARNING: Missing block: B:35:0x006e, code skipped:
             if (r2.hasNext() == false) goto L_0x0082;
      */
-    /* JADX WARNING: Missing block: B:34:0x0070, code:
+    /* JADX WARNING: Missing block: B:36:0x0070, code skipped:
             r4 = (java.lang.String) r2.next();
      */
-    /* JADX WARNING: Missing block: B:35:0x0076, code:
+    /* JADX WARNING: Missing block: B:37:0x0076, code skipped:
             if (r4 != null) goto L_0x0079;
      */
-    /* JADX WARNING: Missing block: B:38:0x007d, code:
+    /* JADX WARNING: Missing block: B:40:0x007d, code skipped:
             if (r0.contains(r4) == false) goto L_0x0081;
      */
-    /* JADX WARNING: Missing block: B:39:0x007f, code:
+    /* JADX WARNING: Missing block: B:41:0x007f, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:40:0x0080, code:
+    /* JADX WARNING: Missing block: B:42:0x0080, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:42:0x0082, code:
+    /* JADX WARNING: Missing block: B:44:0x0082, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:43:0x0083, code:
+    /* JADX WARNING: Missing block: B:45:0x0083, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:44:0x0084, code:
+    /* JADX WARNING: Missing block: B:46:0x0084, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:45:0x0085, code:
+    /* JADX WARNING: Missing block: B:47:0x0085, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1519,8 +1332,13 @@ public class AwareAppKeyBackgroup {
         }
         synchronized (this.mAudioCacheUids) {
             if (2 == state) {
-                if (this.mAudioCacheUids.contains(Integer.valueOf(uid))) {
-                    return true;
+                try {
+                    if (this.mAudioCacheUids.contains(Integer.valueOf(uid))) {
+                        return true;
+                    }
+                } catch (Throwable th) {
+                    while (true) {
+                    }
                 }
             }
         }
@@ -1952,48 +1770,48 @@ public class AwareAppKeyBackgroup {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0030, code:
+    /* JADX WARNING: Missing block: B:12:0x0030, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             r0 = r7.mPGSdk.getSensorInfoByUid(r8, r9);
      */
-    /* JADX WARNING: Missing block: B:16:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             if (r0 == null) goto L_0x009a;
      */
-    /* JADX WARNING: Missing block: B:17:0x003a, code:
+    /* JADX WARNING: Missing block: B:17:0x003a, code skipped:
             r1 = r0.entrySet().iterator();
      */
-    /* JADX WARNING: Missing block: B:19:0x0046, code:
+    /* JADX WARNING: Missing block: B:19:0x0046, code skipped:
             if (r1.hasNext() == false) goto L_0x006d;
      */
-    /* JADX WARNING: Missing block: B:20:0x0048, code:
+    /* JADX WARNING: Missing block: B:20:0x0048, code skipped:
             r2 = (java.util.Map.Entry) r1.next();
             r3 = java.lang.Integer.parseInt((java.lang.String) r2.getKey());
             r4 = java.lang.Integer.parseInt((java.lang.String) r2.getValue());
             r6 = 1;
      */
-    /* JADX WARNING: Missing block: B:21:0x0064, code:
+    /* JADX WARNING: Missing block: B:21:0x0064, code skipped:
             if (r6 > r4) goto L_0x006c;
      */
-    /* JADX WARNING: Missing block: B:22:0x0066, code:
+    /* JADX WARNING: Missing block: B:22:0x0066, code skipped:
             handleSensorEvent(r9, r3, true);
             r6 = r6 + 1;
      */
-    /* JADX WARNING: Missing block: B:25:0x006f, code:
+    /* JADX WARNING: Missing block: B:25:0x006f, code skipped:
             if (DEBUG == false) goto L_0x009a;
      */
-    /* JADX WARNING: Missing block: B:26:0x0071, code:
+    /* JADX WARNING: Missing block: B:26:0x0071, code skipped:
             r2 = TAG;
             r3 = new java.lang.StringBuilder();
             r3.append("getSensorInfoByUid sensor handles ");
             r3.append(r0);
             android.rms.iaware.AwareLog.d(r2, r3.toString());
      */
-    /* JADX WARNING: Missing block: B:28:0x0089, code:
+    /* JADX WARNING: Missing block: B:28:0x0089, code skipped:
             android.rms.iaware.AwareLog.e(TAG, "integer parse error!");
      */
-    /* JADX WARNING: Missing block: B:30:0x0092, code:
+    /* JADX WARNING: Missing block: B:30:0x0092, code skipped:
             android.rms.iaware.AwareLog.e(TAG, "error, PG crash!");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2044,6 +1862,174 @@ public class AwareAppKeyBackgroup {
             stringBuilder.append(" decayinfo ");
             stringBuilder.append(decayInfo);
             AwareLog.d(str, stringBuilder.toString());
+        }
+    }
+
+    /* JADX WARNING: Missing block: B:19:0x004d, code skipped:
+            r0 = true;
+     */
+    /* JADX WARNING: Missing block: B:20:0x004e, code skipped:
+            if (r3 != false) goto L_0x005a;
+     */
+    /* JADX WARNING: Missing block: B:21:0x0050, code skipped:
+            if (r4 == false) goto L_0x0053;
+     */
+    /* JADX WARNING: Missing block: B:22:0x0057, code skipped:
+            r7 = r5;
+            r9 = r6;
+     */
+    /* JADX WARNING: Missing block: B:23:0x005a, code skipped:
+            r8 = r1.mStateEventDecayInfos;
+     */
+    /* JADX WARNING: Missing block: B:24:0x005c, code skipped:
+            monitor-enter(r8);
+     */
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
+            r9 = r1.mStateEventDecayInfos.iterator();
+     */
+    /* JADX WARNING: Missing block: B:28:0x0067, code skipped:
+            if (r9.hasNext() == false) goto L_0x009d;
+     */
+    /* JADX WARNING: Missing block: B:29:0x0069, code skipped:
+            r10 = (com.android.server.rms.iaware.appmng.AwareAppKeyBackgroup.DecayInfo) r9.next();
+     */
+    /* JADX WARNING: Missing block: B:30:0x0073, code skipped:
+            if (r10.getStateType() != 2) goto L_0x0098;
+     */
+    /* JADX WARNING: Missing block: B:32:0x0079, code skipped:
+            if (r10.getEventType() == 2) goto L_0x007c;
+     */
+    /* JADX WARNING: Missing block: B:34:0x007c, code skipped:
+            r11 = r10.getUid();
+            r12 = r10.getPid();
+     */
+    /* JADX WARNING: Missing block: B:36:0x0086, code skipped:
+            if (r11 != r17) goto L_0x008d;
+     */
+    /* JADX WARNING: Missing block: B:37:0x0088, code skipped:
+            r5 = true;
+     */
+    /* JADX WARNING: Missing block: B:38:0x008a, code skipped:
+            if (r12 != -1) goto L_0x008d;
+     */
+    /* JADX WARNING: Missing block: B:39:0x008c, code skipped:
+            r6 = true;
+     */
+    /* JADX WARNING: Missing block: B:41:0x008f, code skipped:
+            if (r12 != r16) goto L_0x0092;
+     */
+    /* JADX WARNING: Missing block: B:42:0x0091, code skipped:
+            r6 = true;
+     */
+    /* JADX WARNING: Missing block: B:43:0x0092, code skipped:
+            if (r5 == false) goto L_0x0063;
+     */
+    /* JADX WARNING: Missing block: B:44:0x0094, code skipped:
+            if (r6 == false) goto L_0x0063;
+     */
+    /* JADX WARNING: Missing block: B:45:0x0098, code skipped:
+            r14 = r16;
+            r13 = r17;
+     */
+    /* JADX WARNING: Missing block: B:46:0x009d, code skipped:
+            r14 = r16;
+            r13 = r17;
+     */
+    /* JADX WARNING: Missing block: B:48:?, code skipped:
+            monitor-exit(r8);
+     */
+    /* JADX WARNING: Missing block: B:49:0x00a2, code skipped:
+            if (r3 == false) goto L_0x00a6;
+     */
+    /* JADX WARNING: Missing block: B:50:0x00a4, code skipped:
+            if (r5 == false) goto L_0x00aa;
+     */
+    /* JADX WARNING: Missing block: B:51:0x00a6, code skipped:
+            if (r4 == false) goto L_0x0057;
+     */
+    /* JADX WARNING: Missing block: B:52:0x00a8, code skipped:
+            if (r6 != false) goto L_0x0057;
+     */
+    /* JADX WARNING: Missing block: B:53:0x00aa, code skipped:
+            return true;
+     */
+    /* JADX WARNING: Missing block: B:54:0x00ab, code skipped:
+            r10 = isInCalling();
+            r11 = r1.mAudioCacheUids;
+     */
+    /* JADX WARNING: Missing block: B:55:0x00b1, code skipped:
+            monitor-enter(r11);
+     */
+    /* JADX WARNING: Missing block: B:56:0x00b2, code skipped:
+            if (r10 == false) goto L_0x00c4;
+     */
+    /* JADX WARNING: Missing block: B:57:0x00b4, code skipped:
+            if (r7 != false) goto L_0x00c2;
+     */
+    /* JADX WARNING: Missing block: B:60:0x00c0, code skipped:
+            if (r1.mAudioCacheUids.contains(java.lang.Integer.valueOf(r17)) == false) goto L_0x00c4;
+     */
+    /* JADX WARNING: Missing block: B:61:0x00c2, code skipped:
+            monitor-exit(r11);
+     */
+    /* JADX WARNING: Missing block: B:62:0x00c3, code skipped:
+            return r0;
+     */
+    /* JADX WARNING: Missing block: B:63:0x00c4, code skipped:
+            monitor-exit(r11);
+     */
+    /* JADX WARNING: Missing block: B:64:0x00c5, code skipped:
+            return false;
+     */
+    /* JADX WARNING: Missing block: B:68:0x00c9, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:69:0x00ca, code skipped:
+            r14 = r16;
+            r13 = r17;
+     */
+    /* JADX WARNING: Missing block: B:71:?, code skipped:
+            monitor-exit(r8);
+     */
+    /* JADX WARNING: Missing block: B:72:0x00cf, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:73:0x00d0, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:78:0x00d9, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public boolean checkAudioOutInstant(int pid, int uid, List<String> pkgs) {
+        int i;
+        int i2;
+        if (!this.mIsInitialized.get() || pkgs == null || pkgs.isEmpty()) {
+            i = pid;
+            i2 = uid;
+            return false;
+        }
+        boolean sceneContainsUid = false;
+        boolean sceneContainsPid = false;
+        boolean decayContainsUid = false;
+        boolean decayContainsPid = false;
+        synchronized (this) {
+            try {
+                if (this.mSceneUidArray.isEmpty()) {
+                    return false;
+                }
+                if (((ArraySet) this.mSceneUidArray.get(2)).contains(Integer.valueOf(uid))) {
+                    sceneContainsUid = true;
+                }
+                if (((ArraySet) this.mScenePidArray.get(2)).contains(Integer.valueOf(pid))) {
+                    sceneContainsPid = true;
+                }
+            } finally {
+                i = pid;
+                i2 = uid;
+                while (true) {
+                }
+            }
         }
     }
 

@@ -135,7 +135,9 @@ public class HwWifiConfigManager extends WifiConfigManager {
                     if (i == 0) {
                         int lastCellid = Integer.parseInt(dhcpResults[i]);
                         int currCellid = WifiProCommonUtils.getCurrentCellId();
-                        if (currCellid == -1 || currCellid != lastCellid) {
+                        if (currCellid == -1) {
+                            break;
+                        } else if (currCellid != lastCellid) {
                             break;
                         }
                     } else if (i == 1) {

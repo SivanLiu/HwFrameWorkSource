@@ -112,7 +112,7 @@ public class PagerTitleStrip extends ViewGroup {
         this.mLastKnownCurrentPage = -1;
         this.mLastKnownPositionOffset = -1.0f;
         this.mPageListener = new PageListener();
-        View textView = new TextView(context);
+        TextView textView = new TextView(context);
         this.mPrevText = textView;
         addView(textView);
         textView = new TextView(context);

@@ -211,441 +211,6 @@ public class PermissionManagerService {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void grantRequestedRuntimePermissionsForUser(android.content.pm.PackageParser.Package r22, int r23, java.lang.String[] r24, int r25, com.android.server.pm.permission.PermissionManagerInternal.PermissionCallback r26) {
-        /*
-        r21 = this;
-        r9 = r21;
-        r10 = r22;
-        r11 = r23;
-        r12 = r24;
-        r0 = r10.mExtras;
-        r13 = r0;
-        r13 = (com.android.server.pm.PackageSetting) r13;
-        if (r13 != 0) goto L_0x0010;
-    L_0x000f:
-        return;
-    L_0x0010:
-        r14 = r13.getPermissionsState();
-        r15 = 20;
-        r0 = r10.applicationInfo;
-        r0 = r0.targetSdkVersion;
-        r1 = 23;
-        if (r0 < r1) goto L_0x0020;
-    L_0x001e:
-        r0 = 1;
-        goto L_0x0021;
-    L_0x0020:
-        r0 = 0;
-    L_0x0021:
-        r16 = r0;
-        r0 = r9.mPackageManagerInt;
-        r1 = r10.packageName;
-        r17 = r0.isInstantApp(r1, r11);
-        r0 = r10.requestedPermissions;
-        r0 = r0.iterator();
-    L_0x0031:
-        r1 = r0.hasNext();
-        if (r1 == 0) goto L_0x00ae;
-    L_0x0037:
-        r1 = r0.next();
-        r8 = r1;
-        r8 = (java.lang.String) r8;
-        r1 = r9.mLock;
-        monitor-enter(r1);
-        r2 = r9.mSettings;	 Catch:{ all -> 0x00a7 }
-        r2 = r2.getPermissionLocked(r8);	 Catch:{ all -> 0x00a7 }
-        r7 = r2;	 Catch:{ all -> 0x00a7 }
-        monitor-exit(r1);	 Catch:{ all -> 0x00a7 }
-        if (r7 == 0) goto L_0x00a6;
-    L_0x004b:
-        r1 = r7.isRuntime();
-        if (r1 != 0) goto L_0x0057;
-    L_0x0051:
-        r1 = r7.isDevelopment();
-        if (r1 == 0) goto L_0x00a6;
-    L_0x0057:
-        if (r17 == 0) goto L_0x005f;
-    L_0x0059:
-        r1 = r7.isInstant();
-        if (r1 == 0) goto L_0x00a6;
-    L_0x005f:
-        if (r16 != 0) goto L_0x0067;
-    L_0x0061:
-        r1 = r7.isRuntimeOnly();
-        if (r1 != 0) goto L_0x00a6;
-    L_0x0067:
-        if (r12 == 0) goto L_0x006f;
-    L_0x0069:
-        r1 = com.android.internal.util.ArrayUtils.contains(r12, r8);
-        if (r1 == 0) goto L_0x00a6;
-    L_0x006f:
-        r18 = r14.getPermissionFlags(r8, r11);
-        if (r16 == 0) goto L_0x0089;
-    L_0x0075:
-        r1 = r18 & 20;
-        if (r1 != 0) goto L_0x00a6;
-    L_0x0079:
-        r3 = r10.packageName;
-        r4 = 0;
-        r1 = r9;
-        r2 = r8;
-        r5 = r25;
-        r6 = r11;
-        r19 = r7;
-        r7 = r26;
-        r1.grantRuntimePermission(r2, r3, r4, r5, r6, r7);
-        goto L_0x00a6;
-    L_0x0089:
-        r19 = r7;
-        r1 = r9.mSettings;
-        r1 = r1.mPermissionReviewRequired;
-        if (r1 == 0) goto L_0x00a6;
-    L_0x0091:
-        r1 = r18 & 64;
-        if (r1 == 0) goto L_0x00a6;
-    L_0x0095:
-        r3 = r10.packageName;
-        r4 = 64;
-        r5 = 0;
-        r1 = r9;
-        r2 = r8;
-        r6 = r25;
-        r7 = r11;
-        r20 = r8;
-        r8 = r26;
-        r1.updatePermissionFlags(r2, r3, r4, r5, r6, r7, r8);
-    L_0x00a6:
-        goto L_0x0031;
-    L_0x00a7:
-        r0 = move-exception;
-        r20 = r8;
-    L_0x00aa:
-        monitor-exit(r1);	 Catch:{ all -> 0x00ac }
-        throw r0;
-    L_0x00ac:
-        r0 = move-exception;
-        goto L_0x00aa;
-    L_0x00ae:
-        return;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.permission.PermissionManagerService.grantRequestedRuntimePermissionsForUser(android.content.pm.PackageParser$Package, int, java.lang.String[], int, com.android.server.pm.permission.PermissionManagerInternal$PermissionCallback):void");
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    private void grantRuntimePermission(java.lang.String r21, java.lang.String r22, boolean r23, int r24, int r25, com.android.server.pm.permission.PermissionManagerInternal.PermissionCallback r26) {
-        /*
-        r20 = this;
-        r8 = r20;
-        r9 = r21;
-        r10 = r22;
-        r11 = r25;
-        r12 = r26;
-        r0 = r8.mUserManagerInt;
-        r0 = r0.exists(r11);
-        if (r0 != 0) goto L_0x0029;
-    L_0x0012:
-        r0 = "PackageManager";
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "No such user:";
-        r1.append(r2);
-        r1.append(r11);
-        r1 = r1.toString();
-        android.util.Log.e(r0, r1);
-        return;
-    L_0x0029:
-        r0 = r8.mContext;
-        r1 = "android.permission.GRANT_RUNTIME_PERMISSIONS";
-        r2 = "grantRuntimePermission";
-        r0.enforceCallingOrSelfPermission(r1, r2);
-        r4 = 1;
-        r5 = 1;
-        r6 = 0;
-        r7 = "grantRuntimePermission";
-        r1 = r8;
-        r2 = r24;
-        r3 = r11;
-        r1.enforceCrossUserPermission(r2, r3, r4, r5, r6, r7);
-        r0 = r8.mPackageManagerInt;
-        r1 = r0.getPackage(r10);
-        if (r1 == 0) goto L_0x01dd;
-    L_0x0046:
-        r0 = r1.mExtras;
-        if (r0 == 0) goto L_0x01dd;
-    L_0x004a:
-        r2 = r8.mLock;
-        monitor-enter(r2);
-        r0 = r8.mSettings;	 Catch:{ all -> 0x01d4 }
-        r0 = r0.getPermissionLocked(r9);	 Catch:{ all -> 0x01d4 }
-        r3 = r0;	 Catch:{ all -> 0x01d4 }
-        monitor-exit(r2);	 Catch:{ all -> 0x01d4 }
-        if (r3 == 0) goto L_0x01b9;
-    L_0x0057:
-        r0 = r8.mPackageManagerInt;
-        r4 = r24;
-        r0 = r0.filterAppAccess(r1, r4, r11);
-        if (r0 != 0) goto L_0x01a0;
-    L_0x0061:
-        r3.enforceDeclaredUsedAndRuntimeOrDevelopment(r1);
-        r0 = r8.mSettings;
-        r0 = r0.mPermissionReviewRequired;
-        r2 = 23;
-        if (r0 == 0) goto L_0x0079;
-    L_0x006c:
-        r0 = r1.applicationInfo;
-        r0 = r0.targetSdkVersion;
-        if (r0 >= r2) goto L_0x0079;
-    L_0x0072:
-        r0 = r3.isRuntime();
-        if (r0 == 0) goto L_0x0079;
-    L_0x0078:
-        return;
-    L_0x0079:
-        r0 = r1.applicationInfo;
-        r0 = r0.uid;
-        r5 = android.os.UserHandle.getUid(r11, r0);
-        r0 = r1.mExtras;
-        r6 = r0;
-        r6 = (com.android.server.pm.PackageSetting) r6;
-        r7 = r6.getPermissionsState();
-        r13 = r7.getPermissionFlags(r9, r11);
-        r0 = r13 & 16;
-        if (r0 != 0) goto L_0x017f;
-    L_0x0092:
-        if (r23 != 0) goto L_0x00b8;
-    L_0x0094:
-        r0 = r13 & 4;
-        if (r0 != 0) goto L_0x0099;
-    L_0x0098:
-        goto L_0x00b8;
-    L_0x0099:
-        r0 = new java.lang.SecurityException;
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r14 = "Cannot grant policy fixed permission ";
-        r2.append(r14);
-        r2.append(r9);
-        r14 = " for package ";
-        r2.append(r14);
-        r2.append(r10);
-        r2 = r2.toString();
-        r0.<init>(r2);
-        throw r0;
-    L_0x00b8:
-        r0 = r3.isDevelopment();
-        r14 = -1;
-        if (r0 == 0) goto L_0x00cb;
-    L_0x00bf:
-        r0 = r7.grantInstallPermission(r3);
-        if (r0 == r14) goto L_0x00ca;
-    L_0x00c5:
-        if (r12 == 0) goto L_0x00ca;
-    L_0x00c7:
-        r26.onInstallPermissionGranted();
-    L_0x00ca:
-        return;
-    L_0x00cb:
-        r0 = r6.getInstantApp(r11);
-        if (r0 == 0) goto L_0x00f7;
-    L_0x00d1:
-        r0 = r3.isInstant();
-        if (r0 == 0) goto L_0x00d8;
-    L_0x00d7:
-        goto L_0x00f7;
-    L_0x00d8:
-        r0 = new java.lang.SecurityException;
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r14 = "Cannot grant non-ephemeral permission";
-        r2.append(r14);
-        r2.append(r9);
-        r14 = " for package ";
-        r2.append(r14);
-        r2.append(r10);
-        r2 = r2.toString();
-        r0.<init>(r2);
-        throw r0;
-    L_0x00f7:
-        r0 = r1.applicationInfo;
-        r0 = r0.targetSdkVersion;
-        if (r0 >= r2) goto L_0x0105;
-    L_0x00fd:
-        r0 = "PackageManager";
-        r2 = "Cannot grant runtime permission to a legacy app";
-        android.util.Slog.w(r0, r2);
-        return;
-    L_0x0105:
-        r2 = r7.grantRuntimePermission(r3, r11);
-        if (r2 == r14) goto L_0x017a;
-    L_0x010b:
-        r0 = 1;
-        if (r2 == r0) goto L_0x010f;
-    L_0x010e:
-        goto L_0x011c;
-    L_0x010f:
-        if (r12 == 0) goto L_0x011c;
-    L_0x0111:
-        r0 = r1.applicationInfo;
-        r0 = r0.uid;
-        r0 = android.os.UserHandle.getAppId(r0);
-        r12.onGidsChanged(r0, r11);
-    L_0x011c:
-        r0 = r3.isRuntime();
-        if (r0 == 0) goto L_0x0127;
-    L_0x0122:
-        r0 = 1243; // 0x4db float:1.742E-42 double:6.14E-321;
-        r8.logPermission(r0, r9, r10);
-    L_0x0127:
-        if (r12 == 0) goto L_0x012c;
-    L_0x0129:
-        r12.onPermissionGranted(r5, r11);
-    L_0x012c:
-        r0 = "android.permission.READ_EXTERNAL_STORAGE";
-        r0 = r0.equals(r9);
-        if (r0 != 0) goto L_0x0142;
-    L_0x0134:
-        r0 = "android.permission.WRITE_EXTERNAL_STORAGE";
-        r0 = r0.equals(r9);
-        if (r0 == 0) goto L_0x013d;
-    L_0x013c:
-        goto L_0x0142;
-    L_0x013d:
-        r18 = r1;
-        r19 = r2;
-        goto L_0x016e;
-    L_0x0142:
-        r14 = android.os.Binder.clearCallingIdentity();
-        r16 = r14;
-        r0 = r8.mUserManagerInt;	 Catch:{ all -> 0x016f }
-        r0 = r0.isUserInitialized(r11);	 Catch:{ all -> 0x016f }
-        if (r0 == 0) goto L_0x0164;
-    L_0x0150:
-        r0 = android.os.storage.StorageManagerInternal.class;	 Catch:{ all -> 0x015c }
-        r0 = com.android.server.LocalServices.getService(r0);	 Catch:{ all -> 0x015c }
-        r0 = (android.os.storage.StorageManagerInternal) r0;	 Catch:{ all -> 0x015c }
-        r0.onExternalStoragePolicyChanged(r5, r10);	 Catch:{ all -> 0x015c }
-        goto L_0x0164;
-    L_0x015c:
-        r0 = move-exception;
-        r18 = r1;
-        r19 = r2;
-        r1 = r16;
-        goto L_0x0176;
-    L_0x0164:
-        r18 = r1;
-        r19 = r2;
-        r1 = r16;
-        android.os.Binder.restoreCallingIdentity(r1);
-    L_0x016e:
-        return;
-    L_0x016f:
-        r0 = move-exception;
-        r18 = r1;
-        r19 = r2;
-        r1 = r16;
-    L_0x0176:
-        android.os.Binder.restoreCallingIdentity(r1);
-        throw r0;
-    L_0x017a:
-        r18 = r1;
-        r19 = r2;
-        return;
-    L_0x017f:
-        r18 = r1;
-        r0 = new java.lang.SecurityException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Cannot grant system fixed permission ";
-        r1.append(r2);
-        r1.append(r9);
-        r2 = " for package ";
-        r1.append(r2);
-        r1.append(r10);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-    L_0x01a0:
-        r18 = r1;
-        r0 = new java.lang.IllegalArgumentException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Unknown package: ";
-        r1.append(r2);
-        r1.append(r10);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-    L_0x01b9:
-        r4 = r24;
-        r18 = r1;
-        r0 = new java.lang.IllegalArgumentException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Unknown permission: ";
-        r1.append(r2);
-        r1.append(r9);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-    L_0x01d4:
-        r0 = move-exception;
-        r4 = r24;
-        r18 = r1;
-    L_0x01d9:
-        monitor-exit(r2);	 Catch:{ all -> 0x01db }
-        throw r0;
-    L_0x01db:
-        r0 = move-exception;
-        goto L_0x01d9;
-    L_0x01dd:
-        r4 = r24;
-        r18 = r1;
-        r0 = new java.lang.IllegalArgumentException;
-        r1 = new java.lang.StringBuilder;
-        r1.<init>();
-        r2 = "Unknown package: ";
-        r1.append(r2);
-        r1.append(r10);
-        r1 = r1.toString();
-        r0.<init>(r1);
-        throw r0;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(java.lang.String, java.lang.String, boolean, int, int, com.android.server.pm.permission.PermissionManagerInternal$PermissionCallback):void");
-    }
-
     PermissionManagerService(Context context, DefaultPermissionGrantedCallback defaultGrantCallback, Object externalLock) {
         int i = 0;
         this.mContext = context;
@@ -812,8 +377,11 @@ public class PermissionManagerService {
         }
         synchronized (this.mLock) {
             if (groupName != null) {
-                if (!this.mSettings.mPermissionGroups.containsKey(groupName)) {
-                    return null;
+                try {
+                    if (!this.mSettings.mPermissionGroups.containsKey(groupName)) {
+                        return null;
+                    }
+                } catch (Throwable th) {
                 }
             }
             ArrayList<PermissionInfo> out = new ArrayList(10);
@@ -1156,7 +724,7 @@ public class PermissionManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0042, code:
+    /* JADX WARNING: Missing block: B:16:0x0042, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1185,40 +753,40 @@ public class PermissionManagerService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:122:0x0210  */
-    /* JADX WARNING: Removed duplicated region for block: B:118:0x01e9 A:{SYNTHETIC, Splitter: B:118:0x01e9} */
-    /* JADX WARNING: Removed duplicated region for block: B:253:0x03fd A:{Catch:{ all -> 0x04b3, all -> 0x04e5 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:125:0x0216 A:{SYNTHETIC, Splitter: B:125:0x0216} */
-    /* JADX WARNING: Missing block: B:229:0x0387, code:
+    /* JADX WARNING: Removed duplicated region for block: B:123:0x0210  */
+    /* JADX WARNING: Removed duplicated region for block: B:119:0x01e9 A:{SYNTHETIC, Splitter:B:119:0x01e9} */
+    /* JADX WARNING: Removed duplicated region for block: B:256:0x03fd A:{Catch:{ all -> 0x04b3, all -> 0x04e5 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:126:0x0216 A:{SYNTHETIC, Splitter:B:126:0x0216} */
+    /* JADX WARNING: Missing block: B:232:0x0387, code skipped:
             r15 = r12;
             r13 = r20;
      */
-    /* JADX WARNING: Missing block: B:249:0x03d0, code:
+    /* JADX WARNING: Missing block: B:252:0x03d0, code skipped:
             if (r4.equals(r2.packageName) != false) goto L_0x03d2;
      */
-    /* JADX WARNING: Missing block: B:306:0x0577, code:
+    /* JADX WARNING: Missing block: B:310:0x0577, code skipped:
             if (r3.isSystem() != false) goto L_0x0584;
      */
-    /* JADX WARNING: Missing block: B:312:0x0588, code:
+    /* JADX WARNING: Missing block: B:316:0x0588, code skipped:
             if (r3.isUpdatedSystem() != false) goto L_0x058a;
      */
-    /* JADX WARNING: Missing block: B:315:?, code:
+    /* JADX WARNING: Missing block: B:319:?, code skipped:
             r3.setInstallPermissionsFixed(true);
      */
-    /* JADX WARNING: Missing block: B:318:0x058f, code:
+    /* JADX WARNING: Missing block: B:322:0x058f, code skipped:
             r5 = r41;
      */
-    /* JADX WARNING: Missing block: B:319:0x0591, code:
+    /* JADX WARNING: Missing block: B:323:0x0591, code skipped:
             if (r5 == null) goto L_0x059b;
      */
-    /* JADX WARNING: Missing block: B:320:0x0593, code:
+    /* JADX WARNING: Missing block: B:324:0x0593, code skipped:
             r5.onPermissionUpdated(r19, r16);
      */
-    /* JADX WARNING: Missing block: B:321:0x059b, code:
+    /* JADX WARNING: Missing block: B:325:0x059b, code skipped:
             r11 = r16;
             r12 = r19;
      */
-    /* JADX WARNING: Missing block: B:322:0x059f, code:
+    /* JADX WARNING: Missing block: B:326:0x059f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1255,9 +823,9 @@ public class PermissionManagerService {
             }
             permissionsState.setGlobalGids(permissionManagerService.mGlobalGids);
             synchronized (permissionManagerService.mLock) {
-                PackageSetting packageSetting;
                 boolean z;
                 int[] iArr;
+                PackageSetting packageSetting;
                 try {
                     int N2 = packageR.requestedPermissions.size();
                     int[] updatedUserIds3 = updatedUserIds2;
@@ -1265,451 +833,88 @@ public class PermissionManagerService {
                     while (true) {
                         boolean runtimePermissionsRevoked2 = runtimePermissionsRevoked;
                         int N3;
-                        boolean changedInstallPermission3;
+                        boolean z2;
                         PackageSetting ps2;
                         if (i < N2) {
+                            String permName;
                             try {
-                                String permName = (String) packageR.requestedPermissions.get(i);
+                                permName = (String) packageR.requestedPermissions.get(i);
                                 N3 = N2;
                                 N2 = permissionManagerService.mSettings.getPermissionLocked(permName);
                                 updatedUserIds = updatedUserIds3;
-                                try {
-                                    boolean appSupportsRuntimePermissions = packageR.applicationInfo.targetSdkVersion >= 23;
+                            } catch (Throwable th) {
+                                N = th;
+                                z = isLegacySystemApp;
+                                iArr = currentUserIds;
+                                z2 = changedInstallPermission2;
+                                packageSetting = ps;
+                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                updatedUserIds2 = updatedUserIds3;
+                                while (true) {
                                     try {
-                                        int i2;
-                                        String str2;
-                                        StringBuilder stringBuilder;
-                                        if (PackageManagerService.DEBUG_INSTALL) {
+                                        break;
+                                    } catch (Throwable th2) {
+                                        N = th2;
+                                    }
+                                }
+                                throw N;
+                            }
+                            try {
+                                boolean appSupportsRuntimePermissions = packageR.applicationInfo.targetSdkVersion >= 23;
+                                try {
+                                    int i2;
+                                    String str2;
+                                    StringBuilder stringBuilder;
+                                    if (PackageManagerService.DEBUG_INSTALL) {
+                                        try {
+                                            String str3 = TAG;
+                                            StringBuilder stringBuilder2 = new StringBuilder();
+                                            z2 = changedInstallPermission2;
                                             try {
-                                                String str3 = TAG;
-                                                StringBuilder stringBuilder2 = new StringBuilder();
-                                                changedInstallPermission3 = changedInstallPermission2;
-                                                try {
-                                                    stringBuilder2.append("Package ");
-                                                    stringBuilder2.append(packageR.packageName);
-                                                    stringBuilder2.append(" checking ");
-                                                    stringBuilder2.append(permName);
-                                                    stringBuilder2.append(": ");
-                                                    stringBuilder2.append(N2);
-                                                    Log.i(str3, stringBuilder2.toString());
-                                                } catch (Throwable th) {
-                                                    N = th;
-                                                }
-                                            } catch (Throwable th2) {
-                                                N = th2;
-                                                changedInstallPermission3 = changedInstallPermission2;
-                                                packageSetting = ps;
-                                                z = isLegacySystemApp;
-                                                iArr = currentUserIds;
-                                                permName = runtimePermissionsRevoked2;
-                                                i = updatedUserIds;
-                                                permissionCallback = callback;
+                                                stringBuilder2.append("Package ");
+                                                stringBuilder2.append(packageR.packageName);
+                                                stringBuilder2.append(" checking ");
+                                                stringBuilder2.append(permName);
+                                                stringBuilder2.append(": ");
+                                                stringBuilder2.append(N2);
+                                                Log.i(str3, stringBuilder2.toString());
+                                            } catch (Throwable th3) {
+                                                N = th3;
                                             }
-                                        } else {
-                                            changedInstallPermission3 = changedInstallPermission2;
+                                        } catch (Throwable th4) {
+                                            N = th4;
+                                            z2 = changedInstallPermission2;
+                                            packageSetting = ps;
+                                            z = isLegacySystemApp;
+                                            iArr = currentUserIds;
+                                            permName = runtimePermissionsRevoked2;
+                                            i = updatedUserIds;
+                                            permissionCallback = callback;
+                                            while (true) {
+                                                break;
+                                            }
+                                            throw N;
                                         }
-                                        if (N2 == 0) {
-                                            ps2 = ps;
-                                            z = isLegacySystemApp;
-                                            iArr = currentUserIds;
-                                            i2 = i;
-                                        } else if (N2.getSourcePackageSetting() == null) {
-                                            ps2 = ps;
-                                            z = isLegacySystemApp;
-                                            iArr = currentUserIds;
-                                            i2 = i;
-                                        } else {
-                                            StringBuilder stringBuilder3;
-                                            if (packageR.applicationInfo.isInstantApp()) {
-                                                if (!N2.isInstant()) {
-                                                    if (PackageManagerService.DEBUG_PERMISSIONS) {
-                                                        str2 = TAG;
-                                                        stringBuilder3 = new StringBuilder();
-                                                        stringBuilder3.append("Denying non-ephemeral permission ");
-                                                        stringBuilder3.append(N2.getName());
-                                                        stringBuilder3.append(" for package ");
-                                                        stringBuilder3.append(packageR.packageName);
-                                                        Log.i(str2, stringBuilder3.toString());
-                                                    }
-                                                    ps2 = ps;
-                                                    z = isLegacySystemApp;
-                                                    iArr = currentUserIds;
-                                                    i2 = i;
-                                                    updatedUserIds3 = updatedUserIds;
-                                                    changedInstallPermission2 = changedInstallPermission3;
-                                                    i = i2 + 1;
-                                                    runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                    N2 = N3;
-                                                    isLegacySystemApp = z;
-                                                    currentUserIds = iArr;
-                                                    ps = ps2;
-                                                    permissionManagerService = this;
-                                                    permissionCallback = callback;
-                                                }
-                                            }
-                                            if (!N2.isRuntimeOnly() || appSupportsRuntimePermissions) {
-                                                boolean allowedSig;
-                                                int grant;
-                                                int grant2;
-                                                str2 = N2.getName();
-                                                if (N2.isAppOp()) {
-                                                    allowedSig = false;
-                                                    grant = 1;
-                                                    permissionManagerService.mSettings.addAppOpPackage(str2, packageR.packageName);
-                                                } else {
-                                                    allowedSig = false;
-                                                    grant = 1;
-                                                }
-                                                try {
-                                                    if (N2.isNormal()) {
-                                                        grant2 = 2;
-                                                    } else if (N2.isRuntime()) {
-                                                        if (!appSupportsRuntimePermissions) {
-                                                            if (!permissionManagerService.mSettings.mPermissionReviewRequired) {
-                                                                grant2 = 2;
-                                                            }
-                                                        }
-                                                        if (origPermissions.hasInstallPermission(N2.getName())) {
-                                                            grant2 = 4;
-                                                        } else if (isLegacySystemApp) {
-                                                            grant2 = 4;
-                                                        } else {
-                                                            grant2 = 3;
-                                                        }
-                                                    } else {
-                                                        if (N2.isSignature()) {
-                                                            try {
-                                                                changedInstallPermission2 = permissionManagerService.grantSignaturePermission(str2, packageR, N2, origPermissions);
-                                                                if (permissionManagerService.mCustPms != null) {
-                                                                    z = isLegacySystemApp;
-                                                                    try {
-                                                                        if (permissionManagerService.mCustPms.isHwFiltReqInstallPerm(packageR.packageName, str2)) {
-                                                                            changedInstallPermission2 = false;
-                                                                        }
-                                                                    } catch (Throwable th3) {
-                                                                        N = th3;
-                                                                        packageSetting = ps;
-                                                                    }
-                                                                } else {
-                                                                    z = isLegacySystemApp;
-                                                                }
-                                                                if (changedInstallPermission2) {
-                                                                    grant2 = 2;
-                                                                    allowedSig = changedInstallPermission2;
-                                                                } else {
-                                                                    allowedSig = changedInstallPermission2;
-                                                                    grant2 = grant;
-                                                                }
-                                                            } catch (Throwable th4) {
-                                                                N = th4;
-                                                                z = isLegacySystemApp;
-                                                                packageSetting = ps;
-                                                                iArr = currentUserIds;
-                                                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                updatedUserIds2 = updatedUserIds;
-                                                                changedInstallPermission2 = changedInstallPermission3;
-                                                                permissionCallback = callback;
-                                                                while (true) {
-                                                                    try {
-                                                                        break;
-                                                                    } catch (Throwable th5) {
-                                                                        N = th5;
-                                                                    }
-                                                                }
-                                                                throw N;
-                                                            }
-                                                        }
-                                                        z = isLegacySystemApp;
-                                                        grant2 = grant;
-                                                        if (PackageManagerService.DEBUG_PERMISSIONS) {
-                                                            i2 = i;
-                                                        } else {
-                                                            String str4 = TAG;
-                                                            stringBuilder3 = new StringBuilder();
-                                                            i2 = i;
-                                                            stringBuilder3.append("Granting permission ");
-                                                            stringBuilder3.append(str2);
-                                                            stringBuilder3.append(" to package ");
-                                                            stringBuilder3.append(packageR.packageName);
-                                                            Slog.i(str4, stringBuilder3.toString());
-                                                        }
-                                                        if (grant2 == 1) {
-                                                            if (!ps.isSystem()) {
-                                                                if (!(!ps.areInstallPermissionsFixed() || allowedSig || origPermissions.hasInstallPermission(str2) || permissionManagerService.isNewPlatformPermissionForPackage(str2, packageR))) {
-                                                                    grant2 = 1;
-                                                                }
-                                                            }
-                                                            int i3;
-                                                            int i4;
-                                                            int length;
-                                                            int userId;
-                                                            switch (grant2) {
-                                                                case 2:
-                                                                    ps2 = ps;
-                                                                    iArr = currentUserIds;
-                                                                    i3 = grant2;
-                                                                    updatedUserIds2 = updatedUserIds;
-                                                                    for (int userId2 : UserManagerService.getInstance().getUserIds()) {
-                                                                        if (origPermissions.getRuntimePermissionState(str2, userId2) != null) {
-                                                                            origPermissions.revokeRuntimePermission(N2, userId2);
-                                                                            origPermissions.updatePermissionFlags(N2, userId2, 255, 0);
-                                                                            updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, userId2);
-                                                                        }
-                                                                    }
-                                                                    if (permissionsState.grantInstallPermission(N2) != -1) {
-                                                                        changedInstallPermission2 = true;
-                                                                        updatedUserIds3 = updatedUserIds2;
-                                                                        break;
-                                                                    }
-                                                                    break;
-                                                                case 3:
-                                                                    ps2 = ps;
-                                                                    iArr = currentUserIds;
-                                                                    i3 = grant2;
-                                                                    ps = UserManagerService.getInstance().getUserIds();
-                                                                    length = ps.length;
-                                                                    updatedUserIds2 = updatedUserIds;
-                                                                    i4 = 0;
-                                                                    while (i4 < length) {
-                                                                        try {
-                                                                            PackageSetting packageSetting2;
-                                                                            int i5;
-                                                                            changedInstallPermission2 = ps[i4];
-                                                                            PermissionState permissionState = origPermissions.getRuntimePermissionState(str2, changedInstallPermission2);
-                                                                            updatedUserIds = permissionState != null ? permissionState.getFlags() : 0;
-                                                                            if (origPermissions.hasRuntimePermission(str2, changedInstallPermission2)) {
-                                                                                boolean revokeOnUpgrade = (updatedUserIds & 8) != 0;
-                                                                                if (revokeOnUpgrade) {
-                                                                                    updatedUserIds &= -9;
-                                                                                    updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
-                                                                                }
-                                                                                packageSetting2 = ps;
-                                                                                if (permissionManagerService.mSettings.mPermissionReviewRequired == null || !revokeOnUpgrade) {
-                                                                                    i5 = length;
-                                                                                    if (permissionsState.grantRuntimePermission(N2, changedInstallPermission2) == -1) {
-                                                                                        updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
-                                                                                    }
-                                                                                } else {
-                                                                                    i5 = length;
-                                                                                }
-                                                                                if (!(permissionManagerService.mSettings.mPermissionReviewRequired == null || !appSupportsRuntimePermissions || (updatedUserIds & 64) == null)) {
-                                                                                    ps = updatedUserIds & -65;
-                                                                                    updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
-                                                                                    updatedUserIds = ps;
-                                                                                }
-                                                                            } else {
-                                                                                packageSetting2 = ps;
-                                                                                i5 = length;
-                                                                                if (!(permissionManagerService.mSettings.mPermissionReviewRequired == null || appSupportsRuntimePermissions)) {
-                                                                                    if (PackageManagerService.PLATFORM_PACKAGE_NAME.equals(N2.getSourcePackageName()) != null && (updatedUserIds & 64) == null) {
-                                                                                        updatedUserIds |= 64;
-                                                                                        updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
-                                                                                    }
-                                                                                    if (permissionsState.grantRuntimePermission(N2, changedInstallPermission2) != -1) {
-                                                                                        updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                            ps = updatedUserIds;
-                                                                            permissionsState.updatePermissionFlags(N2, changedInstallPermission2, ps, ps);
-                                                                            i4++;
-                                                                            ps = packageSetting2;
-                                                                            length = i5;
-                                                                        } catch (Throwable th6) {
-                                                                            N = th6;
-                                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                            permissionCallback = callback;
-                                                                            while (true) {
-                                                                                break;
-                                                                            }
-                                                                            throw N;
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case 4:
-                                                                    PermissionState permissionState2 = origPermissions.getInstallPermissionState(str2);
-                                                                    int flags = permissionState2 != null ? permissionState2.getFlags() : 0;
-                                                                    if (origPermissions.revokeInstallPermission(N2) != -1) {
-                                                                        origPermissions.updatePermissionFlags(N2, -1, 255, 0);
-                                                                        changedInstallPermission2 = true;
-                                                                    } else {
-                                                                        changedInstallPermission2 = changedInstallPermission3;
-                                                                    }
-                                                                    length = flags;
-                                                                    if ((length & 8) == 0) {
-                                                                        try {
-                                                                            i = currentUserIds.length;
-                                                                            changedInstallPermission = changedInstallPermission2;
-                                                                            i3 = grant2;
-                                                                            updatedUserIds3 = updatedUserIds;
-                                                                            userId2 = 0;
-                                                                            while (userId2 < i) {
-                                                                                try {
-                                                                                    iArr = currentUserIds;
-                                                                                    int i6 = i;
-                                                                                    i4 = currentUserIds[userId2];
-                                                                                    try {
-                                                                                        ps2 = ps;
-                                                                                        if (permissionsState.grantRuntimePermission(N2, i4) != -1) {
-                                                                                            try {
-                                                                                                permissionsState.updatePermissionFlags(N2, i4, length, length);
-                                                                                                updatedUserIds3 = ArrayUtils.appendInt(updatedUserIds3, i4);
-                                                                                            } catch (Throwable th7) {
-                                                                                                N = th7;
-                                                                                                updatedUserIds2 = updatedUserIds3;
-                                                                                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                                                changedInstallPermission2 = changedInstallPermission;
-                                                                                                break;
-                                                                                            }
-                                                                                        }
-                                                                                        userId2++;
-                                                                                        currentUserIds = iArr;
-                                                                                        i = i6;
-                                                                                        ps = ps2;
-                                                                                    } catch (Throwable th8) {
-                                                                                        N = th8;
-                                                                                        packageSetting = ps;
-                                                                                        updatedUserIds2 = updatedUserIds3;
-                                                                                        runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                                        changedInstallPermission2 = changedInstallPermission;
-                                                                                        permissionCallback = callback;
-                                                                                        break;
-                                                                                    }
-                                                                                } catch (Throwable th9) {
-                                                                                    N = th9;
-                                                                                    iArr = currentUserIds;
-                                                                                    packageSetting = ps;
-                                                                                    updatedUserIds2 = updatedUserIds3;
-                                                                                    runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                                    changedInstallPermission2 = changedInstallPermission;
-                                                                                    break;
-                                                                                }
-                                                                            }
-                                                                            ps2 = ps;
-                                                                            iArr = currentUserIds;
-                                                                        } catch (Throwable th10) {
-                                                                            N = th10;
-                                                                            iArr = currentUserIds;
-                                                                            changedInstallPermission = changedInstallPermission2;
-                                                                            packageSetting = ps;
-                                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                            updatedUserIds2 = updatedUserIds;
-                                                                            permissionCallback = callback;
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                    ps2 = ps;
-                                                                    iArr = currentUserIds;
-                                                                    changedInstallPermission = changedInstallPermission2;
-                                                                    i3 = grant2;
-                                                                    updatedUserIds3 = updatedUserIds;
-                                                                    changedInstallPermission2 = changedInstallPermission;
-                                                                    break;
-                                                                default:
-                                                                    ps2 = ps;
-                                                                    iArr = currentUserIds;
-                                                                    if (str != null) {
-                                                                        break;
-                                                                    }
-                                                                    if (PackageManagerService.DEBUG_PERMISSIONS) {
-                                                                        String str5 = TAG;
-                                                                        stringBuilder = new StringBuilder();
-                                                                        stringBuilder.append("Not granting permission ");
-                                                                        stringBuilder.append(str2);
-                                                                        stringBuilder.append(" to package ");
-                                                                        stringBuilder.append(packageR.packageName);
-                                                                        stringBuilder.append(" because it was previously installed without");
-                                                                        Slog.i(str5, stringBuilder.toString());
-                                                                        break;
-                                                                    }
-                                                                    break;
-                                                            }
-                                                        }
-                                                        ps2 = ps;
-                                                        iArr = currentUserIds;
-                                                        String str6;
-                                                        if (permissionsState.revokeInstallPermission(N2) != -1) {
-                                                            permissionsState.updatePermissionFlags(N2, -1, 255, 0);
-                                                            changedInstallPermission2 = true;
-                                                            try {
-                                                                str6 = TAG;
-                                                                StringBuilder stringBuilder4 = new StringBuilder();
-                                                                stringBuilder4.append("Un-granting permission ");
-                                                                stringBuilder4.append(str2);
-                                                                stringBuilder4.append(" from package ");
-                                                                stringBuilder4.append(packageR.packageName);
-                                                                stringBuilder4.append(" (protectionLevel=");
-                                                                stringBuilder4.append(N2.getProtectionLevel());
-                                                                stringBuilder4.append(" flags=0x");
-                                                                stringBuilder4.append(Integer.toHexString(packageR.applicationInfo.flags));
-                                                                stringBuilder4.append(")");
-                                                                Slog.i(str6, stringBuilder4.toString());
-                                                                updatedUserIds3 = updatedUserIds;
-                                                                i = i2 + 1;
-                                                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                N2 = N3;
-                                                                isLegacySystemApp = z;
-                                                                currentUserIds = iArr;
-                                                                ps = ps2;
-                                                                permissionManagerService = this;
-                                                                permissionCallback = callback;
-                                                            } catch (Throwable th11) {
-                                                                N = th11;
-                                                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                                updatedUserIds2 = updatedUserIds;
-                                                            }
-                                                        } else {
-                                                            if (N2.isAppOp() && PackageManagerService.DEBUG_PERMISSIONS && (str == null || str.equals(packageR.packageName))) {
-                                                                str6 = TAG;
-                                                                isLegacySystemApp = new StringBuilder();
-                                                                isLegacySystemApp.append("Not granting permission ");
-                                                                isLegacySystemApp.append(str2);
-                                                                isLegacySystemApp.append(" to package ");
-                                                                isLegacySystemApp.append(packageR.packageName);
-                                                                isLegacySystemApp.append(" (protectionLevel=");
-                                                                isLegacySystemApp.append(N2.getProtectionLevel());
-                                                                isLegacySystemApp.append(" flags=0x");
-                                                                isLegacySystemApp.append(Integer.toHexString(packageR.applicationInfo.flags));
-                                                                isLegacySystemApp.append(")");
-                                                                Slog.i(str6, isLegacySystemApp.toString());
-                                                            }
-                                                            updatedUserIds3 = updatedUserIds;
-                                                            changedInstallPermission2 = changedInstallPermission3;
-                                                            i = i2 + 1;
-                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                                            N2 = N3;
-                                                            isLegacySystemApp = z;
-                                                            currentUserIds = iArr;
-                                                            ps = ps2;
-                                                            permissionManagerService = this;
-                                                            permissionCallback = callback;
-                                                        }
-                                                    }
-                                                    z = isLegacySystemApp;
-                                                } catch (Throwable th12) {
-                                                    N = th12;
-                                                    z = isLegacySystemApp;
-                                                    iArr = currentUserIds;
-                                                    packageSetting = ps;
-                                                    permName = runtimePermissionsRevoked2;
-                                                    i = updatedUserIds;
-                                                    changedInstallPermission2 = changedInstallPermission3;
-                                                    permissionCallback = callback;
-                                                }
-                                                try {
-                                                    if (PackageManagerService.DEBUG_PERMISSIONS) {
-                                                    }
-                                                    if (grant2 == 1) {
-                                                    }
-                                                } catch (Throwable th13) {
-                                                    N = th13;
-                                                    permName = runtimePermissionsRevoked2;
-                                                }
-                                            } else {
+                                    }
+                                    z2 = changedInstallPermission2;
+                                    if (N2 == 0) {
+                                        ps2 = ps;
+                                        z = isLegacySystemApp;
+                                        iArr = currentUserIds;
+                                        i2 = i;
+                                    } else if (N2.getSourcePackageSetting() == null) {
+                                        ps2 = ps;
+                                        z = isLegacySystemApp;
+                                        iArr = currentUserIds;
+                                        i2 = i;
+                                    } else {
+                                        StringBuilder stringBuilder3;
+                                        if (packageR.applicationInfo.isInstantApp()) {
+                                            if (!N2.isInstant()) {
                                                 if (PackageManagerService.DEBUG_PERMISSIONS) {
                                                     str2 = TAG;
                                                     stringBuilder3 = new StringBuilder();
-                                                    stringBuilder3.append("Denying runtime-only permission ");
+                                                    stringBuilder3.append("Denying non-ephemeral permission ");
                                                     stringBuilder3.append(N2.getName());
                                                     stringBuilder3.append(" for package ");
                                                     stringBuilder3.append(packageR.packageName);
@@ -1720,7 +925,7 @@ public class PermissionManagerService {
                                                 iArr = currentUserIds;
                                                 i2 = i;
                                                 updatedUserIds3 = updatedUserIds;
-                                                changedInstallPermission2 = changedInstallPermission3;
+                                                changedInstallPermission2 = z2;
                                                 i = i2 + 1;
                                                 runtimePermissionsRevoked = runtimePermissionsRevoked2;
                                                 N2 = N3;
@@ -1731,17 +936,417 @@ public class PermissionManagerService {
                                                 permissionCallback = callback;
                                             }
                                         }
-                                        if ((str == null || str.equals(packageR.packageName)) && PackageManagerService.DEBUG_PERMISSIONS) {
-                                            str2 = TAG;
-                                            stringBuilder = new StringBuilder();
-                                            stringBuilder.append("Unknown permission ");
-                                            stringBuilder.append(permName);
-                                            stringBuilder.append(" in package ");
-                                            stringBuilder.append(packageR.packageName);
-                                            Slog.i(str2, stringBuilder.toString());
+                                        if (!N2.isRuntimeOnly() || appSupportsRuntimePermissions) {
+                                            boolean allowedSig;
+                                            int grant;
+                                            int grant2;
+                                            str2 = N2.getName();
+                                            if (N2.isAppOp()) {
+                                                allowedSig = false;
+                                                grant = 1;
+                                                permissionManagerService.mSettings.addAppOpPackage(str2, packageR.packageName);
+                                            } else {
+                                                allowedSig = false;
+                                                grant = 1;
+                                            }
+                                            try {
+                                                if (N2.isNormal()) {
+                                                    grant2 = 2;
+                                                } else if (N2.isRuntime()) {
+                                                    if (!appSupportsRuntimePermissions) {
+                                                        if (!permissionManagerService.mSettings.mPermissionReviewRequired) {
+                                                            grant2 = 2;
+                                                        }
+                                                    }
+                                                    if (origPermissions.hasInstallPermission(N2.getName())) {
+                                                        grant2 = 4;
+                                                    } else if (isLegacySystemApp) {
+                                                        grant2 = 4;
+                                                    } else {
+                                                        grant2 = 3;
+                                                    }
+                                                } else {
+                                                    if (N2.isSignature()) {
+                                                        try {
+                                                            changedInstallPermission2 = permissionManagerService.grantSignaturePermission(str2, packageR, N2, origPermissions);
+                                                            if (permissionManagerService.mCustPms != null) {
+                                                                z = isLegacySystemApp;
+                                                                try {
+                                                                    if (permissionManagerService.mCustPms.isHwFiltReqInstallPerm(packageR.packageName, str2)) {
+                                                                        changedInstallPermission2 = false;
+                                                                    }
+                                                                } catch (Throwable th5) {
+                                                                    N = th5;
+                                                                    packageSetting = ps;
+                                                                }
+                                                            } else {
+                                                                z = isLegacySystemApp;
+                                                            }
+                                                            if (changedInstallPermission2) {
+                                                                grant2 = 2;
+                                                                allowedSig = changedInstallPermission2;
+                                                            } else {
+                                                                allowedSig = changedInstallPermission2;
+                                                                grant2 = grant;
+                                                            }
+                                                        } catch (Throwable th6) {
+                                                            N = th6;
+                                                            z = isLegacySystemApp;
+                                                            packageSetting = ps;
+                                                            iArr = currentUserIds;
+                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                            updatedUserIds2 = updatedUserIds;
+                                                            changedInstallPermission2 = z2;
+                                                            permissionCallback = callback;
+                                                            while (true) {
+                                                                break;
+                                                            }
+                                                            throw N;
+                                                        }
+                                                    }
+                                                    z = isLegacySystemApp;
+                                                    grant2 = grant;
+                                                    if (PackageManagerService.DEBUG_PERMISSIONS) {
+                                                        i2 = i;
+                                                    } else {
+                                                        String str4 = TAG;
+                                                        stringBuilder3 = new StringBuilder();
+                                                        i2 = i;
+                                                        stringBuilder3.append("Granting permission ");
+                                                        stringBuilder3.append(str2);
+                                                        stringBuilder3.append(" to package ");
+                                                        stringBuilder3.append(packageR.packageName);
+                                                        Slog.i(str4, stringBuilder3.toString());
+                                                    }
+                                                    if (grant2 == 1) {
+                                                        if (!ps.isSystem()) {
+                                                            if (!(!ps.areInstallPermissionsFixed() || allowedSig || origPermissions.hasInstallPermission(str2) || permissionManagerService.isNewPlatformPermissionForPackage(str2, packageR))) {
+                                                                grant2 = 1;
+                                                            }
+                                                        }
+                                                        int i3;
+                                                        int i4;
+                                                        int length;
+                                                        int userId;
+                                                        switch (grant2) {
+                                                            case 2:
+                                                                ps2 = ps;
+                                                                iArr = currentUserIds;
+                                                                i3 = grant2;
+                                                                updatedUserIds2 = updatedUserIds;
+                                                                for (int userId2 : UserManagerService.getInstance().getUserIds()) {
+                                                                    if (origPermissions.getRuntimePermissionState(str2, userId2) != null) {
+                                                                        origPermissions.revokeRuntimePermission(N2, userId2);
+                                                                        origPermissions.updatePermissionFlags(N2, userId2, 255, 0);
+                                                                        updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, userId2);
+                                                                    }
+                                                                }
+                                                                if (permissionsState.grantInstallPermission(N2) != -1) {
+                                                                    changedInstallPermission2 = true;
+                                                                    updatedUserIds3 = updatedUserIds2;
+                                                                    break;
+                                                                }
+                                                                break;
+                                                            case 3:
+                                                                ps2 = ps;
+                                                                iArr = currentUserIds;
+                                                                i3 = grant2;
+                                                                ps = UserManagerService.getInstance().getUserIds();
+                                                                length = ps.length;
+                                                                updatedUserIds2 = updatedUserIds;
+                                                                i4 = 0;
+                                                                while (i4 < length) {
+                                                                    try {
+                                                                        PackageSetting packageSetting2;
+                                                                        int i5;
+                                                                        changedInstallPermission2 = ps[i4];
+                                                                        PermissionState permissionState = origPermissions.getRuntimePermissionState(str2, changedInstallPermission2);
+                                                                        updatedUserIds = permissionState != null ? permissionState.getFlags() : 0;
+                                                                        if (origPermissions.hasRuntimePermission(str2, changedInstallPermission2)) {
+                                                                            boolean revokeOnUpgrade = (updatedUserIds & 8) != 0;
+                                                                            if (revokeOnUpgrade) {
+                                                                                updatedUserIds &= -9;
+                                                                                updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
+                                                                            }
+                                                                            packageSetting2 = ps;
+                                                                            if (permissionManagerService.mSettings.mPermissionReviewRequired != null) {
+                                                                                if (revokeOnUpgrade) {
+                                                                                    i5 = length;
+                                                                                    if (!(permissionManagerService.mSettings.mPermissionReviewRequired == null || !appSupportsRuntimePermissions || (updatedUserIds & 64) == null)) {
+                                                                                        ps = updatedUserIds & -65;
+                                                                                        updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
+                                                                                        updatedUserIds = ps;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            i5 = length;
+                                                                            if (permissionsState.grantRuntimePermission(N2, changedInstallPermission2) == -1) {
+                                                                                updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
+                                                                            }
+                                                                            ps = updatedUserIds & -65;
+                                                                            updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
+                                                                            updatedUserIds = ps;
+                                                                            break;
+                                                                        }
+                                                                        packageSetting2 = ps;
+                                                                        i5 = length;
+                                                                        if (!(permissionManagerService.mSettings.mPermissionReviewRequired == null || appSupportsRuntimePermissions)) {
+                                                                            if (PackageManagerService.PLATFORM_PACKAGE_NAME.equals(N2.getSourcePackageName()) != null && (updatedUserIds & 64) == null) {
+                                                                                updatedUserIds |= 64;
+                                                                                updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
+                                                                            }
+                                                                            if (permissionsState.grantRuntimePermission(N2, changedInstallPermission2) != -1) {
+                                                                                updatedUserIds2 = ArrayUtils.appendInt(updatedUserIds2, changedInstallPermission2);
+                                                                            }
+                                                                        }
+                                                                        ps = updatedUserIds;
+                                                                        permissionsState.updatePermissionFlags(N2, changedInstallPermission2, ps, ps);
+                                                                        i4++;
+                                                                        ps = packageSetting2;
+                                                                        length = i5;
+                                                                    } catch (Throwable th7) {
+                                                                        N = th7;
+                                                                        runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                                        permissionCallback = callback;
+                                                                        while (true) {
+                                                                            break;
+                                                                        }
+                                                                        throw N;
+                                                                    }
+                                                                }
+                                                                break;
+                                                            case 4:
+                                                                PermissionState permissionState2 = origPermissions.getInstallPermissionState(str2);
+                                                                int flags = permissionState2 != null ? permissionState2.getFlags() : 0;
+                                                                if (origPermissions.revokeInstallPermission(N2) != -1) {
+                                                                    origPermissions.updatePermissionFlags(N2, -1, 255, 0);
+                                                                    changedInstallPermission2 = true;
+                                                                } else {
+                                                                    changedInstallPermission2 = z2;
+                                                                }
+                                                                length = flags;
+                                                                if ((length & 8) == 0) {
+                                                                    try {
+                                                                        i = currentUserIds.length;
+                                                                        changedInstallPermission = changedInstallPermission2;
+                                                                        i3 = grant2;
+                                                                        updatedUserIds3 = updatedUserIds;
+                                                                        userId2 = 0;
+                                                                        while (userId2 < i) {
+                                                                            try {
+                                                                                iArr = currentUserIds;
+                                                                                int i6 = i;
+                                                                                i4 = currentUserIds[userId2];
+                                                                                try {
+                                                                                    ps2 = ps;
+                                                                                    if (permissionsState.grantRuntimePermission(N2, i4) != -1) {
+                                                                                        try {
+                                                                                            permissionsState.updatePermissionFlags(N2, i4, length, length);
+                                                                                            updatedUserIds3 = ArrayUtils.appendInt(updatedUserIds3, i4);
+                                                                                        } catch (Throwable th8) {
+                                                                                            N = th8;
+                                                                                            updatedUserIds2 = updatedUserIds3;
+                                                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                                                            changedInstallPermission2 = changedInstallPermission;
+                                                                                            permissionCallback = callback;
+                                                                                            while (true) {
+                                                                                                break;
+                                                                                            }
+                                                                                            throw N;
+                                                                                        }
+                                                                                    }
+                                                                                    userId2++;
+                                                                                    currentUserIds = iArr;
+                                                                                    i = i6;
+                                                                                    ps = ps2;
+                                                                                } catch (Throwable th9) {
+                                                                                    N = th9;
+                                                                                    packageSetting = ps;
+                                                                                    updatedUserIds2 = updatedUserIds3;
+                                                                                    runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                                                    changedInstallPermission2 = changedInstallPermission;
+                                                                                    permissionCallback = callback;
+                                                                                    while (true) {
+                                                                                        break;
+                                                                                    }
+                                                                                    throw N;
+                                                                                }
+                                                                            } catch (Throwable th10) {
+                                                                                N = th10;
+                                                                                iArr = currentUserIds;
+                                                                                packageSetting = ps;
+                                                                                updatedUserIds2 = updatedUserIds3;
+                                                                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                                                changedInstallPermission2 = changedInstallPermission;
+                                                                                permissionCallback = callback;
+                                                                                while (true) {
+                                                                                    break;
+                                                                                }
+                                                                                throw N;
+                                                                            }
+                                                                        }
+                                                                        ps2 = ps;
+                                                                        iArr = currentUserIds;
+                                                                    } catch (Throwable th11) {
+                                                                        N = th11;
+                                                                        iArr = currentUserIds;
+                                                                        changedInstallPermission = changedInstallPermission2;
+                                                                        packageSetting = ps;
+                                                                        runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                                        updatedUserIds2 = updatedUserIds;
+                                                                        permissionCallback = callback;
+                                                                        while (true) {
+                                                                            break;
+                                                                        }
+                                                                        throw N;
+                                                                    }
+                                                                }
+                                                                ps2 = ps;
+                                                                iArr = currentUserIds;
+                                                                changedInstallPermission = changedInstallPermission2;
+                                                                i3 = grant2;
+                                                                updatedUserIds3 = updatedUserIds;
+                                                                changedInstallPermission2 = changedInstallPermission;
+                                                                break;
+                                                            default:
+                                                                ps2 = ps;
+                                                                iArr = currentUserIds;
+                                                                if (str != null) {
+                                                                    break;
+                                                                }
+                                                                if (PackageManagerService.DEBUG_PERMISSIONS) {
+                                                                    String str5 = TAG;
+                                                                    stringBuilder = new StringBuilder();
+                                                                    stringBuilder.append("Not granting permission ");
+                                                                    stringBuilder.append(str2);
+                                                                    stringBuilder.append(" to package ");
+                                                                    stringBuilder.append(packageR.packageName);
+                                                                    stringBuilder.append(" because it was previously installed without");
+                                                                    Slog.i(str5, stringBuilder.toString());
+                                                                    break;
+                                                                }
+                                                                break;
+                                                        }
+                                                    }
+                                                    ps2 = ps;
+                                                    iArr = currentUserIds;
+                                                    String str6;
+                                                    if (permissionsState.revokeInstallPermission(N2) != -1) {
+                                                        permissionsState.updatePermissionFlags(N2, -1, 255, 0);
+                                                        changedInstallPermission2 = true;
+                                                        try {
+                                                            str6 = TAG;
+                                                            StringBuilder stringBuilder4 = new StringBuilder();
+                                                            stringBuilder4.append("Un-granting permission ");
+                                                            stringBuilder4.append(str2);
+                                                            stringBuilder4.append(" from package ");
+                                                            stringBuilder4.append(packageR.packageName);
+                                                            stringBuilder4.append(" (protectionLevel=");
+                                                            stringBuilder4.append(N2.getProtectionLevel());
+                                                            stringBuilder4.append(" flags=0x");
+                                                            stringBuilder4.append(Integer.toHexString(packageR.applicationInfo.flags));
+                                                            stringBuilder4.append(")");
+                                                            Slog.i(str6, stringBuilder4.toString());
+                                                            updatedUserIds3 = updatedUserIds;
+                                                            i = i2 + 1;
+                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                            N2 = N3;
+                                                            isLegacySystemApp = z;
+                                                            currentUserIds = iArr;
+                                                            ps = ps2;
+                                                            permissionManagerService = this;
+                                                            permissionCallback = callback;
+                                                        } catch (Throwable th12) {
+                                                            N = th12;
+                                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                            updatedUserIds2 = updatedUserIds;
+                                                            permissionCallback = callback;
+                                                            while (true) {
+                                                                break;
+                                                            }
+                                                            throw N;
+                                                        }
+                                                    }
+                                                    if (N2.isAppOp() && PackageManagerService.DEBUG_PERMISSIONS && (str == null || str.equals(packageR.packageName))) {
+                                                        str6 = TAG;
+                                                        isLegacySystemApp = new StringBuilder();
+                                                        isLegacySystemApp.append("Not granting permission ");
+                                                        isLegacySystemApp.append(str2);
+                                                        isLegacySystemApp.append(" to package ");
+                                                        isLegacySystemApp.append(packageR.packageName);
+                                                        isLegacySystemApp.append(" (protectionLevel=");
+                                                        isLegacySystemApp.append(N2.getProtectionLevel());
+                                                        isLegacySystemApp.append(" flags=0x");
+                                                        isLegacySystemApp.append(Integer.toHexString(packageR.applicationInfo.flags));
+                                                        isLegacySystemApp.append(")");
+                                                        Slog.i(str6, isLegacySystemApp.toString());
+                                                    }
+                                                    updatedUserIds3 = updatedUserIds;
+                                                    changedInstallPermission2 = z2;
+                                                    i = i2 + 1;
+                                                    runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                                    N2 = N3;
+                                                    isLegacySystemApp = z;
+                                                    currentUserIds = iArr;
+                                                    ps = ps2;
+                                                    permissionManagerService = this;
+                                                    permissionCallback = callback;
+                                                }
+                                                z = isLegacySystemApp;
+                                            } catch (Throwable th13) {
+                                                N = th13;
+                                                z = isLegacySystemApp;
+                                                iArr = currentUserIds;
+                                                packageSetting = ps;
+                                                permName = runtimePermissionsRevoked2;
+                                                i = updatedUserIds;
+                                                changedInstallPermission2 = z2;
+                                                permissionCallback = callback;
+                                                while (true) {
+                                                    break;
+                                                }
+                                                throw N;
+                                            }
+                                            try {
+                                                if (PackageManagerService.DEBUG_PERMISSIONS) {
+                                                }
+                                                if (grant2 == 1) {
+                                                }
+                                            } catch (Throwable th14) {
+                                                N = th14;
+                                                permName = runtimePermissionsRevoked2;
+                                            }
+                                        } else {
+                                            if (PackageManagerService.DEBUG_PERMISSIONS) {
+                                                str2 = TAG;
+                                                stringBuilder3 = new StringBuilder();
+                                                stringBuilder3.append("Denying runtime-only permission ");
+                                                stringBuilder3.append(N2.getName());
+                                                stringBuilder3.append(" for package ");
+                                                stringBuilder3.append(packageR.packageName);
+                                                Log.i(str2, stringBuilder3.toString());
+                                            }
+                                            ps2 = ps;
+                                            z = isLegacySystemApp;
+                                            iArr = currentUserIds;
+                                            i2 = i;
+                                            updatedUserIds3 = updatedUserIds;
+                                            changedInstallPermission2 = z2;
+                                            i = i2 + 1;
+                                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                            N2 = N3;
+                                            isLegacySystemApp = z;
+                                            currentUserIds = iArr;
+                                            ps = ps2;
+                                            permissionManagerService = this;
+                                            permissionCallback = callback;
+                                        }
+                                    }
+                                    if (str != null) {
+                                        if (str.equals(packageR.packageName)) {
                                         }
                                         updatedUserIds3 = updatedUserIds;
-                                        changedInstallPermission2 = changedInstallPermission3;
+                                        changedInstallPermission2 = z2;
                                         i = i2 + 1;
                                         runtimePermissionsRevoked = runtimePermissionsRevoked2;
                                         N2 = N3;
@@ -1750,66 +1355,84 @@ public class PermissionManagerService {
                                         ps = ps2;
                                         permissionManagerService = this;
                                         permissionCallback = callback;
-                                    } catch (Throwable th14) {
-                                        N = th14;
-                                        z = isLegacySystemApp;
-                                        iArr = currentUserIds;
-                                        changedInstallPermission3 = changedInstallPermission2;
-                                        packageSetting = ps;
-                                        runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                        updatedUserIds2 = updatedUserIds;
-                                        permissionCallback = callback;
                                     }
+                                    if (PackageManagerService.DEBUG_PERMISSIONS) {
+                                        str2 = TAG;
+                                        stringBuilder = new StringBuilder();
+                                        stringBuilder.append("Unknown permission ");
+                                        stringBuilder.append(permName);
+                                        stringBuilder.append(" in package ");
+                                        stringBuilder.append(packageR.packageName);
+                                        Slog.i(str2, stringBuilder.toString());
+                                    }
+                                    updatedUserIds3 = updatedUserIds;
+                                    changedInstallPermission2 = z2;
+                                    i = i2 + 1;
+                                    runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                    N2 = N3;
+                                    isLegacySystemApp = z;
+                                    currentUserIds = iArr;
+                                    ps = ps2;
+                                    permissionManagerService = this;
+                                    permissionCallback = callback;
                                 } catch (Throwable th15) {
                                     N = th15;
                                     z = isLegacySystemApp;
                                     iArr = currentUserIds;
-                                    changedInstallPermission3 = changedInstallPermission2;
+                                    z2 = changedInstallPermission2;
                                     packageSetting = ps;
+                                    runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                                    updatedUserIds2 = updatedUserIds;
+                                    permissionCallback = callback;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw N;
                                 }
                             } catch (Throwable th16) {
                                 N = th16;
                                 z = isLegacySystemApp;
                                 iArr = currentUserIds;
-                                changedInstallPermission3 = changedInstallPermission2;
+                                z2 = changedInstallPermission2;
                                 packageSetting = ps;
-                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                updatedUserIds2 = updatedUserIds3;
-                            }
-                        } else {
-                            N3 = N2;
-                            ps2 = ps;
-                            z = isLegacySystemApp;
-                            iArr = currentUserIds;
-                            changedInstallPermission3 = changedInstallPermission2;
-                            updatedUserIds = updatedUserIds3;
-                            if (changedInstallPermission3 || replace) {
-                                packageSetting = ps2;
-                                if (!packageSetting.areInstallPermissionsFixed()) {
-                                    try {
-                                    } catch (Throwable th17) {
-                                        N = th17;
-                                        permissionCallback = callback;
-                                        while (true) {
-                                            break;
-                                        }
-                                        throw N;
-                                    }
-                                }
-                            }
-                            packageSetting = ps2;
-                            try {
-                            } catch (Throwable th18) {
-                                N = th18;
-                                runtimePermissionsRevoked = runtimePermissionsRevoked2;
-                                updatedUserIds2 = updatedUserIds;
-                                permissionCallback = callback;
-                                changedInstallPermission2 = changedInstallPermission3;
                                 while (true) {
                                     break;
                                 }
                                 throw N;
                             }
+                        }
+                        N3 = N2;
+                        ps2 = ps;
+                        z = isLegacySystemApp;
+                        iArr = currentUserIds;
+                        z2 = changedInstallPermission2;
+                        updatedUserIds = updatedUserIds3;
+                        if (z2 || replace) {
+                            packageSetting = ps2;
+                            if (!packageSetting.areInstallPermissionsFixed()) {
+                                try {
+                                } catch (Throwable th17) {
+                                    N = th17;
+                                    permissionCallback = callback;
+                                    while (true) {
+                                        break;
+                                    }
+                                    throw N;
+                                }
+                            }
+                        }
+                        packageSetting = ps2;
+                        try {
+                        } catch (Throwable th18) {
+                            N = th18;
+                            runtimePermissionsRevoked = runtimePermissionsRevoked2;
+                            updatedUserIds2 = updatedUserIds;
+                            permissionCallback = callback;
+                            changedInstallPermission2 = z2;
+                            while (true) {
+                                break;
+                            }
+                            throw N;
                         }
                     }
                 } catch (Throwable th19) {
@@ -1825,11 +1448,6 @@ public class PermissionManagerService {
             }
         }
         return;
-        permissionCallback = callback;
-        while (true) {
-            break;
-        }
-        throw N;
         permissionCallback = callback;
         while (true) {
             break;
@@ -2110,6 +1728,130 @@ public class PermissionManagerService {
         }
     }
 
+    /* JADX WARNING: Missing block: B:44:0x00ac, code skipped:
+            r0 = th;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private void grantRequestedRuntimePermissionsForUser(Package pkg, int userId, String[] grantedPermissions, int callingUid, PermissionCallback callback) {
+        Package packageR = pkg;
+        int i = userId;
+        String[] strArr = grantedPermissions;
+        PackageSetting ps = packageR.mExtras;
+        if (ps != null) {
+            String thisR;
+            PermissionsState permissionsState = ps.getPermissionsState();
+            boolean supportsRuntimePermissions = packageR.applicationInfo.targetSdkVersion >= 23;
+            boolean instantApp = this.mPackageManagerInt.isInstantApp(packageR.packageName, i);
+            Throwable th = packageR.requestedPermissions.iterator();
+            while (th.hasNext()) {
+                BasePermission bp;
+                thisR = (String) th.next();
+                synchronized (this.mLock) {
+                    try {
+                        bp = this.mSettings.getPermissionLocked(thisR);
+                    } finally {
+                        String str = thisR;
+                        while (true) {
+                        }
+                    }
+                }
+                if (bp != null && ((bp.isRuntime() || bp.isDevelopment()) && ((!instantApp || bp.isInstant()) && ((supportsRuntimePermissions || !bp.isRuntimeOnly()) && (strArr == null || ArrayUtils.contains(strArr, thisR)))))) {
+                    int flags = permissionsState.getPermissionFlags(thisR, i);
+                    if (!supportsRuntimePermissions) {
+                        if (this.mSettings.mPermissionReviewRequired && (flags & 64) != 0) {
+                            updatePermissionFlags(thisR, packageR.packageName, 64, 0, callingUid, i, callback);
+                        }
+                    } else if ((flags & 20) == 0) {
+                        String str2 = packageR.packageName;
+                        continue;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void grantRuntimePermission(String permName, String packageName, boolean overridePolicy, int callingUid, int userId, PermissionCallback callback) {
+        Throwable th;
+        int i;
+        Package pkg;
+        String str = permName;
+        String str2 = packageName;
+        int i2 = userId;
+        PermissionCallback permissionCallback = callback;
+        StringBuilder stringBuilder;
+        if (this.mUserManagerInt.exists(i2)) {
+            this.mContext.enforceCallingOrSelfPermission("android.permission.GRANT_RUNTIME_PERMISSIONS", "grantRuntimePermission");
+            enforceCrossUserPermission(callingUid, i2, true, true, false, "grantRuntimePermission");
+            int pkg2 = this.mPackageManagerInt.getPackage(str2);
+            int i3;
+            Package packageR;
+            if (pkg2 == null || pkg2.mExtras == null) {
+                i3 = callingUid;
+                packageR = pkg2;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Unknown package: ");
+                stringBuilder.append(str2);
+                throw new IllegalArgumentException(stringBuilder.toString());
+            }
+            BasePermission bp;
+            int i4 = this.mLock;
+            synchronized (i4) {
+                try {
+                    bp = this.mSettings.getPermissionLocked(str);
+                } finally {
+                    callingUid = 
+/*
+Method generation error in method: com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(java.lang.String, java.lang.String, boolean, int, int, com.android.server.pm.permission.PermissionManagerInternal$PermissionCallback):void, dex: 
+jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r24_2 'callingUid' int) = (r1_4 'pkg2' int), (r2_15 'i4' int) in method: com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(java.lang.String, java.lang.String, boolean, int, int, com.android.server.pm.permission.PermissionManagerInternal$PermissionCallback):void, dex: 
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeSynchronizedRegion(RegionGen.java:230)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:67)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
+	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
+	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
+	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
+	at jadx.core.codegen.ClassGen.addClassCode(ClassGen.java:111)
+	at jadx.core.codegen.ClassGen.makeClass(ClassGen.java:77)
+	at jadx.core.codegen.CodeGen.visit(CodeGen.java:10)
+	at jadx.core.ProcessClass.process(ProcessClass.java:38)
+	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
+	at jadx.api.JavaClass.decompile(JavaClass.java:62)
+	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
+Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only in fallback mode
+	at jadx.core.codegen.InsnGen.fallbackOnlyInsn(InsnGen.java:539)
+	at jadx.core.codegen.InsnGen.makeInsnBody(InsnGen.java:511)
+	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:222)
+	... 39 more
+
+*/
+
     private void revokeRuntimePermission(String permName, String packageName, boolean overridePolicy, int callingUid, int userId, PermissionCallback callback) {
         String str = permName;
         String str2 = packageName;
@@ -2289,13 +2031,13 @@ public class PermissionManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x003b, code:
+    /* JADX WARNING: Missing block: B:16:0x003b, code skipped:
             if (r9.mPackageManagerInt.filterAppAccess(r0, r12, r13) == false) goto L_0x003e;
      */
-    /* JADX WARNING: Missing block: B:17:0x003d, code:
+    /* JADX WARNING: Missing block: B:17:0x003d, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:19:0x004a, code:
+    /* JADX WARNING: Missing block: B:19:0x004a, code skipped:
             return r0.mExtras.getPermissionsState().getPermissionFlags(r10, r13);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2400,15 +2142,20 @@ public class PermissionManagerService {
             }
         }
         if (needsUpdate != null) {
-            for (BasePermission bp2 : needsUpdate) {
+            Iterator it2 = needsUpdate.iterator();
+            while (it2.hasNext()) {
+                BasePermission bp2 = (BasePermission) it2.next();
                 Package sourcePkg = this.mPackageManagerInt.getPackage(bp2.getSourcePackageName());
                 synchronized (this.mLock) {
                     if (sourcePkg != null) {
-                        if (sourcePkg.mExtras != null) {
-                            PackageSetting sourcePs = sourcePkg.mExtras;
-                            if (bp2.getSourcePackageSetting() == null) {
-                                bp2.setSourcePackageSetting(sourcePs);
+                        try {
+                            if (sourcePkg.mExtras != null) {
+                                PackageSetting sourcePs = sourcePkg.mExtras;
+                                if (bp2.getSourcePackageSetting() == null) {
+                                    bp2.setSourcePackageSetting(sourcePs);
+                                }
                             }
+                        } finally {
                         }
                     }
                     String str2 = TAG;
@@ -2452,15 +2199,20 @@ public class PermissionManagerService {
             }
         }
         if (needsUpdate != null) {
-            for (BasePermission bp2 : needsUpdate) {
+            Iterator it2 = needsUpdate.iterator();
+            while (it2.hasNext()) {
+                BasePermission bp2 = (BasePermission) it2.next();
                 Package sourcePkg = this.mPackageManagerInt.getPackage(bp2.getSourcePackageName());
                 synchronized (this.mLock) {
                     if (sourcePkg != null) {
-                        if (sourcePkg.mExtras != null) {
-                            PackageSetting sourcePs = sourcePkg.mExtras;
-                            if (bp2.getSourcePackageSetting() == null) {
-                                bp2.setSourcePackageSetting(sourcePs);
+                        try {
+                            if (sourcePkg.mExtras != null) {
+                                PackageSetting sourcePs = sourcePkg.mExtras;
+                                if (bp2.getSourcePackageSetting() == null) {
+                                    bp2.setSourcePackageSetting(sourcePs);
+                                }
                             }
+                        } finally {
                         }
                     }
                     String str2 = TAG;

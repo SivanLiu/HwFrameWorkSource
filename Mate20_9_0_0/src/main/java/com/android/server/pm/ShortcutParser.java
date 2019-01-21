@@ -57,8 +57,10 @@ public class ShortcutParser {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x02b7  */
-    /* JADX WARNING: Removed duplicated region for block: B:131:0x02b7  */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x02b7  */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x02b7  */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x02b7  */
+    /* JADX WARNING: Removed duplicated region for block: B:135:0x02b7  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private static List<ShortcutInfo> parseShortcutsOneFile(ShortcutService service, ActivityInfo activityInfo, String packageName, int userId, List<ShortcutInfo> result) throws IOException, XmlPullParserException {
         Throwable th;
@@ -102,6 +104,9 @@ public class ShortcutParser {
                         } catch (Throwable th2) {
                             th = th2;
                             result2 = result3;
+                            if (parser != null) {
+                            }
+                            throw th;
                         }
                     }
                     try {
@@ -200,69 +205,129 @@ public class ShortcutParser {
                             depth = depth2;
                             tag = tag2;
                         }
-                        if (type == 2 && !(depth == 1 && TAG_SHORTCUTS.equals(tag))) {
-                            if (depth == 2) {
-                                if (TAG_SHORTCUT.equals(tag)) {
-                                    int i = 1;
-                                    result2 = result3;
-                                    intents2 = intents;
-                                    depth2 = numShortcuts;
-                                    try {
-                                        si = parseShortcutAttributes(shortcutService, attrs2, packageName, activity2, userId, rank);
-                                        if (si != null) {
-                                            if (result2 != null) {
-                                                tag = result2.size() - 1;
-                                                while (tag >= null) {
-                                                    if (si.getId().equals(((ShortcutInfo) result2.get(tag)).getId())) {
-                                                        Log.e(TAG, "Duplicate shortcut ID detected. Skipping it.");
-                                                    } else {
-                                                        tag--;
+                        if (type == 2) {
+                            if (!(depth == 1 && TAG_SHORTCUTS.equals(tag))) {
+                                if (depth == 2) {
+                                    if (TAG_SHORTCUT.equals(tag)) {
+                                        int i = 1;
+                                        result2 = result3;
+                                        intents2 = intents;
+                                        depth2 = numShortcuts;
+                                        try {
+                                            si = parseShortcutAttributes(shortcutService, attrs2, packageName, activity2, userId, rank);
+                                            if (si != null) {
+                                                if (result2 != null) {
+                                                    tag = result2.size() - 1;
+                                                    while (tag >= null) {
+                                                        if (si.getId().equals(((ShortcutInfo) result2.get(tag)).getId())) {
+                                                            Log.e(TAG, "Duplicate shortcut ID detected. Skipping it.");
+                                                        } else {
+                                                            tag--;
+                                                        }
                                                     }
                                                 }
+                                                currentShortcut = si;
+                                                categories = null;
+                                                str = packageName;
+                                                intents = intents2;
+                                                result3 = result2;
+                                                numShortcuts = depth2;
+                                                activity = activity2;
+                                                attrs = attrs2;
+                                                activityInfo2 = activityInfo;
                                             }
-                                            currentShortcut = si;
-                                            categories = null;
+                                            intents = activity2;
+                                            attrs3 = attrs2;
                                             str = packageName;
+                                            activity = intents;
                                             intents = intents2;
                                             result3 = result2;
                                             numShortcuts = depth2;
-                                            activity = activity2;
-                                            attrs = attrs2;
                                             activityInfo2 = activityInfo;
+                                            attrs = attrs3;
+                                        } catch (Throwable th3) {
+                                            th = th3;
+                                            if (parser != null) {
+                                            }
+                                            throw th;
                                         }
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        if (parser != null) {
-                                        }
-                                        throw th;
                                     }
                                 }
-                            }
-                            str = tag;
-                            int i2 = type;
-                            result2 = result3;
-                            intents2 = intents;
-                            depth2 = numShortcuts;
-                            String str3;
-                            StringBuilder stringBuilder2;
-                            if (depth == 3 && "intent".equals(str)) {
-                                if (currentShortcut == null) {
-                                    intents = activity2;
-                                    attrs3 = attrs2;
-                                } else if (currentShortcut.isEnabled()) {
-                                    attrs3 = attrs2;
-                                    Intent intent = Intent.parseIntent(shortcutService.mContext.getResources(), parser, attrs3);
-                                    if (TextUtils.isEmpty(intent.getAction())) {
-                                        str3 = TAG;
-                                        stringBuilder2 = new StringBuilder();
-                                        stringBuilder2.append("Shortcut intent action must be provided. activity=");
+                                str = tag;
+                                int i2 = type;
+                                result2 = result3;
+                                intents2 = intents;
+                                depth2 = numShortcuts;
+                                String str3;
+                                StringBuilder stringBuilder2;
+                                if (depth == 3 && "intent".equals(str)) {
+                                    if (currentShortcut == null) {
                                         intents = activity2;
-                                        stringBuilder2.append(intents);
-                                        Log.e(str3, stringBuilder2.toString());
-                                        currentShortcut = null;
+                                        attrs3 = attrs2;
+                                    } else if (currentShortcut.isEnabled()) {
+                                        attrs3 = attrs2;
+                                        Intent intent = Intent.parseIntent(shortcutService.mContext.getResources(), parser, attrs3);
+                                        if (TextUtils.isEmpty(intent.getAction())) {
+                                            str3 = TAG;
+                                            stringBuilder2 = new StringBuilder();
+                                            stringBuilder2.append("Shortcut intent action must be provided. activity=");
+                                            intents = activity2;
+                                            stringBuilder2.append(intents);
+                                            Log.e(str3, stringBuilder2.toString());
+                                            currentShortcut = null;
+                                        } else {
+                                            intents = activity2;
+                                            intents2.add(intent);
+                                            str = packageName;
+                                            activity = intents;
+                                            intents = intents2;
+                                            result3 = result2;
+                                            numShortcuts = depth2;
+                                            activityInfo2 = activityInfo;
+                                            attrs = attrs3;
+                                        }
                                     } else {
                                         intents = activity2;
-                                        intents2.add(intent);
+                                        attrs3 = attrs2;
+                                    }
+                                    Log.e(TAG, "Ignoring excessive intent tag.");
+                                    str = packageName;
+                                    activity = intents;
+                                    intents = intents2;
+                                    result3 = result2;
+                                    numShortcuts = depth2;
+                                    activityInfo2 = activityInfo;
+                                    attrs = attrs3;
+                                } else {
+                                    intents = activity2;
+                                    attrs3 = attrs2;
+                                    if (depth == 3 && TAG_CATEGORIES.equals(str)) {
+                                        if (currentShortcut != null) {
+                                            if (currentShortcut.getCategories() == null) {
+                                                String name = parseCategories(shortcutService, attrs3);
+                                                if (TextUtils.isEmpty(name)) {
+                                                    str3 = TAG;
+                                                    stringBuilder2 = new StringBuilder();
+                                                    stringBuilder2.append("Empty category found. activity=");
+                                                    stringBuilder2.append(intents);
+                                                    Log.e(str3, stringBuilder2.toString());
+                                                } else {
+                                                    if (categories == null) {
+                                                        categories = new ArraySet();
+                                                    }
+                                                    categories.add(name);
+                                                }
+                                            }
+                                        }
+                                        str = packageName;
+                                        activity = intents;
+                                        intents = intents2;
+                                        result3 = result2;
+                                        numShortcuts = depth2;
+                                        activityInfo2 = activityInfo;
+                                        attrs = attrs3;
+                                    } else {
+                                        Log.w(TAG, String.format("Invalid tag '%s' found at depth %d", new Object[]{str, Integer.valueOf(depth)}));
                                         str = packageName;
                                         activity = intents;
                                         intents = intents2;
@@ -271,11 +336,7 @@ public class ShortcutParser {
                                         activityInfo2 = activityInfo;
                                         attrs = attrs3;
                                     }
-                                } else {
-                                    intents = activity2;
-                                    attrs3 = attrs2;
                                 }
-                                Log.e(TAG, "Ignoring excessive intent tag.");
                                 str = packageName;
                                 activity = intents;
                                 intents = intents2;
@@ -283,55 +344,11 @@ public class ShortcutParser {
                                 numShortcuts = depth2;
                                 activityInfo2 = activityInfo;
                                 attrs = attrs3;
-                            } else {
-                                intents = activity2;
-                                attrs3 = attrs2;
-                                if (depth == 3 && TAG_CATEGORIES.equals(str)) {
-                                    if (currentShortcut != null && currentShortcut.getCategories() == null) {
-                                        String name = parseCategories(shortcutService, attrs3);
-                                        if (TextUtils.isEmpty(name)) {
-                                            str3 = TAG;
-                                            stringBuilder2 = new StringBuilder();
-                                            stringBuilder2.append("Empty category found. activity=");
-                                            stringBuilder2.append(intents);
-                                            Log.e(str3, stringBuilder2.toString());
-                                        } else {
-                                            if (categories == null) {
-                                                categories = new ArraySet();
-                                            }
-                                            categories.add(name);
-                                        }
-                                    }
-                                    str = packageName;
-                                    activity = intents;
-                                    intents = intents2;
-                                    result3 = result2;
-                                    numShortcuts = depth2;
-                                    activityInfo2 = activityInfo;
-                                    attrs = attrs3;
-                                } else {
-                                    Log.w(TAG, String.format("Invalid tag '%s' found at depth %d", new Object[]{str, Integer.valueOf(depth)}));
-                                    str = packageName;
-                                    activity = intents;
-                                    intents = intents2;
-                                    result3 = result2;
-                                    numShortcuts = depth2;
-                                    activityInfo2 = activityInfo;
-                                    attrs = attrs3;
-                                }
                             }
-                            str = packageName;
-                            activity = intents;
-                            intents = intents2;
-                            result3 = result2;
-                            numShortcuts = depth2;
-                            activityInfo2 = activityInfo;
-                            attrs = attrs3;
-                        } else {
-                            result2 = result3;
-                            intents2 = intents;
-                            depth2 = numShortcuts;
                         }
+                        result2 = result3;
+                        intents2 = intents;
+                        depth2 = numShortcuts;
                         intents = activity2;
                         attrs3 = attrs2;
                         str = packageName;
@@ -344,6 +361,9 @@ public class ShortcutParser {
                     } catch (Throwable th4) {
                         th = th4;
                         result2 = result3;
+                        if (parser != null) {
+                        }
+                        throw th;
                     }
                 }
                 if (parser != null) {

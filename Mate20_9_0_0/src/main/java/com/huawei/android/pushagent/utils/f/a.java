@@ -1,155 +1,73 @@
 package com.huawei.android.pushagent.utils.f;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import android.os.Build;
+import com.huawei.android.pushagent.utils.b.b;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 public class a {
-    private SharedPreferences az;
+    private static void xv(Context context, int i, HashMap<Short, Object> hashMap) {
+        if (context == null || hashMap == null) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "startMonitor, map is null");
+            return;
+        }
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "startMonitor, eventId is " + i);
+        String tg = new b(context, "PushMonitor").tg(String.valueOf(i));
+        com.huawei.android.pushagent.model.flowcontrol.a.b bVar = new com.huawei.android.pushagent.model.flowcontrol.a.b(86400000, 2);
+        bVar.nh(tg);
+        if (bVar.ne(1)) {
+            com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "begin to startMonitor");
+            new Thread(new b(context, bVar, i, hashMap)).start();
+            return;
+        }
+        com.huawei.android.pushagent.utils.b.a.sv("PushLog3414", "can't report too many times");
+    }
 
-    private SharedPreferences ek(String str, String str2) {
-        File file = new File(str, str2 + ".xml");
+    public static void xt(Context context) {
+        HashMap hashMap = new HashMap();
+        hashMap.put(Short.valueOf((short) 0), String.valueOf(3414));
+        hashMap.put(Short.valueOf((short) 1), Build.MODEL);
+        xv(context, 907124001, hashMap);
+    }
+
+    public static void xs(Context context, String str) {
+        HashMap hashMap = new HashMap();
+        hashMap.put(Short.valueOf((short) 0), String.valueOf(3414));
+        hashMap.put(Short.valueOf((short) 1), str);
+        xv(context, 907124002, hashMap);
+    }
+
+    private static void xu(Context context, com.huawei.android.pushagent.model.flowcontrol.a.b bVar, int i, HashMap<Short, Object> hashMap) {
         try {
-            Constructor declaredConstructor = Class.forName("android.app.SharedPreferencesImpl").getDeclaredConstructor(new Class[]{File.class, Integer.TYPE});
-            declaredConstructor.setAccessible(true);
-            return (SharedPreferences) declaredConstructor.newInstance(new Object[]{file, Integer.valueOf(0)});
+            Class cls = Class.forName("android.util.IMonitor");
+            Class cls2 = Class.forName("android.util.IMonitor$EventStream");
+            Method declaredMethod = cls.getDeclaredMethod("openEventStream", new Class[]{Integer.TYPE});
+            Method declaredMethod2 = cls.getDeclaredMethod("closeEventStream", new Class[]{cls2});
+            Method declaredMethod3 = cls.getDeclaredMethod("sendEvent", new Class[]{cls2});
+            Object invoke = declaredMethod.invoke(cls, new Object[]{Integer.valueOf(i)});
+            if (invoke != null) {
+                for (Entry entry : hashMap.entrySet()) {
+                    short shortValue = ((Short) entry.getKey()).shortValue();
+                    Object value = entry.getValue();
+                    cls2.getDeclaredMethod("setParam", new Class[]{Short.TYPE, value.getClass()}).invoke(invoke, new Object[]{Short.valueOf(shortValue), value});
+                }
+                declaredMethod3.invoke(cls, new Object[]{invoke});
+                declaredMethod2.invoke(cls, new Object[]{invoke});
+                bVar.nd(1);
+                new b(context, "PushMonitor").tm(String.valueOf(i), bVar.ng());
+            }
         } catch (ClassNotFoundException e) {
-            c.eq("PushLog3413", e.toString());
-            return null;
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", " ClassNotFoundException startMonitor " + e.toString());
         } catch (NoSuchMethodException e2) {
-            c.eq("PushLog3413", e2.toString());
-            return null;
-        } catch (InstantiationException e3) {
-            c.eq("PushLog3413", e3.toString());
-            return null;
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", " NoSuchMethodException startMonitor " + e2.toString());
+        } catch (IllegalArgumentException e3) {
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", " IllegalArgumentException startMonitor " + e3.toString());
         } catch (IllegalAccessException e4) {
-            c.eq("PushLog3413", e4.toString());
-            return null;
-        } catch (IllegalArgumentException e5) {
-            c.eq("PushLog3413", e5.toString());
-            return null;
-        } catch (InvocationTargetException e6) {
-            c.eq("PushLog3413", e6.toString());
-            return null;
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", " IllegalAccessException startMonitor " + e4.toString());
+        } catch (Exception e5) {
+            com.huawei.android.pushagent.utils.b.a.su("PushLog3414", " Exception startMonitor " + e5.toString());
         }
-    }
-
-    public boolean eb(String str, boolean z) {
-        return this.az != null ? this.az.getBoolean(str, z) : z;
-    }
-
-    public String ec(String str) {
-        return this.az != null ? this.az.getString(str, "") : "";
-    }
-
-    public int getInt(String str, int i) {
-        return this.az != null ? this.az.getInt(str, i) : i;
-    }
-
-    public a(Context context, String str) {
-        if (context == null) {
-            throw new NullPointerException("context is null!");
-        }
-        this.az = ek("/data/misc/hwpush", str);
-    }
-
-    public boolean ea(String str, Object obj) {
-        if (this.az == null) {
-            return false;
-        }
-        Editor edit = this.az.edit();
-        if (obj instanceof String) {
-            edit.putString(str, String.valueOf(obj));
-        } else if ((obj instanceof Integer) || (obj instanceof Short) || (obj instanceof Byte)) {
-            edit.putInt(str, ((Integer) obj).intValue());
-        } else if (obj instanceof Long) {
-            edit.putLong(str, ((Long) obj).longValue());
-        } else if (obj instanceof Float) {
-            edit.putFloat(str, ((Float) obj).floatValue());
-        } else if (obj instanceof Double) {
-            edit.putFloat(str, (float) ((Double) obj).doubleValue());
-        } else if (obj instanceof Boolean) {
-            edit.putBoolean(str, ((Boolean) obj).booleanValue());
-        }
-        return edit.commit();
-    }
-
-    public boolean ee(String str, String str2) {
-        if (this.az == null) {
-            return false;
-        }
-        Editor edit = this.az.edit();
-        if (edit != null) {
-            return edit.putString(str, str2).commit();
-        }
-        return false;
-    }
-
-    public void ef(String str, Integer num) {
-        if (this.az != null) {
-            Editor edit = this.az.edit();
-            if (edit != null) {
-                edit.putInt(str, num.intValue()).commit();
-            }
-        }
-    }
-
-    public void ej(String str, boolean z) {
-        if (this.az != null) {
-            Editor edit = this.az.edit();
-            if (edit != null) {
-                edit.putBoolean(str, z).commit();
-            }
-        }
-    }
-
-    public void ei(Map<String, Object> map) {
-        for (Entry entry : map.entrySet()) {
-            ea((String) entry.getKey(), entry.getValue());
-        }
-    }
-
-    public boolean ed(String str) {
-        if (this.az == null || !this.az.contains(str)) {
-            return false;
-        }
-        return this.az.edit().remove(str).commit();
-    }
-
-    public boolean eg() {
-        if (this.az != null) {
-            Map all = this.az.getAll();
-            if (all != null && all.size() > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Map<String, ?> getAll() {
-        if (this.az != null) {
-            return this.az.getAll();
-        }
-        return new HashMap();
-    }
-
-    public boolean dz() {
-        if (this.az != null) {
-            return this.az.edit().clear().commit();
-        }
-        return false;
-    }
-
-    public int eh() {
-        if (this.az != null) {
-            return this.az.getAll().size();
-        }
-        return 0;
     }
 }

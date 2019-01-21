@@ -29,11 +29,11 @@ public class MemoryLockFile {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter: B:44:0x00f8} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter: B:44:0x00f8} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter: B:44:0x00f8} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter: B:44:0x00f8} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter: B:44:0x00f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter:B:44:0x00f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter:B:44:0x00f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter:B:44:0x00f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter:B:44:0x00f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x00f8 A:{SYNTHETIC, Splitter:B:44:0x00f8} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private PinnedFile pinFile(String fileToPin, long offset, long length, long maxSize) {
         ErrnoException e;
@@ -76,16 +76,6 @@ public class MemoryLockFile {
                         stringBuilder.append(e2.getMessage());
                         AwareLog.e(str, stringBuilder.toString());
                         if (fd2.valid()) {
-                            try {
-                                Os.close(fd2);
-                            } catch (ErrnoException e4) {
-                                ErrnoException errnoException = e4;
-                                String str4 = TAG;
-                                StringBuilder stringBuilder3 = new StringBuilder();
-                                stringBuilder3.append("Failed to close fd, error = ");
-                                stringBuilder3.append(e4.getMessage());
-                                AwareLog.e(str4, stringBuilder3.toString());
-                            }
                         }
                         return null;
                     }
@@ -105,11 +95,11 @@ public class MemoryLockFile {
                         Os.mlock(address, length2);
                         PinnedFile pinnedFile = pinnedFile;
                         length3 = length2;
-                    } catch (ErrnoException e5) {
-                        e4 = e5;
+                    } catch (ErrnoException e4) {
+                        e = e4;
                         fileDescriptor = fd2;
                         j = length2;
-                        e2 = e4;
+                        e2 = e;
                         str = TAG;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("Could not pin file ");
@@ -118,16 +108,26 @@ public class MemoryLockFile {
                         stringBuilder.append(e2.getMessage());
                         AwareLog.e(str, stringBuilder.toString());
                         if (fd2.valid()) {
+                            try {
+                                Os.close(fd2);
+                            } catch (ErrnoException e5) {
+                                ErrnoException errnoException = e5;
+                                String str4 = TAG;
+                                StringBuilder stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("Failed to close fd, error = ");
+                                stringBuilder3.append(e5.getMessage());
+                                AwareLog.e(str4, stringBuilder3.toString());
+                            }
                         }
                         return null;
                     }
                     try {
                         return new PinnedFile(address, length3, str2);
                     } catch (ErrnoException e6) {
-                        e4 = e6;
+                        e5 = e6;
                         j = length3;
                         fd2 = fd2;
-                        e2 = e4;
+                        e2 = e5;
                         str = TAG;
                         stringBuilder = new StringBuilder();
                         stringBuilder.append("Could not pin file ");
@@ -153,9 +153,9 @@ public class MemoryLockFile {
                     Os.close(fd2);
                     return null;
                 } catch (ErrnoException e7) {
-                    e4 = e7;
+                    e5 = e7;
                     j = length2;
-                    e2 = e4;
+                    e2 = e5;
                     str = TAG;
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("Could not pin file ");
@@ -168,10 +168,10 @@ public class MemoryLockFile {
                     return null;
                 }
             } catch (ErrnoException e8) {
-                e4 = e8;
+                e5 = e8;
                 fileDescriptor = fd2;
                 j = length;
-                e2 = e4;
+                e2 = e5;
                 str = TAG;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("Could not pin file ");
@@ -184,10 +184,10 @@ public class MemoryLockFile {
                 return null;
             }
         } catch (ErrnoException e9) {
-            e4 = e9;
+            e5 = e9;
             j = length;
             fd2 = fd;
-            e2 = e4;
+            e2 = e5;
             str = TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append("Could not pin file ");

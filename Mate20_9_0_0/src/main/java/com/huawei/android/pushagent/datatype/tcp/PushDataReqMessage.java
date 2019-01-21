@@ -3,9 +3,8 @@ package com.huawei.android.pushagent.datatype.tcp;
 import android.text.TextUtils;
 import com.huawei.android.pushagent.datatype.a.d;
 import com.huawei.android.pushagent.datatype.tcp.base.PushMessage;
-import com.huawei.android.pushagent.utils.a.f;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.utils.b.a;
+import com.huawei.android.pushagent.utils.e.c;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import org.json.JSONException;
@@ -19,15 +18,15 @@ public class PushDataReqMessage extends PushMessage {
     private JSONObject payload;
     private byte[] tokenBytes;
 
-    public static final byte jy() {
+    public static final byte ac() {
         return (byte) 68;
     }
 
     public PushDataReqMessage() {
-        super(jy());
+        super(ac());
     }
 
-    public byte[] jw() {
+    public byte[] aa() {
         if (this.mCookie == null || this.mCookie.length <= 0) {
             return new byte[0];
         }
@@ -36,11 +35,11 @@ public class PushDataReqMessage extends PushMessage {
         return bArr;
     }
 
-    public byte jv() {
+    public byte z() {
         return this.control;
     }
 
-    public byte[] ju() {
+    public byte[] y() {
         if (this.msgId == null || this.msgId.length <= 0) {
             return new byte[0];
         }
@@ -49,13 +48,13 @@ public class PushDataReqMessage extends PushMessage {
         return bArr;
     }
 
-    public byte[] is() {
+    public byte[] b() {
         return new byte[0];
     }
 
     public boolean isValid() {
         boolean z;
-        CharSequence pkgName = getPkgName();
+        String pkgName = getPkgName();
         if (this.tokenBytes == null || this.tokenBytes.length <= 0) {
             z = false;
         } else {
@@ -67,64 +66,64 @@ public class PushDataReqMessage extends PushMessage {
         } else {
             i = 1;
         }
-        if (z && !TextUtils.isEmpty(pkgName) && (i ^ 1) == 0 && jt().length != 0) {
+        if (z && !TextUtils.isEmpty(pkgName) && (i ^ 1) == 0 && x().length != 0) {
             return true;
         }
-        c.eq("PushLog3413", "token pkgName msgId msgBody exist null");
+        a.su("PushLog3414", "token pkgName msgId msgBody exist null");
         return false;
     }
 
-    public PushMessage jc(InputStream inputStream) {
-        d iy = iy(inputStream);
-        this.msgId = iy.kp(g.gy(iy.kp(1)[0]));
-        this.tokenBytes = iy.kp(g.gx(iy.kp(2)));
-        this.control = iy.kp(1)[0];
-        if (!iz(this.control)) {
+    public PushMessage a(InputStream inputStream) {
+        d e = e(inputStream);
+        this.msgId = e.ax(com.huawei.android.pushagent.utils.d.zs(e.ax(1)[0]));
+        this.tokenBytes = e.ax(com.huawei.android.pushagent.utils.d.yg(e.ax(2)));
+        this.control = e.ax(1)[0];
+        if (!h(this.control)) {
             return null;
         }
-        c.ep("PushLog3413", "control is: " + this.control);
+        a.sv("PushLog3414", "control is: " + this.control);
         if ((this.control & 32) == 32) {
-            int gx = g.gx(iy.kp(2));
-            c.ep("PushLog3413", "cookieLen is: " + gx);
-            this.mCookie = iy.kp(gx);
+            int yg = com.huawei.android.pushagent.utils.d.yg(e.ax(2));
+            a.sv("PushLog3414", "cookieLen is: " + yg);
+            this.mCookie = e.ax(yg);
         }
-        this.payload = ja(this.control, iy);
+        this.payload = f(this.control, e);
         return this;
     }
 
     public int getUserId() {
         if (this.payload == null) {
-            c.eq("PushLog3413", "payload is null");
+            a.su("PushLog3414", "payload is null");
             return 0;
         } else if (this.payload.has("userId")) {
             try {
                 return this.payload.getInt("userId");
             } catch (JSONException e) {
-                c.eq("PushLog3413", "fail to get userid from payload");
+                a.su("PushLog3414", "fail to get userid from payload");
             }
         } else {
-            c.eq("PushLog3413", "payload not has userid");
+            a.su("PushLog3414", "payload not has userid");
             return 0;
         }
     }
 
     public String getPkgName() {
         if (this.payload == null) {
-            c.eq("PushLog3413", "payload is null");
+            a.su("PushLog3414", "payload is null");
             return null;
         } else if (this.payload.has("pkgName")) {
             try {
                 return this.payload.getString("pkgName");
             } catch (JSONException e) {
-                c.eq("PushLog3413", "fail to get pkgname from payload");
+                a.su("PushLog3414", "fail to get pkgname from payload");
             }
         } else {
-            c.eq("PushLog3413", "payload not has pkgname");
+            a.su("PushLog3414", "payload not has pkgname");
             return null;
         }
     }
 
-    public byte[] js() {
+    public byte[] w() {
         if (this.tokenBytes == null || this.tokenBytes.length <= 0) {
             return new byte[0];
         }
@@ -133,25 +132,25 @@ public class PushDataReqMessage extends PushMessage {
         return bArr;
     }
 
-    public int jx() {
+    public int ab() {
         if (this.payload == null) {
-            c.eq("PushLog3413", "payload is null");
+            a.su("PushLog3414", "payload is null");
             return -1;
         } else if (this.payload.has("msgType")) {
             try {
                 return this.payload.getInt("msgType");
             } catch (JSONException e) {
-                c.eq("PushLog3413", "fail to get msgType from payload");
+                a.su("PushLog3414", "fail to get msgType from payload");
             }
         } else {
-            c.eq("PushLog3413", "payload not has msgType");
+            a.su("PushLog3414", "payload not has msgType");
             return -1;
         }
     }
 
-    public byte[] jt() {
+    public byte[] x() {
         if (this.payload == null) {
-            c.eq("PushLog3413", "payload is null");
+            a.su("PushLog3414", "payload is null");
             return new byte[0];
         }
         if (this.payload.has("msg")) {
@@ -161,17 +160,17 @@ public class PushDataReqMessage extends PushMessage {
                     return string.getBytes("UTF-8");
                 }
             } catch (JSONException e) {
-                c.eq("PushLog3413", "fail to get msg from payload");
+                a.su("PushLog3414", "fail to get msg from payload");
             } catch (UnsupportedEncodingException e2) {
-                c.eq("PushLog3413", "fail to get msg from payload, unsupport encoding type");
+                a.su("PushLog3414", "fail to get msg from payload, unsupport encoding type");
             }
         } else {
-            c.eq("PushLog3413", "payload not has msg");
+            a.su("PushLog3414", "payload not has msg");
         }
         return new byte[0];
     }
 
     public String toString() {
-        return "payload is" + f.u(this.payload);
+        return "payload is" + c.wi(this.payload);
     }
 }

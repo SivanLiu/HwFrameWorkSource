@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.os.SystemProperties;
 import android.text.TextUtils;
 import android.util.Slog;
+import com.android.server.rms.iaware.memory.utils.MemoryConstant;
 import com.android.server.security.core.IHwSecurityPlugin;
 import com.android.server.security.core.IHwSecurityPlugin.Creator;
 import com.android.server.wifipro.WifiProCommonUtils;
@@ -32,6 +33,7 @@ public class HwAntiMalPlugin extends Stub implements IHwSecurityPlugin {
     private static final boolean IS_CHINA_AREA = "CN".equalsIgnoreCase(SystemProperties.get(WifiProCommonUtils.KEY_PROP_LOCALE, ""));
     private static final boolean IS_DOMESTIC_RELEASE = "1".equalsIgnoreCase(SystemProperties.get("ro.logsystem.usertype", "3"));
     private static final boolean IS_ROOT = "0".equalsIgnoreCase(SystemProperties.get("ro.secure", "1"));
+    private static final boolean IS_TABLET = "tablet".equalsIgnoreCase(SystemProperties.get("ro.build.characteristics", MemoryConstant.MEM_SCENE_DEFAULT));
     private static final String MANAGE_USE_SECURITY = "com.huawei.permission.MANAGE_USE_SECURITY";
     private static final String TAG = "HwAntiMalPlugin";
     private static final boolean mAntimalProtection = "true".equalsIgnoreCase(SystemProperties.get("ro.product.antimal_protection", "true"));
@@ -85,9 +87,7 @@ public class HwAntiMalPlugin extends Stub implements IHwSecurityPlugin {
                 launcher = "com.huawei.android.launcher";
             }
             try {
-                if (this.mHwAntiMalStatus.isAllowedSetHomeActivityForAntiMal(this.mContext.getPackageManager().getPackageInfo(launcher, 0), 0, false)) {
-                    return false;
-                }
+                return !this.mHwAntiMalStatus.isAllowedSetHomeActivityForAntiMalInternal(this.mContext.getPackageManager().getPackageInfo(launcher, 0), 0, false);
             } catch (NameNotFoundException e) {
                 String str = TAG;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -102,9 +102,11 @@ public class HwAntiMalPlugin extends Stub implements IHwSecurityPlugin {
         } else if (!IS_DOMESTIC_RELEASE) {
             Slog.d(TAG, "Beta version !");
             return false;
-        } else if (type == 1) {
+        } else if (!IS_TABLET) {
             return this.mHwAntiMalStatus.isNeedRestrictForAntimal(true);
+        } else {
+            Slog.d(TAG, "Is tablet!");
+            return false;
         }
-        return true;
     }
 }

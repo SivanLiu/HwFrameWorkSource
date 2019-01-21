@@ -29,12 +29,12 @@ public class XMSSPrivateKey extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:15:0x00b6 in {6, 8, 11, 13, 14, 17} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -57,22 +57,17 @@ public class XMSSPrivateKey extends ASN1Object {
         r2 = java.math.BigInteger.valueOf(r2);
         r1 = r1.equals(r2);
         if (r1 == 0) goto L_0x00b7;
-    L_0x001c:
         r1 = r6.size();
         r2 = 3;
         r3 = 2;
         if (r1 == r3) goto L_0x0033;
-    L_0x0024:
         r1 = r6.size();
         if (r1 != r2) goto L_0x002b;
-    L_0x002a:
         goto L_0x0033;
-    L_0x002b:
         r6 = new java.lang.IllegalArgumentException;
         r0 = "key sequence wrong size";
         r6.<init>(r0);
         throw r6;
-    L_0x0033:
         r1 = 1;
         r4 = r6.getObjectAt(r1);
         r4 = org.bouncycastle.asn1.ASN1Sequence.getInstance(r4);
@@ -104,20 +99,16 @@ public class XMSSPrivateKey extends ASN1Object {
         r5.root = r0;
         r0 = r6.size();
         if (r0 != r2) goto L_0x00b4;
-    L_0x009d:
         r6 = r6.getObjectAt(r3);
         r6 = org.bouncycastle.asn1.ASN1TaggedObject.getInstance(r6);
         r6 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r6, r1);
         r6 = r6.getOctets();
         r6 = org.bouncycastle.util.Arrays.clone(r6);
-    L_0x00b1:
         r5.bdsState = r6;
         return;
-    L_0x00b4:
         r6 = 0;
         goto L_0x00b1;
         return;
-    L_0x00b7:
         r6 = new java.lang.IllegalArgumentException;
         r0 = "unknown version of sequence";
         r6.<init>(r0);

@@ -1,65 +1,70 @@
 package com.huawei.android.pushagent.model.prefs;
 
 import android.content.Context;
-import com.huawei.android.pushagent.utils.f.a;
-import com.huawei.android.pushagent.utils.f.c;
+import android.text.TextUtils;
+import com.huawei.android.pushagent.utils.b.b;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 public class j {
-    private static final byte[] gd = new byte[0];
-    private static j ge;
-    private final a gf;
+    private static final byte[] df = new byte[0];
+    private static j dg;
+    private final b dh;
 
     private j(Context context) {
-        this.gf = new a(context, "token_request_flag");
+        this.dh = new b(context, "pclient_request_info");
     }
 
-    public static j rb(Context context) {
-        return rg(context);
+    public static j lm(Context context) {
+        return lr(context);
     }
 
-    private static j rg(Context context) {
+    private static j lr(Context context) {
         j jVar;
-        synchronized (gd) {
-            if (ge == null) {
-                ge = new j(context);
+        synchronized (df) {
+            if (dg == null) {
+                dg = new j(context);
             }
-            jVar = ge;
+            jVar = dg;
         }
         return jVar;
     }
 
-    public boolean rd() {
-        try {
-            Map all = this.gf.getAll();
-            if (all == null) {
-                return false;
-            }
-            Iterable<Entry> entrySet = all.entrySet();
-            if (entrySet == null) {
-                return false;
-            }
-            for (Entry value : entrySet) {
-                if (((Boolean) value.getValue()).booleanValue()) {
-                    return true;
-                }
-            }
+    public boolean lq() {
+        return this.dh.tf();
+    }
+
+    public boolean ln(String str) {
+        if (TextUtils.isEmpty(str)) {
             return false;
-        } catch (Throwable e) {
-            c.es("PushLog3413", e.toString(), e);
         }
+        return this.dh.th(str, "true");
     }
 
-    public boolean rc(String str) {
-        return this.gf.eb(str, false);
+    public boolean remove(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return false;
+        }
+        return this.dh.ti(str);
     }
 
-    public void re(String str, boolean z) {
-        this.gf.ea(str, Boolean.valueOf(z));
+    public String lo(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        }
+        return this.dh.tg(str);
     }
 
-    public void rf(String str) {
-        this.gf.ed(str);
+    public Set<String> lp() {
+        Map all = this.dh.getAll();
+        if (all == null) {
+            return new HashSet();
+        }
+        Set keySet = all.keySet();
+        if (keySet == null) {
+            return new HashSet();
+        }
+        return keySet;
     }
 }

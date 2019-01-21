@@ -264,7 +264,7 @@ public class HwPCMultiWindowManager {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:35:0x0083, code:
+    /* JADX WARNING: Missing block: B:35:0x0083, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -302,7 +302,7 @@ public class HwPCMultiWindowManager {
         return isPortraitOnly(record, record.mRootActivityInfo.screenOrientation);
     }
 
-    /* JADX WARNING: Missing block: B:20:0x002f, code:
+    /* JADX WARNING: Missing block: B:20:0x002f, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

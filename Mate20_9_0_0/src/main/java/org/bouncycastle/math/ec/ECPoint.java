@@ -666,20 +666,20 @@ public abstract class ECPoint {
                 }
             }
             ECFieldElement eCFieldElement5 = this.zs[0];
-            subtract = eCPoint2.zs[0];
+            Object obj = eCPoint2.zs[0];
             boolean isOne3 = eCFieldElement5.isOne();
-            if (isOne3 || !eCFieldElement5.equals(subtract)) {
+            if (isOne3 || !eCFieldElement5.equals(obj)) {
                 ECFieldElement square;
                 if (!isOne3) {
                     ECFieldElement square2 = eCFieldElement5.square();
                     eCFieldElement3 = square2.multiply(eCFieldElement3);
                     eCFieldElement4 = square2.multiply(eCFieldElement5).multiply(eCFieldElement4);
                 }
-                boolean isOne4 = subtract.isOne();
+                boolean isOne4 = obj.isOne();
                 if (!isOne4) {
-                    square = subtract.square();
+                    square = obj.square();
                     eCFieldElement = square.multiply(eCFieldElement);
-                    eCFieldElement2 = square.multiply(subtract).multiply(eCFieldElement2);
+                    eCFieldElement2 = square.multiply(obj).multiply(eCFieldElement2);
                 }
                 eCFieldElement3 = eCFieldElement.subtract(eCFieldElement3);
                 eCFieldElement4 = eCFieldElement2.subtract(eCFieldElement4);
@@ -692,7 +692,7 @@ public abstract class ECPoint {
                     subtract3 = eCFieldElement4.square().add(multiply).subtract(two(eCFieldElement));
                     eCFieldElement = eCFieldElement.subtract(subtract3).multiplyMinusProduct(eCFieldElement4, multiply, eCFieldElement2);
                     eCFieldElement2 = !isOne3 ? eCFieldElement3.multiply(eCFieldElement5) : eCFieldElement3;
-                    subtract = !isOne4 ? eCFieldElement2.multiply(subtract) : eCFieldElement2;
+                    subtract = !isOne4 ? eCFieldElement2.multiply(obj) : eCFieldElement2;
                     if (subtract == eCFieldElement3) {
                         multiply = square;
                         if (coordinateSystem != 4) {
@@ -1166,20 +1166,20 @@ public abstract class ECPoint {
             return new byte[1];
         }
         ECPoint normalize = normalize();
-        Object encoded = normalize.getXCoord().getEncoded();
-        Object obj;
+        byte[] encoded = normalize.getXCoord().getEncoded();
+        byte[] bArr;
         if (z) {
-            obj = new byte[(encoded.length + 1)];
-            obj[0] = (byte) (normalize.getCompressionYTilde() ? 3 : 2);
-            System.arraycopy(encoded, 0, obj, 1, encoded.length);
-            return obj;
+            bArr = new byte[(encoded.length + 1)];
+            bArr[0] = (byte) (normalize.getCompressionYTilde() ? 3 : 2);
+            System.arraycopy(encoded, 0, bArr, 1, encoded.length);
+            return bArr;
         }
-        obj = normalize.getYCoord().getEncoded();
-        Object obj2 = new byte[((encoded.length + obj.length) + 1)];
-        obj2[0] = (byte) 4;
-        System.arraycopy(encoded, 0, obj2, 1, encoded.length);
-        System.arraycopy(obj, 0, obj2, encoded.length + 1, obj.length);
-        return obj2;
+        bArr = normalize.getYCoord().getEncoded();
+        byte[] bArr2 = new byte[((encoded.length + bArr.length) + 1)];
+        bArr2[0] = (byte) 4;
+        System.arraycopy(encoded, 0, bArr2, 1, encoded.length);
+        System.arraycopy(bArr, 0, bArr2, encoded.length + 1, bArr.length);
+        return bArr2;
     }
 
     public final ECFieldElement getRawXCoord() {
@@ -1219,9 +1219,9 @@ public abstract class ECPoint {
         if (length == 0) {
             return EMPTY_ZS;
         }
-        Object obj = new ECFieldElement[length];
-        System.arraycopy(this.zs, 0, obj, 0, length);
-        return obj;
+        ECFieldElement[] eCFieldElementArr = new ECFieldElement[length];
+        System.arraycopy(this.zs, 0, eCFieldElementArr, 0, length);
+        return eCFieldElementArr;
     }
 
     public int hashCode() {

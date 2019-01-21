@@ -3,6 +3,7 @@ package org.bouncycastle.jcajce.io;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import javax.crypto.Cipher;
 import org.bouncycastle.crypto.io.InvalidCipherTextIOException;
 
@@ -15,7 +16,7 @@ public class CipherOutputStream extends FilterOutputStream {
         this.cipher = cipher;
     }
 
-    /* JADX WARNING: Missing block: B:12:0x003a, code:
+    /* JADX WARNING: Missing block: B:12:0x003a, code skipped:
             if (r1 != null) goto L_0x003d;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -28,7 +29,7 @@ public class CipherOutputStream extends FilterOutputStream {
                 this.out.write(doFinal);
             }
             iOException = null;
-        } catch (Throwable e2) {
+        } catch (GeneralSecurityException e2) {
             iOException = new InvalidCipherTextIOException("Error during cipher finalisation", e2);
         } catch (Exception e3) {
             StringBuilder stringBuilder = new StringBuilder();

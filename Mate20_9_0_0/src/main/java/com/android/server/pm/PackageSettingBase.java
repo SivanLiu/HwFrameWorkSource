@@ -9,6 +9,7 @@ import android.util.ArraySet;
 import android.util.SparseArray;
 import android.util.proto.ProtoOutputStream;
 import com.android.internal.annotations.VisibleForTesting;
+import com.android.server.pm.permission.PermissionsState;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +52,10 @@ public abstract class PackageSettingBase extends SettingBase {
     IntentFilterVerificationInfo verificationInfo;
     long versionCode;
     String volumeUuid;
+
+    public /* bridge */ /* synthetic */ PermissionsState getPermissionsState() {
+        return super.getPermissionsState();
+    }
 
     PackageSettingBase(String name, String realName, File codePath, File resourcePath, String legacyNativeLibraryPathString, String primaryCpuAbiString, String secondaryCpuAbiString, String cpuAbiOverrideString, long pVersionCode, int pkgFlags, int pkgPrivateFlags, String parentPackageName, List<String> childPackageNames, String[] usesStaticLibraries, long[] usesStaticLibrariesVersions) {
         List<String> list = childPackageNames;

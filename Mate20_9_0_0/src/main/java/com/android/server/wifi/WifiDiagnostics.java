@@ -537,14 +537,6 @@ class WifiDiagnostics extends BaseWifiDiagnostics {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0052 A:{Splitter: B:1:0x0005, ExcHandler: java.lang.InterruptedException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x0052, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0053, code:
-            r7.mLog.dump("Exception while capturing logcat: %").c(r1.toString()).flush();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private ArrayList<String> getLogcat(int maxLines) {
         ArrayList<String> lines = new ArrayList(maxLines);
         try {
@@ -570,7 +562,8 @@ class WifiDiagnostics extends BaseWifiDiagnostics {
                 lines.add(line);
             }
             process.waitFor();
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
+            this.mLog.dump("Exception while capturing logcat: %").c(e.toString()).flush();
         }
         return lines;
     }

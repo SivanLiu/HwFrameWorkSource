@@ -409,6 +409,8 @@ public class HwAdminCache {
                         break;
                     }
                     break;
+                default:
+                    break;
             }
             switch (z) {
                 case false:
@@ -518,6 +520,8 @@ public class HwAdminCache {
                     break;
                 case true:
                     this.disabledAndroidAnimation = bundle;
+                    break;
+                default:
                     break;
             }
         }
@@ -678,6 +682,8 @@ public class HwAdminCache {
                         break;
                     }
                     break;
+                default:
+                    break;
             }
             switch (obj) {
                 case null:
@@ -754,6 +760,8 @@ public class HwAdminCache {
                     break;
                 case 24:
                     result = this.disabledAndroidAnimation;
+                    break;
+                default:
                     break;
             }
         }

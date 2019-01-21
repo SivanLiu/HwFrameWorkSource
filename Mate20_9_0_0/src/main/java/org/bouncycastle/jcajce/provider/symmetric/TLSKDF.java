@@ -122,26 +122,26 @@ public class TLSKDF {
     }
 
     private static byte[] PRF_legacy(TLSKeyMaterialSpec tLSKeyMaterialSpec) {
-        Mac hMac = new HMac(DigestFactory.createMD5());
-        Mac hMac2 = new HMac(DigestFactory.createSHA1());
+        HMac hMac = new HMac(DigestFactory.createMD5());
+        HMac hMac2 = new HMac(DigestFactory.createSHA1());
         byte[] concatenate = Arrays.concatenate(Strings.toByteArray(tLSKeyMaterialSpec.getLabel()), tLSKeyMaterialSpec.getSeed());
-        Object secret = tLSKeyMaterialSpec.getSecret();
+        byte[] secret = tLSKeyMaterialSpec.getSecret();
         int length = (secret.length + 1) / 2;
-        Object obj = new byte[length];
-        Object obj2 = new byte[length];
+        byte[] bArr = new byte[length];
+        byte[] bArr2 = new byte[length];
         int i = 0;
-        System.arraycopy(secret, 0, obj, 0, length);
-        System.arraycopy(secret, secret.length - length, obj2, 0, length);
+        System.arraycopy(secret, 0, bArr, 0, length);
+        System.arraycopy(secret, secret.length - length, bArr2, 0, length);
         int length2 = tLSKeyMaterialSpec.getLength();
-        byte[] bArr = new byte[length2];
-        byte[] bArr2 = new byte[length2];
-        hmac_hash(hMac, obj, concatenate, bArr);
-        hmac_hash(hMac2, obj2, concatenate, bArr2);
+        secret = new byte[length2];
+        byte[] bArr3 = new byte[length2];
+        hmac_hash(hMac, bArr, concatenate, secret);
+        hmac_hash(hMac2, bArr2, concatenate, bArr3);
         while (i < length2) {
-            bArr[i] = (byte) (bArr[i] ^ bArr2[i]);
+            secret[i] = (byte) (secret[i] ^ bArr3[i]);
             i++;
         }
-        return bArr;
+        return secret;
     }
 
     private static void hmac_hash(Mac mac, byte[] bArr, byte[] bArr2, byte[] bArr3) {
@@ -149,19 +149,19 @@ public class TLSKDF {
         int macSize = mac.getMacSize();
         int length = ((bArr3.length + macSize) - 1) / macSize;
         byte[] bArr4 = new byte[mac.getMacSize()];
-        Object obj = new byte[mac.getMacSize()];
-        byte[] bArr5 = bArr2;
+        byte[] bArr5 = new byte[mac.getMacSize()];
+        byte[] bArr6 = bArr2;
         int i = 0;
         while (i < length) {
-            mac.update(bArr5, 0, bArr5.length);
+            mac.update(bArr6, 0, bArr6.length);
             mac.doFinal(bArr4, 0);
             mac.update(bArr4, 0, bArr4.length);
             mac.update(bArr2, 0, bArr2.length);
-            mac.doFinal(obj, 0);
+            mac.doFinal(bArr5, 0);
             int i2 = macSize * i;
-            System.arraycopy(obj, 0, bArr3, i2, Math.min(macSize, bArr3.length - i2));
+            System.arraycopy(bArr5, 0, bArr3, i2, Math.min(macSize, bArr3.length - i2));
             i++;
-            bArr5 = bArr4;
+            bArr6 = bArr4;
         }
     }
 }

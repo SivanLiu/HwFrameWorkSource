@@ -1,46 +1,71 @@
 package com.huawei.android.pushagent.model.c;
 
 import android.content.Context;
-import android.text.TextUtils;
-import com.huawei.android.pushagent.datatype.http.server.TokenApplyReq;
-import com.huawei.android.pushagent.datatype.http.server.TokenApplyRsp;
-import com.huawei.android.pushagent.model.prefs.k;
-import com.huawei.android.pushagent.utils.c.a;
-import org.json.JSONException;
+import android.content.Intent;
+import com.huawei.android.pushagent.b.a;
+import com.huawei.android.pushagent.datatype.a.b;
+import com.huawei.android.pushagent.utils.d;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-public class c extends a<TokenApplyRsp> {
-    private TokenApplyReq hj;
+public class c {
+    private static c fp = new c();
+    private ArrayList<b> fo = new ArrayList();
 
-    public c(Context context, TokenApplyReq tokenApplyReq) {
-        super(context);
-        this.hj = tokenApplyReq;
+    private c() {
     }
 
-    protected String yt() {
-        String yw = a.yw("pushtrs.push.hicloud.com", k.rh(yq()).getBelongId());
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("https://").append(yw).append("/PushTokenServer/v4/pushtoken/apply");
-        com.huawei.android.pushagent.utils.f.c.er("PushLog3413", "url:" + stringBuffer.toString());
-        return stringBuffer.toString();
+    public static c po() {
+        return fp;
     }
 
-    protected int yr() {
-        return 5222;
+    public void pr(String str, String str2) {
+        b bVar = new b();
+        bVar.setPkgName(str);
+        bVar.ar(str2);
+        bVar.aq(System.currentTimeMillis());
+        ps(bVar);
     }
 
-    protected String ys() {
-        try {
-            return a.bo(this.hj);
-        } catch (JSONException e) {
-            com.huawei.android.pushagent.utils.f.c.eq("PushLog3413", "fail to get reqContent");
-            return null;
+    private void ps(b bVar) {
+        if (this.fo.size() >= 50) {
+            this.fo.remove(0);
+        }
+        this.fo.add(bVar);
+    }
+
+    public void pp(Context context, String str) {
+        Iterator it = this.fo.iterator();
+        while (it.hasNext()) {
+            if (str.equals(((b) it.next()).ao())) {
+                a.abc(90, str);
+                it.remove();
+                break;
+            }
+        }
+        if (this.fo.isEmpty()) {
+            com.huawei.android.pushagent.utils.tools.a.sc(context, "com.huawei.android.push.intent.MSG_RSP_TIMEOUT");
         }
     }
 
-    protected TokenApplyRsp yu(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
+    public void pq(Context context) {
+        long currentTimeMillis = System.currentTimeMillis();
+        long gu = com.huawei.android.pushagent.model.prefs.a.ff(context).gu();
+        Iterator it = this.fo.iterator();
+        while (it.hasNext()) {
+            b bVar = (b) it.next();
+            if (currentTimeMillis - bVar.an() > gu) {
+                String ao = bVar.ao();
+                if (d.zk(context, bVar.ap())) {
+                    a.abc(92, ao);
+                } else {
+                    a.abc(91, ao);
+                }
+                it.remove();
+            }
         }
-        return (TokenApplyRsp) a.br(str, TokenApplyRsp.class, new Class[0]);
+        if (!this.fo.isEmpty()) {
+            com.huawei.android.pushagent.utils.tools.a.sa(context, new Intent("com.huawei.android.push.intent.MSG_RSP_TIMEOUT").setPackage(context.getPackageName()), com.huawei.android.pushagent.model.prefs.a.ff(context).gu());
+        }
     }
 }

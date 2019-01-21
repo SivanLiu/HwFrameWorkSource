@@ -8,6 +8,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.operator.DigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Arrays;
 
 public class CertificateStatus {
@@ -34,7 +35,7 @@ public class CertificateStatus {
                 DigestCalculator digestCalculator = digestCalculatorProvider.get(find);
                 CMPUtil.derEncodeToStream(x509CertificateHolder.toASN1Structure(), digestCalculator.getOutputStream());
                 return Arrays.areEqual(this.certStatus.getCertHash().getOctets(), digestCalculator.getDigest());
-            } catch (Throwable e) {
+            } catch (OperatorCreationException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to create digester: ");
                 stringBuilder.append(e.getMessage());

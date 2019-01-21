@@ -59,13 +59,13 @@ public class CipherSpi extends BaseCipherSpi {
     private byte[] getOutput() throws BadPaddingException {
         try {
             return this.cipher.doFinal();
-        } catch (final InvalidCipherTextException e) {
+        } catch (InvalidCipherTextException e) {
             throw new BadPaddingException("unable to decrypt block") {
                 public synchronized Throwable getCause() {
                     return e;
                 }
             };
-        } catch (Throwable e2) {
+        } catch (ArrayIndexOutOfBoundsException e2) {
             throw new BadBlockException("unable to decrypt block", e2);
         }
     }
@@ -189,12 +189,12 @@ public class CipherSpi extends BaseCipherSpi {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:34:0x00d9 in {2, 4, 7, 10, 13, 15, 18, 21, 24, 27, 30, 33, 36} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -208,19 +208,15 @@ public class CipherSpi extends BaseCipherSpi {
         r1 = "NOPADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0019;
-    L_0x000c:
         r5 = new org.bouncycastle.crypto.BufferedAsymmetricBlockCipher;
         r0 = new org.bouncycastle.crypto.engines.ElGamalEngine;
         r0.<init>();
         r5.<init>(r0);
-    L_0x0016:
         r4.cipher = r5;
         return;
-    L_0x0019:
         r1 = "PKCS1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0031;
-    L_0x0021:
         r5 = new org.bouncycastle.crypto.BufferedAsymmetricBlockCipher;
         r0 = new org.bouncycastle.crypto.encodings.PKCS1Encoding;
         r1 = new org.bouncycastle.crypto.engines.ElGamalEngine;
@@ -228,11 +224,9 @@ public class CipherSpi extends BaseCipherSpi {
         r0.<init>(r1);
         r5.<init>(r0);
         goto L_0x0016;
-    L_0x0031:
         r1 = "ISO9796-1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0049;
-    L_0x0039:
         r5 = new org.bouncycastle.crypto.BufferedAsymmetricBlockCipher;
         r0 = new org.bouncycastle.crypto.encodings.ISO9796d1Encoding;
         r1 = new org.bouncycastle.crypto.engines.ElGamalEngine;
@@ -240,20 +234,15 @@ public class CipherSpi extends BaseCipherSpi {
         r0.<init>(r1);
         r5.<init>(r0);
         goto L_0x0016;
-    L_0x0049:
         r1 = "OAEPPADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0057;
-    L_0x0051:
         r5 = javax.crypto.spec.OAEPParameterSpec.DEFAULT;
-    L_0x0053:
         r4.initFromSpec(r5);
         return;
-    L_0x0057:
         r1 = "OAEPWITHMD5ANDMGF1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0072;
-    L_0x005f:
         r5 = new javax.crypto.spec.OAEPParameterSpec;
         r0 = "MD5";
         r1 = "MGF1";
@@ -263,17 +252,13 @@ public class CipherSpi extends BaseCipherSpi {
         r3 = javax.crypto.spec.PSource.PSpecified.DEFAULT;
         r5.<init>(r0, r1, r2, r3);
         goto L_0x0053;
-    L_0x0072:
         r1 = "OAEPWITHSHA1ANDMGF1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x007b;
-    L_0x007a:
         goto L_0x0051;
-    L_0x007b:
         r1 = "OAEPWITHSHA224ANDMGF1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0096;
-    L_0x0083:
         r5 = new javax.crypto.spec.OAEPParameterSpec;
         r0 = "SHA-224";
         r1 = "MGF1";
@@ -283,11 +268,9 @@ public class CipherSpi extends BaseCipherSpi {
         r3 = javax.crypto.spec.PSource.PSpecified.DEFAULT;
         r5.<init>(r0, r1, r2, r3);
         goto L_0x0053;
-    L_0x0096:
         r1 = "OAEPWITHSHA256ANDMGF1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x00ac;
-    L_0x009e:
         r5 = new javax.crypto.spec.OAEPParameterSpec;
         r0 = "SHA-256";
         r1 = "MGF1";
@@ -295,11 +278,9 @@ public class CipherSpi extends BaseCipherSpi {
         r3 = javax.crypto.spec.PSource.PSpecified.DEFAULT;
         r5.<init>(r0, r1, r2, r3);
         goto L_0x0053;
-    L_0x00ac:
         r1 = "OAEPWITHSHA384ANDMGF1PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x00c2;
-    L_0x00b4:
         r5 = new javax.crypto.spec.OAEPParameterSpec;
         r0 = "SHA-384";
         r1 = "MGF1";
@@ -307,11 +288,9 @@ public class CipherSpi extends BaseCipherSpi {
         r3 = javax.crypto.spec.PSource.PSpecified.DEFAULT;
         r5.<init>(r0, r1, r2, r3);
         goto L_0x0053;
-    L_0x00c2:
         r1 = "OAEPWITHSHA512ANDMGF1PADDING";
         r0 = r0.equals(r1);
         if (r0 == 0) goto L_0x00da;
-    L_0x00ca:
         r5 = new javax.crypto.spec.OAEPParameterSpec;
         r0 = "SHA-512";
         r1 = "MGF1";
@@ -320,7 +299,6 @@ public class CipherSpi extends BaseCipherSpi {
         r5.<init>(r0, r1, r2, r3);
         goto L_0x0053;
         return;
-    L_0x00da:
         r0 = new javax.crypto.NoSuchPaddingException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();

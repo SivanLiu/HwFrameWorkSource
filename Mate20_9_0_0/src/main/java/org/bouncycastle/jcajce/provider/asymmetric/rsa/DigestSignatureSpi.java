@@ -20,7 +20,6 @@ import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
-import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD2Digest;
 import org.bouncycastle.crypto.digests.MD4Digest;
@@ -30,6 +29,7 @@ import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.digests.RIPEMD256Digest;
 import org.bouncycastle.crypto.encodings.PKCS1Encoding;
 import org.bouncycastle.crypto.engines.RSABlindedEngine;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.DigestFactory;
 import org.bouncycastle.util.Arrays;
 
@@ -176,7 +176,7 @@ public class DigestSignatureSpi extends SignatureSpi {
 
     protected void engineInitSign(PrivateKey privateKey) throws InvalidKeyException {
         if (privateKey instanceof RSAPrivateKey) {
-            CipherParameters generatePrivateKeyParameter = RSAUtil.generatePrivateKeyParameter((RSAPrivateKey) privateKey);
+            RSAKeyParameters generatePrivateKeyParameter = RSAUtil.generatePrivateKeyParameter((RSAPrivateKey) privateKey);
             this.digest.reset();
             this.cipher.init(true, generatePrivateKeyParameter);
             return;
@@ -190,7 +190,7 @@ public class DigestSignatureSpi extends SignatureSpi {
 
     protected void engineInitVerify(PublicKey publicKey) throws InvalidKeyException {
         if (publicKey instanceof RSAPublicKey) {
-            CipherParameters generatePublicKeyParameter = RSAUtil.generatePublicKeyParameter((RSAPublicKey) publicKey);
+            RSAKeyParameters generatePublicKeyParameter = RSAUtil.generatePublicKeyParameter((RSAPublicKey) publicKey);
             this.digest.reset();
             this.cipher.init(false, generatePublicKeyParameter);
             return;

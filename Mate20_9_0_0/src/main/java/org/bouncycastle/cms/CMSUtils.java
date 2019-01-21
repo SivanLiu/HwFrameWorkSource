@@ -112,26 +112,26 @@ class CMSUtils {
     }
 
     static List getAttributeCertificatesFromStore(Store store) throws CMSException {
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         try {
             for (X509AttributeCertificateHolder toASN1Structure : store.getMatches(null)) {
                 arrayList.add(new DERTaggedObject(false, 2, toASN1Structure.toASN1Structure()));
             }
             return arrayList;
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             throw new CMSException("error processing certs", e);
         }
     }
 
     static List getCRLsFromStore(Store store) throws CMSException {
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         try {
             for (Object next : store.getMatches(null)) {
                 Object next2;
                 if (next2 instanceof X509CRLHolder) {
                     next2 = ((X509CRLHolder) next2).toASN1Structure();
                 } else if (next2 instanceof OtherRevocationInfoFormat) {
-                    ASN1Encodable instance = OtherRevocationInfoFormat.getInstance(next2);
+                    OtherRevocationInfoFormat instance = OtherRevocationInfoFormat.getInstance(next2);
                     validateInfoFormat(instance);
                     arrayList.add(new DERTaggedObject(false, 1, instance));
                 } else if (!(next2 instanceof ASN1TaggedObject)) {
@@ -139,27 +139,27 @@ class CMSUtils {
                 arrayList.add(next2);
             }
             return arrayList;
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             throw new CMSException("error processing certs", e);
         }
     }
 
     static List getCertificatesFromStore(Store store) throws CMSException {
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         try {
             for (X509CertificateHolder toASN1Structure : store.getMatches(null)) {
                 arrayList.add(toASN1Structure.toASN1Structure());
             }
             return arrayList;
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             throw new CMSException("error processing certs", e);
         }
     }
 
     static Collection getOthersFromStore(ASN1ObjectIdentifier aSN1ObjectIdentifier, Store store) {
-        Collection arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (ASN1Encodable otherRevocationInfoFormat : store.getMatches(null)) {
-            ASN1Encodable otherRevocationInfoFormat2 = new OtherRevocationInfoFormat(aSN1ObjectIdentifier, otherRevocationInfoFormat);
+            OtherRevocationInfoFormat otherRevocationInfoFormat2 = new OtherRevocationInfoFormat(aSN1ObjectIdentifier, otherRevocationInfoFormat);
             validateInfoFormat(otherRevocationInfoFormat2);
             arrayList.add(new DERTaggedObject(false, 1, otherRevocationInfoFormat2));
         }
@@ -225,12 +225,12 @@ class CMSUtils {
                 return instance;
             }
             throw new CMSException("No content found.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new CMSException("IOException reading content.", e);
-        } catch (Exception e2) {
+        } catch (ClassCastException e2) {
             throw new CMSException("Malformed content.", e2);
-        } catch (Exception e22) {
-            throw new CMSException("Malformed content.", e22);
+        } catch (IllegalArgumentException e3) {
+            throw new CMSException("Malformed content.", e3);
         }
     }
 

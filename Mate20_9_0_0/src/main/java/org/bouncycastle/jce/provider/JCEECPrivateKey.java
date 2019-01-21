@@ -105,12 +105,12 @@ public class JCEECPrivateKey implements ECPrivateKey, org.bouncycastle.jce.inter
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x003d in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -131,7 +131,6 @@ public class JCEECPrivateKey implements ECPrivateKey, org.bouncycastle.jce.inter
         r1.d = r2;
         r2 = r3.getParams();
         if (r2 == 0) goto L_0x003b;
-    L_0x001c:
         r2 = r3.getParams();
         r2 = r2.getCurve();
         r0 = r3.getParams();
@@ -139,10 +138,8 @@ public class JCEECPrivateKey implements ECPrivateKey, org.bouncycastle.jce.inter
         r2 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertCurve(r2, r0);
         r3 = r3.getParams();
         r2 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertSpec(r2, r3);
-    L_0x0038:
         r1.ecSpec = r2;
         return;
-    L_0x003b:
         r2 = 0;
         goto L_0x0038;
         return;
@@ -258,7 +255,7 @@ public class JCEECPrivateKey implements ECPrivateKey, org.bouncycastle.jce.inter
     }
 
     public byte[] getEncoded() {
-        X962Parameters x962Parameters;
+        ASN1Encodable x962Parameters;
         if (this.ecSpec instanceof ECNamedCurveSpec) {
             ASN1ObjectIdentifier namedCurveOid = ECUtil.getNamedCurveOid(((ECNamedCurveSpec) this.ecSpec).getName());
             if (namedCurveOid == null) {

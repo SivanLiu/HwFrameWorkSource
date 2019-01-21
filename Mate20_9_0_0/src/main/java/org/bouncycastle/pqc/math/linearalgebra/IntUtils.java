@@ -5,20 +5,20 @@ public final class IntUtils {
     }
 
     public static int[] clone(int[] iArr) {
-        Object obj = new int[iArr.length];
-        System.arraycopy(iArr, 0, obj, 0, iArr.length);
-        return obj;
+        int[] iArr2 = new int[iArr.length];
+        System.arraycopy(iArr, 0, iArr2, 0, iArr.length);
+        return iArr2;
     }
 
     public static boolean equals(int[] iArr, int[] iArr2) {
         if (iArr.length != iArr2.length) {
             return false;
         }
-        boolean z = true;
+        int i = 1;
         for (int length = iArr.length - 1; length >= 0; length--) {
-            z &= iArr[length] == iArr2[length] ? 1 : 0;
+            i &= iArr[length] == iArr2[length] ? 1 : 0;
         }
-        return z;
+        return i;
     }
 
     public static void fill(int[] iArr, int i) {
@@ -61,9 +61,9 @@ public final class IntUtils {
 
     public static int[] subArray(int[] iArr, int i, int i2) {
         i2 -= i;
-        Object obj = new int[i2];
-        System.arraycopy(iArr, i, obj, 0, i2);
-        return obj;
+        int[] iArr2 = new int[i2];
+        System.arraycopy(iArr, i, iArr2, 0, i2);
+        return iArr2;
     }
 
     public static String toHexString(int[] iArr) {

@@ -75,6 +75,10 @@ public class AppWindowContainerController extends WindowContainerController<AppW
         }
     }
 
+    public /* bridge */ /* synthetic */ void onOverrideConfigurationChanged(Configuration configuration) {
+        super.onOverrideConfigurationChanged(configuration);
+    }
+
     static {
         sSkipStartingWindowActivitys.add("com.tencent.mm/.plugin.voip.ui.VideoActivity");
         sSkipStartingWindowActivitys.add("com.tencent.mobileqq/com.tencent.av.ui.VideoInviteFull");
@@ -108,26 +112,26 @@ public class AppWindowContainerController extends WindowContainerController<AppW
         this.mOnWindowsVisible = new -$$Lambda$AppWindowContainerController$BD6wMjkwgPM5dckzkeLRiPrmx9Y(this);
         this.mOnWindowsGone = new -$$Lambda$AppWindowContainerController$mZqlV7Ety8-HHzaQXVEl4hu-8mc(this);
         this.mAddStartingWindow = new Runnable() {
-            /* JADX WARNING: Removed duplicated region for block: B:31:0x0064  */
-            /* JADX WARNING: Missing block: B:10:0x002b, code:
+            /* JADX WARNING: Removed duplicated region for block: B:32:0x0064  */
+            /* JADX WARNING: Missing block: B:10:0x002b, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-            /* JADX WARNING: Missing block: B:11:0x002e, code:
+            /* JADX WARNING: Missing block: B:11:0x002e, code skipped:
             if (r1 != null) goto L_0x0031;
      */
-            /* JADX WARNING: Missing block: B:12:0x0030, code:
+            /* JADX WARNING: Missing block: B:12:0x0030, code skipped:
             return;
      */
-            /* JADX WARNING: Missing block: B:13:0x0031, code:
+            /* JADX WARNING: Missing block: B:13:0x0031, code skipped:
             r3 = null;
      */
-            /* JADX WARNING: Missing block: B:16:0x0037, code:
+            /* JADX WARNING: Missing block: B:16:0x0037, code skipped:
             r3 = r1.createStartingSurface(r2);
      */
-            /* JADX WARNING: Missing block: B:17:0x0039, code:
+            /* JADX WARNING: Missing block: B:17:0x0039, code skipped:
             r4 = move-exception;
      */
-            /* JADX WARNING: Missing block: B:18:0x003a, code:
+            /* JADX WARNING: Missing block: B:18:0x003a, code skipped:
             android.util.Slog.w("WindowManager", "Exception when adding starting window", r4);
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -154,13 +158,14 @@ public class AppWindowContainerController extends WindowContainerController<AppW
                     synchronized (AppWindowContainerController.this.mWindowMap) {
                         try {
                             WindowManagerService.boostPriorityForLockedSection();
-                            if (container.removed || container.startingData == null) {
-                                container.startingWindow = null;
-                                container.startingData = null;
-                                abort = true;
-                            } else {
-                                container.startingSurface = surface;
+                            if (!container.removed) {
+                                if (container.startingData != null) {
+                                    container.startingSurface = surface;
+                                }
                             }
+                            container.startingWindow = null;
+                            container.startingData = null;
+                            abort = true;
                         } finally {
                             while (true) {
                             }
@@ -393,16 +398,16 @@ public class AppWindowContainerController extends WindowContainerController<AppW
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x003e, code:
+    /* JADX WARNING: Missing block: B:18:0x003e, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:19:0x0041, code:
+    /* JADX WARNING: Missing block: B:19:0x0041, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:61:0x0165, code:
+    /* JADX WARNING: Missing block: B:61:0x0165, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:62:0x0168, code:
+    /* JADX WARNING: Missing block: B:62:0x0168, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -516,14 +521,19 @@ public class AppWindowContainerController extends WindowContainerController<AppW
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:150:0x0250=Splitter:B:150:0x0250, B:145:0x023e=Splitter:B:145:0x023e} */
+    /* JADX WARNING: Removed duplicated region for block: B:129:0x020e  */
+    /* JADX WARNING: Removed duplicated region for block: B:126:0x0209 A:{Catch:{ all -> 0x0255 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean addStartingWindow(String pkg, int theme, CompatibilityInfo compatInfo, CharSequence nonLocalizedLabel, int labelRes, int icon, int logo, int windowFlags, IBinder transferFrom, boolean newTask, boolean taskSwitch, boolean processRunning, boolean allowTaskSnapshot, boolean activityCreated, boolean fromRecents) {
         Throwable th;
         WindowHashMap windowHashMap;
         String str = pkg;
         int i = theme;
+        CompatibilityInfo compatibilityInfo = compatInfo;
         WindowHashMap windowHashMap2 = this.mWindowMap;
         synchronized (windowHashMap2) {
-            String str2;
+            CompatibilityInfo compatibilityInfo2;
             try {
                 WindowManagerService.boostPriorityForLockedSection();
                 int i2;
@@ -541,7 +551,7 @@ public class AppWindowContainerController extends WindowContainerController<AppW
                         i2 = windowFlags;
                         iBinder = transferFrom;
                         windowHashMap = windowHashMap2;
-                        str2 = str;
+                        compatibilityInfo2 = compatibilityInfo;
                         WindowManagerService.resetPriorityAfterLockedSection();
                         throw th;
                     }
@@ -592,7 +602,7 @@ public class AppWindowContainerController extends WindowContainerController<AppW
                                 windowState = mainWin;
                                 z = false;
                                 windowHashMap = windowHashMap2;
-                                str2 = str;
+                                compatibilityInfo2 = compatibilityInfo;
                             } else if (this.mService.isSplitMode()) {
                                 taskSnapshot = snapshot;
                                 i3 = type;
@@ -600,64 +610,88 @@ public class AppWindowContainerController extends WindowContainerController<AppW
                                 windowState = mainWin;
                                 z = false;
                                 windowHashMap = windowHashMap2;
-                                str2 = str;
+                                compatibilityInfo2 = compatibilityInfo;
+                            } else if (compatibilityInfo.mAppInfo == null) {
+                                WindowManagerService.resetPriorityAfterLockedSection();
+                                return false;
                             } else {
-                                boolean hwStartWindow = HwServiceFactory.getHwAppWindowContainerController() == null ? false : HwServiceFactory.getHwAppWindowContainerController().isHwStartWindowEnabled();
-                                if (hwStartWindow) {
-                                    i3 = type;
-                                    z = false;
-                                    Entry entry2 = ent;
-                                    windowHashMap = windowHashMap2;
-                                    str2 = str;
-                                    try {
-                                        snapshot = HwServiceFactory.getHwAppWindowContainerController().continueHwStartWindow(str, entry2, compatInfo.mAppInfo, processRunning, windowIsFloating, windowIsTranslucent, windowDisableStarting, newTask, taskSwitch, windowShowWallpaper, transferFrom, this.mToken, this.mRoot);
-                                        if (snapshot < null) {
-                                            WindowManagerService.resetPriorityAfterLockedSection();
-                                            return z;
-                                        }
-                                        if (snapshot > null) {
-                                            snapshot = HwServiceFactory.getHwAppWindowContainerController().getTransferFrom(str2);
+                                boolean z2;
+                                boolean isUnistall;
+                                boolean hwStartWindow = HwServiceFactory.getHwAppWindowContainerController() == null ? false : HwServiceFactory.getHwAppWindowContainerController().isHwStartWindowEnabled(str);
+                                if (!compatibilityInfo.mAppInfo.isSystemApp()) {
+                                    if (!(compatibilityInfo.mAppInfo.isPrivilegedApp() || compatibilityInfo.mAppInfo.isUpdatedSystemApp())) {
+                                        z2 = true;
+                                        isUnistall = z2;
+                                        if (hwStartWindow || !isUnistall) {
+                                            i3 = type;
+                                            entry = ent;
+                                            windowState = mainWin;
+                                            windowHashMap = windowHashMap2;
+                                            compatibilityInfo2 = compatibilityInfo;
+                                            z = false;
+                                            if (!windowIsTranslucent) {
+                                                WindowManagerService.resetPriorityAfterLockedSection();
+                                                return false;
+                                            } else if (windowIsFloating || windowDisableStarting) {
+                                                WindowManagerService.resetPriorityAfterLockedSection();
+                                                return false;
+                                            } else {
+                                                iBinder = transferFrom;
+                                            }
                                         } else {
-                                            snapshot = transferFrom;
+                                            i3 = type;
+                                            z = false;
+                                            windowHashMap = windowHashMap2;
+                                            Entry entry2 = ent;
+                                            compatibilityInfo2 = compatibilityInfo;
+                                            try {
+                                                snapshot = HwServiceFactory.getHwAppWindowContainerController().continueHwStartWindow(str, entry2, compatibilityInfo.mAppInfo, processRunning, windowIsFloating, windowIsTranslucent, windowDisableStarting, newTask, taskSwitch, windowShowWallpaper, transferFrom, this.mToken, this.mRoot);
+                                                if (snapshot < null) {
+                                                    WindowManagerService.resetPriorityAfterLockedSection();
+                                                    return false;
+                                                }
+                                                if (snapshot > null) {
+                                                    snapshot = HwServiceFactory.getHwAppWindowContainerController().getTransferFrom(compatibilityInfo2.mAppInfo);
+                                                } else {
+                                                    snapshot = transferFrom;
+                                                }
+                                                iBinder = snapshot;
+                                            } catch (Throwable th3) {
+                                                th = th3;
+                                                WindowManagerService.resetPriorityAfterLockedSection();
+                                                throw th;
+                                            }
                                         }
-                                        iBinder = snapshot;
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        WindowManagerService.resetPriorityAfterLockedSection();
-                                        throw th;
+                                        if (windowShowWallpaper) {
+                                            try {
+                                                if (((AppWindowToken) this.mContainer).getDisplayContent().mWallpaperController.getWallpaperTarget() == null) {
+                                                    i2 = windowFlags | DumpState.DUMP_DEXOPT;
+                                                } else if (!(hwStartWindow && isUnistall)) {
+                                                    WindowManagerService.resetPriorityAfterLockedSection();
+                                                    return z;
+                                                }
+                                            } catch (Throwable th4) {
+                                                th = th4;
+                                                i2 = windowFlags;
+                                                WindowManagerService.resetPriorityAfterLockedSection();
+                                                throw th;
+                                            }
+                                        }
+                                        i2 = windowFlags;
                                     }
+                                }
+                                z2 = false;
+                                isUnistall = z2;
+                                if (hwStartWindow) {
                                 }
                                 i3 = type;
                                 entry = ent;
                                 windowState = mainWin;
-                                z = false;
                                 windowHashMap = windowHashMap2;
-                                str2 = str;
-                                if (windowIsTranslucent) {
-                                    WindowManagerService.resetPriorityAfterLockedSection();
-                                    return z;
-                                } else if (windowIsFloating || windowDisableStarting) {
-                                    WindowManagerService.resetPriorityAfterLockedSection();
-                                    return z;
-                                } else {
-                                    iBinder = transferFrom;
+                                compatibilityInfo2 = compatibilityInfo;
+                                z = false;
+                                if (!windowIsTranslucent) {
                                 }
-                                if (windowShowWallpaper) {
-                                    try {
-                                        if (((AppWindowToken) this.mContainer).getDisplayContent().mWallpaperController.getWallpaperTarget() == null) {
-                                            i2 = windowFlags | DumpState.DUMP_DEXOPT;
-                                        } else if (!hwStartWindow) {
-                                            WindowManagerService.resetPriorityAfterLockedSection();
-                                            return z;
-                                        }
-                                    } catch (Throwable th4) {
-                                        th = th4;
-                                        i2 = windowFlags;
-                                        WindowManagerService.resetPriorityAfterLockedSection();
-                                        throw th;
-                                    }
-                                }
-                                i2 = windowFlags;
                             }
                             WindowManagerService.resetPriorityAfterLockedSection();
                             return z;
@@ -667,7 +701,7 @@ public class AppWindowContainerController extends WindowContainerController<AppW
                         windowState = mainWin;
                         z = false;
                         windowHashMap = windowHashMap2;
-                        str2 = str;
+                        compatibilityInfo2 = compatibilityInfo;
                         i2 = windowFlags;
                         iBinder = transferFrom;
                         try {
@@ -678,7 +712,7 @@ public class AppWindowContainerController extends WindowContainerController<AppW
                                 WindowManagerService.resetPriorityAfterLockedSection();
                                 return z;
                             } else {
-                                ((AppWindowToken) this.mContainer).startingData = new SplashScreenStartingData(this.mService, str2, theme, compatInfo, nonLocalizedLabel, labelRes, icon, logo, i2, ((AppWindowToken) this.mContainer).getMergedOverrideConfiguration());
+                                ((AppWindowToken) this.mContainer).startingData = new SplashScreenStartingData(this.mService, pkg, theme, compatibilityInfo2, nonLocalizedLabel, labelRes, icon, logo, i2, ((AppWindowToken) this.mContainer).getMergedOverrideConfiguration());
                                 scheduleAddStartingWindow();
                                 WindowManagerService.resetPriorityAfterLockedSection();
                                 return true;
@@ -701,7 +735,7 @@ public class AppWindowContainerController extends WindowContainerController<AppW
             } catch (Throwable th6) {
                 th = th6;
                 windowHashMap = windowHashMap2;
-                str2 = str;
+                compatibilityInfo2 = compatibilityInfo;
                 WindowManagerService.resetPriorityAfterLockedSection();
                 throw th;
             }
@@ -909,10 +943,10 @@ public class AppWindowContainerController extends WindowContainerController<AppW
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0050, code:
+    /* JADX WARNING: Missing block: B:16:0x0050, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:17:0x0053, code:
+    /* JADX WARNING: Missing block: B:17:0x0053, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

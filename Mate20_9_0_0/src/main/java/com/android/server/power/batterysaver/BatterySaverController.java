@@ -55,42 +55,42 @@ public class BatterySaverController implements BatterySaverPolicyListener {
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onReceive(Context context, Intent intent) {
-            boolean z;
+            int i;
             String action = intent.getAction();
-            boolean z2 = true;
+            boolean z = true;
             switch (action.hashCode()) {
                 case -2128145023:
                     if (action.equals("android.intent.action.SCREEN_OFF")) {
-                        z = true;
+                        i = true;
                         break;
                     }
                 case -1538406691:
                     if (action.equals("android.intent.action.BATTERY_CHANGED")) {
-                        z = true;
+                        i = 2;
                         break;
                     }
                 case -1454123155:
                     if (action.equals("android.intent.action.SCREEN_ON")) {
-                        z = false;
+                        i = 0;
                         break;
                     }
                 case 498807504:
                     if (action.equals("android.os.action.LIGHT_DEVICE_IDLE_MODE_CHANGED")) {
-                        z = true;
+                        i = 4;
                         break;
                     }
                 case 870701415:
                     if (action.equals("android.os.action.DEVICE_IDLE_MODE_CHANGED")) {
-                        z = true;
+                        i = 3;
                         break;
                     }
                 default:
-                    z = true;
+                    i = -1;
                     break;
             }
-            switch (z) {
-                case false:
-                case true:
+            switch (i) {
+                case 0:
+                case 1:
                     if (BatterySaverController.this.isEnabled()) {
                         BatterySaverController.this.mHandler.postStateChanged(false, 5);
                         break;
@@ -98,16 +98,16 @@ public class BatterySaverController implements BatterySaverPolicyListener {
                         BatterySaverController.this.updateBatterySavingStats();
                         return;
                     }
-                case true:
+                case 2:
                     synchronized (BatterySaverController.this.mLock) {
                         BatterySaverController batterySaverController = BatterySaverController.this;
                         if (intent.getIntExtra("plugged", 0) == 0) {
-                            z2 = false;
+                            z = false;
                         }
-                        batterySaverController.mIsPluggedIn = z2;
+                        batterySaverController.mIsPluggedIn = z;
                     }
-                case true:
-                case true:
+                case 3:
+                case 4:
                     break;
             }
             BatterySaverController.this.updateBatterySavingStats();

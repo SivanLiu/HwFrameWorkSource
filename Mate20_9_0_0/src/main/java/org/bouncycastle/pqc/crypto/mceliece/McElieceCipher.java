@@ -25,7 +25,7 @@ public class McElieceCipher implements MessageEncryptor {
     private int t;
 
     private byte[] computeMessage(GF2Vector gF2Vector) throws InvalidCipherTextException {
-        Object encoded = gF2Vector.getEncoded();
+        byte[] encoded = gF2Vector.getEncoded();
         int length = encoded.length - 1;
         while (length >= 0 && encoded[length] == (byte) 0) {
             length--;
@@ -33,16 +33,16 @@ public class McElieceCipher implements MessageEncryptor {
         if (length < 0 || encoded[length] != (byte) 1) {
             throw new InvalidCipherTextException("Bad Padding: invalid ciphertext");
         }
-        Object obj = new byte[length];
-        System.arraycopy(encoded, 0, obj, 0, length);
-        return obj;
+        byte[] bArr = new byte[length];
+        System.arraycopy(encoded, 0, bArr, 0, length);
+        return bArr;
     }
 
     private GF2Vector computeMessageRepresentative(byte[] bArr) {
-        Object obj = new byte[(this.maxPlainTextSize + ((this.k & 7) != 0 ? 1 : 0))];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        obj[bArr.length] = 1;
-        return GF2Vector.OS2VP(this.k, obj);
+        byte[] bArr2 = new byte[(this.maxPlainTextSize + ((this.k & 7) != 0 ? 1 : 0))];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+        bArr2[bArr.length] = (byte) 1;
+        return GF2Vector.OS2VP(this.k, bArr2);
     }
 
     private void initCipherDecrypt(McEliecePrivateKeyParameters mcEliecePrivateKeyParameters) {
@@ -104,9 +104,9 @@ public class McElieceCipher implements MessageEncryptor {
         PolynomialGF2mSmallM[] qInv = mcEliecePrivateKeyParameters.getQInv();
         p2 = p1.rightMultiply(p2);
         Vector vector = (GF2Vector) OS2VP.multiply(p2.computeInverse());
-        Vector syndromeDecode = GoppaCode.syndromeDecode((GF2Vector) h.rightMultiply(vector), field, goppaPoly, qInv);
+        GF2Vector syndromeDecode = GoppaCode.syndromeDecode((GF2Vector) h.rightMultiply(vector), field, goppaPoly, qInv);
         OS2VP = (GF2Vector) ((GF2Vector) vector.add(syndromeDecode)).multiply(p1);
-        GF2Vector gF2Vector = (GF2Vector) syndromeDecode.multiply(p2);
+        syndromeDecode = (GF2Vector) syndromeDecode.multiply(p2);
         return computeMessage((GF2Vector) sInv.leftMultiply(OS2VP.extractRightVector(this.k)));
     }
 

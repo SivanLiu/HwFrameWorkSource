@@ -10,10 +10,10 @@ public class Metaphone implements StringEncoder {
     private String varson = "CSPTG";
     private String vowels = "AEIOU";
 
-    /* JADX WARNING: Missing block: B:114:0x01ee, code:
+    /* JADX WARNING: Missing block: B:114:0x01ee, code skipped:
             r13 = 'G';
      */
-    /* JADX WARNING: Missing block: B:162:0x02b0, code:
+    /* JADX WARNING: Missing block: B:162:0x02b0, code skipped:
             r6 = r6 + 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

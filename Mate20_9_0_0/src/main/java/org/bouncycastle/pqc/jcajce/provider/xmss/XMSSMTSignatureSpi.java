@@ -124,7 +124,7 @@ public class XMSSMTSignatureSpi extends Signature implements StateAwareSignature
 
     public PrivateKey getUpdatedPrivateKey() {
         if (this.treeDigest != null) {
-            PrivateKey bCXMSSMTPrivateKey = new BCXMSSMTPrivateKey(this.treeDigest, (XMSSMTPrivateKeyParameters) this.signer.getUpdatedPrivateKey());
+            BCXMSSMTPrivateKey bCXMSSMTPrivateKey = new BCXMSSMTPrivateKey(this.treeDigest, (XMSSMTPrivateKeyParameters) this.signer.getUpdatedPrivateKey());
             this.treeDigest = null;
             return bCXMSSMTPrivateKey;
         }

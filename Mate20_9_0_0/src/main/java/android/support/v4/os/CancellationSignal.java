@@ -26,39 +26,39 @@ public final class CancellationSignal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0014, code:
+    /* JADX WARNING: Missing block: B:12:0x0014, code skipped:
             if (r1 == null) goto L_0x001c;
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             r1.onCancel();
      */
-    /* JADX WARNING: Missing block: B:16:0x001c, code:
+    /* JADX WARNING: Missing block: B:17:0x001c, code skipped:
             if (r0 == null) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:18:0x0022, code:
+    /* JADX WARNING: Missing block: B:19:0x0022, code skipped:
             if (android.os.Build.VERSION.SDK_INT < 16) goto L_0x0036;
      */
-    /* JADX WARNING: Missing block: B:19:0x0024, code:
+    /* JADX WARNING: Missing block: B:20:0x0024, code skipped:
             ((android.os.CancellationSignal) r0).cancel();
      */
-    /* JADX WARNING: Missing block: B:20:0x002b, code:
+    /* JADX WARNING: Missing block: B:21:0x002b, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:22:?, code:
+    /* JADX WARNING: Missing block: B:23:?, code skipped:
             r6.mCancelInProgress = false;
             notifyAll();
      */
-    /* JADX WARNING: Missing block: B:29:0x0036, code:
+    /* JADX WARNING: Missing block: B:30:0x0036, code skipped:
             monitor-enter(r6);
      */
-    /* JADX WARNING: Missing block: B:31:?, code:
+    /* JADX WARNING: Missing block: B:32:?, code skipped:
             r6.mCancelInProgress = false;
             notifyAll();
      */
-    /* JADX WARNING: Missing block: B:32:0x003c, code:
+    /* JADX WARNING: Missing block: B:33:0x003c, code skipped:
             monitor-exit(r6);
      */
-    /* JADX WARNING: Missing block: B:33:0x003e, code:
+    /* JADX WARNING: Missing block: B:35:0x003e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -105,10 +105,12 @@ public final class CancellationSignal {
                 return;
             }
             this.mOnCancelListener = listener;
-            if (!this.mIsCanceled || listener == null) {
-                return;
+            if (this.mIsCanceled) {
+                if (listener != null) {
+                    listener.onCancel();
+                    return;
+                }
             }
-            listener.onCancel();
         }
     }
 

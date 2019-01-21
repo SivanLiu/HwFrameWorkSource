@@ -261,7 +261,7 @@ public class Blake2bDigest implements ExtendedDigest {
             if (i3 >= this.digestLength) {
                 break;
             }
-            Object long2bytes = long2bytes(this.chainValue[i2]);
+            byte[] long2bytes = long2bytes(this.chainValue[i2]);
             if (i3 < this.digestLength - 8) {
                 System.arraycopy(long2bytes, 0, bArr, i3 + i, 8);
             } else {

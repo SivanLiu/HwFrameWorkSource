@@ -574,8 +574,8 @@ public final class HwAudioServiceEx implements IHwAudioServiceEx {
                         stringBuilder.append("Tips for pad, mIsUsbPowercosumeTips = ");
                         stringBuilder.append(HwAudioServiceEx.mIsUsbPowercosumeTips);
                         Slog.i(str, stringBuilder.toString());
-                        this.mTitle = this.mContext.getResources().getString(33686116);
-                        this.mContent = this.mContext.getResources().getString(33686117);
+                        this.mTitle = this.mContext.getResources().getString(33686118);
+                        this.mContent = this.mContext.getResources().getString(33686119);
                     } else {
                         this.mTitle = this.mContext.getResources().getString(33686004);
                         this.mContent = this.mContext.getResources().getString(33686005);
@@ -908,22 +908,22 @@ public final class HwAudioServiceEx implements IHwAudioServiceEx {
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.getAction() != null) {
                     String action = intent.getAction();
-                    boolean z = true;
+                    int i = -1;
                     int hashCode = action.hashCode();
                     if (hashCode != -2146785072) {
                         if (hashCode == 1549278377 && action.equals(HwAudioServiceEx.ACTION_ANALOG_TYPEC_NOTIFY)) {
-                            z = false;
+                            i = 0;
                         }
                     } else if (action.equals(HwAudioServiceEx.ACTION_DIGITAL_TYPEC_NOTIFY)) {
-                        z = true;
+                        i = 1;
                     }
-                    switch (z) {
-                        case false:
+                    switch (i) {
+                        case 0:
                             System.putIntForUser(HwAudioServiceEx.this.mContext.getContentResolver(), "typec_analog_enabled", 0, -2);
                             HwAudioServiceEx.this.mNotificationManager.cancel(HwAudioServiceEx.TAG, 1);
                             HwAudioServiceEx.this.mIsAnalogTypecReceiverRegisterd = false;
                             break;
-                        case true:
+                        case 1:
                             System.putIntForUser(HwAudioServiceEx.this.mContext.getContentResolver(), "typec_digital_enabled", 0, -2);
                             HwAudioServiceEx.this.mNotificationManager.cancel(HwAudioServiceEx.TAG, 2);
                             HwAudioServiceEx.this.mIsDigitalTypecReceiverRegisterd = false;
@@ -1096,12 +1096,14 @@ public final class HwAudioServiceEx implements IHwAudioServiceEx {
     private String getTopActivityPackageName() {
         try {
             List<RunningTaskInfo> tasks = ((ActivityManager) this.mContext.getSystemService("activity")).getRunningTasks(1);
-            if (tasks == null || tasks.isEmpty()) {
-                return null;
-            }
-            ComponentName topActivity = ((RunningTaskInfo) tasks.get(0)).topActivity;
-            if (topActivity != null) {
-                return topActivity.getPackageName();
+            if (tasks != null) {
+                if (!tasks.isEmpty()) {
+                    ComponentName topActivity = ((RunningTaskInfo) tasks.get(0)).topActivity;
+                    if (topActivity != null) {
+                        return topActivity.getPackageName();
+                    }
+                    return null;
+                }
             }
             return null;
         } catch (Exception e) {
@@ -1129,7 +1131,7 @@ public final class HwAudioServiceEx implements IHwAudioServiceEx {
         String activePkgName = getPackageNameByPidEx(activeRecordPid);
         String activePkgLabel = getApplicationLabel(activePkgName);
         if (activePkgName == null) {
-            activePkgName = this.mContext.getString(17039913);
+            activePkgName = this.mContext.getString(17039914);
         }
         String str = TAG;
         StringBuilder stringBuilder = new StringBuilder();
@@ -1624,7 +1626,7 @@ public final class HwAudioServiceEx implements IHwAudioServiceEx {
         }
     }
 
-    /* JADX WARNING: Missing block: B:37:0x0057, code:
+    /* JADX WARNING: Missing block: B:37:0x0057, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

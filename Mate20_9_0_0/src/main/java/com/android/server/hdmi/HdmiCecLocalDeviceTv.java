@@ -769,37 +769,37 @@ final class HdmiCecLocalDeviceTv extends HdmiCecLocalDevice {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x002f, code:
+    /* JADX WARNING: Missing block: B:15:0x002f, code skipped:
             r2 = getActions(com.android.server.hdmi.VolumeControlAction.class);
      */
-    /* JADX WARNING: Missing block: B:16:0x003a, code:
+    /* JADX WARNING: Missing block: B:16:0x003a, code skipped:
             if (r2.isEmpty() == false) goto L_0x0051;
      */
-    /* JADX WARNING: Missing block: B:17:0x003c, code:
+    /* JADX WARNING: Missing block: B:17:0x003c, code skipped:
             r6 = getAvrDeviceInfo().getLogicalAddress();
      */
-    /* JADX WARNING: Missing block: B:18:0x0046, code:
+    /* JADX WARNING: Missing block: B:18:0x0046, code skipped:
             if (r9 <= 0) goto L_0x004a;
      */
-    /* JADX WARNING: Missing block: B:19:0x0048, code:
+    /* JADX WARNING: Missing block: B:19:0x0048, code skipped:
             r4 = true;
      */
-    /* JADX WARNING: Missing block: B:20:0x004a, code:
+    /* JADX WARNING: Missing block: B:20:0x004a, code skipped:
             addAndStartAction(new com.android.server.hdmi.VolumeControlAction(r7, r6, r4));
      */
-    /* JADX WARNING: Missing block: B:21:0x0051, code:
+    /* JADX WARNING: Missing block: B:21:0x0051, code skipped:
             r3 = (com.android.server.hdmi.VolumeControlAction) r2.get(0);
      */
-    /* JADX WARNING: Missing block: B:22:0x0057, code:
+    /* JADX WARNING: Missing block: B:22:0x0057, code skipped:
             if (r9 <= 0) goto L_0x005b;
      */
-    /* JADX WARNING: Missing block: B:23:0x0059, code:
+    /* JADX WARNING: Missing block: B:23:0x0059, code skipped:
             r4 = true;
      */
-    /* JADX WARNING: Missing block: B:24:0x005b, code:
+    /* JADX WARNING: Missing block: B:24:0x005b, code skipped:
             r3.handleVolumeChange(r4);
      */
-    /* JADX WARNING: Missing block: B:25:0x005e, code:
+    /* JADX WARNING: Missing block: B:25:0x005e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -817,20 +817,20 @@ final class HdmiCecLocalDeviceTv extends HdmiCecLocalDevice {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x002e, code:
+    /* JADX WARNING: Missing block: B:13:0x002e, code skipped:
             if (isSystemAudioActivated() != false) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:14:0x0030, code:
+    /* JADX WARNING: Missing block: B:14:0x0030, code skipped:
             com.android.server.hdmi.HdmiLogger.debug("[A]:System audio is not activated.", new java.lang.Object[0]);
      */
-    /* JADX WARNING: Missing block: B:15:0x0037, code:
+    /* JADX WARNING: Missing block: B:15:0x0037, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:16:0x0038, code:
+    /* JADX WARNING: Missing block: B:16:0x0038, code skipped:
             removeAction(com.android.server.hdmi.VolumeControlAction.class);
             sendUserControlPressedAndReleased(getAvrDeviceInfo().getLogicalAddress(), com.android.server.hdmi.HdmiCecKeycode.getMuteKey(r5));
      */
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -171,7 +171,7 @@ public class ActivityStartInterceptor extends AbsActivityStartInterceptor {
             this.mActivityOptions = ActivityOptions.makeBasic();
         }
         ActivityRecord homeActivityRecord = this.mSupervisor.getHomeActivity();
-        if (!(homeActivityRecord == null || homeActivityRecord.getTask() == null)) {
+        if (!(homeActivityRecord == null || homeActivityRecord.getTask() == null || HwPCUtils.isValidExtDisplayId(this.mActivityOptions.getLaunchDisplayId()))) {
             this.mActivityOptions.setLaunchTaskId(homeActivityRecord.getTask().taskId);
         }
         this.mRInfo = this.mSupervisor.resolveIntent(this.mIntent, this.mResolvedType, this.mUserManager.getProfileParent(this.mUserId).id, 0, this.mRealCallingUid);

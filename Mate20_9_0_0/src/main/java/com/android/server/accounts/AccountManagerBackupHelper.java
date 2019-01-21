@@ -7,12 +7,18 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.UserHandle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.PackageUtils;
+import android.util.Pair;
+import android.util.Slog;
 import android.util.Xml;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.content.PackageMonitor;
+import com.android.internal.util.FastXmlSerializer;
 import com.android.internal.util.XmlUtils;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +113,7 @@ public final class AccountManagerBackupHelper {
         private RestorePackageMonitor() {
         }
 
-        /* JADX WARNING: Missing block: B:25:0x0091, code:
+        /* JADX WARNING: Missing block: B:26:0x0091, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -118,8 +124,10 @@ public final class AccountManagerBackupHelper {
                 } else {
                     for (int i = AccountManagerBackupHelper.this.mRestorePendingAppPermissions.size() - 1; i >= 0; i--) {
                         PendingAppPermission pendingAppPermission = (PendingAppPermission) AccountManagerBackupHelper.this.mRestorePendingAppPermissions.get(i);
-                        if (pendingAppPermission.packageName.equals(packageName) && pendingAppPermission.apply(AccountManagerBackupHelper.this.mAccountManagerService.mContext.getPackageManager())) {
-                            AccountManagerBackupHelper.this.mRestorePendingAppPermissions.remove(i);
+                        if (pendingAppPermission.packageName.equals(packageName)) {
+                            if (pendingAppPermission.apply(AccountManagerBackupHelper.this.mAccountManagerService.mContext.getPackageManager())) {
+                                AccountManagerBackupHelper.this.mRestorePendingAppPermissions.remove(i);
+                            }
                         }
                     }
                     if (AccountManagerBackupHelper.this.mRestorePendingAppPermissions.isEmpty() && AccountManagerBackupHelper.this.mRestoreCancelCommand != null) {
@@ -137,227 +145,136 @@ public final class AccountManagerBackupHelper {
         this.mAccountManagerInternal = accountManagerInternal;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: RegionMakerVisitor
-        jadx.core.utils.exceptions.JadxRuntimeException: Exception block dominator not found, method:com.android.server.accounts.AccountManagerBackupHelper.backupAccountAccessPermissions(int):byte[], dom blocks: [B:48:0x011a, B:54:0x0123]
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.searchTryCatchDominators(ProcessTryCatchRegions.java:89)
-        	at jadx.core.dex.visitors.regions.ProcessTryCatchRegions.process(ProcessTryCatchRegions.java:45)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.postProcessRegions(RegionMakerVisitor.java:63)
-        	at jadx.core.dex.visitors.regions.RegionMakerVisitor.visit(RegionMakerVisitor.java:58)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public byte[] backupAccountAccessPermissions(int r22) {
-        /*
-        r21 = this;
-        r1 = r21;
-        r2 = r22;
-        r0 = r1.mAccountManagerService;
-        r3 = r0.getUserAccounts(r2);
-        r4 = r3.dbLock;
-        monitor-enter(r4);
-        r5 = r3.cacheLock;	 Catch:{ all -> 0x0135 }
-        monitor-enter(r5);	 Catch:{ all -> 0x0135 }
-        r0 = r3.accountsDb;	 Catch:{ all -> 0x012e }
-        r0 = r0.findAllAccountGrants();	 Catch:{ all -> 0x012e }
-        r6 = r0;	 Catch:{ all -> 0x012e }
-        r0 = r6.isEmpty();	 Catch:{ all -> 0x012e }
-        r7 = 0;
-        if (r0 == 0) goto L_0x002b;
-    L_0x001e:
-        monitor-exit(r5);	 Catch:{ all -> 0x0026 }
-        monitor-exit(r4);	 Catch:{ all -> 0x0021 }
-        return r7;
-    L_0x0021:
-        r0 = move-exception;
-        r17 = r3;
-        goto L_0x0138;
-    L_0x0026:
-        r0 = move-exception;
-        r17 = r3;
-        goto L_0x0131;
-    L_0x002b:
-        r0 = new java.io.ByteArrayOutputStream;	 Catch:{ IOException -> 0x011e }
-        r0.<init>();	 Catch:{ IOException -> 0x011e }
-        r8 = r0;	 Catch:{ IOException -> 0x011e }
-        r0 = new com.android.internal.util.FastXmlSerializer;	 Catch:{ IOException -> 0x011e }
-        r0.<init>();	 Catch:{ IOException -> 0x011e }
-        r9 = r0;	 Catch:{ IOException -> 0x011e }
-        r0 = java.nio.charset.StandardCharsets.UTF_8;	 Catch:{ IOException -> 0x011e }
-        r0 = r0.name();	 Catch:{ IOException -> 0x011e }
-        r9.setOutput(r8, r0);	 Catch:{ IOException -> 0x011e }
-        r0 = 1;	 Catch:{ IOException -> 0x011e }
-        r0 = java.lang.Boolean.valueOf(r0);	 Catch:{ IOException -> 0x011e }
-        r9.startDocument(r7, r0);	 Catch:{ IOException -> 0x011e }
-        r0 = "permissions";	 Catch:{ IOException -> 0x011e }
-        r9.startTag(r7, r0);	 Catch:{ IOException -> 0x011e }
-        r0 = r1.mAccountManagerService;	 Catch:{ IOException -> 0x011e }
-        r0 = r0.mContext;	 Catch:{ IOException -> 0x011e }
-        r0 = r0.getPackageManager();	 Catch:{ IOException -> 0x011e }
-        r10 = r0;	 Catch:{ IOException -> 0x011e }
-        r11 = r6.iterator();	 Catch:{ IOException -> 0x011e }
-    L_0x005b:
-        r0 = r11.hasNext();	 Catch:{ IOException -> 0x011e }
-        if (r0 == 0) goto L_0x0104;	 Catch:{ IOException -> 0x011e }
-    L_0x0061:
-        r0 = r11.next();	 Catch:{ IOException -> 0x011e }
-        r0 = (android.util.Pair) r0;	 Catch:{ IOException -> 0x011e }
-        r12 = r0;	 Catch:{ IOException -> 0x011e }
-        r0 = r12.first;	 Catch:{ IOException -> 0x011e }
-        r0 = (java.lang.String) r0;	 Catch:{ IOException -> 0x011e }
-        r13 = r0;	 Catch:{ IOException -> 0x011e }
-        r0 = r12.second;	 Catch:{ IOException -> 0x011e }
-        r0 = (java.lang.Integer) r0;	 Catch:{ IOException -> 0x011e }
-        r0 = r0.intValue();	 Catch:{ IOException -> 0x011e }
-        r14 = r0;	 Catch:{ IOException -> 0x011e }
-        r0 = r10.getPackagesForUid(r14);	 Catch:{ IOException -> 0x011e }
-        r15 = r0;	 Catch:{ IOException -> 0x011e }
-        if (r15 != 0) goto L_0x007e;	 Catch:{ IOException -> 0x011e }
-    L_0x007d:
-        goto L_0x005b;	 Catch:{ IOException -> 0x011e }
-    L_0x007e:
-        r7 = r15.length;	 Catch:{ IOException -> 0x011e }
-        r0 = 0;	 Catch:{ IOException -> 0x011e }
-        r1 = r0;	 Catch:{ IOException -> 0x011e }
-    L_0x0081:
-        if (r1 >= r7) goto L_0x00f9;	 Catch:{ IOException -> 0x011e }
-    L_0x0083:
-        r0 = r15[r1];	 Catch:{ IOException -> 0x011e }
-        r16 = r0;
-        r0 = 64;
-        r17 = r3;
-        r3 = r16;
-        r0 = r10.getPackageInfoAsUser(r3, r0, r2);	 Catch:{ NameNotFoundException -> 0x00d1 }
-        r2 = r0.signatures;	 Catch:{ IOException -> 0x00cd }
-        r2 = android.util.PackageUtils.computeSignaturesSha256Digest(r2);	 Catch:{ IOException -> 0x00cd }
-        if (r2 == 0) goto L_0x00c8;	 Catch:{ IOException -> 0x00cd }
-    L_0x009b:
-        r18 = r0;	 Catch:{ IOException -> 0x00cd }
-        r0 = "permission";	 Catch:{ IOException -> 0x00cd }
-        r19 = r6;
-        r6 = 0;
-        r9.startTag(r6, r0);	 Catch:{ IOException -> 0x011c }
-        r0 = "account-sha-256";	 Catch:{ IOException -> 0x011c }
-        r6 = r13.getBytes();	 Catch:{ IOException -> 0x011c }
-        r6 = android.util.PackageUtils.computeSha256Digest(r6);	 Catch:{ IOException -> 0x011c }
-        r20 = r7;	 Catch:{ IOException -> 0x011c }
-        r7 = 0;	 Catch:{ IOException -> 0x011c }
-        r9.attribute(r7, r0, r6);	 Catch:{ IOException -> 0x011c }
-        r0 = "package";	 Catch:{ IOException -> 0x011c }
-        r9.attribute(r7, r0, r3);	 Catch:{ IOException -> 0x011c }
-        r0 = "digest";	 Catch:{ IOException -> 0x011c }
-        r9.attribute(r7, r0, r2);	 Catch:{ IOException -> 0x011c }
-        r0 = "permission";	 Catch:{ IOException -> 0x011c }
-        r9.endTag(r7, r0);	 Catch:{ IOException -> 0x011c }
-        goto L_0x00ee;	 Catch:{ IOException -> 0x011c }
-    L_0x00c8:
-        r19 = r6;	 Catch:{ IOException -> 0x011c }
-        r20 = r7;	 Catch:{ IOException -> 0x011c }
-        goto L_0x00ee;	 Catch:{ IOException -> 0x011c }
-    L_0x00cd:
-        r0 = move-exception;	 Catch:{ IOException -> 0x011c }
-        r19 = r6;	 Catch:{ IOException -> 0x011c }
-        goto L_0x0123;	 Catch:{ IOException -> 0x011c }
-    L_0x00d1:
-        r0 = move-exception;	 Catch:{ IOException -> 0x011c }
-        r19 = r6;	 Catch:{ IOException -> 0x011c }
-        r20 = r7;	 Catch:{ IOException -> 0x011c }
-        r2 = r0;	 Catch:{ IOException -> 0x011c }
-        r2 = "AccountManagerBackupHelper";	 Catch:{ IOException -> 0x011c }
-        r6 = new java.lang.StringBuilder;	 Catch:{ IOException -> 0x011c }
-        r6.<init>();	 Catch:{ IOException -> 0x011c }
-        r7 = "Skipping backup of account access grant for non-existing package: ";	 Catch:{ IOException -> 0x011c }
-        r6.append(r7);	 Catch:{ IOException -> 0x011c }
-        r6.append(r3);	 Catch:{ IOException -> 0x011c }
-        r6 = r6.toString();	 Catch:{ IOException -> 0x011c }
-        android.util.Slog.i(r2, r6);	 Catch:{ IOException -> 0x011c }
-    L_0x00ee:
-        r1 = r1 + 1;	 Catch:{ IOException -> 0x011c }
-        r3 = r17;	 Catch:{ IOException -> 0x011c }
-        r6 = r19;	 Catch:{ IOException -> 0x011c }
-        r7 = r20;	 Catch:{ IOException -> 0x011c }
-        r2 = r22;	 Catch:{ IOException -> 0x011c }
-        goto L_0x0081;	 Catch:{ IOException -> 0x011c }
-    L_0x00f9:
-        r17 = r3;	 Catch:{ IOException -> 0x011c }
-        r19 = r6;	 Catch:{ IOException -> 0x011c }
-        r1 = r21;	 Catch:{ IOException -> 0x011c }
-        r2 = r22;	 Catch:{ IOException -> 0x011c }
-        r7 = 0;	 Catch:{ IOException -> 0x011c }
-        goto L_0x005b;	 Catch:{ IOException -> 0x011c }
-    L_0x0104:
-        r17 = r3;	 Catch:{ IOException -> 0x011c }
-        r19 = r6;	 Catch:{ IOException -> 0x011c }
-        r0 = "permissions";	 Catch:{ IOException -> 0x011c }
-        r1 = 0;	 Catch:{ IOException -> 0x011c }
-        r9.endTag(r1, r0);	 Catch:{ IOException -> 0x011c }
-        r9.endDocument();	 Catch:{ IOException -> 0x011c }
-        r9.flush();	 Catch:{ IOException -> 0x011c }
-        r0 = r8.toByteArray();	 Catch:{ IOException -> 0x011c }
-        monitor-exit(r5);	 Catch:{ all -> 0x0133 }
-        monitor-exit(r4);	 Catch:{ all -> 0x013a }
-        return r0;
-    L_0x011c:
-        r0 = move-exception;
-        goto L_0x0123;
-    L_0x011e:
-        r0 = move-exception;
-        r17 = r3;
-        r19 = r6;
-    L_0x0123:
-        r1 = "AccountManagerBackupHelper";	 Catch:{ all -> 0x0133 }
-        r2 = "Error backing up account access grants";	 Catch:{ all -> 0x0133 }
-        android.util.Log.e(r1, r2, r0);	 Catch:{ all -> 0x0133 }
-        monitor-exit(r5);	 Catch:{ all -> 0x0133 }
-        monitor-exit(r4);	 Catch:{ all -> 0x013a }
-        r1 = 0;
-        return r1;
-    L_0x012e:
-        r0 = move-exception;
-        r17 = r3;
-    L_0x0131:
-        monitor-exit(r5);	 Catch:{ all -> 0x0133 }
-        throw r0;	 Catch:{ all -> 0x013a }
-    L_0x0133:
-        r0 = move-exception;	 Catch:{ all -> 0x013a }
-        goto L_0x0131;	 Catch:{ all -> 0x013a }
-    L_0x0135:
-        r0 = move-exception;	 Catch:{ all -> 0x013a }
-        r17 = r3;	 Catch:{ all -> 0x013a }
-    L_0x0138:
-        monitor-exit(r4);	 Catch:{ all -> 0x013a }
-        throw r0;
-    L_0x013a:
-        r0 = move-exception;
-        goto L_0x0138;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.accounts.AccountManagerBackupHelper.backupAccountAccessPermissions(int):byte[]");
-    }
-
-    /* JADX WARNING: Removed duplicated region for block: B:45:0x00f0 A:{Splitter: B:1:0x0002, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00ee A:{Splitter: B:4:0x0006, ExcHandler: org.xmlpull.v1.XmlPullParserException (e org.xmlpull.v1.XmlPullParserException)} */
-    /* JADX WARNING: Missing block: B:44:0x00ee, code:
-            r0 = e;
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:48:0x011a, B:54:0x0123] */
+    /* JADX WARNING: Missing block: B:67:0x0133, code skipped:
+            r0 = th;
      */
-    /* JADX WARNING: Missing block: B:45:0x00f0, code:
-            r0 = e;
-     */
-    /* JADX WARNING: Missing block: B:46:0x00f1, code:
-            r8 = r19;
-     */
-    /* JADX WARNING: Missing block: B:47:0x00f3, code:
-            android.util.Log.e(TAG, "Error restoring app permissions", r0);
-     */
-    /* JADX WARNING: Missing block: B:54:?, code:
-            return;
+    /* JADX WARNING: Missing block: B:73:0x013a, code skipped:
+            r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
+    public byte[] backupAccountAccessPermissions(int userId) {
+        Throwable th;
+        String str;
+        IOException e;
+        int i = userId;
+        UserAccounts accounts = this.mAccountManagerService.getUserAccounts(i);
+        synchronized (accounts.dbLock) {
+            UserAccounts userAccounts;
+            try {
+                synchronized (accounts.cacheLock) {
+                    try {
+                        List<Pair<String, Integer>> allAccountGrants = accounts.accountsDb.findAllAccountGrants();
+                        if (allAccountGrants.isEmpty()) {
+                            try {
+                                try {
+                                    return null;
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                    userAccounts = accounts;
+                                    throw th;
+                                }
+                            } catch (Throwable th3) {
+                                th = th3;
+                                userAccounts = accounts;
+                                throw th;
+                            }
+                        }
+                        List<Pair<String, Integer>> allAccountGrants2;
+                        try {
+                            ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+                            FastXmlSerializer serializer = new FastXmlSerializer();
+                            serializer.setOutput(dataStream, StandardCharsets.UTF_8.name());
+                            serializer.startDocument(null, Boolean.valueOf(true));
+                            serializer.startTag(null, TAG_PERMISSIONS);
+                            PackageManager packageManager = this.mAccountManagerService.mContext.getPackageManager();
+                            for (Pair<String, Integer> grant : allAccountGrants) {
+                                String accountName = (String) grant.first;
+                                String[] packageNames = packageManager.getPackagesForUid(((Integer) grant.second).intValue());
+                                if (packageNames != null) {
+                                    int length = packageNames.length;
+                                    int i2 = 0;
+                                    while (i2 < length) {
+                                        PackageInfo packageInfo;
+                                        int i3;
+                                        userAccounts = accounts;
+                                        String accounts2 = packageNames[i2];
+                                        try {
+                                            packageInfo = packageManager.getPackageInfoAsUser(accounts2, 64, i);
+                                        } catch (NameNotFoundException e2) {
+                                            allAccountGrants2 = allAccountGrants;
+                                            i3 = length;
+                                            NameNotFoundException nameNotFoundException = e2;
+                                            str = TAG;
+                                            StringBuilder stringBuilder = new StringBuilder();
+                                            stringBuilder.append("Skipping backup of account access grant for non-existing package: ");
+                                            stringBuilder.append(accounts2);
+                                            Slog.i(str, stringBuilder.toString());
+                                        }
+                                        try {
+                                            str = PackageUtils.computeSignaturesSha256Digest(packageInfo.signatures);
+                                            if (str != null) {
+                                                allAccountGrants2 = allAccountGrants;
+                                                try {
+                                                    serializer.startTag(null, TAG_PERMISSION);
+                                                    i3 = length;
+                                                    serializer.attribute(null, ATTR_ACCOUNT_SHA_256, PackageUtils.computeSha256Digest(accountName.getBytes()));
+                                                    serializer.attribute(null, "package", accounts2);
+                                                    serializer.attribute(null, ATTR_DIGEST, str);
+                                                    serializer.endTag(null, TAG_PERMISSION);
+                                                } catch (IOException e3) {
+                                                    e = e3;
+                                                    Log.e(TAG, "Error backing up account access grants", e);
+                                                    return null;
+                                                }
+                                            }
+                                            allAccountGrants2 = allAccountGrants;
+                                            i3 = length;
+                                            i2++;
+                                            accounts = userAccounts;
+                                            allAccountGrants = allAccountGrants2;
+                                            length = i3;
+                                            i = userId;
+                                        } catch (IOException e4) {
+                                            e = e4;
+                                            allAccountGrants2 = allAccountGrants;
+                                            Log.e(TAG, "Error backing up account access grants", e);
+                                            return null;
+                                        }
+                                    }
+                                    allAccountGrants2 = allAccountGrants;
+                                    i = userId;
+                                }
+                            }
+                            allAccountGrants2 = allAccountGrants;
+                            serializer.endTag(null, TAG_PERMISSIONS);
+                            serializer.endDocument();
+                            serializer.flush();
+                            byte[] toByteArray = dataStream.toByteArray();
+                            return toByteArray;
+                        } catch (IOException e5) {
+                            e = e5;
+                            userAccounts = accounts;
+                            allAccountGrants2 = allAccountGrants;
+                            Log.e(TAG, "Error backing up account access grants", e);
+                            return null;
+                        }
+                    } catch (Throwable th4) {
+                        th = th4;
+                        userAccounts = accounts;
+                        throw th;
+                    }
+                }
+            } catch (Throwable th5) {
+                th = th5;
+                userAccounts = accounts;
+                throw th;
+            }
+        }
+    }
+
     public void restoreAccountAccessPermissions(byte[] data, int userId) {
+        Exception e;
         try {
             try {
                 ByteArrayInputStream dataStream = new ByteArrayInputStream(data);
@@ -373,7 +290,6 @@ public final class AccountManagerBackupHelper {
                             while (true) {
                                 int permissionOuterDepth = permissionsOuterDepth;
                                 if (!XmlUtils.nextElementWithin(parser, permissionOuterDepth)) {
-                                    continue;
                                     break;
                                 }
                                 if (TAG_PERMISSION.equals(parser.getName())) {
@@ -391,9 +307,7 @@ public final class AccountManagerBackupHelper {
                                     }
                                     String digest = attributeValue;
                                     PendingAppPermission pendingAppPermission = new PendingAppPermission(accountDigest, packageName, attributeValue, userId);
-                                    if (pendingAppPermission.apply(packageManager)) {
-                                        continue;
-                                    } else {
+                                    if (!pendingAppPermission.apply(packageManager)) {
                                         synchronized (this.mLock) {
                                             if (this.mRestorePackageMonitor == null) {
                                                 this.mRestorePackageMonitor = new RestorePackageMonitor();
@@ -416,9 +330,14 @@ public final class AccountManagerBackupHelper {
                         return;
                     }
                 }
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e2) {
+                e = e2;
+                Log.e(TAG, "Error restoring app permissions", e);
             }
-        } catch (XmlPullParserException e2) {
+        } catch (IOException | XmlPullParserException e3) {
+            e = e3;
+            byte[] bArr = data;
+            Log.e(TAG, "Error restoring app permissions", e);
         }
     }
 }

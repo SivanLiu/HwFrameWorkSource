@@ -8,10 +8,13 @@ import com.android.server.security.tsmagent.utils.HwLog;
 import com.android.server.security.tsmagent.utils.NetworkUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 public abstract class HttpConnTask extends HttpConnectionBase {
     public HttpConnTask(Context context, String url) {
@@ -26,19 +29,6 @@ public abstract class HttpConnTask extends HttpConnectionBase {
         this.mSocketTimeout = socketTimeout;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x00f0 A:{ExcHandler: java.io.IOException (r0_12 'e' java.lang.Exception), Splitter: B:9:0x002c} */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x00f0 A:{ExcHandler: java.io.IOException (r0_12 'e' java.lang.Exception), Splitter: B:9:0x002c} */
-    /* JADX WARNING: Missing block: B:23:0x00f0, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:25:?, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("processTask, Exception : ");
-            r3.append(r0.getMessage());
-            com.android.server.security.tsmagent.utils.HwLog.e(r3.toString());
-            r0 = readErrorResponse(-2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public CardServerBaseResponse processTask(CardServerBaseRequest params) {
         if (NetworkUtil.isNetworkConnected(this.mContext)) {
             String requestStr = prepareRequestStr(params);
@@ -99,7 +89,12 @@ public abstract class HttpConnTask extends HttpConnectionBase {
             } catch (MalformedURLException e) {
                 HwLog.e("processTask url invalid: url");
                 result = readErrorResponse(-3);
-            } catch (Exception e2) {
+            } catch (IOException | KeyManagementException | NoSuchAlgorithmException e2) {
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("processTask, Exception : ");
+                stringBuilder3.append(e2.getMessage());
+                HwLog.e(stringBuilder3.toString());
+                result = readErrorResponse(-2);
             } catch (Throwable th) {
                 closeStream(null, null, outputStream, null);
             }

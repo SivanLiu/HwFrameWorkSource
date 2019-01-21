@@ -63,9 +63,9 @@ public class GenericSigner implements Signer {
         try {
             bArr = this.engine.processBlock(bArr, 0, bArr.length);
             if (bArr.length < bArr2.length) {
-                Object obj = new byte[bArr2.length];
-                System.arraycopy(bArr, 0, obj, obj.length - bArr.length, bArr.length);
-                bArr = obj;
+                byte[] bArr3 = new byte[bArr2.length];
+                System.arraycopy(bArr, 0, bArr3, bArr3.length - bArr.length, bArr.length);
+                bArr = bArr3;
             }
             return Arrays.constantTimeAreEqual(bArr, bArr2);
         } catch (Exception e) {

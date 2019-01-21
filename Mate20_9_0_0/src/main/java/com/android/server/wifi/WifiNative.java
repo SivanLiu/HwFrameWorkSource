@@ -382,10 +382,10 @@ public class WifiNative {
             this.mInterfaceId = id;
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0036, code:
+        /* JADX WARNING: Missing block: B:9:0x0036, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:20:0x0072, code:
+        /* JADX WARNING: Missing block: B:21:0x0072, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -394,9 +394,13 @@ public class WifiNative {
                 Iface ifaceWithId = WifiNative.this.mIfaceMgr.getIface(this.mInterfaceId);
                 if (ifaceWithId != null) {
                     Iface ifaceWithName = WifiNative.this.mIfaceMgr.getIface(ifaceName);
-                    if (ifaceWithName != null && ifaceWithName == ifaceWithId) {
-                        WifiNative.this.onInterfaceStateChanged(ifaceWithName, WifiNative.this.isInterfaceUp(ifaceName));
-                    } else if (WifiNative.this.mVerboseLoggingEnabled) {
+                    if (ifaceWithName != null) {
+                        if (ifaceWithName == ifaceWithId) {
+                            WifiNative.this.onInterfaceStateChanged(ifaceWithName, WifiNative.this.isInterfaceUp(ifaceName));
+                            return;
+                        }
+                    }
+                    if (WifiNative.this.mVerboseLoggingEnabled) {
                         String str = WifiNative.TAG;
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("Received iface link up/down notification on an invalid iface=");
@@ -622,7 +626,7 @@ public class WifiNative {
             this.mInterfaceId = ifaceId;
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0034, code:
+        /* JADX WARNING: Missing block: B:9:0x0034, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -651,6 +655,14 @@ public class WifiNative {
 
     @Immutable
     public static final class RxFateReport extends FateReport {
+        public /* bridge */ /* synthetic */ String toTableRowString() {
+            return super.toTableRowString();
+        }
+
+        public /* bridge */ /* synthetic */ String toVerboseStringWithPiiAllowed() {
+            return super.toVerboseStringWithPiiAllowed();
+        }
+
         RxFateReport(byte fate, long driverTimestampUSec, byte frameType, byte[] frameBytes) {
             super(fate, driverTimestampUSec, frameType, frameBytes);
         }
@@ -704,6 +716,14 @@ public class WifiNative {
 
     @Immutable
     public static final class TxFateReport extends FateReport {
+        public /* bridge */ /* synthetic */ String toTableRowString() {
+            return super.toTableRowString();
+        }
+
+        public /* bridge */ /* synthetic */ String toVerboseStringWithPiiAllowed() {
+            return super.toVerboseStringWithPiiAllowed();
+        }
+
         TxFateReport(byte fate, long driverTimestampUSec, byte frameType, byte[] frameBytes) {
             super(fate, driverTimestampUSec, frameType, frameBytes);
         }
@@ -1054,7 +1074,7 @@ public class WifiNative {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002f, code:
+    /* JADX WARNING: Missing block: B:9:0x002f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

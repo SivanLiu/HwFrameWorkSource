@@ -276,15 +276,15 @@ public final class GOST28147 {
 
         /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
             jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0026 in {2, 4, 7, 10} preds:[]
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
             	at jadx.core.ProcessClass.process(ProcessClass.java:32)
             	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -297,29 +297,24 @@ public final class GOST28147 {
             r2 = org.bouncycastle.asn1.ASN1Primitive.fromByteArray(r2);
             r0 = r2 instanceof org.bouncycastle.asn1.ASN1OctetString;
             if (r0 == 0) goto L_0x0013;
-        L_0x0008:
             r2 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r2);
             r2 = r2.getOctets();
-        L_0x0010:
             r1.iv = r2;
             return;
-        L_0x0013:
             r0 = r2 instanceof org.bouncycastle.asn1.ASN1Sequence;
             if (r0 == 0) goto L_0x0027;
-        L_0x0017:
             r2 = org.bouncycastle.asn1.cryptopro.GOST28147Parameters.getInstance(r2);
             r0 = r2.getEncryptionParamSet();
             r1.sBox = r0;
             r2 = r2.getIV();
             goto L_0x0010;
             return;
-        L_0x0027:
             r2 = new java.io.IOException;
             r0 = "Unable to recognize parameters";
             r2.<init>(r0);
             throw r2;
             */
-            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.jcajce.provider.symmetric.GOST28147.AlgParams.localInit(byte[]):void");
+            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.jcajce.provider.symmetric.GOST28147$AlgParams.localInit(byte[]):void");
         }
     }
 

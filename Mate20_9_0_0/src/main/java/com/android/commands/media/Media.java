@@ -148,26 +148,26 @@ public class Media extends BaseCommand {
                         break;
                     }
                     boolean addNewline = true;
-                    if (line.length() > 0) {
-                        if ("q".equals(line) || "quit".equals(line)) {
-                            break;
-                        } else if ("play".equals(line)) {
-                            dispatchKeyCode(126);
-                        } else if ("pause".equals(line)) {
-                            dispatchKeyCode(127);
-                        } else if ("next".equals(line)) {
-                            dispatchKeyCode(87);
-                        } else if ("previous".equals(line)) {
-                            dispatchKeyCode(88);
-                        } else {
-                            PrintStream printStream = System.out;
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("Invalid command: ");
-                            stringBuilder.append(line);
-                            printStream.println(stringBuilder.toString());
-                        }
-                    } else {
+                    if (line.length() <= 0) {
                         addNewline = false;
+                    } else if ("q".equals(line)) {
+                        break;
+                    } else if ("quit".equals(line)) {
+                        break;
+                    } else if ("play".equals(line)) {
+                        dispatchKeyCode(126);
+                    } else if ("pause".equals(line)) {
+                        dispatchKeyCode(127);
+                    } else if ("next".equals(line)) {
+                        dispatchKeyCode(87);
+                    } else if ("previous".equals(line)) {
+                        dispatchKeyCode(88);
+                    } else {
+                        PrintStream printStream = System.out;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Invalid command: ");
+                        stringBuilder.append(line);
+                        printStream.println(stringBuilder.toString());
                     }
                     synchronized (this) {
                         if (addNewline) {
@@ -192,6 +192,7 @@ public class Media extends BaseCommand {
                     } catch (Exception e3) {
                     }
                 }
+            } catch (Throwable th) {
             }
         }
 

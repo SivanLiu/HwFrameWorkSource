@@ -25,15 +25,16 @@ public class HwHiStreamDataBaseManager {
         return mHwHiStreamDataBaseManager;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0018, code:
+    /* JADX WARNING: Missing block: B:12:0x0018, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void closeHiStreamDB() {
         synchronized (this.mSQLLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen()) {
-            } else {
-                this.mDatabase.close();
+            if (this.mDatabase != null) {
+                if (this.mDatabase.isOpen()) {
+                    this.mDatabase.close();
+                }
             }
         }
     }
@@ -105,16 +106,16 @@ public class HwHiStreamDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0028, code:
+    /* JADX WARNING: Missing block: B:10:0x0028, code skipped:
             if (r2 != null) goto L_0x002a;
      */
-    /* JADX WARNING: Missing block: B:11:0x002a, code:
+    /* JADX WARNING: Missing block: B:11:0x002a, code skipped:
             r2.close();
      */
-    /* JADX WARNING: Missing block: B:17:0x0046, code:
+    /* JADX WARNING: Missing block: B:17:0x0046, code skipped:
             if (r2 == null) goto L_0x0049;
      */
-    /* JADX WARNING: Missing block: B:18:0x0049, code:
+    /* JADX WARNING: Missing block: B:18:0x0049, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -144,17 +145,19 @@ public class HwHiStreamDataBaseManager {
 
     public boolean addOrUpdateApRecordInfo(HiStreamAPInfo dbr) {
         synchronized (this.mSQLLock) {
-            boolean updateApRecordInfo;
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null || dbr.mSSID == null) {
-                HwHiStreamUtils.logE("addOrUpdateApRecordInfo error.");
-                return false;
-            } else if (checkAPRecordExist(dbr)) {
-                updateApRecordInfo = updateApRecordInfo(dbr);
-                return updateApRecordInfo;
-            } else {
-                updateApRecordInfo = insertApRecordInfo(dbr);
-                return updateApRecordInfo;
+            if (!(this.mDatabase == null || !this.mDatabase.isOpen() || dbr == null)) {
+                if (dbr.mSSID != null) {
+                    boolean updateApRecordInfo;
+                    if (checkAPRecordExist(dbr)) {
+                        updateApRecordInfo = updateApRecordInfo(dbr);
+                        return updateApRecordInfo;
+                    }
+                    updateApRecordInfo = insertApRecordInfo(dbr);
+                    return updateApRecordInfo;
+                }
             }
+            HwHiStreamUtils.logE("addOrUpdateApRecordInfo error.");
+            return false;
         }
     }
 
@@ -213,8 +216,11 @@ public class HwHiStreamDataBaseManager {
                 stringBuilder.append("checkTrafficInfoExist error:");
                 stringBuilder.append(e);
                 HwHiStreamUtils.logE(stringBuilder.toString());
+                if (c != null) {
+                    c.close();
+                }
                 return false;
-            } finally {
+            } catch (Throwable th) {
                 if (c != null) {
                     c.close();
                 }
@@ -249,8 +255,11 @@ public class HwHiStreamDataBaseManager {
                 stringBuilder.append("queryTrafficInfo error:");
                 stringBuilder.append(e2);
                 HwHiStreamUtils.logE(stringBuilder.toString());
+                if (c != null) {
+                    c.close();
+                }
                 return null;
-            } finally {
+            } catch (Throwable th) {
                 if (c != null) {
                     c.close();
                 }
@@ -282,16 +291,16 @@ public class HwHiStreamDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x00c6, code:
+    /* JADX WARNING: Missing block: B:23:0x00c6, code skipped:
             if (r5 != null) goto L_0x00c8;
      */
-    /* JADX WARNING: Missing block: B:22:0x00c8, code:
+    /* JADX WARNING: Missing block: B:24:0x00c8, code skipped:
             r5.close();
      */
-    /* JADX WARNING: Missing block: B:25:0x00e1, code:
+    /* JADX WARNING: Missing block: B:27:0x00e1, code skipped:
             if (r5 == null) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:26:0x00e4, code:
+    /* JADX WARNING: Missing block: B:28:0x00e4, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -349,8 +358,11 @@ public class HwHiStreamDataBaseManager {
                 stringBuilder.append("checkTrafficInfoExist error:");
                 stringBuilder.append(e2);
                 HwHiStreamUtils.logE(stringBuilder.toString());
+                if (c != null) {
+                    c.close();
+                }
                 return 0;
-            } finally {
+            } catch (Throwable th) {
                 if (c != null) {
                     c.close();
                 }
@@ -389,8 +401,11 @@ public class HwHiStreamDataBaseManager {
                 stringBuilder.append("getEarlierTrafficRecordTime error:");
                 stringBuilder.append(e);
                 HwHiStreamUtils.logE(stringBuilder.toString());
+                if (c != null) {
+                    c.close();
+                }
                 return 0;
-            } finally {
+            } catch (Throwable th) {
                 if (c != null) {
                     c.close();
                 }
@@ -433,8 +448,11 @@ public class HwHiStreamDataBaseManager {
                 stringBuilder.append("deleteEarliestTrafficRecord error:");
                 stringBuilder.append(e);
                 HwHiStreamUtils.logE(stringBuilder.toString());
+                if (c != null) {
+                    c.close();
+                }
                 return false;
-            } finally {
+            } catch (Throwable th) {
                 if (c != null) {
                     c.close();
                 }
@@ -525,27 +543,29 @@ public class HwHiStreamDataBaseManager {
 
     public boolean addOrUpdateTrafficInfo(String subId, int callType, int netType, long currDay, long mCurrTraffic) {
         synchronized (this.mSQLLock) {
-            if (this.mDatabase == null || !this.mDatabase.isOpen() || subId == null) {
-                HwHiStreamUtils.logE("addOrUpdateTrafficInfo error.");
-                return false;
+            if (this.mDatabase != null && this.mDatabase.isOpen()) {
+                if (subId != null) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("addOrUpdateTrafficInfo calltype=");
+                    stringBuilder.append(callType);
+                    stringBuilder.append(",netType=");
+                    stringBuilder.append(netType);
+                    stringBuilder.append(",currDay =");
+                    stringBuilder.append(currDay);
+                    stringBuilder.append(",mCurrTraffic=");
+                    stringBuilder.append(mCurrTraffic);
+                    HwHiStreamUtils.logD(stringBuilder.toString());
+                    boolean updateTrafficInfo;
+                    if (checkTrafficInfoExist(subId, callType, netType, currDay)) {
+                        updateTrafficInfo = updateTrafficInfo(subId, callType, netType, currDay, mCurrTraffic);
+                        return updateTrafficInfo;
+                    }
+                    updateTrafficInfo = insertTrafficInfo(subId, callType, netType, currDay, mCurrTraffic);
+                    return updateTrafficInfo;
+                }
             }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("addOrUpdateTrafficInfo calltype=");
-            stringBuilder.append(callType);
-            stringBuilder.append(",netType=");
-            stringBuilder.append(netType);
-            stringBuilder.append(",currDay =");
-            stringBuilder.append(currDay);
-            stringBuilder.append(",mCurrTraffic=");
-            stringBuilder.append(mCurrTraffic);
-            HwHiStreamUtils.logD(stringBuilder.toString());
-            boolean updateTrafficInfo;
-            if (checkTrafficInfoExist(subId, callType, netType, currDay)) {
-                updateTrafficInfo = updateTrafficInfo(subId, callType, netType, currDay, mCurrTraffic);
-                return updateTrafficInfo;
-            }
-            updateTrafficInfo = insertTrafficInfo(subId, callType, netType, currDay, mCurrTraffic);
-            return updateTrafficInfo;
+            HwHiStreamUtils.logE("addOrUpdateTrafficInfo error.");
+            return false;
         }
     }
 
@@ -628,16 +648,16 @@ public class HwHiStreamDataBaseManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x01dc, code:
+    /* JADX WARNING: Missing block: B:13:0x01dc, code skipped:
             if (r0 != null) goto L_0x01de;
      */
-    /* JADX WARNING: Missing block: B:14:0x01de, code:
+    /* JADX WARNING: Missing block: B:14:0x01de, code skipped:
             r0.close();
      */
-    /* JADX WARNING: Missing block: B:19:0x01f9, code:
+    /* JADX WARNING: Missing block: B:19:0x01f9, code skipped:
             if (r0 == null) goto L_0x01fc;
      */
-    /* JADX WARNING: Missing block: B:20:0x01fc, code:
+    /* JADX WARNING: Missing block: B:20:0x01fc, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

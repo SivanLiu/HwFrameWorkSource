@@ -3,11 +3,13 @@ package org.bouncycastle.cms.jcajce;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
+import javax.crypto.SecretKey;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
 import org.bouncycastle.asn1.cryptopro.Gost2814789EncryptedKey;
@@ -18,6 +20,7 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.KeyTransRecipient;
 import org.bouncycastle.jcajce.spec.GOST28147WrapParameterSpec;
 import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
+import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.jcajce.JceAsymmetricKeyUnwrapper;
 import org.bouncycastle.util.Arrays;
 
@@ -35,16 +38,15 @@ public abstract class JceKeyTransRecipient implements KeyTransRecipient {
 
     protected Key extractSecretKey(AlgorithmIdentifier algorithmIdentifier, AlgorithmIdentifier algorithmIdentifier2, byte[] bArr) throws CMSException {
         StringBuilder stringBuilder;
-        Key generateSecret;
         if (CMSUtils.isGOST(algorithmIdentifier.getAlgorithm())) {
             try {
                 GostR3410KeyTransport instance = GostR3410KeyTransport.getInstance(bArr);
                 GostR3410TransportParameters transportParameters = instance.getTransportParameters();
-                Key generatePublic = this.helper.createKeyFactory(algorithmIdentifier.getAlgorithm()).generatePublic(new X509EncodedKeySpec(transportParameters.getEphemeralPublicKey().getEncoded()));
+                PublicKey generatePublic = this.helper.createKeyFactory(algorithmIdentifier.getAlgorithm()).generatePublic(new X509EncodedKeySpec(transportParameters.getEphemeralPublicKey().getEncoded()));
                 KeyAgreement createKeyAgreement = this.helper.createKeyAgreement(algorithmIdentifier.getAlgorithm());
                 createKeyAgreement.init(this.recipientKey, new UserKeyingMaterialSpec(transportParameters.getUkm()));
                 createKeyAgreement.doPhase(generatePublic, true);
-                generateSecret = createKeyAgreement.generateSecret("GOST28147");
+                SecretKey generateSecret = createKeyAgreement.generateSecret("GOST28147");
                 Cipher createCipher = this.helper.createCipher(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_KeyWrap);
                 createCipher.init(4, generateSecret, new GOST28147WrapParameterSpec(transportParameters.getEncryptionParamSet(), transportParameters.getUkm()));
                 Gost2814789EncryptedKey sessionEncryptedKey = instance.getSessionEncryptedKey();
@@ -63,12 +65,12 @@ public abstract class JceKeyTransRecipient implements KeyTransRecipient {
             }
         }
         try {
-            generateSecret = this.helper.getJceKey(algorithmIdentifier2.getAlgorithm(), mustProduceEncodableUnwrappedKey.generateUnwrappedKey(algorithmIdentifier2, bArr));
+            Key jceKey = this.helper.getJceKey(algorithmIdentifier2.getAlgorithm(), mustProduceEncodableUnwrappedKey.generateUnwrappedKey(algorithmIdentifier2, bArr));
             if (this.validateKeySize) {
-                this.helper.keySizeCheck(algorithmIdentifier2, generateSecret);
+                this.helper.keySizeCheck(algorithmIdentifier2, jceKey);
             }
-            return generateSecret;
-        } catch (Exception e2) {
+            return jceKey;
+        } catch (OperatorException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception unwrapping key: ");
             stringBuilder.append(e2.getMessage());

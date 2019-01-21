@@ -40,7 +40,7 @@ public class JceKTSKeyUnwrapper extends AsymmetricKeyUnwrapper {
         try {
             createAsymmetricWrapper.init(4, this.privKey, new Builder(wrappingAlgorithmName, instance2.getKeyLength().intValue() * 8, new DEROtherInfo.Builder(instance.getDem(), this.partyUInfo, this.partyVInfo).build().getEncoded()).withKdfAlgorithm(instance2.getKeyDerivationFunction()).build());
             return new JceGenericKey(algorithmIdentifier, createAsymmetricWrapper.unwrap(bArr, this.helper.getKeyAlgorithmName(algorithmIdentifier.getAlgorithm()), 3));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Unable to unwrap contents key: ");
             stringBuilder.append(e.getMessage());

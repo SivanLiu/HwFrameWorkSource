@@ -88,7 +88,7 @@ final class ColorFade {
             this.mDisplayManagerInternal.unregisterDisplayTransactionListener(this);
         }
 
-        /* JADX WARNING: Missing block: B:13:0x0053, code:
+        /* JADX WARNING: Missing block: B:14:0x0053, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -112,6 +112,8 @@ final class ColorFade {
                         case 3:
                             this.mSurfaceControl.setPosition((float) displayInfo.logicalWidth, 0.0f);
                             this.mSurfaceControl.setMatrix(0.0f, 1.0f, -1.0f, 0.0f);
+                            break;
+                        default:
                             break;
                     }
                 }

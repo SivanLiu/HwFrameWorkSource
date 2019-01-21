@@ -5,20 +5,20 @@ public final class CharUtils {
     }
 
     public static char[] clone(char[] cArr) {
-        Object obj = new char[cArr.length];
-        System.arraycopy(cArr, 0, obj, 0, cArr.length);
-        return obj;
+        char[] cArr2 = new char[cArr.length];
+        System.arraycopy(cArr, 0, cArr2, 0, cArr.length);
+        return cArr2;
     }
 
     public static boolean equals(char[] cArr, char[] cArr2) {
         if (cArr.length != cArr2.length) {
             return false;
         }
-        boolean z = true;
+        int i = 1;
         for (int length = cArr.length - 1; length >= 0; length--) {
-            z &= cArr[length] == cArr2[length] ? 1 : 0;
+            i &= cArr[length] == cArr2[length] ? 1 : 0;
         }
-        return z;
+        return i;
     }
 
     public static byte[] toByteArray(char[] cArr) {

@@ -98,51 +98,64 @@ class Vr2dDisplay {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0076  */
+    /* JADX WARNING: Removed duplicated region for block: B:12:0x0073  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void setVirtualDisplayProperties(Vr2dDisplayProperties displayProperties) {
         synchronized (this.mVdLock) {
+            String str;
+            StringBuilder stringBuilder;
+            ImageReader oldImageReader;
             int width = displayProperties.getWidth();
             int height = displayProperties.getHeight();
             int dpi = displayProperties.getDpi();
             boolean resized = false;
-            String str;
-            StringBuilder stringBuilder;
-            if (width < 1 || height < 1 || dpi < 1) {
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Ignoring Width/Height/Dpi values of ");
-                stringBuilder.append(width);
-                stringBuilder.append(",");
-                stringBuilder.append(height);
-                stringBuilder.append(",");
-                stringBuilder.append(dpi);
-                Log.i(str, stringBuilder.toString());
-            } else {
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Setting width/height/dpi to ");
-                stringBuilder.append(width);
-                stringBuilder.append(",");
-                stringBuilder.append(height);
-                stringBuilder.append(",");
-                stringBuilder.append(dpi);
-                Log.i(str, stringBuilder.toString());
-                this.mVirtualDisplayWidth = width;
-                this.mVirtualDisplayHeight = height;
-                this.mVirtualDisplayDpi = dpi;
-                resized = true;
+            if (width >= 1 && height >= 1) {
+                if (dpi >= 1) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Setting width/height/dpi to ");
+                    stringBuilder.append(width);
+                    stringBuilder.append(",");
+                    stringBuilder.append(height);
+                    stringBuilder.append(",");
+                    stringBuilder.append(dpi);
+                    Log.i(str, stringBuilder.toString());
+                    this.mVirtualDisplayWidth = width;
+                    this.mVirtualDisplayHeight = height;
+                    this.mVirtualDisplayDpi = dpi;
+                    resized = true;
+                    if ((displayProperties.getFlags() & 1) != 1) {
+                        this.mIsVirtualDisplayAllowed = true;
+                    } else if ((displayProperties.getRemovedFlags() & 1) == 1) {
+                        this.mIsVirtualDisplayAllowed = false;
+                    }
+                    if (this.mVirtualDisplay != null && resized && this.mIsVirtualDisplayAllowed) {
+                        this.mVirtualDisplay.resize(this.mVirtualDisplayWidth, this.mVirtualDisplayHeight, this.mVirtualDisplayDpi);
+                        oldImageReader = this.mImageReader;
+                        this.mImageReader = null;
+                        startImageReader();
+                        oldImageReader.close();
+                    }
+                    updateVirtualDisplay();
+                }
             }
-            if ((displayProperties.getFlags() & 1) == 1) {
-                this.mIsVirtualDisplayAllowed = true;
-            } else if ((displayProperties.getRemovedFlags() & 1) == 1) {
-                this.mIsVirtualDisplayAllowed = false;
+            str = TAG;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Ignoring Width/Height/Dpi values of ");
+            stringBuilder.append(width);
+            stringBuilder.append(",");
+            stringBuilder.append(height);
+            stringBuilder.append(",");
+            stringBuilder.append(dpi);
+            Log.i(str, stringBuilder.toString());
+            if ((displayProperties.getFlags() & 1) != 1) {
             }
-            if (this.mVirtualDisplay != null && resized && this.mIsVirtualDisplayAllowed) {
-                this.mVirtualDisplay.resize(this.mVirtualDisplayWidth, this.mVirtualDisplayHeight, this.mVirtualDisplayDpi);
-                ImageReader oldImageReader = this.mImageReader;
-                this.mImageReader = null;
-                startImageReader();
-                oldImageReader.close();
-            }
+            this.mVirtualDisplay.resize(this.mVirtualDisplayWidth, this.mVirtualDisplayHeight, this.mVirtualDisplayDpi);
+            oldImageReader = this.mImageReader;
+            this.mImageReader = null;
+            startImageReader();
+            oldImageReader.close();
             updateVirtualDisplay();
         }
     }

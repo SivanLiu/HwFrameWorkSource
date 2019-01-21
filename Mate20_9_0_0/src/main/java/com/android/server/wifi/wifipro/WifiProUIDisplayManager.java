@@ -298,7 +298,7 @@ public class WifiProUIDisplayManager {
         } else if (isNologin) {
             buider.setTitle(33685589);
         }
-        buider.setMessage(33686198);
+        buider.setMessage(33686201);
         buider.setPositiveButton(33685567, new OnClickListener() {
             public void onClick(DialogInterface dialoginterface, int i) {
                 String str = WifiProUIDisplayManager.TAG;

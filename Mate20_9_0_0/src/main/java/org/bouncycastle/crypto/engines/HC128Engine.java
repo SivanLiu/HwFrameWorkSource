@@ -66,25 +66,25 @@ public class HC128Engine implements StreamCipher {
             int i2;
             this.idx = 0;
             this.cnt = 0;
-            Object obj = new int[1280];
+            int[] iArr = new int[1280];
             for (int i3 = 0; i3 < 16; i3++) {
                 i2 = i3 >> 2;
-                obj[i2] = ((this.key[i3] & 255) << (8 * (i3 & 3))) | obj[i2];
+                iArr[i2] = ((this.key[i3] & 255) << (8 * (i3 & 3))) | iArr[i2];
             }
-            System.arraycopy(obj, 0, obj, 4, 4);
+            System.arraycopy(iArr, 0, iArr, 4, 4);
             i2 = 0;
             while (i2 < this.iv.length && i2 < 16) {
                 int i4 = (i2 >> 2) + 8;
-                obj[i4] = obj[i4] | ((this.iv[i2] & 255) << ((i2 & 3) * 8));
+                iArr[i4] = iArr[i4] | ((this.iv[i2] & 255) << ((i2 & 3) * 8));
                 i2++;
             }
-            System.arraycopy(obj, 8, obj, 12, 4);
+            System.arraycopy(iArr, 8, iArr, 12, 4);
             while (i < 1280) {
-                obj[i] = (((f2(obj[i - 2]) + obj[i - 7]) + f1(obj[i - 15])) + obj[i - 16]) + i;
+                iArr[i] = (((f2(iArr[i - 2]) + iArr[i - 7]) + f1(iArr[i - 15])) + iArr[i - 16]) + i;
                 i++;
             }
-            System.arraycopy(obj, 256, this.p, 0, 512);
-            System.arraycopy(obj, 768, this.q, 0, 512);
+            System.arraycopy(iArr, 256, this.p, 0, 512);
+            System.arraycopy(iArr, 768, this.q, 0, 512);
             for (i = 0; i < 512; i++) {
                 this.p[i] = step();
             }

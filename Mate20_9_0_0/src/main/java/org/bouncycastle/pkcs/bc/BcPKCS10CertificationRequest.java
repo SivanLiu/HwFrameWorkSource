@@ -23,7 +23,7 @@ public class BcPKCS10CertificationRequest extends PKCS10CertificationRequest {
     public AsymmetricKeyParameter getPublicKey() throws PKCSException {
         try {
             return PublicKeyFactory.createKey(getSubjectPublicKeyInfo());
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("error extracting key encoding: ");
             stringBuilder.append(e.getMessage());

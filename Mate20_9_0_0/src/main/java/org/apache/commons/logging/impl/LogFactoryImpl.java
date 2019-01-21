@@ -1,6 +1,7 @@
 package org.apache.commons.logging.impl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Enumeration;
@@ -180,7 +181,7 @@ public class LogFactoryImpl extends LogFactory {
             return instance;
         } catch (LogConfigurationException lce) {
             throw lce;
-        } catch (Throwable e) {
+        } catch (InvocationTargetException e) {
             Throwable c = e.getTargetException();
             if (c != null) {
                 throw new LogConfigurationException(c);

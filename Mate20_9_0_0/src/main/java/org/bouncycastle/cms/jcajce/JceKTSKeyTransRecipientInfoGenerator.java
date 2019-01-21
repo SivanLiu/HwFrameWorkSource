@@ -41,7 +41,7 @@ public class JceKTSKeyTransRecipientInfoGenerator extends KeyTransRecipientInfoG
     private static byte[] getEncodedRecipID(IssuerAndSerialNumber issuerAndSerialNumber) throws CertificateEncodingException {
         try {
             return issuerAndSerialNumber.getEncoded(ASN1Encoding.DER);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Cannot process extracted IssuerAndSerialNumber: ");
             stringBuilder.append(e.getMessage());
@@ -56,7 +56,7 @@ public class JceKTSKeyTransRecipientInfoGenerator extends KeyTransRecipientInfoG
     private static byte[] getEncodedSubKeyId(byte[] bArr) {
         try {
             return new DEROctetString(bArr).getEncoded();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Cannot process subject key identifier: ");
             stringBuilder.append(e.getMessage());

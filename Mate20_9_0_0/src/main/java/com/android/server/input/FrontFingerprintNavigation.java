@@ -723,7 +723,7 @@ public class FrontFingerprintNavigation {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0060, code:
+    /* JADX WARNING: Missing block: B:13:0x0060, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

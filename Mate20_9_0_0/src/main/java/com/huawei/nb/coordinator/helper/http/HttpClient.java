@@ -476,25 +476,25 @@ public class HttpClient {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:93:0x0439  */
-    /* JADX WARNING: Removed duplicated region for block: B:164:0x07a0 A:{SYNTHETIC, Splitter: B:164:0x07a0} */
+    /* JADX WARNING: Removed duplicated region for block: B:165:0x07a0 A:{SYNTHETIC, Splitter:B:165:0x07a0} */
     /* JADX WARNING: Removed duplicated region for block: B:96:0x044e  */
-    /* JADX WARNING: Missing block: B:99:?, code:
+    /* JADX WARNING: Missing block: B:99:?, code skipped:
             r26.mResponse.setResponseSize((long) r19);
             r6.flush();
             r26.mResponse.setStatusCode(r17);
      */
-    /* JADX WARNING: Missing block: B:100:0x0484, code:
+    /* JADX WARNING: Missing block: B:100:0x0484, code skipped:
             if (r26.mDataRequestListener == null) goto L_0x04b8;
      */
-    /* JADX WARNING: Missing block: B:102:0x0492, code:
+    /* JADX WARNING: Missing block: B:102:0x0492, code skipped:
             if ((r26.mDataRequestListener instanceof com.huawei.nb.coordinator.helper.RefreshDataRequestListener) == false) goto L_0x04b8;
      */
-    /* JADX WARNING: Missing block: B:103:0x0494, code:
+    /* JADX WARNING: Missing block: B:103:0x0494, code skipped:
             r16.setDownloadedSize((long) r19);
             r16.setFinished(true);
             ((com.huawei.nb.coordinator.helper.RefreshDataRequestListener) r26.mDataRequestListener).onRefresh(r16);
      */
-    /* JADX WARNING: Missing block: B:104:0x04b8, code:
+    /* JADX WARNING: Missing block: B:104:0x04b8, code skipped:
             r5 = r6;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -760,6 +760,9 @@ public class HttpClient {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:148:0x037e  */
+    /* JADX WARNING: Removed duplicated region for block: B:103:0x0261  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void executeResponseForFragmentLoad(HttpURLConnection connection, CoordinatorAudit coordinatorAudit) {
         IOException e;
         Throwable th;
@@ -908,17 +911,26 @@ public class HttpClient {
                                         }
                                     } catch (IOException e3) {
                                         e = e3;
+                                        this.mResponse.setHttpExceptionMsg(e.getMessage());
+                                        setErrorHttpResponse(-5, "HttpClient MultiPackage IOException : " + e.getMessage());
+                                        IOUtils.closeQuietly(bos);
+                                        IOUtils.closeQuietly(os);
+                                        IOUtils.closeQuietly(dis2);
+                                        IOUtils.closeQuietly(is);
+                                        if (connection != null) {
+                                        }
+                                        dis = dis2;
+                                        return;
                                     }
-                                } else {
-                                    setErrorHttpResponse(-5, "HttpClient create file fail!");
-                                    IOUtils.closeQuietly(dis2);
-                                    IOUtils.closeQuietly(is);
-                                    if (connection != null) {
-                                        connection.disconnect();
-                                    }
-                                    dis = dis2;
-                                    return;
                                 }
+                                setErrorHttpResponse(-5, "HttpClient create file fail!");
+                                IOUtils.closeQuietly(dis2);
+                                IOUtils.closeQuietly(is);
+                                if (connection != null) {
+                                    connection.disconnect();
+                                }
+                                dis = dis2;
+                                return;
                             }
                             this.mResponse.setResponseSize(totalLength);
                             this.mResponse.setResponseString("{\"data\":\"Fragment load success!\"}");
@@ -936,9 +948,46 @@ public class HttpClient {
                     } catch (IOException e4) {
                         e = e4;
                         dis = dis2;
-                    } catch (Throwable th4) {
-                        th = th4;
+                        try {
+                            if (TextUtils.isEmpty(e.getMessage())) {
+                                setErrorHttpResponse(-5, " IOException, error msg is empty.");
+                            } else {
+                                this.mResponse.setHttpExceptionMsg(e.getMessage());
+                                String errMsg = "HttpClient executeResponseForMultiPackage IOException : " + e.getMessage();
+                                if (e.getMessage().startsWith("Unable to resolve host")) {
+                                    setErrorHttpResponse(-6, errMsg);
+                                } else if (e.getMessage().startsWith("failed to connect to") || e.getMessage().startsWith("Failed to connect to")) {
+                                    setErrorHttpResponse(-9, errMsg);
+                                } else if (e.getMessage().startsWith(IVerifyVar.TIME_OUT_HEADER)) {
+                                    setErrorHttpResponse(-13, errMsg);
+                                } else {
+                                    setErrorHttpResponse(-5, errMsg);
+                                }
+                            }
+                            IOUtils.closeQuietly(dis);
+                            IOUtils.closeQuietly(is);
+                            if (connection != null) {
+                                connection.disconnect();
+                                return;
+                            }
+                            return;
+                        } catch (Throwable th4) {
+                            th = th4;
+                            IOUtils.closeQuietly(dis);
+                            IOUtils.closeQuietly(is);
+                            if (connection != null) {
+                            }
+                            throw th;
+                        }
+                    } catch (Throwable th5) {
+                        th = th5;
                         dis = dis2;
+                        IOUtils.closeQuietly(dis);
+                        IOUtils.closeQuietly(is);
+                        if (connection != null) {
+                            connection.disconnect();
+                        }
+                        throw th;
                     }
                 } else {
                     IOUtils.closeQuietly(null);
@@ -961,41 +1010,9 @@ public class HttpClient {
             IOUtils.closeQuietly(null);
             if (connection != null) {
                 connection.disconnect();
-                return;
             }
-            return;
         } catch (IOException e5) {
             e = e5;
-        }
-        try {
-            if (TextUtils.isEmpty(e.getMessage())) {
-                setErrorHttpResponse(-5, " IOException, error msg is empty.");
-            } else {
-                this.mResponse.setHttpExceptionMsg(e.getMessage());
-                String errMsg = "HttpClient executeResponseForMultiPackage IOException : " + e.getMessage();
-                if (e.getMessage().startsWith("Unable to resolve host")) {
-                    setErrorHttpResponse(-6, errMsg);
-                } else if (e.getMessage().startsWith("failed to connect to") || e.getMessage().startsWith("Failed to connect to")) {
-                    setErrorHttpResponse(-9, errMsg);
-                } else if (e.getMessage().startsWith(IVerifyVar.TIME_OUT_HEADER)) {
-                    setErrorHttpResponse(-13, errMsg);
-                } else {
-                    setErrorHttpResponse(-5, errMsg);
-                }
-            }
-            IOUtils.closeQuietly(dis);
-            IOUtils.closeQuietly(is);
-            if (connection != null) {
-                connection.disconnect();
-            }
-        } catch (Throwable th5) {
-            th = th5;
-            IOUtils.closeQuietly(dis);
-            IOUtils.closeQuietly(is);
-            if (connection != null) {
-                connection.disconnect();
-            }
-            throw th;
         }
     }
 

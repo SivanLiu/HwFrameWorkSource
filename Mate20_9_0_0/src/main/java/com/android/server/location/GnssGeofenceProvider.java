@@ -9,6 +9,7 @@ import android.util.SparseArray;
 import com.android.internal.annotations.VisibleForTesting;
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 class GnssGeofenceProvider extends Stub {
@@ -120,23 +121,14 @@ class GnssGeofenceProvider extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0015 A:{Splitter: B:1:0x000a, ExcHandler: java.lang.InterruptedException (r1_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0015, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0016, code:
-            android.util.Log.e(TAG, "Failed running callable.", r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x001e, code:
-            return false;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean runOnHandlerThread(Callable<Boolean> callable) {
         FutureTask<Boolean> futureTask = new FutureTask(callable);
         this.mHandler.post(futureTask);
         try {
             return ((Boolean) futureTask.get()).booleanValue();
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException e) {
+            Log.e(TAG, "Failed running callable.", e);
+            return false;
         }
     }
 

@@ -178,32 +178,11 @@ public class LocationDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0022, code:
+    /* JADX WARNING: Missing block: B:8:0x0022, code skipped:
             if (r1 != null) goto L_0x0024;
      */
-    /* JADX WARNING: Missing block: B:9:0x0024, code:
-            r1.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0043, code:
+    /* JADX WARNING: Missing block: B:18:0x005f, code skipped:
             if (r1 == null) goto L_0x0062;
-     */
-    /* JADX WARNING: Missing block: B:17:0x005f, code:
-            if (r1 == null) goto L_0x0062;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0062, code:
-            if (r0 == null) goto L_0x0079;
-     */
-    /* JADX WARNING: Missing block: B:19:0x0064, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("getFrequentLocation, frequentlocation:");
-            r2.append(r0);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:20:0x0079, code:
-            com.android.server.hidata.wavemapping.util.LogUtil.d("getFrequentLocation, NO DATA");
-     */
-    /* JADX WARNING: Missing block: B:21:0x007e, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public String getFrequentLocation() {
@@ -228,6 +207,18 @@ public class LocationDAO {
             stringBuilder.append("getFrequentLocation Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (frequentlocation != null) {
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("getFrequentLocation, frequentlocation:");
+                stringBuilder2.append(frequentlocation);
+                LogUtil.i(stringBuilder2.toString());
+            } else {
+                LogUtil.d("getFrequentLocation, NO DATA");
+            }
+            return frequentlocation;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -235,26 +226,11 @@ public class LocationDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0023, code:
+    /* JADX WARNING: Missing block: B:8:0x0023, code skipped:
             if (r2 != null) goto L_0x0025;
      */
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0044, code:
+    /* JADX WARNING: Missing block: B:18:0x0060, code skipped:
             if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0060, code:
-            if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0063, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getBenefitCHRTime, time:");
-            r3.append(r0);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:19:0x0077, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public long getBenefitCHRTime() {
@@ -279,6 +255,14 @@ public class LocationDAO {
             stringBuilder.append("getBenefitCHRTime Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getBenefitCHRTime, time:");
+            stringBuilder2.append(time);
+            LogUtil.i(stringBuilder2.toString());
+            return time;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -286,26 +270,11 @@ public class LocationDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0023, code:
+    /* JADX WARNING: Missing block: B:8:0x0023, code skipped:
             if (r2 != null) goto L_0x0025;
      */
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0044, code:
+    /* JADX WARNING: Missing block: B:18:0x0060, code skipped:
             if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0060, code:
-            if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0063, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getSpaceUserCHRTime, time:");
-            r3.append(r0);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:19:0x0077, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public long getSpaceUserCHRTime() {
@@ -330,6 +299,14 @@ public class LocationDAO {
             stringBuilder.append("getSpaceUserCHRTime Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getSpaceUserCHRTime, time:");
+            stringBuilder2.append(time);
+            LogUtil.i(stringBuilder2.toString());
+            return time;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -337,26 +314,11 @@ public class LocationDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0023, code:
+    /* JADX WARNING: Missing block: B:8:0x0023, code skipped:
             if (r2 != null) goto L_0x0025;
      */
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0044, code:
+    /* JADX WARNING: Missing block: B:18:0x0060, code skipped:
             if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0060, code:
-            if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0063, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getlastUpdateTime, time:");
-            r3.append(r0);
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:19:0x0077, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public long getlastUpdateTime() {
@@ -381,6 +343,14 @@ public class LocationDAO {
             stringBuilder.append("getlastUpdateTime Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getlastUpdateTime, time:");
+            stringBuilder2.append(time);
+            LogUtil.i(stringBuilder2.toString());
+            return time;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -388,26 +358,11 @@ public class LocationDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0023, code:
+    /* JADX WARNING: Missing block: B:8:0x0023, code skipped:
             if (r2 != null) goto L_0x0025;
      */
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:14:0x0044, code:
+    /* JADX WARNING: Missing block: B:18:0x0060, code skipped:
             if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0060, code:
-            if (r2 == null) goto L_0x0063;
-     */
-    /* JADX WARNING: Missing block: B:18:0x0063, code:
-            r3 = new java.lang.StringBuilder();
-            r3.append("getOOBTime, OOBTime:");
-            r3.append(r0);
-            com.android.server.hidata.wavemapping.util.LogUtil.d(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:19:0x0077, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public long getOOBTime() {
@@ -432,6 +387,14 @@ public class LocationDAO {
             stringBuilder.append("getOOBTime Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("getOOBTime, OOBTime:");
+            stringBuilder2.append(oob_time);
+            LogUtil.d(stringBuilder2.toString());
+            return oob_time;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -945,23 +908,30 @@ public class LocationDAO {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:77:0x0421=Splitter:B:77:0x0421, B:71:0x03fc=Splitter:B:71:0x03fc} */
     /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
-    /* JADX WARNING: Missing block: B:73:0x0414, code:
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
+    /* JADX WARNING: Removed duplicated region for block: B:83:0x0440  */
+    /* JADX WARNING: Missing block: B:73:0x0414, code skipped:
             if (r4 == null) goto L_0x043c;
      */
-    /* JADX WARNING: Missing block: B:74:0x0416, code:
+    /* JADX WARNING: Missing block: B:74:0x0416, code skipped:
             r4.close();
      */
-    /* JADX WARNING: Missing block: B:79:0x0439, code:
+    /* JADX WARNING: Missing block: B:79:0x0439, code skipped:
             if (r4 == null) goto L_0x043c;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public Bundle findCHRbyFreqLoc(String freqlocation) {
         Bundle results;
         IllegalArgumentException e;
+        StringBuilder stringBuilder;
         Exception e2;
         Throwable th;
-        StringBuilder stringBuilder;
         String str = freqlocation;
         Bundle results2 = new Bundle();
         Cursor cursor = null;
@@ -979,265 +949,363 @@ public class LocationDAO {
             stringBuilder2.append(Arrays.toString(args));
             LogUtil.i(stringBuilder2.toString());
             String sql2;
-            String[] args2;
+            String[] strArr;
             try {
                 Cursor cursor2;
                 Cursor cursor3;
                 cursor = this.db.rawQuery(sql, args);
                 while (cursor.moveToNext()) {
+                    int firstreport;
+                    int entery;
+                    int leave;
+                    int duration;
+                    int spacechange;
+                    int spaceleave;
+                    int uptotalswitch;
+                    int upautosucc;
+                    int upmanualsucc;
+                    int upautofail;
+                    int upnoswitchfail;
+                    int upqrycnt;
+                    int uprescnt;
+                    int upunknowndb;
+                    int upunknownspace;
+                    int lptotalswitch;
+                    int lpdatarx;
+                    int lpdatatx;
+                    int lpduration;
+                    int lpoffset;
+                    int lpalreadybest;
+                    int lpnotreach;
+                    int lpback;
+                    int lpunknowndb;
+                    int lpunknownspace;
                     try {
                         try {
-                            int firstreport = cursor.getInt(cursor.getColumnIndexOrThrow("FIRSTREPORT"));
-                            int entery = cursor.getInt(cursor.getColumnIndexOrThrow("ENTERY"));
-                            int leave = cursor.getInt(cursor.getColumnIndexOrThrow("LEAVE"));
-                            int duration = cursor.getInt(cursor.getColumnIndexOrThrow(Constant.USERDB_APP_NAME_DURATION));
-                            int spacechange = cursor.getInt(cursor.getColumnIndexOrThrow("SPACECHANGE"));
-                            int spaceleave = cursor.getInt(cursor.getColumnIndexOrThrow("SPACELEAVE"));
-                            int uptotalswitch = cursor.getInt(cursor.getColumnIndexOrThrow("UPTOTALSWITCH"));
-                            int upautosucc = cursor.getInt(cursor.getColumnIndexOrThrow("UPAUTOSUCC"));
-                            int upmanualsucc = cursor.getInt(cursor.getColumnIndexOrThrow("UPMANUALSUCC"));
-                            int upautofail = cursor.getInt(cursor.getColumnIndexOrThrow("UPAUTOFAIL"));
-                            int upnoswitchfail = cursor.getInt(cursor.getColumnIndexOrThrow("UPNOSWITCHFAIL"));
+                            firstreport = cursor.getInt(cursor.getColumnIndexOrThrow("FIRSTREPORT"));
+                            entery = cursor.getInt(cursor.getColumnIndexOrThrow("ENTERY"));
+                            leave = cursor.getInt(cursor.getColumnIndexOrThrow("LEAVE"));
+                            duration = cursor.getInt(cursor.getColumnIndexOrThrow(Constant.USERDB_APP_NAME_DURATION));
+                            spacechange = cursor.getInt(cursor.getColumnIndexOrThrow("SPACECHANGE"));
+                            spaceleave = cursor.getInt(cursor.getColumnIndexOrThrow("SPACELEAVE"));
+                            uptotalswitch = cursor.getInt(cursor.getColumnIndexOrThrow("UPTOTALSWITCH"));
+                            upautosucc = cursor.getInt(cursor.getColumnIndexOrThrow("UPAUTOSUCC"));
+                            upmanualsucc = cursor.getInt(cursor.getColumnIndexOrThrow("UPMANUALSUCC"));
+                            upautofail = cursor.getInt(cursor.getColumnIndexOrThrow("UPAUTOFAIL"));
+                            upnoswitchfail = cursor.getInt(cursor.getColumnIndexOrThrow("UPNOSWITCHFAIL"));
                             sql2 = sql;
+                        } catch (IllegalArgumentException e3) {
+                            e = e3;
+                            results = results2;
+                            cursor2 = cursor;
+                            sql2 = sql;
+                            strArr = args;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e4) {
+                            e2 = e4;
+                            results = results2;
+                            cursor2 = cursor;
+                            sql2 = sql;
+                            strArr = args;
                             try {
-                                int upqrycnt = cursor.getInt(cursor.getColumnIndexOrThrow("UPQRYCNT"));
-                                args2 = args;
-                                try {
-                                    int uprescnt = cursor.getInt(cursor.getColumnIndexOrThrow("UPRESCNT"));
-                                    int upunknowndb = cursor.getInt(cursor.getColumnIndexOrThrow("UPUNKNOWNDB"));
-                                    int upunknownspace = cursor.getInt(cursor.getColumnIndexOrThrow("UPUNKNOWNSPACE"));
-                                    int lptotalswitch = cursor.getInt(cursor.getColumnIndexOrThrow("LPTOTALSWITCH"));
-                                    int lpdatarx = cursor.getInt(cursor.getColumnIndexOrThrow("LPDATARX"));
-                                    int lpdatatx = cursor.getInt(cursor.getColumnIndexOrThrow("LPDATATX"));
-                                    int lpduration = cursor.getInt(cursor.getColumnIndexOrThrow("LPDURATION"));
-                                    int lpoffset = cursor.getInt(cursor.getColumnIndexOrThrow("LPOFFSET"));
-                                    int lpalreadybest = cursor.getInt(cursor.getColumnIndexOrThrow("LPALREADYBEST"));
-                                    int lpnotreach = cursor.getInt(cursor.getColumnIndexOrThrow("LPNOTREACH"));
-                                    int lpback = cursor.getInt(cursor.getColumnIndexOrThrow("LPBACK"));
-                                    int lpunknowndb = cursor.getInt(cursor.getColumnIndexOrThrow("LPUNKNOWNDB"));
-                                    int lpunknownspace = cursor.getInt(cursor.getColumnIndexOrThrow("LPUNKNOWNSPACE"));
-                                    cursor2 = cursor;
-                                    try {
-                                        results2.putString("FREQLOCATION", str);
-                                        results2.putInt("FIRSTREPORT", firstreport);
-                                        results2.putInt("ENTERY", entery);
-                                        results2.putInt("LEAVE", leave);
-                                        results2.putInt(Constant.USERDB_APP_NAME_DURATION, duration);
-                                        results2.putInt("SPACECHANGE", spacechange);
-                                        results2.putInt("SPACELEAVE", spaceleave);
-                                        results2.putInt("UPTOTALSWITCH", uptotalswitch);
-                                        results2.putInt("UPAUTOSUCC", upautosucc);
-                                        results2.putInt("UPMANUALSUCC", upmanualsucc);
-                                        results2.putInt("UPAUTOFAIL", upautofail);
-                                        results2.putInt("UPNOSWITCHFAIL", upnoswitchfail);
-                                        results2.putInt("UPQRYCNT", upqrycnt);
-                                        int upqrycnt2 = upqrycnt;
-                                        upqrycnt = uprescnt;
-                                        results2.putInt("UPRESCNT", upqrycnt);
-                                        int uprescnt2 = upqrycnt;
-                                        upqrycnt = upunknowndb;
-                                        results2.putInt("UPUNKNOWNDB", upqrycnt);
-                                        int upunknowndb2 = upqrycnt;
-                                        upqrycnt = upunknownspace;
-                                        results2.putInt("UPUNKNOWNSPACE", upqrycnt);
-                                        int upunknownspace2 = upqrycnt;
-                                        upqrycnt = lptotalswitch;
-                                        results2.putInt("LPTOTALSWITCH", upqrycnt);
-                                        int lptotalswitch2 = upqrycnt;
-                                        upqrycnt = lpdatarx;
-                                        results2.putInt("LPDATARX", upqrycnt);
-                                        int lpdatarx2 = upqrycnt;
-                                        upqrycnt = lpdatatx;
-                                        results2.putInt("LPDATATX", upqrycnt);
-                                        int lpdatatx2 = upqrycnt;
-                                        upqrycnt = lpduration;
-                                        results2.putInt("LPDURATION", upqrycnt);
-                                        int lpduration2 = upqrycnt;
-                                        upqrycnt = lpoffset;
-                                        results2.putInt("LPOFFSET", upqrycnt);
-                                        int lpoffset2 = upqrycnt;
-                                        upqrycnt = lpalreadybest;
-                                        results2.putInt("LPALREADYBEST", upqrycnt);
-                                        int lpalreadybest2 = upqrycnt;
-                                        upqrycnt = lpnotreach;
-                                        results2.putInt("LPNOTREACH", upqrycnt);
-                                        int lpnotreach2 = upqrycnt;
-                                        upqrycnt = lpback;
-                                        results2.putInt("LPBACK", upqrycnt);
-                                        int lpback2 = upqrycnt;
-                                        upqrycnt = lpunknowndb;
-                                        results2.putInt("LPUNKNOWNDB", upqrycnt);
-                                        results2.putInt("LPUNKNOWNSPACE", lpunknownspace);
-                                        StringBuilder stringBuilder3 = new StringBuilder();
-                                        results = results2;
-                                        try {
-                                            stringBuilder3.append(" freqlocation:");
-                                            stringBuilder3.append(str);
-                                            stringBuilder3.append(",first report:");
-                                            stringBuilder3.append(firstreport);
-                                            stringBuilder3.append(",entery:");
-                                            stringBuilder3.append(entery);
-                                            stringBuilder3.append(",leave:");
-                                            stringBuilder3.append(leave);
-                                            stringBuilder3.append(",duration:");
-                                            stringBuilder3.append(duration);
-                                            stringBuilder3.append(",space change:");
-                                            stringBuilder3.append(spacechange);
-                                            stringBuilder3.append(",space leave:");
-                                            stringBuilder3.append(spaceleave);
-                                            LogUtil.i(stringBuilder3.toString());
-                                            StringBuilder stringBuilder4 = new StringBuilder();
-                                            stringBuilder4.append(" uptotalswitch:");
-                                            stringBuilder4.append(uptotalswitch);
-                                            stringBuilder4.append(",upautosucc:");
-                                            stringBuilder4.append(upautosucc);
-                                            stringBuilder4.append(",upmanualsucc:");
-                                            stringBuilder4.append(upmanualsucc);
-                                            stringBuilder4.append(",upautofail:");
-                                            stringBuilder4.append(upautofail);
-                                            stringBuilder4.append(",upnoswitchfail:");
-                                            stringBuilder4.append(upnoswitchfail);
-                                            stringBuilder4.append(",upqrycnt:");
-                                            stringBuilder4.append(upqrycnt2);
-                                            stringBuilder4.append(",uprescnt:");
-                                            firstreport = uprescnt2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(" upunknowndb:");
-                                            firstreport = upunknowndb2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(" upunknownspace:");
-                                            firstreport = upunknownspace2;
-                                            stringBuilder4.append(firstreport);
-                                            LogUtil.i(stringBuilder4.toString());
-                                            stringBuilder4 = new StringBuilder();
-                                            stringBuilder4.append(" lptotalswitch:");
-                                            firstreport = lptotalswitch2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(",lpdatarx:");
-                                            firstreport = lpdatarx2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(",lpdatatx:");
-                                            firstreport = lpdatatx2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(",lpduration:");
-                                            firstreport = lpduration2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(",lpoffset:");
-                                            firstreport = lpoffset2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(",lpalreadybest:");
-                                            firstreport = lpalreadybest2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(",lpnotreach:");
-                                            firstreport = lpnotreach2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(" lpback:");
-                                            firstreport = lpback2;
-                                            stringBuilder4.append(firstreport);
-                                            stringBuilder4.append(" lpunknowndb:");
-                                            stringBuilder4.append(upqrycnt);
-                                            stringBuilder4.append(" lpunknownspace:");
-                                            stringBuilder4.append(lpunknownspace);
-                                            LogUtil.i(stringBuilder4.toString());
-                                            sql = sql2;
-                                            args = args2;
-                                            cursor = cursor2;
-                                            results2 = results;
-                                        } catch (IllegalArgumentException e3) {
-                                            e = e3;
-                                            cursor = cursor2;
-                                        } catch (Exception e4) {
-                                            e2 = e4;
-                                            cursor = cursor2;
-                                        } catch (Throwable th2) {
-                                            th = th2;
-                                            cursor = cursor2;
-                                        }
-                                    } catch (IllegalArgumentException e5) {
-                                        e = e5;
-                                        results = results2;
-                                        cursor = cursor2;
-                                    } catch (Exception e6) {
-                                        e2 = e6;
-                                        results = results2;
-                                        cursor = cursor2;
-                                    } catch (Throwable th3) {
-                                        th = th3;
-                                        results = results2;
-                                        cursor = cursor2;
-                                    }
-                                } catch (IllegalArgumentException e7) {
-                                    e = e7;
-                                    results = results2;
-                                    cursor2 = cursor;
-                                } catch (Exception e8) {
-                                    e2 = e8;
-                                    results = results2;
-                                    cursor2 = cursor;
-                                } catch (Throwable th4) {
-                                    th = th4;
-                                    results = results2;
-                                    cursor2 = cursor;
+                                stringBuilder = new StringBuilder();
+                                stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                                stringBuilder.append(e2.getMessage());
+                                LogUtil.e(stringBuilder.toString());
+                            } catch (Throwable th2) {
+                                th = th2;
+                                if (cursor != null) {
                                 }
-                            } catch (IllegalArgumentException e9) {
-                                e = e9;
-                                results = results2;
-                                cursor2 = cursor;
-                                args2 = args;
-                            } catch (Exception e10) {
-                                e2 = e10;
-                                results = results2;
-                                cursor2 = cursor;
-                                args2 = args;
-                            } catch (Throwable th5) {
-                                th = th5;
-                                results = results2;
-                                cursor2 = cursor;
-                                args2 = args;
+                                throw th;
                             }
+                        } catch (Throwable th3) {
+                            th = th3;
+                            results = results2;
+                            cursor2 = cursor;
+                            sql2 = sql;
+                            strArr = args;
+                            if (cursor != null) {
+                            }
+                            throw th;
+                        }
+                        try {
+                            upqrycnt = cursor.getInt(cursor.getColumnIndexOrThrow("UPQRYCNT"));
+                            strArr = args;
+                        } catch (IllegalArgumentException e5) {
+                            e = e5;
+                            results = results2;
+                            cursor2 = cursor;
+                            strArr = args;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e6) {
+                            e2 = e6;
+                            results = results2;
+                            cursor2 = cursor;
+                            strArr = args;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th4) {
+                            th = th4;
+                            results = results2;
+                            cursor2 = cursor;
+                            strArr = args;
+                            if (cursor != null) {
+                            }
+                            throw th;
+                        }
+                        try {
+                            uprescnt = cursor.getInt(cursor.getColumnIndexOrThrow("UPRESCNT"));
+                            upunknowndb = cursor.getInt(cursor.getColumnIndexOrThrow("UPUNKNOWNDB"));
+                            upunknownspace = cursor.getInt(cursor.getColumnIndexOrThrow("UPUNKNOWNSPACE"));
+                            lptotalswitch = cursor.getInt(cursor.getColumnIndexOrThrow("LPTOTALSWITCH"));
+                            lpdatarx = cursor.getInt(cursor.getColumnIndexOrThrow("LPDATARX"));
+                            lpdatatx = cursor.getInt(cursor.getColumnIndexOrThrow("LPDATATX"));
+                            lpduration = cursor.getInt(cursor.getColumnIndexOrThrow("LPDURATION"));
+                            lpoffset = cursor.getInt(cursor.getColumnIndexOrThrow("LPOFFSET"));
+                            lpalreadybest = cursor.getInt(cursor.getColumnIndexOrThrow("LPALREADYBEST"));
+                            lpnotreach = cursor.getInt(cursor.getColumnIndexOrThrow("LPNOTREACH"));
+                            lpback = cursor.getInt(cursor.getColumnIndexOrThrow("LPBACK"));
+                            lpunknowndb = cursor.getInt(cursor.getColumnIndexOrThrow("LPUNKNOWNDB"));
+                            lpunknownspace = cursor.getInt(cursor.getColumnIndexOrThrow("LPUNKNOWNSPACE"));
+                            cursor2 = cursor;
+                        } catch (IllegalArgumentException e7) {
+                            e = e7;
+                            results = results2;
+                            cursor2 = cursor;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Exception e8) {
+                            e2 = e8;
+                            results = results2;
+                            cursor2 = cursor;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th5) {
+                            th = th5;
+                            results = results2;
+                            cursor2 = cursor;
+                            if (cursor != null) {
+                            }
+                            throw th;
+                        }
+                    } catch (IllegalArgumentException e9) {
+                        e = e9;
+                        results = results2;
+                        cursor3 = cursor;
+                        sql2 = sql;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Exception e10) {
+                        e2 = e10;
+                        results = results2;
+                        cursor3 = cursor;
+                        sql2 = sql;
+                        strArr = args;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Throwable th6) {
+                        th = th6;
+                        results = results2;
+                        cursor3 = cursor;
+                        sql2 = sql;
+                        strArr = args;
+                        if (cursor != null) {
+                        }
+                        throw th;
+                    }
+                    try {
+                        results2.putString("FREQLOCATION", str);
+                        results2.putInt("FIRSTREPORT", firstreport);
+                        results2.putInt("ENTERY", entery);
+                        results2.putInt("LEAVE", leave);
+                        results2.putInt(Constant.USERDB_APP_NAME_DURATION, duration);
+                        results2.putInt("SPACECHANGE", spacechange);
+                        results2.putInt("SPACELEAVE", spaceleave);
+                        results2.putInt("UPTOTALSWITCH", uptotalswitch);
+                        results2.putInt("UPAUTOSUCC", upautosucc);
+                        results2.putInt("UPMANUALSUCC", upmanualsucc);
+                        results2.putInt("UPAUTOFAIL", upautofail);
+                        results2.putInt("UPNOSWITCHFAIL", upnoswitchfail);
+                        results2.putInt("UPQRYCNT", upqrycnt);
+                        int upqrycnt2 = upqrycnt;
+                        upqrycnt = uprescnt;
+                        results2.putInt("UPRESCNT", upqrycnt);
+                        int uprescnt2 = upqrycnt;
+                        upqrycnt = upunknowndb;
+                        results2.putInt("UPUNKNOWNDB", upqrycnt);
+                        int upunknowndb2 = upqrycnt;
+                        upqrycnt = upunknownspace;
+                        results2.putInt("UPUNKNOWNSPACE", upqrycnt);
+                        int upunknownspace2 = upqrycnt;
+                        upqrycnt = lptotalswitch;
+                        results2.putInt("LPTOTALSWITCH", upqrycnt);
+                        int lptotalswitch2 = upqrycnt;
+                        upqrycnt = lpdatarx;
+                        results2.putInt("LPDATARX", upqrycnt);
+                        int lpdatarx2 = upqrycnt;
+                        upqrycnt = lpdatatx;
+                        results2.putInt("LPDATATX", upqrycnt);
+                        int lpdatatx2 = upqrycnt;
+                        upqrycnt = lpduration;
+                        results2.putInt("LPDURATION", upqrycnt);
+                        int lpduration2 = upqrycnt;
+                        upqrycnt = lpoffset;
+                        results2.putInt("LPOFFSET", upqrycnt);
+                        int lpoffset2 = upqrycnt;
+                        upqrycnt = lpalreadybest;
+                        results2.putInt("LPALREADYBEST", upqrycnt);
+                        int lpalreadybest2 = upqrycnt;
+                        upqrycnt = lpnotreach;
+                        results2.putInt("LPNOTREACH", upqrycnt);
+                        int lpnotreach2 = upqrycnt;
+                        upqrycnt = lpback;
+                        results2.putInt("LPBACK", upqrycnt);
+                        int lpback2 = upqrycnt;
+                        upqrycnt = lpunknowndb;
+                        results2.putInt("LPUNKNOWNDB", upqrycnt);
+                        results2.putInt("LPUNKNOWNSPACE", lpunknownspace);
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        results = results2;
+                        try {
+                            stringBuilder3.append(" freqlocation:");
+                            stringBuilder3.append(str);
+                            stringBuilder3.append(",first report:");
+                            stringBuilder3.append(firstreport);
+                            stringBuilder3.append(",entery:");
+                            stringBuilder3.append(entery);
+                            stringBuilder3.append(",leave:");
+                            stringBuilder3.append(leave);
+                            stringBuilder3.append(",duration:");
+                            stringBuilder3.append(duration);
+                            stringBuilder3.append(",space change:");
+                            stringBuilder3.append(spacechange);
+                            stringBuilder3.append(",space leave:");
+                            stringBuilder3.append(spaceleave);
+                            LogUtil.i(stringBuilder3.toString());
+                            StringBuilder stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append(" uptotalswitch:");
+                            stringBuilder4.append(uptotalswitch);
+                            stringBuilder4.append(",upautosucc:");
+                            stringBuilder4.append(upautosucc);
+                            stringBuilder4.append(",upmanualsucc:");
+                            stringBuilder4.append(upmanualsucc);
+                            stringBuilder4.append(",upautofail:");
+                            stringBuilder4.append(upautofail);
+                            stringBuilder4.append(",upnoswitchfail:");
+                            stringBuilder4.append(upnoswitchfail);
+                            stringBuilder4.append(",upqrycnt:");
+                            stringBuilder4.append(upqrycnt2);
+                            stringBuilder4.append(",uprescnt:");
+                            firstreport = uprescnt2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(" upunknowndb:");
+                            firstreport = upunknowndb2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(" upunknownspace:");
+                            firstreport = upunknownspace2;
+                            stringBuilder4.append(firstreport);
+                            LogUtil.i(stringBuilder4.toString());
+                            stringBuilder4 = new StringBuilder();
+                            stringBuilder4.append(" lptotalswitch:");
+                            firstreport = lptotalswitch2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(",lpdatarx:");
+                            firstreport = lpdatarx2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(",lpdatatx:");
+                            firstreport = lpdatatx2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(",lpduration:");
+                            firstreport = lpduration2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(",lpoffset:");
+                            firstreport = lpoffset2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(",lpalreadybest:");
+                            firstreport = lpalreadybest2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(",lpnotreach:");
+                            firstreport = lpnotreach2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(" lpback:");
+                            firstreport = lpback2;
+                            stringBuilder4.append(firstreport);
+                            stringBuilder4.append(" lpunknowndb:");
+                            stringBuilder4.append(upqrycnt);
+                            stringBuilder4.append(" lpunknownspace:");
+                            stringBuilder4.append(lpunknownspace);
+                            LogUtil.i(stringBuilder4.toString());
+                            sql = sql2;
+                            args = strArr;
+                            cursor = cursor2;
+                            results2 = results;
                         } catch (IllegalArgumentException e11) {
                             e = e11;
-                            results = results2;
-                            cursor2 = cursor;
-                            sql2 = sql;
-                            args2 = args;
+                            cursor = cursor2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
+                            stringBuilder.append(e.getMessage());
+                            LogUtil.e(stringBuilder.toString());
                         } catch (Exception e12) {
                             e2 = e12;
-                            results = results2;
-                            cursor2 = cursor;
-                            sql2 = sql;
-                            args2 = args;
-                        } catch (Throwable th6) {
-                            th = th6;
-                            results = results2;
-                            cursor2 = cursor;
-                            sql2 = sql;
-                            args2 = args;
+                            cursor = cursor2;
+                            stringBuilder = new StringBuilder();
+                            stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                            stringBuilder.append(e2.getMessage());
+                            LogUtil.e(stringBuilder.toString());
+                        } catch (Throwable th7) {
+                            th = th7;
+                            cursor = cursor2;
+                            if (cursor != null) {
+                            }
+                            throw th;
                         }
                     } catch (IllegalArgumentException e13) {
                         e = e13;
                         results = results2;
-                        cursor3 = cursor;
-                        sql2 = sql;
-                        args2 = args;
+                        cursor = cursor2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
+                        stringBuilder.append(e.getMessage());
+                        LogUtil.e(stringBuilder.toString());
                     } catch (Exception e14) {
                         e2 = e14;
                         results = results2;
-                        cursor3 = cursor;
-                        sql2 = sql;
-                        args2 = args;
-                    } catch (Throwable th7) {
-                        th = th7;
+                        cursor = cursor2;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                        stringBuilder.append(e2.getMessage());
+                        LogUtil.e(stringBuilder.toString());
+                    } catch (Throwable th8) {
+                        th = th8;
                         results = results2;
-                        cursor3 = cursor;
-                        sql2 = sql;
-                        args2 = args;
+                        cursor = cursor2;
+                        if (cursor != null) {
+                        }
+                        throw th;
                     }
                 }
                 results = results2;
                 cursor2 = cursor;
                 sql2 = sql;
-                args2 = args;
+                strArr = args;
                 if (cursor2 != null) {
                     cursor3 = cursor2;
                     cursor3.close();
@@ -1249,7 +1317,7 @@ public class LocationDAO {
                 e = e15;
                 results = results2;
                 sql2 = sql;
-                args2 = args;
+                strArr = args;
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("findCHRbyFreqLocation IllegalArgumentException: ");
                 stringBuilder.append(e.getMessage());
@@ -1258,23 +1326,16 @@ public class LocationDAO {
                 e2 = e16;
                 results = results2;
                 sql2 = sql;
-                args2 = args;
-                try {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("findCHRbyFreqLocation Exception: ");
-                    stringBuilder.append(e2.getMessage());
-                    LogUtil.e(stringBuilder.toString());
-                } catch (Throwable th8) {
-                    th = th8;
-                    if (cursor != null) {
-                    }
-                    throw th;
-                }
+                strArr = args;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("findCHRbyFreqLocation Exception: ");
+                stringBuilder.append(e2.getMessage());
+                LogUtil.e(stringBuilder.toString());
             } catch (Throwable th9) {
                 th = th9;
                 results = results2;
                 sql2 = sql;
-                args2 = args;
+                strArr = args;
                 if (cursor != null) {
                     cursor.close();
                 }

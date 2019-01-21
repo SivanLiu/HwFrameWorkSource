@@ -147,21 +147,21 @@ jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r1_
 	at jadx.core.codegen.ConditionGen.addNot(ConditionGen.java:143)
 	at jadx.core.codegen.ConditionGen.add(ConditionGen.java:64)
 	at jadx.core.codegen.ConditionGen.add(ConditionGen.java:45)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:116)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:298)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
 	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:118)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:120)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -264,14 +264,6 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0022 A:{ExcHandler: java.security.InvalidKeyException (r0_3 'e' java.lang.Exception), Splitter: B:2:0x0004} */
-    /* JADX WARNING: Missing block: B:6:0x0022, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x0028, code:
-            throw new java.security.SignatureException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected byte[] engineSign() throws SignatureException {
         if (this.mCachedException == null) {
             try {
@@ -279,11 +271,11 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
                 byte[] signature = this.mMessageStreamer.doFinal(EmptyArray.BYTE, 0, 0, null, HwUniversalKeyStoreCryptoOperationUtils.getRandomBytesToMixIntoKeystoreRng(this.appRandom, getAdditionalEntropyAmountForSign()));
                 resetWhilePreservingInitState();
                 return signature;
-            } catch (Exception e) {
+            } catch (HwUniversalKeyStoreException | InvalidKeyException e) {
+                throw new SignatureException(e);
             }
-        } else {
-            throw new SignatureException(this.mCachedException);
         }
+        throw new SignatureException(this.mCachedException);
     }
 
     protected int engineSign(byte[] outbuf, int offset, int len) throws SignatureException {

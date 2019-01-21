@@ -34,9 +34,9 @@ public class UDIDModelWhiteConfig {
         loadWhiteModelWhiteList();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x005f A:{Catch:{ FileNotFoundException -> 0x0052, XmlPullParserException -> 0x004f, IOException -> 0x004d, all -> 0x004a }} */
-    /* JADX WARNING: Removed duplicated region for block: B:62:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:29:0x0090 A:{SYNTHETIC, Splitter: B:29:0x0090} */
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x005f A:{Catch:{ FileNotFoundException -> 0x0052, XmlPullParserException -> 0x004f, IOException -> 0x004d, all -> 0x004a }} */
+    /* JADX WARNING: Removed duplicated region for block: B:66:? A:{SYNTHETIC, RETURN, ORIG_RETURN} */
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x0090 A:{SYNTHETIC, Splitter:B:33:0x0090} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void loadWhiteModelWhiteList() {
         String str;

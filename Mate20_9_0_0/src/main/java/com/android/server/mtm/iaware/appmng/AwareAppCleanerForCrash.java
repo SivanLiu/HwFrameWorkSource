@@ -42,7 +42,7 @@ public class AwareAppCleanerForCrash extends AwareAppCleaner {
         return killedCount;
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0020, code:
+    /* JADX WARNING: Missing block: B:6:0x0020, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

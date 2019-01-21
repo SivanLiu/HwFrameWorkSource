@@ -11,6 +11,14 @@ public class UsbACAudioControlEndpoint extends UsbACEndpoint {
     private byte mInterval;
     private int mMaxPacketSize;
 
+    public /* bridge */ /* synthetic */ int getSubclass() {
+        return super.getSubclass();
+    }
+
+    public /* bridge */ /* synthetic */ byte getSubtype() {
+        return super.getSubtype();
+    }
+
     public UsbACAudioControlEndpoint(int length, byte type, int subclass) {
         super(length, type, subclass);
     }

@@ -206,7 +206,7 @@ public class ScoredNetworkEvaluator implements NetworkEvaluator {
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x00c4, code:
+    /* JADX WARNING: Missing block: B:39:0x00c4, code skipped:
             if (android.text.TextUtils.equals(r17, r8.BSSID) != false) goto L_0x00ca;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

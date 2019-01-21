@@ -50,7 +50,7 @@ class AppHibernateMgr {
         return appHibernateMgr;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0024, code:
+    /* JADX WARNING: Missing block: B:10:0x0024, code skipped:
             return -1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

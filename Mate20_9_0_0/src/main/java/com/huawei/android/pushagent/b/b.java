@@ -1,37 +1,22 @@
 package com.huawei.android.pushagent.b;
 
 import android.content.Context;
-import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.f.a;
-import com.huawei.android.pushagent.utils.f.c;
-import com.huawei.android.pushagent.utils.g;
+import com.huawei.android.pushagent.utils.b.a;
 
-public class b {
-    private Context appCtx;
-    private a bx = new a(this.appCtx, "token_request_flag");
+final class b implements Runnable {
+    final /* synthetic */ Context ix;
 
-    public b(Context context) {
-        this.appCtx = context.getApplicationContext();
+    b(Context context) {
+        this.ix = context;
     }
 
-    /* renamed from: if */
-    public void m1if() {
-        ig("pclient_info_v2");
-        ig("push_notify_key");
-        ig("pclient_request_info");
-    }
-
-    private void ig(String str) {
-        for (String ih : new a(this.appCtx, str).getAll().keySet()) {
-            ih(ih);
+    public void run() {
+        if (this.ix == null) {
+            a.su("PushLog3414", "init reporter failed, context is null");
+            return;
         }
-    }
-
-    private void ih(String str) {
-        if (TextUtils.isEmpty(str)) {
-            c.eo("PushLog3413", "pkgNameWithUid is empty");
-        } else {
-            this.bx.ej(g.gv(str), true);
-        }
+        a.appCtx = this.ix.getApplicationContext();
+        a.iw = new com.huawei.android.pushagent.b.a.a();
+        a.iw.aax(this.ix);
     }
 }

@@ -38,7 +38,7 @@ final class DevicePowerStatusAction extends HdmiCecFeatureAction {
         sendCommand(HdmiCecMessageBuilder.buildGiveDevicePowerStatus(getSourceAddress(), this.mTargetAddress));
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0025, code:
+    /* JADX WARNING: Missing block: B:9:0x0025, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

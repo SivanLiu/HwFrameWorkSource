@@ -168,7 +168,10 @@ public class NetworkManagementService extends Stub implements Monitor {
         void setUidOnMeteredNetworkList(boolean blacklist, int uid, boolean enable) {
             synchronized (NetworkManagementService.this.mRulesLock) {
                 if (blacklist) {
-                    NetworkManagementService.this.mUidRejectOnMetered.put(uid, enable);
+                    try {
+                        NetworkManagementService.this.mUidRejectOnMetered.put(uid, enable);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     NetworkManagementService.this.mUidAllowOnMetered.put(uid, enable);
                 }
@@ -232,14 +235,6 @@ public class NetworkManagementService extends Stub implements Monitor {
             this();
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:17:0x007b A:{Splitter: B:4:0x000e, ExcHandler: android.os.RemoteException (r0_3 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:17:0x007b, code:
-            r0 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:19:0x0084, code:
-            throw new java.lang.IllegalStateException("problem parsing tethering stats: ", r0);
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         public NetworkStats getTetherStats(int how) {
             if (how != 1) {
                 return new NetworkStats(SystemClock.elapsedRealtime(), 0);
@@ -268,7 +263,8 @@ public class NetworkManagementService extends Stub implements Monitor {
                     }
                 }
                 return stats;
-            } catch (Exception e2) {
+            } catch (RemoteException | ServiceSpecificException e2) {
+                throw new IllegalStateException("problem parsing tethering stats: ", e2);
             }
         }
 
@@ -706,14 +702,12 @@ public class NetworkManagementService extends Stub implements Monitor {
         this.mObservers.unregister(observer);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x001c A:{Splitter: B:2:0x0009, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void invokeForAllObservers(NetworkManagementEventCallback eventCallback) {
         int length = this.mObservers.beginBroadcast();
         for (int i = 0; i < length; i++) {
             try {
                 eventCallback.sendCallback((INetworkManagementEventObserver) this.mObservers.getBroadcastItem(i));
-            } catch (RemoteException e) {
+            } catch (RemoteException | RuntimeException e) {
             } catch (Throwable th) {
                 this.mObservers.finishBroadcast();
             }
@@ -852,12 +846,13 @@ public class NetworkManagementService extends Stub implements Monitor {
             int i2;
             int i3;
             if (hasKernelSupport) {
-                Slog.d(TAG, "enabling bandwidth control");
                 try {
+                    Slog.d(TAG, "enabling bandwidth control");
                     this.mConnector.execute("bandwidth", "enable");
                     this.mBandwidthControlEnabled = true;
                 } catch (NativeDaemonConnectorException e) {
                     Log.wtf(TAG, "problem enabling bandwidth controls", e);
+                } catch (Throwable th) {
                 }
             } else {
                 Slog.i(TAG, "not enabling bandwidth control");
@@ -1222,7 +1217,7 @@ public class NetworkManagementService extends Stub implements Monitor {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x003d, code:
+    /* JADX WARNING: Missing block: B:19:0x003d, code skipped:
             if (r0 == null) goto L_0x0040;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1528,7 +1523,7 @@ public class NetworkManagementService extends Stub implements Monitor {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0067, code:
+    /* JADX WARNING: Missing block: B:20:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1718,7 +1713,16 @@ public class NetworkManagementService extends Stub implements Monitor {
                 SparseBooleanArray quotaList;
                 boolean oldEnable;
                 synchronized (this.mRulesLock) {
-                    quotaList = blacklist ? this.mUidRejectOnMetered : this.mUidAllowOnMetered;
+                    if (blacklist) {
+                        try {
+                            quotaList = this.mUidRejectOnMetered;
+                        } catch (Throwable th) {
+                            while (true) {
+                            }
+                        }
+                    } else {
+                        quotaList = this.mUidAllowOnMetered;
+                    }
                     oldEnable = quotaList.get(uid, false);
                 }
                 if (oldEnable == enable) {
@@ -1742,10 +1746,9 @@ public class NetworkManagementService extends Stub implements Monitor {
                     }
                     Trace.traceEnd(2097152);
                 } catch (NativeDaemonConnectorException e) {
-                    try {
-                        throw e.rethrowAsParcelableException();
-                    } catch (Throwable th) {
-                        Trace.traceEnd(2097152);
+                    throw e.rethrowAsParcelableException();
+                } catch (Throwable th2) {
+                    while (true) {
                     }
                 }
             }
@@ -1953,7 +1956,7 @@ public class NetworkManagementService extends Stub implements Monitor {
                 try {
                     this.mConnector.execute("network", Arrays.copyOf(argv, argc2));
                     argc = 3;
-                } catch (int argc3) {
+                } catch (NativeDaemonConnectorException argc3) {
                     throw argc3.rethrowAsParcelableException();
                 }
             }
@@ -1977,7 +1980,7 @@ public class NetworkManagementService extends Stub implements Monitor {
                 try {
                     this.mConnector.execute("network", Arrays.copyOf(argv, argc2));
                     argc = 3;
-                } catch (int argc3) {
+                } catch (NativeDaemonConnectorException argc3) {
                     throw argc3.rethrowAsParcelableException();
                 }
             }
@@ -2017,36 +2020,19 @@ public class NetworkManagementService extends Stub implements Monitor {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:39:0x0085 A:{Splitter: B:37:0x007f, ExcHandler: android.os.RemoteException (r2_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:39:0x0085 A:{Splitter: B:37:0x007f, ExcHandler: android.os.RemoteException (r2_6 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:33:0x0070, code:
+    /* JADX WARNING: Missing block: B:33:0x0070, code skipped:
             r0 = r4;
      */
-    /* JADX WARNING: Missing block: B:34:0x0072, code:
+    /* JADX WARNING: Missing block: B:34:0x0072, code skipped:
             if (r5 == r0.length) goto L_0x007b;
      */
-    /* JADX WARNING: Missing block: B:35:0x0074, code:
+    /* JADX WARNING: Missing block: B:35:0x0074, code skipped:
             r0 = (android.net.UidRange[]) java.util.Arrays.copyOf(r0, r5);
      */
-    /* JADX WARNING: Missing block: B:36:0x007b, code:
+    /* JADX WARNING: Missing block: B:36:0x007b, code skipped:
             r3 = r0;
             r1 = new int[0];
             r0 = r5;
-     */
-    /* JADX WARNING: Missing block: B:39:0x0085, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:40:0x0086, code:
-            r4 = TAG;
-            r5 = new java.lang.StringBuilder();
-            r5.append("Error closing sockets after enabling chain ");
-            r5.append(r10);
-            r5.append(": ");
-            r5.append(r2);
-            android.util.Slog.e(r4, r5.toString());
-     */
-    /* JADX WARNING: Missing block: B:56:?, code:
-            return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void closeSocketsForFirewallChainLocked(int chain, String chainName) {
@@ -2102,20 +2088,27 @@ public class NetworkManagementService extends Stub implements Monitor {
         }
         try {
             this.mNetdService.socketDestroy(ranges, exemptUids);
-        } catch (Exception e) {
+        } catch (RemoteException | ServiceSpecificException | IllegalArgumentException e) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Error closing sockets after enabling chain ");
+            stringBuilder.append(chainName);
+            stringBuilder.append(": ");
+            stringBuilder.append(e);
+            Slog.e(str, stringBuilder.toString());
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0016, code:
+    /* JADX WARNING: Missing block: B:15:0x0016, code skipped:
             if (r9 == false) goto L_0x001b;
      */
-    /* JADX WARNING: Missing block: B:17:?, code:
+    /* JADX WARNING: Missing block: B:17:?, code skipped:
             r1 = "enable_chain";
      */
-    /* JADX WARNING: Missing block: B:18:0x001b, code:
+    /* JADX WARNING: Missing block: B:18:0x001b, code skipped:
             r1 = "disable_chain";
      */
-    /* JADX WARNING: Missing block: B:19:0x001d, code:
+    /* JADX WARNING: Missing block: B:19:0x001d, code skipped:
             switch(r8) {
                 case 1: goto L_0x002b;
                 case 2: goto L_0x0027;
@@ -2123,49 +2116,49 @@ public class NetworkManagementService extends Stub implements Monitor {
                 default: goto L_0x0020;
             };
      */
-    /* JADX WARNING: Missing block: B:21:0x0023, code:
+    /* JADX WARNING: Missing block: B:21:0x0023, code skipped:
             r2 = "powersave";
      */
-    /* JADX WARNING: Missing block: B:22:0x0027, code:
+    /* JADX WARNING: Missing block: B:22:0x0027, code skipped:
             r2 = "standby";
      */
-    /* JADX WARNING: Missing block: B:23:0x002b, code:
+    /* JADX WARNING: Missing block: B:23:0x002b, code skipped:
             r2 = "dozable";
      */
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:25:?, code skipped:
             r7.mConnector.execute("firewall", r1, r2);
      */
-    /* JADX WARNING: Missing block: B:26:0x0040, code:
+    /* JADX WARNING: Missing block: B:26:0x0040, code skipped:
             if (r9 == false) goto L_0x005f;
      */
-    /* JADX WARNING: Missing block: B:29:0x0044, code:
+    /* JADX WARNING: Missing block: B:29:0x0044, code skipped:
             if (DBG == false) goto L_0x005c;
      */
-    /* JADX WARNING: Missing block: B:30:0x0046, code:
+    /* JADX WARNING: Missing block: B:30:0x0046, code skipped:
             r3 = TAG;
             r4 = new java.lang.StringBuilder();
             r4.append("Closing sockets after enabling chain ");
             r4.append(r2);
             android.util.Slog.d(r3, r4.toString());
      */
-    /* JADX WARNING: Missing block: B:31:0x005c, code:
+    /* JADX WARNING: Missing block: B:31:0x005c, code skipped:
             closeSocketsForFirewallChainLocked(r8, r2);
      */
-    /* JADX WARNING: Missing block: B:33:0x0060, code:
+    /* JADX WARNING: Missing block: B:33:0x0060, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:34:0x0061, code:
+    /* JADX WARNING: Missing block: B:34:0x0061, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:36:0x0066, code:
+    /* JADX WARNING: Missing block: B:36:0x0066, code skipped:
             throw r3.rethrowAsParcelableException();
      */
-    /* JADX WARNING: Missing block: B:37:0x0067, code:
+    /* JADX WARNING: Missing block: B:37:0x0067, code skipped:
             r3 = new java.lang.StringBuilder();
             r3.append("Bad child chain: ");
             r3.append(r8);
      */
-    /* JADX WARNING: Missing block: B:38:0x007b, code:
+    /* JADX WARNING: Missing block: B:38:0x007b, code skipped:
             throw new java.lang.IllegalArgumentException(r3.toString());
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2265,7 +2258,7 @@ public class NetworkManagementService extends Stub implements Monitor {
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x004d, code:
+    /* JADX WARNING: Missing block: B:11:0x004d, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2295,7 +2288,7 @@ public class NetworkManagementService extends Stub implements Monitor {
                 } else {
                     uidFirewallRules.put(uid, rule);
                 }
-                boolean equals = ruleName.equals(str) ^ 1;
+                int equals = ruleName.equals(str) ^ 1;
                 return equals;
             } else if (DBG) {
                 Slog.d(TAG, "!!!!! Skipping change");
@@ -2398,19 +2391,22 @@ public class NetworkManagementService extends Stub implements Monitor {
     public boolean isNetworkActive() {
         boolean z;
         synchronized (this.mNetworkActivityListeners) {
-            z = this.mNetworkActive || this.mActiveIdleTimers.isEmpty();
+            if (!this.mNetworkActive) {
+                if (!this.mActiveIdleTimers.isEmpty()) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x001c A:{Splitter: B:2:0x0009, ExcHandler: android.os.RemoteException (e android.os.RemoteException)} */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void reportNetworkActive() {
         int length = this.mNetworkActivityListeners.beginBroadcast();
         for (int i = 0; i < length; i++) {
             try {
                 ((INetworkActivityListener) this.mNetworkActivityListeners.getBroadcastItem(i)).onNetworkActive();
-            } catch (RemoteException e) {
+            } catch (RemoteException | RuntimeException e) {
             } catch (Throwable th) {
                 this.mNetworkActivityListeners.finishBroadcast();
             }
@@ -2665,7 +2661,7 @@ public class NetworkManagementService extends Stub implements Monitor {
                 try {
                     this.mConnector.execute("network", Arrays.copyOf(argv, argc2));
                     argc = 4;
-                } catch (int argc3) {
+                } catch (NativeDaemonConnectorException argc3) {
                     throw argc3.rethrowAsParcelableException();
                 }
             }
@@ -2689,7 +2685,7 @@ public class NetworkManagementService extends Stub implements Monitor {
                 try {
                     this.mConnector.execute("network", Arrays.copyOf(argv, argc2));
                     argc = 3;
-                } catch (int argc3) {
+                } catch (NativeDaemonConnectorException argc3) {
                     throw argc3.rethrowAsParcelableException();
                 }
             }
@@ -2746,19 +2742,19 @@ public class NetworkManagementService extends Stub implements Monitor {
         return isNetworkRestrictedInternal(uid);
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0033, code:
+    /* JADX WARNING: Missing block: B:12:0x0033, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:21:0x0062, code:
+    /* JADX WARNING: Missing block: B:21:0x0062, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:30:0x0092, code:
+    /* JADX WARNING: Missing block: B:30:0x0092, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:37:0x00bb, code:
+    /* JADX WARNING: Missing block: B:37:0x00bb, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:46:0x00e8, code:
+    /* JADX WARNING: Missing block: B:46:0x00e8, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -15,7 +15,7 @@ import org.bouncycastle.operator.OutputEncryptor;
 
 public class CMSEncryptedDataGenerator extends CMSEncryptedGenerator {
     private CMSEncryptedData doGenerate(CMSTypedData cMSTypedData, OutputEncryptor outputEncryptor) throws CMSException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
             OutputStream outputStream = outputEncryptor.getOutputStream(byteArrayOutputStream);
             cMSTypedData.write(outputStream);

@@ -132,7 +132,7 @@ public class AppStateTracker {
             return AppStateTracker.this.injectGetGlobalSettingInt("forced_app_standby_for_small_battery_enabled", 0) == 1;
         }
 
-        /* JADX WARNING: Missing block: B:11:0x0024, code:
+        /* JADX WARNING: Missing block: B:11:0x0024, code skipped:
             com.android.server.AppStateTracker.access$200(r3.this$0).notifyForcedAppStandbyFeatureFlagChanged();
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -330,13 +330,13 @@ public class AppStateTracker {
             obtainMessage(14, uid, disabled).sendToTarget();
         }
 
-        /* JADX WARNING: Missing block: B:10:0x0016, code:
+        /* JADX WARNING: Missing block: B:10:0x0016, code skipped:
             r0 = r9.this$0;
             r2 = com.android.server.AppStateTracker.access$800(r9.this$0).getTime();
             r5 = 0;
             r6 = true;
      */
-        /* JADX WARNING: Missing block: B:11:0x0026, code:
+        /* JADX WARNING: Missing block: B:11:0x0026, code skipped:
             switch(r10.what) {
                 case 0: goto L_0x015d;
                 case 1: goto L_0x013f;
@@ -356,236 +356,236 @@ public class AppStateTracker {
                 default: goto L_0x0029;
             };
      */
-        /* JADX WARNING: Missing block: B:12:0x0029, code:
+        /* JADX WARNING: Missing block: B:12:0x0029, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:13:0x002a, code:
+        /* JADX WARNING: Missing block: B:13:0x002a, code skipped:
             r1 = r10.arg1;
      */
-        /* JADX WARNING: Missing block: B:14:0x002e, code:
+        /* JADX WARNING: Missing block: B:14:0x002e, code skipped:
             if (r10.arg1 == 0) goto L_0x0032;
      */
-        /* JADX WARNING: Missing block: B:15:0x0030, code:
+        /* JADX WARNING: Missing block: B:15:0x0030, code skipped:
             r5 = true;
      */
-        /* JADX WARNING: Missing block: B:16:0x0032, code:
+        /* JADX WARNING: Missing block: B:16:0x0032, code skipped:
             handleUidIdle(r1, r5);
      */
-        /* JADX WARNING: Missing block: B:17:0x0035, code:
+        /* JADX WARNING: Missing block: B:17:0x0035, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:18:0x0036, code:
+        /* JADX WARNING: Missing block: B:18:0x0036, code skipped:
             r1 = r10.arg1;
      */
-        /* JADX WARNING: Missing block: B:19:0x003a, code:
+        /* JADX WARNING: Missing block: B:19:0x003a, code skipped:
             if (r10.arg1 == 0) goto L_0x003e;
      */
-        /* JADX WARNING: Missing block: B:20:0x003c, code:
+        /* JADX WARNING: Missing block: B:20:0x003c, code skipped:
             r5 = true;
      */
-        /* JADX WARNING: Missing block: B:21:0x003e, code:
+        /* JADX WARNING: Missing block: B:21:0x003e, code skipped:
             handleUidGone(r1, r5);
      */
-        /* JADX WARNING: Missing block: B:22:0x0041, code:
+        /* JADX WARNING: Missing block: B:22:0x0041, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:23:0x0042, code:
+        /* JADX WARNING: Missing block: B:23:0x0042, code skipped:
             handleUidActive(r10.arg1);
      */
-        /* JADX WARNING: Missing block: B:24:0x0047, code:
+        /* JADX WARNING: Missing block: B:24:0x0047, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:25:0x0048, code:
+        /* JADX WARNING: Missing block: B:25:0x0048, code skipped:
             handleUidStateChanged(r10.arg1, r10.arg2);
      */
-        /* JADX WARNING: Missing block: B:26:0x004f, code:
+        /* JADX WARNING: Missing block: B:26:0x004f, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:27:0x0050, code:
+        /* JADX WARNING: Missing block: B:27:0x0050, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:28:0x0057, code:
+        /* JADX WARNING: Missing block: B:28:0x0057, code skipped:
             if (r5 >= r4) goto L_0x0061;
      */
-        /* JADX WARNING: Missing block: B:29:0x0059, code:
+        /* JADX WARNING: Missing block: B:29:0x0059, code skipped:
             com.android.server.AppStateTracker.Listener.access$1600(r1[r5], r0);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:30:0x0061, code:
+        /* JADX WARNING: Missing block: B:30:0x0061, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(6, r2);
      */
-        /* JADX WARNING: Missing block: B:31:0x006b, code:
+        /* JADX WARNING: Missing block: B:31:0x006b, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:32:0x006c, code:
+        /* JADX WARNING: Missing block: B:32:0x006c, code skipped:
             r4 = com.android.server.AppStateTracker.access$100(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:33:0x0072, code:
+        /* JADX WARNING: Missing block: B:33:0x0072, code skipped:
             monitor-enter(r4);
      */
-        /* JADX WARNING: Missing block: B:36:0x0077, code:
+        /* JADX WARNING: Missing block: B:36:0x0077, code skipped:
             if (r9.this$0.mForcedAppStandbyEnabled != false) goto L_0x0080;
      */
-        /* JADX WARNING: Missing block: B:38:0x007d, code:
+        /* JADX WARNING: Missing block: B:38:0x007d, code skipped:
             if (r9.this$0.mForceAllAppsStandby != false) goto L_0x0080;
      */
-        /* JADX WARNING: Missing block: B:39:0x0080, code:
+        /* JADX WARNING: Missing block: B:40:0x0080, code skipped:
             r6 = false;
      */
-        /* JADX WARNING: Missing block: B:40:0x0081, code:
+        /* JADX WARNING: Missing block: B:41:0x0081, code skipped:
             monitor-exit(r4);
      */
-        /* JADX WARNING: Missing block: B:41:0x0082, code:
+        /* JADX WARNING: Missing block: B:42:0x0082, code skipped:
             r4 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r7 = r4.length;
      */
-        /* JADX WARNING: Missing block: B:42:0x0089, code:
+        /* JADX WARNING: Missing block: B:43:0x0089, code skipped:
             if (r5 >= r7) goto L_0x0098;
      */
-        /* JADX WARNING: Missing block: B:43:0x008b, code:
+        /* JADX WARNING: Missing block: B:44:0x008b, code skipped:
             r8 = r4[r5];
             r8.updateAllJobs();
      */
-        /* JADX WARNING: Missing block: B:44:0x0090, code:
+        /* JADX WARNING: Missing block: B:45:0x0090, code skipped:
             if (r6 == false) goto L_0x0095;
      */
-        /* JADX WARNING: Missing block: B:45:0x0092, code:
+        /* JADX WARNING: Missing block: B:46:0x0092, code skipped:
             r8.unblockAllUnrestrictedAlarms();
      */
-        /* JADX WARNING: Missing block: B:46:0x0095, code:
+        /* JADX WARNING: Missing block: B:47:0x0095, code skipped:
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:47:0x0098, code:
+        /* JADX WARNING: Missing block: B:48:0x0098, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(8, r2);
      */
-        /* JADX WARNING: Missing block: B:48:0x00a1, code:
+        /* JADX WARNING: Missing block: B:49:0x00a1, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:53:0x00a5, code:
+        /* JADX WARNING: Missing block: B:54:0x00a5, code skipped:
             r9.this$0.handleUserRemoved(r10.arg1);
      */
-        /* JADX WARNING: Missing block: B:54:0x00ac, code:
+        /* JADX WARNING: Missing block: B:55:0x00ac, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:55:0x00ad, code:
+        /* JADX WARNING: Missing block: B:56:0x00ad, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:56:0x00b4, code:
+        /* JADX WARNING: Missing block: B:57:0x00b4, code skipped:
             if (r5 >= r4) goto L_0x00be;
      */
-        /* JADX WARNING: Missing block: B:57:0x00b6, code:
+        /* JADX WARNING: Missing block: B:58:0x00b6, code skipped:
             com.android.server.AppStateTracker.Listener.access$1700(r1[r5], r0);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:58:0x00be, code:
+        /* JADX WARNING: Missing block: B:59:0x00be, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(7, r2);
      */
-        /* JADX WARNING: Missing block: B:59:0x00c8, code:
+        /* JADX WARNING: Missing block: B:60:0x00c8, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:60:0x00c9, code:
+        /* JADX WARNING: Missing block: B:61:0x00c9, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:61:0x00d0, code:
+        /* JADX WARNING: Missing block: B:62:0x00d0, code skipped:
             if (r5 >= r4) goto L_0x00da;
      */
-        /* JADX WARNING: Missing block: B:62:0x00d2, code:
+        /* JADX WARNING: Missing block: B:63:0x00d2, code skipped:
             com.android.server.AppStateTracker.Listener.access$1500(r1[r5], r0);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:63:0x00da, code:
+        /* JADX WARNING: Missing block: B:64:0x00da, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(5, r2);
      */
-        /* JADX WARNING: Missing block: B:64:0x00e4, code:
+        /* JADX WARNING: Missing block: B:65:0x00e4, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:65:0x00e5, code:
+        /* JADX WARNING: Missing block: B:66:0x00e5, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:66:0x00ec, code:
+        /* JADX WARNING: Missing block: B:67:0x00ec, code skipped:
             if (r5 >= r4) goto L_0x00f6;
      */
-        /* JADX WARNING: Missing block: B:67:0x00ee, code:
+        /* JADX WARNING: Missing block: B:68:0x00ee, code skipped:
             com.android.server.AppStateTracker.Listener.access$1400(r1[r5], r0);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:68:0x00f6, code:
+        /* JADX WARNING: Missing block: B:69:0x00f6, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(4, r2);
      */
-        /* JADX WARNING: Missing block: B:69:0x0100, code:
+        /* JADX WARNING: Missing block: B:70:0x0100, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:70:0x0101, code:
+        /* JADX WARNING: Missing block: B:71:0x0101, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:71:0x0108, code:
+        /* JADX WARNING: Missing block: B:72:0x0108, code skipped:
             if (r5 >= r4) goto L_0x0112;
      */
-        /* JADX WARNING: Missing block: B:72:0x010a, code:
+        /* JADX WARNING: Missing block: B:73:0x010a, code skipped:
             com.android.server.AppStateTracker.Listener.access$1300(r1[r5], r0);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:73:0x0112, code:
+        /* JADX WARNING: Missing block: B:74:0x0112, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(3, r2);
      */
-        /* JADX WARNING: Missing block: B:74:0x011c, code:
+        /* JADX WARNING: Missing block: B:75:0x011c, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:75:0x011d, code:
+        /* JADX WARNING: Missing block: B:76:0x011d, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:76:0x0124, code:
+        /* JADX WARNING: Missing block: B:77:0x0124, code skipped:
             if (r5 >= r4) goto L_0x0134;
      */
-        /* JADX WARNING: Missing block: B:77:0x0126, code:
+        /* JADX WARNING: Missing block: B:78:0x0126, code skipped:
             com.android.server.AppStateTracker.Listener.access$1200(r1[r5], r0, r10.arg1, (java.lang.String) r10.obj);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:78:0x0134, code:
+        /* JADX WARNING: Missing block: B:79:0x0134, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(2, r2);
      */
-        /* JADX WARNING: Missing block: B:79:0x013e, code:
+        /* JADX WARNING: Missing block: B:80:0x013e, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:80:0x013f, code:
+        /* JADX WARNING: Missing block: B:81:0x013f, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
             r6 = 0;
      */
-        /* JADX WARNING: Missing block: B:81:0x0147, code:
+        /* JADX WARNING: Missing block: B:82:0x0147, code skipped:
             if (r6 >= r4) goto L_0x0153;
      */
-        /* JADX WARNING: Missing block: B:82:0x0149, code:
+        /* JADX WARNING: Missing block: B:83:0x0149, code skipped:
             com.android.server.AppStateTracker.Listener.access$1100(r1[r6], r0, r10.arg1);
             r6 = r6 + 1;
      */
-        /* JADX WARNING: Missing block: B:83:0x0153, code:
+        /* JADX WARNING: Missing block: B:84:0x0153, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(0, r2);
      */
-        /* JADX WARNING: Missing block: B:84:0x015c, code:
+        /* JADX WARNING: Missing block: B:85:0x015c, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:85:0x015d, code:
+        /* JADX WARNING: Missing block: B:86:0x015d, code skipped:
             r1 = com.android.server.AppStateTracker.access$900(r9.this$0);
             r4 = r1.length;
      */
-        /* JADX WARNING: Missing block: B:86:0x0164, code:
+        /* JADX WARNING: Missing block: B:87:0x0164, code skipped:
             if (r5 >= r4) goto L_0x0170;
      */
-        /* JADX WARNING: Missing block: B:87:0x0166, code:
+        /* JADX WARNING: Missing block: B:88:0x0166, code skipped:
             com.android.server.AppStateTracker.Listener.access$1000(r1[r5], r0, r10.arg1);
             r5 = r5 + 1;
      */
-        /* JADX WARNING: Missing block: B:88:0x0170, code:
+        /* JADX WARNING: Missing block: B:89:0x0170, code skipped:
             com.android.server.AppStateTracker.access$800(r9.this$0).logDurationStat(1, r2);
      */
-        /* JADX WARNING: Missing block: B:89:0x0179, code:
+        /* JADX WARNING: Missing block: B:90:0x0179, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -603,8 +603,11 @@ public class AppStateTracker {
         public void handleUidStateChanged(int uid, int procState) {
             synchronized (AppStateTracker.this.mLock) {
                 if (procState > 5) {
-                    if (AppStateTracker.removeUidFromArray(AppStateTracker.this.mForegroundUids, uid, false)) {
-                        AppStateTracker.this.mHandler.notifyUidForegroundStateChanged(uid);
+                    try {
+                        if (AppStateTracker.removeUidFromArray(AppStateTracker.this.mForegroundUids, uid, false)) {
+                            AppStateTracker.this.mHandler.notifyUidForegroundStateChanged(uid);
+                        }
+                    } finally {
                     }
                 } else if (AppStateTracker.addUidToArray(AppStateTracker.this.mForegroundUids, uid)) {
                     AppStateTracker.this.mHandler.notifyUidForegroundStateChanged(uid);
@@ -1065,7 +1068,7 @@ public class AppStateTracker {
     }
 
     public boolean isRunAnyInBackgroundAppOpsAllowed(int uid, String packageName) {
-        boolean isRunAnyRestrictedLocked;
+        int isRunAnyRestrictedLocked;
         synchronized (this.mLock) {
             isRunAnyRestrictedLocked = isRunAnyRestrictedLocked(uid, packageName) ^ 1;
         }

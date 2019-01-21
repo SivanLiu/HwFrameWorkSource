@@ -142,103 +142,103 @@ public class DataRequestDispatcher {
             }
         }
 
-        /* JADX WARNING: Missing block: B:8:0x0025, code:
+        /* JADX WARNING: Missing block: B:8:0x0025, code skipped:
             r1 = android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.containsForegroundRequest(r2);
             r0 = android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.containsSubmissionRequest(r2);
      */
-        /* JADX WARNING: Missing block: B:9:0x002d, code:
+        /* JADX WARNING: Missing block: B:9:0x002d, code skipped:
             r3 = r0;
      */
-        /* JADX WARNING: Missing block: B:12:0x0032, code:
+        /* JADX WARNING: Missing block: B:12:0x0032, code skipped:
             if (r9.this$0.active == false) goto L_0x009e;
      */
-        /* JADX WARNING: Missing block: B:14:0x0038, code:
+        /* JADX WARNING: Missing block: B:14:0x0038, code skipped:
             if (r2.size() <= 0) goto L_0x009e;
      */
-        /* JADX WARNING: Missing block: B:15:0x003a, code:
+        /* JADX WARNING: Missing block: B:15:0x003a, code skipped:
             monitor-enter(r9);
      */
-        /* JADX WARNING: Missing block: B:19:0x0045, code:
+        /* JADX WARNING: Missing block: B:19:0x0045, code skipped:
             if (android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$800(r9.this$0) <= 0) goto L_0x0052;
      */
-        /* JADX WARNING: Missing block: B:21:?, code:
+        /* JADX WARNING: Missing block: B:21:?, code skipped:
             wait(android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$800(r9.this$0));
      */
-        /* JADX WARNING: Missing block: B:28:0x0076, code:
+        /* JADX WARNING: Missing block: B:28:0x0076, code skipped:
             r4 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:30:?, code:
+        /* JADX WARNING: Missing block: B:30:?, code skipped:
             android_maps_conflict_avoidance.com.google.common.StaticUtil.handleOutOfMemory();
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$1100(r9.this$0, 5, r4);
      */
-        /* JADX WARNING: Missing block: B:31:0x0080, code:
+        /* JADX WARNING: Missing block: B:31:0x0080, code skipped:
             r4 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:32:0x0081, code:
+        /* JADX WARNING: Missing block: B:32:0x0081, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$1100(r9.this$0, 5, r4);
             android_maps_conflict_avoidance.com.google.common.Log.logThrowable("REQUEST", r4);
      */
-        /* JADX WARNING: Missing block: B:33:0x008c, code:
+        /* JADX WARNING: Missing block: B:33:0x008c, code skipped:
             r0 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:34:0x008d, code:
+        /* JADX WARNING: Missing block: B:34:0x008d, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$1100(r9.this$0, 3, r0);
      */
-        /* JADX WARNING: Missing block: B:35:0x0094, code:
+        /* JADX WARNING: Missing block: B:35:0x0094, code skipped:
             r0 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:36:0x0095, code:
+        /* JADX WARNING: Missing block: B:36:0x0095, code skipped:
             networkAccessDenied(r0);
      */
-        /* JADX WARNING: Missing block: B:43:0x009e, code:
+        /* JADX WARNING: Missing block: B:43:0x009e, code skipped:
             r0 = android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$200(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:44:0x00a4, code:
+        /* JADX WARNING: Missing block: B:44:0x00a4, code skipped:
             monitor-enter(r0);
      */
-        /* JADX WARNING: Missing block: B:46:?, code:
+        /* JADX WARNING: Missing block: B:46:?, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$310(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:47:0x00aa, code:
+        /* JADX WARNING: Missing block: B:47:0x00aa, code skipped:
             if (r1 == false) goto L_0x00b1;
      */
-        /* JADX WARNING: Missing block: B:48:0x00ac, code:
+        /* JADX WARNING: Missing block: B:48:0x00ac, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$410(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:49:0x00b1, code:
+        /* JADX WARNING: Missing block: B:49:0x00b1, code skipped:
             if (r3 == false) goto L_0x00b8;
      */
-        /* JADX WARNING: Missing block: B:50:0x00b3, code:
+        /* JADX WARNING: Missing block: B:50:0x00b3, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$510(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:51:0x00b8, code:
+        /* JADX WARNING: Missing block: B:51:0x00b8, code skipped:
             monitor-exit(r0);
      */
-        /* JADX WARNING: Missing block: B:52:0x00b9, code:
+        /* JADX WARNING: Missing block: B:52:0x00b9, code skipped:
             activateIfNeeded();
      */
-        /* JADX WARNING: Missing block: B:53:0x00bd, code:
+        /* JADX WARNING: Missing block: B:53:0x00bd, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:60:0x00c8, code:
+        /* JADX WARNING: Missing block: B:60:0x00c8, code skipped:
             monitor-enter(android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$200(r9.this$0));
      */
-        /* JADX WARNING: Missing block: B:62:?, code:
+        /* JADX WARNING: Missing block: B:62:?, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$310(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:63:0x00ce, code:
+        /* JADX WARNING: Missing block: B:63:0x00ce, code skipped:
             if (r1 != false) goto L_0x00d0;
      */
-        /* JADX WARNING: Missing block: B:64:0x00d0, code:
+        /* JADX WARNING: Missing block: B:64:0x00d0, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$410(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:65:0x00d5, code:
+        /* JADX WARNING: Missing block: B:65:0x00d5, code skipped:
             if (r3 != false) goto L_0x00d7;
      */
-        /* JADX WARNING: Missing block: B:66:0x00d7, code:
+        /* JADX WARNING: Missing block: B:66:0x00d7, code skipped:
             android_maps_conflict_avoidance.com.google.googlenav.datarequest.DataRequestDispatcher.access$510(r9.this$0);
      */
-        /* JADX WARNING: Missing block: B:68:0x00dd, code:
+        /* JADX WARNING: Missing block: B:68:0x00dd, code skipped:
             activateIfNeeded();
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -499,159 +499,91 @@ public class DataRequestDispatcher {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
     /* JADX WARNING: Removed duplicated region for block: B:173:0x034c  */
-    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter: B:254:0x058b} */
-    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter: B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
     /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
-    /* JADX WARNING: Removed duplicated region for block: B:294:0x05c5 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:210:0x042e A:{SYNTHETIC, Splitter: B:210:0x042e} */
-    /* JADX WARNING: Removed duplicated region for block: B:291:0x0451 A:{SYNTHETIC} */
-    /* JADX WARNING: Removed duplicated region for block: B:215:0x043e  */
-    /* JADX WARNING: Removed duplicated region for block: B:213:0x0436 A:{LOOP_START, LOOP:6: B:213:0x0436->B:218:0x044d, PHI: r22 } */
-    /* JADX WARNING: Missing block: B:184:0x0387, code:
-            r29 = r4;
-            r30 = r5;
-     */
-    /* JADX WARNING: Missing block: B:186:?, code:
-            r0 = (int) (r1.clock.relativeTimeMillis() - r17);
-            r3 = new java.lang.StringBuilder();
-            r3.append("");
-            r3.append(r13);
-            android_maps_conflict_avoidance.com.google.common.Log.addEvent((short) 22, "fb", r3.toString());
-            r3 = new java.lang.StringBuilder();
-            r3.append("");
-            r3.append(r0);
-            android_maps_conflict_avoidance.com.google.common.Log.addEvent((short) 22, "lb", r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:187:0x03c7, code:
-            r21 = r27;
-            r16 = (int) r13;
-            r32 = r13;
-            r34 = r15;
-            r14 = r29;
-            r13 = r30;
-            r15 = r28;
-            r9 = r6;
-            r22 = 0;
-     */
-    /* JADX WARNING: Missing block: B:189:?, code:
-            r1.warmUpManager.onFinishServiceRequests(r8, r17, r16, r0);
-     */
-    /* JADX WARNING: Missing block: B:190:0x03e5, code:
-            if (r11 < 8192) goto L_0x03f4;
-     */
-    /* JADX WARNING: Missing block: B:192:0x03ed, code:
-            if (((long) r0) > 60000) goto L_0x03f4;
-     */
-    /* JADX WARNING: Missing block: B:193:0x03ef, code:
-            r1.networkSpeedBytesPerSecond = (r11 * 1000) / r0;
-     */
-    /* JADX WARNING: Missing block: B:194:0x03f4, code:
-            r12.append(", ");
-     */
-    /* JADX WARNING: Missing block: B:195:0x03fb, code:
-            if (r11 >= 1000) goto L_0x0403;
-     */
-    /* JADX WARNING: Missing block: B:196:0x03fd, code:
-            r12.append("<1kb");
-     */
-    /* JADX WARNING: Missing block: B:197:0x0403, code:
-            r12.append(r11 / 1000);
-            r12.append("kb");
-     */
-    /* JADX WARNING: Missing block: B:198:0x040d, code:
-            r37.removeAllElements();
-     */
-    /* JADX WARNING: Missing block: B:199:0x0410, code:
-            android_maps_conflict_avoidance.com.google.common.Log.logToScreen(r12.toString());
-     */
-    /* JADX WARNING: Missing block: B:200:0x0418, code:
-            if (r14 == null) goto L_0x0421;
-     */
-    /* JADX WARNING: Missing block: B:202:?, code:
-            r14.close();
-     */
-    /* JADX WARNING: Missing block: B:220:0x0452, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:221:0x0453, code:
-            r9 = r6;
-            r22 = 0;
-            r32 = r13;
-            r21 = r27;
-            r15 = r28;
-            r13 = r30;
-            r2 = r0;
-            r4 = r29;
-     */
-    /* JADX WARNING: Missing block: B:228:0x04b4, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:229:0x04b5, code:
-            r2 = r0;
-            r6 = r9;
-            r4 = r14;
-     */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:254:0x058b A:{SYNTHETIC, Splitter:B:254:0x058b} */
+    /* JADX WARNING: Removed duplicated region for block: B:263:0x059f A:{SYNTHETIC, Splitter:B:263:0x059f} */
+    /* JADX WARNING: Removed duplicated region for block: B:290:0x05c5 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:268:0x05b1  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void serviceRequests(Vector requests, DispatcherServer dispatcherServer) throws IOException, SecurityException {
         byte[] sendData;
@@ -672,7 +604,6 @@ public class DataRequestDispatcher {
         DataOutputStream os4;
         PrintStream printStream;
         DataRequest dataRequest;
-        DataInputStream dataInputStream;
         DataRequestDispatcher dataRequestDispatcher2 = this;
         Vector vector = requests;
         DispatcherServer dispatcherServer2 = dispatcherServer;
@@ -747,7 +678,7 @@ public class DataRequestDispatcher {
                     while (true) {
                         i2 = i;
                         dataRequestDispatcher = dataRequestDispatcher2;
-                        if (i2 < requests2.size()) {
+                        if (i2 >= requests2.size()) {
                         }
                         i = i2 + 1;
                         dataRequestDispatcher2 = dataRequestDispatcher;
@@ -778,7 +709,7 @@ public class DataRequestDispatcher {
                 while (true) {
                     i2 = i;
                     dataRequestDispatcher = dataRequestDispatcher2;
-                    if (i2 < requests2.size()) {
+                    if (i2 >= requests2.size()) {
                     }
                     i = i2 + 1;
                     dataRequestDispatcher2 = dataRequestDispatcher;
@@ -820,7 +751,7 @@ public class DataRequestDispatcher {
                             while (true) {
                                 i2 = i;
                                 dataRequestDispatcher = dataRequestDispatcher2;
-                                if (i2 < requests2.size()) {
+                                if (i2 >= requests2.size()) {
                                 }
                                 i = i2 + 1;
                                 dataRequestDispatcher2 = dataRequestDispatcher;
@@ -851,7 +782,7 @@ public class DataRequestDispatcher {
                         while (true) {
                             i2 = i;
                             dataRequestDispatcher = dataRequestDispatcher2;
-                            if (i2 < requests2.size()) {
+                            if (i2 >= requests2.size()) {
                             }
                             i = i2 + 1;
                             dataRequestDispatcher2 = dataRequestDispatcher;
@@ -882,7 +813,7 @@ public class DataRequestDispatcher {
                     while (true) {
                         i2 = i;
                         dataRequestDispatcher = dataRequestDispatcher2;
-                        if (i2 < requests2.size()) {
+                        if (i2 >= requests2.size()) {
                         }
                         i = i2 + 1;
                         dataRequestDispatcher2 = dataRequestDispatcher;
@@ -912,14 +843,13 @@ public class DataRequestDispatcher {
                 while (true) {
                     i2 = i;
                     dataRequestDispatcher = dataRequestDispatcher2;
-                    if (i2 < requests2.size()) {
+                    if (i2 >= requests2.size()) {
                     }
                     i = i2 + 1;
                     dataRequestDispatcher2 = dataRequestDispatcher;
                 }
             }
             try {
-                DataRequest contentType3;
                 drdDebug2.append(", ");
                 if (firstByteTime2 < 1000) {
                     try {
@@ -957,7 +887,7 @@ public class DataRequestDispatcher {
                         while (true) {
                             i2 = i;
                             dataRequestDispatcher = dataRequestDispatcher2;
-                            if (i2 < requests2.size()) {
+                            if (i2 >= requests2.size()) {
                             }
                             i = i2 + 1;
                             dataRequestDispatcher2 = dataRequestDispatcher;
@@ -1025,7 +955,7 @@ public class DataRequestDispatcher {
                         while (true) {
                             i2 = i;
                             dataRequestDispatcher = dataRequestDispatcher2;
-                            if (i2 < requests2.size()) {
+                            if (i2 >= requests2.size()) {
                             }
                             i = i2 + 1;
                             dataRequestDispatcher2 = dataRequestDispatcher;
@@ -1082,7 +1012,7 @@ public class DataRequestDispatcher {
                                         while (true) {
                                             i2 = i;
                                             dataRequestDispatcher = dataRequestDispatcher2;
-                                            if (i2 < requests2.size()) {
+                                            if (i2 >= requests2.size()) {
                                             }
                                             i = i2 + 1;
                                             dataRequestDispatcher2 = dataRequestDispatcher;
@@ -1121,7 +1051,7 @@ public class DataRequestDispatcher {
                             while (true) {
                                 i2 = i;
                                 dataRequestDispatcher = dataRequestDispatcher2;
-                                if (i2 < requests2.size()) {
+                                if (i2 >= requests2.size()) {
                                 }
                                 i = i2 + 1;
                                 dataRequestDispatcher2 = dataRequestDispatcher;
@@ -1130,15 +1060,78 @@ public class DataRequestDispatcher {
                     } else {
                         addToUrl2 = addToUrl;
                         baos3 = null;
+                        DataInputStream is3;
                         try {
                             if ("application/binary".equals(contentType)) {
-                                String contentType4 = contentType;
+                                String contentType3 = contentType;
                                 int responseCode2 = os3;
                                 try {
                                     addToUrl = (int) hc.getLength();
                                     dataRequestDispatcher2.bytesReceived += addToUrl;
                                     int serverProtocolVersion = is2.readUnsignedShort();
-                                    if (serverProtocolVersion == 23) {
+                                    DataRequest contentType4;
+                                    if (serverProtocolVersion != 23) {
+                                        try {
+                                            dataRequestDispatcher2.maybeNotifyNetworkError(1);
+                                            Log.logToScreen(drdDebug2.toString());
+                                            if (is2 != null) {
+                                                try {
+                                                    is2.close();
+                                                } catch (IOException e5) {
+                                                }
+                                            }
+                                            if (os5 != null && null == null) {
+                                                try {
+                                                    os5.close();
+                                                } catch (IOException e6) {
+                                                }
+                                            }
+                                            if (hc != null) {
+                                                try {
+                                                    hc.close();
+                                                } catch (IOException e7) {
+                                                }
+                                            }
+                                            i4 = 0;
+                                            while (true) {
+                                                i2 = i4;
+                                                if (i2 < requests.size()) {
+                                                    contentType4 = (DataRequest) vector.elementAt(i2);
+                                                    if (contentType4.retryOnFailure() == null) {
+                                                        vector.removeElement(contentType4);
+                                                    }
+                                                    i4 = i2 + 1;
+                                                } else {
+                                                    return;
+                                                }
+                                            }
+                                        } catch (Throwable th22222222) {
+                                            contentType = th22222222;
+                                            firstByteTime = firstByteTime2;
+                                            responseCode = responseCode2;
+                                            contentType2 = contentType3;
+                                            i = 0;
+                                            os = os5;
+                                            requests2 = vector;
+                                            os2 = os;
+                                            osSkipClose = false;
+                                            drdDebug = drdDebug2;
+                                            Log.logToScreen(drdDebug.toString());
+                                            if (is2 != null) {
+                                            }
+                                            os2.close();
+                                            if (hc != null) {
+                                            }
+                                            while (true) {
+                                                i2 = i;
+                                                dataRequestDispatcher = dataRequestDispatcher2;
+                                                if (i2 >= requests2.size()) {
+                                                }
+                                                i = i2 + 1;
+                                                dataRequestDispatcher2 = dataRequestDispatcher;
+                                            }
+                                        }
+                                    } else {
                                         i2 = 0;
                                         while (true) {
                                             DataOutputStream contentType5 = i2;
@@ -1150,10 +1143,10 @@ public class DataRequestDispatcher {
                                                 os6 = (DataRequest) vector.elementAt(contentType5);
                                                 dataRequestDispatcher2.processDataRequest(is2, os6, dispatcherServer2);
                                                 i2 = contentType5 + 1;
-                                            } catch (IOException e5) {
+                                            } catch (IOException e8) {
                                                 is = is2;
                                                 os4 = os5;
-                                                IOException is3 = e5;
+                                                IOException is4 = e8;
                                                 StringBuilder stringBuilder5 = new StringBuilder();
                                                 stringBuilder5.append("IOException: ");
                                                 stringBuilder5.append(os6.getRequestType());
@@ -1164,9 +1157,9 @@ public class DataRequestDispatcher {
                                                     stringBuilder.append("IOException processing: ");
                                                     stringBuilder.append(os6.getRequestType());
                                                     printStream.println(stringBuilder.toString());
-                                                    e5.printStackTrace();
+                                                    e8.printStackTrace();
                                                 }
-                                                if (e5 instanceof EOFException) {
+                                                if (e8 instanceof EOFException) {
                                                     os6.onServerFailure();
                                                     if (dataRequestDispatcher2.debug) {
                                                         int requestType = os6.getRequestType();
@@ -1178,15 +1171,15 @@ public class DataRequestDispatcher {
                                                         for (os3 = null; os3 < contentType5; os3++) {
                                                             vector.removeElementAt(0);
                                                         }
-                                                        throw e5;
+                                                        throw e8;
                                                     }
                                                 }
                                                 dataRequest = os6;
                                                 while (os3 < contentType5) {
                                                 }
-                                                throw e5;
-                                            } catch (RuntimeException e6) {
-                                                RuntimeException runtimeException = e6;
+                                                throw e8;
+                                            } catch (RuntimeException e9) {
+                                                RuntimeException runtimeException = e9;
                                                 stringBuilder4 = new StringBuilder();
                                                 is = is2;
                                                 stringBuilder4.append("RuntimeException: ");
@@ -1199,106 +1192,180 @@ public class DataRequestDispatcher {
                                                     stringBuilder4.append("RuntimeException processing: ");
                                                     stringBuilder4.append(os6.getRequestType());
                                                     printStream.println(stringBuilder4.toString());
-                                                    e6.printStackTrace();
+                                                    e9.printStackTrace();
                                                 }
-                                                throw e6;
-                                            } catch (Throwable th22222222) {
-                                                contentType = th22222222;
+                                                throw e9;
+                                            } catch (Throwable th222222222) {
+                                                contentType = th222222222;
                                                 i = 0;
                                                 firstByteTime = firstByteTime2;
                                                 responseCode = responseCode2;
-                                                contentType2 = contentType4;
+                                                contentType2 = contentType3;
                                                 is2 = is;
                                                 os = os4;
+                                                requests2 = vector;
+                                                os2 = os;
+                                                osSkipClose = false;
+                                                drdDebug = drdDebug2;
+                                                Log.logToScreen(drdDebug.toString());
+                                                if (is2 != null) {
+                                                }
+                                                os2.close();
+                                                if (hc != null) {
+                                                }
+                                                while (true) {
+                                                    i2 = i;
+                                                    dataRequestDispatcher = dataRequestDispatcher2;
+                                                    if (i2 >= requests2.size()) {
+                                                    }
+                                                    i = i2 + 1;
+                                                    dataRequestDispatcher2 = dataRequestDispatcher;
+                                                }
                                             }
                                         }
-                                    } else {
+                                        is = is2;
+                                        os4 = os5;
                                         try {
-                                            dataRequestDispatcher2.maybeNotifyNetworkError(1);
-                                            Log.logToScreen(drdDebug2.toString());
-                                            if (is2 != null) {
-                                                try {
-                                                    is2.close();
-                                                } catch (IOException e7) {
+                                            i2 = (int) (dataRequestDispatcher2.clock.relativeTimeMillis() - startTime);
+                                            os3 = new StringBuilder();
+                                            os3.append("");
+                                            os3.append(firstByteTime2);
+                                            Log.addEvent((short) 22, "fb", os3.toString());
+                                            os3 = new StringBuilder();
+                                            os3.append("");
+                                            os3.append(i2);
+                                            Log.addEvent((short) 22, "lb", os3.toString());
+                                            responseCode = responseCode2;
+                                            int i5 = (int) firstByteTime2;
+                                            firstByteTime = firstByteTime2;
+                                            is3 = is;
+                                            os = os4;
+                                            contentType2 = contentType3;
+                                            googleHttpConnection = hc;
+                                            i = 0;
+                                            try {
+                                                dataRequestDispatcher2.warmUpManager.onFinishServiceRequests(vector, startTime, i5, i2);
+                                                if (addToUrl >= 8192 && ((long) i2) <= 60000) {
+                                                    dataRequestDispatcher2.networkSpeedBytesPerSecond = (addToUrl * 1000) / i2;
                                                 }
-                                            }
-                                            if (os5 != null && null == null) {
-                                                try {
-                                                    os5.close();
-                                                } catch (IOException e8) {
-                                                }
-                                            }
-                                            if (hc != null) {
-                                                try {
-                                                    hc.close();
-                                                } catch (IOException e9) {
-                                                }
-                                            }
-                                            i4 = 0;
-                                            while (true) {
-                                                i2 = i4;
-                                                if (i2 < requests.size()) {
-                                                    contentType3 = (DataRequest) vector.elementAt(i2);
-                                                    if (contentType3.retryOnFailure() == null) {
-                                                        vector.removeElement(contentType3);
-                                                    }
-                                                    i4 = i2 + 1;
+                                                drdDebug2.append(", ");
+                                                if (addToUrl < 1000) {
+                                                    drdDebug2.append("<1kb");
                                                 } else {
-                                                    return;
+                                                    drdDebug2.append(addToUrl / 1000);
+                                                    drdDebug2.append("kb");
+                                                }
+                                                requests.removeAllElements();
+                                                Log.logToScreen(drdDebug2.toString());
+                                                if (is3 != null) {
+                                                    try {
+                                                        is3.close();
+                                                    } catch (IOException e10) {
+                                                    }
+                                                }
+                                                if (os != null && null == null) {
+                                                    try {
+                                                        os.close();
+                                                    } catch (IOException e11) {
+                                                    }
+                                                }
+                                                if (googleHttpConnection != null) {
+                                                    try {
+                                                        googleHttpConnection.close();
+                                                    } catch (IOException e12) {
+                                                    }
+                                                }
+                                                while (true) {
+                                                    i2 = i;
+                                                    if (i2 < requests.size()) {
+                                                        contentType4 = (DataRequest) vector.elementAt(i2);
+                                                        if (contentType4.retryOnFailure() == null) {
+                                                            vector.removeElement(contentType4);
+                                                        }
+                                                        i = i2 + 1;
+                                                    } else {
+                                                        return;
+                                                    }
+                                                }
+                                            } catch (Throwable th2222222222) {
+                                                contentType = th2222222222;
+                                                hc = googleHttpConnection;
+                                                is2 = is3;
+                                                requests2 = vector;
+                                                os2 = os;
+                                                osSkipClose = false;
+                                                drdDebug = drdDebug2;
+                                                Log.logToScreen(drdDebug.toString());
+                                                if (is2 != null) {
+                                                }
+                                                os2.close();
+                                                if (hc != null) {
+                                                }
+                                                while (true) {
+                                                    i2 = i;
+                                                    dataRequestDispatcher = dataRequestDispatcher2;
+                                                    if (i2 >= requests2.size()) {
+                                                    }
+                                                    i = i2 + 1;
+                                                    dataRequestDispatcher2 = dataRequestDispatcher;
                                                 }
                                             }
-                                        } catch (Throwable th222222222) {
-                                            contentType = th222222222;
+                                        } catch (Throwable th22222222222) {
+                                            googleHttpConnection = hc;
+                                            i = 0;
                                             firstByteTime = firstByteTime2;
                                             responseCode = responseCode2;
-                                            contentType2 = contentType4;
-                                            i = 0;
-                                            os = os5;
+                                            contentType2 = contentType3;
+                                            os = os4;
+                                            contentType = th22222222222;
+                                            is2 = is;
                                             requests2 = vector;
                                             os2 = os;
                                             osSkipClose = false;
                                             drdDebug = drdDebug2;
                                             Log.logToScreen(drdDebug.toString());
                                             if (is2 != null) {
-                                                try {
-                                                    is2.close();
-                                                } catch (IOException e10) {
-                                                }
                                             }
-                                            if (!(os2 == null || osSkipClose)) {
-                                                os2.close();
-                                            }
+                                            os2.close();
                                             if (hc != null) {
-                                                try {
-                                                    hc.close();
-                                                } catch (IOException e11) {
-                                                }
                                             }
                                             while (true) {
                                                 i2 = i;
                                                 dataRequestDispatcher = dataRequestDispatcher2;
-                                                if (i2 < requests2.size()) {
-                                                    DataRequest dataRequest3 = (DataRequest) requests2.elementAt(i2);
-                                                    if (!dataRequest3.retryOnFailure()) {
-                                                        requests2.removeElement(dataRequest3);
-                                                    }
-                                                    i = i2 + 1;
-                                                    dataRequestDispatcher2 = dataRequestDispatcher;
-                                                } else {
-                                                    throw contentType;
+                                                if (i2 >= requests2.size()) {
                                                 }
+                                                i = i2 + 1;
+                                                dataRequestDispatcher2 = dataRequestDispatcher;
                                             }
                                         }
                                     }
-                                } catch (Throwable th2222222222) {
+                                } catch (Throwable th222222222222) {
                                     googleHttpConnection = hc;
                                     firstByteTime = firstByteTime2;
                                     responseCode = responseCode2;
-                                    contentType2 = contentType4;
+                                    contentType2 = contentType3;
                                     i = 0;
-                                    dataInputStream = is2;
+                                    is3 = is2;
                                     os = os5;
-                                    contentType = th2222222222;
+                                    contentType = th222222222222;
+                                    requests2 = vector;
+                                    os2 = os;
+                                    osSkipClose = false;
+                                    drdDebug = drdDebug2;
+                                    Log.logToScreen(drdDebug.toString());
+                                    if (is2 != null) {
+                                    }
+                                    os2.close();
+                                    if (hc != null) {
+                                    }
+                                    while (true) {
+                                        i2 = i;
+                                        dataRequestDispatcher = dataRequestDispatcher2;
+                                        if (i2 >= requests2.size()) {
+                                        }
+                                        i = i2 + 1;
+                                        dataRequestDispatcher2 = dataRequestDispatcher;
+                                    }
                                 }
                             } else {
                                 contentType2 = contentType;
@@ -1306,7 +1373,7 @@ public class DataRequestDispatcher {
                                 googleHttpConnection = hc;
                                 firstByteTime = firstByteTime2;
                                 i = 0;
-                                dataInputStream = is2;
+                                is3 = is2;
                                 os = os5;
                                 stringBuilder3 = new StringBuilder();
                                 stringBuilder3.append("Bad HTTP content type: ");
@@ -1319,15 +1386,15 @@ public class DataRequestDispatcher {
                                 stringBuilder2.append(contentType2);
                                 throw new IOException(stringBuilder2.toString());
                             }
-                        } catch (Throwable th22222222222) {
+                        } catch (Throwable th2222222222222) {
                             contentType2 = contentType;
                             responseCode = os3;
                             googleHttpConnection = hc;
                             firstByteTime = firstByteTime2;
                             i = 0;
-                            dataInputStream = is2;
+                            is3 = is2;
                             os = os5;
-                            contentType = th22222222222;
+                            contentType = th2222222222222;
                             requests2 = vector;
                             os2 = os;
                             osSkipClose = false;
@@ -1341,7 +1408,7 @@ public class DataRequestDispatcher {
                             while (true) {
                                 i2 = i;
                                 dataRequestDispatcher = dataRequestDispatcher2;
-                                if (i2 < requests2.size()) {
+                                if (i2 >= requests2.size()) {
                                 }
                                 i = i2 + 1;
                                 dataRequestDispatcher2 = dataRequestDispatcher;
@@ -1349,40 +1416,8 @@ public class DataRequestDispatcher {
                         }
                     }
                 }
-                if (os != null && null == null) {
-                    try {
-                        os.close();
-                    } catch (IOException e12) {
-                    }
-                }
-                if (googleHttpConnection != null) {
-                    try {
-                        googleHttpConnection.close();
-                    } catch (IOException e13) {
-                    }
-                }
-                while (true) {
-                    i2 = i;
-                    if (i2 >= requests.size()) {
-                        contentType3 = (DataRequest) vector.elementAt(i2);
-                        if (contentType3.retryOnFailure() == null) {
-                            vector.removeElement(contentType3);
-                        }
-                        i = i2 + 1;
-                    } else {
-                        return;
-                    }
-                }
-                if (googleHttpConnection != null) {
-                }
-                while (true) {
-                    i2 = i;
-                    if (i2 >= requests.size()) {
-                    }
-                    i = i2 + 1;
-                }
             } catch (Throwable th7) {
-                th22222222222 = th7;
+                th2222222222222 = th7;
                 responseCode = os3;
                 googleHttpConnection = hc;
                 addToUrl2 = addToUrl;
@@ -1392,7 +1427,7 @@ public class DataRequestDispatcher {
                 contentType2 = contentType;
                 sendData2 = is2;
                 os = os5;
-                contentType = th22222222222;
+                contentType = th2222222222222;
                 requests2 = vector;
                 os2 = os;
                 osSkipClose = false;
@@ -1406,14 +1441,14 @@ public class DataRequestDispatcher {
                 while (true) {
                     i2 = i;
                     dataRequestDispatcher = dataRequestDispatcher2;
-                    if (i2 < requests2.size()) {
+                    if (i2 >= requests2.size()) {
                     }
                     i = i2 + 1;
                     dataRequestDispatcher2 = dataRequestDispatcher;
                 }
             }
         } catch (Throwable th8) {
-            th22222222222 = th8;
+            th2222222222222 = th8;
             addToUrl2 = addToUrl;
             sendData = sendData2;
             baos3 = null;
@@ -1424,7 +1459,7 @@ public class DataRequestDispatcher {
             responseCode = 0;
             startTime = 0;
             firstByteTime = 0;
-            contentType = th22222222222;
+            contentType = th2222222222222;
             requests2 = vector;
             os2 = os;
             osSkipClose = false;
@@ -1438,7 +1473,7 @@ public class DataRequestDispatcher {
             while (true) {
                 i2 = i;
                 dataRequestDispatcher = dataRequestDispatcher2;
-                if (i2 < requests2.size()) {
+                if (i2 >= requests2.size()) {
                 }
                 i = i2 + 1;
                 dataRequestDispatcher2 = dataRequestDispatcher;

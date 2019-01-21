@@ -1,5 +1,7 @@
 package org.bouncycastle.operator.jcajce;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -25,9 +27,9 @@ public class JceSymmetricKeyUnwrapper extends SymmetricKeyUnwrapper {
             Cipher createSymmetricWrapper = this.helper.createSymmetricWrapper(getAlgorithmIdentifier().getAlgorithm());
             createSymmetricWrapper.init(4, this.secretKey);
             return new JceGenericKey(algorithmIdentifier, createSymmetricWrapper.unwrap(bArr, this.helper.getKeyAlgorithmName(algorithmIdentifier.getAlgorithm()), 3));
-        } catch (Throwable e) {
+        } catch (InvalidKeyException e) {
             throw new OperatorException("key invalid in message.", e);
-        } catch (Throwable e2) {
+        } catch (NoSuchAlgorithmException e2) {
             throw new OperatorException("can't find algorithm.", e2);
         }
     }

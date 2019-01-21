@@ -40,7 +40,7 @@ final class SystemAudioStatusAction extends HdmiCecFeatureAction {
         finishWithCallback(0);
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001c, code:
+    /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

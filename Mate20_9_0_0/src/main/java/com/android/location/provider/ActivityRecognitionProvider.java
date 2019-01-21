@@ -30,28 +30,28 @@ public final class ActivityRecognitionProvider {
         private SinkTransport() {
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0021, code:
+        /* JADX WARNING: Missing block: B:9:0x0021, code skipped:
             r0 = new java.util.ArrayList();
             r2 = r10.getActivityRecognitionEvents().iterator();
      */
-        /* JADX WARNING: Missing block: B:11:0x0032, code:
+        /* JADX WARNING: Missing block: B:11:0x0032, code skipped:
             if (r2.hasNext() == false) goto L_0x004f;
      */
-        /* JADX WARNING: Missing block: B:12:0x0034, code:
+        /* JADX WARNING: Missing block: B:12:0x0034, code skipped:
             r3 = (android.hardware.location.ActivityRecognitionEvent) r2.next();
             r0.add(new com.android.location.provider.ActivityRecognitionEvent(r3.getActivity(), r3.getEventType(), r3.getTimestampNs()));
      */
-        /* JADX WARNING: Missing block: B:13:0x004f, code:
+        /* JADX WARNING: Missing block: B:13:0x004f, code skipped:
             r2 = new com.android.location.provider.ActivityChangedEvent(r0);
             r3 = r1.iterator();
      */
-        /* JADX WARNING: Missing block: B:15:0x005c, code:
+        /* JADX WARNING: Missing block: B:15:0x005c, code skipped:
             if (r3.hasNext() == false) goto L_0x0068;
      */
-        /* JADX WARNING: Missing block: B:16:0x005e, code:
+        /* JADX WARNING: Missing block: B:16:0x005e, code skipped:
             ((com.android.location.provider.ActivityRecognitionProvider.Sink) r3.next()).onActivityChanged(r2);
      */
-        /* JADX WARNING: Missing block: B:17:0x0068, code:
+        /* JADX WARNING: Missing block: B:17:0x0068, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

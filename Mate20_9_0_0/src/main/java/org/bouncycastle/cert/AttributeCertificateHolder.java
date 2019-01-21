@@ -3,7 +3,6 @@ package org.bouncycastle.cert;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -48,7 +47,7 @@ public class AttributeCertificateHolder implements Selector {
     }
 
     private X500Name[] getPrincipals(GeneralName[] generalNameArr) {
-        List arrayList = new ArrayList(generalNameArr.length);
+        ArrayList arrayList = new ArrayList(generalNameArr.length);
         for (int i = 0; i != generalNameArr.length; i++) {
             if (generalNameArr[i].getTagNo() == 4) {
                 arrayList.add(X500Name.getInstance(generalNameArr[i].getName()));
@@ -121,8 +120,17 @@ public class AttributeCertificateHolder implements Selector {
         return this.holder.hashCode();
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0080, code:
+    /* JADX WARNING: Missing block: B:23:0x0080, code skipped:
             r2.write(r5);
+     */
+    /* JADX WARNING: Missing block: B:25:0x008d, code skipped:
+            r2.close();
+     */
+    /* JADX WARNING: Missing block: B:26:0x009c, code skipped:
+            if (org.bouncycastle.util.Arrays.areEqual(r0.getDigest(), getObjectDigest()) != false) goto L_0x00a0;
+     */
+    /* JADX WARNING: Missing block: B:27:0x009e, code skipped:
+            return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean match(Object obj) {
@@ -152,10 +160,6 @@ public class AttributeCertificateHolder implements Selector {
                             encoded = x509CertificateHolder.getEncoded();
                             break;
                         default:
-                            outputStream.close();
-                            if (!Arrays.areEqual(digestCalculator.getDigest(), getObjectDigest())) {
-                                return false;
-                            }
                             break;
                     }
                 } catch (Exception e) {

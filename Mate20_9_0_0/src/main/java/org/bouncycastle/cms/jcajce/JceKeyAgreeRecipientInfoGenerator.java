@@ -1,7 +1,8 @@
 package org.bouncycastle.cms.jcajce;
 
+import java.io.IOException;
 import java.security.AlgorithmParameters;
-import java.security.Key;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
+import javax.crypto.SecretKey;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -98,7 +100,7 @@ public class JceKeyAgreeRecipientInfoGenerator extends KeyAgreeRecipientInfoGene
             throw new CMSException("No recipients associated with generator - use addRecipient()");
         }
         init(algorithmIdentifier.getAlgorithm());
-        Key key = this.senderPrivateKey;
+        PrivateKey privateKey = this.senderPrivateKey;
         ASN1ObjectIdentifier algorithm = algorithmIdentifier.getAlgorithm();
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
         int i = 0;
@@ -133,26 +135,29 @@ public class JceKeyAgreeRecipientInfoGenerator extends KeyAgreeRecipientInfoGene
                     throw new CMSException("User keying material must be set for static keys.");
                 }
                 KeyAgreement createKeyAgreement = this.helper.createKeyAgreement(algorithm);
-                createKeyAgreement.init(key, mQVParameterSpec, this.random);
+                createKeyAgreement.init(privateKey, mQVParameterSpec, this.random);
                 createKeyAgreement.doPhase(publicKey, true);
-                Key generateSecret = createKeyAgreement.generateSecret(algorithm2.getId());
+                SecretKey generateSecret = createKeyAgreement.generateSecret(algorithm2.getId());
                 Cipher createCipher = this.helper.createCipher(algorithm2);
-                if (algorithm2.equals(CryptoProObjectIdentifiers.id_Gost28147_89_None_KeyWrap) || algorithm2.equals(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_KeyWrap)) {
-                    createCipher.init(3, generateSecret, new GOST28147WrapParameterSpec(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_A_ParamSet, this.userKeyingMaterial));
-                    byte[] wrap = createCipher.wrap(this.helper.getJceKey(genericKey));
-                    dEROctetString = new DEROctetString(new Gost2814789EncryptedKey(Arrays.copyOfRange(wrap, 0, wrap.length - 4), Arrays.copyOfRange(wrap, wrap.length - 4, wrap.length)).getEncoded(ASN1Encoding.DER));
-                } else {
-                    createCipher.init(3, generateSecret, this.random);
-                    dEROctetString = new DEROctetString(createCipher.wrap(this.helper.getJceKey(genericKey)));
+                if (!algorithm2.equals(CryptoProObjectIdentifiers.id_Gost28147_89_None_KeyWrap)) {
+                    if (!algorithm2.equals(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_KeyWrap)) {
+                        createCipher.init(3, generateSecret, this.random);
+                        dEROctetString = new DEROctetString(createCipher.wrap(this.helper.getJceKey(genericKey)));
+                        aSN1EncodableVector.add(new RecipientEncryptedKey(keyAgreeRecipientIdentifier, dEROctetString));
+                        i++;
+                    }
                 }
+                createCipher.init(3, generateSecret, new GOST28147WrapParameterSpec(CryptoProObjectIdentifiers.id_Gost28147_89_CryptoPro_A_ParamSet, this.userKeyingMaterial));
+                byte[] wrap = createCipher.wrap(this.helper.getJceKey(genericKey));
+                dEROctetString = new DEROctetString(new Gost2814789EncryptedKey(Arrays.copyOfRange(wrap, 0, wrap.length - 4), Arrays.copyOfRange(wrap, wrap.length - 4, wrap.length)).getEncoded(ASN1Encoding.DER));
                 aSN1EncodableVector.add(new RecipientEncryptedKey(keyAgreeRecipientIdentifier, dEROctetString));
                 i++;
-            } catch (Exception e) {
+            } catch (GeneralSecurityException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("cannot perform agreement step: ");
                 stringBuilder.append(e.getMessage());
                 throw new CMSException(stringBuilder.toString(), e);
-            } catch (Exception e2) {
+            } catch (IOException e2) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to encode wrapped key: ");
                 stringBuilder.append(e2.getMessage());
@@ -170,7 +175,7 @@ public class JceKeyAgreeRecipientInfoGenerator extends KeyAgreeRecipientInfoGene
         OriginatorPublicKey createOriginatorPublicKey = createOriginatorPublicKey(SubjectPublicKeyInfo.getInstance(this.ephemeralKP.getPublic().getEncoded()));
         try {
             return this.userKeyingMaterial != null ? new MQVuserKeyingMaterial(createOriginatorPublicKey, new DEROctetString(this.userKeyingMaterial)).getEncoded() : new MQVuserKeyingMaterial(createOriginatorPublicKey, null).getEncoded();
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to encode user keying material: ");
             stringBuilder.append(e.getMessage());

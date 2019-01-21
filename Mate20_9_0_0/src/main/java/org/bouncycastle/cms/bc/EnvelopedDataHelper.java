@@ -27,7 +27,6 @@ import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.crypto.KeyGenerationParameters;
-import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.Wrapper;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.digests.SHA224Digest;
@@ -105,7 +104,7 @@ class EnvelopedDataHelper {
     static Object createContentCipher(boolean z, CipherParameters cipherParameters, AlgorithmIdentifier algorithmIdentifier) throws CMSException {
         ASN1ObjectIdentifier algorithm = algorithmIdentifier.getAlgorithm();
         if (algorithm.equals(PKCSObjectIdentifiers.rc4)) {
-            StreamCipher rC4Engine = new RC4Engine();
+            RC4Engine rC4Engine = new RC4Engine();
             rC4Engine.init(z, cipherParameters);
             return rC4Engine;
         }
@@ -154,7 +153,7 @@ class EnvelopedDataHelper {
     }
 
     private static Map createTable() {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put(PKCSObjectIdentifiers.id_hmacWithSHA1, new BcDigestProvider() {
             public ExtendedDigest get(AlgorithmIdentifier algorithmIdentifier) {
                 return new SHA1Digest();
@@ -197,9 +196,8 @@ class EnvelopedDataHelper {
         if (NISTObjectIdentifiers.id_aes256_CBC.equals(aSN1ObjectIdentifier)) {
             return createCipherKeyGenerator(secureRandom, 256);
         }
-        CipherKeyGenerator dESedeKeyGenerator;
         if (PKCSObjectIdentifiers.des_EDE3_CBC.equals(aSN1ObjectIdentifier)) {
-            dESedeKeyGenerator = new DESedeKeyGenerator();
+            DESedeKeyGenerator dESedeKeyGenerator = new DESedeKeyGenerator();
             dESedeKeyGenerator.init(new KeyGenerationParameters(secureRandom, 192));
             return dESedeKeyGenerator;
         } else if (NTTObjectIdentifiers.id_camellia128_cbc.equals(aSN1ObjectIdentifier)) {
@@ -218,9 +216,9 @@ class EnvelopedDataHelper {
                 return createCipherKeyGenerator(secureRandom, 128);
             }
             if (OIWObjectIdentifiers.desCBC.equals(aSN1ObjectIdentifier)) {
-                dESedeKeyGenerator = new DESKeyGenerator();
-                dESedeKeyGenerator.init(new KeyGenerationParameters(secureRandom, 64));
-                return dESedeKeyGenerator;
+                DESKeyGenerator dESKeyGenerator = new DESKeyGenerator();
+                dESKeyGenerator.init(new KeyGenerationParameters(secureRandom, 64));
+                return dESKeyGenerator;
             } else if (PKCSObjectIdentifiers.rc4.equals(aSN1ObjectIdentifier)) {
                 return createCipherKeyGenerator(secureRandom, 128);
             } else {

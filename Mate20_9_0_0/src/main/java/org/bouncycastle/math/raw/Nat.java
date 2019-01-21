@@ -173,9 +173,9 @@ public abstract class Nat {
     }
 
     public static int[] copy(int i, int[] iArr) {
-        Object obj = new int[i];
-        System.arraycopy(iArr, 0, obj, 0, i);
-        return obj;
+        int[] iArr2 = new int[i];
+        System.arraycopy(iArr, 0, iArr2, 0, i);
+        return iArr2;
     }
 
     public static int[] create(int i) {

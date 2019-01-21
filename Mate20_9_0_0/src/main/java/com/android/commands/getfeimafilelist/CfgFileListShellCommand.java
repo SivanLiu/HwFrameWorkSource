@@ -14,6 +14,9 @@ final class CfgFileListShellCommand extends ShellCommand {
     CfgFileListShellCommand() {
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x002f A:{Catch:{ RemoteException -> 0x0054 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:14:0x002a A:{Catch:{ RemoteException -> 0x0054 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public int onCommand(String cmd) {
         if (cmd == null) {
             System.out.println("cmd is null.");
@@ -23,18 +26,22 @@ final class CfgFileListShellCommand extends ShellCommand {
         int i = 0;
         try {
             String str = args[0];
-            if (!(str.hashCode() == 3198785 && str.equals("help"))) {
-                i = -1;
+            if (str.hashCode() == 3198785) {
+                if (str.equals("help")) {
+                    if (i == 0) {
+                        return getFeimaFileList(args);
+                    }
+                    System.out.println("get file list from the Feima cfg path which exists the given file name by slot Id.");
+                    System.out.println("getFeimaFileList [file name] [type] [slotId]");
+                    System.out.println("[file name] like 'prop/local.prop'");
+                    System.out.println("[type] like 0 or 1. 0 == CUST_TYPE_CONFIG ,1 == CUST_TYPE_MEDIA. If type is null, type == 0");
+                    System.out.println("[slotId] like 0 or 1. If slotId is null, slotId == 0");
+                    return -1;
+                }
             }
-            if (i != 0) {
-                return getFeimaFileList(args);
+            i = -1;
+            if (i == 0) {
             }
-            System.out.println("get file list from the Feima cfg path which exists the given file name by slot Id.");
-            System.out.println("getFeimaFileList [file name] [type] [slotId]");
-            System.out.println("[file name] like 'prop/local.prop'");
-            System.out.println("[type] like 0 or 1. 0 == CUST_TYPE_CONFIG ,1 == CUST_TYPE_MEDIA. If type is null, type == 0");
-            System.out.println("[slotId] like 0 or 1. If slotId is null, slotId == 0");
-            return -1;
         } catch (RemoteException e) {
             PrintStream printStream = System.out;
             StringBuilder stringBuilder = new StringBuilder();

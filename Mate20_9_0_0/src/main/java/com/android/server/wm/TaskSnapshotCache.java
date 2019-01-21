@@ -47,16 +47,16 @@ class TaskSnapshotCache {
         this.mRunningCache.put(Integer.valueOf(task.mTaskId), new CacheEntry(snapshot, (AppWindowToken) task.getTopChild()));
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0032, code:
+    /* JADX WARNING: Missing block: B:14:0x0032, code skipped:
             com.android.server.wm.WindowManagerService.resetPriorityAfterLockedSection();
      */
-    /* JADX WARNING: Missing block: B:15:0x0035, code:
+    /* JADX WARNING: Missing block: B:15:0x0035, code skipped:
             if (r6 != false) goto L_0x0039;
      */
-    /* JADX WARNING: Missing block: B:17:0x0038, code:
+    /* JADX WARNING: Missing block: B:17:0x0038, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:19:0x003d, code:
+    /* JADX WARNING: Missing block: B:19:0x003d, code skipped:
             return tryRestoreFromDisk(r4, r5, r7);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

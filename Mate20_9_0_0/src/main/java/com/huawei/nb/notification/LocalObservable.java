@@ -62,7 +62,6 @@ public class LocalObservable extends ServiceConnector<IDataServiceCall> implemen
     }
 
     private boolean registerModelRemoteObserver(ModelObserverInfo observerInfo) {
-        Exception e;
         if (getRemoteService() == null) {
             DSLog.e("Failed to register remote observer, error: not connected to data service.", new Object[0]);
             return false;
@@ -72,17 +71,13 @@ public class LocalObservable extends ServiceConnector<IDataServiceCall> implemen
         SubscribeCallback subscribeCallback = this.callbackManager.createSubscribeCallback();
         try {
             return subscribeCallback.await(((IDataServiceCall) getRemoteService()).registerModelObserver(observerInfo, remoteModelObserver, subscribeCallback), (long) TIMEOUT_MILLISECONDS).booleanValue();
-        } catch (RemoteException e2) {
-            e = e2;
-        } catch (RuntimeException e3) {
-            e = e3;
+        } catch (RemoteException | RuntimeException e) {
+            DSLog.e("Failed to register observer for %s, error: %s.", observerInfo, e.getMessage());
+            return false;
         }
-        DSLog.e("Failed to register observer for %s, error: %s.", observerInfo, e.getMessage());
-        return false;
     }
 
     private boolean unregisterModelRemoteObserver(ModelObserverInfo observerInfo) {
-        Exception e;
         if (getRemoteService() == null) {
             DSLog.e("Failed to unregister remote observer, error: not connected to data service.", new Object[0]);
             return false;
@@ -96,13 +91,10 @@ public class LocalObservable extends ServiceConnector<IDataServiceCall> implemen
         SubscribeCallback subscribeCallback = this.callbackManager.createSubscribeCallback();
         try {
             return subscribeCallback.await(((IDataServiceCall) getRemoteService()).unregisterModelObserver(observerInfo, remoteModelObserver, subscribeCallback), (long) TIMEOUT_MILLISECONDS).booleanValue();
-        } catch (RemoteException e2) {
-            e = e2;
-        } catch (RuntimeException e3) {
-            e = e3;
+        } catch (RemoteException | RuntimeException e) {
+            DSLog.e("Failed to unregister model observer for %s, error: %s.", observerInfo, e.getMessage());
+            return false;
         }
-        DSLog.e("Failed to unregister model observer for %s, error: %s.", observerInfo, e.getMessage());
-        return false;
     }
 
     public void setRemoteService(IDataServiceCall remoteService) {
@@ -114,7 +106,7 @@ public class LocalObservable extends ServiceConnector<IDataServiceCall> implemen
         registerAll();
     }
 
-    /* JADX WARNING: Missing block: B:25:?, code:
+    /* JADX WARNING: Missing block: B:26:?, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

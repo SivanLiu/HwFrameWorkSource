@@ -11,6 +11,7 @@ import android.util.Slog;
 import android.view.Display;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.WindowManager;
+import com.android.server.pm.PackageManagerService;
 
 public class HwForceRotationLayout implements OnSystemUiVisibilityChangeListener {
     private static final String KEY_ENABLE_NAVBAR_DB = "enable_navbar";
@@ -104,7 +105,7 @@ public class HwForceRotationLayout implements OnSystemUiVisibilityChangeListener
     private int getResource(Context context, String name, int defaultVal) {
         Resources resources = context.getResources();
         int val = defaultVal;
-        int resourceId = resources.getIdentifier(name, "dimen", "android");
+        int resourceId = resources.getIdentifier(name, "dimen", PackageManagerService.PLATFORM_PACKAGE_NAME);
         if (resourceId > 0) {
             return resources.getDimensionPixelSize(resourceId);
         }

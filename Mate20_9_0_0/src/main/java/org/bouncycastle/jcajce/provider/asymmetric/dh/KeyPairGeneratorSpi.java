@@ -78,7 +78,7 @@ public class KeyPairGeneratorSpi extends KeyPairGenerator {
                 this.engine.init(this.param);
                 this.initialised = true;
                 return;
-            } catch (Throwable e) {
+            } catch (IllegalArgumentException e) {
                 throw new InvalidAlgorithmParameterException(e.getMessage(), e);
             }
         }

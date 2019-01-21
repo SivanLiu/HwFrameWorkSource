@@ -92,7 +92,7 @@ public class ProtectedPKIMessageBuilder {
         PKIHeader build = this.hdrBuilder.build();
         try {
             return finaliseMessage(build, new DERBitString(calculateSignature(contentSigner, build, this.body)));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to encode signature input: ");
             stringBuilder.append(e.getMessage());
@@ -105,7 +105,7 @@ public class ProtectedPKIMessageBuilder {
         PKIHeader build = this.hdrBuilder.build();
         try {
             return finaliseMessage(build, new DERBitString(calculateMac(macCalculator, build, this.body)));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to encode MAC input: ");
             stringBuilder.append(e.getMessage());

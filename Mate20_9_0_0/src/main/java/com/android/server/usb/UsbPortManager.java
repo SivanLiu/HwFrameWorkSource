@@ -323,10 +323,10 @@ public class UsbPortManager {
         return usbPortStatus;
     }
 
-    /* JADX WARNING: Missing block: B:8:0x002f, code:
+    /* JADX WARNING: Missing block: B:8:0x002f, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:20:0x0081, code:
+    /* JADX WARNING: Missing block: B:20:0x0081, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -495,41 +495,47 @@ public class UsbPortManager {
     public void connectSimulatedPort(String portId, int mode, boolean canChangeMode, int powerRole, boolean canChangePowerRole, int dataRole, boolean canChangeDataRole, IndentingPrintWriter pw) {
         synchronized (this.mLock) {
             RawPortInfo portInfo = (RawPortInfo) this.mSimulatedPorts.get(portId);
-            StringBuilder stringBuilder;
             if (portInfo == null) {
                 pw.println("Cannot connect simulated port which does not exist.");
-            } else if (mode == 0 || powerRole == 0 || dataRole == 0) {
-                pw.println("Cannot connect simulated port in null mode, power role, or data role.");
-            } else if ((portInfo.supportedModes & mode) == 0) {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Simulated port does not support mode: ");
-                stringBuilder.append(UsbPort.modeToString(mode));
-                pw.println(stringBuilder.toString());
-            } else {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Connecting simulated port: portId=");
-                stringBuilder.append(portId);
-                stringBuilder.append(", mode=");
-                stringBuilder.append(UsbPort.modeToString(mode));
-                stringBuilder.append(", canChangeMode=");
-                stringBuilder.append(canChangeMode);
-                stringBuilder.append(", powerRole=");
-                stringBuilder.append(UsbPort.powerRoleToString(powerRole));
-                stringBuilder.append(", canChangePowerRole=");
-                stringBuilder.append(canChangePowerRole);
-                stringBuilder.append(", dataRole=");
-                stringBuilder.append(UsbPort.dataRoleToString(dataRole));
-                stringBuilder.append(", canChangeDataRole=");
-                stringBuilder.append(canChangeDataRole);
-                pw.println(stringBuilder.toString());
-                portInfo.currentMode = mode;
-                portInfo.canChangeMode = canChangeMode;
-                portInfo.currentPowerRole = powerRole;
-                portInfo.canChangePowerRole = canChangePowerRole;
-                portInfo.currentDataRole = dataRole;
-                portInfo.canChangeDataRole = canChangeDataRole;
-                updatePortsLocked(pw, null);
+                return;
             }
+            if (!(mode == 0 || powerRole == 0)) {
+                if (dataRole != 0) {
+                    StringBuilder stringBuilder;
+                    if ((portInfo.supportedModes & mode) == 0) {
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("Simulated port does not support mode: ");
+                        stringBuilder.append(UsbPort.modeToString(mode));
+                        pw.println(stringBuilder.toString());
+                        return;
+                    }
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Connecting simulated port: portId=");
+                    stringBuilder.append(portId);
+                    stringBuilder.append(", mode=");
+                    stringBuilder.append(UsbPort.modeToString(mode));
+                    stringBuilder.append(", canChangeMode=");
+                    stringBuilder.append(canChangeMode);
+                    stringBuilder.append(", powerRole=");
+                    stringBuilder.append(UsbPort.powerRoleToString(powerRole));
+                    stringBuilder.append(", canChangePowerRole=");
+                    stringBuilder.append(canChangePowerRole);
+                    stringBuilder.append(", dataRole=");
+                    stringBuilder.append(UsbPort.dataRoleToString(dataRole));
+                    stringBuilder.append(", canChangeDataRole=");
+                    stringBuilder.append(canChangeDataRole);
+                    pw.println(stringBuilder.toString());
+                    portInfo.currentMode = mode;
+                    portInfo.canChangeMode = canChangeMode;
+                    portInfo.currentPowerRole = powerRole;
+                    portInfo.canChangePowerRole = canChangePowerRole;
+                    portInfo.currentDataRole = dataRole;
+                    portInfo.canChangeDataRole = canChangeDataRole;
+                    updatePortsLocked(pw, null);
+                    return;
+                }
+            }
+            pw.println("Cannot connect simulated port in null mode, power role, or data role.");
         }
     }
 

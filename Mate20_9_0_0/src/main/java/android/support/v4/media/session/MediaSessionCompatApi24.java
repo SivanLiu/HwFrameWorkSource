@@ -4,6 +4,8 @@ import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import java.lang.reflect.InvocationTargetException;
 
 @RequiresApi(24)
 class MediaSessionCompatApi24 {
@@ -45,23 +47,13 @@ class MediaSessionCompatApi24 {
         return new CallbackProxy(callback);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0019 A:{Splitter: B:1:0x0003, ExcHandler: java.lang.NoSuchMethodException (r1_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0019 A:{Splitter: B:1:0x0003, ExcHandler: java.lang.NoSuchMethodException (r1_2 'e' java.lang.ReflectiveOperationException)} */
-    /* JADX WARNING: Missing block: B:4:0x0019, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x001a, code:
-            android.util.Log.e(TAG, "Cannot execute MediaSession.getCallingPackage()", r1);
-     */
-    /* JADX WARNING: Missing block: B:6:0x0022, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static String getCallingPackage(Object sessionObj) {
         MediaSession session = (MediaSession) sessionObj;
         try {
             return (String) session.getClass().getMethod("getCallingPackage", new Class[0]).invoke(session, new Object[0]);
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            Log.e(TAG, "Cannot execute MediaSession.getCallingPackage()", e);
+            return null;
         }
     }
 

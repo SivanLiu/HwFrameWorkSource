@@ -21,39 +21,35 @@ public class InstrumentationReporter {
             super("InstrumentationReporter");
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:18:0x0047 A:{Splitter: B:13:0x002b, ExcHandler: android.os.RemoteException (r5_4 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:9:0x001d, code:
+        /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
             r1 = false;
             r2 = 0;
      */
-        /* JADX WARNING: Missing block: B:11:0x0023, code:
+        /* JADX WARNING: Missing block: B:12:0x0023, code skipped:
             if (r2 >= r3.size()) goto L_0x006d;
      */
-        /* JADX WARNING: Missing block: B:12:0x0025, code:
+        /* JADX WARNING: Missing block: B:13:0x0025, code skipped:
             r4 = (com.android.server.am.InstrumentationReporter.Report) r3.get(r2);
      */
-        /* JADX WARNING: Missing block: B:15:0x002d, code:
+        /* JADX WARNING: Missing block: B:16:0x002d, code skipped:
             if (r4.mType != 0) goto L_0x003b;
      */
-        /* JADX WARNING: Missing block: B:16:0x002f, code:
+        /* JADX WARNING: Missing block: B:17:0x002f, code skipped:
             r4.mWatcher.instrumentationStatus(r4.mName, r4.mResultCode, r4.mResults);
      */
-        /* JADX WARNING: Missing block: B:17:0x003b, code:
+        /* JADX WARNING: Missing block: B:18:0x003b, code skipped:
             r4.mWatcher.instrumentationFinished(r4.mName, r4.mResultCode, r4.mResults);
      */
-        /* JADX WARNING: Missing block: B:18:0x0047, code:
+        /* JADX WARNING: Missing block: B:19:0x0047, code skipped:
             r5 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:19:0x0048, code:
+        /* JADX WARNING: Missing block: B:20:0x0048, code skipped:
             r7 = new java.lang.StringBuilder();
             r7.append("Failure reporting to instrumentation watcher: comp=");
             r7.append(r4.mName);
             r7.append(" results=");
             r7.append(r4.mResults);
             android.util.Slog.i("ActivityManager", r7.toString(), r5);
-     */
-        /* JADX WARNING: Missing block: B:20:0x006a, code:
-            r2 = r2 + 1;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void run() {
@@ -63,19 +59,22 @@ public class InstrumentationReporter {
                 synchronized (InstrumentationReporter.this.mLock) {
                     ArrayList<Report> reports = InstrumentationReporter.this.mPendingReports;
                     InstrumentationReporter.this.mPendingReports = null;
-                    if (reports == null || reports.isEmpty()) {
-                        if (waited) {
-                            InstrumentationReporter.this.mThread = null;
-                            return;
+                    if (reports != null) {
+                        if (reports.isEmpty()) {
                         }
-                        try {
-                            InstrumentationReporter.this.mLock.wait(JobStatus.DEFAULT_TRIGGER_UPDATE_DELAY);
-                        } catch (InterruptedException e) {
-                        }
-                        waited = true;
                     }
+                    if (waited) {
+                        InstrumentationReporter.this.mThread = null;
+                        return;
+                    }
+                    try {
+                        InstrumentationReporter.this.mLock.wait(JobStatus.DEFAULT_TRIGGER_UPDATE_DELAY);
+                    } catch (InterruptedException e) {
+                    }
+                    waited = true;
                 }
             }
+            int i++;
         }
     }
 

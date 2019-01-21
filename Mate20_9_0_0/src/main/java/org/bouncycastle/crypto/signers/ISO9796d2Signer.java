@@ -36,12 +36,12 @@ public class ISO9796d2Signer implements SignerWithRecovery {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x0019 in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -59,19 +59,14 @@ public class ISO9796d2Signer implements SignerWithRecovery {
         r1.cipher = r2;
         r1.digest = r3;
         if (r4 == 0) goto L_0x000e;
-    L_0x0009:
         r2 = 188; // 0xbc float:2.63E-43 double:9.3E-322;
-    L_0x000b:
         r1.trailer = r2;
         return;
-    L_0x000e:
         r2 = org.bouncycastle.crypto.signers.ISOTrailers.getTrailer(r3);
         if (r2 == 0) goto L_0x001a;
-    L_0x0014:
         r2 = r2.intValue();
         goto L_0x000b;
         return;
-    L_0x001a:
         r2 = new java.lang.IllegalArgumentException;
         r4 = new java.lang.StringBuilder;
         r4.<init>();
@@ -236,7 +231,7 @@ public class ISO9796d2Signer implements SignerWithRecovery {
     }
 
     public void updateWithRecoveredMessage(byte[] bArr) throws InvalidCipherTextException {
-        Object processBlock = this.cipher.processBlock(bArr, 0, bArr.length);
+        byte[] processBlock = this.cipher.processBlock(bArr, 0, bArr.length);
         if (((processBlock[0] & 192) ^ 64) != 0) {
             throw new InvalidCipherTextException("malformed signature");
         } else if (((processBlock[processBlock.length - 1] & 15) ^ 12) == 0) {
@@ -293,33 +288,32 @@ public class ISO9796d2Signer implements SignerWithRecovery {
     }
 
     public boolean verifySignature(byte[] bArr) {
-        Object processBlock;
         if (this.preSig == null) {
             try {
-                processBlock = this.cipher.processBlock(bArr, 0, bArr.length);
+                bArr = this.cipher.processBlock(bArr, 0, bArr.length);
             } catch (Exception e) {
                 return false;
             }
         } else if (Arrays.areEqual(this.preSig, bArr)) {
-            processBlock = this.preBlock;
+            bArr = this.preBlock;
             this.preSig = null;
             this.preBlock = null;
         } else {
             throw new IllegalStateException("updateWithRecoveredMessage called on different signature");
         }
-        if (((processBlock[0] & 192) ^ 64) != 0) {
-            return returnFalse(processBlock);
+        if (((bArr[0] & 192) ^ 64) != 0) {
+            return returnFalse(bArr);
         }
-        if (((processBlock[processBlock.length - 1] & 15) ^ 12) != 0) {
-            return returnFalse(processBlock);
+        if (((bArr[bArr.length - 1] & 15) ^ 12) != 0) {
+            return returnFalse(bArr);
         }
         int i;
         int intValue;
         int i2 = 2;
-        if (((processBlock[processBlock.length - 1] & 255) ^ 188) == 0) {
+        if (((bArr[bArr.length - 1] & 255) ^ 188) == 0) {
             i2 = 1;
         } else {
-            i = ((processBlock[processBlock.length - 2] & 255) << 8) | (processBlock[processBlock.length - 1] & 255);
+            i = ((bArr[bArr.length - 2] & 255) << 8) | (bArr[bArr.length - 1] & 255);
             Integer trailer = ISOTrailers.getTrailer(this.digest);
             if (trailer != null) {
                 intValue = trailer.intValue();
@@ -333,38 +327,38 @@ public class ISO9796d2Signer implements SignerWithRecovery {
             throw new IllegalArgumentException("unrecognised hash in signature");
         }
         i = 0;
-        while (i != processBlock.length && ((processBlock[i] & 15) ^ 10) != 0) {
+        while (i != bArr.length && ((bArr[i] & 15) ^ 10) != 0) {
             i++;
         }
         i++;
         byte[] bArr2 = new byte[this.digest.getDigestSize()];
-        int length = (processBlock.length - i2) - bArr2.length;
+        int length = (bArr.length - i2) - bArr2.length;
         i2 = length - i;
         if (i2 <= 0) {
-            return returnFalse(processBlock);
+            return returnFalse(bArr);
         }
         Object obj;
-        boolean z;
         int i3;
         int i4;
-        if ((processBlock[0] & 32) == 0) {
+        int i5;
+        if ((bArr[0] & 32) == 0) {
             this.fullMessage = true;
             if (this.messageLength > i2) {
-                return returnFalse(processBlock);
+                return returnFalse(bArr);
             }
             this.digest.reset();
-            this.digest.update(processBlock, i, i2);
+            this.digest.update(bArr, i, i2);
             this.digest.doFinal(bArr2, 0);
-            z = true;
-            for (i3 = 0; i3 != bArr2.length; i3++) {
-                i4 = length + i3;
-                processBlock[i4] = (byte) (processBlock[i4] ^ bArr2[i3]);
-                if (processBlock[i4] != (byte) 0) {
-                    z = false;
+            i3 = 1;
+            for (i4 = 0; i4 != bArr2.length; i4++) {
+                i5 = length + i4;
+                bArr[i5] = (byte) (bArr[i5] ^ bArr2[i4]);
+                if (bArr[i5] != (byte) 0) {
+                    i3 = 0;
                 }
             }
-            if (!z) {
-                return returnFalse(processBlock);
+            if (i3 == 0) {
+                return returnFalse(bArr);
             }
             this.recoveredMessage = new byte[i2];
             obj = this.recoveredMessage;
@@ -372,27 +366,27 @@ public class ISO9796d2Signer implements SignerWithRecovery {
         } else {
             this.fullMessage = false;
             this.digest.doFinal(bArr2, 0);
-            z = true;
-            for (i3 = 0; i3 != bArr2.length; i3++) {
-                i4 = length + i3;
-                processBlock[i4] = (byte) (processBlock[i4] ^ bArr2[i3]);
-                if (processBlock[i4] != (byte) 0) {
-                    z = false;
+            i3 = 1;
+            for (i4 = 0; i4 != bArr2.length; i4++) {
+                i5 = length + i4;
+                bArr[i5] = (byte) (bArr[i5] ^ bArr2[i4]);
+                if (bArr[i5] != (byte) 0) {
+                    i3 = 0;
                 }
             }
-            if (!z) {
-                return returnFalse(processBlock);
+            if (i3 == 0) {
+                return returnFalse(bArr);
             }
             this.recoveredMessage = new byte[i2];
             obj = this.recoveredMessage;
             intValue = this.recoveredMessage.length;
         }
-        System.arraycopy(processBlock, i, obj, 0, intValue);
+        System.arraycopy(bArr, i, obj, 0, intValue);
         if (this.messageLength != 0 && !isSameAs(this.mBuf, this.recoveredMessage)) {
-            return returnFalse(processBlock);
+            return returnFalse(bArr);
         }
         clearBlock(this.mBuf);
-        clearBlock(processBlock);
+        clearBlock(bArr);
         this.messageLength = 0;
         return true;
     }

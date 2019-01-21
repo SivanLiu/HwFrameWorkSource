@@ -52,18 +52,20 @@ public class KernelIOStats {
         }
         try {
             String ioStatsBuffer = native_read_file("/proc/uid_iostats/show_uid_iostats");
-            if (ioStatsBuffer == null || ioStatsBuffer.length() == 0) {
-                Log.e(TAG, "readUidIOStatsFromKernel io_stats file is empty");
-                return ioStatsResult;
+            if (ioStatsBuffer != null) {
+                if (ioStatsBuffer.length() != 0) {
+                    if (Utils.DEBUG) {
+                        String str2 = TAG;
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("readUidIOStatsFromKernel,ioStatsBuffer:");
+                        stringBuilder2.append(ioStatsBuffer);
+                        Log.d(str2, stringBuilder2.toString());
+                    }
+                    recordHistoryByKernelNodeInfor(ioStatsBuffer, uidPkgTable, ioStatsResult);
+                    return ioStatsResult;
+                }
             }
-            if (Utils.DEBUG) {
-                String str2 = TAG;
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("readUidIOStatsFromKernel,ioStatsBuffer:");
-                stringBuilder2.append(ioStatsBuffer);
-                Log.d(str2, stringBuilder2.toString());
-            }
-            recordHistoryByKernelNodeInfor(ioStatsBuffer, uidPkgTable, ioStatsResult);
+            Log.e(TAG, "readUidIOStatsFromKernel io_stats file is empty");
             return ioStatsResult;
         } catch (RuntimeException ex) {
             str = TAG;
@@ -214,11 +216,13 @@ public class KernelIOStats {
                 stringBuilder.append(path);
                 Log.d(str, stringBuilder.toString());
             }
-            if (uidConnection == null || uidConnection.length() == 0) {
-                Log.e(TAG, "writeToUidMonitorNode,the uidConnection is empty");
-            } else {
-                native_write_file(path, uidConnection, uidConnection.length());
+            if (uidConnection != null) {
+                if (uidConnection.length() != 0) {
+                    native_write_file(path, uidConnection, uidConnection.length());
+                    return;
+                }
             }
+            Log.e(TAG, "writeToUidMonitorNode,the uidConnection is empty");
         } catch (RuntimeException e) {
             Log.e(TAG, "fail to writeToUidMonitorNode:the RuntimeException");
         } catch (Exception e2) {

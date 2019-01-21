@@ -185,6 +185,8 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                 stringBuilder.append(" Error: ");
                 stringBuilder.append(e);
                 Slog.w(str, stringBuilder.toString());
+            } catch (SQLiteException e2) {
+                Slog.w(AccountManagerService.TAG, "Failed reading Uri grants");
             } catch (Throwable th) {
                 logStatement.clearBindings();
             }
@@ -474,18 +476,18 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
             return PackageManagerService.PLATFORM_PACKAGE_NAME.equals(activityInfo.packageName) && (GrantCredentialsPermissionActivity.class.getName().equals(className) || CantAddAccountActivity.class.getName().equals(className));
         }
 
-        /* JADX WARNING: Missing block: B:9:0x001c, code:
+        /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             if (r3.mResponse == null) goto L_0x002b;
      */
-        /* JADX WARNING: Missing block: B:10:0x001e, code:
+        /* JADX WARNING: Missing block: B:10:0x001e, code skipped:
             r3.mResponse.asBinder().unlinkToDeath(r3, 0);
             r3.mResponse = null;
      */
-        /* JADX WARNING: Missing block: B:11:0x002b, code:
+        /* JADX WARNING: Missing block: B:11:0x002b, code skipped:
             cancelTimeout();
             unbind();
      */
-        /* JADX WARNING: Missing block: B:12:0x0031, code:
+        /* JADX WARNING: Missing block: B:12:0x0031, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1093,204 +1095,6 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        */
-    private void dumpUser(com.android.server.accounts.AccountManagerService.UserAccounts r17, java.io.FileDescriptor r18, java.io.PrintWriter r19, java.lang.String[] r20, boolean r21) {
-        /*
-        r16 = this;
-        r7 = r16;
-        r8 = r17;
-        r9 = r19;
-        if (r21 == 0) goto L_0x001a;
-    L_0x0008:
-        r1 = r8.dbLock;
-        monitor-enter(r1);
-        r0 = r8.accountsDb;
-        r0.dumpDeAccountsTable(r9);
-        monitor-exit(r1);
-        r4 = r18;
-        r5 = r20;
-        goto L_0x0159;
-    L_0x0017:
-        r0 = move-exception;
-        monitor-exit(r1);
-        throw r0;
-    L_0x001a:
-        r3 = 0;
-        r4 = 1000; // 0x3e8 float:1.401E-42 double:4.94E-321;
-        r5 = 0;
-        r6 = 0;
-        r1 = r7;
-        r2 = r8;
-        r1 = r1.getAccountsFromCache(r2, r3, r4, r5, r6);
-        r0 = new java.lang.StringBuilder;
-        r0.<init>();
-        r2 = "Accounts: ";
-        r0.append(r2);
-        r2 = r1.length;
-        r0.append(r2);
-        r0 = r0.toString();
-        r9.println(r0);
-        r0 = r1.length;
-        r2 = 0;
-    L_0x003c:
-        if (r2 >= r0) goto L_0x0057;
-    L_0x003e:
-        r3 = r1[r2];
-        r4 = new java.lang.StringBuilder;
-        r4.<init>();
-        r5 = "  ";
-        r4.append(r5);
-        r4.append(r3);
-        r4 = r4.toString();
-        r9.println(r4);
-        r2 = r2 + 1;
-        goto L_0x003c;
-    L_0x0057:
-        r19.println();
-        r2 = r8.dbLock;
-        monitor-enter(r2);
-        r0 = r8.accountsDb;	 Catch:{ all -> 0x0169 }
-        r0.dumpDebugTable(r9);	 Catch:{ all -> 0x0169 }
-        monitor-exit(r2);	 Catch:{ all -> 0x0169 }
-        r19.println();
-        r3 = r7.mSessions;
-        monitor-enter(r3);
-        r4 = android.os.SystemClock.elapsedRealtime();	 Catch:{ all -> 0x0160 }
-        r0 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0160 }
-        r0.<init>();	 Catch:{ all -> 0x0160 }
-        r2 = "Active Sessions: ";	 Catch:{ all -> 0x0160 }
-        r0.append(r2);	 Catch:{ all -> 0x0160 }
-        r2 = r7.mSessions;	 Catch:{ all -> 0x0160 }
-        r2 = r2.size();	 Catch:{ all -> 0x0160 }
-        r0.append(r2);	 Catch:{ all -> 0x0160 }
-        r0 = r0.toString();	 Catch:{ all -> 0x0160 }
-        r9.println(r0);	 Catch:{ all -> 0x0160 }
-        r0 = r7.mSessions;	 Catch:{ all -> 0x0160 }
-        r0 = r0.values();	 Catch:{ all -> 0x0160 }
-        r0 = r0.iterator();	 Catch:{ all -> 0x0160 }
-    L_0x0091:
-        r2 = r0.hasNext();	 Catch:{ all -> 0x0160 }
-        if (r2 == 0) goto L_0x00b6;	 Catch:{ all -> 0x0160 }
-    L_0x0097:
-        r2 = r0.next();	 Catch:{ all -> 0x0160 }
-        r2 = (com.android.server.accounts.AccountManagerService.Session) r2;	 Catch:{ all -> 0x0160 }
-        r6 = new java.lang.StringBuilder;	 Catch:{ all -> 0x0160 }
-        r6.<init>();	 Catch:{ all -> 0x0160 }
-        r10 = "  ";	 Catch:{ all -> 0x0160 }
-        r6.append(r10);	 Catch:{ all -> 0x0160 }
-        r10 = r2.toDebugString(r4);	 Catch:{ all -> 0x0160 }
-        r6.append(r10);	 Catch:{ all -> 0x0160 }
-        r6 = r6.toString();	 Catch:{ all -> 0x0160 }
-        r9.println(r6);	 Catch:{ all -> 0x0160 }
-        goto L_0x0091;	 Catch:{ all -> 0x0160 }
-    L_0x00b6:
-        monitor-exit(r3);	 Catch:{ all -> 0x0160 }
-        r19.println();
-        r0 = r7.mAuthenticatorCache;
-        r2 = r17.userId;
-        r4 = r18;
-        r5 = r20;
-        r0.dump(r4, r9, r5, r2);
-        r2 = r7.mUsers;
-        monitor-enter(r2);
-        r0 = r17.userId;
-        r0 = r7.isLocalUnlockedUser(r0);
-        r3 = r0;
-        monitor-exit(r2);
-        if (r3 != 0) goto L_0x00d7;
-    L_0x00d6:
-        return;
-    L_0x00d7:
-        r19.println();
-        r6 = r8.dbLock;
-        monitor-enter(r6);
-        r0 = r8.accountsDb;
-        r0 = r0.findAllVisibilityValues();
-        r2 = "Account visibility:";
-        r9.println(r2);
-        r2 = r0.keySet();
-        r2 = r2.iterator();
-    L_0x00f0:
-        r10 = r2.hasNext();
-        if (r10 == 0) goto L_0x0158;
-    L_0x00f6:
-        r10 = r2.next();
-        r10 = (android.accounts.Account) r10;
-        r11 = new java.lang.StringBuilder;
-        r11.<init>();
-        r12 = "  ";
-        r11.append(r12);
-        r12 = r10.name;
-        r11.append(r12);
-        r11 = r11.toString();
-        r9.println(r11);
-        r11 = r0.get(r10);
-        r11 = (java.util.Map) r11;
-        r12 = r11.entrySet();
-        r12 = r12.iterator();
-    L_0x0120:
-        r13 = r12.hasNext();
-        if (r13 == 0) goto L_0x0156;
-    L_0x0126:
-        r13 = r12.next();
-        r13 = (java.util.Map.Entry) r13;
-        r14 = new java.lang.StringBuilder;
-        r14.<init>();
-        r15 = r0;
-        r0 = "    ";
-        r14.append(r0);
-        r0 = r13.getKey();
-        r0 = (java.lang.String) r0;
-        r14.append(r0);
-        r0 = ", ";
-        r14.append(r0);
-        r0 = r13.getValue();
-        r14.append(r0);
-        r0 = r14.toString();
-        r9.println(r0);
-        r0 = r15;
-        goto L_0x0120;
-    L_0x0156:
-        r15 = r0;
-        goto L_0x00f0;
-    L_0x0158:
-        monitor-exit(r6);
-    L_0x0159:
-        return;
-    L_0x015a:
-        r0 = move-exception;
-        monitor-exit(r6);
-        throw r0;
-    L_0x015d:
-        r0 = move-exception;
-        monitor-exit(r2);
-        throw r0;
-    L_0x0160:
-        r0 = move-exception;
-        r4 = r18;
-        r5 = r20;
-    L_0x0165:
-        monitor-exit(r3);	 Catch:{ all -> 0x0167 }
-        throw r0;
-    L_0x0167:
-        r0 = move-exception;
-        goto L_0x0165;
-    L_0x0169:
-        r0 = move-exception;
-        r4 = r18;
-        r5 = r20;
-    L_0x016e:
-        monitor-exit(r2);	 Catch:{ all -> 0x0170 }
-        throw r0;
-    L_0x0170:
-        r0 = move-exception;
-        goto L_0x016e;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.accounts.AccountManagerService.dumpUser(com.android.server.accounts.AccountManagerService$UserAccounts, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[], boolean):void");
-    }
-
     static {
         ACCOUNTS_CHANGED_INTENT.setFlags(83886080);
     }
@@ -1711,27 +1515,38 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
     private boolean setAccountVisibility(Account account, String packageName, int newVisibility, boolean notify, UserAccounts accounts) {
         synchronized (accounts.dbLock) {
             synchronized (accounts.cacheLock) {
-                Map<String, Integer> packagesToVisibility;
+                boolean packagesToVisibility;
                 List<String> accountRemovedReceivers;
                 if (notify) {
-                    if (isSpecialPackageKey(packageName)) {
-                        packagesToVisibility = getRequestingPackages(account, accounts);
-                        accountRemovedReceivers = getAccountRemovedReceivers(account, accounts);
-                    } else if (packageExistsForUser(packageName, accounts.userId)) {
-                        packagesToVisibility = new HashMap();
-                        packagesToVisibility.put(packageName, resolveAccountVisibility(account, packageName, accounts));
-                        accountRemovedReceivers = new ArrayList();
-                        if (shouldNotifyPackageOnAccountRemoval(account, packageName, accounts)) {
-                            accountRemovedReceivers.add(packageName);
+                    try {
+                        if (isSpecialPackageKey(packageName)) {
+                            packagesToVisibility = getRequestingPackages(account, accounts);
+                            accountRemovedReceivers = getAccountRemovedReceivers(account, accounts);
+                        } else {
+                            packagesToVisibility = packageExistsForUser(packageName, accounts.userId);
+                            if (packagesToVisibility) {
+                                packagesToVisibility = new HashMap();
+                                packagesToVisibility.put(packageName, resolveAccountVisibility(account, packageName, accounts));
+                                accountRemovedReceivers = new ArrayList();
+                                if (shouldNotifyPackageOnAccountRemoval(account, packageName, accounts)) {
+                                    accountRemovedReceivers.add(packageName);
+                                }
+                            } else {
+                                return false;
+                            }
                         }
-                    } else {
-                        return false;
+                    } finally {
                     }
-                } else if (isSpecialPackageKey(packageName) || packageExistsForUser(packageName, accounts.userId)) {
+                } else {
+                    packagesToVisibility = isSpecialPackageKey(packageName);
+                    if (!packagesToVisibility) {
+                        packagesToVisibility = packageExistsForUser(packageName, accounts.userId);
+                        if (!packagesToVisibility) {
+                            return false;
+                        }
+                    }
                     packagesToVisibility = Collections.emptyMap();
                     accountRemovedReceivers = Collections.emptyList();
-                } else {
-                    return false;
                 }
                 if (updateAccountVisibilityLocked(account, packageName, newVisibility, accounts)) {
                     if (notify) {
@@ -1968,18 +1783,25 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter: B:130:0x0368} */
-    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter: B:130:0x0368} */
-    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter: B:138:0x0373} */
-    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter: B:138:0x0373} */
+    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter:B:138:0x0373} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter:B:130:0x0368} */
+    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter:B:138:0x0373} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter:B:130:0x0368} */
+    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter:B:138:0x0373} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter:B:130:0x0368} */
+    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter:B:138:0x0373} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter:B:130:0x0368} */
+    /* JADX WARNING: Removed duplicated region for block: B:130:0x0368 A:{SYNTHETIC, Splitter:B:130:0x0368} */
+    /* JADX WARNING: Removed duplicated region for block: B:138:0x0373 A:{SYNTHETIC, Splitter:B:138:0x0373} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void validateAccountsInternal(UserAccounts accounts, boolean invalidateAuthenticatorCache) {
         String str;
-        boolean accountDeleted;
         Throwable th;
+        Map<String, Integer> accountEntry;
         AccountsDb accountsDb;
         Map<Long, Account> accountsDb2;
         SQLiteDiskIOException ex;
+        int access$800;
         UserAccounts userAccounts = accounts;
         if (Log.isLoggable(TAG, 3)) {
             str = TAG;
@@ -2002,7 +1824,7 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
             boolean z;
             try {
                 synchronized (userAccounts.cacheLock) {
-                    accountDeleted = false;
+                    boolean accountDeleted = false;
                     try {
                         Iterator it;
                         AccountsDb accountsDb3 = userAccounts.accountsDb;
@@ -2034,6 +1856,7 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                                 th = th2;
                                 hashMap = knownAuth;
                                 z = userUnlocked;
+                                throw th;
                             }
                         }
                         for (Entry<String, Integer> entry : knownAuth.entrySet()) {
@@ -2043,35 +1866,34 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                         HashSet<String> hashSet;
                         Map<String, Integer> map;
                         Map<Long, Account> map2;
-                        AccountsDb accountsDb4;
-                        int access$800;
+                        AccountsDb account;
                         try {
                             userAccounts.accountCache.clear();
                             HashMap<String, ArrayList<String>> accountNamesByType = new LinkedHashMap();
                             it = accountsMap.entrySet().iterator();
                             while (it.hasNext()) {
                                 HashMap<String, ArrayList<String>> accountNamesByType2;
-                                Entry<Long, Account> accountEntry = (Entry) it.next();
-                                long accountId = ((Long) accountEntry.getKey()).longValue();
-                                Account account = (Account) accountEntry.getValue();
+                                Entry<Long, Account> accountEntry2 = (Entry) it.next();
+                                long accountId = ((Long) accountEntry2.getKey()).longValue();
+                                Account account2 = (Account) accountEntry2.getValue();
                                 Iterator it2 = it;
                                 long accountId2;
-                                if (obsoleteAuthType.contains(account.type)) {
+                                if (obsoleteAuthType.contains(account2.type)) {
+                                    HashMap<String, ArrayList<String>> hashMap2;
                                     str = TAG;
-                                    Entry<Long, Account> accountEntry2 = accountEntry;
+                                    Entry<Long, Account> accountEntry3 = accountEntry2;
                                     StringBuilder stringBuilder2 = new StringBuilder();
                                     Map<Long, Account> accountsMap2 = accountsMap;
                                     try {
                                         stringBuilder2.append("deleting account because type ");
-                                        stringBuilder2.append(account.type);
+                                        stringBuilder2.append(account2.type);
                                         stringBuilder2.append("'s registered authenticator no longer exist.");
                                         Slog.w(str, stringBuilder2.toString());
-                                        accountsMap = getRequestingPackages(account, userAccounts);
-                                        Map<String, Integer> accountEntry3 = getAccountRemovedReceivers(account, userAccounts);
+                                        accountsMap = getRequestingPackages(account2, userAccounts);
+                                        accountEntry = getAccountRemovedReceivers(account2, userAccounts);
                                         accountsDb3.beginTransaction();
                                         hashMap = knownAuth;
                                         accountId2 = accountId;
-                                        HashMap<String, ArrayList<String>> hashMap2;
                                         try {
                                             accountsDb3.deleteDeAccount(accountId2);
                                             if (userUnlocked) {
@@ -2084,145 +1906,174 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                                                     z = userUnlocked;
                                                     accountsDb = accountsDb3;
                                                     map = metaAuthUid;
-                                                    Entry<Long, Account> entry2 = accountEntry2;
+                                                    Entry<Long, Account> entry2 = accountEntry3;
                                                     map2 = accountsMap2;
-                                                    userUnlocked = account;
-                                                    metaAuthUid = accountEntry3;
+                                                    userUnlocked = account2;
+                                                    metaAuthUid = accountEntry;
                                                     accountsDb2 = accountsMap;
                                                 }
                                             }
                                             accountsDb3.setTransactionSuccessful();
-                                            try {
-                                                accountsDb3.endTransaction();
-                                                try {
-                                                    z = userUnlocked;
-                                                    userUnlocked = account;
-                                                    map = metaAuthUid;
-                                                    metaAuthUid = accountEntry3;
-                                                    hashMap2 = accountNamesByType;
-                                                    accountsDb = accountsDb3;
-                                                    map2 = accountsMap2;
-                                                    accountsDb2 = accountsMap;
-                                                    hashSet = obsoleteAuthType;
-                                                } catch (SQLiteDiskIOException e) {
-                                                    ex = e;
-                                                    hashSet = obsoleteAuthType;
-                                                    z = userUnlocked;
-                                                    map = metaAuthUid;
-                                                    map2 = accountsMap2;
-                                                    accountsDb4 = accountsDb3;
-                                                    accountDeleted = true;
-                                                } catch (Throwable th4) {
-                                                    th = th4;
-                                                    hashSet = obsoleteAuthType;
-                                                    z = userUnlocked;
-                                                    map = metaAuthUid;
-                                                    map2 = accountsMap2;
-                                                    accountsDb4 = accountsDb3;
-                                                    accountDeleted = true;
-                                                }
-                                                try {
-                                                    logRecord(AccountsDb.DEBUG_ACTION_AUTHENTICATOR_REMOVE, "accounts", accountId2, userAccounts);
-                                                    accounts.userDataCache.remove(userUnlocked);
-                                                    accounts.authTokenCache.remove(userUnlocked);
-                                                    accounts.accountTokenCaches.remove(userUnlocked);
-                                                    accounts.visibilityCache.remove(userUnlocked);
-                                                    for (Entry<String, Integer> packageToVisibility : accountsDb2.entrySet()) {
-                                                        if (isVisible(((Integer) packageToVisibility.getValue()).intValue())) {
-                                                            notifyPackage((String) packageToVisibility.getKey(), userAccounts);
-                                                        }
-                                                    }
-                                                    it = metaAuthUid.iterator();
-                                                    while (it.hasNext()) {
-                                                        sendAccountRemovedBroadcast(userUnlocked, (String) it.next(), accounts.userId);
-                                                    }
-                                                    accountDeleted = true;
-                                                    accountNamesByType2 = hashMap2;
-                                                    accountsDb4 = accountsDb;
-                                                } catch (SQLiteDiskIOException e2) {
-                                                    ex = e2;
-                                                    accountDeleted = true;
-                                                    accountsDb4 = accountsDb;
-                                                    try {
-                                                        Log.w(TAG, "validateAccountsInternal ret got err:", ex);
-                                                        if (accountDeleted) {
-                                                        }
-                                                    } catch (Throwable th5) {
-                                                        th = th5;
-                                                        if (accountDeleted) {
-                                                        }
-                                                        throw th;
-                                                    }
-                                                } catch (Throwable th6) {
-                                                    th = th6;
-                                                    accountDeleted = true;
-                                                    accountsDb4 = accountsDb;
-                                                    if (accountDeleted) {
-                                                    }
-                                                    throw th;
-                                                }
-                                            } catch (SQLiteDiskIOException e3) {
-                                                ex = e3;
-                                                hashSet = obsoleteAuthType;
-                                                z = userUnlocked;
-                                                map = metaAuthUid;
-                                                map2 = accountsMap2;
-                                                accountsDb4 = accountsDb3;
-                                            } catch (Throwable th7) {
-                                                th = th7;
-                                                hashSet = obsoleteAuthType;
-                                                z = userUnlocked;
-                                                map = metaAuthUid;
-                                                map2 = accountsMap2;
-                                            }
-                                        } catch (Throwable th8) {
-                                            th = th8;
+                                        } catch (Throwable th4) {
+                                            th = th4;
                                             hashMap2 = accountNamesByType;
                                             hashSet = obsoleteAuthType;
                                             z = userUnlocked;
                                             accountsDb = accountsDb3;
                                             map = metaAuthUid;
-                                            accountId = accountEntry2;
+                                            accountId = accountEntry3;
                                             map2 = accountsMap2;
-                                            userUnlocked = account;
-                                            metaAuthUid = accountEntry3;
+                                            userUnlocked = account2;
+                                            metaAuthUid = accountEntry;
                                             accountsDb2 = accountsMap;
+                                            try {
+                                                accountsDb.endTransaction();
+                                                throw th;
+                                            } catch (SQLiteDiskIOException e) {
+                                                ex = e;
+                                                try {
+                                                    Log.w(TAG, "validateAccountsInternal ret got err:", ex);
+                                                    if (accountDeleted) {
+                                                    }
+                                                } catch (Throwable th5) {
+                                                    th = th5;
+                                                    if (accountDeleted) {
+                                                    }
+                                                    throw th;
+                                                }
+                                            }
                                         }
-                                    } catch (SQLiteDiskIOException e4) {
-                                        ex = e4;
+                                    } catch (SQLiteDiskIOException e2) {
+                                        ex = e2;
                                         hashSet = obsoleteAuthType;
                                         hashMap = knownAuth;
                                         z = userUnlocked;
-                                        accountsDb4 = accountsDb3;
+                                        account = accountsDb3;
                                         map = metaAuthUid;
                                         map2 = accountsMap2;
+                                        Log.w(TAG, "validateAccountsInternal ret got err:", ex);
+                                        if (accountDeleted) {
+                                        }
+                                    } catch (Throwable th6) {
+                                        th = th6;
+                                        hashSet = obsoleteAuthType;
+                                        hashMap = knownAuth;
+                                        z = userUnlocked;
+                                        account = accountsDb3;
+                                        map = metaAuthUid;
+                                        map2 = accountsMap2;
+                                        if (accountDeleted) {
+                                        }
+                                        throw th;
+                                    }
+                                    try {
+                                        accountsDb3.endTransaction();
+                                        try {
+                                            z = userUnlocked;
+                                            userUnlocked = account2;
+                                            map = metaAuthUid;
+                                            metaAuthUid = accountEntry;
+                                            hashMap2 = accountNamesByType;
+                                            accountsDb = accountsDb3;
+                                            map2 = accountsMap2;
+                                            accountsDb2 = accountsMap;
+                                            hashSet = obsoleteAuthType;
+                                        } catch (SQLiteDiskIOException e3) {
+                                            ex = e3;
+                                            hashSet = obsoleteAuthType;
+                                            z = userUnlocked;
+                                            map = metaAuthUid;
+                                            map2 = accountsMap2;
+                                            account = accountsDb3;
+                                            accountDeleted = true;
+                                            Log.w(TAG, "validateAccountsInternal ret got err:", ex);
+                                            if (accountDeleted) {
+                                            }
+                                        } catch (Throwable th7) {
+                                            th = th7;
+                                            hashSet = obsoleteAuthType;
+                                            z = userUnlocked;
+                                            map = metaAuthUid;
+                                            map2 = accountsMap2;
+                                            account = accountsDb3;
+                                            accountDeleted = true;
+                                            if (accountDeleted) {
+                                            }
+                                            throw th;
+                                        }
+                                        try {
+                                            logRecord(AccountsDb.DEBUG_ACTION_AUTHENTICATOR_REMOVE, "accounts", accountId2, userAccounts);
+                                            accounts.userDataCache.remove(userUnlocked);
+                                            accounts.authTokenCache.remove(userUnlocked);
+                                            accounts.accountTokenCaches.remove(userUnlocked);
+                                            accounts.visibilityCache.remove(userUnlocked);
+                                            for (Entry<String, Integer> packageToVisibility : accountsDb2.entrySet()) {
+                                                if (isVisible(((Integer) packageToVisibility.getValue()).intValue())) {
+                                                    notifyPackage((String) packageToVisibility.getKey(), userAccounts);
+                                                }
+                                            }
+                                            it = metaAuthUid.iterator();
+                                            while (it.hasNext()) {
+                                                sendAccountRemovedBroadcast(userUnlocked, (String) it.next(), accounts.userId);
+                                            }
+                                            accountDeleted = true;
+                                            accountNamesByType2 = hashMap2;
+                                            account = accountsDb;
+                                        } catch (SQLiteDiskIOException e4) {
+                                            ex = e4;
+                                            accountDeleted = true;
+                                            account = accountsDb;
+                                            Log.w(TAG, "validateAccountsInternal ret got err:", ex);
+                                            if (accountDeleted) {
+                                            }
+                                        } catch (Throwable th8) {
+                                            th = th8;
+                                            accountDeleted = true;
+                                            account = accountsDb;
+                                            if (accountDeleted) {
+                                            }
+                                            throw th;
+                                        }
+                                    } catch (SQLiteDiskIOException e5) {
+                                        ex = e5;
+                                        hashSet = obsoleteAuthType;
+                                        z = userUnlocked;
+                                        map = metaAuthUid;
+                                        map2 = accountsMap2;
+                                        account = accountsDb3;
+                                        Log.w(TAG, "validateAccountsInternal ret got err:", ex);
+                                        if (accountDeleted) {
+                                            access$800 = accounts.userId;
+                                            sendAccountsChangedBroadcast(access$800);
+                                        }
                                     } catch (Throwable th9) {
                                         th = th9;
                                         hashSet = obsoleteAuthType;
-                                        hashMap = knownAuth;
                                         z = userUnlocked;
-                                        accountsDb4 = accountsDb3;
                                         map = metaAuthUid;
                                         map2 = accountsMap2;
+                                        if (accountDeleted) {
+                                            sendAccountsChangedBroadcast(accounts.userId);
+                                        }
+                                        throw th;
                                     }
-                                } else {
-                                    map2 = accountsMap;
-                                    hashMap = knownAuth;
-                                    z = userUnlocked;
-                                    map = metaAuthUid;
-                                    accountId2 = accountId;
-                                    Account account2 = account;
-                                    hashSet = obsoleteAuthType;
-                                    accountsDb4 = accountsDb3;
-                                    accountNamesByType2 = accountNamesByType;
-                                    ArrayList<String> accountNames = (ArrayList) accountNamesByType2.get(account2.type);
-                                    if (accountNames == null) {
-                                        accountNames = new ArrayList();
-                                        accountNamesByType2.put(account2.type, accountNames);
-                                    }
-                                    accountNames.add(account2.name);
                                 }
-                                accountsDb3 = accountsDb4;
+                                map2 = accountsMap;
+                                hashMap = knownAuth;
+                                z = userUnlocked;
+                                map = metaAuthUid;
+                                accountId2 = accountId;
+                                Account account3 = account2;
+                                hashSet = obsoleteAuthType;
+                                account = accountsDb3;
+                                accountNamesByType2 = accountNamesByType;
+                                ArrayList<String> accountNames = (ArrayList) accountNamesByType2.get(account3.type);
+                                if (accountNames == null) {
+                                    accountNames = new ArrayList();
+                                    accountNamesByType2.put(account3.type, accountNames);
+                                }
+                                accountNames.add(account3.name);
+                                accountsDb3 = account;
                                 accountNamesByType = accountNamesByType2;
                                 accountsMap = map2;
                                 obsoleteAuthType = hashSet;
@@ -2234,7 +2085,7 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                             hashSet = obsoleteAuthType;
                             hashMap = knownAuth;
                             z = userUnlocked;
-                            accountsDb4 = accountsDb3;
+                            account = accountsDb3;
                             map = metaAuthUid;
                             for (Entry<String, ArrayList<String>> cur : accountNamesByType.entrySet()) {
                                 String accountType = (String) cur.getKey();
@@ -2245,23 +2096,21 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                                 }
                                 userAccounts.accountCache.put(accountType, accountsForType);
                             }
-                            accounts.visibilityCache.putAll(accountsDb4.findAllVisibilityValues());
+                            accounts.visibilityCache.putAll(account.findAllVisibilityValues());
                             if (accountDeleted) {
                                 access$800 = accounts.userId;
                                 sendAccountsChangedBroadcast(access$800);
                             }
-                        } catch (SQLiteDiskIOException e5) {
-                            ex = e5;
+                        } catch (SQLiteDiskIOException e6) {
+                            ex = e6;
                             map2 = accountsMap;
                             hashSet = obsoleteAuthType;
                             hashMap = knownAuth;
                             z = userUnlocked;
-                            accountsDb4 = accountsDb3;
+                            account = accountsDb3;
                             map = metaAuthUid;
                             Log.w(TAG, "validateAccountsInternal ret got err:", ex);
                             if (accountDeleted) {
-                                access$800 = accounts.userId;
-                                sendAccountsChangedBroadcast(access$800);
                             }
                         } catch (Throwable th10) {
                             th = th10;
@@ -2269,10 +2118,9 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
                             hashSet = obsoleteAuthType;
                             hashMap = knownAuth;
                             z = userUnlocked;
-                            accountsDb4 = accountsDb3;
+                            account = accountsDb3;
                             map = metaAuthUid;
                             if (accountDeleted) {
-                                sendAccountsChangedBroadcast(accounts.userId);
                             }
                             throw th;
                         }
@@ -2284,15 +2132,6 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
             } catch (Throwable th12) {
                 th = th12;
                 throw th;
-            }
-        }
-        try {
-            accountsDb.endTransaction();
-            throw th;
-        } catch (SQLiteDiskIOException e6) {
-            ex = e6;
-            Log.w(TAG, "validateAccountsInternal ret got err:", ex);
-            if (accountDeleted) {
             }
         }
     }
@@ -2479,31 +2318,33 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
     private void syncSharedAccounts(int userId) {
         try {
             Account[] sharedAccounts = getSharedAccountsAsUser(userId);
-            if (sharedAccounts != null && sharedAccounts.length != 0) {
-                int parentUserId;
-                Account[] accounts = getAccountsAsUser(null, userId, this.mContext.getOpPackageName());
-                int i = 0;
-                if (UserManager.isSplitSystemUser()) {
-                    parentUserId = getUserManager().getUserInfo(userId).restrictedProfileParentId;
-                } else {
-                    parentUserId = 0;
-                }
-                if (parentUserId < 0) {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("User ");
-                    stringBuilder.append(userId);
-                    stringBuilder.append(" has shared accounts, but no parent user");
-                    Log.w(str, stringBuilder.toString());
-                    return;
-                }
-                int length = sharedAccounts.length;
-                while (i < length) {
-                    Account sa = sharedAccounts[i];
-                    if (!ArrayUtils.contains(accounts, sa)) {
-                        copyAccountToUser(null, sa, parentUserId, userId);
+            if (sharedAccounts != null) {
+                if (sharedAccounts.length != 0) {
+                    int parentUserId;
+                    Account[] accounts = getAccountsAsUser(null, userId, this.mContext.getOpPackageName());
+                    int i = 0;
+                    if (UserManager.isSplitSystemUser()) {
+                        parentUserId = getUserManager().getUserInfo(userId).restrictedProfileParentId;
+                    } else {
+                        parentUserId = 0;
                     }
-                    i++;
+                    if (parentUserId < 0) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("User ");
+                        stringBuilder.append(userId);
+                        stringBuilder.append(" has shared accounts, but no parent user");
+                        Log.w(str, stringBuilder.toString());
+                        return;
+                    }
+                    int length = sharedAccounts.length;
+                    while (i < length) {
+                        Account sa = sharedAccounts[i];
+                        if (!ArrayUtils.contains(accounts, sa)) {
+                            copyAccountToUser(null, sa, parentUserId, userId);
+                        }
+                        i++;
+                    }
                 }
             }
         } catch (SQLiteException e) {
@@ -2883,17 +2724,17 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         }
     }
 
-    /* JADX WARNING: Missing block: B:77:0x01cb, code:
+    /* JADX WARNING: Missing block: B:77:0x01cb, code skipped:
             if (getUserManager().getUserInfo(com.android.server.accounts.AccountManagerService.UserAccounts.access$800(r20)).canHaveProfile() == false) goto L_0x01d4;
      */
-    /* JADX WARNING: Missing block: B:78:0x01cd, code:
+    /* JADX WARNING: Missing block: B:78:0x01cd, code skipped:
             addAccountToLinkedRestrictedUsers(r10, com.android.server.accounts.AccountManagerService.UserAccounts.access$800(r20));
      */
-    /* JADX WARNING: Missing block: B:79:0x01d4, code:
+    /* JADX WARNING: Missing block: B:79:0x01d4, code skipped:
             sendNotificationAccountUpdated(r10, r9);
             sendAccountsChangedBroadcast(com.android.server.accounts.AccountManagerService.UserAccounts.access$800(r20));
      */
-    /* JADX WARNING: Missing block: B:80:0x01df, code:
+    /* JADX WARNING: Missing block: B:80:0x01df, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3109,7 +2950,7 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         throw new IllegalArgumentException("account is null");
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0091, code:
+    /* JADX WARNING: Missing block: B:27:0x0091, code skipped:
             return r10;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3199,14 +3040,14 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         removeAccountAsUser(response, account, expectActivityLaunch, UserHandle.getCallingUserId());
     }
 
-    /* JADX WARNING: Missing block: B:50:0x0108, code:
+    /* JADX WARNING: Missing block: B:50:0x0108, code skipped:
             r18 = r7;
             logRecord(com.android.server.accounts.AccountsDb.DEBUG_ACTION_CALLED_ACCOUNT_REMOVE, "accounts", r7.accountsDb.findDeAccountId(r10), r7, r12);
      */
-    /* JADX WARNING: Missing block: B:52:?, code:
+    /* JADX WARNING: Missing block: B:52:?, code skipped:
             new com.android.server.accounts.AccountManagerService.RemoveAccountSession(r8, r18, r9, r10, r22).bind();
      */
-    /* JADX WARNING: Missing block: B:55:0x0132, code:
+    /* JADX WARNING: Missing block: B:55:0x0132, code skipped:
             restoreCallingIdentity(r14);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3319,76 +3160,76 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         removeAccountInternal(getUserAccountsForCaller(), account, getCallingUid());
     }
 
-    /* JADX WARNING: Missing block: B:52:0x0107, code:
+    /* JADX WARNING: Missing block: B:52:0x0107, code skipped:
             r1 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:54:?, code:
+    /* JADX WARNING: Missing block: B:54:?, code skipped:
             r3 = com.android.server.accounts.AccountManagerService.UserAccounts.access$800(r20);
      */
-    /* JADX WARNING: Missing block: B:55:0x0113, code:
+    /* JADX WARNING: Missing block: B:55:0x0113, code skipped:
             if (canHaveProfile(r3) == false) goto L_0x013d;
      */
-    /* JADX WARNING: Missing block: B:56:0x0115, code:
+    /* JADX WARNING: Missing block: B:56:0x0115, code skipped:
             r4 = getUserManager().getUsers(true).iterator();
      */
-    /* JADX WARNING: Missing block: B:58:0x0125, code:
+    /* JADX WARNING: Missing block: B:58:0x0125, code skipped:
             if (r4.hasNext() == false) goto L_0x013d;
      */
-    /* JADX WARNING: Missing block: B:59:0x0127, code:
+    /* JADX WARNING: Missing block: B:59:0x0127, code skipped:
             r5 = (android.content.pm.UserInfo) r4.next();
      */
-    /* JADX WARNING: Missing block: B:60:0x0131, code:
+    /* JADX WARNING: Missing block: B:60:0x0131, code skipped:
             if (r5.isRestricted() == false) goto L_0x013c;
      */
-    /* JADX WARNING: Missing block: B:62:0x0135, code:
+    /* JADX WARNING: Missing block: B:62:0x0135, code skipped:
             if (r3 != r5.restrictedProfileParentId) goto L_0x013c;
      */
-    /* JADX WARNING: Missing block: B:63:0x0137, code:
+    /* JADX WARNING: Missing block: B:63:0x0137, code skipped:
             removeSharedAccountAsUser(r9, r5.id, r10);
      */
-    /* JADX WARNING: Missing block: B:65:0x013d, code:
+    /* JADX WARNING: Missing block: B:65:0x013d, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:66:0x0141, code:
+    /* JADX WARNING: Missing block: B:66:0x0141, code skipped:
             if (r16 == false) goto L_0x0192;
      */
-    /* JADX WARNING: Missing block: B:67:0x0143, code:
+    /* JADX WARNING: Missing block: B:67:0x0143, code skipped:
             r3 = com.android.server.accounts.AccountManagerService.UserAccounts.access$1700(r20);
      */
-    /* JADX WARNING: Missing block: B:68:0x0147, code:
+    /* JADX WARNING: Missing block: B:68:0x0147, code skipped:
             monitor-enter(r3);
      */
-    /* JADX WARNING: Missing block: B:70:?, code:
+    /* JADX WARNING: Missing block: B:70:?, code skipped:
             r0 = com.android.server.accounts.AccountManagerService.UserAccounts.access$1700(r20).keySet().iterator();
      */
-    /* JADX WARNING: Missing block: B:72:0x0158, code:
+    /* JADX WARNING: Missing block: B:72:0x0158, code skipped:
             if (r0.hasNext() == false) goto L_0x018d;
      */
-    /* JADX WARNING: Missing block: B:73:0x015a, code:
+    /* JADX WARNING: Missing block: B:73:0x015a, code skipped:
             r4 = (android.util.Pair) r0.next();
      */
-    /* JADX WARNING: Missing block: B:74:0x016a, code:
+    /* JADX WARNING: Missing block: B:74:0x016a, code skipped:
             if (r9.equals(((android.util.Pair) r4.first).first) == false) goto L_0x018c;
      */
-    /* JADX WARNING: Missing block: B:76:0x0178, code:
+    /* JADX WARNING: Missing block: B:76:0x0178, code skipped:
             if ("com.android.AccountManager.ACCOUNT_ACCESS_TOKEN_TYPE".equals(((android.util.Pair) r4.first).second) == false) goto L_0x018c;
      */
-    /* JADX WARNING: Missing block: B:77:0x017a, code:
+    /* JADX WARNING: Missing block: B:77:0x017a, code skipped:
             r7.mHandler.post(new com.android.server.accounts.-$$Lambda$AccountManagerService$lqbNdAUKUSipmpqby9oIO8JlNTQ(r7, r9, ((java.lang.Integer) r4.second).intValue()));
      */
-    /* JADX WARNING: Missing block: B:79:0x018d, code:
+    /* JADX WARNING: Missing block: B:79:0x018d, code skipped:
             monitor-exit(r3);
      */
-    /* JADX WARNING: Missing block: B:83:0x0192, code:
+    /* JADX WARNING: Missing block: B:84:0x0192, code skipped:
             return r16;
      */
-    /* JADX WARNING: Missing block: B:85:0x0194, code:
+    /* JADX WARNING: Missing block: B:86:0x0194, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:87:0x0198, code:
+    /* JADX WARNING: Missing block: B:88:0x0198, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:88:0x0199, code:
+    /* JADX WARNING: Missing block: B:89:0x0199, code skipped:
             r1 = r16;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3565,10 +3406,10 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         }
     }
 
-    /* JADX WARNING: Missing block: B:25:0x003f, code:
+    /* JADX WARNING: Missing block: B:26:0x003f, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:44:0x0069, code:
+    /* JADX WARNING: Missing block: B:46:0x0069, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3717,7 +3558,7 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x007e  */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x007e  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void setPasswordInternal(UserAccounts accounts, Account account, String password, int callingUid) {
         Throwable th;
@@ -3840,7 +3681,7 @@ public class AccountManagerService extends Stub implements RegisteredServicesCac
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002f, code:
+    /* JADX WARNING: Missing block: B:14:0x002f, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4045,23 +3886,23 @@ Method generation error in method: com.android.server.accounts.AccountManagerSer
 jadx.core.utils.exceptions.CodegenException: Error generate insn: ?: MERGE  (r8_3 'userId' int) = (r8_0 'userId' int), (r1_35 'isLoggable' int) in method: com.android.server.accounts.AccountManagerService.getAuthToken(android.accounts.IAccountManagerResponse, android.accounts.Account, java.lang.String, boolean, boolean, android.os.Bundle):void, dex: 
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:228)
 	at jadx.core.codegen.InsnGen.makeInsn(InsnGen.java:205)
-	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:100)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:50)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:298)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:63)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:93)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:128)
-	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:143)
-	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:124)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:57)
-	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:87)
-	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:53)
-	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:173)
+	at jadx.core.codegen.RegionGen.makeSimpleBlock(RegionGen.java:102)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:52)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeTryCatch(RegionGen.java:300)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:65)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.RegionGen.makeRegionIndent(RegionGen.java:95)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:130)
+	at jadx.core.codegen.RegionGen.connectElseIf(RegionGen.java:145)
+	at jadx.core.codegen.RegionGen.makeIf(RegionGen.java:126)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:59)
+	at jadx.core.codegen.RegionGen.makeSimpleRegion(RegionGen.java:89)
+	at jadx.core.codegen.RegionGen.makeRegion(RegionGen.java:55)
+	at jadx.core.codegen.MethodGen.addInstructions(MethodGen.java:183)
 	at jadx.core.codegen.ClassGen.addMethod(ClassGen.java:321)
 	at jadx.core.codegen.ClassGen.addMethods(ClassGen.java:259)
 	at jadx.core.codegen.ClassGen.addClassBody(ClassGen.java:221)
@@ -4109,7 +3950,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
         Intent intent2 = intent;
         int uid = intent2.getIntExtra("uid", -1);
         String authTokenType = intent2.getStringExtra("authTokenType");
-        String titleAndSubtitle = this.mContext.getString(17040780, new Object[]{account2.name});
+        String titleAndSubtitle = this.mContext.getString(17040781, new Object[]{account2.name});
         int index = titleAndSubtitle.indexOf(10);
         String title = titleAndSubtitle;
         String subtitle = BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS;
@@ -4559,7 +4400,6 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
                         i = pid;
                         i2 = callingUid;
                         if (Log.isLoggable(TAG, 3)) {
-                            Log.v(TAG, "Failed to decrypt session bundle!", e);
                         }
                         sendErrorResponse(iAccountManagerResponse, 8, "failed to decrypt session bundle");
                     }
@@ -4625,6 +4465,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
                 i = pid;
                 i2 = callingUid;
                 if (Log.isLoggable(TAG, 3)) {
+                    Log.v(TAG, "Failed to decrypt session bundle!", e);
                 }
                 sendErrorResponse(iAccountManagerResponse, 8, "failed to decrypt session bundle");
             }
@@ -5722,6 +5563,93 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
         }
     }
 
+    private void dumpUser(UserAccounts userAccounts, FileDescriptor fd, PrintWriter fout, String[] args, boolean isCheckinRequest) {
+        UserAccounts userAccounts2 = userAccounts;
+        PrintWriter printWriter = fout;
+        FileDescriptor fileDescriptor;
+        String[] strArr;
+        if (isCheckinRequest) {
+            synchronized (userAccounts2.dbLock) {
+                userAccounts2.accountsDb.dumpDeAccountsTable(printWriter);
+            }
+            fileDescriptor = fd;
+            strArr = args;
+        } else {
+            Account[] accounts = getAccountsFromCache(userAccounts2, null, 1000, null, false);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Accounts: ");
+            stringBuilder.append(accounts.length);
+            printWriter.println(stringBuilder.toString());
+            for (Account account : accounts) {
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("  ");
+                stringBuilder2.append(account);
+                printWriter.println(stringBuilder2.toString());
+            }
+            fout.println();
+            int i = userAccounts2.dbLock;
+            synchronized (i) {
+                try {
+                    userAccounts2.accountsDb.dumpDebugTable(printWriter);
+                } finally {
+                    fileDescriptor = fd;
+                    strArr = args;
+                    while (true) {
+                    }
+                }
+            }
+            fout.println();
+            synchronized (this.mSessions) {
+                try {
+                    long now = SystemClock.elapsedRealtime();
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Active Sessions: ");
+                    stringBuilder.append(this.mSessions.size());
+                    printWriter.println(stringBuilder.toString());
+                    for (Session session : this.mSessions.values()) {
+                        StringBuilder stringBuilder3 = new StringBuilder();
+                        stringBuilder3.append("  ");
+                        stringBuilder3.append(session.toDebugString(now));
+                        printWriter.println(stringBuilder3.toString());
+                    }
+                } catch (Throwable th) {
+                    fileDescriptor = fd;
+                    strArr = args;
+                    while (true) {
+                    }
+                }
+            }
+            fout.println();
+            IAccountAuthenticatorCache iAccountAuthenticatorCache = this.mAuthenticatorCache;
+            i = userAccounts.userId;
+            synchronized (r2) {
+            }
+            if (isLocalUnlockedUser(userAccounts.userId)) {
+                fout.println();
+                synchronized (userAccounts2.dbLock) {
+                    Map<Account, Map<String, Integer>> allVisibilityValues = userAccounts2.accountsDb.findAllVisibilityValues();
+                    printWriter.println("Account visibility:");
+                    for (Account account2 : allVisibilityValues.keySet()) {
+                        StringBuilder stringBuilder4 = new StringBuilder();
+                        stringBuilder4.append("  ");
+                        stringBuilder4.append(account2.name);
+                        printWriter.println(stringBuilder4.toString());
+                        for (Entry<String, Integer> entry : ((Map) allVisibilityValues.get(account2)).entrySet()) {
+                            StringBuilder stringBuilder5 = new StringBuilder();
+                            Map<Account, Map<String, Integer>> allVisibilityValues2 = allVisibilityValues;
+                            stringBuilder5.append("    ");
+                            stringBuilder5.append((String) entry.getKey());
+                            stringBuilder5.append(", ");
+                            stringBuilder5.append(entry.getValue());
+                            printWriter.println(stringBuilder5.toString());
+                            allVisibilityValues = allVisibilityValues2;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void doNotification(UserAccounts accounts, Account account, CharSequence message, Intent intent, String packageName, int userId) {
         Account account2 = account;
         CharSequence charSequence = message;
@@ -5743,7 +5671,7 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
                 Context contextForUser = getContextForUser(new UserHandle(i));
                 NotificationId id = getSigninRequiredNotificationId(accounts, account);
                 intent2.addCategory(id.mTag);
-                String notificationTitleFormat = contextForUser.getText(17040607).toString();
+                String notificationTitleFormat = contextForUser.getText(17040608).toString();
                 Bitmap bmp = BitmapFactory.decodeResource(this.mContext.getResources(), 33751687);
                 Builder contentText = new Builder(contextForUser, SystemNotificationChannels.ACCOUNT).setWhen(0).setSmallIcon(17301642).setLargeIcon(bmp).setColor(contextForUser.getColor(17170784)).setContentTitle(String.format(notificationTitleFormat, new Object[]{account2.name})).setContentText(charSequence);
                 Builder builder = contentText;
@@ -6058,7 +5986,12 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
             synchronized (accounts.cacheLock) {
                 long grantsCount;
                 if (authTokenType != null) {
-                    grantsCount = accounts.accountsDb.findMatchingGrantsCount(callerUid, authTokenType, account);
+                    try {
+                        grantsCount = accounts.accountsDb.findMatchingGrantsCount(callerUid, authTokenType, account);
+                    } catch (Throwable th) {
+                        while (true) {
+                        }
+                    }
                 } else {
                     grantsCount = accounts.accountsDb.findMatchingGrantsCountAnyToken(callerUid, account);
                 }
@@ -6410,38 +6343,38 @@ Caused by: jadx.core.utils.exceptions.CodegenException: MERGE can be used only i
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0018, code:
+    /* JADX WARNING: Missing block: B:9:0x0018, code skipped:
             r1 = r5.dbLock;
      */
-    /* JADX WARNING: Missing block: B:10:0x001a, code:
+    /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r0 = r5.cacheLock;
      */
-    /* JADX WARNING: Missing block: B:13:0x001d, code:
+    /* JADX WARNING: Missing block: B:13:0x001d, code skipped:
             monitor-enter(r0);
      */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             r2 = (java.util.Map) com.android.server.accounts.AccountManagerService.UserAccounts.access$1200(r5).get(r6);
      */
-    /* JADX WARNING: Missing block: B:16:0x0028, code:
+    /* JADX WARNING: Missing block: B:16:0x0028, code skipped:
             if (r2 != null) goto L_0x0038;
      */
-    /* JADX WARNING: Missing block: B:17:0x002a, code:
+    /* JADX WARNING: Missing block: B:17:0x002a, code skipped:
             r2 = r5.accountsDb.findAuthTokensByAccount(r6);
             com.android.server.accounts.AccountManagerService.UserAccounts.access$1200(r5).put(r6, r2);
      */
-    /* JADX WARNING: Missing block: B:18:0x0038, code:
+    /* JADX WARNING: Missing block: B:18:0x0038, code skipped:
             r3 = (java.lang.String) r2.get(r7);
      */
-    /* JADX WARNING: Missing block: B:19:0x003e, code:
+    /* JADX WARNING: Missing block: B:19:0x003e, code skipped:
             monitor-exit(r0);
      */
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:22:0x0040, code:
+    /* JADX WARNING: Missing block: B:22:0x0040, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

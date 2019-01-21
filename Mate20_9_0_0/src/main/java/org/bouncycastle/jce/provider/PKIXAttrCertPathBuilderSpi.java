@@ -1,5 +1,6 @@
 package org.bouncycastle.jce.provider;
 
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Principal;
 import java.security.cert.CertPath;
@@ -8,8 +9,8 @@ import java.security.cert.CertPathBuilderResult;
 import java.security.cert.CertPathBuilderSpi;
 import java.security.cert.CertPathParameters;
 import java.security.cert.CertPathValidator;
-import java.security.cert.CertSelector;
 import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.PKIXCertPathValidatorResult;
@@ -19,7 +20,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.jcajce.PKIXCertStoreSelector;
@@ -27,6 +27,7 @@ import org.bouncycastle.jcajce.PKIXExtendedBuilderParameters;
 import org.bouncycastle.jcajce.PKIXExtendedBuilderParameters.Builder;
 import org.bouncycastle.jce.exception.ExtCertPathBuilderException;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.StoreException;
 import org.bouncycastle.x509.ExtendedPKIXBuilderParameters;
 import org.bouncycastle.x509.ExtendedPKIXParameters;
 import org.bouncycastle.x509.X509AttributeCertStoreSelector;
@@ -54,10 +55,10 @@ public class PKIXAttrCertPathBuilderSpi extends CertPathBuilderSpi {
                     PKIXCertPathValidatorResult pKIXCertPathValidatorResult = (PKIXCertPathValidatorResult) instance2.validate(generateCertPath, pKIXExtendedBuilderParameters);
                     return new PKIXCertPathBuilderResult(generateCertPath, pKIXCertPathValidatorResult.getTrustAnchor(), pKIXCertPathValidatorResult.getPolicyTree(), pKIXCertPathValidatorResult.getPublicKey());
                 }
-                List arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 arrayList.addAll(pKIXExtendedBuilderParameters.getBaseParameters().getCertificateStores());
                 arrayList.addAll(CertPathValidatorUtilities.getAdditionalStoresFromAltNames(x509Certificate.getExtensionValue(Extension.issuerAlternativeName.getId()), pKIXExtendedBuilderParameters.getBaseParameters().getNamedCertificateStoreMap()));
-                Collection hashSet = new HashSet();
+                HashSet hashSet = new HashSet();
                 hashSet.addAll(CertPathValidatorUtilities.findIssuerCerts(x509Certificate, pKIXExtendedBuilderParameters.getBaseParameters().getCertStores(), arrayList));
                 if (hashSet.isEmpty()) {
                     throw new AnnotatedException("No issuer certificate for certificate in certification path found.");
@@ -73,29 +74,29 @@ public class PKIXAttrCertPathBuilderSpi extends CertPathBuilderSpi {
                     list.remove(x509Certificate);
                 }
                 return certPathBuilderResult;
-            } catch (Throwable e) {
+            } catch (CertificateParsingException e) {
                 throw new AnnotatedException("No additional X.509 stores can be added from certificate locations.", e);
-            } catch (Throwable e2) {
+            } catch (AnnotatedException e2) {
                 throw new AnnotatedException("Cannot find issuer certificate for certificate in certification path.", e2);
-            } catch (Throwable e22) {
-                throw new AnnotatedException("Certification path could not be constructed from certificate list.", e22);
-            } catch (Throwable e222) {
-                throw new AnnotatedException("Certification path could not be validated.", e222);
-            } catch (Throwable e2222) {
-                this.certPathException = new AnnotatedException("No valid certification path could be build.", e2222);
+            } catch (Exception e3) {
+                throw new AnnotatedException("Certification path could not be constructed from certificate list.", e3);
+            } catch (Exception e32) {
+                throw new AnnotatedException("Certification path could not be validated.", e32);
+            } catch (AnnotatedException e22) {
+                this.certPathException = new AnnotatedException("No valid certification path could be build.", e22);
             }
-        } catch (Exception e3) {
+        } catch (Exception e4) {
             throw new RuntimeException("Exception creating support classes.");
         }
     }
 
     protected static Collection findCertificates(X509AttributeCertStoreSelector x509AttributeCertStoreSelector, List list) throws AnnotatedException {
-        Collection hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (Object next : list) {
             if (next instanceof Store) {
                 try {
                     hashSet.addAll(((Store) next).getMatches(x509AttributeCertStoreSelector));
-                } catch (Throwable e) {
+                } catch (StoreException e) {
                     throw new AnnotatedException("Problem while picking certificates from X.509 store.", e);
                 }
             }
@@ -121,7 +122,7 @@ public class PKIXAttrCertPathBuilderSpi extends CertPathBuilderSpi {
             } else {
                 build = (PKIXExtendedBuilderParameters) certPathParameters;
             }
-            List arrayList2 = new ArrayList();
+            ArrayList arrayList2 = new ArrayList();
             PKIXCertStoreSelector targetConstraints = build.getBaseParameters().getTargetConstraints();
             if (targetConstraints instanceof X509AttributeCertStoreSelector) {
                 try {
@@ -133,9 +134,9 @@ public class PKIXAttrCertPathBuilderSpi extends CertPathBuilderSpi {
                     Iterator it = findCertificates.iterator();
                     while (it.hasNext() && certPathBuilderResult == null) {
                         X509AttributeCertificate x509AttributeCertificate = (X509AttributeCertificate) it.next();
-                        CertSelector x509CertStoreSelector = new X509CertStoreSelector();
+                        X509CertStoreSelector x509CertStoreSelector = new X509CertStoreSelector();
                         Principal[] principals = x509AttributeCertificate.getIssuer().getPrincipals();
-                        Set hashSet = new HashSet();
+                        HashSet hashSet = new HashSet();
                         int i = 0;
                         while (i < principals.length) {
                             try {
@@ -146,9 +147,9 @@ public class PKIXAttrCertPathBuilderSpi extends CertPathBuilderSpi {
                                 hashSet.addAll(CertPathValidatorUtilities.findCertificates(build2, build.getBaseParameters().getCertStores()));
                                 hashSet.addAll(CertPathValidatorUtilities.findCertificates(build2, build.getBaseParameters().getCertificateStores()));
                                 i++;
-                            } catch (Throwable e) {
+                            } catch (AnnotatedException e) {
                                 throw new ExtCertPathBuilderException("Public key certificate for attribute certificate cannot be searched.", e);
-                            } catch (Throwable e2) {
+                            } catch (IOException e2) {
                                 throw new ExtCertPathBuilderException("cannot encode X500Principal.", e2);
                             }
                         }
@@ -167,8 +168,8 @@ public class PKIXAttrCertPathBuilderSpi extends CertPathBuilderSpi {
                     } else {
                         throw new CertPathBuilderException("Unable to find certificate chain.");
                     }
-                } catch (Throwable e22) {
-                    throw new ExtCertPathBuilderException("Error finding target attribute certificate.", e22);
+                } catch (AnnotatedException e3) {
+                    throw new ExtCertPathBuilderException("Error finding target attribute certificate.", e3);
                 }
             }
             stringBuilder = new StringBuilder();

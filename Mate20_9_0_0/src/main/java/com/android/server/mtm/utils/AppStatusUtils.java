@@ -659,7 +659,7 @@ public final class AppStatusUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0024, code:
+    /* JADX WARNING: Missing block: B:12:0x0024, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -847,7 +847,7 @@ public final class AppStatusUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0034, code:
+    /* JADX WARNING: Missing block: B:19:0x0034, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

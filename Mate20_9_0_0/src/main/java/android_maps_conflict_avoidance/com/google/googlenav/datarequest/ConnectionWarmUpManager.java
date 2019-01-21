@@ -33,19 +33,21 @@ public class ConnectionWarmUpManager {
         Throwable th;
         synchronized (this) {
             try {
-                if (this.state == 3 && this.pendingKey == key) {
-                    this.state = 0;
-                    String source = this.pendingSource;
-                    try {
-                        long time = this.pendingWarmUpTime;
-                        this.pendingKey = null;
-                        logUsed(source, (int) (startTime - time), firstByteLatency, lastByteLatency);
-                        return;
-                    } catch (Throwable th2) {
-                        String str = source;
-                        th = th2;
-                        String source2 = str;
-                        throw th;
+                if (this.state == 3) {
+                    if (this.pendingKey == key) {
+                        this.state = 0;
+                        String source = this.pendingSource;
+                        try {
+                            long time = this.pendingWarmUpTime;
+                            this.pendingKey = null;
+                            logUsed(source, (int) (startTime - time), firstByteLatency, lastByteLatency);
+                            return;
+                        } catch (Throwable th2) {
+                            String str = source;
+                            th = th2;
+                            String source2 = str;
+                            throw th;
+                        }
                     }
                 }
             } catch (Throwable th3) {

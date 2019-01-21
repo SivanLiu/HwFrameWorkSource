@@ -475,7 +475,7 @@ public class ViewDragHelper {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0074, code:
+    /* JADX WARNING: Missing block: B:20:0x0074, code skipped:
             if (r0.canScrollVertically(-r20) != false) goto L_0x007f;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -509,28 +509,28 @@ public class ViewDragHelper {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0024, code:
+    /* JADX WARNING: Missing block: B:8:0x0024, code skipped:
             r16 = r2;
             r17 = r3;
             r5 = false;
      */
-    /* JADX WARNING: Missing block: B:10:0x0033, code:
+    /* JADX WARNING: Missing block: B:10:0x0033, code skipped:
             r16 = r2;
             r17 = r3;
      */
-    /* JADX WARNING: Missing block: B:40:0x00ed, code:
+    /* JADX WARNING: Missing block: B:40:0x00ed, code skipped:
             if (r2 != r15) goto L_0x00fc;
      */
-    /* JADX WARNING: Missing block: B:54:0x0129, code:
+    /* JADX WARNING: Missing block: B:54:0x0129, code skipped:
             r5 = false;
      */
-    /* JADX WARNING: Missing block: B:64:0x0164, code:
+    /* JADX WARNING: Missing block: B:64:0x0164, code skipped:
             if (r0.mDragState != 1) goto L_0x0167;
      */
-    /* JADX WARNING: Missing block: B:74:?, code:
+    /* JADX WARNING: Missing block: B:74:?, code skipped:
             return r5;
      */
-    /* JADX WARNING: Missing block: B:75:?, code:
+    /* JADX WARNING: Missing block: B:75:?, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

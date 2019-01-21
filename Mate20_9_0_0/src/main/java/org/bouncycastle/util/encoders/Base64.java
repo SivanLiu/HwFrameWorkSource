@@ -15,7 +15,7 @@ public class Base64 {
     public static int decode(byte[] bArr, int i, int i2, OutputStream outputStream) {
         try {
             return encoder.decode(bArr, i, i2, outputStream);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to decode base64 data: ");
             stringBuilder.append(e.getMessage());
@@ -24,11 +24,11 @@ public class Base64 {
     }
 
     public static byte[] decode(String str) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream((str.length() / 4) * 3);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream((str.length() / 4) * 3);
         try {
             encoder.decode(str, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to decode base64 string: ");
             stringBuilder.append(e.getMessage());
@@ -37,11 +37,11 @@ public class Base64 {
     }
 
     public static byte[] decode(byte[] bArr) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream((bArr.length / 4) * 3);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream((bArr.length / 4) * 3);
         try {
             encoder.decode(bArr, 0, bArr.length, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to decode base64 data: ");
             stringBuilder.append(e.getMessage());
@@ -62,11 +62,11 @@ public class Base64 {
     }
 
     public static byte[] encode(byte[] bArr, int i, int i2) {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream(((i2 + 2) / 3) * 4);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(((i2 + 2) / 3) * 4);
         try {
             encoder.encode(bArr, i, i2, byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception encoding base64 string: ");
             stringBuilder.append(e.getMessage());

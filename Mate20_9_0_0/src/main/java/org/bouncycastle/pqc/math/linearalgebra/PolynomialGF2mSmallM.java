@@ -169,14 +169,13 @@ public class PolynomialGF2mSmallM {
         if (computeDegree(iArr) == -1) {
             return iArr2;
         }
-        Object iArr22;
-        while (computeDegree(iArr22) != -1) {
-            Object mod = mod(iArr, iArr22);
-            Object obj = new int[iArr22.length];
-            System.arraycopy(iArr22, 0, obj, 0, obj.length);
-            iArr22 = new int[mod.length];
-            System.arraycopy(mod, 0, iArr22, 0, iArr22.length);
-            mod = obj;
+        while (computeDegree(iArr2) != -1) {
+            iArr = mod(iArr, iArr2);
+            int[] iArr3 = new int[iArr2.length];
+            System.arraycopy(iArr2, 0, iArr3, 0, iArr3.length);
+            iArr2 = new int[iArr.length];
+            System.arraycopy(iArr, 0, iArr2, 0, iArr2.length);
+            iArr = iArr3;
         }
         return multWithElement(iArr, this.field.inverse(headCoefficient(iArr)));
     }
@@ -277,9 +276,9 @@ public class PolynomialGF2mSmallM {
         if (computeDegree == -1) {
             return new int[1];
         }
-        Object obj = new int[((computeDegree + i) + 1)];
-        System.arraycopy(iArr, 0, obj, i, computeDegree + 1);
-        return obj;
+        int[] iArr2 = new int[((computeDegree + i) + 1)];
+        System.arraycopy(iArr, 0, iArr2, i, computeDegree + 1);
+        return iArr2;
     }
 
     private int[] multiply(int[] iArr, int[] iArr2) {
@@ -288,37 +287,37 @@ public class PolynomialGF2mSmallM {
             iArr2 = iArr;
             iArr = iArr3;
         }
-        Object normalForm = normalForm(iArr);
-        Object normalForm2 = normalForm(iArr2);
-        if (normalForm2.length == 1) {
-            return multWithElement(normalForm, normalForm2[0]);
+        iArr = normalForm(iArr);
+        iArr2 = normalForm(iArr2);
+        if (iArr2.length == 1) {
+            return multWithElement(iArr, iArr2[0]);
         }
-        int length = normalForm.length;
-        int length2 = normalForm2.length;
+        int length = iArr.length;
+        int length2 = iArr2.length;
         int[] iArr4 = new int[((length + length2) - 1)];
-        Object obj;
+        int[] iArr5;
         if (length2 != length) {
-            Object obj2 = new int[length2];
-            obj = new int[(length - length2)];
-            System.arraycopy(normalForm, 0, obj2, 0, obj2.length);
-            System.arraycopy(normalForm, length2, obj, 0, obj.length);
-            return add(multiply(obj2, normalForm2), multWithMonomial(multiply(obj, normalForm2), length2));
+            int[] iArr6 = new int[length2];
+            iArr5 = new int[(length - length2)];
+            System.arraycopy(iArr, 0, iArr6, 0, iArr6.length);
+            System.arraycopy(iArr, length2, iArr5, 0, iArr5.length);
+            return add(multiply(iArr6, iArr2), multWithMonomial(multiply(iArr5, iArr2), length2));
         }
         int i = (length + 1) >>> 1;
         length -= i;
-        Object obj3 = new int[i];
-        Object obj4 = new int[i];
-        Object obj5 = new int[length];
-        obj = new int[length];
-        System.arraycopy(normalForm, 0, obj3, 0, obj3.length);
-        System.arraycopy(normalForm, i, obj5, 0, obj5.length);
-        System.arraycopy(normalForm2, 0, obj4, 0, obj4.length);
-        System.arraycopy(normalForm2, i, obj, 0, obj.length);
-        iArr = add(obj3, obj5);
-        iArr2 = add(obj4, obj);
-        int[] multiply = multiply(obj3, obj4);
+        int[] iArr7 = new int[i];
+        iArr4 = new int[i];
+        int[] iArr8 = new int[length];
+        iArr5 = new int[length];
+        System.arraycopy(iArr, 0, iArr7, 0, iArr7.length);
+        System.arraycopy(iArr, i, iArr8, 0, iArr8.length);
+        System.arraycopy(iArr2, 0, iArr4, 0, iArr4.length);
+        System.arraycopy(iArr2, i, iArr5, 0, iArr5.length);
+        iArr = add(iArr7, iArr8);
+        iArr2 = add(iArr4, iArr5);
+        int[] multiply = multiply(iArr7, iArr4);
         iArr = multiply(iArr, iArr2);
-        iArr2 = multiply(obj5, obj);
+        iArr2 = multiply(iArr8, iArr5);
         return add(multWithMonomial(add(add(add(iArr, multiply), iArr2), multWithMonomial(iArr2, i)), i), multiply);
     }
 
@@ -331,9 +330,9 @@ public class PolynomialGF2mSmallM {
         if (iArr.length == computeDegree) {
             return IntUtils.clone(iArr);
         }
-        Object obj = new int[computeDegree];
-        System.arraycopy(iArr, 0, obj, 0, computeDegree);
-        return obj;
+        int[] iArr2 = new int[computeDegree];
+        System.arraycopy(iArr, 0, iArr2, 0, computeDegree);
+        return iArr2;
     }
 
     public PolynomialGF2mSmallM add(PolynomialGF2mSmallM polynomialGF2mSmallM) {

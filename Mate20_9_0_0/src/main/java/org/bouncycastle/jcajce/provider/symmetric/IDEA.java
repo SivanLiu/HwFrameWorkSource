@@ -63,9 +63,9 @@ public final class IDEA {
             if (!str.equals("RAW")) {
                 return null;
             }
-            Object obj = new byte[this.iv.length];
-            System.arraycopy(this.iv, 0, obj, 0, this.iv.length);
-            return obj;
+            byte[] bArr = new byte[this.iv.length];
+            System.arraycopy(this.iv, 0, bArr, 0, this.iv.length);
+            return bArr;
         }
 
         protected void engineInit(AlgorithmParameterSpec algorithmParameterSpec) throws InvalidParameterSpecException {

@@ -111,18 +111,18 @@ public class EnvelopedDataHelper {
     static Object execute(JCECallback jCECallback) throws CMSException {
         try {
             return jCECallback.doInJCE();
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new CMSException("can't find algorithm.", e);
-        } catch (Exception e2) {
+        } catch (InvalidKeyException e2) {
             throw new CMSException("key invalid in message.", e2);
-        } catch (Exception e22) {
-            throw new CMSException("can't find provider.", e22);
-        } catch (Exception e222) {
-            throw new CMSException("required padding not supported.", e222);
-        } catch (Exception e2222) {
-            throw new CMSException("algorithm parameters invalid.", e2222);
-        } catch (Exception e22222) {
-            throw new CMSException("MAC algorithm parameter spec invalid.", e22222);
+        } catch (NoSuchProviderException e3) {
+            throw new CMSException("can't find provider.", e3);
+        } catch (NoSuchPaddingException e4) {
+            throw new CMSException("required padding not supported.", e4);
+        } catch (InvalidAlgorithmParameterException e5) {
+            throw new CMSException("algorithm parameters invalid.", e5);
+        } catch (InvalidParameterSpecException e6) {
+            throw new CMSException("MAC algorithm parameter spec invalid.", e6);
         }
     }
 
@@ -134,7 +134,7 @@ public class EnvelopedDataHelper {
             try {
                 jcaJceExtHelper = this.helper;
                 str = "PBKDF2with8BIT";
-            } catch (Exception e) {
+            } catch (GeneralSecurityException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Unable to calculate derived key from password: ");
                 stringBuilder.append(e.getMessage());
@@ -186,7 +186,7 @@ public class EnvelopedDataHelper {
                 }
             }
             return this.helper.createCipher(aSN1ObjectIdentifier.getId());
-        } catch (Exception e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create cipher: ");
             stringBuilder.append(e2.getMessage());
@@ -256,7 +256,7 @@ public class EnvelopedDataHelper {
                 }
             }
             return this.helper.createKeyAgreement(aSN1ObjectIdentifier.getId());
-        } catch (Exception e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key agreement: ");
             stringBuilder.append(e2.getMessage());
@@ -274,7 +274,7 @@ public class EnvelopedDataHelper {
                 }
             }
             return this.helper.createKeyFactory(aSN1ObjectIdentifier.getId());
-        } catch (Exception e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key factory: ");
             stringBuilder.append(e2.getMessage());
@@ -292,7 +292,7 @@ public class EnvelopedDataHelper {
                 }
             }
             return this.helper.createKeyGenerator(aSN1ObjectIdentifier.getId());
-        } catch (Exception e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key generator: ");
             stringBuilder.append(e2.getMessage());
@@ -310,7 +310,7 @@ public class EnvelopedDataHelper {
                 }
             }
             return this.helper.createKeyPairGenerator(aSN1ObjectIdentifier.getId());
-        } catch (Exception e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create key pair generator: ");
             stringBuilder.append(e2.getMessage());
@@ -328,7 +328,7 @@ public class EnvelopedDataHelper {
                 }
             }
             return this.helper.createMac(aSN1ObjectIdentifier.getId());
-        } catch (Exception e2) {
+        } catch (GeneralSecurityException e2) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot create mac: ");
             stringBuilder.append(e2.getMessage());
@@ -345,7 +345,7 @@ public class EnvelopedDataHelper {
             stringBuilder2.append("RFC3211Wrap");
             try {
                 return this.helper.createCipher(stringBuilder2.toString());
-            } catch (Exception e) {
+            } catch (GeneralSecurityException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("cannot create cipher: ");
                 stringBuilder.append(e.getMessage());
@@ -376,14 +376,14 @@ public class EnvelopedDataHelper {
                 createAlgorithmParameterGenerator.init(new RC2ParameterSpec(secretKey.getEncoded().length * 8, bArr), secureRandom);
             }
             return createAlgorithmParameterGenerator.generateParameters();
-        } catch (Exception e) {
+        } catch (InvalidAlgorithmParameterException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("parameters generation error: ");
             stringBuilder.append(e);
             throw new CMSException(stringBuilder.toString(), e);
         } catch (NoSuchAlgorithmException e2) {
             return null;
-        } catch (Exception e3) {
+        } catch (GeneralSecurityException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception creating algorithm parameter generator: ");
             stringBuilder.append(e3);

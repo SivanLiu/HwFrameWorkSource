@@ -75,7 +75,7 @@ public class G3413CFBBlockCipher extends StreamBlockCipher {
     }
 
     void generateR(byte[] bArr) {
-        Object LSB = GOST3413CipherUtil.LSB(this.R, this.m - this.s);
+        byte[] LSB = GOST3413CipherUtil.LSB(this.R, this.m - this.s);
         System.arraycopy(LSB, 0, this.R, 0, LSB.length);
         System.arraycopy(bArr, 0, this.R, LSB.length, this.m - LSB.length);
     }

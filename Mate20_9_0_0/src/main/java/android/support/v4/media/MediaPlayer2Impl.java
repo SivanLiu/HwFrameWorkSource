@@ -347,25 +347,27 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
             setBufferingState(mp, 0);
         }
 
-        /* JADX WARNING: Missing block: B:24:0x0059, code:
+        /* JADX WARNING: Missing block: B:25:0x0059, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         synchronized DataSourceError prepareAt(int n) {
-            if (n < this.mQueue.size() && ((MediaPlayerSource) this.mQueue.get(n)).mSourceState == 0 && (n == 0 || getPlayerState() != 0)) {
-                MediaPlayerSource src = (MediaPlayerSource) this.mQueue.get(n);
-                try {
-                    if (this.mAudioSessionId != null) {
-                        src.mPlayer.setAudioSessionId(this.mAudioSessionId.intValue());
+            if (n < this.mQueue.size() && ((MediaPlayerSource) this.mQueue.get(n)).mSourceState == 0) {
+                if (n == 0 || getPlayerState() != 0) {
+                    MediaPlayerSource src = (MediaPlayerSource) this.mQueue.get(n);
+                    try {
+                        if (this.mAudioSessionId != null) {
+                            src.mPlayer.setAudioSessionId(this.mAudioSessionId.intValue());
+                        }
+                        src.mSourceState = 1;
+                        MediaPlayer2Impl.handleDataSource(src);
+                        src.mPlayer.prepareAsync();
+                        return null;
+                    } catch (Exception e) {
+                        DataSourceDesc dsd = src.getDSD();
+                        setMp2State(src.mPlayer, 1005);
+                        return new DataSourceError(dsd, 1, MediaPlayer2.MEDIA_ERROR_UNSUPPORTED);
                     }
-                    src.mSourceState = 1;
-                    MediaPlayer2Impl.handleDataSource(src);
-                    src.mPlayer.prepareAsync();
-                    return null;
-                } catch (Exception e) {
-                    DataSourceDesc dsd = src.getDSD();
-                    setMp2State(src.mPlayer, 1005);
-                    return new DataSourceError(dsd, 1, MediaPlayer2.MEDIA_ERROR_UNSUPPORTED);
                 }
             }
         }
@@ -1015,14 +1017,14 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
     }
 
     public BaseMediaPlayer getBaseMediaPlayer() {
-        BaseMediaPlayer baseMediaPlayer;
+        BaseMediaPlayerImpl baseMediaPlayerImpl;
         synchronized (this.mLock) {
             if (this.mBaseMediaPlayerImpl == null) {
                 this.mBaseMediaPlayerImpl = new BaseMediaPlayerImpl(this, null);
             }
-            baseMediaPlayer = this.mBaseMediaPlayerImpl;
+            baseMediaPlayerImpl = this.mBaseMediaPlayerImpl;
         }
-        return baseMediaPlayer;
+        return baseMediaPlayerImpl;
     }
 
     public void close() {
@@ -1494,16 +1496,16 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             ((java.util.concurrent.Executor) r1.first).execute(new android.support.v4.media.MediaPlayer2Impl.AnonymousClass24(r3));
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1540,16 +1542,16 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    /* JADX WARNING: Missing block: B:6:0x0006, code:
+    /* JADX WARNING: Missing block: B:6:0x0006, code skipped:
             if (r1 == null) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             ((java.util.concurrent.Executor) r1.first).execute(new android.support.v4.media.MediaPlayer2Impl.AnonymousClass26(r3));
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:15:?, code:
+    /* JADX WARNING: Missing block: B:15:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1580,7 +1582,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
                 long timeLeftMs = (long) (((float) (dsd.getEndPosition() - ((timedsd.getAnchorMediaTimeUs() + ((System.nanoTime() - timedsd.getAnchorSytemNanoTime()) / 1000)) / 1000))) / timedsd.getMediaClockRate());
                 Handler handler = this.mEndPositionHandler;
                 onCompletionListener = completionListener;
-                Runnable anonymousClass27 = new Runnable() {
+                AnonymousClass27 anonymousClass27 = new Runnable() {
                     public void run() {
                         if (MediaPlayer2Impl.this.mPlayer.getFirst() == mediaPlayerSource) {
                             MediaPlayer2Impl.this.mPlayer.pause();

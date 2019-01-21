@@ -164,7 +164,7 @@ public class SmbTransport extends Transport implements SmbConstants {
         try {
             connect((long) RESPONSE_TIMEOUT);
             return (this.capabilities & cap) == cap;
-        } catch (Throwable ioe) {
+        } catch (IOException ioe) {
             throw new SmbException(ioe.getMessage(), ioe);
         }
     }
@@ -283,7 +283,7 @@ public class SmbTransport extends Transport implements SmbConstants {
     public void connect() throws SmbException {
         try {
             super.connect((long) RESPONSE_TIMEOUT);
-        } catch (Throwable te) {
+        } catch (TransportException te) {
             throw new SmbException("Failed to connect: " + this.address, te);
         }
     }
@@ -527,6 +527,8 @@ public class SmbTransport extends Transport implements SmbConstants {
         }
     }
 
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     void send(ServerMessageBlock request, ServerMessageBlock response) throws SmbException {
         connect();
         request.flags2 |= this.flags2;
@@ -541,7 +543,7 @@ public class SmbTransport extends Transport implements SmbConstants {
                 return;
             } catch (SmbException se) {
                 throw se;
-            } catch (Throwable ioe) {
+            } catch (IOException ioe) {
                 throw new SmbException(ioe.getMessage(), ioe);
             }
         }
@@ -591,7 +593,7 @@ public class SmbTransport extends Transport implements SmbConstants {
                             checkStatus(req, resp);
                         }
                         this.response_map.remove(req);
-                    } catch (Throwable ie) {
+                    } catch (InterruptedException ie) {
                         throw new TransportException(ie);
                     } catch (Throwable th) {
                         this.response_map.remove(req);

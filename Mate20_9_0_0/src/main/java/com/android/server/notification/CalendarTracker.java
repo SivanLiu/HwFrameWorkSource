@@ -123,6 +123,17 @@ public class CalendarTracker {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
+    /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
+    /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
     /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
     /* JADX WARNING: Removed duplicated region for block: B:136:0x024a  */
     /* JADX WARNING: Removed duplicated region for block: B:132:0x0243  */
@@ -191,19 +202,40 @@ public class CalendarTracker {
                                         e = e2;
                                         result2 = result3;
                                         cursor2 = cursor;
-                                    } catch (Throwable th2) {
-                                        th = th2;
+                                        try {
+                                            Slog.w(TAG, "error reading calendar", e);
+                                            if (cursor2 != null) {
+                                            }
+                                            return result2;
+                                        } catch (Throwable th2) {
+                                            th = th2;
+                                            if (cursor2 != null) {
+                                            }
+                                            throw th;
+                                        }
+                                    } catch (Throwable th3) {
+                                        th = th3;
                                         result2 = result3;
                                         cursor2 = cursor;
+                                        if (cursor2 != null) {
+                                        }
+                                        throw th;
                                     }
                                 } catch (Exception e3) {
                                     e = e3;
                                     cursor2 = cursor3;
                                     result2 = result3;
-                                } catch (Throwable th3) {
-                                    th = th3;
+                                    Slog.w(TAG, "error reading calendar", e);
+                                    if (cursor2 != null) {
+                                    }
+                                    return result2;
+                                } catch (Throwable th4) {
+                                    th = th4;
                                     cursor2 = cursor3;
                                     result2 = result3;
+                                    if (cursor2 != null) {
+                                    }
+                                    throw th;
                                 }
                                 try {
                                     objArr[1] = new Date(begin);
@@ -226,33 +258,44 @@ public class CalendarTracker {
                                     e = e4;
                                     cursor2 = cursor;
                                     result2 = result;
-                                } catch (Throwable th4) {
-                                    th = th4;
+                                } catch (Throwable th5) {
+                                    th = th5;
                                     cursor2 = cursor;
                                     result2 = result;
+                                    if (cursor2 != null) {
+                                    }
+                                    throw th;
                                 }
                             } catch (Exception e5) {
                                 e = e5;
                                 uriBuilder2 = uriBuilder;
                                 cursor2 = cursor3;
                                 result2 = result3;
-                            } catch (Throwable th5) {
-                                th = th5;
+                                Slog.w(TAG, "error reading calendar", e);
+                                if (cursor2 != null) {
+                                    cursor2.close();
+                                }
+                                return result2;
+                            } catch (Throwable th6) {
+                                th = th6;
                                 uriBuilder2 = uriBuilder;
                                 cursor2 = cursor3;
                                 result2 = result3;
+                                if (cursor2 != null) {
+                                    cursor2.close();
+                                }
+                                throw th;
                             }
-                        } else {
-                            primaryCalendars2 = primaryCalendars;
-                            uriBuilder2 = uriBuilder;
-                            cursor = cursor3;
-                            result = result3;
-                            eventId2 = eventId;
-                            name2 = name;
-                            owner2 = owner;
-                            availability2 = availability;
-                            z = false;
                         }
+                        primaryCalendars2 = primaryCalendars;
+                        uriBuilder2 = uriBuilder;
+                        cursor = cursor3;
+                        result = result3;
+                        eventId2 = eventId;
+                        name2 = name;
+                        owner2 = owner;
+                        availability2 = availability;
+                        z = false;
                         boolean meetsTime = (j < begin || j >= end) ? z : true;
                         boolean meetsCalendar = (calendarVisible && calendarPrimary && (eventInfo.calendar == null || Objects.equals(eventInfo.calendar, owner2) || Objects.equals(eventInfo.calendar, name2))) ? true : z;
                         if (availability2 != 1) {
@@ -281,17 +324,10 @@ public class CalendarTracker {
                                         } catch (Exception e6) {
                                             e = e6;
                                             cursor2 = cursor;
-                                            try {
-                                                Slog.w(TAG, "error reading calendar", e);
-                                                if (cursor2 != null) {
-                                                }
-                                                return result2;
-                                            } catch (Throwable th6) {
-                                                th = th6;
-                                                if (cursor2 != null) {
-                                                }
-                                                throw th;
+                                            Slog.w(TAG, "error reading calendar", e);
+                                            if (cursor2 != null) {
                                             }
+                                            return result2;
                                         } catch (Throwable th7) {
                                             th = th7;
                                             cursor2 = cursor;
@@ -329,10 +365,17 @@ public class CalendarTracker {
                                 e = e7;
                                 result2 = result;
                                 cursor2 = cursor;
+                                Slog.w(TAG, "error reading calendar", e);
+                                if (cursor2 != null) {
+                                }
+                                return result2;
                             } catch (Throwable th8) {
                                 th = th8;
                                 result2 = result;
                                 cursor2 = cursor;
+                                if (cursor2 != null) {
+                                }
+                                throw th;
                             }
                         }
                         result2 = result;
@@ -347,11 +390,18 @@ public class CalendarTracker {
                         uriBuilder2 = uriBuilder;
                         result2 = result3;
                         cursor2 = cursor3;
+                        Slog.w(TAG, "error reading calendar", e);
+                        if (cursor2 != null) {
+                        }
+                        return result2;
                     } catch (Throwable th9) {
                         th = th9;
                         uriBuilder2 = uriBuilder;
                         result2 = result3;
                         cursor2 = cursor3;
+                        if (cursor2 != null) {
+                        }
+                        throw th;
                     }
                 } catch (Exception e9) {
                     e = e9;
@@ -388,7 +438,6 @@ public class CalendarTracker {
             result2 = result3;
             Slog.w(TAG, "error reading calendar", e);
             if (cursor2 != null) {
-                cursor2.close();
             }
             return result2;
         } catch (Throwable th11) {
@@ -398,13 +447,16 @@ public class CalendarTracker {
             cursor2 = cursor3;
             result2 = result3;
             if (cursor2 != null) {
-                cursor2.close();
             }
             throw th;
         }
         return result2;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x013b  */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x0142  */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x013b  */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x0142  */
     /* JADX WARNING: Removed duplicated region for block: B:61:0x013b  */
     /* JADX WARNING: Removed duplicated region for block: B:64:0x0142  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -466,13 +518,17 @@ public class CalendarTracker {
                                     th = th3;
                                     str3 = selection;
                                     i = eventId;
+                                    if (cursor != null) {
+                                    }
+                                    if (DEBUG) {
+                                    }
+                                    throw th;
                                 }
-                            } else {
-                                strArr = selectionArgs;
-                                str3 = selection;
-                                z2 = z;
-                                selection = i2;
                             }
+                            strArr = selectionArgs;
+                            str3 = selection;
+                            z2 = z;
+                            selection = i2;
                             if (rowEventId == ((long) eventId)) {
                                 try {
                                     if (Objects.equals(rowEmail, str2) && meetsReply) {
@@ -486,6 +542,11 @@ public class CalendarTracker {
                                     }
                                 } catch (Throwable th4) {
                                     th = th4;
+                                    if (cursor != null) {
+                                    }
+                                    if (DEBUG) {
+                                    }
+                                    throw th;
                                 }
                             }
                             eventMeets = z2;

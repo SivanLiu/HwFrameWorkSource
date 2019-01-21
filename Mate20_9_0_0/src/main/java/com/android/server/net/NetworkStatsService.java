@@ -38,6 +38,7 @@ import android.os.IBinder;
 import android.os.INetworkManagementService;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Process;
@@ -63,7 +64,9 @@ import com.android.internal.net.NetworkStatsFactory;
 import com.android.internal.net.VpnInfo;
 import com.android.internal.telephony.HuaweiTelephonyConfigs;
 import com.android.internal.util.ArrayUtils;
+import com.android.internal.util.DumpUtils;
 import com.android.internal.util.FileRotator;
+import com.android.internal.util.IndentingPrintWriter;
 import com.android.internal.util.Preconditions;
 import com.android.server.EventLogTags;
 import com.android.server.HwServiceFactory;
@@ -74,13 +77,17 @@ import com.android.server.NetworkManagementService;
 import com.android.server.NetworkManagementSocketTagger;
 import com.android.server.ServiceThread;
 import com.android.server.job.controllers.JobStatus;
+import com.android.server.lights.LightsManager;
 import com.android.server.pm.PackageManagerService;
+import com.android.server.utils.PriorityDump;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Clock;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class NetworkStatsService extends AbsNetworkStatsService {
@@ -498,392 +505,7 @@ public class NetworkStatsService extends AbsNetworkStatsService {
 
     private static native long nativeGetUidStat(int i, int i2, boolean z);
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    protected void dump(java.io.FileDescriptor r27, java.io.PrintWriter r28, java.lang.String[] r29) {
-        /*
-        r26 = this;
-        r1 = r26;
-        r8 = r28;
-        r9 = r29;
-        r0 = r1.mContext;
-        r2 = "NetworkStats";
-        r0 = com.android.internal.util.DumpUtils.checkDumpPermission(r0, r2, r8);
-        if (r0 != 0) goto L_0x0011;
-    L_0x0010:
-        return;
-    L_0x0011:
-        r0 = "NetworkStats";
-        r2 = new java.lang.StringBuilder;
-        r2.<init>();
-        r3 = "dump, pid = ";
-        r2.append(r3);
-        r3 = android.os.Binder.getCallingPid();
-        r2.append(r3);
-        r2 = r2.toString();
-        android.util.Slog.i(r0, r2);
-        r2 = 86400000; // 0x5265c00 float:7.82218E-36 double:4.2687272E-316;
-        r0 = new java.util.HashSet;
-        r0.<init>();
-        r10 = r0;
-        r4 = r9.length;
-        r5 = 0;
-        r11 = r2;
-        r2 = r5;
-    L_0x0038:
-        if (r2 >= r4) goto L_0x0058;
-    L_0x003a:
-        r3 = r9[r2];
-        r10.add(r3);
-        r0 = "--duration=";
-        r0 = r3.startsWith(r0);
-        if (r0 == 0) goto L_0x0055;
-    L_0x0047:
-        r0 = 11;
-        r0 = r3.substring(r0);	 Catch:{ NumberFormatException -> 0x0054 }
-        r6 = java.lang.Long.parseLong(r0);	 Catch:{ NumberFormatException -> 0x0054 }
-        r11 = r6;
-        goto L_0x0055;
-    L_0x0054:
-        r0 = move-exception;
-    L_0x0055:
-        r2 = r2 + 1;
-        goto L_0x0038;
-    L_0x0058:
-        r0 = "--poll";
-        r0 = r10.contains(r0);
-        r2 = 1;
-        if (r0 != 0) goto L_0x006d;
-    L_0x0061:
-        r0 = "poll";
-        r0 = r10.contains(r0);
-        if (r0 == 0) goto L_0x006b;
-    L_0x006a:
-        goto L_0x006d;
-    L_0x006b:
-        r0 = r5;
-        goto L_0x006e;
-    L_0x006d:
-        r0 = r2;
-    L_0x006e:
-        r13 = r0;
-        r0 = "--checkin";
-        r14 = r10.contains(r0);
-        r0 = "--full";
-        r0 = r10.contains(r0);
-        if (r0 != 0) goto L_0x0088;
-    L_0x007d:
-        r0 = "full";
-        r0 = r10.contains(r0);
-        if (r0 == 0) goto L_0x0086;
-    L_0x0085:
-        goto L_0x0088;
-    L_0x0086:
-        r0 = r5;
-        goto L_0x0089;
-    L_0x0088:
-        r0 = r2;
-    L_0x0089:
-        r15 = r0;
-        r0 = "--uid";
-        r0 = r10.contains(r0);
-        if (r0 != 0) goto L_0x009d;
-    L_0x0092:
-        r0 = "detail";
-        r0 = r10.contains(r0);
-        if (r0 == 0) goto L_0x009b;
-    L_0x009a:
-        goto L_0x009d;
-    L_0x009b:
-        r0 = r5;
-        goto L_0x009e;
-    L_0x009d:
-        r0 = r2;
-    L_0x009e:
-        r16 = r0;
-        r0 = "--tag";
-        r0 = r10.contains(r0);
-        if (r0 != 0) goto L_0x00b3;
-    L_0x00a8:
-        r0 = "detail";
-        r0 = r10.contains(r0);
-        if (r0 == 0) goto L_0x00b1;
-    L_0x00b0:
-        goto L_0x00b3;
-    L_0x00b1:
-        r2 = r5;
-    L_0x00b3:
-        r17 = r2;
-        r0 = new com.android.internal.util.IndentingPrintWriter;
-        r2 = "  ";
-        r0.<init>(r8, r2);
-        r6 = r0;
-        r7 = r1.mStatsLock;
-        monitor-enter(r7);
-        r0 = r9.length;	 Catch:{ all -> 0x0274 }
-        if (r0 <= 0) goto L_0x00dc;
-    L_0x00c3:
-        r0 = "--proto";	 Catch:{ all -> 0x00d2 }
-        r2 = r9[r5];	 Catch:{ all -> 0x00d2 }
-        r0 = r0.equals(r2);	 Catch:{ all -> 0x00d2 }
-        if (r0 == 0) goto L_0x00dc;	 Catch:{ all -> 0x00d2 }
-    L_0x00cd:
-        r26.dumpProtoLocked(r27);	 Catch:{ all -> 0x00d2 }
-        monitor-exit(r7);	 Catch:{ all -> 0x00d2 }
-        return;	 Catch:{ all -> 0x00d2 }
-    L_0x00d2:
-        r0 = move-exception;	 Catch:{ all -> 0x00d2 }
-        r9 = r6;	 Catch:{ all -> 0x00d2 }
-        r22 = r7;	 Catch:{ all -> 0x00d2 }
-    L_0x00d6:
-        r23 = r10;	 Catch:{ all -> 0x00d2 }
-        r24 = r11;	 Catch:{ all -> 0x00d2 }
-        goto L_0x027c;	 Catch:{ all -> 0x00d2 }
-    L_0x00dc:
-        if (r13 == 0) goto L_0x00ea;	 Catch:{ all -> 0x00d2 }
-    L_0x00de:
-        r0 = 259; // 0x103 float:3.63E-43 double:1.28E-321;	 Catch:{ all -> 0x00d2 }
-        r1.performPollLocked(r0);	 Catch:{ all -> 0x00d2 }
-        r0 = "Forced poll";	 Catch:{ all -> 0x00d2 }
-        r6.println(r0);	 Catch:{ all -> 0x00d2 }
-        monitor-exit(r7);	 Catch:{ all -> 0x00d2 }
-        return;
-    L_0x00ea:
-        if (r14 == 0) goto L_0x0151;
-    L_0x00ec:
-        r2 = java.lang.System.currentTimeMillis();	 Catch:{ all -> 0x0147 }
-        r18 = r2;	 Catch:{ all -> 0x0147 }
-        r20 = r18 - r11;	 Catch:{ all -> 0x0147 }
-        r0 = "v1,";	 Catch:{ all -> 0x0147 }
-        r6.print(r0);	 Catch:{ all -> 0x0147 }
-        r2 = 1000; // 0x3e8 float:1.401E-42 double:4.94E-321;	 Catch:{ all -> 0x0147 }
-        r4 = r20 / r2;	 Catch:{ all -> 0x0147 }
-        r6.print(r4);	 Catch:{ all -> 0x0147 }
-        r0 = 44;	 Catch:{ all -> 0x0147 }
-        r6.print(r0);	 Catch:{ all -> 0x0147 }
-        r2 = r18 / r2;	 Catch:{ all -> 0x0147 }
-        r6.print(r2);	 Catch:{ all -> 0x0147 }
-        r6.println();	 Catch:{ all -> 0x0147 }
-        r0 = "xt";	 Catch:{ all -> 0x0147 }
-        r6.println(r0);	 Catch:{ all -> 0x0147 }
-        r2 = r1.mXtRecorder;	 Catch:{ all -> 0x0147 }
-        r3 = r8;
-        r4 = r20;
-        r9 = r6;
-        r22 = r7;
-        r6 = r18;
-        r2.dumpCheckin(r3, r4, r6);	 Catch:{ all -> 0x0181 }
-        if (r16 == 0) goto L_0x0133;	 Catch:{ all -> 0x0181 }
-    L_0x0123:
-        r0 = "uid";	 Catch:{ all -> 0x0181 }
-        r9.println(r0);	 Catch:{ all -> 0x0181 }
-        r2 = r1.mUidRecorder;	 Catch:{ all -> 0x0181 }
-        r3 = r8;	 Catch:{ all -> 0x0181 }
-        r4 = r20;	 Catch:{ all -> 0x0181 }
-        r6 = r18;	 Catch:{ all -> 0x0181 }
-        r2.dumpCheckin(r3, r4, r6);	 Catch:{ all -> 0x0181 }
-    L_0x0133:
-        if (r17 == 0) goto L_0x0145;	 Catch:{ all -> 0x0181 }
-    L_0x0135:
-        r0 = "tag";	 Catch:{ all -> 0x0181 }
-        r9.println(r0);	 Catch:{ all -> 0x0181 }
-        r2 = r1.mUidTagRecorder;	 Catch:{ all -> 0x0181 }
-        r3 = r8;	 Catch:{ all -> 0x0181 }
-        r4 = r20;	 Catch:{ all -> 0x0181 }
-        r6 = r18;	 Catch:{ all -> 0x0181 }
-        r2.dumpCheckin(r3, r4, r6);	 Catch:{ all -> 0x0181 }
-    L_0x0145:
-        monitor-exit(r22);	 Catch:{ all -> 0x0181 }
-        return;
-    L_0x0147:
-        r0 = move-exception;
-        r9 = r6;
-        r22 = r7;
-        r23 = r10;
-        r24 = r11;
-        goto L_0x027c;
-    L_0x0151:
-        r9 = r6;
-        r22 = r7;
-        r0 = "Active interfaces:";	 Catch:{ all -> 0x026e }
-        r9.println(r0);	 Catch:{ all -> 0x026e }
-        r9.increaseIndent();	 Catch:{ all -> 0x026e }
-        r0 = r5;	 Catch:{ all -> 0x026e }
-    L_0x015d:
-        r2 = r1.mActiveIfaces;	 Catch:{ all -> 0x026e }
-        r2 = r2.size();	 Catch:{ all -> 0x026e }
-        if (r0 >= r2) goto L_0x0184;
-    L_0x0165:
-        r2 = "iface";	 Catch:{ all -> 0x0181 }
-        r3 = r1.mActiveIfaces;	 Catch:{ all -> 0x0181 }
-        r3 = r3.keyAt(r0);	 Catch:{ all -> 0x0181 }
-        r9.printPair(r2, r3);	 Catch:{ all -> 0x0181 }
-        r2 = "ident";	 Catch:{ all -> 0x0181 }
-        r3 = r1.mActiveIfaces;	 Catch:{ all -> 0x0181 }
-        r3 = r3.valueAt(r0);	 Catch:{ all -> 0x0181 }
-        r9.printPair(r2, r3);	 Catch:{ all -> 0x0181 }
-        r9.println();	 Catch:{ all -> 0x0181 }
-        r0 = r0 + 1;
-        goto L_0x015d;
-    L_0x0181:
-        r0 = move-exception;
-        goto L_0x00d6;
-    L_0x0184:
-        r9.decreaseIndent();	 Catch:{ all -> 0x026e }
-        r0 = "Active UID interfaces:";	 Catch:{ all -> 0x026e }
-        r9.println(r0);	 Catch:{ all -> 0x026e }
-        r9.increaseIndent();	 Catch:{ all -> 0x026e }
-        r0 = r5;	 Catch:{ all -> 0x026e }
-    L_0x0190:
-        r2 = r1.mActiveUidIfaces;	 Catch:{ all -> 0x026e }
-        r2 = r2.size();	 Catch:{ all -> 0x026e }
-        if (r0 >= r2) goto L_0x01b4;
-    L_0x0198:
-        r2 = "iface";	 Catch:{ all -> 0x0181 }
-        r3 = r1.mActiveUidIfaces;	 Catch:{ all -> 0x0181 }
-        r3 = r3.keyAt(r0);	 Catch:{ all -> 0x0181 }
-        r9.printPair(r2, r3);	 Catch:{ all -> 0x0181 }
-        r2 = "ident";	 Catch:{ all -> 0x0181 }
-        r3 = r1.mActiveUidIfaces;	 Catch:{ all -> 0x0181 }
-        r3 = r3.valueAt(r0);	 Catch:{ all -> 0x0181 }
-        r9.printPair(r2, r3);	 Catch:{ all -> 0x0181 }
-        r9.println();	 Catch:{ all -> 0x0181 }
-        r0 = r0 + 1;
-        goto L_0x0190;
-    L_0x01b4:
-        r9.decreaseIndent();	 Catch:{ all -> 0x026e }
-        r2 = r1.mOpenSessionCallsPerUid;	 Catch:{ all -> 0x026e }
-        monitor-enter(r2);	 Catch:{ all -> 0x026e }
-        r0 = r1.mOpenSessionCallsPerUid;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r0 = r0.clone();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        monitor-exit(r2);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r2 = r0.size();	 Catch:{ all -> 0x026e }
-        r3 = new long[r2];	 Catch:{ all -> 0x026e }
-        r4 = r5;	 Catch:{ all -> 0x026e }
-    L_0x01c8:
-        r6 = 32;	 Catch:{ all -> 0x026e }
-        if (r4 >= r2) goto L_0x01e8;	 Catch:{ all -> 0x026e }
-    L_0x01cc:
-        r7 = r0.valueAt(r4);	 Catch:{ all -> 0x026e }
-        r7 = (long) r7;	 Catch:{ all -> 0x026e }
-        r6 = r7 << r6;	 Catch:{ all -> 0x026e }
-        r8 = r0.keyAt(r4);	 Catch:{ all -> 0x026e }
-        r23 = r10;
-        r24 = r11;
-        r10 = (long) r8;
-        r6 = r6 | r10;
-        r3[r4] = r6;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r4 = r4 + 1;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r10 = r23;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r11 = r24;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r8 = r28;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        goto L_0x01c8;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x01e8:
-        r23 = r10;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r24 = r11;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        java.util.Arrays.sort(r3);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r4 = "Top openSession callers (uid=count):";	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println(r4);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.increaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r4 = r2 + -20;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r4 = java.lang.Math.max(r5, r4);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = r2 + -1;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x01ff:
-        if (r5 < r4) goto L_0x0219;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0201:
-        r7 = r3[r5];	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r10 = -1;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r7 = r7 & r10;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r7 = (int) r7;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r10 = r3[r5];	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r10 = r10 >> r6;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r8 = (int) r10;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.print(r7);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r10 = "=";	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.print(r10);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println(r8);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = r5 + -1;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        goto L_0x01ff;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0219:
-        r9.decreaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = "Dev stats:";	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println(r5);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.increaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = r1.mDevRecorder;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5.dumpLocked(r9, r15);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.decreaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = "Xt stats:";	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println(r5);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.increaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = r1.mXtRecorder;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5.dumpLocked(r9, r15);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.decreaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        if (r16 == 0) goto L_0x0251;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0241:
-        r5 = "UID stats:";	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println(r5);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.increaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = r1.mUidRecorder;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5.dumpLocked(r9, r15);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.decreaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0251:
-        if (r17 == 0) goto L_0x0263;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0253:
-        r5 = "UID tag stats:";	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.println(r5);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.increaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5 = r1.mUidTagRecorder;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r5.dumpLocked(r9, r15);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9.decreaseIndent();	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0263:
-        monitor-exit(r22);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        return;
-    L_0x0265:
-        r0 = move-exception;
-        r23 = r10;
-        r24 = r11;
-    L_0x026a:
-        monitor-exit(r2);	 Catch:{ all -> 0x026c }
-        throw r0;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x026c:
-        r0 = move-exception;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        goto L_0x026a;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x026e:
-        r0 = move-exception;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r23 = r10;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r24 = r11;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        goto L_0x027c;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x0274:
-        r0 = move-exception;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r9 = r6;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r22 = r7;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r23 = r10;	 Catch:{ all -> 0x0265, all -> 0x027e }
-        r24 = r11;	 Catch:{ all -> 0x0265, all -> 0x027e }
-    L_0x027c:
-        monitor-exit(r22);	 Catch:{ all -> 0x0265, all -> 0x027e }
-        throw r0;
-    L_0x027e:
-        r0 = move-exception;
-        goto L_0x027c;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.net.NetworkStatsService.dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]):void");
-    }
+    private static native int nativeTagSocket(FileDescriptor fileDescriptor, int i, int i2);
 
     private static File getDefaultSystemDir() {
         return new File(Environment.getDataDirectory(), "system");
@@ -1598,6 +1220,20 @@ public class NetworkStatsService extends AbsNetworkStatsService {
         return this.mUseBpfTrafficStats;
     }
 
+    public int tagSocket(ParcelFileDescriptor pfd, int tag, int uid) {
+        int ret = -1;
+        if (this.mContext.checkCallingPermission("android.permission.UPDATE_DEVICE_STATS") == 0) {
+            ret = nativeTagSocket(pfd.getFileDescriptor(), tag, uid);
+        }
+        try {
+            pfd.close();
+            return ret;
+        } catch (IOException e) {
+            Slog.w(TAG, "Closed duplicate socket fd failed");
+            return -1;
+        }
+    }
+
     @GuardedBy("mStatsLock")
     private void updatePersistThresholdsLocked() {
         this.mDevRecorder.setPersistThreshold(this.mSettings.getDevPersistBytes(this.mPersistThreshold));
@@ -1872,6 +1508,192 @@ public class NetworkStatsService extends AbsNetworkStatsService {
             uids = ArrayUtils.appendInt(uids, UserHandle.getUid(userId, app.uid));
         }
         removeUidsLocked(uids);
+    }
+
+    protected void dump(FileDescriptor fd, PrintWriter rawWriter, String[] args) {
+        Throwable i;
+        Object obj;
+        PrintWriter printWriter = rawWriter;
+        String[] strArr = args;
+        if (DumpUtils.checkDumpPermission(this.mContext, TAG, printWriter)) {
+            int duration;
+            int i2;
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("dump, pid = ");
+            stringBuilder.append(Binder.getCallingPid());
+            Slog.i(str, stringBuilder.toString());
+            HashSet<String> argSet = new HashSet();
+            long duration2 = 86400000;
+            for (String arg : strArr) {
+                argSet.add(arg);
+                if (arg.startsWith("--duration=")) {
+                    try {
+                        duration2 = Long.parseLong(arg.substring(11));
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+            boolean z = true;
+            boolean z2 = argSet.contains("--poll") || argSet.contains("poll");
+            boolean poll = z2;
+            boolean checkin = argSet.contains("--checkin");
+            z2 = argSet.contains("--full") || argSet.contains("full");
+            boolean fullHistory = z2;
+            z2 = argSet.contains("--uid") || argSet.contains("detail");
+            boolean includeUid = z2;
+            if (!(argSet.contains("--tag") || argSet.contains("detail"))) {
+                z = false;
+            }
+            boolean includeTag = z;
+            IndentingPrintWriter pw = new IndentingPrintWriter(printWriter, "  ");
+            Object obj2 = this.mStatsLock;
+            synchronized (obj2) {
+                IndentingPrintWriter pw2;
+                HashSet<String> hashSet;
+                long j;
+                try {
+                    if (strArr.length > 0) {
+                        try {
+                            if (PriorityDump.PROTO_ARG.equals(strArr[0])) {
+                                dumpProtoLocked(fd);
+                                return;
+                            }
+                        } catch (Throwable th) {
+                            i = th;
+                            obj = obj2;
+                            throw i;
+                        }
+                    }
+                    if (poll) {
+                        performPollLocked(LightsManager.LIGHT_ID_MANUALCUSTOMBACKLIGHT);
+                        pw.println("Forced poll");
+                    } else if (checkin) {
+                        try {
+                            long end = System.currentTimeMillis();
+                            long start = end - duration2;
+                            pw.print("v1,");
+                            pw.print(start / 1000);
+                            pw.print(',');
+                            pw.print(end / 1000);
+                            pw.println();
+                            pw.println(PREFIX_XT);
+                            pw2 = pw;
+                            obj = obj2;
+                            try {
+                                this.mXtRecorder.dumpCheckin(printWriter, start, end);
+                                if (includeUid) {
+                                    pw2.println("uid");
+                                    this.mUidRecorder.dumpCheckin(printWriter, start, end);
+                                }
+                                if (includeTag) {
+                                    pw2.println("tag");
+                                    this.mUidTagRecorder.dumpCheckin(printWriter, start, end);
+                                }
+                            } catch (Throwable th2) {
+                                i = th2;
+                                throw i;
+                            }
+                        } catch (Throwable th3) {
+                            i = th3;
+                            pw2 = pw;
+                            obj = obj2;
+                            hashSet = argSet;
+                            j = duration2;
+                            throw i;
+                        }
+                    } else {
+                        pw2 = pw;
+                        obj = obj2;
+                        try {
+                            int i3;
+                            SparseIntArray calls;
+                            pw2.println("Active interfaces:");
+                            pw2.increaseIndent();
+                            for (i3 = 0; i3 < this.mActiveIfaces.size(); i3++) {
+                                pw2.printPair("iface", this.mActiveIfaces.keyAt(i3));
+                                pw2.printPair("ident", this.mActiveIfaces.valueAt(i3));
+                                pw2.println();
+                            }
+                            pw2.decreaseIndent();
+                            pw2.println("Active UID interfaces:");
+                            pw2.increaseIndent();
+                            for (i3 = 0; i3 < this.mActiveUidIfaces.size(); i3++) {
+                                pw2.printPair("iface", this.mActiveUidIfaces.keyAt(i3));
+                                pw2.printPair("ident", this.mActiveUidIfaces.valueAt(i3));
+                                pw2.println();
+                            }
+                            pw2.decreaseIndent();
+                            synchronized (this.mOpenSessionCallsPerUid) {
+                                try {
+                                    calls = this.mOpenSessionCallsPerUid.clone();
+                                } catch (Throwable th4) {
+                                    i = th4;
+                                    throw i;
+                                }
+                            }
+                            duration = calls.size();
+                            long[] values = new long[duration];
+                            i2 = 0;
+                            while (i2 < duration) {
+                                hashSet = argSet;
+                                j = duration2;
+                                values[i2] = (((long) calls.valueAt(i2)) << 32) | ((long) calls.keyAt(i2));
+                                i2++;
+                                argSet = hashSet;
+                                duration2 = j;
+                                printWriter = rawWriter;
+                            }
+                            j = duration2;
+                            Arrays.sort(values);
+                            pw2.println("Top openSession callers (uid=count):");
+                            pw2.increaseIndent();
+                            i2 = Math.max(0, duration - 20);
+                            for (int j2 = duration - 1; j2 >= i2; j2--) {
+                                int count = (int) (values[j2] >> 32);
+                                pw2.print((int) (values[j2] & -1));
+                                pw2.print("=");
+                                pw2.println(count);
+                            }
+                            pw2.decreaseIndent();
+                            pw2.println();
+                            pw2.println("Dev stats:");
+                            pw2.increaseIndent();
+                            this.mDevRecorder.dumpLocked(pw2, fullHistory);
+                            pw2.decreaseIndent();
+                            pw2.println("Xt stats:");
+                            pw2.increaseIndent();
+                            this.mXtRecorder.dumpLocked(pw2, fullHistory);
+                            pw2.decreaseIndent();
+                            if (includeUid) {
+                                pw2.println("UID stats:");
+                                pw2.increaseIndent();
+                                this.mUidRecorder.dumpLocked(pw2, fullHistory);
+                                pw2.decreaseIndent();
+                            }
+                            if (includeTag) {
+                                pw2.println("UID tag stats:");
+                                pw2.increaseIndent();
+                                this.mUidTagRecorder.dumpLocked(pw2, fullHistory);
+                                pw2.decreaseIndent();
+                            }
+                        } catch (Throwable th5) {
+                            i = th5;
+                            hashSet = argSet;
+                            j = duration2;
+                            throw i;
+                        }
+                    }
+                } catch (Throwable th6) {
+                    i = th6;
+                    pw2 = pw;
+                    obj = obj2;
+                    hashSet = argSet;
+                    j = duration2;
+                    throw i;
+                }
+            }
+        }
     }
 
     @GuardedBy("mStatsLock")

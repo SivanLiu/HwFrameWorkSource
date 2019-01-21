@@ -17,9 +17,9 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.interfaces.DHKey;
 import javax.crypto.interfaces.DHPrivateKey;
 import javax.crypto.interfaces.DHPublicKey;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPairGenerator;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.KeyEncoder;
 import org.bouncycastle.crypto.agreement.DHBasicAgreement;
 import org.bouncycastle.crypto.engines.AESEngine;
@@ -92,9 +92,9 @@ public class IESCipher extends CipherSpi {
     }
 
     public int engineDoFinal(byte[] bArr, int i, int i2, byte[] bArr2, int i3) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
-        Object engineDoFinal = engineDoFinal(bArr, i, i2);
-        System.arraycopy(engineDoFinal, 0, bArr2, i3, engineDoFinal.length);
-        return engineDoFinal.length;
+        bArr = engineDoFinal(bArr, i, i2);
+        System.arraycopy(bArr, 0, bArr2, i3, bArr.length);
+        return bArr.length;
     }
 
     public byte[] engineDoFinal(byte[] bArr, int i, int i2) throws IllegalBlockSizeException, BadPaddingException {
@@ -110,40 +110,42 @@ public class IESCipher extends CipherSpi {
         DHParameters parameters = ((DHKeyParameters) this.key).getParameters();
         if (this.otherKeyParameter != null) {
             try {
-                if (this.state == 1 || this.state == 3) {
-                    this.engine.init(true, this.otherKeyParameter, this.key, iESWithCipherParameters);
-                } else {
-                    this.engine.init(false, this.key, this.otherKeyParameter, iESWithCipherParameters);
+                if (this.state != 1) {
+                    if (this.state != 3) {
+                        this.engine.init(false, this.key, this.otherKeyParameter, iESWithCipherParameters);
+                        return this.engine.processBlock(bArr, 0, bArr.length);
+                    }
                 }
+                this.engine.init(true, this.otherKeyParameter, this.key, iESWithCipherParameters);
                 return this.engine.processBlock(bArr, 0, bArr.length);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new BadBlockException("unable to process block", e);
             }
         } else if (this.state == 1 || this.state == 3) {
-            AsymmetricCipherKeyPairGenerator dHKeyPairGenerator = new DHKeyPairGenerator();
+            DHKeyPairGenerator dHKeyPairGenerator = new DHKeyPairGenerator();
             dHKeyPairGenerator.init(new DHKeyGenerationParameters(this.random, parameters));
             try {
                 this.engine.init(this.key, iESWithCipherParameters, new EphemeralKeyPairGenerator(dHKeyPairGenerator, new KeyEncoder() {
                     public byte[] getEncoded(AsymmetricKeyParameter asymmetricKeyParameter) {
-                        Object obj = new byte[((((DHKeyParameters) asymmetricKeyParameter).getParameters().getP().bitLength() + 7) / 8)];
-                        Object asUnsignedByteArray = BigIntegers.asUnsignedByteArray(((DHPublicKeyParameters) asymmetricKeyParameter).getY());
-                        if (asUnsignedByteArray.length <= obj.length) {
-                            System.arraycopy(asUnsignedByteArray, 0, obj, obj.length - asUnsignedByteArray.length, asUnsignedByteArray.length);
-                            return obj;
+                        byte[] bArr = new byte[((((DHKeyParameters) asymmetricKeyParameter).getParameters().getP().bitLength() + 7) / 8)];
+                        byte[] asUnsignedByteArray = BigIntegers.asUnsignedByteArray(((DHPublicKeyParameters) asymmetricKeyParameter).getY());
+                        if (asUnsignedByteArray.length <= bArr.length) {
+                            System.arraycopy(asUnsignedByteArray, 0, bArr, bArr.length - asUnsignedByteArray.length, asUnsignedByteArray.length);
+                            return bArr;
                         }
                         throw new IllegalArgumentException("Senders's public key longer than expected.");
                     }
                 }));
                 return this.engine.processBlock(bArr, 0, bArr.length);
-            } catch (Throwable e2) {
+            } catch (Exception e2) {
                 throw new BadBlockException("unable to process block", e2);
             }
         } else if (this.state == 2 || this.state == 4) {
             try {
                 this.engine.init(this.key, iESWithCipherParameters, new DHIESPublicKeyParser(((DHKeyParameters) this.key).getParameters()));
                 return this.engine.processBlock(bArr, 0, bArr.length);
-            } catch (Throwable e22) {
-                throw new BadBlockException("unable to process block", e22);
+            } catch (InvalidCipherTextException e3) {
+                throw new BadBlockException("unable to process block", e3);
             }
         } else {
             throw new IllegalStateException("IESCipher not initialised");
@@ -298,12 +300,12 @@ public class IESCipher extends CipherSpi {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:8:0x001a in {2, 4, 7, 10} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -317,20 +319,15 @@ public class IESCipher extends CipherSpi {
         r1 = "NONE";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0010;
-    L_0x000c:
         r4 = 0;
-    L_0x000d:
         r3.dhaesMode = r4;
         return;
-    L_0x0010:
         r1 = "DHAES";
         r0 = r0.equals(r1);
         if (r0 == 0) goto L_0x001b;
-    L_0x0018:
         r4 = 1;
         goto L_0x000d;
         return;
-    L_0x001b:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();

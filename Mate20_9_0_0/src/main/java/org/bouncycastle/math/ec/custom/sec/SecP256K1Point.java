@@ -93,13 +93,13 @@ public class SecP256K1Point extends AbstractFp {
             SecP256K1Field.negate(iArr, iArr);
             Nat256.mul(iArr4, iArr, createExt);
             SecP256K1Field.reduce32(Nat256.addBothTo(create2, create2, iArr), iArr);
-            ECFieldElement secP256K1FieldElement7 = new SecP256K1FieldElement(create3);
-            SecP256K1Field.square(create, secP256K1FieldElement7.x);
-            SecP256K1Field.subtract(secP256K1FieldElement7.x, iArr, secP256K1FieldElement7.x);
-            ECFieldElement secP256K1FieldElement8 = new SecP256K1FieldElement(iArr);
-            SecP256K1Field.subtract(create2, secP256K1FieldElement7.x, secP256K1FieldElement8.x);
-            SecP256K1Field.multiplyAddToExt(secP256K1FieldElement8.x, create, createExt);
-            SecP256K1Field.reduce(createExt, secP256K1FieldElement8.x);
+            secP256K1FieldElement2 = new SecP256K1FieldElement(create3);
+            SecP256K1Field.square(create, secP256K1FieldElement2.x);
+            SecP256K1Field.subtract(secP256K1FieldElement2.x, iArr, secP256K1FieldElement2.x);
+            ECFieldElement secP256K1FieldElement7 = new SecP256K1FieldElement(iArr);
+            SecP256K1Field.subtract(create2, secP256K1FieldElement2.x, secP256K1FieldElement7.x);
+            SecP256K1Field.multiplyAddToExt(secP256K1FieldElement7.x, create, createExt);
+            SecP256K1Field.reduce(createExt, secP256K1FieldElement7.x);
             secP256K1FieldElement = new SecP256K1FieldElement(create4);
             if (!isOne) {
                 SecP256K1Field.multiply(secP256K1FieldElement.x, secP256K1FieldElement5.x, secP256K1FieldElement.x);
@@ -107,7 +107,7 @@ public class SecP256K1Point extends AbstractFp {
             if (!isOne2) {
                 SecP256K1Field.multiply(secP256K1FieldElement.x, secP256K1FieldElement6.x, secP256K1FieldElement.x);
             }
-            return new SecP256K1Point(curve, secP256K1FieldElement7, secP256K1FieldElement8, new ECFieldElement[]{secP256K1FieldElement}, this.withCompression);
+            return new SecP256K1Point(curve, secP256K1FieldElement2, secP256K1FieldElement7, new ECFieldElement[]{secP256K1FieldElement}, this.withCompression);
         }
     }
 

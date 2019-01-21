@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.cms.KEKIdentifier;
 import org.bouncycastle.asn1.cms.KEKRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.operator.GenericKey;
+import org.bouncycastle.operator.OperatorException;
 import org.bouncycastle.operator.SymmetricKeyWrapper;
 
 public abstract class KEKRecipientInfoGenerator implements RecipientInfoGenerator {
@@ -19,7 +20,7 @@ public abstract class KEKRecipientInfoGenerator implements RecipientInfoGenerato
     public final RecipientInfo generate(GenericKey genericKey) throws CMSException {
         try {
             return new RecipientInfo(new KEKRecipientInfo(this.kekIdentifier, this.wrapper.getAlgorithmIdentifier(), new DEROctetString(this.wrapper.generateWrappedKey(genericKey))));
-        } catch (Exception e) {
+        } catch (OperatorException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception wrapping content key: ");
             stringBuilder.append(e.getMessage());

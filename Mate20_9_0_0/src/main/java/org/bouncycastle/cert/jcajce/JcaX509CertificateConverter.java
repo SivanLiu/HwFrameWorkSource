@@ -1,6 +1,8 @@
 package org.bouncycastle.cert.jcajce;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
@@ -45,12 +47,12 @@ public class JcaX509CertificateConverter {
         StringBuilder stringBuilder;
         try {
             return (X509Certificate) this.helper.getCertificateFactory("X.509").generateCertificate(new ByteArrayInputStream(x509CertificateHolder.getEncoded()));
-        } catch (Throwable e) {
+        } catch (IOException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception parsing certificate: ");
             stringBuilder.append(e.getMessage());
             throw new ExCertificateParsingException(stringBuilder.toString(), e);
-        } catch (Throwable e2) {
+        } catch (NoSuchProviderException e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("cannot find required provider:");
             stringBuilder.append(e2.getMessage());

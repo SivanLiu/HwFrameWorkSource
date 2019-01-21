@@ -39,7 +39,7 @@ public class CSRAttributesResponse implements Encodable {
     private static CsrAttrs parseBytes(byte[] bArr) throws ESTException {
         try {
             return CsrAttrs.getInstance(ASN1Primitive.fromByteArray(bArr));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("malformed data: ");
             stringBuilder.append(e.getMessage());

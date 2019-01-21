@@ -96,7 +96,7 @@ public class OpenBSDBCrypt {
     }
 
     private static byte[] decodeSaltString(String str) {
-        Object toCharArray = str.toCharArray();
+        char[] toCharArray = str.toCharArray();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(16);
         if (toCharArray.length == 22) {
             for (char c : toCharArray) {
@@ -107,22 +107,22 @@ public class OpenBSDBCrypt {
                     throw new IllegalArgumentException(stringBuilder.toString());
                 }
             }
-            Object obj = new char[24];
-            System.arraycopy(toCharArray, 0, obj, 0, toCharArray.length);
-            int length = obj.length;
+            char[] cArr = new char[24];
+            System.arraycopy(toCharArray, 0, cArr, 0, toCharArray.length);
+            int length = cArr.length;
             for (int i = 0; i < length; i += 4) {
-                byte b = decodingTable[obj[i]];
-                byte b2 = decodingTable[obj[i + 1]];
-                byte b3 = decodingTable[obj[i + 2]];
-                byte b4 = decodingTable[obj[i + 3]];
+                byte b = decodingTable[cArr[i]];
+                byte b2 = decodingTable[cArr[i + 1]];
+                byte b3 = decodingTable[cArr[i + 2]];
+                byte b4 = decodingTable[cArr[i + 3]];
                 byteArrayOutputStream.write((b << 2) | (b2 >> 4));
                 byteArrayOutputStream.write((b2 << 4) | (b3 >> 2));
                 byteArrayOutputStream.write((b3 << 6) | b4);
             }
-            toCharArray = byteArrayOutputStream.toByteArray();
-            Object obj2 = new byte[16];
-            System.arraycopy(toCharArray, 0, obj2, 0, obj2.length);
-            return obj2;
+            byte[] toByteArray = byteArrayOutputStream.toByteArray();
+            byte[] bArr = new byte[16];
+            System.arraycopy(toByteArray, 0, bArr, 0, bArr.length);
+            return bArr;
         }
         StringBuilder stringBuilder2 = new StringBuilder();
         stringBuilder2.append("Invalid base64 salt length: ");
@@ -135,13 +135,13 @@ public class OpenBSDBCrypt {
         if (bArr.length == 24 || bArr.length == 16) {
             int i;
             if (bArr.length == 16) {
-                Object obj = new byte[18];
-                System.arraycopy(bArr, 0, obj, 0, bArr.length);
-                bArr = obj;
+                byte[] bArr2 = new byte[18];
+                System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+                bArr = bArr2;
                 i = 1;
             } else {
                 bArr[bArr.length - 1] = (byte) 0;
-                i = (byte) 0;
+                i = 0;
             }
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             int length = bArr.length;

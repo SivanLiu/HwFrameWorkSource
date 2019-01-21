@@ -252,9 +252,13 @@ public class PackageManagerBackupAgent extends BackupAgent {
         return null;
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:35:0x00dc A:{Catch:{ IOException -> 0x00d3 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x0129 A:{SYNTHETIC, Splitter:B:47:0x0129} */
+    /* JADX WARNING: Removed duplicated region for block: B:45:0x0115 A:{SYNTHETIC, Splitter:B:45:0x0115} */
+    /* JADX WARNING: Removed duplicated region for block: B:52:0x013c A:{SYNTHETIC, Splitter:B:52:0x013c} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState) {
         ArrayList<byte[]> arrayList;
-        PackageInfo packageInfo;
         BackupDataOutput backupDataOutput = data;
         ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
         DataOutputStream outputBufferStream = new DataOutputStream(outputBuffer);
@@ -308,98 +312,111 @@ public class PackageManagerBackupAgent extends BackupAgent {
             home = homeInfo2;
             homeSigHashes2 = homeSigHashes;
             homeInfo2 = homeInfo;
+            PackageInfo info;
             try {
+                Iterator it;
                 PackageManagerInternal pmi = (PackageManagerInternal) LocalServices.getService(PackageManagerInternal.class);
                 if (homeVersion == this.mStoredHomeVersion) {
                     try {
-                        if (Objects.equals(home, this.mStoredHomeComponent) && (home == null || BackupUtils.signaturesMatch(this.mStoredHomeSigHashes, homeInfo2, pmi))) {
-                            needHomeBackup = false;
+                        if (Objects.equals(home, this.mStoredHomeComponent)) {
+                            if (home == null || BackupUtils.signaturesMatch(this.mStoredHomeSigHashes, homeInfo2, pmi)) {
+                                needHomeBackup = false;
+                                if (needHomeBackup) {
+                                    if (home != null) {
+                                        outputBuffer.reset();
+                                        outputBufferStream.writeUTF(home.flattenToString());
+                                        outputBufferStream.writeLong(homeVersion);
+                                        outputBufferStream.writeUTF(homeInstaller != null ? homeInstaller : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
+                                        writeSignatureHashArray(outputBufferStream, homeSigHashes2);
+                                        writeEntity(backupDataOutput, DEFAULT_HOME_KEY, outputBuffer.toByteArray());
+                                    } else {
+                                        backupDataOutput.writeEntityHeader(DEFAULT_HOME_KEY, -1);
+                                    }
+                                }
+                                outputBuffer.reset();
+                                if (this.mExisting.contains(GLOBAL_METADATA_KEY)) {
+                                    outputBufferStream.writeInt(VERSION.SDK_INT);
+                                    outputBufferStream.writeUTF(VERSION.INCREMENTAL);
+                                    writeEntity(backupDataOutput, GLOBAL_METADATA_KEY, outputBuffer.toByteArray());
+                                } else {
+                                    this.mExisting.remove(GLOBAL_METADATA_KEY);
+                                }
+                                it = this.mAllPackages.iterator();
+                                while (it.hasNext()) {
+                                    String packName = ((PackageInfo) it.next()).packageName;
+                                    if (!packName.equals(GLOBAL_METADATA_KEY)) {
+                                        boolean needHomeBackup2;
+                                        PackageManagerInternal pmi2;
+                                        Iterator it2;
+                                        info = null;
+                                        try {
+                                            PackageInfo info2 = this.mPackageManager.getPackageInfo(packName, i);
+                                            if (this.mExisting.contains(packName)) {
+                                                this.mExisting.remove(packName);
+                                                needHomeBackup2 = needHomeBackup;
+                                                pmi2 = pmi;
+                                                if (info2.getLongVersionCode() == ((Metadata) this.mStateVersions.get(packName)).versionCode) {
+                                                    pmi = pmi2;
+                                                    needHomeBackup = needHomeBackup2;
+                                                    i = 134217728;
+                                                }
+                                            } else {
+                                                needHomeBackup2 = needHomeBackup;
+                                                pmi2 = pmi;
+                                            }
+                                            needHomeBackup = info2.signingInfo;
+                                            if (needHomeBackup) {
+                                                it2 = it;
+                                                outputBuffer.reset();
+                                                if (info2.versionCodeMajor != 0) {
+                                                    outputBufferStream.writeInt(Integer.MIN_VALUE);
+                                                    outputBufferStream.writeLong(info2.getLongVersionCode());
+                                                } else {
+                                                    outputBufferStream.writeInt(info2.versionCode);
+                                                }
+                                                writeSignatureHashArray(outputBufferStream, BackupUtils.hashSignatureArray(needHomeBackup.getApkContentsSigners()));
+                                                writeEntity(backupDataOutput, packName, outputBuffer.toByteArray());
+                                            } else {
+                                                String str2 = TAG;
+                                                StringBuilder stringBuilder2 = new StringBuilder();
+                                                it2 = it;
+                                                stringBuilder2.append("Not backing up package ");
+                                                stringBuilder2.append(packName);
+                                                stringBuilder2.append(" since it appears to have no signatures.");
+                                                Slog.w(str2, stringBuilder2.toString());
+                                            }
+                                        } catch (NameNotFoundException e2) {
+                                            needHomeBackup2 = needHomeBackup;
+                                            pmi2 = pmi;
+                                            it2 = it;
+                                            this.mExisting.add(packName);
+                                        }
+                                        pmi = pmi2;
+                                        needHomeBackup = needHomeBackup2;
+                                        it = it2;
+                                        i = 134217728;
+                                    }
+                                }
+                                writeStateFile(this.mAllPackages, home, homeVersion, homeSigHashes2, newState);
+                            }
                         }
-                    } catch (IOException e2) {
+                    } catch (IOException e3) {
                         arrayList = homeSigHashes2;
-                        packageInfo = homeInfo2;
+                        info = homeInfo2;
                     }
                 }
                 if (needHomeBackup) {
-                    if (home != null) {
-                        outputBuffer.reset();
-                        outputBufferStream.writeUTF(home.flattenToString());
-                        outputBufferStream.writeLong(homeVersion);
-                        outputBufferStream.writeUTF(homeInstaller != null ? homeInstaller : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
-                        writeSignatureHashArray(outputBufferStream, homeSigHashes2);
-                        writeEntity(backupDataOutput, DEFAULT_HOME_KEY, outputBuffer.toByteArray());
-                    } else {
-                        backupDataOutput.writeEntityHeader(DEFAULT_HOME_KEY, -1);
-                    }
                 }
                 outputBuffer.reset();
                 if (this.mExisting.contains(GLOBAL_METADATA_KEY)) {
-                    this.mExisting.remove(GLOBAL_METADATA_KEY);
-                } else {
-                    outputBufferStream.writeInt(VERSION.SDK_INT);
-                    outputBufferStream.writeUTF(VERSION.INCREMENTAL);
-                    writeEntity(backupDataOutput, GLOBAL_METADATA_KEY, outputBuffer.toByteArray());
                 }
-                Iterator it = this.mAllPackages.iterator();
+                it = this.mAllPackages.iterator();
                 while (it.hasNext()) {
-                    String packName = ((PackageInfo) it.next()).packageName;
-                    if (!packName.equals(GLOBAL_METADATA_KEY)) {
-                        boolean needHomeBackup2;
-                        PackageManagerInternal pmi2;
-                        Iterator it2;
-                        packageInfo = null;
-                        try {
-                            PackageInfo info = this.mPackageManager.getPackageInfo(packName, i);
-                            if (this.mExisting.contains(packName)) {
-                                this.mExisting.remove(packName);
-                                needHomeBackup2 = needHomeBackup;
-                                pmi2 = pmi;
-                                if (info.getLongVersionCode() == ((Metadata) this.mStateVersions.get(packName)).versionCode) {
-                                    pmi = pmi2;
-                                    needHomeBackup = needHomeBackup2;
-                                    i = 134217728;
-                                }
-                            } else {
-                                needHomeBackup2 = needHomeBackup;
-                                pmi2 = pmi;
-                            }
-                            needHomeBackup = info.signingInfo;
-                            if (needHomeBackup) {
-                                it2 = it;
-                                outputBuffer.reset();
-                                if (info.versionCodeMajor != 0) {
-                                    outputBufferStream.writeInt(Integer.MIN_VALUE);
-                                    outputBufferStream.writeLong(info.getLongVersionCode());
-                                } else {
-                                    outputBufferStream.writeInt(info.versionCode);
-                                }
-                                writeSignatureHashArray(outputBufferStream, BackupUtils.hashSignatureArray(needHomeBackup.getApkContentsSigners()));
-                                writeEntity(backupDataOutput, packName, outputBuffer.toByteArray());
-                            } else {
-                                String str2 = TAG;
-                                StringBuilder stringBuilder2 = new StringBuilder();
-                                it2 = it;
-                                stringBuilder2.append("Not backing up package ");
-                                stringBuilder2.append(packName);
-                                stringBuilder2.append(" since it appears to have no signatures.");
-                                Slog.w(str2, stringBuilder2.toString());
-                            }
-                        } catch (NameNotFoundException e3) {
-                            needHomeBackup2 = needHomeBackup;
-                            pmi2 = pmi;
-                            it2 = it;
-                            this.mExisting.add(packName);
-                        }
-                        pmi = pmi2;
-                        needHomeBackup = needHomeBackup2;
-                        it = it2;
-                        i = 134217728;
-                    }
                 }
                 writeStateFile(this.mAllPackages, home, homeVersion, homeSigHashes2, newState);
             } catch (IOException e4) {
                 arrayList = homeSigHashes2;
-                packageInfo = homeInfo2;
+                info = homeInfo2;
                 Slog.e(TAG, "Unable to write package backup data file!");
             }
         } catch (IOException e5) {

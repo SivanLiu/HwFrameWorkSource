@@ -10,7 +10,7 @@ public enum HttpMethod {
         this.method = str;
     }
 
-    public String abk() {
+    public String bb() {
         return this.method;
     }
 }

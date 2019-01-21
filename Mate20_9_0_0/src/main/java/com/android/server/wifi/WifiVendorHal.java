@@ -255,29 +255,31 @@ public class WifiVendorHal {
             WifiVendorHal.this.mHalEventHandler.post(new -$$Lambda$WifiVendorHal$ChipEventCallback$AqzJie2OoFIziDRxaXrZoSkKfNw(this, status, data));
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0017, code:
+        /* JADX WARNING: Missing block: B:10:0x0017, code skipped:
             r0 = r8.size();
             r2 = false;
      */
-        /* JADX WARNING: Missing block: B:11:?, code:
+        /* JADX WARNING: Missing block: B:12:?, code skipped:
             r1.onRingBufferData(com.android.server.wifi.WifiVendorHal.access$1500(r7), com.android.server.wifi.util.NativeUtil.byteArrayFromArrayList(r8));
      */
-        /* JADX WARNING: Missing block: B:12:0x002c, code:
+        /* JADX WARNING: Missing block: B:13:0x002c, code skipped:
             if (r8.size() == r0) goto L_0x0032;
      */
-        /* JADX WARNING: Missing block: B:13:0x002e, code:
+        /* JADX WARNING: Missing block: B:14:0x002e, code skipped:
             r2 = true;
      */
-        /* JADX WARNING: Missing block: B:15:0x0031, code:
+        /* JADX WARNING: Missing block: B:16:0x0031, code skipped:
             r2 = true;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public static /* synthetic */ void lambda$onDebugRingBufferDataAvailable$0(ChipEventCallback chipEventCallback, WifiDebugRingBufferStatus status, ArrayList data) {
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mLogEventHandler == null || status == null || data == null) {
-                    return;
+                if (!(WifiVendorHal.this.mLogEventHandler == null || status == null)) {
+                    if (data != null) {
+                        WifiLoggerEventHandler eventHandler = WifiVendorHal.this.mLogEventHandler;
+                    }
                 }
-                WifiLoggerEventHandler eventHandler = WifiVendorHal.this.mLogEventHandler;
+                return;
             }
             if (conversionFailure) {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -300,11 +302,13 @@ public class WifiVendorHal {
 
         public static /* synthetic */ void lambda$onDebugErrorAlert$1(ChipEventCallback chipEventCallback, ArrayList debugData, int errorCode) {
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mLogEventHandler == null || debugData == null) {
-                    return;
+                if (WifiVendorHal.this.mLogEventHandler != null) {
+                    if (debugData != null) {
+                        WifiLoggerEventHandler eventHandler = WifiVendorHal.this.mLogEventHandler;
+                        eventHandler.onWifiAlert(errorCode, NativeUtil.byteArrayFromArrayList(debugData));
+                        return;
+                    }
                 }
-                WifiLoggerEventHandler eventHandler = WifiVendorHal.this.mLogEventHandler;
-                eventHandler.onWifiAlert(errorCode, NativeUtil.byteArrayFromArrayList(debugData));
             }
         }
     }
@@ -313,34 +317,35 @@ public class WifiVendorHal {
         private RttEventCallback() {
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0021, code:
+        /* JADX WARNING: Missing block: B:10:0x0021, code skipped:
             r0 = new android.net.wifi.RttManager.RttResult[r6.size()];
      */
-        /* JADX WARNING: Missing block: B:10:0x0028, code:
+        /* JADX WARNING: Missing block: B:11:0x0028, code skipped:
             r2 = r3;
      */
-        /* JADX WARNING: Missing block: B:11:0x002a, code:
+        /* JADX WARNING: Missing block: B:12:0x002a, code skipped:
             if (r2 >= r0.length) goto L_0x003b;
      */
-        /* JADX WARNING: Missing block: B:12:0x002c, code:
+        /* JADX WARNING: Missing block: B:13:0x002c, code skipped:
             r0[r2] = com.android.server.wifi.WifiVendorHal.frameworkRttResultFromHalRttResult((android.hardware.wifi.V1_0.RttResult) r6.get(r2));
             r3 = r2 + 1;
      */
-        /* JADX WARNING: Missing block: B:13:0x003b, code:
+        /* JADX WARNING: Missing block: B:14:0x003b, code skipped:
             r1.onRttResults(r0);
      */
-        /* JADX WARNING: Missing block: B:14:0x003e, code:
+        /* JADX WARNING: Missing block: B:15:0x003e, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void onResults(int cmdId, ArrayList<RttResult> results) {
             synchronized (WifiVendorHal.sLock) {
-                if (cmdId != WifiVendorHal.this.mRttCmdId || WifiVendorHal.this.mRttEventHandler == null) {
-                    return;
+                if (cmdId == WifiVendorHal.this.mRttCmdId) {
+                    if (WifiVendorHal.this.mRttEventHandler != null) {
+                        RttEventHandler eventHandler = WifiVendorHal.this.mRttEventHandler;
+                        int i = 0;
+                        WifiVendorHal.this.mRttCmdId = 0;
+                    }
                 }
-                RttEventHandler eventHandler = WifiVendorHal.this.mRttEventHandler;
-                int i = 0;
-                WifiVendorHal.this.mRttCmdId = 0;
             }
         }
     }
@@ -356,11 +361,13 @@ public class WifiVendorHal {
             stringBuilder.append(cmdId);
             wifiLog.d(stringBuilder.toString());
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mScan == null || cmdId != WifiVendorHal.this.mScan.cmdId) {
-                    return;
+                if (WifiVendorHal.this.mScan != null) {
+                    if (cmdId == WifiVendorHal.this.mScan.cmdId) {
+                        ScanEventHandler eventHandler = WifiVendorHal.this.mScan.eventHandler;
+                        eventHandler.onScanStatus(3);
+                        return;
+                    }
                 }
-                ScanEventHandler eventHandler = WifiVendorHal.this.mScan.eventHandler;
-                eventHandler.onScanStatus(3);
             }
         }
 
@@ -371,11 +378,13 @@ public class WifiVendorHal {
             stringBuilder.append(cmdId);
             wifiLog.d(stringBuilder.toString());
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mScan == null || cmdId != WifiVendorHal.this.mScan.cmdId) {
-                    return;
+                if (WifiVendorHal.this.mScan != null) {
+                    if (cmdId == WifiVendorHal.this.mScan.cmdId) {
+                        ScanEventHandler eventHandler = WifiVendorHal.this.mScan.eventHandler;
+                        eventHandler.onFullScanResult(WifiVendorHal.hidlToFrameworkScanResult(result), bucketsScanned);
+                        return;
+                    }
                 }
-                ScanEventHandler eventHandler = WifiVendorHal.this.mScan.eventHandler;
-                eventHandler.onFullScanResult(WifiVendorHal.hidlToFrameworkScanResult(result), bucketsScanned);
             }
         }
 
@@ -386,12 +395,14 @@ public class WifiVendorHal {
             stringBuilder.append(cmdId);
             wifiLog.d(stringBuilder.toString());
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mScan == null || cmdId != WifiVendorHal.this.mScan.cmdId) {
-                    return;
+                if (WifiVendorHal.this.mScan != null) {
+                    if (cmdId == WifiVendorHal.this.mScan.cmdId) {
+                        ScanEventHandler eventHandler = WifiVendorHal.this.mScan.eventHandler;
+                        WifiVendorHal.this.mScan.latestScanResults = WifiVendorHal.hidlToFrameworkScanDatas(cmdId, scanDatas);
+                        eventHandler.onScanStatus(0);
+                        return;
+                    }
                 }
-                ScanEventHandler eventHandler = WifiVendorHal.this.mScan.eventHandler;
-                WifiVendorHal.this.mScan.latestScanResults = WifiVendorHal.hidlToFrameworkScanDatas(cmdId, scanDatas);
-                eventHandler.onScanStatus(0);
             }
         }
 
@@ -404,11 +415,13 @@ public class WifiVendorHal {
             stringBuilder.append(currRssi);
             wifiLog.d(stringBuilder.toString());
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mWifiRssiEventHandler == null || cmdId != WifiVendorHal.sRssiMonCmdId) {
-                    return;
+                if (WifiVendorHal.this.mWifiRssiEventHandler != null) {
+                    if (cmdId == WifiVendorHal.sRssiMonCmdId) {
+                        WifiRssiEventHandler eventHandler = WifiVendorHal.this.mWifiRssiEventHandler;
+                        eventHandler.onRssiThresholdBreached((byte) currRssi);
+                        return;
+                    }
                 }
-                WifiRssiEventHandler eventHandler = WifiVendorHal.this.mWifiRssiEventHandler;
-                eventHandler.onRssiThresholdBreached((byte) currRssi);
             }
         }
     }
@@ -449,31 +462,31 @@ public class WifiVendorHal {
             return ifaceList1.containsAll(ifaceList2);
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0032, code:
+        /* JADX WARNING: Missing block: B:10:0x0032, code skipped:
             if (r9.size() == 0) goto L_0x010a;
      */
-        /* JADX WARNING: Missing block: B:11:0x0039, code:
+        /* JADX WARNING: Missing block: B:12:0x0039, code skipped:
             if (r9.size() <= 2) goto L_0x003d;
      */
-        /* JADX WARNING: Missing block: B:12:0x003d, code:
+        /* JADX WARNING: Missing block: B:13:0x003d, code skipped:
             r3 = (android.hardware.wifi.V1_2.IWifiChipEventCallback.RadioModeInfo) r9.get(0);
      */
-        /* JADX WARNING: Missing block: B:13:0x0049, code:
+        /* JADX WARNING: Missing block: B:14:0x0049, code skipped:
             if (r9.size() != 2) goto L_0x0052;
      */
-        /* JADX WARNING: Missing block: B:14:0x004b, code:
+        /* JADX WARNING: Missing block: B:15:0x004b, code skipped:
             r4 = (android.hardware.wifi.V1_2.IWifiChipEventCallback.RadioModeInfo) r9.get(1);
      */
-        /* JADX WARNING: Missing block: B:15:0x0052, code:
+        /* JADX WARNING: Missing block: B:16:0x0052, code skipped:
             r4 = null;
      */
-        /* JADX WARNING: Missing block: B:16:0x0053, code:
+        /* JADX WARNING: Missing block: B:17:0x0053, code skipped:
             if (r4 == null) goto L_0x0090;
      */
-        /* JADX WARNING: Missing block: B:18:0x0061, code:
+        /* JADX WARNING: Missing block: B:19:0x0061, code skipped:
             if (r3.ifaceInfos.size() == r4.ifaceInfos.size()) goto L_0x0090;
      */
-        /* JADX WARNING: Missing block: B:19:0x0063, code:
+        /* JADX WARNING: Missing block: B:20:0x0063, code skipped:
             r0 = r8.this$0.mLog;
             r2 = new java.lang.StringBuilder();
             r2.append("Unexpected number of iface info in list ");
@@ -482,78 +495,78 @@ public class WifiVendorHal {
             r2.append(r4.ifaceInfos.size());
             r0.e(r2.toString());
      */
-        /* JADX WARNING: Missing block: B:20:0x008f, code:
+        /* JADX WARNING: Missing block: B:21:0x008f, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:21:0x0090, code:
+        /* JADX WARNING: Missing block: B:22:0x0090, code skipped:
             r6 = r3.ifaceInfos.size();
      */
-        /* JADX WARNING: Missing block: B:22:0x0096, code:
+        /* JADX WARNING: Missing block: B:23:0x0096, code skipped:
             if (r6 == 0) goto L_0x00f1;
      */
-        /* JADX WARNING: Missing block: B:23:0x0098, code:
+        /* JADX WARNING: Missing block: B:24:0x0098, code skipped:
             if (r6 <= 2) goto L_0x009b;
      */
-        /* JADX WARNING: Missing block: B:25:0x009f, code:
+        /* JADX WARNING: Missing block: B:26:0x009f, code skipped:
             if (r9.size() != 2) goto L_0x00c7;
      */
-        /* JADX WARNING: Missing block: B:26:0x00a1, code:
+        /* JADX WARNING: Missing block: B:27:0x00a1, code skipped:
             if (r6 != 1) goto L_0x00c7;
      */
-        /* JADX WARNING: Missing block: B:28:0x00ab, code:
+        /* JADX WARNING: Missing block: B:29:0x00ab, code skipped:
             if (areSameIfaceNames(r3.ifaceInfos, r4.ifaceInfos) == false) goto L_0x00b7;
      */
-        /* JADX WARNING: Missing block: B:29:0x00ad, code:
+        /* JADX WARNING: Missing block: B:30:0x00ad, code skipped:
             r8.this$0.mLog.e("Unexpected for both radio infos to have same iface");
      */
-        /* JADX WARNING: Missing block: B:30:0x00b6, code:
+        /* JADX WARNING: Missing block: B:31:0x00b6, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:32:0x00bb, code:
+        /* JADX WARNING: Missing block: B:33:0x00bb, code skipped:
             if (r3.bandInfo == r4.bandInfo) goto L_0x00c1;
      */
-        /* JADX WARNING: Missing block: B:33:0x00bd, code:
+        /* JADX WARNING: Missing block: B:34:0x00bd, code skipped:
             r1.onDbs();
      */
-        /* JADX WARNING: Missing block: B:34:0x00c1, code:
+        /* JADX WARNING: Missing block: B:35:0x00c1, code skipped:
             r1.onSbs(r3.bandInfo);
      */
-        /* JADX WARNING: Missing block: B:36:0x00cb, code:
+        /* JADX WARNING: Missing block: B:37:0x00cb, code skipped:
             if (r9.size() != 1) goto L_0x00f0;
      */
-        /* JADX WARNING: Missing block: B:37:0x00cd, code:
+        /* JADX WARNING: Missing block: B:38:0x00cd, code skipped:
             if (r6 != 2) goto L_0x00f0;
      */
-        /* JADX WARNING: Missing block: B:39:0x00e3, code:
+        /* JADX WARNING: Missing block: B:40:0x00e3, code skipped:
             if (((android.hardware.wifi.V1_2.IWifiChipEventCallback.IfaceInfo) r3.ifaceInfos.get(0)).channel == ((android.hardware.wifi.V1_2.IWifiChipEventCallback.IfaceInfo) r3.ifaceInfos.get(1)).channel) goto L_0x00eb;
      */
-        /* JADX WARNING: Missing block: B:40:0x00e5, code:
+        /* JADX WARNING: Missing block: B:41:0x00e5, code skipped:
             r1.onMcc(r3.bandInfo);
      */
-        /* JADX WARNING: Missing block: B:41:0x00eb, code:
+        /* JADX WARNING: Missing block: B:42:0x00eb, code skipped:
             r1.onScc(r3.bandInfo);
      */
-        /* JADX WARNING: Missing block: B:42:0x00f0, code:
+        /* JADX WARNING: Missing block: B:43:0x00f0, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:43:0x00f1, code:
+        /* JADX WARNING: Missing block: B:44:0x00f1, code skipped:
             r0 = r8.this$0.mLog;
             r2 = new java.lang.StringBuilder();
             r2.append("Unexpected number of iface info in list ");
             r2.append(r6);
             r0.e(r2.toString());
      */
-        /* JADX WARNING: Missing block: B:44:0x0109, code:
+        /* JADX WARNING: Missing block: B:45:0x0109, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:45:0x010a, code:
+        /* JADX WARNING: Missing block: B:46:0x010a, code skipped:
             r0 = r8.this$0.mLog;
             r2 = new java.lang.StringBuilder();
             r2.append("Unexpected number of radio info in list ");
             r2.append(r9.size());
             r0.e(r2.toString());
      */
-        /* JADX WARNING: Missing block: B:46:0x0126, code:
+        /* JADX WARNING: Missing block: B:47:0x0126, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -564,10 +577,11 @@ public class WifiVendorHal {
             stringBuilder.append(radioModeInfoList);
             wifiLog.d(stringBuilder.toString());
             synchronized (WifiVendorHal.sLock) {
-                if (WifiVendorHal.this.mRadioModeChangeEventHandler == null || radioModeInfoList == null) {
-                    return;
+                if (WifiVendorHal.this.mRadioModeChangeEventHandler != null) {
+                    if (radioModeInfoList != null) {
+                        VendorHalRadioModeChangeEventHandler handler = WifiVendorHal.this.mRadioModeChangeEventHandler;
+                    }
                 }
-                VendorHalRadioModeChangeEventHandler handler = WifiVendorHal.this.mRadioModeChangeEventHandler;
             }
         }
     }
@@ -575,8 +589,11 @@ public class WifiVendorHal {
     public void enableVerboseLogging(boolean verbose) {
         synchronized (sLock) {
             if (verbose) {
-                this.mVerboseLog = this.mLog;
-                enter("verbose=true").flush();
+                try {
+                    this.mVerboseLog = this.mLog;
+                    enter("verbose=true").flush();
+                } catch (Throwable th) {
+                }
             } else {
                 enter("verbose=false").flush();
                 this.mVerboseLog = sNoLog;
@@ -864,6 +881,17 @@ public class WifiVendorHal {
         }
     }
 
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:4:0x0006, B:15:0x0018] */
+    /* JADX WARNING: Missing block: B:20:0x0024, code skipped:
+            r2 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:21:0x0025, code skipped:
+            handleRemoteException(r2);
+     */
+    /* JADX WARNING: Missing block: B:23:0x0029, code skipped:
+            return false;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean registerStaIfaceCallback(IWifiStaIface iface) {
         synchronized (sLock) {
             boolean boolResult;
@@ -874,13 +902,8 @@ public class WifiVendorHal {
                 boolResult = boolResult(false);
                 return boolResult;
             } else {
-                try {
-                    boolean ok = ok(iface.registerEventCallback(this.mIWifiStaIfaceEventCallback));
-                    return ok;
-                } catch (RemoteException e) {
-                    handleRemoteException(e);
-                    return false;
-                }
+                boolean ok = ok(iface.registerEventCallback(this.mIWifiStaIfaceEventCallback));
+                return ok;
             }
         }
     }
@@ -949,7 +972,12 @@ public class WifiVendorHal {
     public boolean isHalStarted() {
         boolean z;
         synchronized (sLock) {
-            z = (this.mIWifiStaIfaces.isEmpty() && this.mIWifiApIfaces.isEmpty()) ? false : true;
+            if (this.mIWifiStaIfaces.isEmpty()) {
+                if (this.mIWifiApIfaces.isEmpty()) {
+                    z = false;
+                }
+            }
+            z = true;
         }
         return z;
     }
@@ -1814,6 +1842,7 @@ public class WifiVendorHal {
             } catch (RemoteException e) {
                 handleRemoteException(e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1834,6 +1863,7 @@ public class WifiVendorHal {
             } catch (RemoteException e) {
                 handleRemoteException(e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1856,6 +1886,7 @@ public class WifiVendorHal {
             } catch (RemoteException e) {
                 handleRemoteException(e);
                 return sNoApfCapabilities;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1898,6 +1929,7 @@ public class WifiVendorHal {
             } catch (RemoteException e) {
                 handleRemoteException(e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1921,6 +1953,7 @@ public class WifiVendorHal {
             } catch (RemoteException e) {
                 handleRemoteException(e);
                 return byteArrayResult(null);
+            } catch (Throwable th) {
             }
         }
     }
@@ -1954,6 +1987,7 @@ public class WifiVendorHal {
                 } catch (RemoteException e) {
                     handleRemoteException(e);
                     return false;
+                } catch (Throwable th) {
                 }
             }
         } catch (IllegalArgumentException e2) {
@@ -2729,6 +2763,7 @@ public class WifiVendorHal {
             } catch (RemoteException e2) {
                 handleRemoteException(e2);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }

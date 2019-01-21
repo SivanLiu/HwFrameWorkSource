@@ -1,5 +1,6 @@
 package org.bouncycastle.cert.crmf;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -14,7 +15,7 @@ class CRMFUtil {
     static void addExtension(ExtensionsGenerator extensionsGenerator, ASN1ObjectIdentifier aSN1ObjectIdentifier, boolean z, ASN1Encodable aSN1Encodable) throws CertIOException {
         try {
             extensionsGenerator.addExtension(aSN1ObjectIdentifier, z, aSN1Encodable);
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot encode extension: ");
             stringBuilder.append(e.getMessage());
@@ -27,7 +28,7 @@ class CRMFUtil {
         try {
             dEROutputStream.writeObject(aSN1Encodable);
             dEROutputStream.close();
-        } catch (Throwable e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to DER encode object: ");
             stringBuilder.append(e.getMessage());

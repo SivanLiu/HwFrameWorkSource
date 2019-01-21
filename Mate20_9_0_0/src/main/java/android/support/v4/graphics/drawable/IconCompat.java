@@ -299,7 +299,7 @@ public class IconCompat extends CustomVersionedParcelable {
                 pm = Resources.getSystem();
                 try {
                     return ResourcesCompat.getDrawable(pm, this.mInt1, context.getTheme());
-                } catch (ApplicationInfo ai2) {
+                } catch (RuntimeException ai2) {
                     Log.e(TAG, String.format("Unable to load resource 0x%08x from pkg=%s", new Object[]{Integer.valueOf(this.mInt1), this.mObj1}), ai2);
                     break;
                 }
@@ -356,27 +356,29 @@ public class IconCompat extends CustomVersionedParcelable {
                 case 2:
                     try {
                         Context context = c.createPackageContext((String) this.mObj1, 0);
-                        if (badge != null) {
-                            Drawable dr = ContextCompat.getDrawable(context, this.mInt1);
-                            if (dr.getIntrinsicWidth() <= 0 || dr.getIntrinsicHeight() <= 0) {
-                                int size = ((ActivityManager) context.getSystemService("activity")).getLauncherLargeIconSize();
-                                icon = Bitmap.createBitmap(size, size, Config.ARGB_8888);
-                            } else {
-                                icon = Bitmap.createBitmap(dr.getIntrinsicWidth(), dr.getIntrinsicHeight(), Config.ARGB_8888);
-                            }
-                            dr.setBounds(0, 0, icon.getWidth(), icon.getHeight());
-                            dr.draw(new Canvas(icon));
-                            break;
+                        if (badge == null) {
+                            outIntent.putExtra("android.intent.extra.shortcut.ICON_RESOURCE", ShortcutIconResource.fromContext(context, this.mInt1));
+                            return;
                         }
-                        outIntent.putExtra("android.intent.extra.shortcut.ICON_RESOURCE", ShortcutIconResource.fromContext(context, this.mInt1));
-                        return;
+                        Drawable dr = ContextCompat.getDrawable(context, this.mInt1);
+                        if (dr.getIntrinsicWidth() > 0) {
+                            if (dr.getIntrinsicHeight() > 0) {
+                                icon = Bitmap.createBitmap(dr.getIntrinsicWidth(), dr.getIntrinsicHeight(), Config.ARGB_8888);
+                                dr.setBounds(0, 0, icon.getWidth(), icon.getHeight());
+                                dr.draw(new Canvas(icon));
+                                break;
+                            }
+                        }
+                        int size = ((ActivityManager) context.getSystemService("activity")).getLauncherLargeIconSize();
+                        icon = Bitmap.createBitmap(size, size, Config.ARGB_8888);
+                        dr.setBounds(0, 0, icon.getWidth(), icon.getHeight());
+                        dr.draw(new Canvas(icon));
                     } catch (NameNotFoundException e) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("Can't find package ");
                         stringBuilder.append(this.mObj1);
                         throw new IllegalArgumentException(stringBuilder.toString(), e);
                     }
-                    break;
                 default:
                     throw new IllegalArgumentException("Icon type not supported for intent shortcuts");
             }

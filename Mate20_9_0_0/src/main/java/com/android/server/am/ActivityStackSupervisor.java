@@ -1341,13 +1341,13 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
 
     /* JADX WARNING: Removed duplicated region for block: B:118:0x0277 A:{Catch:{ RemoteException -> 0x04c6 }} */
     /* JADX WARNING: Removed duplicated region for block: B:117:0x0275 A:{Catch:{ RemoteException -> 0x04c6 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:121:0x0281 A:{SYNTHETIC, Splitter: B:121:0x0281} */
-    /* JADX WARNING: Removed duplicated region for block: B:126:0x0294 A:{SYNTHETIC, Splitter: B:126:0x0294} */
-    /* JADX WARNING: Removed duplicated region for block: B:155:0x034b A:{SYNTHETIC, Splitter: B:155:0x034b} */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x032e A:{SYNTHETIC, Splitter: B:147:0x032e} */
+    /* JADX WARNING: Removed duplicated region for block: B:121:0x0281 A:{SYNTHETIC, Splitter:B:121:0x0281} */
+    /* JADX WARNING: Removed duplicated region for block: B:126:0x0294 A:{SYNTHETIC, Splitter:B:126:0x0294} */
+    /* JADX WARNING: Removed duplicated region for block: B:155:0x034b A:{SYNTHETIC, Splitter:B:155:0x034b} */
+    /* JADX WARNING: Removed duplicated region for block: B:147:0x032e A:{SYNTHETIC, Splitter:B:147:0x032e} */
     /* JADX WARNING: Removed duplicated region for block: B:166:0x0370  */
     /* JADX WARNING: Removed duplicated region for block: B:159:0x035d  */
-    /* JADX WARNING: Removed duplicated region for block: B:172:0x037c A:{SYNTHETIC, Splitter: B:172:0x037c} */
+    /* JADX WARNING: Removed duplicated region for block: B:172:0x037c A:{SYNTHETIC, Splitter:B:172:0x037c} */
     /* JADX WARNING: Removed duplicated region for block: B:189:0x03ee  */
     /* JADX WARNING: Removed duplicated region for block: B:196:0x042e  */
     /* JADX WARNING: Removed duplicated region for block: B:200:0x0457  */
@@ -1376,10 +1376,10 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
     /* JADX WARNING: Removed duplicated region for block: B:245:0x0511  */
     /* JADX WARNING: Removed duplicated region for block: B:245:0x0511  */
     /* JADX WARNING: Removed duplicated region for block: B:242:0x04d4 A:{Catch:{ all -> 0x051c }} */
-    /* JADX WARNING: Missing block: B:42:0x00ab, code:
+    /* JADX WARNING: Missing block: B:42:0x00ab, code skipped:
             if (r2.appInfo.uid != r15) goto L_0x00ad;
      */
-    /* JADX WARNING: Missing block: B:65:0x0144, code:
+    /* JADX WARNING: Missing block: B:65:0x0144, code skipped:
             if (r13.getLockTaskModeState() != 1) goto L_0x0149;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1388,27 +1388,28 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
         ProcessRecord processRecord;
         TaskRecord taskRecord;
         ActivityRecord activityRecord;
+        ActivityStack activityStack;
         RemoteException e;
         LockTaskController lockTaskController;
         int i;
         ActivityStack stack;
+        String str;
         ActivityRecord activityRecord2 = r;
         ProcessRecord processRecord2 = app;
         boolean z = andResume;
-        String str;
+        String str2;
         StringBuilder stringBuilder;
         if (allPausedActivitiesComplete()) {
             TaskRecord task = r.getTask();
             StringBuilder stringBuilder2;
             if (task == null) {
-                str = ActivityManagerService.TAG;
+                str2 = ActivityManagerService.TAG;
                 stringBuilder2 = new StringBuilder();
                 stringBuilder2.append(" null task for ActivityRecord: ");
                 stringBuilder2.append(activityRecord2);
-                Slog.e(str, stringBuilder2.toString());
+                Slog.e(str2, stringBuilder2.toString());
                 return false;
             }
-            ActivityStack activityStack;
             ActivityStack stack2 = task.getStack();
             beginDeferResume();
             activityRecord2.startFreezingScreenLocked(processRecord2, 0);
@@ -1435,7 +1436,7 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                 int applicationInfoUid = activityRecord2.info.applicationInfo != null ? activityRecord2.info.applicationInfo.uid : -1;
                 if (activityRecord2.userId == processRecord2.userId) {
                 }
-                str = ActivityManagerService.TAG;
+                str2 = ActivityManagerService.TAG;
                 StringBuilder stringBuilder3 = new StringBuilder();
                 stringBuilder3.append("User ID for activity changing for ");
                 stringBuilder3.append(activityRecord2);
@@ -1447,16 +1448,16 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                 stringBuilder3.append(activityRecord2.app);
                 stringBuilder3.append(" new=");
                 stringBuilder3.append(processRecord2);
-                Slog.wtf(str, stringBuilder3.toString());
+                Slog.wtf(str2, stringBuilder3.toString());
                 processRecord2.waitingToKill = null;
                 activityRecord2.launchCount++;
                 activityRecord2.lastLaunchTime = SystemClock.uptimeMillis();
                 if (ActivityManagerDebugConfig.DEBUG_ALL) {
-                    str = ActivityManagerService.TAG;
+                    str2 = ActivityManagerService.TAG;
                     StringBuilder stringBuilder4 = new StringBuilder();
                     stringBuilder4.append("Launching: ");
                     stringBuilder4.append(activityRecord2);
-                    Slog.v(str, stringBuilder4.toString());
+                    Slog.v(str2, stringBuilder4.toString());
                 }
                 if (processRecord2.activities.indexOf(activityRecord2) < 0) {
                     processRecord2.activities.add(activityRecord2);
@@ -1468,7 +1469,6 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                     if (task.mLockTaskAuth != 4) {
                         if (task.mLockTaskAuth == 3) {
                         }
-                        String str2;
                         if (processRecord2.thread == null) {
                             ProfilerInfo profilerInfo2;
                             boolean forceHardAccel;
@@ -1502,7 +1502,7 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                             List results = arrayList;
                             List newIntents = arrayList2;
                             if (ActivityManagerDebugConfig.DEBUG_SWITCH) {
-                                str = ActivityManagerService.TAG;
+                                str2 = ActivityManagerService.TAG;
                                 StringBuilder stringBuilder5 = new StringBuilder();
                                 stringBuilder5.append("Launching: ");
                                 stringBuilder5.append(activityRecord2);
@@ -1514,7 +1514,7 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                                 stringBuilder5.append(newIntents);
                                 stringBuilder5.append(" andResume=");
                                 stringBuilder5.append(z);
-                                Slog.v(str, stringBuilder5.toString());
+                                Slog.v(str2, stringBuilder5.toString());
                             }
                             EventLog.writeEvent(EventLogTags.AM_RESTART_ACTIVITY, new Object[]{Integer.valueOf(activityRecord2.userId), Integer.valueOf(System.identityHashCode(r)), Integer.valueOf(task.taskId), activityRecord2.shortComponentName});
                             if (r.isActivityTypeHome()) {
@@ -1567,7 +1567,21 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                                             activityRecord = activityRecord2;
                                             activityStack = stack2;
                                             if (activityRecord.launchFailed) {
+                                                str = ActivityManagerService.TAG;
+                                                stringBuilder2 = new StringBuilder();
+                                                stringBuilder2.append("Second failure launching ");
+                                                stringBuilder2.append(activityRecord.intent.getComponent().flattenToShortString());
+                                                stringBuilder2.append(", giving up");
+                                                Slog.e(str, stringBuilder2.toString(), e);
+                                                this.mService.appDiedLocked(processRecord);
+                                                activityStack.requestFinishActivityLocked(activityRecord.appToken, 0, null, "2nd-crash", false);
+                                                endDeferResume();
+                                                return false;
                                             }
+                                            LockTaskController task2 = lockTaskController;
+                                            activityRecord.launchFailed = true;
+                                            processRecord.activities.remove(activityRecord);
+                                            throw e;
                                         }
                                         try {
                                             try {
@@ -1616,13 +1630,13 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                                                             try {
                                                                 if (this.mService.mHasHeavyWeightFeature && processRecord.processName.equals(processRecord.info.packageName)) {
                                                                     if (!(this.mService.mHeavyWeightProcess == null || this.mService.mHeavyWeightProcess == processRecord)) {
-                                                                        str2 = ActivityManagerService.TAG;
+                                                                        str = ActivityManagerService.TAG;
                                                                         stringBuilder2 = new StringBuilder();
                                                                         stringBuilder2.append("Starting new heavy weight process ");
                                                                         stringBuilder2.append(processRecord);
                                                                         stringBuilder2.append(" when already running ");
                                                                         stringBuilder2.append(this.mService.mHeavyWeightProcess);
-                                                                        Slog.w(str2, stringBuilder2.toString());
+                                                                        Slog.w(str, stringBuilder2.toString());
                                                                     }
                                                                     this.mService.mHeavyWeightProcess = processRecord;
                                                                     Message msg = this.mService.mHandler.obtainMessage(24);
@@ -1645,21 +1659,21 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                                                         activityRecord.launchFailed = false;
                                                         activityStack = stack;
                                                         if (activityStack.updateLRUListLocked(activityRecord)) {
-                                                            str = ActivityManagerService.TAG;
+                                                            str2 = ActivityManagerService.TAG;
                                                             stringBuilder = new StringBuilder();
                                                             stringBuilder.append("Activity ");
                                                             stringBuilder.append(activityRecord);
                                                             stringBuilder.append(" being launched, but already in LRU list");
-                                                            Slog.w(str, stringBuilder.toString());
+                                                            Slog.w(str2, stringBuilder.toString());
                                                         }
                                                         if (z || !readyToResume()) {
                                                             if (ActivityManagerDebugConfig.DEBUG_STATES) {
-                                                                str = ActivityManagerService.TAG;
+                                                                str2 = ActivityManagerService.TAG;
                                                                 stringBuilder = new StringBuilder();
                                                                 stringBuilder.append("Moving to PAUSED: ");
                                                                 stringBuilder.append(activityRecord);
                                                                 stringBuilder.append(" (starting in paused state)");
-                                                                Slog.v(str, stringBuilder.toString());
+                                                                Slog.v(str2, stringBuilder.toString());
                                                             }
                                                             activityRecord.setState(ActivityState.PAUSED, "realStartActivityLocked");
                                                         } else {
@@ -1818,21 +1832,7 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                         } catch (RemoteException e14) {
                             e = e14;
                             if (activityRecord.launchFailed) {
-                                str2 = ActivityManagerService.TAG;
-                                stringBuilder2 = new StringBuilder();
-                                stringBuilder2.append("Second failure launching ");
-                                stringBuilder2.append(activityRecord.intent.getComponent().flattenToShortString());
-                                stringBuilder2.append(", giving up");
-                                Slog.e(str2, stringBuilder2.toString(), e);
-                                this.mService.appDiedLocked(processRecord);
-                                activityStack.requestFinishActivityLocked(activityRecord.appToken, 0, null, "2nd-crash", false);
-                                endDeferResume();
-                                return false;
                             }
-                            LockTaskController task2 = lockTaskController;
-                            activityRecord.launchFailed = true;
-                            processRecord.activities.remove(activityRecord);
-                            throw e;
                         }
                     }
                 }
@@ -1862,12 +1862,12 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
             }
         }
         if (ActivityManagerDebugConfig.DEBUG_SWITCH || ActivityManagerDebugConfig.DEBUG_PAUSE || ActivityManagerDebugConfig.DEBUG_STATES) {
-            str = ActivityManagerService.TAG;
+            str2 = ActivityManagerService.TAG;
             stringBuilder = new StringBuilder();
             stringBuilder.append("realStartActivityLocked: Skipping start of r=");
             stringBuilder.append(activityRecord2);
             stringBuilder.append(" some activities pausing...");
-            Slog.v(str, stringBuilder.toString());
+            Slog.v(str2, stringBuilder.toString());
         }
         return false;
         processRecord = app;
@@ -1917,12 +1917,12 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
 
     /* JADX WARNING: Removed duplicated region for block: B:25:0x00b0  */
     /* JADX WARNING: Removed duplicated region for block: B:32:0x00c8  */
-    /* JADX WARNING: Removed duplicated region for block: B:39:0x00ec A:{SYNTHETIC, Splitter: B:39:0x00ec} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00ec A:{SYNTHETIC, Splitter:B:39:0x00ec} */
     /* JADX WARNING: Removed duplicated region for block: B:48:0x015c  */
     /* JADX WARNING: Removed duplicated region for block: B:46:0x0135  */
     /* JADX WARNING: Removed duplicated region for block: B:25:0x00b0  */
     /* JADX WARNING: Removed duplicated region for block: B:32:0x00c8  */
-    /* JADX WARNING: Removed duplicated region for block: B:39:0x00ec A:{SYNTHETIC, Splitter: B:39:0x00ec} */
+    /* JADX WARNING: Removed duplicated region for block: B:39:0x00ec A:{SYNTHETIC, Splitter:B:39:0x00ec} */
     /* JADX WARNING: Removed duplicated region for block: B:46:0x0135  */
     /* JADX WARNING: Removed duplicated region for block: B:48:0x015c  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3077,6 +3077,9 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
         resizeDockedStackLocked(dockedBounds, tempDockedTaskBounds, tempDockedTaskInsetBounds, tempOtherTaskBounds, tempOtherTaskInsetBounds, preserveWindows, false);
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:53:0x00fa  */
+    /* JADX WARNING: Removed duplicated region for block: B:49:0x00f2  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void resizeDockedStackLocked(Rect dockedBounds, Rect tempDockedTaskBounds, Rect tempDockedTaskInsetBounds, Rect tempOtherTaskBounds, Rect tempOtherTaskInsetBounds, boolean preserveWindows, boolean deferResume) {
         Throwable th;
         Rect rect = dockedBounds;
@@ -3102,54 +3105,68 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                 ActivityRecord r = stack.topRunningActivityLocked();
                 try {
                     stack.resize(rect, tempDockedTaskBounds, tempDockedTaskInsetBounds);
-                    if (stack.getWindowingMode() != 1 && (rect != null || stack.isAttached())) {
-                        ActivityDisplay display = getDefaultDisplay();
-                        Rect otherTaskRect = new Rect();
-                        int i = display.getChildCount() - 1;
-                        while (true) {
-                            int i2 = i;
-                            if (i2 < 0) {
-                                break;
-                            }
-                            int i3;
-                            Rect otherTaskRect2;
-                            ActivityDisplay display2;
-                            ActivityStack current = display.getChildAt(i2);
-                            if (current.getWindowingMode() != 3 && current.affectedBySplitScreenResize() && (!this.mDockedStackResizing || current.isTopActivityVisible())) {
-                                current.setWindowingMode(4);
-                                Rect rect2 = tempOtherTaskBounds;
-                                current.getStackDockedModeBounds(rect2, this.tempRect, otherTaskRect, true);
-                                Rect rect3 = !this.tempRect.isEmpty() ? this.tempRect : null;
-                                Rect rect4 = !otherTaskRect.isEmpty() ? otherTaskRect : rect2;
-                                ActivityStack activityStack = current;
-                                rect2 = rect3;
-                                Rect rect5 = rect4;
+                    if (stack.getWindowingMode() != 1) {
+                        if (rect != null || stack.isAttached()) {
+                            ActivityDisplay display = getDefaultDisplay();
+                            Rect otherTaskRect = new Rect();
+                            int i = display.getChildCount() - 1;
+                            while (true) {
+                                int i2 = i;
+                                if (i2 < 0) {
+                                    break;
+                                }
+                                int i3;
+                                Rect otherTaskRect2;
+                                ActivityDisplay display2;
+                                Rect rect2;
+                                ActivityStack current = display.getChildAt(i2);
+                                if (current.getWindowingMode() != 3) {
+                                    if (current.affectedBySplitScreenResize()) {
+                                        if (!this.mDockedStackResizing || current.isTopActivityVisible()) {
+                                            current.setWindowingMode(4);
+                                            Rect rect3 = tempOtherTaskBounds;
+                                            current.getStackDockedModeBounds(rect3, this.tempRect, otherTaskRect, true);
+                                            Rect rect4 = !this.tempRect.isEmpty() ? this.tempRect : null;
+                                            Rect rect5 = !otherTaskRect.isEmpty() ? otherTaskRect : rect3;
+                                            ActivityStack activityStack = current;
+                                            rect3 = rect4;
+                                            Rect rect6 = rect5;
+                                            i3 = i2;
+                                            otherTaskRect2 = otherTaskRect;
+                                            display2 = display;
+                                            resizeStackLocked(activityStack, rect3, rect6, tempOtherTaskInsetBounds, preserveWindows, true, deferResume);
+                                            i = i3 - 1;
+                                            rect2 = tempDockedTaskInsetBounds;
+                                            otherTaskRect = otherTaskRect2;
+                                            display = display2;
+                                        }
+                                    }
+                                }
                                 i3 = i2;
                                 otherTaskRect2 = otherTaskRect;
                                 display2 = display;
-                                resizeStackLocked(activityStack, rect2, rect5, tempOtherTaskInsetBounds, preserveWindows, true, deferResume);
+                                i = i3 - 1;
+                                rect2 = tempDockedTaskInsetBounds;
+                                otherTaskRect = otherTaskRect2;
+                                display = display2;
+                            }
+                            if (deferResume) {
+                                try {
+                                    stack.ensureVisibleActivitiesConfigurationLocked(r, preserveWindows);
+                                } catch (Throwable th2) {
+                                    th = th2;
+                                }
                             } else {
-                                i3 = i2;
-                                otherTaskRect2 = otherTaskRect;
-                                display2 = display;
+                                z = preserveWindows;
                             }
-                            i = i3 - 1;
-                            Rect rect6 = tempDockedTaskInsetBounds;
-                            otherTaskRect = otherTaskRect2;
-                            display = display2;
+                            this.mAllowDockedStackResize = true;
+                            this.mWindowManager.continueSurfaceLayout();
+                            Trace.traceEnd(64);
                         }
-                    } else {
-                        moveTasksToFullscreenStackLocked(stack, true);
-                        r = null;
                     }
+                    moveTasksToFullscreenStackLocked(stack, true);
+                    r = null;
                     if (deferResume) {
-                        z = preserveWindows;
-                    } else {
-                        try {
-                            stack.ensureVisibleActivitiesConfigurationLocked(r, preserveWindows);
-                        } catch (Throwable th2) {
-                            th = th2;
-                        }
                     }
                     this.mAllowDockedStackResize = true;
                     this.mWindowManager.continueSurfaceLayout();
@@ -3261,7 +3278,7 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                         public void run() {
                             Context context = ActivityStackSupervisor.this.mService.mUiContext;
                             if (context != null) {
-                                Toast toast = Toast.makeText(context, context.getString(33686100), 0);
+                                Toast toast = Toast.makeText(context, context.getString(33686102), 0);
                                 LayoutParams windowParams = toast.getWindowParams();
                                 windowParams.privateFlags |= 16;
                                 toast.show();
@@ -3413,33 +3430,21 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
             }
             currentStack.removeTask(task, "restoreRecentTaskLocked", 1);
         }
-        String str;
-        StringBuilder stringBuilder;
-        if (getFocusedStack() == null || getFocusedStack().getWindowingMode() != 1) {
-            stack.addTask(task, onTop, "restoreRecentTask");
-            task.createWindowContainer(onTop, true);
-            if (ActivityManagerDebugConfig.DEBUG_RECENTS) {
-                str = ActivityManagerService.TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Added restored task=");
-                stringBuilder.append(task);
-                stringBuilder.append(" to stack=");
-                stringBuilder.append(stack);
-                Slog.v(str, stringBuilder.toString());
-            }
-            ArrayList<ActivityRecord> activities = task.mActivities;
-            for (int activityNdx = activities.size() - 1; activityNdx >= 0; activityNdx--) {
-                ((ActivityRecord) activities.get(activityNdx)).createWindowContainer(((ActivityRecord) activities.get(activityNdx)).info.navigationHide);
-            }
-            return true;
+        stack.addTask(task, onTop, "restoreRecentTask");
+        task.createWindowContainer(onTop, true);
+        if (ActivityManagerDebugConfig.DEBUG_RECENTS) {
+            String str = ActivityManagerService.TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Added restored task=");
+            stringBuilder.append(task);
+            stringBuilder.append(" to stack=");
+            stringBuilder.append(stack);
+            Slog.v(str, stringBuilder.toString());
         }
-        str = ActivityManagerService.TAG;
-        stringBuilder = new StringBuilder();
-        stringBuilder.append("Skip restoring recent task=");
-        stringBuilder.append(task);
-        stringBuilder.append(" to stack=");
-        stringBuilder.append(stack);
-        Slog.v(str, stringBuilder.toString());
+        ArrayList<ActivityRecord> activities = task.mActivities;
+        for (int activityNdx = activities.size() - 1; activityNdx >= 0; activityNdx--) {
+            ((ActivityRecord) activities.get(activityNdx)).createWindowContainer(((ActivityRecord) activities.get(activityNdx)).info.navigationHide);
+        }
         return true;
     }
 
@@ -3854,6 +3859,7 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                             stack.awakeFromSleepingLocked();
                             if (isFocusedStack(stack) && !getKeyguardController().isKeyguardOrAodShowing(display.mDisplayId)) {
                                 this.mActivityLaunchTrack = "outofsleep";
+                                this.inResumeTopActivity = false;
                                 resumeFocusedStackTopActivityLocked();
                             } else if (stack.inMultiWindowMode() && (stack.getWindowingMode() == 3 || stack.getWindowingMode() == 4)) {
                                 resumeAppLockActivityIfNeeded(stack, null);
@@ -4467,10 +4473,9 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
     static boolean dumpHistoryList(FileDescriptor fd, PrintWriter pw, List<ActivityRecord> list, String prefix, String label, boolean complete, boolean brief, boolean client, String dumpPackage, boolean needNL, String header, TaskRecord lastTask) {
         TaskRecord lastTask2;
         FileDescriptor lastTask3;
-        TransferPipe tp;
+        Throwable th;
         IOException e;
         StringBuilder stringBuilder;
-        Throwable th;
         PrintWriter printWriter = pw;
         String str = prefix;
         String str2 = dumpPackage;
@@ -4544,55 +4549,62 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                 } else {
                     pw.flush();
                     try {
-                        TransferPipe tp2 = new TransferPipe();
+                        TransferPipe tp = new TransferPipe();
+                        TransferPipe tp2;
                         try {
-                            tp = tp2;
+                            tp2 = tp;
                             try {
-                                r.app.thread.dumpActivity(tp.getWriteFd(), r.appToken, innerPrefix, args);
+                                r.app.thread.dumpActivity(tp2.getWriteFd(), r.appToken, innerPrefix, args);
                                 lastTask2 = lastTask4;
-                                try {
-                                    tp.go(fd, 2000);
-                                    try {
-                                        tp.kill();
-                                    } catch (IOException e2) {
-                                        e = e2;
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append(innerPrefix);
-                                        stringBuilder.append("Failure while dumping the activity: ");
-                                        stringBuilder.append(e);
-                                        printWriter.println(stringBuilder.toString());
-                                        needNL2 = true;
-                                        header2 = header3;
-                                        i--;
-                                        lastTask4 = lastTask2;
-                                        str = prefix;
-                                        str2 = dumpPackage;
-                                    } catch (RemoteException e3) {
-                                        stringBuilder = new StringBuilder();
-                                        stringBuilder.append(innerPrefix);
-                                        stringBuilder.append("Got a RemoteException while dumping the activity");
-                                        printWriter.println(stringBuilder.toString());
-                                        needNL2 = true;
-                                        header2 = header3;
-                                        i--;
-                                        lastTask4 = lastTask2;
-                                        str = prefix;
-                                        str2 = dumpPackage;
-                                    }
-                                    needNL2 = true;
-                                } catch (Throwable th2) {
-                                    th = th2;
-                                }
-                            } catch (Throwable th3) {
-                                th = th3;
+                            } catch (Throwable th2) {
+                                th = th2;
                                 lastTask2 = lastTask4;
                                 lastTask3 = fd;
+                                tp2.kill();
+                                throw th;
+                            }
+                            try {
+                                tp2.go(fd, 2000);
+                                try {
+                                    tp2.kill();
+                                } catch (IOException e2) {
+                                    e = e2;
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append(innerPrefix);
+                                    stringBuilder.append("Failure while dumping the activity: ");
+                                    stringBuilder.append(e);
+                                    printWriter.println(stringBuilder.toString());
+                                    needNL2 = true;
+                                    header2 = header3;
+                                    i--;
+                                    lastTask4 = lastTask2;
+                                    str = prefix;
+                                    str2 = dumpPackage;
+                                } catch (RemoteException e3) {
+                                    stringBuilder = new StringBuilder();
+                                    stringBuilder.append(innerPrefix);
+                                    stringBuilder.append("Got a RemoteException while dumping the activity");
+                                    printWriter.println(stringBuilder.toString());
+                                    needNL2 = true;
+                                    header2 = header3;
+                                    i--;
+                                    lastTask4 = lastTask2;
+                                    str = prefix;
+                                    str2 = dumpPackage;
+                                }
+                                needNL2 = true;
+                            } catch (Throwable th3) {
+                                th = th3;
+                                tp2.kill();
+                                throw th;
                             }
                         } catch (Throwable th4) {
                             th = th4;
                             lastTask2 = lastTask4;
-                            tp = tp2;
+                            tp2 = tp;
                             lastTask3 = fd;
+                            tp2.kill();
+                            throw th;
                         }
                     } catch (IOException e4) {
                         e = e4;
@@ -4638,8 +4650,6 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
         lastTask2 = lastTask4;
         lastTask3 = fd;
         return printed;
-        tp.kill();
-        throw th;
     }
 
     void scheduleIdleTimeoutLocked(ActivityRecord next) {
@@ -5338,8 +5348,12 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
                 throw new IllegalArgumentException(stringBuilder2.toString());
             } catch (Throwable th9) {
                 th = th9;
-                setResizingDuringAnimation(task);
-                if (task.getStack().getDisplay().getTopStackInWindowingMode(topSecondaryStack).isActivityTypeHome()) {
+                if (windowingMode == i && task != null) {
+                    setResizingDuringAnimation(task);
+                    if (task.getStack().getDisplay().getTopStackInWindowingMode(topSecondaryStack).isActivityTypeHome()) {
+                        moveHomeStackToFront("startActivityFromRecents: homeVisibleInSplitScreen");
+                        this.mWindowManager.checkSplitScreenMinimizedChanged(z);
+                    }
                 }
                 this.mWindowManager.continueSurfaceLayout();
                 throw th;
@@ -5352,12 +5366,8 @@ public class ActivityStackSupervisor extends AbsActivityStackSupervisor implemen
             i3 = activityType2;
             activityOptions2 = activityOptions;
             z = false;
-            if (windowingMode == i && task != null) {
-                setResizingDuringAnimation(task);
-                if (task.getStack().getDisplay().getTopStackInWindowingMode(topSecondaryStack).isActivityTypeHome()) {
-                    moveHomeStackToFront("startActivityFromRecents: homeVisibleInSplitScreen");
-                    this.mWindowManager.checkSplitScreenMinimizedChanged(z);
-                }
+            setResizingDuringAnimation(task);
+            if (task.getStack().getDisplay().getTopStackInWindowingMode(topSecondaryStack).isActivityTypeHome()) {
             }
             this.mWindowManager.continueSurfaceLayout();
             throw th;

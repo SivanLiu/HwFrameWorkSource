@@ -58,10 +58,10 @@ public class SignatureSpi extends java.security.SignatureSpi implements PKCSObje
         this.digest.doFinal(bArr, 0);
         try {
             BigInteger[] generateSignature = this.signer.generateSignature(bArr);
-            Object toByteArray = generateSignature[0].toByteArray();
-            Object toByteArray2 = generateSignature[1].toByteArray();
-            byte[] bArr2 = new byte[((toByteArray.length > toByteArray2.length ? toByteArray.length : toByteArray2.length) * 2)];
-            System.arraycopy(toByteArray2, 0, bArr2, (bArr2.length / 2) - toByteArray2.length, toByteArray2.length);
+            byte[] toByteArray = generateSignature[0].toByteArray();
+            bArr = generateSignature[1].toByteArray();
+            byte[] bArr2 = new byte[((toByteArray.length > bArr.length ? toByteArray.length : bArr.length) * 2)];
+            System.arraycopy(bArr, 0, bArr2, (bArr2.length / 2) - bArr.length, bArr.length);
             System.arraycopy(toByteArray, 0, bArr2, bArr2.length - toByteArray.length, toByteArray.length);
             return new DEROctetString(bArr2).getEncoded();
         } catch (Exception e) {
@@ -81,11 +81,11 @@ public class SignatureSpi extends java.security.SignatureSpi implements PKCSObje
         byte[] bArr2 = new byte[this.digest.getDigestSize()];
         this.digest.doFinal(bArr2, 0);
         try {
-            Object octets = ((ASN1OctetString) ASN1Primitive.fromByteArray(bArr)).getOctets();
-            Object obj = new byte[(octets.length / 2)];
-            System.arraycopy(octets, 0, new byte[(octets.length / 2)], 0, octets.length / 2);
-            System.arraycopy(octets, octets.length / 2, obj, 0, octets.length / 2);
-            BigInteger[] bigIntegerArr = new BigInteger[]{new BigInteger(1, obj), new BigInteger(1, r4)};
+            bArr = ((ASN1OctetString) ASN1Primitive.fromByteArray(bArr)).getOctets();
+            byte[] bArr3 = new byte[(bArr.length / 2)];
+            System.arraycopy(bArr, 0, new byte[(bArr.length / 2)], 0, bArr.length / 2);
+            System.arraycopy(bArr, bArr.length / 2, bArr3, 0, bArr.length / 2);
+            BigInteger[] bigIntegerArr = new BigInteger[]{new BigInteger(1, bArr3), new BigInteger(1, r4)};
             return this.signer.verifySignature(bArr2, bigIntegerArr[0], bigIntegerArr[1]);
         } catch (Exception e) {
             throw new SignatureException("error decoding signature bytes.");

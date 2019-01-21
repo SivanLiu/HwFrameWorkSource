@@ -21,11 +21,11 @@ public class WinternitzOTSignature {
         this.checksumsize = getLog((this.messagesize << i) + 1);
         this.keysize = this.messagesize + ((int) Math.ceil(((double) this.checksumsize) / d));
         this.privateKeyOTS = (byte[][]) Array.newInstance(byte.class, new int[]{this.keysize, this.mdsize});
-        Object obj = new byte[this.mdsize];
+        byte[] bArr2 = new byte[this.mdsize];
         int i2 = 0;
-        System.arraycopy(bArr, 0, obj, 0, obj.length);
+        System.arraycopy(bArr, 0, bArr2, 0, bArr2.length);
         while (i2 < this.keysize) {
-            this.privateKeyOTS[i2] = this.gmssRandom.nextSeed(obj);
+            this.privateKeyOTS[i2] = this.gmssRandom.nextSeed(bArr2);
             i2++;
         }
     }
@@ -45,30 +45,30 @@ public class WinternitzOTSignature {
     }
 
     public byte[] getPublicKey() {
-        Object obj = new byte[(this.keysize * this.mdsize)];
-        byte[] bArr = new byte[this.mdsize];
+        byte[] bArr = new byte[(this.keysize * this.mdsize)];
+        byte[] bArr2 = new byte[this.mdsize];
         int i = 1 << this.w;
         for (int i2 = 0; i2 < this.keysize; i2++) {
             this.messDigestOTS.update(this.privateKeyOTS[i2], 0, this.privateKeyOTS[i2].length);
-            Object obj2 = new byte[this.messDigestOTS.getDigestSize()];
-            this.messDigestOTS.doFinal(obj2, 0);
+            byte[] bArr3 = new byte[this.messDigestOTS.getDigestSize()];
+            this.messDigestOTS.doFinal(bArr3, 0);
             for (int i3 = 2; i3 < i; i3++) {
-                this.messDigestOTS.update(obj2, 0, obj2.length);
-                obj2 = new byte[this.messDigestOTS.getDigestSize()];
-                this.messDigestOTS.doFinal(obj2, 0);
+                this.messDigestOTS.update(bArr3, 0, bArr3.length);
+                bArr3 = new byte[this.messDigestOTS.getDigestSize()];
+                this.messDigestOTS.doFinal(bArr3, 0);
             }
-            System.arraycopy(obj2, 0, obj, this.mdsize * i2, this.mdsize);
+            System.arraycopy(bArr3, 0, bArr, this.mdsize * i2, this.mdsize);
         }
-        this.messDigestOTS.update(obj, 0, obj.length);
-        byte[] bArr2 = new byte[this.messDigestOTS.getDigestSize()];
-        this.messDigestOTS.doFinal(bArr2, 0);
-        return bArr2;
+        this.messDigestOTS.update(bArr, 0, bArr.length);
+        bArr = new byte[this.messDigestOTS.getDigestSize()];
+        this.messDigestOTS.doFinal(bArr, 0);
+        return bArr;
     }
 
     public byte[] getSignature(byte[] bArr) {
         byte[] bArr2 = bArr;
-        Object obj = new byte[(this.keysize * this.mdsize)];
-        byte[] bArr3 = new byte[this.mdsize];
+        byte[] bArr3 = new byte[(this.keysize * this.mdsize)];
+        byte[] bArr4 = new byte[this.mdsize];
         this.messDigestOTS.update(bArr2, 0, bArr2.length);
         bArr2 = new byte[this.messDigestOTS.getDigestSize()];
         this.messDigestOTS.doFinal(bArr2, 0);
@@ -77,7 +77,7 @@ public class WinternitzOTSignature {
         int i3;
         int i4;
         int i5;
-        Object obj2;
+        Object obj;
         int i6;
         int i7;
         int i8;
@@ -88,40 +88,40 @@ public class WinternitzOTSignature {
             i2 = (1 << this.w) - 1;
             i3 = 0;
             i4 = i3;
-            Object obj3 = new byte[this.mdsize];
+            Object obj2 = new byte[this.mdsize];
             i5 = i4;
             while (i5 < bArr2.length) {
-                obj2 = obj3;
+                obj = obj2;
                 i6 = i4;
                 i4 = i3;
                 for (i3 = 0; i3 < i; i3++) {
                     i7 = bArr2[i5] & i2;
                     i4 += i7;
-                    System.arraycopy(this.privateKeyOTS[i6], 0, obj2, 0, this.mdsize);
+                    System.arraycopy(this.privateKeyOTS[i6], 0, obj, 0, this.mdsize);
                     while (i7 > 0) {
-                        this.messDigestOTS.update(obj2, 0, obj2.length);
-                        obj2 = new byte[this.messDigestOTS.getDigestSize()];
-                        this.messDigestOTS.doFinal(obj2, 0);
+                        this.messDigestOTS.update(obj, 0, obj.length);
+                        obj = new byte[this.messDigestOTS.getDigestSize()];
+                        this.messDigestOTS.doFinal(obj, 0);
                         i7--;
                     }
-                    System.arraycopy(obj2, 0, obj, this.mdsize * i6, this.mdsize);
+                    System.arraycopy(obj, 0, bArr3, this.mdsize * i6, this.mdsize);
                     bArr2[i5] = (byte) (bArr2[i5] >>> this.w);
                     i6++;
                 }
                 i5++;
                 i3 = i4;
                 i4 = i6;
-                obj3 = obj2;
+                obj2 = obj;
             }
             i = (this.messagesize << this.w) - i3;
             for (i8 = 0; i8 < this.checksumsize; i8 += this.w) {
-                System.arraycopy(this.privateKeyOTS[i4], 0, obj3, 0, this.mdsize);
+                System.arraycopy(this.privateKeyOTS[i4], 0, obj2, 0, this.mdsize);
                 for (i5 = i & i2; i5 > 0; i5--) {
-                    this.messDigestOTS.update(obj3, 0, obj3.length);
-                    obj3 = new byte[this.messDigestOTS.getDigestSize()];
-                    this.messDigestOTS.doFinal(obj3, 0);
+                    this.messDigestOTS.update(obj2, 0, obj2.length);
+                    obj2 = new byte[this.messDigestOTS.getDigestSize()];
+                    this.messDigestOTS.doFinal(obj2, 0);
                 }
-                System.arraycopy(obj3, 0, obj, this.mdsize * i4, this.mdsize);
+                System.arraycopy(obj2, 0, bArr3, this.mdsize * i4, this.mdsize);
                 i >>>= this.w;
                 i4++;
             }
@@ -131,7 +131,7 @@ public class WinternitzOTSignature {
             i7 = 0;
             int i11 = i7;
             i9 = i11;
-            Object obj4 = new byte[this.mdsize];
+            Object obj3 = new byte[this.mdsize];
             int i12 = i9;
             while (i12 < i2) {
                 int i13 = i7;
@@ -145,14 +145,14 @@ public class WinternitzOTSignature {
                     i10 = i3;
                     i5 = (int) (((long) i6) & j);
                     i9 += i5;
-                    System.arraycopy(this.privateKeyOTS[i11], 0, obj4, 0, this.mdsize);
+                    System.arraycopy(this.privateKeyOTS[i11], 0, obj3, 0, this.mdsize);
                     while (i5 > 0) {
-                        this.messDigestOTS.update(obj4, 0, obj4.length);
-                        obj4 = new byte[this.messDigestOTS.getDigestSize()];
-                        this.messDigestOTS.doFinal(obj4, 0);
+                        this.messDigestOTS.update(obj3, 0, obj3.length);
+                        obj3 = new byte[this.messDigestOTS.getDigestSize()];
+                        this.messDigestOTS.doFinal(obj3, 0);
                         i5--;
                     }
-                    System.arraycopy(obj4, 0, obj, this.mdsize * i11, this.mdsize);
+                    System.arraycopy(obj3, 0, bArr3, this.mdsize * i11, this.mdsize);
                     j >>>= this.w;
                     i11++;
                     i3 = i10 + 1;
@@ -170,26 +170,26 @@ public class WinternitzOTSignature {
             for (i2 = 0; i2 < i8; i2 += this.w) {
                 i = (int) (j2 & ((long) i6));
                 i9 += i;
-                System.arraycopy(this.privateKeyOTS[i11], 0, obj4, 0, this.mdsize);
+                System.arraycopy(this.privateKeyOTS[i11], 0, obj3, 0, this.mdsize);
                 while (i > 0) {
-                    this.messDigestOTS.update(obj4, 0, obj4.length);
-                    obj4 = new byte[this.messDigestOTS.getDigestSize()];
-                    this.messDigestOTS.doFinal(obj4, 0);
+                    this.messDigestOTS.update(obj3, 0, obj3.length);
+                    obj3 = new byte[this.messDigestOTS.getDigestSize()];
+                    this.messDigestOTS.doFinal(obj3, 0);
                     i--;
                 }
-                System.arraycopy(obj4, 0, obj, this.mdsize * i11, this.mdsize);
+                System.arraycopy(obj3, 0, bArr3, this.mdsize * i11, this.mdsize);
                 j2 >>>= this.w;
                 i11++;
             }
             i2 = (this.messagesize << this.w) - i9;
             for (i8 = 0; i8 < this.checksumsize; i8 += this.w) {
-                System.arraycopy(this.privateKeyOTS[i11], 0, obj4, 0, this.mdsize);
+                System.arraycopy(this.privateKeyOTS[i11], 0, obj3, 0, this.mdsize);
                 for (i = i2 & i6; i > 0; i--) {
-                    this.messDigestOTS.update(obj4, 0, obj4.length);
-                    obj4 = new byte[this.messDigestOTS.getDigestSize()];
-                    this.messDigestOTS.doFinal(obj4, 0);
+                    this.messDigestOTS.update(obj3, 0, obj3.length);
+                    obj3 = new byte[this.messDigestOTS.getDigestSize()];
+                    this.messDigestOTS.doFinal(obj3, 0);
                 }
-                System.arraycopy(obj4, 0, obj, this.mdsize * i11, this.mdsize);
+                System.arraycopy(obj3, 0, bArr3, this.mdsize * i11, this.mdsize);
                 i2 >>>= this.w;
                 i11++;
             }
@@ -199,7 +199,7 @@ public class WinternitzOTSignature {
             i5 = (1 << this.w) - 1;
             i4 = 0;
             i6 = i4;
-            obj2 = new byte[this.mdsize];
+            obj = new byte[this.mdsize];
             i3 = i6;
             while (i3 <= i2) {
                 int i14 = i3 % 8;
@@ -212,14 +212,14 @@ public class WinternitzOTSignature {
                 }
                 j3 = (j4 >>> i14) & ((long) i5);
                 i4 = (int) (((long) i4) + j3);
-                System.arraycopy(this.privateKeyOTS[i6], 0, obj2, 0, this.mdsize);
+                System.arraycopy(this.privateKeyOTS[i6], 0, obj, 0, this.mdsize);
                 while (j3 > 0) {
-                    this.messDigestOTS.update(obj2, 0, obj2.length);
-                    obj2 = new byte[this.messDigestOTS.getDigestSize()];
-                    this.messDigestOTS.doFinal(obj2, 0);
+                    this.messDigestOTS.update(obj, 0, obj.length);
+                    obj = new byte[this.messDigestOTS.getDigestSize()];
+                    this.messDigestOTS.doFinal(obj, 0);
                     j3--;
                 }
-                System.arraycopy(obj2, 0, obj, this.mdsize * i6, this.mdsize);
+                System.arraycopy(obj, 0, bArr3, this.mdsize * i6, this.mdsize);
                 i6++;
             }
             i2 = i3 >>> 3;
@@ -234,29 +234,29 @@ public class WinternitzOTSignature {
                 }
                 long j5 = (j3 >>> i3) & ((long) i5);
                 i4 = (int) (((long) i4) + j5);
-                System.arraycopy(this.privateKeyOTS[i6], 0, obj2, 0, this.mdsize);
+                System.arraycopy(this.privateKeyOTS[i6], 0, obj, 0, this.mdsize);
                 while (j5 > 0) {
-                    this.messDigestOTS.update(obj2, 0, obj2.length);
-                    obj2 = new byte[this.messDigestOTS.getDigestSize()];
-                    this.messDigestOTS.doFinal(obj2, 0);
+                    this.messDigestOTS.update(obj, 0, obj.length);
+                    obj = new byte[this.messDigestOTS.getDigestSize()];
+                    this.messDigestOTS.doFinal(obj, 0);
                     j5--;
                 }
-                System.arraycopy(obj2, 0, obj, this.mdsize * i6, this.mdsize);
+                System.arraycopy(obj, 0, bArr3, this.mdsize * i6, this.mdsize);
                 i6++;
             }
             i2 = (this.messagesize << this.w) - i4;
             for (i8 = 0; i8 < this.checksumsize; i8 += this.w) {
-                System.arraycopy(this.privateKeyOTS[i6], 0, obj2, 0, this.mdsize);
+                System.arraycopy(this.privateKeyOTS[i6], 0, obj, 0, this.mdsize);
                 for (long j6 = (long) (i2 & i5); j6 > 0; j6--) {
-                    this.messDigestOTS.update(obj2, 0, obj2.length);
-                    obj2 = new byte[this.messDigestOTS.getDigestSize()];
-                    this.messDigestOTS.doFinal(obj2, 0);
+                    this.messDigestOTS.update(obj, 0, obj.length);
+                    obj = new byte[this.messDigestOTS.getDigestSize()];
+                    this.messDigestOTS.doFinal(obj, 0);
                 }
-                System.arraycopy(obj2, 0, obj, this.mdsize * i6, this.mdsize);
+                System.arraycopy(obj, 0, bArr3, this.mdsize * i6, this.mdsize);
                 i2 >>>= this.w;
                 i6++;
             }
         }
-        return obj;
+        return bArr3;
     }
 }

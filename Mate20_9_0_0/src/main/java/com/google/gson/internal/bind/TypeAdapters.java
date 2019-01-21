@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public final class TypeAdapters {
         public AtomicInteger read(JsonReader in) throws IOException {
             try {
                 return new AtomicInteger(in.nextInt());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -73,7 +74,7 @@ public final class TypeAdapters {
             while (in.hasNext()) {
                 try {
                     list.add(Integer.valueOf(in.nextInt()));
-                } catch (Throwable e) {
+                } catch (NumberFormatException e) {
                     throw new JsonSyntaxException(e);
                 }
             }
@@ -105,7 +106,7 @@ public final class TypeAdapters {
             }
             try {
                 return new BigDecimal(in.nextString());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -122,7 +123,7 @@ public final class TypeAdapters {
             }
             try {
                 return new BigInteger(in.nextString());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -227,7 +228,7 @@ public final class TypeAdapters {
             }
             try {
                 return Byte.valueOf((byte) in.nextInt());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -405,7 +406,7 @@ public final class TypeAdapters {
             }
             try {
                 return Integer.valueOf(in.nextInt());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -525,7 +526,7 @@ public final class TypeAdapters {
             }
             try {
                 return Long.valueOf(in.nextLong());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -568,7 +569,7 @@ public final class TypeAdapters {
             }
             try {
                 return Short.valueOf((short) in.nextInt());
-            } catch (Throwable e) {
+            } catch (NumberFormatException e) {
                 throw new JsonSyntaxException(e);
             }
         }
@@ -655,7 +656,7 @@ public final class TypeAdapters {
                     uri = new URI(nextString);
                 }
                 return uri;
-            } catch (Throwable e) {
+            } catch (URISyntaxException e) {
                 throw new JsonIOException(e);
             }
         }

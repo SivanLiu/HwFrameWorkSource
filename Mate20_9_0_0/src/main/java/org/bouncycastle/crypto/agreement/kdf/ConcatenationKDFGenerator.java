@@ -28,20 +28,20 @@ public class ConcatenationKDFGenerator implements DerivationFunction {
     public int generateBytes(byte[] bArr, int i, int i2) throws DataLengthException, IllegalArgumentException {
         if (bArr.length - i2 >= i) {
             int i3;
-            Object obj = new byte[this.hLen];
-            byte[] bArr2 = new byte[4];
+            byte[] bArr2 = new byte[this.hLen];
+            byte[] bArr3 = new byte[4];
             this.digest.reset();
             int i4 = 1;
             if (i2 > this.hLen) {
                 int i5;
                 i3 = 0;
                 while (true) {
-                    ItoOSP(i4, bArr2);
-                    this.digest.update(bArr2, 0, bArr2.length);
+                    ItoOSP(i4, bArr3);
+                    this.digest.update(bArr3, 0, bArr3.length);
                     this.digest.update(this.shared, 0, this.shared.length);
                     this.digest.update(this.otherInfo, 0, this.otherInfo.length);
-                    this.digest.doFinal(obj, 0);
-                    System.arraycopy(obj, 0, bArr, i + i3, this.hLen);
+                    this.digest.doFinal(bArr2, 0);
+                    System.arraycopy(bArr2, 0, bArr, i + i3, this.hLen);
                     i3 += this.hLen;
                     i5 = i4 + 1;
                     if (i4 >= i2 / this.hLen) {
@@ -54,12 +54,12 @@ public class ConcatenationKDFGenerator implements DerivationFunction {
                 i3 = 0;
             }
             if (i3 < i2) {
-                ItoOSP(i4, bArr2);
-                this.digest.update(bArr2, 0, bArr2.length);
+                ItoOSP(i4, bArr3);
+                this.digest.update(bArr3, 0, bArr3.length);
                 this.digest.update(this.shared, 0, this.shared.length);
                 this.digest.update(this.otherInfo, 0, this.otherInfo.length);
-                this.digest.doFinal(obj, 0);
-                System.arraycopy(obj, 0, bArr, i + i3, i2 - i3);
+                this.digest.doFinal(bArr2, 0);
+                System.arraycopy(bArr2, 0, bArr, i + i3, i2 - i3);
             }
             return i2;
         }

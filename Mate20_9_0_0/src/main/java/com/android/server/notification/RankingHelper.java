@@ -398,9 +398,9 @@ public class RankingHelper implements RankingConfig {
 
     private void createDefaultChannelIfNeeded(Record r) throws NameNotFoundException {
         if (r.channels.containsKey("miscellaneous")) {
-            ((NotificationChannel) r.channels.get("miscellaneous")).setName(this.mContext.getString(17039921));
+            ((NotificationChannel) r.channels.get("miscellaneous")).setName(this.mContext.getString(17039922));
         } else if (shouldHaveDefaultChannel(r)) {
-            NotificationChannel channel = new NotificationChannel("miscellaneous", this.mContext.getString(17039921), r.importance);
+            NotificationChannel channel = new NotificationChannel("miscellaneous", this.mContext.getString(17039922), r.importance);
             channel.setBypassDnd(r.priority == 2);
             channel.setLockscreenVisibility(r.visibility);
             if (r.importance != JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE) {
@@ -416,6 +416,9 @@ public class RankingHelper implements RankingConfig {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:71:0x0110 A:{SYNTHETIC} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x0063  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void writeXml(XmlSerializer out, boolean forBackup) throws IOException {
         out.startTag(null, TAG_RANKING);
         out.attribute(null, ATT_VERSION, Integer.toString(1));
@@ -423,38 +426,48 @@ public class RankingHelper implements RankingConfig {
             int N = this.mRecords.size();
             for (int i = 0; i < N; i++) {
                 Record r = (Record) this.mRecords.valueAt(i);
-                if (r != null && (!forBackup || UserHandle.getUserId(r.uid) == 0)) {
-                    boolean hasNonDefaultSettings = (r.importance == JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE && r.priority == 0 && r.visibility == JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE && r.showBadge && r.lockedAppFields == 0 && r.channels.size() <= 0 && r.groups.size() <= 0) ? false : true;
-                    if (hasNonDefaultSettings) {
-                        out.startTag(null, "package");
-                        out.attribute(null, "name", r.pkg);
-                        if (r.importance != JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE) {
-                            out.attribute(null, ATT_IMPORTANCE, Integer.toString(r.importance));
-                        }
-                        if (r.priority != 0) {
-                            out.attribute(null, ATT_PRIORITY, Integer.toString(r.priority));
-                        }
-                        if (r.visibility != JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE) {
-                            out.attribute(null, ATT_VISIBILITY, Integer.toString(r.visibility));
-                        }
-                        out.attribute(null, ATT_SHOW_BADGE, Boolean.toString(r.showBadge));
-                        out.attribute(null, ATT_APP_USER_LOCKED_FIELDS, Integer.toString(r.lockedAppFields));
-                        if (!forBackup) {
-                            out.attribute(null, "uid", Integer.toString(r.uid));
-                        }
-                        for (NotificationChannelGroup group : r.groups.values()) {
-                            group.writeXml(out);
-                        }
-                        for (NotificationChannel channel : r.channels.values()) {
-                            if (channel != null) {
-                                if (!forBackup) {
-                                    channel.writeXml(out);
-                                } else if (!channel.isDeleted()) {
-                                    channel.writeXmlForBackup(out, this.mContext);
+                if (r != null) {
+                    if (!forBackup || UserHandle.getUserId(r.uid) == 0) {
+                        boolean hasNonDefaultSettings;
+                        if (r.importance == JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE && r.priority == 0 && r.visibility == JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE && r.showBadge && r.lockedAppFields == 0 && r.channels.size() <= 0) {
+                            if (r.groups.size() <= 0) {
+                                hasNonDefaultSettings = false;
+                                if (!hasNonDefaultSettings) {
+                                    out.startTag(null, "package");
+                                    out.attribute(null, "name", r.pkg);
+                                    if (r.importance != JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE) {
+                                        out.attribute(null, ATT_IMPORTANCE, Integer.toString(r.importance));
+                                    }
+                                    if (r.priority != 0) {
+                                        out.attribute(null, ATT_PRIORITY, Integer.toString(r.priority));
+                                    }
+                                    if (r.visibility != JobSchedulerShellCommand.CMD_ERR_NO_PACKAGE) {
+                                        out.attribute(null, ATT_VISIBILITY, Integer.toString(r.visibility));
+                                    }
+                                    out.attribute(null, ATT_SHOW_BADGE, Boolean.toString(r.showBadge));
+                                    out.attribute(null, ATT_APP_USER_LOCKED_FIELDS, Integer.toString(r.lockedAppFields));
+                                    if (!forBackup) {
+                                        out.attribute(null, "uid", Integer.toString(r.uid));
+                                    }
+                                    for (NotificationChannelGroup group : r.groups.values()) {
+                                        group.writeXml(out);
+                                    }
+                                    for (NotificationChannel channel : r.channels.values()) {
+                                        if (channel != null) {
+                                            if (!forBackup) {
+                                                channel.writeXml(out);
+                                            } else if (!channel.isDeleted()) {
+                                                channel.writeXmlForBackup(out, this.mContext);
+                                            }
+                                        }
+                                    }
+                                    out.endTag(null, "package");
                                 }
                             }
                         }
-                        out.endTag(null, "package");
+                        hasNonDefaultSettings = true;
+                        if (!hasNonDefaultSettings) {
+                        }
                     }
                 }
             }
@@ -469,6 +482,11 @@ public class RankingHelper implements RankingConfig {
         this.mRankingHandler.requestSort();
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x00b7 A:{Catch:{ all -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x00b2 A:{Catch:{ all -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x00c2 A:{Catch:{ all -> 0x0044 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:36:0x00c1 A:{Catch:{ all -> 0x0044 }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void sort(ArrayList<NotificationRecord> notificationList) {
         int i;
         ArrayList<NotificationRecord> arrayList = notificationList;
@@ -478,16 +496,28 @@ public class RankingHelper implements RankingConfig {
         }
         Collections.sort(arrayList, this.mPreliminaryComparator);
         synchronized (this.mProxyByGroupTmp) {
-            for (i = N - 1; i >= 0; i--) {
-                NotificationRecord record = (NotificationRecord) arrayList.get(i);
-                record.setAuthoritativeRank(i);
-                String groupKey = record.getGroupKey();
-                if (((NotificationRecord) this.mProxyByGroupTmp.get(groupKey)) == null) {
-                    this.mProxyByGroupTmp.put(groupKey, record);
+            i = N - 1;
+            while (i >= 0) {
+                try {
+                    NotificationRecord record = (NotificationRecord) arrayList.get(i);
+                    record.setAuthoritativeRank(i);
+                    String groupKey = record.getGroupKey();
+                    if (((NotificationRecord) this.mProxyByGroupTmp.get(groupKey)) == null) {
+                        this.mProxyByGroupTmp.put(groupKey, record);
+                    }
+                    i--;
+                } catch (Throwable th) {
+                    while (true) {
+                    }
                 }
             }
             for (int i2 = 0; i2 < N; i2++) {
                 String groupSortKeyPortion;
+                boolean isGroupSummary;
+                String str;
+                Object[] objArr;
+                char c;
+                char c2;
                 NotificationRecord record2 = (NotificationRecord) arrayList.get(i2);
                 NotificationRecord groupProxy = (NotificationRecord) this.mProxyByGroupTmp.get(record2.getGroupKey());
                 String groupSortKey = record2.getNotification().getSortKey();
@@ -500,16 +530,32 @@ public class RankingHelper implements RankingConfig {
                     stringBuilder.append("gsk=");
                     stringBuilder.append(groupSortKey);
                     groupSortKeyPortion = stringBuilder.toString();
+                    isGroupSummary = record2.getNotification().isGroupSummary();
+                    str = "intrsv=%c:grnk=0x%04x:gsmry=%c:%s:rnk=0x%04x";
+                    objArr = new Object[5];
+                    c = '0';
+                    c2 = (record2.isRecentlyIntrusive() || record2.getImportance() <= 1) ? '1' : '0';
+                    objArr[0] = Character.valueOf(c2);
+                    objArr[1] = Integer.valueOf(groupProxy == null ? groupProxy.getAuthoritativeRank() : i2);
+                    if (isGroupSummary) {
+                        c = '1';
+                    }
+                    objArr[2] = Character.valueOf(c);
+                    objArr[3] = groupSortKeyPortion;
+                    objArr[4] = Integer.valueOf(record2.getAuthoritativeRank());
+                    record2.setGlobalSortKey(String.format(str, objArr));
                 }
-                boolean isGroupSummary = record2.getNotification().isGroupSummary();
-                String str = "intrsv=%c:grnk=0x%04x:gsmry=%c:%s:rnk=0x%04x";
-                Object[] objArr = new Object[5];
-                char c = '0';
-                char c2 = (!record2.isRecentlyIntrusive() || record2.getImportance() <= 1) ? '1' : '0';
+                isGroupSummary = record2.getNotification().isGroupSummary();
+                str = "intrsv=%c:grnk=0x%04x:gsmry=%c:%s:rnk=0x%04x";
+                objArr = new Object[5];
+                c = '0';
+                if (record2.isRecentlyIntrusive()) {
+                }
                 objArr[0] = Character.valueOf(c2);
-                objArr[1] = Integer.valueOf(groupProxy != null ? groupProxy.getAuthoritativeRank() : i2);
-                if (!isGroupSummary) {
-                    c = '1';
+                if (groupProxy == null) {
+                }
+                objArr[1] = Integer.valueOf(groupProxy == null ? groupProxy.getAuthoritativeRank() : i2);
+                if (isGroupSummary) {
                 }
                 objArr[2] = Character.valueOf(c);
                 objArr[3] = groupSortKeyPortion;
@@ -588,7 +634,7 @@ public class RankingHelper implements RankingConfig {
         Preconditions.checkNotNull(pkg);
         Preconditions.checkNotNull(channel);
         Preconditions.checkNotNull(channel.getId());
-        Preconditions.checkArgument(TextUtils.isEmpty(channel.getName()) ^ true);
+        Preconditions.checkArgument(TextUtils.isEmpty(channel.getName()) ^ 1);
         Record r = getOrCreateRecord(pkg, uid);
         if (r == null) {
             throw new IllegalArgumentException("Invalid package");
@@ -899,17 +945,17 @@ public class RankingHelper implements RankingConfig {
         return count;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x003d, code:
+    /* JADX WARNING: Missing block: B:15:0x003d, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:20:0x0047, code:
+    /* JADX WARNING: Missing block: B:20:0x0047, code skipped:
             if (r9.mAreChannelsBypassingDnd == false) goto L_0x004e;
      */
-    /* JADX WARNING: Missing block: B:21:0x0049, code:
+    /* JADX WARNING: Missing block: B:21:0x0049, code skipped:
             r9.mAreChannelsBypassingDnd = false;
             updateZenPolicy(false);
      */
-    /* JADX WARNING: Missing block: B:22:0x004e, code:
+    /* JADX WARNING: Missing block: B:22:0x004e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1231,7 +1277,7 @@ public class RankingHelper implements RankingConfig {
             for (int i = 0; i < N; i++) {
                 Record record = (Record) this.mRecords.valueAt(i);
                 if (UserHandle.getUserId(record.uid) == userId && record.channels.containsKey("miscellaneous")) {
-                    ((NotificationChannel) record.channels.get("miscellaneous")).setName(context.getResources().getString(17039921));
+                    ((NotificationChannel) record.channels.get("miscellaneous")).setName(context.getResources().getString(17039922));
                 }
             }
         }

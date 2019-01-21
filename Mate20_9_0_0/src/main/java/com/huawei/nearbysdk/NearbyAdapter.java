@@ -70,7 +70,7 @@ public final class NearbyAdapter implements CloseRangeInterface {
             HwLog.d(NearbyAdapter.TAG, "NearbyAuthServiceConnection construct");
         }
 
-        /* JADX WARNING: Missing block: B:16:0x0070, code:
+        /* JADX WARNING: Missing block: B:16:0x0070, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -119,7 +119,7 @@ public final class NearbyAdapter implements CloseRangeInterface {
             HwLog.d(NearbyAdapter.TAG, "NearbyServiceConnection construct");
         }
 
-        /* JADX WARNING: Missing block: B:27:0x00a2, code:
+        /* JADX WARNING: Missing block: B:27:0x00a2, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -262,7 +262,7 @@ public final class NearbyAdapter implements CloseRangeInterface {
         return mNearbyService == null || mAuthService == null;
     }
 
-    /* JADX WARNING: Missing block: B:23:0x003e, code:
+    /* JADX WARNING: Missing block: B:23:0x003e, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

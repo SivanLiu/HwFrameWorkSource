@@ -1,7 +1,6 @@
 package org.bouncycastle.cert;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AttCertIssuer;
@@ -48,7 +47,7 @@ public class AttributeCertificateIssuer implements Selector {
 
     public X500Name[] getNames() {
         GeneralName[] names = (this.form instanceof V2Form ? ((V2Form) this.form).getIssuerName() : (GeneralNames) this.form).getNames();
-        List arrayList = new ArrayList(names.length);
+        ArrayList arrayList = new ArrayList(names.length);
         for (int i = 0; i != names.length; i++) {
             if (names[i].getTagNo() == 4) {
                 arrayList.add(X500Name.getInstance(names[i].getName()));

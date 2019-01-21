@@ -1024,7 +1024,7 @@ public class AwareAppMngSort {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0045, code:
+    /* JADX WARNING: Missing block: B:21:0x0045, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1262,7 +1262,7 @@ public class AwareAppMngSort {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0011, code:
+    /* JADX WARNING: Missing block: B:8:0x0011, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1273,7 +1273,7 @@ public class AwareAppMngSort {
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:60:0x00bb, code:
+    /* JADX WARNING: Missing block: B:60:0x00bb, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2507,7 +2507,7 @@ public class AwareAppMngSort {
                 }
             case 3347709:
                 if (type.equals("mem2")) {
-                    i = true;
+                    i = 1;
                     break;
                 }
             case 460796222:

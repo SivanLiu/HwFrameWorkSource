@@ -26,10 +26,10 @@ public final class ServerSession extends ObexSession implements Runnable {
         this.mProcessThread.start();
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0047, code:
+    /* JADX WARNING: Missing block: B:19:0x0047, code skipped:
             handleGetRequest(r1);
      */
-    /* JADX WARNING: Missing block: B:20:0x004b, code:
+    /* JADX WARNING: Missing block: B:20:0x004b, code skipped:
             handlePutRequest(r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -10,7 +10,7 @@ public class NotificationChannelExtractor implements NotificationSignalExtractor
     public void initialize(Context ctx, NotificationUsageStats usageStats) {
     }
 
-    /* JADX WARNING: Missing block: B:9:0x002e, code:
+    /* JADX WARNING: Missing block: B:9:0x002e, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

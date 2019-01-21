@@ -97,43 +97,45 @@ public class HwDualBandBlackListManager {
         return this.mWifiBlacklist;
     }
 
-    /* JADX WARNING: Missing block: B:15:0x00ae, code:
+    /* JADX WARNING: Missing block: B:16:0x00ae, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:17:0x00b0, code:
+    /* JADX WARNING: Missing block: B:18:0x00b0, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void addWifiBlacklist(String ssid, boolean needReset) {
-        if (!TextUtils.isEmpty(ssid) && !this.mWifiBlacklist.contains(ssid)) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("addWifiBlacklist + ssid = ");
-            stringBuilder.append(ssid);
-            Log.d("WiFi_PRO", stringBuilder.toString());
-            this.mWifiBlacklist.add(ssid);
-            DualBandBlackApInfo apInfo;
-            if (this.mWifiBlackListApInfo.containsKey(ssid)) {
-                apInfo = (DualBandBlackApInfo) this.mWifiBlackListApInfo.get(ssid);
-                int curCounter = needReset ? 0 : apInfo.getBlackApCounter() + 1;
-                int expireTime = 300000 * (curCounter + 1);
-                apInfo.setBlackApCounter(curCounter);
-                apInfo.setAddTime(System.currentTimeMillis());
-                apInfo.setExpireTime((long) expireTime);
-                this.mWifiBlackListApInfo.put(ssid, apInfo);
-                new Timer().schedule(new RemoveBlacklistTask(ssid), (long) expireTime);
-            } else {
-                apInfo = new DualBandBlackApInfo(ssid, 0, System.currentTimeMillis(), 300000);
-                this.mWifiBlackListApInfo.put(ssid, apInfo);
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Add new DualBandBlackApInfo : ");
-                stringBuilder2.append(apInfo.getBlackApSsid());
-                Log.d("WiFi_PRO", stringBuilder2.toString());
-                new Timer().schedule(new RemoveBlacklistTask(ssid), 300000);
+        if (!TextUtils.isEmpty(ssid)) {
+            if (!this.mWifiBlacklist.contains(ssid)) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("addWifiBlacklist + ssid = ");
+                stringBuilder.append(ssid);
+                Log.d("WiFi_PRO", stringBuilder.toString());
+                this.mWifiBlacklist.add(ssid);
+                DualBandBlackApInfo apInfo;
+                if (this.mWifiBlackListApInfo.containsKey(ssid)) {
+                    apInfo = (DualBandBlackApInfo) this.mWifiBlackListApInfo.get(ssid);
+                    int curCounter = needReset ? 0 : apInfo.getBlackApCounter() + 1;
+                    int expireTime = 300000 * (curCounter + 1);
+                    apInfo.setBlackApCounter(curCounter);
+                    apInfo.setAddTime(System.currentTimeMillis());
+                    apInfo.setExpireTime((long) expireTime);
+                    this.mWifiBlackListApInfo.put(ssid, apInfo);
+                    new Timer().schedule(new RemoveBlacklistTask(ssid), (long) expireTime);
+                } else {
+                    apInfo = new DualBandBlackApInfo(ssid, 0, System.currentTimeMillis(), 300000);
+                    this.mWifiBlackListApInfo.put(ssid, apInfo);
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("Add new DualBandBlackApInfo : ");
+                    stringBuilder2.append(apInfo.getBlackApSsid());
+                    Log.d("WiFi_PRO", stringBuilder2.toString());
+                    new Timer().schedule(new RemoveBlacklistTask(ssid), 300000);
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:21:0x00c0, code:
+    /* JADX WARNING: Missing block: B:22:0x00c0, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -175,7 +177,7 @@ public class HwDualBandBlackListManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004c, code:
+    /* JADX WARNING: Missing block: B:17:0x004c, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -245,7 +247,7 @@ public class HwDualBandBlackListManager {
         this.mWifiBlacklist.clear();
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0053, code:
+    /* JADX WARNING: Missing block: B:17:0x0053, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

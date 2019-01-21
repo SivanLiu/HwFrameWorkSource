@@ -147,28 +147,28 @@ public class AndroidImage implements GoogleImage {
         super.finalize();
     }
 
-    /* JADX WARNING: Missing block: B:10:0x000e, code:
+    /* JADX WARNING: Missing block: B:10:0x000e, code skipped:
             if (r0 == null) goto L_0x0028;
      */
-    /* JADX WARNING: Missing block: B:11:0x0010, code:
+    /* JADX WARNING: Missing block: B:11:0x0010, code skipped:
             r1 = android_maps_conflict_avoidance.com.google.common.graphics.android.AndroidImage.class;
      */
-    /* JADX WARNING: Missing block: B:12:0x0012, code:
+    /* JADX WARNING: Missing block: B:12:0x0012, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:14:?, code:
+    /* JADX WARNING: Missing block: B:14:?, code skipped:
             bitmapCount--;
      */
-    /* JADX WARNING: Missing block: B:15:0x001b, code:
+    /* JADX WARNING: Missing block: B:15:0x001b, code skipped:
             if (bitmapCount < 0) goto L_0x001f;
      */
-    /* JADX WARNING: Missing block: B:16:0x001d, code:
+    /* JADX WARNING: Missing block: B:16:0x001d, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:18:0x0024, code:
+    /* JADX WARNING: Missing block: B:19:0x0024, code skipped:
             throw new java.lang.IllegalStateException();
      */
-    /* JADX WARNING: Missing block: B:22:0x0028, code:
+    /* JADX WARNING: Missing block: B:23:0x0028, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

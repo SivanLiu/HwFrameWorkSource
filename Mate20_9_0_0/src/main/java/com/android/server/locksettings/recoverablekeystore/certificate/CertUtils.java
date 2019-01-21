@@ -3,15 +3,21 @@ package com.android.server.locksettings.recoverablekeystore.certificate;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.server.slice.SliceClientPermissions.SliceAuthority;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
+import java.security.cert.CertPathBuilderException;
 import java.security.cert.CertPathValidator;
+import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -28,11 +34,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public final class CertUtils {
     private static final String CERT_FORMAT = "X.509";
@@ -58,7 +67,7 @@ public final class CertUtils {
         try {
             try {
                 return (X509Certificate) CertificateFactory.getInstance(CERT_FORMAT).generateCertificate(inStream);
-            } catch (Exception e) {
+            } catch (CertificateException e) {
                 throw new CertParsingException(e);
             }
         } catch (CertificateException e2) {
@@ -66,21 +75,13 @@ public final class CertUtils {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001d A:{Splitter: B:0:0x0000, ExcHandler: org.xml.sax.SAXException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:3:0x001d A:{Splitter: B:0:0x0000, ExcHandler: org.xml.sax.SAXException (r0_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:3:0x001d, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0023, code:
-            throw new com.android.server.locksettings.recoverablekeystore.certificate.CertParsingException(r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     static Element getXmlRootNode(byte[] xmlBytes) throws CertParsingException {
         try {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
             document.getDocumentElement().normalize();
             return document.getDocumentElement();
-        } catch (Exception e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new CertParsingException(e);
         }
     }
 
@@ -119,7 +120,7 @@ public final class CertUtils {
                 result.add(nodeList.item(i).getTextContent().replaceAll("\\s", BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS));
             }
             return result;
-        } catch (Exception e) {
+        } catch (XPathExpressionException e) {
             throw new CertParsingException(e);
         }
     }
@@ -127,19 +128,11 @@ public final class CertUtils {
     public static byte[] decodeBase64(String str) throws CertParsingException {
         try {
             return Base64.getDecoder().decode(str);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new CertParsingException(e);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x001e A:{Splitter: B:2:0x0008, ExcHandler: java.security.InvalidKeyException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:8:0x001e, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:10:0x0024, code:
-            throw new com.android.server.locksettings.recoverablekeystore.certificate.CertValidationException(r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     static void verifyRsaSha256Signature(PublicKey signerPublicKey, byte[] signature, byte[] signedBytes) throws CertValidationException {
         try {
             Signature verifier = Signature.getInstance(SIGNATURE_ALG);
@@ -149,21 +142,14 @@ public final class CertUtils {
                 if (!verifier.verify(signature)) {
                     throw new CertValidationException("The signature is invalid");
                 }
-            } catch (Exception e) {
+            } catch (InvalidKeyException | SignatureException e) {
+                throw new CertValidationException(e);
             }
         } catch (NoSuchAlgorithmException e2) {
             throw new RuntimeException(e2);
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:6:0x0016 A:{Splitter: B:3:0x0011, ExcHandler: java.security.cert.CertPathValidatorException (r3_0 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:6:0x0016, code:
-            r3 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x001c, code:
-            throw new com.android.server.locksettings.recoverablekeystore.certificate.CertValidationException(r3);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     static CertPath validateCert(Date validationDate, X509Certificate trustedRoot, List<X509Certificate> intermediateCerts, X509Certificate leafCert) throws CertValidationException {
         PKIXParameters pkixParams = buildPkixParams(validationDate, trustedRoot, intermediateCerts, leafCert);
         CertPath certPath = buildCertPath(pkixParams);
@@ -171,7 +157,8 @@ public final class CertUtils {
             try {
                 CertPathValidator.getInstance(CERT_PATH_ALG).validate(certPath, pkixParams);
                 return certPath;
-            } catch (Exception e) {
+            } catch (InvalidAlgorithmParameterException | CertPathValidatorException e) {
+                throw new CertValidationException(e);
             }
         } catch (NoSuchAlgorithmException e2) {
             throw new RuntimeException(e2);
@@ -194,20 +181,13 @@ public final class CertUtils {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:5:0x0011 A:{Splitter: B:2:0x0008, ExcHandler: java.security.cert.CertPathBuilderException (r1_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:5:0x0011, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:7:0x0017, code:
-            throw new com.android.server.locksettings.recoverablekeystore.certificate.CertValidationException(r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     static CertPath buildCertPath(PKIXParameters pkixParams) throws CertValidationException {
         try {
             try {
                 return CertPathBuilder.getInstance(CERT_PATH_ALG).build(pkixParams).getCertPath();
-            } catch (Exception e) {
+            } catch (InvalidAlgorithmParameterException | CertPathBuilderException e) {
+                throw new CertValidationException(e);
             }
         } catch (NoSuchAlgorithmException e2) {
             throw new RuntimeException(e2);
@@ -230,12 +210,12 @@ public final class CertUtils {
                 pkixParams.setDate(validationDate);
                 pkixParams.setRevocationEnabled(false);
                 return pkixParams;
-            } catch (Exception e) {
+            } catch (InvalidAlgorithmParameterException e) {
                 throw new CertValidationException(e);
             }
         } catch (NoSuchAlgorithmException e2) {
             throw new RuntimeException(e2);
-        } catch (Exception e3) {
+        } catch (InvalidAlgorithmParameterException e3) {
             throw new CertValidationException(e3);
         }
     }

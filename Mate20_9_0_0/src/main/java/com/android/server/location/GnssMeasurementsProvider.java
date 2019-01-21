@@ -54,6 +54,10 @@ public abstract class GnssMeasurementsProvider extends RemoteListenerHelper<IGns
 
     private static native boolean native_stop_measurement_collection();
 
+    public /* bridge */ /* synthetic */ boolean isRegistered() {
+        return super.isRegistered();
+    }
+
     protected GnssMeasurementsProvider(Context context, Handler handler) {
         this(context, handler, new GnssMeasurementProviderNative());
     }

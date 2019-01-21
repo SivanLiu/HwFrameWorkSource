@@ -124,7 +124,7 @@ class PinnedStackController {
         this.mDefaultMinSize = res.getDimensionPixelSize(17105016);
         this.mCurrentMinSize = this.mDefaultMinSize;
         this.mDefaultAspectRatio = res.getFloat(17104968);
-        String screenEdgeInsetsDpString = res.getString(17039789);
+        String screenEdgeInsetsDpString = res.getString(17039790);
         if (screenEdgeInsetsDpString.isEmpty()) {
             screenEdgeInsetsDp = null;
         } else {

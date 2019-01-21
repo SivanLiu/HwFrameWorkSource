@@ -81,8 +81,8 @@ public final class TrustSpaceSettings {
         this.mPreviousProtectedPackageFile = new File(systemDir, "trustspace.list");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:34:0x0091 A:{SYNTHETIC, Splitter: B:34:0x0091} */
-    /* JADX WARNING: Removed duplicated region for block: B:31:0x0086 A:{Catch:{ XmlPullParserException -> 0x0068, IOException -> 0x0065, all -> 0x0062 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:37:0x0091 A:{SYNTHETIC, Splitter:B:37:0x0091} */
+    /* JADX WARNING: Removed duplicated region for block: B:34:0x0086 A:{Catch:{ XmlPullParserException -> 0x0068, IOException -> 0x0065, all -> 0x0062 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     void readPackages() {
         if (this.mProtectedPackageFile.exists()) {

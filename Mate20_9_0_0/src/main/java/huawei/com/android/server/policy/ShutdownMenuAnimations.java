@@ -105,7 +105,7 @@ public class ShutdownMenuAnimations {
         return shutdownMenuAnimations;
     }
 
-    /* JADX WARNING: Incorrect type for fill-array insn 0x0170, element type: float, insn element type: null */
+    /* JADX WARNING: Incorrect type for fill-array insn 0x0172, element type: float, insn element type: null */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public AnimatorSet setImageAnimation(boolean isEnter) {
         AnimatorSet mSet = new AnimatorSet();
@@ -480,7 +480,7 @@ public class ShutdownMenuAnimations {
         return this.isAnimRunning;
     }
 
-    /* JADX WARNING: Incorrect type for fill-array insn 0x002d, element type: float, insn element type: null */
+    /* JADX WARNING: Incorrect type for fill-array insn 0x002f, element type: float, insn element type: null */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public AnimatorSet setNewShutdownViewAnimation(boolean isEnter) {
         ObjectAnimator alpha_two_action;
@@ -506,7 +506,7 @@ public class ShutdownMenuAnimations {
         return mSet;
     }
 
-    /* JADX WARNING: Incorrect type for fill-array insn 0x002b, element type: float, insn element type: null */
+    /* JADX WARNING: Incorrect type for fill-array insn 0x002d, element type: float, insn element type: null */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public AnimatorSet setShutdownMenuDismissAnim() {
         AnimatorSet animSet = new AnimatorSet();
@@ -788,7 +788,7 @@ public class ShutdownMenuAnimations {
         }
     }
 
-    /* JADX WARNING: Incorrect type for fill-array insn 0x003c, element type: float, insn element type: null */
+    /* JADX WARNING: Incorrect type for fill-array insn 0x003e, element type: float, insn element type: null */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void startNewShutdownOrRebootAnim(boolean isReboot, final boolean isScreenOff) {
         if (this.isAnimRunning) {

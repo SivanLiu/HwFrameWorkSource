@@ -54,15 +54,11 @@ public class SubtitleController {
         MediaFormatUtil() {
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:3:0x0005 A:{Splitter: B:0:0x0000, ExcHandler: java.lang.NullPointerException (e java.lang.NullPointerException)} */
-        /* JADX WARNING: Missing block: B:4:0x0006, code:
-            return r3;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         static int getInteger(MediaFormat format, String name, int defaultValue) {
             try {
                 return format.getInteger(name);
-            } catch (NullPointerException e) {
+            } catch (ClassCastException | NullPointerException e) {
+                return defaultValue;
             }
         }
     }
@@ -173,6 +169,13 @@ public class SubtitleController {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:33:0x0086  */
+    /* JADX WARNING: Removed duplicated region for block: B:32:0x0084  */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x0098  */
+    /* JADX WARNING: Removed duplicated region for block: B:40:0x0095  */
+    /* JADX WARNING: Removed duplicated region for block: B:45:0x00a1  */
+    /* JADX WARNING: Removed duplicated region for block: B:44:0x009e  */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public SubtitleTrack getDefaultTrack() {
         SubtitleTrack bestTrack = null;
         int bestScore = -1;
@@ -187,20 +190,43 @@ public class SubtitleController {
         synchronized (this.mTracksLock) {
             Iterator it = this.mTracks.iterator();
             while (it.hasNext()) {
+                int i;
+                int i2;
                 SubtitleTrack track = (SubtitleTrack) it.next();
                 MediaFormat format = track.getFormat();
                 String language = format.getString("language");
                 boolean forced = MediaFormatUtil.getInteger(format, "is-forced-subtitle", 0) != 0 ? languageMatches : $assertionsDisabled;
                 boolean autoselect = MediaFormatUtil.getInteger(format, "is-autoselect", languageMatches) != 0 ? languageMatches : $assertionsDisabled;
                 boolean is_default = MediaFormatUtil.getInteger(format, "is-default", 0) != 0 ? languageMatches : $assertionsDisabled;
-                languageMatches = (locale2 == null || locale2.getLanguage().equals("") || locale2.getISO3Language().equals(language) || locale2.getLanguage().equals(language)) ? true : $assertionsDisabled;
-                int i = forced ? 0 : 8;
-                int i2 = (selectedLocale == null && is_default) ? 4 : 0;
-                i = ((i + i2) + (autoselect ? 0 : 2)) + (languageMatches ? 1 : 0);
-                if ((!selectForced || forced) && (((selectedLocale == null && is_default) || (languageMatches && (autoselect || forced || selectedLocale != null))) && i > bestScore)) {
-                    bestScore = i;
-                    bestTrack = track;
+                if (!(locale2 == null || locale2.getLanguage().equals("") || locale2.getISO3Language().equals(language))) {
+                    if (!locale2.getLanguage().equals(language)) {
+                        languageMatches = $assertionsDisabled;
+                        i = forced ? 0 : 8;
+                        i2 = (selectedLocale == null || !is_default) ? 0 : 4;
+                        i = ((i + i2) + (autoselect ? 0 : 2)) + (languageMatches ? 1 : 0);
+                        if (selectForced || forced) {
+                            if (((selectedLocale == null && is_default) || (languageMatches && (autoselect || forced || selectedLocale != null))) && i > bestScore) {
+                                bestScore = i;
+                                bestTrack = track;
+                            }
+                        }
+                        languageMatches = true;
+                    }
                 }
+                languageMatches = true;
+                if (forced) {
+                }
+                if (selectedLocale == null) {
+                }
+                if (autoselect) {
+                }
+                if (languageMatches) {
+                }
+                i = ((i + i2) + (autoselect ? 0 : 2)) + (languageMatches ? 1 : 0);
+                if (selectForced) {
+                }
+                bestScore = i;
+                bestTrack = track;
                 languageMatches = true;
             }
         }

@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -241,11 +242,6 @@ class MediaSessionCompatApi21 {
         ((MediaSession) sessionObj).setExtras(extras);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x001d A:{Splitter: B:1:0x0002, ExcHandler: java.lang.NoSuchFieldException (e java.lang.NoSuchFieldException)} */
-    /* JADX WARNING: Missing block: B:9:0x001e, code:
-            android.util.Log.w(TAG, "Failed to get mCallback object.");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static boolean hasCallback(Object sessionObj) {
         boolean z = false;
         try {
@@ -257,7 +253,8 @@ class MediaSessionCompatApi21 {
                 }
                 return z;
             }
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            Log.w(TAG, "Failed to get mCallback object.");
         }
         return false;
     }

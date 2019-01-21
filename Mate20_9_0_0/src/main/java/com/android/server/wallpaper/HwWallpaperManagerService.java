@@ -149,99 +149,100 @@ public class HwWallpaperManagerService extends WallpaperManagerService {
 
     public void createBlurWallpaper(boolean force) {
         synchronized (getLock()) {
+            Bitmap wallpaper;
+            Bitmap wallpaper2;
             if (!force) {
-                if (new File(Environment.getUserSystemDirectory(getWallpaperUserId()), "blurwallpaper").exists()) {
-                    return;
+                try {
+                    if (new File(Environment.getUserSystemDirectory(getWallpaperUserId()), "blurwallpaper").exists()) {
+                        return;
+                    }
+                } catch (OutOfMemoryError e) {
+                    Slog.w(TAG, "No memory load current wallpaper", e);
+                } catch (Throwable th) {
                 }
             }
             String bitmapStyle = "";
-            try {
-                Bitmap wallpaper;
-                Bitmap wallpaper2;
-                WallpaperInfo info = getWallpaperInfo(getWallpaperUserId());
-                String bitmapStyle2;
-                if (info == null) {
-                    wallpaper = getCurrentWallpaperLocked(getContext());
-                    bitmapStyle2 = "static";
+            WallpaperInfo info = getWallpaperInfo(getWallpaperUserId());
+            String bitmapStyle2;
+            if (info == null) {
+                wallpaper = getCurrentWallpaperLocked(getContext());
+                bitmapStyle2 = "static";
+            } else {
+                Drawable dr = HwFrameworkFactory.getHwWallpaperInfoStub(info).loadThumbnailWithoutTheme(getContext().getPackageManager());
+                if (dr == null) {
+                    wallpaper2 = null;
+                } else if (dr instanceof BitmapDrawable) {
+                    wallpaper2 = ((BitmapDrawable) dr).getBitmap();
                 } else {
-                    Drawable dr = HwFrameworkFactory.getHwWallpaperInfoStub(info).loadThumbnailWithoutTheme(getContext().getPackageManager());
-                    if (dr == null) {
+                    try {
+                        wallpaper = Bitmap.createBitmap(dr.getIntrinsicWidth(), dr.getIntrinsicHeight(), dr.getOpacity() != -1 ? Config.ARGB_8888 : Config.RGB_565);
+                        Canvas c = new Canvas(wallpaper);
+                        dr.setBounds(0, 0, dr.getIntrinsicWidth(), dr.getIntrinsicHeight());
+                        dr.draw(c);
+                    } catch (RuntimeException e2) {
+                        Slog.e(TAG, "create blurwallpaper draw has some errors");
                         wallpaper2 = null;
-                    } else if (dr instanceof BitmapDrawable) {
-                        wallpaper2 = ((BitmapDrawable) dr).getBitmap();
-                    } else {
-                        try {
-                            wallpaper = Bitmap.createBitmap(dr.getIntrinsicWidth(), dr.getIntrinsicHeight(), dr.getOpacity() != -1 ? Config.ARGB_8888 : Config.RGB_565);
-                            Canvas c = new Canvas(wallpaper);
-                            dr.setBounds(0, 0, dr.getIntrinsicWidth(), dr.getIntrinsicHeight());
-                            dr.draw(c);
-                        } catch (RuntimeException e) {
-                            Slog.e(TAG, "create blurwallpaper draw has some errors");
-                            wallpaper2 = null;
-                        }
-                        bitmapStyle2 = "live";
                     }
-                    wallpaper = wallpaper2;
                     bitmapStyle2 = "live";
                 }
-                if (wallpaper == null || wallpaper.isRecycled()) {
-                    Slog.d(TAG, "wallpaper is null or has been recycled");
-                    wallpaper = getDefaultWallpaperLocked(getContext());
+                wallpaper = wallpaper2;
+                bitmapStyle2 = "live";
+            }
+            if (wallpaper == null || wallpaper.isRecycled()) {
+                Slog.d(TAG, "wallpaper is null or has been recycled");
+                wallpaper = getDefaultWallpaperLocked(getContext());
+            }
+            if (wallpaper != null) {
+                Bitmap bitmap;
+                int h = this.disHeight;
+                int w = this.disWidth;
+                if (!ViewConfiguration.get(getContext()).hasPermanentMenuKey()) {
+                    h += getContext().getResources().getDimensionPixelSize(17105186);
                 }
-                if (wallpaper != null) {
-                    Bitmap bitmap;
-                    int h = this.disHeight;
-                    int w = this.disWidth;
-                    if (!ViewConfiguration.get(getContext()).hasPermanentMenuKey()) {
-                        h += getContext().getResources().getDimensionPixelSize(17105186);
-                    }
-                    if (wallpaper.getHeight() == h && wallpaper.getWidth() == 2 * w) {
-                        int[] inPixels = new int[(this.disWidth * h)];
-                        Bitmap bitmap2 = Bitmap.createBitmap(this.disWidth, h, Config.ARGB_8888);
-                        wallpaper.getPixels(inPixels, 0, this.disWidth, 0, 0, this.disWidth, h);
-                        bitmap2.setPixels(inPixels, 0, this.disWidth, 0, 0, this.disWidth, h);
-                        bitmap = bitmap2;
-                        if (!(bitmap == wallpaper || wallpaper.isRecycled())) {
-                            wallpaper.recycle();
-                            wallpaper = bitmap;
-                            if (info != null) {
-                                removeThumbnailCache(info);
-                            }
-                        }
-                    }
-                    bitmap = wallpaper;
-                    if (!(wallpaper.getHeight() == h / 4 && wallpaper.getWidth() == w / 4)) {
-                        wallpaper = Bitmap.createScaledBitmap(bitmap, this.disWidth / 4, h / 4, true);
-                        if (!(wallpaper == null || wallpaper == bitmap || bitmap.isRecycled())) {
-                            bitmap.recycle();
-                            if (info != null) {
-                                removeThumbnailCache(info);
-                            }
-                        }
-                    }
-                }
-                if (wallpaper != null) {
-                    wallpaper2 = BlurUtils.stackBlur(wallpaper, 80);
-                    if (wallpaper2 != null) {
+                if (wallpaper.getHeight() == h && wallpaper.getWidth() == 2 * w) {
+                    int[] inPixels = new int[(this.disWidth * h)];
+                    Bitmap bitmap2 = Bitmap.createBitmap(this.disWidth, h, Config.ARGB_8888);
+                    wallpaper.getPixels(inPixels, 0, this.disWidth, 0, 0, this.disWidth, h);
+                    bitmap2.setPixels(inPixels, 0, this.disWidth, 0, 0, this.disWidth, h);
+                    bitmap = bitmap2;
+                    if (!(bitmap == wallpaper || wallpaper.isRecycled())) {
                         wallpaper.recycle();
-                        if (HwPicAverageNoises.isAverageNoiseSupported()) {
-                            saveBlurWallpaperBitmapLocked(wallpaper2);
-                        } else {
-                            Bitmap blurImg = BlurUtils.addBlackBoard(wallpaper2, 1275068416);
-                            if (blurImg != null) {
-                                wallpaper2.recycle();
-                                saveBlurWallpaperBitmapLocked(blurImg);
-                            }
+                        wallpaper = bitmap;
+                        if (info != null) {
+                            removeThumbnailCache(info);
                         }
                     }
                 }
-            } catch (OutOfMemoryError e2) {
-                Slog.w(TAG, "No memory load current wallpaper", e2);
+                bitmap = wallpaper;
+                if (!(wallpaper.getHeight() == h / 4 && wallpaper.getWidth() == w / 4)) {
+                    wallpaper = Bitmap.createScaledBitmap(bitmap, this.disWidth / 4, h / 4, true);
+                    if (!(wallpaper == null || wallpaper == bitmap || bitmap.isRecycled())) {
+                        bitmap.recycle();
+                        if (info != null) {
+                            removeThumbnailCache(info);
+                        }
+                    }
+                }
+            }
+            if (wallpaper != null) {
+                wallpaper2 = BlurUtils.stackBlur(wallpaper, 80);
+                if (wallpaper2 != null) {
+                    wallpaper.recycle();
+                    if (HwPicAverageNoises.isAverageNoiseSupported()) {
+                        saveBlurWallpaperBitmapLocked(wallpaper2);
+                    } else {
+                        Bitmap blurImg = BlurUtils.addBlackBoard(wallpaper2, 1275068416);
+                        if (blurImg != null) {
+                            wallpaper2.recycle();
+                            saveBlurWallpaperBitmapLocked(blurImg);
+                        }
+                    }
+                }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x0056, code:
+    /* JADX WARNING: Missing block: B:29:0x0056, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -249,21 +250,22 @@ public class HwWallpaperManagerService extends WallpaperManagerService {
         synchronized (getLock()) {
             int wallpaperUserId = getWallpaperUserId();
             WallpaperData wallpaper = (WallpaperData) getWallpaperMap().get(wallpaperUserId);
-            if (wallpaper == null || wallpaper.getCallbacks() == null) {
-            } else {
-                if (!(cb == null || wallpaper.getCallbacks().isContainIBinder(cb))) {
-                    wallpaper.getCallbacks().register(cb);
-                }
-                try {
-                    File f = new File(Environment.getUserSystemDirectory(wallpaperUserId), "blurwallpaper");
-                    if (f.exists()) {
-                        ParcelFileDescriptor open = ParcelFileDescriptor.open(f, 268435456);
-                        return open;
+            if (wallpaper != null) {
+                if (wallpaper.getCallbacks() != null) {
+                    if (!(cb == null || wallpaper.getCallbacks().isContainIBinder(cb))) {
+                        wallpaper.getCallbacks().register(cb);
                     }
-                    return null;
-                } catch (FileNotFoundException e) {
-                    Slog.w(TAG, "Error getting wallpaper", e);
-                    return null;
+                    try {
+                        File f = new File(Environment.getUserSystemDirectory(wallpaperUserId), "blurwallpaper");
+                        if (f.exists()) {
+                            ParcelFileDescriptor open = ParcelFileDescriptor.open(f, 268435456);
+                            return open;
+                        }
+                        return null;
+                    } catch (FileNotFoundException e) {
+                        Slog.w(TAG, "Error getting wallpaper", e);
+                        return null;
+                    }
                 }
             }
         }
@@ -367,6 +369,8 @@ public class HwWallpaperManagerService extends WallpaperManagerService {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:30:0x0087=Splitter:B:30:0x0087, B:19:0x005a=Splitter:B:19:0x005a} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void saveBlurWallpaperBitmapLocked(Bitmap blurImg) {
         Slog.d(TAG, "saveBlurWallpaperBitmapLocked begin");
         long timeBegin = System.currentTimeMillis();

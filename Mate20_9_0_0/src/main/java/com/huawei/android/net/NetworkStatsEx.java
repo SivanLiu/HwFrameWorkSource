@@ -1,0 +1,77 @@
+package com.huawei.android.net;
+
+import android.net.NetworkStats;
+
+public class NetworkStatsEx {
+    public static final int SET_DEFAULT = 0;
+    public static final int SET_FOREGROUND = 1;
+    private NetworkStats mNetworkStats;
+
+    public static class Entry {
+        private android.net.NetworkStats.Entry entry;
+
+        private Entry(android.net.NetworkStats.Entry entry) {
+            this.entry = entry;
+        }
+
+        public long getRxBytes() {
+            return this.entry == null ? 0 : this.entry.rxBytes;
+        }
+
+        public long getTxBytes() {
+            return this.entry == null ? 0 : this.entry.txBytes;
+        }
+
+        public int getUid() {
+            return this.entry == null ? 0 : this.entry.uid;
+        }
+
+        public int getSet() {
+            return this.entry == null ? 0 : this.entry.set;
+        }
+
+        public int getActualUid() {
+            return this.entry == null ? -1 : this.entry.actUid;
+        }
+
+        public String getProc() {
+            return this.entry == null ? "" : this.entry.proc;
+        }
+    }
+
+    public NetworkStatsEx(NetworkStats networkStats) {
+        this.mNetworkStats = networkStats;
+    }
+
+    public Entry getTotalIncludingTags(Entry recycle) {
+        if (this.mNetworkStats == null) {
+            return null;
+        }
+        android.net.NetworkStats.Entry entry;
+        NetworkStats networkStats = this.mNetworkStats;
+        if (recycle == null) {
+            entry = null;
+        } else {
+            entry = recycle.entry;
+        }
+        return new Entry(networkStats.getTotalIncludingTags(entry));
+    }
+
+    public static boolean isSetStatic(int set) {
+        if (9 == set) {
+            return true;
+        }
+        return false;
+    }
+
+    public int size() {
+        return this.mNetworkStats == null ? 0 : this.mNetworkStats.size();
+    }
+
+    public Entry getValues(int i, Entry recycle) {
+        if (this.mNetworkStats == null) {
+            return null;
+        }
+        return new Entry(this.mNetworkStats.getValues(i, recycle == null ? null : recycle.entry));
+    }
+}

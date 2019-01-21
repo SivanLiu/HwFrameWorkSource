@@ -43,15 +43,17 @@ public class GetStd {
                 }
             }
             int size = result.size();
-            if (size == 1 || size == 0) {
-                return GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
+            if (size != 1) {
+                if (size != 0) {
+                    float avg = getAverage(result);
+                    for (int i = 0; i < size; i++) {
+                        sum += (((double) ((Float) result.get(i)).floatValue()) - ((double) avg)) * (((double) ((Float) result.get(i)).floatValue()) - ((double) avg));
+                    }
+                    ret = (float) Math.sqrt(sum / ((double) (size - 1)));
+                    return ret;
+                }
             }
-            float avg = getAverage(result);
-            for (int i = 0; i < size; i++) {
-                sum += (((double) ((Float) result.get(i)).floatValue()) - ((double) avg)) * (((double) ((Float) result.get(i)).floatValue()) - ((double) avg));
-            }
-            ret = (float) Math.sqrt(sum / ((double) (size - 1)));
-            return ret;
+            return GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
         } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("LocatingState,e");

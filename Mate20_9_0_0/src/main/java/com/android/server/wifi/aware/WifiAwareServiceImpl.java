@@ -4,8 +4,11 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.wifi.aware.Characteristics;
+import android.net.wifi.aware.ConfigRequest;
+import android.net.wifi.aware.ConfigRequest.Builder;
 import android.net.wifi.aware.DiscoverySession;
 import android.net.wifi.aware.IWifiAwareDiscoverySessionCallback;
+import android.net.wifi.aware.IWifiAwareEventCallback;
 import android.net.wifi.aware.IWifiAwareMacAddressProvider;
 import android.net.wifi.aware.IWifiAwareManager.Stub;
 import android.net.wifi.aware.PublishConfig;
@@ -15,6 +18,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.IBinder.DeathRecipient;
+import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.os.ShellCallback;
 import android.provider.Settings.Global;
@@ -42,189 +46,6 @@ public class WifiAwareServiceImpl extends Stub {
     private WifiAwareStateManager mStateManager;
     private final SparseIntArray mUidByClientId = new SparseIntArray();
     private WifiPermissionsUtil mWifiPermissionsUtil;
-
-    /* renamed from: com.android.server.wifi.aware.WifiAwareServiceImpl$2 */
-    class AnonymousClass2 implements DeathRecipient {
-        final /* synthetic */ IBinder val$binder;
-        final /* synthetic */ int val$clientId;
-
-        AnonymousClass2(int i, IBinder iBinder) {
-            this.val$clientId = i;
-            this.val$binder = iBinder;
-        }
-
-        public void binderDied() {
-            if (WifiAwareServiceImpl.this.mDbg) {
-                String str = WifiAwareServiceImpl.TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("binderDied: clientId=");
-                stringBuilder.append(this.val$clientId);
-                Log.v(str, stringBuilder.toString());
-            }
-            this.val$binder.unlinkToDeath(this, 0);
-            synchronized (WifiAwareServiceImpl.this.mLock) {
-                WifiAwareServiceImpl.this.mDeathRecipientsByClientId.delete(this.val$clientId);
-                WifiAwareServiceImpl.this.mUidByClientId.delete(this.val$clientId);
-            }
-            WifiAwareServiceImpl.this.mStateManager.disconnect(this.val$clientId);
-        }
-    }
-
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-        	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
-        	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-        	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-        	at java.lang.Iterable.forEach(Iterable.java:75)
-        	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-        	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-        	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-        	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-        	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-        */
-    public void connect(android.os.IBinder r20, java.lang.String r21, android.net.wifi.aware.IWifiAwareEventCallback r22, android.net.wifi.aware.ConfigRequest r23, boolean r24) {
-        /*
-        r19 = this;
-        r1 = r19;
-        r2 = r20;
-        r11 = r21;
-        r12 = r22;
-        r13 = r24;
-        r19.enforceAccessPermission();
-        r19.enforceChangePermission();
-        r14 = r19.getMockableCallingUid();
-        r0 = r1.mAppOps;
-        r0.checkPackage(r14, r11);
-        if (r12 == 0) goto L_0x00e6;
-    L_0x001b:
-        if (r2 == 0) goto L_0x00de;
-    L_0x001d:
-        if (r13 == 0) goto L_0x0026;
-    L_0x001f:
-        r0 = r19.getMockableCallingUid();
-        r1.enforceLocationPermission(r11, r0);
-    L_0x0026:
-        if (r23 == 0) goto L_0x002e;
-    L_0x0028:
-        r19.enforceNetworkStackPermission();
-        r15 = r23;
-        goto L_0x0038;
-    L_0x002e:
-        r3 = new android.net.wifi.aware.ConfigRequest$Builder;
-        r3.<init>();
-        r0 = r3.build();
-        r15 = r0;
-    L_0x0038:
-        r15.validate();
-        r16 = getCallingPid();
-        r3 = r1.mLock;
-        monitor-enter(r3);
-        r0 = r1.mNextClientId;
-        r4 = r0 + 1;
-        r1.mNextClientId = r4;
-        r10 = r0;
-        monitor-exit(r3);
-        r0 = r1.mDbg;
-        if (r0 == 0) goto L_0x007c;
-    L_0x004e:
-        r0 = "WifiAwareService";
-        r3 = new java.lang.StringBuilder;
-        r3.<init>();
-        r4 = "connect: uid=";
-        r3.append(r4);
-        r3.append(r14);
-        r4 = ", clientId=";
-        r3.append(r4);
-        r3.append(r10);
-        r4 = ", configRequest";
-        r3.append(r4);
-        r3.append(r15);
-        r4 = ", notifyOnIdentityChanged=";
-        r3.append(r4);
-        r3.append(r13);
-        r3 = r3.toString();
-        android.util.Log.v(r0, r3);
-    L_0x007c:
-        r0 = new com.android.server.wifi.aware.WifiAwareServiceImpl$2;
-        r0.<init>(r10, r2);
-        r9 = r0;
-        r0 = 0;
-        r2.linkToDeath(r9, r0);	 Catch:{ RemoteException -> 0x00b0 }
-        r3 = r1.mLock;
-        monitor-enter(r3);
-        r0 = r1.mDeathRecipientsByClientId;	 Catch:{ all -> 0x00a7 }
-        r0.put(r10, r9);	 Catch:{ all -> 0x00a7 }
-        r0 = r1.mUidByClientId;	 Catch:{ all -> 0x00a7 }
-        r0.put(r10, r14);	 Catch:{ all -> 0x00a7 }
-        monitor-exit(r3);	 Catch:{ all -> 0x00a7 }
-        r3 = r1.mStateManager;
-        r4 = r10;
-        r5 = r14;
-        r6 = r16;
-        r7 = r11;
-        r8 = r12;
-        r17 = r9;
-        r9 = r15;
-        r18 = r10;
-        r10 = r13;
-        r3.connect(r4, r5, r6, r7, r8, r9, r10);
-        return;
-    L_0x00a7:
-        r0 = move-exception;
-        r17 = r9;
-        r18 = r10;
-    L_0x00ac:
-        monitor-exit(r3);	 Catch:{ all -> 0x00ae }
-        throw r0;
-    L_0x00ae:
-        r0 = move-exception;
-        goto L_0x00ac;
-    L_0x00b0:
-        r0 = move-exception;
-        r17 = r9;
-        r18 = r10;
-        r3 = r0;
-        r0 = "WifiAwareService";
-        r4 = new java.lang.StringBuilder;
-        r4.<init>();
-        r5 = "Error on linkToDeath - ";
-        r4.append(r5);
-        r4.append(r3);
-        r4 = r4.toString();
-        android.util.Log.e(r0, r4);
-        r0 = 1;
-        r12.onConnectFail(r0);	 Catch:{ RemoteException -> 0x00d1 }
-        goto L_0x00da;
-    L_0x00d1:
-        r0 = move-exception;
-        r4 = r0;
-        r4 = "WifiAwareService";
-        r5 = "Error on onConnectFail()";
-        android.util.Log.e(r4, r5);
-    L_0x00da:
-        return;
-    L_0x00db:
-        r0 = move-exception;
-        monitor-exit(r3);
-        throw r0;
-    L_0x00de:
-        r3 = new java.lang.IllegalArgumentException;
-        r4 = "Binder must not be null";
-        r3.<init>(r4);
-        throw r3;
-    L_0x00e6:
-        r3 = new java.lang.IllegalArgumentException;
-        r4 = "Callback must not be null";
-        r3.<init>(r4);
-        throw r3;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.android.server.wifi.aware.WifiAwareServiceImpl.connect(android.os.IBinder, java.lang.String, android.net.wifi.aware.IWifiAwareEventCallback, android.net.wifi.aware.ConfigRequest, boolean):void");
-    }
 
     public WifiAwareServiceImpl(Context context) {
         this.mContext = context.getApplicationContext();
@@ -291,6 +112,102 @@ public class WifiAwareServiceImpl extends Stub {
             return null;
         }
         return this.mStateManager.getCapabilities().toPublicCharacteristics();
+    }
+
+    public void connect(IBinder binder, String callingPackage, IWifiAwareEventCallback callback, ConfigRequest configRequest, boolean notifyOnIdentityChanged) {
+        int i;
+        final IBinder iBinder = binder;
+        String str = callingPackage;
+        IWifiAwareEventCallback iWifiAwareEventCallback = callback;
+        boolean z = notifyOnIdentityChanged;
+        enforceAccessPermission();
+        enforceChangePermission();
+        DeathRecipient uid = getMockableCallingUid();
+        this.mAppOps.checkPackage(uid, str);
+        if (iWifiAwareEventCallback == null) {
+            throw new IllegalArgumentException("Callback must not be null");
+        } else if (iBinder != null) {
+            ConfigRequest configRequest2;
+            String str2;
+            if (z) {
+                enforceLocationPermission(str, getMockableCallingUid());
+            }
+            if (configRequest != null) {
+                enforceNetworkStackPermission();
+                configRequest2 = configRequest;
+            } else {
+                configRequest2 = new Builder().build();
+            }
+            configRequest2.validate();
+            int pid = getCallingPid();
+            synchronized (this.mLock) {
+                int i2 = this.mNextClientId;
+                this.mNextClientId = i2 + 1;
+                uid = i2;
+            }
+            if (this.mDbg) {
+                str2 = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("connect: uid=");
+                stringBuilder.append(uid);
+                stringBuilder.append(", clientId=");
+                stringBuilder.append(uid);
+                stringBuilder.append(", configRequest");
+                stringBuilder.append(configRequest2);
+                stringBuilder.append(", notifyOnIdentityChanged=");
+                stringBuilder.append(z);
+                Log.v(str2, stringBuilder.toString());
+            }
+            DeathRecipient dr = new DeathRecipient() {
+                public void binderDied() {
+                    if (WifiAwareServiceImpl.this.mDbg) {
+                        String str = WifiAwareServiceImpl.TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("binderDied: clientId=");
+                        stringBuilder.append(uid);
+                        Log.v(str, stringBuilder.toString());
+                    }
+                    iBinder.unlinkToDeath(this, 0);
+                    synchronized (WifiAwareServiceImpl.this.mLock) {
+                        WifiAwareServiceImpl.this.mDeathRecipientsByClientId.delete(uid);
+                        WifiAwareServiceImpl.this.mUidByClientId.delete(uid);
+                    }
+                    WifiAwareServiceImpl.this.mStateManager.disconnect(uid);
+                }
+            };
+            try {
+                iBinder.linkToDeath(dr, 0);
+                synchronized (this.mLock) {
+                    try {
+                        this.mDeathRecipientsByClientId.put(uid, dr);
+                        this.mUidByClientId.put(uid, uid);
+                    } finally {
+                        DeathRecipient deathRecipient = dr;
+                        i = dr;
+                        while (true) {
+                        }
+                    }
+                }
+                WifiAwareStateManager wifiAwareStateManager = this.mStateManager;
+            } catch (RemoteException e) {
+                Object obj = dr;
+                i = uid;
+                RemoteException e2 = e;
+                str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("Error on linkToDeath - ");
+                stringBuilder2.append(e2);
+                Log.e(str2, stringBuilder2.toString());
+                try {
+                    iWifiAwareEventCallback.onConnectFail(1);
+                } catch (RemoteException e3) {
+                    RemoteException remoteException = e3;
+                    Log.e(TAG, "Error on onConnectFail()");
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Binder must not be null");
+        }
     }
 
     public void disconnect(int clientId, IBinder binder) {

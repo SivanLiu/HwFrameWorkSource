@@ -15,7 +15,7 @@ public class DANEEntryStore implements Store {
     private final Map entries;
 
     DANEEntryStore(List list) {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         for (DANEEntry dANEEntry : list) {
             hashMap.put(dANEEntry.getDomainName(), dANEEntry);
         }
@@ -26,7 +26,7 @@ public class DANEEntryStore implements Store {
         if (selector == null) {
             return this.entries.values();
         }
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (Object next : this.entries.values()) {
             if (selector.match(next)) {
                 arrayList.add(next);
@@ -37,7 +37,7 @@ public class DANEEntryStore implements Store {
 
     public Store toCertificateStore() {
         Collection<DANEEntry> matches = getMatches(null);
-        Collection arrayList = new ArrayList(matches.size());
+        ArrayList arrayList = new ArrayList(matches.size());
         for (DANEEntry certificate : matches) {
             arrayList.add(certificate.getCertificate());
         }

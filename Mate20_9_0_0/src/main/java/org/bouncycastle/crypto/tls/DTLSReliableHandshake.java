@@ -271,13 +271,14 @@ class DTLSReliableHandshake {
                     bArr = new byte[receiveLimit];
                 }
                 int receive = this.recordLayer.receive(bArr, 0, receiveLimit, i);
-                if (receive >= 0) {
+                if (receive < 0) {
+                    resendOutboundFlight();
+                    i = backOff(i);
+                } else {
                     if (processRecord(16, this.recordLayer.getReadEpoch(), bArr, 0, receive)) {
                         i = backOff(i);
                     }
                 }
-                resendOutboundFlight();
-                i = backOff(i);
             } catch (IOException e) {
             }
         }

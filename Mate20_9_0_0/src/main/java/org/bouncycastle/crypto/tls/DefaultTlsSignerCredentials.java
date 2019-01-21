@@ -1,6 +1,7 @@
 package org.bouncycastle.crypto.tls;
 
 import java.io.IOException;
+import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.DSAPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
@@ -54,7 +55,7 @@ public class DefaultTlsSignerCredentials extends AbstractTlsSignerCredentials {
     public byte[] generateCertificateSignature(byte[] bArr) throws IOException {
         try {
             return TlsUtils.isTLSv12(this.context) ? this.signer.generateRawSignature(this.signatureAndHashAlgorithm, this.privateKey, bArr) : this.signer.generateRawSignature(this.privateKey, bArr);
-        } catch (Throwable e) {
+        } catch (CryptoException e) {
             throw new TlsFatalAlert((short) 80, e);
         }
     }

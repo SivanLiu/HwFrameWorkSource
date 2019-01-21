@@ -135,10 +135,10 @@ public final class LocalBroadcastManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:52:0x0160, code:
+    /* JADX WARNING: Missing block: B:53:0x0160, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:55:0x0163, code:
+    /* JADX WARNING: Missing block: B:56:0x0163, code skipped:
             return DEBUG;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -177,6 +177,7 @@ public final class LocalBroadcastManager {
                 int i = 0;
                 while (true) {
                     int i2 = i;
+                    ArrayList<ReceiverRecord> receivers2;
                     if (i2 < entries.size()) {
                         String type2;
                         int i3;
@@ -211,10 +212,13 @@ public final class LocalBroadcastManager {
                                     Log.v(str2, stringBuilder3.toString());
                                 }
                                 if (type == null) {
-                                    type = new ArrayList();
+                                    receivers2 = new ArrayList();
                                 }
-                                type.add(receiver2);
+                                receivers2.add(receiver2);
                                 receiver2.broadcasting = true;
+                                receivers = receivers2;
+                                i = i3 + 1;
+                                type = type2;
                             } else if (debug) {
                                 switch (i) {
                                     case -4:
@@ -240,16 +244,16 @@ public final class LocalBroadcastManager {
                                 Log.v(str3, stringBuilder4.toString());
                             }
                         }
-                        Object receivers2 = type;
+                        receivers = type;
                         i = i3 + 1;
                         type = type2;
                     } else {
-                        ArrayList<ReceiverRecord> receivers3 = receivers2;
-                        if (receivers3 != null) {
-                            for (i = 0; i < receivers3.size(); i++) {
-                                ((ReceiverRecord) receivers3.get(i)).broadcasting = DEBUG;
+                        receivers2 = receivers;
+                        if (receivers2 != null) {
+                            for (i = 0; i < receivers2.size(); i++) {
+                                ((ReceiverRecord) receivers2.get(i)).broadcasting = DEBUG;
                             }
-                            this.mPendingBroadcasts.add(new BroadcastRecord(intent2, receivers3));
+                            this.mPendingBroadcasts.add(new BroadcastRecord(intent2, receivers2));
                             if (!this.mHandler.hasMessages(1)) {
                                 this.mHandler.sendEmptyMessage(1);
                             }
@@ -266,33 +270,33 @@ public final class LocalBroadcastManager {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001c, code:
+    /* JADX WARNING: Missing block: B:10:0x001c, code skipped:
             r2 = 0;
      */
-    /* JADX WARNING: Missing block: B:12:0x001f, code:
+    /* JADX WARNING: Missing block: B:12:0x001f, code skipped:
             if (r2 >= r0.length) goto L_0x0047;
      */
-    /* JADX WARNING: Missing block: B:13:0x0021, code:
+    /* JADX WARNING: Missing block: B:13:0x0021, code skipped:
             r3 = r0[r2];
             r4 = r3.receivers.size();
             r5 = 0;
      */
-    /* JADX WARNING: Missing block: B:14:0x002a, code:
+    /* JADX WARNING: Missing block: B:14:0x002a, code skipped:
             if (r5 >= r4) goto L_0x0044;
      */
-    /* JADX WARNING: Missing block: B:15:0x002c, code:
+    /* JADX WARNING: Missing block: B:15:0x002c, code skipped:
             r6 = (android.support.v4.content.LocalBroadcastManager.ReceiverRecord) r3.receivers.get(r5);
      */
-    /* JADX WARNING: Missing block: B:16:0x0036, code:
+    /* JADX WARNING: Missing block: B:16:0x0036, code skipped:
             if (r6.dead != false) goto L_0x0041;
      */
-    /* JADX WARNING: Missing block: B:17:0x0038, code:
+    /* JADX WARNING: Missing block: B:17:0x0038, code skipped:
             r6.receiver.onReceive(r10.mAppContext, r3.intent);
      */
-    /* JADX WARNING: Missing block: B:18:0x0041, code:
+    /* JADX WARNING: Missing block: B:18:0x0041, code skipped:
             r5 = r5 + 1;
      */
-    /* JADX WARNING: Missing block: B:19:0x0044, code:
+    /* JADX WARNING: Missing block: B:19:0x0044, code skipped:
             r2 = r2 + 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

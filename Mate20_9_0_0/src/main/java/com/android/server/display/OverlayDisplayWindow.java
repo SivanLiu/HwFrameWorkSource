@@ -200,11 +200,11 @@ final class OverlayDisplayWindow implements Dump {
         this.mWidth = width;
         this.mHeight = height;
         this.mDensityDpi = densityDpi;
-        this.mTitle = this.mContext.getResources().getString(17039947, new Object[]{this.mName, Integer.valueOf(this.mWidth), Integer.valueOf(this.mHeight), Integer.valueOf(this.mDensityDpi)});
+        this.mTitle = this.mContext.getResources().getString(17039948, new Object[]{this.mName, Integer.valueOf(this.mWidth), Integer.valueOf(this.mHeight), Integer.valueOf(this.mDensityDpi)});
         if (this.mSecure) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(this.mTitle);
-            stringBuilder.append(this.mContext.getResources().getString(17039946));
+            stringBuilder.append(this.mContext.getResources().getString(17039947));
             this.mTitle = stringBuilder.toString();
         }
         if (doLayout) {

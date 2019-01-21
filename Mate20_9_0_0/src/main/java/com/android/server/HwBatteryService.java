@@ -642,7 +642,7 @@ public final class HwBatteryService extends BatteryService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:28:0x009d, code:
+    /* JADX WARNING: Missing block: B:28:0x009d, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -776,22 +776,22 @@ public final class HwBatteryService extends BatteryService {
     private int getWirelessTxErrorRes(int status) {
         this.mLowBattery = false;
         if (status == 3) {
-            return 33686199;
+            return 33686202;
         }
         if (status != 23) {
             switch (status) {
                 case 19:
-                    return 33686201;
+                    return 33686204;
                 case 20:
-                    return 33686203;
+                    return 33686206;
                 case 21:
-                    return 33686202;
+                    return 33686205;
                 default:
                     return -1;
             }
         }
         this.mLowBattery = true;
-        return 33686200;
+        return 33686203;
     }
 
     private boolean allowWirelessTxSwitch(int switchStatus, int wirelessTxStatus) {
@@ -810,26 +810,26 @@ public final class HwBatteryService extends BatteryService {
         return result;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0059, code:
+    /* JADX WARNING: Missing block: B:16:0x0059, code skipped:
             if (isWirelessTxNormal(r0) == false) goto L_0x005f;
      */
-    /* JADX WARNING: Missing block: B:17:0x005b, code:
+    /* JADX WARNING: Missing block: B:17:0x005b, code skipped:
             sendWirelessTxStatusChangeBroadcast(1);
      */
-    /* JADX WARNING: Missing block: B:19:0x0063, code:
+    /* JADX WARNING: Missing block: B:19:0x0063, code skipped:
             if (isWirelessTxError(r0) == false) goto L_0x006c;
      */
-    /* JADX WARNING: Missing block: B:20:0x0065, code:
+    /* JADX WARNING: Missing block: B:20:0x0065, code skipped:
             sendWirelessTxChargeErrorBroadcast();
             sendWirelessTxErrorNotification(r0);
      */
-    /* JADX WARNING: Missing block: B:22:0x0070, code:
+    /* JADX WARNING: Missing block: B:22:0x0070, code skipped:
             if (isWirelessTxDisconnect(r0) == false) goto L_0x0076;
      */
-    /* JADX WARNING: Missing block: B:23:0x0072, code:
+    /* JADX WARNING: Missing block: B:23:0x0072, code skipped:
             sendWirelessTxStatusChangeBroadcast(0);
      */
-    /* JADX WARNING: Missing block: B:24:0x0076, code:
+    /* JADX WARNING: Missing block: B:24:0x0076, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1084,16 +1084,16 @@ public final class HwBatteryService extends BatteryService {
         return queryRingMusicUri(context.getContentResolver(), fileName);
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0047, code:
+    /* JADX WARNING: Missing block: B:13:0x0047, code skipped:
             if (r9 != null) goto L_0x0049;
      */
-    /* JADX WARNING: Missing block: B:14:0x0049, code:
+    /* JADX WARNING: Missing block: B:14:0x0049, code skipped:
             r9.close();
      */
-    /* JADX WARNING: Missing block: B:20:0x0055, code:
+    /* JADX WARNING: Missing block: B:20:0x0055, code skipped:
             if (r9 == null) goto L_0x0058;
      */
-    /* JADX WARNING: Missing block: B:21:0x0058, code:
+    /* JADX WARNING: Missing block: B:21:0x0058, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

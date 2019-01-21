@@ -125,21 +125,21 @@ public class GF2nPolynomial {
 
     public final void enlarge(int i) {
         if (i > this.size) {
-            Object obj = new GF2nElement[i];
-            System.arraycopy(this.coeff, 0, obj, 0, this.size);
+            GF2nElement[] gF2nElementArr = new GF2nElement[i];
+            System.arraycopy(this.coeff, 0, gF2nElementArr, 0, this.size);
             GF2nField field = this.coeff[0].getField();
             int i2;
             if (this.coeff[0] instanceof GF2nPolynomialElement) {
                 for (i2 = this.size; i2 < i; i2++) {
-                    obj[i2] = GF2nPolynomialElement.ZERO((GF2nPolynomialField) field);
+                    gF2nElementArr[i2] = GF2nPolynomialElement.ZERO((GF2nPolynomialField) field);
                 }
             } else if (this.coeff[0] instanceof GF2nONBElement) {
                 for (i2 = this.size; i2 < i; i2++) {
-                    obj[i2] = GF2nONBElement.ZERO((GF2nONBField) field);
+                    gF2nElementArr[i2] = GF2nONBElement.ZERO((GF2nONBField) field);
                 }
             }
             this.size = i;
-            this.coeff = obj;
+            this.coeff = gF2nElementArr;
         }
     }
 
@@ -295,9 +295,9 @@ public class GF2nPolynomial {
         }
         i++;
         if (i < this.size) {
-            Object obj = new GF2nElement[i];
-            System.arraycopy(this.coeff, 0, obj, 0, i);
-            this.coeff = obj;
+            GF2nElement[] gF2nElementArr = new GF2nElement[i];
+            System.arraycopy(this.coeff, 0, gF2nElementArr, 0, i);
+            this.coeff = gF2nElementArr;
             this.size = i;
         }
     }

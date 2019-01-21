@@ -20,17 +20,20 @@ public class ReversedWindowGenerator implements RandomGenerator {
         synchronized (this) {
             int i3 = 0;
             while (i3 < i2) {
-                if (this.windowCount < 1) {
-                    this.generator.nextBytes(this.window, 0, this.window.length);
-                    this.windowCount = this.window.length;
+                try {
+                    if (this.windowCount < 1) {
+                        this.generator.nextBytes(this.window, 0, this.window.length);
+                        this.windowCount = this.window.length;
+                    }
+                    int i4 = i3 + 1;
+                    i3 += i;
+                    byte[] bArr2 = this.window;
+                    int i5 = this.windowCount - 1;
+                    this.windowCount = i5;
+                    bArr[i3] = bArr2[i5];
+                    i3 = i4;
+                } catch (Throwable th) {
                 }
-                int i4 = i3 + 1;
-                i3 += i;
-                byte[] bArr2 = this.window;
-                int i5 = this.windowCount - 1;
-                this.windowCount = i5;
-                bArr[i3] = bArr2[i5];
-                i3 = i4;
             }
         }
     }

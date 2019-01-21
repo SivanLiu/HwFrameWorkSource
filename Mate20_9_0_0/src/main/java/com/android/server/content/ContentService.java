@@ -57,7 +57,6 @@ import com.android.server.slice.SliceClientPermissions.SliceAuthority;
 import huawei.android.security.IHwBehaviorCollectManager.BehaviorId;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -449,10 +448,10 @@ public final class ContentService extends Stub {
 
     protected synchronized void dump(FileDescriptor fd, PrintWriter pw_, String[] args) {
         Throwable th;
-        Writer writer = pw_;
+        PrintWriter printWriter = pw_;
         synchronized (this) {
-            if (DumpUtils.checkDumpAndUsageStatsPermission(this.mContext, TAG, writer)) {
-                PrintWriter pw = new IndentingPrintWriter(writer, "  ");
+            if (DumpUtils.checkDumpAndUsageStatsPermission(this.mContext, TAG, printWriter)) {
+                PrintWriter pw = new IndentingPrintWriter(printWriter, "  ");
                 String[] strArr = args;
                 boolean dumpAll = ArrayUtils.contains(strArr, "-a");
                 long identityToken = clearCallingIdentity();
@@ -655,93 +654,212 @@ public final class ContentService extends Stub {
         throw new IllegalArgumentException("You must pass a valid observer");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:48:0x00c4 A:{SYNTHETIC, Splitter: B:48:0x00c4} */
-    /* JADX WARNING: Missing block: B:25:0x0094, code:
+    /* JADX WARNING: Removed duplicated region for block: B:48:0x00c4 A:{SYNTHETIC, Splitter:B:48:0x00c4} */
+    /* JADX WARNING: Missing block: B:25:0x0094, code skipped:
             r9 = r2.size();
             r0 = 0;
      */
-    /* JADX WARNING: Missing block: B:78:0x0136, code:
+    /* JADX WARNING: Missing block: B:26:0x0096, code skipped:
+            r10 = r0;
+     */
+    /* JADX WARNING: Missing block: B:27:0x0097, code skipped:
+            if (r10 >= r9) goto L_0x0136;
+     */
+    /* JADX WARNING: Missing block: B:30:0x009f, code skipped:
+            r11 = (com.android.server.content.ContentService.ObserverCall) r2.get(r10);
+     */
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
+            r11.mObserver.onChange(r11.mSelfChange, r28, r7);
+     */
+    /* JADX WARNING: Missing block: B:36:0x00a9, code skipped:
+            r21 = r2;
+            r23 = r3;
+     */
+    /* JADX WARNING: Missing block: B:37:0x00b0, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:38:0x00b2, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:39:0x00b4, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:40:0x00b5, code skipped:
+            r13 = r28;
+     */
+    /* JADX WARNING: Missing block: B:41:0x00b7, code skipped:
+            r9 = r3;
+            r11 = r6;
+            r12 = r19;
+     */
+    /* JADX WARNING: Missing block: B:42:0x00bd, code skipped:
+            r0 = e;
+     */
+    /* JADX WARNING: Missing block: B:43:0x00be, code skipped:
+            r13 = r28;
+     */
+    /* JADX WARNING: Missing block: B:44:0x00c0, code skipped:
+            r12 = r0;
+     */
+    /* JADX WARNING: Missing block: B:47:0x00c3, code skipped:
+            monitor-enter(r8.mRootNode);
+     */
+    /* JADX WARNING: Missing block: B:49:?, code skipped:
+            android.util.Log.w(TAG, "Found dead observer, removing");
+            r0 = r11.mObserver.asBinder();
+            r15 = com.android.server.content.ContentService.ObserverNode.access$300(r11.mNode);
+     */
+    /* JADX WARNING: Missing block: B:50:0x00db, code skipped:
+            r1 = r15.size();
+            r16 = 0;
+     */
+    /* JADX WARNING: Missing block: B:51:0x00df, code skipped:
+            r21 = r2;
+            r2 = r16;
+     */
+    /* JADX WARNING: Missing block: B:52:0x00e5, code skipped:
+            if (r2 < r1) goto L_0x00e7;
+     */
+    /* JADX WARNING: Missing block: B:55:0x00ed, code skipped:
+            r23 = r3;
+     */
+    /* JADX WARNING: Missing block: B:58:0x00f9, code skipped:
+            if (((com.android.server.content.ContentService.ObserverNode.ObserverEntry) r15.get(r2)).observer.asBinder() == r0) goto L_0x00fb;
+     */
+    /* JADX WARNING: Missing block: B:59:0x00fb, code skipped:
+            r15.remove(r2);
+            r1 = r1 - 1;
+            r2 = r2 - 1;
+     */
+    /* JADX WARNING: Missing block: B:60:0x0104, code skipped:
+            r16 = r2 + 1;
+            r2 = r21;
+            r3 = r23;
+     */
+    /* JADX WARNING: Missing block: B:61:0x010b, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:62:0x010c, code skipped:
+            r23 = r3;
+     */
+    /* JADX WARNING: Missing block: B:63:0x010f, code skipped:
+            r23 = r3;
+     */
+    /* JADX WARNING: Missing block: B:66:0x011a, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:67:0x011b, code skipped:
+            r21 = r2;
+            r23 = r3;
+     */
+    /* JADX WARNING: Missing block: B:70:?, code skipped:
+            throw r0;
+     */
+    /* JADX WARNING: Missing block: B:71:0x0121, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:72:0x0122, code skipped:
+            r11 = r6;
+            r12 = r19;
+            r9 = r23;
+     */
+    /* JADX WARNING: Missing block: B:73:0x0129, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:74:0x012b, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:75:0x012d, code skipped:
+            r0 = th;
+     */
+    /* JADX WARNING: Missing block: B:76:0x012e, code skipped:
+            r13 = r28;
+     */
+    /* JADX WARNING: Missing block: B:77:0x0130, code skipped:
+            r9 = r3;
+            r11 = r6;
+            r12 = r19;
+     */
+    /* JADX WARNING: Missing block: B:78:0x0136, code skipped:
             r21 = r2;
             r23 = r3;
             r13 = r28;
      */
-    /* JADX WARNING: Missing block: B:79:0x013e, code:
+    /* JADX WARNING: Missing block: B:79:0x013e, code skipped:
             if ((r31 & 1) == 0) goto L_0x016e;
      */
-    /* JADX WARNING: Missing block: B:81:?, code:
+    /* JADX WARNING: Missing block: B:81:?, code skipped:
             r0 = getSyncManager();
      */
-    /* JADX WARNING: Missing block: B:82:0x0144, code:
+    /* JADX WARNING: Missing block: B:82:0x0144, code skipped:
             if (r0 == null) goto L_0x016e;
      */
-    /* JADX WARNING: Missing block: B:84:0x014b, code:
+    /* JADX WARNING: Missing block: B:84:0x014b, code skipped:
             r12 = r19;
      */
-    /* JADX WARNING: Missing block: B:87:0x0151, code:
+    /* JADX WARNING: Missing block: B:87:0x0151, code skipped:
             r15 = r21;
             r25 = r9;
             r9 = r23;
             r11 = r6;
      */
-    /* JADX WARNING: Missing block: B:89:?, code:
+    /* JADX WARNING: Missing block: B:89:?, code skipped:
             r0.scheduleLocalSync(null, r18, r12, r28.getAuthority(), getSyncExemptionForCaller(r12));
      */
-    /* JADX WARNING: Missing block: B:90:0x0162, code:
+    /* JADX WARNING: Missing block: B:90:0x0162, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:91:0x0163, code:
+    /* JADX WARNING: Missing block: B:91:0x0163, code skipped:
             r11 = r6;
             r9 = r23;
      */
-    /* JADX WARNING: Missing block: B:92:0x0167, code:
+    /* JADX WARNING: Missing block: B:92:0x0167, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:93:0x0168, code:
+    /* JADX WARNING: Missing block: B:93:0x0168, code skipped:
             r11 = r6;
             r12 = r19;
             r9 = r23;
      */
-    /* JADX WARNING: Missing block: B:94:0x016e, code:
+    /* JADX WARNING: Missing block: B:94:0x016e, code skipped:
             r11 = r6;
             r25 = r9;
             r12 = r19;
             r15 = r21;
             r9 = r23;
      */
-    /* JADX WARNING: Missing block: B:95:0x0177, code:
+    /* JADX WARNING: Missing block: B:95:0x0177, code skipped:
             r1 = r8.mCache;
      */
-    /* JADX WARNING: Missing block: B:96:0x0179, code:
+    /* JADX WARNING: Missing block: B:96:0x0179, code skipped:
             monitor-enter(r1);
      */
-    /* JADX WARNING: Missing block: B:98:?, code:
+    /* JADX WARNING: Missing block: B:98:?, code skipped:
             invalidateCacheLocked(r7, getProviderPackageName(r28), r13);
      */
-    /* JADX WARNING: Missing block: B:99:0x0181, code:
+    /* JADX WARNING: Missing block: B:99:0x0181, code skipped:
             monitor-exit(r1);
      */
-    /* JADX WARNING: Missing block: B:100:0x0182, code:
+    /* JADX WARNING: Missing block: B:100:0x0182, code skipped:
             restoreCallingIdentity(r9);
      */
-    /* JADX WARNING: Missing block: B:101:0x0186, code:
+    /* JADX WARNING: Missing block: B:101:0x0186, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:107:0x018a, code:
+    /* JADX WARNING: Missing block: B:107:0x018a, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:108:0x018b, code:
+    /* JADX WARNING: Missing block: B:108:0x018b, code skipped:
             r9 = r3;
             r11 = r6;
             r12 = r19;
             r13 = r28;
      */
-    /* JADX WARNING: Missing block: B:117:0x01a3, code:
+    /* JADX WARNING: Missing block: B:117:0x01a3, code skipped:
             r0 = th;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public void notifyChange(Uri uri, IContentObserver observer, boolean observerWantsSelfNotifications, int flags, int userHandle, int targetSdkVersion) {
-        int userHandle2;
-        String msg;
         long identityToken;
         ArrayList<ObserverCall> calls;
         Throwable th;
@@ -750,17 +868,13 @@ public final class ContentService extends Stub {
         String str;
         int i;
         Uri uri2;
-        ArrayList<ObserverCall> calls2;
-        long identityToken3;
-        RemoteException e;
-        RemoteException ex;
         Uri uri3 = uri;
         if (uri3 != null) {
             int uid = Binder.getCallingUid();
             int pid = Binder.getCallingPid();
             int callingUserHandle = UserHandle.getCallingUserId();
-            userHandle2 = handleIncomingUser(uri3, pid, uid, 2, true, userHandle);
-            msg = ((ActivityManagerInternal) LocalServices.getService(ActivityManagerInternal.class)).checkContentProviderAccess(uri.getAuthority(), userHandle2);
+            int userHandle2 = handleIncomingUser(uri3, pid, uid, 2, true, userHandle);
+            String msg = ((ActivityManagerInternal) LocalServices.getService(ActivityManagerInternal.class)).checkContentProviderAccess(uri.getAuthority(), userHandle2);
             if (msg == null) {
                 int i2 = targetSdkVersion;
             } else if (targetSdkVersion >= 26) {
@@ -826,97 +940,9 @@ public final class ContentService extends Stub {
         }
         uri2 = uri3;
         throw new NullPointerException("Uri must not be null");
-        while (true) {
-            int i3;
-            int i4 = i3;
-            if (i4 >= identityToken2) {
-                break;
-            }
-            try {
-                ObserverCall oc = (ObserverCall) calls.get(i4);
-                try {
-                    try {
-                        oc.mObserver.onChange(oc.mSelfChange, uri, userHandle2);
-                        calls2 = calls;
-                        identityToken3 = identityToken;
-                    } catch (RemoteException e2) {
-                        e = e2;
-                        ex = e;
-                        try {
-                            synchronized (this.mRootNode) {
-                            }
-                        } catch (Throwable th6) {
-                            th = th6;
-                            identityToken2 = identityToken;
-                            restoreCallingIdentity(identityToken2);
-                            throw th;
-                        }
-                    } catch (Throwable th7) {
-                        th = th7;
-                    }
-                } catch (RemoteException e3) {
-                    e = e3;
-                    uri2 = uri;
-                    ex = e;
-                    synchronized (this.mRootNode) {
-                        try {
-                            Log.w(TAG, "Found dead observer, removing");
-                            IBinder binder = oc.mObserver.asBinder();
-                            ArrayList<ObserverEntry> list = oc.mNode.mObservers;
-                            int numList = list.size();
-                            int j = 0;
-                            while (true) {
-                                calls2 = calls;
-                                int j2 = j;
-                                if (j2 < numList) {
-                                    try {
-                                        identityToken3 = identityToken;
-                                        if (((ObserverEntry) list.get(j2)).observer.asBinder() == binder) {
-                                            list.remove(j2);
-                                            numList--;
-                                            j2--;
-                                        }
-                                        j = j2 + 1;
-                                        calls = calls2;
-                                        identityToken = identityToken3;
-                                    } catch (Throwable th8) {
-                                        th = th8;
-                                    }
-                                } else {
-                                    identityToken3 = identityToken;
-                                }
-                            }
-                            i3 = i4 + 1;
-                            calls = calls2;
-                            identityToken = identityToken3;
-                        } catch (Throwable th9) {
-                            th = th9;
-                            calls2 = calls;
-                            identityToken3 = identityToken;
-                        }
-                    }
-                } catch (Throwable th10) {
-                    th = th10;
-                    uri2 = uri;
-                }
-                i3 = i4 + 1;
-                calls = calls2;
-                identityToken = identityToken3;
-            } catch (Throwable th11) {
-                th = th11;
-                uri2 = uri;
-            }
-        }
-        identityToken2 = identityToken;
-        str = msg;
-        restoreCallingIdentity(identityToken2);
-        throw th;
-        try {
-            throw th;
-        } catch (Throwable th12) {
-            th = th12;
-            identityToken2 = identityToken3;
-        }
+        int i3 = i + 1;
+        calls = calls;
+        identityToken = identityToken;
     }
 
     private int checkUriPermission(Uri uri, int pid, int uid, int modeFlags, int userHandle) {

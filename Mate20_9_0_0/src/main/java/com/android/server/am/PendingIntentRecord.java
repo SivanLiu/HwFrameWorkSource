@@ -200,10 +200,10 @@ final class PendingIntentRecord extends Stub {
         return sendInner(code, intent, resolvedType, whitelistToken, finishedReceiver, requiredPermission, null, null, 0, 0, 0, options);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02de  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02de  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02de  */
-    /* JADX WARNING: Removed duplicated region for block: B:147:0x02de  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x02de  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x02de  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x02de  */
+    /* JADX WARNING: Removed duplicated region for block: B:149:0x02de  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     int sendInner(int code, Intent intent, String resolvedType, IBinder whitelistToken, IIntentReceiver finishedReceiver, String requiredPermission, IBinder resultTo, String resultWho, int requestCode, int flagsMask, int flagsValues, Bundle options) {
         int i;
@@ -390,12 +390,12 @@ final class PendingIntentRecord extends Stub {
                                 Slog.w("ActivityManager", "Unable to send startActivity intent", e);
                                 callingUid = res;
                                 if (sendFinish) {
+                                    break;
                                 }
                                 Binder.restoreCallingIdentity(origId);
                                 ActivityManagerService.resetPriorityAfterLockedSection();
                                 return callingUid;
                             }
-                            break;
                         case 2:
                             origId = origId2;
                             try {
@@ -446,7 +446,6 @@ final class PendingIntentRecord extends Stub {
                                     activityManagerService2 = activityManagerService;
                                     callingUid = res;
                                     if (sendFinish) {
-                                        break;
                                     }
                                     Binder.restoreCallingIdentity(origId);
                                     ActivityManagerService.resetPriorityAfterLockedSection();
@@ -476,6 +475,7 @@ final class PendingIntentRecord extends Stub {
                                 ActivityManagerService.resetPriorityAfterLockedSection();
                                 return callingUid;
                             }
+                            break;
                         default:
                             origId = origId2;
                             finalIntent2 = finalIntent;

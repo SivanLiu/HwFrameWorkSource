@@ -2,6 +2,10 @@ package com.android.server.devicepolicy;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.security.keymaster.KeymasterCertificateChain;
+import android.security.keystore.ParcelableKeyGenParameterSpec;
+import android.telephony.data.ApnSetting;
 import android.util.Log;
 import android.util.Slog;
 import com.android.server.devicepolicy.PolicyStruct.PolicyItem;
@@ -569,6 +573,94 @@ public abstract class AbsDevicePolicyManagerService extends BaseIDevicePolicyMan
             }
             return result;
         }
+    }
+
+    public /* bridge */ /* synthetic */ int addOverrideApn(ComponentName componentName, ApnSetting apnSetting) {
+        return super.addOverrideApn(componentName, apnSetting);
+    }
+
+    public /* bridge */ /* synthetic */ void clearSystemUpdatePolicyFreezePeriodRecord() {
+        super.clearSystemUpdatePolicyFreezePeriodRecord();
+    }
+
+    public /* bridge */ /* synthetic */ long forceSecurityLogs() {
+        return super.forceSecurityLogs();
+    }
+
+    public /* bridge */ /* synthetic */ boolean generateKeyPair(ComponentName componentName, String str, String str2, ParcelableKeyGenParameterSpec parcelableKeyGenParameterSpec, int i, KeymasterCertificateChain keymasterCertificateChain) {
+        return super.generateKeyPair(componentName, str, str2, parcelableKeyGenParameterSpec, i, keymasterCertificateChain);
+    }
+
+    public /* bridge */ /* synthetic */ String getEndUserSessionMessage(ComponentName componentName) {
+        return super.getEndUserSessionMessage(componentName);
+    }
+
+    public /* bridge */ /* synthetic */ List getMeteredDataDisabledPackages(ComponentName componentName) {
+        return super.getMeteredDataDisabledPackages(componentName);
+    }
+
+    public /* bridge */ /* synthetic */ List getOverrideApns(ComponentName componentName) {
+        return super.getOverrideApns(componentName);
+    }
+
+    public /* bridge */ /* synthetic */ String getStartUserSessionMessage(ComponentName componentName) {
+        return super.getStartUserSessionMessage(componentName);
+    }
+
+    public /* bridge */ /* synthetic */ PersistableBundle getTransferOwnershipBundle() {
+        return super.getTransferOwnershipBundle();
+    }
+
+    public /* bridge */ /* synthetic */ boolean isMeteredDataDisabledPackageForUser(ComponentName componentName, String str, int i) {
+        return super.isMeteredDataDisabledPackageForUser(componentName, str, i);
+    }
+
+    public /* bridge */ /* synthetic */ boolean isOverrideApnEnabled(ComponentName componentName) {
+        return super.isOverrideApnEnabled(componentName);
+    }
+
+    public /* bridge */ /* synthetic */ boolean isUsingUnifiedPassword(ComponentName componentName) {
+        return super.isUsingUnifiedPassword(componentName);
+    }
+
+    public /* bridge */ /* synthetic */ boolean removeOverrideApn(ComponentName componentName, int i) {
+        return super.removeOverrideApn(componentName, i);
+    }
+
+    public /* bridge */ /* synthetic */ void setDefaultSmsApplication(ComponentName componentName, String str) {
+        super.setDefaultSmsApplication(componentName, str);
+    }
+
+    public /* bridge */ /* synthetic */ void setEndUserSessionMessage(ComponentName componentName, CharSequence charSequence) {
+        super.setEndUserSessionMessage(componentName, charSequence);
+    }
+
+    public /* bridge */ /* synthetic */ boolean setKeyPairCertificate(ComponentName componentName, String str, String str2, byte[] bArr, byte[] bArr2, boolean z) {
+        return super.setKeyPairCertificate(componentName, str, str2, bArr, bArr2, z);
+    }
+
+    public /* bridge */ /* synthetic */ List setMeteredDataDisabledPackages(ComponentName componentName, List list) {
+        return super.setMeteredDataDisabledPackages(componentName, list);
+    }
+
+    public /* bridge */ /* synthetic */ void setOverrideApnsEnabled(ComponentName componentName, boolean z) {
+        super.setOverrideApnsEnabled(componentName, z);
+    }
+
+    public /* bridge */ /* synthetic */ void setStartUserSessionMessage(ComponentName componentName, CharSequence charSequence) {
+        super.setStartUserSessionMessage(componentName, charSequence);
+    }
+
+    public /* bridge */ /* synthetic */ void setSystemSetting(ComponentName componentName, String str, String str2) {
+        super.setSystemSetting(componentName, str, str2);
+    }
+
+    public /* bridge */ /* synthetic */ void transferOwnership(ComponentName componentName, ComponentName componentName2, PersistableBundle persistableBundle) {
+        super.transferOwnership(componentName, componentName2, persistableBundle);
+    }
+
+    public /* bridge */ /* synthetic */ boolean updateOverrideApn(ComponentName componentName, int i, ApnSetting apnSetting) {
+        return super.updateOverrideApn(componentName, i, apnSetting);
     }
 
     static {

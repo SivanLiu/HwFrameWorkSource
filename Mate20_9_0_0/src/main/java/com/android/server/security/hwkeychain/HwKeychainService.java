@@ -538,7 +538,7 @@ public class HwKeychainService extends Stub implements IHwSecurityPlugin {
         currentDecisionReport.append(month);
         currentDecisionReport.append("-");
         currentDecisionReport.append(day);
-        return true ^ currentDecisionReport.toString().equals(decisionReport);
+        return 1 ^ currentDecisionReport.toString().equals(decisionReport);
     }
 
     private void setDecisionReport(JSONObject dict) {

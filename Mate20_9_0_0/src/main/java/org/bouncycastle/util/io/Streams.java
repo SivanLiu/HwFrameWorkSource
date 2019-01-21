@@ -46,13 +46,13 @@ public final class Streams {
     }
 
     public static byte[] readAll(InputStream inputStream) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         pipeAll(inputStream, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
     public static byte[] readAllLimited(InputStream inputStream, int i) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         pipeAllLimited(inputStream, (long) i, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }

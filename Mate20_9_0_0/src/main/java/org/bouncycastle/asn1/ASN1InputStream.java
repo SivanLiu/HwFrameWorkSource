@@ -196,7 +196,7 @@ public class ASN1InputStream extends FilterInputStream implements BERTags {
     ASN1EncodableVector buildEncodableVector() throws IOException {
         ASN1EncodableVector aSN1EncodableVector = new ASN1EncodableVector();
         while (true) {
-            ASN1Encodable readObject = readObject();
+            ASN1Primitive readObject = readObject();
             if (readObject == null) {
                 return aSN1EncodableVector;
             }
@@ -266,7 +266,7 @@ public class ASN1InputStream extends FilterInputStream implements BERTags {
             if (readLength >= 0) {
                 try {
                     return buildObject(read, readTagNumber, readLength);
-                } catch (Throwable e) {
+                } catch (IllegalArgumentException e) {
                     throw new ASN1Exception("corrupted stream detected", e);
                 }
             } else if (z) {

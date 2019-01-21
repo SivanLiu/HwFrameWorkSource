@@ -27,8 +27,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.KeySpec;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -155,7 +153,7 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         private final Map KEY_SIZES;
 
         DefaultSecretKeyProvider() {
-            Map hashMap = new HashMap();
+            HashMap hashMap = new HashMap();
             hashMap.put(new ASN1ObjectIdentifier(CMSEnvelopedGenerator.CAST5_CBC), Integers.valueOf(128));
             hashMap.put(PKCSObjectIdentifiers.des_EDE3_CBC, Integers.valueOf(192));
             hashMap.put(NISTObjectIdentifiers.id_aes128_CBC, Integers.valueOf(128));
@@ -238,12 +236,12 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:10:0x0061 in {3, 5, 9, 12} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -288,21 +286,16 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         r3.keyAlgorithm = r5;
         r3.certAlgorithm = r6;
         if (r4 == 0) goto L_0x005a;
-    L_0x004f:
         r5 = "X.509";	 Catch:{ Exception -> 0x0058 }
         r4 = java.security.cert.CertificateFactory.getInstance(r5, r4);	 Catch:{ Exception -> 0x0058 }
-    L_0x0055:
         r3.certFact = r4;	 Catch:{ Exception -> 0x0058 }
         return;	 Catch:{ Exception -> 0x0058 }
-    L_0x0058:
         r4 = move-exception;	 Catch:{ Exception -> 0x0058 }
         goto L_0x0062;	 Catch:{ Exception -> 0x0058 }
-    L_0x005a:
         r4 = "X.509";	 Catch:{ Exception -> 0x0058 }
         r4 = java.security.cert.CertificateFactory.getInstance(r4);	 Catch:{ Exception -> 0x0058 }
         goto L_0x0055;
         return;
-    L_0x0062:
         r5 = new java.lang.IllegalArgumentException;
         r6 = new java.lang.StringBuilder;
         r6.<init>();
@@ -318,7 +311,7 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
     }
 
     private byte[] calculatePbeMac(ASN1ObjectIdentifier aSN1ObjectIdentifier, byte[] bArr, int i, char[] cArr, boolean z, byte[] bArr2) throws Exception {
-        AlgorithmParameterSpec pBEParameterSpec = new PBEParameterSpec(bArr, i);
+        PBEParameterSpec pBEParameterSpec = new PBEParameterSpec(bArr, i);
         Mac createMac = this.helper.createMac(aSN1ObjectIdentifier.getId());
         createMac.init(new PKCS12Key(cArr, z), pBEParameterSpec);
         createMac.update(bArr2);
@@ -327,12 +320,12 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:10:0x00b0 in {2, 3, 6, 8, 9} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -356,7 +349,6 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         r2 = r2.createSecretKeyFactory(r3);
         r3 = r0.isDefaultPrf();
         if (r3 == 0) goto L_0x0050;
-    L_0x0034:
         r3 = new javax.crypto.spec.PBEKeySpec;
         r4 = r0.getSalt();
         r0 = r0.getIterationCount();
@@ -366,7 +358,6 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         r3.<init>(r12, r4, r0, r1);
         r12 = r2.generateSecret(r3);
         goto L_0x0071;
-    L_0x0050:
         r9 = new org.bouncycastle.jcajce.spec.PBKDF2KeySpec;
         r5 = r0.getSalt();
         r3 = r0.getIterationCount();
@@ -378,7 +369,6 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         r4 = r12;
         r3.<init>(r4, r5, r6, r7, r8);
         r12 = r2.generateSecret(r9);
-    L_0x0071:
         r0 = r13.getEncryptionScheme();
         r0 = r0.getAlgorithm();
         r0 = r0.getId();
@@ -387,15 +377,12 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         r13 = r13.getParameters();
         r1 = r13 instanceof org.bouncycastle.asn1.ASN1OctetString;
         if (r1 == 0) goto L_0x009e;
-    L_0x008d:
         r1 = new javax.crypto.spec.IvParameterSpec;
         r13 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r13);
         r13 = r13.getOctets();
         r1.<init>(r13);
-    L_0x009a:
         r0.init(r11, r12, r1);
         return r0;
-    L_0x009e:
         r13 = org.bouncycastle.asn1.cryptopro.GOST28147Parameters.getInstance(r13);
         r1 = new org.bouncycastle.jcajce.spec.GOST28147ParameterSpec;
         r2 = r13.getEncryptionParamSet();
@@ -474,7 +461,7 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                 }
                 aSN1EncodableVector3.add(new SafeBag(pkcs8ShroudedKeyBag, encryptedPrivateKeyInfo.toASN1Primitive(), new DERSet(aSN1EncodableVector)));
             }
-            ASN1Encodable bEROctetString = new BEROctetString(new DERSequence(aSN1EncodableVector3).getEncoded(ASN1Encoding.DER));
+            BEROctetString bEROctetString = new BEROctetString(new DERSequence(aSN1EncodableVector3).getEncoded(ASN1Encoding.DER));
             byte[] bArr2 = new byte[20];
             this.random.nextBytes(bArr2);
             ASN1EncodableVector aSN1EncodableVector6 = new ASN1EncodableVector();
@@ -630,8 +617,8 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                 }
             }
             EncryptedData encryptedData = new EncryptedData(data, algorithmIdentifier, new BEROctetString(cryptData(true, algorithmIdentifier, cArr2, false, new DERSequence(aSN1EncodableVector6).getEncoded(ASN1Encoding.DER))));
-            ASN1Encodable authenticatedSafe = new AuthenticatedSafe(new ContentInfo[]{new ContentInfo(data, bEROctetString), new ContentInfo(encryptedData, encryptedData.toASN1Primitive())});
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            AuthenticatedSafe authenticatedSafe = new AuthenticatedSafe(new ContentInfo[]{new ContentInfo(data, bEROctetString), new ContentInfo(encryptedData, encryptedData.toASN1Primitive())});
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             (z ? new DEROutputStream(byteArrayOutputStream) : new BEROutputStream(byteArrayOutputStream)).writeObject(authenticatedSafe);
             ContentInfo contentInfo = new ContentInfo(data, new BEROctetString(byteArrayOutputStream.toByteArray()));
             byte[] bArr3 = new byte[this.saltLength];
@@ -674,7 +661,7 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
     }
 
     private Set getUsedCertificateSet() {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         Enumeration keys = this.keys.keys();
         while (keys.hasMoreElements()) {
             Certificate[] engineGetCertificateChain = engineGetCertificateChain((String) keys.nextElement());
@@ -713,8 +700,8 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         if (algorithm.on(PKCSObjectIdentifiers.pkcs_12PbeIds)) {
             PKCS12PBEParams instance = PKCS12PBEParams.getInstance(algorithmIdentifier.getParameters());
             try {
-                AlgorithmParameterSpec pBEParameterSpec = new PBEParameterSpec(instance.getIV(), instance.getIterations().intValue());
-                Key pKCS12Key = new PKCS12Key(cArr, z2);
+                PBEParameterSpec pBEParameterSpec = new PBEParameterSpec(instance.getIV(), instance.getIterations().intValue());
+                PKCS12Key pKCS12Key = new PKCS12Key(cArr, z2);
                 Cipher createCipher = this.helper.createCipher(algorithm.getId());
                 createCipher.init(i, pKCS12Key, pBEParameterSpec);
                 return createCipher.doFinal(bArr);
@@ -972,7 +959,6 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                                 PrivateKey unwrapKey;
                                 ASN1OctetString aSN1OctetString;
                                 Object obj;
-                                ASN1Encodable bagAttribute2;
                                 String str2;
                                 PrintStream printStream;
                                 StringBuilder stringBuilder2;
@@ -990,32 +976,32 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                                                 aSN1OctetString = anonymousClass1;
                                                 obj = aSN1OctetString;
                                                 while (objects.hasMoreElements()) {
-                                                    ASN1Encodable aSN1Encodable;
+                                                    ASN1Primitive aSN1Primitive;
                                                     ASN1Sequence aSN1Sequence3 = (ASN1Sequence) objects.nextElement();
                                                     ASN1ObjectIdentifier aSN1ObjectIdentifier = (ASN1ObjectIdentifier) aSN1Sequence3.getObjectAt(i3);
                                                     ASN1Set aSN1Set = (ASN1Set) aSN1Sequence3.getObjectAt(i2);
                                                     if (aSN1Set.size() > 0) {
-                                                        aSN1Encodable = (ASN1Primitive) aSN1Set.getObjectAt(0);
+                                                        aSN1Primitive = (ASN1Primitive) aSN1Set.getObjectAt(0);
                                                         if (unwrapKey instanceof PKCS12BagAttributeCarrier) {
                                                             pKCS12BagAttributeCarrier = (PKCS12BagAttributeCarrier) unwrapKey;
                                                             aSN1Sequence2 = aSN1Sequence;
-                                                            bagAttribute2 = pKCS12BagAttributeCarrier.getBagAttribute(aSN1ObjectIdentifier);
+                                                            ASN1Encodable bagAttribute2 = pKCS12BagAttributeCarrier.getBagAttribute(aSN1ObjectIdentifier);
                                                             if (bagAttribute2 == null) {
-                                                                pKCS12BagAttributeCarrier.setBagAttribute(aSN1ObjectIdentifier, aSN1Encodable);
-                                                            } else if (!bagAttribute2.toASN1Primitive().equals(aSN1Encodable)) {
+                                                                pKCS12BagAttributeCarrier.setBagAttribute(aSN1ObjectIdentifier, aSN1Primitive);
+                                                            } else if (!bagAttribute2.toASN1Primitive().equals(aSN1Primitive)) {
                                                                 throw new IOException("attempt to add existing attribute with different value");
                                                             }
                                                         }
                                                         aSN1Sequence2 = aSN1Sequence;
                                                     } else {
                                                         aSN1Sequence2 = aSN1Sequence;
-                                                        aSN1Encodable = null;
+                                                        aSN1Primitive = null;
                                                     }
                                                     if (aSN1ObjectIdentifier.equals(pkcs_9_at_friendlyName)) {
-                                                        obj = ((DERBMPString) aSN1Encodable).getString();
+                                                        obj = ((DERBMPString) aSN1Primitive).getString();
                                                         this.keys.put(obj, unwrapKey);
                                                     } else if (aSN1ObjectIdentifier.equals(pkcs_9_at_localKeyId)) {
-                                                        aSN1OctetString = (ASN1OctetString) aSN1Encodable;
+                                                        aSN1OctetString = (ASN1OctetString) aSN1Primitive;
                                                     }
                                                     aSN1Sequence = aSN1Sequence2;
                                                     i2 = 1;
@@ -1077,26 +1063,27 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                                             ASN1OctetString aSN1OctetString2 = null;
                                             Object obj2 = null;
                                             while (objects.hasMoreElements()) {
+                                                ASN1Primitive aSN1Primitive2;
                                                 ASN1Sequence aSN1Sequence5 = (ASN1Sequence) objects.nextElement();
                                                 aSN1ObjectIdentifier2 = (ASN1ObjectIdentifier) aSN1Sequence5.getObjectAt(0);
                                                 aSN1Sequence4 = aSN1Sequence;
                                                 ASN1Set aSN1Set2 = (ASN1Set) aSN1Sequence5.getObjectAt(1);
                                                 if (aSN1Set2.size() > 0) {
-                                                    bagAttribute2 = (ASN1Primitive) aSN1Set2.getObjectAt(0);
+                                                    aSN1Primitive2 = (ASN1Primitive) aSN1Set2.getObjectAt(0);
                                                     bagAttribute = pKCS12BagAttributeCarrier2.getBagAttribute(aSN1ObjectIdentifier2);
                                                     if (bagAttribute == null) {
-                                                        pKCS12BagAttributeCarrier2.setBagAttribute(aSN1ObjectIdentifier2, bagAttribute2);
-                                                    } else if (!bagAttribute.toASN1Primitive().equals(bagAttribute2)) {
+                                                        pKCS12BagAttributeCarrier2.setBagAttribute(aSN1ObjectIdentifier2, aSN1Primitive2);
+                                                    } else if (!bagAttribute.toASN1Primitive().equals(aSN1Primitive2)) {
                                                         throw new IOException("attempt to add existing attribute with different value");
                                                     }
                                                 }
-                                                bagAttribute2 = null;
+                                                aSN1Primitive2 = null;
                                                 if (aSN1ObjectIdentifier2.equals(pkcs_9_at_friendlyName)) {
-                                                    str2 = ((DERBMPString) bagAttribute2).getString();
+                                                    str2 = ((DERBMPString) aSN1Primitive2).getString();
                                                     this.keys.put(str2, unwrapKey);
                                                     obj2 = str2;
                                                 } else if (aSN1ObjectIdentifier2.equals(pkcs_9_at_localKeyId)) {
-                                                    aSN1OctetString2 = (ASN1OctetString) bagAttribute2;
+                                                    aSN1OctetString2 = (ASN1OctetString) aSN1Primitive2;
                                                 }
                                                 aSN1Sequence = aSN1Sequence4;
                                             }
@@ -1120,18 +1107,18 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                                                     aSN1ObjectIdentifier2 = ASN1ObjectIdentifier.getInstance(instance5.getObjectAt(0));
                                                     ASN1Set instance6 = ASN1Set.getInstance(instance5.getObjectAt(1));
                                                     if (instance6.size() > 0) {
-                                                        ASN1Primitive aSN1Primitive = (ASN1Primitive) instance6.getObjectAt(0);
+                                                        ASN1Primitive aSN1Primitive3 = (ASN1Primitive) instance6.getObjectAt(0);
                                                         bagAttribute = pKCS12BagAttributeCarrier3.getBagAttribute(aSN1ObjectIdentifier2);
                                                         if (bagAttribute == null) {
-                                                            pKCS12BagAttributeCarrier3.setBagAttribute(aSN1ObjectIdentifier2, aSN1Primitive);
-                                                        } else if (!bagAttribute.toASN1Primitive().equals(aSN1Primitive)) {
+                                                            pKCS12BagAttributeCarrier3.setBagAttribute(aSN1ObjectIdentifier2, aSN1Primitive3);
+                                                        } else if (!bagAttribute.toASN1Primitive().equals(aSN1Primitive3)) {
                                                             throw new IOException("attempt to add existing attribute with different value");
                                                         }
                                                         if (aSN1ObjectIdentifier2.equals(pkcs_9_at_friendlyName)) {
-                                                            obj = ((DERBMPString) aSN1Primitive).getString();
+                                                            obj = ((DERBMPString) aSN1Primitive3).getString();
                                                             this.keys.put(obj, privateKey);
                                                         } else if (aSN1ObjectIdentifier2.equals(pkcs_9_at_localKeyId)) {
-                                                            aSN1OctetString = (ASN1OctetString) aSN1Primitive;
+                                                            aSN1OctetString = (ASN1OctetString) aSN1Primitive3;
                                                         }
                                                     }
                                                 }
@@ -1195,20 +1182,20 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
                                             ASN1ObjectIdentifier instance9 = ASN1ObjectIdentifier.getInstance(instance8.getObjectAt(0));
                                             ASN1Set instance10 = ASN1Set.getInstance(instance8.getObjectAt(1));
                                             if (instance10.size() > 0) {
-                                                ASN1Primitive aSN1Primitive2 = (ASN1Primitive) instance10.getObjectAt(0);
+                                                ASN1Primitive aSN1Primitive4 = (ASN1Primitive) instance10.getObjectAt(0);
                                                 if (generateCertificate instanceof PKCS12BagAttributeCarrier) {
                                                     pKCS12BagAttributeCarrier = (PKCS12BagAttributeCarrier) generateCertificate;
                                                     bagAttribute = pKCS12BagAttributeCarrier.getBagAttribute(instance9);
                                                     if (bagAttribute == null) {
-                                                        pKCS12BagAttributeCarrier.setBagAttribute(instance9, aSN1Primitive2);
-                                                    } else if (!bagAttribute.toASN1Primitive().equals(aSN1Primitive2)) {
+                                                        pKCS12BagAttributeCarrier.setBagAttribute(instance9, aSN1Primitive4);
+                                                    } else if (!bagAttribute.toASN1Primitive().equals(aSN1Primitive4)) {
                                                         throw new IOException("attempt to add existing attribute with different value");
                                                     }
                                                 }
                                                 if (instance9.equals(pkcs_9_at_friendlyName)) {
-                                                    str3 = ((DERBMPString) aSN1Primitive2).getString();
+                                                    str3 = ((DERBMPString) aSN1Primitive4).getString();
                                                 } else if (instance9.equals(pkcs_9_at_localKeyId)) {
-                                                    aSN1OctetString3 = (ASN1OctetString) aSN1Primitive2;
+                                                    aSN1OctetString3 = (ASN1OctetString) aSN1Primitive4;
                                                 }
                                             }
                                         }
@@ -1353,7 +1340,7 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
         try {
             if (algorithm.on(PKCSObjectIdentifiers.pkcs_12PbeIds)) {
                 PKCS12PBEParams instance = PKCS12PBEParams.getInstance(algorithmIdentifier.getParameters());
-                AlgorithmParameterSpec pBEParameterSpec = new PBEParameterSpec(instance.getIV(), validateIterationCount(instance.getIterations()));
+                PBEParameterSpec pBEParameterSpec = new PBEParameterSpec(instance.getIV(), validateIterationCount(instance.getIterations()));
                 Cipher createCipher = this.helper.createCipher(algorithm.getId());
                 createCipher.init(4, new PKCS12Key(cArr, z), pBEParameterSpec);
                 return (PrivateKey) createCipher.unwrap(bArr, "", 2);
@@ -1374,10 +1361,10 @@ public class PKCS12KeyStoreSpi extends KeyStoreSpi implements PKCSObjectIdentifi
     }
 
     protected byte[] wrapKey(String str, Key key, PKCS12PBEParams pKCS12PBEParams, char[] cArr) throws IOException {
-        KeySpec pBEKeySpec = new PBEKeySpec(cArr);
+        PBEKeySpec pBEKeySpec = new PBEKeySpec(cArr);
         try {
             SecretKeyFactory createSecretKeyFactory = this.helper.createSecretKeyFactory(str);
-            AlgorithmParameterSpec pBEParameterSpec = new PBEParameterSpec(pKCS12PBEParams.getIV(), pKCS12PBEParams.getIterations().intValue());
+            PBEParameterSpec pBEParameterSpec = new PBEParameterSpec(pKCS12PBEParams.getIV(), pKCS12PBEParams.getIterations().intValue());
             Cipher createCipher = this.helper.createCipher(str);
             createCipher.init(3, createSecretKeyFactory.generateSecret(pBEKeySpec), pBEParameterSpec);
             return createCipher.wrap(key);

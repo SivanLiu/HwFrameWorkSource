@@ -624,7 +624,7 @@ public final class HwWindowManagerServiceEx implements IHwWindowManagerServiceEx
         }
     }
 
-    /* JADX WARNING: Missing block: B:27:0x006d, code:
+    /* JADX WARNING: Missing block: B:28:0x006d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -645,7 +645,7 @@ public final class HwWindowManagerServiceEx implements IHwWindowManagerServiceEx
                     Parcelable parcelable = null;
                     outBundle.putString(AwareIntelligentRecg.CMP_PKGNAME, ws == null ? null : ws.getAttrs().packageName);
                     boolean isApp = false;
-                    if (!(ws == null || ws.getAppToken() == null)) {
+                    if (ws != null && ws.getAppToken() != null) {
                         isApp = true;
                     }
                     outBundle.putBoolean("isApp", isApp);
@@ -677,8 +677,8 @@ public final class HwWindowManagerServiceEx implements IHwWindowManagerServiceEx
         return false;
     }
 
-    public void updateHwStartWindowRecord(String packageName) {
-        HwStartWindowRecord.getInstance().resetStartWindowApp(packageName);
+    public void updateHwStartWindowRecord(int appUid) {
+        HwStartWindowRecord.getInstance().resetStartWindowApp(Integer.valueOf(appUid));
     }
 
     public HwTaskSnapshotWrapper getForegroundTaskSnapshotWrapper(TaskSnapshotController mTaskSnapshotController, WindowState focusedWindow, boolean refresh) {

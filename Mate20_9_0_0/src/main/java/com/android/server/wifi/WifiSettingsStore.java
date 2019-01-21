@@ -29,10 +29,10 @@ public class WifiSettingsStore {
         this.mScanAlwaysAvailable = getPersistedScanAlwaysAvailable();
     }
 
-    /* JADX WARNING: Missing block: B:16:0x001d, code:
+    /* JADX WARNING: Missing block: B:16:0x001d, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:22:0x0025, code:
+    /* JADX WARNING: Missing block: B:22:0x0025, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -63,7 +63,7 @@ public class WifiSettingsStore {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0022, code:
+    /* JADX WARNING: Missing block: B:17:0x0022, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -80,7 +80,7 @@ public class WifiSettingsStore {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0056, code:
+    /* JADX WARNING: Missing block: B:20:0x0056, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

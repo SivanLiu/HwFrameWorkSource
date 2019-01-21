@@ -36,7 +36,7 @@ public class RespID {
             stringBuilder.append("only SHA-1 can be used with RespID - found: ");
             stringBuilder.append(digestCalculator.getAlgorithmIdentifier().getAlgorithm());
             throw new IllegalArgumentException(stringBuilder.toString());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("problem creating ID: ");
             stringBuilder.append(e);

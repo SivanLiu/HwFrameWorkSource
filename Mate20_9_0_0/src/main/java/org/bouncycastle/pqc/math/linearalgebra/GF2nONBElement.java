@@ -105,9 +105,9 @@ public class GF2nONBElement extends GF2nElement {
     }
 
     private long[] getElement() {
-        Object obj = new long[this.mPol.length];
-        System.arraycopy(this.mPol, 0, obj, 0, this.mPol.length);
-        return obj;
+        long[] jArr = new long[this.mPol.length];
+        System.arraycopy(this.mPol, 0, jArr, 0, this.mPol.length);
+        return jArr;
     }
 
     private long[] getElementReverseOrder() {
@@ -122,7 +122,7 @@ public class GF2nONBElement extends GF2nElement {
     }
 
     public GFElement add(GFElement gFElement) throws RuntimeException {
-        GFElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         gF2nONBElement.addToThis(gFElement);
         return gF2nONBElement;
     }
@@ -175,7 +175,7 @@ public class GF2nONBElement extends GF2nElement {
     }
 
     public GF2nElement increase() {
-        GF2nElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         gF2nONBElement.increaseThis();
         return gF2nONBElement;
     }
@@ -185,7 +185,7 @@ public class GF2nONBElement extends GF2nElement {
     }
 
     public GFElement invert() throws ArithmeticException {
-        GFElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         gF2nONBElement.invertThis();
         return gF2nONBElement;
     }
@@ -204,7 +204,7 @@ public class GF2nONBElement extends GF2nElement {
         }
         i++;
         ZERO((GF2nONBField) this.mField);
-        GF2nElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         int i3 = 1;
         for (i--; i >= 0; i--) {
             GF2nElement gF2nElement = (GF2nElement) gF2nONBElement.clone();
@@ -245,7 +245,7 @@ public class GF2nONBElement extends GF2nElement {
     }
 
     public GFElement multiply(GFElement gFElement) throws RuntimeException {
-        GFElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         gF2nONBElement.multiplyThisBy(gFElement);
         return gF2nONBElement;
     }
@@ -398,13 +398,13 @@ public class GF2nONBElement extends GF2nElement {
     }
 
     public GF2nElement square() {
-        GF2nElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         gF2nONBElement.squareThis();
         return gF2nONBElement;
     }
 
     public GF2nElement squareRoot() {
-        GF2nElement gF2nONBElement = new GF2nONBElement(this);
+        GF2nONBElement gF2nONBElement = new GF2nONBElement(this);
         gF2nONBElement.squareRootThis();
         return gF2nONBElement;
     }

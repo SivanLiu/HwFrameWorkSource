@@ -56,7 +56,7 @@ public class AudioFocusHandler {
             private AudioFocusListener() {
             }
 
-            /* JADX WARNING: Missing block: B:89:?, code:
+            /* JADX WARNING: Missing block: B:93:?, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -129,49 +129,49 @@ public class AudioFocusHandler {
             private NoisyIntentReceiver() {
             }
 
-            /* JADX WARNING: Missing block: B:9:0x001c, code:
+            /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             if ("android.media.AUDIO_BECOMING_NOISY".equals(r6.getAction()) == false) goto L_0x0069;
      */
-            /* JADX WARNING: Missing block: B:10:0x001e, code:
+            /* JADX WARNING: Missing block: B:10:0x001e, code skipped:
             r0 = android.support.v4.media.AudioFocusHandler.AudioFocusHandlerImplBase.access$200(r4.this$0);
      */
-            /* JADX WARNING: Missing block: B:11:0x0024, code:
+            /* JADX WARNING: Missing block: B:11:0x0024, code skipped:
             monitor-enter(r0);
      */
-            /* JADX WARNING: Missing block: B:15:0x002c, code:
+            /* JADX WARNING: Missing block: B:15:0x002c, code skipped:
             if (android.support.v4.media.AudioFocusHandler.AudioFocusHandlerImplBase.access$400(r4.this$0) != null) goto L_0x0030;
      */
-            /* JADX WARNING: Missing block: B:16:0x002e, code:
+            /* JADX WARNING: Missing block: B:16:0x002e, code skipped:
             monitor-exit(r0);
      */
-            /* JADX WARNING: Missing block: B:17:0x002f, code:
+            /* JADX WARNING: Missing block: B:17:0x002f, code skipped:
             return;
      */
-            /* JADX WARNING: Missing block: B:18:0x0030, code:
+            /* JADX WARNING: Missing block: B:18:0x0030, code skipped:
             r1 = android.support.v4.media.AudioFocusHandler.AudioFocusHandlerImplBase.access$400(r4.this$0).getUsage();
      */
-            /* JADX WARNING: Missing block: B:19:0x003b, code:
+            /* JADX WARNING: Missing block: B:19:0x003b, code skipped:
             monitor-exit(r0);
      */
-            /* JADX WARNING: Missing block: B:21:0x003d, code:
+            /* JADX WARNING: Missing block: B:21:0x003d, code skipped:
             if (r1 == 1) goto L_0x005c;
      */
-            /* JADX WARNING: Missing block: B:23:0x0041, code:
+            /* JADX WARNING: Missing block: B:23:0x0041, code skipped:
             if (r1 == 14) goto L_0x0044;
      */
-            /* JADX WARNING: Missing block: B:24:0x0044, code:
+            /* JADX WARNING: Missing block: B:24:0x0044, code skipped:
             r0 = android.support.v4.media.AudioFocusHandler.AudioFocusHandlerImplBase.access$500(r4.this$0).getPlayer();
      */
-            /* JADX WARNING: Missing block: B:25:0x004e, code:
+            /* JADX WARNING: Missing block: B:25:0x004e, code skipped:
             if (r0 == null) goto L_0x0069;
      */
-            /* JADX WARNING: Missing block: B:26:0x0050, code:
+            /* JADX WARNING: Missing block: B:26:0x0050, code skipped:
             r0.setPlayerVolume(r0.getPlayerVolume() * android.support.v4.media.AudioFocusHandler.AudioFocusHandlerImplBase.VOLUME_DUCK_FACTOR);
      */
-            /* JADX WARNING: Missing block: B:27:0x005c, code:
+            /* JADX WARNING: Missing block: B:27:0x005c, code skipped:
             android.support.v4.media.AudioFocusHandler.AudioFocusHandlerImplBase.access$500(r4.this$0).pause();
      */
-            /* JADX WARNING: Missing block: B:32:0x0069, code:
+            /* JADX WARNING: Missing block: B:32:0x0069, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -188,7 +188,7 @@ public class AudioFocusHandler {
             this.mAudioManager = (AudioManager) context.getSystemService("audio");
         }
 
-        /* JADX WARNING: Missing block: B:21:0x003e, code:
+        /* JADX WARNING: Missing block: B:21:0x003e, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

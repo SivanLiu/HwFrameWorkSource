@@ -19,12 +19,12 @@ public class ScryptParams extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:13:0x0084 in {4, 6, 9, 11, 12} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -43,12 +43,9 @@ public class ScryptParams extends ASN1Object {
         r1 = 5;
         r2 = 4;
         if (r0 == r2) goto L_0x002d;
-    L_0x000b:
         r0 = r4.size();
         if (r0 != r1) goto L_0x0012;
-    L_0x0011:
         goto L_0x002d;
-    L_0x0012:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -59,7 +56,6 @@ public class ScryptParams extends ASN1Object {
         r4 = r1.toString();
         r0.<init>(r4);
         throw r0;
-    L_0x002d:
         r0 = 0;
         r0 = r4.getObjectAt(r0);
         r0 = org.bouncycastle.asn1.ASN1OctetString.getInstance(r0);
@@ -83,14 +79,11 @@ public class ScryptParams extends ASN1Object {
         r3.parallelizationParameter = r0;
         r0 = r4.size();
         if (r0 != r1) goto L_0x0082;
-    L_0x0073:
         r4 = r4.getObjectAt(r2);
         r4 = org.bouncycastle.asn1.ASN1Integer.getInstance(r4);
         r4 = r4.getValue();
-    L_0x007f:
         r3.keyLength = r4;
         return;
-    L_0x0082:
         r4 = 0;
         goto L_0x007f;
         return;

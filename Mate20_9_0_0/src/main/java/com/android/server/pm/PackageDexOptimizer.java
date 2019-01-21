@@ -523,6 +523,8 @@ public class PackageDexOptimizer {
                     dexoptFlags2 = dexoptFlags3;
                 } catch (InstallerException e) {
                     dexoptFlags = e;
+                    Slog.w(TAG, "Failed to dexopt", dexoptFlags);
+                    return -1;
                 }
             }
             dexoptFlags3 = dexoptFlags2;
@@ -740,24 +742,6 @@ public class PackageDexOptimizer {
         return String.join(",", flagsList);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x001c A:{PHI: r0 , Splitter: B:1:0x0002, ExcHandler: java.io.IOException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            r3 = TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("Exception reading apk: ");
-            r4.append(r6);
-            android.util.Slog.w(r3, r4.toString(), r2);
-     */
-    /* JADX WARNING: Missing block: B:14:0x0033, code:
-            if (r0 != null) goto L_0x0035;
-     */
-    /* JADX WARNING: Missing block: B:16:?, code:
-            r0.close();
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private static boolean dexEntryExists(String path) {
         ZipFile apkFile = null;
         boolean z = false;
@@ -771,16 +755,27 @@ public class PackageDexOptimizer {
             } catch (IOException e) {
             }
             return z;
-        } catch (Exception e2) {
-        } catch (Throwable th) {
+        } catch (IOException | IllegalArgumentException e2) {
+            String str = TAG;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Exception reading apk: ");
+            stringBuilder.append(path);
+            Slog.w(str, stringBuilder.toString(), e2);
             if (apkFile != null) {
                 try {
                     apkFile.close();
                 } catch (IOException e3) {
                 }
             }
+            return false;
+        } catch (Throwable th) {
+            if (apkFile != null) {
+                try {
+                    apkFile.close();
+                } catch (IOException e4) {
+                }
+            }
         }
-        return false;
     }
 
     public long getDexOptTotalTime() {

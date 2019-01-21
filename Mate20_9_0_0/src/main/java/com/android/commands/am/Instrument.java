@@ -348,58 +348,85 @@ public class Instrument {
         }
     }
 
+    /* JADX WARNING: Removed duplicated region for block: B:13:0x0026 A:{Catch:{ Exception -> 0x00e0, all -> 0x00de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x0037 A:{Catch:{ Exception -> 0x00e0, all -> 0x00de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:19:0x005a A:{Catch:{ Exception -> 0x00e0, all -> 0x00de }} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x00c3 A:{SYNTHETIC, Splitter:B:41:0x00c3} */
+    /* JADX WARNING: Removed duplicated region for block: B:31:0x00a6 A:{Catch:{ Exception -> 0x00e0, all -> 0x00de }} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void run() throws Exception {
         StatusReporter reporter = null;
         float[] oldAnims = null;
         try {
-            if (this.protoFile || this.protoStd) {
-                reporter = new ProtoStatusReporter();
-            } else if (this.wait) {
-                reporter = new TextStatusReporter(this.rawMode);
-            }
-            InstrumentationWatcher watcher = null;
-            UiAutomationConnection connection = null;
-            if (reporter != null) {
-                watcher = new InstrumentationWatcher(reporter);
-                connection = new UiAutomationConnection();
-            }
-            if (this.noWindowAnimation) {
-                oldAnims = this.mWm.getAnimationScales();
-                this.mWm.setAnimationScale(0, 0.0f);
-                this.mWm.setAnimationScale(1, 0.0f);
-                this.mWm.setAnimationScale(2, 0.0f);
-            }
-            ComponentName cn = parseComponentName(this.componentNameArg);
-            if (this.abi != null) {
-                boolean matched = false;
-                for (String supportedAbi : Build.SUPPORTED_ABIS) {
-                    if (supportedAbi.equals(this.abi)) {
-                        matched = true;
-                        break;
+            InstrumentationWatcher watcher;
+            UiAutomationConnection connection;
+            ComponentName cn;
+            ComponentName cn2;
+            if (!this.protoFile) {
+                if (!this.protoStd) {
+                    if (this.wait) {
+                        reporter = new TextStatusReporter(this.rawMode);
+                    }
+                    watcher = null;
+                    connection = null;
+                    if (reporter != null) {
+                        watcher = new InstrumentationWatcher(reporter);
+                        connection = new UiAutomationConnection();
+                    }
+                    if (this.noWindowAnimation) {
+                        oldAnims = this.mWm.getAnimationScales();
+                        this.mWm.setAnimationScale(0, 0.0f);
+                        this.mWm.setAnimationScale(1, 0.0f);
+                        this.mWm.setAnimationScale(2, 0.0f);
+                    }
+                    cn = parseComponentName(this.componentNameArg);
+                    if (this.abi != null) {
+                        boolean matched = false;
+                        for (String supportedAbi : Build.SUPPORTED_ABIS) {
+                            if (supportedAbi.equals(this.abi)) {
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (!matched) {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append("INSTRUMENTATION_FAILED: Unsupported instruction set ");
+                            stringBuilder.append(this.abi);
+                            throw new AndroidException(stringBuilder.toString());
+                        }
+                    }
+                    cn2 = cn;
+                    if (this.mAm.startInstrumentation(cn, this.profileFile, this.disableHiddenApiChecks, this.args, watcher, connection, this.userId, this.abi)) {
+                        StringBuilder stringBuilder2 = new StringBuilder();
+                        stringBuilder2.append("INSTRUMENTATION_FAILED: ");
+                        stringBuilder2.append(cn2.flattenToString());
+                        throw new AndroidException(stringBuilder2.toString());
+                    } else if (watcher == null || watcher.waitForFinish()) {
+                        if (oldAnims != null) {
+                            this.mWm.setAnimationScales(oldAnims);
+                        }
+                        return;
+                    } else {
+                        reporter.onError("INSTRUMENTATION_ABORTED: System has crashed.", false);
+                        if (oldAnims != null) {
+                            this.mWm.setAnimationScales(oldAnims);
+                        }
+                        return;
                     }
                 }
-                if (!matched) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("INSTRUMENTATION_FAILED: Unsupported instruction set ");
-                    stringBuilder.append(this.abi);
-                    throw new AndroidException(stringBuilder.toString());
-                }
             }
-            ComponentName cn2 = cn;
-            if (!this.mAm.startInstrumentation(cn, this.profileFile, this.disableHiddenApiChecks, this.args, watcher, connection, this.userId, this.abi)) {
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("INSTRUMENTATION_FAILED: ");
-                stringBuilder2.append(cn2.flattenToString());
-                throw new AndroidException(stringBuilder2.toString());
-            } else if (watcher == null || watcher.waitForFinish()) {
-                if (oldAnims != null) {
-                    this.mWm.setAnimationScales(oldAnims);
-                }
-            } else {
-                reporter.onError("INSTRUMENTATION_ABORTED: System has crashed.", false);
-                if (oldAnims != null) {
-                    this.mWm.setAnimationScales(oldAnims);
-                }
+            reporter = new ProtoStatusReporter();
+            watcher = null;
+            connection = null;
+            if (reporter != null) {
+            }
+            if (this.noWindowAnimation) {
+            }
+            cn = parseComponentName(this.componentNameArg);
+            if (this.abi != null) {
+            }
+            cn2 = cn;
+            if (this.mAm.startInstrumentation(cn, this.profileFile, this.disableHiddenApiChecks, this.args, watcher, connection, this.userId, this.abi)) {
             }
         } catch (Exception ex) {
             if (reporter != null) {

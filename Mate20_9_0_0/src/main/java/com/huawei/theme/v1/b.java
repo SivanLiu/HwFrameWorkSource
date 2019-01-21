@@ -7,11 +7,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public final class b {
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x0084 A:{SYNTHETIC, Splitter: B:20:0x0084} */
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x0089  */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x009a A:{SYNTHETIC, Splitter: B:30:0x009a} */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x009a A:{SYNTHETIC, Splitter:B:30:0x009a} */
     /* JADX WARNING: Removed duplicated region for block: B:33:0x009f  */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x009a A:{SYNTHETIC, Splitter: B:30:0x009a} */
+    /* JADX WARNING: Removed duplicated region for block: B:20:0x0084 A:{SYNTHETIC, Splitter:B:20:0x0084} */
+    /* JADX WARNING: Removed duplicated region for block: B:23:0x0089  */
+    /* JADX WARNING: Removed duplicated region for block: B:30:0x009a A:{SYNTHETIC, Splitter:B:30:0x009a} */
     /* JADX WARNING: Removed duplicated region for block: B:33:0x009f  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static boolean a(String str, byte[] bArr) {
@@ -74,8 +74,15 @@ public final class b {
                 } catch (Throwable th2) {
                     th = th2;
                     if (outputStream != null) {
+                        try {
+                            outputStream.close();
+                        } catch (IOException e22) {
+                            e22.printStackTrace();
+                        }
                     }
                     if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                        a.h();
                     }
                     throw th;
                 }
@@ -84,15 +91,8 @@ public final class b {
                 httpURLConnection = httpURLConnection2;
                 th = th4;
                 if (outputStream != null) {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e22) {
-                        e22.printStackTrace();
-                    }
                 }
                 if (httpURLConnection != null) {
-                    httpURLConnection.disconnect();
-                    a.h();
                 }
                 throw th;
             }

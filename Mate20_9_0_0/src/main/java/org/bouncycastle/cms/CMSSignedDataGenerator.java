@@ -1,6 +1,7 @@
 package org.bouncycastle.cms;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
 
 public class CMSSignedDataGenerator extends CMSSignedGenerator {
     private List signerInfs = new ArrayList();
@@ -48,10 +50,10 @@ public class CMSSignedDataGenerator extends CMSSignedGenerator {
                     if (z) {
                         bEROctetString = new BEROctetString(byteArrayOutputStream.toByteArray());
                         for (SignerInfoGenerator signerInfoGenerator : this.signerGens) {
-                            Object generate = signerInfoGenerator.generate(contentType);
+                            SignerInfo generate = signerInfoGenerator.generate(contentType);
                             aSN1EncodableVector.add(generate.getDigestAlgorithm());
                             aSN1EncodableVector2.add(generate);
-                            Object calculatedDigest = signerInfoGenerator.getCalculatedDigest();
+                            byte[] calculatedDigest = signerInfoGenerator.getCalculatedDigest();
                             if (calculatedDigest != null) {
                                 this.digests.put(generate.getDigestAlgorithm().getAlgorithm().getId(), calculatedDigest);
                             }
@@ -62,7 +64,7 @@ public class CMSSignedDataGenerator extends CMSSignedGenerator {
                         }
                         return new CMSSignedData((CMSProcessable) cMSTypedData, new ContentInfo(CMSObjectIdentifiers.signedData, new SignedData(new DERSet(aSN1EncodableVector), new ContentInfo(contentType, bEROctetString), createBerSetFromList, aSN1Set, new DERSet(aSN1EncodableVector2))));
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("data processing exception: ");
                     stringBuilder.append(e.getMessage());

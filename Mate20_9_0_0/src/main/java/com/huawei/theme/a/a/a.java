@@ -94,9 +94,9 @@ public final class a {
         return context.getPackageManager().checkPermission(str, context.getPackageName()) == 0;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0029 A:{SYNTHETIC, Splitter: B:17:0x0029} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x003b A:{SYNTHETIC, Splitter: B:24:0x003b} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x003b A:{SYNTHETIC, Splitter: B:24:0x003b} */
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0029 A:{SYNTHETIC, Splitter:B:17:0x0029} */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x003b A:{SYNTHETIC, Splitter:B:24:0x003b} */
+    /* JADX WARNING: Removed duplicated region for block: B:24:0x003b A:{SYNTHETIC, Splitter:B:24:0x003b} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static byte[] a(byte[] bArr) {
         Exception e;

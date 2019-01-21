@@ -191,7 +191,7 @@ public class KeyguardServiceDelegate {
 
     public void bindService(Context context) {
         Intent intent = new Intent();
-        ComponentName keyguardComponent = ComponentName.unflattenFromString(context.getApplicationContext().getResources().getString(17039824));
+        ComponentName keyguardComponent = ComponentName.unflattenFromString(context.getApplicationContext().getResources().getString(17039825));
         intent.addFlags(256);
         intent.setComponent(keyguardComponent);
         if (context.bindServiceAsUser(intent, this.mKeyguardConnection, 1, this.mHandler, UserHandle.SYSTEM)) {

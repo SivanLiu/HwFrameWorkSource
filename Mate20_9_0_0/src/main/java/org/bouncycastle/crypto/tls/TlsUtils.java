@@ -71,15 +71,15 @@ public class TlsUtils {
 
     static byte[] PRF_legacy(byte[] bArr, byte[] bArr2, byte[] bArr3, int i) {
         int length = (bArr.length + 1) / 2;
-        Object obj = new byte[length];
-        Object obj2 = new byte[length];
+        byte[] bArr4 = new byte[length];
+        byte[] bArr5 = new byte[length];
         int i2 = 0;
-        System.arraycopy(bArr, 0, obj, 0, length);
-        System.arraycopy(bArr, bArr.length - length, obj2, 0, length);
+        System.arraycopy(bArr, 0, bArr4, 0, length);
+        System.arraycopy(bArr, bArr.length - length, bArr5, 0, length);
         bArr = new byte[i];
         bArr2 = new byte[i];
-        hmac_hash(createHash((short) 1), obj, bArr3, bArr);
-        hmac_hash(createHash((short) 2), obj2, bArr3, bArr2);
+        hmac_hash(createHash((short) 1), bArr4, bArr3, bArr);
+        hmac_hash(createHash((short) 2), bArr5, bArr3, bArr2);
         while (i2 < i) {
             bArr[i2] = (byte) (bArr[i2] ^ bArr2[i2]);
             i2++;
@@ -245,10 +245,10 @@ public class TlsUtils {
     }
 
     static byte[] concat(byte[] bArr, byte[] bArr2) {
-        Object obj = new byte[(bArr.length + bArr2.length)];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        System.arraycopy(bArr2, 0, obj, bArr.length, bArr2.length);
-        return obj;
+        byte[] bArr3 = new byte[(bArr.length + bArr2.length)];
+        System.arraycopy(bArr, 0, bArr3, 0, bArr.length);
+        System.arraycopy(bArr2, 0, bArr3, bArr.length, bArr2.length);
+        return bArr3;
     }
 
     public static Digest createHash(SignatureAndHashAlgorithm signatureAndHashAlgorithm) {
@@ -279,7 +279,7 @@ public class TlsUtils {
     }
 
     public static byte[] createSignatureAlgorithmsExtension(Vector vector) throws IOException {
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         encodeSupportedSignatureAlgorithms(vector, false, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
@@ -417,7 +417,7 @@ public class TlsUtils {
             } else {
                 throw new TlsFatalAlert((short) 43);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new TlsFatalAlert((short) 43, e);
         }
     }
@@ -446,40 +446,40 @@ public class TlsUtils {
         return vector;
     }
 
-    /* JADX WARNING: Missing block: B:16:0x002d, code:
+    /* JADX WARNING: Missing block: B:16:0x002d, code skipped:
             return 104;
      */
-    /* JADX WARNING: Missing block: B:18:0x0030, code:
+    /* JADX WARNING: Missing block: B:18:0x0030, code skipped:
             return 103;
      */
-    /* JADX WARNING: Missing block: B:33:0x0046, code:
+    /* JADX WARNING: Missing block: B:33:0x0046, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:35:0x0049, code:
+    /* JADX WARNING: Missing block: B:35:0x0049, code skipped:
             return 11;
      */
-    /* JADX WARNING: Missing block: B:37:0x004c, code:
+    /* JADX WARNING: Missing block: B:37:0x004c, code skipped:
             return 10;
      */
-    /* JADX WARNING: Missing block: B:41:0x0051, code:
+    /* JADX WARNING: Missing block: B:41:0x0051, code skipped:
             return 7;
      */
-    /* JADX WARNING: Missing block: B:43:0x0054, code:
+    /* JADX WARNING: Missing block: B:43:0x0054, code skipped:
             return 13;
      */
-    /* JADX WARNING: Missing block: B:45:0x0057, code:
+    /* JADX WARNING: Missing block: B:45:0x0057, code skipped:
             return 12;
      */
-    /* JADX WARNING: Missing block: B:46:0x0058, code:
+    /* JADX WARNING: Missing block: B:46:0x0058, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:48:0x005b, code:
+    /* JADX WARNING: Missing block: B:48:0x005b, code skipped:
             return 9;
      */
-    /* JADX WARNING: Missing block: B:50:0x005e, code:
+    /* JADX WARNING: Missing block: B:50:0x005e, code skipped:
             return 8;
      */
-    /* JADX WARNING: Missing block: B:51:0x005f, code:
+    /* JADX WARNING: Missing block: B:51:0x005f, code skipped:
             return 2;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -833,43 +833,43 @@ public class TlsUtils {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002b, code:
+    /* JADX WARNING: Missing block: B:14:0x002b, code skipped:
             return 24;
      */
-    /* JADX WARNING: Missing block: B:24:0x003a, code:
+    /* JADX WARNING: Missing block: B:24:0x003a, code skipped:
             return 19;
      */
-    /* JADX WARNING: Missing block: B:26:0x003d, code:
+    /* JADX WARNING: Missing block: B:26:0x003d, code skipped:
             return 18;
      */
-    /* JADX WARNING: Missing block: B:28:0x0040, code:
+    /* JADX WARNING: Missing block: B:28:0x0040, code skipped:
             return 17;
      */
-    /* JADX WARNING: Missing block: B:30:0x0043, code:
+    /* JADX WARNING: Missing block: B:30:0x0043, code skipped:
             return 16;
      */
-    /* JADX WARNING: Missing block: B:32:0x0046, code:
+    /* JADX WARNING: Missing block: B:32:0x0046, code skipped:
             return 11;
      */
-    /* JADX WARNING: Missing block: B:34:0x0048, code:
+    /* JADX WARNING: Missing block: B:34:0x0048, code skipped:
             return 5;
      */
-    /* JADX WARNING: Missing block: B:36:0x004a, code:
+    /* JADX WARNING: Missing block: B:36:0x004a, code skipped:
             return 3;
      */
-    /* JADX WARNING: Missing block: B:38:0x004d, code:
+    /* JADX WARNING: Missing block: B:38:0x004d, code skipped:
             return 9;
      */
-    /* JADX WARNING: Missing block: B:40:0x004f, code:
+    /* JADX WARNING: Missing block: B:40:0x004f, code skipped:
             return 7;
      */
-    /* JADX WARNING: Missing block: B:42:0x0052, code:
+    /* JADX WARNING: Missing block: B:42:0x0052, code skipped:
             return 15;
      */
-    /* JADX WARNING: Missing block: B:44:0x0055, code:
+    /* JADX WARNING: Missing block: B:44:0x0055, code skipped:
             return 14;
      */
-    /* JADX WARNING: Missing block: B:46:0x0058, code:
+    /* JADX WARNING: Missing block: B:46:0x0058, code skipped:
             return 13;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1229,19 +1229,19 @@ public class TlsUtils {
         return 1;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x002a, code:
+    /* JADX WARNING: Missing block: B:14:0x002a, code skipped:
             return 4;
      */
-    /* JADX WARNING: Missing block: B:16:0x002c, code:
+    /* JADX WARNING: Missing block: B:16:0x002c, code skipped:
             return 0;
      */
-    /* JADX WARNING: Missing block: B:18:0x002e, code:
+    /* JADX WARNING: Missing block: B:18:0x002e, code skipped:
             return 3;
      */
-    /* JADX WARNING: Missing block: B:20:0x0030, code:
+    /* JADX WARNING: Missing block: B:20:0x0030, code skipped:
             return 2;
      */
-    /* JADX WARNING: Missing block: B:22:0x0032, code:
+    /* JADX WARNING: Missing block: B:22:0x0032, code skipped:
             return 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1815,19 +1815,19 @@ public class TlsUtils {
         int digestSize = digest.getDigestSize();
         int length = ((bArr3.length + digestSize) - 1) / digestSize;
         byte[] bArr4 = new byte[hMac.getMacSize()];
-        Object obj = new byte[hMac.getMacSize()];
-        byte[] bArr5 = bArr2;
+        byte[] bArr5 = new byte[hMac.getMacSize()];
+        byte[] bArr6 = bArr2;
         int i = 0;
         while (i < length) {
-            hMac.update(bArr5, 0, bArr5.length);
+            hMac.update(bArr6, 0, bArr6.length);
             hMac.doFinal(bArr4, 0);
             hMac.update(bArr4, 0, bArr4.length);
             hMac.update(bArr2, 0, bArr2.length);
-            hMac.doFinal(obj, 0);
+            hMac.doFinal(bArr5, 0);
             int i2 = digestSize * i;
-            System.arraycopy(obj, 0, bArr3, i2, Math.min(digestSize, bArr3.length - i2));
+            System.arraycopy(bArr5, 0, bArr3, i2, Math.min(digestSize, bArr3.length - i2));
             i++;
-            bArr5 = bArr4;
+            bArr6 = bArr4;
         }
     }
 
@@ -2036,7 +2036,7 @@ public class TlsUtils {
 
     public static Vector readSignatureAlgorithmsExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             Vector parseSupportedSignatureAlgorithms = parseSupportedSignatureAlgorithms(false, byteArrayInputStream);
             TlsProtocol.assertEmpty(byteArrayInputStream);
             return parseSupportedSignatureAlgorithms;

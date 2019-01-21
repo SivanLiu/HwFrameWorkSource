@@ -212,19 +212,21 @@ class VoiceInteractionManagerServiceImpl implements Callback {
 
     public int startAssistantActivityLocked(int callingPid, int callingUid, IBinder token, Intent intent, String resolvedType) {
         try {
-            if (this.mActiveSession == null || token != this.mActiveSession.mToken) {
-                Slog.w(TAG, "startAssistantActivity does not match active session");
-                return -89;
-            } else if (this.mActiveSession.mShown) {
-                intent = new Intent(intent);
-                intent.addFlags(268435456);
-                ActivityOptions options = ActivityOptions.makeBasic();
-                options.setLaunchActivityType(4);
-                return this.mAm.startAssistantActivity(this.mComponent.getPackageName(), callingPid, callingUid, intent, resolvedType, options.toBundle(), this.mUser);
-            } else {
-                Slog.w(TAG, "startAssistantActivity not allowed on hidden session");
-                return -90;
+            if (this.mActiveSession != null) {
+                if (token == this.mActiveSession.mToken) {
+                    if (this.mActiveSession.mShown) {
+                        intent = new Intent(intent);
+                        intent.addFlags(268435456);
+                        ActivityOptions options = ActivityOptions.makeBasic();
+                        options.setLaunchActivityType(4);
+                        return this.mAm.startAssistantActivity(this.mComponent.getPackageName(), callingPid, callingUid, intent, resolvedType, options.toBundle(), this.mUser);
+                    }
+                    Slog.w(TAG, "startAssistantActivity not allowed on hidden session");
+                    return -90;
+                }
             }
+            Slog.w(TAG, "startAssistantActivity does not match active session");
+            return -89;
         } catch (RemoteException e) {
             throw new IllegalStateException("Unexpected remote error", e);
         }
@@ -232,11 +234,13 @@ class VoiceInteractionManagerServiceImpl implements Callback {
 
     public void setKeepAwakeLocked(IBinder token, boolean keepAwake) {
         try {
-            if (this.mActiveSession == null || token != this.mActiveSession.mToken) {
-                Slog.w(TAG, "setKeepAwake does not match active session");
-            } else {
-                this.mAm.setVoiceKeepAwake(this.mActiveSession.mSession, keepAwake);
+            if (this.mActiveSession != null) {
+                if (token == this.mActiveSession.mToken) {
+                    this.mAm.setVoiceKeepAwake(this.mActiveSession.mSession, keepAwake);
+                    return;
+                }
             }
+            Slog.w(TAG, "setKeepAwake does not match active session");
         } catch (RemoteException e) {
             throw new IllegalStateException("Unexpected remote error", e);
         }
@@ -244,11 +248,13 @@ class VoiceInteractionManagerServiceImpl implements Callback {
 
     public void closeSystemDialogsLocked(IBinder token) {
         try {
-            if (this.mActiveSession == null || token != this.mActiveSession.mToken) {
-                Slog.w(TAG, "closeSystemDialogs does not match active session");
-            } else {
-                this.mAm.closeSystemDialogs(CLOSE_REASON_VOICE_INTERACTION);
+            if (this.mActiveSession != null) {
+                if (token == this.mActiveSession.mToken) {
+                    this.mAm.closeSystemDialogs(CLOSE_REASON_VOICE_INTERACTION);
+                    return;
+                }
             }
+            Slog.w(TAG, "closeSystemDialogs does not match active session");
         } catch (RemoteException e) {
             throw new IllegalStateException("Unexpected remote error", e);
         }

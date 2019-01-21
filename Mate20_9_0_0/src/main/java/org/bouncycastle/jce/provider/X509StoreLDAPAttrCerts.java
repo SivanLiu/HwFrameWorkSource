@@ -19,7 +19,7 @@ public class X509StoreLDAPAttrCerts extends X509StoreSpi {
             return Collections.EMPTY_SET;
         }
         X509AttributeCertStoreSelector x509AttributeCertStoreSelector = (X509AttributeCertStoreSelector) selector;
-        Collection hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         hashSet.addAll(this.helper.getAACertificates(x509AttributeCertStoreSelector));
         hashSet.addAll(this.helper.getAttributeCertificateAttributes(x509AttributeCertStoreSelector));
         hashSet.addAll(this.helper.getAttributeDescriptorCertificates(x509AttributeCertStoreSelector));

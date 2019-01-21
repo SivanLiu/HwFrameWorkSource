@@ -80,11 +80,15 @@ public class SchedulingPolicyService extends Stub {
         synchronized (this.mDeathRecipient) {
             int enableCpusetBoost;
             if (enable) {
-                enableCpusetBoost = enableCpusetBoost(nativePids[0], client);
+                try {
+                    enableCpusetBoost = enableCpusetBoost(nativePids[0], client);
+                    return enableCpusetBoost;
+                } catch (Throwable th) {
+                }
+            } else {
+                enableCpusetBoost = disableCpusetBoost(nativePids[0]);
                 return enableCpusetBoost;
             }
-            enableCpusetBoost = disableCpusetBoost(nativePids[0]);
-            return enableCpusetBoost;
         }
     }
 

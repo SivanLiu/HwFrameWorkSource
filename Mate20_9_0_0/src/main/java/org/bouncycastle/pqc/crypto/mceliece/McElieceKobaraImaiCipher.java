@@ -132,36 +132,36 @@ public class McElieceKobaraImaiCipher implements MessageEncryptor {
             }
             int length2 = PUBLIC_CONSTANT.length + length;
             int i2 = ((length2 + digestSize) - i) - bitLength;
-            Object obj = new byte[length2];
-            System.arraycopy(bArr, 0, obj, 0, bArr.length);
-            System.arraycopy(PUBLIC_CONSTANT, 0, obj, length, PUBLIC_CONSTANT.length);
+            byte[] bArr2 = new byte[length2];
+            System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+            System.arraycopy(PUBLIC_CONSTANT, 0, bArr2, length, PUBLIC_CONSTANT.length);
             bArr = new byte[digestSize];
             this.sr.nextBytes(bArr);
             DigestRandomGenerator digestRandomGenerator = new DigestRandomGenerator(new SHA1Digest());
             digestRandomGenerator.addSeedMaterial(bArr);
-            byte[] bArr2 = new byte[length2];
-            digestRandomGenerator.nextBytes(bArr2);
+            byte[] bArr3 = new byte[length2];
+            digestRandomGenerator.nextBytes(bArr3);
             for (length2--; length2 >= 0; length2--) {
-                bArr2[length2] = (byte) (bArr2[length2] ^ obj[length2]);
+                bArr3[length2] = (byte) (bArr3[length2] ^ bArr2[length2]);
             }
-            byte[] bArr3 = new byte[this.messDigest.getDigestSize()];
-            this.messDigest.update(bArr2, 0, bArr2.length);
-            this.messDigest.doFinal(bArr3, 0);
+            byte[] bArr4 = new byte[this.messDigest.getDigestSize()];
+            this.messDigest.update(bArr3, 0, bArr3.length);
+            this.messDigest.doFinal(bArr4, 0);
             for (digestSize--; digestSize >= 0; digestSize--) {
-                bArr3[digestSize] = (byte) (bArr3[digestSize] ^ bArr[digestSize]);
+                bArr4[digestSize] = (byte) (bArr4[digestSize] ^ bArr[digestSize]);
             }
-            Object concatenate = ByteUtils.concatenate(bArr3, bArr2);
-            byte[] bArr4 = new byte[0];
+            bArr = ByteUtils.concatenate(bArr4, bArr3);
+            byte[] bArr5 = new byte[0];
             if (i2 > 0) {
-                bArr4 = new byte[i2];
-                System.arraycopy(concatenate, 0, bArr4, 0, i2);
+                bArr5 = new byte[i2];
+                System.arraycopy(bArr, 0, bArr5, 0, i2);
             }
-            Object obj2 = new byte[bitLength];
-            System.arraycopy(concatenate, i2, obj2, 0, bitLength);
-            Object obj3 = new byte[i];
-            System.arraycopy(concatenate, bitLength + i2, obj3, 0, i);
-            bArr = McElieceCCA2Primitives.encryptionPrimitive((McElieceCCA2PublicKeyParameters) this.key, GF2Vector.OS2VP(this.k, obj3), Conversions.encode(this.n, this.t, obj2)).getEncoded();
-            return i2 > 0 ? ByteUtils.concatenate(bArr4, bArr) : bArr;
+            bArr4 = new byte[bitLength];
+            System.arraycopy(bArr, i2, bArr4, 0, bitLength);
+            byte[] bArr6 = new byte[i];
+            System.arraycopy(bArr, bitLength + i2, bArr6, 0, i);
+            bArr = McElieceCCA2Primitives.encryptionPrimitive((McElieceCCA2PublicKeyParameters) this.key, GF2Vector.OS2VP(this.k, bArr6), Conversions.encode(this.n, this.t, bArr4)).getEncoded();
+            return i2 > 0 ? ByteUtils.concatenate(bArr5, bArr) : bArr;
         } else {
             throw new IllegalStateException("cipher initialised for decryption");
         }

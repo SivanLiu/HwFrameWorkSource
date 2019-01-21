@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
@@ -79,7 +78,7 @@ public class TraceOptimizer {
     }
 
     public static void main(String[] strArr) {
-        SortedSet<String> treeSet = new TreeSet(enumToList(ECNamedCurveTable.getNames()));
+        TreeSet<String> treeSet = new TreeSet(enumToList(ECNamedCurveTable.getNames()));
         treeSet.addAll(enumToList(CustomNamedCurves.getNames()));
         for (String str : treeSet) {
             X9ECParameters byName = CustomNamedCurves.getByName(str);

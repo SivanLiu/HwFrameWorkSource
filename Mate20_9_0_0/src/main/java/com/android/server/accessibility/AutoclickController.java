@@ -209,6 +209,14 @@ public class AutoclickController extends BaseEventStreamTransformation {
         }
     }
 
+    public /* bridge */ /* synthetic */ EventStreamTransformation getNext() {
+        return super.getNext();
+    }
+
+    public /* bridge */ /* synthetic */ void setNext(EventStreamTransformation eventStreamTransformation) {
+        super.setNext(eventStreamTransformation);
+    }
+
     public AutoclickController(Context context, int userId) {
         this.mContext = context;
         this.mUserId = userId;

@@ -578,34 +578,39 @@ final class HwEyeProtectionXmlLoader {
         HWFLOW = z;
     }
 
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:9:0x0014, B:14:0x0021] */
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
+            r2 = th;
+     */
+    /* JADX WARNING: Missing block: B:21:0x0041, code skipped:
+            if (null == null) goto L_0x0043;
+     */
+    /* JADX WARNING: Missing block: B:22:0x0043, code skipped:
+            new com.android.server.display.HwEyeProtectionXmlLoader.Data().loadDefaultConfig();
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static Data getData(String xmlFilePath) {
         Data retData = null;
         synchronized (mLock) {
-            Data data;
+            Data th;
             try {
                 if (mLoader == null) {
                     mLoader = new HwEyeProtectionXmlLoader(xmlFilePath);
                 }
                 retData = mData;
                 if (retData == null) {
-                    data = new Data();
-                    retData = data;
+                    th = new Data();
+                    retData = th;
                     retData.loadDefaultConfig();
                 }
             } catch (Exception e) {
-                try {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("getData() error!");
-                    stringBuilder.append(e);
-                    Slog.e(str, stringBuilder.toString());
-                    if (null == null) {
-                        data = new Data();
-                    }
-                } catch (Throwable th) {
-                    if (null == null) {
-                        new Data().loadDefaultConfig();
-                    }
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("getData() error!");
+                stringBuilder.append(e);
+                Slog.e(str, stringBuilder.toString());
+                if (null == null) {
+                    th = new Data();
                 }
             }
         }

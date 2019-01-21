@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.iawareperf.UniPerf;
 import android.os.SystemProperties;
+import android.util.HwPCUtils;
 import android.util.HwVRUtils;
 import android.vrsystem.IVRSystemServiceManager;
+import android.widget.Toast;
+import com.android.server.UiThread;
 import com.android.server.rms.iaware.cpu.CPUFeature;
 import com.huawei.pgmng.log.LogPower;
 import com.huawei.server.am.IHwActivityStarterEx;
@@ -19,6 +22,7 @@ public class HwActivityStarterEx implements IHwActivityStarterEx {
     public static final String TAG = "HwActivityStarterEx";
     private static final boolean mIsSupportGameAssist;
     final ActivityManagerService mService;
+    private Toast mToast = null;
 
     static {
         boolean z = false;
@@ -161,5 +165,29 @@ public class HwActivityStarterEx implements IHwActivityStarterEx {
         }
         HwSnsVideoManager.getInstance(this.mService.mContext).setReadyToShowActivity(false);
         return true;
+    }
+
+    /* JADX WARNING: Missing block: B:16:0x003c, code skipped:
+            return true;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    public boolean isAbleToLaunchInPCCastMode(String packageName, int displayId) {
+        if (displayId == 0 || displayId == -1 || packageName == null || !HwPCUtils.isPcCastModeInServer() || !HwPCUtils.sPackagesCanStartedInPCMode.contains(packageName)) {
+            return true;
+        }
+        HwPCUtils.log(TAG, "about to launch app which cannot be started in PC mode, abort.");
+        final Context context = HwPCUtils.getDisplayContext(this.mService.mContext, HwPCUtils.getPCDisplayID());
+        if (context != null) {
+            UiThread.getHandler().post(new Runnable() {
+                public void run() {
+                    if (HwActivityStarterEx.this.mToast != null) {
+                        HwActivityStarterEx.this.mToast.cancel();
+                    }
+                    HwActivityStarterEx.this.mToast = Toast.makeText(context, context.getResources().getString(33686015), 0);
+                    HwActivityStarterEx.this.mToast.show();
+                }
+            });
+        }
+        return false;
     }
 }

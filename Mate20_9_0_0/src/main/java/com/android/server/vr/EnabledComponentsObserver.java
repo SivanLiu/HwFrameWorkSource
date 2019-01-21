@@ -110,14 +110,18 @@ public class EnabledComponentsObserver implements SettingChangeListener {
     public int isValid(ComponentName component, int userId) {
         synchronized (this.mLock) {
             ArraySet<ComponentName> installedComponents = (ArraySet) this.mInstalledSet.get(userId);
-            if (installedComponents == null || !installedComponents.contains(component)) {
-                return -2;
+            if (installedComponents != null) {
+                if (installedComponents.contains(component)) {
+                    ArraySet<ComponentName> validComponents = (ArraySet) this.mEnabledSet.get(userId);
+                    if (validComponents != null) {
+                        if (validComponents.contains(component)) {
+                            return 0;
+                        }
+                    }
+                    return -1;
+                }
             }
-            ArraySet<ComponentName> validComponents = (ArraySet) this.mEnabledSet.get(userId);
-            if (validComponents == null || !validComponents.contains(component)) {
-                return -1;
-            }
-            return 0;
+            return -2;
         }
     }
 
@@ -125,7 +129,7 @@ public class EnabledComponentsObserver implements SettingChangeListener {
         synchronized (this.mLock) {
             ArraySet<ComponentName> ret = (ArraySet) this.mInstalledSet.get(userId);
             if (ret == null) {
-                ArraySet<ComponentName> arraySet = new ArraySet();
+                ArraySet arraySet = new ArraySet();
                 return arraySet;
             }
             return ret;
@@ -136,7 +140,7 @@ public class EnabledComponentsObserver implements SettingChangeListener {
         synchronized (this.mLock) {
             ArraySet<ComponentName> ret = (ArraySet) this.mEnabledSet.get(userId);
             if (ret == null) {
-                ArraySet<ComponentName> arraySet = new ArraySet();
+                ArraySet arraySet = new ArraySet();
                 return arraySet;
             }
             return ret;

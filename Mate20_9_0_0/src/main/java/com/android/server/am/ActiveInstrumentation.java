@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.util.PrintWriterPrinter;
-import android.util.Printer;
 import android.util.proto.ProtoOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ class ActiveInstrumentation {
         pw.println(this.mTargetInfo);
         if (this.mTargetInfo != null) {
             ApplicationInfo applicationInfo = this.mTargetInfo;
-            Printer printWriterPrinter = new PrintWriterPrinter(pw);
+            PrintWriterPrinter printWriterPrinter = new PrintWriterPrinter(pw);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(prefix);
             stringBuilder.append("  ");

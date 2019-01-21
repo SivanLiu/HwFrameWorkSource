@@ -15,10 +15,10 @@ public class UnsupportedCompileSdkDialog {
 
     public UnsupportedCompileSdkDialog(AppWarnings manager, Context context, ApplicationInfo appInfo) {
         this.mPackageName = appInfo.packageName;
-        Builder builder = new Builder(context).setPositiveButton(17039370, null).setMessage(context.getString(17041269, new Object[]{appInfo.loadSafeLabel(context.getPackageManager())})).setView(17367325);
+        Builder builder = new Builder(context).setPositiveButton(17039370, null).setMessage(context.getString(17041270, new Object[]{appInfo.loadSafeLabel(context.getPackageManager())})).setView(17367325);
         Intent installerIntent = AppInstallerUtil.createIntent(context, appInfo.packageName);
         if (installerIntent != null) {
-            builder.setNeutralButton(17041268, new -$$Lambda$UnsupportedCompileSdkDialog$K7plB7GGwH9pXpEKQfCoIs-hrJg(context, installerIntent));
+            builder.setNeutralButton(17041269, new -$$Lambda$UnsupportedCompileSdkDialog$K7plB7GGwH9pXpEKQfCoIs-hrJg(context, installerIntent));
         }
         this.mDialog = builder.create();
         this.mDialog.create();

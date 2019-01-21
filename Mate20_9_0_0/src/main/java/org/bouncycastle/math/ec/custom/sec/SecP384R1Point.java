@@ -95,14 +95,14 @@ public class SecP384R1Point extends AbstractFp {
             SecP384R1Field.negate(iArr2, iArr2);
             Nat384.mul(iArr4, iArr2, create);
             SecP384R1Field.reduce32(Nat.addBothTo(12, create3, create3, iArr2), iArr2);
-            ECFieldElement secP384R1FieldElement7 = new SecP384R1FieldElement(create4);
-            SecP384R1Field.square(iArr, secP384R1FieldElement7.x);
-            SecP384R1Field.subtract(secP384R1FieldElement7.x, iArr2, secP384R1FieldElement7.x);
-            ECFieldElement secP384R1FieldElement8 = new SecP384R1FieldElement(iArr2);
-            SecP384R1Field.subtract(create3, secP384R1FieldElement7.x, secP384R1FieldElement8.x);
-            Nat384.mul(secP384R1FieldElement8.x, iArr, create2);
+            secP384R1FieldElement = new SecP384R1FieldElement(create4);
+            SecP384R1Field.square(iArr, secP384R1FieldElement.x);
+            SecP384R1Field.subtract(secP384R1FieldElement.x, iArr2, secP384R1FieldElement.x);
+            secP384R1FieldElement2 = new SecP384R1FieldElement(iArr2);
+            SecP384R1Field.subtract(create3, secP384R1FieldElement.x, secP384R1FieldElement2.x);
+            Nat384.mul(secP384R1FieldElement2.x, iArr, create2);
             SecP384R1Field.addExt(create, create2, create);
-            SecP384R1Field.reduce(create, secP384R1FieldElement8.x);
+            SecP384R1Field.reduce(create, secP384R1FieldElement2.x);
             secP384R1FieldElement3 = new SecP384R1FieldElement(create5);
             if (!isOne) {
                 SecP384R1Field.multiply(secP384R1FieldElement3.x, secP384R1FieldElement5.x, secP384R1FieldElement3.x);
@@ -110,7 +110,7 @@ public class SecP384R1Point extends AbstractFp {
             if (!isOne2) {
                 SecP384R1Field.multiply(secP384R1FieldElement3.x, secP384R1FieldElement6.x, secP384R1FieldElement3.x);
             }
-            return new SecP384R1Point(curve, secP384R1FieldElement7, secP384R1FieldElement8, new ECFieldElement[]{secP384R1FieldElement3}, this.withCompression);
+            return new SecP384R1Point(curve, secP384R1FieldElement, secP384R1FieldElement2, new ECFieldElement[]{secP384R1FieldElement3}, this.withCompression);
         }
     }
 

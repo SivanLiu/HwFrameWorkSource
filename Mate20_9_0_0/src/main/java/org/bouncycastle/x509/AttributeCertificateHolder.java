@@ -10,7 +10,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.List;
 import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -68,7 +67,7 @@ public class AttributeCertificateHolder implements CertSelector, Selector {
     }
 
     private Object[] getNames(GeneralName[] generalNameArr) {
-        List arrayList = new ArrayList(generalNameArr.length);
+        ArrayList arrayList = new ArrayList(generalNameArr.length);
         for (int i = 0; i != generalNameArr.length; i++) {
             if (generalNameArr[i].getTagNo() == 4) {
                 try {
@@ -83,7 +82,7 @@ public class AttributeCertificateHolder implements CertSelector, Selector {
 
     private Principal[] getPrincipals(GeneralNames generalNames) {
         Object[] names = getNames(generalNames.getNames());
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (int i = 0; i != names.length; i++) {
             if (names[i] instanceof Principal) {
                 arrayList.add(names[i]);
@@ -161,8 +160,14 @@ public class AttributeCertificateHolder implements CertSelector, Selector {
         return !(obj instanceof X509Certificate) ? false : match((Certificate) obj);
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0077, code:
+    /* JADX WARNING: Missing block: B:27:0x0077, code skipped:
             r0.update(r5);
+     */
+    /* JADX WARNING: Missing block: B:30:0x0090, code skipped:
+            if (org.bouncycastle.util.Arrays.areEqual(r0.digest(), getObjectDigest()) != false) goto L_0x0094;
+     */
+    /* JADX WARNING: Missing block: B:31:0x0092, code skipped:
+            return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean match(Certificate certificate) {
@@ -192,9 +197,6 @@ public class AttributeCertificateHolder implements CertSelector, Selector {
                                 encoded = certificate.getEncoded();
                                 break;
                             default:
-                                if (!Arrays.areEqual(instance.digest(), getObjectDigest())) {
-                                    return false;
-                                }
                                 break;
                         }
                     } catch (Exception e) {

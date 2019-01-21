@@ -725,8 +725,10 @@ final class OverlayManagerServiceImpl {
                 PackageInfo disabledOverlayPackageInfo = this.mPackageManager.getPackageInfo(disabledOverlayPackageName, userId);
                 if (disabledOverlayPackageInfo == null) {
                     modified |= this.mSettings.remove(disabledOverlayPackageName, userId);
-                } else if (!disabledOverlayPackageInfo.isStaticOverlayPackage() && (!withinCategory || Objects.equals(disabledOverlayPackageInfo.overlayCategory, oi.category))) {
-                    modified = (modified | this.mSettings.setEnabled(disabledOverlayPackageName, userId, false)) | updateState(targetPackageName, disabledOverlayPackageName, userId, 0);
+                } else if (!disabledOverlayPackageInfo.isStaticOverlayPackage()) {
+                    if (!withinCategory || Objects.equals(disabledOverlayPackageInfo.overlayCategory, oi.category)) {
+                        modified = (modified | this.mSettings.setEnabled(disabledOverlayPackageName, userId, false)) | updateState(targetPackageName, disabledOverlayPackageName, userId, 0);
+                    }
                 }
             }
             if (((this.mSettings.setEnabled(packageName, userId, true) | modified) | updateState(targetPackageName, packageName, userId, 0)) | checkWhiteExtList(packageName)) {

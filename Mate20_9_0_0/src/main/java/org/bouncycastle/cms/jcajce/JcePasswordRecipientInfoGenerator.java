@@ -1,5 +1,6 @@
 package org.bouncycastle.cms.jcajce;
 
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.Provider;
 import javax.crypto.Cipher;
@@ -29,7 +30,7 @@ public class JcePasswordRecipientInfoGenerator extends PasswordRecipientInfoGene
         try {
             createRFC3211Wrapper.init(3, new SecretKeySpec(bArr, createRFC3211Wrapper.getAlgorithm()), new IvParameterSpec(ASN1OctetString.getInstance(algorithmIdentifier.getParameters()).getOctets()));
             return createRFC3211Wrapper.wrap(jceKey);
-        } catch (Exception e) {
+        } catch (GeneralSecurityException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("cannot process content encryption key: ");
             stringBuilder.append(e.getMessage());

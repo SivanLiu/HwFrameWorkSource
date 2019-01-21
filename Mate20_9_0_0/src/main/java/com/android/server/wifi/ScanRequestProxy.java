@@ -318,7 +318,7 @@ public class ScanRequestProxy {
     }
 
     public List<ScanResult> getScanResults() {
-        List<ScanResult> list;
+        List list;
         synchronized (this) {
             list = this.mLastScanResults;
         }
@@ -358,13 +358,13 @@ public class ScanRequestProxy {
         Log.e(TAG, "Failed to retrieve wifiscanner");
     }
 
-    /* JADX WARNING: Missing block: B:24:0x004e, code:
+    /* JADX WARNING: Missing block: B:24:0x004e, code skipped:
             if (r1 != r11.mHilinkLastHashCode) goto L_0x0056;
      */
-    /* JADX WARNING: Missing block: B:26:0x0054, code:
+    /* JADX WARNING: Missing block: B:26:0x0054, code skipped:
             if (r6 <= r11.mHilinkLastLevelCode) goto L_0x0076;
      */
-    /* JADX WARNING: Missing block: B:27:0x0056, code:
+    /* JADX WARNING: Missing block: B:27:0x0056, code skipped:
             android.util.Log.d(TAG, "Hilink sendHilinkscanResultBroadcast");
             r0 = new android.content.Intent(HILINK_STATE_CHANGE_ACTION);
             r0.putExtra("TYPE", "SCAN_RESULTS");
@@ -372,21 +372,21 @@ public class ScanRequestProxy {
             r11.mHilinkLastHashCode = r1;
             r11.mAllowSendHiLinkScanResultsBroadcast = false;
      */
-    /* JADX WARNING: Missing block: B:28:0x0076, code:
+    /* JADX WARNING: Missing block: B:28:0x0076, code skipped:
             r11.mHilinkLastLevelCode = r6;
             r0 = r11.mSendHiLinkScanResultsBroadcastTries + 1;
             r11.mSendHiLinkScanResultsBroadcastTries = r0;
      */
-    /* JADX WARNING: Missing block: B:29:0x0080, code:
+    /* JADX WARNING: Missing block: B:29:0x0080, code skipped:
             if (r0 <= 10) goto L_?;
      */
-    /* JADX WARNING: Missing block: B:30:0x0082, code:
+    /* JADX WARNING: Missing block: B:30:0x0082, code skipped:
             r11.mAllowSendHiLinkScanResultsBroadcast = false;
      */
-    /* JADX WARNING: Missing block: B:44:?, code:
+    /* JADX WARNING: Missing block: B:44:?, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:45:?, code:
+    /* JADX WARNING: Missing block: B:45:?, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

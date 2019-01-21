@@ -1,5 +1,6 @@
 package org.bouncycastle.cms;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,7 +89,7 @@ public class SignerInfoGenerator {
     }
 
     private Map getBaseParameters(ASN1ObjectIdentifier aSN1ObjectIdentifier, AlgorithmIdentifier algorithmIdentifier, AlgorithmIdentifier algorithmIdentifier2, byte[] bArr) {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         if (aSN1ObjectIdentifier != null) {
             hashMap.put(CMSAttributeTableGenerator.CONTENT_TYPE, aSN1ObjectIdentifier);
         }
@@ -134,7 +135,7 @@ public class SignerInfoGenerator {
                 attributeSet = null;
             }
             return new SignerInfo(this.signerIdentifier, algorithmIdentifier, aSN1Set, findEncryptionAlgorithm, new DEROctetString(signature), attributeSet);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new CMSException("encoding error.", e);
         }
     }

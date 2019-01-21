@@ -333,11 +333,11 @@ public class SkeinEngine implements Memoable {
     }
 
     private void output(long j, byte[] bArr, int i, int i2) {
-        Object obj = new byte[8];
-        ThreefishEngine.wordToBytes(j, obj, 0);
+        byte[] bArr2 = new byte[8];
+        ThreefishEngine.wordToBytes(j, bArr2, 0);
         long[] jArr = new long[this.chain.length];
         ubiInit(63);
-        this.ubi.update(obj, 0, obj.length, jArr);
+        this.ubi.update(bArr2, 0, bArr2.length, jArr);
         this.ubi.doFinal(jArr);
         int i3 = ((i2 + 8) - 1) / 8;
         for (int i4 = 0; i4 < i3; i4++) {
@@ -346,8 +346,8 @@ public class SkeinEngine implements Memoable {
             if (min == 8) {
                 ThreefishEngine.wordToBytes(jArr[i4], bArr, i5 + i);
             } else {
-                ThreefishEngine.wordToBytes(jArr[i4], obj, 0);
-                System.arraycopy(obj, 0, bArr, i5 + i, min);
+                ThreefishEngine.wordToBytes(jArr[i4], bArr2, 0);
+                System.arraycopy(bArr2, 0, bArr, i5 + i, min);
             }
         }
     }

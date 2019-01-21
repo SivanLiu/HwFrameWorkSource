@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.android.server.hidata.wavemapping.cons.Constant;
 import com.android.server.hidata.wavemapping.entity.ApInfo;
 import com.android.server.hidata.wavemapping.util.LogUtil;
+import com.android.server.hidata.wavemapping.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,20 +43,11 @@ public class EnterpriseApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0019, code:
+    /* JADX WARNING: Missing block: B:7:0x0019, code skipped:
             if (r3 != null) goto L_0x001b;
      */
-    /* JADX WARNING: Missing block: B:8:0x001b, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x003a, code:
+    /* JADX WARNING: Missing block: B:17:0x0059, code skipped:
             if (r3 == null) goto L_0x005c;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0059, code:
-            if (r3 == null) goto L_0x005c;
-     */
-    /* JADX WARNING: Missing block: B:17:0x005c, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public int findAllCount() {
@@ -79,6 +71,10 @@ public class EnterpriseApDAO {
             stringBuilder.append("findAll Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return cnt;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -86,20 +82,11 @@ public class EnterpriseApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0024, code:
+    /* JADX WARNING: Missing block: B:7:0x0024, code skipped:
             if (r3 != null) goto L_0x0026;
      */
-    /* JADX WARNING: Missing block: B:8:0x0026, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x0045, code:
+    /* JADX WARNING: Missing block: B:17:0x0064, code skipped:
             if (r3 == null) goto L_0x0067;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0064, code:
-            if (r3 == null) goto L_0x0067;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0067, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public Set<String> findAll() {
@@ -123,6 +110,10 @@ public class EnterpriseApDAO {
             stringBuilder.append("findAll Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return aps;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -130,20 +121,11 @@ public class EnterpriseApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0033, code:
+    /* JADX WARNING: Missing block: B:7:0x0033, code skipped:
             if (r3 != null) goto L_0x0035;
      */
-    /* JADX WARNING: Missing block: B:8:0x0035, code:
-            r3.close();
-     */
-    /* JADX WARNING: Missing block: B:13:0x0054, code:
+    /* JADX WARNING: Missing block: B:17:0x0073, code skipped:
             if (r3 == null) goto L_0x0076;
-     */
-    /* JADX WARNING: Missing block: B:16:0x0073, code:
-            if (r3 == null) goto L_0x0076;
-     */
-    /* JADX WARNING: Missing block: B:17:0x0076, code:
-            return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<ApInfo> findAllAps() {
@@ -167,6 +149,10 @@ public class EnterpriseApDAO {
             stringBuilder.append("findAllAps Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return apInfos;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -207,20 +193,11 @@ public class EnterpriseApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0042, code:
+    /* JADX WARNING: Missing block: B:12:0x0042, code skipped:
             if (r2 != null) goto L_0x0044;
      */
-    /* JADX WARNING: Missing block: B:13:0x0044, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:18:0x0063, code:
+    /* JADX WARNING: Missing block: B:22:0x007f, code skipped:
             if (r2 == null) goto L_0x0082;
-     */
-    /* JADX WARNING: Missing block: B:21:0x007f, code:
-            if (r2 == null) goto L_0x0082;
-     */
-    /* JADX WARNING: Missing block: B:22:0x0082, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public ApInfo findBySsid(String ssid) {
@@ -250,6 +227,10 @@ public class EnterpriseApDAO {
             stringBuilder.append("findBySsid Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            return apInfo;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();
@@ -257,36 +238,11 @@ public class EnterpriseApDAO {
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0042, code:
+    /* JADX WARNING: Missing block: B:12:0x0042, code skipped:
             if (r2 != null) goto L_0x0044;
      */
-    /* JADX WARNING: Missing block: B:13:0x0044, code:
-            r2.close();
-     */
-    /* JADX WARNING: Missing block: B:21:0x006a, code:
+    /* JADX WARNING: Missing block: B:25:0x0086, code skipped:
             if (r2 == null) goto L_0x0089;
-     */
-    /* JADX WARNING: Missing block: B:24:0x0086, code:
-            if (r2 == null) goto L_0x0089;
-     */
-    /* JADX WARNING: Missing block: B:25:0x0089, code:
-            if (r0 == null) goto L_0x00b5;
-     */
-    /* JADX WARNING: Missing block: B:26:0x008b, code:
-            r0.setUptime(com.android.server.hidata.wavemapping.util.TimeUtil.getTime());
-     */
-    /* JADX WARNING: Missing block: B:27:0x0096, code:
-            if (update(r0) != false) goto L_0x00b5;
-     */
-    /* JADX WARNING: Missing block: B:28:0x0098, code:
-            com.android.server.hidata.wavemapping.util.LogUtil.d("findBySsidForUpdateTime update failure");
-            r3 = new java.lang.StringBuilder();
-            r3.append("                                      ,apinfo: ");
-            r3.append(r0.toString());
-            com.android.server.hidata.wavemapping.util.LogUtil.i(r3.toString());
-     */
-    /* JADX WARNING: Missing block: B:29:0x00b5, code:
-            return r0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public ApInfo findBySsidForUpdateTime(String ssid) {
@@ -321,6 +277,20 @@ public class EnterpriseApDAO {
             stringBuilder.append("findBySsidForUpdateTime Exception: ");
             stringBuilder.append(e2.getMessage());
             LogUtil.e(stringBuilder.toString());
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (apInfo != null) {
+                apInfo.setUptime(TimeUtil.getTime());
+                if (!update(apInfo)) {
+                    LogUtil.d("findBySsidForUpdateTime update failure");
+                    StringBuilder stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("                                      ,apinfo: ");
+                    stringBuilder2.append(apInfo.toString());
+                    LogUtil.i(stringBuilder2.toString());
+                }
+            }
+            return apInfo;
         } catch (Throwable th) {
             if (cursor != null) {
                 cursor.close();

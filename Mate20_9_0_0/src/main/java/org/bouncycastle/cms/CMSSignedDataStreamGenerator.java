@@ -46,7 +46,7 @@ public class CMSSignedDataStreamGenerator extends CMSSignedGenerator {
                 try {
                     aSN1EncodableVector.add(signerInfoGenerator.generate(this._contentOID));
                     CMSSignedDataStreamGenerator.this.digests.put(signerInfoGenerator.getDigestAlgorithm().getAlgorithm().getId(), signerInfoGenerator.getCalculatedDigest());
-                } catch (Throwable e) {
+                } catch (CMSException e) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("exception generating signers: ");
                     stringBuilder.append(e.getMessage());

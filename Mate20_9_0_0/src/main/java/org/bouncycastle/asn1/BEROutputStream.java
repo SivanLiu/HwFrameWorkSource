@@ -9,12 +9,12 @@ public class BEROutputStream extends DEROutputStream {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:11:0x001b in {2, 5, 7, 10, 13} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -25,26 +25,19 @@ public class BEROutputStream extends DEROutputStream {
         /*
         r1 = this;
         if (r2 != 0) goto L_0x0006;
-    L_0x0002:
         r1.writeNull();
         return;
-    L_0x0006:
         r0 = r2 instanceof org.bouncycastle.asn1.ASN1Primitive;
         if (r0 == 0) goto L_0x0010;
-    L_0x000a:
         r2 = (org.bouncycastle.asn1.ASN1Primitive) r2;
-    L_0x000c:
         r2.encode(r1);
         return;
-    L_0x0010:
         r0 = r2 instanceof org.bouncycastle.asn1.ASN1Encodable;
         if (r0 == 0) goto L_0x001c;
-    L_0x0014:
         r2 = (org.bouncycastle.asn1.ASN1Encodable) r2;
         r2 = r2.toASN1Primitive();
         goto L_0x000c;
         return;
-    L_0x001c:
         r2 = new java.io.IOException;
         r0 = "object not BEREncodable";
         r2.<init>(r0);

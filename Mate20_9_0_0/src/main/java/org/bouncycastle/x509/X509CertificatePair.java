@@ -1,5 +1,6 @@
 package org.bouncycastle.x509;
 
+import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -53,8 +54,9 @@ public class X509CertificatePair {
                 if (instance == null) {
                     throw new CertificateEncodingException("unable to get encoding for forward");
                 }
+            } else {
+                instance = null;
             }
-            instance = null;
             if (this.reverse != null) {
                 certificate = Certificate.getInstance(new ASN1InputStream(this.reverse.getEncoded()).readObject());
                 if (certificate == null) {
@@ -62,9 +64,9 @@ public class X509CertificatePair {
                 }
             }
             return new CertificatePair(instance, certificate).getEncoded(ASN1Encoding.DER);
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
             throw new ExtCertificateEncodingException(e.toString(), e);
-        } catch (Throwable e2) {
+        } catch (IOException e2) {
             throw new ExtCertificateEncodingException(e2.toString(), e2);
         }
     }

@@ -342,27 +342,27 @@ public abstract class AbstractHttpClient implements HttpClient {
         return execute(target, request, (HttpContext) null);
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0060, code:
+    /* JADX WARNING: Missing block: B:18:0x0060, code skipped:
             if (r16 == false) goto L_0x006e;
      */
-    /* JADX WARNING: Missing block: B:21:0x0066, code:
+    /* JADX WARNING: Missing block: B:21:0x0066, code skipped:
             return getFakeResponse();
      */
-    /* JADX WARNING: Missing block: B:22:0x0067, code:
+    /* JADX WARNING: Missing block: B:22:0x0067, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:23:0x0068, code:
+    /* JADX WARNING: Missing block: B:23:0x0068, code skipped:
             r2 = r22;
             r4 = r15;
             r3 = r23;
      */
-    /* JADX WARNING: Missing block: B:27:0x0077, code:
+    /* JADX WARNING: Missing block: B:27:0x0077, code skipped:
             return r1.execute(r22, r23, r15);
      */
-    /* JADX WARNING: Missing block: B:28:0x0078, code:
+    /* JADX WARNING: Missing block: B:28:0x0078, code skipped:
             r0 = e;
      */
-    /* JADX WARNING: Missing block: B:30:0x007e, code:
+    /* JADX WARNING: Missing block: B:30:0x007e, code skipped:
             throw new org.apache.http.client.ClientProtocolException(r0);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -391,7 +391,7 @@ public abstract class AbstractHttpClient implements HttpClient {
                         ConnectionReuseStrategy connectionReuseStrategy = getConnectionReuseStrategy();
                         ConnectionKeepAliveStrategy connectionKeepAliveStrategy = getConnectionKeepAliveStrategy();
                         HttpRoutePlanner routePlanner = getRoutePlanner();
-                        HttpProcessor copy = getHttpProcessor().copy();
+                        BasicHttpProcessor copy = getHttpProcessor().copy();
                         HttpRequestRetryHandler httpRequestRetryHandler = getHttpRequestRetryHandler();
                         RedirectHandler redirectHandler = getRedirectHandler();
                         AuthenticationHandler targetAuthenticationHandler = getTargetAuthenticationHandler();

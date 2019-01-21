@@ -41,7 +41,7 @@ public class EACCertificateBuilder {
             outputStream.write(buildBody.getEncoded(ASN1Encoding.DER));
             outputStream.close();
             return new EACCertificateHolder(new CVCertificate(buildBody, eACSigner.getSignature()));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to process signature: ");
             stringBuilder.append(e.getMessage());

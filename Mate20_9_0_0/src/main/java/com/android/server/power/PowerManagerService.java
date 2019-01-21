@@ -165,6 +165,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
     static final long MIN_LONG_WAKE_CHECK_INTERVAL = 60000;
     private static final long MIN_TIME_FACE_DETECT_BEFORE_DIM = 1000;
     private static final int MSG_CHECK_FOR_LONG_WAKELOCKS = 4;
+    private static final int MSG_CUSTOM_USER_ACTIVITY_TIMEOUT = 105;
     private static final int MSG_FACE_DETECT_BEFORE_DIM = 103;
     private static final int MSG_POWERKEY_WAKEUP = 102;
     private static final int MSG_PROXIMITY_POSITIVE = 5;
@@ -238,6 +239,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
     private int mCoverModeBrightness;
     private int mCurrentUserId;
     private HwCustPowerManagerService mCust;
+    private int mCustomUserActivityTimeout;
     private boolean mDecoupleHalAutoSuspendModeFromDisplayConfig;
     private boolean mDecoupleHalInteractiveModeFromDisplayConfig;
     private boolean mDeviceIdleMode;
@@ -638,8 +640,8 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         public boolean isWakeLockLevelSupported(int level) {
             long ident = Binder.clearCallingIdentity();
             try {
-                boolean access$4200 = PowerManagerService.this.isWakeLockLevelSupportedInternal(level);
-                return access$4200;
+                boolean access$4300 = PowerManagerService.this.isWakeLockLevelSupportedInternal(level);
+                return access$4300;
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -724,8 +726,8 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         public boolean isInteractive() {
             long ident = Binder.clearCallingIdentity();
             try {
-                boolean access$4700 = PowerManagerService.this.isInteractiveInternal();
-                return access$4700;
+                boolean access$4800 = PowerManagerService.this.isInteractiveInternal();
+                return access$4800;
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -755,8 +757,8 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
             PowerManagerService.this.mContext.enforceCallingOrSelfPermission("android.permission.DEVICE_POWER", null);
             long ident = Binder.clearCallingIdentity();
             try {
-                boolean access$5000 = PowerManagerService.this.setLowPowerModeInternal(enabled);
-                return access$5000;
+                boolean access$5100 = PowerManagerService.this.setLowPowerModeInternal(enabled);
+                return access$5100;
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -1056,8 +1058,8 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         public boolean isScreenBrightnessBoosted() {
             long ident = Binder.clearCallingIdentity();
             try {
-                boolean access$5900 = PowerManagerService.this.isScreenBrightnessBoostedInternal();
-                return access$5900;
+                boolean access$6000 = PowerManagerService.this.isScreenBrightnessBoostedInternal();
+                return access$6000;
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -1267,7 +1269,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
 
         public List<String> getWakeLockPackageName() {
-            List list;
+            ArrayList arrayList;
             synchronized (PowerManagerService.this.mLock) {
                 this.mWakeLockPackageNameList.clear();
                 for (int i = 0; i < PowerManagerService.this.mWakeLocks.size(); i++) {
@@ -1276,9 +1278,9 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
                         this.mWakeLockPackageNameList.add(wakeLock.mPackageName);
                     }
                 }
-                list = this.mWakeLockPackageNameList;
+                arrayList = this.mWakeLockPackageNameList;
             }
-            return list;
+            return arrayList;
         }
 
         public IBinder getHwInnerService() {
@@ -1404,6 +1406,13 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         public boolean registerPowerMonitorCallback(IHwPowerDAMonitorCallback callback) {
             PowerManagerService.this.mPowerProxy.registerPowerMonitorCallback(callback);
             return true;
+        }
+
+        public void requestNoUserActivityNotification(int timeout) {
+            PowerManagerService.this.mContext.enforceCallingOrSelfPermission("android.permission.USER_ACTIVITY", null);
+            if (PowerManagerService.this.mHwPowerEx != null) {
+                PowerManagerService.this.mHwPowerEx.requestNoUserActivityNotification(timeout);
+            }
         }
     }
 
@@ -1565,6 +1574,9 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
                             stringBuilder.append(msg.obj);
                             Slog.d(str, stringBuilder.toString());
                             Global.putString(PowerManagerService.this.mContext.getContentResolver(), PowerManagerService.WAKEUP_REASON, msg.obj == null ? "unknow" : msg.obj.toString());
+                            return;
+                        case 105:
+                            PowerManagerService.this.handleCustomUserInActivityTimeout();
                             return;
                         default:
                             return;
@@ -1940,7 +1952,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         	at jadx.core.utils.ErrorsCounter.methodError(ErrorsCounter.java:82)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:29)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -1956,15 +1968,11 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         r3 = this;
         r0 = r3.mHandler;
         if (r0 == 0) goto L_0x0008;
-    L_0x0004:
         r0 = r3.mSystemReady;
         if (r0 != 0) goto L_0x0011;
-    L_0x0008:
         r0 = com.android.server.RescueParty.isAttemptingFactoryReset();
         if (r0 == 0) goto L_0x0036;
-    L_0x000e:
         lowLevelReboot(r6);
-    L_0x0011:
         r0 = new com.android.server.power.PowerManagerService$4;
         r0.<init>(r4, r5, r6);
         r1 = com.android.server.UiThread.getHandler();
@@ -1974,22 +1982,15 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         r2 = com.android.server.UiThread.getHandler();
         r2.sendMessage(r1);
         if (r7 == 0) goto L_0x0035;
-    L_0x002b:
         monitor-enter(r0);
-    L_0x002c:
         r0.wait();	 Catch:{ InterruptedException -> 0x0033 }
-    L_0x002f:
         goto L_0x002c;
-    L_0x0030:
         r2 = move-exception;
         monitor-exit(r0);	 Catch:{ all -> 0x0030 }
         throw r2;
-    L_0x0033:
         r2 = move-exception;
         goto L_0x002f;
-    L_0x0035:
         return;
-    L_0x0036:
         r0 = new java.lang.IllegalStateException;
         r1 = "Too early to call shutdown() or reboot()";
         r0.<init>(r1);
@@ -2014,6 +2015,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
 
     public PowerManagerService(Context context) {
         super(context);
+        this.mCustomUserActivityTimeout = 0;
         this.mLock = LockGuard.installNewLock(1);
         this.mSuspendBlockers = new ArrayList();
         this.mWakeLocks = new ArrayList();
@@ -2065,17 +2067,24 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
 
             public void onProximityPositive() {
                 synchronized (PowerManagerService.this.mLock) {
+                    Message msg;
                     PowerManagerService.this.mProximityPositive = true;
                     PowerManagerService powerManagerService = PowerManagerService.this;
                     powerManagerService.mDirty |= 512;
-                    if (!PowerManagerService.this.isPhoneHeldWakeLock() || HwPCUtils.isPcCastModeInServer()) {
-                        Flog.i(NativeResponseCode.SERVICE_LOST, "UL_Power onProximityPositive -> updatePowerStateLocked");
-                        PowerManagerService.this.updatePowerStateLocked();
-                    } else if (PowerManagerService.this.goToSleepNoUpdateLocked(SystemClock.uptimeMillis(), 100, 0, 1000)) {
-                        Flog.i(NativeResponseCode.SERVICE_LOST, "UL_Power onProximityPositivebyPhone -> updatePowerStateLocked");
-                        PowerManagerService.this.updatePowerStateLocked();
+                    if (PowerManagerService.this.isPhoneHeldWakeLock()) {
+                        if (!HwPCUtils.isPcCastModeInServer()) {
+                            if (PowerManagerService.this.goToSleepNoUpdateLocked(SystemClock.uptimeMillis(), 100, 0, 1000)) {
+                                Flog.i(NativeResponseCode.SERVICE_LOST, "UL_Power onProximityPositivebyPhone -> updatePowerStateLocked");
+                                PowerManagerService.this.updatePowerStateLocked();
+                            }
+                            msg = PowerManagerService.this.mHandler.obtainMessage(5);
+                            msg.setAsynchronous(true);
+                            PowerManagerService.this.mHandler.sendMessage(msg);
+                        }
                     }
-                    Message msg = PowerManagerService.this.mHandler.obtainMessage(5);
+                    Flog.i(NativeResponseCode.SERVICE_LOST, "UL_Power onProximityPositive -> updatePowerStateLocked");
+                    PowerManagerService.this.updatePowerStateLocked();
+                    msg = PowerManagerService.this.mHandler.obtainMessage(5);
                     msg.setAsynchronous(true);
                     PowerManagerService.this.mHandler.sendMessage(msg);
                 }
@@ -2096,27 +2105,32 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
                 }
             }
 
+            /* JADX WARNING: Removed duplicated region for block: B:26:0x0054  */
+            /* Code decompiled incorrectly, please refer to instructions dump. */
             public void onDisplayStateChange(int state) {
                 synchronized (PowerManagerService.this.mLock) {
                     if (this.mDisplayState != state) {
                         this.mDisplayState = state;
-                        if (state == 1 || (PowerManagerService.mSupportAod && state == 4)) {
-                            if (!PowerManagerService.this.mDecoupleHalInteractiveModeFromDisplayConfig) {
-                                PowerManagerService.this.setHalInteractiveModeLocked(false);
-                            }
-                            if (!PowerManagerService.this.mDecoupleHalAutoSuspendModeFromDisplayConfig) {
-                                PowerManagerService.this.setHalAutoSuspendModeLocked(true);
-                            }
-                        } else {
-                            if (!PowerManagerService.this.mDecoupleHalAutoSuspendModeFromDisplayConfig) {
-                                PowerManagerService.this.setHalAutoSuspendModeLocked(false);
-                            }
-                            if (!PowerManagerService.this.mDecoupleHalInteractiveModeFromDisplayConfig) {
-                                PowerManagerService.this.setHalInteractiveModeLocked(true);
+                        if (state != 1) {
+                            if (!PowerManagerService.mSupportAod || state != 4) {
+                                if (!PowerManagerService.this.mDecoupleHalAutoSuspendModeFromDisplayConfig) {
+                                    PowerManagerService.this.setHalAutoSuspendModeLocked(false);
+                                }
+                                if (!PowerManagerService.this.mDecoupleHalInteractiveModeFromDisplayConfig) {
+                                    PowerManagerService.this.setHalInteractiveModeLocked(true);
+                                }
+                                if (PowerManagerService.mSupportAod) {
+                                    PowerManagerService.this.mPolicy.onPowerStateChange(state);
+                                }
                             }
                         }
+                        if (!PowerManagerService.this.mDecoupleHalInteractiveModeFromDisplayConfig) {
+                            PowerManagerService.this.setHalInteractiveModeLocked(false);
+                        }
+                        if (!PowerManagerService.this.mDecoupleHalAutoSuspendModeFromDisplayConfig) {
+                            PowerManagerService.this.setHalAutoSuspendModeLocked(true);
+                        }
                         if (PowerManagerService.mSupportAod) {
-                            PowerManagerService.this.mPolicy.onPowerStateChange(state);
                         }
                     }
                 }
@@ -2190,6 +2204,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
     @VisibleForTesting
     PowerManagerService(Context context, BatterySaverPolicy batterySaverPolicy) {
         super(context);
+        this.mCustomUserActivityTimeout = 0;
         this.mLock = LockGuard.installNewLock(1);
         this.mSuspendBlockers = new ArrayList();
         this.mWakeLocks = new ArrayList();
@@ -2255,7 +2270,10 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
     public void onBootPhase(int phase) {
         synchronized (this.mLock) {
             if (phase == 600) {
-                incrementBootCount();
+                try {
+                    incrementBootCount();
+                } catch (Throwable th) {
+                }
             } else if (phase == 1000) {
                 long now = SystemClock.uptimeMillis();
                 this.mBootCompleted = true;
@@ -2369,9 +2387,9 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         Resources resources = this.mContext.getResources();
         this.mDecoupleHalAutoSuspendModeFromDisplayConfig = resources.getBoolean(17957002);
         this.mDecoupleHalInteractiveModeFromDisplayConfig = resources.getBoolean(17957003);
-        this.mWakeUpWhenPluggedOrUnpluggedConfig = resources.getBoolean(17957054);
+        this.mWakeUpWhenPluggedOrUnpluggedConfig = resources.getBoolean(17957055);
         this.mWakeUpWhenPluggedOrUnpluggedInTheaterModeConfig = resources.getBoolean(17956885);
-        this.mSuspendWhenScreenOffDueToProximityConfig = resources.getBoolean(17957044);
+        this.mSuspendWhenScreenOffDueToProximityConfig = resources.getBoolean(17957045);
         this.mDreamsSupportedConfig = resources.getBoolean(17956943);
         this.mDreamsEnabledByDefaultConfig = resources.getBoolean(17956941);
         this.mDreamsActivatedOnSleepByDefaultConfig = resources.getBoolean(17956940);
@@ -2384,7 +2402,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         this.mMinimumScreenOffTimeoutConfig = (long) resources.getInteger(17694819);
         this.mMaximumScreenDimDurationConfig = (long) resources.getInteger(17694814);
         this.mMaximumScreenDimRatioConfig = resources.getFraction(18022402, 1, 1);
-        this.mSupportsDoubleTapWakeConfig = resources.getBoolean(17957035);
+        this.mSupportsDoubleTapWakeConfig = resources.getBoolean(17957036);
         if (this.mCust != null) {
             this.mDreamsSupportedConfig = this.mCust.readConfigurationLocked(this.mDreamsSupportedConfig);
         }
@@ -2512,9 +2530,9 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         return false;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00d1 A:{Catch:{ all -> 0x00c9, all -> 0x0141 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:26:0x0084 A:{SYNTHETIC, Splitter: B:26:0x0084} */
-    /* JADX WARNING: Removed duplicated region for block: B:51:0x012e A:{Catch:{ RemoteException -> 0x0133, all -> 0x014a }} */
+    /* JADX WARNING: Removed duplicated region for block: B:38:0x00d1 A:{Catch:{ all -> 0x00c9, all -> 0x0141 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:27:0x0084 A:{SYNTHETIC, Splitter:B:27:0x0084} */
+    /* JADX WARNING: Removed duplicated region for block: B:52:0x012e A:{Catch:{ RemoteException -> 0x0133, all -> 0x014a }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void acquireWakeLockInternal(IBinder lock, int flags, String tag, String packageName, WorkSource ws, String historyTag, int uid, int pid) {
         Throwable th;
@@ -2676,7 +2694,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:12:0x003a, code:
+    /* JADX WARNING: Missing block: B:12:0x003a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2766,7 +2784,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:39:0x00ea, code:
+    /* JADX WARNING: Missing block: B:40:0x00ea, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2919,10 +2937,10 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0031, code:
+    /* JADX WARNING: Missing block: B:28:0x0031, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:28:0x0033, code:
+    /* JADX WARNING: Missing block: B:30:0x0033, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2932,9 +2950,12 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
             if (!(level == 1 || level == 6 || level == 10 || level == 26)) {
                 if (level != 32) {
                     if (!(level == 64 || level == 128)) {
-                        return false;
+                        try {
+                            return false;
+                        } catch (Throwable th) {
+                        }
                     }
-                } else if (!(this.mSystemReady && this.mDisplayManagerInternal.isProximitySensorAvailable())) {
+                } else if (!this.mSystemReady || !this.mDisplayManagerInternal.isProximitySensorAvailable()) {
                     z = false;
                 }
             }
@@ -2943,6 +2964,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
 
     private void userActivityFromNative(long eventTime, int event, int flags) {
         userActivityInternal(eventTime, event, flags, 1000);
+        resetCustomUserInActivityNotification(eventTime);
     }
 
     protected void userActivityInternal(long eventTime, int event, int flags, int uid) {
@@ -2985,35 +3007,37 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
                 this.mUserInactiveOverrideFromWindowManager = false;
                 this.mOverriddenTimeout = -1;
             }
-            if (this.mWakefulness == 0 || this.mWakefulness == 3 || (flags & 2) != 0) {
-                Trace.traceEnd(131072);
-                return false;
-            }
-            maybeUpdateForegroundProfileLastActivityLocked(eventTime);
-            if ((flags & 1) != 0) {
-                if (eventTime > this.mLastUserActivityTimeNoChangeLights && eventTime > this.mLastUserActivityTime) {
-                    if (mSupportFaceDetect) {
-                        unregisterFaceDetect();
-                    }
-                    this.mLastUserActivityTimeNoChangeLights = eventTime;
-                    this.mDirty |= 4;
-                    if (event == 1) {
-                        this.mDirty |= 4096;
+            if (!(this.mWakefulness == 0 || this.mWakefulness == 3)) {
+                if ((flags & 2) == 0) {
+                    maybeUpdateForegroundProfileLastActivityLocked(eventTime);
+                    if ((flags & 1) != 0) {
+                        if (eventTime > this.mLastUserActivityTimeNoChangeLights && eventTime > this.mLastUserActivityTime) {
+                            if (mSupportFaceDetect) {
+                                unregisterFaceDetect();
+                            }
+                            this.mLastUserActivityTimeNoChangeLights = eventTime;
+                            this.mDirty |= 4;
+                            if (event == 1) {
+                                this.mDirty |= 4096;
+                            }
+                            Trace.traceEnd(131072);
+                            return true;
+                        }
+                    } else if (eventTime > this.mLastUserActivityTime) {
+                        if (mSupportFaceDetect) {
+                            unregisterFaceDetect();
+                        }
+                        this.mLastUserActivityTime = eventTime;
+                        this.mDirty |= 4;
+                        if (event == 1) {
+                            this.mDirty |= 4096;
+                        }
+                        Trace.traceEnd(131072);
+                        return true;
                     }
                     Trace.traceEnd(131072);
-                    return true;
+                    return false;
                 }
-            } else if (eventTime > this.mLastUserActivityTime) {
-                if (mSupportFaceDetect) {
-                    unregisterFaceDetect();
-                }
-                this.mLastUserActivityTime = eventTime;
-                this.mDirty |= 4;
-                if (event == 1) {
-                    this.mDirty |= 4096;
-                }
-                Trace.traceEnd(131072);
-                return true;
             }
             Trace.traceEnd(131072);
             return false;
@@ -3167,7 +3191,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0060, code:
+    /* JADX WARNING: Missing block: B:20:0x0060, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3275,6 +3299,10 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
             return false;
         }
         String str;
+        if (this.mCustomUserActivityTimeout > 0) {
+            this.mCustomUserActivityTimeout = 0;
+            this.mHandler.removeMessages(105);
+        }
         Trace.traceBegin(131072, "goToSleep");
         StringBuilder stringBuilder3;
         String str2;
@@ -3898,6 +3926,19 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
+    private void resetCustomUserInActivityNotification(long eventTime) {
+        if (this.mCustomUserActivityTimeout > 0) {
+            this.mHandler.removeMessages(105);
+            scheduleCustomUserInactivityTimeout(((long) this.mCustomUserActivityTimeout) + eventTime);
+        }
+    }
+
+    private void scheduleCustomUserInactivityTimeout(long timeMs) {
+        Message msg = this.mHandler.obtainMessage(105);
+        msg.setAsynchronous(true);
+        this.mHandler.sendMessageAtTime(msg, timeMs);
+    }
+
     private void scheduleUserInactivityTimeout(long timeMs) {
         Message msg = this.mHandler.obtainMessage(1);
         msg.setAsynchronous(true);
@@ -3927,6 +3968,14 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
             updatePowerStateLocked();
             this.mScreenTimeoutFlag = false;
         }
+    }
+
+    private void handleCustomUserInActivityTimeout() {
+        Slog.i(TAG, "handleCustomUserInActivityTimeout send broadcast !");
+        Intent intent = new Intent("android.intent.action.USER_INACTIVITY_NOTIFICATION");
+        intent.addFlags(1073741824);
+        this.mContext.sendBroadcastAsUser(intent, UserHandle.ALL, "android.permission.USER_ACTIVITY");
+        this.mCustomUserActivityTimeout = 0;
     }
 
     private long getSleepTimeoutLocked() {
@@ -4042,31 +4091,32 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:68:0x00f2, code:
+    /* JADX WARNING: Removed duplicated region for block: B:26:0x0055  */
+    /* JADX WARNING: Missing block: B:70:0x00f2, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:81:0x013c, code:
+    /* JADX WARNING: Missing block: B:84:0x013c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:83:0x013e, code:
+    /* JADX WARNING: Missing block: B:86:0x013e, code skipped:
             if (r4 == false) goto L_0x015f;
      */
-    /* JADX WARNING: Missing block: B:85:0x0142, code:
+    /* JADX WARNING: Missing block: B:88:0x0142, code skipped:
             if (r14.mCust == null) goto L_0x015a;
      */
-    /* JADX WARNING: Missing block: B:87:0x014a, code:
+    /* JADX WARNING: Missing block: B:90:0x014a, code skipped:
             if (r14.mCust.isChargingAlbumSupported() == false) goto L_0x015a;
      */
-    /* JADX WARNING: Missing block: B:89:0x0152, code:
+    /* JADX WARNING: Missing block: B:92:0x0152, code skipped:
             if (r14.mCust.isStartDreamFromUser() != false) goto L_0x015f;
      */
-    /* JADX WARNING: Missing block: B:90:0x0154, code:
+    /* JADX WARNING: Missing block: B:93:0x0154, code skipped:
             r14.mDreamManager.stopDream(false);
      */
-    /* JADX WARNING: Missing block: B:91:0x015a, code:
+    /* JADX WARNING: Missing block: B:94:0x015a, code skipped:
             r14.mDreamManager.stopDream(false);
      */
-    /* JADX WARNING: Missing block: B:92:0x015f, code:
+    /* JADX WARNING: Missing block: B:95:0x015f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4081,15 +4131,30 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
             wakefulness = this.mWakefulness;
             z = true;
             if (this.mSandmanSummoned && this.mDisplayReady) {
+                String str;
+                StringBuilder stringBuilder;
                 cust = this.mCust != null && this.mCust.isChargingAlbumSupported() && this.mCust.isStartDreamFromUser();
-                startDreaming = canDreamLocked() || canDozeLocked() || cust;
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
+                if (!(canDreamLocked() || canDozeLocked())) {
+                    if (!cust) {
+                        startDreaming = false;
+                        str = TAG;
+                        stringBuilder = new StringBuilder();
+                        stringBuilder.append("startDreaming = ");
+                        stringBuilder.append(startDreaming);
+                        Slog.e(str, stringBuilder.toString());
+                        if (this.mCust != null) {
+                            this.mCust.setStartDreamFromUser(false);
+                        }
+                        this.mSandmanSummoned = false;
+                    }
+                }
+                startDreaming = true;
+                str = TAG;
+                stringBuilder = new StringBuilder();
                 stringBuilder.append("startDreaming = ");
                 stringBuilder.append(startDreaming);
                 Slog.e(str, stringBuilder.toString());
                 if (this.mCust != null) {
-                    this.mCust.setStartDreamFromUser(false);
                 }
                 this.mSandmanSummoned = false;
             } else {
@@ -4120,34 +4185,38 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
                     Slog.i(TAG, "Dreaming...");
                 }
             }
-            if (this.mSandmanSummoned || this.mWakefulness != wakefulness) {
-            } else if (wakefulness == 2) {
-                if (z && canDreamLocked()) {
-                    if (this.mDreamsBatteryLevelDrainCutoffConfig >= 0 && this.mBatteryLevel < this.mBatteryLevelWhenDreamStarted - this.mDreamsBatteryLevelDrainCutoffConfig && !isBeingKeptAwakeLocked()) {
-                        String str2 = TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("Stopping dream because the battery appears to be draining faster than it is charging.  Battery level when dream started: ");
-                        stringBuilder2.append(this.mBatteryLevelWhenDreamStarted);
-                        stringBuilder2.append("%.  Battery level now: ");
-                        stringBuilder2.append(this.mBatteryLevel);
-                        stringBuilder2.append("%.");
-                        Slog.i(str2, stringBuilder2.toString());
-                    } else if (mSupportFaceDetect) {
-                        unregisterFaceDetect();
+            if (!this.mSandmanSummoned) {
+                if (this.mWakefulness == wakefulness) {
+                    if (wakefulness == 2) {
+                        if (z && canDreamLocked()) {
+                            if (this.mDreamsBatteryLevelDrainCutoffConfig >= 0 && this.mBatteryLevel < this.mBatteryLevelWhenDreamStarted - this.mDreamsBatteryLevelDrainCutoffConfig && !isBeingKeptAwakeLocked()) {
+                                String str2 = TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append("Stopping dream because the battery appears to be draining faster than it is charging.  Battery level when dream started: ");
+                                stringBuilder2.append(this.mBatteryLevelWhenDreamStarted);
+                                stringBuilder2.append("%.  Battery level now: ");
+                                stringBuilder2.append(this.mBatteryLevel);
+                                stringBuilder2.append("%.");
+                                Slog.i(str2, stringBuilder2.toString());
+                            } else if (mSupportFaceDetect) {
+                                unregisterFaceDetect();
+                            }
+                        }
+                        if (isItBedTimeYetLocked()) {
+                            goToSleepNoUpdateLocked(SystemClock.uptimeMillis(), 2, 0, 1000);
+                            updatePowerStateLocked();
+                        } else {
+                            wakeUpNoUpdateLocked(SystemClock.uptimeMillis(), "android.server.power:DREAM", 1000, this.mContext.getOpPackageName(), 1000);
+                            updatePowerStateLocked();
+                        }
+                    } else if (wakefulness == 3) {
+                        if (!z) {
+                            if (!mSupportAod || !this.mForceDoze) {
+                                reallyGoToSleepNoUpdateLocked(SystemClock.uptimeMillis(), 1000);
+                                updatePowerStateLocked();
+                            }
+                        }
                     }
-                }
-                if (isItBedTimeYetLocked()) {
-                    goToSleepNoUpdateLocked(SystemClock.uptimeMillis(), 2, 0, 1000);
-                    updatePowerStateLocked();
-                } else {
-                    wakeUpNoUpdateLocked(SystemClock.uptimeMillis(), "android.server.power:DREAM", 1000, this.mContext.getOpPackageName(), 1000);
-                    updatePowerStateLocked();
-                }
-            } else if (wakefulness == 3) {
-                if (z || (mSupportAod && this.mForceDoze)) {
-                } else {
-                    reallyGoToSleepNoUpdateLocked(SystemClock.uptimeMillis(), 1000);
-                    updatePowerStateLocked();
                 }
             }
         }
@@ -4211,7 +4280,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
             }
             this.mKeyguardLocked = keyguardLocked;
             boolean updateBacklightBrightnessFlag = false;
-            if (this.mScreenBrightnessOverrideFromWindowManager > 255) {
+            if (this.mScreenBrightnessOverrideFromWindowManager > 255 || this.mScreenBrightnessOverrideFromWindowManager == -1) {
                 updateBacklightBrightnessFlag = this.mBacklightBrightness.updateBacklightBrightness(this.mScreenBrightnessOverrideFromWindowManager);
             }
             this.mDisplayManagerInternal.setBacklightBrightness(this.mBacklightBrightness);
@@ -4386,7 +4455,7 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001c, code:
+    /* JADX WARNING: Missing block: B:11:0x001c, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4535,33 +4604,39 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
         synchronized (this.mLock) {
             if (userId == 0) {
-                this.mMaximumScreenOffTimeoutFromDeviceAdmin = timeMs;
-            } else if (timeMs == JobStatus.NO_LATEST_RUNTIME || timeMs == 0) {
-                this.mProfilePowerState.delete(userId);
-            } else {
-                ProfilePowerState profile = (ProfilePowerState) this.mProfilePowerState.get(userId);
-                if (profile != null) {
-                    profile.mScreenOffTimeout = timeMs;
-                } else {
-                    this.mProfilePowerState.put(userId, new ProfilePowerState(userId, timeMs));
-                    this.mDirty |= 1;
+                try {
+                    this.mMaximumScreenOffTimeoutFromDeviceAdmin = timeMs;
+                } catch (Throwable th) {
                 }
+            } else {
+                if (timeMs != JobStatus.NO_LATEST_RUNTIME) {
+                    if (timeMs != 0) {
+                        ProfilePowerState profile = (ProfilePowerState) this.mProfilePowerState.get(userId);
+                        if (profile != null) {
+                            profile.mScreenOffTimeout = timeMs;
+                        } else {
+                            this.mProfilePowerState.put(userId, new ProfilePowerState(userId, timeMs));
+                            this.mDirty |= 1;
+                        }
+                    }
+                }
+                this.mProfilePowerState.delete(userId);
             }
             this.mDirty |= 32;
             updatePowerStateLocked();
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x0010, code:
+    /* JADX WARNING: Missing block: B:10:0x0010, code skipped:
             if (r3 == false) goto L_0x0019;
      */
-    /* JADX WARNING: Missing block: B:11:0x0012, code:
+    /* JADX WARNING: Missing block: B:11:0x0012, code skipped:
             com.android.server.EventLogTags.writeDeviceIdleOnPhase("power");
      */
-    /* JADX WARNING: Missing block: B:12:0x0019, code:
+    /* JADX WARNING: Missing block: B:12:0x0019, code skipped:
             com.android.server.EventLogTags.writeDeviceIdleOffPhase("power");
      */
-    /* JADX WARNING: Missing block: B:14:0x0020, code:
+    /* JADX WARNING: Missing block: B:14:0x0020, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4755,19 +4830,19 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         return this.mMaximumScreenOffTimeoutFromDeviceAdmin >= 0 && this.mMaximumScreenOffTimeoutFromDeviceAdmin < JobStatus.NO_LATEST_RUNTIME;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x000e, code:
+    /* JADX WARNING: Missing block: B:10:0x000e, code skipped:
             if (r5 == false) goto L_0x0012;
      */
-    /* JADX WARNING: Missing block: B:11:0x0010, code:
+    /* JADX WARNING: Missing block: B:11:0x0010, code skipped:
             r3 = 3;
      */
-    /* JADX WARNING: Missing block: B:12:0x0012, code:
+    /* JADX WARNING: Missing block: B:12:0x0012, code skipped:
             r3 = 0;
      */
-    /* JADX WARNING: Missing block: B:13:0x0013, code:
+    /* JADX WARNING: Missing block: B:13:0x0013, code skipped:
             r1.setFlashing(r6, 2, r3, 0);
      */
-    /* JADX WARNING: Missing block: B:14:0x0016, code:
+    /* JADX WARNING: Missing block: B:14:0x0016, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4785,28 +4860,29 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x004f, code:
+    /* JADX WARNING: Missing block: B:17:0x004f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void boostScreenBrightnessInternal(long eventTime, int uid) {
         synchronized (this.mLock) {
-            if (!this.mSystemReady || this.mWakefulness == 0 || eventTime < this.mLastScreenBrightnessBoostTime) {
-            } else {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Brightness boost activated (uid ");
-                stringBuilder.append(uid);
-                stringBuilder.append(")...");
-                Slog.i(str, stringBuilder.toString());
-                this.mLastScreenBrightnessBoostTime = eventTime;
-                if (!this.mScreenBrightnessBoostInProgress) {
-                    this.mScreenBrightnessBoostInProgress = true;
-                    this.mNotifier.onScreenBrightnessBoostChanged();
+            if (this.mSystemReady && this.mWakefulness != 0) {
+                if (eventTime >= this.mLastScreenBrightnessBoostTime) {
+                    String str = TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Brightness boost activated (uid ");
+                    stringBuilder.append(uid);
+                    stringBuilder.append(")...");
+                    Slog.i(str, stringBuilder.toString());
+                    this.mLastScreenBrightnessBoostTime = eventTime;
+                    if (!this.mScreenBrightnessBoostInProgress) {
+                        this.mScreenBrightnessBoostInProgress = true;
+                        this.mNotifier.onScreenBrightnessBoostChanged();
+                    }
+                    this.mDirty |= 2048;
+                    userActivityNoUpdateLocked(eventTime, 0, 0, uid);
+                    updatePowerStateLocked();
                 }
-                this.mDirty |= 2048;
-                userActivityNoUpdateLocked(eventTime, 0, 0, uid);
-                updatePowerStateLocked();
             }
         }
     }
@@ -6083,5 +6159,31 @@ public class PowerManagerService extends AbsPowerManagerService implements Monit
 
     public HwPowerDAMonitorProxy getPowerMonitor() {
         return this.mPowerProxy;
+    }
+
+    public void sendNoUserActivityNotification(int customActivityTimeout) {
+        String str = TAG;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("sendNoUserActivityNotification customActivityTimeout :");
+        stringBuilder.append(customActivityTimeout);
+        Slog.i(str, stringBuilder.toString());
+        boolean z = true;
+        if (!(this.mWakefulness == 1 || this.mWakefulness == 2)) {
+            z = false;
+        }
+        boolean isScreenOn = z;
+        if (isScreenOn && this.mCustomUserActivityTimeout == 0) {
+            this.mCustomUserActivityTimeout = customActivityTimeout;
+            long nextCustomActivityTimeout = ((long) this.mCustomUserActivityTimeout) + SystemClock.uptimeMillis();
+            String str2 = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("sendNoUserActivityNotification isScreenOn = ");
+            stringBuilder2.append(isScreenOn);
+            stringBuilder2.append(" nextCustomActivityTimeout = ");
+            stringBuilder2.append(nextCustomActivityTimeout);
+            Slog.i(str2, stringBuilder2.toString());
+            this.mHandler.removeMessages(105);
+            scheduleCustomUserInactivityTimeout(nextCustomActivityTimeout);
+        }
     }
 }

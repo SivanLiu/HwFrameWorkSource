@@ -575,7 +575,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                     initOrResetVelocityTracker();
                     this.mVelocityTracker.addMovement(motionEvent);
                     this.mScroller.computeScrollOffset();
-                    this.mIsBeingDragged = true ^ this.mScroller.isFinished();
+                    this.mIsBeingDragged = 1 ^ this.mScroller.isFinished();
                     startNestedScroll(2, 0);
                     break;
                 case 1:
@@ -633,7 +633,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
             this.mNestedYOffset = 0;
         }
         vtev.offsetLocation(0.0f, (float) this.mNestedYOffset);
-        boolean isFinished;
+        int isFinished;
         ViewParent parent;
         int initialVelocity;
         switch (actionMasked) {
@@ -642,7 +642,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                 if (getChildCount() != 0) {
                     isFinished = this.mScroller.isFinished() ^ z;
                     this.mIsBeingDragged = isFinished;
-                    if (isFinished) {
+                    if (isFinished != 0) {
                         parent = getParent();
                         if (parent != null) {
                             parent.requestDisallowInterceptTouchEvent(z);
@@ -697,8 +697,8 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                         int oldY = getScrollY();
                         int range = getScrollRange();
                         int overscrollMode = getOverScrollMode();
-                        isFinished = overscrollMode == 0 || (overscrollMode == 1 && range > 0);
-                        boolean canOverscroll = isFinished;
+                        boolean z2 = overscrollMode == 0 || (overscrollMode == 1 && range > 0);
+                        boolean canOverscroll = z2;
                         int range2 = range;
                         int deltaY2 = deltaY;
                         int activePointerIndex2 = activePointerIndex;
@@ -756,9 +756,9 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                 z = true;
                 break;
             case 5:
-                int index = ev.getActionIndex();
-                this.mLastMotionY = (int) motionEvent.getY(index);
-                this.mActivePointerId = motionEvent.getPointerId(index);
+                isFinished = ev.getActionIndex();
+                this.mLastMotionY = (int) motionEvent.getY(isFinished);
+                this.mActivePointerId = motionEvent.getPointerId(isFinished);
                 z = true;
                 break;
             case 6:
@@ -1118,7 +1118,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:20:0x007f  */
-    /* JADX WARNING: Missing block: B:13:0x006f, code:
+    /* JADX WARNING: Missing block: B:13:0x006f, code skipped:
             if (r1 > 0) goto L_0x0079;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1300,7 +1300,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
         this.mIsLaidOut = false;
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0027, code:
+    /* JADX WARNING: Missing block: B:7:0x0027, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -112,15 +112,15 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
 
         /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
             jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0013 in {2, 4, 5} preds:[]
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+            	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
             	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
+            	at java.util.ArrayList.forEach(ArrayList.java:1257)
             	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
             	at jadx.core.ProcessClass.process(ProcessClass.java:32)
             	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -137,17 +137,14 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
             r1 = "javax.crypto.AEADBadTagException";
             r0 = org.bouncycastle.jcajce.provider.symmetric.util.ClassUtil.loadClass(r0, r1);
             if (r0 == 0) goto L_0x0011;
-        L_0x000a:
             r0 = findExceptionConstructor(r0);
-        L_0x000e:
             aeadBadTagConstructor = r0;
             return;
-        L_0x0011:
             r0 = 0;
             goto L_0x000e;
             return;
             */
-            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher.AEADGenericBlockCipher.<clinit>():void");
+            throw new UnsupportedOperationException("Method not decompiled: org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$AEADGenericBlockCipher.<clinit>():void");
         }
 
         AEADGenericBlockCipher(AEADBlockCipher aEADBlockCipher) {
@@ -382,10 +379,9 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
     }
 
     private CipherParameters adjustParameters(AlgorithmParameterSpec algorithmParameterSpec, CipherParameters cipherParameters) {
-        CipherParameters parameters;
         GOST28147ParameterSpec gOST28147ParameterSpec;
         if (cipherParameters instanceof ParametersWithIV) {
-            parameters = ((ParametersWithIV) cipherParameters).getParameters();
+            CipherParameters parameters = ((ParametersWithIV) cipherParameters).getParameters();
             if (algorithmParameterSpec instanceof IvParameterSpec) {
                 this.ivParam = new ParametersWithIV(parameters, ((IvParameterSpec) algorithmParameterSpec).getIV());
             } else {
@@ -405,11 +401,11 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         } else {
             if (algorithmParameterSpec instanceof GOST28147ParameterSpec) {
                 gOST28147ParameterSpec = (GOST28147ParameterSpec) algorithmParameterSpec;
-                parameters = new ParametersWithSBox(cipherParameters, gOST28147ParameterSpec.getSbox());
+                ParametersWithSBox parametersWithSBox2 = new ParametersWithSBox(cipherParameters, gOST28147ParameterSpec.getSbox());
                 if (gOST28147ParameterSpec.getIV() != null && this.ivLength != 0) {
-                    return new ParametersWithIV(parameters, gOST28147ParameterSpec.getIV());
+                    return new ParametersWithIV(parametersWithSBox2, gOST28147ParameterSpec.getIV());
                 }
-                cipherParameters = parameters;
+                cipherParameters = parametersWithSBox2;
             }
             return cipherParameters;
         }
@@ -439,16 +435,16 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
     }
 
     protected byte[] engineDoFinal(byte[] bArr, int i, int i2) throws IllegalBlockSizeException, BadPaddingException {
-        Object obj = new byte[engineGetOutputSize(i2)];
-        int processBytes = i2 != 0 ? this.cipher.processBytes(bArr, i, i2, obj, 0) : 0;
+        byte[] bArr2 = new byte[engineGetOutputSize(i2)];
+        int processBytes = i2 != 0 ? this.cipher.processBytes(bArr, i, i2, bArr2, 0) : 0;
         try {
-            processBytes += this.cipher.doFinal(obj, processBytes);
-            if (processBytes == obj.length) {
-                return obj;
+            processBytes += this.cipher.doFinal(bArr2, processBytes);
+            if (processBytes == bArr2.length) {
+                return bArr2;
             }
-            Object obj2 = new byte[processBytes];
-            System.arraycopy(obj, 0, obj2, 0, processBytes);
-            return obj2;
+            byte[] bArr3 = new byte[processBytes];
+            System.arraycopy(bArr2, 0, bArr3, 0, processBytes);
+            return bArr3;
         } catch (DataLengthException e) {
             throw new IllegalBlockSizeException(e.getMessage());
         }
@@ -533,28 +529,28 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:230:0x04d4 A:{SYNTHETIC, Splitter: B:230:0x04d4} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x04d4 A:{SYNTHETIC, Splitter:B:230:0x04d4} */
     /* JADX WARNING: Removed duplicated region for block: B:233:0x04dd A:{Catch:{ Exception -> 0x052b }} */
     /* JADX WARNING: Removed duplicated region for block: B:232:0x04d7 A:{Catch:{ Exception -> 0x052b }} */
     /* JADX WARNING: Removed duplicated region for block: B:112:0x0244  */
     /* JADX WARNING: Removed duplicated region for block: B:101:0x0205  */
     /* JADX WARNING: Removed duplicated region for block: B:215:0x0490  */
     /* JADX WARNING: Removed duplicated region for block: B:214:0x048a  */
-    /* JADX WARNING: Removed duplicated region for block: B:230:0x04d4 A:{SYNTHETIC, Splitter: B:230:0x04d4} */
+    /* JADX WARNING: Removed duplicated region for block: B:230:0x04d4 A:{SYNTHETIC, Splitter:B:230:0x04d4} */
     /* JADX WARNING: Removed duplicated region for block: B:233:0x04dd A:{Catch:{ Exception -> 0x052b }} */
     /* JADX WARNING: Removed duplicated region for block: B:232:0x04d7 A:{Catch:{ Exception -> 0x052b }} */
     /* JADX WARNING: Removed duplicated region for block: B:248:? A:{SYNTHETIC, RETURN, SKIP, Catch:{ Exception -> 0x052b }} */
     /* JADX WARNING: Removed duplicated region for block: B:236:0x04e8 A:{Catch:{ Exception -> 0x052b }} */
-    /* JADX WARNING: Missing block: B:27:0x00a3, code:
+    /* JADX WARNING: Missing block: B:27:0x00a3, code skipped:
             if ((r5 instanceof org.bouncycastle.crypto.params.ParametersWithIV) != false) goto L_0x00a5;
      */
-    /* JADX WARNING: Missing block: B:43:0x00f1, code:
+    /* JADX WARNING: Missing block: B:43:0x00f1, code skipped:
             if ((r5 instanceof org.bouncycastle.crypto.params.ParametersWithIV) != false) goto L_0x00a5;
      */
-    /* JADX WARNING: Missing block: B:54:0x013b, code:
+    /* JADX WARNING: Missing block: B:54:0x013b, code skipped:
             if ((r5 instanceof org.bouncycastle.crypto.params.ParametersWithIV) != false) goto L_0x00a5;
      */
-    /* JADX WARNING: Missing block: B:98:0x01fc, code:
+    /* JADX WARNING: Missing block: B:98:0x01fc, code skipped:
             if ((r5 instanceof org.bouncycastle.crypto.params.ParametersWithIV) != false) goto L_0x00a5;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -764,7 +760,7 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
                                     stringBuilder2.append(i2);
                                     stringBuilder2.append(" passed");
                                     throw new InvalidParameterException(stringBuilder2.toString());
-                                } catch (Throwable e3) {
+                                } catch (Exception e3) {
                                     throw new InvalidKeyOrParametersException(e3.getMessage(), e3);
                                 }
                         }
@@ -823,12 +819,12 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:72:0x02b3 in {2, 4, 7, 12, 14, 15, 20, 21, 24, 27, 32, 34, 39, 40, 43, 46, 49, 54, 55, 60, 62, 65, 70, 71, 74} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -849,20 +845,16 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0 = r0.equals(r1);
         r1 = 0;
         if (r0 == 0) goto L_0x001d;
-    L_0x0011:
         r5.ivLength = r1;
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = r5.baseEngine;
         r6.<init>(r0);
-    L_0x001a:
         r5.cipher = r6;
         return;
-    L_0x001d:
         r0 = r5.modeName;
         r2 = "CBC";
         r0 = r0.equals(r2);
         if (r0 == 0) goto L_0x003c;
-    L_0x0027:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
@@ -872,21 +864,18 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x003c:
         r0 = r5.modeName;
         r2 = "OFB";
         r0 = r0.startsWith(r2);
         r2 = 8;
         r3 = 3;
         if (r0 == 0) goto L_0x0086;
-    L_0x0049:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
         r6 = r5.modeName;
         r6 = r6.length();
         if (r6 == r3) goto L_0x0072;
-    L_0x0059:
         r6 = r5.modeName;
         r6 = r6.substring(r3);
         r6 = java.lang.Integer.parseInt(r6);
@@ -895,10 +884,8 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r2 = r5.baseEngine;
         r1.<init>(r2, r6);
         r0.<init>(r1);
-    L_0x006f:
         r5.cipher = r0;
         return;
-    L_0x0072:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.OFBBlockCipher;
         r1 = r5.baseEngine;
@@ -908,19 +895,16 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1, r2);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x0086:
         r0 = r5.modeName;
         r4 = "CFB";
         r0 = r0.startsWith(r4);
         if (r0 == 0) goto L_0x00cc;
-    L_0x0090:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
         r6 = r5.modeName;
         r6 = r6.length();
         if (r6 == r3) goto L_0x00b7;
-    L_0x00a0:
         r6 = r5.modeName;
         r6 = r6.substring(r3);
         r6 = java.lang.Integer.parseInt(r6);
@@ -930,7 +914,6 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r1.<init>(r2, r6);
         r0.<init>(r1);
         goto L_0x006f;
-    L_0x00b7:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.CFBBlockCipher;
         r1 = r5.baseEngine;
@@ -940,12 +923,10 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1, r2);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x00cc:
         r0 = r5.modeName;
         r2 = "PGP";
         r0 = r0.startsWith(r2);
         if (r0 == 0) goto L_0x00f4;
-    L_0x00d6:
         r6 = r5.modeName;
         r0 = "PGPCFBwithIV";
         r6 = r6.equalsIgnoreCase(r0);
@@ -958,12 +939,10 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r1.<init>(r2, r6);
         r0.<init>(r1);
         goto L_0x006f;
-    L_0x00f4:
         r0 = r5.modeName;
         r2 = "OpenPGPCFB";
         r0 = r0.equalsIgnoreCase(r2);
         if (r0 == 0) goto L_0x010e;
-    L_0x00fe:
         r5.ivLength = r1;
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.OpenPGPCFBBlockCipher;
@@ -971,19 +950,16 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x010e:
         r0 = r5.modeName;
         r2 = "SIC";
         r0 = r0.startsWith(r2);
         if (r0 == 0) goto L_0x0143;
-    L_0x0118:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
         r6 = r5.ivLength;
         r0 = 16;
         if (r6 < r0) goto L_0x013b;
-    L_0x0126:
         r5.fixedIv = r1;
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.BufferedBlockCipher;
@@ -993,17 +969,14 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x013b:
         r6 = new java.lang.IllegalArgumentException;
         r0 = "Warning: SIC-Mode can become a twotime-pad if the blocksize of the cipher is too small. Use a cipher with a block size of at least 128 bits (e.g. AES)";
         r6.<init>(r0);
         throw r6;
-    L_0x0143:
         r0 = r5.modeName;
         r2 = "CTR";
         r0 = r0.startsWith(r2);
         if (r0 == 0) goto L_0x0183;
-    L_0x014d:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
@@ -1011,7 +984,6 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r6 = r5.baseEngine;
         r6 = r6 instanceof org.bouncycastle.crypto.engines.DSTU7624Engine;
         if (r6 == 0) goto L_0x0170;
-    L_0x015d:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.BufferedBlockCipher;
         r1 = new org.bouncycastle.crypto.modes.KCTRBlockCipher;
@@ -1020,7 +992,6 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x0170:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$BufferedGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.BufferedBlockCipher;
         r1 = new org.bouncycastle.crypto.modes.SICBlockCipher;
@@ -1029,12 +1000,10 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x0183:
         r0 = r5.modeName;
         r1 = "GOFB";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x01a8;
-    L_0x018d:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
@@ -1046,12 +1015,10 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x01a8:
         r0 = r5.modeName;
         r1 = "GCFB";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x01cd;
-    L_0x01b2:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
@@ -1063,12 +1030,10 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x01cd:
         r0 = r5.modeName;
         r1 = "CTS";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x01f2;
-    L_0x01d7:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
@@ -1080,40 +1045,33 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x01f2:
         r0 = r5.modeName;
         r1 = "CCM";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x0222;
-    L_0x01fc:
         r6 = 12;
         r5.ivLength = r6;
         r6 = r5.baseEngine;
         r6 = r6 instanceof org.bouncycastle.crypto.engines.DSTU7624Engine;
         if (r6 == 0) goto L_0x0214;
-    L_0x0206:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$AEADGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.KCCMBlockCipher;
         r1 = r5.baseEngine;
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x0214:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$AEADGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.CCMBlockCipher;
         r1 = r5.baseEngine;
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x0222:
         r0 = r5.modeName;
         r1 = "OCB";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x025f;
-    L_0x022c:
         r0 = r5.engineProvider;
         if (r0 == 0) goto L_0x0248;
-    L_0x0230:
         r6 = 15;
         r5.ivLength = r6;
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$AEADGenericBlockCipher;
@@ -1124,7 +1082,6 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1, r2);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x0248:
         r0 = new java.security.NoSuchAlgorithmException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -1134,12 +1091,10 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r6 = r1.toString();
         r0.<init>(r6);
         throw r0;
-    L_0x025f:
         r0 = r5.modeName;
         r1 = "EAX";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x027f;
-    L_0x0269:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
@@ -1149,26 +1104,22 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x027f:
         r0 = r5.modeName;
         r1 = "GCM";
         r0 = r0.startsWith(r1);
         if (r0 == 0) goto L_0x02b4;
-    L_0x0289:
         r6 = r5.baseEngine;
         r6 = r6.getBlockSize();
         r5.ivLength = r6;
         r6 = r5.baseEngine;
         r6 = r6 instanceof org.bouncycastle.crypto.engines.DSTU7624Engine;
         if (r6 == 0) goto L_0x02a5;
-    L_0x0297:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$AEADGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.KGCMBlockCipher;
         r1 = r5.baseEngine;
         r0.<init>(r1);
         r6.<init>(r0);
         goto L_0x001a;
-    L_0x02a5:
         r6 = new org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher$AEADGenericBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.GCMBlockCipher;
         r1 = r5.baseEngine;
@@ -1176,7 +1127,6 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
         r6.<init>(r0);
         goto L_0x001a;
         return;
-    L_0x02b4:
         r0 = new java.security.NoSuchAlgorithmException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -1242,17 +1192,17 @@ public class BaseBlockCipher extends BaseWrapCipher implements PBE {
     protected byte[] engineUpdate(byte[] bArr, int i, int i2) {
         int updateOutputSize = this.cipher.getUpdateOutputSize(i2);
         if (updateOutputSize > 0) {
-            Object obj = new byte[updateOutputSize];
-            int processBytes = this.cipher.processBytes(bArr, i, i2, obj, 0);
+            byte[] bArr2 = new byte[updateOutputSize];
+            int processBytes = this.cipher.processBytes(bArr, i, i2, bArr2, 0);
             if (processBytes == 0) {
                 return null;
             }
-            if (processBytes == obj.length) {
-                return obj;
+            if (processBytes == bArr2.length) {
+                return bArr2;
             }
-            Object obj2 = new byte[processBytes];
-            System.arraycopy(obj, 0, obj2, 0, processBytes);
-            return obj2;
+            byte[] bArr3 = new byte[processBytes];
+            System.arraycopy(bArr2, 0, bArr3, 0, processBytes);
+            return bArr3;
         }
         this.cipher.processBytes(bArr, i, i2, null, 0);
         return null;

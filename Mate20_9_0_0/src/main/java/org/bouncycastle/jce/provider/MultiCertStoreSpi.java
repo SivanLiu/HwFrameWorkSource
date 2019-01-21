@@ -10,6 +10,7 @@ import java.security.cert.CertStoreSpi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.bouncycastle.jce.MultiCertStoreParameters;
 
 public class MultiCertStoreSpi extends CertStoreSpi {
@@ -29,7 +30,7 @@ public class MultiCertStoreSpi extends CertStoreSpi {
 
     public Collection engineGetCRLs(CRLSelector cRLSelector) throws CertStoreException {
         boolean searchAllStores = this.params.getSearchAllStores();
-        Collection arrayList = searchAllStores ? new ArrayList() : Collections.EMPTY_LIST;
+        List arrayList = searchAllStores ? new ArrayList() : Collections.EMPTY_LIST;
         for (CertStore cRLs : this.params.getCertStores()) {
             Collection cRLs2 = cRLs.getCRLs(cRLSelector);
             if (searchAllStores) {
@@ -43,7 +44,7 @@ public class MultiCertStoreSpi extends CertStoreSpi {
 
     public Collection engineGetCertificates(CertSelector certSelector) throws CertStoreException {
         boolean searchAllStores = this.params.getSearchAllStores();
-        Collection arrayList = searchAllStores ? new ArrayList() : Collections.EMPTY_LIST;
+        List arrayList = searchAllStores ? new ArrayList() : Collections.EMPTY_LIST;
         for (CertStore certificates : this.params.getCertStores()) {
             Collection certificates2 = certificates.getCertificates(certSelector);
             if (searchAllStores) {

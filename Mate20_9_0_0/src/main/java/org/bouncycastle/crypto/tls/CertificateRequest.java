@@ -30,7 +30,7 @@ public class CertificateRequest {
             vector = TlsUtils.parseSupportedSignatureAlgorithms(false, inputStream);
         }
         Vector vector2 = new Vector();
-        InputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readOpaque16(inputStream));
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(TlsUtils.readOpaque16(inputStream));
         while (byteArrayInputStream.available() > 0) {
             vector2.addElement(X500Name.getInstance(TlsUtils.readDERObject(TlsUtils.readOpaque16(byteArrayInputStream))));
         }
@@ -55,7 +55,7 @@ public class CertificateRequest {
         int i2 = 0;
         int i3 = i2;
         while (i2 < this.certificateAuthorities.size()) {
-            Object encoded = ((X500Name) this.certificateAuthorities.elementAt(i2)).getEncoded(ASN1Encoding.DER);
+            byte[] encoded = ((X500Name) this.certificateAuthorities.elementAt(i2)).getEncoded(ASN1Encoding.DER);
             vector.addElement(encoded);
             i3 += encoded.length + 2;
             i2++;

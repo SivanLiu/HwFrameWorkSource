@@ -25,27 +25,27 @@ public class G3413CBCBlockCipher implements BlockCipher {
         bArr = GOST3413CipherUtil.copyFromInput(bArr, this.blockSize, i);
         byte[] bArr3 = new byte[bArr.length];
         this.cipher.processBlock(bArr, 0, bArr3, 0);
-        Object sum = GOST3413CipherUtil.sum(bArr3, MSB);
-        System.arraycopy(sum, 0, bArr2, i2, sum.length);
-        if (bArr2.length > i2 + sum.length) {
+        bArr3 = GOST3413CipherUtil.sum(bArr3, MSB);
+        System.arraycopy(bArr3, 0, bArr2, i2, bArr3.length);
+        if (bArr2.length > i2 + bArr3.length) {
             generateR(bArr);
         }
-        return sum.length;
+        return bArr3.length;
     }
 
     private int encrypt(byte[] bArr, int i, byte[] bArr2, int i2) {
         bArr = GOST3413CipherUtil.sum(GOST3413CipherUtil.copyFromInput(bArr, this.blockSize, i), GOST3413CipherUtil.MSB(this.R, this.blockSize));
-        Object obj = new byte[bArr.length];
-        this.cipher.processBlock(bArr, 0, obj, 0);
-        System.arraycopy(obj, 0, bArr2, i2, obj.length);
+        byte[] bArr3 = new byte[bArr.length];
+        this.cipher.processBlock(bArr, 0, bArr3, 0);
+        System.arraycopy(bArr3, 0, bArr2, i2, bArr3.length);
         if (bArr2.length > i2 + bArr.length) {
-            generateR(obj);
+            generateR(bArr3);
         }
-        return obj.length;
+        return bArr3.length;
     }
 
     private void generateR(byte[] bArr) {
-        Object LSB = GOST3413CipherUtil.LSB(this.R, this.m - this.blockSize);
+        byte[] LSB = GOST3413CipherUtil.LSB(this.R, this.m - this.blockSize);
         System.arraycopy(LSB, 0, this.R, 0, LSB.length);
         System.arraycopy(bArr, 0, this.R, LSB.length, this.m - LSB.length);
     }

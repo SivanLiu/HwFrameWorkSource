@@ -164,7 +164,7 @@ public class SupplicantStaNetworkHal {
         this.mISupplicantStaNetwork = iSupplicantStaNetwork;
         this.mIfaceName = ifaceName;
         this.mWifiMonitor = monitor;
-        this.mSystemSupportsFastBssTransition = context.getResources().getBoolean(17957077);
+        this.mSystemSupportsFastBssTransition = context.getResources().getBoolean(17957078);
     }
 
     void enableVerboseLogging(boolean enable) {
@@ -177,74 +177,89 @@ public class SupplicantStaNetworkHal {
         synchronized (this.mLock) {
             int i = 0;
             if (config == null) {
-                return false;
-            }
-            config.SSID = null;
-            if (!getSsid() || ArrayUtils.isEmpty(this.mSsid)) {
-                Log.e(TAG, "failed to read ssid");
-                return false;
-            }
-            config.SSID = NativeUtil.encodeSsid(this.mSsid);
-            config.networkId = -1;
-            if (getId()) {
-                config.networkId = this.mNetworkId;
-                config.getNetworkSelectionStatus().setNetworkSelectionBSSID(null);
-                if (getBssid() && !ArrayUtils.isEmpty(this.mBssid)) {
-                    config.getNetworkSelectionStatus().setNetworkSelectionBSSID(NativeUtil.macAddressFromByteArray(this.mBssid));
+                try {
+                    return false;
+                } catch (Throwable th) {
                 }
-                config.hiddenSSID = false;
-                if (getScanSsid()) {
-                    config.hiddenSSID = this.mScanSsid;
+            } else {
+                config.SSID = null;
+                if (!getSsid() || ArrayUtils.isEmpty(this.mSsid)) {
+                    Log.e(TAG, "failed to read ssid");
+                    return false;
                 }
-                config.requirePMF = false;
-                if (getRequirePmf()) {
-                    config.requirePMF = this.mRequirePmf;
-                }
-                config.wepTxKeyIndex = -1;
-                if (getWepTxKeyIdx()) {
-                    config.wepTxKeyIndex = this.mWepTxKeyIdx;
-                }
-                while (i < 4) {
-                    config.wepKeys[i] = null;
-                    if (getWepKey(i) && !ArrayUtils.isEmpty(this.mWepKey)) {
-                        config.wepKeys[i] = NativeUtil.bytesToHexOrQuotedString(this.mWepKey);
+                config.SSID = NativeUtil.encodeSsid(this.mSsid);
+                config.networkId = -1;
+                if (getId()) {
+                    config.networkId = this.mNetworkId;
+                    config.getNetworkSelectionStatus().setNetworkSelectionBSSID(null);
+                    if (getBssid() && !ArrayUtils.isEmpty(this.mBssid)) {
+                        config.getNetworkSelectionStatus().setNetworkSelectionBSSID(NativeUtil.macAddressFromByteArray(this.mBssid));
                     }
-                    i++;
+                    config.hiddenSSID = false;
+                    if (getScanSsid()) {
+                        config.hiddenSSID = this.mScanSsid;
+                    }
+                    config.requirePMF = false;
+                    if (getRequirePmf()) {
+                        config.requirePMF = this.mRequirePmf;
+                    }
+                    config.wepTxKeyIndex = -1;
+                    if (getWepTxKeyIdx()) {
+                        config.wepTxKeyIndex = this.mWepTxKeyIdx;
+                    }
+                    while (i < 4) {
+                        config.wepKeys[i] = null;
+                        if (getWepKey(i) && !ArrayUtils.isEmpty(this.mWepKey)) {
+                            config.wepKeys[i] = NativeUtil.bytesToHexOrQuotedString(this.mWepKey);
+                        }
+                        i++;
+                    }
+                    config.preSharedKey = null;
+                    if (getPskPassphrase() && !TextUtils.isEmpty(this.mPskPassphrase)) {
+                        config.preSharedKey = NativeUtil.addEnclosingQuotes(this.mPskPassphrase);
+                    } else if (getPsk() && !ArrayUtils.isEmpty(this.mPsk)) {
+                        config.preSharedKey = NativeUtil.hexStringFromByteArray(this.mPsk);
+                    }
+                    if (getKeyMgmt()) {
+                        config.allowedKeyManagement = removeFastTransitionFlags(supplicantToWifiConfigurationKeyMgmtMask(this.mKeyMgmtMask));
+                    }
+                    if (getProto()) {
+                        config.allowedProtocols = supplicantToWifiConfigurationProtoMask(this.mProtoMask);
+                    }
+                    if (getAuthAlg()) {
+                        config.allowedAuthAlgorithms = supplicantToWifiConfigurationAuthAlgMask(this.mAuthAlgMask);
+                    }
+                    if (getGroupCipher()) {
+                        config.allowedGroupCiphers = supplicantToWifiConfigurationGroupCipherMask(this.mGroupCipherMask);
+                    }
+                    if (getPairwiseCipher()) {
+                        config.allowedPairwiseCiphers = supplicantToWifiConfigurationPairwiseCipherMask(this.mPairwiseCipherMask);
+                    }
+                    if (!getIdStr() || TextUtils.isEmpty(this.mIdStr)) {
+                        Log.w(TAG, "getIdStr failed or empty");
+                    } else {
+                        networkExtras.putAll(parseNetworkExtra(this.mIdStr));
+                    }
+                    boolean loadWifiEnterpriseConfig = loadWifiEnterpriseConfig(config.SSID, config.enterpriseConfig);
+                    return loadWifiEnterpriseConfig;
                 }
-                config.preSharedKey = null;
-                if (getPskPassphrase() && !TextUtils.isEmpty(this.mPskPassphrase)) {
-                    config.preSharedKey = NativeUtil.addEnclosingQuotes(this.mPskPassphrase);
-                } else if (getPsk() && !ArrayUtils.isEmpty(this.mPsk)) {
-                    config.preSharedKey = NativeUtil.hexStringFromByteArray(this.mPsk);
-                }
-                if (getKeyMgmt()) {
-                    config.allowedKeyManagement = removeFastTransitionFlags(supplicantToWifiConfigurationKeyMgmtMask(this.mKeyMgmtMask));
-                }
-                if (getProto()) {
-                    config.allowedProtocols = supplicantToWifiConfigurationProtoMask(this.mProtoMask);
-                }
-                if (getAuthAlg()) {
-                    config.allowedAuthAlgorithms = supplicantToWifiConfigurationAuthAlgMask(this.mAuthAlgMask);
-                }
-                if (getGroupCipher()) {
-                    config.allowedGroupCiphers = supplicantToWifiConfigurationGroupCipherMask(this.mGroupCipherMask);
-                }
-                if (getPairwiseCipher()) {
-                    config.allowedPairwiseCiphers = supplicantToWifiConfigurationPairwiseCipherMask(this.mPairwiseCipherMask);
-                }
-                if (!getIdStr() || TextUtils.isEmpty(this.mIdStr)) {
-                    Log.w(TAG, "getIdStr failed or empty");
-                } else {
-                    networkExtras.putAll(parseNetworkExtra(this.mIdStr));
-                }
-                boolean loadWifiEnterpriseConfig = loadWifiEnterpriseConfig(config.SSID, config.enterpriseConfig);
-                return loadWifiEnterpriseConfig;
+                Log.e(TAG, "getId failed");
+                return false;
             }
-            Log.e(TAG, "getId failed");
-            return false;
         }
     }
 
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:4:0x0006, B:13:0x004d] */
+    /* JADX WARNING: Missing block: B:19:0x0069, code skipped:
+            r3 = move-exception;
+     */
+    /* JADX WARNING: Missing block: B:21:?, code skipped:
+            android.util.Log.e(TAG, "saveWifiConfiguration: cannot be utf-8 encoded", r3);
+     */
+    /* JADX WARNING: Missing block: B:23:0x0072, code skipped:
+            return false;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean saveWifiConfiguration(WifiConfiguration config) {
         synchronized (this.mLock) {
             if (config == null) {
@@ -262,15 +277,10 @@ public class SupplicantStaNetworkHal {
                 stringBuilder.append(ssid);
                 Log.d(str, stringBuilder.toString());
                 if (ssid == null) {
-                    try {
-                        if (TextUtils.isEmpty(config.oriSsid)) {
-                            ssid = NativeUtil.decodeSsid(config.SSID);
-                        } else {
-                            ssid = NativeUtil.byteArrayToArrayList(NativeUtil.hexStringToByteArray(config.oriSsid));
-                        }
-                    } catch (IllegalArgumentException e) {
-                        Log.e(TAG, "saveWifiConfiguration: cannot be utf-8 encoded", e);
-                        return false;
+                    if (TextUtils.isEmpty(config.oriSsid)) {
+                        ssid = NativeUtil.decodeSsid(config.SSID);
+                    } else {
+                        ssid = NativeUtil.byteArrayToArrayList(NativeUtil.hexStringToByteArray(config.oriSsid));
                     }
                 }
                 if (!setSsid(ssid)) {
@@ -409,14 +419,17 @@ public class SupplicantStaNetworkHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:77:0x013a, code:
+    /* JADX WARNING: Missing block: B:78:0x013a, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean loadWifiEnterpriseConfig(String ssid, WifiEnterpriseConfig eapConfig) {
         synchronized (this.mLock) {
             if (eapConfig == null) {
-                return false;
+                try {
+                    return false;
+                } catch (Throwable th) {
+                }
             } else if (getEapMethod()) {
                 eapConfig.setEapMethod(supplicantToWifiConfigurationEapMethod(this.mEapMethod));
                 if (getEapPhase2Method()) {
@@ -480,7 +493,10 @@ public class SupplicantStaNetworkHal {
             String str;
             StringBuilder stringBuilder;
             if (eapConfig == null) {
-                return false;
+                try {
+                    return false;
+                } catch (Throwable th) {
+                }
             } else if (!setEapMethod(wifiConfigurationToSupplicantEapMethod(eapConfig.getEapMethod()))) {
                 str = TAG;
                 stringBuilder = new StringBuilder();
@@ -1031,6 +1047,7 @@ public class SupplicantStaNetworkHal {
                 stringBuilder.append(bssidStr);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return bssid;
@@ -2318,6 +2335,8 @@ public class SupplicantStaNetworkHal {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:29:0x008c=Splitter:B:29:0x008c, B:44:0x00bc=Splitter:B:44:0x00bc} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean sendNetworkEapSimGsmAuthResponse(String paramsStr) {
         synchronized (this.mLock) {
             try {
@@ -2336,37 +2355,43 @@ public class SupplicantStaNetworkHal {
                     }
                     NetworkResponseEapSimGsmAuthParams param = new NetworkResponseEapSimGsmAuthParams();
                     byte[] kc = NativeUtil.hexStringToByteArray(match.group(1));
-                    if (kc == null || kc.length != param.kc.length) {
-                        String str2 = TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("Invalid kc value: ");
-                        stringBuilder2.append(match.group(1));
-                        Log.e(str2, stringBuilder2.toString());
-                        return false;
+                    if (kc != null) {
+                        if (kc.length == param.kc.length) {
+                            byte[] sres = NativeUtil.hexStringToByteArray(match.group(2));
+                            if (sres != null) {
+                                if (sres.length == param.sres.length) {
+                                    System.arraycopy(kc, 0, param.kc, 0, param.kc.length);
+                                    System.arraycopy(sres, 0, param.sres, 0, param.sres.length);
+                                    params.add(param);
+                                }
+                            }
+                            String str2 = TAG;
+                            StringBuilder stringBuilder2 = new StringBuilder();
+                            stringBuilder2.append("Invalid sres value: ");
+                            stringBuilder2.append(match.group(2));
+                            Log.e(str2, stringBuilder2.toString());
+                            return false;
+                        }
                     }
-                    byte[] sres = NativeUtil.hexStringToByteArray(match.group(2));
-                    if (sres == null || sres.length != param.sres.length) {
-                        String str3 = TAG;
-                        StringBuilder stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append("Invalid sres value: ");
-                        stringBuilder3.append(match.group(2));
-                        Log.e(str3, stringBuilder3.toString());
-                        return false;
-                    }
-                    System.arraycopy(kc, 0, param.kc, 0, param.kc.length);
-                    System.arraycopy(sres, 0, param.sres, 0, param.sres.length);
-                    params.add(param);
-                }
-                if (params.size() > 3 || params.size() < 2) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Malformed gsm auth response params: ");
-                    stringBuilder.append(paramsStr);
-                    Log.e(str, stringBuilder.toString());
+                    String str3 = TAG;
+                    StringBuilder stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("Invalid kc value: ");
+                    stringBuilder3.append(match.group(1));
+                    Log.e(str3, stringBuilder3.toString());
                     return false;
                 }
-                boolean sendNetworkEapSimGsmAuthResponse = sendNetworkEapSimGsmAuthResponse(params);
-                return sendNetworkEapSimGsmAuthResponse;
+                if (params.size() <= 3) {
+                    if (params.size() >= 2) {
+                        boolean sendNetworkEapSimGsmAuthResponse = sendNetworkEapSimGsmAuthResponse(params);
+                        return sendNetworkEapSimGsmAuthResponse;
+                    }
+                }
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Malformed gsm auth response params: ");
+                stringBuilder.append(paramsStr);
+                Log.e(str, stringBuilder.toString());
+                return false;
             } catch (IllegalArgumentException e) {
                 String str4 = TAG;
                 StringBuilder stringBuilder4 = new StringBuilder();
@@ -2374,6 +2399,7 @@ public class SupplicantStaNetworkHal {
                 stringBuilder4.append(paramsStr);
                 Log.e(str4, stringBuilder4.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -2410,48 +2436,58 @@ public class SupplicantStaNetworkHal {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:41:0x00b1=Splitter:B:41:0x00b1, B:36:0x0095=Splitter:B:36:0x0095, B:31:0x0079=Splitter:B:31:0x0079, B:46:0x00cd=Splitter:B:46:0x00cd} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean sendNetworkEapSimUmtsAuthResponse(String paramsStr) {
         synchronized (this.mLock) {
             String str;
             StringBuilder stringBuilder;
             try {
                 Matcher match = UMTS_AUTH_RESPONSE_PARAMS_PATTERN.matcher(paramsStr);
-                if (match.find() && match.groupCount() == 3) {
-                    NetworkResponseEapSimUmtsAuthParams params = new NetworkResponseEapSimUmtsAuthParams();
-                    byte[] ik = NativeUtil.hexStringToByteArray(match.group(1));
-                    String str2;
-                    if (ik == null || ik.length != params.ik.length) {
+                if (match.find()) {
+                    if (match.groupCount() == 3) {
+                        String str2;
+                        NetworkResponseEapSimUmtsAuthParams params = new NetworkResponseEapSimUmtsAuthParams();
+                        byte[] ik = NativeUtil.hexStringToByteArray(match.group(1));
+                        if (ik != null) {
+                            if (ik.length == params.ik.length) {
+                                byte[] ck = NativeUtil.hexStringToByteArray(match.group(2));
+                                if (ck != null) {
+                                    if (ck.length == params.ck.length) {
+                                        byte[] res = NativeUtil.hexStringToByteArray(match.group(3));
+                                        if (res != null) {
+                                            if (res.length != 0) {
+                                                System.arraycopy(ik, 0, params.ik, 0, params.ik.length);
+                                                System.arraycopy(ck, 0, params.ck, 0, params.ck.length);
+                                                for (byte b : res) {
+                                                    params.res.add(Byte.valueOf(b));
+                                                }
+                                                return sendNetworkEapSimUmtsAuthResponse(params);
+                                            }
+                                        }
+                                        String str3 = TAG;
+                                        StringBuilder stringBuilder2 = new StringBuilder();
+                                        stringBuilder2.append("Invalid res value: ");
+                                        stringBuilder2.append(match.group(3));
+                                        Log.e(str3, stringBuilder2.toString());
+                                        return false;
+                                    }
+                                }
+                                str2 = TAG;
+                                StringBuilder stringBuilder3 = new StringBuilder();
+                                stringBuilder3.append("Invalid ck value: ");
+                                stringBuilder3.append(match.group(2));
+                                Log.e(str2, stringBuilder3.toString());
+                                return false;
+                            }
+                        }
                         str2 = TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append("Invalid ik value: ");
-                        stringBuilder2.append(match.group(1));
-                        Log.e(str2, stringBuilder2.toString());
-                        return false;
-                    }
-                    byte[] ck = NativeUtil.hexStringToByteArray(match.group(2));
-                    if (ck == null || ck.length != params.ck.length) {
-                        str2 = TAG;
-                        StringBuilder stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append("Invalid ck value: ");
-                        stringBuilder3.append(match.group(2));
-                        Log.e(str2, stringBuilder3.toString());
-                        return false;
-                    }
-                    byte[] res = NativeUtil.hexStringToByteArray(match.group(3));
-                    if (res == null || res.length == 0) {
-                        String str3 = TAG;
                         StringBuilder stringBuilder4 = new StringBuilder();
-                        stringBuilder4.append("Invalid res value: ");
-                        stringBuilder4.append(match.group(3));
-                        Log.e(str3, stringBuilder4.toString());
+                        stringBuilder4.append("Invalid ik value: ");
+                        stringBuilder4.append(match.group(1));
+                        Log.e(str2, stringBuilder4.toString());
                         return false;
                     }
-                    System.arraycopy(ik, 0, params.ik, 0, params.ik.length);
-                    System.arraycopy(ck, 0, params.ck, 0, params.ck.length);
-                    for (byte b : res) {
-                        params.res.add(Byte.valueOf(b));
-                    }
-                    return sendNetworkEapSimUmtsAuthResponse(params);
                 }
                 str = TAG;
                 stringBuilder = new StringBuilder();
@@ -2466,6 +2502,7 @@ public class SupplicantStaNetworkHal {
                 stringBuilder.append(paramsStr);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -2486,15 +2523,23 @@ public class SupplicantStaNetworkHal {
         }
     }
 
+    /* JADX WARNING: Unknown top exception splitter block from list: {B:23:0x004a=Splitter:B:23:0x004a, B:18:0x002e=Splitter:B:18:0x002e} */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean sendNetworkEapSimUmtsAutsResponse(String paramsStr) {
         synchronized (this.mLock) {
             String str;
             StringBuilder stringBuilder;
             try {
                 Matcher match = UMTS_AUTS_RESPONSE_PARAMS_PATTERN.matcher(paramsStr);
-                if (match.find() && match.groupCount() == 1) {
-                    byte[] auts = NativeUtil.hexStringToByteArray(match.group(1));
-                    if (auts == null || auts.length != 14) {
+                if (match.find()) {
+                    if (match.groupCount() == 1) {
+                        byte[] auts = NativeUtil.hexStringToByteArray(match.group(1));
+                        if (auts != null) {
+                            if (auts.length == 14) {
+                                boolean sendNetworkEapSimUmtsAutsResponse = sendNetworkEapSimUmtsAutsResponse(auts);
+                                return sendNetworkEapSimUmtsAutsResponse;
+                            }
+                        }
                         String str2 = TAG;
                         StringBuilder stringBuilder2 = new StringBuilder();
                         stringBuilder2.append("Invalid auts value: ");
@@ -2502,8 +2547,6 @@ public class SupplicantStaNetworkHal {
                         Log.e(str2, stringBuilder2.toString());
                         return false;
                     }
-                    boolean sendNetworkEapSimUmtsAutsResponse = sendNetworkEapSimUmtsAutsResponse(auts);
-                    return sendNetworkEapSimUmtsAutsResponse;
                 }
                 str = TAG;
                 stringBuilder = new StringBuilder();
@@ -2518,6 +2561,7 @@ public class SupplicantStaNetworkHal {
                 stringBuilder.append(paramsStr);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -2574,6 +2618,7 @@ public class SupplicantStaNetworkHal {
             } catch (IllegalArgumentException e) {
                 Log.e(TAG, "Illegal argument identityStr");
                 return false;
+            } catch (Throwable th) {
             }
         }
         return sendNetworkEapIdentityResponse;
@@ -2623,7 +2668,7 @@ public class SupplicantStaNetworkHal {
                 } catch (RemoteException e) {
                     handleRemoteException(e, "getWpsNfcConfigurationToken");
                 }
-                ArrayList<Byte> arrayList = (ArrayList) gotToken.value;
+                ArrayList arrayList = (ArrayList) gotToken.value;
                 return arrayList;
             }
             return null;
@@ -2702,7 +2747,7 @@ public class SupplicantStaNetworkHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0026, code:
+    /* JADX WARNING: Missing block: B:14:0x0026, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

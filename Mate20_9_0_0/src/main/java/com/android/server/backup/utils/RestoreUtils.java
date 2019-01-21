@@ -68,45 +68,53 @@ public class RestoreUtils {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
-    /* JADX WARNING: Removed duplicated region for block: B:183:0x037a A:{SYNTHETIC, Splitter: B:183:0x037a} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:183:0x037a A:{SYNTHETIC, Splitter: B:183:0x037a} */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
-    /* JADX WARNING: Removed duplicated region for block: B:183:0x037a A:{SYNTHETIC, Splitter: B:183:0x037a} */
-    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:63:0x0118 A:{Splitter: B:61:0x0114, ExcHandler: all (th java.lang.Throwable)} */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
     /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
     /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
-    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter: B:137:0x02a9} */
-    /* JADX WARNING: Removed duplicated region for block: B:183:0x037a A:{SYNTHETIC, Splitter: B:183:0x037a} */
-    /* JADX WARNING: Removed duplicated region for block: B:160:0x02f8 A:{SYNTHETIC, Splitter: B:160:0x02f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x037a A:{SYNTHETIC, Splitter:B:184:0x037a} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
+    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
+    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x02f8 A:{SYNTHETIC, Splitter:B:160:0x02f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x037a A:{SYNTHETIC, Splitter:B:184:0x037a} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x02f8 A:{SYNTHETIC, Splitter:B:160:0x02f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x02f8 A:{SYNTHETIC, Splitter:B:160:0x02f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x037a A:{SYNTHETIC, Splitter:B:184:0x037a} */
+    /* JADX WARNING: Removed duplicated region for block: B:160:0x02f8 A:{SYNTHETIC, Splitter:B:160:0x02f8} */
+    /* JADX WARNING: Removed duplicated region for block: B:184:0x037a A:{SYNTHETIC, Splitter:B:184:0x037a} */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
+    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
+    /* JADX WARNING: Removed duplicated region for block: B:63:0x0118 A:{ExcHandler: all (th java.lang.Throwable), Splitter:B:61:0x0114} */
+    /* JADX WARNING: Removed duplicated region for block: B:146:0x02bf  */
+    /* JADX WARNING: Removed duplicated region for block: B:137:0x02a9 A:{SYNTHETIC, Splitter:B:137:0x02a9} */
     /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:63:0x0118, code:
+    /* JADX WARNING: Missing block: B:63:0x0118, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:64:0x0119, code:
+    /* JADX WARNING: Missing block: B:64:0x0119, code skipped:
             r12 = r25;
             r14 = r26;
             r10 = r27;
             r1 = null;
             r4 = r28;
      */
-    /* JADX WARNING: Missing block: B:65:0x0124, code:
-            r0 = move-exception;
+    /* JADX WARNING: Missing block: B:150:0x02c9, code skipped:
+            r0 = th;
      */
-    /* JADX WARNING: Missing block: B:66:0x0125, code:
+    /* JADX WARNING: Missing block: B:151:0x02ca, code skipped:
             r12 = r25;
             r14 = r26;
             r10 = r27;
-            r3 = r0;
             r4 = r28;
+     */
+    /* JADX WARNING: Missing block: B:185:?, code skipped:
+            $closeResource(r1, r2);
+     */
+    /* JADX WARNING: Missing block: B:186:0x037e, code skipped:
+            r0 = e;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public static boolean installApk(InputStream instream, Context context, RestoreDeleteObserver deleteObserver, HashMap<String, Signature[]> manifestSignatures, HashMap<String, RestorePolicy> packagePolicies, FileMetadata info, String installerPackageName, BytesReadListener bytesReadListener) {
@@ -153,8 +161,8 @@ public class RestoreUtils {
                                     byte[] buffer = new byte[32768];
                                     long size = fileMetadata.size;
                                     while (size > 0) {
+                                        long toRead;
                                         try {
-                                            long toRead;
                                             if (((long) buffer.length) < size) {
                                                 try {
                                                     toRead = (long) buffer.length;
@@ -169,45 +177,15 @@ public class RestoreUtils {
                                                     th3 = null;
                                                     th = null;
                                                     params = instream;
-                                                }
-                                            } else {
-                                                toRead = size;
-                                            }
-                                            sessionParams = params2;
-                                            try {
-                                                int didRead = instream.read(buffer, 0, (int) toRead);
-                                                if (didRead >= 0) {
-                                                    try {
-                                                        bytesReadListener.onBytesRead((long) didRead);
-                                                    } catch (Throwable th6) {
-                                                        th2 = th6;
-                                                        restoreDeleteObserver = deleteObserver;
-                                                        hashMap = manifestSignatures;
-                                                        hashMap2 = packagePolicies;
-                                                        th3 = null;
-                                                        fileMetadata2 = info;
-                                                        th = null;
-                                                        if (apkStream != null) {
-                                                        }
-                                                        throw th2;
+                                                    if (apkStream != null) {
                                                     }
+                                                    throw th2;
                                                 }
-                                                bytesReadListener2 = bytesReadListener;
-                                                apkStream.write(buffer, 0, didRead);
-                                                size -= (long) didRead;
-                                                params2 = sessionParams;
-                                                fileMetadata = info;
-                                            } catch (Throwable th7) {
-                                                th2 = th7;
-                                                bytesReadListener2 = bytesReadListener;
-                                                restoreDeleteObserver = deleteObserver;
-                                                hashMap = manifestSignatures;
-                                                hashMap2 = packagePolicies;
-                                                fileMetadata2 = fileMetadata;
-                                                th3 = null;
                                             }
-                                        } catch (Throwable th8) {
-                                            th2 = th8;
+                                            toRead = size;
+                                            sessionParams = params2;
+                                        } catch (Throwable th6) {
+                                            th2 = th6;
                                             bytesReadListener2 = bytesReadListener;
                                             sessionParams = params2;
                                             params = instream;
@@ -217,6 +195,45 @@ public class RestoreUtils {
                                             fileMetadata2 = fileMetadata;
                                             th3 = null;
                                             th = null;
+                                            if (apkStream != null) {
+                                            }
+                                            throw th2;
+                                        }
+                                        try {
+                                            int didRead = instream.read(buffer, 0, (int) toRead);
+                                            if (didRead >= 0) {
+                                                try {
+                                                    bytesReadListener.onBytesRead((long) didRead);
+                                                } catch (Throwable th7) {
+                                                    th2 = th7;
+                                                    restoreDeleteObserver = deleteObserver;
+                                                    hashMap = manifestSignatures;
+                                                    hashMap2 = packagePolicies;
+                                                    th3 = null;
+                                                    fileMetadata2 = info;
+                                                    th = null;
+                                                    if (apkStream != null) {
+                                                    }
+                                                    throw th2;
+                                                }
+                                            }
+                                            bytesReadListener2 = bytesReadListener;
+                                            apkStream.write(buffer, 0, didRead);
+                                            size -= (long) didRead;
+                                            params2 = sessionParams;
+                                            fileMetadata = info;
+                                        } catch (Throwable th8) {
+                                            th2 = th8;
+                                            bytesReadListener2 = bytesReadListener;
+                                            restoreDeleteObserver = deleteObserver;
+                                            hashMap = manifestSignatures;
+                                            hashMap2 = packagePolicies;
+                                            fileMetadata2 = fileMetadata;
+                                            th3 = null;
+                                            th = null;
+                                            if (apkStream != null) {
+                                            }
+                                            throw th2;
                                         }
                                     }
                                     bytesReadListener2 = bytesReadListener;
@@ -495,18 +512,6 @@ public class RestoreUtils {
                             params = instream;
                             hashMap = manifestSignatures;
                             if (okay3) {
-                                try {
-                                    $closeResource(th3, okay3);
-                                } catch (Exception e14) {
-                                    t = e14;
-                                    try {
-                                        installer.abandonSession(sessionId);
-                                        throw t;
-                                    } catch (IOException e15) {
-                                        Slog.e(BackupManagerService.TAG, "Unable to transcribe restored apk for install");
-                                        return false;
-                                    }
-                                }
                             }
                             throw th2;
                         }
@@ -527,8 +532,8 @@ public class RestoreUtils {
                         }
                         throw th2;
                     }
-                } catch (Exception e16) {
-                    t = e16;
+                } catch (Exception e14) {
+                    t = e14;
                     restoreDeleteObserver = deleteObserver;
                     hashMap = manifestSignatures;
                     hashMap2 = packagePolicies;
@@ -538,10 +543,15 @@ public class RestoreUtils {
                     sessionParams = params2;
                     params = instream;
                     fileMetadata2 = fileMetadata;
-                    installer.abandonSession(sessionId);
-                    throw t;
+                    try {
+                        installer.abandonSession(sessionId);
+                        throw t;
+                    } catch (IOException e15) {
+                        Slog.e(BackupManagerService.TAG, "Unable to transcribe restored apk for install");
+                        return false;
+                    }
                 }
-            } catch (IOException e17) {
+            } catch (IOException e16) {
                 params = instream;
                 restoreDeleteObserver = deleteObserver;
                 hashMap = manifestSignatures;
@@ -552,7 +562,7 @@ public class RestoreUtils {
                 Slog.e(BackupManagerService.TAG, "Unable to transcribe restored apk for install");
                 return false;
             }
-        } catch (IOException e18) {
+        } catch (IOException e17) {
             params = instream;
             restoreDeleteObserver = deleteObserver;
             hashMap = manifestSignatures;

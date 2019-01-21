@@ -1725,25 +1725,27 @@ public class NotificationCompat {
             @Nullable
             static Message getMessageFromBundle(Bundle bundle) {
                 try {
-                    if (!bundle.containsKey(KEY_TEXT) || !bundle.containsKey(KEY_TIMESTAMP)) {
-                        return null;
+                    if (bundle.containsKey(KEY_TEXT)) {
+                        if (bundle.containsKey(KEY_TIMESTAMP)) {
+                            Person person = null;
+                            if (bundle.containsKey(KEY_PERSON)) {
+                                person = Person.fromBundle(bundle.getBundle(KEY_PERSON));
+                            } else if (bundle.containsKey(KEY_NOTIFICATION_PERSON) && VERSION.SDK_INT >= 28) {
+                                person = Person.fromAndroidPerson((Person) bundle.getParcelable(KEY_NOTIFICATION_PERSON));
+                            } else if (bundle.containsKey(KEY_SENDER)) {
+                                person = new android.support.v4.app.Person.Builder().setName(bundle.getCharSequence(KEY_SENDER)).build();
+                            }
+                            Message message = new Message(bundle.getCharSequence(KEY_TEXT), bundle.getLong(KEY_TIMESTAMP), person);
+                            if (bundle.containsKey(KEY_DATA_MIME_TYPE) && bundle.containsKey(KEY_DATA_URI)) {
+                                message.setData(bundle.getString(KEY_DATA_MIME_TYPE), (Uri) bundle.getParcelable(KEY_DATA_URI));
+                            }
+                            if (bundle.containsKey(KEY_EXTRAS_BUNDLE)) {
+                                message.getExtras().putAll(bundle.getBundle(KEY_EXTRAS_BUNDLE));
+                            }
+                            return message;
+                        }
                     }
-                    Person person = null;
-                    if (bundle.containsKey(KEY_PERSON)) {
-                        person = Person.fromBundle(bundle.getBundle(KEY_PERSON));
-                    } else if (bundle.containsKey(KEY_NOTIFICATION_PERSON) && VERSION.SDK_INT >= 28) {
-                        person = Person.fromAndroidPerson((Person) bundle.getParcelable(KEY_NOTIFICATION_PERSON));
-                    } else if (bundle.containsKey(KEY_SENDER)) {
-                        person = new android.support.v4.app.Person.Builder().setName(bundle.getCharSequence(KEY_SENDER)).build();
-                    }
-                    Message message = new Message(bundle.getCharSequence(KEY_TEXT), bundle.getLong(KEY_TIMESTAMP), person);
-                    if (bundle.containsKey(KEY_DATA_MIME_TYPE) && bundle.containsKey(KEY_DATA_URI)) {
-                        message.setData(bundle.getString(KEY_DATA_MIME_TYPE), (Uri) bundle.getParcelable(KEY_DATA_URI));
-                    }
-                    if (bundle.containsKey(KEY_EXTRAS_BUNDLE)) {
-                        message.getExtras().putAll(bundle.getBundle(KEY_EXTRAS_BUNDLE));
-                    }
-                    return message;
+                    return null;
                 } catch (ClassCastException e) {
                     return null;
                 }

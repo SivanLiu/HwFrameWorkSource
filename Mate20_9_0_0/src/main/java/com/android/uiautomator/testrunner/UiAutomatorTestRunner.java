@@ -65,7 +65,10 @@ public class UiAutomatorTestRunner {
         public void instrumentationStatus(ComponentName name, int resultCode, Bundle results) {
             synchronized (this) {
                 if (UiAutomatorTestRunner.EXIT_OK != null) {
-                    System.out.print(null);
+                    try {
+                        System.out.print(null);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     if (results != null) {
                         for (String key : results.keySet()) {
@@ -91,7 +94,10 @@ public class UiAutomatorTestRunner {
         public void instrumentationFinished(ComponentName name, int resultCode, Bundle results) {
             synchronized (this) {
                 if (UiAutomatorTestRunner.EXIT_OK != null) {
-                    System.out.println(null);
+                    try {
+                        System.out.println(null);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     if (results != null) {
                         for (String key : results.keySet()) {

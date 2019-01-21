@@ -12,6 +12,7 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Arrays;
 
@@ -42,7 +43,7 @@ class TimeStampDataUtil {
             outputStream.write(timeStampAndCRL.getEncoded(ASN1Encoding.DER));
             outputStream.close();
             return digestCalculator.getDigest();
-        } catch (Exception e) {
+        } catch (IOException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("exception calculating hash: ");
             stringBuilder.append(e.getMessage());
@@ -63,7 +64,7 @@ class TimeStampDataUtil {
             DigestCalculator digestCalculator = digestCalculatorProvider.get(new AlgorithmIdentifier(getTimeStampToken(this.timeStamps[0]).getTimeStampInfo().getMessageImprintAlgOID()));
             initialiseMessageImprintDigestCalculator(digestCalculator);
             return digestCalculator;
-        } catch (Throwable e) {
+        } catch (CMSException e) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("unable to extract algorithm ID: ");
             stringBuilder.append(e.getMessage());
@@ -79,12 +80,12 @@ class TimeStampDataUtil {
         StringBuilder stringBuilder;
         try {
             return new TimeStampToken(timeStampAndCRL.getTimeStampToken());
-        } catch (Exception e) {
+        } catch (IOException e) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("unable to parse token data: ");
             stringBuilder.append(e.getMessage());
             throw new CMSException(stringBuilder.toString(), e);
-        } catch (Exception e2) {
+        } catch (TSPException e2) {
             if (e2.getCause() instanceof CMSException) {
                 throw ((CMSException) e2.getCause());
             }
@@ -92,11 +93,11 @@ class TimeStampDataUtil {
             stringBuilder.append("token data invalid: ");
             stringBuilder.append(e2.getMessage());
             throw new CMSException(stringBuilder.toString(), e2);
-        } catch (Exception e22) {
+        } catch (IllegalArgumentException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("token data invalid: ");
-            stringBuilder.append(e22.getMessage());
-            throw new CMSException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new CMSException(stringBuilder.toString(), e3);
         }
     }
 
@@ -129,12 +130,12 @@ class TimeStampDataUtil {
                 }
                 compareDigest(timeStampToken, bArr);
                 i++;
-            } catch (Exception e) {
+            } catch (IOException e) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("exception calculating hash: ");
                 stringBuilder.append(e.getMessage());
                 throw new CMSException(stringBuilder.toString(), e);
-            } catch (Exception e2) {
+            } catch (OperatorCreationException e2) {
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("cannot create digest: ");
                 stringBuilder.append(e2.getMessage());
@@ -162,12 +163,12 @@ class TimeStampDataUtil {
                     } else {
                         return;
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("exception calculating hash: ");
                     stringBuilder.append(e.getMessage());
                     throw new CMSException(stringBuilder.toString(), e);
-                } catch (Exception e2) {
+                } catch (OperatorCreationException e2) {
                     stringBuilder = new StringBuilder();
                     stringBuilder.append("cannot create digest: ");
                     stringBuilder.append(e2.getMessage());
@@ -175,11 +176,11 @@ class TimeStampDataUtil {
                 }
             }
             throw new ImprintDigestInvalidException("passed in token not associated with timestamps present", timeStampToken);
-        } catch (Exception e22) {
+        } catch (IOException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("exception encoding timeStampToken: ");
-            stringBuilder.append(e22.getMessage());
-            throw new CMSException(stringBuilder.toString(), e22);
+            stringBuilder.append(e3.getMessage());
+            throw new CMSException(stringBuilder.toString(), e3);
         }
     }
 }

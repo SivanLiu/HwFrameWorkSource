@@ -35,7 +35,7 @@ public class PKIArchiveControl implements Control {
             stringBuilder.append("CMS parsing error: ");
             stringBuilder.append(e.getMessage());
             throw new CRMFException(stringBuilder.toString(), e.getCause());
-        } catch (Throwable e2) {
+        } catch (Exception e2) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("CRMF parsing error: ");
             stringBuilder.append(e2.getMessage());

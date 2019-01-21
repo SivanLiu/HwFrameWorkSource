@@ -111,10 +111,10 @@ public class RecoverableKeyStoreDb {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:14:0x005f, code:
+    /* JADX WARNING: Missing block: B:14:0x005f, code skipped:
             if (r1 != null) goto L_0x0061;
      */
-    /* JADX WARNING: Missing block: B:15:0x0061, code:
+    /* JADX WARNING: Missing block: B:15:0x0061, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -138,10 +138,10 @@ public class RecoverableKeyStoreDb {
         return db.update("keys", values, "uid = ? AND alias = ?", new String[]{String.valueOf(uid), alias});
     }
 
-    /* JADX WARNING: Missing block: B:14:0x008a, code:
+    /* JADX WARNING: Missing block: B:14:0x008a, code skipped:
             if (r1 != null) goto L_0x008c;
      */
-    /* JADX WARNING: Missing block: B:15:0x008c, code:
+    /* JADX WARNING: Missing block: B:15:0x008c, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -184,10 +184,10 @@ public class RecoverableKeyStoreDb {
         db.update("keys", values, "user_id = ?", new String[]{String.valueOf(userId)});
     }
 
-    /* JADX WARNING: Missing block: B:17:0x004d, code:
+    /* JADX WARNING: Missing block: B:17:0x004d, code skipped:
             if (r1 != null) goto L_0x004f;
      */
-    /* JADX WARNING: Missing block: B:18:0x004f, code:
+    /* JADX WARNING: Missing block: B:18:0x004f, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -240,10 +240,10 @@ public class RecoverableKeyStoreDb {
         throw new CertificateEncodingException("No certificate contained in the cert path.");
     }
 
-    /* JADX WARNING: Missing block: B:14:0x0055, code:
+    /* JADX WARNING: Missing block: B:14:0x0055, code skipped:
             if (r1 != null) goto L_0x0057;
      */
-    /* JADX WARNING: Missing block: B:15:0x0057, code:
+    /* JADX WARNING: Missing block: B:15:0x0057, code skipped:
             $closeResource(r2, r1);
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

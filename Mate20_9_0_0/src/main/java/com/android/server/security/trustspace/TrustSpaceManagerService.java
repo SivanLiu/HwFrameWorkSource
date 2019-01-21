@@ -206,7 +206,7 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
         }
 
         public void notifyInfo(String projectionPack) {
-            String text = TrustSpaceManagerService.this.mContext.getResources().getString(33686188);
+            String text = TrustSpaceManagerService.this.mContext.getResources().getString(33686191);
             if (text != null) {
                 String packageLabel = projectionPack;
                 PackageManager pm = TrustSpaceManagerService.this.mContext.getPackageManager();
@@ -366,34 +366,34 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0040, code:
+    /* JADX WARNING: Missing block: B:18:0x0040, code skipped:
             r1 = android.os.SystemClock.uptimeMillis();
             r6 = com.huawei.hsm.permission.StubController.getHoldService();
      */
-    /* JADX WARNING: Missing block: B:18:0x0048, code:
+    /* JADX WARNING: Missing block: B:19:0x0048, code skipped:
             if (r6 != null) goto L_0x0056;
      */
-    /* JADX WARNING: Missing block: B:20:0x004c, code:
+    /* JADX WARNING: Missing block: B:21:0x004c, code skipped:
             if (HW_DEBUG == false) goto L_0x0055;
      */
-    /* JADX WARNING: Missing block: B:21:0x004e, code:
+    /* JADX WARNING: Missing block: B:22:0x004e, code skipped:
             android.util.Slog.e(TAG, "isMaliciousApp, service is null!");
      */
-    /* JADX WARNING: Missing block: B:22:0x0055, code:
+    /* JADX WARNING: Missing block: B:23:0x0055, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:23:0x0056, code:
+    /* JADX WARNING: Missing block: B:24:0x0056, code skipped:
             r7 = new android.os.Bundle();
             r7.putString("packageName", r15);
             r8 = null;
      */
-    /* JADX WARNING: Missing block: B:26:0x0067, code:
+    /* JADX WARNING: Missing block: B:27:0x0067, code skipped:
             r8 = r6.callHsmService("isVirusApk", r7);
      */
-    /* JADX WARNING: Missing block: B:27:0x0069, code:
+    /* JADX WARNING: Missing block: B:28:0x0069, code skipped:
             r9 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:28:0x006a, code:
+    /* JADX WARNING: Missing block: B:29:0x006a, code skipped:
             r10 = TAG;
             r11 = new java.lang.StringBuilder();
             r11.append("callHsmService fail: ");
@@ -410,15 +410,17 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
         synchronized (this.mVirusScanResult) {
             if (this.mVirusScanResult.containsKey(packageName)) {
                 int type = ((Integer) this.mVirusScanResult.get(packageName)).intValue();
-                if (type == 303 || type == 305) {
-                    str = TAG;
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("find Malicious App:");
-                    stringBuilder.append(packageName);
-                    Slog.i(str, stringBuilder.toString());
-                    return true;
+                if (type != 303) {
+                    if (type != 305) {
+                        return false;
+                    }
                 }
-                return false;
+                str = TAG;
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("find Malicious App:");
+                stringBuilder.append(packageName);
+                Slog.i(str, stringBuilder.toString());
+                return true;
             }
         }
         long costTime = SystemClock.uptimeMillis() - start;
@@ -669,19 +671,19 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0059, code:
+    /* JADX WARNING: Missing block: B:27:0x0059, code skipped:
             if (r7 != 0) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:28:0x005b, code:
+    /* JADX WARNING: Missing block: B:28:0x005b, code skipped:
             if (r6 != 0) goto L_0x005e;
      */
-    /* JADX WARNING: Missing block: B:29:0x005d, code:
+    /* JADX WARNING: Missing block: B:29:0x005d, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:31:0x0060, code:
+    /* JADX WARNING: Missing block: B:31:0x0060, code skipped:
             if (HW_DEBUG == false) goto L_0x00b0;
      */
-    /* JADX WARNING: Missing block: B:32:0x0062, code:
+    /* JADX WARNING: Missing block: B:32:0x0062, code skipped:
             r0 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("check Intent, type: ");
@@ -702,122 +704,122 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
             r2.append(r14);
             android.util.Slog.d(r0, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:33:0x00b0, code:
+    /* JADX WARNING: Missing block: B:33:0x00b0, code skipped:
             r0 = false;
             r2 = false;
      */
-    /* JADX WARNING: Missing block: B:34:0x00b3, code:
+    /* JADX WARNING: Missing block: B:34:0x00b3, code skipped:
             if (r7 != 1) goto L_0x00c3;
      */
-    /* JADX WARNING: Missing block: B:35:0x00b5, code:
+    /* JADX WARNING: Missing block: B:35:0x00b5, code skipped:
             if (r6 != 0) goto L_0x00c2;
      */
-    /* JADX WARNING: Missing block: B:36:0x00b7, code:
+    /* JADX WARNING: Missing block: B:36:0x00b7, code skipped:
             if (r17 == false) goto L_0x00ba;
      */
-    /* JADX WARNING: Missing block: B:38:0x00be, code:
+    /* JADX WARNING: Missing block: B:38:0x00be, code skipped:
             if (isMaliciousApp(r13) == false) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:39:0x00c0, code:
+    /* JADX WARNING: Missing block: B:39:0x00c0, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:40:0x00c2, code:
+    /* JADX WARNING: Missing block: B:40:0x00c2, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:41:0x00c3, code:
+    /* JADX WARNING: Missing block: B:41:0x00c3, code skipped:
             if (r6 != 1) goto L_0x00d3;
      */
-    /* JADX WARNING: Missing block: B:42:0x00c5, code:
+    /* JADX WARNING: Missing block: B:42:0x00c5, code skipped:
             if (r7 != 0) goto L_0x00d2;
      */
-    /* JADX WARNING: Missing block: B:43:0x00c7, code:
+    /* JADX WARNING: Missing block: B:43:0x00c7, code skipped:
             if (r16 == false) goto L_0x00ca;
      */
-    /* JADX WARNING: Missing block: B:45:0x00ce, code:
+    /* JADX WARNING: Missing block: B:45:0x00ce, code skipped:
             if (isMaliciousApp(r10) == false) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:46:0x00d0, code:
+    /* JADX WARNING: Missing block: B:46:0x00d0, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:47:0x00d2, code:
+    /* JADX WARNING: Missing block: B:47:0x00d2, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:49:0x00d4, code:
+    /* JADX WARNING: Missing block: B:49:0x00d4, code skipped:
             if (r7 != 2) goto L_0x00e5;
      */
-    /* JADX WARNING: Missing block: B:50:0x00d6, code:
+    /* JADX WARNING: Missing block: B:50:0x00d6, code skipped:
             if (r6 != 0) goto L_0x00e4;
      */
-    /* JADX WARNING: Missing block: B:51:0x00d8, code:
+    /* JADX WARNING: Missing block: B:51:0x00d8, code skipped:
             if (r17 == false) goto L_0x00db;
      */
-    /* JADX WARNING: Missing block: B:52:0x00db, code:
+    /* JADX WARNING: Missing block: B:52:0x00db, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:53:0x00e0, code:
+    /* JADX WARNING: Missing block: B:53:0x00e0, code skipped:
             if (shouldNotify(r9, r13) == false) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:54:0x00e2, code:
+    /* JADX WARNING: Missing block: B:54:0x00e2, code skipped:
             r2 = true;
      */
-    /* JADX WARNING: Missing block: B:55:0x00e4, code:
+    /* JADX WARNING: Missing block: B:55:0x00e4, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:56:0x00e5, code:
+    /* JADX WARNING: Missing block: B:56:0x00e5, code skipped:
             if (r6 != 2) goto L_0x00ef;
      */
-    /* JADX WARNING: Missing block: B:58:0x00eb, code:
+    /* JADX WARNING: Missing block: B:58:0x00eb, code skipped:
             if (isMaliciousApp(r10) != false) goto L_0x00ee;
      */
-    /* JADX WARNING: Missing block: B:59:0x00ed, code:
+    /* JADX WARNING: Missing block: B:59:0x00ed, code skipped:
             return false;
      */
-    /* JADX WARNING: Missing block: B:60:0x00ee, code:
+    /* JADX WARNING: Missing block: B:60:0x00ee, code skipped:
             r0 = true;
      */
-    /* JADX WARNING: Missing block: B:61:0x00ef, code:
+    /* JADX WARNING: Missing block: B:61:0x00ef, code skipped:
             r18 = r0;
             r0 = r2;
      */
-    /* JADX WARNING: Missing block: B:62:0x00f6, code:
+    /* JADX WARNING: Missing block: B:62:0x00f6, code skipped:
             if (isMaliciousApp(r13) != false) goto L_0x0100;
      */
-    /* JADX WARNING: Missing block: B:64:0x00fc, code:
+    /* JADX WARNING: Missing block: B:64:0x00fc, code skipped:
             if (isMaliciousApp(r10) == false) goto L_0x0101;
      */
-    /* JADX WARNING: Missing block: B:65:0x0100, code:
+    /* JADX WARNING: Missing block: B:65:0x0100, code skipped:
             r1 = true;
      */
-    /* JADX WARNING: Missing block: B:66:0x0101, code:
+    /* JADX WARNING: Missing block: B:66:0x0101, code skipped:
             r5 = r1;
      */
-    /* JADX WARNING: Missing block: B:67:0x0102, code:
+    /* JADX WARNING: Missing block: B:67:0x0102, code skipped:
             if (r5 == false) goto L_0x0119;
      */
-    /* JADX WARNING: Missing block: B:68:0x0104, code:
+    /* JADX WARNING: Missing block: B:68:0x0104, code skipped:
             if (r9 == 1) goto L_0x0119;
      */
-    /* JADX WARNING: Missing block: B:69:0x0106, code:
+    /* JADX WARNING: Missing block: B:69:0x0106, code skipped:
             r20 = r5;
             r21 = r6;
             r22 = r7;
             notifyIntentPrevented(r15, r10, r7, r13, r6, 1);
      */
-    /* JADX WARNING: Missing block: B:70:0x0119, code:
+    /* JADX WARNING: Missing block: B:70:0x0119, code skipped:
             r20 = r5;
             r21 = r6;
             r22 = r7;
      */
-    /* JADX WARNING: Missing block: B:71:0x011f, code:
+    /* JADX WARNING: Missing block: B:71:0x011f, code skipped:
             if (r0 == false) goto L_0x012d;
      */
-    /* JADX WARNING: Missing block: B:72:0x0121, code:
+    /* JADX WARNING: Missing block: B:72:0x0121, code skipped:
             notifyIntentPrevented(r15, r10, r22, r13, r21, false);
      */
-    /* JADX WARNING: Missing block: B:73:0x012d, code:
+    /* JADX WARNING: Missing block: B:73:0x012d, code skipped:
             if (r18 == false) goto L_0x018c;
      */
-    /* JADX WARNING: Missing block: B:74:0x012f, code:
+    /* JADX WARNING: Missing block: B:74:0x012f, code skipped:
             r1 = TAG;
             r2 = new java.lang.StringBuilder();
             r2.append("prevent Intent, type: ");
@@ -840,12 +842,12 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
             r2.append(r14);
             android.util.Slog.i(r1, r2.toString());
      */
-    /* JADX WARNING: Missing block: B:75:0x018c, code:
+    /* JADX WARNING: Missing block: B:75:0x018c, code skipped:
             r5 = r20;
             r4 = r21;
             r3 = r22;
      */
-    /* JADX WARNING: Missing block: B:76:0x0192, code:
+    /* JADX WARNING: Missing block: B:76:0x0192, code skipped:
             return r18;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1005,7 +1007,7 @@ public class TrustSpaceManagerService extends Stub implements IHwSecurityPlugin 
         if (!calledFromValidUser()) {
             return new ArrayList(0);
         }
-        List<String> intentProtectedApps;
+        List intentProtectedApps;
         synchronized (this) {
             intentProtectedApps = this.mSettings.getIntentProtectedApps(flags);
         }

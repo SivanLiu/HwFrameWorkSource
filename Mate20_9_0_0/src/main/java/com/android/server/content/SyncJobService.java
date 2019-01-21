@@ -120,17 +120,19 @@ public class SyncJobService extends JobService {
                 stringBuilder3.append(" start uptime not found:  params=");
                 stringBuilder3.append(jobParametersToString(params));
                 wtf(stringBuilder3.toString());
-            } else if (runtime > 60000 && readyToSync && !this.mStartedSyncs.get(jobId)) {
-                stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("Job ");
-                stringBuilder3.append(jobId);
-                stringBuilder3.append(" didn't start:  startUptime=");
-                stringBuilder3.append(startUptime);
-                stringBuilder3.append(" nowUptime=");
-                stringBuilder3.append(nowUptime);
-                stringBuilder3.append(" params=");
-                stringBuilder3.append(jobParametersToString(params));
-                wtf(stringBuilder3.toString());
+            } else if (runtime > 60000) {
+                if (readyToSync && !this.mStartedSyncs.get(jobId)) {
+                    stringBuilder3 = new StringBuilder();
+                    stringBuilder3.append("Job ");
+                    stringBuilder3.append(jobId);
+                    stringBuilder3.append(" didn't start:  startUptime=");
+                    stringBuilder3.append(startUptime);
+                    stringBuilder3.append(" nowUptime=");
+                    stringBuilder3.append(nowUptime);
+                    stringBuilder3.append(" params=");
+                    stringBuilder3.append(jobParametersToString(params));
+                    wtf(stringBuilder3.toString());
+                }
             }
             this.mStartedSyncs.delete(jobId);
             this.mJobStartUptimes.delete(jobId);

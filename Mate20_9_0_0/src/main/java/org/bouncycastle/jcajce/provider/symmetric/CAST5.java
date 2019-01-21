@@ -49,9 +49,9 @@ public final class CAST5 {
         private int keyLength = 128;
 
         protected byte[] engineGetEncoded() {
-            Object obj = new byte[this.iv.length];
-            System.arraycopy(this.iv, 0, obj, 0, this.iv.length);
-            return obj;
+            byte[] bArr = new byte[this.iv.length];
+            System.arraycopy(this.iv, 0, bArr, 0, this.iv.length);
+            return bArr;
         }
 
         protected byte[] engineGetEncoded(String str) throws IOException {

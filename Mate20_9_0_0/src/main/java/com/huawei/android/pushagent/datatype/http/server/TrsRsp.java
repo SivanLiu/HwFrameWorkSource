@@ -1,15 +1,14 @@
 package com.huawei.android.pushagent.datatype.http.server;
 
 import android.text.TextUtils;
-import com.huawei.android.pushagent.utils.a.c;
-import com.huawei.android.pushagent.utils.c.a;
+import com.huawei.android.pushagent.utils.d.a;
 import java.util.Map;
 
 public class TrsRsp {
     private Map<String, Object> cfgs;
 
     public TrsRsp(String str) {
-        this.cfgs = a.bc(str);
+        this.cfgs = a.us(str);
     }
 
     public boolean isValid() {
@@ -72,9 +71,9 @@ public class TrsRsp {
     }
 
     public void encryptRsaPubKey() {
-        CharSequence k = c.k(getRsaPubKey());
-        if (!TextUtils.isEmpty(k)) {
-            setValue("publicKey", k);
+        String vu = com.huawei.android.pushagent.utils.e.a.vu(getRsaPubKey());
+        if (!TextUtils.isEmpty(vu)) {
+            setValue("publicKey", vu);
         }
     }
 
@@ -83,9 +82,9 @@ public class TrsRsp {
     }
 
     public void encryptConnectionId() {
-        CharSequence k = c.k(getConnectionId());
-        if (!TextUtils.isEmpty(k)) {
-            setValue("connId", k);
+        String vu = com.huawei.android.pushagent.utils.e.a.vu(getConnectionId());
+        if (!TextUtils.isEmpty(vu)) {
+            setValue("connId", vu);
         }
     }
 
@@ -98,9 +97,9 @@ public class TrsRsp {
     }
 
     public void encryptDeviceId() {
-        CharSequence k = c.k(getDeviceId());
-        if (!TextUtils.isEmpty(k)) {
-            setValue("pushDeviceId", k);
+        String vu = com.huawei.android.pushagent.utils.e.a.vu(getDeviceId());
+        if (!TextUtils.isEmpty(vu)) {
+            setValue("pushDeviceId", vu);
         }
     }
 

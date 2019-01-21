@@ -90,7 +90,7 @@ final class CertCompatSettings {
         this.mFoundWhiteListFile = this.mWhiteListFilename.exists();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x0037 A:{SYNTHETIC, Splitter: B:15:0x0037} */
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x0037 A:{SYNTHETIC, Splitter:B:15:0x0037} */
     /* JADX WARNING: Removed duplicated region for block: B:13:0x0032  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean loadTrustedCerts(File file) {
@@ -190,9 +190,9 @@ final class CertCompatSettings {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0037 A:{SYNTHETIC, Splitter: B:17:0x0037} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x002a A:{SYNTHETIC, Splitter: B:12:0x002a} */
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0037 A:{SYNTHETIC, Splitter:B:17:0x0037} */
+    /* JADX WARNING: Removed duplicated region for block: B:12:0x002a A:{SYNTHETIC, Splitter:B:12:0x002a} */
+    /* JADX WARNING: Missing block: B:35:?, code skipped:
             r0.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -294,9 +294,9 @@ final class CertCompatSettings {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:60:0x010f A:{SYNTHETIC, Splitter: B:60:0x010f} */
-    /* JADX WARNING: Removed duplicated region for block: B:43:0x00c5 A:{SYNTHETIC, Splitter: B:43:0x00c5} */
-    /* JADX WARNING: Removed duplicated region for block: B:37:0x00b6  */
+    /* JADX WARNING: Removed duplicated region for block: B:64:0x010f A:{SYNTHETIC, Splitter:B:64:0x010f} */
+    /* JADX WARNING: Removed duplicated region for block: B:47:0x00c5 A:{SYNTHETIC, Splitter:B:47:0x00c5} */
+    /* JADX WARNING: Removed duplicated region for block: B:41:0x00b6  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     boolean readCertCompatPackages() {
         int type;

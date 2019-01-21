@@ -21,13 +21,13 @@ public class RecipientKeyIdentifier extends ASN1Object {
         this.other = otherKeyAttribute;
     }
 
-    /* JADX WARNING: Missing block: B:5:0x0029, code:
+    /* JADX WARNING: Missing block: B:5:0x0029, code skipped:
             r3.other = org.bouncycastle.asn1.cms.OtherKeyAttribute.getInstance(r4.getObjectAt(2));
      */
-    /* JADX WARNING: Missing block: B:6:0x0033, code:
+    /* JADX WARNING: Missing block: B:6:0x0033, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:10:0x0046, code:
+    /* JADX WARNING: Missing block: B:10:0x0046, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

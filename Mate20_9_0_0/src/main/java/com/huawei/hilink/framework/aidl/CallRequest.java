@@ -159,7 +159,7 @@ public class CallRequest implements Parcelable {
         dest.writeInt(this.remotePort);
     }
 
-    /* JADX WARNING: Missing block: B:40:0x0075, code:
+    /* JADX WARNING: Missing block: B:40:0x0075, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

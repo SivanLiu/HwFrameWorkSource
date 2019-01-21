@@ -23,13 +23,13 @@ public class ISO9796d1Encoding implements AsymmetricBlockCipher {
     }
 
     private static byte[] convertOutputDecryptOnly(BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         if (toByteArray[0] != (byte) 0) {
             return toByteArray;
         }
-        Object obj = new byte[(toByteArray.length - 1)];
-        System.arraycopy(toByteArray, 1, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[(toByteArray.length - 1)];
+        System.arraycopy(toByteArray, 1, bArr, 0, bArr.length);
+        return bArr;
     }
 
     private byte[] decodeBlock(byte[] bArr, int i, int i2) throws InvalidCipherTextException {
@@ -78,7 +78,7 @@ public class ISO9796d1Encoding implements AsymmetricBlockCipher {
 
     private byte[] encodeBlock(byte[] bArr, int i, int i2) throws InvalidCipherTextException {
         int length;
-        Object obj = new byte[((this.bitSize + 7) / 8)];
+        byte[] bArr2 = new byte[((this.bitSize + 7) / 8)];
         int i3 = 1;
         int i4 = this.padBits + 1;
         int i5 = (this.bitSize + 13) / 16;
@@ -86,30 +86,30 @@ public class ISO9796d1Encoding implements AsymmetricBlockCipher {
         while (i6 < i5) {
             if (i6 > i5 - i2) {
                 int i7 = i5 - i6;
-                System.arraycopy(bArr, (i + i2) - i7, obj, obj.length - i5, i7);
+                System.arraycopy(bArr, (i + i2) - i7, bArr2, bArr2.length - i5, i7);
             } else {
-                System.arraycopy(bArr, i, obj, obj.length - (i6 + i2), i2);
+                System.arraycopy(bArr, i, bArr2, bArr2.length - (i6 + i2), i2);
             }
             i6 += i2;
         }
-        for (length = obj.length - (2 * i5); length != obj.length; length += 2) {
-            byte b = obj[(obj.length - i5) + (length / 2)];
-            obj[length] = (byte) ((shadows[(b & 255) >>> 4] << 4) | shadows[b & 15]);
-            obj[length + 1] = b;
+        for (length = bArr2.length - (2 * i5); length != bArr2.length; length += 2) {
+            byte b = bArr2[(bArr2.length - i5) + (length / 2)];
+            bArr2[length] = (byte) ((shadows[(b & 255) >>> 4] << 4) | shadows[b & 15]);
+            bArr2[length + 1] = b;
         }
-        length = obj.length - (2 * i2);
-        obj[length] = (byte) (obj[length] ^ i4);
-        obj[obj.length - 1] = (byte) ((obj[obj.length - 1] << 4) | 6);
+        length = bArr2.length - (2 * i2);
+        bArr2[length] = (byte) (bArr2[length] ^ i4);
+        bArr2[bArr2.length - 1] = (byte) ((bArr2[bArr2.length - 1] << 4) | 6);
         length = 8 - ((this.bitSize - 1) % 8);
         if (length != 8) {
-            obj[0] = (byte) (obj[0] & (255 >>> length));
-            obj[0] = (byte) ((128 >>> length) | obj[0]);
+            bArr2[0] = (byte) (bArr2[0] & (255 >>> length));
+            bArr2[0] = (byte) ((128 >>> length) | bArr2[0]);
             i3 = 0;
         } else {
-            obj[0] = null;
-            obj[1] = (byte) (obj[1] | 128);
+            bArr2[0] = (byte) 0;
+            bArr2[1] = (byte) (bArr2[1] | 128);
         }
-        return this.engine.processBlock(obj, i3, obj.length - i3);
+        return this.engine.processBlock(bArr2, i3, bArr2.length - i3);
     }
 
     public int getInputBlockSize() {

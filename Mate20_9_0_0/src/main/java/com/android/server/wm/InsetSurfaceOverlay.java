@@ -60,8 +60,7 @@ class InsetSurfaceOverlay {
         Canvas c = null;
         try {
             c = this.mSurface.lockCanvas(null);
-        } catch (IllegalArgumentException e) {
-        } catch (OutOfResourcesException e2) {
+        } catch (OutOfResourcesException | IllegalArgumentException e) {
         }
         if (c != null) {
             c.drawColor(-3091492, Mode.SRC);

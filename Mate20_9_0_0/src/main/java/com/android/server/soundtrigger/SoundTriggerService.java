@@ -239,8 +239,13 @@ public class SoundTriggerService extends SystemService {
             int totalOperationsInLastDay;
             synchronized (this.mLock) {
                 totalOperationsInLastDay = 0;
-                for (int i = 0; i < 24; i++) {
-                    totalOperationsInLastDay += this.mNumOps[i];
+                int i = 0;
+                while (i < 24) {
+                    try {
+                        totalOperationsInLastDay += this.mNumOps[i];
+                        i++;
+                    } catch (Throwable th) {
+                    }
                 }
             }
             return totalOperationsInLastDay;
@@ -469,60 +474,63 @@ public class SoundTriggerService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:30:0x00e4, code:
+        /* JADX WARNING: Missing block: B:31:0x00e4, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private void runOrAddOperation(Operation op) {
             synchronized (this.mRemoteServiceLock) {
-                if (this.mIsDestroyed || this.mDestroyOnceRunningOpsDone) {
-                    String str = SoundTriggerService.TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append(this.mPuuid);
-                    stringBuilder.append(": Dropped operation as already destroyed or marked for destruction");
-                    Slog.w(str, stringBuilder.toString());
-                    op.drop();
-                } else if (this.mService == null) {
-                    this.mPendingOps.add(op);
-                    if (!this.mIsBound) {
-                        bind();
-                    }
-                } else {
-                    long currentTime = System.nanoTime();
-                    this.mNumOps.clearOldOps(currentTime);
-                    int opsAllowed = Global.getInt(SoundTriggerService.this.mContext.getContentResolver(), "max_sound_trigger_detection_service_ops_per_day", HwBootFail.STAGE_BOOT_SUCCESS);
-                    int opsAdded = this.mNumOps.getOpsAdded();
-                    this.mNumOps.addOp(currentTime);
-                    int opId = this.mNumTotalOpsPerformed;
-                    do {
-                        this.mNumTotalOpsPerformed++;
-                    } while (this.mRunningOpIds.contains(Integer.valueOf(opId)));
-                    try {
-                        String str2 = SoundTriggerService.TAG;
-                        StringBuilder stringBuilder2 = new StringBuilder();
-                        stringBuilder2.append(this.mPuuid);
-                        stringBuilder2.append(": runOp ");
-                        stringBuilder2.append(opId);
-                        Slog.v(str2, stringBuilder2.toString());
-                        op.run(opId, this.mService);
-                        this.mRunningOpIds.add(Integer.valueOf(opId));
-                    } catch (Exception e) {
-                        String str3 = SoundTriggerService.TAG;
-                        StringBuilder stringBuilder3 = new StringBuilder();
-                        stringBuilder3.append(this.mPuuid);
-                        stringBuilder3.append(": Could not run operation ");
-                        stringBuilder3.append(opId);
-                        Slog.e(str3, stringBuilder3.toString(), e);
-                    }
-                    if (!this.mPendingOps.isEmpty() || !this.mRunningOpIds.isEmpty()) {
-                        this.mHandler.removeMessages(1);
-                        this.mHandler.sendMessageDelayed(PooledLambda.obtainMessage(-$$Lambda$SoundTriggerService$RemoteSoundTriggerDetectionService$wfDlqQ7aPvu9qZCZ24jJu4tfUMY.INSTANCE, this).setWhat(1), Global.getLong(SoundTriggerService.this.mContext.getContentResolver(), "sound_trigger_detection_service_op_timeout", JobStatus.NO_LATEST_RUNTIME));
-                    } else if (this.mDestroyOnceRunningOpsDone) {
-                        destroy();
-                    } else {
-                        disconnectLocked();
+                if (!this.mIsDestroyed) {
+                    if (!this.mDestroyOnceRunningOpsDone) {
+                        if (this.mService == null) {
+                            this.mPendingOps.add(op);
+                            if (!this.mIsBound) {
+                                bind();
+                            }
+                        } else {
+                            long currentTime = System.nanoTime();
+                            this.mNumOps.clearOldOps(currentTime);
+                            int opsAllowed = Global.getInt(SoundTriggerService.this.mContext.getContentResolver(), "max_sound_trigger_detection_service_ops_per_day", HwBootFail.STAGE_BOOT_SUCCESS);
+                            int opsAdded = this.mNumOps.getOpsAdded();
+                            this.mNumOps.addOp(currentTime);
+                            int opId = this.mNumTotalOpsPerformed;
+                            do {
+                                this.mNumTotalOpsPerformed++;
+                            } while (this.mRunningOpIds.contains(Integer.valueOf(opId)));
+                            try {
+                                String str = SoundTriggerService.TAG;
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append(this.mPuuid);
+                                stringBuilder.append(": runOp ");
+                                stringBuilder.append(opId);
+                                Slog.v(str, stringBuilder.toString());
+                                op.run(opId, this.mService);
+                                this.mRunningOpIds.add(Integer.valueOf(opId));
+                            } catch (Exception e) {
+                                String str2 = SoundTriggerService.TAG;
+                                StringBuilder stringBuilder2 = new StringBuilder();
+                                stringBuilder2.append(this.mPuuid);
+                                stringBuilder2.append(": Could not run operation ");
+                                stringBuilder2.append(opId);
+                                Slog.e(str2, stringBuilder2.toString(), e);
+                            }
+                            if (!this.mPendingOps.isEmpty() || !this.mRunningOpIds.isEmpty()) {
+                                this.mHandler.removeMessages(1);
+                                this.mHandler.sendMessageDelayed(PooledLambda.obtainMessage(-$$Lambda$SoundTriggerService$RemoteSoundTriggerDetectionService$wfDlqQ7aPvu9qZCZ24jJu4tfUMY.INSTANCE, this).setWhat(1), Global.getLong(SoundTriggerService.this.mContext.getContentResolver(), "sound_trigger_detection_service_op_timeout", JobStatus.NO_LATEST_RUNTIME));
+                            } else if (this.mDestroyOnceRunningOpsDone) {
+                                destroy();
+                            } else {
+                                disconnectLocked();
+                            }
+                        }
                     }
                 }
+                String str3 = SoundTriggerService.TAG;
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append(this.mPuuid);
+                stringBuilder3.append(": Dropped operation as already destroyed or marked for destruction");
+                Slog.w(str3, stringBuilder3.toString());
+                op.drop();
             }
         }
 

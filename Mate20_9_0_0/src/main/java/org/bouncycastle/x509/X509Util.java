@@ -15,7 +15,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -164,7 +163,7 @@ class X509Util {
 
     static Iterator getAlgNames() {
         Enumeration keys = algorithms.keys();
-        List arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         while (keys.hasMoreElements()) {
             arrayList.add(keys.nextElement());
         }

@@ -40,6 +40,8 @@ import com.android.server.wifi.hotspot2.anqp.Constants;
 import com.android.server.wifi.hotspot2.anqp.Constants.ANQPElementType;
 import com.android.server.wifi.util.NativeUtil;
 import com.android.server.wifi.util.ScanResultUtil;
+import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -104,21 +106,6 @@ public class SupplicantStaIfaceHal {
             this.mIfaceName = ifaceName;
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:11:0x002c A:{Splitter: B:2:0x0007, Catch:{ IOException -> 0x002c, IOException -> 0x002c }, ExcHandler: java.io.IOException (r1_9 'e' java.lang.Exception)} */
-        /* JADX WARNING: Missing block: B:11:0x002c, code:
-            r1 = move-exception;
-     */
-        /* JADX WARNING: Missing block: B:12:0x002d, code:
-            r2 = com.android.server.wifi.SupplicantStaIfaceHal.TAG;
-            r3 = new java.lang.StringBuilder();
-            r3.append("Failed parsing ANQP element payload: ");
-            r3.append(r6);
-            android.util.Log.e(r2, r3.toString(), r1);
-     */
-        /* JADX WARNING: Missing block: B:14:0x0045, code:
-            return null;
-     */
-        /* Code decompiled incorrectly, please refer to instructions dump. */
         private ANQPElement parseAnqpElement(ANQPElementType infoID, ArrayList<Byte> payload) {
             ANQPElement parseElement;
             synchronized (SupplicantStaIfaceHal.this.mLock) {
@@ -128,27 +115,34 @@ public class SupplicantStaIfaceHal {
                     } else {
                         parseElement = ANQPParser.parseHS20Element(infoID, ByteBuffer.wrap(NativeUtil.byteArrayFromArrayList(payload)));
                     }
-                } catch (Exception e) {
+                } catch (IOException | BufferUnderflowException e) {
+                    String str = SupplicantStaIfaceHal.TAG;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Failed parsing ANQP element payload: ");
+                    stringBuilder.append(infoID);
+                    Log.e(str, stringBuilder.toString(), e);
+                    return null;
+                } catch (Throwable th) {
                 }
             }
             return parseElement;
         }
 
-        /* JADX WARNING: Missing block: B:10:0x001a, code:
-            return;
-     */
-        /* JADX WARNING: Missing block: B:13:0x001e, code:
+        /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private void addAnqpElementToMap(Map<ANQPElementType, ANQPElement> elementsMap, ANQPElementType infoID, ArrayList<Byte> payload) {
             synchronized (SupplicantStaIfaceHal.this.mLock) {
                 if (payload != null) {
-                    if (!payload.isEmpty()) {
-                        ANQPElement element = parseAnqpElement(infoID, payload);
-                        if (element != null) {
-                            elementsMap.put(infoID, element);
+                    try {
+                        if (!payload.isEmpty()) {
+                            ANQPElement element = parseAnqpElement(infoID, payload);
+                            if (element != null) {
+                                elementsMap.put(infoID, element);
+                            }
                         }
+                    } finally {
                     }
                 }
             }
@@ -641,6 +635,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(e);
                 Log.e(str, stringBuilder.toString());
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -840,6 +835,7 @@ public class SupplicantStaIfaceHal {
                 Log.e(str2, stringBuilder2.toString());
                 handleRemoteException(e, "removeInterface");
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -930,6 +926,7 @@ public class SupplicantStaIfaceHal {
             } catch (NoSuchElementException e) {
                 Log.e(TAG, "Failed to get ISupplicant", e);
                 return null;
+            } catch (Throwable th) {
             }
         }
         return service;
@@ -943,6 +940,7 @@ public class SupplicantStaIfaceHal {
             } catch (NoSuchElementException e) {
                 Log.e(TAG, "Failed to get ISupplicant", e);
                 return null;
+            } catch (Throwable th) {
             }
         }
         return castFrom;
@@ -980,6 +978,7 @@ public class SupplicantStaIfaceHal {
                 Log.e(str, stringBuilder.toString());
                 handleRemoteException(e, "getSupplicantMockable");
                 return false;
+            } catch (Throwable th) {
             }
         }
         return z;
@@ -997,7 +996,7 @@ public class SupplicantStaIfaceHal {
         return (WifiConfiguration) this.mCurrentNetworkLocalConfigs.get(ifaceName);
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0063, code:
+    /* JADX WARNING: Missing block: B:25:0x0063, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1024,7 +1023,7 @@ public class SupplicantStaIfaceHal {
                 Log.e(str, stringBuilder.toString(), e);
             }
             if (saveSuccess) {
-                Pair<SupplicantStaNetworkHal, WifiConfiguration> pair = new Pair(network, new WifiConfiguration(config));
+                Pair pair = new Pair(network, new WifiConfiguration(config));
                 return pair;
             }
             StringBuilder stringBuilder2 = new StringBuilder();
@@ -1075,14 +1074,16 @@ public class SupplicantStaIfaceHal {
                 }
             }
             SupplicantStaNetworkHal networkHandle = checkSupplicantStaNetworkAndLogFailure(ifaceName, "connectToNetwork");
-            if (networkHandle == null || !networkHandle.select()) {
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("Failed to select network configuration: ");
-                stringBuilder.append(config.configKey());
-                loge(stringBuilder.toString());
-                return false;
+            if (networkHandle != null) {
+                if (networkHandle.select()) {
+                    return true;
+                }
             }
-            return true;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("Failed to select network configuration: ");
+            stringBuilder.append(config.configKey());
+            loge(stringBuilder.toString());
+            return false;
         }
     }
 
@@ -1108,18 +1109,20 @@ public class SupplicantStaIfaceHal {
             stringBuilder.append(")");
             logd(stringBuilder.toString());
             SupplicantStaNetworkHal networkHandle = checkSupplicantStaNetworkAndLogFailure(ifaceName, "roamToNetwork");
-            if (networkHandle == null || !networkHandle.setBssid(str)) {
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("Failed to set new bssid on network: ");
-                stringBuilder2.append(config.configKey());
-                loge(stringBuilder2.toString());
-                return false;
-            } else if (reassociate(ifaceName)) {
-                return true;
-            } else {
-                loge("Failed to trigger reassociate");
-                return false;
+            if (networkHandle != null) {
+                if (networkHandle.setBssid(str)) {
+                    if (reassociate(ifaceName)) {
+                        return true;
+                    }
+                    loge("Failed to trigger reassociate");
+                    return false;
+                }
             }
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Failed to set new bssid on network: ");
+            stringBuilder2.append(config.configKey());
+            loge(stringBuilder2.toString());
+            return false;
         }
     }
 
@@ -1469,7 +1472,7 @@ public class SupplicantStaIfaceHal {
             } catch (RemoteException e) {
                 handleRemoteException(e, "listNetworks");
             }
-            ArrayList<Integer> arrayList = (ArrayList) networkIdList.value;
+            ArrayList arrayList = (ArrayList) networkIdList.value;
             return arrayList;
         }
     }
@@ -1503,17 +1506,19 @@ public class SupplicantStaIfaceHal {
             StringBuilder stringBuilder;
             try {
                 Matcher match = WPS_DEVICE_TYPE_PATTERN.matcher(typeStr);
-                if (match.find() && match.groupCount() == 3) {
-                    short categ = Short.parseShort(match.group(1));
-                    byte[] oui = NativeUtil.hexStringToByteArray(match.group(2));
-                    short subCateg = Short.parseShort(match.group(3));
-                    byte[] bytes = new byte[8];
-                    ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
-                    byteBuffer.putShort(categ);
-                    byteBuffer.put(oui);
-                    byteBuffer.putShort(subCateg);
-                    boolean wpsDeviceType = setWpsDeviceType(ifaceName, bytes);
-                    return wpsDeviceType;
+                if (match.find()) {
+                    if (match.groupCount() == 3) {
+                        short categ = Short.parseShort(match.group(1));
+                        byte[] oui = NativeUtil.hexStringToByteArray(match.group(2));
+                        short subCateg = Short.parseShort(match.group(3));
+                        byte[] bytes = new byte[8];
+                        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
+                        byteBuffer.putShort(categ);
+                        byteBuffer.put(oui);
+                        byteBuffer.putShort(subCateg);
+                        boolean wpsDeviceType = setWpsDeviceType(ifaceName, bytes);
+                        return wpsDeviceType;
+                    }
                 }
                 str = TAG;
                 stringBuilder = new StringBuilder();
@@ -1528,6 +1533,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(typeStr);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
     }
@@ -1725,6 +1731,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(macAddress);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return initiateTdlsDiscover;
@@ -1759,6 +1766,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(macAddress);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return initiateTdlsSetup;
@@ -1793,6 +1801,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(macAddress);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return initiateTdlsTeardown;
@@ -1827,6 +1836,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(bssid);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return initiateAnqpQuery;
@@ -1861,6 +1871,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(bssid);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return initiateHs20IconQuery;
@@ -2125,7 +2136,7 @@ public class SupplicantStaIfaceHal {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0036, code:
+    /* JADX WARNING: Missing block: B:17:0x0036, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2177,6 +2188,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(bssidStr);
                 Log.e(str, stringBuilder.toString(), e);
                 return false;
+            } catch (Throwable th) {
             }
         }
         return startWpsPbc;
@@ -2231,6 +2243,7 @@ public class SupplicantStaIfaceHal {
                 stringBuilder.append(bssidStr);
                 Log.e(str, stringBuilder.toString(), e);
                 return null;
+            } catch (Throwable th) {
             }
         }
         return startWpsPinDisplay;
@@ -2340,11 +2353,15 @@ public class SupplicantStaIfaceHal {
         synchronized (this.mLock) {
             boolean concurrencyPriority;
             if (isStaHigherPriority) {
-                concurrencyPriority = setConcurrencyPriority(0);
+                try {
+                    concurrencyPriority = setConcurrencyPriority(0);
+                    return concurrencyPriority;
+                } catch (Throwable th) {
+                }
+            } else {
+                concurrencyPriority = setConcurrencyPriority(1);
                 return concurrencyPriority;
             }
-            concurrencyPriority = setConcurrencyPriority(1);
-            return concurrencyPriority;
         }
     }
 
@@ -2681,6 +2698,7 @@ public class SupplicantStaIfaceHal {
                 Log.e(str, stringBuilder.toString());
                 supplicantServiceDiedHandler();
                 return false;
+            } catch (Throwable th) {
             }
         }
         return z;
@@ -2694,6 +2712,7 @@ public class SupplicantStaIfaceHal {
             } catch (NoSuchElementException e) {
                 Log.e(TAG, "Failed to get vendor V2_0 ISupplicant", e);
                 return null;
+            } catch (Throwable th) {
             }
         }
         return castFrom;

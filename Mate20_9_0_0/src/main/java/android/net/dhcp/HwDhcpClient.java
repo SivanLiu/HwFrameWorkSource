@@ -101,11 +101,11 @@ public class HwDhcpClient extends DhcpClient {
 
     public void sendDhcpOfferPacket(Context context, DhcpPacket dhcpPacket) {
         if (dhcpPacket != null && (dhcpPacket instanceof DhcpOfferPacket)) {
-            Intent intent = new Intent("com.hw.wifipro.action.DHCP_OFFER_INFO");
+            Intent intent = new Intent(ACTION_DHCP_OFFER_INFO);
             String dhcpResultsStr = dhcpResults2String(dhcpPacket.toDhcpResults());
             if (dhcpResultsStr != null) {
                 intent.setFlags(67108864);
-                intent.putExtra("com.hw.wifipro.FLAG_DHCP_OFFER_INFO", dhcpResultsStr);
+                intent.putExtra(FLAG_DHCP_OFFER_INFO, dhcpResultsStr);
                 context.sendBroadcastAsUser(intent, UserHandle.ALL);
             }
         }
@@ -121,7 +121,7 @@ public class HwDhcpClient extends DhcpClient {
         stringBuilder.append("|");
         lastDhcpResults.append(stringBuilder.toString());
         stringBuilder = new StringBuilder();
-        stringBuilder.append(dhcpResults.domains == null ? "" : dhcpResults.domains);
+        stringBuilder.append(dhcpResults.domains == null ? BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS : dhcpResults.domains);
         stringBuilder.append("|");
         lastDhcpResults.append(stringBuilder.toString());
         stringBuilder = new StringBuilder();
@@ -141,7 +141,7 @@ public class HwDhcpClient extends DhcpClient {
         stringBuilder.append("|");
         lastDhcpResults.append(stringBuilder.toString());
         stringBuilder = new StringBuilder();
-        stringBuilder.append(dhcpResults.gateway != null ? dhcpResults.gateway.getHostAddress() : "");
+        stringBuilder.append(dhcpResults.gateway != null ? dhcpResults.gateway.getHostAddress() : BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
         stringBuilder.append("|");
         lastDhcpResults.append(stringBuilder.toString());
         Iterator it = dhcpResults.dnsServers.iterator();
@@ -167,7 +167,7 @@ public class HwDhcpClient extends DhcpClient {
         removeDhcpResultsInfoCache();
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0079, code:
+    /* JADX WARNING: Missing block: B:26:0x0079, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -191,11 +191,11 @@ public class HwDhcpClient extends DhcpClient {
 
     public void notifyInvalidDhcpOfferRcvd(Context context, DhcpResults offer) {
         if (offer != null) {
-            Intent intent = new Intent("com.hw.wifipro.action.INVALID_DHCP_OFFER_RCVD");
+            Intent intent = new Intent(ACTION_INVALID_DHCP_OFFER_RCVD);
             String dhcpResultsStr = dhcpResults2String(offer);
             if (dhcpResultsStr != null) {
                 intent.setFlags(67108864);
-                intent.putExtra("com.hw.wifipro.FLAG_DHCP_OFFER_INFO", dhcpResultsStr);
+                intent.putExtra(FLAG_DHCP_OFFER_INFO, dhcpResultsStr);
                 context.sendBroadcastAsUser(intent, UserHandle.ALL);
             }
         }

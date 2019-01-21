@@ -24,9 +24,9 @@ public class AiModelReader {
                     DSLog.e("Failed to close EfsRwChannel.", new Object[0]);
                 }
             }
-        } catch (Throwable e3) {
+        } catch (UnsatisfiedLinkError e3) {
             e = e3;
-        } catch (Throwable e32) {
+        } catch (EfsException e32) {
             e = e32;
         }
         return read;

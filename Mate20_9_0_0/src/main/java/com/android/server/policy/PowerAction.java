@@ -11,7 +11,7 @@ public final class PowerAction extends SinglePressAction implements LongPressAct
     private final WindowManagerFuncs mWindowManagerFuncs;
 
     public PowerAction(Context context, WindowManagerFuncs windowManagerFuncs) {
-        super(17301552, 17040128);
+        super(17301552, 17040129);
         this.mContext = context;
         this.mWindowManagerFuncs = windowManagerFuncs;
     }

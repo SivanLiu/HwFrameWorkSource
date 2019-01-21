@@ -276,7 +276,7 @@ public class HwArbitrationCallbackImpl implements IMpLinkCallback, IHwAPPQoECall
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0058, code:
+    /* JADX WARNING: Missing block: B:15:0x0058, code skipped:
             if (r0 != com.android.server.hidata.appqoe.HwAPPQoEUtils.APP_TYPE_STREAMING) goto L_0x00a8;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -424,7 +424,7 @@ public class HwArbitrationCallbackImpl implements IMpLinkCallback, IHwAPPQoECall
         }
         boolean z = true;
         if (1 == this.isFullInfo) {
-            if (!(this.isTargetNetworkGood && isGood)) {
+            if (!this.isTargetNetworkGood || !isGood) {
                 z = false;
             }
             this.isTargetNetworkGood = z;

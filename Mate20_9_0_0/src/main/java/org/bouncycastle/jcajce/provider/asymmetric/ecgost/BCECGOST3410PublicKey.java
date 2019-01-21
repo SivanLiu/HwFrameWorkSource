@@ -63,12 +63,12 @@ public class BCECGOST3410PublicKey implements ECPublicKey, org.bouncycastle.jce.
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:6:0x0035 in {2, 4, 5} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -89,15 +89,12 @@ public class BCECGOST3410PublicKey implements ECPublicKey, org.bouncycastle.jce.
         r1.algorithm = r2;
         r1.ecPublicKey = r3;
         if (r4 != 0) goto L_0x0024;
-    L_0x0011:
         r2 = r0.getCurve();
         r3 = r0.getSeed();
         r2 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertCurve(r2, r3);
         r2 = r1.createSpec(r2, r0);
-    L_0x0021:
         r1.ecSpec = r2;
         return;
-    L_0x0024:
         r2 = r4.getCurve();
         r3 = r4.getSeed();
         r2 = org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util.convertCurve(r2, r3);
@@ -151,12 +148,12 @@ public class BCECGOST3410PublicKey implements ECPublicKey, org.bouncycastle.jce.
     }
 
     private void extractBytes(byte[] bArr, int i, BigInteger bigInteger) {
-        Object toByteArray = bigInteger.toByteArray();
+        byte[] toByteArray = bigInteger.toByteArray();
         int i2 = 0;
         if (toByteArray.length < 32) {
-            Object obj = new byte[32];
-            System.arraycopy(toByteArray, 0, obj, obj.length - toByteArray.length, toByteArray.length);
-            toByteArray = obj;
+            byte[] bArr2 = new byte[32];
+            System.arraycopy(toByteArray, 0, bArr2, bArr2.length - toByteArray.length, toByteArray.length);
+            toByteArray = bArr2;
         }
         while (i2 != 32) {
             bArr[i + i2] = toByteArray[(toByteArray.length - 1) - i2];
@@ -180,7 +177,7 @@ public class BCECGOST3410PublicKey implements ECPublicKey, org.bouncycastle.jce.
                 instance = ASN1ObjectIdentifier.getInstance(subjectPublicKeyInfo.getAlgorithm().getParameters());
                 this.gostParams = instance;
             } else {
-                Object instance2 = GOST3410PublicKeyAlgParameters.getInstance(subjectPublicKeyInfo.getAlgorithm().getParameters());
+                GOST3410PublicKeyAlgParameters instance2 = GOST3410PublicKeyAlgParameters.getInstance(subjectPublicKeyInfo.getAlgorithm().getParameters());
                 this.gostParams = instance2;
                 instance = instance2.getPublicKeyParamSet();
             }

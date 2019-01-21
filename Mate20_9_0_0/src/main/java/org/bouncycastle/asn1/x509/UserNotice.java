@@ -12,12 +12,12 @@ public class UserNotice extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:16:0x0051 in {2, 4, 9, 11, 12, 15, 18} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -33,43 +33,33 @@ public class UserNotice extends ASN1Object {
         r2 = 0;
         r3 = 2;
         if (r0 != r3) goto L_0x0021;
-    L_0x000c:
         r0 = r5.getObjectAt(r2);
         r0 = org.bouncycastle.asn1.x509.NoticeReference.getInstance(r0);
         r4.noticeRef = r0;
         r5 = r5.getObjectAt(r1);
-    L_0x001a:
         r5 = org.bouncycastle.asn1.x509.DisplayText.getInstance(r5);
         r4.explicitText = r5;
         return;
-    L_0x0021:
         r0 = r5.size();
         r3 = 0;
         if (r0 != r1) goto L_0x0048;
-    L_0x0028:
         r0 = r5.getObjectAt(r2);
         r0 = r0.toASN1Primitive();
         r0 = r0 instanceof org.bouncycastle.asn1.ASN1Sequence;
         if (r0 == 0) goto L_0x0041;
-    L_0x0034:
         r5 = r5.getObjectAt(r2);
         r5 = org.bouncycastle.asn1.x509.NoticeReference.getInstance(r5);
         r4.noticeRef = r5;
-    L_0x003e:
         r4.explicitText = r3;
         return;
-    L_0x0041:
         r4.noticeRef = r3;
         r5 = r5.getObjectAt(r2);
         goto L_0x001a;
-    L_0x0048:
         r0 = r5.size();
         if (r0 != 0) goto L_0x0052;
-    L_0x004e:
         r4.noticeRef = r3;
         goto L_0x003e;
         return;
-    L_0x0052:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();

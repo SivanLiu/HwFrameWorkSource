@@ -11,7 +11,7 @@ public final class DefaultXMSSMTOid implements XMSSOid {
     private final String stringRepresentation;
 
     static {
-        Map hashMap = new HashMap();
+        HashMap hashMap = new HashMap();
         hashMap.put(createKey(McElieceCCA2KeyGenParameterSpec.SHA256, 32, 16, 67, 20, 2), new DefaultXMSSMTOid(16777217, "XMSSMT_SHA2-256_W16_H20_D2"));
         hashMap.put(createKey(McElieceCCA2KeyGenParameterSpec.SHA256, 32, 16, 67, 20, 4), new DefaultXMSSMTOid(16777217, "XMSSMT_SHA2-256_W16_H20_D4"));
         hashMap.put(createKey(McElieceCCA2KeyGenParameterSpec.SHA256, 32, 16, 67, 40, 2), new DefaultXMSSMTOid(16777217, "XMSSMT_SHA2-256_W16_H40_D2"));

@@ -3,6 +3,8 @@ package android.support.v4.media;
 import android.media.AudioAttributes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @RequiresApi(21)
@@ -29,19 +31,6 @@ class AudioAttributesCompatApi21 {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x002d A:{Splitter: B:1:0x0004, ExcHandler: java.lang.NoSuchMethodException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x002d A:{Splitter: B:1:0x0004, ExcHandler: java.lang.NoSuchMethodException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:7:0x002d A:{Splitter: B:1:0x0004, ExcHandler: java.lang.NoSuchMethodException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:7:0x002d, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:8:0x002e, code:
-            android.util.Log.w(TAG, "getLegacyStreamType() failed on API21+", r1);
-     */
-    /* JADX WARNING: Missing block: B:9:0x0036, code:
-            return -1;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static int toLegacyStreamType(Wrapper aaWrap) {
         AudioAttributes aaObject = aaWrap.unwrap();
         try {
@@ -49,7 +38,9 @@ class AudioAttributesCompatApi21 {
                 sAudioAttributesToLegacyStreamType = AudioAttributes.class.getMethod("toLegacyStreamType", new Class[]{AudioAttributes.class});
             }
             return ((Integer) sAudioAttributesToLegacyStreamType.invoke(null, new Object[]{aaObject})).intValue();
-        } catch (Exception e) {
+        } catch (ClassCastException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            Log.w(TAG, "getLegacyStreamType() failed on API21+", e);
+            return -1;
         }
     }
 

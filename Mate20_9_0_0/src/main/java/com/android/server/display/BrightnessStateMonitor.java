@@ -174,7 +174,7 @@ class BrightnessStateMonitor implements MonitorModule {
     public void triggerUploadTimer() {
     }
 
-    /* JADX WARNING: Missing block: B:21:0x0063, code:
+    /* JADX WARNING: Missing block: B:21:0x0063, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -246,7 +246,7 @@ class BrightnessStateMonitor implements MonitorModule {
         this.mManager.sendMonitorMsgDelayed(MsgType.STATE_TIMER, params, delayMillis);
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0045, code:
+    /* JADX WARNING: Missing block: B:11:0x0045, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -327,7 +327,7 @@ class BrightnessStateMonitor implements MonitorModule {
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x005d, code:
+    /* JADX WARNING: Missing block: B:17:0x005f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -364,7 +364,7 @@ class BrightnessStateMonitor implements MonitorModule {
         return false;
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0043, code:
+    /* JADX WARNING: Missing block: B:11:0x0043, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

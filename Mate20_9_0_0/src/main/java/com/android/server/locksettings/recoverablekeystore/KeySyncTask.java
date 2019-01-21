@@ -137,23 +137,6 @@ public class KeySyncTask implements Runnable {
         return (this.mCredentialType == -1 || this.mCredentialType == 1 || this.mCredentialType == 2) ? false : true;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:75:0x0239 A:{Splitter: B:46:0x0131, ExcHandler: java.security.InvalidKeyException (r0_66 'e' java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Missing block: B:75:0x0239, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:76:0x023a, code:
-            r15 = r5;
-            r19 = r7;
-            r22 = r9;
-            r23 = r10;
-            r9 = r6;
-            r1 = r0;
-            android.util.Log.wtf(TAG, "Should be impossible: could not encrypt application keys with random key", r0);
-     */
-    /* JADX WARNING: Missing block: B:77:0x024a, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void syncKeysForAgent(int recoveryAgentUid) throws IOException {
         boolean z;
         PublicKey publicKey;
@@ -163,6 +146,7 @@ public class KeySyncTask implements Runnable {
         byte[] bArr2;
         NoSuchAlgorithmException noSuchAlgorithmException;
         String str;
+        GeneralSecurityException generalSecurityException;
         int i = recoveryAgentUid;
         boolean shouldRecreateCurrentVersion = false;
         if (!shouldCreateSnapshot(recoveryAgentUid)) {
@@ -293,7 +277,14 @@ public class KeySyncTask implements Runnable {
                         InvalidKeyException invalidKeyException = e3;
                         Log.e(TAG, "Could not encrypt with recovery key", e3);
                     }
-                } catch (GeneralSecurityException e4) {
+                } catch (InvalidKeyException | NoSuchAlgorithmException e4) {
+                    str = rootCertAlias;
+                    publicKey2 = publicKey3;
+                    z2 = useScryptToHashCredential;
+                    bArr2 = salt;
+                    useScryptToHashCredential = certPath;
+                    generalSecurityException = e4;
+                    Log.wtf(TAG, "Should be impossible: could not encrypt application keys with random key", e4);
                 }
             } catch (NoSuchAlgorithmException e22) {
                 str = rootCertAlias;
@@ -304,37 +295,37 @@ public class KeySyncTask implements Runnable {
                 noSuchAlgorithmException = e22;
                 Log.wtf("AES should never be unavailable", e22);
             }
-        } catch (GeneralSecurityException e5) {
+        } catch (GeneralSecurityException e42) {
             str = rootCertAlias;
             publicKey2 = publicKey3;
             z2 = useScryptToHashCredential;
             bArr2 = salt;
-            GeneralSecurityException generalSecurityException = e5;
-            Log.e(TAG, "Failed to load recoverable keys for sync", e5);
-        } catch (InsecureUserException e6) {
-            str = rootCertAlias;
-            publicKey2 = publicKey3;
-            z2 = useScryptToHashCredential;
-            bArr2 = salt;
-            useScryptToHashCredential = certPath;
-            InsecureUserException insecureUserException = e6;
-            Log.e(TAG, "A screen unlock triggered the key sync flow, so user must have lock screen. This should be impossible.", e6);
-        } catch (BadPlatformKeyException e7) {
+            generalSecurityException = e42;
+            Log.e(TAG, "Failed to load recoverable keys for sync", e42);
+        } catch (InsecureUserException e5) {
             str = rootCertAlias;
             publicKey2 = publicKey3;
             z2 = useScryptToHashCredential;
             bArr2 = salt;
             useScryptToHashCredential = certPath;
-            BadPlatformKeyException badPlatformKeyException = e7;
-            Log.e(TAG, "Loaded keys for same generation ID as platform key, so BadPlatformKeyException should be impossible.", e7);
-        } catch (IOException e8) {
+            InsecureUserException insecureUserException = e5;
+            Log.e(TAG, "A screen unlock triggered the key sync flow, so user must have lock screen. This should be impossible.", e5);
+        } catch (BadPlatformKeyException e6) {
             str = rootCertAlias;
             publicKey2 = publicKey3;
             z2 = useScryptToHashCredential;
             bArr2 = salt;
             useScryptToHashCredential = certPath;
-            IOException iOException = e8;
-            Log.e(TAG, "Local database error.", e8);
+            BadPlatformKeyException badPlatformKeyException = e6;
+            Log.e(TAG, "Loaded keys for same generation ID as platform key, so BadPlatformKeyException should be impossible.", e6);
+        } catch (IOException e7) {
+            str = rootCertAlias;
+            publicKey2 = publicKey3;
+            z2 = useScryptToHashCredential;
+            bArr2 = salt;
+            useScryptToHashCredential = certPath;
+            IOException iOException = e7;
+            Log.e(TAG, "Local database error.", e7);
         }
     }
 

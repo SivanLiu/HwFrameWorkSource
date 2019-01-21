@@ -312,13 +312,16 @@ public final class HdmiControlService extends SystemService {
         }
 
         public List<HdmiDeviceInfo> getInputDevices() {
-            List<HdmiDeviceInfo> mergeToUnmodifiableList;
+            List mergeToUnmodifiableList;
             HdmiControlService.this.enforceAccessPermission();
             HdmiCecLocalDeviceTv tv = HdmiControlService.this.tv();
             synchronized (HdmiControlService.this.mLock) {
                 List<HdmiDeviceInfo> cecDevices;
                 if (tv == null) {
-                    cecDevices = Collections.emptyList();
+                    try {
+                        cecDevices = Collections.emptyList();
+                    } catch (Throwable th) {
+                    }
                 } else {
                     cecDevices = tv.getSafeExternalInputsLocked();
                 }
@@ -333,7 +336,10 @@ public final class HdmiControlService extends SystemService {
             HdmiCecLocalDeviceTv tv = HdmiControlService.this.tv();
             synchronized (HdmiControlService.this.mLock) {
                 if (tv == null) {
-                    emptyList = Collections.emptyList();
+                    try {
+                        emptyList = Collections.emptyList();
+                    } catch (Throwable th) {
+                    }
                 } else {
                     emptyList = tv.getSafeCecDevicesLocked();
                 }
@@ -1631,27 +1637,27 @@ public final class HdmiControlService extends SystemService {
                 this.mHotplugEventListenerRecords.add(record);
             }
             runOnServiceThread(new Runnable() {
-                /* JADX WARNING: Missing block: B:8:0x0018, code:
+                /* JADX WARNING: Missing block: B:8:0x0018, code skipped:
             r0 = com.android.server.hdmi.HdmiControlService.access$4500(r6.this$0).iterator();
      */
-                /* JADX WARNING: Missing block: B:10:0x0026, code:
+                /* JADX WARNING: Missing block: B:10:0x0026, code skipped:
             if (r0.hasNext() == false) goto L_0x0058;
      */
-                /* JADX WARNING: Missing block: B:11:0x0028, code:
+                /* JADX WARNING: Missing block: B:11:0x0028, code skipped:
             r1 = (android.hardware.hdmi.HdmiPortInfo) r0.next();
             r2 = new android.hardware.hdmi.HdmiHotplugEvent(r1.getId(), com.android.server.hdmi.HdmiControlService.access$1100(r6.this$0).isConnected(r1.getId()));
             r3 = com.android.server.hdmi.HdmiControlService.access$2100(r6.this$0);
      */
-                /* JADX WARNING: Missing block: B:12:0x004b, code:
+                /* JADX WARNING: Missing block: B:12:0x004b, code skipped:
             monitor-enter(r3);
      */
-                /* JADX WARNING: Missing block: B:14:?, code:
+                /* JADX WARNING: Missing block: B:14:?, code skipped:
             com.android.server.hdmi.HdmiControlService.access$4700(r6.this$0, r5, r2);
      */
-                /* JADX WARNING: Missing block: B:15:0x0053, code:
+                /* JADX WARNING: Missing block: B:15:0x0053, code skipped:
             monitor-exit(r3);
      */
-                /* JADX WARNING: Missing block: B:20:0x0058, code:
+                /* JADX WARNING: Missing block: B:20:0x0058, code skipped:
             return;
      */
                 /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -93,13 +93,13 @@ public class Curve25519Point extends AbstractFp {
             Curve25519Field.negate(iArr2, iArr2);
             Nat256.mul(iArr4, iArr2, createExt);
             Curve25519Field.reduce27(Nat256.addBothTo(create2, create2, iArr2), iArr2);
-            ECFieldElement curve25519FieldElement7 = new Curve25519FieldElement(create3);
-            Curve25519Field.square(create, curve25519FieldElement7.x);
-            Curve25519Field.subtract(curve25519FieldElement7.x, iArr2, curve25519FieldElement7.x);
-            ECFieldElement curve25519FieldElement8 = new Curve25519FieldElement(iArr2);
-            Curve25519Field.subtract(create2, curve25519FieldElement7.x, curve25519FieldElement8.x);
-            Curve25519Field.multiplyAddToExt(curve25519FieldElement8.x, create, createExt);
-            Curve25519Field.reduce(createExt, curve25519FieldElement8.x);
+            curve25519FieldElement2 = new Curve25519FieldElement(create3);
+            Curve25519Field.square(create, curve25519FieldElement2.x);
+            Curve25519Field.subtract(curve25519FieldElement2.x, iArr2, curve25519FieldElement2.x);
+            ECFieldElement curve25519FieldElement7 = new Curve25519FieldElement(iArr2);
+            Curve25519Field.subtract(create2, curve25519FieldElement2.x, curve25519FieldElement7.x);
+            Curve25519Field.multiplyAddToExt(curve25519FieldElement7.x, create, createExt);
+            Curve25519Field.reduce(createExt, curve25519FieldElement7.x);
             curve25519FieldElement = new Curve25519FieldElement(create4);
             if (!isOne) {
                 Curve25519Field.multiply(curve25519FieldElement.x, curve25519FieldElement3.x, curve25519FieldElement.x);
@@ -111,7 +111,7 @@ public class Curve25519Point extends AbstractFp {
                 iArr = null;
             }
             curve25519FieldElement6 = calculateJacobianModifiedW(curve25519FieldElement, iArr);
-            return new Curve25519Point(curve, curve25519FieldElement7, curve25519FieldElement8, new ECFieldElement[]{curve25519FieldElement, curve25519FieldElement6}, this.withCompression);
+            return new Curve25519Point(curve, curve25519FieldElement2, curve25519FieldElement7, new ECFieldElement[]{curve25519FieldElement, curve25519FieldElement6}, this.withCompression);
         }
     }
 
@@ -182,11 +182,11 @@ public class Curve25519Point extends AbstractFp {
         int[] create5 = Nat256.create();
         Curve25519Field.square(create3, create5);
         Curve25519Field.twice(create5, create5);
-        ECFieldElement curve25519FieldElement4 = new Curve25519FieldElement(create3);
+        Curve25519FieldElement curve25519FieldElement4 = new Curve25519FieldElement(create3);
         Curve25519Field.square(create, curve25519FieldElement4.x);
         Curve25519Field.subtract(curve25519FieldElement4.x, create4, curve25519FieldElement4.x);
         Curve25519Field.subtract(curve25519FieldElement4.x, create4, curve25519FieldElement4.x);
-        ECFieldElement curve25519FieldElement5 = new Curve25519FieldElement(create4);
+        Curve25519FieldElement curve25519FieldElement5 = new Curve25519FieldElement(create4);
         Curve25519Field.subtract(create4, curve25519FieldElement4.x, curve25519FieldElement5.x);
         Curve25519Field.multiply(curve25519FieldElement5.x, create, curve25519FieldElement5.x);
         Curve25519Field.subtract(curve25519FieldElement5.x, create5, curve25519FieldElement5.x);

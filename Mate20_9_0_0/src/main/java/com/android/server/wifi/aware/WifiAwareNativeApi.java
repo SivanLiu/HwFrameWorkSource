@@ -591,7 +591,7 @@ public class WifiAwareNativeApi implements DelegatedShellCommand {
         convertNativeByteArrayToArrayList(publishConfig.mServiceSpecificInfo, req.baseConfigs.serviceSpecificInfo);
         convertNativeByteArrayToArrayList(publishConfig.mMatchFilter, publishConfig.mPublishType == 0 ? req.baseConfigs.txMatchFilter : req.baseConfigs.rxMatchFilter);
         req.baseConfigs.useRssiThreshold = false;
-        req.baseConfigs.disableDiscoveryTerminationIndication = publishConfig.mEnableTerminateNotification ^ true;
+        req.baseConfigs.disableDiscoveryTerminationIndication = publishConfig.mEnableTerminateNotification ^ 1;
         req.baseConfigs.disableMatchExpirationIndication = true;
         req.baseConfigs.disableFollowupReceivedIndication = false;
         req.autoAcceptDataPathRequests = false;
@@ -650,7 +650,7 @@ public class WifiAwareNativeApi implements DelegatedShellCommand {
         convertNativeByteArrayToArrayList(subscribeConfig.mServiceSpecificInfo, req.baseConfigs.serviceSpecificInfo);
         convertNativeByteArrayToArrayList(subscribeConfig.mMatchFilter, subscribeConfig.mSubscribeType == 1 ? req.baseConfigs.txMatchFilter : req.baseConfigs.rxMatchFilter);
         req.baseConfigs.useRssiThreshold = false;
-        req.baseConfigs.disableDiscoveryTerminationIndication = subscribeConfig.mEnableTerminateNotification ^ true;
+        req.baseConfigs.disableDiscoveryTerminationIndication = subscribeConfig.mEnableTerminateNotification ^ 1;
         req.baseConfigs.disableMatchExpirationIndication = true;
         req.baseConfigs.disableFollowupReceivedIndication = false;
         NanDiscoveryCommonConfig nanDiscoveryCommonConfig = req.baseConfigs;

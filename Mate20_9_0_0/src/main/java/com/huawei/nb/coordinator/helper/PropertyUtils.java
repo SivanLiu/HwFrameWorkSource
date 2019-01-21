@@ -8,7 +8,6 @@ public class PropertyUtils {
     private static volatile Method get = null;
 
     private static String getProperty(String prop, String defaultValue) {
-        ReflectiveOperationException e;
         String value = "";
         DSLog.d("PropertyUtils defaultValue: " + defaultValue, new Object[0]);
         try {
@@ -20,17 +19,10 @@ public class PropertyUtils {
                 }
             }
             return (String) get.invoke(null, new Object[]{prop, defaultValue});
-        } catch (InvocationTargetException e2) {
-            e = e2;
-        } catch (NoSuchMethodException e3) {
-            e = e3;
-        } catch (ClassNotFoundException e4) {
-            e = e4;
-        } catch (IllegalAccessException e5) {
-            e = e5;
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            DSLog.e("PropertyUtils failed: " + e.getMessage(), new Object[0]);
+            return null;
         }
-        DSLog.e("PropertyUtils failed: " + e.getMessage(), new Object[0]);
-        return null;
     }
 
     public static boolean isSupportHwPKI() {

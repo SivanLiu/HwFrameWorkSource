@@ -188,7 +188,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
 
     private class SilentModeToggleAction extends ToggleAction {
         public SilentModeToggleAction() {
-            super(17302287, 17302285, 17040135, 17040133, 17040132);
+            super(17302287, 17302285, 17040136, 17040134, 17040133);
         }
 
         public void onToggle(boolean on) {
@@ -292,7 +292,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
             z = true;
         }
         this.mHasVibrator = z;
-        this.mShowSilentToggle = this.mContext.getResources().getBoolean(17957059) ^ true;
+        this.mShowSilentToggle = this.mContext.getResources().getBoolean(17957060) ^ 1;
         this.mEmergencyAffordanceManager = new EmergencyAffordanceManager(context);
     }
 
@@ -340,7 +340,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
         } else {
             this.mSilentModeAction = new SilentModeToggleAction();
         }
-        this.mAirplaneModeOn = new ToggleAction(17302417, 17302419, 17040140, 17040139, 17040138) {
+        this.mAirplaneModeOn = new ToggleAction(17302417, 17302419, 17040141, 17040140, 17040139) {
             public void onToggle(boolean on) {
                 if (LegacyGlobalActions.this.mHasTelephony && Boolean.parseBoolean(SystemProperties.get("ril.cdma.inecmmode"))) {
                     LegacyGlobalActions.this.mIsWaitingForEcmExit = true;
@@ -438,7 +438,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
     }
 
     private Action getSettingsAction() {
-        return new SinglePressAction(17302749, 17040131) {
+        return new SinglePressAction(17302749, 17040132) {
             public void onPress() {
                 Intent intent = new Intent("android.settings.SETTINGS");
                 intent.addFlags(335544320);
@@ -456,7 +456,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
     }
 
     private Action getEmergencyAction() {
-        return new SinglePressAction(17302180, 17040124) {
+        return new SinglePressAction(17302180, 17040125) {
             public void onPress() {
                 LegacyGlobalActions.this.mEmergencyAffordanceManager.performEmergencyCall();
             }
@@ -472,7 +472,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
     }
 
     private Action getAssistAction() {
-        return new SinglePressAction(17302261, 17040120) {
+        return new SinglePressAction(17302261, 17040121) {
             public void onPress() {
                 Intent intent = new Intent("android.intent.action.ASSIST");
                 intent.addFlags(335544320);
@@ -490,7 +490,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
     }
 
     private Action getVoiceAssistAction() {
-        return new SinglePressAction(17302781, 17040136) {
+        return new SinglePressAction(17302781, 17040137) {
             public void onPress() {
                 Intent intent = new Intent("android.intent.action.VOICE_ASSIST");
                 intent.addFlags(335544320);
@@ -508,7 +508,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
     }
 
     private Action getLockdownAction() {
-        return new SinglePressAction(17301551, 17040126) {
+        return new SinglePressAction(17301551, 17040127) {
             public void onPress() {
                 new LockPatternUtils(LegacyGlobalActions.this.mContext).requireCredentialEntry(-1);
                 try {
@@ -603,7 +603,7 @@ class LegacyGlobalActions implements OnDismissListener, OnClickListener {
         if (this.mShowSilentToggle) {
             IntentFilter filter = new IntentFilter("android.media.RINGER_MODE_CHANGED");
             Context context = this.mContext;
-            BroadcastReceiver anonymousClass9 = new BroadcastReceiver() {
+            AnonymousClass9 anonymousClass9 = new BroadcastReceiver() {
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();
                     if (action != null && "android.media.RINGER_MODE_CHANGED".equals(action)) {

@@ -150,16 +150,19 @@ public class NetworkQosMonitor {
                             }
                             NetworkQosMonitor.this.mNetworkHandler.sendMessage(Message.obtain(NetworkQosMonitor.this.mNetworkHandler, 2, 1, property));
                             NetworkQosMonitor.this.mBroadcastNotified.set(true);
-                            if (property == -1 || property == WifiproUtils.NET_INET_QOS_LEVEL_UNKNOWN) {
-                                HwSelfCureEngine.getInstance().notifyInternetFailureDetected(true);
-                                HwWifiConnectivityMonitor hwWifiConnectivityMonitor = HwWifiConnectivityMonitor.getInstance();
-                                if (hwWifiConnectivityMonitor != null) {
-                                    hwWifiConnectivityMonitor.requestRoamingByNoInternet();
+                            if (property != -1) {
+                                if (property != WifiproUtils.NET_INET_QOS_LEVEL_UNKNOWN) {
+                                    if (property == 5) {
+                                        NetworkQosMonitor.this.syncNotifyPowerSaveGenie(true, 101, true);
+                                    }
                                 }
-                                NetworkQosMonitor.this.syncNotifyPowerSaveGenie(false, 102, true);
-                            } else if (property == 5) {
-                                NetworkQosMonitor.this.syncNotifyPowerSaveGenie(true, 101, true);
                             }
+                            HwSelfCureEngine.getInstance().notifyInternetFailureDetected(true);
+                            HwWifiConnectivityMonitor hwWifiConnectivityMonitor = HwWifiConnectivityMonitor.getInstance();
+                            if (hwWifiConnectivityMonitor != null) {
+                                hwWifiConnectivityMonitor.requestRoamingByNoInternet();
+                            }
+                            NetworkQosMonitor.this.syncNotifyPowerSaveGenie(false, 102, true);
                         } else if ("com.huawei.wifi.action.ACTION_REQUEST_TCP_RX_COUNTER".equals(intent.getAction()) && !NetworkQosMonitor.this.mTcpRxRequestedViaBroadcast) {
                             NetworkQosMonitor.this.mTcpRxRequestedViaBroadcast = true;
                             NetworkQosMonitor.this.mIpQosMonitor.queryPackets(0);

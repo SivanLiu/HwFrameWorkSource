@@ -102,7 +102,7 @@ public class BluetoothParaManager {
             this.mIsCotaBroadcast = cotaBroadcast;
         }
 
-        /* JADX WARNING: Missing block: B:39:0x01d7, code:
+        /* JADX WARNING: Missing block: B:40:0x01d7, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -142,6 +142,7 @@ public class BluetoothParaManager {
                         stringBuilder2.append(BluetoothParaManager.this.mCotaFile.exists());
                         HwLog.e(str2, stringBuilder2.toString());
                         BluetoothParaManager.this.responseForParaUpdate(0);
+                        return;
                     } else if (cotaFileLength >= BluetoothParaManager.BT_PARA_FILE_MAX_SIZE) {
                         BluetoothParaManager bluetoothParaManager = BluetoothParaManager.this;
                         stringBuilder2 = new StringBuilder();
@@ -149,9 +150,11 @@ public class BluetoothParaManager {
                         stringBuilder2.append(cotaFileLength);
                         bluetoothParaManager.btParaFileError(stringBuilder2.toString());
                         BluetoothParaManager.this.responseForParaUpdate(6);
+                        return;
                     } else if (BluetoothParaManager.this.getVersion(BluetoothParaManager.this.mCotaFile, "EMUI", "emui_version") == null) {
                         BluetoothParaManager.this.btParaFileError("BT_PARA get config file EMUI version failed.");
                         BluetoothParaManager.this.responseForParaUpdate(6);
+                        return;
                     } else if (BluetoothParaManager.this.mCotaConfigVersion > BluetoothParaManager.this.mSavedConfigVersion) {
                         HwLog.i(BluetoothParaManager.TAG, "BT_PARA cotaFile is newer than saved, need to parse");
                         BluetoothParaManager.this.mToBeSavedBtInteropVersion = BluetoothParaManager.this.mCotaConfigVersion;
@@ -163,10 +166,15 @@ public class BluetoothParaManager {
                 } catch (SecurityException e) {
                     HwLog.e(BluetoothParaManager.TAG, "BT_PARA mCotaFile exist or not exception");
                     BluetoothParaManager.this.responseForParaUpdate(0);
+                    return;
                 }
-            } else if (BluetoothParaManager.this.mSysConfigVersion <= BluetoothParaManager.this.mSavedConfigVersion && BluetoothParaManager.this.mCotaConfigVersion <= BluetoothParaManager.this.mSavedConfigVersion) {
-                HwLog.i(BluetoothParaManager.TAG, "BT_PARA not need to parse xml");
-            } else if (BluetoothParaManager.this.mSysConfigVersion >= BluetoothParaManager.this.mCotaConfigVersion) {
+            }
+            if (BluetoothParaManager.this.mSysConfigVersion <= BluetoothParaManager.this.mSavedConfigVersion) {
+                if (BluetoothParaManager.this.mCotaConfigVersion <= BluetoothParaManager.this.mSavedConfigVersion) {
+                    HwLog.i(BluetoothParaManager.TAG, "BT_PARA not need to parse xml");
+                }
+            }
+            if (BluetoothParaManager.this.mSysConfigVersion >= BluetoothParaManager.this.mCotaConfigVersion) {
                 HwLog.i(BluetoothParaManager.TAG, "BT_PARA need update system file");
                 BluetoothParaManager.this.mToBeSavedBtInteropVersion = BluetoothParaManager.this.mSysConfigVersion;
                 BluetoothParaManager.this.updateBtInteropDataFromFile(BluetoothParaManager.this.mSysFile, this.mIsCotaBroadcast);
@@ -391,15 +399,17 @@ public class BluetoothParaManager {
                 if (isCotaBroadcast) {
                     if (this.mSendBroadcastToApk) {
                         this.mAdapter = BluetoothAdapter.getDefaultAdapter();
-                        if (this.mAdapter.getState() == 12 || this.mAdapter.getState() == 11) {
-                            Intent intent = new Intent();
-                            intent.setAction(BT_PARA_UPDATE_ACTION);
-                            this.mContext.sendBroadcast(intent, BT_PARA_UPDATE_PERMISSION);
-                            HwLog.i(TAG, "BT_PARA send broadcast to app done");
-                        } else {
-                            HwLog.i(TAG, "BT_PARA bt state is not state on or state_turning_on not need to send broadcast");
-                            responseForParaUpdate(7);
+                        if (this.mAdapter.getState() != 12) {
+                            if (this.mAdapter.getState() != 11) {
+                                HwLog.i(TAG, "BT_PARA bt state is not state on or state_turning_on not need to send broadcast");
+                                responseForParaUpdate(7);
+                                this.mSendBroadcastToApk = false;
+                            }
                         }
+                        Intent intent = new Intent();
+                        intent.setAction(BT_PARA_UPDATE_ACTION);
+                        this.mContext.sendBroadcast(intent, BT_PARA_UPDATE_PERMISSION);
+                        HwLog.i(TAG, "BT_PARA send broadcast to app done");
                         this.mSendBroadcastToApk = false;
                     } else {
                         btParaFileError("BT_PARA xml file format is incorrect");

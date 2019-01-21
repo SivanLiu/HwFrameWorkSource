@@ -67,8 +67,7 @@ class CircularDisplayMask {
             Canvas c = null;
             try {
                 c = this.mSurface.lockCanvas(dirty);
-            } catch (IllegalArgumentException e) {
-            } catch (OutOfResourcesException e2) {
+            } catch (OutOfResourcesException | IllegalArgumentException e) {
             }
             if (c != null) {
                 switch (this.mRotation) {

@@ -39,11 +39,13 @@ import com.android.server.SystemService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -351,21 +353,6 @@ public class SliceManagerService extends Stub {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0045 A:{Splitter: B:7:0x0027, ExcHandler: java.io.IOException (r2_4 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:10:0x0045, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:11:0x0046, code:
-            r3 = TAG;
-            r4 = new java.lang.StringBuilder();
-            r4.append("getBackupPayload: error writing payload for user ");
-            r4.append(r7);
-            android.util.Slog.w(r3, r4.toString(), r2);
-     */
-    /* JADX WARNING: Missing block: B:12:0x005c, code:
-            return null;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public byte[] getBackupPayload(int user) {
         if (Binder.getCallingUid() != 1000) {
             throw new SecurityException("Caller must be system");
@@ -384,20 +371,17 @@ public class SliceManagerService extends Stub {
                 this.mPermissions.writeBackup(out);
                 out.flush();
                 return baos.toByteArray();
-            } catch (Exception e) {
+            } catch (IOException | XmlPullParserException e) {
+                String str2 = TAG;
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("getBackupPayload: error writing payload for user ");
+                stringBuilder2.append(user);
+                Slog.w(str2, stringBuilder2.toString(), e);
+                return null;
             }
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0056 A:{Splitter: B:9:0x003f, ExcHandler: java.lang.NumberFormatException (r1_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:11:0x0056 A:{Splitter: B:9:0x003f, ExcHandler: java.lang.NumberFormatException (r1_7 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:11:0x0056, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:12:0x0057, code:
-            android.util.Slog.w(TAG, "applyRestore: error reading payload", r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void applyRestore(byte[] payload, int user) {
         String str;
         StringBuilder stringBuilder;
@@ -421,7 +405,8 @@ public class SliceManagerService extends Stub {
                 XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
                 parser.setInput(bais, Encoding.UTF_8.name());
                 this.mPermissions.readRestore(parser);
-            } catch (Exception e) {
+            } catch (IOException | NumberFormatException | XmlPullParserException e) {
+                Slog.w(TAG, "applyRestore: error reading payload", e);
             }
         }
     }
@@ -614,9 +599,11 @@ public class SliceManagerService extends Stub {
                 int lastPriority = Integer.MIN_VALUE;
                 for (int i = 0; i < size; i++) {
                     ResolveInfo ri = (ResolveInfo) allHomeCandidates.get(i);
-                    if (ri.activityInfo.applicationInfo.isSystemApp() && ri.priority >= lastPriority) {
-                        detected = ri.activityInfo.getComponentName();
-                        lastPriority = ri.priority;
+                    if (ri.activityInfo.applicationInfo.isSystemApp()) {
+                        if (ri.priority >= lastPriority) {
+                            detected = ri.activityInfo.getComponentName();
+                            lastPriority = ri.priority;
+                        }
                     }
                 }
             }

@@ -324,16 +324,16 @@ public class HwUsbDeviceManager extends UsbDeviceManager {
         return queryRingMusicUri(context.getContentResolver(), fileName);
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0047, code:
+    /* JADX WARNING: Missing block: B:13:0x0047, code skipped:
             if (r9 != null) goto L_0x0049;
      */
-    /* JADX WARNING: Missing block: B:14:0x0049, code:
+    /* JADX WARNING: Missing block: B:14:0x0049, code skipped:
             r9.close();
      */
-    /* JADX WARNING: Missing block: B:19:0x0066, code:
+    /* JADX WARNING: Missing block: B:19:0x0066, code skipped:
             if (r9 == null) goto L_0x0069;
      */
-    /* JADX WARNING: Missing block: B:20:0x0069, code:
+    /* JADX WARNING: Missing block: B:20:0x0069, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -51,7 +51,7 @@ public final class StartupByBroadcastRecorder {
         }
     }
 
-    /* JADX WARNING: Missing block: B:24:0x006a, code:
+    /* JADX WARNING: Missing block: B:25:0x006a, code skipped:
             return 0;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -69,26 +69,27 @@ public final class StartupByBroadcastRecorder {
         key = key.toString();
         synchronized (this.mLock) {
             ArraySet<Long> occurTimes = (ArraySet) this.mStartupRecordMaps.get(key);
-            if (occurTimes == null || occurTimes.size() == 0) {
-            } else {
-                int counts = 0;
-                long currentTime = System.currentTimeMillis();
-                for (int i = occurTimes.size() - 1; i >= 0; i--) {
-                    long timeTemp = ((Long) occurTimes.valueAt(i)).longValue();
-                    if (currentTime > timeTemp) {
-                        if (currentTime - timeTemp < time) {
-                            counts++;
-                        } else if (currentTime - timeTemp > 86400000) {
-                            occurTimes.removeAt(i);
+            if (occurTimes != null) {
+                if (occurTimes.size() != 0) {
+                    int counts = 0;
+                    long currentTime = System.currentTimeMillis();
+                    for (int i = occurTimes.size() - 1; i >= 0; i--) {
+                        long timeTemp = ((Long) occurTimes.valueAt(i)).longValue();
+                        if (currentTime > timeTemp) {
+                            if (currentTime - timeTemp < time) {
+                                counts++;
+                            } else if (currentTime - timeTemp > 86400000) {
+                                occurTimes.removeAt(i);
+                            }
                         }
                     }
+                    return counts;
                 }
-                return counts;
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0051, code:
+    /* JADX WARNING: Missing block: B:21:0x0051, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -104,14 +105,15 @@ public final class StartupByBroadcastRecorder {
         key = key.toString();
         synchronized (this.mLock) {
             ArraySet<Long> occurTimes = (ArraySet) this.mStartupRecordMaps.get(key);
-            if (occurTimes == null || occurTimes.size() == 0) {
-            } else {
-                long currentTime = System.currentTimeMillis();
-                long timeTemp = ((Long) occurTimes.valueAt(occurTimes.size() - 1)).longValue();
-                if (currentTime <= timeTemp || currentTime - timeTemp <= time) {
-                    return false;
+            if (occurTimes != null) {
+                if (occurTimes.size() != 0) {
+                    long currentTime = System.currentTimeMillis();
+                    long timeTemp = ((Long) occurTimes.valueAt(occurTimes.size() - 1)).longValue();
+                    if (currentTime <= timeTemp || currentTime - timeTemp <= time) {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
             }
         }
     }

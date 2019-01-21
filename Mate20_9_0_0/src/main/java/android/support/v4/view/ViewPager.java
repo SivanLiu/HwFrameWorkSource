@@ -2151,7 +2151,7 @@ public class ViewPager extends ViewGroup {
         }
     }
 
-    /* JADX WARNING: Missing block: B:18:0x0065, code:
+    /* JADX WARNING: Missing block: B:18:0x0065, code skipped:
             if (r0.canScrollHorizontally(-r17) != false) goto L_0x006b;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

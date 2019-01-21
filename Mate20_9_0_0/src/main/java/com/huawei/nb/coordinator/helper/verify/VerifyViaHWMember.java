@@ -60,19 +60,7 @@ public class VerifyViaHWMember implements IVerify {
             }
             DSLog.e(this.TAG + " can not get signature.", new Object[0]);
             return "";
-        } catch (ClassNotFoundException e) {
-            DSLog.e(this.TAG + "getAttestationSignature failed: ", new Object[0]);
-            return "";
-        } catch (NoSuchMethodException e2) {
-            DSLog.e(this.TAG + "getAttestationSignature failed: ", new Object[0]);
-            return "";
-        } catch (InvocationTargetException e3) {
-            DSLog.e(this.TAG + "getAttestationSignature failed: ", new Object[0]);
-            return "";
-        } catch (IllegalAccessException e4) {
-            DSLog.e(this.TAG + "getAttestationSignature failed: ", new Object[0]);
-            return "";
-        } catch (InstantiationException e5) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             DSLog.e(this.TAG + "getAttestationSignature failed: ", new Object[0]);
             return "";
         }

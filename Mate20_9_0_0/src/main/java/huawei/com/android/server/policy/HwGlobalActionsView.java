@@ -420,7 +420,7 @@ public class HwGlobalActionsView extends RelativeLayout implements IBlurWallpape
             }
         };
         this.mActionClickListener = new OnClickListener() {
-            /* JADX WARNING: Missing block: B:45:0x0128, code:
+            /* JADX WARNING: Missing block: B:45:0x0128, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -822,7 +822,7 @@ public class HwGlobalActionsView extends RelativeLayout implements IBlurWallpape
         this.isFirstShow = true;
     }
 
-    /* JADX WARNING: Missing block: B:20:0x0043, code:
+    /* JADX WARNING: Missing block: B:20:0x0043, code skipped:
             r2.setContentDescription(getContext().getResources().getString(ID_STR_REBOOT));
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

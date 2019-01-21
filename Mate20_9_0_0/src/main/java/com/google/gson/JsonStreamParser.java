@@ -3,7 +3,9 @@ package com.google.gson;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.MalformedJsonException;
 import java.io.EOFException;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
@@ -31,7 +33,7 @@ public final class JsonStreamParser implements Iterator<JsonElement> {
                 throw new JsonParseException("Failed parsing JSON source to Json", e);
             } catch (OutOfMemoryError e2) {
                 throw new JsonParseException("Failed parsing JSON source to Json", e2);
-            } catch (RuntimeException e3) {
+            } catch (JsonParseException e3) {
                 throw (e3.getCause() instanceof EOFException ? new NoSuchElementException() : e3);
             }
         }
@@ -43,10 +45,11 @@ public final class JsonStreamParser implements Iterator<JsonElement> {
         synchronized (this.lock) {
             try {
                 z = this.parser.peek() != JsonToken.END_DOCUMENT;
-            } catch (Throwable e) {
+            } catch (MalformedJsonException e) {
                 throw new JsonSyntaxException(e);
-            } catch (Throwable e2) {
+            } catch (IOException e2) {
                 throw new JsonIOException(e2);
+            } catch (Throwable th) {
             }
         }
         return z;

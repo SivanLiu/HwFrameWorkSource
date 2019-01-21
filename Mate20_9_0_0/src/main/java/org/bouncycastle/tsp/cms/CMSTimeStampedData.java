@@ -64,7 +64,7 @@ public class CMSTimeStampedData {
     }
 
     public CMSTimeStampedData addTimeStamp(TimeStampToken timeStampToken) throws CMSException {
-        Object timeStamps = this.util.getTimeStamps();
+        TimeStampAndCRL[] timeStamps = this.util.getTimeStamps();
         TimeStampAndCRL[] timeStampAndCRLArr = new TimeStampAndCRL[(timeStamps.length + 1)];
         System.arraycopy(timeStamps, 0, timeStampAndCRLArr, 0, timeStamps.length);
         timeStampAndCRLArr[timeStamps.length] = new TimeStampAndCRL(timeStampToken.toCMSSignedData().toASN1Structure());

@@ -48,39 +48,43 @@ public class HwWifiBoost {
     }
 
     private synchronized int getBGLimitMaxMode() {
-        if (this.mBGLimitModeRecords == null || this.mBGLimitModeRecords.size() == 0) {
-            HwHiDataCommonUtils.logD(TAG, " mBGLimitModeRecords is null");
-            return -1;
-        }
-        int size = this.mBGLimitModeRecords.size();
-        int max_mode = 0;
-        for (int i = 0; i < size; i++) {
-            int key = this.mBGLimitModeRecords.keyAt(i);
-            if (((Integer) this.mBGLimitModeRecords.get(key)).intValue() > max_mode) {
-                String str = TAG;
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("BG Limit id=");
-                stringBuilder.append(key);
-                stringBuilder.append(" mode=");
-                stringBuilder.append(this.mBGLimitModeRecords.get(key));
-                stringBuilder.append(" > max mode=");
-                stringBuilder.append(max_mode);
-                HwHiDataCommonUtils.logD(str, stringBuilder.toString());
-                max_mode = ((Integer) this.mBGLimitModeRecords.get(key)).intValue();
+        if (this.mBGLimitModeRecords != null) {
+            if (this.mBGLimitModeRecords.size() != 0) {
+                int size = this.mBGLimitModeRecords.size();
+                int max_mode = 0;
+                for (int i = 0; i < size; i++) {
+                    int key = this.mBGLimitModeRecords.keyAt(i);
+                    if (((Integer) this.mBGLimitModeRecords.get(key)).intValue() > max_mode) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("BG Limit id=");
+                        stringBuilder.append(key);
+                        stringBuilder.append(" mode=");
+                        stringBuilder.append(this.mBGLimitModeRecords.get(key));
+                        stringBuilder.append(" > max mode=");
+                        stringBuilder.append(max_mode);
+                        HwHiDataCommonUtils.logD(str, stringBuilder.toString());
+                        max_mode = ((Integer) this.mBGLimitModeRecords.get(key)).intValue();
+                    }
+                }
+                return max_mode;
             }
         }
-        return max_mode;
+        HwHiDataCommonUtils.logD(TAG, " mBGLimitModeRecords is null");
+        return -1;
     }
 
     private synchronized void dumpModeTable() {
-        if (this.mBGLimitModeRecords == null || this.mBGLimitModeRecords.size() == 0) {
-            HwHiDataCommonUtils.logD(TAG, " mBGLimitModeRecords is null");
-            return;
+        if (this.mBGLimitModeRecords != null) {
+            if (this.mBGLimitModeRecords.size() != 0) {
+                int size = this.mBGLimitModeRecords.size();
+                for (int i = 0; i < size; i++) {
+                    int key = this.mBGLimitModeRecords.keyAt(i);
+                }
+                return;
+            }
         }
-        int size = this.mBGLimitModeRecords.size();
-        for (int i = 0; i < size; i++) {
-            int key = this.mBGLimitModeRecords.keyAt(i);
-        }
+        HwHiDataCommonUtils.logD(TAG, " mBGLimitModeRecords is null");
     }
 
     public synchronized void limitedSpeed(int controlId, int enable, int mode) {

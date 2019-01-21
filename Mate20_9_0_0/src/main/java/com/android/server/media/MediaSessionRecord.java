@@ -100,7 +100,7 @@ public class MediaSessionRecord implements DeathRecipient {
             return MediaSessionRecord.this.mSessionCb.sendMediaButton(packageName, Binder.getCallingPid(), Binder.getCallingUid(), cb, asSystemService, keyEvent);
         }
 
-        /* JADX WARNING: Missing block: B:17:0x0058, code:
+        /* JADX WARNING: Missing block: B:17:0x0058, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

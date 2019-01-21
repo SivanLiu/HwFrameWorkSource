@@ -50,6 +50,7 @@ import android.security.KeyStore;
 import android.security.KeyStore.State;
 import android.security.keystore.AndroidKeyStoreProvider;
 import android.security.keystore.KeyProtection;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.security.keystore.recovery.KeyChainProtectionParams;
 import android.security.keystore.recovery.KeyChainSnapshot;
 import android.security.keystore.recovery.RecoveryCertPath;
@@ -428,14 +429,6 @@ public class LockSettingsService extends AbsLockSettingsService {
         ACTION_NULL.addCategory("android.intent.category.HOME");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x006f A:{Splitter: B:18:0x0041, ExcHandler: java.security.NoSuchAlgorithmException (r2_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:20:0x006f, code:
-            r2 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:21:0x0070, code:
-            android.util.Slog.e(TAG, "Fail to tie managed profile", r2);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void tieManagedProfileLockIfNecessary(int managedUserId, String managedUserPassword) {
         if (this.mUserManager.getUserInfo(managedUserId).isManagedProfile() && !this.mLockPatternUtils.isSeparateProfileChallengeEnabled(managedUserId) && !this.mStorage.hasChildProfileLock(managedUserId)) {
             int parentId = this.mUserManager.getProfileParent(managedUserId).id;
@@ -448,7 +441,8 @@ public class LockSettingsService extends AbsLockSettingsService {
                             setLockCredentialInternal(newPassword, 2, managedUserPassword, 327680, managedUserId);
                             setLong("lockscreen.password_type", 327680, managedUserId);
                             tieProfileLockToParent(managedUserId, newPassword);
-                        } catch (Exception e) {
+                        } catch (RemoteException | NoSuchAlgorithmException e) {
+                            Slog.e(TAG, "Fail to tie managed profile", e);
                         }
                     }
                 } catch (RemoteException e2) {
@@ -553,14 +547,14 @@ public class LockSettingsService extends AbsLockSettingsService {
 
     private void showEncryptionNotificationForUser(UserHandle user) {
         Resources r = this.mContext.getResources();
-        showEncryptionNotification(user, r.getText(33685896), r.getText(33685897), r.getText(17041306), PendingIntent.getBroadcast(this.mContext, 0, ACTION_NULL, 134217728));
+        showEncryptionNotification(user, r.getText(33685896), r.getText(33685897), r.getText(17041307), PendingIntent.getBroadcast(this.mContext, 0, ACTION_NULL, 134217728));
     }
 
     private void showEncryptionNotificationForProfile(UserHandle user) {
         Resources r = this.mContext.getResources();
-        CharSequence title = r.getText(17041308);
-        CharSequence message = r.getText(17040955);
-        CharSequence detail = r.getText(17040954);
+        CharSequence title = r.getText(17041309);
+        CharSequence message = r.getText(17040956);
+        CharSequence detail = r.getText(17040955);
         Intent unlockIntent = ((KeyguardManager) this.mContext.getSystemService("keyguard")).createConfirmDeviceCredentialIntent(null, null, user.getIdentifier());
         if (unlockIntent != null) {
             unlockIntent.setFlags(276824064);
@@ -677,16 +671,6 @@ public class LockSettingsService extends AbsLockSettingsService {
         this.mStrongAuth.systemReady();
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:79:0x01fb A:{Splitter: B:75:0x01d4, ExcHandler: java.security.KeyStoreException (r0_49 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:79:0x01fb A:{Splitter: B:75:0x01d4, ExcHandler: java.security.KeyStoreException (r0_49 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:79:0x01fb A:{Splitter: B:75:0x01d4, ExcHandler: java.security.KeyStoreException (r0_49 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:79:0x01fb, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:80:0x01fc, code:
-            android.util.Slog.e(TAG, "Unable to remove tied profile key", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void migrateOldData() {
         int i;
         int i2;
@@ -800,7 +784,8 @@ public class LockSettingsService extends AbsLockSettingsService {
                 if (keyStore.containsAlias(str)) {
                     keyStore.deleteEntry(str);
                 }
-            } catch (Exception e2) {
+            } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e2) {
+                Slog.e(TAG, "Unable to remove tied profile key", e2);
             }
             user = i2 + 1;
         }
@@ -1019,7 +1004,7 @@ public class LockSettingsService extends AbsLockSettingsService {
         return this.mStorage.readPersistentDataBlock().qualityForUi;
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001d, code:
+    /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1034,7 +1019,7 @@ public class LockSettingsService extends AbsLockSettingsService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x001c, code:
+    /* JADX WARNING: Missing block: B:10:0x001c, code skipped:
             return r4;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1052,7 +1037,7 @@ public class LockSettingsService extends AbsLockSettingsService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001a, code:
+    /* JADX WARNING: Missing block: B:10:0x001a, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1093,47 +1078,17 @@ public class LockSettingsService extends AbsLockSettingsService {
         throw new FileNotFoundException("Child profile lock file not found");
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x000f A:{Splitter: B:0:0x0000, ExcHandler: java.security.UnrecoverableKeyException (r0_1 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:2:0x000f, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:4:0x0012, code:
-            if ((r0 instanceof java.io.FileNotFoundException) != false) goto L_0x0014;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0014, code:
-            android.util.Slog.i(TAG, "Child profile key not found");
-     */
-    /* JADX WARNING: Missing block: B:6:0x001c, code:
-            if (r10 == false) goto L_0x002a;
-     */
-    /* JADX WARNING: Missing block: B:9:0x0022, code:
-            android.util.Slog.i(TAG, "Parent keystore seems locked, ignoring");
-     */
-    /* JADX WARNING: Missing block: B:10:0x002a, code:
-            android.util.Slog.e(TAG, "Failed to decrypt child profile key", r0);
-     */
-    /* JADX WARNING: Missing block: B:11:?, code:
-            return;
-     */
-    /* JADX WARNING: Missing block: B:12:?, code:
-            return;
-     */
-    /* JADX WARNING: Missing block: B:13:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void unlockChildProfile(int profileHandle, boolean ignoreUserNotAuthenticated) throws RemoteException {
         try {
             doVerifyCredential(getDecryptedPasswordForTiedProfile(profileHandle), 2, false, 0, profileHandle, null);
-        } catch (Exception e) {
+        } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            if (e instanceof FileNotFoundException) {
+                Slog.i(TAG, "Child profile key not found");
+            } else if (ignoreUserNotAuthenticated && (e instanceof UserNotAuthenticatedException)) {
+                Slog.i(TAG, "Parent keystore seems locked, ignoring");
+            } else {
+                Slog.e(TAG, "Failed to decrypt child profile key", e);
+            }
         }
     }
 
@@ -1196,26 +1151,6 @@ public class LockSettingsService extends AbsLockSettingsService {
         return userInfo.isManagedProfile() && !this.mLockPatternUtils.isSeparateProfileChallengeEnabled(userInfo.id) && this.mStorage.hasChildProfileLock(userInfo.id) && this.mUserManager.isUserRunning(userInfo.id);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x0044 A:{Splitter: B:10:0x0038, ExcHandler: java.security.KeyStoreException (r6_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:12:0x0044, code:
-            r6 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:13:0x0045, code:
-            r7 = TAG;
-            r8 = new java.lang.StringBuilder();
-            r8.append("getDecryptedPasswordsForAllTiedProfiles failed for user ");
-            r8.append(r5);
-            android.util.Slog.e(r7, r8.toString(), r6);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private Map<Integer, String> getDecryptedPasswordsForAllTiedProfiles(int userId) {
         if (this.mUserManager.getUserInfo(userId).isManagedProfile()) {
             return null;
@@ -1230,7 +1165,12 @@ public class LockSettingsService extends AbsLockSettingsService {
                 if (!this.mLockPatternUtils.isSeparateProfileChallengeEnabled(managedUserId)) {
                     try {
                         result.put(Integer.valueOf(managedUserId), getDecryptedPasswordForTiedProfile(managedUserId));
-                    } catch (Exception e) {
+                    } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+                        String str = TAG;
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("getDecryptedPasswordsForAllTiedProfiles failed for user ");
+                        stringBuilder.append(managedUserId);
+                        Slog.e(str, stringBuilder.toString(), e);
                     }
                 }
             }
@@ -1287,25 +1227,16 @@ public class LockSettingsService extends AbsLockSettingsService {
         notifySeparateProfileChallengeChanged(userId);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:30:0x0083 A:{Splitter: B:27:0x007c, ExcHandler: java.security.UnrecoverableKeyException (r0_14 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:18:0x0034, code:
+    /* JADX WARNING: Missing block: B:18:0x0034, code skipped:
             if (r10 != -1) goto L_0x006c;
      */
-    /* JADX WARNING: Missing block: B:19:0x0036, code:
+    /* JADX WARNING: Missing block: B:19:0x0036, code skipped:
             if (r12 == null) goto L_0x003f;
      */
-    /* JADX WARNING: Missing block: B:20:0x0038, code:
+    /* JADX WARNING: Missing block: B:20:0x0038, code skipped:
             android.util.Slog.wtf(TAG, "CredentialType is none, but credential is non-null.");
      */
-    /* JADX WARNING: Missing block: B:21:0x003f, code:
+    /* JADX WARNING: Missing block: B:21:0x003f, code skipped:
             clearUserKeyProtection(r11);
             getGateKeeperService().clearSecureUserId(r11);
             r9.mStorage.writeCredentialHash(com.android.server.locksettings.LockSettingsStorage.CredentialHash.createEmptyHash(), r11);
@@ -1316,60 +1247,60 @@ public class LockSettingsService extends AbsLockSettingsService {
             r9.mRecoverableKeyStoreManager.lockScreenSecretChanged(r10, r12, r11);
             android.util.Slog.w(TAG, "setLockPattern to null success");
      */
-    /* JADX WARNING: Missing block: B:22:0x006b, code:
+    /* JADX WARNING: Missing block: B:22:0x006b, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:23:0x006c, code:
+    /* JADX WARNING: Missing block: B:23:0x006c, code skipped:
             if (r12 == null) goto L_0x0147;
      */
-    /* JADX WARNING: Missing block: B:24:0x006e, code:
+    /* JADX WARNING: Missing block: B:24:0x006e, code skipped:
             r14 = r9.mStorage.readCredentialHash(r11);
      */
-    /* JADX WARNING: Missing block: B:25:0x0078, code:
+    /* JADX WARNING: Missing block: B:25:0x0078, code skipped:
             if (isManagedProfileWithUnifiedLock(r11) == false) goto L_0x0097;
      */
-    /* JADX WARNING: Missing block: B:26:0x007a, code:
+    /* JADX WARNING: Missing block: B:26:0x007a, code skipped:
             if (r7 != null) goto L_0x00a6;
      */
-    /* JADX WARNING: Missing block: B:28:?, code:
+    /* JADX WARNING: Missing block: B:28:?, code skipped:
             r0 = getDecryptedPasswordForTiedProfile(r11);
      */
-    /* JADX WARNING: Missing block: B:29:0x0081, code:
+    /* JADX WARNING: Missing block: B:29:0x0081, code skipped:
             r15 = r0;
      */
-    /* JADX WARNING: Missing block: B:30:0x0083, code:
+    /* JADX WARNING: Missing block: B:30:0x0083, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:31:0x0084, code:
+    /* JADX WARNING: Missing block: B:31:0x0084, code skipped:
             r1 = r0;
             android.util.Slog.e(TAG, "Failed to decrypt child profile key", r0);
      */
-    /* JADX WARNING: Missing block: B:32:0x008d, code:
+    /* JADX WARNING: Missing block: B:32:0x008d, code skipped:
             r0 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:33:0x008e, code:
+    /* JADX WARNING: Missing block: B:33:0x008e, code skipped:
             r1 = r0;
             android.util.Slog.i(TAG, "Child profile key not found");
      */
-    /* JADX WARNING: Missing block: B:35:0x0099, code:
+    /* JADX WARNING: Missing block: B:35:0x0099, code skipped:
             if (r14.hash != null) goto L_0x00a6;
      */
-    /* JADX WARNING: Missing block: B:36:0x009b, code:
+    /* JADX WARNING: Missing block: B:36:0x009b, code skipped:
             if (r7 == null) goto L_0x00a4;
      */
-    /* JADX WARNING: Missing block: B:37:0x009d, code:
+    /* JADX WARNING: Missing block: B:37:0x009d, code skipped:
             android.util.Slog.w(TAG, "Saved credential provided, but none stored");
      */
-    /* JADX WARNING: Missing block: B:38:0x00a4, code:
+    /* JADX WARNING: Missing block: B:38:0x00a4, code skipped:
             r0 = null;
      */
-    /* JADX WARNING: Missing block: B:49:0x00c9, code:
+    /* JADX WARNING: Missing block: B:49:0x00c9, code skipped:
             r0 = enrollCredential(r14.hash, r15, r12, r11);
      */
-    /* JADX WARNING: Missing block: B:50:0x00cf, code:
+    /* JADX WARNING: Missing block: B:50:0x00cf, code skipped:
             if (r0 == null) goto L_0x0119;
      */
-    /* JADX WARNING: Missing block: B:51:0x00d1, code:
+    /* JADX WARNING: Missing block: B:51:0x00d1, code skipped:
             r8 = com.android.server.locksettings.LockSettingsStorage.CredentialHash.create(r0, r10);
             r9.mStorage.writeCredentialHash(r8, r11);
             r7 = getGateKeeperService().verifyChallenge(r11, 0, r8.hash, r12.getBytes());
@@ -1382,31 +1313,31 @@ public class LockSettingsService extends AbsLockSettingsService {
             r9.mRecoverableKeyStoreManager.lockScreenSecretChanged(r10, r12, r11);
             android.util.Slog.w(TAG, "set new LockPassword success");
      */
-    /* JADX WARNING: Missing block: B:52:0x0118, code:
+    /* JADX WARNING: Missing block: B:52:0x0118, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:53:0x0119, code:
+    /* JADX WARNING: Missing block: B:53:0x0119, code skipped:
             android.util.Slog.e(TAG, "Failed to enroll password");
             notifyBigDataForPwdProtectFail(r11);
             r2 = new java.lang.StringBuilder();
             r2.append("Failed to enroll ");
      */
-    /* JADX WARNING: Missing block: B:54:0x0130, code:
+    /* JADX WARNING: Missing block: B:54:0x0130, code skipped:
             if (r10 != 2) goto L_0x0136;
      */
-    /* JADX WARNING: Missing block: B:55:0x0132, code:
+    /* JADX WARNING: Missing block: B:55:0x0132, code skipped:
             r3 = "password";
      */
-    /* JADX WARNING: Missing block: B:56:0x0136, code:
+    /* JADX WARNING: Missing block: B:56:0x0136, code skipped:
             r3 = "pattern";
      */
-    /* JADX WARNING: Missing block: B:57:0x0139, code:
+    /* JADX WARNING: Missing block: B:57:0x0139, code skipped:
             r2.append(r3);
      */
-    /* JADX WARNING: Missing block: B:58:0x0143, code:
+    /* JADX WARNING: Missing block: B:58:0x0143, code skipped:
             throw new android.os.RemoteException(r2.toString());
      */
-    /* JADX WARNING: Missing block: B:64:0x014e, code:
+    /* JADX WARNING: Missing block: B:64:0x014e, code skipped:
             throw new android.os.RemoteException("Null credential with mismatched credential type");
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1434,21 +1365,6 @@ public class LockSettingsService extends AbsLockSettingsService {
         return VerifyCredentialResponse.fromGateKeeperResponse(gateKeeperResponse);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:25:0x0136 A:{Splitter: B:1:0x0006, ExcHandler: java.security.cert.CertificateException (r1_3 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:25:0x0136, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:27:0x013e, code:
-            throw new java.lang.RuntimeException("Failed to encrypt key", r1);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     @VisibleForTesting
     protected void tieProfileLockToParent(int userId, String password) {
         byte[] randomLockSeed = password.getBytes(StandardCharsets.UTF_8);
@@ -1492,10 +1408,11 @@ public class LockSettingsService extends AbsLockSettingsService {
                 stringBuilder2.append("Invalid iv length: ");
                 stringBuilder2.append(iv.length);
                 throw new RuntimeException(stringBuilder2.toString());
-            } catch (SecretKey secretKey2) {
+            } catch (IOException secretKey2) {
                 throw new RuntimeException("Failed to concatenate byte arrays", secretKey2);
             }
-        } catch (Exception e) {
+        } catch (IOException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+            throw new RuntimeException("Failed to encrypt key", e);
         } catch (Throwable th) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("profile_key_name_encrypt_");
@@ -1595,23 +1512,8 @@ public class LockSettingsService extends AbsLockSettingsService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:12:0x004a A:{Catch:{ UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a, UnrecoverableKeyException -> 0x004a }, Splitter: B:10:0x003f, ExcHandler: java.security.UnrecoverableKeyException (r0_11 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:12:0x004a, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:14:0x006d, code:
-            android.util.Slog.e(TAG, "Failed to decrypt child profile key", r0);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void resetKeyStore(int userId) throws RemoteException {
+        Exception e;
         int i = userId;
         checkWritePermission(userId);
         String managedUserDecryptedPassword = null;
@@ -1622,10 +1524,11 @@ public class LockSettingsService extends AbsLockSettingsService {
                     try {
                         managedUserDecryptedPassword = getDecryptedPasswordForTiedProfile(pi.id);
                         managedUserId = pi.id;
-                    } catch (Exception e) {
+                    } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e2) {
+                        Slog.e(TAG, "Failed to decrypt child profile key", e2);
                     }
                 } else {
-                    Exception e2 = TAG;
+                    e2 = TAG;
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("More than one managed profile, uid1:");
                     stringBuilder.append(managedUserId);
@@ -1738,25 +1641,6 @@ public class LockSettingsService extends AbsLockSettingsService {
         return VerifyCredentialResponse.ERROR;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:8:0x0037 A:{Splitter: B:5:0x0027, ExcHandler: java.security.UnrecoverableKeyException (r0_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:8:0x0037, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:9:0x0038, code:
-            android.util.Slog.e(TAG, "Failed to decrypt child profile key", r0);
-     */
-    /* JADX WARNING: Missing block: B:10:0x0046, code:
-            throw new android.os.RemoteException("Unable to get tied profile token");
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public VerifyCredentialResponse verifyTiedProfileChallenge(String credential, int type, long challenge, int userId) throws RemoteException {
         int i = userId;
         checkPasswordReadPermission(i);
@@ -1767,11 +1651,12 @@ public class LockSettingsService extends AbsLockSettingsService {
             }
             try {
                 return doVerifyCredential(getDecryptedPasswordForTiedProfile(i), 2, true, challenge, i, null);
-            } catch (Exception e) {
+            } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
+                Slog.e(TAG, "Failed to decrypt child profile key", e);
+                throw new RemoteException("Unable to get tied profile token");
             }
-        } else {
-            throw new RemoteException("User id must be managed profile with unified lock");
         }
+        throw new RemoteException("User id must be managed profile with unified lock");
     }
 
     private VerifyCredentialResponse verifyCredential(int userId, CredentialHash storedHash, String credential, boolean hasChallenge, long challenge, ICheckCredentialProgressCallback progressCallback) throws RemoteException {
@@ -1959,23 +1844,6 @@ public class LockSettingsService extends AbsLockSettingsService {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x0035 A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x0035 A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:2:0x0035 A:{Splitter: B:0:0x0000, ExcHandler: java.security.KeyStoreException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:2:0x0035, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:3:0x0036, code:
-            r1 = TAG;
-            r2 = new java.lang.StringBuilder();
-            r2.append("Unable to remove keystore profile key for user:");
-            r2.append(r5);
-            android.util.Slog.e(r1, r2.toString(), r0);
-     */
-    /* JADX WARNING: Missing block: B:4:?, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private void removeKeystoreProfileKey(int targetUserId) {
         try {
             java.security.KeyStore keyStore = java.security.KeyStore.getInstance("AndroidKeyStore");
@@ -1988,7 +1856,12 @@ public class LockSettingsService extends AbsLockSettingsService {
             stringBuilder.append("profile_key_name_decrypt_");
             stringBuilder.append(targetUserId);
             keyStore.deleteEntry(stringBuilder.toString());
-        } catch (Exception e) {
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            String str = TAG;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.append("Unable to remove keystore profile key for user:");
+            stringBuilder2.append(targetUserId);
+            Slog.e(str, stringBuilder2.toString(), e);
         }
     }
 
@@ -2247,10 +2120,10 @@ public class LockSettingsService extends AbsLockSettingsService {
         setLong("enable-sp", 1, 0);
     }
 
-    /* JADX WARNING: Missing block: B:37:0x0084, code:
+    /* JADX WARNING: Missing block: B:37:0x0084, code skipped:
             if (r3.getResponseCode() != 0) goto L_0x00df;
      */
-    /* JADX WARNING: Missing block: B:38:0x0086, code:
+    /* JADX WARNING: Missing block: B:38:0x0086, code skipped:
             notifyActivePasswordMetricsAvailable(r14, r13);
             unlockKeystore(r0.authToken.deriveKeyStorePassword(), r13);
             r5 = r0.authToken.deriveDiskEncryptionKey();
@@ -2264,26 +2137,26 @@ public class LockSettingsService extends AbsLockSettingsService {
             unlockUser(r13, r4, r5);
             activateEscrowTokens(r0.authToken, r13);
      */
-    /* JADX WARNING: Missing block: B:39:0x00c3, code:
+    /* JADX WARNING: Missing block: B:39:0x00c3, code skipped:
             if (isManagedProfileWithSeparatedLock(r13) == false) goto L_0x00d4;
      */
-    /* JADX WARNING: Missing block: B:40:0x00c5, code:
+    /* JADX WARNING: Missing block: B:40:0x00c5, code skipped:
             ((android.app.trust.TrustManager) r1.mContext.getSystemService("trust")).setDeviceLockedForUser(r13, false);
      */
-    /* JADX WARNING: Missing block: B:41:0x00d4, code:
+    /* JADX WARNING: Missing block: B:41:0x00d4, code skipped:
             r1.mStrongAuth.reportSuccessfulStrongAuthUnlock(r13);
             onAuthTokenKnownForUser(r13, r0.authToken);
      */
-    /* JADX WARNING: Missing block: B:43:0x00e4, code:
+    /* JADX WARNING: Missing block: B:43:0x00e4, code skipped:
             if (r3.getResponseCode() != 1) goto L_0x00f1;
      */
-    /* JADX WARNING: Missing block: B:45:0x00ea, code:
+    /* JADX WARNING: Missing block: B:45:0x00ea, code skipped:
             if (r3.getTimeout() <= 0) goto L_0x00f1;
      */
-    /* JADX WARNING: Missing block: B:46:0x00ec, code:
+    /* JADX WARNING: Missing block: B:46:0x00ec, code skipped:
             requireStrongAuth(8, r13);
      */
-    /* JADX WARNING: Missing block: B:47:0x00f1, code:
+    /* JADX WARNING: Missing block: B:47:0x00f1, code skipped:
             return r3;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2368,22 +2241,6 @@ public class LockSettingsService extends AbsLockSettingsService {
     /* JADX WARNING: Removed duplicated region for block: B:20:0x0065  */
     /* JADX WARNING: Removed duplicated region for block: B:31:0x00ac  */
     /* JADX WARNING: Removed duplicated region for block: B:27:0x0088  */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:4:0x0011 A:{Splitter: B:2:0x000c, ExcHandler: java.security.UnrecoverableKeyException (r0_2 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:4:0x0011, code:
-            r0 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:5:0x0012, code:
-            r1 = r0;
-            android.util.Slog.e(TAG, "Failed to decrypt child profile key", r0);
-     */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     @GuardedBy("mSpManager")
     private void spBasedSetLockCredentialInternalLocked(String credential, int credentialType, String savedCredential, int requestedQuality, int userId) throws RemoteException {
@@ -2403,7 +2260,9 @@ public class LockSettingsService extends AbsLockSettingsService {
             } catch (FileNotFoundException e) {
                 FileNotFoundException fileNotFoundException = e;
                 Slog.i(TAG, "Child profile key not found");
-            } catch (Exception e2) {
+            } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e2) {
+                Exception exception = e2;
+                Slog.e(TAG, "Failed to decrypt child profile key", e2);
             }
             handle = getSyntheticPasswordHandleLocked(i2);
             authResult = this.mSpManager.unwrapPasswordBasedSyntheticPassword(getGateKeeperService(), handle, savedCredential2, i2, null);

@@ -43,10 +43,10 @@ public final class Arrays {
             return new byte[]{b};
         }
         int length = bArr.length;
-        Object obj = new byte[(length + 1)];
-        System.arraycopy(bArr, 0, obj, 0, length);
-        obj[length] = b;
-        return obj;
+        byte[] bArr2 = new byte[(length + 1)];
+        System.arraycopy(bArr, 0, bArr2, 0, length);
+        bArr2[length] = b;
+        return bArr2;
     }
 
     public static int[] append(int[] iArr, int i) {
@@ -54,10 +54,10 @@ public final class Arrays {
             return new int[]{i};
         }
         int length = iArr.length;
-        Object obj = new int[(length + 1)];
-        System.arraycopy(iArr, 0, obj, 0, length);
-        obj[length] = i;
-        return obj;
+        int[] iArr2 = new int[(length + 1)];
+        System.arraycopy(iArr, 0, iArr2, 0, length);
+        iArr2[length] = i;
+        return iArr2;
     }
 
     public static String[] append(String[] strArr, String str) {
@@ -65,10 +65,10 @@ public final class Arrays {
             return new String[]{str};
         }
         int length = strArr.length;
-        Object obj = new String[(length + 1)];
-        System.arraycopy(strArr, 0, obj, 0, length);
-        obj[length] = str;
-        return obj;
+        String[] strArr2 = new String[(length + 1)];
+        System.arraycopy(strArr, 0, strArr2, 0, length);
+        strArr2[length] = str;
+        return strArr2;
     }
 
     public static short[] append(short[] sArr, short s) {
@@ -76,10 +76,10 @@ public final class Arrays {
             return new short[]{s};
         }
         int length = sArr.length;
-        Object obj = new short[(length + 1)];
-        System.arraycopy(sArr, 0, obj, 0, length);
-        obj[length] = s;
-        return obj;
+        short[] sArr2 = new short[(length + 1)];
+        System.arraycopy(sArr, 0, sArr2, 0, length);
+        sArr2[length] = s;
+        return sArr2;
     }
 
     public static boolean areEqual(byte[] bArr, byte[] bArr2) {
@@ -205,9 +205,9 @@ public final class Arrays {
         if (bArr == null) {
             return null;
         }
-        Object obj = new byte[bArr.length];
-        System.arraycopy(bArr, 0, obj, 0, bArr.length);
-        return obj;
+        byte[] bArr2 = new byte[bArr.length];
+        System.arraycopy(bArr, 0, bArr2, 0, bArr.length);
+        return bArr2;
     }
 
     public static byte[] clone(byte[] bArr, byte[] bArr2) {
@@ -225,27 +225,27 @@ public final class Arrays {
         if (cArr == null) {
             return null;
         }
-        Object obj = new char[cArr.length];
-        System.arraycopy(cArr, 0, obj, 0, cArr.length);
-        return obj;
+        char[] cArr2 = new char[cArr.length];
+        System.arraycopy(cArr, 0, cArr2, 0, cArr.length);
+        return cArr2;
     }
 
     public static int[] clone(int[] iArr) {
         if (iArr == null) {
             return null;
         }
-        Object obj = new int[iArr.length];
-        System.arraycopy(iArr, 0, obj, 0, iArr.length);
-        return obj;
+        int[] iArr2 = new int[iArr.length];
+        System.arraycopy(iArr, 0, iArr2, 0, iArr.length);
+        return iArr2;
     }
 
     public static long[] clone(long[] jArr) {
         if (jArr == null) {
             return null;
         }
-        Object obj = new long[jArr.length];
-        System.arraycopy(jArr, 0, obj, 0, jArr.length);
-        return obj;
+        long[] jArr2 = new long[jArr.length];
+        System.arraycopy(jArr, 0, jArr2, 0, jArr.length);
+        return jArr2;
     }
 
     public static long[] clone(long[] jArr, long[] jArr2) {
@@ -263,18 +263,18 @@ public final class Arrays {
         if (bigIntegerArr == null) {
             return null;
         }
-        Object obj = new BigInteger[bigIntegerArr.length];
-        System.arraycopy(bigIntegerArr, 0, obj, 0, bigIntegerArr.length);
-        return obj;
+        BigInteger[] bigIntegerArr2 = new BigInteger[bigIntegerArr.length];
+        System.arraycopy(bigIntegerArr, 0, bigIntegerArr2, 0, bigIntegerArr.length);
+        return bigIntegerArr2;
     }
 
     public static short[] clone(short[] sArr) {
         if (sArr == null) {
             return null;
         }
-        Object obj = new short[sArr.length];
-        System.arraycopy(sArr, 0, obj, 0, sArr.length);
-        return obj;
+        short[] sArr2 = new short[sArr.length];
+        System.arraycopy(sArr, 0, sArr2, 0, sArr.length);
+        return sArr2;
     }
 
     public static byte[][] clone(byte[][] bArr) {
@@ -327,10 +327,10 @@ public final class Arrays {
         if (bArr == null || bArr2 == null) {
             return bArr2 != null ? clone(bArr2) : clone(bArr);
         } else {
-            Object obj = new byte[(bArr.length + bArr2.length)];
-            System.arraycopy(bArr, 0, obj, 0, bArr.length);
-            System.arraycopy(bArr2, 0, obj, bArr.length, bArr2.length);
-            return obj;
+            byte[] bArr3 = new byte[(bArr.length + bArr2.length)];
+            System.arraycopy(bArr, 0, bArr3, 0, bArr.length);
+            System.arraycopy(bArr2, 0, bArr3, bArr.length, bArr2.length);
+            return bArr3;
         }
     }
 
@@ -338,11 +338,11 @@ public final class Arrays {
         if (bArr == null || bArr2 == null || bArr3 == null) {
             return bArr == null ? concatenate(bArr2, bArr3) : bArr2 == null ? concatenate(bArr, bArr3) : concatenate(bArr, bArr2);
         } else {
-            Object obj = new byte[((bArr.length + bArr2.length) + bArr3.length)];
-            System.arraycopy(bArr, 0, obj, 0, bArr.length);
-            System.arraycopy(bArr2, 0, obj, bArr.length, bArr2.length);
-            System.arraycopy(bArr3, 0, obj, bArr.length + bArr2.length, bArr3.length);
-            return obj;
+            byte[] bArr4 = new byte[((bArr.length + bArr2.length) + bArr3.length)];
+            System.arraycopy(bArr, 0, bArr4, 0, bArr.length);
+            System.arraycopy(bArr2, 0, bArr4, bArr.length, bArr2.length);
+            System.arraycopy(bArr3, 0, bArr4, bArr.length + bArr2.length, bArr3.length);
+            return bArr4;
         }
     }
 
@@ -350,12 +350,12 @@ public final class Arrays {
         if (bArr == null || bArr2 == null || bArr3 == null || bArr4 == null) {
             return bArr4 == null ? concatenate(bArr, bArr2, bArr3) : bArr3 == null ? concatenate(bArr, bArr2, bArr4) : bArr2 == null ? concatenate(bArr, bArr3, bArr4) : concatenate(bArr2, bArr3, bArr4);
         } else {
-            Object obj = new byte[(((bArr.length + bArr2.length) + bArr3.length) + bArr4.length)];
-            System.arraycopy(bArr, 0, obj, 0, bArr.length);
-            System.arraycopy(bArr2, 0, obj, bArr.length, bArr2.length);
-            System.arraycopy(bArr3, 0, obj, bArr.length + bArr2.length, bArr3.length);
-            System.arraycopy(bArr4, 0, obj, (bArr.length + bArr2.length) + bArr3.length, bArr4.length);
-            return obj;
+            byte[] bArr5 = new byte[(((bArr.length + bArr2.length) + bArr3.length) + bArr4.length)];
+            System.arraycopy(bArr, 0, bArr5, 0, bArr.length);
+            System.arraycopy(bArr2, 0, bArr5, bArr.length, bArr2.length);
+            System.arraycopy(bArr3, 0, bArr5, bArr.length + bArr2.length, bArr3.length);
+            System.arraycopy(bArr4, 0, bArr5, (bArr.length + bArr2.length) + bArr3.length, bArr4.length);
+            return bArr5;
         }
     }
 
@@ -366,15 +366,15 @@ public final class Arrays {
             i2 += bArr[i].length;
             i++;
         }
-        Object obj = new byte[i2];
+        byte[] bArr2 = new byte[i2];
         i2 = 0;
         int i3 = i2;
         while (i2 != bArr.length) {
-            System.arraycopy(bArr[i2], 0, obj, i3, bArr[i2].length);
+            System.arraycopy(bArr[i2], 0, bArr2, i3, bArr[i2].length);
             i3 += bArr[i2].length;
             i2++;
         }
-        return obj;
+        return bArr2;
     }
 
     public static int[] concatenate(int[] iArr, int[] iArr2) {
@@ -384,10 +384,10 @@ public final class Arrays {
         if (iArr2 == null) {
             return clone(iArr);
         }
-        Object obj = new int[(iArr.length + iArr2.length)];
-        System.arraycopy(iArr, 0, obj, 0, iArr.length);
-        System.arraycopy(iArr2, 0, obj, iArr.length, iArr2.length);
-        return obj;
+        int[] iArr3 = new int[(iArr.length + iArr2.length)];
+        System.arraycopy(iArr, 0, iArr3, 0, iArr.length);
+        System.arraycopy(iArr2, 0, iArr3, iArr.length, iArr2.length);
+        return iArr3;
     }
 
     public static boolean constantTimeAreEqual(byte[] bArr, byte[] bArr2) {
@@ -398,7 +398,7 @@ public final class Arrays {
             return false;
         }
         if (bArr.length != bArr2.length) {
-            return constantTimeAreEqual(bArr, bArr) ^ true;
+            return constantTimeAreEqual(bArr, bArr) ^ 1;
         }
         int i = 0;
         int i2 = i;
@@ -429,12 +429,12 @@ public final class Arrays {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x000c in {3, 4} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -451,10 +451,8 @@ public final class Arrays {
         r1 = r3.length;
         r2 = 0;
         if (r4 >= r1) goto L_0x000a;
-    L_0x0006:
         java.lang.System.arraycopy(r3, r2, r0, r2, r4);
         return r0;
-    L_0x000a:
         r4 = r3.length;
         goto L_0x0006;
         return r0;
@@ -464,12 +462,12 @@ public final class Arrays {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x000c in {3, 4} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -486,10 +484,8 @@ public final class Arrays {
         r1 = r3.length;
         r2 = 0;
         if (r4 >= r1) goto L_0x000a;
-    L_0x0006:
         java.lang.System.arraycopy(r3, r2, r0, r2, r4);
         return r0;
-    L_0x000a:
         r4 = r3.length;
         goto L_0x0006;
         return r0;
@@ -499,12 +495,12 @@ public final class Arrays {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x000c in {3, 4} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -521,10 +517,8 @@ public final class Arrays {
         r1 = r3.length;
         r2 = 0;
         if (r4 >= r1) goto L_0x000a;
-    L_0x0006:
         java.lang.System.arraycopy(r3, r2, r0, r2, r4);
         return r0;
-    L_0x000a:
         r4 = r3.length;
         goto L_0x0006;
         return r0;
@@ -534,12 +528,12 @@ public final class Arrays {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x000c in {3, 4} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -556,10 +550,8 @@ public final class Arrays {
         r1 = r3.length;
         r2 = 0;
         if (r4 >= r1) goto L_0x000a;
-    L_0x0006:
         java.lang.System.arraycopy(r3, r2, r0, r2, r4);
         return r0;
-    L_0x000a:
         r4 = r3.length;
         goto L_0x0006;
         return r0;
@@ -569,12 +561,12 @@ public final class Arrays {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:5:0x000c in {3, 4} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -591,10 +583,8 @@ public final class Arrays {
         r1 = r3.length;
         r2 = 0;
         if (r4 >= r1) goto L_0x000a;
-    L_0x0006:
         java.lang.System.arraycopy(r3, r2, r0, r2, r4);
         return r0;
-    L_0x000a:
         r4 = r3.length;
         goto L_0x0006;
         return r0;
@@ -604,42 +594,42 @@ public final class Arrays {
 
     public static byte[] copyOfRange(byte[] bArr, int i, int i2) {
         i2 = getLength(i, i2);
-        Object obj = new byte[i2];
+        byte[] bArr2 = new byte[i2];
         if (bArr.length - i < i2) {
             i2 = bArr.length - i;
         }
-        System.arraycopy(bArr, i, obj, 0, i2);
-        return obj;
+        System.arraycopy(bArr, i, bArr2, 0, i2);
+        return bArr2;
     }
 
     public static int[] copyOfRange(int[] iArr, int i, int i2) {
         i2 = getLength(i, i2);
-        Object obj = new int[i2];
+        int[] iArr2 = new int[i2];
         if (iArr.length - i < i2) {
             i2 = iArr.length - i;
         }
-        System.arraycopy(iArr, i, obj, 0, i2);
-        return obj;
+        System.arraycopy(iArr, i, iArr2, 0, i2);
+        return iArr2;
     }
 
     public static long[] copyOfRange(long[] jArr, int i, int i2) {
         i2 = getLength(i, i2);
-        Object obj = new long[i2];
+        long[] jArr2 = new long[i2];
         if (jArr.length - i < i2) {
             i2 = jArr.length - i;
         }
-        System.arraycopy(jArr, i, obj, 0, i2);
-        return obj;
+        System.arraycopy(jArr, i, jArr2, 0, i2);
+        return jArr2;
     }
 
     public static BigInteger[] copyOfRange(BigInteger[] bigIntegerArr, int i, int i2) {
         i2 = getLength(i, i2);
-        Object obj = new BigInteger[i2];
+        BigInteger[] bigIntegerArr2 = new BigInteger[i2];
         if (bigIntegerArr.length - i < i2) {
             i2 = bigIntegerArr.length - i;
         }
-        System.arraycopy(bigIntegerArr, i, obj, 0, i2);
-        return obj;
+        System.arraycopy(bigIntegerArr, i, bigIntegerArr2, 0, i2);
+        return bigIntegerArr2;
     }
 
     public static void fill(byte[] bArr, byte b) {
@@ -888,10 +878,10 @@ public final class Arrays {
             return new byte[]{b};
         }
         int length = bArr.length;
-        Object obj = new byte[(length + 1)];
-        System.arraycopy(bArr, 0, obj, 1, length);
-        obj[0] = b;
-        return obj;
+        byte[] bArr2 = new byte[(length + 1)];
+        System.arraycopy(bArr, 0, bArr2, 1, length);
+        bArr2[0] = b;
+        return bArr2;
     }
 
     public static int[] prepend(int[] iArr, int i) {
@@ -899,10 +889,10 @@ public final class Arrays {
             return new int[]{i};
         }
         int length = iArr.length;
-        Object obj = new int[(length + 1)];
-        System.arraycopy(iArr, 0, obj, 1, length);
-        obj[0] = i;
-        return obj;
+        int[] iArr2 = new int[(length + 1)];
+        System.arraycopy(iArr, 0, iArr2, 1, length);
+        iArr2[0] = i;
+        return iArr2;
     }
 
     public static short[] prepend(short[] sArr, short s) {
@@ -910,10 +900,10 @@ public final class Arrays {
             return new short[]{s};
         }
         int length = sArr.length;
-        Object obj = new short[(length + 1)];
-        System.arraycopy(sArr, 0, obj, 1, length);
-        obj[0] = s;
-        return obj;
+        short[] sArr2 = new short[(length + 1)];
+        System.arraycopy(sArr, 0, sArr2, 1, length);
+        sArr2[0] = s;
+        return sArr2;
     }
 
     public static byte[] reverse(byte[] bArr) {

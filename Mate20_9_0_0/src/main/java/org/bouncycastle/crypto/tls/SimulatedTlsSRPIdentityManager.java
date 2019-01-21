@@ -23,7 +23,7 @@ public class SimulatedTlsSRPIdentityManager implements TlsSRPIdentityManager {
     public static SimulatedTlsSRPIdentityManager getRFC5054Default(SRP6GroupParameters sRP6GroupParameters, byte[] bArr) {
         SRP6VerifierGenerator sRP6VerifierGenerator = new SRP6VerifierGenerator();
         sRP6VerifierGenerator.init(sRP6GroupParameters, TlsUtils.createHash((short) 2));
-        Mac hMac = new HMac(TlsUtils.createHash((short) 2));
+        HMac hMac = new HMac(TlsUtils.createHash((short) 2));
         hMac.init(new KeyParameter(bArr));
         return new SimulatedTlsSRPIdentityManager(sRP6GroupParameters, sRP6VerifierGenerator, hMac);
     }

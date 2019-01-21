@@ -822,28 +822,28 @@ public class HwInputManagerService extends InputManagerService {
         return this.mCurFocusedWindowHandle;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0017, code:
+    /* JADX WARNING: Missing block: B:9:0x0017, code skipped:
             r5.mModalWindowOnTop = false;
      */
-    /* JADX WARNING: Missing block: B:10:0x001c, code:
+    /* JADX WARNING: Missing block: B:10:0x001c, code skipped:
             if (r0 == com.android.server.hidata.arbitration.HwArbitrationDEFS.MSG_MPLINK_UNBIND_FAIL) goto L_0x0024;
      */
-    /* JADX WARNING: Missing block: B:12:0x0020, code:
+    /* JADX WARNING: Missing block: B:12:0x0020, code skipped:
             if (r0 != 2003) goto L_0x0025;
      */
-    /* JADX WARNING: Missing block: B:13:0x0024, code:
+    /* JADX WARNING: Missing block: B:13:0x0024, code skipped:
             r4 = true;
      */
-    /* JADX WARNING: Missing block: B:15:0x0026, code:
+    /* JADX WARNING: Missing block: B:15:0x0026, code skipped:
             if (r4 == false) goto L_0x002e;
      */
-    /* JADX WARNING: Missing block: B:17:0x002a, code:
+    /* JADX WARNING: Missing block: B:17:0x002a, code skipped:
             if ((r1 & 40) != 0) goto L_0x002e;
      */
-    /* JADX WARNING: Missing block: B:18:0x002c, code:
+    /* JADX WARNING: Missing block: B:18:0x002c, code skipped:
             r5.mModalWindowOnTop = true;
      */
-    /* JADX WARNING: Missing block: B:20:0x0030, code:
+    /* JADX WARNING: Missing block: B:20:0x0030, code skipped:
             return r5.mModalWindowOnTop;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -866,7 +866,7 @@ public class HwInputManagerService extends InputManagerService {
         return z;
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0056, code:
+    /* JADX WARNING: Missing block: B:26:0x0056, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1025,7 +1025,7 @@ public class HwInputManagerService extends InputManagerService {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x002a, code:
+    /* JADX WARNING: Missing block: B:13:0x002a, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1157,11 +1157,12 @@ public class HwInputManagerService extends InputManagerService {
 
     private void setInputFilterEnabled() {
         synchronized (this.mInputFilterLock) {
-            if (this.mEnableFingerSnapshot || this.mIsStartInputEventControl || this.mInputFilter != null) {
-                nativeSetInputFilterEnabled(this.mPtr, true);
-            } else {
-                nativeSetInputFilterEnabled(this.mPtr, false);
+            if (!(this.mEnableFingerSnapshot || this.mIsStartInputEventControl)) {
+                if (this.mInputFilter == null) {
+                    nativeSetInputFilterEnabled(this.mPtr, false);
+                }
             }
+            nativeSetInputFilterEnabled(this.mPtr, true);
         }
     }
 
@@ -1187,8 +1188,11 @@ public class HwInputManagerService extends InputManagerService {
         super.setInputFilter(filter);
         synchronized (this.mInputFilterLock) {
             if (filter == null) {
-                if (this.mEnableFingerSnapshot || this.mIsStartInputEventControl) {
-                    nativeSetInputFilterEnabled(this.mPtr, true);
+                try {
+                    if (this.mEnableFingerSnapshot || this.mIsStartInputEventControl) {
+                        nativeSetInputFilterEnabled(this.mPtr, true);
+                    }
+                } catch (Throwable th) {
                 }
             }
         }

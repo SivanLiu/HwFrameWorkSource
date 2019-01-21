@@ -244,7 +244,7 @@ public class LocalizedMessage {
             stringBuilder2.append(this.resource);
             stringBuilder2.append(".");
             throw new MissingEntryException(stringBuilder2.toString(), this.resource, str3, locale, this.loader != null ? this.loader : getClassLoader());
-        } catch (Throwable e2) {
+        } catch (UnsupportedEncodingException e2) {
             throw new RuntimeException(e2);
         }
     }

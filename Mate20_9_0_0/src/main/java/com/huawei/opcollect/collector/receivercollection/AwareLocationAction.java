@@ -43,7 +43,7 @@ public class AwareLocationAction extends Action implements ILocationListener {
     private boolean isHomeOrOffice = false;
     private boolean isNeedModifyCityCode = false;
     private AwareHandler mHandler = null;
-    private int mLocationType = -1;
+    private int mLocationType = LOCATION_UNKNOW;
     private AwareLocationReceiver mReceiver = null;
 
     private static class AwareHandler extends Handler {
@@ -79,7 +79,7 @@ public class AwareLocationAction extends Action implements ILocationListener {
                     }
                     int eventID = bundle.getInt(AwareLocationAction.PLACE_RECOGNITION_KEY);
                     OPCollectLog.r(AwareLocationAction.TAG, "eventID: " + eventID);
-                    if (eventID == -1) {
+                    if (eventID == AwareLocationAction.LOCATION_UNKNOW) {
                         AwareLocationAction.this.isHomeOrOffice = false;
                         return;
                     }

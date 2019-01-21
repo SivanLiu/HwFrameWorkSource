@@ -851,7 +851,7 @@ public class HwABSStateMachine extends StateMachine {
             this.mGetApMIMOCapabilityTimes = 0;
         }
 
-        /* JADX WARNING: Missing block: B:40:0x011a, code:
+        /* JADX WARNING: Missing block: B:40:0x011a, code skipped:
             if (r4 == null) goto L_0x019f;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */

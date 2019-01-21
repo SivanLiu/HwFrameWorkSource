@@ -34,35 +34,39 @@ public class ZenModeFiltering {
             this.mCalls = new ArrayMap();
         }
 
-        /* JADX WARNING: Missing block: B:14:0x0028, code:
+        /* JADX WARNING: Missing block: B:15:0x0028, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private synchronized void recordCall(Context context, Bundle extras) {
             setThresholdMinutes(context);
-            if (this.mThresholdMinutes > 0 && extras != null) {
-                String peopleString = peopleString(extras);
-                if (peopleString != null) {
-                    long now = System.currentTimeMillis();
-                    cleanUp(this.mCalls, now);
-                    this.mCalls.put(peopleString, Long.valueOf(now));
+            if (this.mThresholdMinutes > 0) {
+                if (extras != null) {
+                    String peopleString = peopleString(extras);
+                    if (peopleString != null) {
+                        long now = System.currentTimeMillis();
+                        cleanUp(this.mCalls, now);
+                        this.mCalls.put(peopleString, Long.valueOf(now));
+                    }
                 }
             }
         }
 
-        /* JADX WARNING: Missing block: B:14:0x0026, code:
+        /* JADX WARNING: Missing block: B:15:0x0026, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private synchronized boolean isRepeat(Context context, Bundle extras) {
             setThresholdMinutes(context);
-            if (this.mThresholdMinutes > 0 && extras != null) {
-                String peopleString = peopleString(extras);
-                if (peopleString == null) {
-                    return false;
+            if (this.mThresholdMinutes > 0) {
+                if (extras != null) {
+                    String peopleString = peopleString(extras);
+                    if (peopleString == null) {
+                        return false;
+                    }
+                    cleanUp(this.mCalls, System.currentTimeMillis());
+                    return this.mCalls.containsKey(peopleString);
                 }
-                cleanUp(this.mCalls, System.currentTimeMillis());
-                return this.mCalls.containsKey(peopleString);
             }
         }
 

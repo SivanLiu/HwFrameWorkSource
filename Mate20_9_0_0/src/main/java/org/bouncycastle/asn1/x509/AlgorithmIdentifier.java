@@ -24,12 +24,12 @@ public class AlgorithmIdentifier extends ASN1Object {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:10:0x002b in {6, 8, 9, 12} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -47,27 +47,21 @@ public class AlgorithmIdentifier extends ASN1Object {
         r0 = r4.size();
         r1 = 1;
         if (r0 < r1) goto L_0x002c;
-    L_0x000a:
         r0 = r4.size();
         r2 = 2;
         if (r0 > r2) goto L_0x002c;
-    L_0x0011:
         r0 = 0;
         r0 = r4.getObjectAt(r0);
         r0 = org.bouncycastle.asn1.ASN1ObjectIdentifier.getInstance(r0);
         r3.algorithm = r0;
         r0 = r4.size();
         if (r0 != r2) goto L_0x0029;
-    L_0x0022:
         r4 = r4.getObjectAt(r1);
-    L_0x0026:
         r3.parameters = r4;
         return;
-    L_0x0029:
         r4 = 0;
         goto L_0x0026;
         return;
-    L_0x002c:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();

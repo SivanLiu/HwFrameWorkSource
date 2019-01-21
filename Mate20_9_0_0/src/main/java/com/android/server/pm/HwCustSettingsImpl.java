@@ -45,7 +45,7 @@ public class HwCustSettingsImpl extends HwCustSettings {
         }
     }
 
-    /* JADX WARNING: Missing block: B:20:?, code:
+    /* JADX WARNING: Missing block: B:20:?, code skipped:
             r1.close();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

@@ -19,9 +19,9 @@ public class CMSContentInfoParser {
                 return;
             }
             throw new CMSException("No content found.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new CMSException("IOException reading content.", e);
-        } catch (Exception e2) {
+        } catch (ClassCastException e2) {
             throw new CMSException("Unexpected object reading content.", e2);
         }
     }

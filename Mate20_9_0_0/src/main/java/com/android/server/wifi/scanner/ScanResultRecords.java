@@ -32,7 +32,7 @@ public class ScanResultRecords {
         this.mPmfRecords.clear();
     }
 
-    /* JADX WARNING: Missing block: B:12:0x0022, code:
+    /* JADX WARNING: Missing block: B:12:0x0022, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -55,47 +55,64 @@ public class ScanResultRecords {
         return this.mHiLinkRecords.contains(bssid.toLowerCase());
     }
 
-    /* JADX WARNING: Missing block: B:15:0x005a, code:
+    /* JADX WARNING: Missing block: B:16:0x005a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public synchronized void recordOriSsid(String bssid, String ssid, byte[] oriSsid) {
-        if (TextUtils.isEmpty(bssid) || TextUtils.isEmpty(ssid) || isByteArrayInvalid(oriSsid)) {
-            Log.d(TAG, "recordOriSsid: param is invalid.");
-            return;
+        if (!(TextUtils.isEmpty(bssid) || TextUtils.isEmpty(ssid))) {
+            if (!isByteArrayInvalid(oriSsid)) {
+                String bssidRecord = bssid.toLowerCase();
+                String ssidRecord = NativeUtil.removeEnclosingQuotes(ssid);
+                ArrayList<Byte> oriSsidRecord = NativeUtil.byteArrayToArrayList(oriSsid);
+                Map<String, ArrayList<Byte>> item;
+                if (!this.mOriSsidRecords.containsKey(bssidRecord)) {
+                    item = new HashMap();
+                    item.put(ssidRecord, oriSsidRecord);
+                    this.mOriSsidRecords.put(bssid, item);
+                } else if (!((Map) this.mOriSsidRecords.get(bssidRecord)).containsKey(ssidRecord)) {
+                    item = (Map) this.mOriSsidRecords.get(bssidRecord);
+                    item.put(ssidRecord, oriSsidRecord);
+                    this.mOriSsidRecords.remove(bssid);
+                    this.mOriSsidRecords.put(bssidRecord, item);
+                }
+            }
         }
-        String bssidRecord = bssid.toLowerCase();
-        String ssidRecord = NativeUtil.removeEnclosingQuotes(ssid);
-        ArrayList<Byte> oriSsidRecord = NativeUtil.byteArrayToArrayList(oriSsid);
-        Map<String, ArrayList<Byte>> item;
-        if (!this.mOriSsidRecords.containsKey(bssidRecord)) {
-            item = new HashMap();
-            item.put(ssidRecord, oriSsidRecord);
-            this.mOriSsidRecords.put(bssid, item);
-        } else if (!((Map) this.mOriSsidRecords.get(bssidRecord)).containsKey(ssidRecord)) {
-            item = (Map) this.mOriSsidRecords.get(bssidRecord);
-            item.put(ssidRecord, oriSsidRecord);
-            this.mOriSsidRecords.remove(bssid);
-            this.mOriSsidRecords.put(bssidRecord, item);
-        }
+        Log.d(TAG, "recordOriSsid: param is invalid.");
     }
 
     public synchronized ArrayList<Byte> getOriSsid(String bssid, String ssid) {
-        if (TextUtils.isEmpty(bssid) || TextUtils.isEmpty(ssid)) {
+        if (!TextUtils.isEmpty(bssid)) {
+            if (!TextUtils.isEmpty(ssid)) {
+                String bssidRecord = bssid.toLowerCase();
+                String ssidRecord = NativeUtil.removeEnclosingQuotes(ssid);
+                if (!this.mOriSsidRecords.containsKey(bssidRecord)) {
+                    Log.d(TAG, "getOriSsid: bssid is not exist in records.");
+                    return null;
+                } else if (((Map) this.mOriSsidRecords.get(bssidRecord)).containsKey(ssidRecord)) {
+                    return (ArrayList) ((Map) this.mOriSsidRecords.get(bssidRecord)).get(ssidRecord);
+                } else {
+                    Log.d(TAG, "getOriSsid: ssid is not exist in records.");
+                    return null;
+                }
+            }
+        }
+        Log.d(TAG, "getOriSsid: param is null");
+        return null;
+    }
+
+    public synchronized ArrayList<Byte> getOriSsid(String ssid) {
+        if (TextUtils.isEmpty(ssid)) {
             Log.d(TAG, "getOriSsid: param is null");
             return null;
         }
-        String bssidRecord = bssid.toLowerCase();
         String ssidRecord = NativeUtil.removeEnclosingQuotes(ssid);
-        if (!this.mOriSsidRecords.containsKey(bssidRecord)) {
-            Log.d(TAG, "getOriSsid: bssid is not exist in records.");
-            return null;
-        } else if (((Map) this.mOriSsidRecords.get(bssidRecord)).containsKey(ssidRecord)) {
-            return (ArrayList) ((Map) this.mOriSsidRecords.get(bssidRecord)).get(ssidRecord);
-        } else {
-            Log.d(TAG, "getOriSsid: ssid is not exist in records.");
-            return null;
+        for (Map<String, ArrayList<Byte>> records : this.mOriSsidRecords.values()) {
+            if (records.containsKey(ssidRecord)) {
+                return (ArrayList) records.get(ssidRecord);
+            }
         }
+        return null;
     }
 
     public synchronized void clearOrdSsidRecords() {
@@ -103,11 +120,13 @@ public class ScanResultRecords {
     }
 
     public synchronized void recordPmf(String bssid, String pmfCapabilities) {
-        if (TextUtils.isEmpty(bssid) || TextUtils.isEmpty(pmfCapabilities)) {
-            Log.d(TAG, "PMF: param is null");
-            return;
+        if (!TextUtils.isEmpty(bssid)) {
+            if (!TextUtils.isEmpty(pmfCapabilities)) {
+                this.mPmfRecords.put(bssid.toLowerCase(), pmfCapabilities);
+                return;
+            }
         }
-        this.mPmfRecords.put(bssid.toLowerCase(), pmfCapabilities);
+        Log.d(TAG, "PMF: param is null");
     }
 
     public synchronized String getPmf(String bssid) {

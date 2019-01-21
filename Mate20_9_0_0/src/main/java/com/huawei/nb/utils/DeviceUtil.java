@@ -44,17 +44,6 @@ public class DeviceUtil {
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x005a  */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0044  */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0044  */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x005a  */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x005a  */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0044  */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0044  */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x005a  */
-    /* JADX WARNING: Removed duplicated region for block: B:13:0x005a  */
-    /* JADX WARNING: Removed duplicated region for block: B:10:0x0044  */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static String getEMMCID() {
         if (getIntFiled(DEVICE_ATTESTATION_MANAGER, "DEVICE_ID_TYPE_EMMC", -1) == -1) {
             DSLog.e("DeviceUtil getAttestationSignature failed: deviceIdTypeEmmc == -1", new Object[0]);
@@ -67,31 +56,13 @@ public class DeviceUtil {
                 return "";
             }
             retObj = cls.getDeclaredMethod("getDeviceID", new Class[]{Integer.TYPE}).invoke(cls.newInstance(), new Object[]{Integer.valueOf(deviceIdTypeEmmc)});
-            if (retObj == null) {
+            if (retObj != null) {
                 return new String((byte[]) retObj, StandardCharsets.UTF_8);
             }
             DSLog.e("DeviceUtil emmcID is empty!", new Object[0]);
             return "";
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             DSLog.e("DeviceUtil getEMMCID failed: ", new Object[0]);
-            if (retObj == null) {
-            }
-        } catch (NoSuchMethodException e2) {
-            DSLog.e("DeviceUtil getEMMCID failed: ", new Object[0]);
-            if (retObj == null) {
-            }
-        } catch (InvocationTargetException e3) {
-            DSLog.e("DeviceUtil getEMMCID failed: ", new Object[0]);
-            if (retObj == null) {
-            }
-        } catch (IllegalAccessException e4) {
-            DSLog.e("DeviceUtil getEMMCID failed: ", new Object[0]);
-            if (retObj == null) {
-            }
-        } catch (InstantiationException e5) {
-            DSLog.e("DeviceUtil getEMMCID failed: ", new Object[0]);
-            if (retObj == null) {
-            }
         }
     }
 
@@ -107,12 +78,10 @@ public class DeviceUtil {
         }
         try {
             return cls.getField(filedName).getInt(null);
-        } catch (IllegalArgumentException e2) {
-        } catch (IllegalAccessException e3) {
-        } catch (NoSuchFieldException e4) {
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException e2) {
+            DSLog.e("DeviceUtil getIntFiled failed: ", new Object[0]);
+            return def;
         }
-        DSLog.e("DeviceUtil getIntFiled failed: ", new Object[0]);
-        return def;
     }
 
     public static String getDeviceToken(Context context) {
@@ -153,12 +122,10 @@ public class DeviceUtil {
         int userid = -1;
         try {
             return ((Integer) UserHandle.class.getDeclaredMethod("getCallingUserId", new Class[0]).invoke(null, new Object[0])).intValue();
-        } catch (NoSuchMethodException e) {
-        } catch (IllegalAccessException e2) {
-        } catch (InvocationTargetException e3) {
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            DSLog.e("DeviceUtil getCurrentUId Exception :", new Object[0]);
+            return userid;
         }
-        DSLog.e("DeviceUtil getCurrentUId Exception :", new Object[0]);
-        return userid;
     }
 
     public static boolean isDomesticBetaUser() {
@@ -221,8 +188,6 @@ public class DeviceUtil {
     }
 
     public static Boolean isUserKnown(Context context, int dirUid) {
-        Boolean result;
-        Exception e;
         boolean z = true;
         if (context == null || dirUid < 0) {
             String str = "DeviceUtil isUserKnown err param, context null[%s] or dirUid invalid [%s]";
@@ -232,31 +197,15 @@ public class DeviceUtil {
             DSLog.e(str, objArr);
             return null;
         }
+        Boolean result;
         try {
             if (UserManager.class.getDeclaredMethod("getUserInfo", new Class[]{Integer.TYPE}).invoke((UserManager) context.getSystemService("user"), new Object[]{Integer.valueOf(dirUid)}) == null) {
                 z = false;
             }
             result = Boolean.valueOf(z);
-        } catch (RuntimeException e2) {
-            e = e2;
+        } catch (IllegalAccessException | NoSuchMethodException | RuntimeException | InvocationTargetException e) {
             DSLog.e("DeviceUtil isUserKnown failed with exception: " + e.getClass().getName(), new Object[0]);
             result = null;
-            return result;
-        } catch (NoSuchMethodException e3) {
-            e = e3;
-            DSLog.e("DeviceUtil isUserKnown failed with exception: " + e.getClass().getName(), new Object[0]);
-            result = null;
-            return result;
-        } catch (IllegalAccessException e4) {
-            e = e4;
-            DSLog.e("DeviceUtil isUserKnown failed with exception: " + e.getClass().getName(), new Object[0]);
-            result = null;
-            return result;
-        } catch (InvocationTargetException e5) {
-            e = e5;
-            DSLog.e("DeviceUtil isUserKnown failed with exception: " + e.getClass().getName(), new Object[0]);
-            result = null;
-            return result;
         }
         return result;
     }

@@ -527,7 +527,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
 
         public HashMap<String, List<InputMethodSubtype>> getAllAdditionalInputMethodSubtypes() {
-            HashMap<String, List<InputMethodSubtype>> hashMap;
+            HashMap hashMap;
             synchronized (this.mMethodMap) {
                 hashMap = this.mAdditionalSubtypesMap;
             }
@@ -586,44 +586,58 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             }
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:76:0x0199 A:{Splitter: B:4:0x000b, ExcHandler: org.xmlpull.v1.XmlPullParserException (r0_6 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:76:0x0199 A:{Splitter: B:4:0x000b, ExcHandler: org.xmlpull.v1.XmlPullParserException (r0_6 'e' java.lang.Exception)} */
-        /* JADX WARNING: Removed duplicated region for block: B:60:0x0182 A:{Splitter: B:7:0x0011, ExcHandler: all (r0_3 'th' java.lang.Throwable)} */
+        /* JADX WARNING: Removed duplicated region for block: B:60:0x0182 A:{ExcHandler: Throwable (r0_3 'th' java.lang.Throwable), Splitter:B:7:0x0011} */
+        /* JADX WARNING: Removed duplicated region for block: B:76:0x0199 A:{ExcHandler: IOException | NumberFormatException | XmlPullParserException (r0_6 'e' java.lang.Exception), Splitter:B:4:0x000b} */
+        /* JADX WARNING: Removed duplicated region for block: B:76:0x0199 A:{ExcHandler: IOException | NumberFormatException | XmlPullParserException (r0_6 'e' java.lang.Exception), Splitter:B:4:0x000b} */
         /* JADX WARNING: Failed to process nested try/catch */
-        /* JADX WARNING: Missing block: B:58:0x017e, code:
+        /* JADX WARNING: Failed to process nested try/catch */
+        /* JADX WARNING: Missing block: B:58:0x017e, code skipped:
             r0 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:59:0x017f, code:
+        /* JADX WARNING: Missing block: B:59:0x017f, code skipped:
             r1 = r0;
             r4 = null;
      */
-        /* JADX WARNING: Missing block: B:60:0x0182, code:
+        /* JADX WARNING: Missing block: B:60:0x0182, code skipped:
             r0 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:61:0x0183, code:
+        /* JADX WARNING: Missing block: B:61:0x0183, code skipped:
             r4 = r0;
      */
-        /* JADX WARNING: Missing block: B:63:?, code:
+        /* JADX WARNING: Missing block: B:63:?, code skipped:
             throw r4;
      */
-        /* JADX WARNING: Missing block: B:76:0x0199, code:
+        /* JADX WARNING: Missing block: B:66:0x0187, code skipped:
+            if (r3 != null) goto L_0x0189;
+     */
+        /* JADX WARNING: Missing block: B:67:0x0189, code skipped:
+            if (r4 != null) goto L_0x018b;
+     */
+        /* JADX WARNING: Missing block: B:69:?, code skipped:
+            r3.close();
+     */
+        /* JADX WARNING: Missing block: B:74:0x0195, code skipped:
+            r3.close();
+     */
+        /* JADX WARNING: Missing block: B:75:0x0198, code skipped:
+            throw r1;
+     */
+        /* JADX WARNING: Missing block: B:76:0x0199, code skipped:
             r0 = move-exception;
      */
-        /* JADX WARNING: Missing block: B:77:0x019a, code:
+        /* JADX WARNING: Missing block: B:77:0x019a, code skipped:
             android.util.Slog.w(com.android.server.InputMethodManagerService.TAG, "Error reading subtypes", r0);
      */
-        /* JADX WARNING: Missing block: B:78:0x01a1, code:
+        /* JADX WARNING: Missing block: B:78:0x01a1, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         private static void readAdditionalInputMethodSubtypes(HashMap<String, List<InputMethodSubtype>> allSubtypes, AtomicFile subtypesFile) {
-            FileInputStream fis;
-            Throwable th;
             HashMap hashMap = allSubtypes;
             if (hashMap != null && subtypesFile != null) {
                 allSubtypes.clear();
                 try {
-                    fis = subtypesFile.openRead();
+                    FileInputStream fis = subtypesFile.openRead();
                     String str = null;
                     try {
                         int i;
@@ -728,27 +742,14 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                         }
                         firstNodeName2 = firstNodeName;
                         throw new XmlPullParserException("Xml doesn't start with subtypes");
-                    } catch (Throwable th2) {
-                        th = th2;
+                    } catch (Throwable th) {
+                        Throwable th2 = th;
                     }
-                } catch (Exception e) {
-                }
-            } else {
-                return;
-            }
-            if (fis != null) {
-                if (r4 != null) {
-                    try {
-                        fis.close();
-                    } catch (Throwable th22) {
-                        r4.addSuppressed(th22);
-                    }
-                } else {
-                    fis.close();
+                } catch (IOException | NumberFormatException | XmlPullParserException e) {
+                } catch (Throwable th3) {
+                    r4.addSuppressed(th3);
                 }
             }
-            throw th;
-            throw th;
         }
     }
 
@@ -822,7 +823,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             return getChangingUserId() == InputMethodManagerService.this.mSettings.getCurrentUserId();
         }
 
-        /* JADX WARNING: Missing block: B:26:0x0055, code:
+        /* JADX WARNING: Missing block: B:26:0x0055, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -911,7 +912,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             return false;
         }
 
-        /* JADX WARNING: Missing block: B:50:0x0114, code:
+        /* JADX WARNING: Missing block: B:50:0x0114, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1183,10 +1184,10 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             return 0;
         }
 
-        /* JADX WARNING: Missing block: B:9:0x003c, code:
+        /* JADX WARNING: Missing block: B:9:0x003c, code skipped:
             if (r0 != null) goto L_0x003e;
      */
-        /* JADX WARNING: Missing block: B:10:0x003e, code:
+        /* JADX WARNING: Missing block: B:10:0x003e, code skipped:
             $closeResource(r1, r0);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1219,7 +1220,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             x1.close();
         }
 
-        /* JADX WARNING: Missing block: B:9:0x0088, code:
+        /* JADX WARNING: Missing block: B:9:0x0088, code skipped:
             $closeResource(r1, r0);
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1512,7 +1513,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x0022, code:
+    /* JADX WARNING: Missing block: B:11:0x0022, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1522,7 +1523,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             if (userId != currentUserId) {
                 return;
             }
-            this.mSettings.switchCurrentUser(currentUserId, this.mSystemReady ^ true);
+            this.mSettings.switchCurrentUser(currentUserId, this.mSystemReady ^ 1);
             if (this.mSystemReady) {
                 buildInputMethodListLocked(false);
                 updateInputMethodsFromSettingsLocked(true);
@@ -1555,7 +1556,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         this.mUserManager = (UserManager) this.mContext.getSystemService(UserManager.class);
         this.mHardKeyboardListener = new HardKeyboardListener(this, null);
         this.mHasFeature = context.getPackageManager().hasSystemFeature("android.software.input_methods");
-        this.mSlotIme = this.mContext.getString(17041186);
+        this.mSlotIme = this.mContext.getString(17041187);
         this.mHardKeyboardBehavior = this.mContext.getResources().getInteger(17694786);
         Bundle extras = new Bundle();
         extras.putBoolean("android.allowDuringSetup", true);
@@ -1640,7 +1641,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                 this.mSystemReady = true;
                 this.mLastSystemLocales = this.mRes.getConfiguration().getLocales();
                 int currentUserId = this.mSettings.getCurrentUserId();
-                this.mSettings.switchCurrentUser(currentUserId, this.mUserManager.isUserUnlockingOrUnlocked(currentUserId) ^ true);
+                this.mSettings.switchCurrentUser(currentUserId, this.mUserManager.isUserUnlockingOrUnlocked(currentUserId) ^ 1);
                 this.mKeyguardManager = (KeyguardManager) this.mContext.getSystemService(KeyguardManager.class);
                 this.mNotificationManager = (NotificationManager) this.mContext.getSystemService(NotificationManager.class);
                 this.mStatusBar = statusBar;
@@ -1649,7 +1650,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                     this.mStatusBar.setIconVisibility(this.mSlotIme, false);
                 }
                 updateSystemUiLocked(this.mCurToken, this.mImeWindowVis, this.mBackDisposition);
-                this.mShowOngoingImeSwitcherForPhones = this.mRes.getBoolean(17957107);
+                this.mShowOngoingImeSwitcherForPhones = this.mRes.getBoolean(17957108);
                 if (this.mShowOngoingImeSwitcherForPhones) {
                     this.mWindowManagerInternal.setOnHardKeyboardStatusChangeListener(this.mHardKeyboardListener);
                 }
@@ -1682,7 +1683,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x003f, code:
+    /* JADX WARNING: Missing block: B:9:0x003f, code skipped:
             return true;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1767,15 +1768,15 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         if (!calledFromValidUser()) {
             return Collections.emptyList();
         }
-        List enabledInputMethodListLocked;
+        ArrayList enabledInputMethodListLocked;
         synchronized (this.mMethodMap) {
             enabledInputMethodListLocked = this.mSettings.getEnabledInputMethodListLocked();
         }
         return enabledInputMethodListLocked;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0031  */
-    /* JADX WARNING: Removed duplicated region for block: B:14:0x002b  */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x0031 A:{Catch:{ all -> 0x001f }} */
+    /* JADX WARNING: Removed duplicated region for block: B:15:0x002b A:{Catch:{ all -> 0x001f }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public List<InputMethodSubtype> getEnabledInputMethodSubtypeList(String imiId, boolean allowsImplicitlySelectedSubtypes) {
         if (!calledFromValidUser()) {
@@ -1784,15 +1785,18 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         synchronized (this.mMethodMap) {
             InputMethodInfo imi;
             if (imiId == null) {
-                if (this.mCurMethodId != null) {
-                    imi = (InputMethodInfo) this.mMethodMap.get(this.mCurMethodId);
-                    List<InputMethodSubtype> emptyList;
-                    if (imi != null) {
-                        emptyList = Collections.emptyList();
+                try {
+                    if (this.mCurMethodId != null) {
+                        imi = (InputMethodInfo) this.mMethodMap.get(this.mCurMethodId);
+                        List emptyList;
+                        if (imi != null) {
+                            emptyList = Collections.emptyList();
+                            return emptyList;
+                        }
+                        emptyList = this.mSettings.getEnabledInputMethodSubtypeListLocked(this.mContext, imi, allowsImplicitlySelectedSubtypes);
                         return emptyList;
                     }
-                    emptyList = this.mSettings.getEnabledInputMethodSubtypeListLocked(this.mContext, imi, allowsImplicitlySelectedSubtypes);
-                    return emptyList;
+                } finally {
                 }
             }
             imi = (InputMethodInfo) this.mMethodMap.get(imiId);
@@ -2035,7 +2039,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         unbindCurrentMethodLocked(true);
         this.mCurIntent = new Intent("android.view.InputMethod");
         this.mCurIntent.setComponent(info.getComponent());
-        this.mCurIntent.putExtra("android.intent.extra.client_label", 17040221);
+        this.mCurIntent.putExtra("android.intent.extra.client_label", 17040222);
         this.mCurIntent.putExtra("android.intent.extra.client_intent", PendingIntent.getActivity(this.mContext, 0, new Intent("android.settings.INPUT_METHOD_SETTINGS"), 0));
         if (bindCurrentInputMethodServiceLocked(this.mCurIntent, this, IME_CONNECTION_BIND_FLAGS)) {
             this.mLastBindTime = SystemClock.uptimeMillis();
@@ -2076,7 +2080,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
     public void finishInput(IInputMethodClient client) {
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0066, code:
+    /* JADX WARNING: Missing block: B:19:0x0066, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2105,13 +2109,13 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:17:0x0053, code:
+    /* JADX WARNING: Missing block: B:17:0x0053, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:19:0x0055, code:
+    /* JADX WARNING: Missing block: B:19:0x0055, code skipped:
             r9.dispose();
      */
-    /* JADX WARNING: Missing block: B:20:0x0058, code:
+    /* JADX WARNING: Missing block: B:20:0x0058, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2303,10 +2307,11 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                     InputMethodSubtype subtype = (InputMethodSubtype) subtypes.get(nonAuxCount);
                     if (subtype.isAuxiliary()) {
                         auxCount2++;
+                        auxSubtype2 = subtype;
                     } else {
                         auxCount++;
+                        auxSubtype = subtype;
                     }
-                    auxSubtype2 = subtype;
                 }
                 nonAuxCount = auxCount;
                 auxCount = auxCount2;
@@ -2372,7 +2377,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:26:0x0045  */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0030 A:{SYNTHETIC, Splitter: B:17:0x0030} */
+    /* JADX WARNING: Removed duplicated region for block: B:17:0x0030 A:{SYNTHETIC, Splitter:B:17:0x0030} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private void updateSystemUiLocked(IBinder token, int vis, int backDisposition) {
         Throwable th;
@@ -2409,7 +2414,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                         try {
                             imi = (InputMethodInfo) this.mMethodMap.get(this.mCurMethodId);
                             if (imi == null && needsToShowImeSwitcher) {
-                                this.mImeSwitcherNotification.setContentTitle(this.mRes.getText(17041059)).setContentText(InputMethodUtils.getImeAndSubtypeDisplayName(this.mContext, imi, this.mCurrentSubtype)).setContentIntent(this.mImeSwitchPendingIntent);
+                                this.mImeSwitcherNotification.setContentTitle(this.mRes.getText(17041060)).setContentText(InputMethodUtils.getImeAndSubtypeDisplayName(this.mContext, imi, this.mCurrentSubtype)).setContentIntent(this.mImeSwitchPendingIntent);
                                 try {
                                     boolean isEnableNavBar = System.getIntForUser(this.mContext.getContentResolver(), "enable_navbar", getNaviBarEnabledDefValue(), -2) != 0;
                                     String str = TAG;
@@ -2419,10 +2424,12 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                                     stringBuilder.append(" ,isEnableNavBar = ");
                                     stringBuilder.append(isEnableNavBar);
                                     Slog.i(str, stringBuilder.toString());
-                                    if (this.mNotificationManager == null) {
-                                    } else if (this.mIWindowManager.hasNavigationBar() && isEnableNavBar) {
-                                        i2 = vis2;
-                                    } else {
+                                    if (this.mNotificationManager != null) {
+                                        if (this.mIWindowManager.hasNavigationBar()) {
+                                            if (isEnableNavBar) {
+                                                i2 = vis2;
+                                            }
+                                        }
                                         i2 = vis2;
                                         try {
                                             this.mNotificationManager.notifyAsUser(null, 8, this.mImeSwitcherNotification.build(), UserHandle.ALL);
@@ -2497,7 +2504,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:22:0x0061, code:
+    /* JADX WARNING: Missing block: B:23:0x0061, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -2509,21 +2516,22 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
             InputMethodInfo targetImi = (InputMethodInfo) this.mSecureSuggestionSpans.get(span);
             if (targetImi != null) {
                 String[] suggestions = span.getSuggestions();
-                if (index < 0 || index >= suggestions.length) {
-                } else {
-                    String className = span.getNotificationTargetClassName();
-                    Intent intent = new Intent();
-                    intent.setClassName(targetImi.getPackageName(), className);
-                    intent.setAction("android.text.style.SUGGESTION_PICKED");
-                    intent.putExtra("before", originalString);
-                    intent.putExtra("after", suggestions[index]);
-                    intent.putExtra("hashcode", span.hashCode());
-                    long ident = Binder.clearCallingIdentity();
-                    try {
-                        this.mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
-                        return true;
-                    } finally {
-                        Binder.restoreCallingIdentity(ident);
+                if (index >= 0) {
+                    if (index < suggestions.length) {
+                        String className = span.getNotificationTargetClassName();
+                        Intent intent = new Intent();
+                        intent.setClassName(targetImi.getPackageName(), className);
+                        intent.setAction("android.text.style.SUGGESTION_PICKED");
+                        intent.putExtra("before", originalString);
+                        intent.putExtra("after", suggestions[index]);
+                        intent.putExtra("hashcode", span.hashCode());
+                        long ident = Binder.clearCallingIdentity();
+                        try {
+                            this.mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
+                            return true;
+                        } finally {
+                            Binder.restoreCallingIdentity(ident);
+                        }
                     }
                 }
             } else {
@@ -2832,8 +2840,8 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
     /* JADX WARNING: Removed duplicated region for block: B:98:0x01ad A:{Catch:{ all -> 0x0149, all -> 0x01a8 }} */
     /* JADX WARNING: Removed duplicated region for block: B:92:0x0193 A:{Catch:{ all -> 0x0149, all -> 0x01a8 }} */
     /* JADX WARNING: Removed duplicated region for block: B:81:0x0156 A:{Catch:{ all -> 0x0149, all -> 0x01a8 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:61:0x0108 A:{SYNTHETIC, Splitter: B:61:0x0108} */
-    /* JADX WARNING: Removed duplicated region for block: B:126:0x021e A:{Catch:{ all -> 0x0149, all -> 0x01a8 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:61:0x0108 A:{SYNTHETIC, Splitter:B:61:0x0108} */
+    /* JADX WARNING: Removed duplicated region for block: B:127:0x021e A:{Catch:{ all -> 0x0149, all -> 0x01a8 }} */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     protected InputBindResult windowGainedFocus(int startInputReason, IInputMethodClient client, IBinder windowToken, int controlFlags, int softInputMode, int windowFlags, EditorInfo attribute, IInputContext inputContext, int missingMethods, int unverifiedTargetSdkVersion) {
         Throwable th;
@@ -2923,20 +2931,22 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                                                 ident2 = ident4;
                                                 ident4 = unverifiedTargetSdkVersion;
                                                 resultReceiver = null;
-                                                if (isTextEditor && doAutoShow) {
-                                                    if (isTextEditor && doAutoShow && (i2 & 256) != 0) {
-                                                        if (DEBUG_FLOW) {
-                                                            Slog.v(TAG, "Unspecified window will show input");
+                                                if (isTextEditor) {
+                                                    if (doAutoShow) {
+                                                        if (isTextEditor && doAutoShow && (i2 & 256) != 0) {
+                                                            if (DEBUG_FLOW) {
+                                                                Slog.v(TAG, "Unspecified window will show input");
+                                                            }
+                                                            if (attribute != null) {
+                                                                resultReceiver2 = resultReceiver;
+                                                                res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, attribute, i, startInputReason);
+                                                                didStart = true;
+                                                            } else {
+                                                                resultReceiver2 = resultReceiver;
+                                                            }
+                                                            showCurrentInputLocked(1, resultReceiver2);
+                                                            break;
                                                         }
-                                                        if (attribute != null) {
-                                                            resultReceiver2 = resultReceiver;
-                                                            res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, attribute, i, startInputReason);
-                                                            didStart = true;
-                                                        } else {
-                                                            resultReceiver2 = resultReceiver;
-                                                        }
-                                                        showCurrentInputLocked(1, resultReceiver2);
-                                                        break;
                                                     }
                                                 }
                                                 resultReceiver2 = resultReceiver;
@@ -3036,12 +3046,15 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                                                 break;
                                         }
                                         if (!didStart) {
-                                            if (attribute == null) {
-                                                res = InputBindResult.NULL_EDITOR_INFO;
-                                            } else if (DebugFlags.FLAG_OPTIMIZE_START_INPUT.value() && (i & 2) == 0) {
-                                                res = InputBindResult.NO_EDITOR;
-                                            } else {
+                                            if (attribute != null) {
+                                                if (DebugFlags.FLAG_OPTIMIZE_START_INPUT.value()) {
+                                                    if ((i & 2) == 0) {
+                                                        res = InputBindResult.NO_EDITOR;
+                                                    }
+                                                }
                                                 res = startInputUncheckedLocked(calledFromValidUser, inputContext, missingMethods, attribute, i, startInputReason);
+                                            } else {
+                                                res = InputBindResult.NULL_EDITOR_INFO;
                                             }
                                         }
                                         Binder.restoreCallingIdentity(ident2);
@@ -3193,7 +3206,10 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         if (calledFromValidUser()) {
             synchronized (this.mMethodMap) {
                 if (subtype != null) {
-                    setInputMethodWithSubtypeIdLocked(token, id, InputMethodUtils.getSubtypeIdFromHashCode((InputMethodInfo) this.mMethodMap.get(id), subtype.hashCode()));
+                    try {
+                        setInputMethodWithSubtypeIdLocked(token, id, InputMethodUtils.getSubtypeIdFromHashCode((InputMethodInfo) this.mMethodMap.get(id), subtype.hashCode()));
+                    } catch (Throwable th) {
+                    }
                 } else {
                     setInputMethod(token, id);
                 }
@@ -3209,8 +3225,8 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:49:0x00d7 A:{Catch:{ all -> 0x00db, all -> 0x00e0 }} */
-    /* JADX WARNING: Removed duplicated region for block: B:44:0x00d0  */
+    /* JADX WARNING: Removed duplicated region for block: B:50:0x00d7 A:{Catch:{ all -> 0x00db, all -> 0x00e0 }} */
+    /* JADX WARNING: Removed duplicated region for block: B:45:0x00d0  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean switchToPreviousInputMethod(IBinder token) {
         Throwable th;
@@ -3323,10 +3339,10 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:26:0x0053, code:
+    /* JADX WARNING: Missing block: B:28:0x0053, code skipped:
             return null;
      */
-    /* JADX WARNING: Missing block: B:31:0x0058, code:
+    /* JADX WARNING: Missing block: B:33:0x0058, code skipped:
             return null;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3336,30 +3352,29 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
         synchronized (this.mMethodMap) {
             Pair<String, String> lastIme = this.mSettings.getLastInputMethodAndSubtypeLocked();
-            if (lastIme == null || TextUtils.isEmpty((CharSequence) lastIme.first) || TextUtils.isEmpty((CharSequence) lastIme.second)) {
-            } else {
-                InputMethodInfo lastImi = (InputMethodInfo) this.mMethodMap.get(lastIme.first);
-                if (lastImi == null) {
-                    return null;
-                }
-                try {
-                    int lastSubtypeId = InputMethodUtils.getSubtypeIdFromHashCode(lastImi, Integer.parseInt((String) lastIme.second));
-                    if (lastSubtypeId < 0 || lastSubtypeId >= lastImi.getSubtypeCount()) {
-                    } else {
-                        InputMethodSubtype subtypeAt = lastImi.getSubtypeAt(lastSubtypeId);
-                        return subtypeAt;
+            if (!(lastIme == null || TextUtils.isEmpty((CharSequence) lastIme.first))) {
+                if (!TextUtils.isEmpty((CharSequence) lastIme.second)) {
+                    InputMethodInfo lastImi = (InputMethodInfo) this.mMethodMap.get(lastIme.first);
+                    if (lastImi == null) {
+                        return null;
                     }
-                } catch (NumberFormatException e) {
-                    return null;
+                    try {
+                        int lastSubtypeId = InputMethodUtils.getSubtypeIdFromHashCode(lastImi, Integer.parseInt((String) lastIme.second));
+                        if (lastSubtypeId >= 0) {
+                            if (lastSubtypeId < lastImi.getSubtypeCount()) {
+                                InputMethodSubtype subtypeAt = lastImi.getSubtypeAt(lastSubtypeId);
+                                return subtypeAt;
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
                 }
             }
         }
     }
 
-    /* JADX WARNING: Missing block: B:30:0x0055, code:
-            return;
-     */
-    /* JADX WARNING: Missing block: B:36:0x005f, code:
+    /* JADX WARNING: Missing block: B:36:0x005f, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3382,6 +3397,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                                     long ident = Binder.clearCallingIdentity();
                                     try {
                                         buildInputMethodListLocked(false);
+                                        return;
                                     } finally {
                                         Binder.restoreCallingIdentity(ident);
                                     }
@@ -3414,7 +3430,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:11:0x001d, code:
+    /* JADX WARNING: Missing block: B:11:0x001d, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3459,10 +3475,6 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0045, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void hideMySoftInput(IBinder token, int flags) {
         if (calledFromValidUser()) {
             synchronized (this.mMethodMap) {
@@ -3487,10 +3499,6 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x001f, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void showMySoftInput(IBinder token, int flags) {
         if (calledFromValidUser()) {
             synchronized (this.mMethodMap) {
@@ -3524,22 +3532,22 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:53:0x00fd, code:
+    /* JADX WARNING: Missing block: B:53:0x00fd, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x00ff;
      */
-    /* JADX WARNING: Missing block: B:54:0x00ff, code:
+    /* JADX WARNING: Missing block: B:54:0x00ff, code skipped:
             r3.channel.dispose();
      */
-    /* JADX WARNING: Missing block: B:62:0x0128, code:
+    /* JADX WARNING: Missing block: B:62:0x0128, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x00ff;
      */
-    /* JADX WARNING: Missing block: B:92:0x01a0, code:
+    /* JADX WARNING: Missing block: B:92:0x01a0, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x01b9;
      */
-    /* JADX WARNING: Missing block: B:102:0x01b7, code:
+    /* JADX WARNING: Missing block: B:102:0x01b7, code skipped:
             if (android.os.Binder.isProxy(r1) != false) goto L_0x01b9;
      */
-    /* JADX WARNING: Missing block: B:103:0x01b9, code:
+    /* JADX WARNING: Missing block: B:103:0x01b9, code skipped:
             r3.dispose();
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3783,7 +3791,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0059, code:
+    /* JADX WARNING: Missing block: B:19:0x0059, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -3976,7 +3984,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         return this.mKeyguardManager != null && this.mKeyguardManager.isKeyguardLocked() && this.mKeyguardManager.isKeyguardSecure();
     }
 
-    /* JADX WARNING: Missing block: B:81:0x0204, code:
+    /* JADX WARNING: Missing block: B:82:0x0204, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4093,38 +4101,39 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                         });
                         final ImeSubtypeListAdapter adapter = new ImeSubtypeListAdapter(themeContext, 17367285, imList, checkedItem);
                         this.mDialogBuilder.setSingleChoiceItems(adapter, checkedItem, new OnClickListener() {
-                            /* JADX WARNING: Missing block: B:22:0x00a1, code:
+                            /* JADX WARNING: Missing block: B:23:0x00a1, code skipped:
             return;
      */
-                            /* JADX WARNING: Missing block: B:24:0x00a3, code:
+                            /* JADX WARNING: Missing block: B:25:0x00a3, code skipped:
             return;
      */
                             /* Code decompiled incorrectly, please refer to instructions dump. */
                             public void onClick(DialogInterface dialog, int which) {
                                 synchronized (InputMethodManagerService.this.mMethodMap) {
-                                    if (InputMethodManagerService.this.mIms == null || InputMethodManagerService.this.mIms.length <= which || InputMethodManagerService.this.mSubtypeIds == null || InputMethodManagerService.this.mSubtypeIds.length <= which) {
-                                    } else {
-                                        InputMethodInfo im = InputMethodManagerService.this.mIms[which];
-                                        int subtypeId = InputMethodManagerService.this.mSubtypeIds[which];
-                                        adapter.mCheckedItem = which;
-                                        adapter.notifyDataSetChanged();
-                                        InputMethodManagerService.this.hideInputMethodMenu();
-                                        if (im != null) {
-                                            if (subtypeId < 0 || subtypeId >= im.getSubtypeCount()) {
-                                                subtypeId = -1;
+                                    if (!(InputMethodManagerService.this.mIms == null || InputMethodManagerService.this.mIms.length <= which || InputMethodManagerService.this.mSubtypeIds == null)) {
+                                        if (InputMethodManagerService.this.mSubtypeIds.length > which) {
+                                            InputMethodInfo im = InputMethodManagerService.this.mIms[which];
+                                            int subtypeId = InputMethodManagerService.this.mSubtypeIds[which];
+                                            adapter.mCheckedItem = which;
+                                            adapter.notifyDataSetChanged();
+                                            InputMethodManagerService.this.hideInputMethodMenu();
+                                            if (im != null) {
+                                                if (subtypeId < 0 || subtypeId >= im.getSubtypeCount()) {
+                                                    subtypeId = -1;
+                                                }
+                                                InputMethodManagerService.this.mLastInputShown = InputMethodManagerService.this.mInputShown;
+                                                if (im.getId() != null) {
+                                                    String str = InputMethodManagerService.TAG;
+                                                    StringBuilder stringBuilder = new StringBuilder();
+                                                    stringBuilder.append("ime choosed, issame: ");
+                                                    stringBuilder.append(im.getId().equals(InputMethodManagerService.this.mCurMethodId));
+                                                    stringBuilder.append(",lastInputShown: ");
+                                                    stringBuilder.append(InputMethodManagerService.this.mLastInputShown);
+                                                    Slog.i(str, stringBuilder.toString());
+                                                }
+                                                InputMethodManagerService.this.mCurInputId = im.getId();
+                                                InputMethodManagerService.this.setInputMethodLocked(im.getId(), subtypeId);
                                             }
-                                            InputMethodManagerService.this.mLastInputShown = InputMethodManagerService.this.mInputShown;
-                                            if (im.getId() != null) {
-                                                String str = InputMethodManagerService.TAG;
-                                                StringBuilder stringBuilder = new StringBuilder();
-                                                stringBuilder.append("ime choosed, issame: ");
-                                                stringBuilder.append(im.getId().equals(InputMethodManagerService.this.mCurMethodId));
-                                                stringBuilder.append(",lastInputShown: ");
-                                                stringBuilder.append(InputMethodManagerService.this.mLastInputShown);
-                                                Slog.i(str, stringBuilder.toString());
-                                            }
-                                            InputMethodManagerService.this.mCurInputId = im.getId();
-                                            InputMethodManagerService.this.setInputMethodLocked(im.getId(), subtypeId);
                                         }
                                     }
                                 }
@@ -4391,7 +4400,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         return this.mCurrentSubtype;
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0024, code:
+    /* JADX WARNING: Missing block: B:9:0x0024, code skipped:
             return r1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4417,7 +4426,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0031, code:
+    /* JADX WARNING: Missing block: B:17:0x0031, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4427,12 +4436,15 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
         synchronized (this.mMethodMap) {
             if (subtype != null) {
-                if (this.mCurMethodId != null) {
-                    int subtypeId = InputMethodUtils.getSubtypeIdFromHashCode((InputMethodInfo) this.mMethodMap.get(this.mCurMethodId), subtype.hashCode());
-                    if (subtypeId != -1) {
-                        setInputMethodLocked(this.mCurMethodId, subtypeId);
-                        return true;
+                try {
+                    if (this.mCurMethodId != null) {
+                        int subtypeId = InputMethodUtils.getSubtypeIdFromHashCode((InputMethodInfo) this.mMethodMap.get(this.mCurMethodId), subtype.hashCode());
+                        if (subtypeId != -1) {
+                            setInputMethodLocked(this.mCurMethodId, subtypeId);
+                            return true;
+                        }
                     }
+                } catch (Throwable th) {
                 }
             }
         }
@@ -4502,7 +4514,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Missing block: B:16:0x0030, code:
+    /* JADX WARNING: Missing block: B:16:0x0030, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -4518,163 +4530,133 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:20:0x02c8 A:{Splitter: B:18:0x02be, ExcHandler: java.io.IOException (r1_5 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:28:0x0308 A:{Splitter: B:26:0x02fe, ExcHandler: java.io.IOException (r1_13 'e' java.lang.Exception)} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:0x032f A:{Splitter: B:33:0x0327, ExcHandler: java.io.IOException (r1_16 'e' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:20:0x02c8, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:21:0x02c9, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to dump input method client: ");
-            r2.append(r1);
-            r0.println(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:28:0x0308, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:29:0x0309, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to dump input method client in focused window: ");
-            r2.append(r1);
-            r0.println(r2.toString());
-     */
-    /* JADX WARNING: Missing block: B:35:0x032f, code:
-            r1 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:36:0x0330, code:
-            r2 = new java.lang.StringBuilder();
-            r2.append("Failed to dump input method service: ");
-            r2.append(r1);
-            r0.println(r2.toString());
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     protected void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
+        StringBuilder stringBuilder;
         if (DumpUtils.checkDumpPermission(this.mContext, TAG, pw)) {
             ClientState ci;
             ClientState client;
             IInputMethod method;
             Printer p = new PrintWriterPrinter(pw);
             synchronized (this.mMethodMap) {
-                StringBuilder stringBuilder;
+                StringBuilder stringBuilder2;
                 p.println("Current Input Method Manager state:");
                 int N = this.mMethodList.size();
-                StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  Input Methods: mMethodMapUpdateCount=");
-                stringBuilder2.append(this.mMethodMapUpdateCount);
-                stringBuilder2.append(" mBindInstantServiceAllowed=");
-                stringBuilder2.append(this.mBindInstantServiceAllowed);
-                p.println(stringBuilder2.toString());
+                StringBuilder stringBuilder3 = new StringBuilder();
+                stringBuilder3.append("  Input Methods: mMethodMapUpdateCount=");
+                stringBuilder3.append(this.mMethodMapUpdateCount);
+                stringBuilder3.append(" mBindInstantServiceAllowed=");
+                stringBuilder3.append(this.mBindInstantServiceAllowed);
+                p.println(stringBuilder3.toString());
                 for (int i = 0; i < N; i++) {
                     InputMethodInfo info = (InputMethodInfo) this.mMethodList.get(i);
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("  InputMethod #");
-                    stringBuilder.append(i);
-                    stringBuilder.append(":");
-                    p.println(stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("  InputMethod #");
+                    stringBuilder2.append(i);
+                    stringBuilder2.append(":");
+                    p.println(stringBuilder2.toString());
                     info.dump(p, "    ");
                 }
                 p.println("  Clients:");
                 for (ClientState ci2 : this.mClients.values()) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("  Client ");
-                    stringBuilder.append(ci2);
-                    stringBuilder.append(":");
-                    p.println(stringBuilder.toString());
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("    client=");
-                    stringBuilder.append(ci2.client);
-                    p.println(stringBuilder.toString());
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("    inputContext=");
-                    stringBuilder.append(ci2.inputContext);
-                    p.println(stringBuilder.toString());
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("    sessionRequested=");
-                    stringBuilder.append(ci2.sessionRequested);
-                    p.println(stringBuilder.toString());
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("    curSession=");
-                    stringBuilder.append(ci2.curSession);
-                    p.println(stringBuilder.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("  Client ");
+                    stringBuilder2.append(ci2);
+                    stringBuilder2.append(":");
+                    p.println(stringBuilder2.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("    client=");
+                    stringBuilder2.append(ci2.client);
+                    p.println(stringBuilder2.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("    inputContext=");
+                    stringBuilder2.append(ci2.inputContext);
+                    p.println(stringBuilder2.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("    sessionRequested=");
+                    stringBuilder2.append(ci2.sessionRequested);
+                    p.println(stringBuilder2.toString());
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("    curSession=");
+                    stringBuilder2.append(ci2.curSession);
+                    p.println(stringBuilder2.toString());
                 }
-                stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("  mCurMethodId=");
-                stringBuilder2.append(this.mCurMethodId);
-                p.println(stringBuilder2.toString());
-                client = this.mCurClient;
-                StringBuilder stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("  mCurClient=");
-                stringBuilder3.append(client);
-                stringBuilder3.append(" mCurSeq=");
-                stringBuilder3.append(this.mCurSeq);
-                p.println(stringBuilder3.toString());
                 stringBuilder3 = new StringBuilder();
-                stringBuilder3.append("  mCurFocusedWindow=");
-                stringBuilder3.append(this.mCurFocusedWindow);
-                stringBuilder3.append(" softInputMode=");
-                stringBuilder3.append(InputMethodClient.softInputModeToString(this.mCurFocusedWindowSoftInputMode));
-                stringBuilder3.append(" client=");
-                stringBuilder3.append(this.mCurFocusedWindowClient);
+                stringBuilder3.append("  mCurMethodId=");
+                stringBuilder3.append(this.mCurMethodId);
                 p.println(stringBuilder3.toString());
-                ci2 = this.mCurFocusedWindowClient;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("  mCurId=");
-                stringBuilder.append(this.mCurId);
-                stringBuilder.append(" mHaveConnect=");
-                stringBuilder.append(this.mHaveConnection);
-                stringBuilder.append(" mBoundToMethod=");
-                stringBuilder.append(this.mBoundToMethod);
-                p.println(stringBuilder.toString());
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("  mCurToken=");
-                stringBuilder.append(this.mCurToken);
-                p.println(stringBuilder.toString());
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("  mCurIntent=");
-                stringBuilder.append(this.mCurIntent);
-                p.println(stringBuilder.toString());
-                method = this.mCurMethod;
+                client = this.mCurClient;
                 StringBuilder stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mCurMethod=");
-                stringBuilder4.append(this.mCurMethod);
+                stringBuilder4.append("  mCurClient=");
+                stringBuilder4.append(client);
+                stringBuilder4.append(" mCurSeq=");
+                stringBuilder4.append(this.mCurSeq);
                 p.println(stringBuilder4.toString());
                 stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mEnabledSession=");
-                stringBuilder4.append(this.mEnabledSession);
+                stringBuilder4.append("  mCurFocusedWindow=");
+                stringBuilder4.append(this.mCurFocusedWindow);
+                stringBuilder4.append(" softInputMode=");
+                stringBuilder4.append(InputMethodClient.softInputModeToString(this.mCurFocusedWindowSoftInputMode));
+                stringBuilder4.append(" client=");
+                stringBuilder4.append(this.mCurFocusedWindowClient);
                 p.println(stringBuilder4.toString());
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mImeWindowVis=");
-                stringBuilder4.append(imeWindowStatusToString(this.mImeWindowVis));
-                p.println(stringBuilder4.toString());
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mShowRequested=");
-                stringBuilder4.append(this.mShowRequested);
-                stringBuilder4.append(" mShowExplicitlyRequested=");
-                stringBuilder4.append(this.mShowExplicitlyRequested);
-                stringBuilder4.append(" mShowForced=");
-                stringBuilder4.append(this.mShowForced);
-                stringBuilder4.append(" mInputShown=");
-                stringBuilder4.append(this.mInputShown);
-                p.println(stringBuilder4.toString());
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mInFullscreenMode=");
-                stringBuilder4.append(this.mInFullscreenMode);
-                p.println(stringBuilder4.toString());
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mCurUserActionNotificationSequenceNumber=");
-                stringBuilder4.append(this.mCurUserActionNotificationSequenceNumber);
-                p.println(stringBuilder4.toString());
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mSystemReady=");
-                stringBuilder4.append(this.mSystemReady);
-                stringBuilder4.append(" mInteractive=");
-                stringBuilder4.append(this.mIsInteractive);
-                p.println(stringBuilder4.toString());
-                stringBuilder4 = new StringBuilder();
-                stringBuilder4.append("  mSettingsObserver=");
-                stringBuilder4.append(this.mSettingsObserver);
-                p.println(stringBuilder4.toString());
+                ci2 = this.mCurFocusedWindowClient;
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("  mCurId=");
+                stringBuilder2.append(this.mCurId);
+                stringBuilder2.append(" mHaveConnect=");
+                stringBuilder2.append(this.mHaveConnection);
+                stringBuilder2.append(" mBoundToMethod=");
+                stringBuilder2.append(this.mBoundToMethod);
+                p.println(stringBuilder2.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("  mCurToken=");
+                stringBuilder2.append(this.mCurToken);
+                p.println(stringBuilder2.toString());
+                stringBuilder2 = new StringBuilder();
+                stringBuilder2.append("  mCurIntent=");
+                stringBuilder2.append(this.mCurIntent);
+                p.println(stringBuilder2.toString());
+                method = this.mCurMethod;
+                StringBuilder stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mCurMethod=");
+                stringBuilder5.append(this.mCurMethod);
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mEnabledSession=");
+                stringBuilder5.append(this.mEnabledSession);
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mImeWindowVis=");
+                stringBuilder5.append(imeWindowStatusToString(this.mImeWindowVis));
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mShowRequested=");
+                stringBuilder5.append(this.mShowRequested);
+                stringBuilder5.append(" mShowExplicitlyRequested=");
+                stringBuilder5.append(this.mShowExplicitlyRequested);
+                stringBuilder5.append(" mShowForced=");
+                stringBuilder5.append(this.mShowForced);
+                stringBuilder5.append(" mInputShown=");
+                stringBuilder5.append(this.mInputShown);
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mInFullscreenMode=");
+                stringBuilder5.append(this.mInFullscreenMode);
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mCurUserActionNotificationSequenceNumber=");
+                stringBuilder5.append(this.mCurUserActionNotificationSequenceNumber);
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mSystemReady=");
+                stringBuilder5.append(this.mSystemReady);
+                stringBuilder5.append(" mInteractive=");
+                stringBuilder5.append(this.mIsInteractive);
+                p.println(stringBuilder5.toString());
+                stringBuilder5 = new StringBuilder();
+                stringBuilder5.append("  mSettingsObserver=");
+                stringBuilder5.append(this.mSettingsObserver);
+                p.println(stringBuilder5.toString());
                 p.println("  mSwitchingController:");
                 this.mSwitchingController.dump(p);
                 p.println("  mSettings:");
@@ -4687,7 +4669,11 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                 pw.flush();
                 try {
                     TransferPipe.dumpAsync(client.client.asBinder(), fd, args);
-                } catch (Exception e) {
+                } catch (RemoteException | IOException e) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Failed to dump input method client: ");
+                    stringBuilder.append(e);
+                    p.println(stringBuilder.toString());
                 }
             } else {
                 p.println("No input method client.");
@@ -4700,7 +4686,11 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                 pw.flush();
                 try {
                     TransferPipe.dumpAsync(ci2.client.asBinder(), fd, args);
-                } catch (Exception e2) {
+                } catch (RemoteException | IOException e2) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Failed to dump input method client in focused window: ");
+                    stringBuilder.append(e2);
+                    p.println(stringBuilder.toString());
                 }
             }
             p.println(" ");
@@ -4708,7 +4698,11 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                 pw.flush();
                 try {
                     TransferPipe.dumpAsync(method.asBinder(), fd, args);
-                } catch (Exception e3) {
+                } catch (RemoteException | IOException e22) {
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("Failed to dump input method service: ");
+                    stringBuilder.append(e22);
+                    p.println(stringBuilder.toString());
                 }
             } else {
                 p.println("No input method service.");
@@ -4720,10 +4714,6 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
         new ShellCommandImpl(this).exec(this, in, out, err, args, callback, resultReceiver);
     }
 
-    /* JADX WARNING: Missing block: B:22:0x004f, code:
-            return 0;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private int handleSetBindInstantServiceAllowed(ShellCommand shellCommand) {
         String allowedString = shellCommand.getNextArgRequired();
         if (allowedString == null) {
@@ -4745,6 +4735,7 @@ public class InputMethodManagerService extends AbsInputMethodManagerService impl
                     this.mSettings.putSelectedInputMethod(null);
                     buildInputMethodListLocked(false);
                     updateInputMethodsFromSettingsLocked(true);
+                    return 0;
                 } finally {
                     Binder.restoreCallingIdentity(ident);
                 }

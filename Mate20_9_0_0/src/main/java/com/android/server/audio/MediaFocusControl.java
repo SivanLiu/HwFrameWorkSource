@@ -72,13 +72,20 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         }
     }
 
-    /*  JADX ERROR: NullPointerException in pass: BlockFinish
-        java.lang.NullPointerException
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-        	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
+    /*  JADX ERROR: JadxRuntimeException in pass: SSATransform
+        jadx.core.utils.exceptions.JadxRuntimeException: Not initialized variable reg: 11, insn: 0x0025: IF  (r11 ?[int, OBJECT, ARRAY, boolean, byte, short, char]) == (0 ?[int, OBJECT, ARRAY, boolean, byte, short, char])  -> B:13:0x0049, block:B:9:0x0025, method: com.android.server.audio.MediaFocusControl.notifyExtFocusPolicyFocusRequest_syncAf(android.media.AudioFocusInfo, android.media.IAudioFocusDispatcher, android.os.IBinder):boolean
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVar(SSATransform.java:162)
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVar(SSATransform.java:184)
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVar(SSATransform.java:184)
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVar(SSATransform.java:184)
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVar(SSATransform.java:184)
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVar(SSATransform.java:184)
+        	at jadx.core.dex.visitors.ssa.SSATransform.renameVariables(SSATransform.java:133)
+        	at jadx.core.dex.visitors.ssa.SSATransform.process(SSATransform.java:52)
+        	at jadx.core.dex.visitors.ssa.SSATransform.visit(SSATransform.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -98,9 +105,7 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         r0 = r7.mFocusPolicy;
         r10 = 0;
         if (r0 != 0) goto L_0x000a;
-    L_0x0009:
         return r10;
-    L_0x000a:
         r1 = r7.mExtFocusChangeLock;
         monitor-enter(r1);
         r2 = r7.mExtFocusChangeCounter;	 Catch:{ all -> 0x0086 }
@@ -115,11 +120,9 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         r11 = r0;
         r11 = (com.android.server.audio.FocusRequester) r11;
         if (r11 == 0) goto L_0x0049;
-    L_0x0027:
         r12 = r15;
         r0 = r11.hasSameDispatcher(r12);
         if (r0 != 0) goto L_0x0061;
-    L_0x002e:
         r11.release();
         r4 = new com.android.server.audio.MediaFocusControl$AudioFocusDeathHandler;
         r4.<init>(r9);
@@ -133,7 +136,6 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         r2 = r8.getClientId();
         r1.put(r2, r0);
         goto L_0x0061;
-    L_0x0049:
         r12 = r15;
         r4 = new com.android.server.audio.MediaFocusControl$AudioFocusDeathHandler;
         r4.<init>(r9);
@@ -146,12 +148,10 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         r1 = r7.mFocusOwnersForFocusPolicy;
         r2 = r8.getClientId();
         r1.put(r2, r0);
-    L_0x0061:
         r0 = r7.mFocusPolicy;	 Catch:{ RemoteException -> 0x0068 }
         r1 = 1;	 Catch:{ RemoteException -> 0x0068 }
         r0.notifyAudioFocusRequest(r8, r1);	 Catch:{ RemoteException -> 0x0068 }
         return r1;
-    L_0x0068:
         r0 = move-exception;
         r1 = "MediaFocusControl";
         r2 = new java.lang.StringBuilder;
@@ -164,13 +164,10 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         r2 = r2.toString();
         android.util.Log.e(r1, r2, r0);
         return r10;
-    L_0x0086:
         r0 = move-exception;
         r12 = r15;
-    L_0x0088:
         monitor-exit(r1);	 Catch:{ all -> 0x008a }
         throw r0;
-    L_0x008a:
         r0 = move-exception;
         goto L_0x0088;
         */
@@ -508,16 +505,16 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
         }
     }
 
-    /* JADX WARNING: Missing block: B:8:0x0010, code:
+    /* JADX WARNING: Missing block: B:8:0x0010, code skipped:
             r0 = (com.android.server.audio.FocusRequester) r5.mFocusOwnersForFocusPolicy.get(r6.getClientId());
      */
-    /* JADX WARNING: Missing block: B:9:0x001c, code:
+    /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             if (r0 == null) goto L_0x0021;
      */
-    /* JADX WARNING: Missing block: B:10:0x001e, code:
+    /* JADX WARNING: Missing block: B:10:0x001e, code skipped:
             r0.dispatchFocusResultFromExtPolicy(r7);
      */
-    /* JADX WARNING: Missing block: B:11:0x0021, code:
+    /* JADX WARNING: Missing block: B:11:0x0021, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -610,10 +607,10 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
 
     /* JADX WARNING: Removed duplicated region for block: B:99:0x01c7 A:{Catch:{ all -> 0x01ef, all -> 0x022b }} */
     /* JADX WARNING: Removed duplicated region for block: B:94:0x01b8 A:{Catch:{ all -> 0x01ef, all -> 0x022b }} */
-    /* JADX WARNING: Missing block: B:98:0x01c6, code:
+    /* JADX WARNING: Missing block: B:98:0x01c6, code skipped:
             return r1;
      */
-    /* JADX WARNING: Missing block: B:109:0x01ee, code:
+    /* JADX WARNING: Missing block: B:109:0x01ee, code skipped:
             return r15;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -709,13 +706,13 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
                     AudioFocusInfo afiForExtPolicy2 = afiForExtPolicy;
                     boolean focusGrantDelayed = false;
                     try {
-                        boolean z3;
+                        int i4;
                         if (canReassignAudioFocus()) {
-                            z3 = false;
+                            i4 = 0;
                         } else if ((i2 & 1) == 0) {
                             return 0;
                         } else {
-                            z3 = false;
+                            i4 = 0;
                             focusGrantDelayed = true;
                         }
                         boolean focusGrantDelayed2 = focusGrantDelayed;
@@ -727,25 +724,26 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
                         AudioFocusDeathHandler afdh = new AudioFocusDeathHandler(iBinder2);
                         try {
                             IBinder iBinder3;
-                            iBinder2.linkToDeath(afdh, z3);
+                            iBinder2.linkToDeath(afdh, i4);
                             try {
-                                boolean z4;
+                                int i5;
+                                int i6;
                                 if (!this.mFocusStack.empty()) {
                                     if (((FocusRequester) this.mFocusStack.peek()).hasSameClient(str)) {
                                         fr = (FocusRequester) this.mFocusStack.peek();
                                         if (fr.getGainRequest() == i && fr.getGrantFlags() == i2) {
-                                            iBinder2.unlinkToDeath(afdh, z3);
+                                            iBinder2.unlinkToDeath(afdh, i4);
                                             notifyExtPolicyFocusGrant_syncAf(fr.toAudioFocusInfo(), 1);
                                             return 1;
                                         }
-                                        isInExternalDisplay2 = true;
+                                        i5 = 1;
                                         if (!focusGrantDelayed2) {
                                             this.mFocusStack.pop();
                                             fr.release();
                                         }
-                                        removeFocusStackEntry(str, z3, z3);
+                                        removeFocusStackEntry(str, i4, i4);
                                         iBinder3 = iBinder2;
-                                        z4 = isInExternalDisplay2;
+                                        i6 = i5;
                                         fr = HwServiceFactory.getHwFocusRequester(aa, i, i2, iAudioFocusDispatcher, iBinder3, str, afdh, str2, Binder.getCallingUid(), this, sdk, isInExternalDisplay);
                                         fr.setIsInExternal(isInExternalDisplay);
                                         if (focusGrantDelayed2) {
@@ -755,23 +753,23 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
                                                 propagateFocusLossFromGain_syncAf(i, fr, forceDuck);
                                             }
                                             this.mFocusStack.push(fr);
-                                            fr.handleFocusGainFromRequest(z4);
-                                            notifyExtPolicyFocusGrant_syncAf(fr.toAudioFocusInfo(), z4);
-                                            if ((z4 & enteringRingOrCall) != 0) {
-                                                runAudioCheckerForRingOrCallAsync(z4);
+                                            fr.handleFocusGainFromRequest(i6);
+                                            notifyExtPolicyFocusGrant_syncAf(fr.toAudioFocusInfo(), i6);
+                                            if ((i6 & enteringRingOrCall) != 0) {
+                                                runAudioCheckerForRingOrCallAsync(i6);
                                             }
                                         } else {
-                                            int requestResult = pushBelowLockedFocusOwners(fr);
-                                            if (requestResult != 0) {
-                                                notifyExtPolicyFocusGrant_syncAf(fr.toAudioFocusInfo(), requestResult);
+                                            i4 = pushBelowLockedFocusOwners(fr);
+                                            if (i4 != 0) {
+                                                notifyExtPolicyFocusGrant_syncAf(fr.toAudioFocusInfo(), i4);
                                             }
                                         }
                                     }
                                 }
-                                isInExternalDisplay2 = true;
-                                removeFocusStackEntry(str, z3, z3);
+                                i5 = 1;
+                                removeFocusStackEntry(str, i4, i4);
                                 iBinder3 = iBinder2;
-                                z4 = isInExternalDisplay2;
+                                i6 = i5;
                             } catch (Throwable th5) {
                                 th = th5;
                                 z = forceDuck;
@@ -800,7 +798,7 @@ public class MediaFocusControl implements PlayerFocusEnforcer {
                             stringBuilder3.append(cb);
                             stringBuilder3.append(" binder death");
                             Log.w(str4, stringBuilder3.toString());
-                            return z3;
+                            return i4;
                         } catch (Throwable th7) {
                             th = th7;
                             throw th;

@@ -345,18 +345,20 @@ public class PacManager {
         this.mConnectivityHandler.sendMessage(this.mConnectivityHandler.obtainMessage(this.mProxyMessage, proxy));
     }
 
-    /* JADX WARNING: Missing block: B:10:0x001f, code:
+    /* JADX WARNING: Missing block: B:11:0x001f, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:12:0x0021, code:
+    /* JADX WARNING: Missing block: B:13:0x0021, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     private synchronized void sendProxyIfNeeded() {
-        if (this.mHasDownloaded && this.mLastPort != -1) {
-            if (!this.mHasSentBroadcast) {
-                sendPacBroadcast(new ProxyInfo(this.mPacUrl, this.mLastPort));
-                this.mHasSentBroadcast = true;
+        if (this.mHasDownloaded) {
+            if (this.mLastPort != -1) {
+                if (!this.mHasSentBroadcast) {
+                    sendPacBroadcast(new ProxyInfo(this.mPacUrl, this.mLastPort));
+                    this.mHasSentBroadcast = true;
+                }
             }
         }
     }

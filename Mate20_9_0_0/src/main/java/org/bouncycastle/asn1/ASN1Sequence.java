@@ -180,13 +180,13 @@ public abstract class ASN1Sequence extends ASN1Primitive implements Iterable<ASN
     }
 
     ASN1Primitive toDERObject() {
-        ASN1Primitive dERSequence = new DERSequence();
+        DERSequence dERSequence = new DERSequence();
         dERSequence.seq = this.seq;
         return dERSequence;
     }
 
     ASN1Primitive toDLObject() {
-        ASN1Primitive dLSequence = new DLSequence();
+        DLSequence dLSequence = new DLSequence();
         dLSequence.seq = this.seq;
         return dLSequence;
     }

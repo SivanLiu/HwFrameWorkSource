@@ -146,7 +146,7 @@ public class GF2mMatrix extends Matrix {
         throw new ArithmeticException("Matrix is not invertible.");
     }
 
-    /* JADX WARNING: Missing block: B:25:0x0042, code:
+    /* JADX WARNING: Missing block: B:25:0x0042, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

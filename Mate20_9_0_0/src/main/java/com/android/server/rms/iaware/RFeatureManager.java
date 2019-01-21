@@ -463,37 +463,37 @@ public class RFeatureManager implements IRDataRegister {
             }
         }
 
-        /* JADX WARNING: Missing block: B:19:0x004e, code:
+        /* JADX WARNING: Missing block: B:19:0x004e, code skipped:
             r3 = 0;
      */
-        /* JADX WARNING: Missing block: B:20:0x004f, code:
+        /* JADX WARNING: Missing block: B:20:0x004f, code skipped:
             if (r3 >= r2) goto L_0x0087;
      */
-        /* JADX WARNING: Missing block: B:21:0x0051, code:
+        /* JADX WARNING: Missing block: B:21:0x0051, code skipped:
             r5 = (com.android.server.rms.iaware.RFeatureManager.FeatureWrapper) com.android.server.rms.iaware.RFeatureManager.access$1100(r10.this$0).get(com.android.server.rms.iaware.RFeatureManager.access$2100(r10.this$0)[r3]);
      */
-        /* JADX WARNING: Missing block: B:22:0x0065, code:
+        /* JADX WARNING: Missing block: B:22:0x0065, code skipped:
             if (r5 == null) goto L_0x0084;
      */
-        /* JADX WARNING: Missing block: B:24:0x006b, code:
+        /* JADX WARNING: Missing block: B:24:0x006b, code skipped:
             if (r5.getFeatureInstance() == null) goto L_0x0084;
      */
-        /* JADX WARNING: Missing block: B:26:0x0071, code:
+        /* JADX WARNING: Missing block: B:26:0x0071, code skipped:
             if (r5.getFeatureEnabled() == false) goto L_0x0084;
      */
-        /* JADX WARNING: Missing block: B:27:0x0073, code:
+        /* JADX WARNING: Missing block: B:27:0x0073, code skipped:
             if (r12 != null) goto L_0x007d;
      */
-        /* JADX WARNING: Missing block: B:28:0x0075, code:
+        /* JADX WARNING: Missing block: B:28:0x0075, code skipped:
             r5.getFeatureInstance().reportData(r11);
      */
-        /* JADX WARNING: Missing block: B:29:0x007d, code:
+        /* JADX WARNING: Missing block: B:29:0x007d, code skipped:
             r5.getFeatureInstance().reportDataWithCallback(r11, r12);
      */
-        /* JADX WARNING: Missing block: B:30:0x0084, code:
+        /* JADX WARNING: Missing block: B:30:0x0084, code skipped:
             r3 = r3 + 1;
      */
-        /* JADX WARNING: Missing block: B:31:0x0087, code:
+        /* JADX WARNING: Missing block: B:31:0x0087, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -515,12 +515,12 @@ public class RFeatureManager implements IRDataRegister {
                                 } catch (Throwable th2) {
                                     th = th2;
                                     index = index2;
+                                    throw th;
                                 }
                             }
-                        } else {
-                            AwareLog.e(RFeatureManager.TAG, "deliveryDataToFeatures subscribed too much features!");
-                            return;
                         }
+                        AwareLog.e(RFeatureManager.TAG, "deliveryDataToFeatures subscribed too much features!");
+                        return;
                     }
                     String str = RFeatureManager.TAG;
                     StringBuilder stringBuilder = new StringBuilder();

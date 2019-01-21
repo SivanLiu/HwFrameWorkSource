@@ -89,6 +89,7 @@ import com.android.server.pm.DumpState;
 import com.android.server.power.IHwShutdownThread;
 import com.android.server.wm.WindowManagerInternal;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,6 +103,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import libcore.util.EmptyArray;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class AccessibilityManagerService extends Stub implements SystemSupport {
     private static final char COMPONENT_NAME_SEPARATOR = ':';
@@ -194,44 +196,50 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         public void onChange(boolean selfChange, Uri uri) {
             synchronized (AccessibilityManagerService.this.mLock) {
                 UserState userState = AccessibilityManagerService.this.getCurrentUserStateLocked();
-                if (this.mTouchExplorationEnabledUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readTouchExplorationEnabledSettingLocked(userState)) {
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                if (!this.mTouchExplorationEnabledUri.equals(uri)) {
+                    if (!this.mDisplayMagnificationEnabledUri.equals(uri)) {
+                        if (!this.mNavBarMagnificationEnabledUri.equals(uri)) {
+                            if (this.mAutoclickEnabledUri.equals(uri)) {
+                                if (AccessibilityManagerService.this.readAutoclickEnabledSettingLocked(userState)) {
+                                    AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                                }
+                            } else if (this.mEnabledAccessibilityServicesUri.equals(uri)) {
+                                if (AccessibilityManagerService.this.readEnabledAccessibilityServicesLocked(userState)) {
+                                    AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                                }
+                            } else if (!this.mTouchExplorationGrantedAccessibilityServicesUri.equals(uri)) {
+                                if (!this.mDisplayDaltonizerEnabledUri.equals(uri)) {
+                                    if (!this.mDisplayDaltonizerUri.equals(uri)) {
+                                        if (this.mDisplayInversionEnabledUri.equals(uri)) {
+                                            AccessibilityManagerService.this.updateDisplayInversionLocked(userState);
+                                        } else if (this.mHighTextContrastUri.equals(uri)) {
+                                            if (AccessibilityManagerService.this.readHighTextContrastEnabledSettingLocked(userState)) {
+                                                AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                                            }
+                                        } else if (this.mAccessibilitySoftKeyboardModeUri.equals(uri)) {
+                                            if (AccessibilityManagerService.this.readSoftKeyboardShowModeChangedLocked(userState)) {
+                                                AccessibilityManagerService.this.notifySoftKeyboardShowModeChangedLocked(userState.mSoftKeyboardShowMode);
+                                                AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                                            }
+                                        } else if (this.mAccessibilityShortcutServiceIdUri.equals(uri)) {
+                                            if (AccessibilityManagerService.this.readAccessibilityShortcutSettingLocked(userState)) {
+                                                AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                                            }
+                                        } else if (this.mAccessibilityButtonComponentIdUri.equals(uri) && AccessibilityManagerService.this.readAccessibilityButtonSettingsLocked(userState)) {
+                                            AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                                        }
+                                    }
+                                }
+                                AccessibilityManagerService.this.updateDisplayDaltonizerLocked(userState);
+                            } else if (AccessibilityManagerService.this.readTouchExplorationGrantedAccessibilityServicesLocked(userState)) {
+                                AccessibilityManagerService.this.onUserStateChangedLocked(userState);
+                            }
+                        }
                     }
-                } else if (this.mDisplayMagnificationEnabledUri.equals(uri) || this.mNavBarMagnificationEnabledUri.equals(uri)) {
                     if (AccessibilityManagerService.this.readMagnificationEnabledSettingsLocked(userState)) {
                         AccessibilityManagerService.this.onUserStateChangedLocked(userState);
                     }
-                } else if (this.mAutoclickEnabledUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readAutoclickEnabledSettingLocked(userState)) {
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
-                    }
-                } else if (this.mEnabledAccessibilityServicesUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readEnabledAccessibilityServicesLocked(userState)) {
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
-                    }
-                } else if (this.mTouchExplorationGrantedAccessibilityServicesUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readTouchExplorationGrantedAccessibilityServicesLocked(userState)) {
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
-                    }
-                } else if (this.mDisplayDaltonizerEnabledUri.equals(uri) || this.mDisplayDaltonizerUri.equals(uri)) {
-                    AccessibilityManagerService.this.updateDisplayDaltonizerLocked(userState);
-                } else if (this.mDisplayInversionEnabledUri.equals(uri)) {
-                    AccessibilityManagerService.this.updateDisplayInversionLocked(userState);
-                } else if (this.mHighTextContrastUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readHighTextContrastEnabledSettingLocked(userState)) {
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
-                    }
-                } else if (this.mAccessibilitySoftKeyboardModeUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readSoftKeyboardShowModeChangedLocked(userState)) {
-                        AccessibilityManagerService.this.notifySoftKeyboardShowModeChangedLocked(userState.mSoftKeyboardShowMode);
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
-                    }
-                } else if (this.mAccessibilityShortcutServiceIdUri.equals(uri)) {
-                    if (AccessibilityManagerService.this.readAccessibilityShortcutSettingLocked(userState)) {
-                        AccessibilityManagerService.this.onUserStateChangedLocked(userState);
-                    }
-                } else if (this.mAccessibilityButtonComponentIdUri.equals(uri) && AccessibilityManagerService.this.readAccessibilityButtonSettingsLocked(userState)) {
+                } else if (AccessibilityManagerService.this.readTouchExplorationEnabledSettingLocked(userState)) {
                     AccessibilityManagerService.this.onUserStateChangedLocked(userState);
                 }
             }
@@ -257,7 +265,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
     }
 
     private final class InteractionBridge {
-        private final ComponentName COMPONENT_NAME;
+        private final ComponentName COMPONENT_NAME = new ComponentName("com.android.server.accessibility", "InteractionBridge");
         private final AccessibilityInteractionClient mClient;
         private final int mConnectionId;
         private final Display mDefaultDisplay;
@@ -279,95 +287,29 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
             }
         }
 
-        /*  JADX ERROR: NullPointerException in pass: BlockFinish
-            java.lang.NullPointerException
-            	at jadx.core.dex.visitors.blocksmaker.BlockFinish.fixSplitterBlock(BlockFinish.java:45)
-            	at jadx.core.dex.visitors.blocksmaker.BlockFinish.visit(BlockFinish.java:29)
-            	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
-            	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
-            	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
-            	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$0(DepthTraversal.java:13)
-            	at java.util.ArrayList.forEach(ArrayList.java:1249)
-            	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:13)
-            	at jadx.core.ProcessClass.process(ProcessClass.java:32)
-            	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
-            	at java.lang.Iterable.forEach(Iterable.java:75)
-            	at jadx.core.ProcessClass.processDependencies(ProcessClass.java:51)
-            	at jadx.core.ProcessClass.process(ProcessClass.java:37)
-            	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
-            	at jadx.api.JavaClass.decompile(JavaClass.java:62)
-            	at jadx.api.JadxDecompiler.lambda$appendSourcesSave$0(JadxDecompiler.java:200)
-            */
-        public InteractionBridge(com.android.server.accessibility.AccessibilityManagerService r19) {
-            /*
-            r18 = this;
-            r15 = r18;
-            r0 = r19;
-            r15.this$0 = r0;
-            r18.<init>();
-            r1 = new android.content.ComponentName;
-            r2 = "com.android.server.accessibility";
-            r3 = "InteractionBridge";
-            r1.<init>(r2, r3);
-            r15.COMPONENT_NAME = r1;
-            r1 = new android.accessibilityservice.AccessibilityServiceInfo;
-            r1.<init>();
-            r14 = r1;
-            r1 = 1;
-            r14.setCapabilities(r1);
-            r1 = r14.flags;
-            r1 = r1 | 64;
-            r14.flags = r1;
-            r1 = r14.flags;
-            r1 = r1 | 2;
-            r14.flags = r1;
-            r1 = r19.mLock;
-            monitor-enter(r1);
-            r3 = r19.getCurrentUserStateLocked();	 Catch:{ all -> 0x0085 }
-            monitor-exit(r1);	 Catch:{ all -> 0x0085 }
-            r16 = new com.android.server.accessibility.AccessibilityManagerService$InteractionBridge$1;
-            r4 = r19.mContext;
-            r5 = r15.COMPONENT_NAME;
-            r7 = com.android.server.accessibility.AccessibilityManagerService.access$2508();
-            r8 = r19.mMainHandler;
-            r9 = r19.mLock;
-            r10 = r19.mSecurityPolicy;
-            r12 = r19.mWindowManagerService;
-            r13 = r19.mGlobalActionPerformer;
-            r1 = r16;
-            r2 = r15;
-            r6 = r14;
-            r11 = r0;
-            r17 = r14;
-            r14 = r0;
-            r1.<init>(r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14);
-            r2 = r1.mId;
-            r15.mConnectionId = r2;
-            r2 = android.view.accessibility.AccessibilityInteractionClient.getInstance();
-            r15.mClient = r2;
-            r2 = r15.mClient;
-            r2 = r15.mConnectionId;
-            android.view.accessibility.AccessibilityInteractionClient.addConnection(r2, r1);
-            r0 = r19.mContext;
-            r2 = "display";
-            r0 = r0.getSystemService(r2);
-            r0 = (android.hardware.display.DisplayManager) r0;
-            r2 = 0;
-            r2 = r0.getDisplay(r2);
-            r15.mDefaultDisplay = r2;
-            return;
-        L_0x0085:
-            r0 = move-exception;
-            r17 = r14;
-        L_0x0088:
-            monitor-exit(r1);	 Catch:{ all -> 0x008a }
-            throw r0;
-        L_0x008a:
-            r0 = move-exception;
-            goto L_0x0088;
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.android.server.accessibility.AccessibilityManagerService.InteractionBridge.<init>(com.android.server.accessibility.AccessibilityManagerService):void");
+        public InteractionBridge(AccessibilityManagerService accessibilityManagerService) {
+            this.this$0 = accessibilityManagerService;
+            AccessibilityServiceInfo info = new AccessibilityServiceInfo();
+            info.setCapabilities(1);
+            info.flags |= 64;
+            info.flags |= 2;
+            synchronized (accessibilityManagerService.mLock) {
+                try {
+                    UserState userState = accessibilityManagerService.getCurrentUserStateLocked();
+                } finally {
+                    AccessibilityServiceInfo accessibilityServiceInfo = info;
+                    while (true) {
+                    }
+                }
+            }
+            Context access$1700 = accessibilityManagerService.mContext;
+            ComponentName componentName = this.COMPONENT_NAME;
+            int access$2508 = AccessibilityManagerService.access$2508();
+            MainHandler access$2600 = accessibilityManagerService.mMainHandler;
+            Object access$200 = accessibilityManagerService.mLock;
+            SecurityPolicy access$2300 = accessibilityManagerService.mSecurityPolicy;
+            WindowManagerInternal access$2700 = accessibilityManagerService.mWindowManagerService;
+            GlobalActionPerformer access$2800 = accessibilityManagerService.mGlobalActionPerformer;
         }
 
         public void clearAccessibilityFocusNotLocked(int windowId) {
@@ -960,9 +902,9 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
                     return false;
                 }
                 z = AccessibilityManagerService.this.mUserManager.hasUserRestriction("no_debugging_features", UserHandle.of(userId));
-                z ^= 1;
+                int i = z ^ 1;
                 Binder.restoreCallingIdentity(token);
-                return z;
+                return i;
             } finally {
                 Binder.restoreCallingIdentity(token);
             }
@@ -1160,7 +1102,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
             return reportedWindow;
         }
 
-        /* JADX WARNING: Missing block: B:15:0x001b, code:
+        /* JADX WARNING: Missing block: B:15:0x001b, code skipped:
             return 3;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1294,7 +1236,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
 
     private void registerBroadcastReceivers() {
         new PackageMonitor() {
-            /* JADX WARNING: Missing block: B:11:0x002e, code:
+            /* JADX WARNING: Missing block: B:11:0x002e, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1311,7 +1253,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
                 }
             }
 
-            /* JADX WARNING: Missing block: B:16:0x0049, code:
+            /* JADX WARNING: Missing block: B:16:0x0049, code skipped:
             return;
      */
             /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1496,7 +1438,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
     }
 
     public List<AccessibilityServiceInfo> getInstalledAccessibilityServiceList(int userId) {
-        List<AccessibilityServiceInfo> list;
+        List list;
         synchronized (this.mLock) {
             list = getUserStateLocked(this.mSecurityPolicy.resolveCallingUserIdEnforcingPermissionsLocked(userId)).mInstalledServices;
         }
@@ -1507,7 +1449,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         synchronized (this.mLock) {
             UserState userState = getUserStateLocked(this.mSecurityPolicy.resolveCallingUserIdEnforcingPermissionsLocked(userId));
             if (this.mUiAutomationManager.suppressingAccessibilityServicesLocked()) {
-                List<AccessibilityServiceInfo> emptyList = Collections.emptyList();
+                List emptyList = Collections.emptyList();
                 return emptyList;
             }
             List<AccessibilityServiceConnection> services = userState.mBoundServices;
@@ -1523,28 +1465,28 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         }
     }
 
-    /* JADX WARNING: Missing block: B:15:0x0037, code:
+    /* JADX WARNING: Missing block: B:15:0x0037, code skipped:
             r0 = r4;
             r1 = 0;
             r2 = r0.size();
      */
-    /* JADX WARNING: Missing block: B:16:0x003d, code:
+    /* JADX WARNING: Missing block: B:16:0x003d, code skipped:
             if (r1 >= r2) goto L_0x0067;
      */
-    /* JADX WARNING: Missing block: B:18:?, code:
+    /* JADX WARNING: Missing block: B:18:?, code skipped:
             ((android.accessibilityservice.IAccessibilityServiceClient) r0.get(r1)).onInterrupt();
      */
-    /* JADX WARNING: Missing block: B:19:0x0049, code:
+    /* JADX WARNING: Missing block: B:19:0x0049, code skipped:
             r3 = move-exception;
      */
-    /* JADX WARNING: Missing block: B:20:0x004a, code:
+    /* JADX WARNING: Missing block: B:20:0x004a, code skipped:
             r4 = LOG_TAG;
             r5 = new java.lang.StringBuilder();
             r5.append("Error sending interrupt request to ");
             r5.append(r0.get(r1));
             android.util.Slog.e(r4, r5.toString(), r3);
      */
-    /* JADX WARNING: Missing block: B:22:0x0067, code:
+    /* JADX WARNING: Missing block: B:22:0x0067, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1840,7 +1782,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         this.mSecurityPolicy.onTouchInteractionEnd();
     }
 
-    /* JADX WARNING: Missing block: B:19:0x0066, code:
+    /* JADX WARNING: Missing block: B:19:0x0066, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -1872,7 +1814,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         synchronized (this.mLock) {
             if (getCurrentUserStateLocked().isHandlingAccessibilityEvents()) {
                 UserManager userManager = (UserManager) this.mContext.getSystemService("user");
-                String message = this.mContext.getString(17041311, new Object[]{userManager.getUserInfo(this.mCurrentUserId).name});
+                String message = this.mContext.getString(17041312, new Object[]{userManager.getUserInfo(this.mCurrentUserId).name});
                 AccessibilityEvent event = AccessibilityEvent.obtain(16384);
                 event.getText().add(message);
                 sendAccessibilityEventLocked(event, this.mCurrentUserId);
@@ -2025,14 +1967,6 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         userState.mInteractionConnections.remove(windowId);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:9:0x0041 A:{Splitter: B:7:0x0034, ExcHandler: org.xmlpull.v1.XmlPullParserException (r6_2 'xppe' java.lang.Exception)} */
-    /* JADX WARNING: Missing block: B:9:0x0041, code:
-            r6 = move-exception;
-     */
-    /* JADX WARNING: Missing block: B:10:0x0042, code:
-            android.util.Slog.e(LOG_TAG, "Error while initializing AccessibilityServiceInfo", r6);
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     private boolean readInstalledAccessibilityServiceLocked(UserState userState) {
         this.mTempAccessibilityServiceInfoList.clear();
         int flags = 819332;
@@ -2046,7 +1980,8 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
             if (canRegisterService(resolveInfo.serviceInfo)) {
                 try {
                     this.mTempAccessibilityServiceInfoList.add(new AccessibilityServiceInfo(resolveInfo, this.mContext));
-                } catch (Exception xppe) {
+                } catch (IOException | XmlPullParserException xppe) {
+                    Slog.e(LOG_TAG, "Error while initializing AccessibilityServiceInfo", xppe);
                 }
             }
         }
@@ -2280,7 +2215,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
                             Context context = this.mContext;
                             int i3 = sIdCounter;
                             sIdCounter = i3 + 1;
-                            Handler handler = this.mMainHandler;
+                            MainHandler mainHandler = this.mMainHandler;
                             Object obj = this.mLock;
                             SecurityPolicy securityPolicy = this.mSecurityPolicy;
                             componentNameToServiceMap2 = componentNameToServiceMap;
@@ -2290,7 +2225,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
                             count3 = count2;
                             WindowManagerInternal windowManagerInternal = this.mWindowManagerService;
                             i2 = i;
-                            componentNameToServiceMap = new AccessibilityServiceConnection(userState2, context, componentName, installedService, i3, handler, obj2, securityPolicy2, this, windowManagerInternal, this.mGlobalActionPerformer);
+                            componentNameToServiceMap = new AccessibilityServiceConnection(userState2, context, componentName, installedService, i3, mainHandler, obj2, securityPolicy2, this, windowManagerInternal, this.mGlobalActionPerformer);
                         } else {
                             accessibilityServiceInfo = installedService;
                             count3 = count2;
@@ -2451,7 +2386,7 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
-                }).setTitle(17039990).setMessage(this.mContext.getString(17039989, new Object[]{label})).create();
+                }).setTitle(17039991).setMessage(this.mContext.getString(17039990, new Object[]{label})).create();
                 this.mEnableTouchExplorationDialog.getWindow().setType(2003);
                 LayoutParams attributes = this.mEnableTouchExplorationDialog.getWindow().getAttributes();
                 attributes.privateFlags |= 16;
@@ -2862,10 +2797,6 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         return PendingIntent.getActivity(context, requestCode, intent, flags);
     }
 
-    /* JADX WARNING: Missing block: B:27:0x0089, code:
-            return;
-     */
-    /* Code decompiled incorrectly, please refer to instructions dump. */
     public void performAccessibilityShortcut() {
         if (UserHandle.getAppId(Binder.getCallingUid()) == 1000 || this.mContext.checkCallingPermission("android.permission.WRITE_SECURE_SETTINGS") == 0) {
             Map<ComponentName, ToggleableFrameworkFeatureInfo> frameworkFeatureMap = AccessibilityShortcutController.getFrameworkShortcutFeaturesMap();
@@ -3073,111 +3004,127 @@ public class AccessibilityManagerService extends Stub implements SystemSupport {
         return magnificationController;
     }
 
-    /* JADX WARNING: Missing block: B:33:0x004d, code:
+    /* JADX WARNING: Removed duplicated region for block: B:16:0x002a A:{Catch:{ all -> 0x00bc }} */
+    /* JADX WARNING: Removed duplicated region for block: B:22:0x0038 A:{SYNTHETIC, Splitter:B:22:0x0038} */
+    /* JADX WARNING: Missing block: B:34:0x004d, code skipped:
             r13 = r0;
             r17 = android.os.Binder.getCallingPid();
             r10 = android.os.Binder.clearCallingIdentity();
      */
-    /* JADX WARNING: Missing block: B:35:?, code:
+    /* JADX WARNING: Missing block: B:36:?, code skipped:
             r1.mPowerManager.userActivity(android.os.SystemClock.uptimeMillis(), 3, 0);
      */
-    /* JADX WARNING: Missing block: B:36:0x0061, code:
+    /* JADX WARNING: Missing block: B:37:0x0061, code skipped:
             if (r12 == null) goto L_0x007d;
      */
-    /* JADX WARNING: Missing block: B:38:?, code:
+    /* JADX WARNING: Missing block: B:39:?, code skipped:
             ((android.app.ActivityManagerInternal) com.android.server.LocalServices.getService(android.app.ActivityManagerInternal.class)).setFocusedActivity(r12);
      */
-    /* JADX WARNING: Missing block: B:39:0x006f, code:
+    /* JADX WARNING: Missing block: B:40:0x006f, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:40:0x0070, code:
+    /* JADX WARNING: Missing block: B:41:0x0070, code skipped:
             r1 = r10;
             r19 = r12;
             r18 = r13;
      */
-    /* JADX WARNING: Missing block: B:42:0x0077, code:
+    /* JADX WARNING: Missing block: B:43:0x0077, code skipped:
             r1 = r10;
             r19 = r12;
             r18 = r13;
      */
-    /* JADX WARNING: Missing block: B:45:0x0081, code:
+    /* JADX WARNING: Missing block: B:46:0x0081, code skipped:
             r1 = r10;
             r19 = r12;
             r18 = r13;
      */
-    /* JADX WARNING: Missing block: B:47:?, code:
+    /* JADX WARNING: Missing block: B:48:?, code skipped:
             com.android.server.accessibility.AccessibilityManagerService.RemoteAccessibilityConnection.access$2200(r13).performAccessibilityAction(r22, r14, r25, r26, r27, r28, r17, r29);
      */
-    /* JADX WARNING: Missing block: B:48:0x0098, code:
+    /* JADX WARNING: Missing block: B:49:0x0098, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:49:0x009c, code:
+    /* JADX WARNING: Missing block: B:50:0x009c, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:50:0x009d, code:
+    /* JADX WARNING: Missing block: B:51:0x009d, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:52:0x00a1, code:
+    /* JADX WARNING: Missing block: B:53:0x00a1, code skipped:
             r0 = th;
      */
-    /* JADX WARNING: Missing block: B:53:0x00a2, code:
+    /* JADX WARNING: Missing block: B:54:0x00a2, code skipped:
             r1 = r10;
             r19 = r12;
             r18 = r13;
      */
-    /* JADX WARNING: Missing block: B:54:0x00a7, code:
+    /* JADX WARNING: Missing block: B:55:0x00a7, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:55:0x00aa, code:
+    /* JADX WARNING: Missing block: B:56:0x00aa, code skipped:
             throw r0;
      */
-    /* JADX WARNING: Missing block: B:57:0x00ac, code:
+    /* JADX WARNING: Missing block: B:58:0x00ac, code skipped:
             r1 = r10;
             r19 = r12;
             r18 = r13;
      */
-    /* JADX WARNING: Missing block: B:58:0x00b1, code:
+    /* JADX WARNING: Missing block: B:59:0x00b1, code skipped:
             android.os.Binder.restoreCallingIdentity(r1);
      */
-    /* JADX WARNING: Missing block: B:59:0x00b5, code:
+    /* JADX WARNING: Missing block: B:60:0x00b5, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public boolean performAccessibilityAction(int resolvedWindowId, long accessibilityNodeId, int action, Bundle arguments, int interactionId, IAccessibilityInteractionConnectionCallback callback, int fetchFlags, long interrogatingTid) {
+        IBinder activityToken;
         Throwable th;
         int i = resolvedWindowId;
         int i2 = action;
-        IBinder activityToken = null;
+        IBinder activityToken2 = null;
         synchronized (this.mLock) {
             try {
                 RemoteAccessibilityConnection connection = getConnectionLocked(resolvedWindowId);
                 if (connection == null) {
                     return false;
                 }
-                boolean isA11yFocusAction = i2 == 64 || i2 == 128;
-                AccessibilityWindowInfo a11yWindowInfo = this.mSecurityPolicy.findA11yWindowInfoById(i);
-                if (!isA11yFocusAction) {
-                    WindowInfo windowInfo = this.mSecurityPolicy.findWindowInfoById(i);
-                    if (windowInfo != null) {
-                        activityToken = windowInfo.activityToken;
+                boolean isA11yFocusAction;
+                AccessibilityWindowInfo a11yWindowInfo;
+                if (i2 != 64) {
+                    if (i2 != 128) {
+                        isA11yFocusAction = false;
+                        a11yWindowInfo = this.mSecurityPolicy.findA11yWindowInfoById(i);
+                        if (!isA11yFocusAction) {
+                            WindowInfo windowInfo = this.mSecurityPolicy.findWindowInfoById(i);
+                            if (windowInfo != null) {
+                                activityToken2 = windowInfo.activityToken;
+                            }
+                        }
+                        activityToken = activityToken2;
+                        if (a11yWindowInfo != null) {
+                            try {
+                                if (!(!a11yWindowInfo.isInPictureInPictureMode() || this.mPictureInPictureActionReplacingConnection == null || isA11yFocusAction)) {
+                                    connection = this.mPictureInPictureActionReplacingConnection;
+                                }
+                            } catch (Throwable th2) {
+                                th = th2;
+                                activityToken2 = activityToken;
+                                throw th;
+                            }
+                        }
                     }
                 }
-                IBinder activityToken2 = activityToken;
+                isA11yFocusAction = true;
+                a11yWindowInfo = this.mSecurityPolicy.findA11yWindowInfoById(i);
+                if (isA11yFocusAction) {
+                }
+                activityToken = activityToken2;
                 if (a11yWindowInfo != null) {
-                    try {
-                        if (!(!a11yWindowInfo.isInPictureInPictureMode() || this.mPictureInPictureActionReplacingConnection == null || isA11yFocusAction)) {
-                            connection = this.mPictureInPictureActionReplacingConnection;
-                        }
-                    } catch (Throwable th2) {
-                        th = th2;
-                        activityToken = activityToken2;
-                        throw th;
-                    }
                 }
                 try {
                 } catch (Throwable th3) {
                     th = th3;
-                    activityToken = activityToken2;
+                    activityToken2 = activityToken;
                     throw th;
                 }
             } catch (Throwable th4) {

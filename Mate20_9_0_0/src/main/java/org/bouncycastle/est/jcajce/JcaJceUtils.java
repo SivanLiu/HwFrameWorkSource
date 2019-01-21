@@ -1,5 +1,6 @@
 package org.bouncycastle.est.jcajce;
 
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -7,8 +8,6 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CRL;
 import java.security.cert.CertPathBuilder;
-import java.security.cert.CertPathParameters;
-import java.security.cert.CertSelector;
 import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
@@ -57,9 +56,9 @@ public class JcaJceUtils {
                 try {
                     CertStore instance = CertStore.getInstance("Collection", new CollectionCertStoreParameters(Arrays.asList(x509CertificateArr)), "BC");
                     CertPathBuilder instance2 = CertPathBuilder.getInstance("PKIX", "BC");
-                    CertSelector x509CertSelector = new X509CertSelector();
+                    X509CertSelector x509CertSelector = new X509CertSelector();
                     x509CertSelector.setCertificate(x509CertificateArr[0]);
-                    CertPathParameters pKIXBuilderParameters = new PKIXBuilderParameters(set, x509CertSelector);
+                    PKIXBuilderParameters pKIXBuilderParameters = new PKIXBuilderParameters(set, x509CertSelector);
                     pKIXBuilderParameters.addCertStore(instance);
                     if (crlArr != null) {
                         pKIXBuilderParameters.setRevocationEnabled(true);
@@ -71,7 +70,7 @@ public class JcaJceUtils {
                     JcaJceUtils.validateServerCertUsage(x509CertificateArr[0]);
                 } catch (CertificateException e) {
                     throw e;
-                } catch (Throwable e2) {
+                } catch (GeneralSecurityException e2) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("unable to process certificates: ");
                     stringBuilder.append(e2.getMessage());
@@ -80,9 +79,9 @@ public class JcaJceUtils {
             }
 
             public X509Certificate[] getAcceptedIssuers() {
-                Object obj = new X509Certificate[x509CertificateArr.length];
-                System.arraycopy(x509CertificateArr, 0, obj, 0, obj.length);
-                return obj;
+                X509Certificate[] x509CertificateArr = new X509Certificate[x509CertificateArr.length];
+                System.arraycopy(x509CertificateArr, 0, x509CertificateArr, 0, x509CertificateArr.length);
+                return x509CertificateArr;
             }
         }};
     }
@@ -101,7 +100,7 @@ public class JcaJceUtils {
         };
     }
 
-    /* JADX WARNING: Missing block: B:24:0x0066, code:
+    /* JADX WARNING: Missing block: B:25:0x0066, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -112,8 +111,10 @@ public class JcaJceUtils {
             if (fromExtensions != null) {
                 if (fromExtensions.hasUsages(4)) {
                     throw new CertificateException("Key usage must not contain keyCertSign");
-                } else if (!(fromExtensions.hasUsages(128) || fromExtensions.hasUsages(32))) {
-                    throw new CertificateException("Key usage must be none, digitalSignature or keyEncipherment");
+                } else if (!fromExtensions.hasUsages(128)) {
+                    if (!fromExtensions.hasUsages(32)) {
+                        throw new CertificateException("Key usage must be none, digitalSignature or keyEncipherment");
+                    }
                 }
             }
             ExtendedKeyUsage fromExtensions2 = ExtendedKeyUsage.fromExtensions(x509CertificateHolder.getExtensions());
@@ -122,7 +123,7 @@ public class JcaJceUtils {
             }
         } catch (CertificateException e) {
             throw e;
-        } catch (Throwable e2) {
+        } catch (Exception e2) {
             throw new CertificateException(e2.getMessage(), e2);
         }
     }

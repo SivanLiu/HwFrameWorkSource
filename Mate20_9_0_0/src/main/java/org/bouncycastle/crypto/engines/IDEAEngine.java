@@ -23,9 +23,9 @@ public class IDEAEngine implements BlockCipher {
         int[] iArr = new int[52];
         int i2 = 0;
         if (bArr.length < 16) {
-            Object obj = new byte[16];
-            System.arraycopy(bArr, 0, obj, obj.length - bArr.length, bArr.length);
-            bArr = obj;
+            byte[] bArr2 = new byte[16];
+            System.arraycopy(bArr, 0, bArr2, bArr2.length - bArr.length, bArr.length);
+            bArr = bArr2;
         }
         while (true) {
             i = 8;

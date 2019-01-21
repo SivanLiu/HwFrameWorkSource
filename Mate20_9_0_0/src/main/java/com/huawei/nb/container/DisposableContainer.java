@@ -107,7 +107,7 @@ public final class DisposableContainer implements Disposable, Container<Disposab
         return true;
     }
 
-    /* JADX WARNING: Missing block: B:21:?, code:
+    /* JADX WARNING: Missing block: B:22:?, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -179,7 +179,7 @@ public final class DisposableContainer implements Disposable, Container<Disposab
     }
 
     public Iterator<Disposable> iterator() {
-        Iterator<Disposable> it;
+        Iterator it;
         synchronized (this) {
             it = this.resources.iterator();
         }

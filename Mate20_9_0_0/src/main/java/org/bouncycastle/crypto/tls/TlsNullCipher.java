@@ -71,11 +71,11 @@ public class TlsNullCipher implements TlsCipher {
         if (this.writeMac == null) {
             return Arrays.copyOfRange(bArr, i, i2 + i);
         }
-        Object calculateMac = this.writeMac.calculateMac(j, s, bArr, i, i2);
-        Object obj = new byte[(calculateMac.length + i2)];
-        System.arraycopy(bArr, i, obj, 0, i2);
-        System.arraycopy(calculateMac, 0, obj, i2, calculateMac.length);
-        return obj;
+        byte[] calculateMac = this.writeMac.calculateMac(j, s, bArr, i, i2);
+        byte[] bArr2 = new byte[(calculateMac.length + i2)];
+        System.arraycopy(bArr, i, bArr2, 0, i2);
+        System.arraycopy(calculateMac, 0, bArr2, i2, calculateMac.length);
+        return bArr2;
     }
 
     public int getPlaintextLimit(int i) {

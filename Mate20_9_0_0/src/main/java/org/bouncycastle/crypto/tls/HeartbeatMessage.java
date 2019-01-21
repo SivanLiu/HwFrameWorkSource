@@ -40,7 +40,7 @@ public class HeartbeatMessage {
         short readUint8 = TlsUtils.readUint8(inputStream);
         if (HeartbeatMessageType.isValid(readUint8)) {
             int readUint16 = TlsUtils.readUint16(inputStream);
-            OutputStream payloadBuffer = new PayloadBuffer();
+            PayloadBuffer payloadBuffer = new PayloadBuffer();
             Streams.pipeAll(inputStream, payloadBuffer);
             byte[] toTruncatedByteArray = payloadBuffer.toTruncatedByteArray(readUint16);
             return toTruncatedByteArray == null ? null : new HeartbeatMessage(readUint8, toTruncatedByteArray, payloadBuffer.size() - toTruncatedByteArray.length);

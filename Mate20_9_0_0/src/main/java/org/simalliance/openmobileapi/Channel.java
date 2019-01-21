@@ -33,7 +33,7 @@ public class Channel {
             return true;
         }
         if (this.mChannel != null) {
-            return this.mChannel.isOpen() ^ true;
+            return this.mChannel.isOpen() ^ 1;
         }
         throw new IllegalStateException("channel must not be null");
     }

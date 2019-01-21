@@ -88,7 +88,7 @@ public class PEMParser extends PemReader {
 
         public PEMKeyPair parse(byte[] bArr) throws IOException {
             try {
-                Object instance = ECPrivateKey.getInstance(ASN1Sequence.getInstance(bArr));
+                ECPrivateKey instance = ECPrivateKey.getInstance(ASN1Sequence.getInstance(bArr));
                 AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, instance.getParameters());
                 return new PEMKeyPair(new SubjectPublicKeyInfo(algorithmIdentifier, instance.getPublicKey().getBytes()), new PrivateKeyInfo(algorithmIdentifier, instance));
             } catch (IOException e) {
@@ -139,12 +139,12 @@ public class PEMParser extends PemReader {
             try {
                 StringTokenizer stringTokenizer = new StringTokenizer(str, ",");
                 return new PEMEncryptedKeyPair(stringTokenizer.nextToken(), Hex.decode(stringTokenizer.nextToken()), content, this.pemKeyPairParser);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 if (obj != null) {
                     throw new PEMException("exception decoding - please check password and data.", e);
                 }
                 throw new PEMException(e.getMessage(), e);
-            } catch (Exception e2) {
+            } catch (IllegalArgumentException e2) {
                 if (obj != null) {
                     throw new PEMException("exception decoding - please check password and data.", e2);
                 }
@@ -212,7 +212,7 @@ public class PEMParser extends PemReader {
             try {
                 ASN1Sequence instance = ASN1Sequence.getInstance(bArr);
                 if (instance.size() == 9) {
-                    ASN1Encodable instance2 = RSAPrivateKey.getInstance(instance);
+                    RSAPrivateKey instance2 = RSAPrivateKey.getInstance(instance);
                     ASN1Encodable rSAPublicKey = new RSAPublicKey(instance2.getModulus(), instance2.getPublicExponent());
                     AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE);
                     return new PEMKeyPair(new SubjectPublicKeyInfo(algorithmIdentifier, rSAPublicKey), new PrivateKeyInfo(algorithmIdentifier, instance2));

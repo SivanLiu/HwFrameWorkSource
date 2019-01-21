@@ -381,7 +381,7 @@ class AmbientLightMonitor implements MonitorModule {
         }
     }
 
-    /* JADX WARNING: Missing block: B:9:0x0036, code:
+    /* JADX WARNING: Missing block: B:9:0x0036, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

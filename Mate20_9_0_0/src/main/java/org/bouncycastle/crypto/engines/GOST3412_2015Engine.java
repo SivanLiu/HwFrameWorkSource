@@ -27,30 +27,30 @@ public class GOST3412_2015Engine implements BlockCipher {
     }
 
     private void F(byte[] bArr, byte[] bArr2, byte[] bArr3) {
-        Object LSX = LSX(bArr, bArr2);
-        X(LSX, bArr3);
+        bArr = LSX(bArr, bArr2);
+        X(bArr, bArr3);
         System.arraycopy(bArr2, 0, bArr3, 0, this.SUB_LENGTH);
-        System.arraycopy(LSX, 0, bArr2, 0, this.SUB_LENGTH);
+        System.arraycopy(bArr, 0, bArr2, 0, this.SUB_LENGTH);
     }
 
     private void GOST3412_2015Func(byte[] bArr, int i, byte[] bArr2, int i2) {
-        Object obj = new byte[16];
-        System.arraycopy(bArr, i, obj, 0, 16);
+        byte[] bArr3 = new byte[16];
+        System.arraycopy(bArr, i, bArr3, 0, 16);
         i = 9;
         if (this.forEncryption) {
             for (int i3 = 0; i3 < 9; i3++) {
-                obj = Arrays.copyOf(LSX(this.subKeys[i3], obj), 16);
+                bArr3 = Arrays.copyOf(LSX(this.subKeys[i3], bArr3), 16);
             }
             bArr = this.subKeys[9];
         } else {
             while (i > 0) {
-                obj = Arrays.copyOf(XSL(this.subKeys[i], obj), 16);
+                bArr3 = Arrays.copyOf(XSL(this.subKeys[i], bArr3), 16);
                 i--;
             }
             bArr = this.subKeys[0];
         }
-        X(obj, bArr);
-        System.arraycopy(obj, 0, bArr2, i2, 16);
+        X(bArr3, bArr);
+        System.arraycopy(bArr3, 0, bArr2, i2, 16);
     }
 
     private void L(byte[] bArr) {
@@ -100,27 +100,27 @@ public class GOST3412_2015Engine implements BlockCipher {
             for (int i2 = 0; i2 < 10; i2++) {
                 this.subKeys[i2] = new byte[this.SUB_LENGTH];
             }
-            Object obj = new byte[this.SUB_LENGTH];
-            Object obj2 = new byte[this.SUB_LENGTH];
+            byte[] bArr2 = new byte[this.SUB_LENGTH];
+            byte[] bArr3 = new byte[this.SUB_LENGTH];
             for (i = 0; i < this.SUB_LENGTH; i++) {
-                byte[] bArr2 = this.subKeys[0];
+                byte[] bArr4 = this.subKeys[0];
                 byte b = bArr[i];
-                obj[i] = b;
                 bArr2[i] = b;
-                bArr2 = this.subKeys[1];
+                bArr4[i] = b;
+                bArr4 = this.subKeys[1];
                 byte b2 = bArr[this.SUB_LENGTH + i];
-                obj2[i] = b2;
-                bArr2[i] = b2;
+                bArr3[i] = b2;
+                bArr4[i] = b2;
             }
             bArr = new byte[this.SUB_LENGTH];
             for (i = 1; i < 5; i++) {
                 for (int i3 = 1; i3 <= 8; i3++) {
                     C(bArr, (8 * (i - 1)) + i3);
-                    F(bArr, obj, obj2);
+                    F(bArr, bArr2, bArr3);
                 }
                 int i4 = 2 * i;
-                System.arraycopy(obj, 0, this.subKeys[i4], 0, this.SUB_LENGTH);
-                System.arraycopy(obj2, 0, this.subKeys[i4 + 1], 0, this.SUB_LENGTH);
+                System.arraycopy(bArr2, 0, this.subKeys[i4], 0, this.SUB_LENGTH);
+                System.arraycopy(bArr3, 0, this.subKeys[i4 + 1], 0, this.SUB_LENGTH);
             }
             return;
         }
@@ -145,10 +145,10 @@ public class GOST3412_2015Engine implements BlockCipher {
     }
 
     private void inverseR(byte[] bArr) {
-        Object obj = new byte[16];
-        System.arraycopy(bArr, 1, obj, 0, 15);
-        obj[15] = bArr[0];
-        byte l = l(obj);
+        byte[] bArr2 = new byte[16];
+        System.arraycopy(bArr, 1, bArr2, 0, 15);
+        bArr2[15] = bArr[0];
+        byte l = l(bArr2);
         System.arraycopy(bArr, 1, bArr, 0, 15);
         bArr[15] = l;
     }
@@ -161,28 +161,28 @@ public class GOST3412_2015Engine implements BlockCipher {
 
     private static byte kuz_mul_gf256_slow(byte b, byte b2) {
         int i = 0;
-        byte b3 = (byte) 0;
+        int i2 = 0;
         while (i < 8 && b != 0 && b2 != 0) {
             if ((b2 & 1) != 0) {
-                b3 = (byte) (b3 ^ b);
+                i2 = (byte) (i2 ^ b);
             }
-            byte b4 = (byte) (b & 128);
-            int b5 = (byte) (b5 << 1);
-            if (b4 != (byte) 0) {
-                b5 = (byte) (b5 ^ CipherSuite.TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA256);
+            byte b3 = (byte) (b & 128);
+            int b4 = (byte) (b4 << 1);
+            if (b3 != (byte) 0) {
+                b4 = (byte) (b4 ^ CipherSuite.TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA256);
             }
             int b22 = (byte) (b22 >> 1);
             i = (byte) (i + 1);
         }
-        return b3;
+        return i2;
     }
 
     private byte l(byte[] bArr) {
-        byte b = bArr[15];
-        for (int i = 14; i >= 0; i--) {
-            b = (byte) (b ^ this._gf_mul[unsignedByte(bArr[i])][unsignedByte(this.lFactors[i])]);
+        int i = bArr[15];
+        for (int i2 = 14; i2 >= 0; i2--) {
+            i = (byte) (i ^ this._gf_mul[unsignedByte(bArr[i2])][unsignedByte(this.lFactors[i2])]);
         }
-        return b;
+        return i;
     }
 
     private int unsignedByte(byte b) {

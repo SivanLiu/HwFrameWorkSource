@@ -10,7 +10,7 @@ public class HwCustPreferredComponentImpl extends HwCustPreferredComponent {
     private static final String PACKAGE_START_UP_GUIDE = "com.huawei.hwstartupguide";
     private static final String PACKAGE_START_UP_GUIDE_CLASS = "com.huawei.hwstartupguide.LanguageSelectActivity";
 
-    /* JADX WARNING: Missing block: B:19:0x0040, code:
+    /* JADX WARNING: Missing block: B:19:0x0040, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

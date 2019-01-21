@@ -28,7 +28,7 @@ public abstract class ClientCertificateManager {
     public abstract void store(@NonNull EnrollmentContext enrollmentContext) throws EnrollmentException;
 
     public static synchronized ClientCertificateManager getInstance(String keyStoreType, String keyStoreProvider) throws InvalidParameterException, EnrollmentException {
-        ClientCertificateManager clientCertificateManager;
+        LocalClientCertificateManager localClientCertificateManager;
         synchronized (ClientCertificateManager.class) {
             String message;
             if (Security.getProvider(keyStoreProvider) == null || Security.getProvider("BC") == null) {
@@ -44,12 +44,12 @@ public abstract class ClientCertificateManager {
                         throw new EnrollmentException(message, -31);
                     }
                 }
-                clientCertificateManager = mLocalCCM;
+                localClientCertificateManager = mLocalCCM;
             } else {
                 throw new EnrollmentException("the current HUKS service version not support", -7);
             }
         }
-        return clientCertificateManager;
+        return localClientCertificateManager;
     }
 
     private static boolean checkVersion() {

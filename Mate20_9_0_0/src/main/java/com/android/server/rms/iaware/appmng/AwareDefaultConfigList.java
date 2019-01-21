@@ -258,31 +258,31 @@ public class AwareDefaultConfigList {
         setHabitWhiteList();
     }
 
-    /* JADX WARNING: Missing block: B:7:0x0008, code:
+    /* JADX WARNING: Missing block: B:7:0x0008, code skipped:
             updateAppMngCfgFromRMS(28);
             updateAdjWhiteListFromRMS(28);
             updateRestartAppListFromRMS(28);
             updateBadAppListFromRMS(28);
             r0 = getWhiteListFromRMS(28);
      */
-    /* JADX WARNING: Missing block: B:8:0x001a, code:
+    /* JADX WARNING: Missing block: B:8:0x001a, code skipped:
             if (r0 != null) goto L_0x001d;
      */
-    /* JADX WARNING: Missing block: B:9:0x001c, code:
+    /* JADX WARNING: Missing block: B:9:0x001c, code skipped:
             return;
      */
-    /* JADX WARNING: Missing block: B:10:0x001d, code:
+    /* JADX WARNING: Missing block: B:10:0x001d, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:12:?, code:
+    /* JADX WARNING: Missing block: B:12:?, code skipped:
             r2.mAwareProtectList.addAll(r0);
             parseAwareProtectList();
             r2.mHasReadXml = true;
      */
-    /* JADX WARNING: Missing block: B:13:0x0029, code:
+    /* JADX WARNING: Missing block: B:13:0x0029, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:14:0x002a, code:
+    /* JADX WARNING: Missing block: B:14:0x002a, code skipped:
             return;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -918,25 +918,25 @@ public class AwareDefaultConfigList {
         }
     }
 
-    /* JADX WARNING: Missing block: B:13:0x0018, code:
+    /* JADX WARNING: Missing block: B:13:0x0018, code skipped:
             r2 = r4.mHabitFrequentUsed;
      */
-    /* JADX WARNING: Missing block: B:14:0x001a, code:
+    /* JADX WARNING: Missing block: B:14:0x001a, code skipped:
             monitor-enter(r2);
      */
-    /* JADX WARNING: Missing block: B:17:0x0021, code:
+    /* JADX WARNING: Missing block: B:17:0x0021, code skipped:
             if (r4.mHabitFrequentUsed.contains(r5) == false) goto L_0x0025;
      */
-    /* JADX WARNING: Missing block: B:18:0x0023, code:
+    /* JADX WARNING: Missing block: B:18:0x0023, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:19:0x0024, code:
+    /* JADX WARNING: Missing block: B:19:0x0024, code skipped:
             return true;
      */
-    /* JADX WARNING: Missing block: B:20:0x0025, code:
+    /* JADX WARNING: Missing block: B:20:0x0025, code skipped:
             monitor-exit(r2);
      */
-    /* JADX WARNING: Missing block: B:21:0x0026, code:
+    /* JADX WARNING: Missing block: B:21:0x0026, code skipped:
             return false;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -952,7 +952,7 @@ public class AwareDefaultConfigList {
     }
 
     public Set<String> getRestartAppList() {
-        Set arraySet;
+        ArraySet arraySet;
         synchronized (this.mRestartAppList) {
             arraySet = new ArraySet(this.mRestartAppList);
         }
@@ -960,7 +960,7 @@ public class AwareDefaultConfigList {
     }
 
     public Set<String> getBadAppList() {
-        Set arraySet;
+        ArraySet arraySet;
         synchronized (this.mBadAppList) {
             arraySet = new ArraySet(this.mBadAppList);
         }

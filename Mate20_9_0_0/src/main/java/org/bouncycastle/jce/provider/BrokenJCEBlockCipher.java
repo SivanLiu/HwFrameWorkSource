@@ -49,42 +49,42 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
 
     public static class BrokePBEWithMD5AndDES extends BrokenJCEBlockCipher {
         public BrokePBEWithMD5AndDES() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
             super(cBCBlockCipher, 0, 0, 64, 64);
         }
     }
 
     public static class BrokePBEWithSHA1AndDES extends BrokenJCEBlockCipher {
         public BrokePBEWithSHA1AndDES() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESEngine());
             super(cBCBlockCipher, 0, 1, 64, 64);
         }
     }
 
     public static class BrokePBEWithSHAAndDES2Key extends BrokenJCEBlockCipher {
         public BrokePBEWithSHAAndDES2Key() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
             super(cBCBlockCipher, 2, 1, 128, 64);
         }
     }
 
     public static class BrokePBEWithSHAAndDES3Key extends BrokenJCEBlockCipher {
         public BrokePBEWithSHAAndDES3Key() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
             super(cBCBlockCipher, 2, 1, 192, 64);
         }
     }
 
     public static class OldPBEWithSHAAndDES3Key extends BrokenJCEBlockCipher {
         public OldPBEWithSHAAndDES3Key() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new DESedeEngine());
             super(cBCBlockCipher, 3, 1, 192, 64);
         }
     }
 
     public static class OldPBEWithSHAAndTwofish extends BrokenJCEBlockCipher {
         public OldPBEWithSHAAndTwofish() {
-            BlockCipher cBCBlockCipher = new CBCBlockCipher(new TwofishEngine());
+            CBCBlockCipher cBCBlockCipher = new CBCBlockCipher(new TwofishEngine());
             super(cBCBlockCipher, 3, 1, 256, 128);
         }
     }
@@ -123,13 +123,13 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
     }
 
     protected byte[] engineDoFinal(byte[] bArr, int i, int i2) throws IllegalBlockSizeException, BadPaddingException {
-        Object obj = new byte[engineGetOutputSize(i2)];
-        int processBytes = i2 != 0 ? this.cipher.processBytes(bArr, i, i2, obj, 0) : 0;
+        byte[] bArr2 = new byte[engineGetOutputSize(i2)];
+        int processBytes = i2 != 0 ? this.cipher.processBytes(bArr, i, i2, bArr2, 0) : 0;
         try {
-            processBytes += this.cipher.doFinal(obj, processBytes);
-            Object obj2 = new byte[processBytes];
-            System.arraycopy(obj, 0, obj2, 0, processBytes);
-            return obj2;
+            processBytes += this.cipher.doFinal(bArr2, processBytes);
+            byte[] bArr3 = new byte[processBytes];
+            System.arraycopy(bArr2, 0, bArr3, 0, processBytes);
+            return bArr3;
         } catch (DataLengthException e) {
             throw new IllegalBlockSizeException(e.getMessage());
         } catch (InvalidCipherTextException e2) {
@@ -209,7 +209,7 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
     /* JADX WARNING: Removed duplicated region for block: B:44:0x00ee  */
     /* JADX WARNING: Removed duplicated region for block: B:48:0x00fd  */
     /* JADX WARNING: Removed duplicated region for block: B:46:0x00f6  */
-    /* JADX WARNING: Missing block: B:3:0x0020, code:
+    /* JADX WARNING: Missing block: B:3:0x0020, code skipped:
             if (r8.pbeIvSize != 0) goto L_0x0022;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -322,12 +322,12 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:22:0x00de in {2, 4, 7, 12, 14, 15, 20, 21, 24} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -341,21 +341,17 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r1 = "ECB";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x001d;
-    L_0x000c:
         r5 = 0;
         r4.ivLength = r5;
         r5 = new org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
         r0 = r4.cipher;
         r0 = r0.getUnderlyingCipher();
         r5.<init>(r0);
-    L_0x001a:
         r4.cipher = r5;
         return;
-    L_0x001d:
         r1 = "CBC";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0042;
-    L_0x0025:
         r5 = r4.cipher;
         r5 = r5.getUnderlyingCipher();
         r5 = r5.getBlockSize();
@@ -367,20 +363,17 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r0.<init>(r1);
         r5.<init>(r0);
         goto L_0x001a;
-    L_0x0042:
         r1 = "OFB";
         r1 = r0.startsWith(r1);
         r2 = 8;
         r3 = 3;
         if (r1 == 0) goto L_0x0092;
-    L_0x004d:
         r5 = r4.cipher;
         r5 = r5.getUnderlyingCipher();
         r5 = r5.getBlockSize();
         r4.ivLength = r5;
         r5 = r0.length();
         if (r5 == r3) goto L_0x007a;
-    L_0x005f:
         r5 = r0.substring(r3);
         r5 = java.lang.Integer.parseInt(r5);
         r0 = new org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -389,10 +382,8 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r2 = r2.getUnderlyingCipher();
         r1.<init>(r2, r5);
         r0.<init>(r1);
-    L_0x0077:
         r4.cipher = r0;
         return;
-    L_0x007a:
         r5 = new org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.OFBBlockCipher;
         r1 = r4.cipher;
@@ -403,18 +394,15 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r0.<init>(r1, r2);
         r5.<init>(r0);
         goto L_0x001a;
-    L_0x0092:
         r1 = "CFB";
         r1 = r0.startsWith(r1);
         if (r1 == 0) goto L_0x00df;
-    L_0x009a:
         r5 = r4.cipher;
         r5 = r5.getUnderlyingCipher();
         r5 = r5.getBlockSize();
         r4.ivLength = r5;
         r5 = r0.length();
         if (r5 == r3) goto L_0x00c5;
-    L_0x00ac:
         r5 = r0.substring(r3);
         r5 = java.lang.Integer.parseInt(r5);
         r0 = new org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -424,7 +412,6 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r1.<init>(r2, r5);
         r0.<init>(r1);
         goto L_0x0077;
-    L_0x00c5:
         r5 = new org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
         r0 = new org.bouncycastle.crypto.modes.CFBBlockCipher;
         r1 = r4.cipher;
@@ -436,7 +423,6 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r5.<init>(r0);
         goto L_0x001a;
         return;
-    L_0x00df:
         r0 = new java.lang.IllegalArgumentException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -452,12 +438,12 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:18:0x006f in {2, 4, 11, 14, 16, 17} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.api.JadxDecompiler.processClass(JadxDecompiler.java:292)
@@ -471,39 +457,30 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r1 = "NOPADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x001a;
-    L_0x000c:
         r4 = new org.bouncycastle.crypto.BufferedBlockCipher;
         r0 = r3.cipher;
         r0 = r0.getUnderlyingCipher();
         r4.<init>(r0);
-    L_0x0017:
         r3.cipher = r4;
         return;
-    L_0x001a:
         r1 = "PKCS5PADDING";
         r1 = r0.equals(r1);
         if (r1 != 0) goto L_0x0063;
-    L_0x0022:
         r1 = "PKCS7PADDING";
         r1 = r0.equals(r1);
         if (r1 != 0) goto L_0x0063;
-    L_0x002a:
         r1 = "ISO10126PADDING";
         r1 = r0.equals(r1);
         if (r1 == 0) goto L_0x0033;
-    L_0x0032:
         goto L_0x0063;
-    L_0x0033:
         r1 = "WITHCTS";
         r0 = r0.equals(r1);
         if (r0 == 0) goto L_0x0047;
-    L_0x003b:
         r4 = new org.bouncycastle.crypto.modes.CTSBlockCipher;
         r0 = r3.cipher;
         r0 = r0.getUnderlyingCipher();
         r4.<init>(r0);
         goto L_0x0017;
-    L_0x0047:
         r0 = new javax.crypto.NoSuchPaddingException;
         r1 = new java.lang.StringBuilder;
         r1.<init>();
@@ -515,7 +492,6 @@ public class BrokenJCEBlockCipher implements BrokenPBE {
         r4 = r1.toString();
         r0.<init>(r4);
         throw r0;
-    L_0x0063:
         r4 = new org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
         r0 = r3.cipher;
         r0 = r0.getUnderlyingCipher();

@@ -62,7 +62,7 @@ public class HwAPPQoEStateMachine extends StateMachine {
             HwAPPQoEStateMachine.this.removeMessages(107);
         }
 
-        /* JADX WARNING: Removed duplicated region for block: B:27:0x0120  */
+        /* JADX WARNING: Removed duplicated region for block: B:29:0x0128  */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public boolean processMessage(Message message) {
             String access$000 = HwAPPQoEStateMachine.TAG;
@@ -93,6 +93,7 @@ public class HwAPPQoEStateMachine extends StateMachine {
                         HwAPPQoEStateMachine.this.updateCurAPPStateInfo(infoData);
                         HwAPPQoEStateMachine.this.startAPPMonitor(infoData, HwAPPQoEStateMachine.STATE_MACHINE_NAME_CELL);
                         startChrState();
+                        HwAPPQoEStateMachine.this.removeMessages(107);
                         break;
                     case 101:
                         HwAPPQoEUtils.logD(HwAPPQoEStateMachine.TAG, "CellMonitorState MSG_APP_STATE_BACKGROUND/END");
@@ -131,7 +132,7 @@ public class HwAPPQoEStateMachine extends StateMachine {
                                 infoData.mNetworkType = 801;
                                 HwAPPQoEStateMachine.this.notifyAPPQualityCallback(infoData, message.what, false);
                                 HwAPPQoEAPKConfig config = HwAPPQoEStateMachine.this.mHwAPPQoeResourceManger.getAPKScenceConfig(infoData.mScenceId);
-                                if (config != null) {
+                                if (!(config == null || HwAPPQoEStateMachine.this.hasMessages(107))) {
                                     int appPeriod = config.mAppPeriod * 1000;
                                     Message msg = new Message();
                                     msg.what = 107;

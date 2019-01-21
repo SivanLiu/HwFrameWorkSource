@@ -22,8 +22,11 @@ final class VrController {
         public void onPersistentVrStateChanged(boolean enabled) {
             synchronized (VrController.this.mGlobalAmLock) {
                 if (enabled) {
-                    VrController.this.setVrRenderThreadLocked(0, 3, true);
-                    VrController.access$276(VrController.this, 2);
+                    try {
+                        VrController.this.setVrRenderThreadLocked(0, 3, true);
+                        VrController.access$276(VrController.this, 2);
+                    } catch (Throwable th) {
+                    }
                 } else {
                     VrController.this.setPersistentVrRenderThreadLocked(0, true);
                     VrController.access$272(VrController.this, -3);

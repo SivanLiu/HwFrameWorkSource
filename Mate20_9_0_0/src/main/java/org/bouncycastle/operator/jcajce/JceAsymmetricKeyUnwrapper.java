@@ -2,12 +2,16 @@ package org.bouncycastle.operator.jcajce;
 
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.ProviderException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -30,13 +34,10 @@ public class JceAsymmetricKeyUnwrapper extends AsymmetricKeyUnwrapper {
     }
 
     /* JADX WARNING: Removed duplicated region for block: B:20:0x004e  */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0048 A:{Splitter: B:4:0x001e, ExcHandler: java.security.GeneralSecurityException (e java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0048 A:{Splitter: B:4:0x001e, ExcHandler: java.security.GeneralSecurityException (e java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:17:0x0048 A:{Splitter: B:4:0x001e, ExcHandler: java.security.GeneralSecurityException (e java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:8:0x0038, ExcHandler: java.security.GeneralSecurityException (e java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:8:0x0038, ExcHandler: java.security.GeneralSecurityException (e java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter: B:8:0x0038, ExcHandler: java.security.GeneralSecurityException (e java.security.GeneralSecurityException)} */
-    /* JADX WARNING: Missing block: B:15:0x0043, code:
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter:B:11:0x003c, ExcHandler: IllegalStateException | UnsupportedOperationException | GeneralSecurityException | ProviderException (e java.lang.Throwable)} */
+    /* JADX WARNING: Removed duplicated region for block: B:18:0x004a A:{Splitter:B:11:0x003c, ExcHandler: IllegalStateException | UnsupportedOperationException | GeneralSecurityException | ProviderException (e java.lang.Throwable)} */
+    /* JADX WARNING: No exception handlers in catch block: Catch:{  } */
+    /* JADX WARNING: Missing block: B:15:0x0043, code skipped:
             if (r2.length != 0) goto L_0x0046;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -49,44 +50,44 @@ public class JceAsymmetricKeyUnwrapper extends AsymmetricKeyUnwrapper {
             if (createAlgorithmParameters != null) {
                 try {
                     createAsymmetricWrapper.init(4, this.privKey, createAlgorithmParameters);
-                } catch (GeneralSecurityException e) {
+                } catch (IllegalStateException | UnsupportedOperationException | GeneralSecurityException | ProviderException e) {
                 }
             } else {
                 createAsymmetricWrapper.init(4, this.privKey);
             }
             Key unwrap = createAsymmetricWrapper.unwrap(bArr, this.helper.getKeyAlgorithmName(algorithmIdentifier.getAlgorithm()), 3);
-            try {
-                if (this.unwrappedKeyMustBeEncodable) {
+            if (this.unwrappedKeyMustBeEncodable) {
+                try {
                     byte[] encoded = unwrap.getEncoded();
                     if (encoded != null) {
                     }
-                    if (key == null) {
-                        createAsymmetricWrapper.init(2, this.privKey);
-                        key = new SecretKeySpec(createAsymmetricWrapper.doFinal(bArr), algorithmIdentifier.getAlgorithm().getId());
-                    }
-                    return new JceGenericKey(algorithmIdentifier, key);
+                } catch (IllegalStateException | UnsupportedOperationException | GeneralSecurityException | ProviderException e2) {
                 }
-            } catch (GeneralSecurityException e2) {
+                if (key == null) {
+                    createAsymmetricWrapper.init(2, this.privKey);
+                    key = new SecretKeySpec(createAsymmetricWrapper.doFinal(bArr), algorithmIdentifier.getAlgorithm().getId());
+                }
+                return new JceGenericKey(algorithmIdentifier, key);
             }
             key = unwrap;
             if (key == null) {
             }
             return new JceGenericKey(algorithmIdentifier, key);
-        } catch (Throwable e3) {
+        } catch (InvalidKeyException e3) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("key invalid: ");
             stringBuilder.append(e3.getMessage());
             throw new OperatorException(stringBuilder.toString(), e3);
-        } catch (Throwable e32) {
+        } catch (IllegalBlockSizeException e4) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("illegal blocksize: ");
-            stringBuilder.append(e32.getMessage());
-            throw new OperatorException(stringBuilder.toString(), e32);
-        } catch (Throwable e322) {
+            stringBuilder.append(e4.getMessage());
+            throw new OperatorException(stringBuilder.toString(), e4);
+        } catch (BadPaddingException e5) {
             stringBuilder = new StringBuilder();
             stringBuilder.append("bad padding: ");
-            stringBuilder.append(e322.getMessage());
-            throw new OperatorException(stringBuilder.toString(), e322);
+            stringBuilder.append(e5.getMessage());
+            throw new OperatorException(stringBuilder.toString(), e5);
         }
     }
 

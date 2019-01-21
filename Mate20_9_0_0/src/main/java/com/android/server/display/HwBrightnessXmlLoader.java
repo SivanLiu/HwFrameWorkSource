@@ -103,6 +103,7 @@ final class HwBrightnessXmlLoader {
         public float darkTimeDelayBeta0 = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
         public float darkTimeDelayBeta1 = 1.0f;
         public float darkTimeDelayBeta2 = 0.333f;
+        public float darkTimeDelayBrightness = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
         public boolean darkTimeDelayEnable = false;
         public float darkTimeDelayLuxThreshold = 50.0f;
         public int darkenCurrentFor255 = DeviceStatusConstant.TYPE_HEAD_DOWN;
@@ -360,6 +361,8 @@ final class HwBrightnessXmlLoader {
                 stringBuilder.append(this.darkTimeDelayBeta1);
                 stringBuilder.append(",darkTimeDelayBeta2=");
                 stringBuilder.append(this.darkTimeDelayBeta2);
+                stringBuilder.append(",darkTimeDelayBrightness=");
+                stringBuilder.append(this.darkTimeDelayBrightness);
                 Slog.i(str, stringBuilder.toString());
                 str = HwBrightnessXmlLoader.TAG;
                 stringBuilder = new StringBuilder();
@@ -807,6 +810,7 @@ final class HwBrightnessXmlLoader {
             this.darkTimeDelayBeta0 = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
             this.darkTimeDelayBeta1 = 1.0f;
             this.darkTimeDelayBeta2 = 0.333f;
+            this.darkTimeDelayBrightness = GestureNavConst.BOTTOM_WINDOW_SINGLE_HAND_RATIO;
             this.powerOnFastResponseLuxNum = 8;
             this.sceneMaxPoints = 0;
             this.sceneGapPoints = 29;
@@ -4142,7 +4146,7 @@ final class HwBrightnessXmlLoader {
         }
 
         protected List<String> getNameList() {
-            return Arrays.asList(new String[]{"BrighenDebounceTimeForSmallThr", "DarkenDebounceTimeForSmallThr", "RatioForBrightnenSmallThr", "RatioForDarkenSmallThr", "DarkTimeDelayEnable", "DarkTimeDelay", "DarkTimeDelayLuxThreshold", "DarkTimeDelayBeta0", "DarkTimeDelayBeta1", "DarkTimeDelayBeta2"});
+            return Arrays.asList(new String[]{"BrighenDebounceTimeForSmallThr", "DarkenDebounceTimeForSmallThr", "RatioForBrightnenSmallThr", "RatioForDarkenSmallThr", "DarkTimeDelayEnable", "DarkTimeDelay", "DarkTimeDelayLuxThreshold", "DarkTimeDelayBeta0", "DarkTimeDelayBeta1", "DarkTimeDelayBeta2", "DarkTimeDelayBrightness"});
         }
 
         protected boolean isOptional() {
@@ -4181,6 +4185,11 @@ final class HwBrightnessXmlLoader {
                     }
                 case -487716469:
                     if (valueName.equals("DarkenDebounceTimeForSmallThr")) {
+                        z = true;
+                        break;
+                    }
+                case 254012465:
+                    if (valueName.equals("DarkTimeDelayBrightness")) {
                         z = true;
                         break;
                     }
@@ -4238,6 +4247,9 @@ final class HwBrightnessXmlLoader {
                     break;
                 case true:
                     HwBrightnessXmlLoader.mData.darkTimeDelayBeta2 = HwXmlElement.string2Float(parser.nextText());
+                    break;
+                case true:
+                    HwBrightnessXmlLoader.mData.darkTimeDelayBrightness = HwXmlElement.string2Float(parser.nextText());
                     break;
                 default:
                     String str = this.TAG;
@@ -4705,34 +4717,39 @@ final class HwBrightnessXmlLoader {
         HWFLOW = z;
     }
 
+    /* JADX WARNING: Exception block dominator not found, dom blocks: [B:9:0x0014, B:14:0x0021] */
+    /* JADX WARNING: Missing block: B:12:0x001e, code skipped:
+            r2 = th;
+     */
+    /* JADX WARNING: Missing block: B:21:0x0041, code skipped:
+            if (null == null) goto L_0x0043;
+     */
+    /* JADX WARNING: Missing block: B:22:0x0043, code skipped:
+            new com.android.server.display.HwBrightnessXmlLoader.Data().loadDefaultConfig();
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
     public static Data getData() {
         Data retData = null;
         synchronized (mLock) {
-            Data data;
+            Data th;
             try {
                 if (mLoader == null) {
                     mLoader = new HwBrightnessXmlLoader();
                 }
                 retData = mData;
                 if (retData == null) {
-                    data = new Data();
-                    retData = data;
+                    th = new Data();
+                    retData = th;
                     retData.loadDefaultConfig();
                 }
             } catch (RuntimeException e) {
-                try {
-                    String str = TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("getData() failed! ");
-                    stringBuilder.append(e);
-                    Slog.e(str, stringBuilder.toString());
-                    if (null == null) {
-                        data = new Data();
-                    }
-                } catch (Throwable th) {
-                    if (null == null) {
-                        new Data().loadDefaultConfig();
-                    }
+                String str = TAG;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("getData() failed! ");
+                stringBuilder.append(e);
+                Slog.e(str, stringBuilder.toString());
+                if (null == null) {
+                    th = new Data();
                 }
             }
         }

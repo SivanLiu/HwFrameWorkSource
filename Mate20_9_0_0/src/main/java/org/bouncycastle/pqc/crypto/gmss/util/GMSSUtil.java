@@ -15,15 +15,15 @@ public class GMSSUtil {
     }
 
     public byte[] concatenateArray(byte[][] bArr) {
-        Object obj = new byte[(bArr.length * bArr[0].length)];
+        byte[] bArr2 = new byte[(bArr.length * bArr[0].length)];
         int i = 0;
         int i2 = i;
         while (i < bArr.length) {
-            System.arraycopy(bArr[i], 0, obj, i2, bArr[i].length);
+            System.arraycopy(bArr[i], 0, bArr2, i2, bArr[i].length);
             i2 += bArr[i].length;
             i++;
         }
-        return obj;
+        return bArr2;
     }
 
     public int getLog(int i) {

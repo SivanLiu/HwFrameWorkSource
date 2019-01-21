@@ -467,6 +467,8 @@ public interface WindowManagerPolicy extends WindowManagerPolicyConstants {
 
     void setFullScreenWindow(WindowState windowState);
 
+    void setGestureNavMode(String str, int i, int i2, int i3, int i4);
+
     void setInitialDisplaySize(Display display, int i, int i2, int i3);
 
     void setInputMethodWindowVisible(boolean z);
@@ -549,10 +551,10 @@ public interface WindowManagerPolicy extends WindowManagerPolicyConstants {
         throw new IllegalArgumentException("Use getWindowLayerFromTypeLw() or getWindowLayerLw() for alert window types");
     }
 
-    /* JADX WARNING: Missing block: B:33:0x0051, code:
+    /* JADX WARNING: Missing block: B:33:0x0051, code skipped:
             return 13;
      */
-    /* JADX WARNING: Missing block: B:52:0x006c, code:
+    /* JADX WARNING: Missing block: B:52:0x006c, code skipped:
             return 1;
      */
     /* Code decompiled incorrectly, please refer to instructions dump. */

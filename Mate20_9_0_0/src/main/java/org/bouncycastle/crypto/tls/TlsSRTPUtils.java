@@ -3,8 +3,6 @@ package org.bouncycastle.crypto.tls;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Hashtable;
 import org.bouncycastle.util.Integers;
 
@@ -17,7 +15,7 @@ public class TlsSRTPUtils {
 
     public static byte[] createUseSRTPExtension(UseSRTPData useSRTPData) throws IOException {
         if (useSRTPData != null) {
-            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             TlsUtils.writeUint16ArrayWithUint16Length(useSRTPData.getProtectionProfiles(), byteArrayOutputStream);
             TlsUtils.writeOpaque8(useSRTPData.getMki(), byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
@@ -32,7 +30,7 @@ public class TlsSRTPUtils {
 
     public static UseSRTPData readUseSRTPExtension(byte[] bArr) throws IOException {
         if (bArr != null) {
-            InputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bArr);
             int readUint16 = TlsUtils.readUint16(byteArrayInputStream);
             if (readUint16 < 2 || (readUint16 & 1) != 0) {
                 throw new TlsFatalAlert((short) 50);

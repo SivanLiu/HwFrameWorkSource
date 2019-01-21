@@ -115,15 +115,32 @@ public class HwLog {
         String str;
         StringBuilder stringBuilder;
         try {
+            boolean z;
+            String str2;
+            StringBuilder stringBuilder2;
             Class<Log> logClass = Log.class;
             Field field_HwModuleLog = logClass.getField("HWModuleLog");
             sHwInfo = logClass.getField("HWINFO").getBoolean(null);
             sHwModuleDebug = field_HwModuleLog.getBoolean(null);
-            boolean z = sHwInfo || (sHwModuleDebug && Log.isLoggable(TAG, 4));
+            if (!sHwInfo) {
+                if (!sHwModuleDebug || !Log.isLoggable(TAG, 4)) {
+                    z = false;
+                    sHwInfo = z;
+                    sHwDetailLog = sHwInfo;
+                    str2 = TAG;
+                    stringBuilder2 = new StringBuilder();
+                    stringBuilder2.append("sHwDetailLog:");
+                    stringBuilder2.append(sHwDetailLog);
+                    stringBuilder2.append(" HwModuleDebug:");
+                    stringBuilder2.append(sHwModuleDebug);
+                    e(str2, stringBuilder2.toString());
+                }
+            }
+            z = true;
             sHwInfo = z;
             sHwDetailLog = sHwInfo;
-            String str2 = TAG;
-            StringBuilder stringBuilder2 = new StringBuilder();
+            str2 = TAG;
+            stringBuilder2 = new StringBuilder();
             stringBuilder2.append("sHwDetailLog:");
             stringBuilder2.append(sHwDetailLog);
             stringBuilder2.append(" HwModuleDebug:");

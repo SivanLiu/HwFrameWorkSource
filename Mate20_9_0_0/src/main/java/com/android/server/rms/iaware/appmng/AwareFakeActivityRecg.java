@@ -2,7 +2,9 @@ package com.android.server.rms.iaware.appmng;
 
 import android.app.ActivityManagerNative;
 import android.app.mtm.iaware.appmng.AppMngConstant.AppMngFeature;
+import android.app.mtm.iaware.appmng.AppMngConstant.AppStartSource;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.UserInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -630,9 +632,14 @@ public class AwareFakeActivityRecg {
                 this.bGiveupRecognize = true;
                 this.mGiveupRecongnizeTimeMs = System.currentTimeMillis();
                 this.mGiveupReason = giveupReason;
-            } else if (this.bGiveupRecognize && System.currentTimeMillis() - this.mGiveupRecongnizeTimeMs > HwArbitrationDEFS.DelayTimeMillisA) {
-                this.bGiveupRecognize = false;
-                this.mGiveupReason = giveupReason;
+            } else {
+                try {
+                    if (this.bGiveupRecognize && System.currentTimeMillis() - this.mGiveupRecongnizeTimeMs > HwArbitrationDEFS.DelayTimeMillisA) {
+                        this.bGiveupRecognize = false;
+                        this.mGiveupReason = giveupReason;
+                    }
+                } finally {
+                }
             }
         }
     }
@@ -1095,15 +1102,13 @@ public class AwareFakeActivityRecg {
         pw.println("dump really recognized fake activities begin:");
         synchronized (this.mFakeActivities) {
             for (Entry entry : this.mFakeActivities.entrySet()) {
-                String str;
                 String keyStr = (String) entry.getKey();
                 String strValue = "";
                 if (3 == ((Long) entry.getValue()).longValue()) {
-                    str = "persistentfake";
+                    strValue = "persistentfake";
                 } else {
-                    str = "dynamicfake";
+                    strValue = "dynamicfake";
                 }
-                strValue = str;
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(keyStr);
                 stringBuilder.append(CPUCustBaseConfig.CPUCONFIG_GAP_IDENTIFIER);
@@ -1339,7 +1344,7 @@ public class AwareFakeActivityRecg {
         if (isScreenOn && !getSceenOnExpired()) {
             setGiveupRecognize(true, 3);
         }
-        if (!this.mDataMgr.isSystemBaseApp(activityInfo.applicationInfo)) {
+        if (needCheckPrevent(activityInfo.applicationInfo)) {
             shouldPrevent = removeOrRecgFakeActivity(isScreenOn, callerUid, callerPid, activityInfo.applicationInfo.uid, compName, this.mGotoSleepingTimeMs);
         }
         if (this.DEBUG_COST) {
@@ -1350,6 +1355,17 @@ public class AwareFakeActivityRecg {
             AwareLog.i(str, stringBuilder.toString());
         }
         return shouldPrevent;
+    }
+
+    private boolean needCheckPrevent(ApplicationInfo applicationInfo) {
+        if (applicationInfo == null || this.mDataMgr.isSystemBaseApp(applicationInfo)) {
+            return false;
+        }
+        String pkgName = applicationInfo.packageName;
+        if (pkgName != null && DecisionMaker.getInstance().getAppStartPolicy(pkgName, AppStartSource.THIRD_ACTIVITY) == 0) {
+            return true;
+        }
+        return false;
     }
 
     public void processNativeEventNotify(int eventType, int eventValue, int keyAction, int pid, int uid) {

@@ -440,7 +440,7 @@ public class WificondControl implements DeathRecipient {
         return (IWifiScannerImpl) this.mWificondScanners.get(ifaceName);
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:95:0x0264  */
+    /* JADX WARNING: Removed duplicated region for block: B:96:0x0264  */
     /* Code decompiled incorrectly, please refer to instructions dump. */
     public ArrayList<ScanDetail> getScanResults(String ifaceName, int scanType) {
         IWifiScannerImpl iWifiScannerImpl;
@@ -469,6 +469,10 @@ public class WificondControl implements DeathRecipient {
                 nativeResults = scannerImpl.getPnoScanResults();
             } catch (RemoteException e3) {
                 iWifiScannerImpl = scannerImpl;
+                Log.e(TAG, "Failed to create ScanDetail ArrayList");
+                if (this.mVerboseLoggingEnabled) {
+                }
+                return results;
             }
         }
         NativeScanResult[] nativeResults2 = nativeResults;
@@ -662,10 +666,6 @@ public class WificondControl implements DeathRecipient {
             stringBuilder4.append(results.size());
             stringBuilder4.append(" scan results from wificond");
             Log.d(str3, stringBuilder4.toString());
-        }
-        return results;
-        Log.e(TAG, "Failed to create ScanDetail ArrayList");
-        if (this.mVerboseLoggingEnabled) {
         }
         return results;
     }

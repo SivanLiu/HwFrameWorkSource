@@ -274,8 +274,10 @@ public class MemoryFeature extends RFeature {
                 if (itemValue != null) {
                     Object obj = -1;
                     try {
-                        if (itemName.hashCode() == -1109843021 && itemName.equals(MemoryConstant.MEM_SCENE_LAUNCH)) {
-                            obj = null;
+                        if (itemName.hashCode() == -1109843021) {
+                            if (itemName.equals(MemoryConstant.MEM_SCENE_LAUNCH)) {
+                                obj = null;
+                            }
                         }
                         if (obj != null) {
                             AwareLog.w(TAG, "no such configuration!");
@@ -312,8 +314,10 @@ public class MemoryFeature extends RFeature {
                     try {
                         int hashCode = itemName.hashCode();
                         if (hashCode != -190523471) {
-                            if (hashCode == 2089932130 && itemName.equals(MemoryConstant.MEM_CONSTANT_IONSPEEDUPSWITCH)) {
-                                obj = null;
+                            if (hashCode == 2089932130) {
+                                if (itemName.equals(MemoryConstant.MEM_CONSTANT_IONSPEEDUPSWITCH)) {
+                                    obj = null;
+                                }
                             }
                         } else if (itemName.equals(MemoryConstant.MEM_CONSTANT_CAMERAPOWERUPNAME)) {
                             obj = 1;
@@ -527,6 +531,8 @@ public class MemoryFeature extends RFeature {
                                     break;
                                 }
                                 break;
+                            default:
+                                break;
                         }
                         String str;
                         StringBuilder stringBuilder;
@@ -656,6 +662,8 @@ public class MemoryFeature extends RFeature {
                         obj = 3;
                         break;
                     }
+                    break;
+                default:
                     break;
             }
             long lowCpuLoad;

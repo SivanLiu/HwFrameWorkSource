@@ -70,30 +70,33 @@ public class ClipboardService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:12:0x0034, code:
+        /* JADX WARNING: Missing block: B:12:0x0034, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public void setPrimaryClip(ClipData clip, String callingPackage) {
             synchronized (this) {
                 if (clip != null) {
-                    if (clip.getItemCount() > 0) {
-                        int callingUid = Binder.getCallingUid();
-                        if (ClipboardService.this.clipboardAccessAllowed(30, callingPackage, callingUid)) {
-                            ClipboardService.this.checkDataOwnerLocked(clip, callingUid);
-                            ClipboardService.this.setPrimaryClipInternal(clip, callingUid);
-                            return;
+                    try {
+                        if (clip.getItemCount() > 0) {
+                            int callingUid = Binder.getCallingUid();
+                            if (ClipboardService.this.clipboardAccessAllowed(30, callingPackage, callingUid)) {
+                                ClipboardService.this.checkDataOwnerLocked(clip, callingUid);
+                                ClipboardService.this.setPrimaryClipInternal(clip, callingUid);
+                                return;
+                            }
+                            final Context context = ClipboardService.this.getContext();
+                            if (HwDeviceManager.disallowOp(23) && context != null) {
+                                UiThread.getHandler().post(new Runnable() {
+                                    public void run() {
+                                        Toast toast = Toast.makeText(context, context.getResources().getString(33685904), 1);
+                                        toast.getWindowParams().type = 2006;
+                                        toast.show();
+                                    }
+                                });
+                            }
                         }
-                        final Context context = ClipboardService.this.getContext();
-                        if (HwDeviceManager.disallowOp(23) && context != null) {
-                            UiThread.getHandler().post(new Runnable() {
-                                public void run() {
-                                    Toast toast = Toast.makeText(context, context.getResources().getString(33685904), 1);
-                                    toast.getWindowParams().type = 2006;
-                                    toast.show();
-                                }
-                            });
-                        }
+                    } catch (Throwable th) {
                     }
                 }
                 throw new IllegalArgumentException("No items");
@@ -113,48 +116,54 @@ public class ClipboardService extends SystemService {
         public ClipData getPrimaryClip(String pkg) {
             HwFrameworkFactory.getHwBehaviorCollectManager().sendBehavior(BehaviorId.CLIPBOARD_GETPRIMARYCLIP);
             synchronized (this) {
-                if (!ClipboardService.this.clipboardAccessAllowed(29, pkg, Binder.getCallingUid()) || ClipboardService.this.isDeviceLocked()) {
-                    return null;
+                if (ClipboardService.this.clipboardAccessAllowed(29, pkg, Binder.getCallingUid())) {
+                    if (!ClipboardService.this.isDeviceLocked()) {
+                        ClipboardService.this.addActiveOwnerLocked(Binder.getCallingUid(), pkg);
+                        ClipData clipData = ClipboardService.this.getClipboard().primaryClip;
+                        return clipData;
+                    }
                 }
-                ClipboardService.this.addActiveOwnerLocked(Binder.getCallingUid(), pkg);
-                ClipData clipData = ClipboardService.this.getClipboard().primaryClip;
-                return clipData;
+                return null;
             }
         }
 
-        /* JADX WARNING: Missing block: B:10:0x002b, code:
+        /* JADX WARNING: Missing block: B:11:0x002b, code skipped:
             return r1;
      */
-        /* JADX WARNING: Missing block: B:12:0x002d, code:
+        /* JADX WARNING: Missing block: B:13:0x002d, code skipped:
             return null;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public ClipDescription getPrimaryClipDescription(String callingPackage) {
             synchronized (this) {
                 ClipDescription clipDescription = null;
-                if (!ClipboardService.this.clipboardAccessAllowed(29, callingPackage, Binder.getCallingUid()) || ClipboardService.this.isDeviceLocked()) {
-                } else {
-                    PerUserClipboard clipboard = ClipboardService.this.getClipboard();
-                    if (clipboard.primaryClip != null) {
-                        clipDescription = clipboard.primaryClip.getDescription();
+                if (ClipboardService.this.clipboardAccessAllowed(29, callingPackage, Binder.getCallingUid())) {
+                    if (!ClipboardService.this.isDeviceLocked()) {
+                        PerUserClipboard clipboard = ClipboardService.this.getClipboard();
+                        if (clipboard.primaryClip != null) {
+                            clipDescription = clipboard.primaryClip.getDescription();
+                        }
                     }
                 }
             }
         }
 
-        /* JADX WARNING: Missing block: B:10:0x0026, code:
+        /* JADX WARNING: Missing block: B:11:0x0026, code skipped:
             return r1;
      */
-        /* JADX WARNING: Missing block: B:12:0x0028, code:
+        /* JADX WARNING: Missing block: B:13:0x0028, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public boolean hasPrimaryClip(String callingPackage) {
             synchronized (this) {
                 boolean z = false;
-                if (!ClipboardService.this.clipboardAccessAllowed(29, callingPackage, Binder.getCallingUid()) || ClipboardService.this.isDeviceLocked()) {
-                } else if (ClipboardService.this.getClipboard().primaryClip != null) {
-                    z = true;
+                if (ClipboardService.this.clipboardAccessAllowed(29, callingPackage, Binder.getCallingUid())) {
+                    if (!ClipboardService.this.isDeviceLocked()) {
+                        if (ClipboardService.this.getClipboard().primaryClip != null) {
+                            z = true;
+                        }
+                    }
                 }
             }
         }
@@ -172,26 +181,27 @@ public class ClipboardService extends SystemService {
             }
         }
 
-        /* JADX WARNING: Missing block: B:14:0x0038, code:
+        /* JADX WARNING: Missing block: B:15:0x0038, code skipped:
             return r1;
      */
-        /* JADX WARNING: Missing block: B:18:0x003c, code:
+        /* JADX WARNING: Missing block: B:19:0x003c, code skipped:
             return false;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
         public boolean hasClipboardText(String callingPackage) {
             synchronized (this) {
                 boolean z = false;
-                if (!ClipboardService.this.clipboardAccessAllowed(29, callingPackage, Binder.getCallingUid()) || ClipboardService.this.isDeviceLocked()) {
-                } else {
-                    PerUserClipboard clipboard = ClipboardService.this.getClipboard();
-                    if (clipboard.primaryClip != null) {
-                        CharSequence text = clipboard.primaryClip.getItemAt(0).getText();
-                        if (text != null && text.length() > 0) {
-                            z = true;
+                if (ClipboardService.this.clipboardAccessAllowed(29, callingPackage, Binder.getCallingUid())) {
+                    if (!ClipboardService.this.isDeviceLocked()) {
+                        PerUserClipboard clipboard = ClipboardService.this.getClipboard();
+                        if (clipboard.primaryClip != null) {
+                            CharSequence text = clipboard.primaryClip.getItemAt(0).getText();
+                            if (text != null && text.length() > 0) {
+                                z = true;
+                            }
+                        } else {
+                            return false;
                         }
-                    } else {
-                        return false;
                     }
                 }
             }
@@ -446,15 +456,12 @@ public class ClipboardService extends SystemService {
         try {
             PackageInfo pi = pm.getPackageInfo(pkg, 0, targetUserHandle);
             StringBuilder stringBuilder;
-            if (pi != null) {
-                if (!UserHandle.isSameApp(pi.applicationInfo.uid, uid)) {
-                    stringBuilder = new StringBuilder();
-                    stringBuilder.append("Calling uid ");
-                    stringBuilder.append(uid);
-                    stringBuilder.append(" does not own package ");
-                    stringBuilder.append(pkg);
-                    throw new SecurityException(stringBuilder.toString());
-                }
+            if (pi == null) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Unknown package ");
+                stringBuilder.append(pkg);
+                throw new IllegalArgumentException(stringBuilder.toString());
+            } else if (UserHandle.isSameApp(pi.applicationInfo.uid, uid)) {
                 Binder.restoreCallingIdentity(oldIdentity);
                 PerUserClipboard clipboard = getClipboard();
                 if (clipboard.primaryClip != null && !clipboard.activePermissionOwners.contains(pkg)) {
@@ -464,14 +471,15 @@ public class ClipboardService extends SystemService {
                         i++;
                     }
                     clipboard.activePermissionOwners.add(pkg);
-                    return;
                 }
-                return;
+            } else {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append("Calling uid ");
+                stringBuilder.append(uid);
+                stringBuilder.append(" does not own package ");
+                stringBuilder.append(pkg);
+                throw new SecurityException(stringBuilder.toString());
             }
-            stringBuilder = new StringBuilder();
-            stringBuilder.append("Unknown package ");
-            stringBuilder.append(pkg);
-            throw new IllegalArgumentException(stringBuilder.toString());
         } catch (RemoteException e) {
         } catch (Throwable th) {
             Binder.restoreCallingIdentity(oldIdentity);

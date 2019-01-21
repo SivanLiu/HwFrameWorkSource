@@ -2,6 +2,7 @@ package org.bouncycastle.cms.jcajce;
 
 import java.io.OutputStream;
 import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;
@@ -54,7 +55,7 @@ public class JceCMSContentEncryptorBuilder {
                     algorithmParameters = this.cipher.getParameters();
                 }
                 this.algorithmIdentifier = JceCMSContentEncryptorBuilder.this.helper.getAlgorithmIdentifier(aSN1ObjectIdentifier, algorithmParameters);
-            } catch (Exception e) {
+            } catch (GeneralSecurityException e) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("unable to initialize cipher: ");
                 stringBuilder.append(e.getMessage());

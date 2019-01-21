@@ -105,16 +105,16 @@ public class DataAppHandle extends AbsDataHandle {
             this.mLastPid = Integer.valueOf(pid);
         }
 
-        /* JADX WARNING: Missing block: B:11:0x0036, code:
+        /* JADX WARNING: Missing block: B:12:0x0036, code skipped:
             if (r0 == 0) goto L_?;
      */
-        /* JADX WARNING: Missing block: B:12:0x0038, code:
+        /* JADX WARNING: Missing block: B:13:0x0038, code skipped:
             com.android.server.rms.iaware.memory.utils.MemoryUtils.trimMemory(com.android.server.rms.iaware.memory.data.handle.DataAppHandle.access$400(r8.this$0), java.lang.String.valueOf(r0), 40);
      */
-        /* JADX WARNING: Missing block: B:19:?, code:
+        /* JADX WARNING: Missing block: B:20:?, code skipped:
             return;
      */
-        /* JADX WARNING: Missing block: B:20:?, code:
+        /* JADX WARNING: Missing block: B:21:?, code skipped:
             return;
      */
         /* Code decompiled incorrectly, please refer to instructions dump. */
@@ -190,28 +190,30 @@ public class DataAppHandle extends AbsDataHandle {
                 return -1;
             }
             Integer uid = Integer.valueOf(Integer.valueOf(Integer.parseInt((String) arrayMap.get("uid"))).intValue() % LaserTSMServiceImpl.EXCUTE_OTA_RESULT_SUCCESS);
-            if (uid.intValue() == MemoryConstant.getSystemCameraUid() || uid.intValue() == 1000) {
-                extras.putLong("reqMem", (long) reqMemKB);
-                str = TAG;
-                stringBuilder = new StringBuilder();
-                stringBuilder.append("handleAppPrepareMem reqMemKB ");
-                stringBuilder.append(reqMemKB);
-                stringBuilder.append("kb");
-                AwareLog.i(str, stringBuilder.toString());
-                try {
-                    this.mDMEServer.execute(MemoryConstant.MEM_SCENE_BIGMEM, extras, event, timestamp);
-                    return 0;
-                } catch (NumberFormatException e) {
-                    AwareLog.e(TAG, "reqMem is not right");
+            if (uid.intValue() != MemoryConstant.getSystemCameraUid()) {
+                if (uid.intValue() != 1000) {
+                    str = TAG;
+                    stringBuilder = new StringBuilder();
+                    stringBuilder.append("invalid uid:");
+                    stringBuilder.append(uid);
+                    AwareLog.i(str, stringBuilder.toString());
                     return -1;
                 }
             }
+            extras.putLong("reqMem", (long) reqMemKB);
             str = TAG;
             stringBuilder = new StringBuilder();
-            stringBuilder.append("invalid uid:");
-            stringBuilder.append(uid);
+            stringBuilder.append("handleAppPrepareMem reqMemKB ");
+            stringBuilder.append(reqMemKB);
+            stringBuilder.append("kb");
             AwareLog.i(str, stringBuilder.toString());
-            return -1;
+            try {
+                this.mDMEServer.execute(MemoryConstant.MEM_SCENE_BIGMEM, extras, event, timestamp);
+                return 0;
+            } catch (NumberFormatException e) {
+                AwareLog.e(TAG, "reqMem is not right");
+                return -1;
+            }
         } catch (NumberFormatException e2) {
             AwareLog.e(TAG, "reqMem is not right");
             return -1;

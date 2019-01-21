@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteException;
 import com.huawei.odmf.database.AndroidSQLiteDatabase;
 import com.huawei.odmf.database.DataBase;
 import com.huawei.odmf.database.ODMFSQLiteDatabase;
-import com.huawei.odmf.exception.ODMFException;
 import com.huawei.odmf.exception.ODMFIllegalArgumentException;
 import com.huawei.odmf.exception.ODMFIllegalStateException;
 import com.huawei.odmf.exception.ODMFRuntimeException;
@@ -32,19 +31,13 @@ class CrossPersistentStore extends PersistentStore {
     private DataBase db;
 
     CrossPersistentStore(Context appCtx, String modelPath, String uri, Configuration configuration, List<String> databasePaths, List<byte[]> keyList) {
-        ODMFException e;
         super(configuration.getPath(), configuration.getDatabaseType(), configuration.getStorageMode(), uri);
         if (modelPath == null || modelPath.equals("")) {
             this.model = null;
         } else {
             try {
                 this.model = ObjectModelFactory.parse(appCtx, modelPath);
-            } catch (ODMFIllegalArgumentException e2) {
-                e = e2;
-                LOG.logE("create mObjectModel failed!!");
-                throw new ODMFRuntimeException("Xml parser failed : " + e.getMessage());
-            } catch (ODMFXmlParserException e3) {
-                e = e3;
+            } catch (ODMFIllegalArgumentException | ODMFXmlParserException e) {
                 LOG.logE("create mObjectModel failed!!");
                 throw new ODMFRuntimeException("Xml parser failed : " + e.getMessage());
             }
@@ -83,23 +76,21 @@ class CrossPersistentStore extends PersistentStore {
                 try {
                     this.db.addAttachAlias((String) this.databasePaths.get(i), file.getCanonicalPath(), (byte[]) keyList.get(i));
                     i++;
-                } catch (IOException e) {
-                } catch (SQLException e2) {
+                } catch (SQLException | IOException e) {
+                    LOG.logE("error happens when attaching database!!");
+                    for (j = 0; j < i; j++) {
+                        this.db.removeAttachAlias((String) this.databasePaths.get(j));
+                    }
+                    return false;
                 }
-            } else {
-                for (j = i - 1; j >= 0; j++) {
-                    this.db.removeAttachAlias((String) this.databasePaths.get(j));
-                }
-                LOG.logE("error happens when attaching database!!");
-                throw new ODMFIllegalStateException("The database " + ((String) this.databasePaths.get(i)) + " you want to attached does not exist.");
             }
+            for (j = i - 1; j >= 0; j++) {
+                this.db.removeAttachAlias((String) this.databasePaths.get(j));
+            }
+            LOG.logE("error happens when attaching database!!");
+            throw new ODMFIllegalStateException("The database " + ((String) this.databasePaths.get(i)) + " you want to attached does not exist.");
         }
         return true;
-        LOG.logE("error happens when attaching database!!");
-        for (j = 0; j < i; j++) {
-            this.db.removeAttachAlias((String) this.databasePaths.get(j));
-        }
-        return false;
     }
 
     private void init(String databaseName, byte[] key, boolean throwException, boolean detectDelete) {
@@ -125,78 +116,53 @@ class CrossPersistentStore extends PersistentStore {
     }
 
     protected void executeRawSQL(String sql) {
-        SQLException e;
         try {
             this.db.execSQL(sql);
-        } catch (SQLiteException e2) {
-            e = e2;
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e) {
             LOG.logE("Execute SQL Failed : A SQLiteException occurred when execute SQL");
             throw new ODMFRuntimeException("Save Failed : " + e.getMessage());
-        } catch (com.huawei.hwsqlite.SQLiteException e3) {
-            e = e3;
-            LOG.logE("Execute SQL Failed : A SQLiteException occurred when execute SQL");
-            throw new ODMFRuntimeException("Save Failed : " + e.getMessage());
-        } catch (IllegalStateException e4) {
+        } catch (IllegalStateException e2) {
             LOG.logE("Execute rawSQL failed : A IllegalStateException occurred when execute SQL.");
-            throw new ODMFRuntimeException("Execute rawSQL failed : " + e4.getMessage(), e4);
+            throw new ODMFRuntimeException("Execute rawSQL failed : " + e2.getMessage(), e2);
         }
     }
 
     protected Cursor query(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
-        SQLException e;
         try {
             return DatabaseQueryService.query(this.db, distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        } catch (SQLiteException e2) {
-            e = e2;
-        } catch (com.huawei.hwsqlite.SQLiteException e3) {
-            e = e3;
-        } catch (IllegalStateException e4) {
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e) {
+            LOG.logE("Execute RawSQL Failed : A SQLiteException occurred when execute SQL.");
+            throw new ODMFRuntimeException("Execute RawSQL Failed : " + e.getMessage());
+        } catch (IllegalStateException e2) {
             LOG.logE("Execute rawSQL failed : A IllegalStateException occurred when execute SQL.");
-            throw new ODMFRuntimeException("Execute rawSQL failed : " + e4.getMessage(), e4);
+            throw new ODMFRuntimeException("Execute rawSQL failed : " + e2.getMessage(), e2);
         }
-        LOG.logE("Execute RawSQL Failed : A SQLiteException occurred when execute SQL.");
-        throw new ODMFRuntimeException("Execute RawSQL Failed : " + e.getMessage());
     }
 
     protected Cursor executeRawQuerySQL(String sql) {
-        SQLException e;
         try {
             return this.db.rawQuery(sql, null);
-        } catch (SQLiteException e2) {
-            e = e2;
-        } catch (com.huawei.hwsqlite.SQLiteException e3) {
-            e = e3;
-        } catch (IllegalStateException e4) {
+        } catch (SQLiteException | com.huawei.hwsqlite.SQLiteException e) {
+            LOG.logE("Raw Query Failed : A SQLiteException occurred when execute rawQuery");
+            throw new ODMFRuntimeException("Save Failed : " + e.getMessage());
+        } catch (IllegalStateException e2) {
             LOG.logE("Execute rawQuerySQL failed : A IllegalStateException occurred when execute rawQuery.");
-            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e4.getMessage(), e4);
+            throw new ODMFRuntimeException("Execute rawQuerySQL failed : " + e2.getMessage(), e2);
         }
-        LOG.logE("Raw Query Failed : A SQLiteException occurred when execute rawQuery");
-        throw new ODMFRuntimeException("Save Failed : " + e.getMessage());
     }
 
     protected void close() {
-        SQLException e;
         try {
             this.databaseHelper.close();
-        } catch (SQLiteDatabaseCorruptException e2) {
-            e = e2;
+        } catch (SQLiteDatabaseCorruptException | com.huawei.hwsqlite.SQLiteDatabaseCorruptException e) {
             LOG.logE("Close database failed : A SQLiteDatabaseCorruptException occurred when close.");
             throw new ODMFSQLiteDatabaseCorruptException("Close database failed : " + e.getMessage(), e);
-        } catch (com.huawei.hwsqlite.SQLiteDatabaseCorruptException e3) {
-            e = e3;
-            LOG.logE("Close database failed : A SQLiteDatabaseCorruptException occurred when close.");
-            throw new ODMFSQLiteDatabaseCorruptException("Close database failed : " + e.getMessage(), e);
-        } catch (SQLiteDiskIOException e4) {
-            e = e4;
+        } catch (SQLiteDiskIOException | com.huawei.hwsqlite.SQLiteDiskIOException e2) {
             LOG.logE("Close database failed : A SQLiteDiskIOException occurred when close.");
-            throw new ODMFSQLiteDiskIOException("Close database failed : " + e.getMessage(), e);
-        } catch (com.huawei.hwsqlite.SQLiteDiskIOException e5) {
-            e = e5;
-            LOG.logE("Close database failed : A SQLiteDiskIOException occurred when close.");
-            throw new ODMFSQLiteDiskIOException("Close database failed : " + e.getMessage(), e);
-        } catch (RuntimeException e6) {
+            throw new ODMFSQLiteDiskIOException("Close database failed : " + e2.getMessage(), e2);
+        } catch (RuntimeException e3) {
             LOG.logE("Close database failed : A RuntimeException occurred when close.");
-            throw new ODMFRuntimeException("Close database failed : " + e6.getMessage(), e6);
+            throw new ODMFRuntimeException("Close database failed : " + e3.getMessage(), e3);
         }
     }
 

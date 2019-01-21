@@ -305,7 +305,7 @@ public class AwareBroadcastConfig {
     }
 
     public ArraySet<String> getUnProxyActionList() {
-        ArraySet<String> arraySet;
+        ArraySet arraySet;
         synchronized (this.mAwareUnProxyActionList) {
             arraySet = new ArraySet(this.mAwareUnProxyActionList);
         }
@@ -313,7 +313,7 @@ public class AwareBroadcastConfig {
     }
 
     public ArraySet<String> getUnProxyPkgList() {
-        ArraySet<String> arraySet;
+        ArraySet arraySet;
         synchronized (this.mAwareUnProxyPkgList) {
             arraySet = new ArraySet(this.mAwareUnProxyPkgList);
         }
@@ -321,7 +321,7 @@ public class AwareBroadcastConfig {
     }
 
     public ArrayMap<String, ArraySet<String>> getUnProxySysList() {
-        ArrayMap<String, ArraySet<String>> arrayMap;
+        ArrayMap arrayMap;
         synchronized (this.mAwareUnProxySys) {
             arrayMap = new ArrayMap(this.mAwareUnProxySys);
         }
@@ -329,7 +329,7 @@ public class AwareBroadcastConfig {
     }
 
     public ArraySet<String> getTrimActionList() {
-        ArraySet<String> arraySet;
+        ArraySet arraySet;
         synchronized (this.mAwareProxyTrimActionList) {
             arraySet = new ArraySet(this.mAwareProxyTrimActionList);
         }

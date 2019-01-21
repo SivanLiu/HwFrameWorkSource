@@ -83,7 +83,7 @@ public class X509CRLObject extends X509CRL {
         if (getVersion() == 2) {
             Extensions extensions = this.c.getTBSCertList().getExtensions();
             if (extensions != null) {
-                Set hashSet = new HashSet();
+                HashSet hashSet = new HashSet();
                 Enumeration oids = extensions.oids();
                 while (oids.hasMoreElements()) {
                     ASN1ObjectIdentifier aSN1ObjectIdentifier = (ASN1ObjectIdentifier) oids.nextElement();
@@ -99,15 +99,15 @@ public class X509CRLObject extends X509CRL {
 
     public static boolean isIndirectCRL(X509CRL x509crl) throws CRLException {
         try {
-            Object extensionValue = x509crl.getExtensionValue(Extension.issuingDistributionPoint.getId());
+            byte[] extensionValue = x509crl.getExtensionValue(Extension.issuingDistributionPoint.getId());
             return extensionValue != null && IssuingDistributionPoint.getInstance(ASN1OctetString.getInstance(extensionValue).getOctets()).isIndirectCRL();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ExtCRLException("Exception reading IssuingDistributionPoint", e);
         }
     }
 
     private Set loadCRLEntries() {
-        Set hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         Enumeration revokedCertificateEnumeration = this.c.getRevokedCertificateEnumeration();
         X500Name x500Name = null;
         while (revokedCertificateEnumeration.hasMoreElements()) {
@@ -222,9 +222,9 @@ public class X509CRLObject extends X509CRL {
         if (this.sigAlgParams == null) {
             return null;
         }
-        Object obj = new byte[this.sigAlgParams.length];
-        System.arraycopy(this.sigAlgParams, 0, obj, 0, obj.length);
-        return obj;
+        byte[] bArr = new byte[this.sigAlgParams.length];
+        System.arraycopy(this.sigAlgParams, 0, bArr, 0, bArr.length);
+        return bArr;
     }
 
     public byte[] getSignature() {

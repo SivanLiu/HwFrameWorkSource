@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public final class IMAGE_CONTAINER_S {
-    public final byte[] image = new byte[BUFF_LEN_E.INPUT_MAX_TRANSPOT_LEN];
+    public final byte[] image = new byte[153600];
     public int len;
 
     public final boolean equals(Object otherObject) {
@@ -60,7 +60,7 @@ public final class IMAGE_CONTAINER_S {
 
     public final void readEmbeddedFromParcel(HwParcel parcel, HwBlob _hidl_blob, long _hidl_offset) {
         this.len = _hidl_blob.getInt32(0 + _hidl_offset);
-        _hidl_blob.copyToInt8Array(4 + _hidl_offset, this.image, BUFF_LEN_E.INPUT_MAX_TRANSPOT_LEN);
+        _hidl_blob.copyToInt8Array(4 + _hidl_offset, this.image, 153600);
     }
 
     public final void writeToParcel(HwParcel parcel) {

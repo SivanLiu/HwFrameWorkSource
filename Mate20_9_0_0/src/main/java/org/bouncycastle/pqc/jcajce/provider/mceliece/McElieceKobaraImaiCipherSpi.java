@@ -11,7 +11,6 @@ import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.BadPaddingException;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
-import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
@@ -81,9 +80,9 @@ public class McElieceKobaraImaiCipherSpi extends AsymmetricHybridCipher implemen
             length--;
         }
         if (bArr[length] == (byte) 1) {
-            Object obj = new byte[length];
-            System.arraycopy(bArr, 0, obj, 0, length);
-            return obj;
+            byte[] bArr2 = new byte[length];
+            System.arraycopy(bArr, 0, bArr2, 0, length);
+            return bArr2;
         }
         throw new BadPaddingException("invalid ciphertext");
     }
@@ -131,14 +130,14 @@ public class McElieceKobaraImaiCipherSpi extends AsymmetricHybridCipher implemen
 
     protected void initCipherDecrypt(Key key, AlgorithmParameterSpec algorithmParameterSpec) throws InvalidKeyException, InvalidAlgorithmParameterException {
         this.buf.reset();
-        CipherParameters generatePrivateKeyParameter = McElieceCCA2KeysToParams.generatePrivateKeyParameter((PrivateKey) key);
+        AsymmetricKeyParameter generatePrivateKeyParameter = McElieceCCA2KeysToParams.generatePrivateKeyParameter((PrivateKey) key);
         this.digest.reset();
         this.cipher.init(false, generatePrivateKeyParameter);
     }
 
     protected void initCipherEncrypt(Key key, AlgorithmParameterSpec algorithmParameterSpec, SecureRandom secureRandom) throws InvalidKeyException, InvalidAlgorithmParameterException {
         this.buf.reset();
-        CipherParameters parametersWithRandom = new ParametersWithRandom(McElieceCCA2KeysToParams.generatePublicKeyParameter((PublicKey) key), secureRandom);
+        ParametersWithRandom parametersWithRandom = new ParametersWithRandom(McElieceCCA2KeysToParams.generatePublicKeyParameter((PublicKey) key), secureRandom);
         this.digest.reset();
         this.cipher.init(true, parametersWithRandom);
     }

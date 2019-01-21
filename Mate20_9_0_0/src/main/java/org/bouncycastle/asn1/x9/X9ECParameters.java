@@ -48,12 +48,12 @@ public class X9ECParameters extends ASN1Object implements X9ObjectIdentifiers {
 
     /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
         jadx.core.utils.exceptions.JadxRuntimeException: Can't find immediate dominator for block B:13:0x005a in {2, 4, 9, 12, 15, 17} preds:[]
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:238)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:48)
-        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:38)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.computeDominators(BlockProcessor.java:242)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.processBlocksTree(BlockProcessor.java:52)
+        	at jadx.core.dex.visitors.blocksmaker.BlockProcessor.visit(BlockProcessor.java:42)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:27)
         	at jadx.core.dex.visitors.DepthTraversal.lambda$visit$1(DepthTraversal.java:14)
-        	at java.util.ArrayList.forEach(ArrayList.java:1249)
+        	at java.util.ArrayList.forEach(ArrayList.java:1257)
         	at jadx.core.dex.visitors.DepthTraversal.visit(DepthTraversal.java:14)
         	at jadx.core.ProcessClass.process(ProcessClass.java:32)
         	at jadx.core.ProcessClass.lambda$processDependencies$0(ProcessClass.java:51)
@@ -75,18 +75,14 @@ public class X9ECParameters extends ASN1Object implements X9ObjectIdentifiers {
         r1.seed = r6;
         r3 = org.bouncycastle.math.ec.ECAlgorithms.isFpCurve(r2);
         if (r3 == 0) goto L_0x0023;
-    L_0x0013:
         r3 = new org.bouncycastle.asn1.x9.X9FieldID;
         r2 = r2.getField();
         r2 = r2.getCharacteristic();
         r3.<init>(r2);
-    L_0x0020:
         r1.fieldID = r3;
         return;
-    L_0x0023:
         r3 = org.bouncycastle.math.ec.ECAlgorithms.isF2mCurve(r2);
         if (r3 == 0) goto L_0x0063;
-    L_0x0029:
         r2 = r2.getField();
         r2 = (org.bouncycastle.math.field.PolynomialExtensionField) r2;
         r2 = r2.getMinimalPolynomial();
@@ -96,17 +92,14 @@ public class X9ECParameters extends ASN1Object implements X9ObjectIdentifiers {
         r5 = 2;
         r6 = 3;
         if (r3 != r6) goto L_0x0047;
-    L_0x003d:
         r3 = new org.bouncycastle.asn1.x9.X9FieldID;
         r5 = r2[r5];
         r2 = r2[r4];
         r3.<init>(r5, r2);
         goto L_0x0020;
-    L_0x0047:
         r3 = r2.length;
         r0 = 5;
         if (r3 != r0) goto L_0x005b;
-    L_0x004b:
         r3 = new org.bouncycastle.asn1.x9.X9FieldID;
         r0 = 4;
         r0 = r2[r0];
@@ -116,12 +109,10 @@ public class X9ECParameters extends ASN1Object implements X9ObjectIdentifiers {
         r3.<init>(r0, r4, r5, r2);
         goto L_0x0020;
         return;
-    L_0x005b:
         r2 = new java.lang.IllegalArgumentException;
         r3 = "Only trinomial and pentomial curves are supported";
         r2.<init>(r3);
         throw r2;
-    L_0x0063:
         r2 = new java.lang.IllegalArgumentException;
         r3 = "'curve' is of an unsupported type";
         r2.<init>(r3);

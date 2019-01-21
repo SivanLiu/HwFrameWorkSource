@@ -23,11 +23,11 @@ public class DESedeWrapEngine implements Wrapper {
     Digest sha1 = DigestFactory.createSHA1();
 
     private byte[] calculateCMSKeyChecksum(byte[] bArr) {
-        Object obj = new byte[8];
+        byte[] bArr2 = new byte[8];
         this.sha1.update(bArr, 0, bArr.length);
         this.sha1.doFinal(this.digest, 0);
-        System.arraycopy(this.digest, 0, obj, 0, 8);
-        return obj;
+        System.arraycopy(this.digest, 0, bArr2, 0, 8);
+        return bArr2;
     }
 
     private boolean checkCMSKeyChecksum(byte[] bArr, byte[] bArr2) {
@@ -93,23 +93,23 @@ public class DESedeWrapEngine implements Wrapper {
                 for (int i3 = 0; i3 != i2; i3 += blockSize) {
                     this.engine.processBlock(bArr, i + i3, bArr2, i3);
                 }
-                Object reverse = reverse(bArr2);
+                bArr = reverse(bArr2);
                 this.iv = new byte[8];
-                Object obj = new byte[(reverse.length - 8)];
-                System.arraycopy(reverse, 0, this.iv, 0, 8);
-                System.arraycopy(reverse, 8, obj, 0, reverse.length - 8);
+                byte[] bArr3 = new byte[(bArr.length - 8)];
+                System.arraycopy(bArr, 0, this.iv, 0, 8);
+                System.arraycopy(bArr, 8, bArr3, 0, bArr.length - 8);
                 this.paramPlusIV = new ParametersWithIV(this.param, this.iv);
                 this.engine.init(false, this.paramPlusIV);
-                reverse = new byte[obj.length];
-                for (int i4 = 0; i4 != reverse.length; i4 += blockSize) {
-                    this.engine.processBlock(obj, i4, reverse, i4);
+                bArr = new byte[bArr3.length];
+                for (int i4 = 0; i4 != bArr.length; i4 += blockSize) {
+                    this.engine.processBlock(bArr3, i4, bArr, i4);
                 }
-                obj = new byte[(reverse.length - 8)];
-                Object obj2 = new byte[8];
-                System.arraycopy(reverse, 0, obj, 0, reverse.length - 8);
-                System.arraycopy(reverse, reverse.length - 8, obj2, 0, 8);
-                if (checkCMSKeyChecksum(obj, obj2)) {
-                    return obj;
+                bArr3 = new byte[(bArr.length - 8)];
+                byte[] bArr4 = new byte[8];
+                System.arraycopy(bArr, 0, bArr3, 0, bArr.length - 8);
+                System.arraycopy(bArr, bArr.length - 8, bArr4, 0, 8);
+                if (checkCMSKeyChecksum(bArr3, bArr4)) {
+                    return bArr3;
                 }
                 throw new InvalidCipherTextException("Checksum inside ciphertext is corrupted");
             }
@@ -124,30 +124,30 @@ public class DESedeWrapEngine implements Wrapper {
 
     public byte[] wrap(byte[] bArr, int i, int i2) {
         if (this.forWrapping) {
-            Object obj = new byte[i2];
+            byte[] bArr2 = new byte[i2];
             int i3 = 0;
-            System.arraycopy(bArr, i, obj, 0, i2);
-            Object calculateCMSKeyChecksum = calculateCMSKeyChecksum(obj);
-            Object obj2 = new byte[(obj.length + calculateCMSKeyChecksum.length)];
-            System.arraycopy(obj, 0, obj2, 0, obj.length);
-            System.arraycopy(calculateCMSKeyChecksum, 0, obj2, obj.length, calculateCMSKeyChecksum.length);
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            bArr = calculateCMSKeyChecksum(bArr2);
+            byte[] bArr3 = new byte[(bArr2.length + bArr.length)];
+            System.arraycopy(bArr2, 0, bArr3, 0, bArr2.length);
+            System.arraycopy(bArr, 0, bArr3, bArr2.length, bArr.length);
             int blockSize = this.engine.getBlockSize();
-            if (obj2.length % blockSize == 0) {
+            if (bArr3.length % blockSize == 0) {
                 this.engine.init(true, this.paramPlusIV);
-                Object obj3 = new byte[obj2.length];
-                for (int i4 = 0; i4 != obj2.length; i4 += blockSize) {
-                    this.engine.processBlock(obj2, i4, obj3, i4);
+                byte[] bArr4 = new byte[bArr3.length];
+                for (int i4 = 0; i4 != bArr3.length; i4 += blockSize) {
+                    this.engine.processBlock(bArr3, i4, bArr4, i4);
                 }
-                obj2 = new byte[(this.iv.length + obj3.length)];
-                System.arraycopy(this.iv, 0, obj2, 0, this.iv.length);
-                System.arraycopy(obj3, 0, obj2, this.iv.length, obj3.length);
-                byte[] reverse = reverse(obj2);
+                bArr3 = new byte[(this.iv.length + bArr4.length)];
+                System.arraycopy(this.iv, 0, bArr3, 0, this.iv.length);
+                System.arraycopy(bArr4, 0, bArr3, this.iv.length, bArr4.length);
+                bArr3 = reverse(bArr3);
                 this.engine.init(true, new ParametersWithIV(this.param, IV2));
-                while (i3 != reverse.length) {
-                    this.engine.processBlock(reverse, i3, reverse, i3);
+                while (i3 != bArr3.length) {
+                    this.engine.processBlock(bArr3, i3, bArr3, i3);
                     i3 += blockSize;
                 }
-                return reverse;
+                return bArr3;
             }
             throw new IllegalStateException("Not multiple of block length");
         }
